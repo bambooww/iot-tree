@@ -78,6 +78,7 @@ body {
 	z-index: 999;
 	width: 45px;
 	overflow-x: hidden
+	background-color: #aaaaaa;
 }
 
 
@@ -90,6 +91,7 @@ body {
 	z-index: 999;
 	width: 145px;
 	overflow-x: hidden
+	
 }
 
 .right {
@@ -99,15 +101,16 @@ body {
 	top: 0px;
 	bottom: 0;
 	z-index: 999;
-	width: 250px;
+	width: 45px;
 	height: 100%;
 	overflow-x: hidden
+	background-color: #aaaaaa;
 }
 
 .mid {
 	position: absolute;
 	left: 45px;
-	right: 250px;
+	right: 45px;
 	top: 0px;
 	bottom: 0;
 	z-index: 998;
@@ -248,6 +251,20 @@ position:absolute;display:none;z-index:1000;left:45px;
 background-color: #eeeeee;
 top:0px;height:100%;
 }
+
+.right_panel_win
+{
+position:absolute;display:none;z-index:1000;right:45px;
+top:0px;height:100%;
+border: 1;
+ font: 15;
+  width: 145px;
+  height: 98%; 
+  background-color: window;
+
+}
+
+
 .left_panel_bar
 {
 height:30px;
@@ -286,7 +303,7 @@ height:30px;
 			
 		</div>
 		 --%>
-		<div class="left " style="background-color: #aaaaaa;overflow: hidden;">
+		<div class="left " style="overflow: hidden;">
 			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',150)" title="Context Sub-HMI"><i class="fa fa-cube fa-3x lr_btn"></i><br>&nbsp;</div>
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic',230)" title="Basic"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>&nbsp;</div>
 			<div id="leftcat_divcomp" onclick="leftcat_sel('divcomp','Components',330)" title="Controller"><i class="fa fa-cog fa-3x lr_btn"></i><br> &nbsp;</div>
@@ -333,8 +350,13 @@ height:30px;
 					
 				
 		</div>
-		<div class="right " style="background-color: #eeeeee">
-		    <div id='edit_panel' style="border: 1; font: 15; position: absolute; top: 3px; width: 100%; height: 98%; background-color: window; z-index: 60000; overFlow0: auto">
+		<div class="right " style="background-color: #eeeeee;overflow: hidden;">
+		    
+	
+
+	
+</div>
+<div id='edit_panel'  class="right_panel_win" >
 
 	<div class="layui-tab">
   <ul class="layui-tab-title">
@@ -351,12 +373,9 @@ height:30px;
    
   </div>
 </div>
-
+<div id="p_info" style="background-color: grey; height: 20" class="props_panel_pos">&nbsp;</div>
  </div>
-	<div id="p_info" style="background-color: grey; height: 20" class="props_panel_pos">&nbsp;</div>
-
-	
-</div>
+ 
 		</div>
 
 

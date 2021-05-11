@@ -10,7 +10,8 @@
 /.idea/
 /.settings/
 /.vscode/
-/node_modules/
+opencharts
+tomcat
 
 *.bat
 
