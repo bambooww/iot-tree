@@ -1,0 +1,122 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.iottree</groupId>
+		<artifactId>iottree-parent</artifactId>
+		<version>0.92.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>iottree-core</artifactId>
+	<packaging>jar</packaging>
+	
+	  <properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
+	    
+		<output.directory>../_output</output.directory>
+	  </properties>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.milo/sdk-client -->
+		<dependency>
+			<groupId>org.eclipse.milo</groupId>
+			<artifactId>sdk-client</artifactId>
+			
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.milo/sdk-server -->
+		<dependency>
+			<groupId>org.eclipse.milo</groupId>
+			<artifactId>sdk-server</artifactId>
+			
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.milo</groupId>
+			<artifactId>dictionary-manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.graalvm.sdk/graal-sdk -->
+		<dependency>
+		    <groupId>org.graalvm.sdk</groupId>
+		    <artifactId>graal-sdk</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+
+		</dependency>
+        <!-- 
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+		</dependency>
+		 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>servlet-api</artifactId>
+	    <scope>system</scope>
+	    <version>2.5</version>
+	     <systemPath>${basedir}/../server/tomcat/lib/servlet-api.jar</systemPath>
+	</dependency>
+	
+	<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>system</scope>
+			<version>2.2</version>
+			<systemPath>${basedir}/../server/tomcat/lib/jsp-api.jar</systemPath>
+		</dependency>
+	<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>websocket-api</artifactId>
+			<scope>system</scope>
+			<version>2.2</version>
+			<systemPath>${basedir}/../server/tomcat/lib/websocket-api.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		</dependency>
+				
+				<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.netty/netty-all 
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-all</artifactId>
+		    <version>4.1.63.Final</version>
+		</dependency>
+		-->
+	</dependencies>
+	
+</project>

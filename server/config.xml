@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<iottree debug="false" title="IOTTree Server" copyright="" data_dir="../data/">
+
+ 	<webapps port="9090" ajp_port="" base_dir="../web">
+ 	 	<webapp name="admin" />
+		<webapp name="ROOT" />		
+		<webapp name="_js" />
+		<webapp name="_iottree" />
+		<webapp name="opencharts" />
+	</webapps>
+	
+	<system>
+	
+		
+	<!-- 
+		<env name="java.home" value0="c:/jdk-11"  value="C:/openjdk08" value1="C:/jdk8_x86"/>
+		<env name="java.util.logging.manager" value="org.apache.juli.ClassLoaderLogManager"/>
+		<env name="java.util.logging.config.file" value="./logging.properties"/>
+		<env name="java.endorsed.dirs" value="./tomcat/common/endorsed"/>
+		<env name="catalina.base" value="./tomcat"/>
+		<env name="catalina.home" value="./tomcat"/>
+		<env name="tomcat.util.scan.StandardJarScanFilter.jarsToSkip" value="*"/>
+		<env name="java.io.tmpdir" value="./tomcat/temp"/>
+		<lib dir="./lib"/>
+		 -->
+		<server_comp class="org.iottree.ua.driver.opcua.server.OpcUAServerComp"/>
+		
+	</system>
+	
+	
+</iottree>

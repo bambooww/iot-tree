@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web>
+	<authorization desc="">
+		<default is_login="true"/>
+		<location path="main.jsp" is_login="false"/>
+	</authorization>
+</web>

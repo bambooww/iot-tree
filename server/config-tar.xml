@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<iottree debug="false" title="IOTTree Server" data_dir="./data/">
+ 	<webapps port="9090" ajp_port="" base_dir="./web">
+ 	 	<webapp name="admin" />
+		<webapp name="ROOT" />		
+		<webapp name="_js" />
+		<webapp name="_iottree" />
+		<webapp name="opencharts" />
+	</webapps>
+	
+	<system>
+		
+		<server_comp class="org.iottree.ua.driver.opcua.server.OpcUAServerComp"/>
+		
+	</system>
+</iottree>

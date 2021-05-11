@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>iottree-parent</artifactId>
+    <groupId>org.iottree</groupId>
+    <version>0.92.0</version>
+  </parent>
+
+  <artifactId>iottree-server</artifactId>
+  <name>iottree-server</name>
+   
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <output.directory>../_output</output.directory>
+  </properties>
+
+  <dependencies>
+  <dependency>
+	    <groupId>org.iottree</groupId>
+	    <artifactId>iottree-core</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+	    <groupId>tanukisoft</groupId>
+	    <artifactId>wrapper</artifactId>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+	<dependency>
+	    <groupId>commons-logging</groupId>
+	    <artifactId>commons-logging</artifactId>
+	    <version>1.2</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+	<dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>2.4</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.22</version>
+	</dependency>
+	
+	<dependency>
+			<groupId>tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<scope>system</scope>
+			<version>2.2</version>
+			<systemPath>${basedir}/../server/tomcat/lib/catalina.jar</systemPath>
+		</dependency>
+	<!-- 
+	<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/tomcat/lib/servlet-api.jar</systemPath>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>system</scope>
+			<systemPath>${basedir}/tomcat/lib/jsp-api.jar</systemPath>
+		</dependency>
+ -->
+  </dependencies>
+
+  <build>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+      <plugins>
+         
+        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        
+        
+      </plugins>
+    </pluginManagement>
+    
+    <plugins>
+    <!-- 
+           <plugin>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <configuration>
+                   <compilerArguments>
+                       <extdirs>.\tomcat\lib\</extdirs>
+                   </compilerArguments>
+               </configuration>
+           </plugin>
+            -->     
+            
+
+				<!-- config manifest add lib dependence -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<classesDirectory>target/classes/</classesDirectory>
+					<archive>
+						<manifest>
+							<!-- 主函数的入口 -->
+							<mainClass>org.iottree.server.Server</mainClass>
+							<!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
+							<useUniqueVersions>false</useUniqueVersions>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+			    <artifactId>maven-resources-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <id>copy-resource</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>copy-resources</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>../_output/</outputDirectory>
+			                <resources>
+			                    <resource>
+			                        <directory>./</directory>
+			                        <includes>
+			                            <include>log/logging.properties</include>
+			                            <include>log/logging_debug.properties</include>
+			                            <include>tomcat/lib/</include>
+			                            <include>tomcat/bin/</include>
+			                            <include>wrapper.*</include>
+			                            <include>../data/ua/</include>
+			                        </includes>
+			                    </resource>
+			                    <resource>
+			                        <directory>../</directory>
+			                        <includes>
+			                            <include>data/ua/</include>
+			                        </includes>
+			                    </resource>
+			                </resources>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+			<!-- copy rename -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<copy file="./config-tar.xml" tofile="../_output/config.xml" />
+								<copy file="./iot-tree.bat.txt" tofile="../_output/iot-tree.bat" />
+								<copy file="./iot-tree-setup.bat.txt" tofile="../_output/iot-tree-setup.bat" />
+								<copy file="./iot-tree.sh.txt" tofile="../_output/iot-tree.sh" />
+								<copy file="./iot-tree-service-start.sh.txt" tofile="../_output/iot-tree-service-start.sh" />
+								<copy file="./iot-tree-service-stop.sh.txt" tofile="../_output/iot-tree-service-stop.sh" />
+								<copy file="../core/target/iottree-core-${project.version}.jar" tofile="../_output/lib/iottree-core-${project.version}.jar" />
+								<copy file="../server/target/iottree-server-${project.version}.jar" tofile="../_output/lib/iottree-server-${project.version}.jar" />
+								<copy file="../driver-parent/driver-common/target/iottree-driver-common-${project.version}.jar"
+								        tofile="../_output/lib/iottree-driver-common-${project.version}.jar" />
+								<copy file="../driver-parent/driver-opc/target/iottree-driver-opc-${project.version}.jar"
+								        tofile="../_output/lib/iottree-driver-opc-${project.version}.jar" />
+								<delete file="../_output/lib/jsp-api-2.2.jar" />
+			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
+			                    <delete file="../_output/lib/servlet-api-2.5.jar" />
+			                    <delete file="../_output/lib/tomcat-catalina-2.2.jar" />
+			                     <delete>
+				                    <fileset dir="../_output/web/admin/target/" includes="*.*" />
+				                </delete>
+				                <delete dir="../_output/web/admin/target/" includeemptydirs="true"/>
+				                <delete dir="../_output/web/admin/.settings/" includeemptydirs="true"/>
+				                <delete dir="../_output/web/admin/src/" includeemptydirs="true"/>
+			                    <delete>
+				                    <fileset dir="../_output/web/ROOT/target/" includes="*.*" />
+				                </delete>
+				                <delete dir="../_output/web/ROOT/target/" includeemptydirs="true"/>
+				                <delete dir="../_output/web/ROOT/.settings/" includeemptydirs="true"/>
+				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
+			                    
+			                    <echo message="package zip file" />
+			                    <zip basedir="../_output/" destfile="../_output/iot-tree-${project.version}.zip" />
+			                     
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+  </build>
+</project>

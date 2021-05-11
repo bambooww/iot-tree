@@ -1,0 +1,5 @@
+/target/
+/tomcat/logs/
+/tomcat/conf/
+/tomcat/work/
+/sbin/

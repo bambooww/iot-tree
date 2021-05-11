@@ -1,0 +1,33 @@
+#!/bin/sh
+
+echo ----------------------------------------
+echo Starting IOT-Tree Server
+echo ----------------------------------------
+
+
+MAIN_CLASS=org.iottree.server.Server
+
+export IOTTREE_HOME="`dirname "$0"`"
+
+#echo home=$IOTTREE_HOME
+
+#JAVA_HOME=${IOTTREE_HOME}/jdk
+#JAVA_HOME=C:/jdk8
+
+
+CLASSPATH=${IOTTREE_HOME}/tomcat/bin/bootstrap.jar:${IOTTREE_HOME}/tomcat/bin/tomcat-juli.jar
+for f in ${IOTTREE_HOME}/lib/*.jar;
+do
+  CLASSPATH=${CLASSPATH}":"$f
+done
+for f in ${IOTTREE_HOME}/tomcat/lib/*.jar;
+do
+  CLASSPATH=${CLASSPATH}":"$f
+done
+
+
+#echo "${JAVA_HOME}/bin/java" -cp "$CLASSPATH" "$MAIN_CLASS" $1
+"${JAVA_HOME}/bin/java" -cp "$CLASSPATH" "$MAIN_CLASS" $1
+
+
+exit $?

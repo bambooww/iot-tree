@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>org.iottree</groupId>
+		<artifactId>iottree-parent</artifactId>
+		<version>0.92.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+  <groupId>org.iottree.driver</groupId>
+  <artifactId>driver-parent</artifactId>
+  <packaging>pom</packaging>
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>scp://webhost.company.com/www/website</url>
+    </site>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!--不对外发布-->
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <output.directory>../_output</output.directory>
+  </properties>
+  <modules>
+    <module>driver-opc</module>
+    <module>driver-common</module>
+  </modules>
+  
+  <dependencies>
+    <dependency>
+	    <groupId>org.iottree</groupId>
+	    <artifactId>iottree-core</artifactId>
+	    <version>0.92.0</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.bidib.jbidib.org.qbang.rxtx/rxtxcomm -->
+<dependency>
+    <groupId>org.bidib.jbidib.org.qbang.rxtx</groupId>
+    <artifactId>rxtxcomm</artifactId>
+    <version>2.2</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/tanukisoft/wrapper -->
+<dependency>
+    <groupId>tanukisoft</groupId>
+    <artifactId>wrapper</artifactId>
+</dependency>
+
+	
+	
+  </dependencies>
+</project>

@@ -1,0 +1,218 @@
+package org.iottree.core;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.*;
+
+import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.DataTranserXml;
+import org.iottree.core.util.xmldata.XmlData;
+import org.iottree.core.util.xmldata.data_class;
+import org.iottree.core.util.xmldata.data_val;
+
+/**
+ * DevCat in driver
+ * 
+ * @author jason.zhu
+ */
+@data_class
+public class DevCat
+{
+	@data_val
+	String name = null ;
+	
+	@data_val
+	String title = null ;
+	
+	@data_val
+	String desc = null ;
+	
+	//ArrayList<DevModel> devModels = new ArrayList<>() ;
+	
+	transient DevDriver driver = null ;
+	
+	transient List<DevDef> devDefs = null ;
+	
+	public DevCat(DevDriver dd)
+	{
+		this.driver = dd ;
+	}
+	
+	public DevCat(DevDriver dd,String name,String title)
+	{
+		this.driver = dd ;
+		this.name = name ;
+		this.title = title ;
+	}
+	
+	public DevDriver getDriver()
+	{
+		return driver ;
+	}
+	
+	public String getName()
+	{
+		return name ;
+	}
+	
+	public String getTitle()
+	{
+		return title ;
+	}
+	
+	public List<DevDef> getDevDefs()
+	{
+		if(devDefs!=null)
+			return devDefs;
+		synchronized(this)
+		{
+			if(devDefs!=null)
+				return devDefs;
+			
+			devDefs = loadDevDefs();
+			
+			for(DevDef dd:devDefs)
+				dd.constructNodeTree();
+			
+			return devDefs ;
+		}
+	}
+	
+	
+
+	public DevDef getDevDefByName(String name)
+	{
+		List<DevDef> ddfs = getDevDefs();
+		for(DevDef dd:ddfs)
+		{
+			if(name.equals(dd.getName()))
+				return dd ;
+		}
+		return null ;
+	}
+	
+	public DevDef getDevDefById(String id)
+	{
+		List<DevDef> ddfs = getDevDefs();
+		for(DevDef dd:ddfs)
+		{
+			if(id.equals(dd.getId()))
+				return dd ;
+		}
+		return null ;
+	}
+	
+	
+	File getDevCatDir()
+	{
+		return driver.getDevCatDir(this.getName()) ;
+	}
+	
+	void saveDevDef(DevDef dd) throws Exception
+	{
+		File ff = dd.getDevDefFile();
+		if(!ff.getParentFile().exists())
+			ff.getParentFile().mkdirs() ;
+		XmlData xd = DataTranserXml.extractXmlDataFromObj(dd) ;
+		//XmlData xd = rep.toUAXmlData();
+		XmlData.writeToFile(xd, ff);
+	}
+	
+	private DevDef loadDevDef(String id) throws Exception
+	{
+		File catdir=  getDevCatDir();
+		if(!catdir.exists())
+			return null;
+		File ddf = new File(catdir,"dd_"+id+".xml");
+		if(!ddf.exists())
+			return null ;
+		XmlData tmpxd = XmlData.readFromFile(ddf);
+		DevDef r = new DevDef(this) ;
+		DataTranserXml.injectXmDataToObj(r, tmpxd);
+		return r ;
+	}
+
+	private List<DevDef> loadDevDefs()
+	{
+		ArrayList<DevDef> rets = new ArrayList<>() ;
+		
+		File catdir=  driver.getDevCatDir(this.getName()) ;
+		if(!catdir.exists())
+			return rets;
+		File[] fs = catdir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
+			{
+				if(f.isDirectory())
+					return false;
+				String n = f.getName() ;
+				return n.startsWith("dd_")&&n.endsWith(".xml");
+			}
+		});
+		//ArrayList<DevCat> rets = new ArrayList<>() ;
+		for(File tmpf:fs)
+		{
+			String n = tmpf.getName() ;
+			String id = n.substring(3,n.length()-4) ;
+			try
+			{
+				DevDef dd =  loadDevDef(id) ;
+				if(dd==null)
+				{
+					System.out.println("Warning,load DevDef failed ["+id+"]");
+					continue ;
+				}
+				rets.add(dd);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Warning,load DevCat error ["+id+"]");
+				e.printStackTrace();
+			}
+		}
+		return rets;
+	}
+	
+	public DevDef addDevDef(String name,String title,String desc) throws Exception
+	{
+		StringBuilder sb = new StringBuilder() ;
+		if(!Convert.checkVarName(name,true,sb))
+			throw new IllegalArgumentException(sb.toString()) ;
+		
+		DevDef r = this.getDevDefByName(name) ;
+		if(r!=null)
+		{
+			throw new Exception("name="+name+" is existed!") ;
+		}
+		r = new DevDef(this,name,title,desc) ;
+		saveDevDef(r);
+		this.getDevDefs().add(r) ;
+		r.constructNodeTree();
+		return r ;
+	}
+	
+	
+//	public List<DevModel> getDevModels()
+//	{
+//		return devModels ;
+//	}
+//	
+//	public DevModel getDevModelByName(String n)
+//	{
+//		for(DevModel m:devModels)
+//		{
+//			if(n.contentEquals(m.getName()))
+//				return m ;
+//		}
+//		return null ;
+//	}
+//	
+//	public DevModel createDevModelByName(String n)
+//	{
+//		DevModel m = getDevModelByName(n);
+//		if(m==null)
+//			return null ;
+//		return m.copyMe() ;
+//	}
+}

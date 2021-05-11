@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+  <dd_node id="1001" name="name" name_cn="名称" name_en="Name" />
+  <dd_node id="1002" name="title" name_cn="标题" name_en="Title"/>
+  <dd_node id="1003" name="driver" name_cn="驱动" name_en="Driver"/>   
+  <dd_node id="1004" name="description" name_cn="描述" name_en="Description"/>   
+  <dd_node id="1004" name="ok" name_cn="确认" name_en="Ok"/>  
+  <dd_node id="1004" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1004" name="pls_input" name_cn="请输入" name_en="Please input "/>
+  <dd_node id="1004" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/> 
+
+</dd_class>
