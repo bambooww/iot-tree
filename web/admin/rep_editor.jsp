@@ -452,20 +452,34 @@ background-color: #fff ;
 
 </script>
 <body class="layout-body">
-<div class="top " style="background-color: #326690;color:#ffffff;">
- <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid">IOTTree Editor <%=rep.getTitle()%>-<%=rep.getName() %></div>
+<div class="top " style="background-color: #007ad4;color:#ffffff;">
+ <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
+   <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree </div>
+		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
+		<%=rep.getTitle()%>-<%=rep.getName() %>
+		</div>
+ <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
 
- <div style="float: left;position:relative;margin-left:10px;top:10px;font: 20px solid;color:#fff5e2"></div>
-
-			<i class="fa fa-floppy-o fa-3x top_btn" onclick="tab_save()" ></i>
-			<i class="fa fa-cogs  fa-3x  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid">Device Library</span>
-			<i class="fa fa-cogs  fa-3x  top_btn" onclick="list_comps()"></i><span style="font: 20px solid">UI Library</span>
-		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-3x top_btn"></i>
+			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
+			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
+			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
+		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
+		    </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">
-        <div class="hj-transverse-split-div subwin" style="width:20%">
-			<div class="subwin_toolbar">Connectors
-				<button type="button" class="btn btn-default" id="btn_menu_conn"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+        <div id="div_conn" class="hj-transverse-split-div subwin" style="width:20%">
+			<div class="subwin_toolbar">
+			<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>
+			<%--
+			Connectors
+				<button type="button" class="btn btn-default"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+				 --%>
+				<div class="btn-group open"  id="btn_menu_conn">
+				  <a class="btn" href="#"><i class="fa fa-link fa-fw"></i> Connectors</a>
+				  <a class="btn" href="#">
+				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
+				  </a>
+				 </div>
 		   </div>
 		   <div class="subwin_content" style="overflow:hidden;">
 		      <div  style="width:75%;height:100%;float:left;overflow:hidden;border:solid 1px;border-color: #cccccc;">
@@ -515,17 +529,28 @@ background-color: #fff ;
 	      <label class="hj-transverse-split-label"></label>
 	    </div>
        
-        <div class="hj-transverse-split-div subwin" style="width:20%">
-           <div class="subwin_toolbar">Browser
-           <button type="button" class="btn btn-default" id="btn_menu_tree"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+        <div id="div_brw" class="hj-transverse-split-div subwin" style="width:20%">
+           <div class="subwin_toolbar">
+           <%--
+           Browser
+           <button type="button" class="btn btn-default" ><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+            --%>
+           <div class="btn-group open"  id="btn_menu_tree">
+				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> Browser</a>
+				  <a class="btn "  href="#">
+				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
+				  </a>
+				 </div>
+				 
            </div>
            <div class="subwin_content" style="overflow:auto">
            		<div id="tree"  style="width:100%;overflow: hidden;"></div>
+           		<div style="width:100%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>
         </div>
          
-        <div class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3">
+        <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3">
            <div style="padding-left:10px;padding-right:10px;marign0:10px;height:100%;position:inherit;">
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			  <ul class="layui-tab-title">
@@ -591,6 +616,24 @@ $('#btn_menu_conn').click(function(){
 		regular : true,
 		data : connpro_menu
 	});
+});
+
+var b_left_show=true;
+$('#btn_left_showhidden').click(function(){
+	if(b_left_show)
+	{
+		$("#div_conn").css("width","5%");
+		$("#div_brw").css("width","5%");
+		$("#div_content").css("width","90%");
+		b_left_show=false;
+	}
+	else
+	{
+		$("#div_conn").css("width","20%");
+		$("#div_brw").css("width","20%");
+		$("#div_content").css("width","60%");
+		b_left_show=true;
+	}
 });
 
 $('#btn_menu_tree').click(function(){

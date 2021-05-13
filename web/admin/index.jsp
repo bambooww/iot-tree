@@ -12,10 +12,26 @@
 //String un = up.getUserInfo().getFullName();
 List<UARep> reps = UAManager.getInstance().listReps();
 
+Collections.sort(reps, new Comparator<UARep>() {
+
+    @Override
+    public int compare(UARep o1, UARep o2) {
+        long v = o1.getSavedDT()-o2.getSavedDT() ;
+        if(v>0)
+        	return -1 ;
+        else if(v<0)
+        	return 1 ;
+        return 0 ;
+    }
+}) ;
 %><!DOCTYPE html>
-<html>
+<html class="">
 <head>
-<title>IOT Tree Server</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+    <title>IOT-Tree</title>
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
@@ -23,61 +39,195 @@ List<UARep> reps = UAManager.getInstance().listReps();
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
-</head>
-<style>
-.oc-toolbar .toolbarbtn
-{
-width:200px;height:200px;margin: 10px;
-}
+            <link href="./inc/common.css" rel="stylesheet" type="text/css">
+        <link href="./inc/index.css" rel="stylesheet" type="text/css">
 
-</style>
-<body>
-  <div id="header" style="white-space:nowrap;top:0;width:100%;height:70px;background-color: #dfdfdf">
-  	<img src="inc/logo3.png"/>  
-  	<b>admin panel</b>
-  	<button onclick="logout()">Logout</button>
-  </div>
-  <div id="win_act2"  style="width:70%;top:30px;overflow:auto;text-align: right;right:100px" >
-  		<a href="javascript:open_devlib()">Device Library</a>
-  	</div>
-  <div id="win_act1"  class="oc-toolbar" style="width:100%;top:70px;bottom: 50px;overflow:auto" >
-  	
-  <div id="main" class="btns" style="top:10px;width:100%">
-  <%
-  String idstr = "";
-  for(UARep dc:reps)
-  {
-	  String cid = dc.getId();
-	  idstr += ",\""+cid+"\"";
-	  String tt = dc.getTitle() ;
-  %>
-    <div class="toolbarbtn" style="background-color: #515658" onclick="open_rep('<%=cid%>')">
-      <div id="panel_<%=cid %>" style="background-color: #2f2f2f;width:100%;height:170px" ></div>
-	  <div style="height:50px;margin:12px;color:#8dcef7"><%=tt %></div>
-    </div>
+    </head>
+<body aria-hidden="false">
+	<div class="iot-top-menu-wrap">
+		<div class="container">
+			<!-- start logo -->
+			<div class="iot-logo">
+				<a><img src="inc/logo1.png" width="40px" height="40px"/> IOT-Tree Server</a>
+			</div>
+			<!-- end logo -->
+			<!-- start nav -->
+			<div class="iot-top-nav navbar">
+				<div class="navbar-header">
+				  <button class="navbar-toggle pull-left">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				  </button>
+				</div>
+				<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
+				  <ul class="nav navbar-nav">
+					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i> Home</a></li>
+					  <li><a href=""><i class="icon icon-topic"></i> Helper</a></li>
+				  </ul>
+				</nav>
+			</div>
+			<!-- end nav-->
+			
+			<!-- search 
+			<div class="iot-search-box  hidden-xs hidden-sm">
+				<form class="navbar-search" id="global_search_form" method="post">
+					<input class="form-control search-query" type="text" placeholder="" autocomplete="off" name="q" id="iot-search-query">
+					
+				</form>
+			</div>
+			end search -->
+			<!-- user -->
+			<div class="iot-user-nav">
+					<div class="iot-top-user"><a class="login" href="javascript:logout()">logout</a></div>
+			</div>
+			<!-- end user -->
+			
+		</div>
+	</div>
+	
+
+<div class="iot-container-wrap" style="height: auto !important;">
+		<div class="container" style="height: auto !important;">
+		<div class="row" style="height: auto !important;">
+			<div class="iot-content-wrap clearfix" style="height: auto !important;">
+				<div class="iot-main-content" style="height: auto !important; min-height: 0px !important;">
+					<div class="iot-mod iot-question-detail iot-item">
+						<div class="mod-head">
+							<h1>Local Repositories
+							<a class="btn btn-success" style="width:80px;height:40px;align-content: center;" href="javascript:add_rep()">
+							<i class="fa fa-plus-circle fa-lg" ></i>&nbsp;&nbsp;Add
+							</a>
+							
+							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_rep()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;&nbsp;Import
+							</a>
+
+				           </h1>
+						</div>
+						<div class="mod-body">
+							<div class="content markitup-box" style="height:100%">
 <%
-  }
-  if(idstr.length()>0)
-	  idstr = idstr.substring(1) ;
+for(UARep rep:reps)
+{
 %>
-    <div class="toolbarbtn" style="background-color: #515658" onclick="add()">
-      <div style="background-color: #aaaaab;width:100%;height:170px;align-content: center;"><br><i class="fa fa-plus-circle fa-3x"></i></div>
-	  <div style="height:50px;margin:12px;color:#8dcef7">新增</div>
-    </div>
-  </div>
-  </div>
-  <div class="" style="width:100%;bottom: 0px;height:50px;background-color: #dfdfdf"></div>
+	<div class="aw-item">
+       <a class="img aw-border-radius-5" >
+         <i class="fa fa-sitemap fa-2x"></i>
+       </a>
+       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8"><%=rep.getTitle() %></a>
+       <div class="inline-block pull-right text-left">
+           <a class="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+           </a>
+           <a class="btn btn-success"  href="javascript:del_rep('<%=rep.getId()%>')" title="export">
+              <i class="fa fa-arrow-right"></i>
+           </a>
+           <a class="btn btn-success " style="background-color: #e33a3e" href="javascript:del_rep('<%=rep.getId()%>')" title="delete">
+              <i class="fa fa-times" aria-hidden="true"></i>
+           </a>
+       </div>
+
+       <div class="text-color-999">
+           <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
+           • modified date:<span class="text-color-666"><%=new Date(rep.getSavedDT()) %></span>
+       </div>
+   </div>
+<%
+}
+%>
+
+							</div>
+						</div>
+						
+						<div class="mod-footer">
+							<div class="meta">
+																
+								
+								<div class="pull-right more-operate">
+									<a class="text-color-999 dropdown-toggle" data-toggle="dropdown">
+										<i class="icon icon-share"></i>bottom									</a>
+									<div aria-labelledby="dropdownMenu" role="menu" class="iot-dropdown shareout pull-right">
+										<ul class="iot-dropdown-list">
+											<li><a ><i class="icon icon-weibo"></i>act1</a></li>
+											<li><a ><i class="icon icon-qzone"></i> act2</a></li>
+											<li><a ><i class="icon icon-wechat"></i> act3</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				<!--right side -->
+				<div class="iot-side-bar">
+					
+
+
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <h3>Device Library</h3>
+					    </div>
+					    <div class="mod-body">
+					       
+					        <a href="javascript:open_devlib()">Open</a> Device Library
+					        <p>supported drivers:</p>
+					        
+					    </div>
+					</div>
+
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <h3>Remote Connections</h3>
+					    </div>
+					    <div class="mod-body">
+					                
+					                
+					            </div>
+					</div>
+
+				</div>
+				<!-- end 侧边栏 -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="iot-footer-wrap">
+	<div class="iot-footer">
+		Copyright 
+
+	</div>
+</div>
 </body>
 <script type="text/javascript">
-var ids=[<%=idstr%>];
+
 var all_panels=[];
 function open_rep(id)
 {
 	window.open("rep_editor.jsp?id="+id);
 	//window.open("ua_rep.jsp?repid="+id);
+}
+
+function del_rep(id)
+{
+	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+    {
+		var pms = {name:n,title:tt,desc:desc,op:"add"} ;
+		send_ajax('ua/rep_ajax.jsp',{op:"del",id:id},function(bsucc,ret){
+			if(!bsucc||ret!='ok')
+			{
+				dlg.msg(ret) ;
+				return ;
+			}
+			document.location.href=document.location.href;
+		});
+     });
 }
 
 function open_devlib()
@@ -96,7 +246,7 @@ function open_devlib()
 				}
 			]);
 }
-function add()
+function add_rep()
 {
 	dlg.open("ua/rep_edit.jsp",
 			{title:"新增容器",w:'500px',h:'400px'},
@@ -122,68 +272,6 @@ function add()
 				}
 			]);
 }
-
-function load_all_unit(cb)
-{
-	//send_ajax("unit/unit_ajax.jsp","op=load_all",function(bsucc,ret){
-	send_ajax("ua/ui_unit_ajax.jsp","op=load_all",function(bsucc,ret){
-		if(!bsucc&&ret.indexOf("[")!=0)
-		{
-			dlg.msg("load allunit err:"+ret);
-			return ;
-		}
-		var ob = null ;
-		eval("ob="+ret);
-		var items=[];
-		for(var item of ob)
-		{
-			oc.DrawUnit.addUnitByJSON(item);
-		}
-		cb();
-	}) ;
-
-}
-
-var loadidx= 0 ;
-function load_preview()
-{
-	if(loadidx>=ids.length)
-		return;//end
-		//"?op=load&id="+repid
-	//send_ajax("rep/rep_ajax.jsp","op=load&id="+ids[loadidx],function(bsucc,ret){
-	send_ajax("ua/ui_cont_ajax.jsp","op=load&id="+ids[loadidx],function(bsucc,ret){
-		if(!bsucc||ret.indexOf("{")!=0)
-		{
-			dlg.msg(ret) ;
-		}
-		else
-		{
-			
-			var ob = null;
-			eval("ob="+ret) ;
-			var lay = new oc.DrawLayer();
-			oc.iott.IOTTView.injectLayerByCont(lay,ob) ;
-			//lay.inject(ret) ;
-			var p1 = new oc.DrawPanelDiv("panel_"+ids[loadidx],{layer:lay}) ;
-			all_panels.push(p1);
-			loadidx ++ ;
-			lay.ajustDrawFit();
-			load_preview();
-		}
-	});
-}
-	
-$(document).ready(function()
-{
-	load_all_unit(load_preview);
-});
-	
-
-
-$(window).resize(function(){
-	for(var p of all_panels)
-		p.updateByResize();
-	});
 
 function logout()
 {

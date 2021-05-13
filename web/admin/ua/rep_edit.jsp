@@ -90,8 +90,8 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	//var dbname=document.getElementById('db_name').value;
-	var pms = "name="+n+'&title='+tt+"&desc="+desc ;
-	send_ajax('rep_edit_do_ajax.jsp',pms,function(bsucc,ret)
+	var pms = {name:n,title:tt,desc:desc,op:"add"} ;
+	send_ajax('rep_ajax.jsp',pms,function(bsucc,ret)
 	{
 		if(!bsucc || ret.indexOf('succ')<0)
 		{

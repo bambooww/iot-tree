@@ -322,6 +322,20 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		return getRepSubDir() ;
 	}
 	
+	File getRepFile()
+	{
+		return UAManager.getRepFile(this.id) ;
+	}
+	
+	
+	public long getSavedDT()
+	{
+		File f = getRepFile() ;
+		if(!f.exists())
+			return -1 ;
+		return f.lastModified();
+	}
+	
 	
 	public List<ConnProvider> getConnProviders() throws Exception
 	{

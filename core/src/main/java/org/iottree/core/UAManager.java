@@ -178,6 +178,20 @@ public class UAManager
 		XmlData.writeToFile(xd, getRepFile(rep.getId()));
 	}
 	
+	public void delRep(String id)
+	{
+		File f = getRepFile(id) ;
+		if(f.exists())
+		{
+			f.delete();
+		}
+		File df = getRepFileSubDir(id) ;
+		if(df.exists())
+		{
+			
+		}
+	}
+	
 	public UARep addRep(String name,String title,String desc) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
