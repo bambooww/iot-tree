@@ -48,20 +48,26 @@ if(n==null)
 	out.print("no node found") ;
 	return ;
 }
-List<UAHmi> hmis = listCxtSubHmis(n.getParentNode());
+UANode pnode = n.getParentNode() ;
+String p_path = pnode.getNodePath() ;
+int p_path_len = p_path.length() ;
+List<UAHmi> hmis = listCxtSubHmis(pnode);
 String ids_str="" ;
 String paths_str = "" ;
+String subpaths_str="" ;
 String titles_str="" ;
 int s = hmis.size();
 if(s>0)
 {
 	ids_str+= "'"+hmis.get(0).getId() +"'";
 	paths_str+= "'"+hmis.get(0).getNodePath() +"'";
+	subpaths_str+="'"+hmis.get(0).getNodePath().substring(p_path_len) +"'";
 	titles_str = "'"+hmis.get(0).getTitle() +"'";
 	for(int i = 1 ; i < s ; i ++)
 	{
 		ids_str+= ",'"+hmis.get(i).getId() +"'";
 		paths_str+= ",'"+hmis.get(i).getNodePath() +"'";
+		subpaths_str+= ",'"+hmis.get(i).getNodePath().substring(p_path_len)  +"'";
 		titles_str+= ",'"+hmis.get(i).getTitle() +"'";
 	}
 }
@@ -142,6 +148,7 @@ left:10px;
 var ids = [<%=ids_str%>] ;
 var paths=[<%=paths_str%>] ;
 var titles= [<%=titles_str%>] ;
+var sub_paths=[<%=subpaths_str%>] ;
 var loadidx= 0 ;
 
 
@@ -176,7 +183,7 @@ function show_cxt_hmi_list()
 	{
 		tmps += "<div id='"+ids[i]+"' class=\"toolbarbtn\"  onclick=\"item_clk('"+ids[i]+"')\" >"
 		+"<div id='panel_"+ids[i]+"' hmi_path='"+paths[i]+"' draggable='true' ondragstart='drag(event)'></div><span>"
-		+titles[i]+"</span></div>";
+		+sub_paths[i]+"</span></div>";
 	}
 	
 		loadidx= 0 ;
@@ -190,6 +197,7 @@ function load_preview()
 {
 	if(loadidx>=ids.length)
 		return;//end
+	var path = paths[loadidx];
 	send_ajax("hmi_editor_ajax.jsp","op=load&path="+paths[loadidx],function(bsucc,ret){
 		if(!bsucc||ret.indexOf("{")!=0)
 		{
@@ -201,7 +209,7 @@ function load_preview()
 			var lay = new oc.DrawLayer();
 			lay.inject(ret) ;
 			var panel = new oc.hmi.HMICompPanel(ids[loadidx],"panel_"+ids[loadidx],{});
-			var p1 = new oc.DrawPanelDiv("",{layer:lay,panel:panel}) ;
+			var p1 = new oc.hmi.HMISubDiv("",{layer:lay,panel:panel,hmi_path:path}) ;
 			p1["hmi_path"] = paths[loadidx];
 			p1["hmi_id"] = ids[loadidx];
 			

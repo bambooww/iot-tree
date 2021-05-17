@@ -218,7 +218,6 @@ function del_rep(id)
 {
 	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
     {
-		var pms = {name:n,title:tt,desc:desc,op:"add"} ;
 		send_ajax('ua/rep_ajax.jsp',{op:"del",id:id},function(bsucc,ret){
 			if(!bsucc||ret!='ok')
 			{

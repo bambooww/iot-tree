@@ -57,7 +57,10 @@
 			out.print("illegal hmi_path and sub_id") ;
 			return ;
 		}
+		UANode branchn = hmi.getRefBranchNode() ;
 		UANode subn = hmi.getParentNode().findNodeById(subid) ;
+		if(subn==null&&branchn!=null)
+			subn = branchn.getParentNode().findNodeById(subid) ;
 		if(subn==null || !(subn instanceof UAHmi))
 		{
 			out.print("no sub hmi found") ;

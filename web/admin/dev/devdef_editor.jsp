@@ -401,15 +401,18 @@ background-color: #ffffff;
 
 </script>
 <body class="layout-body">
-<div class="top " style="background-color: #326690;color:#ffffff;">
- <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid">IOTTree Device Definition Editor</div>
-
- <div style="float: left;position:relative;margin-left:10px;top:10px;font: 20px solid;color:#fff5e2"></div>
-			<i class="fa fa-floppy-o fa-3x top_btn" onclick="tab_save()" ></i>
-			<i class="fa fa-cogs  fa-3x  top_btn" onclick="list_comps()"></i><span style="font: 20px solid">UI Library</span>
-		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-3x top_btn"></i>
+<div class="top " style="background-color: #007ad4;color:#ffffff;">
+<div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
+ <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree Device Definition Editor </div>
+ <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
+		<%=dev.getTitle()%>-<%=dev.getName() %>
+		</div>
+ <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
+			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
+			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid">UI Library</span>
+		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
 </div>
-
+</div>
 <div class='hj-wrap'>
 		
         <div class="hj-transverse-split-div subwin" style="width:20%">
@@ -418,8 +421,8 @@ background-color: #ffffff;
             <label class="hj-transverse-split-label"></label>
         </div>
         
-        <div class="hj-transverse-split-div" style="width:70%;background-color: #ebeef3">
-           <div style="padding-left:10px;padding-right:10px;marign0:10px;height:100%;position:inherit;">
+        <div class="hj-transverse-split-div" style="width:80%;background-color: #ebeef3">
+           <div style="padding-left:10px;padding-right:0px;marign0:10px;height:100%;position:inherit;">
            
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			  <ul class="layui-tab-title">

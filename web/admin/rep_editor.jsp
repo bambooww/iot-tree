@@ -551,7 +551,7 @@ background-color: #fff ;
         </div>
          
         <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3">
-           <div style="padding-left:10px;padding-right:10px;marign0:10px;height:100%;position:inherit;">
+           <div style="padding-left:10px;padding-right:0px;marign0:10px;height:100%;position:inherit;">
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>

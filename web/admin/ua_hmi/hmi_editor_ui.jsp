@@ -110,11 +110,12 @@ body {
 .mid {
 	position: absolute;
 	left: 45px;
-	right: 45px;
+	right: 0px;
 	top: 0px;
 	bottom: 0;
 	z-index: 998;
 	width: auto;
+	margin:0px;
 	overflow: hidden;
 	box-sizing: border-box
 }
@@ -254,13 +255,12 @@ top:0px;height:100%;
 
 .right_panel_win
 {
-position:absolute;display:none;z-index:1000;right:45px;
+position:absolute;z-index:1000;right:0px;
 top:0px;height:100%;
 border: 1;
  font: 15;
-  width: 145px;
-  height: 98%; 
-  background-color: window;
+  width: 245px;
+  background-color: #f2f2f2;
 
 }
 
@@ -279,30 +279,11 @@ height:30px;
 .layui-tab-content {
     padding: 0px;
 }
+
 </style>
-
 </head>
-<script type="text/javascript">
-
-
-</script>
 <body class="layout-body">
-<%--
-<div class="top " style="background-color: #cccccc">
- <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;color:#0092c8">IOTTree HMI Editor</div>
- <div style="float: left;position:relative;margin-left:10px;top:10px;font: 20px solid;color:#fb0003">[<%=uahmi.getNodePathTitle() %>]</div>
-			<i class="fa fa-cube fa-3x top_btn" id="topm_filter_op" style=""></i>
-			<i class="fa fa-floppy-o fa-3x top_btn" onclick="btn_save_hmi()" ></i>
-			<i class="fa fa-cog fa-3x  top_btn"></i>
-			 <i id="edit_panel_btn"  class="fa fa-pencil-square-o fa-3x top_btn"></i>
-		  <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-3x top_btn"></i>
-		  
-		   <input class="layui-btn layui-btn-primary layui-btn-sm" name='save' type='button' value='保存模板' onclick="btn_save_temp()" title="ctrl+b" />
-		 <input class="layui-btn layui-btn-primary layui-btn-sm" name='save' type='button' value='保存内容' onclick="btn_save_cont()" title="ctrl+b" />
-			<input type="button" value="Apply" onclick="do_apply()" class="layui-btn layui-btn-primary layui-btn-sm" />
-			
-		</div>
-		 --%>
+
 		<div class="left " style="overflow: hidden;">
 			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',150)" title="Context Sub-HMI"><i class="fa fa-cube fa-3x lr_btn"></i><br>&nbsp;</div>
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic',230)" title="Basic"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>&nbsp;</div>
@@ -318,7 +299,7 @@ height:30px;
 			<iframe id="left_pan_iframe" src="" style="width:100%;height:90%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
 		</div>
 		<div class="mid">
-			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
+			<div id="main_panel" style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
 				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增数据库"  onclick="store_add_db()">
@@ -347,34 +328,30 @@ height:30px;
 					</div>
 				</div>
 
-					
-				
 		</div>
-		<div class="right " style="background-color: #eeeeee;overflow: hidden;">
-		    
-	
+		
 
-	
-</div>
+<div style="position:absolute;right:5px;top:5px;z-index:1001;color:#1e1e1e" title="show or hide properties panel" id="btn_prop_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</div>
+
 <div id='edit_panel'  class="right_panel_win" >
-
-	<div class="layui-tab">
-  <ul class="layui-tab-title">
-    <li class="layui-this">Properties</li>
-    <li>Events</li>
-  </ul>
-  <div class="layui-tab-content">
-    <div class="layui-tab-item layui-show">
-    	<div  id='edit_props'  style="width:100%;height:500px;"></div>
+	<div id="p_info" style="height: 20" class0="props_panel_pos">&nbsp;</div>
+		<div class="layui-tab">
+	  <ul class="layui-tab-title">
+	    <li class="layui-this">Properties</li>
+	    <li>Events</li>
+	  </ul>
+	  <div class="layui-tab-content">
+	    <div class="layui-tab-item layui-show">
+	    	<div  id='edit_props'  style="width:100%;height:500px;"></div>
+		</div>
+	    <div class="layui-tab-item">
+	      <div  id='edit_events'  style="width:100%;height:500px;"></div>
+		</div>
+	   
+	  </div>
 	</div>
-    <div class="layui-tab-item">
-      <div  id='edit_events'  style="width:100%;height:500px;"></div>
-	</div>
-   
-  </div>
 </div>
-<div id="p_info" style="background-color: grey; height: 20" class="props_panel_pos">&nbsp;</div>
- </div>
+
  
 		</div>
 
@@ -733,6 +710,24 @@ $(window).resize(function(){
 	if(resize_cc<=1)
 		draw_fit();
 	});
+	
+var b_prop_show=true;
+$('#btn_prop_showhidden').click(function(){
+	if(b_prop_show)
+	{
+		$("#edit_panel").css("display","none");
+		$("#btn_prop_showhidden").css("color","#ebeef3");
+		
+		b_prop_show=false;
+	}
+	else
+	{
+		$("#edit_panel").css("display","");
+		$("#btn_prop_showhidden").css("color","#1e1e1e");
+		b_prop_show=true;
+	}
+});
+
 </script>
 </body>
 </html>
