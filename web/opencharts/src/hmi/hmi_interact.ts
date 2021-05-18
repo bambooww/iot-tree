@@ -142,12 +142,14 @@ module oc.hmi
 				eval("pm="+str) ;
 				console.log(pm) ;
 				var hmiid = pm["hmi_id"] ;
+				var w = pm["w"];
+				var h = pm["h"];
 				//var hmipath = pm["hmi_path"] ;
 				var lay = this.getLayer();//du.getLayer();
 				var hmisub = new oc.hmi.HMISub({}) ;
 				hmisub.setDrawXY(dxy.x,dxy.y) ;
 				hmisub.setHmiSubId(hmiid) ;
-				hmisub.setDrawSize(200,100) ;
+				hmisub.setDrawSize(w,h) ;
 				lay.addItem(hmisub) ;
 				break;
 			}
