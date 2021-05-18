@@ -438,6 +438,11 @@ module oc
 			//this.switchCxtFrontBack();
 		}
 
+
+		public getShowItemsRect()
+		{
+			return ItemsContainer.calcRect(this.getItemsShow());
+		}
 		
 		public ajustDrawFit()
 		{

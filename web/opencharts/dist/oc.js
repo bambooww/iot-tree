@@ -902,7 +902,13 @@ var oc;
             return { w: 100, h: 100 };
         }
         getPixelPreferSize() {
-            return { w: 100, h: 100 };
+            var c = this.getContainer();
+            if (c == null)
+                throw "no container";
+            var ds = this.getDrawPreferSize();
+            var pw = c.transDrawLen2PixelLen(true, ds.w);
+            var ph = c.transDrawLen2PixelLen(false, ds.h);
+            return { w: pw, h: ph };
         }
         /**
          * w/h ratio  invalid when val<=0
@@ -3708,6 +3714,9 @@ var oc;
                 inta.getCurOper().draw();
             }
             //this.switchCxtFrontBack();
+        }
+        getShowItemsRect() {
+            return oc.ItemsContainer.calcRect(this.getItemsShow());
         }
         ajustDrawFit() {
             var p = this.getPanel();
@@ -9537,12 +9546,14 @@ var oc;
                         eval("pm=" + str);
                         console.log(pm);
                         var hmiid = pm["hmi_id"];
+                        var w = pm["w"];
+                        var h = pm["h"];
                         //var hmipath = pm["hmi_path"] ;
                         var lay = this.getLayer(); //du.getLayer();
                         var hmisub = new oc.hmi.HMISub({});
                         hmisub.setDrawXY(dxy.x, dxy.y);
                         hmisub.setHmiSubId(hmiid);
-                        hmisub.setDrawSize(200, 100);
+                        hmisub.setDrawSize(w, h);
                         lay.addItem(hmisub);
                         break;
                 }
@@ -9800,116 +9811,6 @@ var oc;
     var hmi;
     (function (hmi) {
         //export type DIDivCB=(icomp:IDIDivComp)=>void;
-        // /**
-        //  * 
-        //  */
-        // class HMISubLoader
-        // {
-        //     static LOADED_JS={} ;
-        //     hmiSubId:string;
-        //     subItem:HMISubItem|null=null;
-        //     loadOk:boolean=false;
-        //     //loading listeners,
-        //     loadingCB:HMISubLoaded[]=[];
-        //     constructor(subid:string)
-        //     {
-        //         this.hmiSubId = subid ;
-        //     }
-        //     public getHmiSubId()
-        //     {
-        //         return this.hmiSubId ;
-        //     }
-        //     public addLoadingCB(cb:HMISubLoaded)
-        //     {
-        //         this.loadingCB.push(cb) ;
-        //     }
-        //     private fireLoadOk()
-        //     {
-        //         if(this.loadingCB.length==0)
-        //             return ;
-        //         for(var ldcb of this.loadingCB)
-        //         {
-        //             ldcb(this.subItem) ;
-        //         }
-        //         this.loadingCB=[];
-        //     }
-        //     doLoad()
-        //     {
-        //         var url = "/hmi_ajax.jsp?cxtid=&id" ;
-        //         //load comp first
-        //         oc.util.doAjax(url,{},(bsucc,ret)=>{
-        //             this.layer = new oc.DrawLayer({});
-        //             this.layer.inject(ret,null) ;
-        //             this.fireLoadOk();
-        //         });
-        //     }
-        //     isLoadOk():boolean
-        //     {
-        //         return this.loadOk ;
-        //     }
-        // }
-        class HMISubPanel0 extends oc.AbstractDrawPanel {
-            constructor(sub) {
-                super();
-                this.subDrawLayer = null;
-                this.hmiSub = sub;
-            }
-            setSubDrawLayer(dl) {
-                if (dl != null)
-                    this.addLayer(dl);
-                this.subDrawLayer = dl;
-                // if(this.subDrawLayer!=null)
-                //     this.subDrawLayer.setPanel(this) ;
-            }
-            update_draw() {
-                if (this.subDrawLayer == null)
-                    return;
-                var ele = this.hmiSub.getContEle();
-                if (ele == null)
-                    return;
-                //    this.subDrawLayer.ajustDrawFit() ;
-                this.subDrawLayer.update_draw();
-            }
-            clear_draw() {
-            }
-            setPixelSize(sz) {
-            }
-            getPixelSize() {
-                // var r = this.hmiSub.getBoundRectPixel() ;
-                // if(r==null)
-                //     return {w:100,h:100};
-                // return {w:r.w,h:r.h} ;
-                var ps = this.hmiSub.getPixelSize();
-                if (ps == null)
-                    return { w: 100, h: 100 };
-                return ps;
-            }
-            // public ajustDrawFitInRect(rect: oc.base.Rect)
-            // {
-            // 	this.drawCenter = rect.getCenter();
-            // 	var ps = this.getPixelSize();
-            // 	var res = rect.w / ps.w;
-            // 	var res2 = rect.h / ps.h;
-            // 	this.drawResolution = 1;//Math.max(res, res2);
-            // 	this.update_draw();
-            // }
-            getHTMLElement() {
-                var ele = this.hmiSub.getContEle();
-                if (ele == null)
-                    throw new Error("no html element");
-                return ele[0];
-            }
-            delPopMenu() {
-            }
-            setPopMenu(menuele) {
-            }
-            getDrawView() {
-                return null;
-            }
-            getInteract() {
-                return null;
-            }
-        }
         /**
          * for hmi edit and display
          */
@@ -10085,6 +9986,14 @@ var oc;
                 this.reloadSubHmi();
                 //this.MODEL_fireChged(["sub_id"]);
             }
+            getDrawPreferSize() {
+                if (this.subDrawLayer == null)
+                    return super.getDrawPreferSize();
+                var r = this.subDrawLayer.getShowItemsRect();
+                if (r == null)
+                    return super.getDrawPreferSize();
+                return { w: r.w, h: r.h };
+            }
             on_container_set() {
                 super.on_container_set();
                 this.reloadSubHmi();
@@ -10111,7 +10020,7 @@ var oc;
                 if (m == null)
                     return;
                 var hmipath = m.getHmiPath();
-                var p = this.getSubPanel();
+                //var p = this.getSubPanel() ;
                 console.log(hmipath, subid);
                 HMISub.getOrLoadSubItem(hmipath, subid, (subitem, lay) => {
                     if (subitem == null || lay == null)
@@ -10186,6 +10095,47 @@ var oc;
         };
         HMISub.LEFTTOP_R = 30;
         hmi.HMISub = HMISub;
+        class HMISubDiv {
+            constructor(divele, opts) {
+                this.drawItem = null;
+                if (opts == undefined)
+                    opts = {};
+                if (opts["panel"])
+                    this.panel = opts["panel"];
+                else
+                    this.panel = new oc.DrawPanel(divele, {});
+                this.subModel = new hmi.HMIModel({ temp_url: "",
+                    comp_url: "",
+                    dyn_url: "",
+                    hmi_path: opts["hmi_path"] });
+                this.panel.init_panel();
+                this.subView = new HMISubView(this.subModel, this.panel);
+                this.layer = (opts["layer"] != undefined) ? opts["layer"] : new oc.DrawLayer("lay");
+                this.panel.addLayer(this.layer);
+                var ele = this.panel.getHTMLElement();
+                ele[oc.DrawPanelDiv.DRAW_PANEL_DIV] = this;
+            }
+            getPanel() {
+                return this.panel;
+            }
+            getLayer() {
+                return this.layer;
+            }
+            setDrawItem(di) {
+                this.drawItem = di;
+                this.layer.addItem(di);
+                //this.layer.ajustDrawFit();//cause firefox error
+            }
+            getDrawItem() {
+                return this.drawItem;
+            }
+            updateByResize() {
+                this.panel.updatePixelSize();
+                this.layer.ajustDrawFit();
+            }
+        }
+        HMISubDiv.DRAW_PANEL_DIV = "_hmisub_div";
+        hmi.HMISubDiv = HMISubDiv;
     })(hmi = oc.hmi || (oc.hmi = {}));
 })(oc || (oc = {}));
 var oc;

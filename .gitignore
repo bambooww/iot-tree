@@ -10,8 +10,8 @@
 /.idea/
 /.settings/
 /.vscode/
-opencharts
-tomcat
+/web/opencharts/
+/server/tomcat/
 
 *.bat
 

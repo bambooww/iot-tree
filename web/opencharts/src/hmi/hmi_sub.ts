@@ -9,156 +9,6 @@ namespace oc.hmi
 
     //export type DIDivCB=(icomp:IDIDivComp)=>void;
 
-    // /**
-    //  * 
-    //  */
-    // class HMISubLoader
-    // {
-    //     static LOADED_JS={} ;
-
-    //     hmiSubId:string;
-    //     subItem:HMISubItem|null=null;
-    //     loadOk:boolean=false;
-
-    //     //loading listeners,
-    //     loadingCB:HMISubLoaded[]=[];
-
-    //     constructor(subid:string)
-    //     {
-    //         this.hmiSubId = subid ;
-            
-    //     }
-
-    //     public getHmiSubId()
-    //     {
-    //         return this.hmiSubId ;
-    //     }
-
-    //     public addLoadingCB(cb:HMISubLoaded)
-    //     {
-    //         this.loadingCB.push(cb) ;
-    //     }
-
-    //     private fireLoadOk()
-    //     {
-    //         if(this.loadingCB.length==0)
-    //             return ;
-           
-    //         for(var ldcb of this.loadingCB)
-    //         {
-    //             ldcb(this.subItem) ;
-    //         }
-    //         this.loadingCB=[];
-    //     }
-
-    //     doLoad()
-    //     {
-    //         var url = "/hmi_ajax.jsp?cxtid=&id" ;
-    //         //load comp first
-    //         oc.util.doAjax(url,{},(bsucc,ret)=>{
-    //             this.layer = new oc.DrawLayer({});
-    //             this.layer.inject(ret,null) ;
-    //             this.fireLoadOk();
-    //         });
-            
-    //     }
-
-
-    //     isLoadOk():boolean
-    //     {
-    //         return this.loadOk ;
-    //     }
-
-
-    // }
-
-    class HMISubPanel0 extends AbstractDrawPanel
-    {
-        
-        subDrawLayer:DrawLayer|null=null ;
-        hmiSub:HMISub ;
-
-        constructor(sub:HMISub)
-        {
-            super();
-            this.hmiSub = sub ;
-        }
-
-        public setSubDrawLayer(dl:DrawLayer|null)
-        {
-            if(dl!=null)
-                this.addLayer(dl) ;
-            this.subDrawLayer = dl ;
-            // if(this.subDrawLayer!=null)
-            //     this.subDrawLayer.setPanel(this) ;
-        }
-
-        public update_draw(): void
-        {
-            if(this.subDrawLayer==null)
-                return ;
-            var ele = this.hmiSub.getContEle();
-            if(ele==null)
-                return ;
-            //    this.subDrawLayer.ajustDrawFit() ;
-            this.subDrawLayer.update_draw() ;
-        }
-
-        public clear_draw(): void
-        {
-            
-        }
-        public setPixelSize(sz: base.Size): void
-        {
-            
-        }
-        public getPixelSize(): base.Size
-        {
-            // var r = this.hmiSub.getBoundRectPixel() ;
-            // if(r==null)
-            //     return {w:100,h:100};
-
-            // return {w:r.w,h:r.h} ;
-            var ps = this.hmiSub.getPixelSize() ;
-            if(ps==null)
-                return {w:100,h:100};
-            return ps ;
-        }
-
-        // public ajustDrawFitInRect(rect: oc.base.Rect)
-		// {
-		// 	this.drawCenter = rect.getCenter();
-		// 	var ps = this.getPixelSize();
-		// 	var res = rect.w / ps.w;
-		// 	var res2 = rect.h / ps.h;
-		// 	this.drawResolution = 1;//Math.max(res, res2);
-		// 	this.update_draw();
-		// }
-        
-        public getHTMLElement(): HTMLElement
-        {
-            var ele = this.hmiSub.getContEle();
-            if(ele==null)
-                throw new Error("no html element") ;
-            return ele[0] ;
-        }
-
-        public delPopMenu(): void
-        {
-        }
-        public setPopMenu(menuele: JQuery<HTMLElement>): void
-        {
-        }
-        public getDrawView(): DrawView | null
-        {
-            return null ;
-        }
-        public getInteract(): DrawInteract | null
-        {
-            return null ;
-        }
-    }
-
     /**
      * for hmi edit and display
      */
@@ -413,6 +263,15 @@ namespace oc.hmi
             //this.MODEL_fireChged(["sub_id"]);
         }
 
+        public getDrawPreferSize():base.Size
+		{
+            if(this.subDrawLayer==null)
+                return super.getDrawPreferSize() ;
+            var r = this.subDrawLayer.getShowItemsRect();
+            if(r==null)
+                return super.getDrawPreferSize() ;
+			return {w:r.w,h:r.h};
+		}
 
         public on_container_set()
         {
@@ -447,7 +306,7 @@ namespace oc.hmi
             if(m==null)
                 return;
             var hmipath = m.getHmiPath() ;
-            var p = this.getSubPanel() ;
+            //var p = this.getSubPanel() ;
             console.log(hmipath,subid) ;
             HMISub.getOrLoadSubItem(hmipath,subid,(subitem,lay)=>{
                 if(subitem==null||lay==null)
@@ -542,5 +401,68 @@ namespace oc.hmi
 
     }
 
+    export class HMISubDiv
+	{
+		static DRAW_PANEL_DIV="_hmisub_div";
 
+		private panel:DrawPanel;
+		private layer:DrawLayer;
+        private subModel:HMIModel;
+        private subView:HMISubView;
+		private drawItem:DrawItem|null=null;
+
+		public constructor(divele:string,opts:{}|undefined)
+		{
+			if(opts==undefined)
+				opts={} ;
+			if(opts["panel"])
+				this.panel = opts["panel"];
+			else
+				this.panel = new DrawPanel(divele,{});
+			
+            this.subModel = new HMIModel({temp_url:"",
+                comp_url:"",
+                dyn_url:"",
+                hmi_path:opts["hmi_path"]});
+
+			this.panel.init_panel();
+			
+            this.subView = new HMISubView(this.subModel,this.panel);
+
+			this.layer =(opts["layer"]!=undefined)?opts["layer"]:new oc.DrawLayer("lay") ;
+			this.panel.addLayer(this.layer);
+
+			var ele = this.panel.getHTMLElement();
+			ele[DrawPanelDiv.DRAW_PANEL_DIV] = this;
+		}
+
+
+		public getPanel()
+		{
+			return this.panel;
+		}
+
+		public getLayer()
+		{
+			return this.layer;
+		}
+
+		public setDrawItem(di:DrawItem)
+		{
+			this.drawItem = di;
+			this.layer.addItem(di);
+			//this.layer.ajustDrawFit();//cause firefox error
+		}
+
+		public getDrawItem():DrawItem|null
+		{
+			return this.drawItem;
+		}
+
+		public updateByResize()
+		{
+			this.panel.updatePixelSize() ;
+			this.layer.ajustDrawFit();
+		}
+	}
 }

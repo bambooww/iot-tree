@@ -83,7 +83,13 @@ namespace oc
 
 		public getPixelPreferSize():base.Size
 		{
-			return {w:100,h:100}
+			var c = this.getContainer();
+			if (c == null)
+				throw "no container" ;
+			var ds = this.getDrawPreferSize() ;
+			var pw = c.transDrawLen2PixelLen(true,ds.w);
+			var ph = c.transDrawLen2PixelLen(false,ds.h);
+			return {w:pw,h:ph}
 		}
 
 

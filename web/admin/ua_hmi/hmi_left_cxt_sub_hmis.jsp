@@ -168,7 +168,10 @@ function drag(ev)
 	var hmiid = p["hmi_id"] ;
 	if(hmipath==null||hmipath==undefined)
 		return ;
-	var pm= {hmi_path:hmipath,hmi_id:hmiid} ;
+	var w = p["w"] ;
+	var h = p["h"] ;
+	
+	var pm= {hmi_path:hmipath,hmi_id:hmiid,w:w,h:h} ;
 	var r = {_val:JSON.stringify(pm),_tp:"hmi_sub"};
 	//console.log(r) ;
 	oc.util.setDragEventData(ev,r);
@@ -212,6 +215,9 @@ function load_preview()
 			var p1 = new oc.hmi.HMISubDiv("",{layer:lay,panel:panel,hmi_path:path}) ;
 			p1["hmi_path"] = paths[loadidx];
 			p1["hmi_id"] = ids[loadidx];
+			var r = lay.getShowItemsRect() ;
+			p1["w"] = r.w;
+			p1["h"] = r.h;
 			
 			lay.ajustDrawFit();
 			
