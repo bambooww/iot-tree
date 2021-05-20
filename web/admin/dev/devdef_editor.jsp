@@ -433,7 +433,7 @@ background-color: #ffffff;
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			    <div class="layui-tab-item layui-show"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
-			      <iframe id="if_tags" src="../tag/node_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
+			      <iframe id="if_tags" src="../ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
 			    <div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_prop" src="../ua/ui_prop.jsp?dlg=false&&tabid=drv&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
@@ -441,8 +441,6 @@ background-color: #ffffff;
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_device" src="../dev_device.jsp?tabid=dev&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
-				
- 
 			  </div>
 			</div>
 			 
@@ -513,7 +511,7 @@ var cxt_menu = {
 function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","../ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
-	$("#if_tags").attr("src","../tag/node_tags.jsp?tabid=main&path="+tn.path);
+	$("#if_tags").attr("src","../ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
 }
 
 var ua_tree = new UATree({

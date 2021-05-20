@@ -8,13 +8,12 @@
 	java.net.*,
 	java.util.*,
 	
-	org.json.*"%><%
-	if(!Convert.checkReqEmpty(request, out, "id","op"))
+	org.json.*"%><%if(!Convert.checkReqEmpty(request, out, "id","op"))
 		return;
 	String op = request.getParameter("op");
 	String repid=request.getParameter("id");
 
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
+	UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 	if(rep==null)
 	{
 		out.print("no rep found");
@@ -36,7 +35,6 @@
 		rep.fromOCUnitJSON(jobj);
 		rep.save();
 		out.print("ok");
-	}
-%>
+	}%>
 
 

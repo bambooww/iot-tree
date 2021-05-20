@@ -8,7 +8,7 @@ import org.apache.catalina.security.SecurityClassLoad;
 import org.apache.catalina.startup.Tomcat;
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
-import org.iottree.core.UARep;
+import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 

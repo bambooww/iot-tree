@@ -27,7 +27,7 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
-import org.iottree.core.UARep;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.bind.BindDI;
@@ -50,7 +50,7 @@ public class WSHmiRT extends WSServer
 	static class SessionItem
 	{
 		private final Session session;
-		private final UARep rep;
+		private final UAPrj rep;
 		private final UANodeOCTagsCxt nodecxt;
 		private final UAHmi hmi ;
 		
@@ -58,7 +58,7 @@ public class WSHmiRT extends WSServer
 		
 		//private boolean bFirstTick=true ;
 		
-		public SessionItem(Session s,UARep rep,UANodeOCTagsCxt nodecxt,UAHmi hmi)
+		public SessionItem(Session s,UAPrj rep,UANodeOCTagsCxt nodecxt,UAHmi hmi)
 		{
 			this.session = s ;
 			this.rep = rep ;
@@ -71,7 +71,7 @@ public class WSHmiRT extends WSServer
 			return session ;
 		}
 		
-		public UARep getRep()
+		public UAPrj getRep()
 		{
 			return rep ;
 		}
@@ -296,7 +296,7 @@ public class WSHmiRT extends WSServer
 	@OnOpen
 	public void onOpen(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "hmiid") String hmiid) throws Exception //
 	{
-		UARep rep = UAManager.getInstance().getRepByName(repname) ;
+		UAPrj rep = UAManager.getInstance().getPrjByName(repname) ;
 		if(rep==null)
 		{
 			session.close();
@@ -376,7 +376,7 @@ public class WSHmiRT extends WSServer
 	
 	private void onHmiEvent(String repid,String hmiid,String diid,String eventn,String val)
 	{
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			return ;
 		UAHmi hmi = rep.findHmiById(hmiid) ;

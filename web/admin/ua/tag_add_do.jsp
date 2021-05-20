@@ -9,7 +9,7 @@
 	java.net.*,
 	java.util.*"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "repid","pid","name"))
+	if(!Convert.checkReqEmpty(request, out, "repid","pid","name"))
 	return;
 String repid = request.getParameter("repid") ;
 String pid = request.getParameter("pid");
@@ -29,7 +29,7 @@ float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 
 StringBuilder errsb = new StringBuilder() ;
 UAManager uam = UAManager.getInstance();
-UARep dc = uam.getRepById(repid) ;
+UAPrj dc = uam.getPrjById(repid) ;
 if(dc==null)
 {
 	out.print("no rep found with id="+repid) ;
@@ -60,18 +60,18 @@ try
 		UATagList tgl = (UATagList)n;
 		UANode pn = tgl.getParentNode() ;
 		if(pn instanceof UANodeOCTags)
-			tag = ((UANodeOCTags)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
+	tag = ((UANodeOCTags)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
 		else if(pn instanceof UATagG)
-			tag = ((UATagG)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
+	tag = ((UATagG)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
 	}
 	else if(n instanceof UATag)
 	{
 		UATagList tl = (UATagList)n.getParentNode();
 		UANode pn = tl.getParentNode() ;
 		if(pn instanceof UADev)
-			tag = ((UADev)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
+	tag = ((UADev)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
 		else if(pn instanceof UATagG)
-			tag = ((UATagG)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
+	tag = ((UATagG)pn).addTag(bmid,name, title, desc,addr,dt,canw,srate) ;
 	}
 }
 catch(Exception e)

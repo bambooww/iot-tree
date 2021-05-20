@@ -25,8 +25,10 @@ if(!(node instanceof UANodeOCTags))
 }
 UANodeOCTags node_tags = (UANodeOCTags)node;
 //UATagList taglist  = node_tags.getTagList() ;
-List<UATag> tags = node_tags.listTags() ;
+
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
+List<UATag> cur_tags = node_tags.listTags() ;
+List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
 %><html>
 <head>
 <title></title>
@@ -53,18 +55,69 @@ background-color: #eeeeee
 	background-color: #373737;
 }
 
+table, th, td
+{
+border:1px solid;
+}
+th
+{
+	font-size: 15px;
+}
 
 
 </style>
 <body marginwidth="0" marginheight="0">
-<%=node_tags.getNodePathTitle() %>
-<hr class="layui-bg-green">
-<table class="oc_div_list" id="divlist_tb_">
+<form class="layui-form" action="">
+<blockquote class="layui-elem-quote"><%=node_tags.getNodePathTitle() %> [<%=node_tags.getNodePath() %>]
+ <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ 	<button class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('','')">+Add Tag</button>&nbsp;&nbsp;
+ 	<button class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag('')">+Delete Tag</button>
+ </div>
+</blockquote>
+<table class="oc_div_list" id="tb_cur">
   <thead>
      <tr>
+        <th><input type="checkbox" lay-skin="primary"  id="chkall" onclick="sel_tags_all()"/></th>
         <th>Mid</th>
         <th>Tag Name</th>
         <th>Title</th>
+        <th>Address</th>
+        <th>Value Type</th>
+        <th>Write</th>
+     </tr>
+   </thead>
+   <tbody id="div_list_bd_">
+<%
+for(UATag tag:cur_tags)
+{
+	String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+%>
+   <tr id="tag_<%=tag.getId() %>"  tag_id="<%=tag.getId()%>">
+        <td style="text-align: center;"><input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/></td>
+        <td></td>
+        <td title="<%=cxtpath%>"><%=tag.getName() %></td>
+        <td><%=tag.getTitle() %></td>
+        <td><%=tag.getAddress() %></td>
+        <td><%=tag.getValTp() %></td>
+        <td><%=(tag.isCanWrite()?"✔":"") %></td>
+      </tr>
+<%
+}
+%>
+    </tbody>
+</table>
+<hr class="layui-bg-green">
+
+ <blockquote class="layui-elem-quote ">Context under  [<%=node_tags.getNodePath() %>]
+   <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+  <input type="checkbox" name="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
+ </div>
+</blockquote>
+<table class="oc_div_list" style="margin-top:10px">
+  <thead>
+     <tr>
+        <th>Mid</th>
+    <th>Tag</th>
         <th>Address</th>
         <th>Value Type</th>
         <th>Write</th>
@@ -75,13 +128,31 @@ background-color: #eeeeee
    </thead>
    <tbody id="div_list_bd_">
 <%
-for(UATag tag:tags)
+for(UANodeOCTags tn:tns)
 {
+	if(tn.getRefBranchNode()!=null)
+		continue ;
+	List<UATag> tags = null;
+	boolean brefowner = tn.isRefOwner() ;
+	if(brefowner)
+	{
+		tags = tn.listTagsAll() ;
+	}
+	else
+	{
+		tags = tn.listTags() ;
+	}
+	
+	String tn_id = tn.getId() ;
+	String tn_path = tn.getNodePath() ;
+	for(UATag tag:tags)
+	{
+		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 %>
-   <tr id="tag_<%=tag.getId() %>"  tag_id="<%=tag.getId()%>">
+   <tr id="tag_<%=tag.getId() %>"  tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>">
         <td></td>
-        <td><%=tag.getName() %></td>
-        <td><%=tag.getTitle() %></td>
+<td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><%=cxtpath%></td>
+
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
         <td><%=(tag.isCanWrite()?"✔":"") %></td>
@@ -90,14 +161,21 @@ for(UATag tag:tags)
         <td id="tag_q_<%=tag.getId() %>"></td>
       </tr>
 <%
+	}
 }
 %>
     </tbody>
 </table>
+</form>
 </body>
 <script>
 var path = "<%=path%>" ;
 var b_devdef = <%=bdevdef%>;
+
+layui.use('form', function(){
+	  var form = layui.form;
+	  form.render();
+	});
 
 document.oncontextmenu = function() {
     return false;
@@ -131,7 +209,8 @@ $('tr[id*="tag_"]').mouseup(function(e) {
     	
     	//$('body').selectMenu({rightClick : true}) ;//clear outter menu
     	$('.sm_container').css("display","none") ;
-    	
+    	var t_path = $(this).attr("tag_path");
+    	var t_id = $(this).attr("tag_id");
         $(this).selectMenu({
         	title0:'Modify Tag',
         	regular : true,
@@ -139,16 +218,16 @@ $('tr[id*="tag_"]').mouseup(function(e) {
         	data : ()=>{
 				var d = [
 					{ content : 'Modify Tag', callback:()=>{
-						add_or_modify_tag($(this).attr("tag_id"));
+						add_or_modify_tag(t_path,t_id);
 					}},
 					{ content : 'Copy Tag', callback:()=>{
 						copy_tag($(this).attr("tag_id"));
 					}},
 					{ content : 'Paste Tag', callback:()=>{
-						paste_tag($(this).attr("tag_id"));
+						paste_tag(t_path,t_id);
 					}},
 					{ content : 'Delete Tag', callback:()=>{
-						del_tag($(this).attr("tag_id"));
+						del_tag(t_path,t_id);
 					}},
 				];
 				return d;
@@ -157,11 +236,47 @@ $('tr[id*="tag_"]').mouseup(function(e) {
     }
 })
 
-
-function add_or_modify_tag(id)
+function sel_tags_all(path)
 {
+	var tb = document.getElementById("tb_"+path) ;
+	var inputchkall = document.getElementById("chkall_"+path) ;
+	var bchk = $(inputchkall).prop("checked") ;
+	var tb = $(tb) ;
+	var r = "" ;
+	tb.find("input").each(function(){
+		$(this).prop('checked',bchk);
+	  });
+	return r ;
+}
+
+function get_selected_ids_in_table(path)
+{
+	var tb = document.getElementById("tb_"+path) ;
+	var tb = $(tb) ;
+	var r = "" ;
+	tb.find("input").each(function(){
+		if(!$(this).prop('checked'))
+			return ;
+	    var id = $(this).attr("id") ;
+	    if(id.indexOf("chk_")==0)
+	    {
+	    	if(r=="")
+	    		r += id.substring(4) ;
+	    	else
+	    		r+=","+id.substring(4) ;
+	    }
+	  });
+	return r ;
+}
+
+
+function add_or_modify_tag(path,id)
+{
+	var tt = "Modify Tag";
+	if(id==null||id=='')
+		tt = "Add Tag" ;
 		dlg.open("./tag_edit.jsp?path="+path+"&id="+id,
-				{title:"Modify Tag",w:'500px',h:'400px'},
+				{title:tt,w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
@@ -199,32 +314,38 @@ function add_or_modify_tag(id)
 				]);
 }
 
-function del_tag(id)
+function del_tag(path,id)
 {
 	var ret={} ;
+	
 	ret.path=path ;
 	 ret.op = "del_tag";
-	 ret.id = id ;
+	 if(id==null||id=='')
+	 {
+		 id = get_selected_ids_in_table(path);
+	 }
+	 if(id==null||id=='')
+	 {
+		 dlg.msg("no tag selected") ;
+		 return ;
+	 }
 	 
-	 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
-		{
-			if(!bsucc || ret.indexOf('succ')<0)
+	 ret.id = id ;
+	 dlg.confirm("make sure to delete selected tags？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	 { 
+		 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
 			{
-				dlg.msg(ret);
-				return ;
-			}
-			dlg.close();
-			document.location.href=document.location.href;
-		},false);
+				if(!bsucc || ret.indexOf('succ')<0)
+				{
+					dlg.msg(ret);
+					return ;
+				}
+				dlg.close();
+				document.location.href=document.location.href;
+			},false);
+	 });
 }
-/*
-$("[id^='tag_']").selectMenu({
-	title : 'Modify Tag',
-	regular : true,
-	rightClick : true,
-	data : menudata
-});
-*/
+
 
 function tags_rt()
 {

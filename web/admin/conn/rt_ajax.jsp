@@ -8,14 +8,13 @@
 	java.net.*,
 	java.util.*"%><%!
 	
-%><%
-if(!Convert.checkReqEmpty(request, out, "repid"))
+%><%if(!Convert.checkReqEmpty(request, out, "repid"))
 	return;
 String repid = request.getParameter("repid") ;
 String op = request.getParameter("op") ;
 if(op==null)
 	op="" ;
-UARep rep = UAManager.getInstance().getRepById(repid) ;
+UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 if(rep==null)
 {
 	out.print("{\"err\":\"no rep\"}");
@@ -50,6 +49,4 @@ case "conn_stop":
 default:
 	ConnManager.getInstance().renderRTJson(repid, out) ;
 	break ;
-}
-
-%>
+}%>

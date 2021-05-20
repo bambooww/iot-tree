@@ -7,12 +7,11 @@
 	java.net.*,
 	java.util.*,
 	org.json.*,
-	org.iottree.core.*"%><%
-	if(!Convert.checkReqEmpty(request, out, "id"))
+	org.iottree.core.*"%><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
 	String repid=request.getParameter("id");
 
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
+	UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 	if(rep==null)
 	{
 		out.print("no rep found");
@@ -20,7 +19,6 @@
 	}
 
 	JSONObject jobj = rep.toOCDynJSON(-1);
-	out.print(jobj.toString(2));
-%>
+	out.print(jobj.toString(2));%>
 
 

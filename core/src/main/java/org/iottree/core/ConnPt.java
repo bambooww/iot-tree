@@ -348,7 +348,7 @@ public abstract class ConnPt implements IXmlDataValidator
 	 */
 	public UACh getJoinedCh() throws Exception
 	{
-		UARep rep = this.belongTo.getBelongTo();
+		UAPrj rep = this.belongTo.getBelongTo();
 		ConnJoin cj = ConnManager.getInstance().getConnJoinByConnId(rep.getId(),this.id) ;
 		if(cj==null)
 			return null ;

@@ -12,7 +12,7 @@
 	//String op = request.getParameter("op");
 	String repid = request.getParameter("repid");
 	//String id = request.getParameter("id");
-	UARep rep = UAManager.getInstance().getRepById(repid);
+	UAPrj rep = UAManager.getInstance().getPrjById(repid);
 	if(rep==null)
 	{
 		out.print("no rep found!");

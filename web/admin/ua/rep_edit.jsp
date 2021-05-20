@@ -9,13 +9,13 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-String id=request.getParameter("id");
+	String id=request.getParameter("id");
 String name = null ;
 String title = "" ;
 String desc = "" ;
 if(Convert.isNotNullEmpty(id))
 {
-	UARep dc = UAManager.getInstance().getRepById(id) ;
+	UAPrj dc = UAManager.getInstance().getPrjById(id) ;
 	if(dc!=null)
 	{
 		name = dc.getName();

@@ -175,7 +175,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 	
 	private ArrayList<ConnPt> connPts = new ArrayList<>() ;
 	
-	transient UARep belongTo = null ;
+	transient UAPrj belongTo = null ;
 	
 	private Thread runTh = null;
 	
@@ -265,7 +265,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 	}
 	
 	
-	public UARep getBelongTo()
+	public UAPrj getBelongTo()
 	{
 		return belongTo ;
 	}

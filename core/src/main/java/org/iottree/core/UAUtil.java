@@ -138,7 +138,7 @@ public class UAUtil
 	{
 		if(ownerid.startsWith("rep_"))
 		{
-			UARep rep = UAManager.getInstance().getRepById(ownerid.substring(4)) ;
+			UAPrj rep = UAManager.getInstance().getPrjById(ownerid.substring(4)) ;
 			if(rep==null)
 				return null ;
 			return rep.findHmiById(hmiid) ;

@@ -12,40 +12,58 @@
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>	
 <%
-	if(!Convert.checkReqEmpty(request, out, "repid","id"))
-		return;
-	
-	//String op = request.getParameter("op");
-	String repid=request.getParameter("repid");
-	String id = request.getParameter("id") ;
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
-	if(rep==null)
-	{
-		out.print("no rep found");
-		return ;
-	}
-	
-	String repname = rep.getName() ;
-	
-	UANode n = rep.findNodeById(id) ;
-	if(n==null)
-	{
-		out.print("no node found") ;
-		return ;
-	}
-	if(!(n instanceof UANodeOCTags))
-	{
-		out.print("not node oc tags") ;
-		return ;
-	}
-	UANodeOCTags ntags = (UANodeOCTags)n ;
-	List<UATag> tags = ntags.listTagsAll() ;
-	
+		/*
+		if(!Convert.checkReqEmpty(request, out, "repid","id"))
+			return;
+		
+		//String op = request.getParameter("op");
+		String repid=request.getParameter("repid");
+		String id = request.getParameter("id") ;
+		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		if(rep==null)
+		{
+			out.print("no rep found");
+			return ;
+		}
+		
+		String repname = rep.getName() ;
+	*/
+		if(!Convert.checkReqEmpty(request, out, "path"))
+			return;
+		String path = request.getParameter("path") ;
+		UANode n = UAUtil.findNodeByPath(path) ;
+		if(n==null)
+		{
+			out.print("no node found") ;
+			return ;
+		}
+		//UANode n = rep.findNodeById(id) ;
+		
+		if(!(n instanceof UANodeOCTags))
+		{
+			out.print("not node oc tags") ;
+			return ;
+		}
+		
+		UANode topn = n.getTopNode() ;
+		UAPrj rep = null ;
+		String repname = "" ;
+		String repid = "" ;
+		if(topn instanceof UAPrj)
+		{
+			rep = (UAPrj)topn ;
+			repname = rep.getName() ;
+			repid = rep.getId() ;
+		}
+		
+		UANodeOCTags ntags = (UANodeOCTags)n ;
+		List<UATag> tags = ntags.listTagsAll() ;
+		
 
-	String parent_p = ntags.getNodePathName() ;
-	if(Convert.isNotNullEmpty(parent_p))
-		parent_p +="." ;
-	boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
+		String parent_p = ntags.getNodePathName() ;
+		if(Convert.isNotNullEmpty(parent_p))
+			parent_p +="." ;
+		boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	%>
 <html>
 <head>
@@ -63,7 +81,7 @@
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
-<b>Context:<%=rep.getTitle() %>] / [<%=ntags.getNodePathName() %>] </b>
+<b>Context:<%=topn.getTitle() %>] / [<%=ntags.getNodePathName() %>] </b>
 <%
 
 %>
@@ -124,9 +142,9 @@
 </div>
 </body>
 <script>
-var repid="<%=repid%>" ;
+var path="<%=path%>" ;
 var repname = "<%=repname%>" ;
-var id = "<%=id%>" ;
+var id = "<%=repid%>" ;
 var rowbgcolor = '#ffffff';
 function mouseover(sel)
 {
@@ -149,7 +167,7 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	send_ajax('cxt_script_test.jsp','repid='+repid+'&id='+id+'&txt='+utf8UrlEncode(scode),
+	send_ajax('cxt_script_test.jsp','path='+path+'&txt='+utf8UrlEncode(scode),
 		function(bsucc,ret)
 		{
 			document.getElementById('script_res').value = ret ;

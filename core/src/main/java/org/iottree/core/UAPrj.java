@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * @author zzj
  */
 @data_class
-public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResCxt,IResCxtRelated,ISaver
+public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResCxt,IResCxtRelated,ISaver
 {
 	@data_obj(obj_c = UACh.class)
 	List<UACh> chs = new ArrayList<>();
@@ -83,7 +83,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	 */
 	private transient String jsRunError  = null ;
 
-	public UARep()
+	public UAPrj()
 	{
 		super();
 	}
@@ -91,7 +91,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	/**
 	 * for creation
 	 */
-	public UARep(String name, String title, String desc)
+	public UAPrj(String name, String title, String desc)
 	{
 		super(name, title, desc);
 	}
@@ -119,7 +119,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
 	{
 		super.copyTreeWithNewSelf(new_self,ownerid,copy_id);
-		UARep self = (UARep)new_self ;
+		UAPrj self = (UAPrj)new_self ;
 		self.script = this.script ;
 		self.scriptInt = this.scriptInt ;
 		self.chs.clear();
@@ -314,7 +314,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	 */
 	public File getRepSubDir()
 	{
-		return UAManager.getRepFileSubDir(this.getId());
+		return UAManager.getPrjFileSubDir(this.getId());
 	}
 	
 	public File getSaverDir()
@@ -324,7 +324,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	
 	File getRepFile()
 	{
-		return UAManager.getRepFile(this.id) ;
+		return UAManager.getPrjFile(this.id) ;
 	}
 	
 	
@@ -498,7 +498,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		if(resCxt!=null)
 			return resCxt ;
-		File fsb = UAManager.getRepFileSubDir(this.getId()) ;
+		File fsb = UAManager.getPrjFileSubDir(this.getId()) ;
 		File dir = new File(fsb,"_res/") ;
 		if(!dir.exists())
 			dir.mkdirs();
@@ -703,7 +703,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		public boolean set_tag_val(String ch_name,String dev_name,String tagn,Object v)
 		{
-			UACh ch = UARep.this.getChByName(ch_name) ;
+			UACh ch = UAPrj.this.getChByName(ch_name) ;
 			if(ch==null)
 				return false;
 			UADev dev = ch.getDevByName(dev_name);
@@ -713,7 +713,7 @@ public class UARep extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			if(t==null)
 				return false;
 			t.RT_setVal(v) ;
-			UARep.this.CXT_calMidTagsValLocal();
+			UAPrj.this.CXT_calMidTagsValLocal();
 			return true;
 		}
 	}

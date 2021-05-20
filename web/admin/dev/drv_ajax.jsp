@@ -7,11 +7,10 @@
 	java.util.*,
 	java.net.*,
 	java.util.*"%><%!
-%><%
-if(!Convert.checkReqEmpty(request, out, "repid","op"))
+%><%if(!Convert.checkReqEmpty(request, out, "repid","op"))
 	return;
 String repid = request.getParameter("repid") ;
-UARep rep = UAManager.getInstance().getRepById(repid);
+UAPrj rep = UAManager.getInstance().getPrjById(repid);
 if(rep==null)
 {
 	out.print("no rep found") ;
@@ -43,6 +42,4 @@ case "del":
 case "join_add":
 
 	break ;
-}
-
-%>
+}%>

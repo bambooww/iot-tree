@@ -9,7 +9,7 @@
 	java.net.*,
 	java.util.*"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "op"))
+	if(!Convert.checkReqEmpty(request, out, "op"))
 	return;
 
 String op = request.getParameter("op") ;
@@ -23,7 +23,7 @@ switch(op)
 case "add":
 	StringBuilder errsb = new StringBuilder() ;
 
-	UARep dc = UAManager.getInstance().addRep(name, title, desc) ;
+	UAPrj dc = UAManager.getInstance().addRep(name, title, desc) ;
 	if(dc==null)
 	{
 		out.print(errsb.toString()) ;
@@ -39,7 +39,7 @@ case "edit":
 case "del":
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
-	dc = UAManager.getInstance().getRepById(id) ;
+	dc = UAManager.getInstance().getPrjById(id) ;
 	if(dc==null)
 	{
 		out.print("ok") ;
@@ -49,5 +49,4 @@ case "del":
 	out.print("ok") ;
 	break ;
 }
-
 %>

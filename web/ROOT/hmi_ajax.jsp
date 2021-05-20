@@ -6,8 +6,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%
-	if(!Convert.checkReqEmpty(request, out, "tp"))
+	java.util.*"%><%if(!Convert.checkReqEmpty(request, out, "tp"))
 		return;
 	String tp = request.getParameter("tp");
 	
@@ -20,7 +19,7 @@
 		String rootid = request.getParameter("rootid") ;
 		String id=request.getParameter("id");
 		
-		UARep rep = UAManager.getInstance().getRepById(rootid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(rootid) ;
 		if(rep==null)
 		{
 			out.print("no rep found");
@@ -86,7 +85,6 @@
 	String np = hmi.getNodePath() ;
 	String txt = hmi.loadHmiUITxt() ;
 	out.print(np+"\r\n") ;
-	out.print(txt);
-%>
+	out.print(txt);%>
 
 

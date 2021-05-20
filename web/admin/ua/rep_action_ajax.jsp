@@ -6,13 +6,12 @@ org.iottree.core.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%
-if(!Convert.checkReqEmpty(request, out, "repid","op"))
+	java.util.*"%><%if(!Convert.checkReqEmpty(request, out, "repid","op"))
 	return;
 String repid = request.getParameter("repid") ;
 String op=request.getParameter("op");
 UAManager uam = UAManager.getInstance();
-UARep dc = uam.getRepById(repid) ;
+UAPrj dc = uam.getPrjById(repid) ;
 if(dc==null)
 {
 	out.print("no rep found with id="+repid) ;
@@ -48,6 +47,4 @@ else if("start_stop".equals(op))
 		dc.RT_start() ;
 		out.print("start ok");
 	}
-}
-
-%>
+}%>

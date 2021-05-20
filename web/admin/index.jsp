@@ -7,15 +7,14 @@
 	java.net.*,
 	java.util.*,
 	org.iottree.core.util.xmldata.*
-"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-//UserProfile up = UserProfile.getUserProfile(request);
+"%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
-List<UARep> reps = UAManager.getInstance().listReps();
+List<UAPrj> reps = UAManager.getInstance().listPrjs();
 
-Collections.sort(reps, new Comparator<UARep>() {
+Collections.sort(reps, new Comparator<UAPrj>() {
 
     @Override
-    public int compare(UARep o1, UARep o2) {
+    public int compare(UAPrj o1, UAPrj o2) {
         long v = o1.getSavedDT()-o2.getSavedDT() ;
         if(v>0)
         	return -1 ;
@@ -23,8 +22,7 @@ Collections.sort(reps, new Comparator<UARep>() {
         	return 1 ;
         return 0 ;
     }
-}) ;
-%><!DOCTYPE html>
+}) ;%><!DOCTYPE html>
 <html class="">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -95,24 +93,31 @@ Collections.sort(reps, new Comparator<UARep>() {
 				<div class="iot-main-content" style="height: auto !important; min-height: 0px !important;">
 					<div class="iot-mod iot-question-detail iot-item">
 						<div class="mod-head">
-							<h1>Local Repositories
+							<h1>Local Projects
 							<a class="btn btn-success" style="width:80px;height:40px;align-content: center;" href="javascript:add_rep()">
 							<i class="fa fa-plus-circle fa-lg" ></i>&nbsp;&nbsp;Add
 							</a>
 							
-							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_rep()">
+							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_prj()">
 							<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
 							</span>&nbsp;&nbsp;Import
 							</a>
 
+							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_demo()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;&nbsp;Import Demo
+							</a>
+							
 				           </h1>
 						</div>
 						<div class="mod-body">
 							<div class="content markitup-box" style="height:100%">
 <%
-for(UARep rep:reps)
+	for(UAPrj rep:reps)
 {
 %>
 	<div class="aw-item">

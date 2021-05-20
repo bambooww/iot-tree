@@ -9,13 +9,13 @@
 	java.net.*,
 	java.util.*"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "repid","unit_id"))
+	if(!Convert.checkReqEmpty(request, out, "repid","unit_id"))
 	return;
 String repid = request.getParameter("repid") ;
 String chid = request.getParameter("unit_id") ;
 
 UAManager uam = UAManager.getInstance();
-UARep dc = uam.getRepById(repid) ;
+UAPrj dc = uam.getPrjById(repid) ;
 if(dc==null)
 {
 	out.print("no rep found with id="+repid) ;
@@ -28,7 +28,6 @@ if(n==null)
 	out.print("no node found") ;
 	return ;
 }
-
 %>
 <div>run=<%=n.getDriver().RT_isRunning() %>
  <input type="button" value="start" onclick="btn_start_ch()"/>

@@ -5,13 +5,12 @@
 				org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
-				java.net.*"%><%
-	if(!Convert.checkReqEmpty(request, out, "repid","id"))
+				java.net.*"%><%if(!Convert.checkReqEmpty(request, out, "repid","id"))
 		return ;
 	//String op = request.getParameter("op");
 	String repid = request.getParameter("repid");
 	String id = request.getParameter("id");
-	UARep rep = UAManager.getInstance().getRepById(repid);
+	UAPrj rep = UAManager.getInstance().getPrjById(repid);
 	if(rep==null)
 	{
 		out.print("{error:true,info:\"no rep found!\"");
@@ -31,5 +30,4 @@
 		return ;
 	}
 	UANodeOCTags ntags = (UANodeOCTags)n ;
-	List<UATag> tags = ntags.listTagsAll() ;
-%>{}
+	List<UATag> tags = ntags.listTagsAll() ;%>{}

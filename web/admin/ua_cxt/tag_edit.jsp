@@ -24,6 +24,7 @@
 	String title = "" ;
 	String addr = "" ;
 	UAVal.ValTP valtp = null ;
+	String valtp_str = "" ;
 	long srate = 200;
 	boolean canw = false;
 	String desc = "" ;
@@ -41,6 +42,9 @@
  		desc = tag.getDesc() ;
  		addr = tag.getAddress() ;
  		valtp = tag.getValTp() ;
+ 		if(valtp!=null)
+ 			valtp_str = ""+valtp.getInt() ;
+ 		
  		srate = tag.getScanRate() ;
  		canw = tag.isCanWrite();
 	}
@@ -98,7 +102,6 @@ dlg.resize_to(400,600);
       <input type="text"  id="desc"  name="desc"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
     </div>
   </div>
-  
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
     <div class="layui-input-block">
@@ -138,20 +141,20 @@ var name= "<%=html_str(name) %>" ;
 var title = "<%=html_str(title)%>" ;
 var desc = "<%=html_str(desc)%>";
 var addr = "<%=html_str(addr)%>" ;
-var vt = "<%=html_str(valtp)%>" ;
+var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var canw = "<%=canw%>"
 
-$("#name").val(name) ;
-$("#title").val(title) ;
-$("#addr").val(addr) ;
-$("#desc").val(desc) ;
-$("#vt").val(vt) ;
-$("#srate").val(srate) ;
-$("#canw").val(canw) ;
 
 layui.use('form', function(){
 	  var form = layui.form;
+	  $("#name").val(name) ;
+	  $("#title").val(title) ;
+	  $("#addr").val(addr) ;
+	  $("#desc").val(desc) ;
+	  $("#vt").val(vt) ;
+	  $("#srate").val(srate) ;
+	  $("#canw").val(canw) ;
 	  
 	  form.render();
 });

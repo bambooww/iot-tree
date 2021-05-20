@@ -4,11 +4,10 @@
 				java.util.*,
 				org.iottree.core.*,
 				org.iottree.core.util.*,
-				java.net.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-	if(!Convert.checkReqEmpty(request, out, "id"))
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
 	String id = request.getParameter("id");
-	UARep dc = UAManager.getInstance().getRepById(id);
+	UAPrj dc = UAManager.getInstance().getPrjById(id);
 	if(dc==null)
 	{
 		out.print("no container found!");
@@ -16,9 +15,7 @@
 	}
 	
 	String name = dc.getName() ;
-	//List<DevConnProvider> cps = dc.listConnProviders();
-	
-%><!DOCTYPE html>
+	//List<DevConnProvider> cps = dc.listConnProviders();%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">

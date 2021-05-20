@@ -7,12 +7,9 @@
 	java.net.*,
 	java.util.*,
 	org.iottree.core.util.xmldata.*
-"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-//UserProfile up = UserProfile.getUserProfile(request);
+"%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
-List<UARep> reps = UAManager.getInstance().listReps();
-
-%><!DOCTYPE html>
+List<UAPrj> reps = UAManager.getInstance().listPrjs();%><!DOCTYPE html>
 <html>
 <head>
 <title>IOT Tree Server</title>
@@ -47,12 +44,12 @@ width:200px;height:200px;margin: 10px;
   	
   <div id="main" class="btns" style="top:10px;width:100%">
   <%
-  String idstr = "";
-  for(UARep dc:reps)
-  {
-	  String cid = dc.getId();
-	  idstr += ",\""+cid+"\"";
-	  String tt = dc.getTitle() ;
+  	String idstr = "";
+    for(UAPrj dc:reps)
+    {
+  	  String cid = dc.getId();
+  	  idstr += ",\""+cid+"\"";
+  	  String tt = dc.getTitle() ;
   %>
     <div class="toolbarbtn" style="background-color: #515658" onclick="open_rep('<%=cid%>')">
       <div id="panel_<%=cid %>" style="background-color: #2f2f2f;width:100%;height:170px" ></div>

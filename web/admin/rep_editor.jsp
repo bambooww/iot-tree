@@ -12,7 +12,7 @@
 	//String op = request.getParameter("op");
 	String repid = request.getParameter("id");
 	//String id = request.getParameter("id");
-	UARep rep = UAManager.getInstance().getRepById(repid);
+	UAPrj rep = UAManager.getInstance().getPrjById(repid);
 	if(rep==null)
 	{
 		out.print("no rep found!");
@@ -454,7 +454,7 @@ background-color: #fff ;
 <body class="layout-body">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
-   <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree </div>
+   <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
 		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
 		<%=rep.getTitle()%>-<%=rep.getName() %>
 		</div>
@@ -556,11 +556,11 @@ background-color: #fff ;
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>
 			    <li >Properties</li>
-			    <li >Graph</li>
+			    <li >Accessibility</li>
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			  	<div class="layui-tab-item layui-show" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
-			      <iframe id="if_tags" src="./tag/node_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
+			      <iframe id="if_tags" src="./ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
 				
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
@@ -569,12 +569,15 @@ background-color: #fff ;
 				<%--
 			    <div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_rep" border="0" src11="rep.jsp?tabid=main&id=<%=repid %>" src0="rep_editor.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
+			      			
+			      <iframe id="if_main" src="rep_editor_graph.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
+			      
 				</div>
  --%>
 				<div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
-			      <iframe id="if_main" src="rep_editor_graph.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
+			
+			       <iframe id="if_main" src="./ua_cxt/cxt_accessor.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
- 
 			  </div>
 			</div>
 			 
@@ -811,7 +814,7 @@ var cxt_menu = {
 function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","./ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
-	$("#if_tags").attr("src","./tag/node_tags.jsp?tabid=main&path="+tn.path);
+	$("#if_tags").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
 }
 
 var ua_panel = new UAPanel(
@@ -1419,7 +1422,7 @@ function act_hmi_edit_ui(n,op)
 
 function act_open_data_cxt(n,op)
 {
-	dlg.open("ua_cxt/cxt_var_lister.jsp?repid="+repid+"&id="+n.id,
+	dlg.open("ua_cxt/cxt_var_lister.jsp?path="+n.path,
 			{title:"Data Context",w:'850px',h:'600px'},
 			['Cancel'],
 			[

@@ -16,7 +16,7 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
-import org.iottree.core.UARep;
+import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 
 public class RepServlet extends HttpServlet
@@ -55,11 +55,11 @@ public class RepServlet extends HttpServlet
 		UANode node = null ;
 		
 		UAManager uamgr = UAManager.getInstance() ;
-		UARep rep = null ;
+		UAPrj rep = null ;
 		PathItem pi = null ;
 		if(uri.equals("/"))
 		{//using default repository
-			node = rep = uamgr.getRepDefault() ;
+			node = rep = uamgr.getPrjDefault() ;
 			if(rep==null)
 				return ;
 			pi = new PathItem() ;
@@ -69,7 +69,7 @@ public class RepServlet extends HttpServlet
 		{
 			pi = parsePath(uri);
 			String firstn = pi.nodePath.removeFirst() ;
-			rep = uamgr.getRepByName(firstn) ;
+			rep = uamgr.getPrjByName(firstn) ;
 			if(rep==null)
 				return ;
 			if(pi.nodePath.size()<=0)

@@ -114,6 +114,8 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return id.substring(0,k) ;
 	}
 	
+	
+	
 	public String getRefBranchId()
 	{
 		int k = id.indexOf('-') ;
@@ -122,6 +124,10 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return id.substring(k+1) ;
 	}
 	
+	public boolean isRefOwner()
+	{
+		return this instanceof IRefOwner ;
+	}
 	/**
 	 * tree node which is copied by branch will has owner tree node id and branch treenode ref id
 	 * 
@@ -207,6 +213,20 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return ppn+"/"+this.name;
 	}
 	
+	public String getNodeCxtPathIn(UANode tn)
+	{
+		String pnp = tn.getNodePath() ;
+		String np = this.getNodePath() ;
+		return np.substring(pnp.length()) ;
+	}
+	
+	public String getNodeCxtPathTitleIn(UANode tn)
+	{
+		String pnp = tn.getNodePathTitle() ;
+		String np = this.getNodePathTitle() ;
+		return np.substring(pnp.length()) ;
+	}
+	
 	public String getNodePathName()
 	{
 		UANode p = this.getParentNode() ;
@@ -234,7 +254,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		if(Convert.isNullOrEmpty(ppt))
 			return this.getTitle() ;
 		else
-			return ppt+"-"+this.getTitle();
+			return ppt+"/"+this.getTitle();
 	}
 	
 	

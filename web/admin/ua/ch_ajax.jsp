@@ -7,19 +7,17 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%!
-	
-	private static void addOrEditCh(HttpServletRequest request,JspWriter out) throws Exception
+	java.util.*"%><%!private static void addOrEditCh(HttpServletRequest request,JspWriter out) throws Exception
 	{
 		String reppath = request.getParameter("rep_path") ;
 		String chpath = request.getParameter("ch_path") ;
 		
-		UARep rep = null ;
+		UAPrj rep = null ;
 		UACh ch  = null;
 		
 		if(Convert.isNotNullEmpty(reppath))
 		{
-			rep  = (UARep)UAUtil.findNodeByPath(reppath) ;
+			rep  = (UAPrj)UAUtil.findNodeByPath(reppath) ;
 			if(rep==null)
 			{
 				out.print("no rep node found");
@@ -54,7 +52,7 @@
 				ch = rep.addCh(drv,name, title, desc,null) ;
 			else
 			{
-				UARep rep0 = ch.getBelongTo() ;
+				UAPrj rep0 = ch.getBelongTo() ;
 				rep0.updateCh(ch,drv,name,title,desc);
 			}
 			out.print("succ="+ch.getId()) ;
@@ -128,8 +126,7 @@
 			out.print("succ") ;
 			return ;
 		}
-	}
-%><%
+	}%><%
 if(!Convert.checkReqEmpty(request, out, "op"))
 	return;
 String op = request.getParameter("op") ;

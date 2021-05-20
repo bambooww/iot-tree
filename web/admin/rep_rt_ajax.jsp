@@ -6,20 +6,15 @@
 				org.iottree.core.util.*,
 				java.net.*"%><%!
 				
-%><%
-
-	if(!Convert.checkReqEmpty(request, out, "id"))
+%><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
 	String id = request.getParameter("id");
-	UARep rep = UAManager.getInstance().getRepById(id);
+	UAPrj rep = UAManager.getInstance().getPrjById(id);
 	if(rep==null)
 	{
 		out.print("no repository found!");
 		return;
-	}
-	
-	
-%>{
+	}%>{
 	"cps":
 <%
 	ConnManager.getInstance().renderRTJson(id, out) ;

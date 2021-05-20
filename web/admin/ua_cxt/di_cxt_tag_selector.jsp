@@ -12,43 +12,43 @@
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>	
 <%
-	if(!Convert.checkReqEmpty(request, out, "repid","id"))
+		if(!Convert.checkReqEmpty(request, out, "repid","id"))
 		return;
-	
-	String val = request.getParameter("val") ;
-	if(val==null)
+			
+			String val = request.getParameter("val") ;
+			if(val==null)
 		val = "" ;
-	//String op = request.getParameter("op");
-	String repid=request.getParameter("repid");
-	String id = request.getParameter("id") ;
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
-	if(rep==null)
-	{
+			//String op = request.getParameter("op");
+			String repid=request.getParameter("repid");
+			String id = request.getParameter("id") ;
+			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
+			if(rep==null)
+			{
 		out.print("no rep found");
 		return ;
-	}
-	
-	String repname = rep.getName() ;
-	
-	UANode n = rep.findNodeById(id) ;
-	if(n==null)
-	{
+			}
+			
+			String repname = rep.getName() ;
+			
+			UANode n = rep.findNodeById(id) ;
+			if(n==null)
+			{
 		out.print("no node found") ;
 		return ;
-	}
-	if(!(n instanceof UANodeOCTags))
-	{
+			}
+			if(!(n instanceof UANodeOCTags))
+			{
 		out.print("not node oc tags") ;
 		return ;
-	}
-	UANodeOCTags ntags = (UANodeOCTags)n ;
-	List<UATag> tags = ntags.listTagsAll() ;
-	
+			}
+			UANodeOCTags ntags = (UANodeOCTags)n ;
+			List<UATag> tags = ntags.listTagsAll() ;
+			
 
-	String parent_p = ntags.getNodePathName() ;
-	if(Convert.isNotNullEmpty(parent_p))
+			String parent_p = ntags.getNodePathName() ;
+			if(Convert.isNotNullEmpty(parent_p))
 		parent_p +="." ;
-	boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
+			boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	%>
 <html>
 <head>

@@ -9,13 +9,13 @@ org.iottree.core.*,
 	java.net.*,
 	java.util.*"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "repid","chid","op"))
+	if(!Convert.checkReqEmpty(request, out, "repid","chid","op"))
 	return;
 String repid = request.getParameter("repid") ;
 String chid=request.getParameter("chid");
 String op=request.getParameter("op");
 UAManager uam = UAManager.getInstance();
-UARep dc = uam.getRepById(repid) ;
+UAPrj dc = uam.getPrjById(repid) ;
 if(dc==null)
 {
 	out.print("no rep found with id="+repid) ;
@@ -51,5 +51,4 @@ else if("stop".equals(op))
 		out.print("stop ok");
 	}
 }
-
 %>

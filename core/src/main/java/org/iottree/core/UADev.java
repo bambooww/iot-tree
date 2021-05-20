@@ -55,7 +55,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return (UACh)this.getParentNode() ;
 	}
 	
-	public UARep getRep()
+	public UAPrj getRep()
 	{
 		UACh ch = getBelongTo();
 		if(ch==null)

@@ -10,7 +10,7 @@
 <%
 	String rid = request.getParameter("rid");
 
-UARep rep = new UARep() ;
+UAPrj rep = new UAPrj() ;
 
 UACh ch = new UACh("modbus_serial");
 ch.addDev(new UADev());
@@ -21,14 +21,14 @@ System.out.println(xd.toXmlString()) ;
 JSONObject jo = DataTranserJSON.extractJSONFromObj(rep) ;
 System.out.println(jo.toString(2)) ;
 
-UARep repn = new UARep() ;
+UAPrj repn = new UAPrj() ;
 repn.fromUAXmlData(xd);
 //XmlDataUtil.injectXmDataToObj(repn, xd) ;
 xd = repn.toUAXmlData();
 System.out.println("--------------");
 System.out.println(xd.toXmlString()) ;
 
-repn = new UARep() ;
+repn = new UAPrj() ;
 DataTranserJSON.injectJSONToObj(repn, jo) ;
 jo = DataTranserJSON.extractJSONFromObj(rep) ;
 System.out.println(jo.toString(2)) ;

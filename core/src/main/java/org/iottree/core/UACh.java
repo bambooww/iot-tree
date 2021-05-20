@@ -101,9 +101,9 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		return rets;
 	}
 	
-	public UARep getBelongTo()
+	public UAPrj getBelongTo()
 	{
-		return (UARep)this.getParentNode() ;
+		return (UAPrj)this.getParentNode() ;
 	}
 	
 	public boolean chkValid()
@@ -156,7 +156,7 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	 */
 	public List<DevDriver> getSupportedDrivers() throws Exception
 	{
-		UARep rep = this.getBelongTo() ;
+		UAPrj rep = this.getBelongTo() ;
 		
 		//ConnJoin cj = ConnManager.getInstance().getConnJoinByChId(rep.getId(), this.getId()) ;
 		ConnProvider cp = ConnManager.getInstance().getConnJoinedProvider(rep.getId(), this.getId()) ;
@@ -317,7 +317,7 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	
 	public boolean delFromParent() throws Exception
 	{
-		UARep r = this.getBelongTo();
+		UAPrj r = this.getBelongTo();
 		if(r==null)
 			return false;
 		r.delCh(this) ;

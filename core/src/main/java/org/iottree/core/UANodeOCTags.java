@@ -92,6 +92,29 @@ public abstract class UANodeOCTags extends UANodeOC
 		super.constructNodeTree();
 	}
 	
+	
+	public List<UANodeOCTags> listSelfAndSubTagsNode()
+	{
+		ArrayList<UANodeOCTags> rets = new ArrayList<>() ;
+		listSelfAndSubTagsNode(rets) ;
+		return rets ;
+	}
+	
+	
+	private void listSelfAndSubTagsNode(List<UANodeOCTags> tags)
+	{
+		tags.add(this) ;
+		List<UANode> ns = this.getSubNodes() ;
+		if(ns==null)
+			return ;
+		for(UANode n:ns)
+		{
+			if(n instanceof UANodeOCTags)
+			{
+				((UANodeOCTags)n).listSelfAndSubTagsNode(tags) ;
+			}
+		}
+	}
 
 	public UATag addOrUpdateTag(String tagid,
 			boolean bmid,String name,String title,String desc,

@@ -52,7 +52,7 @@ public class ConnManager
 		
 		synchronized(this)
 		{
-			UARep rep = UAManager.getInstance().getRepById(repid) ;
+			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 			if(rep==null)
 				throw new Exception("no rep found") ;
 			
@@ -104,7 +104,7 @@ public class ConnManager
 	 * get connproviders config file
 	 * @return
 	 */
-	private File getConnFile(UARep rep)
+	private File getConnFile(UAPrj rep)
 	{
 		File subdir = rep.getRepSubDir() ;
 		if(!subdir.exists())
@@ -113,7 +113,7 @@ public class ConnManager
 	}
 	
 	
-	private List<ConnProvider> loadConnProviders(UARep rep,File cf) throws Exception
+	private List<ConnProvider> loadConnProviders(UAPrj rep,File cf) throws Exception
 	{
 		ArrayList<ConnProvider> rets = new ArrayList<>() ;
 		XmlData xd = XmlData.readFromFile(cf) ;
@@ -149,7 +149,7 @@ public class ConnManager
 	
 	void saveConnProvidersByRepId(String repid) throws Exception
 	{
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found with id="+repid) ;
 		
@@ -221,7 +221,7 @@ public class ConnManager
 		List<ConnProvider> cps = getConnProviders(repid) ;
 		if(oldcp==null)
 			cps.add(cp) ;
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
 		cp.belongTo = rep ;
@@ -273,7 +273,7 @@ public class ConnManager
 		
 		synchronized(this)
 		{
-			UARep rep = UAManager.getInstance().getRepById(repid) ;
+			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 			if(rep==null)
 				throw new Exception("no rep found") ;
 			
@@ -317,7 +317,7 @@ public class ConnManager
 		ConnPt conn = getConnPtById(repid,cj.getConnId()) ;
 		if(conn==null)
 			return false;
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep ") ;
 		UACh ch = rep.getChById(cj.getChId()) ;
@@ -366,7 +366,7 @@ public class ConnManager
 		ConnJoin cj = new ConnJoin(connid,chid) ;
 		cjs.add(cj) ;
 		
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
 		File cjf = getConnJoinFile(rep) ;
@@ -382,7 +382,7 @@ public class ConnManager
 			return false;
 		cjs.remove(cj) ;
 		
-		UARep rep = UAManager.getInstance().getRepById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
 		File cjf = getConnJoinFile(rep) ;
@@ -392,7 +392,7 @@ public class ConnManager
 	}
 	//public ConnJoin get
 	
-	private File getConnJoinFile(UARep rep)
+	private File getConnJoinFile(UAPrj rep)
 	{
 		File subdir = rep.getRepSubDir() ;
 		if(!subdir.exists())

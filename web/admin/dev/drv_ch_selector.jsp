@@ -12,7 +12,7 @@
 		return ;
 	String repid = request.getParameter("repid") ;
 	String chid = request.getParameter("chid") ;
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
+	UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 	if(rep==null)
 	{
 		out.print("no rep found") ;

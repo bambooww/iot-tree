@@ -10,13 +10,13 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-String reppath = request.getParameter("rep_path") ;
+	String reppath = request.getParameter("rep_path") ;
 String chpath = request.getParameter("ch_path") ;
 UACh ch= null;
-UARep rep = null ;
+UAPrj rep = null ;
 if(Convert.isNotNullEmpty(reppath))
 {
-	rep  = (UARep)UAUtil.findNodeByPath(reppath) ;
+	rep  = (UAPrj)UAUtil.findNodeByPath(reppath) ;
 	if(rep==null)
 	{
 		out.print("no rep node found");

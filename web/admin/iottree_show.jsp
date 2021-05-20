@@ -6,14 +6,13 @@
 				 org.iottree.core.*,
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
-%><%
-	if(!Convert.checkReqEmpty(request, out,"tp","repid","id"))
+%><%if(!Convert.checkReqEmpty(request, out,"tp","repid","id"))
 		return ;
 	String repid = request.getParameter("repid") ;
 	String id = request.getParameter("id") ;
 	String tp = request.getParameter("tp") ;
 
-	UARep rep = UAManager.getInstance().getRepById(repid) ;
+	UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 	if(rep==null)
 	{
 		out.print("no rep found") ;
@@ -33,6 +32,4 @@
 		return ;
 	case "list":
 		//response.sendRedirect("/iottree"+ppath+"/_hmi/"+hmi.getName()) ;
-	}
-	
-%>
+	}%>

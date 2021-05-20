@@ -24,7 +24,7 @@ import javax.websocket.server.ServerEndpoint;
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
-import org.iottree.core.UARep;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
@@ -43,12 +43,12 @@ public class WSCxtRT extends WSServer
 	static class SessionItem
 	{
 		private final Session session;
-		private final UARep rep;
+		private final UAPrj rep;
 		private final UANodeOCTagsCxt nodecxt;
 		
 		private long lastDT = -1 ;
 		
-		public SessionItem(Session s,UARep rep,UANodeOCTagsCxt nodecxt)
+		public SessionItem(Session s,UAPrj rep,UANodeOCTagsCxt nodecxt)
 		{
 			this.session = s ;
 			this.rep = rep ;
@@ -60,7 +60,7 @@ public class WSCxtRT extends WSServer
 			return session ;
 		}
 		
-		public UARep getRep()
+		public UAPrj getRep()
 		{
 			return rep ;
 		}
@@ -230,7 +230,7 @@ public class WSCxtRT extends WSServer
 	@OnOpen
 	public void onOpen(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "nodeid") String nodeid) throws Exception //
 	{
-		UARep rep = UAManager.getInstance().getRepByName(repname) ;
+		UAPrj rep = UAManager.getInstance().getPrjByName(repname) ;
 		if(rep==null)
 		{
 			session.close();

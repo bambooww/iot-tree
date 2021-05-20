@@ -49,7 +49,7 @@ public class DevManager
 
 	static File getDevFileBase()
 	{
-		String fp = Config.getDataDirBase() + "/ua/dev_drv/";
+		String fp = Config.getDataDirBase() + "/dev_drv/";
 		return new File(fp) ;
 	}
 	

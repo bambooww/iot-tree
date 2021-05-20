@@ -11,20 +11,12 @@
 	org.iottree.core.util.xmldata.*
 	"%>
 <%//通信节点下挂载的设备
-if(!Convert.checkReqEmpty(request, out, "repid","id"))
+if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 
-//String op = request.getParameter("op");
-String repid=request.getParameter("repid");
-String id = request.getParameter("id") ;
-UARep rep = UAManager.getInstance().getRepById(repid) ;
-if(rep==null)
-{
-	out.print("no rep found");
-	return ;
-}
+String path=request.getParameter("path");
 
-UANode n = rep.findNodeById(id) ;
+UANode n = UAUtil.findNodeByPath(path) ;
 if(n==null)
 {
 	out.print("no node found") ;

@@ -61,8 +61,11 @@ case "edit_tag":
 	break ;
 
 case "del_tag":
+	if(!Convert.checkReqEmpty(request, out, "id"))
+		return;
 	String tagid = request.getParameter("id") ;
-	if(Convert.isNullOrEmpty(tagid))
+	List<String> tagids = Convert.splitStrWith(tagid, ",") ;
+	if(tagids==null||tagids.size()<=0)
 	{
 		out.print("no tag id input") ;
 		break ;
@@ -72,23 +75,16 @@ case "del_tag":
 		out.print("not tags node") ;
 		break ;
 	}
-	
-	UATag t = ((UANodeOCTags)n).getTagById(tagid) ;
-	if(t==null)
+	for(String tid:tagids)
 	{
-		out.print("no tag found") ;
-		break ;
+		UATag t = ((UANodeOCTags)n).getTagById(tid) ;
+		if(t==null)
+		{
+			continue ;
+		}
+		boolean b =t.delFromParent();
 	}
-	boolean b =t.delFromParent();
-	if(!b)
-	{
-		out.print("del err") ;
-	}
-	else
-	{
-		out.print("succ="+tagid) ;
-	}
-	
+	out.print("succ="+tagid) ;
 	break ;
 case "copy":
 case "paste":

@@ -10,13 +10,13 @@
 	java.util.*
 	"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "repid","id"))
+	if(!Convert.checkReqEmpty(request, out, "repid","id"))
 	return;
 String repid = request.getParameter("repid") ;
 String id=request.getParameter("id");
 
 UAManager uam = UAManager.getInstance();
-UARep dc = uam.getRepById(repid) ;
+UAPrj dc = uam.getPrjById(repid) ;
 if(dc==null)
 {
 	out.print("no rep found with id="+repid) ;

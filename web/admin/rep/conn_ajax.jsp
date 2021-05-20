@@ -9,12 +9,12 @@
 	java.net.*,
 	java.util.*"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "repid","name","conntp"))
+	if(!Convert.checkReqEmpty(request, out, "repid","name","conntp"))
 	return;
 String repid = request.getParameter("repid") ;
 StringBuilder errsb = new StringBuilder() ;
 UAManager uam = UAManager.getInstance();
-UARep rep = uam.getRepById(repid) ;
+UAPrj rep = uam.getPrjById(repid) ;
 if(rep==null)
 {
 	out.print("no rep found with id="+repid) ;

@@ -14,7 +14,7 @@
 	return;
 String repid = request.getParameter("repid") ;
 String hmiid = request.getParameter("hmiid") ;
-UARep rep = UAManager.getInstance().getRepById(repid) ;
+UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 if(rep==null)
 {
 	out.print("{res:false,err:\"no rep found\"}") ;

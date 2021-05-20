@@ -29,13 +29,13 @@ public class UAManager
 		}
 	}
 	
-	private ArrayList<UARep> reps = null;
+	private ArrayList<UAPrj> reps = null;
 	
 	private EventBus eventBus = new EventBus("ua");
 	
 	private UAManager()
 	{
-		reps = loadReps();
+		reps = loadPrjs();
 		if(reps==null)
 			reps = new ArrayList<>() ;
 		
@@ -44,7 +44,7 @@ public class UAManager
 	
 	private void constrcuctTree()
 	{
-		for(UARep r:reps)
+		for(UAPrj r:reps)
 			r.constructNodeTree();
 	}
 	
@@ -53,9 +53,9 @@ public class UAManager
 		return eventBus;
 	}
 	
-	private ArrayList<UARep> loadReps()
+	private ArrayList<UAPrj> loadPrjs()
 	{
-		String dirf = Config.getDataDirBase() + "/ua/reps/";
+		String dirf = Config.getDataDirBase() + "/prjs/";
 		File df = new File(dirf);
 		if (!df.exists())
 			return null;
@@ -65,11 +65,11 @@ public class UAManager
 			public boolean accept(File f)
 			{
 				String fn = f.getName();
-				return fn.startsWith("rep_") && (fn.endsWith(".xml"));
+				return fn.startsWith("prj_") && (fn.endsWith(".xml"));
 			}
 		});
 		
-		ArrayList<UARep> reps = new ArrayList<>();
+		ArrayList<UAPrj> reps = new ArrayList<>();
 		if (fs != null)
 		{
 			for (File tmpf : fs)
@@ -80,7 +80,7 @@ public class UAManager
 				
 				try
 				{
-					UARep dc = loadRep(id);
+					UAPrj dc = loadRep(id);
 					if(dc==null)
 						continue ;
 					reps.add(dc);
@@ -94,12 +94,12 @@ public class UAManager
 		return reps;
 	}
 	
-	public List<UARep> listReps()
+	public List<UAPrj> listPrjs()
 	{
 		return reps;
 	}
 	
-	public UARep getRepById(String id)
+	public UAPrj getPrjById(String id)
 	{
 //		if(true)
 //		{
@@ -117,7 +117,7 @@ public class UAManager
 //			}
 //		}
 		
-		for(UARep r:reps)
+		for(UAPrj r:reps)
 		{
 			if(r.getId().contentEquals(id))
 				return r ;
@@ -125,9 +125,9 @@ public class UAManager
 		return null ;
 	}
 	
-	public UARep getRepByName(String name)
+	public UAPrj getPrjByName(String name)
 	{
-		for(UARep r:reps)
+		for(UAPrj r:reps)
 		{
 			if(name.contentEquals(r.getName()))
 				return r ;
@@ -139,53 +139,53 @@ public class UAManager
 	 * get default repository
 	 * @return
 	 */
-	public UARep getRepDefault()
+	public UAPrj getPrjDefault()
 	{
 		if(reps.size()<=0)
 			return null ;
 		return reps.get(0) ;
 	}
 	
-	static File getRepFileSubDir(String id)
+	static File getPrjFileSubDir(String id)
 	{
-		String fp = Config.getDataDirBase() + "/ua/reps/rep_"+id+"/";
+		String fp = Config.getDataDirBase() + "/prjs/prj_"+id+"/";
 		return new File(fp) ;
 	}
 	
-	static File getRepFile(String id)
+	static File getPrjFile(String id)
 	{
-		String fp = Config.getDataDirBase() + "/ua/reps/rep_"+id+".xml";
+		String fp = Config.getDataDirBase() + "/prjs/prj_"+id+".xml";
 		return new File(fp);
 	}
 	
-	UARep loadRep(String id) throws Exception
+	UAPrj loadRep(String id) throws Exception
 	{
-		File tmpf = getRepFile(id);
+		File tmpf = getPrjFile(id);
 		if(!tmpf.exists())
 			return null ;
 		XmlData tmpxd = XmlData.readFromFile(tmpf);
-		UARep r = new UARep() ;
+		UAPrj r = new UAPrj() ;
 		DataTranserXml.injectXmDataToObj(r, tmpxd);
 		//r.fromUAXmlData(tmpxd);
 		r.onLoaded();
 		return r ;
 	}
 	
-	void saveRep(UARep rep) throws Exception
+	void saveRep(UAPrj rep) throws Exception
 	{
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(rep) ;
 		//XmlData xd = rep.toUAXmlData();
-		XmlData.writeToFile(xd, getRepFile(rep.getId()));
+		XmlData.writeToFile(xd, getPrjFile(rep.getId()));
 	}
 	
 	public void delRep(String id)
 	{
-		File f = getRepFile(id) ;
+		File f = getPrjFile(id) ;
 		if(f.exists())
 		{
 			f.delete();
 		}
-		File df = getRepFileSubDir(id) ;
+		File df = getPrjFileSubDir(id) ;
 		if(df.exists())
 		{
 			deleteDir(df) ;
@@ -205,18 +205,18 @@ public class UAManager
         return dir.delete();
     }
 	
-	public UARep addRep(String name,String title,String desc) throws Exception
+	public UAPrj addRep(String name,String title,String desc) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,sb))
 			throw new IllegalArgumentException(sb.toString()) ;
 		
-		UARep r = this.getRepByName(name) ;
+		UAPrj r = this.getPrjByName(name) ;
 		if(r!=null)
 		{
 			throw new Exception("name="+name+" is existed!") ;
 		}
-		r = new UARep(name,title,desc) ;
+		r = new UAPrj(name,title,desc) ;
 		saveRep(r);
 		reps.add(r);
 		return r ;
@@ -227,7 +227,7 @@ public class UAManager
 	{
 		LinkedList<String> ss = Convert.splitStrWithLinkedList(path, "/\\.") ;
 		String n = ss.removeFirst() ;
-		UARep rep = this.getRepByName(n) ;
+		UAPrj rep = this.getPrjByName(n) ;
 		if(rep==null)
 			return null ;
 		return rep.getDescendantNodeByPath(ss) ;
@@ -235,7 +235,7 @@ public class UAManager
 	
 	public UANode findNodeById(String id)
 	{
-		for(UARep rep:this.listReps())
+		for(UAPrj rep:this.listPrjs())
 		{
 			UANode n = rep.findNodeById(id) ;
 			if(n!=null)
@@ -292,7 +292,7 @@ public class UAManager
 
 	public void renderRTJson(String repid,JspWriter out) throws Exception
 	{
-		UARep rep = this.getRepById(repid) ;
+		UAPrj rep = this.getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
 		List<UACh> chs = rep.getChs() ;
