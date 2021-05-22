@@ -128,6 +128,12 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	{
 		return this instanceof IRefOwner ;
 	}
+	
+	public boolean isRefedNode()
+	{
+		return isRefOwner() || Convert.isNotNullEmpty(getRefBranchId());
+	}
+	
 	/**
 	 * tree node which is copied by branch will has owner tree node id and branch treenode ref id
 	 * 

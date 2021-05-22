@@ -48,7 +48,6 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	public List<UANode> getSubNodes()
 	{
-		
 		ArrayList<UANode> rets = new ArrayList<>() ;
 		rets.addAll(tags);
 		return rets;

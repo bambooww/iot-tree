@@ -29,6 +29,8 @@ UANodeOCTags node_tags = (UANodeOCTags)node;
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
 List<UATag> cur_tags = node_tags.listTags() ;
 List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
+boolean brefowner = node_tags.isRefOwner();
+boolean brefed = node_tags.isRefedNode() ;
 %><html>
 <head>
 <title></title>
@@ -69,15 +71,37 @@ th
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
 <blockquote class="layui-elem-quote"><%=node_tags.getNodePathTitle() %> [<%=node_tags.getNodePath() %>]
+<%
+if(!brefed)
+{
+%>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('','')">+Add Tag</button>&nbsp;&nbsp;
- 	<button class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag('')">+Delete Tag</button>
+ <%
+ 	if(bdevdef)
+ 	{
+ %>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
+<%
+ 	}
+%>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+Add Middle Tag</button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  </div>
+<%
+}
+%>
 </blockquote>
 <table class="oc_div_list" id="tb_cur">
   <thead>
      <tr>
+<%
+	if(!brefed)
+	{
+%>
         <th><input type="checkbox" lay-skin="primary"  id="chkall" onclick="sel_tags_all()"/></th>
+<%
+	}
+%>
         <th>Mid</th>
         <th>Tag Name</th>
         <th>Title</th>
@@ -93,8 +117,15 @@ for(UATag tag:cur_tags)
 	String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 %>
    <tr id="tag_<%=tag.getId() %>"  tag_id="<%=tag.getId()%>">
+<%
+	if(!brefed)
+	{
+%>
         <td style="text-align: center;"><input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/></td>
-        <td></td>
+<%
+	}
+%>
+        <td><%=(tag.isMidExpress()?"✔":"") %></td>
         <td title="<%=cxtpath%>"><%=tag.getName() %></td>
         <td><%=tag.getTitle() %></td>
         <td><%=tag.getAddress() %></td>
@@ -130,35 +161,26 @@ for(UATag tag:cur_tags)
 <%
 for(UANodeOCTags tn:tns)
 {
-	if(tn.getRefBranchNode()!=null)
-		continue ;
-	List<UATag> tags = null;
-	boolean brefowner = tn.isRefOwner() ;
-	if(brefowner)
-	{
-		tags = tn.listTagsAll() ;
-	}
-	else
-	{
-		tags = tn.listTags() ;
-	}
-	
+	//if(tn.getRefBranchNode()!=null)
+	//	continue ;
+	List<UATag> tags = tn.listTagsAll() ;
+
 	String tn_id = tn.getId() ;
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
 	{
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 %>
-   <tr id="tag_<%=tag.getId() %>"  tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>">
+   <tr id="ctag_<%=tag.getId() %>"  tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>">
         <td></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><%=cxtpath%></td>
 
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
         <td><%=(tag.isCanWrite()?"✔":"") %></td>
-        <td id="tag_v_<%=tag.getId() %>"></td>
-        <td id="tag_dt_<%=tag.getId() %>"></td>
-        <td id="tag_q_<%=tag.getId() %>"></td>
+        <td id="ctag_v_<%=cxtpath%>"></td>
+        <td id="ctag_dt_<%=cxtpath%>"></td>
+        <td id="ctag_q_<%=cxtpath%>"></td>
       </tr>
 <%
 	}
@@ -171,6 +193,7 @@ for(UANodeOCTags tn:tns)
 <script>
 var path = "<%=path%>" ;
 var b_devdef = <%=bdevdef%>;
+var b_refed = <%=brefed%>;
 
 layui.use('form', function(){
 	  var form = layui.form;
@@ -180,63 +203,74 @@ layui.use('form', function(){
 document.oncontextmenu = function() {
     return false;
 }
+function init_right_menu()
+{
+	if(b_refed)
+		return ;
+	$('#tb_cur').mouseup(function(e) {
+	    if (3 == e.which)
+	    {
+	    	$('.sm_container').css("display","none") ;
+	    	
+	        $(this).selectMenu({
+	        	title0:'Add Tag',
+	        	regular : true,
+	        	rightClick : true,
+	        	data : ()=>{
+					var d = [
+						{ content : 'Add Tag', callback:()=>{
+							add_or_modify_tag("");
+						}}
+					];
+					return d;
+				}
+	        });
+	    }
+	})
 
-$('body').mouseup(function(e) {
-    if (3 == e.which)
-    {
-    	$('.sm_container').css("display","none") ;
-    	
-        $(this).selectMenu({
-        	title0:'Add Tag',
-        	regular : true,
-        	rightClick : true,
-        	data : ()=>{
-				var d = [
-					{ content : 'Add Tag', callback:()=>{
-						add_or_modify_tag("");
-					}}
-				];
-				return d;
-			}
-        });
-    }
-})
+	$('#tb_cur tr[id*="tag_"]').mouseup(function(e) {
+	    if (3 == e.which)
+	    {
+	    	e.stopPropagation();
+	    	
+	    	//$('body').selectMenu({rightClick : true}) ;//clear outter menu
+	    	$('.sm_container').css("display","none") ;
+	    	var t_path = $(this).attr("tag_path");
+	    	var t_id = $(this).attr("tag_id");
+	        $(this).selectMenu({
+	        	title0:'Modify Tag',
+	        	regular : true,
+	        	rightClick : true,
+	        	data : ()=>{
+					var d = [
+						{ content : 'Add Tag', callback:()=>{
+							add_or_modify_tag("");
+						}},
+						{ content : 'Modify Tag', callback:()=>{
+							add_or_modify_tag(t_id);
+						}},
+						{ content : 'Copy Tag', callback:()=>{
+							copy_tag($(this).attr("tag_id"));
+						}},
+						{ content : 'Paste Tag', callback:()=>{
+							paste_tag(t_id);
+						}},
+						{ content : 'Delete Tag', callback:()=>{
+							del_tag(t_id);
+						}},
+					];
+					return d;
+				}
+	        });
+	    }
+	})
 
-$('tr[id*="tag_"]').mouseup(function(e) {
-    if (3 == e.which)
-    {
-    	e.stopPropagation();
-    	
-    	//$('body').selectMenu({rightClick : true}) ;//clear outter menu
-    	$('.sm_container').css("display","none") ;
-    	var t_path = $(this).attr("tag_path");
-    	var t_id = $(this).attr("tag_id");
-        $(this).selectMenu({
-        	title0:'Modify Tag',
-        	regular : true,
-        	rightClick : true,
-        	data : ()=>{
-				var d = [
-					{ content : 'Modify Tag', callback:()=>{
-						add_or_modify_tag(t_path,t_id);
-					}},
-					{ content : 'Copy Tag', callback:()=>{
-						copy_tag($(this).attr("tag_id"));
-					}},
-					{ content : 'Paste Tag', callback:()=>{
-						paste_tag(t_path,t_id);
-					}},
-					{ content : 'Delete Tag', callback:()=>{
-						del_tag(t_path,t_id);
-					}},
-				];
-				return d;
-			}
-        });
-    }
-})
+}
 
-function sel_tags_all(path)
+init_right_menu();
+
+
+function sel_tags_all()
 {
 	var tb = document.getElementById("tb_"+path) ;
 	var inputchkall = document.getElementById("chkall_"+path) ;
@@ -249,7 +283,7 @@ function sel_tags_all(path)
 	return r ;
 }
 
-function get_selected_ids_in_table(path)
+function get_selected_ids_in_table()
 {
 	var tb = document.getElementById("tb_"+path) ;
 	var tb = $(tb) ;
@@ -270,12 +304,16 @@ function get_selected_ids_in_table(path)
 }
 
 
-function add_or_modify_tag(path,id)
+function add_or_modify_tag(id,bmid)
 {
 	var tt = "Modify Tag";
 	if(id==null||id=='')
 		tt = "Add Tag" ;
-		dlg.open("./tag_edit.jsp?path="+path+"&id="+id,
+	if(bmid)
+		bmid = true;
+	else
+		bmid = false;
+		dlg.open("./tag_edit.jsp?path="+path+"&id="+id+"&mid="+bmid,
 				{title:tt,w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
@@ -314,7 +352,7 @@ function add_or_modify_tag(path,id)
 				]);
 }
 
-function del_tag(path,id)
+function del_tag(id)
 {
 	var ret={} ;
 	
@@ -347,28 +385,45 @@ function del_tag(path,id)
 }
 
 
-function tags_rt()
+function cxt_rt()
 {
-	send_ajax("./tag_ajax.jsp",{path:path,op:"rt"},(bsucc,ret)=>{
+	send_ajax("./cxt_dyn_ajax.jsp",{path:path,op:"rt"},(bsucc,ret)=>{
 		if(!bsucc)
 			return ;
 		if(typeof(ret) == 'string')
 			eval("ret="+ret) ;
-		for(var tg of ret)
-		{
-			var id =tg.tag_id ;
-			var bvalid = tg.valid ;
-			var dt = tg.dt ;
-			var strv = tg.strv ;
-			$("#tag_v_"+id).html(strv) ;
-			$("#tag_dt_"+id).html(dt) ;
-			$("#tag_q_"+id).html(bvalid) ;
-		}
-		
+		show_cxt_dyn("/",ret) ;
 	},false) ;
 }
 
+function show_cxt_dyn(p,cxt)
+{
+	for(var tg of cxt.tags)
+	{
+		var tagp =p+tg.n ;
+		var bvalid = tg.valid ;
+		var dt = tg.dt ;
+		var strv = tg.strv ;
+		show_ele_html("ctag_v_"+tagp,strv) ;
+		show_ele_html("ctag_dt_"+tagp,dt) ;
+		show_ele_html("ctag_q_"+tagp,""+bvalid) ;
+	}
+	
+	for(var subn in cxt.subs)
+	{
+		show_cxt_dyn(p+subn+"/",cxt.subs[subn]) ;
+	}
+}
+
+function show_ele_html(n,v)
+{
+	var ele = document.getElementById(n) ;
+	if(ele==null||ele==undefined)
+		return ;
+	ele.innerHTML=v||"" ;
+}
+
 if(!b_devdef)
-	setInterval(tags_rt,3000) ;
+	setInterval(cxt_rt,3000) ;
 </script>
 </html>

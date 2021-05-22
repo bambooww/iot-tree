@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/json; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="
 	java.io.*,
@@ -22,49 +22,11 @@ if(n==null)
 	out.print("no node found") ;
 	return ;
 }
-if(!(n instanceof UANodeOCTags))
+if(!(n instanceof UANodeOCTagsCxt))
 {
 	out.print("not node oc tags") ;
 	return ;
 }
-UANodeOCTags ntags = (UANodeOCTags)n ;
-List<UATag> tags = ntags.listTagsAll() ;
-
-
-String parent_p = ntags.getNodePathName() ;
-if(Convert.isNotNullEmpty(parent_p))
-	parent_p +="." ;
-
-out.print("succ={dt:\'"+""+"\',vals:[") ;
-boolean bfirst = true ;
-for(UATag tg : tags)
-{
-	String pathn = tg.getNodePathName();
-	pathn = pathn.substring(parent_p.length()) ;
-	
-	if(!bfirst)
-		out.print(",") ;
-	else
-		bfirst = false ;
-
-	UAVal val = tg.RT_getVal() ;
-	boolean bvalid = false;
-	String vstr = "" ;
-	String dt = "" ;
-	String dt_chg="" ;
-	if(val!=null)
-	{
-		bvalid = val.isValid() ;
-		vstr = ""+val.getObjVal() ;
-		
-		dt = Convert.toFullYMDHMS(new Date(val.getValDT())) ;
-		dt_chg = Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
-	}
-	out.print("{path:\'");
-	out.print(pathn) ;
-	
-	out.print("\',valid:"+bvalid+",v:\'"+vstr+"\',dt:\'"+dt+"\',chgdt:\'"+dt_chg+"\'}") ;
-}
-
-out.print("]}") ;
+UANodeOCTagsCxt ntags = (UANodeOCTagsCxt)n ;
+ntags.CXT_renderJson(out);
 %>

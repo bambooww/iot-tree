@@ -1,7 +1,10 @@
 package org.iottree.core;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +15,7 @@ import javax.script.SimpleScriptContext;
 import org.iottree.core.basic.JSObMap;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 
@@ -161,6 +165,18 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		rets.addAll(hmis);
 		return rets;
 	}
+	
+	public List<UANodeOCTagsCxt> getSubNodesCxt()
+	{
+		List<UANode> subs = getSubNodes();
+		ArrayList<UANodeOCTagsCxt> rets = new ArrayList<>() ;
+		for(UANode n:subs)
+		{
+			if(n instanceof UANodeOCTagsCxt)
+				rets.add((UANodeOCTagsCxt)n) ;
+		}
+		return rets ;
+	}
 
 	@Override
 	public List<IOCBox> OC_getSubs()
@@ -220,4 +236,49 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 	}
 	
+	
+	public void CXT_renderJson(Writer w) throws IOException
+	{
+		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.name+"\",\"tags\":[") ;
+		boolean bfirst = true ;
+		List<UATag> tags = this.listTags();
+		for(UATag tg : tags)
+		{
+			if(!bfirst)
+				w.write(",") ;
+			else
+				bfirst = false ;
+			
+			UAVal val = tg.RT_getVal() ;
+			boolean bvalid = false;
+			String vstr = "" ;
+			String dt = "" ;
+			String dt_chg="" ;
+			if(val!=null)
+			{
+				bvalid = val.isValid() ;
+				vstr = ""+val.getObjVal() ;
+				
+				dt = Convert.toFullYMDHMS(new Date(val.getValDT())) ;
+				dt_chg = Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+			}
+			w.write("{\"n\":\"");
+			w.write(tg.getName()) ;
+			w.write("\",\"valid\":"+bvalid+",\"v\":\""+vstr+"\",\"dt\":\""+dt+"\",\"chgdt\":\""+dt_chg+"\"}") ;
+		}
+		w.write("],\"subs\":{");
+		
+		bfirst = true ;
+		for(UANodeOCTagsCxt subtg:this.getSubNodesCxt())
+		{
+			if(!bfirst)
+				w.write(",") ;
+			else
+				bfirst = false ;
+			w.write("\""+subtg.getName()+"\"");
+			w.write(":");
+			subtg.CXT_renderJson(w) ;
+		}
+		w.write("}}");
+	}
 }

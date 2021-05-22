@@ -62,6 +62,7 @@ public class ModbusDrvCOM extends ModbusDrv
 	
 	protected boolean RT_initDriver(StringBuilder failedr)
 	{
+		//System.load(filename);
 		try
 		{
 			comEP = openCom(failedr) ;

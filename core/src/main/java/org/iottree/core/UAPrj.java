@@ -32,7 +32,7 @@ import org.iottree.core.res.ResCxtManager;
 import org.json.JSONObject;
 
 /**
- * UA Repository
+ * UA Project
  * 
  * @author zzj
  */

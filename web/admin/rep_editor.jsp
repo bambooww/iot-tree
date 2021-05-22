@@ -601,9 +601,7 @@ var connpro_menu = [
 	{content:'sm_divider'},
 	
 	{content:'Others',header: true},
-	{content:'COM',callback : function(){
-		dlg.msg('com');
-	}}
+	{content:'COM',callback : function(){edit_cp("com","");}}
 ];
 
 var tree_menu = [

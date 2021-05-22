@@ -15,8 +15,8 @@
 String repid = request.getParameter("repid") ;
 String cpid = request.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
-ConnProTcpClient cp = (ConnProTcpClient)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
-ConnPtTcpClient cpt = null ;
+ConnProCOM cp = (ConnProCOM)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+ConnPtCOM cpt = null ;
 if(cp==null)
 {
 	out.print("no ConnProvider found") ;
@@ -25,12 +25,12 @@ if(cp==null)
 
 if(Convert.isNullOrEmpty(connid))
 {
-	cpt = new ConnPtTcpClient() ;
+	cpt = new ConnPtCOM() ;
 	connid = cpt.getId() ;
 }
 else
 {
-	cpt = (ConnPtTcpClient)cp.getConnById(connid) ;
+	cpt = (ConnPtCOM)cp.getConnById(connid) ;
 	if(cpt==null)
 	{
 		out.print("no connection found") ;
@@ -44,9 +44,12 @@ String chked = "" ;
 if(cpt.isEnable())
 	chked = "checked='checked'" ;
 String desc = cpt.getDesc();
-String host = cpt.getHost() ;
-String port  = cpt.getPortStr() ;
-
+String comid = ""+cpt.getComId() ;
+String baud  = ""+cpt.getBaud() ;
+int databits = cpt.getDataBits() ;
+int parity = cpt.getParity() ;
+int stopbits = cpt.getStopBits() ;
+int flowctl = cpt.getFlowCtl() ;
 String cp_tp = cp.getProviderType() ;
 
 %>
@@ -81,13 +84,80 @@ dlg.resize_to(600,400);
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Host:</label>
+    <label class="layui-form-label">ID:</label>
     <div class="layui-input-inline">
-      <input type="text" id="host" name="host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      	    <select id="comid" lay-filter="comid">
+<%
+for(String cid:ConnProCOM.listSysComs())
+{
+%><option value="<%=cid%>"><%=cid %></option>
+<%
+}
+%>   </select>
     </div>
-    <div class="layui-form-mid">Port:</div>
+    <div class="layui-form-mid">Baud rate:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <select id="baud"  lay-filter="baud">
+<%
+for(int b:ConnPtCOM.BAUDS)
+{
+%><option value="<%=b%>"><%=b %></option>
+<%
+}
+%>   </select>
+	  </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Data bits:</label>
+    <div class="layui-input-inline">
+      	    <select id="databits" lay-filter="databits">
+<%
+for(int dbit:ConnPtCOM.DATABITS)
+{
+%><option value="<%=dbit%>"><%=dbit %></option>
+<%
+}
+%>   </select>
+    </div>
+    <div class="layui-form-mid">Parity:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <select id="parity" lay-filter="parity">
+<%
+
+for(int i = 0 ; i < ConnPtCOM.PARITY.length ; i ++)
+{
+	int pri = ConnPtCOM.PARITY[i] ;
+	String tt =  ConnPtCOM.PARITY_TITLE[i] ;
+%><option value="<%=pri%>"><%=tt %></option>
+<%
+}
+%>   </select>
+	  </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Stop bits:</label>
+    <div class="layui-input-inline">
+      	    <select id="stopbits" lay-filter="stopbits">
+<%
+for(int dbit:ConnPtCOM.STOPBITS)
+{
+%><option value="<%=dbit%>"><%=dbit %></option>
+<%
+}
+%>   </select>
+    </div>
+    <div class="layui-form-mid">Flow Control:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <select id="flowctl" lay-filter="flowctl">
+<%
+for(int i = 0 ; i < ConnPtCOM.FLOWCTL.length;i++)
+{
+	int fctl = ConnPtCOM.FLOWCTL[i] ;
+	String tt = ConnPtCOM.FLOWCTL_TITLE[i] ;
+%><option value="<%=fctl%>"><%=tt %></option>
+<%
+}
+%>   </select>
 	  </div>
   </div>
     <div class="layui-form-item">
@@ -105,14 +175,41 @@ dlg.resize_to(600,400);
  </form>
 </body>
 <script type="text/javascript">
+var comid = <%=comid%>;
+var baud = <%=baud%>;
+var databits = <%=databits%>;
+var parity = <%=parity%>;
+var stopbits = <%=stopbits%>;
+var flowctl = <%=flowctl%>;
+$("#comid").val(comid) ;
+$("#baud").val(baud) ;
+$("#databits").val(databits) ;
+$("#parity").val(parity) ;
+$("#stopbits").val(stopbits) ;
+$("#flowctl").val(flowctl) ;
+
 var form = null;
 layui.use('form', function(){
 	  form = layui.form;
 	  
-	  $("#name").on("input",function(e){
+	  
+	  
+	  form.on("select(comid)",function(obj){
 		  setDirty();
 		  });
-	  $("#title").on("input",function(e){
+	  form.on("select(baud)",function(obj){
+		  setDirty();
+		  });
+	  form.on("select(databits)",function(obj){
+		  setDirty();
+		  });
+	  form.on("select(parity)",function(obj){
+		  setDirty();
+		  });
+	  form.on("select(stopbits)",function(obj){
+		  setDirty();
+		  });
+	  form.on("select(flowctl)",function(obj){
 		  setDirty();
 		  });
 	  $("#desc").on("input",function(e){

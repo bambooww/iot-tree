@@ -2,6 +2,7 @@
 /_*/
 /web/_*/
 /data/
+/lib/
 /tomato_data/
 /server/temp/
 /server/app.xml

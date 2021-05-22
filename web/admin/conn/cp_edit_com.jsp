@@ -10,49 +10,38 @@
 	java.net.*,
 	java.util.*
 	"%><%
-	if(!Convert.checkReqEmpty(request, out, "repid","cpid"))
+	if(!Convert.checkReqEmpty(request, out, "repid"))
 	return;
 String repid = request.getParameter("repid") ;
 String cpid = request.getParameter("cpid") ;
-String connid = request.getParameter("connid") ;
-ConnProTcpClient cp = (ConnProTcpClient)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
-ConnPtTcpClient cpt = null ;
-if(cp==null)
+ConnProCOM cp = null ;
+if(Convert.isNullOrEmpty(cpid))
 {
-	out.print("no ConnProvider found") ;
-	return ;
-}
-
-if(Convert.isNullOrEmpty(connid))
-{
-	cpt = new ConnPtTcpClient() ;
-	connid = cpt.getId() ;
+	cp = new ConnProCOM() ;
+	cpid = cp.getId() ;
 }
 else
 {
-	cpt = (ConnPtTcpClient)cp.getConnById(connid) ;
-	if(cpt==null)
+	cp = (ConnProCOM)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+	if(cp==null)
 	{
-		out.print("no connection found") ;
+		out.print("no ConnProvider found") ;
 		return ;
 	}
 }
 
-String name = cpt.getName() ;
-String title= cpt.getTitle() ;
+String name = cp.getName() ;
+String title= cp.getTitle() ;
 String chked = "" ;
-if(cpt.isEnable())
+if(cp.isEnable())
 	chked = "checked='checked'" ;
-String desc = cpt.getDesc();
-String host = cpt.getHost() ;
-String port  = cpt.getPortStr() ;
-
+String desc = cp.getDesc();
 String cp_tp = cp.getProviderType() ;
-
+//List<ConnProTcpClient.ClientItem> clients = cp.listConns() ;
 %>
 <html>
 <head>
-<title>tcp client conn editor</title>
+<title>com cp editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -69,25 +58,15 @@ dlg.resize_to(600,400);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-inline">
-      <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="name" value="<%=name%>" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="title" name="title" value="<%=title%>" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
 	  </div>
 	  <div class="layui-form-mid">Enable:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
-	  </div>
-  </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label">Host:</label>
-    <div class="layui-input-inline">
-      <input type="text" id="host" name="host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-form-mid">Port:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
     <div class="layui-form-item">
@@ -130,7 +109,6 @@ var _tmpid = 0 ;
 var bdirty=false;
 var cp_id = "<%=cpid%>" ;
 var cp_tp = "<%=cp_tp%>" ;
-var conn_id = "<%=connid%>" ;
 
 function isDirty()
 {
@@ -179,25 +157,10 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
-	var host = $('#host').val();
-	if(host==null||host=='')
-	{
-		cb(false,'Please input host') ;
-		return ;
-	}
-	var port = $('#port').val();
-	if(port==null||port=='')
-	{
-		cb(false,'Please input port') ;
-		return ;
-	}
-	var vp = parseInt(port);
-	if(vp==NaN||vp<0)
-	{
-		cb(false,'Please input valid port') ;
-	}
+	cb(true,{id:cp_id,name:n,title:tt,desc:desc,enable:ben,tp:cp_tp});
+	//var dbname=document.getElementById('db_name').value;
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp});
+	//document.getElementById('form1').submit() ;
 }
 
 </script>

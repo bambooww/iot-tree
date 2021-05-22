@@ -40,6 +40,7 @@
  		name = tag.getName() ;
  		title = tag.getTitle() ;
  		desc = tag.getDesc() ;
+ 		bmid = tag.isMidExpress();
  		addr = tag.getAddress() ;
  		valtp = tag.getValTp() ;
  		if(valtp!=null)

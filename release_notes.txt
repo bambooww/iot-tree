@@ -1,0 +1,7 @@
+IOT-Tree is an open source server
+
+
+COM Driver is implements on RXTX
+
+RXTX binary builds provided as a courtesy of Fizzed, Inc. (http://fizzed.com/).
+Please see http://fizzed.com/oss/rxtx-for-java for more information.
