@@ -805,7 +805,8 @@ var cxt_menu = {
 	"hmi":[
 		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui},
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi},
-		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi}
+		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi},
+		{op_name:"access_ui",op_title:"<wbt:lang>Access</wbt:lang>",op_icon:"fa fa-times",op_action:act_access_hmi},
 	]
 }
 
@@ -1362,6 +1363,11 @@ function act_del_hmi(n,op)
 	hmi_del(n.path,()=>{
 		refresh_ui() ;
 	});
+}
+
+function act_access_hmi(n,op)
+{
+	window.open(n.path);
 }
 
 function act_hmi_edit_ui(n,op)

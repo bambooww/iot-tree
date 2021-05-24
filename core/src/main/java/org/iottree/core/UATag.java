@@ -195,8 +195,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public UADev getBelongToDev()
 	{
-		if(belongToNode instanceof UADev)
-			return (UADev)belongToNode ;
+		UANode p = belongToNode ;
+		do
+		{
+			if(p instanceof UADev)
+				return (UADev)p ;
+			p = p.getParentNode() ;
+		}while(p!=null);
 		return null ;
 	}
 	

@@ -44,8 +44,8 @@ String chked = "" ;
 if(cpt.isEnable())
 	chked = "checked='checked'" ;
 String desc = cpt.getDesc();
-String comid = ""+cpt.getComId() ;
-String baud  = ""+cpt.getBaud() ;
+String comid = cpt.getComId() ;
+int baud  = cpt.getBaud() ;
 int databits = cpt.getDataBits() ;
 int parity = cpt.getParity() ;
 int stopbits = cpt.getStopBits() ;
@@ -175,7 +175,7 @@ for(int i = 0 ; i < ConnPtCOM.FLOWCTL.length;i++)
  </form>
 </body>
 <script type="text/javascript">
-var comid = <%=comid%>;
+var comid = '<%=comid%>';
 var baud = <%=baud%>;
 var databits = <%=databits%>;
 var parity = <%=parity%>;
@@ -257,6 +257,27 @@ function get_input_val(id,defv,bnum)
 	return n;
 }
 
+function get_val(id,title,cb,bnum)
+{
+	var v = $('#'+id).val();
+	if(v==null||v=='')
+	{
+		cb(false,'Please input '+title) ;
+		throw "no "+title+" input" ;
+	}
+	if(bnum)
+	{
+		v = parseInt(v);
+		if(v==NaN)
+		{
+			cb(false,'Please input valid '+title) ;
+			throw "invalid "+title+" input" ;
+		}
+	}
+	
+	return v ;
+}
+
 function do_submit(cb)
 {
 	var n = $('#name').val();
@@ -276,25 +297,17 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
-	var host = $('#host').val();
-	if(host==null||host=='')
-	{
-		cb(false,'Please input host') ;
-		return ;
-	}
-	var port = $('#port').val();
-	if(port==null||port=='')
-	{
-		cb(false,'Please input port') ;
-		return ;
-	}
-	var vp = parseInt(port);
-	if(vp==NaN||vp<0)
-	{
-		cb(false,'Please input valid port') ;
-	}
+	var comid = get_val("comid","Port Id",cb,false);
+	var baud = get_val("baud","Baud rate",cb,true);
+	var databits = get_val("databits","Data bits",cb,true);
+	var parity = get_val("parity","Parity",cb,true);
+	var stopbits = get_val("stopbits","Stop bits",cb,true);
+	var flowctl = get_val("flowctl","Flow control",cb,true);
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
+		comid:comid,baud:baud,databits:databits,
+		parity:parity,stopbits:stopbits,flowctl:flowctl
+		});
 }
 
 </script>

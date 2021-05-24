@@ -5,36 +5,30 @@
     <listener>
         <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
     </listener>
-    <!-- 
+    
     <filter>
-        <filter-name>AppConfFilter</filter-name>
-        <filter-class>org.iottree.core.AppConfigFilter</filter-class>
+        <filter-name>PrjFilter</filter-name>
+        <filter-class>org.iottree.core.util.web.PrjFilter</filter-class>
         <init-param>
-            <param-name>comp-tasks</param-name>
+            <param-name></param-name>
             <param-value></param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AppConfFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
+        <filter-name>PrjFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>AppConfFilter</filter-name>
-        <url-pattern>*.jws</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>AppConfFilter</filter-name>
-        <url-pattern>*.xml</url-pattern>
-    </filter-mapping>
-    	 -->
+    	 
+   <!-- 
 	<servlet>
-	  	<servlet-name>RepServlet</servlet-name>
-	  	<servlet-class>org.iottree.core.util.web.RepServlet</servlet-class>
+	  	<servlet-name>PrjServlet</servlet-name>
+	  	<servlet-class>org.iottree.core.util.web.PrjServlet</servlet-class>
     </servlet>
 	  <servlet-mapping>
-	  	<servlet-name>RepServlet</servlet-name>
-	  	<url-pattern>/iottree/*</url-pattern>
+	  	<servlet-name>PrjServlet</servlet-name>
+	  	<url-pattern>/*</url-pattern>
 	  </servlet-mapping>
+	   -->
     <jsp-config>
         <taglib>
             <taglib-uri>wb_tag</taglib-uri>

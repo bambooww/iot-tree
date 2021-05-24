@@ -8,23 +8,16 @@
 	org.iottree.core.comp.*,
 				java.net.*"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "repid","id"))
+	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
 	//String op = request.getParameter("op");
-	String repid = request.getParameter("repid");
-	String id = request.getParameter("id");
-	UAPrj rep = UAManager.getInstance().getPrjById(repid);
-	if(rep==null)
-	{
-		out.print("no rep found!");
-		return;
-	}
-	UAHmi uahmi = rep.findHmiById(id) ;
+	String path = request.getParameter("path");
+	UAHmi uahmi = UAUtil.findHmiByPath(path) ;
 	if(uahmi==null)
 	{
 		out.print("no hmi node found") ;
 	}
-	String repname = rep.getName() ;
+	//String repname = rep.getName() ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -104,8 +97,8 @@ body {
 
 .mid {
 	position: absolute;
-	left: 45px;
-	right: 20px;
+	left: 0px;
+	right: 0px;
 	top: 0px;
 	bottom: 0;
 	z-index: 998;
@@ -268,7 +261,7 @@ height:30px;
 
 </script>
 <body class="layout-body">
-
+<%--
 		<div class="left " style="background-color: #aaaaaa;overflow: hidden;">
 			<div id="leftcat_rep_unit" class0="lr_btn_div" onclick="leftcat_sel('rep_unit','Project Lib')"><i class="fa fa-cube fa-3x lr_btn"></i><br>Project</div>
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
@@ -276,12 +269,14 @@ height:30px;
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)"><i class="fa fa-cubes fa-3x lr_btn"></i><br>Pic Lib</div>
 			<div id="leftcat_comp" onclick="leftcat_sel('comp','HMI Components',500)"><i class="fa fa-cogs fa-3x lr_btn"></i><br> Components</div>
 		</div>
+		
 		<div id="left_panel" class="left_panel_win" pop_width="300px" >
 			<div class="left_panel_bar" >
 				<span id="left_panel_title" style="font-size: 20px;">Basic Shape</span><div onclick="leftcat_close()" class="top_menu_close"  style="position:absolute;top:1px;right:10px;top:2px;">X</div>
 			</div>
 			<iframe id="left_pan_iframe" src="" style="width:100%;height:90%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
 		</div>
+		 --%>
 		<div class="mid">
 			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
 				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
@@ -326,10 +321,7 @@ height:30px;
 
 
 var layuiEle ;
-var repid="<%=repid%>";
-var repname="<%=repname%>" ;
-var hmiid = "<%=id%>"
-var editorname = "<%=rep.getEditorName()%>" ;
+var path="<%=path%>";
 
 layui.use('element', function(){
 	layuiEle = layui.element;
@@ -355,10 +347,10 @@ function on_panel_mousemv(p,d)
 	$("#p_info").html("["+p.x+","+p.y+"] - ("+Math.round(d.x*10)/10+","+Math.round(d.y*10)/10+")");
 }
 
-function init_iottpanel()
+function init_iottpanel0()
 {
 	hmiModel = new oc.hmi.HMIModel({
-		temp_url:"/hmi_ajax.jsp?op=load&repid="+repid+"&hmiid="+hmiid,
+		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
 		comp_url:"/comp_ajax.jsp?op=comp_load",
 	});
 	
@@ -371,6 +363,33 @@ function init_iottpanel()
 	//}) ;
 	hmiView = new oc.hmi.HMIView(repid,hmiid,hmiModel,panel,null,{
 		copy_paste_url:"util/copy_paste_ajax.jsp",show_only:true
+	});
+	
+	hmiView.init();
+	
+	loadLayer = hmiView.getLayer();
+	intedit = hmiView.getInteract();
+}
+
+
+function init_iottpanel()
+{
+	hmiModel = new oc.hmi.HMIModel({
+		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
+		comp_url:"/comp_ajax.jsp?op=comp_load",
+		hmi_path:path
+	});
+	
+	panel = new oc.hmi.HMIPanel("main_panel",{
+		on_mouse_mv:on_panel_mousemv,
+		on_model_chg:on_model_chg
+	});
+	//editor = new oc.DrawEditor("edit_props","edit_events",panel,{
+	//	plug_cb:editor_plugcb
+	//}) ;
+	hmiView = new oc.hmi.HMIView(hmiModel,panel,null,{
+		copy_paste_url:"util/copy_paste_ajax.jsp",
+		show_only:true
 	});
 	
 	hmiView.init();
@@ -640,7 +659,7 @@ var ws = null;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/_ws/hmi/'+repname+"/"+hmiid;
+    var url = 'ws://' + window.location.host + '/_ws/hmi/';
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

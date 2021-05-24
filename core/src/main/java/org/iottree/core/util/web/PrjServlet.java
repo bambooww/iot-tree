@@ -17,21 +17,101 @@ import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UAUtil;
 import org.iottree.core.util.Convert;
 
-public class RepServlet extends HttpServlet
+public class PrjServlet extends HttpServlet
 {
-	public RepServlet()
+	public PrjServlet()
 	{
 	}
 	
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-	{
-		super.doGet(req, resp);
-	}
+//	@Override
+//	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+//	{
+//		super.doGet(req, resp);
+//	}
 
+	
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, java.io.IOException
+	{
+		HttpSession session = req.getSession();
+		//this.getServletContext()..getRequestDispatcher(getServletInfo())
+		resp.setContentType("text/html;charset=UTF-8");
+		String uri = req.getRequestURI();
+		String qs = req.getQueryString();
+		System.out.println("uri="+uri +"  qs="+qs);
+		if(uri.startsWith("/iottree"))
+			uri = uri.substring(8) ;
+		
+		if(uri.endsWith(".jsp"))
+		{
+			String u = uri ;
+			if(qs!=null)
+				u += "?"+qs ;
+			//req.getRequestDispatcher(u).forward(req, resp);
+			super.service(req, resp);
+			return ;
+		}
+		
+		UANode node = UAUtil.findNodeByPath(uri) ;
+		if(node==null)
+		{
+			return ;
+		}
+		
+		if(node instanceof UAHmi)
+		{
+			//UAHmi hmi = (UAHmi)node ;
+			req.getRequestDispatcher("/hmi.jsp?path="+uri).forward(req, resp);
+			return ;
+		}
+		else
+		{
+			req.getRequestDispatcher("/node_list.jsp?path="+uri).forward(req, resp);
+			return ;
+		}
+		
+	}
+	
+	private PathItem parsePath(String path)
+	{
+		LinkedList<String> ss = Convert.splitStrWithLinkedList(path, "/") ;
+		PathItem pi = new PathItem() ;
+		
+		pi.nodePath = new LinkedList<>() ;
+		while(ss.size()>0)
+		{
+			String n = ss.removeFirst() ;
+			if(n.startsWith("_"))
+			{
+				pi.tp = n ;
+				break ;
+			}
+			else
+			{
+				pi.nodePath.addLast(n);
+			}
+		}
+		
+		if(ss.size()>0)
+			pi.tpPath = ss ;
+		
+		return pi ;
+	}
+	
+	public static class PathItem
+	{
+		LinkedList<String> nodePath = null ;
+		
+		String tp = null ;
+		
+		LinkedList<String> tpPath = null ;
+	}
+	
+
+	protected void service0(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, java.io.IOException
 	{
 		HttpSession session = req.getSession();
@@ -102,41 +182,5 @@ public class RepServlet extends HttpServlet
 			req.getRequestDispatcher("/hmi.jsp?repid="+rep.getId()+"&id="+hmi.getId()).forward(req, resp);
 			break ;
 		}
-	}
-	
-	
-	private PathItem parsePath(String path)
-	{
-		LinkedList<String> ss = Convert.splitStrWithLinkedList(path, "/") ;
-		PathItem pi = new PathItem() ;
-		
-		pi.nodePath = new LinkedList<>() ;
-		while(ss.size()>0)
-		{
-			String n = ss.removeFirst() ;
-			if(n.startsWith("_"))
-			{
-				pi.tp = n ;
-				break ;
-			}
-			else
-			{
-				pi.nodePath.addLast(n);
-			}
-		}
-		
-		if(ss.size()>0)
-			pi.tpPath = ss ;
-		
-		return pi ;
-	}
-	
-	public static class PathItem
-	{
-		LinkedList<String> nodePath = null ;
-		
-		String tp = null ;
-		
-		LinkedList<String> tpPath = null ;
 	}
 }  

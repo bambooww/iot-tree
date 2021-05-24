@@ -73,11 +73,11 @@ var ow = dlg.get_opener_w() ;
 var plugpm = ow.editor_plugcb_pm;
 if(plugpm!=null)
 {
-	//{editor:editorname,editor_id:repid,repid:repid,hmiid:hmiid,di:di,name:name,val:val} ;
+	// {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
 	console.log(plugpm) ;
 	var di = plugpm.di ;
 	var pdf = di.findProDefItemByName(plugpm.name) ;
-	$("#binded_id").val(pdf.title+"["+pdf.name+"] ") ;
+	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
 	$("#name").val(plugpm.name) ;
 	var vv = plugpm.val ;
 	if(vv)
@@ -96,9 +96,9 @@ function sel_tag()
 {
 	if(plugpm==null)
 		return ;
-	var cxtnodeid = plugpm.cxtnodeid ;
+	//var cxtnodeid = plugpm.cxtnodeid ;
 	var tmpv = $("#tag").val() ;
-	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?repid="+plugpm.repid+"&id="+cxtnodeid+"&val="+tmpv,
+	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?path="+plugpm.path+"&val="+tmpv,
 			{title:"Select Tag in Context",w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[
@@ -121,7 +121,7 @@ function insert_tag()
 		return ;
 	var cxtnodeid = plugpm.cxtnodeid ;
 	var tmpv = $("#tag").val() ;
-	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?repid="+plugpm.repid+"&id="+cxtnodeid+"&val="+tmpv,
+	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?path="+plugpm.path+"&val="+tmpv,
 			{title:"Select Tag in Context",w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[

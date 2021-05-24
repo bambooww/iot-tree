@@ -25,6 +25,11 @@
 	{
 		out.print("no hmi node found") ;
 	}
+	if(uahmi.getRefBranchNode()!=null)
+	{
+		response.sendRedirect(path);
+		return ;
+	}
 	UANodeOCTagsCxt node = uahmi.getBelongTo() ;
 	String cxtnodeid = node.getId() ;
 %><!DOCTYPE html>

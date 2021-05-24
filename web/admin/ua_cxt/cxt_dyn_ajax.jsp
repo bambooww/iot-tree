@@ -15,7 +15,7 @@ if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 
 String path=request.getParameter("path");
-
+String op = request.getParameter("op");
 UANode n = UAUtil.findNodeByPath(path) ;
 if(n==null)
 {
@@ -28,5 +28,14 @@ if(!(n instanceof UANodeOCTagsCxt))
 	return ;
 }
 UANodeOCTagsCxt ntags = (UANodeOCTagsCxt)n ;
-ntags.CXT_renderJson(out);
+switch(op)
+{
+case "w":
+	ntags.getTagById(id)
+	break ;
+default:
+	
+	ntags.CXT_renderJson(out);
+break ;
+}
 %>

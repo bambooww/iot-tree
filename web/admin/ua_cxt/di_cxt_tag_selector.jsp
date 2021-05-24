@@ -12,45 +12,39 @@
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>	
 <%
-		if(!Convert.checkReqEmpty(request, out, "repid","id"))
-		return;
-			
-			String val = request.getParameter("val") ;
-			if(val==null)
-		val = "" ;
-			//String op = request.getParameter("op");
-			String repid=request.getParameter("repid");
-			String id = request.getParameter("id") ;
-			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
-			if(rep==null)
-			{
-		out.print("no rep found");
-		return ;
-			}
-			
-			String repname = rep.getName() ;
-			
-			UANode n = rep.findNodeById(id) ;
-			if(n==null)
-			{
-		out.print("no node found") ;
-		return ;
-			}
-			if(!(n instanceof UANodeOCTags))
-			{
-		out.print("not node oc tags") ;
-		return ;
-			}
-			UANodeOCTags ntags = (UANodeOCTags)n ;
-			List<UATag> tags = ntags.listTagsAll() ;
-			
+if(!Convert.checkReqEmpty(request, out, "path"))
+	return;
+	
+String val = request.getParameter("val") ;
+if(val==null)
+	val = "" ;
+//String op = request.getParameter("op");
+String path=request.getParameter("path");
 
-			String parent_p = ntags.getNodePathName() ;
-			if(Convert.isNotNullEmpty(parent_p))
-		parent_p +="." ;
-			boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
-	%>
-<html>
+	
+	//String repname = rep.getName() ;
+	
+UANode n = UAUtil.findNodeByPath(path);//rep.findNodeById(id) ;
+if(n==null)
+{
+	out.print("no node found") ;
+	return ;
+}
+if(n instanceof UAHmi)
+	n = n.getParentNode() ;
+if(!(n instanceof UANodeOCTags))
+{
+	out.print("not node oc tags") ;
+	return ;
+}
+UANodeOCTags ntags = (UANodeOCTags)n ;
+List<UATag> tags = ntags.listTagsAll() ;
+
+String parent_p = ntags.getNodePathName() ;
+if(Convert.isNotNullEmpty(parent_p))
+	parent_p +="." ;
+boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
+%><html>
 <head>
 <title>context tags lister</title>
 <style>
@@ -66,7 +60,7 @@
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
-<b>Context:<%=rep.getTitle() %>] / [<%=ntags.getNodePathName() %>] </b>
+<b>Context: / [<%=path %>] </b>
 <%
 
 %>
@@ -84,8 +78,9 @@
 	
 	for(UATag tg : tags)
 	{
-		String pathn = tg.getMemberPathName();
-		pathn = pathn.substring(parent_p.length()) ;
+		String pathn = tg.getNodeCxtPathIn(ntags) ;
+		String patht =  tg.getNodeCxtPathTitleIn(ntags) ;
+		//pathn = pathn.substring(parent_p.length()) ;
 		String chked = "" ;
 		if(pathn.equals(val))
 			chked = "checked='checked'" ;
@@ -94,7 +89,7 @@
  <tr id="row_<%=pathn %>" height0='1' style0="height:5" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
   <td><input type="checkbox" id="cb_<%=pathn %>"  <%=chked %>/></td>
   <td><%=pathn %></td>
-  <td><%=tg.getMemberPathTitle() %></td>
+  <td><%=patht %></td>
   
   <td><%=tg.getValTp() %></td>
   </tr>
@@ -106,9 +101,7 @@
 
 </body>
 <script>
-var repid="<%=repid%>" ;
-var repname = "<%=repname%>" ;
-var id = "<%=id%>" ;
+var path="<%=path%>" ;
 var rowbgcolor = '#ffffff';
 var selVal = "<%=val%>" ;
 function mouseover(sel)

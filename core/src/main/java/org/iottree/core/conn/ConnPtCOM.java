@@ -45,7 +45,7 @@ public class ConnPtCOM extends ConnPtStream
 				new Object[] {0,1,2,3,4},0));
 	 */
 	
-	int comId=1 ;
+	String comId="" ;
 	
 	int baud = 9600 ;
 	
@@ -83,6 +83,10 @@ public class ConnPtCOM extends ConnPtStream
 		XmlData xd = super.toXmlData();
 		xd.setParamValue("comid", comId);
 		xd.setParamValue("baud", baud);
+		xd.setParamValue("databits", dataBits);
+		xd.setParamValue("parity", parity);
+		xd.setParamValue("stopbits", stopBits);
+		xd.setParamValue("flowctl", flowCtl);
 		return xd;
 	}
 
@@ -90,8 +94,12 @@ public class ConnPtCOM extends ConnPtStream
 	public boolean fromXmlData(XmlData xd, StringBuilder failedr)
 	{
 		boolean r = super.fromXmlData(xd, failedr);
-		this.comId = xd.getParamValueInt32("comid",1);
+		this.comId = xd.getParamValueStr("comid","");
 		this.baud = xd.getParamValueInt32("baud", 9600);
+		this.dataBits =  xd.getParamValueInt32("databits", 8);
+		this.parity = xd.getParamValueInt32("parity", 0);
+		this.stopBits = xd.getParamValueInt32("stopbits", 1);
+		this.flowCtl = xd.getParamValueInt32("flowctl", 0);
 		return r;
 	}
 	
@@ -99,12 +107,15 @@ public class ConnPtCOM extends ConnPtStream
 	{
 		super.injectByJson(jo);
 		
-		
-		this.comId = jo.getInt("comid");
+		this.comId = jo.getString("comid");
 		this.baud = jo.getInt("baud") ;
+		this.dataBits = jo.getInt("databits");
+		this.parity = jo.getInt("parity") ;
+		this.stopBits = jo.getInt("stopbits");
+		this.flowCtl = jo.getInt("flowctl") ;
 	}
 
-	public int getComId()
+	public String getComId()
 	{
 		return comId;
 	}
@@ -162,7 +173,7 @@ public class ConnPtCOM extends ConnPtStream
 		try
 		{
 			CommPortIdentifier compid = CommPortIdentifier
-					.getPortIdentifier("COM"+comId);
+					.getPortIdentifier(comId);
 			if (compid == null)
 			{
 				return false;

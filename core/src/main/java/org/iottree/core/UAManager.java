@@ -180,6 +180,10 @@ public class UAManager
 	
 	public void delRep(String id)
 	{
+		UAPrj prj = getPrjById(id);
+		if(prj==null)
+			return ;
+		
 		File f = getPrjFile(id) ;
 		if(f.exists())
 		{
@@ -190,7 +194,10 @@ public class UAManager
 		{
 			deleteDir(df) ;
 		}
+		
+		this.reps.remove(prj) ;
 	}
+	
 	private static boolean deleteDir(File dir) {
         if (dir.isDirectory())
         {
@@ -210,7 +217,10 @@ public class UAManager
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,sb))
 			throw new IllegalArgumentException(sb.toString()) ;
-		
+		if("admin".equals(name))
+		{
+			throw new IllegalArgumentException("admin is reserved word.Please use another name") ;
+		}
 		UAPrj r = this.getPrjByName(name) ;
 		if(r!=null)
 		{

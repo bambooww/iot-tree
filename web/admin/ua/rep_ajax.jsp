@@ -18,20 +18,21 @@ String id=request.getParameter("id");
 String name=request.getParameter("name");
 String title = request.getParameter("title");
 String desc = request.getParameter("desc");
+UAPrj dc = null;
 switch(op)
 {
 case "add":
 	StringBuilder errsb = new StringBuilder() ;
 
-	UAPrj dc = UAManager.getInstance().addRep(name, title, desc) ;
-	if(dc==null)
+	try
 	{
-		out.print(errsb.toString()) ;
+		dc = UAManager.getInstance().addRep(name, title, desc) ;
+		out.print("succ="+dc.getId()) ;
 		return ;
 	}
-	else
+	catch(Exception e)
 	{
-		out.print("succ="+dc.getId()) ;
+		out.print(e.getMessage()) ;
 		return ;
 	}
 case "edit":

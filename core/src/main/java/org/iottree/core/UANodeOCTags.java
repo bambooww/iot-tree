@@ -252,6 +252,13 @@ public abstract class UANodeOCTags extends UANodeOC
 		return null ;
 	}
 	
+	
+	public UATag getTagByCxtPath(String cxtpath)
+	{
+		//this.fin
+		List<String> pns = Convert.splitStrWith(cxtpath, "/.") ;
+		return null;
+	}
 //	/**
 //	 *  xxx.xxx.xxx
 //	 * @param path
@@ -274,7 +281,7 @@ public abstract class UANodeOCTags extends UANodeOC
 
 	public List<DevAddr> listTagsAddrAll()
 	{
-		List<UATag> tags = listTags() ;
+		List<UATag> tags = listTagsAll() ;
 		if(tags==null||tags.size()<=0)
 		{
 			return null ;

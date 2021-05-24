@@ -91,7 +91,8 @@ if(!brefed)
 }
 %>
 </blockquote>
-<table class="oc_div_list" id="tb_cur">
+<div style="height:100px;overflow: auto;">
+<table class="oc_div_list" id="tb_cur" >
   <thead>
      <tr>
 <%
@@ -108,6 +109,7 @@ if(!brefed)
         <th>Address</th>
         <th>Value Type</th>
         <th>Write</th>
+        <th></th>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -131,19 +133,24 @@ for(UATag tag:cur_tags)
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
         <td><%=(tag.isCanWrite()?"✔":"") %></td>
+        <td>
+        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
+        <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
+        </td>
       </tr>
 <%
 }
 %>
     </tbody>
 </table>
+</div>
 <hr class="layui-bg-green">
-
  <blockquote class="layui-elem-quote ">Context under  [<%=node_tags.getNodePath() %>]
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
   <input type="checkbox" name="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
  </div>
 </blockquote>
+<div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
 <table class="oc_div_list" style="margin-top:10px">
   <thead>
      <tr>
@@ -151,10 +158,11 @@ for(UATag tag:cur_tags)
     <th>Tag</th>
         <th>Address</th>
         <th>Value Type</th>
-        <th>Write</th>
+        
         <th>Value</th>
         <th>Timestamp</th>
         <th>Quality</th>
+        <th>Write</th>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -163,7 +171,7 @@ for(UANodeOCTags tn:tns)
 {
 	//if(tn.getRefBranchNode()!=null)
 	//	continue ;
-	List<UATag> tags = tn.listTagsAll() ;
+	List<UATag> tags = tn.listTags() ;
 
 	String tn_id = tn.getId() ;
 	String tn_path = tn.getNodePath() ;
@@ -177,10 +185,20 @@ for(UANodeOCTags tn:tns)
 
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
-        <td><%=(tag.isCanWrite()?"✔":"") %></td>
         <td id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>
+        <td>
+<%
+	if(tag.isCanWrite())
+	{
+%>
+        <%=(tag.isCanWrite()?"✔":"") %>
+        	<input type="text" id="ctag_w_<%=cxtpath%>" value="" size="8"/><button>w</button>
+<%
+	}
+%>
+        </td>
       </tr>
 <%
 	}
@@ -188,7 +206,24 @@ for(UANodeOCTags tn:tns)
 %>
     </tbody>
 </table>
+</div>
 </form>
+<table width='100%' border='1' height="120">
+<tr>
+ <td>
+ script test <input type='button' value='run' onclick="run_script_test('')"/>
+ </td>
+ <td>script test result</td>
+</tr>
+ <tr>
+  <td>
+   <textarea id='script_test' rows="6" style="overflow: scroll;width:98%"></textarea>
+  </td>
+  <td>
+   <textarea id='script_res' rows="6" style="overflow: scroll;width:98%"></textarea>
+  </td>
+ </tr>
+</table>
 </body>
 <script>
 var path = "<%=path%>" ;
@@ -403,7 +438,7 @@ function show_cxt_dyn(p,cxt)
 		var tagp =p+tg.n ;
 		var bvalid = tg.valid ;
 		var dt = tg.dt ;
-		var strv = tg.strv ;
+		var strv = tg.v ;
 		show_ele_html("ctag_v_"+tagp,strv) ;
 		show_ele_html("ctag_dt_"+tagp,dt) ;
 		show_ele_html("ctag_q_"+tagp,""+bvalid) ;
@@ -425,5 +460,18 @@ function show_ele_html(n,v)
 
 if(!b_devdef)
 	setInterval(cxt_rt,3000) ;
+	
+function run_script_test(fn)
+{
+	var scode = document.getElementById('script_test').value ;
+	if(scode==null||scode==''||trim(scode)=='')
+		return ;
+	send_ajax('cxt_script_test.jsp','path='+path+'&txt='+utf8UrlEncode(scode),
+		function(bsucc,ret)
+		{
+			document.getElementById('script_res').value = ret ;
+		},false) ;
+}
+
 </script>
 </html>

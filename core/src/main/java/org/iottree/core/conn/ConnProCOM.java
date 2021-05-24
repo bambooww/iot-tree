@@ -151,7 +151,7 @@ public class ConnProCOM extends ConnProvider
 	{
 		for(ConnPt ci:this.listConns())
 		{
-			ConnPtTcpClient citc = (ConnPtTcpClient)ci ;
+			ConnPtCOM citc = (ConnPtCOM)ci ;
 			citc.checkConn() ;
 		}
 	}

@@ -6,40 +6,14 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%if(!Convert.checkReqEmpty(request, out, "tp"))
-		return;
+	java.util.*"%><%	
 	String tp = request.getParameter("tp");
-	
+	if(tp==null)
+		tp= "" ;
 	UAHmi hmi = null ;
+	UANode branchn =null;
 	switch(tp)
 	{
-	case "rep":
-		if(!Convert.checkReqEmpty(request, out, "rootid","id"))
-			return;
-		String rootid = request.getParameter("rootid") ;
-		String id=request.getParameter("id");
-		
-		UAPrj rep = UAManager.getInstance().getPrjById(rootid) ;
-		if(rep==null)
-		{
-			out.print("no rep found");
-			return ;
-		}
-		hmi = rep.findHmiById(id) ;
-		break ;
-	case "devdef":
-		if(!Convert.checkReqEmpty(request, out, "rootid","id"))
-			return;
-		rootid = request.getParameter("rootid") ;
-		id=request.getParameter("id");
-		DevDef dd = DevManager.getInstance().getDevDefById(rootid);
-		if(dd==null)
-		{
-			out.print("no rep found");
-			return ;
-		}
-		hmi = (UAHmi)dd.findNodeById(id) ;
-		break ;
 	case "sub":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_id"))
 			return;
@@ -56,7 +30,7 @@
 			out.print("illegal hmi_path and sub_id") ;
 			return ;
 		}
-		UANode branchn = hmi.getRefBranchNode() ;
+		branchn = hmi.getRefBranchNode() ;
 		UANode subn = hmi.getParentNode().findNodeById(subid) ;
 		if(subn==null&&branchn!=null)
 			subn = branchn.getParentNode().findNodeById(subid) ;
@@ -66,25 +40,35 @@
 			return ;
 		}
 		hmi = (UAHmi)subn ;
+		UANode refn = hmi.getRefBranchNode() ;
+		String refid = null ;
+		if(refn!=null)
+		{
+			hmi = (UAHmi)refn ;
+		}
+		String np = hmi.getNodePath() ;
+		String txt = hmi.loadHmiUITxt() ;
+		out.print(np+"\r\n") ;
+		out.print(txt);
 		break ;
 	default:
-		return ;
+		if(!Convert.checkReqEmpty(request, out, "path"))
+			return;
+		String path=request.getParameter("path");
+		hmi = (UAHmi)UAUtil.findNodeByPath(path);//.findHmiById(hmiid) ;
+		if(hmi==null)
+		{
+			out.print("no hmi found") ;
+			return ;
+		}
+		branchn = hmi.getRefBranchNode();
+		if(branchn!=null&&branchn instanceof UAHmi)
+			hmi = (UAHmi)branchn ;
+		txt = hmi.loadHmiUITxt() ;
+		out.print(txt);
+		break ;
 	}
+	
 
-	if(hmi==null)
-	{
-		out.print("no hmi found") ;
-		return ;
-	}
-	UANode refn = hmi.getRefBranchNode() ;
-	String refid = null ;
-	if(refn!=null)
-	{
-		hmi = (UAHmi)refn ;
-	}
-	String np = hmi.getNodePath() ;
-	String txt = hmi.loadHmiUITxt() ;
-	out.print(np+"\r\n") ;
-	out.print(txt);%>
-
-
+	
+%>
