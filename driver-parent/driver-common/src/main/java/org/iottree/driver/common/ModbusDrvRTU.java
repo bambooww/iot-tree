@@ -78,9 +78,11 @@ public class ModbusDrvRTU extends DevDriver
 		PropGroup gp = null;
 		
 		gp = new PropGroup("timing","Timing");
-		gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("conn_tryc","Fail Retry times","",PValTP.vt_int,false,null,null,3));
+		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
+		//
 		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
+		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
+		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
 		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
 		pgs.add(gp) ;
 		
@@ -209,6 +211,29 @@ public class ModbusDrvRTU extends DevDriver
 //		}
 		return true;
 	}
+	
+	private ModbusDevItem getDevItem(UADev dev)
+	{
+		for(ModbusDevItem mdi:modbusDevItems)
+		{
+			if(mdi.getUADev().equals(dev))
+					return mdi ;
+		}
+		return null ;
+	}
 
-
+	@Override
+	public boolean RT_writeVal(UADev dev,DevAddr da,Object v)
+	{
+		ModbusDevItem mdi = getDevItem(dev) ;
+		if(mdi==null)
+			return false;
+		return mdi.RT_writeVal(da, v) ;
+	}
+	
+	@Override
+	public boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v)
+	{
+		throw new RuntimeException("no impl") ;
+	}
 }

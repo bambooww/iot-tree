@@ -510,6 +510,15 @@ public class Convert
 	{
 		return checkVarName(n, true, invalidreson) ;
 	}
+	
+	public static void checkVarName(String n,boolean letterfirst)
+	{
+		StringBuilder sb = new StringBuilder();
+		if (!checkVarName(n,letterfirst, sb))
+			throw new IllegalArgumentException(sb.toString());
+
+		return;
+	}
 
 	public static boolean checkVarName(String n, boolean letterfirst,StringBuilder invalidreson)
 	{

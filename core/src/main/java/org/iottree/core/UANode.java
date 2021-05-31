@@ -57,6 +57,16 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		this.title = title ;
 		this.desc = desc ;
 	}
+	
+	void setNameTitleSys(String name,String title,String desc)
+	{
+		Convert.checkVarName(name,false);
+		//if(name.startsWith("_"))
+		//	throw new IllegalArgumentException("name cannot start with _") ;
+		this.name = name ;
+		this.title = title ;
+		this.desc = desc ;
+	}
 	/**
 	 * 
 	 * @param new_self create by copySelfWithNewId
@@ -226,7 +236,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		{
 			return "."+this.name ;
 		}
-		String ppn = p.getNodePath() ;
+		String ppn = p.getNodePathCxt() ;
 		return ppn+"."+this.name;
 	}
 	
@@ -384,6 +394,20 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	
 	protected abstract boolean chkValid();
 	
+	
+	protected void fireNodeChanged()
+	{
+		this.onNodeChanged();
+		
+		//
+		
+	}
+	
+	protected void onNodeChanged()
+	{
+		
+	}
+	
 	static ArrayList<PropGroup> basicPGS = new ArrayList<>();
 	static
 	{
@@ -475,7 +499,6 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		if(pnxd!=null)
 			this.fromPropNodeValXmlData(pnxd);
 	}
-
 	
 	public Object JS_get(String  key)
 	{
@@ -510,8 +533,6 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	}
 	
 	public static final String JS_NAME="graal.js";//"nashorn"; //
-	
-
 }
 
 

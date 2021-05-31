@@ -184,6 +184,7 @@ margin: 0 auto;
 .pi_sel
 {
 background-color: #0078d7;
+color:#ffffff;
 }
 
 .pi_edit_unit
@@ -238,7 +239,7 @@ for(PropGroup pg:pgs)
 %>
   <tr id="pi_<%=pi.getName()%>" onclick="sel_pi('<%=pi.getName()%>')">
     <td style="width:50%" class="td_left"><%=pi.getTitle() %></td>
-    <td style="width:50%">
+    <td style="width:50%;color:#010101">
 <%
 	PropItem.ValOpts vopts = pi.getValOpts();
 if(vopts==null || pi.isReadOnly())

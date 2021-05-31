@@ -20,6 +20,16 @@ if(val==null)
 	val = "" ;
 //String op = request.getParameter("op");
 String path=request.getParameter("path");
+String propv = "" ;
+if(Convert.isNotNullEmpty(val))
+{
+	int k = val.lastIndexOf('.') ;
+	if(k>0)
+	{
+		propv = val.substring(k+1) ;
+		val = val.substring(0,k); 
+	}
+}
 
 	
 	//String repname = rep.getName() ;
@@ -51,10 +61,10 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		table{border-collapse:collapse;}
 		body,td{font-size:12px;cursor:default;}
 </style>
-
 <script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/ajax.js" ></script>
-<script src="/_js/dlg.js" ></script>
+<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<script src="/_js/layui/layui.all.js"></script>
+<script src="/_js/dlg_layer.js"></script>
 <script>
 	
 </script>
@@ -65,7 +75,8 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 
 %>
 <span id="updt"></span><span id="log_inf"></span>
-<div style="overflow: auto;height: 90%">
+<div style="float:left;overflow: auto;height: 90%;width:70%">
+Tags
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <td width='2%'></td>
@@ -75,7 +86,6 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
   <td width='6%'>Value Type</td>
  </tr>
 <%
-	
 	for(UATag tg : tags)
 	{
 		String pathn = tg.getNodeCxtPathIn(ntags) ;
@@ -98,7 +108,22 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 %>
 </table>
 </div>
-
+<div style="float:right;height: 90%;width:30%">
+Properties
+ <select id="prop" multiple="multiple" style="width:99%;height:90%">
+ <%
+ for(String pn:UATag.js_names)
+ {
+	 String seled = "" ;
+	 if(pn.equals(propv))
+		 seled = "selected=\'selected\'" ;
+ %>
+ 	<option value="<%=pn %>" <%=seled %>><%=pn %></option>
+<%
+ }
+%> 	
+ </select>
+</div>
 </body>
 <script>
 var path="<%=path%>" ;
@@ -130,7 +155,18 @@ function clk_sel(sel)
 
 function get_val()
 {
-	return selVal ;
+	if(selVal==null||selVal==""||selVal==undefined)
+	{
+		dlg.msg("please select tag")
+		return null ;
+	}
+	var p = $("#prop").val() ;
+	if(p==null||p=="")
+	{
+		dlg.msg("please select property")
+		return null ;
+	}
+	return selVal+"."+p ;
 }
 
 function log(s)

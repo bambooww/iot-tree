@@ -41,7 +41,7 @@ public abstract class ModbusDrv extends DevDriver
 		PropGroup gp = null;
 		
 		gp = new PropGroup("timing","Timing");
-		gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
+		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
 		gp.addPropItem(new PropItem("conn_tryc","Fail Retry times","",PValTP.vt_int,false,null,null,3));
 		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
 		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));

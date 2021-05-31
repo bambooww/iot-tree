@@ -47,5 +47,10 @@ public class UAValList
 		return rets ;
 	}
 	
-	
+	public UAVal getValLast()
+	{
+		if(vals.size()<=0)
+			return null ;
+		return vals.getLast() ;
+	}
 }

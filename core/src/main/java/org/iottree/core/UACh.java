@@ -6,6 +6,7 @@ import java.util.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
 import org.graalvm.polyglot.Value;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -465,7 +466,24 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	}
 	
 	
-	
+	@Override
+	void RT_init(boolean breset, boolean b_sub)
+	{
+		super.RT_init(breset, b_sub);
+		this.setSysTag("_name", "channel name", "", ValTP.vt_str);
+		this.setSysTag("_title", "channle", "", ValTP.vt_str);
+		this.setSysTag("_driver_name", "", "", ValTP.vt_str);
+		
+//		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
+//		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
+//		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
+//		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
+//		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
+		
+		this.RT_setSysTagVal("_name", this.getName()) ;
+		this.RT_setSysTagVal("_title", this.getTitle()) ;
+		this.RT_setSysTagVal("_driver_name", this.getDriverName()) ;
+	}
 	/**
 	 * start driver
 	 * @param failedr

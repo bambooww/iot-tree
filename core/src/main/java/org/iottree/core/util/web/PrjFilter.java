@@ -36,7 +36,7 @@ public class PrjFilter implements Filter
 		response.setContentType("text/html;charset=UTF-8");
 		String uri = req.getRequestURI();
 		String qs = req.getQueryString();
-		System.out.println("uri="+uri +"  qs="+qs);
+		//System.out.println("uri="+uri +"  qs="+qs);
 		if(uri.startsWith("/iottree"))
 			uri = uri.substring(8) ;
 		

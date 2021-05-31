@@ -27,6 +27,16 @@ public class ModbusBlock
 	
 	transient HashMap<ModbusCmd,List<ModbusAddr>> cmd2addr = new HashMap<>() ;
 	
+	
+	//private int failedRetryTimes = 3 ;
+	
+	private long reqTO = 1000 ;
+	
+	private long recvTO = 100 ;
+	
+	private long interReqMs = 0 ;
+	
+	
 	public ModbusBlock(int devid,short addrtp,List<ModbusAddr> addrs,
 			int block_size,long scan_inter_ms)
 	{
@@ -39,6 +49,13 @@ public class ModbusBlock
 		this.addrs = addrs ;
 		this.blockSize = block_size ;
 		this.scanInterMS = scan_inter_ms;
+	}
+	
+	public void setTimingParam(long req_to,long recv_to,long inter_reqms)
+	{
+		this.reqTO = req_to ;
+		this.recvTO = recv_to ;
+		this.interReqMs = inter_reqms ;
 	}
 		
 	public short getAddrTp()
@@ -117,7 +134,9 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd =  new ModbusCmdReadBits(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegPos()-cur_reg+1) ;
-			
+			curcmd.setRecvTimeout(reqTO);
+			curcmd.setRecvEndTimeout(recvTO);
+			curcmd.setRecvTimeout(reqTO);
 			cmd2addr.put(curcmd, curaddrs);
 				
 			cur_reg = regp ;
@@ -242,10 +261,12 @@ public class ModbusBlock
 //	}
 	
 	
-	public void runCmds(IConnEndPoint ep) throws Exception
+	
+	public boolean runCmds(IConnEndPoint ep) throws Exception
 	{
 		this.runWriteCmdAndClear(ep);
-		runReadCmds(ep);
+		return runReadCmds(ep) ;
+		
 	}
 	
 	private void transMem2Addrs(List<ModbusAddr> addrs)
@@ -259,9 +280,10 @@ public class ModbusBlock
 		}
 	}
 	
-	private void runReadCmds(IConnEndPoint ep) throws Exception
+	private boolean runReadCmds(IConnEndPoint ep) throws Exception
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
+		boolean ret = true;
 		for(ModbusCmd mc:cmd2addr.keySet())
 		{
 			if(!mc.tickCanRun())
@@ -275,6 +297,7 @@ public class ModbusBlock
 				if(bvs==null)
 				{//err set address invalid
 					setAddrError(addrs);
+					ret = false;
 					continue ;
 				}
 				int regpos = mcb.getRegAddr() ;
@@ -292,6 +315,7 @@ public class ModbusBlock
 				if(rvs==null)
 				{//err set address invalid
 					setAddrError(addrs);
+					ret = false;
 					continue ;
 				}
 				int regpos = mcw.getRegAddr() ;
@@ -303,6 +327,7 @@ public class ModbusBlock
 				transMem2Addrs(addrs);
 			}
 		}
+		return ret ;
 	}
 	
 	private LinkedList<ModbusCmd> writeCmds = new LinkedList<>() ;
@@ -326,13 +351,15 @@ public class ModbusBlock
 	
 	public boolean setWriteCmdAsyn(ModbusAddr ma, Object v)
 	{
+		//System.out.println("set write asyn") ;
 		ModbusCmd mc=null;
 		switch(ma.getAddrTp())
 		{
 		case ModbusAddr.COIL_OUTPUT:
 			boolean[] bvs = new boolean[1] ;
 			bvs[0] = (Boolean)v;
-			mc = new ModbusCmdWriteBits(scanInterMS,this.devId,ma.getRegPos(),bvs) ;
+			//mc = new ModbusCmdWriteBits(scanInterMS,this.devId,ma.getRegPos(),bvs) ;
+			mc = new ModbusCmdWriteBit(scanInterMS,this.devId,ma.getRegPos(), (Boolean)v) ;
 			break ;
 		case ModbusAddr.REG_HOLD:
 			if(!(v instanceof Number))

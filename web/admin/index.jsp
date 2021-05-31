@@ -10,19 +10,7 @@
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
 List<UAPrj> reps = UAManager.getInstance().listPrjs();
-
-Collections.sort(reps, new Comparator<UAPrj>() {
-
-    @Override
-    public int compare(UAPrj o1, UAPrj o2) {
-        long v = o1.getSavedDT()-o2.getSavedDT() ;
-        if(v>0)
-        	return -1 ;
-        else if(v<0)
-        	return 1 ;
-        return 0 ;
-    }
-}) ;%><!DOCTYPE html>
+%><!DOCTYPE html>
 <html class="">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

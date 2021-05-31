@@ -61,10 +61,12 @@ public class UACodeItem
 			return false;
 		this.cxt = cxt ;
 		this.codeTxt = this.codeTxt.trim();
+		boolean bblock = false;
 		if(codeTxt.startsWith("{"))
 		{//block 
 			blockFn = createUniqueFn() ;
 			this.codeTxt = "function "+blockFn+"($input)"+this.codeTxt ;
+			bblock=true ;
 		}
 		
 		//this.codeTxt = UAContext.FN_TEMP_VAR+"."+blockFn+"=function($input)"+this.codeTxt ;
@@ -75,7 +77,8 @@ public class UACodeItem
 			
 			Compilable cp = (Compilable)cxt.getScriptEngine() ;
 			codeCS = cp.compile(this.codeTxt) ;
-			codeCS.eval() ;
+			if(bblock)
+				codeCS.eval() ;
 //			if(blockFn!=null)
 //			{
 //				codeCS.eval() ;

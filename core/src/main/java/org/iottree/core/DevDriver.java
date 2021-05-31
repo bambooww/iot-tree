@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
@@ -257,41 +258,41 @@ public abstract class DevDriver  implements IPropChecker
 	
 	
 
-	final protected boolean getPropValBool(String groupn,String itemn,boolean defv)
-	{
-//		Object obj = getPropVal(groupn,itemn);
-//		if(obj==null)
-//			return defv ;
-//		return (Boolean)obj ;
-		return this.belongToCh.getPropValueBool(groupn, itemn, defv);
-	}
-	
-	final protected long getPropValInt(String groupn,String itemn,long defv)
-	{
-//		Object obj = getPropVal(groupn,itemn);
-//		if(obj==null)
-//			return defv ;
-//		return (Long)obj;
-		return this.belongToCh.getPropValueLong(groupn, itemn, defv);
-	}
-	
-	final protected double getPropValFloat(String groupn,String itemn,double defv)
-	{
-//		Object obj = getPropVal(groupn,itemn);
-//		if(obj==null)
-//			return defv ;
-//		return (Double)obj;
-		return this.belongToCh.getPropValueDouble(groupn, itemn, defv);
-	}
-	
-	final protected String getPropValStr(String groupn,String itemn,String defv)
-	{
-//		Object obj = getPropVal(groupn,itemn);
-//		if(obj==null)
-//			return defv ;
-//		return (String)obj;
-		return this.belongToCh.getPropValueStr(groupn, itemn, defv);
-	}
+//	final protected boolean getPropValBool(String groupn,String itemn,boolean defv)
+//	{
+////		Object obj = getPropVal(groupn,itemn);
+////		if(obj==null)
+////			return defv ;
+////		return (Boolean)obj ;
+//		return this.belongToCh.getPropValueBool(groupn, itemn, defv);
+//	}
+//	
+//	final protected long getPropValInt(String groupn,String itemn,long defv)
+//	{
+////		Object obj = getPropVal(groupn,itemn);
+////		if(obj==null)
+////			return defv ;
+////		return (Long)obj;
+//		return this.belongToCh.getPropValueLong(groupn, itemn, defv);
+//	}
+//	
+//	final protected double getPropValFloat(String groupn,String itemn,double defv)
+//	{
+////		Object obj = getPropVal(groupn,itemn);
+////		if(obj==null)
+////			return defv ;
+////		return (Double)obj;
+//		return this.belongToCh.getPropValueDouble(groupn, itemn, defv);
+//	}
+//	
+//	final protected String getPropValStr(String groupn,String itemn,String defv)
+//	{
+////		Object obj = getPropVal(groupn,itemn);
+////		if(obj==null)
+////			return defv ;
+////		return (String)obj;
+//		return this.belongToCh.getPropValueStr(groupn, itemn, defv);
+//	}
 	
 	
 	
@@ -310,6 +311,7 @@ public abstract class DevDriver  implements IPropChecker
 	 */
 	protected  boolean initDriver(StringBuilder failedr) throws Exception
 	{
+		
 		return true ;
 	}
 	
@@ -506,5 +508,32 @@ public abstract class DevDriver  implements IPropChecker
 		
 	}
 	
+
+	public abstract boolean RT_writeVal(UADev dev,DevAddr da,Object v) ;
 	
+	public abstract boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v) ;
+	
+	public boolean RT_writeValStr(UADev dev,DevAddr da,String strv)
+	{
+		ValTP tp = da.getValTP();
+		Object v = UAVal.transStr2ObjVal(tp, strv);
+		if(v==null)
+			return false;
+		RT_writeVal(dev,da,v);
+		return true;
+	}
+	
+	public boolean RT_writeValsStr(UADev dev,DevAddr[] da,String[] strv)
+	{
+		Object[] objvs = new Object[strv.length];
+		for(int i = 0 ; i< strv.length ; i ++)
+		{
+			ValTP tp = da[i].getValTP();
+			Object v = UAVal.transStr2ObjVal(tp, strv[i]);
+			objvs[i] = v ;
+		}
+		
+		RT_writeVals(dev,da,objvs);
+		return true;
+	}
 }

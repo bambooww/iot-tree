@@ -14,6 +14,10 @@ public abstract class UANodeOCTags extends UANodeOC
 	@data_obj(obj_c=UATag.class)
 	List<UATag> tags = new ArrayList<>();
 	
+	// -  for system tags
+	
+	private transient ArrayList<UATag> sysTags = null;
+	
 	public UANodeOCTags()
 	{
 		super();
@@ -50,6 +54,8 @@ public abstract class UANodeOCTags extends UANodeOC
 	{
 		ArrayList<UANode> rets = new ArrayList<>() ;
 		rets.addAll(tags);
+		if(sysTags!=null)
+			rets.addAll(sysTags) ;
 		return rets;
 	}
 	
@@ -87,6 +93,15 @@ public abstract class UANodeOCTags extends UANodeOC
 		{
 			tg.belongToNode = this ;
 			//tg.belongToNode = this ;
+		}
+		
+		if(sysTags!=null)
+		{
+			for(UATag tg:sysTags)
+			{
+				tg.belongToNode = this ;
+				//tg.belongToNode = this ;
+			}
 		}
 		super.constructNodeTree();
 	}
@@ -190,9 +205,20 @@ public abstract class UANodeOCTags extends UANodeOC
 	 */
 	public List<UATag> listTags()
 	{
-		return tags;//tagList.listTags();
+		if(this.sysTags==null)
+		{
+			return tags;//tagList.listTags();
+		}
+		ArrayList<UATag> rets = new ArrayList<>(tags.size()+sysTags.size()) ;
+		rets.addAll(this.tags) ;
+		rets.addAll(this.sysTags) ;
+		return rets ;
 	}
 	
+	public List<UATag> getNorTags()
+	{
+		return tags ;
+	}
 	/**
 	 * list local mid tags
 	 * @return
@@ -300,6 +326,83 @@ public abstract class UANodeOCTags extends UANodeOC
 		return addrs ;
 	}
 	
+	protected void onNodeChanged()
+	{
+		super.onNodeChanged();
+		
+		this.RT_init(true,false);
+	}
+	
+	
+	
+	public List<UATag> getSysTags()
+	{
+		return sysTags ;
+	}
+	
+	
+	public UATag getSysTagByName(String n)
+	{
+		List<UATag> ts = getSysTags() ;
+		if(ts==null)
+			return null ;
+		for(UATag t:ts)
+		{
+			if(n.equals(t.getName()))
+				return t ;
+		}
+		return null ;
+	}
+	
+	protected final synchronized void setSysTag(String name,String title,String desc,UAVal.ValTP vt)
+	{
+		if(!name.startsWith("_"))
+			throw new IllegalArgumentException("system tag name must start with _") ;
+		if(sysTags==null)
+			sysTags = new ArrayList<>() ;
+		UATag t = this.getSysTagByName(name) ;
+		if(t==null)
+		{
+			t = new UATag();
+			t.setTagSys(name,title,desc,"", vt,false,200);
+			sysTags.add(t) ;
+		}
+		else
+			t.setTagSys(name, title, desc, "", vt, false, 200);
+	}
+	
+	/**
+	 * node will be init before start RT
+	 */
+	void RT_init(boolean breset,boolean b_sub)
+	{
+		if(breset)
+			sysTags= null ;
+		
+		if(b_sub)
+		{
+			List<UANode> subn = this.getSubNodes() ;
+			if(subn==null)
+				return ;
+			for(UANode sub:subn)
+			{
+				if(sub instanceof UANodeOCTags)
+				{
+					((UANodeOCTags)sub).RT_init(breset,b_sub);
+				}
+			}
+		}
+	}
+	
+	
+	final boolean RT_setSysTagVal(String name,Object v)
+	{
+		UATag t = this.getSysTagByName(name) ;
+		if(t==null)
+			return false;
+		t.RT_setVal(v);
+		return true;
+	}
 	
 	public List<IOCBox> OC_getSubs()
 	{

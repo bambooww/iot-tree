@@ -51,10 +51,36 @@
 		out.print(np+"\r\n") ;
 		out.print(txt);
 		break ;
-	default:
+	case "rt":
 		if(!Convert.checkReqEmpty(request, out, "path"))
 			return;
 		String path=request.getParameter("path");
+		UANode tmpn = UAUtil.findNodeByPath(path);
+		if(tmpn==null)
+		{
+			out.print("no node found") ;
+			return ;
+		}
+		UANodeOCTagsCxt ntags = null ;
+		if(tmpn instanceof UAHmi)
+		{
+			ntags = ((UAHmi)tmpn).getBelongTo() ;
+		}
+		else if(tmpn instanceof UANodeOCTagsCxt)
+		{
+			ntags = (UANodeOCTagsCxt)tmpn ;
+		}
+		else
+		{
+			return ;
+		}
+		
+		ntags.CXT_renderJson(out);
+		break ;
+	default:
+		if(!Convert.checkReqEmpty(request, out, "path"))
+			return;
+		path=request.getParameter("path");
 		hmi = (UAHmi)UAUtil.findNodeByPath(path);//.findHmiById(hmiid) ;
 		if(hmi==null)
 		{

@@ -10,17 +10,14 @@ import java.util.*;
  */
 public abstract class ModbusCmd
 {
-	// ��д
+
 	public final static short MODBUS_FC_READ_COILS = 0x01;
 
-	// ��0x01����---ֻ��
 	public final static short MODBUS_FC_READ_DISCRETE_INPUT = 0x02;
 
 	// ref modbus spc en page 15
-	// ��д
 	public final static short MODBUS_FC_READ_HOLD_REG = 0x03;
 
-	// ֻ��
 	public final static short MODBUS_FC_READ_INPUT_REG = 0x04;
 
 	public final static short MODBUS_FC_WRITE_SINGLE_COIL = 0x05;
@@ -63,16 +60,16 @@ public abstract class ModbusCmd
 			0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C, 0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46,
 			0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80, 0x40 };
 
-	// crc16���֧��
+	// crc16
 	public static int modbus_crc16_check(byte[] pmsg, int msglen)
 	{
-		int hi = 0xFF; // ��CRC�ֽڳ�ʼ��
-		int lo = 0xFF; // ��CRC �ֽڳ�ʼ��
-		int idx; // CRCѭ���е�����
+		int hi = 0xFF; 
+		int lo = 0xFF; 
+		int idx; 
 
-		for (int i = 0; i < msglen; i++) // ������Ϣ������
+		for (int i = 0; i < msglen; i++)
 		{
-			idx = hi ^ (((int) pmsg[i]) & 0xFF); // ����CRC
+			idx = hi ^ (((int) pmsg[i]) & 0xFF); 
 			hi = lo ^ auchCRCHi[idx];
 			lo = auchCRCLo[idx];
 		}
@@ -81,15 +78,15 @@ public abstract class ModbusCmd
 
 	public static int modbus_crc16_check_seg(byte[] phead, int hlen, byte[] pmsg, int msglen, byte[] ptail, int tlen)
 	{
-		int hi = 0xFF; // ��CRC�ֽڳ�ʼ��
-		int lo = 0xFF; // ��CRC �ֽڳ�ʼ��
-		int idx; // CRCѭ���е�����
+		int hi = 0xFF; 
+		int lo = 0xFF; 
+		int idx; 
 
 		if (phead != null)
 		{
-			for (int i = 0; i < hlen; i++) // ������Ϣ������
+			for (int i = 0; i < hlen; i++)
 			{
-				idx = hi ^ (((int) phead[i]) & 0xFF); // ����CRC
+				idx = hi ^ (((int) phead[i]) & 0xFF);
 				hi = lo ^ auchCRCHi[idx];
 				lo = auchCRCLo[idx];
 			}
@@ -97,9 +94,9 @@ public abstract class ModbusCmd
 
 		if(pmsg!=null)
 		{
-			for (int i = 0; i < msglen; i++) // ������Ϣ������
+			for (int i = 0; i < msglen; i++)
 			{
-				idx = hi ^ (((int) pmsg[i]) & 0xFF); // ����CRC
+				idx = hi ^ (((int) pmsg[i]) & 0xFF);
 				hi = lo ^ auchCRCHi[idx];
 				lo = auchCRCLo[idx];
 			}
@@ -107,27 +104,15 @@ public abstract class ModbusCmd
 
 		if (ptail != null)
 		{
-			for (int i = 0; i < tlen; i++) // ������Ϣ������
+			for (int i = 0; i < tlen; i++)
 			{
-				idx = hi ^ (((int) ptail[i]) & 0xFF); // ����CRC
+				idx = hi ^ (((int) ptail[i]) & 0xFF);
 				hi = lo ^ auchCRCHi[idx];
 				lo = auchCRCLo[idx];
 			}
 		}
 
 		return (hi << 8) | lo;
-	}
-
-	/**
-	 * ������ֽڴ��������󣬻�ʣ�������
-	 * 
-	 * @author jasonzhu
-	 *
-	 */
-	static class ParseLeft
-	{
-		int leftIdx = -1;
-
 	}
 
 	public static enum Protocol
@@ -151,8 +136,6 @@ public abstract class ModbusCmd
 	}
 
 	/**
-	 * ���ǵ�modbusָ��ͨ��ʱ������������10ms���������ݵķֶΣ�
-	 * 
 	 * @param inputs
 	 * @return
 	 * @throws IOException
@@ -187,61 +170,44 @@ public abstract class ModbusCmd
 		return null;
 	}
 
-	/////////// ���й����еĴ�����
+	//
 	public final static int ERR_RECV_TIMEOUT = -1;
 
 	public final static int ERR_RECV_END_TIMEOUT = -2;
 
 	public final static int ERR_CRC = -3;
 
-	/**
-	 * ���ɨ��ʱ��������������ȡ���ݳ��������ʱ���ʹ��
-	 */
+	
 	final static int MAX_SCAN_MULTI = 50;
 
 	// final static int RECV_TIMEOUT_MAX = 2000;//60 ;
 	final static int RECV_TIMEOUT_MIN = 20;
 
-	final static int RECV_TIMEOUT_DEFAULT = 30;
+	final static int RECV_TIMEOUT_DEFAULT = 1000;
 
 	final static int RECV_END_TIMEOUT_DEFAULT = 20;
 
-	/**
-	 * �����������
-	 */
 	protected long scanIntervalMS = 100;
 
-	/**
-	 * �����ջظ�����ms���������������
-	 */
+	
 	protected long maxRecvTOMS = 60;
 
-	/**
-	 * ��modbusɨ��ĳ���豸����Խ��Խ�����Կ�����ɨ�������Ը������� ��ֵ���60��Ҳ����1����һ��
-	 */
 	private int scanErrIntervalMulti = 0;
 
-	/**
-	 * ��ֵ����ݽ��յĳɹ������������Զ�����30-60֮��
-	 */
 	protected long recvTimeout = RECV_TIMEOUT_DEFAULT;
 
-	private boolean bFixTO = false;// �Ƿ��ǹ̶���EndTimeout
+	private boolean bFixTO = false;//
 
-	/**
-	 * ��ֵ����ݽ��յĳɹ������������Զ�����
-	 */
 	protected long recvEndTimeout = RECV_END_TIMEOUT_DEFAULT;
+	
+	protected long reqInterMS = 0 ;
 
-	private boolean bFixEndTO = false;// �Ƿ��ǹ̶���EndTimeout
+	private boolean bFixEndTO = true;
 
 	protected short slaveAddr = 0;
 
-	protected int tryTimes = 1;
+	protected int tryTimes = 0;
 
-	/**
-	 * Э��
-	 */
 	protected Protocol protocal = Protocol.rtu;
 
 	transient protected byte[] mbuss_adu = new byte[300];
@@ -252,16 +218,10 @@ public abstract class ModbusCmd
 
 	ModbusRunner belongToRunner = null;
 
-	/**
-	 * ��ض���
-	 */
 	transient Object relatedObj = null;
 
 	transient long runOnceT = -1;
 
-	/**
-	 * �����������
-	 */
 	transient int errCount = 0;
 
 	protected transient int lastTcpCC = 0;
@@ -284,8 +244,6 @@ public abstract class ModbusCmd
 	// public abstract short getFC() ;
 
 	/**
-	 * �������������Runner
-	 * 
 	 * @return
 	 */
 	public ModbusRunner getComRunner()
@@ -316,8 +274,6 @@ public abstract class ModbusCmd
 	}
 
 	/**
-	 * ��ض���
-	 * 
 	 * @return
 	 */
 	public Object getRelatedObj()
@@ -335,11 +291,6 @@ public abstract class ModbusCmd
 		return slaveAddr;
 	}
 
-	/**
-	 * ɨ����
-	 * 
-	 * @return
-	 */
 	public long getScanIntervalMS()
 	{
 		return scanIntervalMS + 100 * scanErrIntervalMulti;
@@ -350,11 +301,6 @@ public abstract class ModbusCmd
 		scanIntervalMS = sms;
 	}
 
-	/**
-	 * û�н��յ��κ����ݵĹ���ʱ��
-	 * 
-	 * @return
-	 */
 	public long getRecvTimeout()
 	{
 		return recvTimeout;
@@ -374,11 +320,6 @@ public abstract class ModbusCmd
 		}
 	}
 
-	/**
-	 * ���չ����У��������ݽ���
-	 * 
-	 * @return
-	 */
 	public long getRecvEndTimeout()
 	{
 		return recvEndTimeout;
@@ -436,11 +377,6 @@ public abstract class ModbusCmd
 		return false;
 	}
 
-	/**
-	 * �жϴ�ָ���Ƿ�������һ��
-	 * 
-	 * @return -1 ��ʾ��������һ�Σ�>0��ʾ���еľ���ʱ��
-	 */
 	public long getRunOnceTime()
 	{
 		return runOnceT;
@@ -451,11 +387,6 @@ public abstract class ModbusCmd
 		runOnceT = t;
 	}
 
-	/**
-	 * �õ������������
-	 * 
-	 * @return
-	 */
 	public int getErrCount()
 	{
 		return errCount;
@@ -498,26 +429,26 @@ public abstract class ModbusCmd
 		else
 			r = reqRespRTU(outs, ins);
 		//System.out.println("doCmdInner --2 r="+r) ;
-		if (r < 0)
-		{
-			for (int k = 0; k < tryTimes; k++)
-			{
-				Thread.sleep(recvEndTimeout);
-				if (this.protocal == Protocol.tcp)
-					r = reqRespTCP(outs, ins);
-				else
-					r = reqRespRTU(outs, ins);
-				if (r > 0)
-					break;
-			}
-		}
+//		if (r < 0)
+//		{
+//			for (int k = 0; k < tryTimes; k++)
+//			{
+//				Thread.sleep(reqInterMS);
+//				if (this.protocal == Protocol.tcp)
+//					r = reqRespTCP(outs, ins);
+//				else
+//					r = reqRespRTU(outs, ins);
+//				if (r > 0)
+//					break;
+//			}
+//		}
 		//System.out.println("doCmdInner --2.5") ;
 		if (!this.isReadCmd())
 			return;
 		//System.out.println("doCmdInner --3") ;
-		// read cmd ��̬����
+		// read cmd 
 		if (r < 0)
-		{// ʧ������£��Զ�����һЩ���ʲ���
+		{
 			switch (r)
 			{
 			case ERR_RECV_TIMEOUT:// recvTimeout may be adjust
@@ -533,7 +464,7 @@ public abstract class ModbusCmd
 					else
 						recvTimeout += 1;
 					if (recvTimeout >= maxRecvTOMS)// RECV_TIMEOUT_MAX)
-					{// ����������豸�����⣬������������
+					{
 						recvTimeout = maxRecvTOMS;// RECV_TIMEOUT_MAX;
 						scanErrIntervalMulti++;
 						if (scanErrIntervalMulti > MAX_SCAN_MULTI)
@@ -547,12 +478,12 @@ public abstract class ModbusCmd
 					recvEndTimeout += 1;
 				}
 				break;
-			case ERR_CRC:// ������¼״̬��Ϣ���ṩ������ָ�������״̬
+			case ERR_CRC:
 			}
 		}
 
 		if (r > 0)
-		{// �ɹ�������¶�һЩ�������лظ�
+		{
 			if (scanErrIntervalMulti > 0)
 			{
 				scanErrIntervalMulti = 0;
@@ -565,7 +496,7 @@ public abstract class ModbusCmd
 	}
 
 	/**
-	 * ��master���õķ������󵽷��ؽ��ָ��
+	 * 
 	 * 
 	 * @param ous
 	 * @param ins
@@ -619,62 +550,17 @@ public abstract class ModbusCmd
 		// tt_c = 0;
 	}
 
-	// �ж��Ƿ��ڽ�����
-	// �����ս���֮��
 	protected boolean com_stream_in_recving()
 	{
 		return b_in_rx > 0;
 	}
 
-	// ���ý��ս���
-	// ��������˽������ݴ������֮��
-	// Ӧ�õ��ô˷������Խ������������
-	// ���com_stream_in_recving�������ⲿ���ƿ���
 	protected void com_stream_end()
 	{
 		b_in_rx = 0;
 		urx_end = 1;
 	}
 
-	// ����ѭ���в��ϵ��õķ�������������Ƿ����
-	// �������������ready�����õĻ������ݻᱻ�Զ�����
-	// �����ش���0�ĳ���ֵ
-	// protected int com_stream_recv_chk_finish(InputStream inputs)
-	// throws IOException
-	// {
-	// int rc = 0;
-	// if(urx_end!=0)
-	// return 0;
-	//
-	// rc = chkCurRecvedLen(inputs);//pComDrv->drv_rx_count() ;
-	// if(rc==0)
-	// return 0 ;
-	//
-	// if(rc>urx_count_last)
-	// {//�����������
-	// urx_count_last = rc ;
-	// tt_c = System.currentTimeMillis() ;
-	// return 0 ;
-	// }
-	//
-	// //���ڻ�ȡ�����У�����ʱû������
-	// if(System.currentTimeMillis()-tt_c>getRecvEndTimeout())
-	// {//time out ,��Ϊһ�����ݽ������
-	// //#asm("cli")
-	// urx_end = 1;//�رս���
-	// //#asm("sei")
-	//
-	// return rc ;
-	// }
-	//
-	// return 0 ;
-	// }
-
-	// �жϽ��չ������Ѿ��е����ݣ��˷����������ݳ���
-	// ����������ֱ�Ӳ鿴���ջ�������ݣ������жϽ����Ƿ��������û�б�Ҫ
-	// �ȴ�һ������ʱ��Ž����������������ݵ�Ч��
-	// ������չ��ڡ�����Ҫ������com_stream_in_recving()���ж��Ƿ�ʧ�ܽ���
-	//
 	protected int com_stream_recv_chk_len_timeout(InputStream inputs) throws IOException
 	{
 		int rc = 0;
@@ -709,7 +595,7 @@ public abstract class ModbusCmd
 			return rc;
 		}
 		else
-		{// no new data,�������ߣ�����cpu�군
+		{
 			try
 			{
 				Thread.sleep(1);
@@ -719,9 +605,9 @@ public abstract class ModbusCmd
 			}
 		}
 
-		// ���ڻ�ȡ�����У�����ʱû������
+		
 		if (System.currentTimeMillis() - tt_c > recvEndTimeout)
-		{// time out ,��Ϊһ�����ݽ������
+		{// time out
 			// #asm("cli")
 			com_stream_end();
 			// urx_end = 1 ;
@@ -733,24 +619,10 @@ public abstract class ModbusCmd
 		return rc;
 	}
 
-	private static void printUsage()
-	{
-		System.out.println(
-				"java net.wimpi.modbus.cmd.SerialAITest <portname [String]>  <Unit Address [int8]> <register [int16]> <wordcount [int16]> {<repeat [int]>}");
-	}// printUsage
-
+	
 	public String toString()
 	{
 		return "[dev:" + this.slaveAddr + ":" + this.recvTimeout + ":" + this.recvEndTimeout + "]";
 	}
 
-	public static void main(String[] args)
-	{
-		System.out.println("modbus test!!!!!!");
-		// test_read_holding_regs(args) ;
-		// test_write_multi_regs(args) ;
-		// test_write_single_coil(args);
-		// test_read_input_regs(args) ;
-		// test_read_discrete_input(args);
-	}
 }

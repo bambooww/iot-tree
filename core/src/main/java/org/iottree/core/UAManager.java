@@ -91,6 +91,19 @@ public class UAManager
 				}
 			}
 		}
+		
+		Collections.sort(reps, new Comparator<UAPrj>() {
+
+		    @Override
+		    public int compare(UAPrj o1, UAPrj o2) {
+		        long v = o1.getSavedDT()-o2.getSavedDT() ;
+		        if(v>0)
+		        	return -1 ;
+		        else if(v<0)
+		        	return 1 ;
+		        return 0 ;
+		    }
+		});
 		return reps;
 	}
 	

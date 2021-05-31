@@ -56,6 +56,16 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
+	public int getPropValueInt(String groupn,String itemn,int defv)
+	{
+		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			return defv ;
+		if(v instanceof Number)
+			return ((Number)v).intValue() ;
+		return defv ;
+	}
+	
 	public double getPropValueDouble(String groupn,String itemn,double defv)
 	{
 		Object v = getPropValue(groupn,itemn);

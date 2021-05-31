@@ -2,6 +2,7 @@ package org.iottree.core;
 
 import java.util.*;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -270,6 +271,23 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 //
 //		return null ;
 //	}
+	
+	@Override
+	void RT_init(boolean breset, boolean b_sub)
+	{
+		super.RT_init(breset, b_sub);
+		this.setSysTag("_name", "device name", "", ValTP.vt_str);
+		this.setSysTag("_title", "device title", "", ValTP.vt_str);
+		
+//		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
+//		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
+//		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
+//		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
+//		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
+		
+		this.RT_setSysTagVal("_name", this.getName()) ;
+		this.RT_setSysTagVal("_title", this.getTitle()) ;
+	}
 
 	/**
 	 * driver run ok or not for this device.

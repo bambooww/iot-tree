@@ -19,6 +19,7 @@ import org.iottree.core.util.xmldata.data_val;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -136,6 +137,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		this.getResCxt() ;
 		ResCxtManager.getInstance().setResCxtRelated(this);
+		
+		this.RT_init(true,true) ;
 	}
 
 	public List<UANode> getSubNodes()
@@ -524,6 +527,23 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	// return null ;
 	// }
 	
+	@Override
+	void RT_init(boolean breset, boolean b_sub)
+	{
+		super.RT_init(breset, b_sub);
+		
+		this.setSysTag("_name", "", "", ValTP.vt_str);
+		this.setSysTag("_title", "", "", ValTP.vt_str);
+		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
+		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
+		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
+		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
+		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
+		
+		this.RT_setSysTagVal("_name", this.getName()) ;
+		this.RT_setSysTagVal("_title", this.getTitle()) ;
+	}
+	
 	private Thread rtTh = null ;
 	
 	private boolean rtRun = false;
@@ -709,10 +729,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			UADev dev = ch.getDevByName(dev_name);
 			if(dev==null)
 				return false;
-			UATag t = null;//dev.getTagByName(tagn) ;
+			UATag t = dev.getTagByName(tagn) ;
 			if(t==null)
 				return false;
-			t.RT_setVal(v) ;
+			t.RT_writeVal(v) ;
 			UAPrj.this.CXT_calMidTagsValLocal();
 			return true;
 		}

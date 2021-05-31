@@ -111,31 +111,31 @@ public class MQTTClientDrv extends DevDriver
 
 	protected boolean RT_initDriver(StringBuilder failedr) throws Exception
 	{
-
-		host = this.getPropValStr("mqtt_conn", "server_host", null);
+		UACh ch = this.getBelongToCh() ;
+		host = ch.getPropValueStr("mqtt_conn", "server_host", null);
 		if (Convert.isNullOrEmpty(host))
 		{
 			failedr.append("no server host set");
 			return false;
 		}
 		topics = new ArrayList<>();
-		port = (int) this.getPropValInt("mqtt_conn", "server_port", 1833);
+		port =  ch.getPropValueInt("mqtt_conn", "server_port", 1833);
 		String serveruri = "tcp://" + host + ":" + port;
 
 		int qos = 1;
-		String clientId = this.getPropValStr("mqtt_conn", "clientid", "client1");
-		String userName = this.getPropValStr("mqtt_conn", "username", "");
-		String userPsw = this.getPropValStr("mqtt_conn", "userpsw", "");
+		String clientId = ch.getPropValueStr("mqtt_conn", "clientid", "client1");
+		String userName = ch.getPropValueStr("mqtt_conn", "username", "");
+		String userPsw = ch.getPropValueStr("mqtt_conn", "userpsw", "");
 
 		/**
 		 * connection timeout with second
 		 */
-		int connTimeout = (int) this.getPropValInt("mqtt_conn", "conn_to_sec", 10);
-		;
+		int connTimeout = (int) ch.getPropValueInt("mqtt_conn", "conn_to_sec", 10);
+		
 
-		int keepAliveInterval = (int) this.getPropValInt("mqtt_conn", "ka_int", 20);
-		;
-		;
+		int keepAliveInterval = (int) ch.getPropValueInt("mqtt_conn", "ka_int", 20);
+		
+		
 
 		List<UADev> devs = this.getBelongToCh().getDevs();
 		if (devs == null || devs.size() <= 0)
@@ -359,6 +359,18 @@ public class MQTTClientDrv extends DevDriver
 	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
 	{
 		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean RT_writeVal(UADev dev,DevAddr da,Object v)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v)
+	{
 		return false;
 	}
 }

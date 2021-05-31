@@ -252,21 +252,22 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			UAVal val = tg.RT_getVal() ;
 			boolean bvalid = false;
 			String vstr = "" ;
-			String dt = "" ;
-			String dt_chg="" ;
+			long dt = -1 ;
+			long dt_chg=-1 ;
 			if(val!=null)
 			{
 				bvalid = val.isValid() ;
 				vstr = ""+val.getObjVal() ;
 				
-				dt = Convert.toFullYMDHMS(new Date(val.getValDT())) ;
-				dt_chg = Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+				dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
+				dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
 			}
+			//w.write("\""+tg.getName()+"\":");
 			w.write("{\"n\":\"");
 			w.write(tg.getName()) ;
-			w.write("\",\"valid\":"+bvalid+",\"v\":\""+vstr+"\",\"dt\":\""+dt+"\",\"chgdt\":\""+dt_chg+"\"}") ;
+			w.write("\",\"valid\":"+bvalid+",\"v\":\""+vstr+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
 		}
-		w.write("],\"subs\":{");
+		w.write("],\"subs\":[");
 		
 		bfirst = true ;
 		for(UANodeOCTagsCxt subtg:this.getSubNodesCxt())
@@ -275,10 +276,10 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				w.write(",") ;
 			else
 				bfirst = false ;
-			w.write("\""+subtg.getName()+"\"");
-			w.write(":");
+			//w.write("\""+subtg.getName()+"\":");
+			
 			subtg.CXT_renderJson(w) ;
 		}
-		w.write("}}");
+		w.write("]}");
 	}
 }

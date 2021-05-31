@@ -46,7 +46,7 @@ if(cpt.isEnable())
 String desc = cpt.getDesc();
 String host = cpt.getHost() ;
 String port  = cpt.getPortStr() ;
-
+int connto = cpt.getConnTimeout();
 String cp_tp = cp.getProviderType() ;
 
 %>
@@ -89,6 +89,10 @@ dlg.resize_to(600,400);
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
+	 <div class="layui-form-mid">Connect timeout</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	  </div>
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
@@ -116,6 +120,9 @@ layui.use('form', function(){
 		  setDirty();
 		  });
 	  $("#desc").on("input",function(e){
+		  setDirty();
+		  });
+	  $("#conn_to").on("input",function(e){
 		  setDirty();
 		  });
 	  form.on('switch(enable)', function(obj){
@@ -196,8 +203,13 @@ function do_submit(cb)
 	{
 		cb(false,'Please input valid port') ;
 	}
+	var connto = $("#conn_to").val() ;
+	if(connto==NaN)
+	{
+		cb(false,'Please input valid connect timeout') ;
+	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto});
 }
 
 </script>

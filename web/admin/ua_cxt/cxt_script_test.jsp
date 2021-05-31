@@ -54,6 +54,7 @@ long et = System.currentTimeMillis() ;
 Object obj = null;
 try
 {
+	//System.out.println("run js code") ;
 	obj = cxtr.runCode(txt);
 }
 catch(Exception e)

@@ -9,6 +9,7 @@ import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
 import org.iottree.core.DevModel;
 import org.iottree.core.UACh;
+import org.iottree.core.UADev;
 import org.iottree.core.basic.PropGroup;
 
 public class SimulatorDrv extends DevDriver
@@ -104,6 +105,16 @@ public class SimulatorDrv extends DevDriver
 		return false;
 	}
 
-
+	@Override
+	public boolean RT_writeVal(UADev dev,DevAddr da,Object v)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v)
+	{
+		return false;
+	}
 }
 

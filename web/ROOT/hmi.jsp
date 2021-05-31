@@ -261,6 +261,7 @@ height:30px;
 
 </script>
 <body class="layout-body">
+<div style="z-index: 60000"><button onclick="cxt_rt()" >cxtrt</button></div>
 <%--
 		<div class="left " style="background-color: #aaaaaa;overflow: hidden;">
 			<div id="leftcat_rep_unit" class0="lr_btn_div" onclick="leftcat_sel('rep_unit','Project Lib')"><i class="fa fa-cube fa-3x lr_btn"></i><br>Project</div>
@@ -675,7 +676,6 @@ function ws_conn()
         log('Info: WebSocket connection opened.');
         
         hmiView.setWebSocket(ws);
-        
     };
     ws.onmessage = function (event) {
 
@@ -695,7 +695,22 @@ function ws_disconn() {
     }
 }
 
-ws_conn();
+//ws_conn();
+
+function cxt_rt()
+{
+	send_ajax("/hmi_ajax.jsp",{path:path,tp:"rt"},(bsucc,ret)=>{
+		if(!bsucc)
+			return ;
+		if(typeof(ret) == 'string')
+			eval("ret="+ret) ;
+		hmiModel.updateRtNodes(ret);
+		//var rtn = hmiModel.getCxtRtNode();
+		//alert(JSON.stringify(rtn)) ;
+	},false) ;
+}
+
+setInterval("cxt_rt()",5000);
 </script>
 </body>
 </html>

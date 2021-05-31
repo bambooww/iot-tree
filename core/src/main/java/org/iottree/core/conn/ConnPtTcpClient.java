@@ -19,6 +19,11 @@ public class ConnPtTcpClient extends ConnPtStream
 	String host = null;
 
 	int port = -1;
+	
+	/**
+	 * conn timeout in millissecond
+	 */
+	int connTimeoutMS = 3000 ;
 
 	Socket sock = null;
 
@@ -46,6 +51,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		XmlData xd = super.toXmlData();
 		xd.setParamValue("host", host);
 		xd.setParamValue("port", port);
+		xd.setParamValue("conn_to",connTimeoutMS);
 		return xd;
 	}
 
@@ -55,6 +61,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		boolean r = super.fromXmlData(xd, failedr);
 		this.host = xd.getParamValueStr("host");
 		this.port = xd.getParamValueInt32("port", 8081);
+		this.connTimeoutMS = xd.getParamValueInt32("conn_to", 3000) ;
 		return r;
 	}
 	
@@ -65,6 +72,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		
 		this.host = jo.getString("host") ;
 		this.port = jo.getInt("port") ;
+		this.connTimeoutMS = jo.getInt("conn_to") ;
 	}
 
 	public String getHost()
@@ -85,6 +93,12 @@ public class ConnPtTcpClient extends ConnPtStream
 			return "" ;
 		return ""+port;
 	}
+	
+	public int getConnTimeout()
+	{
+		return connTimeoutMS ;
+	}
+	
 
 	@Override
 	protected InputStream getInputStreamInner()
@@ -133,7 +147,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		{
 			
 			sock = new Socket(host, port);
-			sock.setSoTimeout(10000);
+			sock.setSoTimeout(connTimeoutMS);
 			sock.setTcpNoDelay(true);
 			inputS = sock.getInputStream();
 			outputS = sock.getOutputStream();

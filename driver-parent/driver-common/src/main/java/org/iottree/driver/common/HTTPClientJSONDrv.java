@@ -89,26 +89,26 @@ public class HTTPClientJSONDrv extends DevDriver
 	}
 
 
-	protected boolean RT_initDriver(StringBuilder failedr) throws Exception
-	{
-		String jsstr = this.getPropValStr("conns", "js", null) ;
-		if(jsstr==null)
-			jsstr = "" ;
-		try
-		{
-			
-			getJSEngine().eval("function _do_http_json_model(){\r\n"
-						 +jsstr
-						+"}\r\n");
-			return true ;
-		}
-		catch(Exception ee)
-		{
-			ee.printStackTrace();
-			return false;
-		}
-	}
-	
+//	protected boolean RT_initDriver(StringBuilder failedr) throws Exception
+//	{
+//		String jsstr = this.getPropValStr("conns", "js", null) ;
+//		if(jsstr==null)
+//			jsstr = "" ;
+//		try
+//		{
+//			
+//			getJSEngine().eval("function _do_http_json_model(){\r\n"
+//						 +jsstr
+//						+"}\r\n");
+//			return true ;
+//		}
+//		catch(Exception ee)
+//		{
+//			ee.printStackTrace();
+//			return false;
+//		}
+//	}
+//	
 	private static String readStringFromUrl(String url) throws IOException
 	{
 		try(InputStream is = new URL(url).openStream();)
@@ -220,7 +220,7 @@ public class HTTPClientJSONDrv extends DevDriver
 	@Override
 	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
 	{
-		String url = this.getPropValStr("conns", "url", null) ;
+		String url = this.getBelongToCh().getPropValueStr("conns", "url", null) ;
 		if(url==null||url.contentEquals(""))
 			return false;
 
@@ -239,5 +239,15 @@ public class HTTPClientJSONDrv extends DevDriver
 		}
 	}
 
-
+	@Override
+	public boolean RT_writeVal(UADev dev,DevAddr da,Object v)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v)
+	{
+		return false;
+	}
 }

@@ -1,19 +1,19 @@
-package org.iottree.core;
+package org.iottree.core.util.web;
 
 import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.iottree.core.Config;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
-import org.iottree.core.util.web.LoginUtil;
 
 /**
  * 
  * @author jason.zhu
  *
  */
-public class ConfigFilter implements Filter
+public class AdminFilter implements Filter
 {
 	static
 	{
@@ -28,21 +28,21 @@ public class ConfigFilter implements Filter
 	}
 
 	
-	static ILogger log = LoggerManager.getLogger(ConfigFilter.class);
+	static ILogger log = LoggerManager.getLogger(AdminFilter.class);
 	
 	public static final String KEY_AUTH_SESSION_NAME = "access_auth_timelimit" ;
 	
 	
 	
 	
-	public ConfigFilter()
+	public AdminFilter()
 	{
 
 	}
 
 	public void init(FilterConfig config) throws ServletException
 	{
-			Config.appConfigInitSucc = true;
+			//Config.appConfigInitSucc = true;
 	}
 
 
@@ -60,7 +60,7 @@ public class ConfigFilter implements Filter
 	{
 		try
 		{
-			synchronized(ConfigFilter.class)
+			synchronized(AdminFilter.class)
 			{
 				runJspNum ++ ;
 			}
@@ -69,7 +69,7 @@ public class ConfigFilter implements Filter
 		}
 		finally
 		{
-			synchronized(ConfigFilter.class)
+			synchronized(AdminFilter.class)
 			{
 				runJspNum -- ;
 			}

@@ -24,15 +24,27 @@ public class ModbusDevItem //extends DevModel
 	ModbusBlock mbRegIn = null ;
 	ModbusBlock mbRegHold = null ;
 	
-	private transient ModbusCmd writeCmd = null ;
+	//private transient ModbusCmd writeCmd = null ;
 	
 	private transient UADev uaDev = null ;
+	private transient DevDef devDef = null ;
+	//private transient UACh 
+	
+	/**
+	 * failed after num successive will make device to be failed 
+	 */
+	private int failAfterSuccessive = 3 ;
 	
 	public ModbusDevItem(UADev dev)
 	{
 		uaDev = dev ;
+		devDef=  dev.getDevDef() ;
 	}
 
+	public UADev getUADev()
+	{
+		return uaDev ;
+	}
 	/**
 	 * 
 	 * @param addrs
@@ -57,9 +69,15 @@ public class ModbusDevItem //extends DevModel
 		int devid = (int)uaDev.getPropValueLong("modbus_spk", "mdev_addr", 1);
 		//int devid = Integer.parseInt(uaDev.getId());
 		
-		int blocksize = (int)uaDev.getDevDef().getPropValueLong("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
+		failAfterSuccessive = devDef.getPropValueInt("timing", "failed_tryn", 3);
+		
+		int blocksize = devDef.getPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
 		if(blocksize<=0)
 			blocksize=32;
+		
+		long reqto = devDef.getPropValueLong("timing", "req_to", 1000) ;
+		long recvto = devDef.getPropValueLong("timing", "recv_to", 200) ;
+		long inter_ms = devDef.getPropValueLong("timing", "inter_req", 0) ;
 		//create modbus cmd and address mapping
 		List<ModbusAddr> coil_in_addrs = filterAndSortAddrs(ModbusAddr.COIL_INPUT) ;
 		List<ModbusAddr> coil_out_addrs = filterAndSortAddrs(ModbusAddr.COIL_OUTPUT) ;
@@ -70,6 +88,7 @@ public class ModbusDevItem //extends DevModel
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_INPUT,coil_in_addrs,
 					blocksize,100);
+			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilIn = mb;
 		}
@@ -77,6 +96,7 @@ public class ModbusDevItem //extends DevModel
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_OUTPUT,coil_out_addrs,
 					blocksize,100);
+			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilOut = mb;
 		}
@@ -84,6 +104,7 @@ public class ModbusDevItem //extends DevModel
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_INPUT,reg_input_addrs,
 					blocksize,100);
+			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegIn = mb;
 		}
@@ -91,6 +112,7 @@ public class ModbusDevItem //extends DevModel
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_HOLD,reg_hold_addrs,
 					blocksize,100);
+			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegHold = mb;
 		}
@@ -110,28 +132,47 @@ public class ModbusDevItem //extends DevModel
 		return r ;
 	}
 	
+	private transient int errCount = 0 ;
+	
 	/**
 	 * called by driver
 	 * @param ep
 	 */
-	void doModbusCmd(ConnPtStream ep)  throws Exception
+	boolean doModbusCmd(ConnPtStream ep)  throws Exception
 	{
+		boolean ret = true ;
 		if(mbCoilIn != null)
 		{
-			mbCoilIn.runCmds(ep);
+			if(!mbCoilIn.runCmds(ep))
+				ret = false;
 		}
 		if(mbCoilOut != null)
 		{
-			mbCoilOut.runCmds(ep);
+			if(!mbCoilOut.runCmds(ep))
+				ret= false;
 		}
 		if(mbRegIn != null)
 		{
-			mbRegIn.runCmds(ep);
+			if(!mbRegIn.runCmds(ep))
+				ret=false;
 		}
 		if(mbRegHold != null)
 		{
-			mbRegHold.runCmds(ep);
+			if(!mbRegHold.runCmds(ep))
+				ret=false;
 		}
+		
+		if(!ret)
+		{
+			errCount ++ ;
+			if(errCount>=this.failAfterSuccessive)
+			{
+				errCount = this.failAfterSuccessive ;
+				return false;//dev do cmd err
+			}
+		}
+		
+		return ret ;
 	}
 
 	public boolean RT_writeVal(DevAddr da, Object v)

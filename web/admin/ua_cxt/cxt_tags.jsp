@@ -10,7 +10,8 @@
 if(!Convert.checkReqEmpty(request, out, "path"))
 	return ;
 //boolean bdev = "true".equals(request.getParameter("bdev")) ;
-boolean bmgr ="true".equals(request.getParameter("mgr")) ;
+//boolean bmgr ="true".equals(request.getParameter("mgr")) ;
+boolean bsys = "true".equals(request.getParameter("sys")) ;
 String path = request.getParameter("path") ;
 UANode node = UAUtil.findNodeByPath(path) ;
 if(node==null)
@@ -27,7 +28,7 @@ UANodeOCTags node_tags = (UANodeOCTags)node;
 //UATagList taglist  = node_tags.getTagList() ;
 
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
-List<UATag> cur_tags = node_tags.listTags() ;
+List<UATag> cur_tags = node_tags.getNorTags() ;
 List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
 boolean brefowner = node_tags.isRefOwner();
 boolean brefed = node_tags.isRefedNode() ;
@@ -147,7 +148,7 @@ for(UATag tag:cur_tags)
 <hr class="layui-bg-green">
  <blockquote class="layui-elem-quote ">Context under  [<%=node_tags.getNodePath() %>]
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
-  <input type="checkbox" name="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
+  <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
  </div>
 </blockquote>
 <div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
@@ -171,17 +172,26 @@ for(UANodeOCTags tn:tns)
 {
 	//if(tn.getRefBranchNode()!=null)
 	//	continue ;
-	List<UATag> tags = tn.listTags() ;
-
+	List<UATag> tags = null;
+	if(bsys)
+		tags = tn.listTags() ;
+	else
+		tags = tn.getNorTags() ;
+	
 	String tn_id = tn.getId() ;
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
 	{
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+		String cssstr="" ;
+		if(tag.isSysTag())
+			cssstr="color:grey";
+		else
+			cssstr="color:blue";
 %>
    <tr id="ctag_<%=tag.getId() %>"  tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>">
         <td></td>
-<td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><%=cxtpath%></td>
+<td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>"><%=cxtpath%></span></td>
 
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
@@ -193,8 +203,7 @@ for(UANodeOCTags tn:tns)
 	if(tag.isCanWrite())
 	{
 %>
-        <%=(tag.isCanWrite()?"✔":"") %>
-        	<input type="text" id="ctag_w_<%=cxtpath%>" value="" size="8"/><button>w</button>
+        	<input type="text" id="ctag_w_<%=cxtpath%>" value="" size="8"/><button onclick="tag_write('<%=cxtpath%>')">w</button>
 <%
 	}
 %>
@@ -211,7 +220,7 @@ for(UANodeOCTags tn:tns)
 <table width='100%' border='1' height="120">
 <tr>
  <td>
- script test <input type='button' value='run' onclick="run_script_test('')"/>
+ script test <input type='button' value='run' onclick="run_script_test('')"/> <input type='button' value='ttt' onclick="run_script_test1()"/>
  </td>
  <td>script test result</td>
 </tr>
@@ -229,9 +238,19 @@ for(UANodeOCTags tn:tns)
 var path = "<%=path%>" ;
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
+var b_sys = <%=bsys%>;
 
 layui.use('form', function(){
 	  var form = layui.form;
+	  
+	  if(b_sys)
+	  	$("#show_sys").attr('checked', 'checked');
+	  
+	  form.on('switch(show_sys)', function(obj){
+		  var bshow = obj.elem.checked ;
+          document.location.href="cxt_tags.jsp?path="+path+"&sys="+bshow ;
+      });
+	  
 	  form.render();
 	});
 
@@ -427,7 +446,7 @@ function cxt_rt()
 			return ;
 		if(typeof(ret) == 'string')
 			eval("ret="+ret) ;
-		show_cxt_dyn("/",ret) ;
+		show_cxt_dyn("",ret) ;
 	},false) ;
 }
 
@@ -435,18 +454,22 @@ function show_cxt_dyn(p,cxt)
 {
 	for(var tg of cxt.tags)
 	{
-		var tagp =p+tg.n ;
+		var n = tg.n;
+		var tagp =p+n ;
 		var bvalid = tg.valid ;
 		var dt = tg.dt ;
 		var strv = tg.v ;
+		var strdt = "" ;
+		if(dt>0)
+			strdt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
 		show_ele_html("ctag_v_"+tagp,strv) ;
-		show_ele_html("ctag_dt_"+tagp,dt) ;
-		show_ele_html("ctag_q_"+tagp,""+bvalid) ;
+		show_ele_html("ctag_dt_"+tagp,strdt) ;
+		show_ele_html("ctag_q_"+tagp,(bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>")) ;
 	}
 	
-	for(var subn in cxt.subs)
+	for(var sub of cxt.subs)
 	{
-		show_cxt_dyn(p+subn+"/",cxt.subs[subn]) ;
+		show_cxt_dyn(p+sub.n+".",sub) ;
 	}
 }
 
@@ -472,6 +495,14 @@ function run_script_test(fn)
 			document.getElementById('script_res').value = ret ;
 		},false) ;
 }
+
+var abc =function() {
+		var a = 1 ;
+		var b =2 ;
+		var c = 3 ;
+		
+		
+};
 
 </script>
 </html>

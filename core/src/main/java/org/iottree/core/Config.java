@@ -75,7 +75,7 @@ public class Config
 	
 	static String lastConfigError = "" ;
 	
-	static boolean appConfigInitSucc = false;
+	//static boolean appConfigInitSucc = false;
 	
 	static String dataDirBase = null ;
 	
@@ -93,15 +93,15 @@ public class Config
 		}
 	}
 	
-	/**
-	 * �ж�AppConfig��ʼ���Ƿ�ɹ�
-	 * @return
-	 */
-	public static boolean isAppConfigInitSucc()
-	{
-		return appConfigInitSucc ;
-	}
-	
+//	/**
+//	 * �ж�AppConfig��ʼ���Ƿ�ɹ�
+//	 * @return
+//	 */
+//	public static boolean isAppConfigInitSucc0()
+//	{
+//		return appConfigInitSucc ;
+//	}
+//	
 	
 	public static String getAppConfigInitError()
 	{

@@ -115,6 +115,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.scanRate = srate;
 	}
 	
+	void setTagSys(String name,String title,String desc,String addr,UAVal.ValTP vt,boolean canwrite,long srate)
+	{
+		setNameTitleSys(name,title,desc) ;
+		this.addr = addr ;
+		this.valTp = vt ;
+		this.bCanWrite = canwrite ;
+		this.scanRate = srate;
+	}
+	
 	public UATag(DevItem item)
 	{
 		super(item.name,item.title,item.desc) ;
@@ -180,6 +189,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public UANodeOCTags getBelongToNode()
 	{
 		return belongToNode;
+	}
+	
+	public boolean isSysTag()
+	{
+		return this.name.startsWith("_") ;
 	}
 	
 	@Override
@@ -509,16 +523,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 	}
 	
-	/**
-	 * 不考虑各种驱动、地址和型号，也不考虑mid
-	 * 直接设置对应的值
-	 * @param v
-	 */
-	public void RT_setVal(Object v)
-	{
-		midVal = new UAVal(true,v,System.currentTimeMillis()) ;
-		HIS_setVal(midVal) ;
-	}
+//	/**
+//	 * 不考虑各种驱动、地址和型号，也不考虑mid
+//	 * 直接设置对应的值
+//	 * @param v
+//	 */
+//	public void RT_setVal(Object v)
+//	{
+//		midVal = new UAVal(true,v,System.currentTimeMillis()) ;
+//		HIS_setVal(midVal) ;
+//	}
 	
 	void HIS_setVal(UAVal v)
 	{
@@ -539,6 +553,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this.valsCacheList.getVals(lastdt) ;
 	}
 	
+	/**
+	 * set value in memory
+	 * for systag etc
+	 * @param v
+	 */
+	void RT_setVal(Object v)
+	{
+		UAVal uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		HIS_setVal(uav) ;
+	}
+	
 	public boolean RT_writeVal(Object v)
 	{
 		if(this.isMidExpress())
@@ -551,16 +576,30 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(dev==null)
 			return false;
 		
+		DevDriver dd = dev.getBelongTo().getDriver() ;
+		if(dd==null)
+			return false;
+
+		return dd.RT_writeVal(dev, da, v);
+	}
+	
+	public boolean RT_writeValStr(String v)
+	{
+		if(this.isMidExpress())
+			return false;
+		StringBuilder sb = new StringBuilder() ;
+		DevAddr da = this.getDevAddr(sb);
+		if(da==null)
+			return false;
+		UADev dev = this.getBelongToDev();
+		if(dev==null)
+			return false;
 		
-//		DevModel m = dev.getModel();
-//		if(m==null)
-//			return false;
-//		if(v instanceof String)
-//			return m.RT_writeValStr(da, (String)v);
-//		
-//		return m.RT_writeVal(da, v) ;
-		// TODO call driver to write  
-		return false;
+		DevDriver dd = dev.getBelongTo().getDriver() ;
+		if(dd==null)
+			return false;
+
+		return dd.RT_writeValStr(dev, da, v);
 	}
 	
 	
@@ -569,6 +608,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.isMidExpress())
 		{
 			return midVal ;
+		}
+		else if(this.isSysTag())
+		{
+			if(this.valsCacheList==null)
+				return null ;
+			return this.valsCacheList.getValLast() ;
 		}
 		else
 		{
@@ -610,7 +655,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	}
 	
 	
-	static List<String> js_names = Arrays.asList("_pv","_valid","_updt") ;
+	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt") ;
 	
 	
 	public List<Object> JS_names()
@@ -640,7 +685,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		switch(key.toLowerCase())
 		{
 		case "_pv":
-			RT_setVal(v) ;
+			RT_writeVal(v) ;
 			break ;
 		default:
 			break ;//do nothing

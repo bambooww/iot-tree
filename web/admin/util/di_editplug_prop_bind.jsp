@@ -105,6 +105,8 @@ function sel_tag()
 				function(dlgw)
 				{
 					var ret = dlgw.get_val() ;
+					if(ret==null)
+						return ;
 					$("#tag").val(ret) ;
 					 dlg.close();
 				},
