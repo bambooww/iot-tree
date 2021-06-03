@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/json; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="
 	java.io.*,
@@ -11,11 +11,11 @@
 	org.iottree.core.util.xmldata.*
 	"%>
 <%//通信节点下挂载的设备
-if(!Convert.checkReqEmpty(request, out, "path"))
+if(!Convert.checkReqEmpty(request, out, "op"))
 	return;
-
-String path=request.getParameter("path");
 String op = request.getParameter("op");
+String path=request.getParameter("path");
+
 UANode n = UAUtil.findNodeByPath(path) ;
 if(n==null)
 {
@@ -34,7 +34,7 @@ case "w":
 	if(!Convert.checkReqEmpty(request, out, "tagid"))
 		return;
 	String tagid = request.getParameter("tagid") ;
-	UATag tag = ntags.getTagById(tagid) ;
+	UATag tag = (UATag)ntags.findNodeById(tagid);//.getTagById(tagid) ;
 	if(tag==null)
 	{
 		out.print("no tag found") ;
@@ -42,6 +42,7 @@ case "w":
 	}
 	String strv = request.getParameter("v") ;
 	tag.RT_writeValStr(strv);
+	out.print("write value ok") ;
 	break ;
 default:
 	

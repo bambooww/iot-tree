@@ -6,7 +6,7 @@
 		<webapp name="ROOT" />		
 		<webapp name="_js" />
 		<webapp name="_iottree" />
-		<webapp name="opencharts" />
+		<webapp name="opencharts" path="../../opencharts" />
 	</webapps>
 	
 	<system>

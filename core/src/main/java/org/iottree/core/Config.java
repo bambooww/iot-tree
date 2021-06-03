@@ -181,6 +181,29 @@ public class Config
 		return webappBase;
 	}
 	
+	public static class Webapp
+	{
+		String appName = null ;
+		
+		String path = null ;
+		
+		private Webapp(String appn,String path)
+		{
+			this.appName = appn ;
+			this.path = path ;
+		}
+		
+		public String getAppName()
+		{
+			return appName ;
+		}
+		
+		public String getPath()
+		{
+			return this.path ;
+		}
+	}
+	
 	public static class Webapps
 	{
 		int port = 80 ;
@@ -189,7 +212,7 @@ public class Config
 		
 		int sslPort = -1 ;
 		
-		ArrayList<String> webappNames = new ArrayList<String>() ;
+		ArrayList<Webapp> webapps = new ArrayList<Webapp>() ;
 		
 		public Webapps()
 		{
@@ -211,9 +234,19 @@ public class Config
 			return sslPort; 
 		}
 		
-		public List<String> getAppNameList()
+		public List<Webapp> getAppList()
 		{
-			return webappNames ;
+			return webapps ;
+		}
+		
+		public Webapp getApp(String name)
+		{
+			for(Webapp w:this.webapps)
+			{
+				if(name.equals(w.appName))
+					return w ;
+			}
+			return null ;
 		}
 	}
 	
@@ -234,10 +267,11 @@ public class Config
 			for(Element wele:weles)
 			{
 				String appn = wele.getAttribute("name") ;
+				String path = wele.getAttribute("path") ;
 				boolean bload = !"false".equalsIgnoreCase(wele.getAttribute("load")) ;
 				if(!bload)
 					continue ;
-				r.webappNames.add(appn) ;
+				r.webapps.add(new Webapp(appn,path)) ;
 			}
 		}
 		return r ;
@@ -261,7 +295,7 @@ public class Config
 			if(!tmpf.isDirectory())
 				continue ;
 			String n = tmpf.getName() ;
-			if(w!=null && !w.webappNames.contains(n))
+			if(w!=null && w.getApp(n)==null)
 				continue ;
 				
 			rets.add(tmpf.getName()) ;

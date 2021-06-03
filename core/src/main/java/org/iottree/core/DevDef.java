@@ -258,11 +258,4 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch
 		return null;
 	}
 
-	@Override
-	protected void listTagsAll(List<UATag> tgs, boolean bmid)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
 }

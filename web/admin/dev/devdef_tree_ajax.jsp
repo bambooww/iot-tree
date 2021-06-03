@@ -8,7 +8,8 @@
 				public static void renderTagGroup(Writer out,UANodeOCTagsGCxt tg) throws Exception
 				{
 					String path = tg.getNodePath();
-					out.write("{\"text\": \""+tg.getTitle()+"-"+tg.getName()+"\"") ;
+					//out.write("{\"text\": \""+tg.getTitle()+"-"+tg.getName()+"\"") ;
+					out.write("{\"text\": \""+tg.getName()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\",\"path\":\""
 						+path+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
@@ -62,7 +63,8 @@
 						if(bfirst) bfirst=false;
 						else out.write(",") ;
 						
-						out.write("{\"text\": \""+hmi.getTitle()+"-"+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
+						//out.write("{\"text\": \""+hmi.getTitle()+"-"+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
+						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\"") ;
 						out.write(",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
 					}

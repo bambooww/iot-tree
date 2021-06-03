@@ -12,12 +12,46 @@
 		tp= "" ;
 	UAHmi hmi = null ;
 	UANode branchn =null;
+	String hmipath = null ;
 	switch(tp)
 	{
+	case "subp":
+		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_path"))
+			return;
+		hmipath = request.getParameter("hmi_path") ;
+		hmi =  UAUtil.findHmiByPath(hmipath) ;
+		if(hmi==null)
+		{
+			out.print("no path hmi found") ;
+			return ;
+		}
+		String subpath = request.getParameter("sub_path") ;
+		String fp = hmi.getParentNode().getNodePath()+"/"+subpath ;
+		UAHmi sub_hmi = UAUtil.findHmiByPath(fp) ;
+		if(sub_hmi==null)
+		{
+			out.print("no sub hmi found") ;
+			return ;
+		}
+		
+		
+		UAHmi rb_hmi = (UAHmi)sub_hmi.getRefBranchNode();
+		String rb_path = "" ;
+		if(rb_hmi!=null)
+		{
+			rb_path = rb_hmi.getNodePath() ;
+			sub_hmi = rb_hmi ;
+		}
+		
+		String txt = sub_hmi.loadHmiUITxt() ;
+		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
+		out.print("{\"path\":\""+fp+"\",\"rb_path\":\""+rb_path+"\"}\r\n") ;
+		out.print(txt);
+		break ;
 	case "sub":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_id"))
 			return;
-		String hmipath = request.getParameter("hmi_path") ;
+		hmipath = request.getParameter("hmi_path") ;
 		String subid = request.getParameter("sub_id") ;
 		hmi = UAUtil.findHmiByPath(hmipath) ;
 		if(hmi==null)
@@ -30,25 +64,40 @@
 			out.print("illegal hmi_path and sub_id") ;
 			return ;
 		}
-		branchn = hmi.getRefBranchNode() ;
-		UANode subn = hmi.getParentNode().findNodeById(subid) ;
-		if(subn==null&&branchn!=null)
-			subn = branchn.getParentNode().findNodeById(subid) ;
+		
+		UANode bn = hmi.getRefBranchNode();
+		UANode subn = null;
+		String refpath_cxt = null;
+		if(bn!=null)
+		{
+			refpath_cxt = hmi.getParentNode().getNodePath();
+			subn = bn.getParentNode().findNodeById(subid) ;
+		}
+		else
+		{
+			//branchn = hmi.getRefBranchNode() ;
+			subn = hmi.getParentNode().findNodeById(subid) ;
+			refpath_cxt = subn.getParentNode().getNodePath();
+		}
+		//if(subn==null&&branchn!=null)
+		//	subn = branchn.getParentNode().findNodeById(subid) ;
 		if(subn==null || !(subn instanceof UAHmi))
 		{
 			out.print("no sub hmi found") ;
 			return ;
 		}
 		hmi = (UAHmi)subn ;
-		UANode refn = hmi.getRefBranchNode() ;
+		branchn = hmi.getRefBranchNode() ;
 		String refid = null ;
-		if(refn!=null)
+		UAHmi branchhmi = null ;
+		if(branchn!=null)
 		{
-			hmi = (UAHmi)refn ;
+			hmi = (UAHmi)branchn ;
 		}
 		String np = hmi.getNodePath() ;
-		String txt = hmi.loadHmiUITxt() ;
-		out.print(np+"\r\n") ;
+		txt = hmi.loadHmiUITxt() ;
+		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
+		out.print("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	case "rt":

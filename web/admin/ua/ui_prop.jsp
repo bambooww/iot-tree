@@ -200,7 +200,7 @@ width:100%;
 <body>
 <table class="prop_table" >
   <tr>
-    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path"><%=n.getNodePathTitle() %></div></td>
+    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path"><%=n.getNodePathTitle() %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<%=n.getNodePath() %>]</div></td>
   </tr>
   <tr>
     <td style="width:30%" >

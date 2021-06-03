@@ -19,6 +19,14 @@ if(node==null)
 	out.print("node not found"); 
 	return ;
 }
+UAHmi hmi = null ;
+boolean bhmi = false;
+if(node instanceof UAHmi)
+{
+	bhmi = true ;
+	hmi = (UAHmi)node ;
+	node = node.getParentNode() ;
+}
 if(!(node instanceof UANodeOCTags))
 {
 	out.print("node has no tags") ;
@@ -71,6 +79,10 @@ th
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
+<%
+if(!bhmi)
+{
+%>
 <blockquote class="layui-elem-quote"><%=node_tags.getNodePathTitle() %> [<%=node_tags.getNodePath() %>]
 <%
 if(!brefed)
@@ -145,8 +157,17 @@ for(UATag tag:cur_tags)
     </tbody>
 </table>
 </div>
+<%
+}//end if(bhmi)
+
+String hmitt = "" ;
+if(bhmi)
+{
+	hmitt ="UI ["+hmi.getNodePath()+"]";
+}
+%>
 <hr class="layui-bg-green">
- <blockquote class="layui-elem-quote ">Context under  [<%=node_tags.getNodePath() %>]
+ <blockquote class="layui-elem-quote "><%=hmitt %> Context under  [<%=node_tags.getNodePath() %>]
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
   <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
  </div>
@@ -203,7 +224,7 @@ for(UANodeOCTags tn:tns)
 	if(tag.isCanWrite())
 	{
 %>
-        	<input type="text" id="ctag_w_<%=cxtpath%>" value="" size="8"/><button onclick="tag_write('<%=cxtpath%>')">w</button>
+        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" size="8"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
 <%
 	}
 %>
@@ -438,6 +459,18 @@ function del_tag(id)
 	 });
 }
 
+function w_tag(id)
+{
+	var strv = $("#ctag_w_"+id).val();
+	if(strv==null||strv=="")
+	{
+		dlg.msg("please input write value") ;
+		return ;
+	}
+	send_ajax("./cxt_dyn_ajax.jsp",{path:path,tagid:id,v:strv,op:"w"},(bsucc,ret)=>{
+		dlg.msg(ret) ;
+	},false) ;
+}
 
 function cxt_rt()
 {
@@ -495,14 +528,6 @@ function run_script_test(fn)
 			document.getElementById('script_res').value = ret ;
 		},false) ;
 }
-
-var abc =function() {
-		var a = 1 ;
-		var b =2 ;
-		var c = 3 ;
-		
-		
-};
 
 </script>
 </html>

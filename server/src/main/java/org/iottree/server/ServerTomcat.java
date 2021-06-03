@@ -5,6 +5,8 @@ import java.io.File;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.iottree.core.Config;
+import org.iottree.core.Config.Webapp;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
 
 /**
@@ -63,9 +65,13 @@ public class ServerTomcat implements IServerBootComp
 			String wbase = Config.getWebappBase();
 			File wbf = new File(wbase);
 			tomcat.setPort(w.getPort());
-			for (String appn : w.getAppNameList())
+			for (Webapp app : w.getAppList())
 			{
+				String appn = app.getAppName();
+				String path = app.getPath() ;
 				String fp = wbase + "/" + appn;
+				if(Convert.isNotNullEmpty(path))
+					fp = wbase+"/"+path ;
 				if (!(new File(fp).exists()))
 					continue;
 

@@ -112,11 +112,18 @@ Tags
 Properties
  <select id="prop" multiple="multiple" style="width:99%;height:90%">
  <%
+ boolean bfirst = true ;
  for(String pn:UATag.js_names)
  {
 	 String seled = "" ;
 	 if(pn.equals(propv))
 		 seled = "selected=\'selected\'" ;
+	 if(bfirst)
+	 {
+		 bfirst=false;
+		 if(Convert.isNullOrEmpty(propv))
+			 seled = "selected=\'selected\'" ;
+	 }
  %>
  	<option value="<%=pn %>" <%=seled %>><%=pn %></option>
 <%
