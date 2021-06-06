@@ -36,7 +36,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Repository</title>
+<title>hmi context editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>

@@ -117,7 +117,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
            <a class="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
            </a>
-           <a class="btn btn-success"  href="javascript:del_rep('<%=rep.getId()%>')" title="export">
+           <a class="btn btn-success"  href="javascript:exp_rep('<%=rep.getId()%>')" title="export">
               <i class="fa fa-arrow-right"></i>
            </a>
            <a class="btn btn-success " style="background-color: #e33a3e" href="javascript:del_rep('<%=rep.getId()%>')" title="delete">
@@ -156,20 +156,59 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 						</div>
 						
 					</div>
+					
+					<div class="iot-mod iot-question-detail iot-item">
+					    <div class="mod-head">
+					        <h1>Device Library </h1>
+					        <div style="float:right;top:0px;position: absolute;right:10px" onclick="show_hide('cont_devlib')"><i class="fa fa-bars fa-lg"></i></div>
+					    </div>
+					    <div class="mod-body" style="display:none" id="cont_devlib">
+					       
+					        <a href="javascript:open_devlib()">Open</a>
+							<iframe src="/admin/dev/dev_lib_lister.jsp?mgr=true" style="width:100%;height:500px;"></iframe>
+					        
+					    </div>
+					</div>
+					
+					<div class="iot-mod iot-question-detail iot-item">
+					    <div class="mod-head">
+					        <h1 style="width:200px">HMI Library</h1>
+					        
+					        <div style="float:left;top:5px;position: absolute;left:210px" >
+					        	<i class="fa fa-download fa-lg"></i> Import
+					        
+					        </div>
+					        
+					        <div style="float:right;top:5px;position: absolute;right:10px" onclick="show_hide('cont_hmilib')"><i class="fa fa-bars fa-lg"></i></div>
+					    </div>
+					    <div class="mod-body"  id="cont_hmilib" style="display:none">
+					        <iframe src="/admin/ua_hmi/hmi_left_comp.jsp" style="width:100%;height:500px;"></iframe>
+					        
+					    </div>
+					</div>
+					
 				</div>
 				<!--right side -->
 				<div class="iot-side-bar">
 					
-
-
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Device Library</h3>
+					        <h3>Tag Indicator</h3>
 					    </div>
 					    <div class="mod-body">
 					       
-					        <a href="javascript:open_devlib()">Open</a> Device Library
-					        <p>supported drivers:</p>
+					       TODO 1.2v
+					        
+					    </div>
+					</div>
+
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <h3>Store Adapters</h3>
+					    </div>
+					    <div class="mod-body">
+					       
+					       TODO 1.2v
 					        
 					    </div>
 					</div>
@@ -205,6 +244,15 @@ function open_rep(id)
 {
 	window.open("rep_editor.jsp?id="+id);
 	//window.open("ua_rep.jsp?repid="+id);
+}
+
+function show_hide(id)
+{
+	var ob = $("#"+id) ;
+	if(ob.css("display")=='none')
+		ob.css("display","") ;
+	else
+		ob.css("display",'none') ;
 }
 
 function del_rep(id)

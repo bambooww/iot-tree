@@ -239,7 +239,8 @@ function reg_right_menu()
 
 function open_comp_editor(cat,id,tt)
 {
-	parent.parent.set_comp_editor_tab(cat,id,"comp:"+tt) ;
+	//parent.parent.set_comp_editor_tab(cat,id,"comp:"+tt) ;
+	window.open("./hmi_editor_comp.jsp?tabid="+id+"&catid="+cat+"&id="+id);
 }
 
 function comp_sel_chg()

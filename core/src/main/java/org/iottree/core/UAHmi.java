@@ -78,6 +78,12 @@ public class UAHmi extends UANodeOC implements IOCUnit
 
 	File getHmiUIFile()
 	{
+		UAHmi rbhmi = (UAHmi)this.getRefBranchNode();
+		if(rbhmi!=null)
+		{
+			return rbhmi.getHmiUIFile() ;
+		}
+		
 		ISaver rep = (ISaver)this.getTopNode() ;
 		
 		File subdir = rep.getSaverDir();
@@ -98,6 +104,10 @@ public class UAHmi extends UANodeOC implements IOCUnit
 	
 	public void saveHmiUITxt(String txt) throws FileNotFoundException, IOException
 	{
+		UAHmi rbhmi = (UAHmi)this.getRefBranchNode();
+		if(rbhmi!=null)
+			throw new IOException("hmi has refer branch node");
+		
 		File savef = getHmiUIFile();
 		try(FileOutputStream fos = new FileOutputStream(savef))
 		{

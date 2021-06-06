@@ -571,6 +571,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		return rtTh!=null;
 	}
 	
+	
+	
 	private Runnable runner = new Runnable() {
 
 		@Override
@@ -586,6 +588,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 					{
 						Thread.sleep(5);
 					}catch(Exception e) {}
+					
+					RT_runFlush();
 					
 					runScriptInterval() ;
 				}

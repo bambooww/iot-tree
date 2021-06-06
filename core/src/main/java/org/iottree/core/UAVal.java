@@ -173,7 +173,7 @@ public class UAVal //extends JSObMap
 	
 	private long valDT = System.currentTimeMillis() ;
 	
-	private long valChgDT = -1 ;
+	private long valChgDT = System.currentTimeMillis() ;
 	/**
 	 * 
 	 */
@@ -230,27 +230,56 @@ public class UAVal //extends JSObMap
 	
 	synchronized public void setVal(boolean bvalid,Object val,long valdt)
 	{
-		bValid = bvalid ;
+		if(!bvalid)
+		{
+			if(!bValid)
+				return ;
+			
+			bValid=false;
+			this.valChgDT = valdt;
+			return ;
+		}
+		
+		if(!bValid)
+		{
+			bValid = true ;
+			objVal = val ;
+			this.valChgDT = valDT = valdt;
+			return ;
+		}
+		
+		if(val.equals(objVal))
+		{
+			valDT = valdt;
+			return ;
+		}
+		
 		objVal = val ;
-		if(valdt>0)
-			valDT = valdt ;
+		this.valChgDT = valDT = valdt;
 	}
 	
 	synchronized public void setValErr(String err)
 	{
+		this.valErr = err ;
+		if(!bValid)
+			return ;
+		
 		bValid = false ;
 		objVal = null ;
-		this.valErr = err ;
+		this.valChgDT = valDT = System.currentTimeMillis();
 	}
 	
 	synchronized public void setValException(String err,Exception e)
 	{
-		bValid = false ;
-		objVal = null ;
-		if(Convert.isNullOrEmpty(err))
-			err = e.getMessage() ;
 		this.valErr = err ;
 		this.valErrOb = e ;
+		setValErr(err);
+		
+//		bValid = false ;
+//		objVal = null ;
+//		if(Convert.isNullOrEmpty(err))
+//			err = e.getMessage() ;
+		
 	}
 	
 	public Object getObjVal()

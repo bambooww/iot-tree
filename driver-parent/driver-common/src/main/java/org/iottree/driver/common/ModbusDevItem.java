@@ -87,7 +87,7 @@ public class ModbusDevItem //extends DevModel
 		if(coil_in_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_INPUT,coil_in_addrs,
-					blocksize,100);
+					blocksize,100,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilIn = mb;
@@ -95,7 +95,7 @@ public class ModbusDevItem //extends DevModel
 		if(coil_out_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_OUTPUT,coil_out_addrs,
-					blocksize,100);
+					blocksize,100,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilOut = mb;
@@ -103,7 +103,7 @@ public class ModbusDevItem //extends DevModel
 		if(reg_input_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_INPUT,reg_input_addrs,
-					blocksize,100);
+					blocksize,100,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegIn = mb;
@@ -111,7 +111,7 @@ public class ModbusDevItem //extends DevModel
 		if(reg_hold_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_HOLD,reg_hold_addrs,
-					blocksize,100);
+					blocksize,100,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegHold = mb;

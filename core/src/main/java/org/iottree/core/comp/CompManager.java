@@ -52,7 +52,7 @@ public class CompManager
 	
 	private CompManager()
 	{
-		fileDirBase = new File(Config.getDataDirBase()+"/ua/lib/") ;
+		fileDirBase = new File(Config.getDataDirBase()+"/comp_lib/") ;
 		if(!fileDirBase.exists())
 			fileDirBase.mkdirs() ;
 	}

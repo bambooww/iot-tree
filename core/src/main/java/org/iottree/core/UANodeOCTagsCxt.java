@@ -236,36 +236,47 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 	}
 	
-	
 	public void CXT_renderJson(Writer w) throws IOException
 	{
+		CXT_renderJson(w,-1);
+	}
+	
+	public boolean CXT_renderJson(Writer w,long lastdt) throws IOException
+	{
+		boolean bchged = false;
 		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.name+"\",\"tags\":[") ;
 		boolean bfirst = true ;
 		List<UATag> tags = this.listTags();
 		for(UATag tg : tags)
 		{
-			if(!bfirst)
-				w.write(",") ;
-			else
-				bfirst = false ;
-			
 			UAVal val = tg.RT_getVal() ;
+			if(val==null)
+				continue ;
+			
 			boolean bvalid = false;
 			String vstr = "" ;
 			long dt = -1 ;
 			long dt_chg=-1 ;
-			if(val!=null)
-			{
-				bvalid = val.isValid() ;
-				vstr = ""+val.getObjVal() ;
-				
-				dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
-				dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
-			}
+
+			bvalid = val.isValid() ;
+			vstr = ""+val.getObjVal() ;
+			
+			dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
+			dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+			
+			if(lastdt>0&&dt_chg<=lastdt)
+				continue ;
+			
+			if(!bfirst)
+				w.write(",") ;
+			else
+				bfirst = false ;
 			//w.write("\""+tg.getName()+"\":");
 			w.write("{\"n\":\"");
 			w.write(tg.getName()) ;
 			w.write("\",\"valid\":"+bvalid+",\"v\":\""+vstr+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+			
+			bchged = true ;
 		}
 		w.write("],\"subs\":[");
 		
@@ -278,8 +289,11 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				bfirst = false ;
 			//w.write("\""+subtg.getName()+"\":");
 			
-			subtg.CXT_renderJson(w) ;
+			if(subtg.CXT_renderJson(w,lastdt))
+				bchged = true ;
 		}
 		w.write("]}");
+		
+		return bchged ;
 	}
 }

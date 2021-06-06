@@ -17,6 +17,17 @@
 	{
 		out.print("no hmi node found") ;
 	}
+	UANode topn = uahmi.getTopNode() ;
+	UAPrj prj = null ;
+	String prjid = "" ;
+	String prjname = "" ;
+	String hmiid = uahmi.getId() ;
+	if(topn instanceof UAPrj)
+	{
+		prj = (UAPrj)topn ;
+		prjid = prj.getId() ;
+		prjname = prj.getName() ;
+	}
 	//String repname = rep.getName() ;
 %><!DOCTYPE html>
 <html>
@@ -315,7 +326,7 @@ height:30px;
 		</div>
 
 
-
+	<div id="oper_fitwin" style="position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000"><i class="fa fa-crosshairs fa-3x"></i></div>
 
 
 <script>
@@ -323,11 +334,18 @@ height:30px;
 
 var layuiEle ;
 var path="<%=path%>";
+var prj_name = "<%=prjname%>" ;
+var hmi_id="<%=hmiid%>" ;
 
 layui.use('element', function(){
 	layuiEle = layui.element;
   
   //…
+});
+
+$('#oper_fitwin').click(function()
+{
+	draw_fit();
 });
 
 function add_tab()
@@ -371,6 +389,15 @@ function init_iottpanel0()
 	loadLayer = hmiView.getLayer();
 	intedit = hmiView.getInteract();
 }
+
+
+function draw_fit()
+{
+	if(loadLayer==null)
+		return ;
+	loadLayer.ajustDrawFit();
+}
+
 
 
 function init_iottpanel()
@@ -660,7 +687,7 @@ var ws = null;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/_ws/hmi/';
+    var url = 'ws://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {
@@ -675,12 +702,17 @@ function ws_conn()
         //setConnected(true);
         log('Info: WebSocket connection opened.');
         
-        hmiView.setWebSocket(ws);
+        hmiModel.setWebSocket(ws);
     };
     ws.onmessage = function (event) {
 
     	//console.log(event.data) ;
-    	hmiModel.fireModelPropBindData(event.data) ;
+    	//hmiModel.fireModelPropBindData(event.data) ;
+    	var d = null ;
+    	eval("d="+event.data) ;
+    	//if(typeof(ret) == 'string')
+		//	eval("ret="+ret) ;
+		hmiModel.updateRtNodes(d);
     };
     ws.onclose = function (event) {
        
@@ -695,7 +727,8 @@ function ws_disconn() {
     }
 }
 
-//ws_conn();
+if(prj_name!=null&&prj_name!="")
+	ws_conn();
 
 function cxt_rt()
 {
@@ -710,7 +743,7 @@ function cxt_rt()
 	},false) ;
 }
 
-setInterval("cxt_rt()",5000);
+//setInterval("cxt_rt()",5000);
 </script>
 </body>
 </html>

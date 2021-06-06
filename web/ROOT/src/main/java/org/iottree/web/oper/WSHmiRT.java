@@ -1,6 +1,7 @@
 package org.iottree.web.oper;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
+import org.iottree.core.UAUtil;
 import org.iottree.core.UAVal;
 import org.iottree.core.bind.BindDI;
 import org.iottree.core.bind.EventBindItem;
@@ -38,7 +40,7 @@ import org.iottree.core.ws.WSServer;
 import org.iottree.core.ws.WebSocketConfig;
 import org.json.JSONObject;
 
-@ServerEndpoint(value = "/_ws/hmi/{repname}/{hmiid}", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/_ws/hmi/{prjname}/{hmiid}", configurator = WebSocketConfig.class)
 public class WSHmiRT extends WSServer
 {
 	static
@@ -50,7 +52,7 @@ public class WSHmiRT extends WSServer
 	static class SessionItem
 	{
 		private final Session session;
-		private final UAPrj rep;
+		private final UAPrj prj;
 		private final UANodeOCTagsCxt nodecxt;
 		private final UAHmi hmi ;
 		
@@ -61,7 +63,7 @@ public class WSHmiRT extends WSServer
 		public SessionItem(Session s,UAPrj rep,UANodeOCTagsCxt nodecxt,UAHmi hmi)
 		{
 			this.session = s ;
-			this.rep = rep ;
+			this.prj = rep ;
 			this.nodecxt = nodecxt ;
 			this.hmi = hmi ;
 		}
@@ -73,7 +75,7 @@ public class WSHmiRT extends WSServer
 		
 		public UAPrj getRep()
 		{
-			return rep ;
+			return prj ;
 		}
 		
 		public UAHmi getHmi()
@@ -87,7 +89,7 @@ public class WSHmiRT extends WSServer
 		public String getRepDynJsonStr()
 		{
 			long curt = System.currentTimeMillis() ;
-			JSONObject jobj = rep.toOCDynJSON(lastDT);
+			JSONObject jobj = prj.toOCDynJSON(lastDT);
 			lastDT = curt ;
 			return jobj.toString(2);
 		}
@@ -112,7 +114,42 @@ public class WSHmiRT extends WSServer
 	        }
 		}
 		
-		void onTick()
+		void onTick() throws IOException
+		{
+			UAHmi hmi = getHmi() ;
+			
+			
+			long lastdt = lastDT ;
+			lastDT = System.currentTimeMillis() ;
+			
+			UANodeOCTagsCxt ntags = hmi.getBelongTo() ;
+			
+			StringWriter sw = new StringWriter();
+			if(ntags.CXT_renderJson(sw,lastdt))
+			{
+				String txt = sw.toString() ;
+				try
+				{
+					sendTxt(txt);
+				} catch (IllegalStateException ise)
+				{
+					ise.printStackTrace();
+				}
+			}
+			
+			
+//			if(!bhas_data)
+//			{
+//				return ;//do nothing
+//			}
+			
+			//System.out.println("session id="+this.getSession().getId()+" has git data") ;
+
+			
+		}
+	
+		
+		void onTick0()
 		{
 			UAHmi hmi = getHmi() ;
 			
@@ -249,7 +286,17 @@ public class WSHmiRT extends WSServer
 	protected static void tick()
 	{
 		for(SessionItem si : getSessionItems())
-			si.onTick();
+		{
+			try
+			{
+				si.onTick();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+			
 //		HashMap<UAHmi,List<SessionItem>> hmi2sis = getHmiSessions() ;
 //		if(hmi2sis==null||hmi2sis.size()<0)
 //			return ;
@@ -294,9 +341,9 @@ public class WSHmiRT extends WSServer
 	}
 	
 	@OnOpen
-	public void onOpen(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "hmiid") String hmiid) throws Exception //
+	public void onOpen(Session session, @PathParam(value = "prjname") String prjname,@PathParam(value = "hmiid") String hmiid) throws Exception //
 	{
-		UAPrj rep = UAManager.getInstance().getPrjByName(repname) ;
+		UAPrj rep = UAManager.getInstance().getPrjByName(prjname) ;
 		if(rep==null)
 		{
 			session.close();
@@ -319,7 +366,7 @@ public class WSHmiRT extends WSServer
 
 	// 关闭连接时调用
 	@OnClose
-	public void onClose(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "hmiid") String hmiid)
+	public void onClose(Session session, @PathParam(value = "prjname") String prjname,@PathParam(value = "hmiid") String hmiid)
 	{
 		removeSessionItem(session);
 		//getAgentServer().onSessionUnset(session.getId());
@@ -345,8 +392,9 @@ public class WSHmiRT extends WSServer
 			switch(tp)
 			{
 			case "event":
-				String repid = job.getString("repid") ;
-				String hmiid = job.getString("hmiid") ;
+			// {tp:"event",cxtpath:cxtpath,hmipath:hmipath,diid:diid,name:eventn,val:eventv} ;
+				String cxtpath = job.getString("cxtpath") ;
+				String hmipath = job.getString("hmipath") ;
 				String diid = job.getString("diid") ;
 				String eventn = job.getString("name") ;
 				Object val = job.get("val") ;
@@ -355,7 +403,7 @@ public class WSHmiRT extends WSServer
 					strval = (String)val ;
 				else
 					strval = JSONObject.valueToString(val);
-				onHmiEvent(repid,hmiid,diid,eventn,strval);
+				onHmiEvent(cxtpath,hmipath,diid,eventn,strval);
 				break ;
 			}
 		}
@@ -374,12 +422,12 @@ public class WSHmiRT extends WSServer
 	}
 	
 	
-	private void onHmiEvent(String repid,String hmiid,String diid,String eventn,String val)
+	private void onHmiEvent(String cxtpath,String hmipath,String diid,String eventn,String val)
 	{
-		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
-		if(rep==null)
+		UANode cxtn = UAUtil.findNodeByPath(cxtpath);//.getPrjById(repid) ;
+		if(cxtn==null)
 			return ;
-		UAHmi hmi = rep.findHmiById(hmiid) ;
+		UAHmi hmi = UAUtil.findHmiByPath(hmipath);
 		if(hmi==null)
 			return ;
 		BindDI bdi = hmi.getBind(diid) ;

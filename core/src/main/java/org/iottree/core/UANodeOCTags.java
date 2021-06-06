@@ -394,6 +394,25 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 	}
 	
+	/**
+	 * will be called interval to update sys tag values
+	 */
+	protected void RT_flush()
+	{
+		
+	}
+	
+	final void RT_runFlush()
+	{
+		this.RT_flush();
+		for(UANode subn:this.getSubNodes())
+		{
+			if(subn instanceof UANodeOCTags)
+			{
+				((UANodeOCTags)subn).RT_runFlush();
+			}
+		}
+	}
 	
 	final boolean RT_setSysTagVal(String name,Object v)
 	{

@@ -27,11 +27,12 @@
 		out.print("no item found") ;
 		return ;
 	}
+	
 %><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Repository</title>
+<title>HMI Component Editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
@@ -73,7 +74,7 @@ body {
 	position: fixed;
 	float: left;
 	left: 0;
-	top: 0px;
+	top: 45px;
 	bottom: 0;
 	z-index: 999;
 	width: 45px;
@@ -96,7 +97,7 @@ body {
 	position: fixed;
 	float: right;
 	right: 0;
-	top: 0px;
+	top: 45px;
 	bottom: 0;
 	z-index: 999;
 	width: 250px;
@@ -108,7 +109,7 @@ body {
 	position: absolute;
 	left: 45px;
 	right: 250px;
-	top: 0px;
+	top: 45px;
 	bottom: 0;
 	z-index: 998;
 	width: auto;
@@ -276,13 +277,23 @@ padding-bottom:0px;
 }
 
 </style>
-
 </head>
 <script type="text/javascript">
 
 
 </script>
 <body class="layout-body">
+<div class="top " style="background-color: #007ad4;color:#ffffff;">
+<div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
+ <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree HMI Component Editor </div>
+ <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
+		<%=cc.getTitle()%>-<%=ci.getTitle()%>
+		</div>
+ <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
+			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
+		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
+</div>
+</div>
 
 		<div class="left " style="background-color: #aaaaaa">
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
@@ -430,9 +441,7 @@ function init_iottpanel()
 			inter_refresh();
 		}
 	});
-	
-	
-	
+
 	loadLayer = hmiView.getLayer();
 	intedit = hmiView.getInteract();
 	hmiView.init();
@@ -446,17 +455,20 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 
 	if(tp.indexOf("event_")==0)
 	{
-		dlg.open("../util/di_editplug_"+tp+".jsp",
+		dlg.open("../util/di_editplug_"+tp+".jsp?sjs=false",
 				{title:"Edit Event",w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
 					{
 						var ret = dlgw.editplug_get() ;
-						 var js = ret.js ;
-						 if(js==null)
-							 js = "" ;
-						 di.setEventBinder(name,js) ;
+						 var cjs = ret.clientjs ;
+						 var sjs = ret.serverjs;
+						 if(cjs==null)
+							 cjs = "" ;
+						 if(sjs==null)
+							 sjs = "" ;
+						 di.setEventBinder(name,cjs,sjs) ;
 						 editor.refreshEventEditor();
 						 dlg.close();
 					},
@@ -677,7 +689,7 @@ function tab_save()
 
 function tab_notify()
 {
-	parent.tab_notify(tab_id);
+	//parent.tab_notify(tab_id);
 }
 
 function tab_st()

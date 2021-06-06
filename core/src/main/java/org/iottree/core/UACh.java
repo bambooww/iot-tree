@@ -159,8 +159,8 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	{
 		UAPrj rep = this.getBelongTo() ;
 		
-		//ConnJoin cj = ConnManager.getInstance().getConnJoinByChId(rep.getId(), this.getId()) ;
-		ConnProvider cp = ConnManager.getInstance().getConnJoinedProvider(rep.getId(), this.getId()) ;
+		//
+		ConnProvider cp =getConnJoinedProvider();
 		if(cp==null)
 		{// no conn
 			return DevManager.getInstance().listDriversNotNeedConn() ;
@@ -169,6 +169,26 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		return cp.supportDrivers() ;	
 	}
 	
+	
+	public ConnProvider getConnJoinedProvider() throws Exception
+	{
+		UAPrj rep = this.getBelongTo() ;
+		
+		//ConnJoin cj = ConnManager.getInstance().getConnJoinByChId(rep.getId(), this.getId()) ;
+		return ConnManager.getInstance().getConnJoinedProvider(rep.getId(), this.getId()) ;
+	}
+//	
+//	public ConnJoin getConnJoin() throws Exception
+//	{
+//		UAPrj rep = this.getBelongTo() ;
+//		return ConnManager.getInstance().getConnJoinByChId(rep.getId(), this.getId()) ;
+//	}
+	
+	public ConnPt getConnPt() throws Exception
+	{
+		UAPrj rep = this.getBelongTo() ;
+		return ConnManager.getInstance().getConnPtByCh(rep.getId(), this.getId()) ;
+	}
 	/**
 	 * check driver is fit for this ch or not
 	 * @return
@@ -473,16 +493,41 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		this.setSysTag("_name", "channel name", "", ValTP.vt_str);
 		this.setSysTag("_title", "channle", "", ValTP.vt_str);
 		this.setSysTag("_driver_name", "", "", ValTP.vt_str);
-		
-//		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
-//		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
-//		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
-//		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
-//		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
+		this.setSysTag("_driver_run", "", "", ValTP.vt_bool);
 		
 		this.RT_setSysTagVal("_name", this.getName()) ;
 		this.RT_setSysTagVal("_title", this.getTitle()) ;
 		this.RT_setSysTagVal("_driver_name", this.getDriverName()) ;
+		
+		this.setSysTag("_conn_ready", "","",ValTP.vt_bool) ;
+		this.setSysTag("_conn_name", "","",ValTP.vt_str) ;
+		this.setSysTag("_conn_tp", "","",ValTP.vt_str) ;
+		
+		
+	}
+	
+	@Override
+	protected void RT_flush()
+	{
+		super.RT_flush();
+		
+		try
+		{
+			ConnPt cpt = getConnPt() ;
+			this.RT_setSysTagVal("_conn_ready", cpt!=null&&cpt.isConnReady());
+			
+			if(cpt!=null)
+			{
+				this.RT_setSysTagVal("_conn_name", cpt.getName());
+				this.RT_setSysTagVal("_conn_tp", cpt.getConnType());
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		this.RT_setSysTagVal("_driver_run",  this.RT_getState().isRunning());
 	}
 	/**
 	 * start driver
@@ -508,12 +553,13 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		return drv.RT_start(failedr) ;
 	}
 	
-	public void RT_stopDriver(boolean bforce)
+	public boolean RT_stopDriver(boolean bforce)
 	{
 		DevDriver drv = this.getDriver() ;
-		
+		if(drv==null)
+			return false;
 		drv.RT_stop(bforce);
-		
+		return true;
 	}
 	
 	public DevDriver.State RT_getState()

@@ -28,7 +28,7 @@ public class ModbusBlock
 	transient HashMap<ModbusCmd,List<ModbusAddr>> cmd2addr = new HashMap<>() ;
 	
 	
-	//private int failedRetryTimes = 3 ;
+	private int failedSuccessive = 3 ;
 	
 	private long reqTO = 1000 ;
 	
@@ -36,9 +36,10 @@ public class ModbusBlock
 	
 	private long interReqMs = 0 ;
 	
+	transient int failedCount = 0 ;
 	
 	public ModbusBlock(int devid,short addrtp,List<ModbusAddr> addrs,
-			int block_size,long scan_inter_ms)
+			int block_size,long scan_inter_ms,int failed_successive)
 	{
 		devId = devid ;
 		if(addrs==null||addrs.size()<=0)
@@ -49,6 +50,7 @@ public class ModbusBlock
 		this.addrs = addrs ;
 		this.blockSize = block_size ;
 		this.scanInterMS = scan_inter_ms;
+		this.failedSuccessive = failed_successive;
 	}
 	
 	public void setTimingParam(long req_to,long recv_to,long inter_reqms)
@@ -280,6 +282,23 @@ public class ModbusBlock
 		}
 	}
 	
+	private boolean chkSuccessiveFailed(boolean bfailed)
+	{
+		if(!bfailed)
+		{
+			failedCount = 0 ;
+			return false;
+		}
+		
+		failedCount ++;
+		if(failedCount>=this.failedSuccessive)
+		{
+			failedCount = this.failedSuccessive;
+			return true;
+		}
+		return false;
+	}
+	
 	private boolean runReadCmds(IConnEndPoint ep) throws Exception
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
@@ -296,8 +315,11 @@ public class ModbusBlock
 				boolean[] bvs = mcb.getRetVals() ;
 				if(bvs==null)
 				{//err set address invalid
-					setAddrError(addrs);
-					ret = false;
+					if(chkSuccessiveFailed(true))
+					{
+						setAddrError(addrs);
+						ret = false;
+					}
 					continue ;
 				}
 				int regpos = mcb.getRegAddr() ;
@@ -307,6 +329,8 @@ public class ModbusBlock
 					memTb.setValBool((regpos+i)/8, (regpos+i)%8, bv);
 				}
 				transMem2Addrs(addrs);
+				
+				chkSuccessiveFailed(false) ;
 			}
 			else if(mc instanceof ModbusCmdReadWords)
 			{
@@ -314,8 +338,11 @@ public class ModbusBlock
 				int[] rvs = mcw.getRetVals() ;
 				if(rvs==null)
 				{//err set address invalid
-					setAddrError(addrs);
-					ret = false;
+					if(chkSuccessiveFailed(true))
+					{
+						setAddrError(addrs);
+						ret = false;
+					}
 					continue ;
 				}
 				int regpos = mcw.getRegAddr() ;
@@ -325,6 +352,7 @@ public class ModbusBlock
 					memTb.setValNumber(ValTP.vt_int16, (regpos+i)*2, rv);
 				}
 				transMem2Addrs(addrs);
+				chkSuccessiveFailed(false) ;
 			}
 		}
 		return ret ;
