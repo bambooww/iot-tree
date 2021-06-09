@@ -156,6 +156,9 @@ public class ModbusDrvRTU extends DevDriver
 	protected  boolean initDriver(StringBuilder failedr) throws Exception
 	{
 		List<UADev> devs = this.getBelongToCh().getDevs() ;
+		
+		ArrayList<ModbusDevItem> mdis=  new ArrayList<>() ;
+		
 		//create modbus cmds
 		for(UADev dev:devs)
 		{
@@ -164,9 +167,10 @@ public class ModbusDrvRTU extends DevDriver
 			if(!mdi.init(devfr))
 				continue ;
 			
-			modbusDevItems.add(mdi) ;
+			mdis.add(mdi) ;
 		}
 		
+		modbusDevItems = mdis;
 		if(modbusDevItems.size()<=0)
 		{
 			failedr.append("no modbus cmd inited in driver") ;

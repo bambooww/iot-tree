@@ -179,14 +179,12 @@ public class HTTPClientJSONDrv extends DevDriver
 	@Override
 	public boolean supportDevFinder()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevDef()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -199,7 +197,6 @@ public class HTTPClientJSONDrv extends DevDriver
 	@Override
 	public List<PropGroup> getPropGroupsForDevInCh()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -104,32 +104,32 @@ public class ModbusCmdWriteBits extends ModbusCmd
 	        rlen = com_stream_recv_chk_len_timeout(ins) ;
 	        if(rlen==0)
 	            continue ;
-	        //判断返回内容是否接收完整
+	        //
 	        if(mayrlen>0)
-	        {//只需要判断接收长度就行
+	        {//
 	            if(rlen>=mayrlen)
-	                break ;//接收结束
+	                break ;//
 	        }
 	        else
-	        {//判断地址和长度
+	        {//
 	            if(mbuss_adu[0]!=(byte)slaveAddr)
-	            {//接收格式错误
+	            {//
 	                break ;
 	            }
 	            if(rlen<3)
 	                continue ;
 	            
 	            if(mbuss_adu[1]!=(byte)MODBUS_FC_WRITE_MULTI_COIL)
-	            {//功能码错误
+	            {//
 	                if(mbuss_adu[1]==(byte)(MODBUS_FC_WRITE_MULTI_COIL+0x80))
-	                {//设备返回错误
+	                {//
 	                    //*perrc = mbuss_adu[2] ; 
 	                }
 	                break ;
 	            }
 	            else
 	            {//
-	                mayrlen = 8;//返回字节长度信息，前面3字节+包含crc
+	                mayrlen = 8;//
 	            }
 	        }
 	        
@@ -138,7 +138,7 @@ public class ModbusCmdWriteBits extends ModbusCmd
 	    }
 	    
 	    if(mayrlen<=0 || rlen<mayrlen)
-	    {//接收错误信息 or time out
+	    {//
 	        com_stream_end() ;
 	        if(rlen<=0)
 	        	return ERR_RECV_TIMEOUT ;//recvTimeout may be adjust
@@ -149,8 +149,6 @@ public class ModbusCmdWriteBits extends ModbusCmd
 	    }
 	    
 	    /////
-//	  处理接收的内容，地址和功能码
-	    //crc验证
 	    if(crc!=modbus_crc16_check(mbuss_adu,6))//mayrlen-2))
 	    {
 	        com_stream_end() ;
@@ -180,8 +178,8 @@ public class ModbusCmdWriteBits extends ModbusCmd
 		pdata[0] = (byte) ((lastTcpCC >> 8) & 0xFF) ;
 		pdata[1] = (byte) (lastTcpCC & 0xFF) ;
 		pdata[2] = pdata[3] = 0 ;
-		pdata[4] = 0 ;//后续字节数高位
-		pdata[5] = 6 ;//后续字节数低位
+		pdata[4] = 0 ;//
+		pdata[5] = 6 ;//
 		//pdu
 		
 		pdata[6] = (byte)slaveAddr ;
@@ -209,7 +207,7 @@ public class ModbusCmdWriteBits extends ModbusCmd
 	    clearInputStream(ins) ;
 	    ous.write(pdata) ;
 	    ous.flush() ;
-	    //读取前6个字节
+	    //锟斤拷取前6锟斤拷锟街斤拷
 	    byte[] read_mbap = new byte[6];
 	    do
 	    {
@@ -256,7 +254,7 @@ public class ModbusCmdWriteBits extends ModbusCmd
 	    	return 0 ;//err
 	    }
 	    if(recvpdu[1]!=pdata[7] )
-        {//功能码错误
+        {//
             //if(mbuss_adu[1]==(byte)(fc+0x80))
 	    	return 0 ;
         }
