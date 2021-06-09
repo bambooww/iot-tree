@@ -49,5 +49,21 @@ case "del":
 	UAManager.getInstance().delRep(id) ;
 	out.print("ok") ;
 	break ;
+case "start":
+case "stop":
+	if(!Convert.checkReqEmpty(request, out, "id"))
+		return;
+	dc = UAManager.getInstance().getPrjById(id) ;
+	if(dc==null)
+	{
+		out.print("no project found") ;
+		return ;
+	}
+	if("start".equals(op))
+		dc.RT_start();
+	else
+		dc.RT_stop();
+	out.print(op+" ok") ;
+	break ;
 }
 %>

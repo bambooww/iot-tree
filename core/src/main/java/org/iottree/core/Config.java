@@ -61,15 +61,6 @@ public class Config
 	
 	
 	static String dataFileBase = null ;
-	/**
-	 * �ж���Ӧ���Ƿ��Ƕ�������:Ҳ����system.jar��������Ϣ����һ��webapp����
-	 * ���Զ������е�һ��webapp
-	 * 
-	 * 
-	 */
-	static boolean bSole = false;
-	
-	static String bSoleWebAppRoot = null ;
 
 	static String appConfigInitError = "" ;
 	
@@ -93,15 +84,7 @@ public class Config
 		}
 	}
 	
-//	/**
-//	 * �ж�AppConfig��ʼ���Ƿ�ɹ�
-//	 * @return
-//	 */
-//	public static boolean isAppConfigInitSucc0()
-//	{
-//		return appConfigInitSucc ;
-//	}
-//	
+
 	
 	public static String getAppConfigInitError()
 	{
@@ -114,20 +97,6 @@ public class Config
 	}
 	
 	
-//	public static void setConfigFileBase(String fb)
-//	{
-//		configFileBase = fb.trim() ;
-//		configFileBase = configFileBase.replace('\\', '/');
-//		if(!configFileBase.endsWith("/"))
-//			configFileBase += "/" ;
-//	}
-	
-	/**
-	 * ���������ļ����ƣ���ö�Ӧ��File����
-	 * ��������ڣ��򷵻�null
-	 * @param conffn
-	 * @return
-	 */
 	public static File getConfFile(String conffn)
 	{
 		String sysconffn = configFileBase
@@ -367,7 +336,10 @@ public class Config
 		
 	}
 	
-	
+	public static String getDataTmpDir()
+	{
+		return getDataDirBase()+"tmp/" ;
+	}
 	/**
 	 * ����ҳ��������,���ĳһ��·������ʵ�ļ�·��
 	 * @param pc
@@ -508,7 +480,7 @@ public class Config
 	private static ArrayList<LangItem> multiLangItems = new ArrayList<>() ;
 	
 	private static String appCopyRight = "" ;
-
+	
 	public static Element loadConf()
 	{
 		if (confRootEle != null)
@@ -576,6 +548,7 @@ public class Config
 				appCopyRight = confRootEle.getAttribute("copyright");
 				if(appCopyRight==null)
 					appCopyRight = "" ;
+				
 				
 				appLang = confRootEle.getAttribute("lang");
 				if(Convert.isNullOrEmpty(appLang))
@@ -728,10 +701,7 @@ public class Config
 		return appTitle ;
 	}
 	
-	/**
-	 * ��ñ����������ⲿ���������Http����ǰ׺
-	 * @return
-	 */
+
 	public static List<String> getHttpBases()
 	{
 		return httpBases;
@@ -745,11 +715,7 @@ public class Config
 	{
 		return multiLangItems;
 	}
-	
-	/**
-	 * �����Ի����£����ȱʡ����
-	 * @return
-	 */
+
 	public static LangItem getMultiLangDefault()
 	{
 		if(multiLangItems==null||multiLangItems.size()<=0)
@@ -774,23 +740,13 @@ public class Config
 		return appLang ;
 	}
 	
-	/**
-	 * �ж�ȱʡ������Ƿ���Ҫ��½
-	 * @return
-	 */
+
 	public static boolean isAuthDefaultLogin()
 	{
 		return bAuthDefaultLogin ;
 	}
 	
-	
-	/**
-	 * �ж�ҳ���Ƿ���Ҫ����Ƿ�Ҫ��½���ܷ���
-	 * ���Ϊtrue,����Ҫ
-	 * false,����Ҫ - 
-	 *   web.conf�п��Զ��ض���ҳ�����check��uncheck����
-	 * @return
-	 */
+
 	public static boolean isAuthDefaultAllow()
 	{
 		return bAuthDefaultAllow ;

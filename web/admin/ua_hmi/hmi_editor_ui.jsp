@@ -24,6 +24,7 @@
 	if(uahmi==null)
 	{
 		out.print("no hmi node found") ;
+		return;
 	}
 	if(uahmi.getRefBranchNode()!=null)
 	{

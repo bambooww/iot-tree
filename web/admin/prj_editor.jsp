@@ -458,8 +458,12 @@ background-color: #fff ;
 		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
 		<%=rep.getTitle()%>-<%=rep.getName() %>
 		</div>
+		 <div style="position:relative;float: right;right:320px;margin-right:30px;width:110px;margin-top:10px;font: 20px solid;color:#fff5e2;background-color: #515658">
+		 <i id="prj_btn_start"  class="fa fa-play fa-lg top_btn" style="color:grey" title="start project" onclick="prj_run(true)"></i>
+		 <i id="prj_btn_stop"  class="fa fa-stop fa-lg top_btn" style="color:grey" title="stop project" onclick="prj_run(false)"></i>
+		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
-
+		 
 			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
 			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
 			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
@@ -760,7 +764,7 @@ layui.use('element', function(){
 });
 
 var cxt_menu = {
-	"rep":[
+	"prj":[
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
@@ -819,10 +823,42 @@ function on_tree_node_selected(tn)
 var ua_panel = new UAPanel(
 		{eleid:"conn" ,data_url:"./conn/cp_ajax.jsp?op=list&repid="+repid,ui_showed:on_conn_ui_showed},
 		{eleid:"conn_ch",join_url:"./conn/cp_ajax.jsp?repid="+repid},
-		{eleid:"tree",data_url:"rep_tree_ajax.jsp?id="+repid,cxt_menu:cxt_menu,on_selected:on_tree_node_selected}
+		{eleid:"tree",data_url:"prj_tree_ajax.jsp?id="+repid,cxt_menu:cxt_menu,on_selected:on_tree_node_selected}
 		);
 ua_panel.init() ;
 
+function prj_run(b)
+{
+	var op = "start" ;
+	if(!b)
+		op = "stop" ;
+
+	var pm = {
+			type : 'post',
+			url : "./ua/prj_ajax.jsp",
+			data :{id:repid,op:op}
+		};
+		$.ajax(pm).done((ret)=>{
+			dlg.msg(ret);
+		}).fail(function(req, st, err) {
+			dlg.msg(err);
+		});
+	
+}
+
+function update_prj_run(brun)
+{
+	if(brun)
+	{
+		$("#prj_btn_start").css("color","grey") ;
+		$("#prj_btn_stop").css("color","red") ;
+	}
+	else
+	{
+		$("#prj_btn_start").css("color","#8ecf6a") ;
+		$("#prj_btn_stop").css("color","grey") ;
+	}
+}
 
 function refresh_ui()
 {
@@ -1637,12 +1673,14 @@ $(window).resize(function(){
 		draw_fit();
 	});
 	
-function rep_rt()
+function prj_rt()
 {
-	send_ajax("./rep_rt_ajax.jsp",{id:repid},(bsucc,ret)=>{
+	send_ajax("./prj_rt_ajax.jsp",{id:repid},(bsucc,ret)=>{
 		if(!bsucc)
 			return ;
 		var v = ret ;
+		update_prj_run(ret.run);
+		
 		for(var cp of ret.cps)
 		{
 			var id =cp.cp_id ;
@@ -1693,7 +1731,7 @@ function rt_cp_start_stop(cp_id)
 	},false) ;
 }
 
-setInterval(rep_rt,3000) ;
+setInterval(prj_rt,3000) ;
 </script>
 <script src="./js/split.js"></script>
 </body>

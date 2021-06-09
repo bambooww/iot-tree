@@ -294,7 +294,7 @@ function init_tree()
 		$('#jstree').jstree({
 			'core' : {
 				'data' : {
-					"url" : "./rep_tree_ajax.jsp?id="+repid,
+					"url" : "./prj_tree_ajax.jsp?id="+repid,
 					"dataType" : "json" // needed only if you do not supply JSON headers
 				}
 			}
@@ -308,7 +308,7 @@ function load_tree()
 {
 	$.ajax({
         type: 'post',
-        url:'./rep_tree_ajax.jsp',
+        url:'./prj_tree_ajax.jsp',
         data: {id:repid},
         async: true,  
         success: function (result) {  

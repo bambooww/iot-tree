@@ -35,7 +35,7 @@ if(desc==null)
 %>
 <html>
 <head>
-<title>rep editor</title>
+<title>project editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
@@ -91,7 +91,7 @@ function do_submit(cb)
 		desc ='' ;
 	//var dbname=document.getElementById('db_name').value;
 	var pms = {name:n,title:tt,desc:desc,op:"add"} ;
-	send_ajax('rep_ajax.jsp',pms,function(bsucc,ret)
+	send_ajax('prj_ajax.jsp',pms,function(bsucc,ret)
 	{
 		if(!bsucc || ret.indexOf('succ')<0)
 		{

@@ -444,7 +444,7 @@ public abstract class DevDriver  implements IPropChecker
 		Thread t = rtTh ;
 		if(t==null)
 			return ;
-		if(!bforce)
+		if(bforce)
 		{
 			t.interrupt();
 			stopDriver();

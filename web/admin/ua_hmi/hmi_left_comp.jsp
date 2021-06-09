@@ -107,6 +107,11 @@ function get_cur_catid()
 	return get_cur_cat_id_title()[0];
 }
 
+function get_sel_cat_ids()
+{
+	return $("#var_cat").val() ;
+}
+
 function drag(ev)
 {
 	var tar = ev.target;

@@ -4,7 +4,6 @@
 				 org.iottree.core.util.*,
 				 org.iottree.core.util.web.*,
 				 org.iottree.core.*,
-				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*,
 				 org.apache.commons.fileupload.*,
 org.apache.commons.fileupload.servlet.*,
@@ -39,54 +38,37 @@ if (!ServletFileUpload.isMultipartContent(request)) {
     return;
 }
 
-// 配置上传参数
 DiskFileItemFactory factory = new DiskFileItemFactory();
 
 factory.setSizeThreshold(MEMORY_THRESHOLD);
-// 设置临时存储目录
-factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+// 
+
+factory.setRepository(new File(Config.getDataTmpDir()));
 
 ServletFileUpload upload = new ServletFileUpload(factory);
  
-// 设置最大文件上传值
+
 upload.setFileSizeMax(MAX_FILE_SIZE);
  
-// 设置最大请求值 (包含文件和表单数据)
+
 upload.setSizeMax(MAX_REQUEST_SIZE);
 
-// 中文处理
+
 upload.setHeaderEncoding("UTF-8"); 
 
 File dirb = null ;
 
     List<FileItem> formItems = upload.parseRequest(request);
     HashMap<String,String> pms = getReqParams(formItems);
-    String cxtid = pms.get("cxtid") ;
-    String name = pms.get("name") ;
+    //String cxtid = pms.get("cxtid") ;
+    //String name = pms.get("name") ;
     
-    if(Convert.isNullOrEmpty(cxtid))
-    {
-    	out.print("no cxtid input");
-    	return;
-    }
-    if(Convert.isNullOrEmpty(name))
-    {
-    	out.print("no name input");
-    	return;
-    }
     
-    ResCxt rc = ResCxtManager.getInstance().getResCxt(cxtid) ;
-	if(rc==null)
-	{
-		out.print("no ResCxt found") ;
-		return ;
-	}
     
     FileItem fi = null ;
     
     if (formItems != null && formItems.size() > 0)
     {
-    
         for (FileItem item : formItems)
         {
             if (item.isFormField())
@@ -104,6 +86,12 @@ File dirb = null ;
         }
     }
     
-    rc.setResItem(name, fi) ;
-
-%>succ
+    if(fi==null)
+    {
+    	out.print("no file upload");
+    	return ;
+    }
+    String fn = UUID.randomUUID().toString() ;
+    fi.write(new File(Config.getDataTmpDir(),fn)) ;
+   
+%>succ=<%=fn%>

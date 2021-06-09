@@ -11,6 +11,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.xmldata.data_class;
@@ -535,13 +536,30 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		this.setSysTag("_name", "", "", ValTP.vt_str);
 		this.setSysTag("_title", "", "", ValTP.vt_str);
 		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
-		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
+		this.setSysTag("_date", "yyyy-MM-dd hh:mm:ss", "", ValTP.vt_str);
 		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
-		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
-		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
+		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int16);
+		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int16);
 		
 		this.RT_setSysTagVal("_name", this.getName()) ;
 		this.RT_setSysTagVal("_title", this.getTitle()) ;
+	}
+	
+	@Override
+	protected void RT_flush()
+	{
+		super.RT_flush();
+		
+		Calendar d = Calendar.getInstance();
+		this.RT_setSysTagVal("_tick_ms", d.getTimeInMillis()) ;
+		short y = (short)d.get(Calendar.YEAR);
+		short m =  (short)(d.get(Calendar.MONTH)+1);
+		short day =   (short)d.get(Calendar.DAY_OF_MONTH) ;
+		
+		this.RT_setSysTagVal("_date",Convert.toFullYMDHMS(d.getTime()));
+		this.RT_setSysTagVal("_date_year",y);
+		this.RT_setSysTagVal("_date_month", m);
+		this.RT_setSysTagVal("_date_day", day);
 	}
 	
 	private Thread rtTh = null ;
@@ -572,6 +590,56 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	}
 	
 	
+	private void startStopConn(boolean b) //throws Exception
+	{
+		try
+		{
+			List<ConnProvider> cps = ConnManager.getInstance().getConnProviders(this.getId()) ;
+			if(cps==null)
+				return ;
+			for(ConnProvider cp:cps)
+			{
+				if(!cp.isEnable())
+					continue ;
+				
+				try
+				{
+					if(b)
+						cp.start();
+					else
+						cp.stop();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void startStopCh(boolean b)
+	{
+		for(UACh ch:this.getChs())
+		{
+			try
+			{
+				StringBuilder sb = new StringBuilder() ;
+				if(b)
+					ch.RT_startDriver(sb) ;
+				else
+					ch.RT_stopDriver(true) ;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	
 	private Runnable runner = new Runnable() {
 
@@ -581,6 +649,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			try
 			{
 				//StringBuilder failedr = new StringBuilder() ;
+				//start connprovider
+				startStopConn(true);
+				
+				//start channel drivers
+				startStopCh(true) ;
 				
 				while(rtRun)
 				{
@@ -600,6 +673,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			}
 			finally
 			{
+				startStopConn(false);
+				startStopCh(false);
 				rtRun=false;
 				rtTh = null ;
 			}

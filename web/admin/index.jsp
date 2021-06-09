@@ -81,26 +81,43 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 				<div class="iot-main-content" style="height: auto !important; min-height: 0px !important;">
 					<div class="iot-mod iot-question-detail iot-item">
 						<div class="mod-head">
-							<h1>Local Projects
-							<a class="btn btn-success" style="width:80px;height:40px;align-content: center;" href="javascript:add_rep()">
-							<i class="fa fa-plus-circle fa-lg" ></i>&nbsp;&nbsp;Add
-							</a>
+							<h1>Local Projects</h1>
 							
-							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_prj()">
+							<div style="float:left;top:5px;position: absolute;left:160px" >
+							<a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_prj()">
+							
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-plus fa-stack-1x"></i>
+							</span>&nbsp;Add
+							</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:imp_prj()">
 							<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
-							</span>&nbsp;&nbsp;Import
+							</span>&nbsp;Import
+							 <input type="file" id='add_file' onchange="add_file_onchg()" name="file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
-
-							<a class="btn btn-success"  style="width:100px;height:40px;" href="javascript:imp_demo()">
+&nbsp;&nbsp;&nbsp;&nbsp;
+							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:imp_prj_demo()">
 							<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
-							</span>&nbsp;&nbsp;Import Demo
+							</span>&nbsp;Import Demo
 							</a>
 							
-				           </h1>
+							<%--
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:exp_prj()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span>&nbsp;Export
+							</a>
+							 --%>
+							</div>
+				           
 						</div>
 						<div class="mod-body">
 							<div class="content markitup-box" style="height:100%">
@@ -109,19 +126,30 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 {
 %>
 	<div class="aw-item">
+	   
        <a class="img aw-border-radius-5" >
-         <i class="fa fa-sitemap fa-2x"></i>
+         <i class="fa fa-sitemap fa-1x"></i>
        </a>
        <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8"><%=rep.getTitle() %></a>
        <div class="inline-block pull-right text-left">
-           <a class="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
-              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+           <a class0="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-pencil fa-stack-1x"></i>
+							</span>
            </a>
-           <a class="btn btn-success"  href="javascript:exp_rep('<%=rep.getId()%>')" title="export">
-              <i class="fa fa-arrow-right"></i>
+           
+           <a class0="btn btn-success"  href="javascript:exp_prj('<%=rep.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span>
            </a>
-           <a class="btn btn-success " style="background-color: #e33a3e" href="javascript:del_rep('<%=rep.getId()%>')" title="delete">
-              <i class="fa fa-times" aria-hidden="true"></i>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:del_rep('<%=rep.getId()%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-times fa-stack-1x"></i>
+							</span>
            </a>
        </div>
 
@@ -160,12 +188,38 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
 					        <h1>Device Library </h1>
+					        
+					        <div style="float:left;top:5px;position: absolute;left:210px" >
+					        	<a href="javascript:devdef_cat_export()">
+					        	<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;&nbsp; Import</a>
+					        	&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_import()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span>&nbsp;&nbsp;Export
+							</a>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:devdef_help()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-question fa-stack-1x"></i>
+							</span>
+							</a>
+							
+					        </div>
+					        
 					        <div style="float:right;top:0px;position: absolute;right:10px" onclick="show_hide('cont_devlib')"><i class="fa fa-bars fa-lg"></i></div>
 					    </div>
 					    <div class="mod-body" style="display:none" id="cont_devlib">
-					       
+<%--
 					        <a href="javascript:open_devlib()">Open</a>
-							<iframe src="/admin/dev/dev_lib_lister.jsp?mgr=true" style="width:100%;height:500px;"></iframe>
+ --%>
+							<iframe id="devdef_lister" src="/admin/dev/dev_lib_lister.jsp?mgr=true" style="width:100%;height:500px;"></iframe>
 					        
 					    </div>
 					</div>
@@ -175,14 +229,30 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 					        <h1 style="width:200px">HMI Library</h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
-					        	<i class="fa fa-download fa-lg"></i> Import
-					        
+					        	<a href="javascript:comp_import()"><span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;&nbsp; Import</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a href="javascript:comp_cat_export()"><span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span> Export</a>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:comp_help()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-question fa-stack-1x"></i>
+							</span>
+							</a>
+							
 					        </div>
 					        
 					        <div style="float:right;top:5px;position: absolute;right:10px" onclick="show_hide('cont_hmilib')"><i class="fa fa-bars fa-lg"></i></div>
 					    </div>
 					    <div class="mod-body"  id="cont_hmilib" style="display:none">
-					        <iframe src="/admin/ua_hmi/hmi_left_comp.jsp" style="width:100%;height:500px;"></iframe>
+					        <iframe id="comp_lister" src="/admin/ua_hmi/hmi_left_comp.jsp" style="width:100%;height:500px;"></iframe>
 					        
 					    </div>
 					</div>
@@ -232,7 +302,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 
 <div class="iot-footer-wrap">
 	<div class="iot-footer">
-		Copyright 
+		Copyright:  Version:<%=Config.getVersion() %>
 
 	</div>
 </div>
@@ -242,7 +312,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 var all_panels=[];
 function open_rep(id)
 {
-	window.open("rep_editor.jsp?id="+id);
+	window.open("prj_editor.jsp?id="+id);
 	//window.open("ua_rep.jsp?repid="+id);
 }
 
@@ -259,7 +329,7 @@ function del_rep(id)
 {
 	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
     {
-		send_ajax('ua/rep_ajax.jsp',{op:"del",id:id},function(bsucc,ret){
+		send_ajax('ua/prj_ajax.jsp',{op:"del",id:id},function(bsucc,ret){
 			if(!bsucc||ret!='ok')
 			{
 				dlg.msg(ret) ;
@@ -286,9 +356,9 @@ function open_devlib()
 				}
 			]);
 }
-function add_rep()
+function add_prj()
 {
-	dlg.open("ua/rep_edit.jsp",
+	dlg.open("ua/prj_edit.jsp",
 			{title:"新增容器",w:'500px',h:'400px'},
 			['确定','取消'],
 			[
@@ -311,6 +381,117 @@ function add_rep()
 					dlg.close();
 				}
 			]);
+}
+
+function comp_cat_export()
+{
+	var w = document.getElementById("comp_lister").contentWindow ;
+	if(!w||!w.get_sel_cat_ids)
+	{
+		dlg.msg("no comp cat selected") ;
+		return ;
+	}
+	var catids = w.get_sel_cat_ids() ;
+	if(catids==null||catids.length==0)
+	{
+		dlg.msg("please select component catetory");
+		return ;
+	}
+		
+	window.open("./ua_hmi/comp_lib_export.jsp?catid="+catids[0]) ;
+}
+
+
+function devdef_cat_export()
+{
+	var w = document.getElementById("devdef_lister").contentWindow ;
+	if(!w||!w.get_sel_cat_ids)
+	{
+		dlg.msg("no comp cat selected") ;
+		return ;
+	}
+	var catids = w.get_sel_cat_ids() ;
+	if(catids==null||catids.length==0)
+	{
+		dlg.msg("please select component catetory");
+		return ;
+	}
+		
+	window.open("./ua_hmi/comp_lib_export.jsp?catid="+catids[0]) ;
+}
+
+function exp_prj(id)
+{
+	window.open("./ua/prj_export.jsp?id="+id) ;
+}
+
+
+function add_file_onchg()
+{
+	//$("#"+id).
+	var fs = $("#add_file")[0].files ;
+	if(fs==undefined||fs==null||fs.length<=0)
+	{
+		return ;
+	}
+	var f = fs[0];
+
+	//upload
+	var fd = new FormData();
+    //fd.append("cxtid",cur_cxtid) ;
+    fd.append("file",f);
+     $.ajax({"url": "ua/prj_imp_upload.jsp",type: "post","processData": false,"contentType": false,
+		"data": fd,
+		success: function(data)
+       	{
+ 	  		//dlg.msg(data);
+ 	  		//document.location.href=document.location.href;
+ 	  		if(data.indexOf("succ=")==0)
+ 	  			before_imp(data.substring(5)) ;
+ 	  		else
+ 	  			dlg.msg(data) ;
+   　  },
+      　error: function(data)
+         {
+  				dlg.msg("upload failed");
+　　　}
+  　　});
+}
+
+
+function before_imp(tmpfn)
+{
+
+	dlg.open("ua/prj_import.jsp?tmpfn="+tmpfn,
+			{title:"Import project",w:'500px',h:'400px'},
+			['Do Import','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 //enable_btn(true);
+							 return;
+						 }
+						 //console.log(ret);
+						 dlg.close();
+						 document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+
+function imp_prj()
+{
+	add_file.click() ;
 }
 
 function logout()

@@ -78,7 +78,7 @@
 	{
 	"text":"<%=rep.getTitle()%>-<%=rep.getName() %>"
 	,"id":"<%=rep.getId() %>"
-	,"type":"rep"
+	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
 	,"icon": "fa fa-sitemap fa-lg"
 	,"state": {"opened": true}

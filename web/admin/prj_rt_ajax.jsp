@@ -14,7 +14,9 @@
 	{
 		out.print("no repository found!");
 		return;
-	}%>{
+	}
+	
+%>{"run":<%=rep.RT_isRunning()%>,
 	"cps":
 <%
 	ConnManager.getInstance().renderRTJson(id, out) ;

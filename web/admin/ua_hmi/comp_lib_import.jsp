@@ -4,7 +4,6 @@
 				 org.iottree.core.util.*,
 				 org.iottree.core.util.web.*,
 				 org.iottree.core.*,
-				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*,
 				 org.apache.commons.fileupload.*,
 org.apache.commons.fileupload.servlet.*,
@@ -39,7 +38,6 @@ if (!ServletFileUpload.isMultipartContent(request)) {
     return;
 }
 
-// 配置上传参数
 DiskFileItemFactory factory = new DiskFileItemFactory();
 
 factory.setSizeThreshold(MEMORY_THRESHOLD);
@@ -48,13 +46,13 @@ factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
 
 ServletFileUpload upload = new ServletFileUpload(factory);
  
-// 设置最大文件上传值
+
 upload.setFileSizeMax(MAX_FILE_SIZE);
  
-// 设置最大请求值 (包含文件和表单数据)
+
 upload.setSizeMax(MAX_REQUEST_SIZE);
 
-// 中文处理
+
 upload.setHeaderEncoding("UTF-8"); 
 
 File dirb = null ;

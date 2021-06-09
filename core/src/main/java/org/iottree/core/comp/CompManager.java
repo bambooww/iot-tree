@@ -3,7 +3,9 @@ package org.iottree.core.comp;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.Config;
+import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.xmldata.XmlData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -244,5 +247,18 @@ public class CompManager
 		saveCatXd(cc) ;
 		this.id2item.put(ci.getId(), ci) ;
 		return ci ;
+	}
+	
+	public boolean exportCompCat(String catid,File fout) throws IOException
+	{
+		CompCat cc = this.getCatById(catid) ;
+		if(cc==null)
+			return false;
+		File catdir = cc.getCatDirFile() ;
+		if(!catdir.exists())
+			return false;
+		
+		ZipUtil.zipFileOut(Arrays.asList(catdir), null, fout);
+		return true;
 	}
 }

@@ -264,6 +264,16 @@ height:30px;
 .layui-tab-content {
     padding: 0px;
 }
+
+.oper
+{
+position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000
+}
+
+.oper i
+{
+margin-top:5px;
+}
 </style>
 
 </head>
@@ -326,7 +336,9 @@ height:30px;
 		</div>
 
 
-	<div id="oper_fitwin" style="position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000"><i class="fa fa-crosshairs fa-3x"></i></div>
+	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
+	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus-square-o fa-3x"></i></div>
+	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus-square-o fa-3x"></i></div>
 
 
 <script>
@@ -346,6 +358,16 @@ layui.use('element', function(){
 $('#oper_fitwin').click(function()
 {
 	draw_fit();
+});
+
+$('#oper_zoomup').click(function()
+{
+	zoom(-1)
+});
+
+$('#oper_zoomdown').click(function()
+{
+	zoom(1)
 });
 
 function add_tab()
@@ -398,6 +420,10 @@ function draw_fit()
 	loadLayer.ajustDrawFit();
 }
 
+function zoom(v)
+{
+	panel.ajustDrawResolution(0,0,v) ;
+}
 
 
 function init_iottpanel()
