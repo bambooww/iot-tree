@@ -50,9 +50,6 @@ List<ConnProTcpServer.AcceptedSockHandler> ashs = ConnProTcpServer.getAcceptedSo
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
-<script type="text/javascript" src="/_js/ajax.js"></script>
 <script>
 dlg.resize_to(600,400);
 </script>

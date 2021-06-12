@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <iottree debug="false" title="IOTTree Server" copyright="" data_dir="../data/" >
 
- 	<webapps port="9090" ajp_port="" base_dir="../web">
+ 	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web">
  	 	<webapp name="admin" />
 		<webapp name="ROOT" />		
 		<webapp name="_js" />

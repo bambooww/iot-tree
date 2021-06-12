@@ -1,7 +1,7 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8"%><%@page import="java.util.*" %><%!
 
 %><%
-	response.sendRedirect("/admin") ;
+	//response.sendRedirect("/admin") ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="/_js/layui/css/layui.css">
 </head>
 <body class="layui-layout-body">
- root
+ 	Welcome to IOT-Tree Server
+ 	you can use IOT-Tree Server to do excelent things.
+ 	
 </body>
 </html>

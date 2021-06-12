@@ -558,9 +558,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * for systag etc
 	 * @param v
 	 */
-	void RT_setVal(Object v)
+	void RT_setVal(Object v,boolean ignore_nochg)
 	{
-		UAVal uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		UAVal uav = RT_getVal();
+		if(ignore_nochg && uav!=null)
+		{
+			if(uav.isValid() && uav.getObjVal().equals(v))
+				return ;
+		}
+		uav = new UAVal(true,v,System.currentTimeMillis()) ;
 		HIS_setVal(uav) ;
 	}
 	

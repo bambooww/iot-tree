@@ -41,8 +41,8 @@
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 	
 <style>
@@ -568,6 +568,7 @@ function inter_prop_edit(n)
 							 dlg.msg("invalid property item") ;
 							 return ;
 						 }
+						 //var tp = ret.tp ;
 						 loadLayer.getCompInter().setInterProp(n,ret);
 						 inter_refresh();
 						 dlg.close();

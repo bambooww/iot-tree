@@ -11,31 +11,9 @@ import java.util.zip.ZipOutputStream;
 
 public class ZipUtil
 {
-	static void zipFileOut0(List<File> files, String comment, OutputStream zip_outs) throws Exception
-	{
-		try (ZipOutputStream zipOut = new ZipOutputStream(zip_outs);
-				BufferedOutputStream bufferout = new BufferedOutputStream(zipOut);)
-		{
-			if (comment != null)
-				zipOut.setComment(comment);
 
-			for (File _file : files)
-			{
-				try (InputStream input = new FileInputStream(_file);
-						BufferedInputStream buffin = new BufferedInputStream(input);)
-				{
-					zipOut.putNextEntry(new ZipEntry(_file.getName()));
-					int temp = 0;
-					while ((temp = buffin.read()) != -1)
-					{
-						bufferout.write(temp);
-					}
-				}
-			}
-		} // end try
-	}
 
-	public static void zipFileOut(List<File> files, String comment, File zipoutf) throws IOException
+	public static void zipFileOut(String metatxt, List<File> files, File zipoutf) throws IOException
 	{
 		File pf = zipoutf.getParentFile();
 		if (!pf.exists())
@@ -43,15 +21,31 @@ public class ZipUtil
 
 		try (FileOutputStream fos = new FileOutputStream(zipoutf); ZipOutputStream zos = new ZipOutputStream(fos);)
 		{
-			if (comment != null)
-				zos.setComment(comment);
+			if (metatxt != null)
+			{
+				writeZipMeta(zos,metatxt) ;
+			}
 
 			for (File f : files)
 			{
 				writeZip(f, "", zos);
-				;
 			}
 		}
+	}
+	
+	public static final String META_ENTRY_NAME = "__meta__.txt";
+	
+	public static void writeZipMeta(ZipOutputStream zos,String metatxt) throws  IOException
+	{
+		ZipEntry ze = new ZipEntry(META_ENTRY_NAME);
+		zos.putNextEntry(ze);
+		zos.write(metatxt.getBytes("UTF-8"));
+		zos.flush();
+	}
+	
+	public static String readZipMeta(File zipf) throws IOException
+	{
+		return readZipTxt(zipf,META_ENTRY_NAME,"UTF-8") ;
 	}
 
 	private static boolean writeZip(File file, String ppath, ZipOutputStream zos) throws IOException
@@ -128,6 +122,7 @@ public class ZipUtil
 		return new String(bs,encoding) ;
 	}
 	
+	
 	public static byte[] readZipBytes(File file,String entryn,String encoding) throws IOException
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
@@ -135,6 +130,7 @@ public class ZipUtil
 			return null ;
 		return baos.toByteArray() ;
 	}
+	
 	
 	public static boolean readZipOut(File file,String entryn,OutputStream outs) throws IOException
 	{

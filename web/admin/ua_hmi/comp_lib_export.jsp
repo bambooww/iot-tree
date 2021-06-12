@@ -11,14 +11,19 @@ if(!Convert.checkReqEmpty(request, out, "catid"))
 	return;
 String catid = request.getParameter("catid") ;
 CompManager compmgr = CompManager.getInstance() ;
-
+CompCat cc = compmgr.getCatById(catid) ;
+if(cc==null)
+{
+	out.print("no cat found") ;
+	return;
+}
 String fn = catid+".zip";
 File fout = new File(Config.getDataDirBase()+"/tmp/"+fn) ;
 compmgr.exportCompCat(catid, fout);
 
 try(FileInputStream fis = new FileInputStream(fout);)
 {
-	WebRes.renderFile(response, fn, fis) ;
+	WebRes.renderFile(response, cc.getTitle()+".zip", fis) ;
 }
 
 //fout.delete();

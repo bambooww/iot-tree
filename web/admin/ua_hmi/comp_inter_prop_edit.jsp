@@ -39,21 +39,31 @@ if(n==null)
 <script src="/opencharts/dist/oc.js"></script>
 <link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(400,450);
+dlg.resize_to(600,450);
 </script>
 </head>
 <body>
 <form class="layui-form" action="">
-  <div class="layui-form-item">
+<div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
-    <div class="layui-input-block">
-      <input type="text" id="name" name="name" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
+    <div class="layui-input-inline">
+      <input type="text" id="name" name="name" value=""   autocomplete="off" class="layui-input">
     </div>
+    <div class="layui-form-mid">title:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="title" name="title" value=""   autocomplete="off" class="layui-input">
+	  </div>
   </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
-    <div class="layui-input-block">
-      <input type="text" id="title" name="title" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+
+    <div class="layui-form-item">
+    <label class="layui-form-label">Value Type:</label>
+    <div class="layui-input-inline">
+      <select id="val_tp" name="val_tp" class="layui-input">
+      	  <option value="number">number</option>
+      	  <option value="bool">bool</option>
+      	  <option value="str">string</option>
+      	  <option value="color">color</option>
+      </select>
     </div>
   </div>
   <div class="layui-form-item">
@@ -81,12 +91,15 @@ if(ctrl_n!="")
 	{
 		$("#name").val(ctrlitem.n) ;
 		$("#title").val(ctrlitem.t) ;
+		$("#val_tp").val(ctrlitem.tp);
 		$("#onGetJS").val(ctrlitem.onGetJS) ;
 		$("#onSetJS").val(ctrlitem.onSetJS) ;
 	}
 }
 layui.use('form', function(){
 	  var form = layui.form;
+	  
+	  form.render();
 });
 	
 function win_close()
@@ -99,6 +112,7 @@ function do_submit(cb)
 {
 	var n = $('#name').val();
 	var tt = $('#title').val();
+	var tp = $("#val_tp").val() ;
 	var gjs = $('#onGetJS').val();
 	var sjs = $('#onSetJS').val();
 	if(n==null||n=='')
@@ -106,7 +120,7 @@ function do_submit(cb)
 		cb(false,'please input name') ;
 		return ;
 	}
-	cb(true,{n:n,t:tt,onGetJS:gjs,onSetJS:sjs});
+	cb(true,{n:n,t:tt,tp:tp,onGetJS:gjs,onSetJS:sjs});
 }
 
 </script>

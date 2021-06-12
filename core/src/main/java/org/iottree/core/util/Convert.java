@@ -988,6 +988,16 @@ public class Convert
 		}
 	}
 
+	public static String transMapToPropStr(HashMap<String,String> mp)
+	{
+		StringBuilder ret = new  StringBuilder() ;
+		for(Map.Entry<String, String> n2v:mp.entrySet())
+		{
+			ret.append(n2v.getKey()+"="+n2v.getValue()+"\r\n") ;
+		}
+		
+		return ret.toString() ;
+	}
 	/**
 	 * 从流中读取字典映射
 	 * 

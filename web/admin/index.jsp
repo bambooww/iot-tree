@@ -190,13 +190,13 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 					        <h1>Device Library </h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
-					        	<a href="javascript:devdef_cat_export()">
+					        	<a href="javascript:devdef_cat_import()">
 					        	<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
 							</span>&nbsp;&nbsp; Import</a>
 					        	&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_import()">
+					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_export()">
 							<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-up fa-stack-1x"></i>
@@ -229,7 +229,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 					        <h1 style="width:200px">HMI Library</h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
-					        	<a href="javascript:comp_import()"><span class="fa-stack">
+					        	<a href="javascript:comp_cat_import()"><span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
 							</span>&nbsp;&nbsp; Import</a>
@@ -399,6 +399,11 @@ function comp_cat_export()
 	}
 		
 	window.open("./ua_hmi/comp_lib_export.jsp?catid="+catids[0]) ;
+}
+
+function comp_cat_import()
+{
+	
 }
 
 

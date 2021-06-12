@@ -269,7 +269,12 @@ public class UAManager
 			return false;
 		
 		List<File> fs = Arrays.asList(UAManager.getPrjFile(prjid),UAManager.getPrjFileSubDir(prjid)) ;
-		ZipUtil.zipFileOut(fs, "", fout) ;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "prj") ;
+		metam.put("prjid", prjid) ;
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		
+		ZipUtil.zipFileOut(metatxt,fs,fout) ;
 		return true;
 	}
 	

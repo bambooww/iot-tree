@@ -55,6 +55,12 @@ public class PrjFilter implements Filter
 			return ;
 		}
 		
+		if(uri.contentEquals("/"))
+		{
+			chain.doFilter(request, response);
+			return ;
+		}
+		
 		UANode node = UAUtil.findNodeByPath(uri) ;
 		if(node==null)
 		{

@@ -414,12 +414,19 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 	}
 	
-	final boolean RT_setSysTagVal(String name,Object v)
+	
+	boolean RT_setSysTagVal(String name,Object v)
+	{
+		return RT_setSysTagVal(name, v,true) ;
+	}
+	
+	
+	final boolean RT_setSysTagVal(String name,Object v,boolean ignore_nochg)
 	{
 		UATag t = this.getSysTagByName(name) ;
 		if(t==null)
 			return false;
-		t.RT_setVal(v);
+		t.RT_setVal(v,ignore_nochg);
 		return true;
 	}
 	

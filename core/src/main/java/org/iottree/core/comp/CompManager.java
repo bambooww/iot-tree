@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.Config;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.xmldata.XmlData;
 import org.w3c.dom.Document;
@@ -257,8 +258,23 @@ public class CompManager
 		File catdir = cc.getCatDirFile() ;
 		if(!catdir.exists())
 			return false;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "comp") ;
+		metam.put("cat", catid) ;
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		ZipUtil.zipFileOut(metatxt,Arrays.asList(catdir), fout);
+		return true;
+	}
+	
+	public boolean importCompCat(File zipf) throws IOException
+	{
+		String txt = ZipUtil.readZipMeta(zipf) ;
+		if(txt==null)
+			return false;//
+		HashMap<String,String> mmap = Convert.transPropStrToMap(txt) ;
+		if(!"comp".contentEquals(mmap.get("tp")))
+			return false;
 		
-		ZipUtil.zipFileOut(Arrays.asList(catdir), null, fout);
 		return true;
 	}
 }

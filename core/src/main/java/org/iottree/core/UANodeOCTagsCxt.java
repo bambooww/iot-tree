@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.JSObMap;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
@@ -254,12 +255,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				continue ;
 			
 			boolean bvalid = false;
-			String vstr = "" ;
+			Object v=null ;
 			long dt = -1 ;
 			long dt_chg=-1 ;
 
 			bvalid = val.isValid() ;
-			vstr = ""+val.getObjVal() ;
+			v = val.getObjVal() ;
 			
 			dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
 			dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
@@ -274,7 +275,18 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			//w.write("\""+tg.getName()+"\":");
 			w.write("{\"n\":\"");
 			w.write(tg.getName()) ;
-			w.write("\",\"valid\":"+bvalid+",\"v\":\""+vstr+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+			ValTP vtp = tg.getValTp();
+			if(bvalid)
+			{
+				if(vtp.isNumberVT()||vtp==ValTP.vt_bool)
+					w.write("\",\"valid\":"+bvalid+",\"v\":"+v+",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+				else
+					w.write("\",\"valid\":"+bvalid+",\"v\":\""+v+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+			}
+			else
+			{
+				w.write("\",\"valid\":"+bvalid+",\"v\":null,\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+			}
 			
 			bchged = true ;
 		}

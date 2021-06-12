@@ -541,8 +541,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int16);
 		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int16);
 		
-		this.RT_setSysTagVal("_name", this.getName()) ;
-		this.RT_setSysTagVal("_title", this.getTitle()) ;
+		this.RT_setSysTagVal("_name", this.getName(),true) ;
+		this.RT_setSysTagVal("_title", this.getTitle(),true) ;
 	}
 	
 	@Override
@@ -551,15 +551,16 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		super.RT_flush();
 		
 		Calendar d = Calendar.getInstance();
-		this.RT_setSysTagVal("_tick_ms", d.getTimeInMillis()) ;
+		//this.RT_setSysTagVal("_tick_ms", d.getTimeInMillis(),true) ;
+		
 		short y = (short)d.get(Calendar.YEAR);
 		short m =  (short)(d.get(Calendar.MONTH)+1);
 		short day =   (short)d.get(Calendar.DAY_OF_MONTH) ;
 		
-		this.RT_setSysTagVal("_date",Convert.toFullYMDHMS(d.getTime()));
-		this.RT_setSysTagVal("_date_year",y);
-		this.RT_setSysTagVal("_date_month", m);
-		this.RT_setSysTagVal("_date_day", day);
+		//this.RT_setSysTagVal("_date",Convert.toFullYMDHMS(d.getTime()),true) ;
+		this.RT_setSysTagVal("_date_year",y,true) ;
+		this.RT_setSysTagVal("_date_month", m,true) ;
+		this.RT_setSysTagVal("_date_day", day,true) ;
 	}
 	
 	private Thread rtTh = null ;
