@@ -94,6 +94,16 @@ public abstract class DevDriver  implements IPropChecker
 		return null ;
 	}
 	
+	public DevCat getDevCatById(String id)
+	{
+		for(DevCat dc:getDevCats())
+		{
+			if(id.equals(dc.getId()))
+				return dc ;
+		}
+		return null ;
+	}
+	
 	private File getDrvDir()
 	{
 		File fb = DevManager.getDevFileBase() ;

@@ -4,6 +4,7 @@
 				java.io.*,
 				java.util.*,
 				org.iottree.core.*,
+				org.iottree.core.res.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
 				java.net.*"%>
@@ -33,6 +34,12 @@
 	}
 	UANodeOCTagsCxt node = uahmi.getBelongTo() ;
 	String cxtnodeid = node.getId() ;
+	UANode topn = node.getTopNode() ;
+	String resnodeid = "" ;
+	if(topn instanceof IResNode)
+	{
+		resnodeid = ((IResNode)topn).getResNodeUID() ;
+	}
 %><!DOCTYPE html>
 <html>
 <head>
@@ -372,6 +379,7 @@ var tab_id = "<%=tabid%>" ;
 
 var layuiEle ;
 var path="<%=path%>";
+var res_node_id="<%=resnodeid%>";
 
 var cxtnodeid = "<%=cxtnodeid%>" ;
 var editorname = "<%=uahmi.getTitle()%>" ;
@@ -434,7 +442,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 
 	if(tp.indexOf("event_")==0)
 	{
-		dlg.open("../util/di_editplug_"+tp+".jsp",
+		dlg.open("../util/di_editplug_"+tp+".jsp?p="+path,
 				{title:"Edit Event",w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
@@ -462,7 +470,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 		var tt = "Edit Properties" ;
 		if(tp=="prop_bind")
 			tt = "Bind Properties" ;
-		dlg.open("../util/di_editplug_"+tp+".jsp",
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_node_id="+res_node_id,
 				{title:tt,w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[

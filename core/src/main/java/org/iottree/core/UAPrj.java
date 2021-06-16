@@ -28,9 +28,9 @@ import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.IResCxtRelated;
-import org.iottree.core.res.ResCxt;
-import org.iottree.core.res.ResCxtManager;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
+import org.iottree.core.res.ResManager;
 import org.json.JSONObject;
 
 /**
@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * @author zzj
  */
 @data_class
-public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResCxt,IResCxtRelated,ISaver
+public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResNode,ISaver
 {
 	@data_obj(obj_c = UACh.class)
 	List<UACh> chs = new ArrayList<>();
@@ -136,8 +136,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	
 	void onLoaded()
 	{
-		this.getResCxt() ;
-		ResCxtManager.getInstance().setResCxtRelated(this);
+		this.getResDir() ;
 		
 		this.RT_init(true,true) ;
 	}
@@ -477,9 +476,6 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		return null;
 	}
 	
-	
-	private transient ResCxt resCxt = null ;
-
 	/**
 	 * name of editor which will use res
 	 * @return
@@ -493,30 +489,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		return this.id ;
 	}
-	/**
-	 * 
-	 * @return
-	 */
-	@Override
-	public ResCxt getResCxt()
-	{
-		if(resCxt!=null)
-			return resCxt ;
-		File fsb = UAManager.getPrjFileSubDir(this.getId()) ;
-		File dir = new File(fsb,"_res/") ;
-		if(!dir.exists())
-			dir.mkdirs();
-		resCxt=new ResCxt("rep",this.getId(),this.getTitle(),dir);
-		return resCxt;
-	}
-
-	@Override
-	public List<ResCxt> getResCxts()
-	{
-		ArrayList<ResCxt> rcs = new ArrayList<>(1) ;
-		rcs.add(getResCxt()) ;
-		return rcs;
-	}
+	
+//	@Override
+//	public List<ResDir> getResCxts()
+//	{
+//		ArrayList<ResDir> rcs = new ArrayList<>(1) ;
+//		rcs.add(getResCxt()) ;
+//		return rcs;
+//	}
 
 	
 	// public Object JS_get(Object key)
@@ -816,6 +796,50 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			UAPrj.this.CXT_calMidTagsValLocal();
 			return true;
 		}
+	}
+
+
+	
+	private transient ResDir resDir = null ;
+
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId() ;
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle() ;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		return UAManager.getInstance();
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	@Override
+	public ResDir getResDir()
+	{
+		if(resDir!=null)
+			return resDir ;
+		File fsb = UAManager.getPrjFileSubDir(this.getId()) ;
+		File dir = new File(fsb,"_res/") ;
+		if(!dir.exists())
+			dir.mkdirs();
+		resDir=new ResDir(this,this.getId(),this.getTitle(),dir);
+		return resDir;
+	}
+	
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return null;
 	}
 
 }

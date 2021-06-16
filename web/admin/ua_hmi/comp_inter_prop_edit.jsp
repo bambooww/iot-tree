@@ -39,7 +39,7 @@ if(n==null)
 <script src="/opencharts/dist/oc.js"></script>
 <link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(600,450);
+dlg.resize_to(600,650);
 </script>
 </head>
 <body>
@@ -69,13 +69,13 @@ dlg.resize_to(600,450);
   <div class="layui-form-item">
     <label class="layui-form-label">OnGetJS:</label>
     <div class="layui-input-block">
-      <textarea id="onGetJS" name="onGetJS" placeholder="" class="layui-textarea" rows="4"></textarea>
+      <textarea id="onGetJS" name="onGetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">OnSetJS:</label>
     <div class="layui-input-block">
-      <textarea id="onSetJS" name="onSetJS" placeholder="" class="layui-textarea" rows="4"></textarea>
+      <textarea id="onSetJS" name="onSetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
     </div>
   </div>
  </form>

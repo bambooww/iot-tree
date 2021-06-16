@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropNode;
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -22,7 +25,7 @@ import org.json.JSONObject;
  *
  */
 @data_class
-public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch
+public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,IResNode
 {
 	transient DevCat belongToCat = null;
 	
@@ -98,9 +101,14 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch
 		memUpDT=  System.currentTimeMillis() ;
 	}
 	
-	public File getSaverDir()
+	public File getDevDefDir()
 	{
 		return new File(this.getBelongToCat().getDevCatDir(),"dd_"+getId()+"/");
+	}
+	
+	public File getSaverDir()
+	{
+		return this.getDevDefDir() ;
 	}
 	/**
 	 * create new UADev for UACh
@@ -256,6 +264,45 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private ResDir resDir = null ;
+	
+	@Override
+	public ResDir getResDir()
+	{
+		if(resDir!=null)
+			return resDir ;
+		
+		File dir = new File(getDevDefDir(),"_res/") ;
+		if(!dir.exists())
+			dir.mkdirs();
+		resDir=new ResDir(this,this.getId(),this.getTitle(),dir);
+		return resDir;
+	}
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return null;
+	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return getId();
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle() ;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		return this.getBelongToCat();
 	}
 
 }

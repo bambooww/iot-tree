@@ -7,12 +7,23 @@
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
 %><%
-	String resid = request.getParameter("resid") ;
-	if(Convert.isNullOrEmpty(resid))
+if(!Convert.checkReqEmpty(request, out, "res_node_id"))
+	return ;
+	String resnodeid = request.getParameter("res_node_id") ;
+	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
+	
+	if(dr==null)
+	{
+		out.print("no ResDir input") ;
+		return ;
+	}
+
+String resname = request.getParameter("resname") ;
+	if(Convert.isNullOrEmpty(resname))
 	{
 		return ;
 	}
-	ResItem ri = ResCxtManager.getInstance().getResItemById(resid) ;
+	ResItem ri = dr.getResItem(resname);
 	if(ri==null)
 	{
 		return ;
@@ -23,5 +34,4 @@
 	try(FileInputStream fis= new FileInputStream(rf))
 	{
 		WebRes.renderFile(response, ri.getFileName(), fis, true);
-	}
-%>
+	}%>

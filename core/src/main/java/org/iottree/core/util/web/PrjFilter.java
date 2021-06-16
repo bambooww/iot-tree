@@ -47,9 +47,9 @@ public class PrjFilter implements Filter
 		
 		if(uri.endsWith(".jsp"))
 		{
-			String u = uri ;
-			if(qs!=null)
-				u += "?"+qs ;
+//			String u = uri ;
+//			if(qs!=null)
+//				u += "?"+qs ;
 			//req.getRequestDispatcher(u).forward(req, resp);
 			chain.doFilter(request, response);
 			return ;
@@ -58,6 +58,15 @@ public class PrjFilter implements Filter
 		if(uri.contentEquals("/"))
 		{
 			chain.doFilter(request, response);
+			return ;
+		}
+		
+		if(uri.startsWith("/_res"))
+		{
+			String tmpu = "/res.jsp?path="+uri.substring(5);
+			if(qs!=null)
+				tmpu += "?"+qs ;
+			req.getRequestDispatcher(tmpu).forward(req, resp);
 			return ;
 		}
 		

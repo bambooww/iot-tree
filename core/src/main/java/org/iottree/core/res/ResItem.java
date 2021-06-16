@@ -13,17 +13,14 @@ public class ResItem
 		PIC_EXTS.add("gif") ;
 	}
 	
-	ResCxt resCxt = null ;
-	
 	File resF = null ;
 
 	String name = null ;
 	
 	private boolean bPic = false;
 	
-	public ResItem(ResCxt rc,File f)
+	public ResItem(File f)
 	{
-		this.resCxt = rc ;
 		this.resF = f ;
 		
 		String n = resF.getName() ;
@@ -36,14 +33,9 @@ public class ResItem
 		name = n.substring(0,k) ;
 	}
 	
-	public ResCxt getResCxt()
-	{
-		return resCxt ;
-	}
-	
 	public String getResId()
 	{
-		return this.resCxt.getCxtId()+"-"+this.getName() ;
+		return this.getName() ;
 	}
 	
 	/**

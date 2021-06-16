@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
@@ -16,8 +20,11 @@ import org.iottree.core.util.xmldata.data_val;
  * @author jason.zhu
  */
 @data_class
-public class DevCat
+public class DevCat implements IResNode
 {
+	@data_val
+	String id = "" ;
+	
 	@data_val
 	String name = null ;
 	
@@ -35,11 +42,13 @@ public class DevCat
 	
 	public DevCat(DevDriver dd)
 	{
+		id = CompressUUID.createNewId();
 		this.driver = dd ;
 	}
 	
 	public DevCat(DevDriver dd,String name,String title)
 	{
+		id = CompressUUID.createNewId();
 		this.driver = dd ;
 		this.name = name ;
 		this.title = title ;
@@ -48,6 +57,13 @@ public class DevCat
 	public DevDriver getDriver()
 	{
 		return driver ;
+	}
+	
+	public String getId()
+	{
+		if(Convert.isNullOrEmpty(this.id))
+			return this.name ;
+		return id ;
 	}
 	
 	public String getName()
@@ -105,7 +121,7 @@ public class DevCat
 	
 	File getDevCatDir()
 	{
-		return driver.getDevCatDir(this.getName()) ;
+		return driver.getDevCatDir(this.getId()) ;
 	}
 	
 	void saveDevDef(DevDef dd) throws Exception
@@ -191,7 +207,47 @@ public class DevCat
 		r.constructNodeTree();
 		return r ;
 	}
+
+	ResDir resCxt = null ;
 	
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId() ;
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle() ;
+	}
+	
+	@Override
+	public ResDir getResDir()
+	{
+		if(resCxt!=null)
+			return resCxt ;
+		File catdir = this.getDevCatDir();
+		File dir = new File(catdir,"_res/") ;
+		if(!dir.exists())
+			dir.mkdirs();
+		resCxt=new ResDir(this,this.getName(),this.getTitle(),dir);
+		return resCxt;
+	}
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return this.getDevDefById(subid) ;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		
+		return DevManager.getInstance();
+	}
+
 	
 //	public List<DevModel> getDevModels()
 //	{

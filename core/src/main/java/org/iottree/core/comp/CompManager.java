@@ -13,6 +13,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.Config;
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.xmldata.XmlData;
@@ -29,7 +32,7 @@ import org.xml.sax.InputSource;
  * 
  * @author zzj
  */
-public class CompManager
+public class CompManager implements IResCxt
 {
 	static Object locker = new Object() ;
 	static CompManager ins = null ;
@@ -276,5 +279,46 @@ public class CompManager
 			return false;
 		
 		return true;
+	}
+
+	@Override
+	public ResDir getResDir()
+	{
+		return null;
+	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return null ;
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return null ;
+	}
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return this.getCatById(subid) ;
+	}
+	
+	public IResNode getResNodeParent()
+	{
+		return null ;
+	}
+
+	@Override
+	public String getResPrefix()
+	{
+		return IResCxt.PRE_COMP;
+	}
+
+	@Override
+	public boolean isResReadOnly()
+	{
+		return false;
 	}
 }

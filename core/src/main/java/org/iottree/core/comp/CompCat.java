@@ -6,12 +6,13 @@ import java.util.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.ResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.w3c.dom.Element;
 
 
-public class CompCat implements IResCxt
+public class CompCat implements IResNode
 {
 	public static final String TAG = "cat" ;
 	
@@ -160,10 +161,10 @@ public class CompCat implements IResCxt
 		}
 	}
 
-	ResCxt resCxt = null ;
+	ResDir resCxt = null ;
 	
 	@Override
-	public ResCxt getResCxt()
+	public ResDir getResDir()
 	{
 		if(resCxt!=null)
 			return resCxt ;
@@ -171,7 +172,30 @@ public class CompCat implements IResCxt
 		File dir = new File(catdir,"_res/") ;
 		if(!dir.exists())
 			dir.mkdirs();
-		resCxt=new ResCxt("ccat",this.getId(),"Cat-"+this.getTitle(),dir);
+		resCxt=new ResDir(CompManager.getInstance(),this.getId(),this.getTitle(),dir);
 		return resCxt;
+	}
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return this.getItemById(subid) ;
+	}
+
+	public IResNode getResNodeParent()
+	{
+		return CompManager.getInstance() ;
+	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId();
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle() ;
 	}
 }

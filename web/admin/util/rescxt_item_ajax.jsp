@@ -6,13 +6,12 @@
 				 org.iottree.core.*,
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
-%><%
-	if(!Convert.checkReqEmpty(request, out,"op","cxtid"))
+%><%if(!Convert.checkReqEmpty(request, out,"op","cxtid"))
 		return ;
 	String cxtid = request.getParameter("cxtid") ;
 	String op = request.getParameter("op") ;
 
-	ResCxt rc = ResCxtManager.getInstance().getResCxt(cxtid) ;
+	ResDir rc = ResManager.getInstance().getResCxt(cxtid) ;
 	if(rc==null)
 	{
 		out.print("no ResCxt found") ;
@@ -25,6 +24,4 @@
 		
 	case "del":
 	
-	}
-	
-%>
+	}%>

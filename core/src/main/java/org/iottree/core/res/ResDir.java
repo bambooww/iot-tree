@@ -11,54 +11,73 @@ import org.apache.commons.fileupload.*;
  * belong to rep channel dev or component
  * which contains resources like pics css or other file using same management
  * 
- * rep:
- * @author zzj
+ * @author jason.zhu
  *
  */
-public class ResCxt implements Comparable<ResCxt>
+public class ResDir //Comparable<ResDir>
 {
-	String prefix ;
+	IResNode belongToNode = null ;
 	
-	File cxtDirF = null ;
-	//public static final String RES_IDX
-	String id = null ;
+	String id = "" ;
 	
 	String title = "" ;
 	
-	public ResCxt(String prefix,String id,String title,File dirf)
+	File dirF = null ;
+	
+	//ResDir parent = null ;
+	
+	public ResDir(IResNode n,String id,String title,File dirf)
 	{
-		if(prefix.contains("_"))
-			throw new IllegalArgumentException("invalid prefix") ;
-		if(id.contains("_"))
-			throw new IllegalArgumentException("invalid id") ;
-		this.prefix = prefix ;
-		cxtDirF = dirf ;
+		this.belongToNode = n ;
+		
 		this.id = id ;
 		this.title = title ;
-		
-		ResCxtManager.getInstance().setResCxt(this);
+		this.dirF = dirf ;
 	}
+	
+//	public ResDir(ResDir parent,String id,String title,File dirf)
+//	{
+//		this.parent = parent ;
+//		this.belongToCxt = parent.getResCxt() ;
+//		
+//		this.id = id ;
+//		this.title = title ;
+//		this.dirF = dirf ;
+//	}
+	
+	public IResNode getResNode()
+	{
+		return belongToNode ;
+	}
+	
+//	public ResDir getParent()
+//	{
+//		return this.parent ;
+//	}
+	
+//	public void setParent(ResDir p)
+//	{
+//		this.parent = p ;
+//	}
+	
+	public String getResNodeUID()
+	{
+		return this.belongToNode.getResNodeUID() ;
+	}
+	
+//	public ResDir getResDirParent()
+//	{
+//		return this.parent ;
+//	}
 	
 	public File getResDir()
 	{
-		return cxtDirF ;
-	}
-	
-	public String getPrefix()
-	{
-		return prefix ;
+		return dirF ;
 	}
 	
 	public String getId()
 	{
 		return id ;
-	}
-	
-	public String getCxtId()
-	{
-		if(id==null)
-			return prefix;
-		return prefix+"_"+id ;
 	}
 	
 	public String getTitle()
@@ -84,7 +103,7 @@ public class ResCxt implements Comparable<ResCxt>
 			}});
 		for(File f:fs)
 		{
-			ResItem ri =  new ResItem(this,f);
+			ResItem ri =  new ResItem(f);
 			rets.add(ri) ;
 		}
 		return rets ;
@@ -140,11 +159,10 @@ public class ResCxt implements Comparable<ResCxt>
 		}
 	}
 
-	
 
-	@Override
-	public int compareTo(ResCxt o)
-	{
-		return getCxtId().compareTo(o.getCxtId());
-	}
+//	@Override
+//	public int compareTo(ResDir o)
+//	{
+//		return getCxtId().compareTo(o.getCxtId());
+//	}
 }

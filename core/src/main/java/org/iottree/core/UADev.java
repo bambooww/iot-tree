@@ -95,7 +95,8 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		if(drv==null)
 			return null ;
 		DevDef dd = drv.getDevDefById(this.devRefId) ;
-		
+		if(dd==null)
+			return null ;
 		if(dd.memUpDT!=defMemUpDT)
 		{
 //			refreshByDevDef();

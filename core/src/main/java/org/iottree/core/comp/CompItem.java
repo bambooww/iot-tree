@@ -12,13 +12,13 @@ import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.UAManager;
 import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.IResCxtRelated;
-import org.iottree.core.res.ResCxt;
-import org.iottree.core.res.ResCxtManager;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
+import org.iottree.core.res.ResManager;
 import org.iottree.core.util.CompressUUID;
 import org.w3c.dom.Element;
 
-public class CompItem implements IXmlDataable,IResCxt,IResCxtRelated
+public class CompItem implements IXmlDataable,IResNode
 {
 	public static final String TAG = "item" ;
 	
@@ -68,8 +68,8 @@ public class CompItem implements IXmlDataable,IResCxt,IResCxtRelated
 	
 	void onLoaded()
 	{
-		getResCxt();
-		ResCxtManager.getInstance().setResCxtRelated(this);
+		getResDir();
+		//ResManager.getInstance().setResCxtRelated(this);
 	}
 	
 	public String getId()
@@ -91,6 +91,12 @@ public class CompItem implements IXmlDataable,IResCxt,IResCxtRelated
 	{
 		File catdir = belongTo.getCatDirFile() ;
 		return new File(catdir,this.id+".data.txt") ;
+	}
+	
+	public File getDataDir()
+	{
+		File catdir = belongTo.getCatDirFile() ;
+		return new File(catdir,this.id+"/") ;
 	}
 	
 	public void saveCompData(String txt) throws Exception
@@ -142,7 +148,7 @@ public class CompItem implements IXmlDataable,IResCxt,IResCxtRelated
 		this.desc = xd.getParamValueStr("desc") ;
 	}
 
-	ResCxt resCxt = null ;
+	ResDir resCxt = null ;
 	
 	/**
 	 * name of editor which will use res
@@ -159,26 +165,41 @@ public class CompItem implements IXmlDataable,IResCxt,IResCxtRelated
 	}
 	
 	@Override
-	public ResCxt getResCxt()
+	public ResDir getResDir()
 	{
 		if(resCxt!=null)
 			return resCxt ;
-		File catdir = belongTo.getCatDirFile() ;
-		File dir = new File(catdir,"_res_"+this.getId()+"/") ;
+		File datadir = getDataDir() ;
+		File dir = new File(datadir,"_res/") ;
 		if(!dir.exists())
 			dir.mkdirs();
-		resCxt=new ResCxt("comp",this.getId(),this.getTitle(),dir);
+		resCxt=new ResDir(this,this.getId(),this.getTitle(),dir);
 		return resCxt;
 	}
 
 	@Override
-	public List<ResCxt> getResCxts()
+	public IResNode getResNodeSub(String subid)
 	{
-		ArrayList<ResCxt> rets = new ArrayList<>(2) ;
-		ResCxt rc = this.getBelongTo().getResCxt() ;
-		rets.add(getResCxt()) ;
-		rets.add(rc) ;
-		return rets;
+		return null;
 	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId();
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle() ;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		return this.getBelongTo();
+	}
+
 	
 }

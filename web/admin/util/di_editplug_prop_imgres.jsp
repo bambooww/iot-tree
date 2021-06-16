@@ -1,30 +1,26 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ page import="java.util.*,
+<%@ page import="java.util.*,org.iottree.core.*,org.iottree.core.util.*,
 	java.io.*,
 	org.iottree.core.res.*,
+	org.iottree.core.comp.*,
 	org.iottree.core.gr.*
 	"%><%!
 
 %><%
-/*
-	String rid = request.getParameter("rid") ;
+if(!Convert.checkReqEmpty(request, out, "res_node_id"))
+	return ;
+	String resnodeid = request.getParameter("res_node_id") ;
+	//String compid = request.getParameter("compid") ;
+	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
 	
-	ResCxtManager rcm = ResCxtManager.getInstance();
-	IResCxtRelated rcr = rcm.getResCxtRelated(rid) ;
-	List<ResCxt> rcs = rcr.getResCxts();//.listResCxts() ;
-	ResCxt rc = null;
-	if(rcs.size()>0)
-		rc = rcs.get(0) ;
-	
-	List<ResItem> ris = null ;
-	if(rc==null)
+	if(dr==null)
 	{
-		ris = new ArrayList<>(0) ;
+		out.print("no ResDir input") ;
 		return ;
 	}
-	else
-		ris = rc.listResItemsPic() ;
-	*/
+
+	IResNode pdr = dr.getResNode().getResNodeParent() ;
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -185,12 +181,21 @@ width:80px;height:80px;margin: 10px;
 border-width:2px; border-style:solid; background-color0: #515658;
 }
 
-.resitem_sel
+.res_sel
 {
-	
+	background-color: #1173ec;
+	color: #eeeeee;
 }
 
+.res_node
+{
 
+}
+
+.res_node:hover {
+	background-color: #1173ec;
+	color: #eeeeee;
+}
 </style>
 </head>
 <script type="text/javascript">
@@ -203,7 +208,20 @@ border-width:2px; border-style:solid; background-color0: #515658;
   <tr>
     <td style="width:20%;height:90%" valign="top" >
      <div id="rescxt_list" class="prop_edit_cat" style="overflow: hidden;">
-    	afsfadsf
+       <ul type="square">
+<%
+if(pdr!=null)
+{
+	String nid = pdr.getResNodeUID();
+%>
+        <li node_id="<%=nid%>" class="res_node" onclick="show_res_node_id('<%=nid%>')"><%=pdr.getResNodeTitle() %></li>
+<%
+}
+
+String nid = dr.getResNodeUID() ;
+%>
+    	<li node_id="<%=nid%>"  class="res_node res_sel"  onclick="show_res_node_id('<%=nid%>')"><%=dr.getTitle() %></li>
+       </ul>
     	</div>
     </td>
     <td style="width:80%;vertical-align: top;"  >
@@ -228,19 +246,41 @@ var cur_cxtid=null ;
 var cur_resitems = null;
 var cur_resitem = null ;
 
-function load_cxts()
+var cur_resnodeid="<%=resnodeid%>" ;
+
+function set_res_node_sel(resnodeid)
+{
+	cur_resnodeid = resnodeid;
+	$("li.res_node").each(function(){
+		if($(this).attr("node_id")==resnodeid)
+			$(this).addClass("res_sel") ;
+		else
+			$(this).removeClass("res_sel") ;
+	}) ;
+}
+
+function refresh_cur_node()
+{
+	show_res_node_id(cur_resnodeid,false) ;
+}
+
+function show_res_node_id(resnodeid,binit)
 {
 	var ow = dlg.get_opener_w() ;
-	var plugpm = ow.editor_plugcb_pm;
+	var plugpm = null;
+	if(ow!=null)
+		plugpm = ow.editor_plugcb_pm;
 	if(plugpm==null)
 		return ;
 	
 	var pm={}; 
 	pm.editor=plugpm.editor;
 	pm.editor_id=plugpm.editor_id;
+	pm.res_node_id=resnodeid;
+	set_res_node_sel(resnodeid);
 	$.ajax( {
 		type : 'post',
-		url : "rescxt_list_by_editor_ajax.jsp",
+		url : "rescxt_items_ajax.jsp",
 		data : pm
 	}).done(function(ret) {
 		if(ret.indexOf("[")!=0)
@@ -252,20 +292,22 @@ function load_cxts()
 		eval("rcs="+ret) ;
 		var tmps="" ;
 		//console.log(rcs);
-		var firstcxtid = null ;
 		for(var item of rcs)
 		{
-			var cxtid=item.cxtid ;
-			if(firstcxtid==null)
-				firstcxtid = cxtid ;
-			var tt = item.title ;
-			tmps+=`<div onclick="chg_rescxt('`+cxtid+`')">`+tt+`</div>`;
+			var resid = item.id ;
+			var n = item.name ;
+			tmps+=`<div id="resdiv_`+resid+`" class="toolbarbtn resitem" style="border-width:2px; border-style:solid;" onclick="on_res_clk('`+n+`')">
+			     <img id="panel_`+resid+`" src="/res.jsp?res_node_id=`+resnodeid+`&name=`+n+`" width="100%" height="100%"/>
+				  <div style="height:20px;margin:12px;color:#8dcef7;bottom:0px">`+n+`</div>
+			   </div>`;
 		}
-		//console.log(tmps);
-		$("#rescxt_list").html(tmps) ;
-			
-		if(firstcxtid!=null)
-			chg_rescxt(firstcxtid,true);
+		cur_resitems = rcs ;
+		$("#res_list").html(tmps) ;
+		
+		if(binit)
+		{
+			init_val();
+		}
 	
 	}).fail(function(req, st, err) {
 		dlg.msg(err) ;
@@ -320,19 +362,19 @@ function refresh_list()
 		return ;
 	for(var ri of cur_resitems)
 	{
-		var rdiv = $("#resdiv_"+ri.resid);
-		rdiv.css("border-color","");
+		var rdiv = $("#resdiv_"+ri.id);
+		rdiv.removeClass("res_sel");
 	}
 	if(cur_resitem!=null)
 	{
-		var rdiv = $("#resdiv_"+cur_resitem.resid);
-		rdiv.css("border-color","red");
+		var rdiv = $("#resdiv_"+cur_resitem.id);
+		rdiv.addClass("res_sel");
 	}
 }
 
-function on_res_clk(id)
+function on_res_clk(n)
 {
-	var ri = get_cur_resitem_byid(id) ;
+	var ri = get_cur_resitem_byname(n) ;
 	if(ri==null)
 		return ;
 	$("#add_name").val(ri.name) ;
@@ -364,9 +406,9 @@ function on_name_chged()
 
 function add_file_onchg()
 {
-	if(cur_cxtid==null)
+	if(cur_resnodeid==null||cur_resnodeid=="")
 	{
-		dlg.msg("no current cxtid") ;
+		dlg.msg("no resnodeid") ;
 		return ;
 	}
 	//$("#"+id).
@@ -383,7 +425,7 @@ function add_file_onchg()
 	//upload
 	var fd = new FormData();
 	var n= $("#add_name").val() ;
-    fd.append("cxtid",cur_cxtid) ;
+    fd.append("res_node_id",cur_resnodeid) ;
     fd.append("name",n) ;
     fd.append("file",f);
      $.ajax({"url": "rescxt_item_fileup.jsp",type: "post","processData": false,"contentType": false,
@@ -393,8 +435,8 @@ function add_file_onchg()
 			//lj.show_loading(false) ;
  	  		if(data=="succ")
  	  		{
- 	  			dlg.msg("发布成功");
- 	  			chg_rescxt(cur_cxtid);
+ 	  			dlg.msg("add ok");
+ 	  		 refresh_cur_node();
  	  		}
  	  		else
  	  		{
@@ -404,53 +446,10 @@ function add_file_onchg()
       　error: function(data)
          {
     	  	//lj.show_loading(false) ;
-	  				lj.msg("发布失败,请重新尝试！");
+	  				lj.msg("add failed "+data);
   　　　　}
   　　});
 }
-
-function chg_rescxt(cxtid,binit)
-{
-	cur_cxtid = cxtid;
-	var pm={}; 
-	pm.cxtid=cxtid;
-	pm.pic=true;
-	$.ajax( {
-		type : 'post',
-		url : "rescxt_items_ajax.jsp",
-		data : pm
-	}).done(function(ret) {
-		if(ret.indexOf("[")!=0)
-		{
-			dlg.msg(ret) ;
-			return ;
-		}
-		var rcs = null ;
-		eval("rcs="+ret) ;
-		var tmps="" ;
-		//console.log(rcs);
-		for(var item of rcs)
-		{
-			var resid = item.resid ;
-			var n = item.name ;
-			tmps+=`<div id="resdiv_`+resid+`" class="toolbarbtn resitem" style="border-width:2px; border-style:solid;" onclick="on_res_clk('`+resid+`')">
-			     <img id="panel_`+resid+`" src="rescxt_show_img.jsp?resid=`+resid+`" width="100%" height="100%"/>
-				  <div style="height:20px;margin:12px;color:#8dcef7;bottom:0px">`+n+`</div>
-			   </div>`;
-		}
-		cur_resitems = rcs ;
-		$("#res_list").html(tmps) ;
-		
-		if(binit)
-		{
-			init_val();
-		}
-	}).fail(function(req, st, err) {
-		dlg.msg(err) ;
-	});
-}
-
-
 
 
 
@@ -473,7 +472,7 @@ function init_val()
 	}
 }
 
-load_cxts();
+show_res_node_id(cur_resnodeid,true);
 
 
 function win_close()

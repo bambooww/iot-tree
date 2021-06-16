@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.*,
-	org.iottree.core.util.*,
+	org.iottree.core.util.*,org.iottree.core.res.*,
 	org.iottree.core.comp.*,
 	java.io.*,
 	java.util.*,
@@ -32,6 +32,15 @@
 		if(branchn!=null&&branchn instanceof UAHmi)
 			h = (UAHmi)branchn ;
 		String txt = h.loadHmiUITxt() ;
+		
+		UANode topn = h.getTopNode() ;
+		String resnodeid = "" ;
+		if(topn instanceof IResNode)
+		{
+			resnodeid = ((IResNode)topn).getResNodeUID() ;
+		}
+		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
+		out.print("{\"path\":\""+""+"\",\"rb_path\":\""+""+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
 		out.print(txt);
 	}
 	else if("save".equals(op))

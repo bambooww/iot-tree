@@ -3,6 +3,9 @@ package org.iottree.core;
 import java.io.*;
 import java.util.*;
 
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
@@ -12,7 +15,7 @@ import org.iottree.core.util.xmldata.XmlData;
  * 
  * @author jason.zhu
  */
-public class DevManager
+public class DevManager implements IResCxt
 {
 	private static DevManager instance = null ;
 	
@@ -123,6 +126,17 @@ public class DevManager
 		}
 		return null;
 	}
+	
+	public DevCat getDevCatById(String catid)
+	{
+		for(DevDriver drv:this.getDrivers())
+		{
+			DevCat dc = drv.getDevCatById(catid) ;
+			if(dc!=null)
+				return dc ;
+		}
+		return null ;
+	}
 //	private DevCat loadCatModels(File catdir) throws Exception
 //	{
 //		File catf = new File(catdir,"cat.json") ;
@@ -226,4 +240,52 @@ public class DevManager
 			rets.add(drv) ;
 		return rets;
 	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return null ;
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return null;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		return null;
+	}
+	
+	
+	@Override
+	public ResDir getResDir()
+	{
+		return null;
+	}
+
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return this.getDevCatById(subid) ;
+	}
+
+
+	@Override
+	public String getResPrefix()
+	{
+		return IResCxt.PRE_DEVDEF;
+	}
+
+	@Override
+	public boolean isResReadOnly()
+	{
+		return false;
+	}
+
+
+	
 }

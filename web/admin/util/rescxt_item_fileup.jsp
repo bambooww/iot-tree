@@ -29,9 +29,7 @@ org.apache.commons.fileupload.disk.*"%><%!
 		 	}
 		 	return ret;
 		 }
-%><%
-
-if (!ServletFileUpload.isMultipartContent(request)) {
+%><%if (!ServletFileUpload.isMultipartContent(request)) {
     // 如果不是则停止
     PrintWriter writer = response.getWriter();
     writer.println("Error: form must has enctype=multipart/form-data");
@@ -61,12 +59,12 @@ File dirb = null ;
 
     List<FileItem> formItems = upload.parseRequest(request);
     HashMap<String,String> pms = getReqParams(formItems);
-    String cxtid = pms.get("cxtid") ;
+    String resnodeid = pms.get("res_node_id") ;
     String name = pms.get("name") ;
     
-    if(Convert.isNullOrEmpty(cxtid))
+    if(Convert.isNullOrEmpty(resnodeid))
     {
-    	out.print("no cxtid input");
+    	out.print("no res_node_id input");
     	return;
     }
     if(Convert.isNullOrEmpty(name))
@@ -75,10 +73,10 @@ File dirb = null ;
     	return;
     }
     
-    ResCxt rc = ResCxtManager.getInstance().getResCxt(cxtid) ;
+    ResDir rc = ResManager.getInstance().getResDir(resnodeid);
 	if(rc==null)
 	{
-		out.print("no ResCxt found") ;
+		out.print("no ResDir found") ;
 		return ;
 	}
     
@@ -104,6 +102,4 @@ File dirb = null ;
         }
     }
     
-    rc.setResItem(name, fi) ;
-
-%>succ
+    rc.setResItem(name, fi) ;%>succ

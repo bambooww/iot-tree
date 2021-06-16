@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.*,
 	org.iottree.core.util.*,
+	org.iottree.core.res.*,
 	org.iottree.core.comp.*,
 	java.io.*,
 	java.util.*,
@@ -44,8 +45,14 @@
 		}
 		
 		String txt = sub_hmi.loadHmiUITxt() ;
+		UANode topn = sub_hmi.getTopNode() ;
+		String resnodeid = "" ;
+		if(topn instanceof IResNode)
+		{
+			resnodeid = ((IResNode)topn).getResNodeUID() ;
+		}
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
-		out.print("{\"path\":\""+fp+"\",\"rb_path\":\""+rb_path+"\"}\r\n") ;
+		out.print("{\"path\":\""+fp+"\",\"rb_path\":\""+rb_path+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	case "sub":
@@ -96,8 +103,15 @@
 		}
 		String np = hmi.getNodePath() ;
 		txt = hmi.loadHmiUITxt() ;
+		topn = hmi.getTopNode() ;
+		resnodeid = "" ;
+		if(topn instanceof IResNode)
+		{
+			resnodeid = ((IResNode)topn).getResNodeUID() ;
+		}
+		
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
-		out.print("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
+		out.print("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	case "rt":
@@ -137,9 +151,21 @@
 			return ;
 		}
 		branchn = hmi.getRefBranchNode();
+		rb_path="" ;
 		if(branchn!=null&&branchn instanceof UAHmi)
+		{
+			//rb_path
 			hmi = (UAHmi)branchn ;
+		}
+		topn = hmi.getTopNode() ;
+		resnodeid = "" ;
+		if(topn instanceof IResNode)
+		{
+			resnodeid = ((IResNode)topn).getResNodeUID() ;
+		}
+		
 		txt = hmi.loadHmiUITxt() ;
+		out.print("{\"path\":\""+path+"\",\"rb_path\":\""+rb_path+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	}

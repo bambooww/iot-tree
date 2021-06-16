@@ -28,9 +28,7 @@ org.apache.commons.fileupload.disk.*"%><%!
 		 	}
 		 	return ret;
 		 }
-%><%
-
-if (!ServletFileUpload.isMultipartContent(request)) {
+%><%if (!ServletFileUpload.isMultipartContent(request)) {
     // 如果不是则停止
     PrintWriter writer = response.getWriter();
     writer.println("Error: form must has enctype=multipart/form-data");
@@ -73,7 +71,7 @@ File dirb = null ;
     	return;
     }
     
-    ResCxt rc = ResCxtManager.getInstance().getResCxt(cxtid) ;
+    ResDir rc = ResManager.getInstance().getResCxt(cxtid) ;
 	if(rc==null)
 	{
 		out.print("no ResCxt found") ;
@@ -102,6 +100,4 @@ File dirb = null ;
         }
     }
     
-    rc.setResItem(name, fi) ;
-
-%>succ
+    rc.setResItem(name, fi) ;%>succ

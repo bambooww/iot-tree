@@ -74,6 +74,8 @@ case "comp_load":
 		return ;
 	}
 	String txt = ci.getOrLoadCompData() ;
+	String resnid = ci.getResNodeUID() ;
+	out.print("{res_node_id:\""+resnid+"\"}\r\n");
 	out.print(txt) ;
 	break;
 case "comp_txt":
@@ -94,6 +96,8 @@ case "comp_txt":
 		return ;
 	}
 	txt = ci.getOrLoadCompData() ;
+	resnid = ci.getResNodeUID() ;
+	out.print("{res_node_id:\""+resnid+"\"}\r\n");
 	out.print(txt) ;
 	break;
 case "comp_txt_save":

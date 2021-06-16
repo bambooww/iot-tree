@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
-				  java.io.*,
+				 java.io.*,
 				 java.net.*,
 				 org.iottree.core.util.*,
 				 org.iottree.core.util.web.*,
@@ -7,10 +7,11 @@
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
 %><%
-if(!Convert.checkReqEmpty(request, out, "res_node_id"))
+	if(!Convert.checkReqEmpty(request, out, "res_node_id","name"))
 	return ;
+	
+	String resname = request.getParameter("name") ;
 	String resnodeid = request.getParameter("res_node_id") ;
-	//String compid = request.getParameter("compid") ;
 	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
 	
 	if(dr==null)
@@ -19,16 +20,15 @@ if(!Convert.checkReqEmpty(request, out, "res_node_id"))
 		return ;
 	}
 
-	List<ResItem> ris = dr.listResItems() ;
-	
-	out.print("[");
-	boolean bfirst = true;
-	for(ResItem ri:ris)
+	ResItem ri = dr.getResItem(resname);
+	if(ri==null)
 	{
-		if(bfirst) bfirst= false;
-		else
-			out.print(",");
-		String name = ri.getName() ;
-		out.print("{id:\""+ri.getResId()+"\",name:\""+name+"\"}");
+		return ;
 	}
-	out.print("]");%>
+	File rf = ri.getResFile();
+	if(!rf.exists())
+		return ;
+	try(FileInputStream fis= new FileInputStream(rf))
+	{
+		WebRes.renderFile(response, ri.getFileName(), fis, true);
+	}%>

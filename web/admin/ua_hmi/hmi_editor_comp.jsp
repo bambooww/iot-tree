@@ -27,7 +27,7 @@
 		out.print("no item found") ;
 		return ;
 	}
-	
+	String resnodeid = ci.getResNodeUID();
 %><!DOCTYPE html>
 <html>
 <head>
@@ -276,6 +276,34 @@ padding-bottom:0px;
 
 }
 
+.toolbox
+{
+		position:absolute;
+		top:25px;
+		left:25px;
+		width:200px;
+		z-index:1000;
+		-moz-border-radius: 8px 0 0 0;
+		-webkit-border-radius: 8px 0 0 0;
+		border-radius: 8px 0 0 0;		
+}
+.toolbox .title
+{
+	position:relative;
+		background: #808080;
+		height:30px;
+		margin-left:0px;
+		margin-top:0px;
+		-moz-border-radius: 8px 0 0 0;
+		-webkit-border-radius: 8px 0 0 0;
+		border-radius: 8px 0 0 0;
+	
+		}
+.toolbox .content
+{
+	height:100%;
+}
+
 </style>
 </head>
 <script type="text/javascript">
@@ -340,7 +368,7 @@ padding-bottom:0px;
 				
 		</div>
 		<div class="right " style0="background-color: #eeeeee;display:flex;flex-direction: column;">
-			<div style="position0: absolute; width: 100%; height: 500px; border:1 solid;border-color: red">
+			<div style="position0: absolute; width: 100%; height:100%; border:1 solid;border-color: red">
 				<div class="layui-tab">
   <ul class="layui-tab-title">
     <li class="layui-this">Properties</li>
@@ -348,10 +376,10 @@ padding-bottom:0px;
   </ul>
   <div class="layui-tab-content">
     <div class="layui-tab-item layui-show">
-    	<div  id='edit_props'  style="width:100%;height:450px;overflow: auto;"></div>
+    	<div  id='edit_props'  style="width:100%;height:600px;overflow: auto;"></div>
 	</div>
     <div class="layui-tab-item">
-      <div  id='edit_events'  style="width:100%;height:450px;overflow: auto;"></div>
+      <div  id='edit_events'  style="width:100%;height:600px;overflow: auto;"></div>
 	</div>
    
   </div>
@@ -363,40 +391,69 @@ padding-bottom:0px;
 				</div>
 				 --%>
 			</div>
-			<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
-				<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
-				Interface Properties<button onclick="inter_prop_edit()">+Add</button><button onclick="inter_prop_test()">Test</button></div>
-				<div id="inter_prop_list" style="position0:absolute;top:20px;height:20px;width:100%">
-					
-				</div>
-				
-			</div>
-			<div id='inter_event_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
-				<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
-				Interface Events<button onclick="inter_event_edit()">+add</button></div>
-				<div id="inter_event_list" style="position0:absolute;top:20px;height:20px;width:100%">
-					
-				</div>
-				
-			</div>
-			<div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
+			
 		</div>
 		
+		<div id="inter_editor" class="toolbox">
+				<div class="title"><h3>Interface</h3></div>
+				<div class="content" style="height:300px"> 
+							<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
+						<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
+						Interface Properties<button onclick="inter_prop_edit()">+Add</button><button onclick="inter_prop_test()">Test</button></div>
+						<div id="inter_prop_list" style="position0:absolute;top:20px;height:120px;width:100%">
+							
+						</div>
+						
+					</div>
+					<div id='inter_event_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
+						<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
+						Interface Events<button onclick="inter_event_edit()">+add</button></div>
+						<div id="inter_event_list" style="position0:absolute;top:20px;height:120px;width:100%">
+							
+						</div>
+						
+					</div>
+					<div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
+				</div>
+		</div>
 	</div>
-
-
-
 
 
 
 
 <script>
 
+function toolbox_init(which){//which参数指定的是哪一个窗口的id，比如"#dialog"
+	var offestLeft;
+	var offestTop;
+	var right=false;
+	$(which).mousedown(function(e){
+				var x=e.clientX;
+				var y=e.clientY;
+				var styleLeft=$(which).css("left");
+				var styleTop=$(which).css("top");
+				offestLeft=x-parseInt(styleLeft);
+				offestTop=y-parseInt(styleTop);
+				right=true;
+										  });
+	
+	$(which).mousemove(function(e){
+									 if(right){
+				var nowLeft=e.clientX-offestLeft;
+				var nowTop=e.clientY-offestTop;
+				$(which).css("left",nowLeft).css("top",nowTop);}
+										  });
+	$(which).mouseup(function(e){				   
+					right=false;			   
+								   });
+}
+toolbox_init("#inter_editor");
 
 var tab_id = "<%=tabid%>" ;
 var catid="<%=catid%>";
 var itemid = "<%=id%>"
 var editname = "<%=ci.getEditorName()%>" ;
+var res_node_id = "<%=resnodeid%>" ;
 
 var ctrl_items=[] ;
 
@@ -428,7 +485,7 @@ function init_iottpanel()
 		comp_url:"comp_ajax.jsp?op=comp_txt&catid="+catid+"&id="+itemid,
 	});
 	
-	panel = new oc.hmi.HMICompPanel(itemid,"main_panel",{
+	panel = new oc.hmi.HMICompPanel(itemid,res_node_id,"main_panel",{
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
@@ -455,7 +512,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 
 	if(tp.indexOf("event_")==0)
 	{
-		dlg.open("../util/di_editplug_"+tp+".jsp?sjs=false",
+		dlg.open("../util/di_editplug_"+tp+".jsp?sjs=false&compid="+itemid,
 				{title:"Edit Event",w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
@@ -480,7 +537,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 	}
 	else
 	{
-		dlg.open("../util/di_editplug_"+tp+".jsp",
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_node_id="+res_node_id,
 				{title:"Edit Properties",w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[

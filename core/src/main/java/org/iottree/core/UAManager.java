@@ -9,6 +9,9 @@ import java.util.*;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.xmldata.*;
@@ -16,7 +19,7 @@ import org.iottree.core.util.xmldata.*;
 import com.google.common.eventbus.EventBus;
 import static com.google.common.base.Preconditions.*;
 
-public class UAManager
+public class UAManager implements IResCxt
 {
 	private static UAManager instance = null ;
 	
@@ -510,4 +513,48 @@ public class UAManager
 		}
 		out.print("]");
 	}
+	
+	//--res
+	@Override
+	public String getResNodeId()
+	{
+		return null ;
+	}
+	
+	@Override
+	public String getResNodeTitle()
+	{
+		return null;
+	}
+
+	@Override
+	public IResNode getResNodeParent()
+	{
+		return null;
+	}
+
+	@Override
+	public String getResPrefix()
+	{
+		return IResCxt.PRE_PRJ;
+	}
+
+	@Override
+	public boolean isResReadOnly()
+	{
+		return false;
+	}
+
+	@Override
+	public ResDir getResDir()
+	{
+		return null;
+	}
+
+	@Override
+	public IResNode getResNodeSub(String subid)
+	{
+		return this.getPrjById(subid) ;
+	}
+
 }

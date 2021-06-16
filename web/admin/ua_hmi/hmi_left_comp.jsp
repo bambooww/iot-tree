@@ -17,8 +17,8 @@ boolean bedit ="true".equals(request.getParameter("edit")) ;
 <script src="/_js/ajax.js" ></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 </head>
 <style>
@@ -188,8 +188,10 @@ function load_preview()
 		else
 		{
 			var lay = new oc.DrawLayer();
-			lay.inject(ret) ;
-			var panel = new oc.hmi.HMICompPanel(cur_cat_itemids[loadidx],"panel_"+cur_cat_itemids[loadidx],{});
+			var fl = oc.util.splitFirstLnAndLeft(ret) ;
+			var resnid = fl.first_ob["res_node_id"];
+			lay.inject(fl.left_ob) ;
+			var panel = new oc.hmi.HMICompPanel(cur_cat_itemids[loadidx],resnid,"panel_"+cur_cat_itemids[loadidx],{});
 			var p1 = new oc.DrawPanelDiv("",{layer:lay,panel:panel}) ;
 			p1["compid"] = cur_cat_itemids[loadidx];
 			//all_panels.push(p1);
