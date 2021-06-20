@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * slave��
+ * slave data provider
  * @author jasonzhu
  *
  */
@@ -21,8 +21,8 @@ public abstract class MSlaveDataProvider
 		public byte[] toModbusBytes();
 		
 		/**
-		 * �����ȡ��ֵ����provider�����õ�������
-		 * 1����regidx֮��regidx+regnum֮ǰ
+		 * provider
+		 * after regid,before regidx+regnum֮
 		 * @param regidx
 		 * @param regnum
 		 * @param acqidx
@@ -332,7 +332,7 @@ public abstract class MSlaveDataProvider
 	}
 	
 	/**
-	 * �豸id
+	 * dev id
 	 */
 	short devAddr = 0 ;
 	
@@ -345,21 +345,21 @@ public abstract class MSlaveDataProvider
 	XmlVal.XmlValType valType = null ;
 	
 	/**
-	 * ProviderΪ���ṩ�������ʵ�ַ������Ҫ����ʼ��ַ
+	 * Provider start address,to provider outer access
 	 */
 	int acqIdx = 0 ;
 	
 	/**
-	 * slave�ڴ��е�����
+	 * slave member data
 	 */
 	transient SlaveData slaveData = null ;
 	
 	transient long lastActDt= -1 ;
 	/**
-	 * ��ʼ��Provider�������ļ���Ӧ��eleҲ�ṩ
-	 * �����������������ļ��ڵ��У�����һЩ��Provider����Ҫ���������
+	 * init provider
+	 * it can add provider more parameters
 	 * 
-	 * �̳������أ��˷�������
+	 * sub class must override this method
 	 * @param ele
 	 */
 	protected void init(Element ele)
@@ -398,7 +398,7 @@ public abstract class MSlaveDataProvider
 	}
 	
 	/**
-	 * �������Provider
+	 * acquire idx in Provider
 	 * @return
 	 */
 	public int getAcqIdx()
@@ -433,12 +433,12 @@ public abstract class MSlaveDataProvider
 		lastActDt = ct ;
 	}
 	/**
-	 * �ɹ����ͳһ����
+	 * call by manager
 	 * 
-	 * �̳���ʵ�ִ˷�������ȡ��Ҫ���µ�����
-	 * ��Ӧmodbus slave�����ṩ�߶��ԣ��˷����ǹؼ����ݡ�
-	 * 1��Ҫע��˷����ᱻ��ʱ���У����е�ʱ����ͨ�������ļ�����
-	 * 2��Ҫע���һ�����кͺ������еĲ��죬����������������Ч�ʣ����ٲ���Ҫ�����ݷ���
+	 * implements it to acquire updated data
+	 * key method for modbus slave data provider
+	 * 1, it will be called interval,interval gap is configed
+	 * 2, pay attentation first run and flow running,it can be make more effectioned.
 	 * 3
 	 */
 	protected abstract SlaveData acquireData(int idx,int num) ;

@@ -9,7 +9,7 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.w3c.dom.Element;
 
 /**
- * ͨ��tcp��ʽģ��modbus slave�豸
+ *  modbus slave
  * 
  * @author jasonzhu
  */

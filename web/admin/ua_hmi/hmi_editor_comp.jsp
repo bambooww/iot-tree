@@ -304,6 +304,15 @@ padding-bottom:0px;
 	height:100%;
 }
 
+#edit_toolbar
+{
+height:50px;background-color: grey;
+}
+
+#edit_toolbar button
+{
+	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
+}
 </style>
 </head>
 <script type="text/javascript">
@@ -368,7 +377,9 @@ padding-bottom:0px;
 				
 		</div>
 		<div class="right " style0="background-color: #eeeeee;display:flex;flex-direction: column;">
-			<div style="position0: absolute; width: 100%; height:100%; border:1 solid;border-color: red">
+		 <div id="edit_toolbar" ></div>
+		 <div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
+			<div style="position0: absolute; width: 100%; height:90%; border:1 solid;border-color: red">
 				<div class="layui-tab">
   <ul class="layui-tab-title">
     <li class="layui-this">Properties</li>
@@ -413,7 +424,7 @@ padding-bottom:0px;
 						</div>
 						
 					</div>
-					<div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
+					
 				</div>
 		</div>
 	</div>
@@ -489,7 +500,7 @@ function init_iottpanel()
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
-	editor = new oc.DrawEditor("edit_props","edit_events",panel,{
+	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
 		plug_cb:editor_plugcb
 	}) ;
 	hmiView = new oc.hmi.HMICompView(hmiModel,panel,editor,{

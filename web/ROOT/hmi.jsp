@@ -445,7 +445,7 @@ function init_iottpanel()
 		copy_paste_url:"util/copy_paste_ajax.jsp",
 		show_only:true,
 		on_model_loaded:()=>{
-			console.log("loaded") ;
+			//console.log("loaded") ;
 			draw_fit()
 		}
 	});

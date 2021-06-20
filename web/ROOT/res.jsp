@@ -12,23 +12,21 @@
 	
 	String resname = request.getParameter("name") ;
 	String resnodeid = request.getParameter("res_node_id") ;
-	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
 	
-	if(dr==null)
-	{
-		out.print("no ResDir input") ;
-		return ;
-	}
 
-	ResItem ri = dr.getResItem(resname);
+	ResItem ri = ResManager.getInstance().findResItem(resnodeid, resname)  ;
 	if(ri==null)
 	{
 		return ;
 	}
+	ri.renderOut(request, response);
+	/*
 	File rf = ri.getResFile();
 	if(!rf.exists())
 		return ;
 	try(FileInputStream fis= new FileInputStream(rf))
 	{
 		WebRes.renderFile(response, ri.getFileName(), fis, true);
-	}%>
+	}
+	*/
+	%>

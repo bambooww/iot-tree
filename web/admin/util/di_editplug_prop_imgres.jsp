@@ -19,8 +19,11 @@ if(!Convert.checkReqEmpty(request, out, "res_node_id"))
 		return ;
 	}
 
-	IResNode pdr = dr.getResNode().getResNodeParent() ;
+	IResNode prn = dr.getResNode().getResNodeParent() ;
 	
+	ResDir prd = null;
+	if(prn!=null)
+		prd = prn.getResDir() ;
 %>
 <!DOCTYPE html>
 <html>
@@ -210,11 +213,11 @@ border-width:2px; border-style:solid; background-color0: #515658;
      <div id="rescxt_list" class="prop_edit_cat" style="overflow: hidden;">
        <ul type="square">
 <%
-if(pdr!=null)
+if(prd!=null)
 {
-	String nid = pdr.getResNodeUID();
+	String nid = prd.getResNodeUID();
 %>
-        <li node_id="<%=nid%>" class="res_node" onclick="show_res_node_id('<%=nid%>')"><%=pdr.getResNodeTitle() %></li>
+        <li node_id="<%=nid%>" class="res_node" onclick="show_res_node_id('<%=nid%>')"><%=prn.getResNodeTitle() %></li>
 <%
 }
 

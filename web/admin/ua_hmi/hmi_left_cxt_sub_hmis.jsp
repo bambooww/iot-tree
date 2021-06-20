@@ -79,8 +79,8 @@ if(s>0)
 <script src="/_js/ajax.js" ></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 </head>
 <style>
@@ -210,8 +210,13 @@ function load_preview()
 		else
 		{
 			var lay = new oc.DrawLayer();
-			lay.inject(ret) ;
-			var panel = new oc.hmi.HMICompPanel(ids[loadidx],"panel_"+ids[loadidx],{});
+            var fl = oc.util.splitFirstLnAndLeft(ret) ;
+            var refpath = fl.first_ob["rb_path"];
+            var np = fl.first_ob["path"] ;
+            var resnodeid = fl.first_ob["res_node_id"] ;
+           
+			lay.inject(fl.left_txt) ;
+			var panel = new oc.hmi.HMICompPanel(ids[loadidx],resnodeid,"panel_"+ids[loadidx],{});
 			var p1 = new oc.hmi.HMISubDiv("",{layer:lay,panel:panel,hmi_path:path}) ;
 			p1["hmi_path"] = paths[loadidx];
 			p1["hmi_id"] = ids[loadidx];

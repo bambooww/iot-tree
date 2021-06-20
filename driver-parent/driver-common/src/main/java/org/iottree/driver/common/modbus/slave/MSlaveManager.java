@@ -107,7 +107,7 @@ public class MSlaveManager
 		}};
 	
 	/**
-	 * �����е�slave�����������
+	 * start slave mon thread
 	 *
 	 */
 	public void start()

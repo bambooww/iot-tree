@@ -53,24 +53,24 @@ public class ResManager
 	
 	//private static ResDir getByUid(ResDir )
 	
-	public ResDir getResDir(String uidid)
+	public IResNode getResNode(String resnodeid)
 	{
 		IResNode rc = null ;
 		List<String> subids = null;//
 		String id =null;
-		if(uidid.startsWith(IResCxt.PRE_PRJ))
+		if(resnodeid.startsWith(IResCxt.PRE_PRJ))
 		{
-			id = uidid.substring(IResCxt.PRE_PRJ.length()+1) ;
+			id = resnodeid.substring(IResCxt.PRE_PRJ.length()+1) ;
 			rc = UAManager.getInstance();
 		}
-		else if(uidid.startsWith(IResCxt.PRE_DEVDEF))
+		else if(resnodeid.startsWith(IResCxt.PRE_DEVDEF))
 		{
-			id = uidid.substring(IResCxt.PRE_DEVDEF.length()+1) ;
+			id = resnodeid.substring(IResCxt.PRE_DEVDEF.length()+1) ;
 			rc = DevManager.getInstance();
 		}
-		else if(uidid.startsWith(IResCxt.PRE_COMP))
+		else if(resnodeid.startsWith(IResCxt.PRE_COMP))
 		{
-			id = uidid.substring(IResCxt.PRE_COMP.length()+1) ;
+			id = resnodeid.substring(IResCxt.PRE_COMP.length()+1) ;
 			rc = CompManager.getInstance() ;
 		}
 		else
@@ -84,9 +84,35 @@ public class ResManager
 			if(rc==null)
 				break ;
 		}
+		return rc;
+	}
+	
+	public ResDir getResDir(String resnodeid)
+	{
+		IResNode rc = getResNode(resnodeid) ;
 		if(rc==null)
 			return null ;
 		return rc.getResDir() ;
+	}
+	
+	
+	public ResItem findResItem(String res_node_id,String resname)
+	{
+		IResNode rc = getResNode(res_node_id) ;
+		if(rc==null)
+			return null ;
+		do
+		{
+			ResDir rd = rc.getResDir() ;
+			if(rd!=null)
+			{
+				ResItem ri = rd.getResItem(resname) ;
+				if(ri!=null)
+					return ri ;
+			}
+			rc = rc.getResNodeParent() ;
+		}while(rc!=null) ;
+		return null ;
 	}
 //	/**
 //	 * rep_id-name

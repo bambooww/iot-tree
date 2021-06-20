@@ -2195,6 +2195,15 @@ public class Convert
 	 */
 	public static String readFileTxt(File f, String encod) throws IOException
 	{
+		byte[] bs = readFileBuf(f) ;
+			if (Convert.isNullOrEmpty(encod))
+				return new String(bs);
+			else
+				return new String(bs, encod);
+	}
+	
+	public static byte[] readFileBuf(File f)throws IOException
+	{
 		if (f.length() > 10485760)
 			throw new RuntimeException("file is too long");
 
@@ -2203,10 +2212,7 @@ public class Convert
 			int size = fis.available();
 			byte[] buffer = new byte[size];
 			fis.read(buffer);
-			if (Convert.isNullOrEmpty(encod))
-				return new String(buffer);
-			else
-				return new String(buffer, encod);
+			return buffer ;
 		}
 	}
 	

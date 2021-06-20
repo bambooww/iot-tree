@@ -293,6 +293,16 @@ height:30px;
     padding: 0px;
 }
 
+#edit_toolbar
+{
+height:50px;background-color: grey;
+}
+
+#edit_toolbar button
+{
+	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
+}
+
 </style>
 </head>
 <body class="layout-body">
@@ -347,6 +357,8 @@ height:30px;
 <div style="position:absolute;right:5px;top:5px;z-index:1001;color:#1e1e1e" title="show or hide properties panel" id="btn_prop_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</div>
 
 <div id='edit_panel'  class="right_panel_win" >
+
+  <div id="edit_toolbar" style="height:50px;background-color: grey"></div>
 	<div id="p_info" style="height: 20" class0="props_panel_pos">&nbsp;</div>
 		<div class="layui-tab">
 	  <ul class="layui-tab-title">
@@ -420,11 +432,15 @@ function init_iottpanel()
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
-	editor = new oc.DrawEditor("edit_props","edit_events",panel,{
+	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
 		plug_cb:editor_plugcb
 	}) ;
 	hmiView = new oc.hmi.HMIView(hmiModel,panel,editor,{
-		copy_paste_url:"util/copy_paste_ajax.jsp"
+		copy_paste_url:"util/copy_paste_ajax.jsp",
+		on_model_loaded:()=>{
+			//console.log("loaded") ;
+			draw_fit()
+		}
 	});
 	
 	hmiView.init();

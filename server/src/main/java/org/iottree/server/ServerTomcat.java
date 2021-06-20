@@ -60,11 +60,14 @@ public class ServerTomcat implements IServerBootComp
 				tomcat.getService().addConnector(sslc);
 			}
 			
+			Connector norc = getNorConnector(w.getPort());
+			tomcat.getService().addConnector(norc);
+			
 			tomcat.setBaseDir(CATALINA_HOME);
 			
 			String wbase = Config.getWebappBase();
 			File wbf = new File(wbase);
-			tomcat.setPort(w.getPort());
+			//tomcat.setPort(w.getPort());
 			for (Webapp app : w.getAppList())
 			{
 				String appn = app.getAppName();
@@ -91,7 +94,15 @@ public class ServerTomcat implements IServerBootComp
 			tomcat.start();
 	}
 	
-	
+	private static Connector getNorConnector(int port)
+	{
+		Connector connector = new Connector();
+		connector.setPort(port);
+		connector.setSecure(true);
+		connector.setScheme("http");
+		connector.setAttribute("maxThreads", "200");
+		return connector;
+	}
 
 	private static Connector getSslConnector(int port)
 	{

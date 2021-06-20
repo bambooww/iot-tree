@@ -12,9 +12,8 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.common.modbus.*;
 
 /**
- * һ�ν�����tcp���Ӷ���
- * 
- * �ڲ�����һ���̣߳��ȴ�master����modbusָ��
+
+ * a thred in it,waiting master send modbus cmd
  * @author jasonzhu
  *
  */
@@ -324,7 +323,8 @@ public class MSlaveTcpConn implements Runnable
 			int len = 0 ;
 			
 			while (bRun)
-			{//ͨ��ʱ������ȡmodbusָ��ԭʼ����
+			{
+				//
 				delay(1) ;
 				
 				

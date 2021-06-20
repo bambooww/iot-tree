@@ -236,14 +236,14 @@ public class WSHmiRT extends WSServer
 	{
 		sess2item.put(si.getSession(), si) ;
 		
-		System.out.println(" add session ,num="+sess2item.size()) ;
+		//System.out.println(" add session ,num="+sess2item.size()) ;
 	}
 	
 	public static synchronized void removeSessionItem(Session sess)
 	{
 		sess2item.remove(sess) ;
 		
-		System.out.println(" remove session ,num="+sess2item.size()) ;
+		//System.out.println(" remove session ,num="+sess2item.size()) ;
 	}
 	
 	public static int getSessionNum()
@@ -312,7 +312,7 @@ public class WSHmiRT extends WSServer
 		if(timer!=null)
 			return ;
 		
-		System.out.println(" hmi rt  --  start timer") ;
+		//System.out.println(" hmi rt  --  start timer") ;
 		
 		timer = new Timer(WSHmiRT.class.getSimpleName() + " Timer");
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -334,7 +334,7 @@ public class WSHmiRT extends WSServer
 	{
 		if (timer != null)
 		{
-			System.out.println(" hmi rt  --  stop timer") ;
+			//System.out.println(" hmi rt  --  stop timer") ;
 			timer.cancel();
 			timer = null ;
 		}
@@ -383,7 +383,7 @@ public class WSHmiRT extends WSServer
 	@OnMessage
 	public void onMessageTxt(Session session, String msg) throws Exception
 	{//{tp:"event",repid:this.repId,hmiid:this.hmiId,diid:diid,name:eventn,val:eventv} ;
-		System.out.println("ws recv:"+msg) ;
+		//System.out.println("ws recv:"+msg) ;
 		
 		try
 		{

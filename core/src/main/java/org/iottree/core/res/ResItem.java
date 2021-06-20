@@ -3,6 +3,12 @@ package org.iottree.core.res;
 import java.io.*;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.iottree.core.util.Convert;
+import org.iottree.core.util.web.WebRes;
+
 public class ResItem
 {
 	static HashSet<String> PIC_EXTS = new HashSet<>() ;
@@ -73,5 +79,47 @@ public class ResItem
 			}
 		}
 		resF = f ;
+	}
+	
+	
+	transient private byte[] resCont = null ;
+	
+	transient private long resModifyDT = -1 ;
+	
+	private byte[] getOrLoadCont()
+	{
+		if(resCont!=null)
+			return resCont ;
+		
+		synchronized(this)
+		{
+			File rf = getResFile();
+			if(!rf.exists())
+			{
+				resCont = new byte[0] ;
+				return resCont ;
+			}
+			
+			try
+			{
+				resCont = Convert.readFileBuf(rf) ;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				resCont = new byte[0] ;
+			}
+			return resCont ;
+		}
+		
+	}
+	
+	public void renderOut(HttpServletRequest req,HttpServletResponse resp) throws IOException
+	{
+		byte[] bs = getOrLoadCont() ;
+		if(bs==null||bs.length==0)
+			return ;
+		File rf = getResFile() ;
+		WebRes.renderFile(req,resp, rf.getName(), bs,this.bPic,new Date( rf.lastModified()));
 	}
 }

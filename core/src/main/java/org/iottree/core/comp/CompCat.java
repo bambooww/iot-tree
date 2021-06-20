@@ -172,7 +172,7 @@ public class CompCat implements IResNode
 		File dir = new File(catdir,"_res/") ;
 		if(!dir.exists())
 			dir.mkdirs();
-		resCxt=new ResDir(CompManager.getInstance(),this.getId(),this.getTitle(),dir);
+		resCxt=new ResDir(this,this.getId(),this.getTitle(),dir);
 		return resCxt;
 	}
 
