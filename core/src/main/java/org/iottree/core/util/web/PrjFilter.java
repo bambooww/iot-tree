@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANode;
 import org.iottree.core.UAUtil;
+import org.iottree.core.util.Convert;
 
 public class PrjFilter implements Filter
 {
@@ -62,8 +63,11 @@ public class PrjFilter implements Filter
 		}
 		
 		if(uri.startsWith("/_res"))
-		{
-			String tmpu = "/res.jsp?path="+uri.substring(5);
+		{//res_node_id="+resnodeid+"&name="+name
+			java.util.List<String> ss = Convert.splitStrWith(uri.substring(5), "/") ;
+			if(ss.size()<=1)
+				return ;
+			String tmpu = "/res.jsp?resnodeid="+ss.get(0)+"&name="+ss.get(1);
 			if(qs!=null)
 				tmpu += "?"+qs ;
 			req.getRequestDispatcher(tmpu).forward(req, resp);

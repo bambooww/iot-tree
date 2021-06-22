@@ -45,7 +45,9 @@
 <script src="/_js/oc/oc.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
-	
+  <!-- 
+
+-->
 <style>
 body {
 	margin: 0px;
@@ -339,13 +341,19 @@ margin-top:5px;
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
 	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus-square-o fa-3x"></i></div>
 	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus-square-o fa-3x"></i></div>
+	<!-- 
+<script src="/_iottree/di_div_comps/echarts.min.js"></script>
+<script src="/_iottree/di_div_comps/switchs/comp_button.js"></script>
+<script src="/_iottree/di_div_comps/meters/comp_gauge2.js"></script>
 
-
+ -->
+ 
 <script>
 
 
 var layuiEle ;
 var path="<%=path%>";
+var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;
 
@@ -403,7 +411,8 @@ function init_iottpanel0()
 	//	plug_cb:editor_plugcb
 	//}) ;
 	hmiView = new oc.hmi.HMIView(repid,hmiid,hmiModel,panel,null,{
-		copy_paste_url:"util/copy_paste_ajax.jsp",show_only:true
+		copy_paste_url:"util/copy_paste_ajax.jsp",show_only:true,
+		
 	});
 	
 	hmiView.init();
@@ -447,6 +456,23 @@ function init_iottpanel()
 		on_model_loaded:()=>{
 			//console.log("loaded") ;
 			draw_fit()
+		},
+		on_new_dlg:(p,title,w,h)=>{
+			var fp = p ;
+			if(p.indexOf("/")!=0)
+				fp = ppath+p ;
+			dlg.open(fp,
+					{title:title,w:w+'px',h:h+'px'},
+					['Cancel'],
+					[
+						function(dlgw)
+						{
+							dlg.close();
+						}
+					]);
+		},
+		on_new_win:(p)=>{
+			
 		}
 	});
 	

@@ -17,7 +17,7 @@
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(400,500);
+dlg.resize_to(500,500);
 </script>
 </head>
 <body>
@@ -33,6 +33,7 @@ dlg.resize_to(400,500);
     <div class="layui-input-block">
       <input id="exp_false" type="radio" lay-filter="bexp" name="bexp" value="false" title="context tag"  checked >
       <input id="exp_true" type="radio" lay-filter="bexp" name="bexp" value="true" title="js express" >
+      <input id="exp_unbind" type="radio" lay-filter="bexp" name="bexp" value="unbind" title="unbind" >
     </div>
   </div>
    <div class="layui-form-item" id="divtag">
@@ -43,10 +44,11 @@ dlg.resize_to(400,500);
   </div>
   <div class="layui-form-item" id="divtjs" style="display:none;">
     <label class="layui-form-label">Script:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-block">
       <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10"></textarea>
+      <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
-    <div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
+    
   </div>
   
  </form>
@@ -55,7 +57,7 @@ dlg.resize_to(400,500);
 
 var form = null ;
 
-var bExp = false;
+var bind_val = "false";
 
 layui.use('form', function(){
 	  form = layui.form;
@@ -63,7 +65,7 @@ layui.use('form', function(){
 	  form.on('radio(bexp)', function (data) {
 		　
 		　　var value = data.value;
-			sel_exp_or_not(value=='true');
+			sel_exp_or_not(value);
 		});
 	  
 	  form.render() ;
@@ -74,7 +76,7 @@ var plugpm = ow.editor_plugcb_pm;
 if(plugpm!=null)
 {
 	// {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
-	console.log(plugpm) ;
+	//console.log(plugpm) ;
 	var di = plugpm.di ;
 	var pdf = di.findProDefItemByName(plugpm.name) ;
 	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
@@ -83,7 +85,7 @@ if(plugpm!=null)
 	if(vv)
 	{
 		document.getElementById("exp_"+vv.bExp).checked = true ;
-		sel_exp_or_not(vv.bExp) ;
+		sel_exp_or_not(vv.bExp?"true":"false") ;
 		if(vv.bExp)
 			$("#js").val(vv.binderTxt) ;
 		else
@@ -173,18 +175,23 @@ function insertAtCursor(txtarea_id, txt)
 	}
 }
 
-function sel_exp_or_not(bexp)
+function sel_exp_or_not(v)
 {
-	bExp = bexp ;
-	if(bexp)
+	bind_val = v ;
+	if(v=="true")
 	{
 		$("#divtjs").css("display","") ;
 		$("#divtag").css("display","none") ;
 	}
-	else
+	else if(v=="false")
 	{
 		$("#divtjs").css("display","none") ;
 		$("#divtag").css("display","") ;
+	}
+	else if(v=="unbind")
+	{
+		$("#divtjs").css("display","none") ;
+		$("#divtag").css("display","none") ;
 	}
 }
 
@@ -199,8 +206,10 @@ function editplug_get(cb)
 {
 	var tag = $("#tag").val() ;
 	var js =  $("#js").val() ;
-	var jstxt ;
-	if(bExp)
+	var jstxt=null ;
+	var bexp = false;
+	var bunbind=false;
+	if(bind_val=="true")
 	{
 		js = trim(js) ;
 		if(js==null||js=="")
@@ -208,9 +217,10 @@ function editplug_get(cb)
 			cb(false,'please input js expression') ;
 			return ;
 		}
+		bexp=true;
 		jstxt= js ;
 	}
-	else
+	else if(bind_val=='false')
 	{
 		if(tag==null)
 		{
@@ -219,8 +229,12 @@ function editplug_get(cb)
 		}
 		jstxt = tag ;
 	}
+	else if(bind_val=='unbind')
+	{
+		bunbind=true;
+	}
 	
-	return {bexp:bExp,jstxt:jstxt};
+	return {bexp:bexp,jstxt:jstxt,unbind:bunbind};
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

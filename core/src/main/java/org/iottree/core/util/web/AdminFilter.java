@@ -104,10 +104,10 @@ public class AdminFilter implements Filter
 		
 		req.setCharacterEncoding("UTF-8");
 		
-		resp.setHeader( "Pragma", "no-cache" );
-		resp.setHeader( "Cache-Control", "no-cache" );
-		resp.setHeader( "Cache-Control", "no-store" );
-		resp.setDateHeader( "Expires", 0 );
+//		resp.setHeader( "Pragma", "no-cache" );
+//		resp.setHeader( "Cache-Control", "no-cache" );
+//		resp.setHeader( "Cache-Control", "no-store" );
+//		resp.setDateHeader( "Expires", 0 );
 
 		
 		fc.doFilter(req, resp);

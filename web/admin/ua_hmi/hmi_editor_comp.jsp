@@ -554,10 +554,28 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 				[
 					function(dlgw)
 					{
-						var ret = dlgw.editplug_get() ;
-						var v = ret.v ;
-						jq_ele.val(v) ;
-						editor.applyUI2SelectedItem();
+						if(tp=="prop_bind")
+						{
+							var ret = dlgw.editplug_get() ;
+							if(ret.unbind)
+							{
+								di.setPropBinder(name,null,false) ;
+							}
+							else
+							{
+								di.setPropBinder(name,ret.jstxt,ret.bexp) ;
+							}
+							
+							editor.refreshPropBindEditor();
+						}
+						else
+						{
+							var ret = dlgw.editplug_get() ;
+							var v = ret.v ;
+							jq_ele.val(v) ;
+							editor.applyUI2SelectedItem();
+						} 
+						
 						dlg.close();
 					},
 					function(dlgw)

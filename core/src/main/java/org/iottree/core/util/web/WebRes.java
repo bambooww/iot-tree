@@ -104,6 +104,7 @@ public class WebRes extends HttpServlet
 		ServletOutputStream os = resp.getOutputStream();
 		os.write(file_cont);
 		os.flush();
+		os.close();
 	}
 
 	/**

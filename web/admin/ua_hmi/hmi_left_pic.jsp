@@ -19,14 +19,25 @@ if(Convert.isNotNullEmpty(cat))
 %><html>
 <head>
 <title></title>
+
+<script src="/_js/jquery-1.12.0.min.js"></script>
+<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script src="/_js/ajax.js" ></script>
 <script src="/_js/dlg.js" ></script>
-<script src="../scada_common.js" charset="utf-8" ></script>
-<link type="text/css" href="/_js/jquery_ui/css/ui-lightness/jquery-ui-1.8.10.custom.css" rel="stylesheet" />	
-<script type="text/javascript" src="/_js/jquery_ui/js/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" src="/_js/jquery_ui/js/jquery-ui-1.8.10.custom.min.js"></script>
-
+<script src="/opencharts/dist/oc.js"></script>
+<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
 </head>
+<script type="text/javascript">
+function drag(ev)
+{
+	var tar = ev.target;
+	
+	var cn = tar.getAttribute("pic_path");
+	
+	console.log("ss="+cn);
+	oc.util.setDragEventData(ev,{_val:cn,_tp:"pic"})
+}
+</script>
 <body marginwidth="0" marginheight="0">
 <table width='100%' height='100%'>
  <tr width="20">
@@ -64,7 +75,7 @@ if(Convert.isNotNullEmpty(cat))
  	</select>
  </td>
  <td width="50%" height='90%' valign="top" >示意
- 	<img id='pic_demo' src="" width='90%' height='90%'/><br/>
+ 	<img id='pic_demo' src="" width='90%' height='90%' draggable="true" ondragstart="drag(event)"/><br/>
  	<input type='button' value="OK" onclick="sel()"/> &nbsp; 
   <input type='button' value="Cancel" onclick="dlg.close()"/>
  </td>
@@ -90,8 +101,10 @@ function single_sel_chg(id)
 	var v = ss.value ;
 	if(v!=null)
 		ss.value = v ;
-	
-	document.getElementById('pic_demo').src=v ;
+	console.log(v) ;
+	var pd = document.getElementById('pic_demo') ;
+	pd.src=v ;
+	pd.setAttribute("pic_path",v) ;
 }
 
 var indlg = false;//

@@ -35,7 +35,7 @@ public class GRManager
 		}
 	}
 	
-	static final String REF_HEAD = "/_scada/res/" ;
+	static final String REF_HEAD = "/_iottree/pics/" ;
 	
 	ArrayList<GRCat> giCats = null;//new ArrayList<GICat>() ;
 	HashMap<String,GRItem> name2gii = null ;

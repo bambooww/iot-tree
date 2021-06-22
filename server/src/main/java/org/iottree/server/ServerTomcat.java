@@ -98,7 +98,7 @@ public class ServerTomcat implements IServerBootComp
 	{
 		Connector connector = new Connector();
 		connector.setPort(port);
-		connector.setSecure(true);
+		//connector.setSecure(true);
 		connector.setScheme("http");
 		connector.setAttribute("maxThreads", "200");
 		return connector;
