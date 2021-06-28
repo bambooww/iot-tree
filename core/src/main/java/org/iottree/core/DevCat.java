@@ -88,7 +88,10 @@ public class DevCat implements IResNode
 			devDefs = loadDevDefs();
 			
 			for(DevDef dd:devDefs)
+			{
+				dd.RT_init(true, true);
 				dd.constructNodeTree();
+			}
 			
 			return devDefs ;
 		}

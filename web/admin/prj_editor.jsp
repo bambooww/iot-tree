@@ -15,7 +15,7 @@
 	UAPrj rep = UAManager.getInstance().getPrjById(repid);
 	if(rep==null)
 	{
-		out.print("no rep found!");
+		out.print("no prj found!");
 		return;
 	}
 	
@@ -24,7 +24,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>IOTTree HMI Editor</title>
+<title>IOTTree Project Editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
@@ -516,7 +516,7 @@ background-color: #fff ;
 										</td>
 										<td width="25px">&nbsp;</td>
 										<td width="25px">
-											<div style="width:20px;height:20px;background-color: grey;"  v-bind:id="'conn_st_'+connection.id" >&nbsp;</div>
+											<div style="width:15px;height:15px;background-color: grey;"  v-bind:id="'conn_st_'+connection.id" >&nbsp;</div>
 										</td>
 										
 									</tr>
@@ -595,9 +595,10 @@ background-color: #fff ;
 var repid="<%=repid%>";
 
 var connpro_menu = [
-	{content:'Tcp/IP Connector',header: true},
+	{content:'Stream Connector',header: true},
 	{content:'Tcp Client',callback:function(){edit_cp("tcp_client","");}},
 	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
+	{content:'COM',callback : function(){edit_cp("com","");}},
 	{content:'sm_divider'},
 	
 	{content:'HTTP Connector',header: true},
@@ -605,7 +606,7 @@ var connpro_menu = [
 	{content:'sm_divider'},
 	
 	{content:'Others',header: true},
-	{content:'COM',callback : function(){edit_cp("com","");}}
+	{content:'Virtual',callback : function(){edit_cp("virtual","");}}
 ];
 
 var tree_menu = [
@@ -985,7 +986,7 @@ function del_cpt(cpid,connid)
 function edit_cpt(cptp,cpid,connid)
 {
 	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?repid="+repid+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" Connection Editor",w:'800',h:'535'},
+			{title:cptp+" Connection Editor",w:'800',h:'750'},
 			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
 			[
 				function(dlgw)

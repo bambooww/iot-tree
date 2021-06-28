@@ -252,7 +252,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		List<PropGroup> lpgs = super.listPropGroups() ;
 		if(lpgs!=null)
 			pgs.addAll(lpgs) ;
-		pgs.add(this.getRepPropGroup()) ;
+		pgs.add(this.getPrjPropGroup()) ;
 		//
 		
 		repPGS = pgs;
@@ -260,11 +260,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	}
 	
 	
-	private PropGroup getRepPropGroup()
+	private PropGroup getPrjPropGroup()
 	{
-		PropGroup r = new PropGroup("rep","Respository");
+		PropGroup r = new PropGroup("prj","Project");
 		
-		r.addPropItem(new PropItem("script","JavaScript","JavaScript run interval by Channel",PValTP.vt_str,false,null,null,"")
+		r.addPropItem(new PropItem("script","JavaScript","JavaScript run interval by Project,you can do controller logic here",PValTP.vt_str,false,null,null,"")
 				.withTxtMultiLine(true));
 		
 		r.addPropItem(new PropItem("script_int","JavaScript Interval","JavaScript run interval(ms)",PValTP.vt_int,false,null,null,"10000"));

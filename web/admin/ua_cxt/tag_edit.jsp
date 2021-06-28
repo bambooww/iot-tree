@@ -58,39 +58,26 @@
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(400,600);
+dlg.resize_to(600,600);
 </script>
-<style type="text/css">
-.layui-form-label {
-    padding: 5px 15px;
-}
-.layui-input, .layui-select, .layui-textarea {
-    height: 30px;
-    line-height: 20px\9;
-}
-.layui-form-select dl dd, .layui-form-select dl dt {
-    line-height: 30px;
-}
-</style>
+
 </head>
 <body>
 <form class="layui-form" action="">
 	<input type="hidden" id="id" name="name" value="<%=html_str(id)%>">
-  <div class="layui-form-item">
+	  <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
-    <div class="layui-input-block">
-      <input type="text" id="name" name="name"  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
+    <div class="layui-input-inline">
+      <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
     </div>
+    <div class="layui-form-mid">Title:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="title" name="title" lay-verify="required" autocomplete="off" class="layui-input">
+	  </div>
+	  
   </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
-    <div class="layui-input-block">
-      <input type="text" id="title" name="title"  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
-    </div>
-  </div>
+
     <div class="layui-form-item">
     <label class="layui-form-label"><%=(bmid?"Express":"Address") %>:</label>
     <div class="layui-input-block">
@@ -105,7 +92,7 @@ dlg.resize_to(400,600);
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width: 120px;">
       <select  id="vt"  name="vt" lay-verify="required" class="layui-input">
 <%
 for(UAVal.ValTP vt:UAVal.ValTP.values())
@@ -115,14 +102,20 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 %>
       </select>
     </div>
+    <div class="layui-form-mid">Decimal Digits:</div>
+    <div class="layui-input-inline" style="width: 120px;">
+      <input type="text" id="dec_digits" name="dec_digits" placeholder="" autocomplete="off" class="layui-input">
     </div>
-        <div class="layui-form-item">
+    </div>
+    
+  <%--
+   <div class="layui-form-item">
     <label class="layui-form-label">Scan rate:</label>
     <div class="layui-input-block">
       <input type="text" id="srate" name="srate" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
     </div>
   </div>
-  
+   --%>
     <div class="layui-form-item">
     <label class="layui-form-label">Client access</label>
     <div class="layui-input-block">

@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.92.0</version>
+    <version>0.93.0</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -184,13 +184,13 @@
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
 			                            <include>wrapper.*</include>
-			                            <include>../data/ua/</include>
 			                        </includes>
 			                    </resource>
 			                    <resource>
 			                        <directory>../</directory>
 			                        <includes>
-			                            <include>data/ua/</include>
+			                            <include>data/dev_drv/</include>
+			                            <include>data/comp_lib/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>

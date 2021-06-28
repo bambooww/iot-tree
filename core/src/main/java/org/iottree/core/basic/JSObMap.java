@@ -114,7 +114,25 @@ public class JSObMap  extends HashMap<String,Object> implements ProxyObject
 //		return this.getSubNodeByName(key)!=null;
 	}
 	
-	
+	private Object transValueNumber(Value value,Class<?> tarc)
+	{
+		Number nv = (Number)value.as(Number.class) ;
+
+		if(tarc==Integer.class)
+			return nv.intValue();
+		if(tarc==Float.class)
+			return nv.floatValue();
+		if(tarc==Long.class)
+			return nv.longValue() ;
+		if(tarc==Double.class)
+			return nv.doubleValue() ;
+		if(tarc==Short.class)
+			return nv.shortValue();
+		if(tarc==Byte.class)
+			return nv.byteValue() ;
+		
+		return value.as(tarc) ;
+	}
 
 	@Override
 	public final void putMember(String key, Value value)
@@ -130,6 +148,10 @@ public class JSObMap  extends HashMap<String,Object> implements ProxyObject
 			else if(c==UnsignedLong.class)
 			{
 				ov = UnsignedInteger.valueOf(value.as(BigInteger.class)) ;
+			}
+			else if(Number.class.isAssignableFrom(c))
+			{
+				ov = transValueNumber(value,c);
 			}
 			else
 				ov = value.as(c) ;

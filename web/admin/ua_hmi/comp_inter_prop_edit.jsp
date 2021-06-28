@@ -69,12 +69,14 @@ dlg.resize_to(600,650);
   <div class="layui-form-item">
     <label class="layui-form-label">OnGetJS:</label>
     <div class="layui-input-block">
+    ($this)=>
       <textarea id="onGetJS" name="onGetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">OnSetJS:</label>
     <div class="layui-input-block">
+    ($this,$value)=>
       <textarea id="onSetJS" name="onSetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
     </div>
   </div>

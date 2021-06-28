@@ -10,6 +10,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtVirtual;
 import org.json.JSONObject;
 
 @data_class
@@ -189,6 +190,17 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		UAPrj rep = this.getBelongTo() ;
 		return ConnManager.getInstance().getConnPtByCh(rep.getId(), this.getId()) ;
 	}
+	
+	/**
+	 * check channel is connected virtual or not
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isConnVirtual() throws Exception
+	{
+		ConnPt cpt = this.getConnPt() ;
+		return cpt!=null&&cpt instanceof ConnPtVirtual ;
+	}
 	/**
 	 * check driver is fit for this ch or not
 	 * @return
@@ -196,6 +208,8 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	 */
 	public boolean chkDriverFit(String drvname) throws Exception
 	{
+		if(isConnVirtual())
+			return true;
 		if(Convert.isNullOrEmpty(drvname))
 			return false;
 		List<DevDriver> drvs = getSupportedDrivers();
@@ -279,12 +293,14 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 				throw new IllegalArgumentException("dev with name="+name+" existed") ;
 			}
 			d = dd.updateUADev(dev,name, title, desc) ;
-			constructNodeTree();
 		}
 		else
 		{
 			dev.setNameTitle(name, title, desc);
 		}
+		
+		this.RT_init(false, true);
+		constructNodeTree();
 		this.getBelongTo().save();
 		return dev ;
 	}
@@ -502,8 +518,6 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		this.setSysTag("_conn_ready", "","",ValTP.vt_bool) ;
 		this.setSysTag("_conn_name", "","",ValTP.vt_str) ;
 		this.setSysTag("_conn_tp", "","",ValTP.vt_str) ;
-		
-		
 	}
 	
 	@Override
@@ -529,6 +543,8 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		
 		this.RT_setSysTagVal("_driver_run",  this.RT_getState().isRunning());
 	}
+	
+	
 	/**
 	 * start driver
 	 * @param failedr
@@ -537,6 +553,13 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	 */
 	public boolean RT_startDriver(StringBuilder failedr) throws Exception
 	{
+		if(isConnVirtual())
+		{
+			failedr.append("channel is connected to virtual") ;
+			return false ;
+		}
+		
+		//this.getConnJoinedProvider()
 		DevDriver drv = this.getDriver() ;
 		if(drv==null)
 		{

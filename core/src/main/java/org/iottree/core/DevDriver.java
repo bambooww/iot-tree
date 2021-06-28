@@ -117,7 +117,7 @@ public abstract class DevDriver  implements IPropChecker
 
 	private void saveCat(DevCat dc) throws Exception
 	{
-		File catdir=  getDevCatDir(dc.getName()) ;
+		File catdir=  getDevCatDir(dc.getId()) ;
 		if(!catdir.exists())
 			catdir.mkdirs() ;
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(dc) ;
@@ -125,9 +125,9 @@ public abstract class DevDriver  implements IPropChecker
 		XmlData.writeToFile(xd, new File(catdir,"cat.xml"));
 	}
 	
-	private DevCat loadCat(String catname) throws Exception
+	private DevCat loadCat(String catid) throws Exception
 	{
-		File catdir=  getDevCatDir(catname) ;
+		File catdir=  getDevCatDir(catid) ;
 		if(!catdir.exists())
 			return null;
 		File catf = new File(catdir,"cat.xml") ;
@@ -160,20 +160,20 @@ public abstract class DevDriver  implements IPropChecker
 		//ArrayList<DevCat> rets = new ArrayList<>() ;
 		for(File tmpf:fs)
 		{
-			String catn = tmpf.getName().substring(4) ;
+			String catid = tmpf.getName().substring(4) ;
 			try
 			{
-				DevCat dc = loadCat(catn) ;
+				DevCat dc = loadCat(catid) ;
 				if(dc==null)
 				{
-					System.out.println("Warning,load DevCat failed ["+catn+"]");
+					System.out.println("Warning,load DevCat failed ["+catid+"]");
 					continue ;
 				}
 				rets.add(dc);
 			}
 			catch(Exception e)
 			{
-				System.out.println("Warning,load DevCat error ["+catn+"]");
+				System.out.println("Warning,load DevCat error ["+catid+"]");
 				e.printStackTrace();
 			}
 		}

@@ -5,7 +5,7 @@
 				org.iottree.core.*,
 				org.iottree.core.util.*,
 				java.net.*"%><%!
-	static void listSubHmis(UANode node,ArrayList<UAHmi> hmis)
+	static void listSubHmis(UANode node,ArrayList<UAHmi> hmis,UANode ignorehmi)
 	{
 		List<UANode> subns = node.getSubNodes();
 		if(subns==null)
@@ -14,18 +14,20 @@
 		{
 			if(subn instanceof UAHmi)
 			{
+				if(subn==ignorehmi)
+					continue ;
 				hmis.add((UAHmi)subn) ;
 				continue ;
 			}
-			
-			listSubHmis(subn,hmis) ;
+			listSubHmis(subn,hmis,ignorehmi) ;
 		}
 	}
 		
 	//list sub cxt hmis ,no include node itself
-	static List<UAHmi> listCxtSubHmis(UANode cxtnode)
+	static List<UAHmi> listCxtSubHmis(UANode cxtnode,UANode ignorehmi)
 	{
 		ArrayList<UAHmi> rets=  new ArrayList<>() ;
+		listSubHmis(cxtnode,rets,ignorehmi) ;
 		List<UANode> subns = cxtnode.getSubNodes() ;
 		if(subns==null)
 			return rets ;
@@ -33,7 +35,7 @@
 		{
 			if(subn instanceof UAHmi)
 				continue ;//no include self node
-			listSubHmis(subn,rets) ;
+			listSubHmis(subn,rets,ignorehmi) ;
 		}
 		return rets ;
 	}
@@ -51,7 +53,7 @@ if(n==null)
 UANode pnode = n.getParentNode() ;
 String p_path = pnode.getNodePath() ;
 int p_path_len = p_path.length() ;
-List<UAHmi> hmis = listCxtSubHmis(pnode);
+List<UAHmi> hmis = listCxtSubHmis(pnode,n);
 String ids_str="" ;
 String paths_str = "" ;
 String subpaths_str="" ;

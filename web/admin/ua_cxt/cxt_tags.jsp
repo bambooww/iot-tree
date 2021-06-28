@@ -495,7 +495,7 @@ function show_cxt_dyn(p,cxt)
 		var strdt = "" ;
 		if(dt>0)
 			strdt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
-		show_ele_html("ctag_v_"+tagp,strv) ;
+		show_ele_html("ctag_v_"+tagp,strv,true) ;
 		show_ele_html("ctag_dt_"+tagp,strdt) ;
 		show_ele_html("ctag_q_"+tagp,(bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>")) ;
 	}
@@ -506,12 +506,17 @@ function show_cxt_dyn(p,cxt)
 	}
 }
 
-function show_ele_html(n,v)
+var MAX_VAL_SHOWLEN = 20 ;
+
+function show_ele_html(n,v,chklen)
 {
 	var ele = document.getElementById(n) ;
 	if(ele==null||ele==undefined)
 		return ;
-	ele.innerHTML=v||"" ;
+	if(chklen&&v!=null&&v.length>20)
+		ele.innerHTML = "<span title='"+v+"'>"+v.substr(0,20)+"...</span>";
+	else
+		ele.innerHTML=v||"" ;
 }
 
 if(!b_devdef)

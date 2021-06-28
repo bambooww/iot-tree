@@ -55,17 +55,28 @@ public class UACodeItem
 		initItem(cxt) ;
 	}
 	
-	public boolean initItem(UAContext cxt) //throws ScriptException
+	public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
 	{
 		if(Convert.isNullOrEmpty(this.codeTxt))
 			return false;
 		this.cxt = cxt ;
+		String tmps = "" ;
 		this.codeTxt = this.codeTxt.trim();
 		boolean bblock = false;
 		if(codeTxt.startsWith("{"))
 		{//block 
 			blockFn = createUniqueFn() ;
-			this.codeTxt = "function "+blockFn+"($input)"+this.codeTxt ;
+			tmps = "function "+blockFn+"(";
+			int pnum =param_names.length;
+			if(pnum>0)
+			{
+				tmps += param_names[0] ;
+				for(int i = 1 ; i < pnum ; i ++)
+				{
+					tmps += ","+param_names[i] ;
+				}
+			}
+			tmps+= ")"+this.codeTxt ;
 			bblock=true ;
 		}
 		
@@ -76,7 +87,7 @@ public class UACodeItem
 			//cxt.getScriptEngine().eval(this.codeTxt);
 			
 			Compilable cp = (Compilable)cxt.getScriptEngine() ;
-			codeCS = cp.compile(this.codeTxt) ;
+			codeCS = cp.compile(tmps) ;
 			if(bblock)
 				codeCS.eval() ;
 //			if(blockFn!=null)
@@ -92,6 +103,46 @@ public class UACodeItem
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean initItem(UAContext cxt) //throws ScriptException
+	{
+		return initItem(cxt,"$input") ;
+//		if(Convert.isNullOrEmpty(this.codeTxt))
+//			return false;
+//		this.cxt = cxt ;
+//		this.codeTxt = this.codeTxt.trim();
+//		boolean bblock = false;
+//		if(codeTxt.startsWith("{"))
+//		{//block 
+//			blockFn = createUniqueFn() ;
+//			this.codeTxt = "function "+blockFn+"($input)"+this.codeTxt ;
+//			bblock=true ;
+//		}
+//		
+//		//this.codeTxt = UAContext.FN_TEMP_VAR+"."+blockFn+"=function($input)"+this.codeTxt ;
+//		//this.codeTxt = "function "+blockFn+"($input)"+this.codeTxt ;
+//		try
+//		{
+//			//cxt.getScriptEngine().eval(this.codeTxt);
+//			
+//			Compilable cp = (Compilable)cxt.getScriptEngine() ;
+//			codeCS = cp.compile(this.codeTxt) ;
+//			if(bblock)
+//				codeCS.eval() ;
+////			if(blockFn!=null)
+////			{
+////				codeCS.eval() ;
+////				callFnCS = cp.compile(UAContext.FN_TEMP_VAR+"."+blockFn+"($input)") ;
+////			}
+//			bValid = true ;
+//			return true;
+//		}
+//		catch(Exception e)
+//		{
+//			e.printStackTrace();
+//			return false;
+//		}
 	}
 	
 //	public void initItem()
@@ -126,7 +177,7 @@ public class UACodeItem
 	public Object runCode() throws ScriptException, NoSuchMethodException
 	{
 		if(blockFn!=null)
-			return runCodeFunc(null);
+			return runCodeFunc();
 		return codeCS.eval() ;
 //		if(blockFn==null)
 //			return codeCS.eval() ;
@@ -136,12 +187,13 @@ public class UACodeItem
 //		return callFnCS.eval() ;
 	}
 	
-	public Object runCodeFunc(Object inputv) throws NoSuchMethodException, ScriptException
+	public Object runCodeFunc(Object... paramvals) throws NoSuchMethodException, ScriptException
 	{
 		//function name must no in obj
 		Invocable inv = (Invocable)cxt.getScriptEngine() ;
-		return inv.invokeFunction(blockFn, inputv) ;
+		return inv.invokeFunction(blockFn, paramvals) ;
 	}
+	
 	
 //	public Object runCodeInput(Object inputv) throws ScriptException, NoSuchMethodException
 //	{

@@ -141,6 +141,6 @@ public abstract class DevAddr
 		uaVal.setVal(true, v, System.currentTimeMillis());
 		
 		//set his
-		this.getBelongTo().HIS_setVal(uaVal) ;
+		this.getBelongTo().RT_setUAVal(uaVal);
 	}
 }

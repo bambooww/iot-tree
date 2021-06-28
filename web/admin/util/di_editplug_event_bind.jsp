@@ -36,6 +36,7 @@ dlg.resize_to(500,620);
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
     <div class="layui-input-block">
+    ($view,$panel,$container,$this)=&gt;
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="8"></textarea>
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('clientjs')">insert tag</div>
     </div>

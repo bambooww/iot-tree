@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropNode;
 import org.iottree.core.res.IResCxt;
@@ -264,6 +265,15 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	void RT_init(boolean breset, boolean b_sub)
+	{
+		super.RT_init(breset, b_sub);
+		this.setSysTag("_name", "device name", "", ValTP.vt_str);
+		this.setSysTag("_title", "device title", "", ValTP.vt_str);
+		
 	}
 
 	private ResDir resDir = null ;

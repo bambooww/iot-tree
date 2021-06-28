@@ -10,10 +10,12 @@ import javax.script.ScriptException;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
 import org.iottree.core.util.xmldata.XmlVal.*;
-import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.*;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.json.JSONObject;
@@ -91,6 +93,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * save val his, to support 
 	 */
 	private transient UAValList valsCacheList = null ;
+	
+	private transient UAVal curVal = null ;
 	
 	public UATag()
 	{
@@ -214,6 +218,18 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			if(p instanceof UADev)
 				return (UADev)p ;
+			p = p.getParentNode() ;
+		}while(p!=null);
+		return null ;
+	}
+	
+	public UACh getBelongToCh()
+	{
+		UANode p = belongToNode ;
+		do
+		{
+			if(p instanceof UACh)
+				return (UACh)p ;
 			p = p.getParentNode() ;
 		}while(p!=null);
 		return null ;
@@ -470,7 +486,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient UACodeItem codeItem = null ;
 	
-	private transient UAVal midVal = null ;
+	//private transient UAVal midVal = null ;
 	
 	
 	
@@ -493,20 +509,18 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	/**
 	 * outter thread call this method to calculate mid value
 	 */
-	public void CXT_calMidVal()
+	UAVal CXT_calMidVal()
 	{
 		if(!this.isMidExpress())
-			return ;
-		UAVal v = midVal ;
-		if(v==null)
-			v = new UAVal() ;
+			return null;
+		UAVal v = new UAVal() ;
 		try
 		{
 			UACodeItem ci =  CXT_getMidCodeItem();
 			if(ci==null)
 			{
 				v.setValErr("no express code item");
-				return ;
+				return null;
 			}
 			Object ob = ci.runCode() ;
 			v.setVal(true, ob, System.currentTimeMillis());
@@ -516,13 +530,25 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			v.setValException(null, e);
 			e.printStackTrace();
 		}
-		finally
-		{
-			if(midVal==null)
-				midVal = v ;
-		}
+		return v;
 	}
 	
+	UAVal RT_readValFromDriver()
+	{
+		if(this.isMidExpress()||this.isSysTag())
+		{
+			return null ;
+		}
+		
+		StringBuilder sb = new StringBuilder() ;
+		DevAddr da = this.getDevAddr(sb);
+		UAVal r = null ;
+		if(da!=null)
+		{
+			r = da.RT_getVal() ;
+		}
+		return r ;
+	}
 //	/**
 //	 * 不考虑各种驱动、地址和型号，也不考虑mid
 //	 * 直接设置对应的值
@@ -534,7 +560,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //		HIS_setVal(midVal) ;
 //	}
 	
-	void HIS_setVal(UAVal v)
+	private void HIS_setVal(UAVal v)
 	{
 		if(this.valsCacheList==null)
 			this.valsCacheList = new UAValList(this.valChgedCacheLen) ;
@@ -553,24 +579,38 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this.valsCacheList.getVals(lastdt) ;
 	}
 	
+	
+	
 	/**
 	 * set value in memory
 	 * for systag etc
 	 * @param v
 	 */
-	void RT_setVal(Object v,boolean ignore_nochg)
+	public void RT_setVal(Object v,boolean ignore_nochg)
 	{
-		UAVal uav = RT_getVal();
+		UAVal uav = this.curVal;//RT_getVal();
 		if(ignore_nochg && uav!=null)
 		{
 			if(uav.isValid() && uav.getObjVal().equals(v))
 				return ;
 		}
 		uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		RT_setUAVal(uav);
+	}
+	
+	@HostAccess.Export
+	public void RT_setVal(Object v)
+	{
+		this.RT_setVal(v,true);
+	}
+	
+	void RT_setUAVal(UAVal uav)
+	{
+		this.curVal = uav ;
 		HIS_setVal(uav) ;
 	}
 	
-	public boolean RT_writeVal(Object v)
+	private boolean RT_writeValDriver(Object v)
 	{
 		if(this.isMidExpress())
 			return false;
@@ -589,52 +629,53 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return dd.RT_writeVal(dev, da, v);
 	}
 	
-	public boolean RT_writeValStr(String v)
+	
+	public boolean RT_writeVal(Object v) //throws Exception
 	{
-		if(this.isMidExpress())
+		UACh ch = this.getBelongToCh();
+		if(ch==null)
 			return false;
+		try
+		{
+			if(ch.isConnVirtual())
+			{
+				ConnPtVirtual cpt = (ConnPtVirtual)ch.getConnPt() ;
+				cpt.runOnWrite(this, v);
+				return true;
+			}
+			else
+			{
+				return RT_writeValDriver(v);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean RT_writeValStr(String strv) // throws Exception
+	{
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
 		if(da==null)
 			return false;
-		UADev dev = this.getBelongToDev();
-		if(dev==null)
+		
+		ValTP tp = da.getValTP();
+		Object v = UAVal.transStr2ObjVal(tp, strv);
+		if(v==null)
 			return false;
 		
-		DevDriver dd = dev.getBelongTo().getDriver() ;
-		if(dd==null)
-			return false;
-
-		return dd.RT_writeValStr(dev, da, v);
+		return RT_writeVal(v) ;
 	}
 	
 	
 	public UAVal RT_getVal()
 	{
-		if(this.isMidExpress())
-		{
-			return midVal ;
-		}
-		else if(this.isSysTag())
-		{
-			if(this.valsCacheList==null)
-				return null ;
-			return this.valsCacheList.getValLast() ;
-		}
-		else
-		{
-			StringBuilder sb = new StringBuilder() ;
-			DevAddr da = this.getDevAddr(sb);
-			UAVal r = null ;
-			if(da!=null)
-			{
-				r = da.RT_getVal() ;
-			}
-			
-			if(r==null)
-				r = midVal ;
-			return r ;
-		}
+		return this.curVal ;
+		
+
 	}
 	
 	
@@ -651,6 +692,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		switch(key.toLowerCase())
 		{
 		case "_pv":
+		case "_value":
 			return uav.getObjVal() ;
 		case "_valid":
 			return uav.isValid() ;
@@ -661,7 +703,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	}
 	
 	
-	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt") ;
+	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt","_value") ;
 	
 	
 	public List<Object> JS_names()
@@ -676,6 +718,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		switch(key.toLowerCase())
 		{
 		case "_pv":
+		case "_value":
 			UAVal.ValTP vtp = this.getValTp();
 			if(vtp==null)
 				return Integer.class ;
@@ -692,10 +735,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 		case "_pv":
 			RT_writeVal(v) ;
-			break ;
+			return ;
+		case "_value":
+			this.RT_setVal(v, true);
+			return;
 		default:
 			break ;//do nothing
 		}
+		
+		super.JS_set(key, v);
 	}
 	
 	@Override
