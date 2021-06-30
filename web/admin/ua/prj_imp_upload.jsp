@@ -43,7 +43,11 @@ DiskFileItemFactory factory = new DiskFileItemFactory();
 factory.setSizeThreshold(MEMORY_THRESHOLD);
 // 
 
-factory.setRepository(new File(Config.getDataTmpDir()));
+File tmpdir = new File(Config.getDataTmpDir()) ;
+if(!tmpdir.exists())
+	tmpdir.mkdirs() ;
+		
+factory.setRepository(tmpdir);
 
 ServletFileUpload upload = new ServletFileUpload(factory);
  

@@ -56,8 +56,8 @@
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 <style>
 body {

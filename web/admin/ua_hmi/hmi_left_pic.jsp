@@ -24,8 +24,8 @@ if(Convert.isNotNullEmpty(cat))
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script src="/_js/ajax.js" ></script>
 <script src="/_js/dlg.js" ></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 </head>
 <script type="text/javascript">
 function drag(ev)

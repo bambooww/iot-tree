@@ -38,8 +38,8 @@ if(!Convert.checkReqEmpty(request, out, "res_node_id"))
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <style>
 body {
 	margin: 0px;

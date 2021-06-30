@@ -24,7 +24,7 @@ String rid = request.getParameter("rid") ;
 	<script src="/_js/layer/layer.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 
-<script src="/opencharts/dist/oc.js"></script>
+<script src="/_js/oc/oc.js"></script>
 
 
 

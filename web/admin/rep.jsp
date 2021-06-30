@@ -31,8 +31,8 @@
 <script src="/_js/echarts/echarts.min.js"></script>
  -->
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 <script src="/_js/jstree/jstree.min.js"></script>
 <script src="./js/ua_tree.js"></script>

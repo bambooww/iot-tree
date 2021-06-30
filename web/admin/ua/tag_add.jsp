@@ -20,8 +20,8 @@
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <script>
 dlg.resize_to(400,600);
 </script>

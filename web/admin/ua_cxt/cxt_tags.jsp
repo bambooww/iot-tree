@@ -48,8 +48,8 @@ boolean brefed = node_tags.isRefedNode() ;
 <script src="/_js/layui/layui.all.js"></script>
   <link   href="/_js/layui/css/layui.css" rel="stylesheet" />
 <script src="/_js/dlg_layer.js"></script>
-<script src="/opencharts/dist/oc.js"></script>
-<link type="text/css" href="/opencharts/src/css/oc.css" rel="stylesheet" />
+<script src="/_js/oc/oc.js"></script>
+<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 <script src="/_js/selectmenu/selectmenu.min.js"></script>

@@ -377,10 +377,10 @@ if(bprj)
 	  </ul>
 	  <div class="layui-tab-content">
 	    <div class="layui-tab-item layui-show">
-	    	<div  id='edit_props'  style="width:100%;height:500px;"></div>
+	    	<div  id='edit_props'  style="width:100%;height:300px;overflow:auto;"></div>
 		</div>
 	    <div class="layui-tab-item">
-	      <div  id='edit_events'  style="width:100%;height:500px;"></div>
+	      <div  id='edit_events'  style="width:100%;height:500px;overflow:auto"></div>
 		</div>
 	   
 	  </div>
@@ -750,8 +750,19 @@ function leftcat_close()
 	slide_toggle($('#left_panel'));
 }
 
+function fit_right_height()
+{
+	var hpx =($(window).height()-130)+"px";
+	//console.log(">>>>>"+($(window).height()-130)+"px")
+	//$("#edit_props")[0].style.height=hpx;
+	$("#edit_props").css("height",hpx)
+	$("#edit_events").css("height",hpx)
+}
+
+fit_right_height();
 var resize_cc = 0 ;
 $(window).resize(function(){
+	fit_right_height();
 	panel.updatePixelSize() ;
 	resize_cc ++ ;
 	if(resize_cc<=1)
