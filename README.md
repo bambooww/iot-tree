@@ -50,7 +50,7 @@ IOT-Tree Server能干什么
 
 如果您的接入设备恰好能够被我们内部自带的驱动支持，那么IOT-Tree Server估计会给你一个惊喜。
 
-按照我们的开源策略，您的大部分项目都可以免费使用。很重要的一点是，随着时间的推移，我们的驱动肯定会越来越多，希望IOT-Tree Server能给你节省大量的成本，并且获得更多的收益。
+按照我们的开源策略，您的大部分项目都可以免费使用。很重要的一点是，随着时间的推移，我们支持的驱动肯定会越来越多，希望IOT-Tree Server能给你节省大量的成本，并且获得更多的收益。
 
 ## 1.4 系统可以成为分布式应用的一个节点
 
@@ -64,11 +64,12 @@ IOT-Tree Server能干什么
 
 如果您想深入了解，请参考相关资料。
 
-
+[快速开始][quick_start]
 
 [快速入门][quick_link]
 
 [案例演示][demo_link]
 
+[quick_start]: ./doc/quick_start.md
  [quick_link]: ./doc/quick/index.md
  [demo_link]: ./doc/case/index.md
