@@ -7,7 +7,7 @@
 				java.net.*"%><%!
 				public static void renderTagGroup(Writer out,UATagG tg) throws Exception
 				{
-					out.write("{\"text\": \""+tg.getTitle()+"-"+tg.getName()+"\"") ;
+					out.write("{\"text\": \""+tg.getName()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
 					out.write(",\"children\": [") ;
@@ -60,7 +60,7 @@
 						if(bfirst) bfirst=false;
 						else out.write(",") ;
 						
-						out.write("{\"text\": \""+hmi.getTitle()+"-"+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
+						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\"") ;
 						out.write(",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
 					}
@@ -76,7 +76,7 @@
 	}%>[
 	
 	{
-	"text":"<%=rep.getTitle()%>-<%=rep.getName() %>"
+	"text":"<%=rep.getName() %>"
 	,"id":"<%=rep.getId() %>"
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
@@ -100,7 +100,7 @@
 			drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%=ch.getTitle()%>-<%=ch.getName() %><%=drvfit%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
 		  ,"id":"<%=ch.getId() %>"
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
@@ -128,7 +128,7 @@
 			}
 %>
 			{
-				"text":"<%=dev.getTitle()%>-<%=dev.getName() %>[<%=deft%>] <%=devok%>"
+				"text":"<span title='<%=dev.getTitle()%>'><%=dev.getName() %></span>[<%=deft%>] <%=devok%>"
 			  ,"id":"<%=dev.getId() %>"
 			  ,"type":"dev"
 			   ,"path":"<%=dev.getNodePath()%>"

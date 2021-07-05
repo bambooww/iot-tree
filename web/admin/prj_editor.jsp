@@ -455,8 +455,8 @@ background-color: #fff ;
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
-		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
-		<%=rep.getTitle()%>-<%=rep.getName() %>
+		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 20px solid">
+		<%=rep.getTitle()%>
 		</div>
 		 <div style="position:relative;float: right;right:320px;margin-right:30px;width:110px;margin-top:10px;font: 20px solid;color:#fff5e2;background-color: #515658">
 		 <i id="prj_btn_start"  class="fa fa-play fa-lg top_btn" style="color:grey" title="start project" onclick="prj_run(true)"></i>
@@ -464,10 +464,13 @@ background-color: #fff ;
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
 		 
-			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
+			
 			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
 			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
+			<%--
+			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
+		     --%>
 		    </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">

@@ -72,7 +72,11 @@ border:1px solid;
 }
 th
 {
-	font-size: 15px;
+	font-size: 12px;
+	font-weight: bold;
+}
+td
+{font-size: 12px;
 }
 
 

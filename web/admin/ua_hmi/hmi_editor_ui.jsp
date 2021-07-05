@@ -262,7 +262,7 @@ z-index:10000;
 
 .left_panel_win
 {
-position:absolute;display:none;z-index:1000;left:45px;
+position:absolute;display:none;z-index:60001;left:45px;
 background-color: #eeeeee;
 top:0px;height:100%;
 }
@@ -304,6 +304,15 @@ height:50px;background-color: grey;
 	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
 }
 
+.oper
+{
+position: absolute;width:45px;height:45px;left:50px;background-color:#67e0e3;top:10px;z-index: 60000
+}
+
+.oper i
+{
+margin-top:5px;
+}
 </style>
 </head>
 <body class="layout-body">
@@ -391,6 +400,10 @@ if(bprj)
 		</div>
 
 
+<div id="oper_save" class="oper" style="top:10px"><i class="fa fa-floppy-o fa-3x"></i></div>
+<div id="oper_fitwin" class="oper" style="top:60px"><i class="fa fa-crosshairs fa-3x"></i></div>
+	<div id="oper_zoomup" class="oper" style="top:110px"><i class="fa fa-plus-square-o fa-3x"></i></div>
+	<div id="oper_zoomdown" class="oper" style="top:160px"><i class="fa fa-minus-square-o fa-3x"></i></div>
 
 
 
@@ -424,6 +437,26 @@ var intedit =null;
 
 var hmiModel=null;
 var hmiView=null;
+
+$('#oper_fitwin').click(function()
+		{
+			draw_fit();
+		});
+$('#oper_save').click(function()
+		{
+	tab_save();
+		});
+
+
+		$('#oper_zoomup').click(function()
+		{
+			zoom(-1)
+		});
+
+		$('#oper_zoomdown').click(function()
+		{
+			zoom(1)
+		});
 
 function on_panel_mousemv(p,d)
 {
@@ -620,6 +653,11 @@ function draw_fit()
 	if(loadLayer==null)
 		return ;
 	loadLayer.ajustDrawFit();
+}
+
+function zoom(v)
+{
+	panel.ajustDrawResolution(0,0,v) ;
 }
 
 var bInRefresh=false;
