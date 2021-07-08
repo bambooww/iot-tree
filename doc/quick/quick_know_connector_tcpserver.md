@@ -1,7 +1,7 @@
 快速理解TcpServer接入器
 ==
 
-# TcpServer接入器使用背景
+## TcpServer接入器使用背景
 
 如果您有个云端服务器（有着固定公网地址），并且准备作为物联网项目的接入服务器。
 
@@ -14,23 +14,23 @@
 以上的使用方式非常简单而有效。接下来你肯定会问了，既然设备通信这么简单了，云端我该怎么办呢？
 
 很简单，在你的项目中使用IOT-Tree Server吧，你会发现云端也会简单到让你感叹！
-# 在云端使用IOT-Tree Server管理所有设备和数据
+## 在云端使用IOT-Tree Server管理所有设备和数据
 
 你可以参考[quick start][quick_start]在你的云端服务器轻松安装部署IOT-Tree Server。
 
 接着，你可以查看IOT-Tree Server具体某个设备驱动协议下面是否有你的现场设备。如果还没有，那请参考[quick know device definition][qn_devdef],在已经部署的IOT-Tree Server中定义好你的现场监测设备。这些都搞定后，接下来就很简单了。
 
-## 建立Tcp Server Connector
+### 建立Tcp Server Connector
 
-## 设定验证方式和所有设备id
+### 设定验证方式和所有设备id
 
-## 选择添加设备，运行查看接入数据
+### 选择添加设备，运行查看接入数据
 
-## 使用在线编辑组态UI建立你的项目监控画面
+### 使用在线编辑组态UI建立你的项目监控画面
 
-## 使用存储机制，自动存储你的设备数据
+### 使用存储机制，自动存储你的设备数据
 
-## 使用IOT-Tree Server RestFUL接口给你的应用提供api
+### 使用IOT-Tree Server RestFUL接口给你的应用提供api
 
 最后，还不错吧！
 
