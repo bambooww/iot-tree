@@ -8,7 +8,11 @@
 				 org.iottree.core.*,
 				 org.iottree.core.res.*,
 				 org.iottree.core.basic.*,
-				 org.iottree.core.util.xmldata.*"%>
+				 org.iottree.core.util.xmldata.*"%><%
+	String reqcolor = request.getParameter("color") ;
+    if(reqcolor==null)
+    	reqcolor="" ;
+%>
 <html>
 <head>
 <title>Edit</title>
@@ -40,12 +44,12 @@ dlg.resize_to(320,550);
 </table>
 </body>
 <script type="text/javascript">
-
+var req_color="<%=reqcolor%>" ;
 $(document).ready(function() {
     
 });
 	
-
+var input_v="" ;
 var cur_color = "" ;
 var cur_alpha = 1 ;
 var ret_val="" ;
@@ -58,12 +62,21 @@ if(plugpm!=null)
 	var v = plugpm.val ;
 	if(v==null||v=='')
 		v = '#ffffff';
-	var tc = tinycolor(v)
-	cur_color = v = tc.toHex() ;
+	input_v=  v;
+}
+else
+{
+	input_v = req_color;
+}
+
+if(input_v!=null&&input_v!="")
+{console.log(input_v);
+	var tc = tinycolor(input_v)
+	cur_color = input_v = tc.toHex() ;
 	cur_alpha = tc.toRgb().a;
 	$("#input_alpha").val(cur_alpha) ;
 	$('#colorp').minimalColorpicker({
-        color: v,
+        color: input_v,
         onUpdateColor: function(e, color) {
             cur_color = color.hex;
             show_val();

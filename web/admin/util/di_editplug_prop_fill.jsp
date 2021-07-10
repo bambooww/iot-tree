@@ -50,10 +50,10 @@ dlg.resize_to(500,450);
 	  <div class="layui-form-item">
 	    <label >Color</label><br/>
 	    <div style="">
-	      <div id="fcolor_0" class="citem">&nbsp;</div>
-	      <div id="fcolor_1" class="citem" style="display:none">&nbsp;</div>
-	      <div id="fcolor_2" class="citem" style="display:none">&nbsp;</div>
-	      <div id="fcolor_3" class="citem" style="display:none">&nbsp;</div>
+	      <div id="fcolor_0" class="citem" onclick="sel_color(0)">&nbsp;</div>
+	      <div id="fcolor_1" class="citem" onclick="sel_color(1)" style="display:none">&nbsp;</div>
+	      <div id="fcolor_2" class="citem" onclick="sel_color(2)" style="display:none">&nbsp;</div>
+	      <div id="fcolor_3" class="citem" onclick="sel_color(3)" style="display:none">&nbsp;</div>
 	    </div>
 	  </div>
 	 </form>
@@ -67,21 +67,29 @@ dlg.resize_to(500,450);
 		    <li id="tp_tt"fill_tp="tt">Texture</li>
 		  </ul>
 		  <div class="layui-tab-content">
-		    <div class="layui-tab-item layui-show contitem">内容1</div>
+		    <div class="layui-tab-item layui-show contitem">
+		    	
+		    </div>
 		    <div class="layui-tab-item contitem">
-		    	Color Number:<select>
+		    	Color Number:<select id="sel_colornum">
+		    		<option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+		    	</select><br><br>
+		    	<div style="white-space: nowrap;width:300px">
+		    	<span style="float:left;">Rotation:</span><div id="rotation_sld" style="float:left;margin:10px;width:200px"></div><input type="text" size="10" id="rotation" value="0" readonly="readonly" style="float:left;width:25px"/>
+		    	</div>
+			</div>
+		    <div class="layui-tab-item contitem">
+		      Color Number:<select id="sel_colornum2">
 		    		<option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
 		    	</select>
-		    	Rotation:<input type="number" size="3"/>
-			</div>
-		    <div class="layui-tab-item contitem">内容3</div>
+		    </div>
 		    <div class="layui-tab-item contitem">内容4</div>
 		  </div>
 		</div> 
    </div>
 </div>
 <div style="float:left;position:relative;text-align:center; width:230px;height:130px;white-space: nowrap;margin-left:50px">
-    Preview:<div style="width:120px;border:1px solid;height:120px;margin-left:50px">
+    Preview:<div id="div_preview" style="width:120px;border:1px solid;height:120px;margin-left:50px">
 
 </div>
 </div>
@@ -89,21 +97,46 @@ dlg.resize_to(500,450);
 </body>
 <script type="text/javascript">
 
-layui.use('element', function(){
+
+var ow = dlg.get_opener_w() ;
+var plugpm = ow.editor_plugcb_pm;
+var fill = null ;
+var canvas = null ;
+var cxt = null ;
+
+var rotition_sld=null;
+
+layui.use(['element','slider'], function(){
 	  //var form = layui.form;
 	  var element = layui.element;
+	  var slider = layui.slider;
+	  
+	  rotition_sld = slider.render({
+		    elem: '#rotation_sld',
+		    max:360,min:0,value:0,step:1,
+		    change: function(v){
+		        $("#rotation").val(v) ;
+		        fill.rotate=v;
+		        update_preview();
+		    }
+		});
 	  
 	    element.on('tab(fill_tp_tab)', function()
 	    {
 	    	on_fill_tp_chg($(this).attr("fill_tp"));
 	    });
+	    
+	    init_edit();
 });
 
-var ow = dlg.get_opener_w() ;
-var plugpm = ow.editor_plugcb_pm;
-var fill = null ;
-if(plugpm!=null)
+
+
+function init_edit()
 {
+	canvas = document.createElement('canvas');
+	cxt = canvas.getContext('2d');
+	$("#div_preview")[0].appendChild(canvas);
+	
 	$("#name").val(plugpm.name) ;
 	console.log(plugpm);
 	var val = plugpm.val ;
@@ -114,17 +147,19 @@ if(plugpm!=null)
 	
 	if(fill==null)
 		fill = oc.base.Fill.createNor("#0000ee") ;
-	console.log("#tp_"+fill.tp);
+	//console.log("#tp_"+fill.tp);
 	$("#tp_"+fill.tp).click();
+	$("#sel_colornum").on('change',function(){
+		var colorn = parseInt($(this).val());
+		fill.setColorNum(colorn);
+		update_preview();
+	});
+	$("#sel_colornum2").on('change',function(){
+		var colorn = parseInt($(this).val());
+		fill.setColorNum(colorn);
+		update_preview();
+	});
 	update_ui();
-
-}
-
-function init_edit(v)
-{
-	if(!v)
-		return ;
-	
 }
 
 function on_fill_tp_chg(tp)
@@ -136,6 +171,18 @@ function on_fill_tp_chg(tp)
 
 function update_ui()
 {
+	update_ui_item();
+	update_preview();
+}
+
+function update_preview()
+{
+	update_ui_tp();
+	fill.previewToElement($("#div_preview")[0],cxt)
+}
+
+function update_ui_tp()
+{
 	switch(fill.tp)
 	{
 	case "nor":
@@ -145,11 +192,13 @@ function update_ui()
 		$("#fcolor_3").css("display","none") ;
 		break ;
 	case "lin":
+		
 	case "rad":
+		var n = fill.getColorNum() ;
 		var cs = fill.getColors() ;
 		for(var i = 0 ; i < cs.length ; i ++)
 		{
-			if(i < cs.length)
+			if(i < n)
 			{
 				$("#fcolor_"+i).css("background-color",cs[i]) ;
 				$("#fcolor_"+i).css("display","") ;
@@ -168,6 +217,36 @@ function update_ui()
 	}
 }
 
+function update_ui_item()
+{
+	rotition_sld.setValue(fill.rotate);
+	$("#sel_colornum").val(fill.getColorNum());
+	$("#sel_colornum2").val(fill.getColorNum());
+}
+
+function sel_color(n)
+{
+	
+	var c = fill.colors[n] ;
+	console.log(fill.colors,n,c);
+	dlg.open("./di_editplug_prop_color.jsp?color="+escape(c),
+			{title:"Edit Event",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					var ret = dlgw.editplug_get() ;
+					 fill.colors[n]=ret.v;
+					 update_preview();
+					 dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 function win_close()
 {
 	dlg.close(0);
@@ -176,14 +255,7 @@ function win_close()
 
 function editplug_get(cb)
 {
-	var n = $('#name').val();
-	var js = $('#js').val();
-	if(n==null||n=='')
-	{
-		cb(false,'please input name') ;
-		return ;
-	}
-	return {n:n,js:js};
+	return {v:fill.toStr(),fill:fill};
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

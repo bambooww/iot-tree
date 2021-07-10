@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.93.2</version>
+    <version>0.93.4</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
