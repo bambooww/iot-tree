@@ -422,9 +422,10 @@ background-color: #ffffff;
         </div>
         
         <div class="hj-transverse-split-div" style="width:80%;background-color: #ebeef3">
-           <div style="padding-left:10px;padding-right:0px;marign0:10px;height:100%;position:inherit;">
+           <div style="padding-left:10px;padding-right:0px;marign0:10px;height:100%;width:100%;position:inherit;background-color: #ebeef3;z-index:60000" id="right_tabs">
            
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
+			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>
 			    <li >Properties</li>
@@ -527,6 +528,18 @@ function refresh_ui()
 	ua_tree.init();
 }
 
+$("#right_tabs_btn").click(function(){
+	if("fixed"==$("#right_tabs").css("position"))
+	{//position:
+		$("#right_tabs").css("position","inherit") ;
+	}
+	else
+	{
+		$("#right_tabs").css("position","fixed") ;
+		$("#right_tabs").css("left","0px") ;
+		$("#right_tabs").css("top","0px") ;
+	}
+});
 
 function act_prop(n,op)
 {

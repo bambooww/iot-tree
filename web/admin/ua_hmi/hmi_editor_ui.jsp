@@ -46,30 +46,14 @@
 <head>
 <meta charset="utf-8">
 <title>hmi context editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp">
+ <jsp:param value="true" name="oc"/>
+</jsp:include>
 	
 <style>
-body {
-	margin: 0px;
-	padding: 0px;
-	font-size: 12px;
-	text-align: center;
--moz-user-select : none;
--webkit-user-select: none;
-}
+
 .top {
 	position: fixed;
-	
 	left: 0;
 	top: 0;
 	bottom: 0;
@@ -105,7 +89,6 @@ body {
 	z-index: 999;
 	width: 145px;
 	overflow-x: hidden
-	
 }
 
 .right {
@@ -294,12 +277,12 @@ height:30px;
     padding: 0px;
 }
 
-#edit_toolbar
+.edit_toolbar
 {
 height:50px;background-color: grey;
 }
 
-#edit_toolbar button
+.edit_toolbar button
 {
 	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
 }
@@ -313,6 +296,13 @@ position: absolute;width:45px;height:45px;left:50px;background-color:#67e0e3;top
 {
 margin-top:5px;
 }
+
+.toolbox
+{
+		top:25px;
+		left:100px;
+		width:150px;
+}
 </style>
 </head>
 <body class="layout-body">
@@ -320,7 +310,9 @@ margin-top:5px;
 		<div class="left " style="overflow: hidden;">
 		
 			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-cube fa-3x lr_btn"></i><br>&nbsp;</div>
+			<%--
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic',230)" title="Basic"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>&nbsp;</div>
+			 --%>
 			<div id="leftcat_divcomp" onclick="leftcat_sel('divcomp','Components',330)" title="Controller"><i class="fa fa-cog fa-3x lr_btn"></i><br> &nbsp;</div>
 			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')" title="Icon"><i class="fa fa-picture-o fa-3x lr_btn"></i><br>&nbsp;</div>
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)" title="Pic Library"><i class="fa fa-cubes fa-3x lr_btn"></i><br>&nbsp;</div>
@@ -376,8 +368,11 @@ if(bprj)
 <div style="position:absolute;right:5px;top:5px;z-index:1001;color:#1e1e1e" title="show or hide properties panel" id="btn_prop_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</div>
 
 <div id='edit_panel'  class="right_panel_win" >
-
-  <div id="edit_toolbar" style="height:50px;background-color: grey"></div>
+<div style="height:100px;background-color: grey" class="edit_toolbar">
+				<button id="oper_save"  title="save"><i class="fa fa-floppy-o fa-3x"></i></button>
+				<span id="edit_toolbar" class="edit_toolbar"></span>
+				</div>
+  
 	<div id="p_info" style="height: 20" class0="props_panel_pos">&nbsp;</div>
 		<div class="layui-tab">
 	  <ul class="layui-tab-title">
@@ -399,15 +394,20 @@ if(bprj)
  
 		</div>
 
+	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
+	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus-square-o fa-3x"></i></div>
+	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus-square-o fa-3x"></i></div>
 
-<div id="oper_save" class="oper" style="top:10px"><i class="fa fa-floppy-o fa-3x"></i></div>
-<div id="oper_fitwin" class="oper" style="top:60px"><i class="fa fa-crosshairs fa-3x"></i></div>
-	<div id="oper_zoomup" class="oper" style="top:110px"><i class="fa fa-plus-square-o fa-3x"></i></div>
-	<div id="oper_zoomdown" class="oper" style="top:160px"><i class="fa fa-minus-square-o fa-3x"></i></div>
-
-
+	<div id="toolbar_basic" class="toolbox">
+				<div class="title" style="float:left;width:100%"><i class="fa fa-wrench fa-2x" aria-hidden="true" onclick="show_hide_toolbar()"></i></div>
+		<div id="toolbar_list" class="content" style="height:200px"> 
+			<iframe src="hmi_left_basic_di.jsp" height="200px" width="100%"></iframe>
+		</div>
+	</div>
 
 <script>
+
+toolbox_init("#toolbar_basic");
 
 
 var tab_id = "<%=tabid%>" ;
@@ -439,24 +439,35 @@ var hmiModel=null;
 var hmiView=null;
 
 $('#oper_fitwin').click(function()
-		{
-			draw_fit();
-		});
+{
+	draw_fit();
+});
 $('#oper_save').click(function()
-		{
+{
 	tab_save();
-		});
+});
 
+$('#oper_zoomup').click(function()
+{
+	zoom(-1)
+});
 
-		$('#oper_zoomup').click(function()
-		{
-			zoom(-1)
-		});
+$('#oper_zoomdown').click(function()
+{
+	zoom(1)
+});
 
-		$('#oper_zoomdown').click(function()
-		{
-			zoom(1)
-		});
+function show_hide_toolbar()
+{
+	if( $("#toolbar_list").css("display")=='none')
+	{
+		$("#toolbar_list").css("display","")
+	}
+	else
+	{
+		$("#toolbar_list").css("display","none")
+	}
+}
 
 function on_panel_mousemv(p,d)
 {
@@ -479,7 +490,7 @@ function init_iottpanel()
 		plug_cb:editor_plugcb
 	}) ;
 	hmiView = new oc.hmi.HMIView(hmiModel,panel,editor,{
-		copy_paste_url:"util/copy_paste_ajax.jsp",
+		copy_paste_url:"../util/copy_paste_ajax.jsp",
 		on_model_loaded:()=>{
 			//console.log("loaded") ;
 			draw_fit()
@@ -502,7 +513,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 	if(tp.indexOf("event_")==0)
 	{
 		dlg.open("../util/di_editplug_"+tp+".jsp?p="+path,
-				{title:"Edit Event",w:'500px',h:'400px'},
+				{title:"Edit Event",w:'500px',h:'400px',shade: false},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
@@ -530,7 +541,11 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 		if(tp=="prop_bind")
 			tt = "Bind Properties" ;
 		dlg.open("../util/di_editplug_"+tp+".jsp?res_node_id="+res_node_id,
-				{title:tt,w:'500px',h:'400px'},
+				{title:tt,w:'500px',h:'420px',shade: 0.01,
+					on_val_chg:(v)=>{
+						jq_ele.val(v) ;
+						editor.applyUI2SelectedItem();
+					}},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
@@ -683,9 +698,6 @@ function refresh_dyn()
 	}
 }
 
-//setInterval("hmiModel.refreshDyn();",5000);
-//setInterval("refresh_dyn()",2000);
-
 function btn_load_unit()
 {
 	send_ajax("t_ajax.jsp","id=u_u1",function(bsucc,ret){
@@ -790,9 +802,7 @@ function leftcat_close()
 
 function fit_right_height()
 {
-	var hpx =($(window).height()-130)+"px";
-	//console.log(">>>>>"+($(window).height()-130)+"px")
-	//$("#edit_props")[0].style.height=hpx;
+	var hpx =($(window).height()-180)+"px";
 	$("#edit_props").css("height",hpx)
 	$("#edit_events").css("height",hpx)
 }

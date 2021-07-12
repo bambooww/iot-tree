@@ -17,16 +17,22 @@
 %><html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/ajax.js" ></script>
-<script src="/_js/layui/layui.all.js"></script>
-  <link   href="/_js/layui/css/layui.css" rel="stylesheet" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp"></jsp:include>
 </head>
 <style>
+body {
+	margin: 0px;
+	padding: 0px;
+	font-size: 12px;
+-moz-user-select : none;
+-webkit-user-select: none;
+}
+
+select option
+{
+font-size: 12px;
+}
+
 .oc-toolbar .toolbarbtn
 {
 width:40px;height:40px;margin: 5px;
@@ -70,7 +76,7 @@ background-color: #eeeeee
  if(bmgr)
  {
  %> 
-   <a href="javascript:add_cat()">+Add</a>
+   <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
 <%
  }
 %>
@@ -83,7 +89,7 @@ background-color: #eeeeee
  if(bmgr)
  {
  %> 
- 	<a href="javascript:add_devdef()">+Add</a>
+ 	<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_devdef()">+Add</button>
 <%
  }
 %>
@@ -349,19 +355,19 @@ function show_table()
 	    ,url: 'devdef_ajax.jsp?op=list_tb&drv='+drv_cat.drv+'&cat='+drv_cat.cat+"&mgr="+bmgr
 	    ,page0: {layout:['prev', 'page', 'next'],limit:10,theme:"#c00"} //open page
 	    ,cols: [[ //head
-	    	{field: 'n', title: 'Name', width:'30%'}
-	    	,{field: 't', title: 'Title', width:'30%'}
+	    	{field: 'n', title: 'Name', width:'40%'}
+	    	,{field: 't', title: 'Title', width:'40%'}
 <%
 if(bmgr)
 {
 %>
-,{field: 'Oper', title: '操作', width:'33%',toolbar: '#row_toolbar'}
+,{field: 'Oper', title: '', width:'20%',toolbar: '#row_toolbar'}
 <%
 }
 else
 {
 %>
-,{field: 'Oper', title: '操作', width:'33%',toolbar: '#sel_toolbar'}
+,{field: 'Oper', title: '', width:'20%',toolbar: '#sel_toolbar'}
 <%
 }
 %>

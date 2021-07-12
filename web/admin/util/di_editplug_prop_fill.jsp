@@ -173,12 +173,14 @@ function update_ui()
 {
 	update_ui_item();
 	update_preview();
+	
 }
 
 function update_preview()
 {
 	update_ui_tp();
 	fill.previewToElement($("#div_preview")[0],cxt)
+	fire_chg();
 }
 
 function update_ui_tp()
@@ -237,8 +239,8 @@ function sel_color(n)
 				{
 					var ret = dlgw.editplug_get() ;
 					 fill.colors[n]=ret.v;
-					 update_preview();
 					 dlg.close();
+					 update_preview();
 				},
 				function(dlgw)
 				{
@@ -250,6 +252,11 @@ function sel_color(n)
 function win_close()
 {
 	dlg.close(0);
+}
+
+function fire_chg()
+{
+	dlg.fire_val_chg(fill.toStr()) ;
 }
 
 

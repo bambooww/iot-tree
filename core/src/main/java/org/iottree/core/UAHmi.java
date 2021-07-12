@@ -238,4 +238,21 @@ public class UAHmi extends UANodeOC implements IOCUnit
 //		}
 //		
 //	}
+	
+	public boolean isMainInPrj()
+	{
+		UANode uan = this.getTopNode() ;
+		if(!(uan instanceof UAPrj))
+			return false;
+		return this.getId().equals(((UAPrj)uan).getHmiMainId()) ;
+	}
+	
+	public boolean setMainInPrj() throws Exception
+	{
+		UANode uan = this.getTopNode() ;
+		if(!(uan instanceof UAPrj))
+			return false;
+		((UAPrj)uan).setHmiMainId(this.getId());
+		return true;
+	}
 }

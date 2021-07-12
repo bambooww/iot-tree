@@ -51,6 +51,13 @@
 		h.saveHmiUITxt(txt);
 		out.print("save ok");
 	}
+	else if("main".equals(op))
+	{
+		if(h.setMainInPrj())
+			out.print("set as main ui ok");
+		else
+			out.print("set as main ui failed");
+	}
 %>
 
 

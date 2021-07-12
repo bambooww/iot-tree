@@ -64,6 +64,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	@data_val(param_name = "script_int")
 	long scriptInt = 10000 ;
 	
+	@data_val(param_name = "hmi_main_id")
+	String hmiMainId = null;
 	
 	/**
 	 * last script date time
@@ -235,6 +237,29 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		save();
 	}
 
+	
+	public void setHmiMainId(String hmiid) throws Exception
+	{
+		this.hmiMainId = hmiid ;
+		save() ;
+	}
+	
+	public String getHmiMainId()
+	{
+		return this.hmiMainId ;
+	}
+	
+	public UAHmi getHmiMain()
+	{
+		if(Convert.isNullOrEmpty(this.hmiMainId))
+		{
+			List<UAHmi> hs=this.getHmis();
+			if(hs==null||hs.size()<=0)
+				return null ;
+			return hs.get(0);
+		}
+		return this.getHmiById(hmiMainId);
+	}
 
 	public boolean chkValid()
 	{

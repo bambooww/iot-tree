@@ -61,8 +61,8 @@
 						else out.write(",") ;
 						
 						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
-						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\"") ;
-						out.write(",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
+						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
+						out.write(",\"tp\":\"hmi\",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
 					}
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
@@ -132,7 +132,7 @@
 			  ,"id":"<%=dev.getId() %>"
 			  ,"type":"dev"
 			   ,"path":"<%=dev.getNodePath()%>"
-			  ,"state": {"opened": true}
+			  ,"state": {"opened": false}
 			   ,"icon":"icon_dev"
 			  ,"children": [
 <%

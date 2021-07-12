@@ -19,20 +19,23 @@
 		return;
 	}
 	
+	UAHmi hmi_main = rep.getHmiMain() ;
+	String hmi_main_path ="" ;
+	String hmi_main_id="" ;
+	String hmi_main_title="" ;
+	if(hmi_main!=null)
+	{
+		hmi_main_id = hmi_main.getId();
+		hmi_main_title = hmi_main.getTitle();
+		hmi_main_path = hmi_main.getNodePath();
+	}
 	String path = rep.getNodePath() ;
 %><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>IOTTree Project Editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="head.jsp"></jsp:include>
 <link rel="stylesheet" href="/_js/jstree/themes/default/style.min.css" />
 <script src="/_js/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
@@ -538,28 +541,29 @@ background-color: #fff ;
        
         <div id="div_brw" class="hj-transverse-split-div subwin" style="width:20%">
            <div class="subwin_toolbar">
-           <%--
-           Browser
-           <button type="button" class="btn btn-default" ><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
-            --%>
+          <%--
+          Browser
+          <button type="button" class="btn btn-default" ><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
+           --%>
            <div class="btn-group open"  id="btn_menu_tree">
 				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> Browser</a>
 				  <a class="btn "  href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
 				 </div>
-				 
            </div>
            <div class="subwin_content" style="overflow:auto">
-           		<div id="tree"  style="width:100%;overflow: hidden;"></div>
+           		<div id="tree"  style="width:100%;overflow: hidden;left:-30px;position:absolute"></div>
            		<div style="width:100%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>
         </div>
          
         <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3">
-           <div style="padding-left:10px;padding-right:0px;marign0:10px;height:100%;position:inherit;">
+           <div style="padding-left:10px;padding-right:0px;marign0:10px;width:100%;height:100%;position:inherit;background-color: #ebeef3;z-index:60000" id="right_tabs">
+             
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
+			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>
 			    <li >Properties</li>
@@ -573,29 +577,24 @@ background-color: #fff ;
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_prop" src="./ua/ui_prop.jsp?dlg=false&&tabid=drv&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
-				<%--
+<%--
 			    <div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_rep" border="0" src11="rep.jsp?tabid=main&id=<%=repid %>" src0="rep_editor.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
-			      			
 			      <iframe id="if_main" src="rep_editor_graph.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
-			      
 				</div>
  --%>
 				<div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
-			
-			       <iframe id="if_main" src="./ua_cxt/cxt_accessor.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
+			       <iframe id="if_access" src="./ua_cxt/cxt_accessor.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
 			  </div>
 			</div>
-			 
 		    </div>
             <label class="hj-transverse-split-label"></label>
         </div>
-        
     </div>
-    
 <script>
 var repid="<%=repid%>";
+var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
 
 var connpro_menu = [
 	{content:'Stream Connector',header: true},
@@ -625,6 +624,19 @@ $('#btn_menu_conn').click(function(){
 		regular : true,
 		data : connpro_menu
 	});
+});
+
+$("#right_tabs_btn").click(function(){
+	if("fixed"==$("#right_tabs").css("position"))
+	{//position:
+		$("#right_tabs").css("position","inherit") ;
+	}
+	else
+	{
+		$("#right_tabs").css("position","fixed") ;
+		$("#right_tabs").css("left","0px") ;
+		$("#right_tabs").css("top","0px") ;
+	}
 });
 
 var b_left_show=true;
@@ -814,7 +826,8 @@ var cxt_menu = {
 		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui},
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi},
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi},
-		{op_name:"access_ui",op_title:"<wbt:lang>Access</wbt:lang>",op_icon:"fa fa-times",op_action:act_access_hmi},
+		{op_name:"access_ui",op_title:"<wbt:lang>Access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access_hmi},
+		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi},
 	]
 }
 
@@ -822,12 +835,20 @@ function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","./ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
 	$("#if_tags").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
+	$("#if_access").attr("src","./ua_cxt/cxt_accessor.jsp?tabid=main&path="+tn.path);
+}
+
+function on_tree_loaded(data)
+{
+	//console.log("loaded tree",data) ;
 }
 
 var ua_panel = new UAPanel(
 		{eleid:"conn" ,data_url:"./conn/cp_ajax.jsp?op=list&repid="+repid,ui_showed:on_conn_ui_showed},
 		{eleid:"conn_ch",join_url:"./conn/cp_ajax.jsp?repid="+repid},
-		{eleid:"tree",data_url:"prj_tree_ajax.jsp?id="+repid,cxt_menu:cxt_menu,on_selected:on_tree_node_selected}
+		{eleid:"tree",data_url:"prj_tree_ajax.jsp?id="+repid,cxt_menu:cxt_menu,
+				on_selected:on_tree_node_selected,
+				on_loaded:on_tree_loaded}
 		);
 ua_panel.init() ;
 
@@ -1410,11 +1431,26 @@ function act_access_hmi(n,op)
 	window.open(n.path);
 }
 
+function act_main_hmi(n,op)
+{
+	var ret={} ;
+	 ret.path = n.path;
+	 ret.op="main" ;
+	 send_ajax('ua_hmi/hmi_editor_ajax.jsp',ret,function(bsucc,ret)
+		{
+			dlg.msg(ret) ;
+		},false);
+}
+
 function act_hmi_edit_ui(n,op)
 {
 	//window.open("ua_hmi/hmi_editor.jsp?repid="+repid+"&id="+u.getId()) ;
 	add_tab(n.id,n.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
+
+
+if(hmi_main.path!=null&&hmi_main.path!="")
+	add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
 
 /*
 function act_new_hmi(n,op)

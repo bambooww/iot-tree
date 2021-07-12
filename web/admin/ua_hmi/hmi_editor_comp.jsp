@@ -42,6 +42,7 @@
 <script src="/_js/dlg_layer.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
 <script src="/_js/oc/oc.js"></script>
+<script src="/_js/oc/oc_util.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 	
@@ -276,43 +277,17 @@ padding-bottom:0px;
 
 }
 
-.toolbox
-{
-		position:absolute;
-		top:25px;
-		left:25px;
-		width:200px;
-		z-index:1000;
-		-moz-border-radius: 8px 0 0 0;
-		-webkit-border-radius: 8px 0 0 0;
-		border-radius: 8px 0 0 0;		
-}
-.toolbox .title
-{
-	position:relative;
-		background: #808080;
-		height:30px;
-		margin-left:0px;
-		margin-top:0px;
-		-moz-border-radius: 8px 0 0 0;
-		-webkit-border-radius: 8px 0 0 0;
-		border-radius: 8px 0 0 0;
-	
-		}
-.toolbox .content
-{
-	height:100%;
-}
-
-#edit_toolbar
+.edit_toolbar
 {
 height:50px;background-color: grey;
 }
 
-#edit_toolbar button
+.edit_toolbar button
 {
 	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
 }
+
+
 </style>
 </head>
 <script type="text/javascript">
@@ -333,7 +308,9 @@ height:50px;background-color: grey;
 </div>
 
 		<div class="left " style="background-color: #aaaaaa">
+		<%--
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
+			 --%>
 			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')"><i class="fa fa-picture-o fa-3x lr_btn"></i><br>Icon</div>
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)"><i class="fa fa-cubes fa-3x lr_btn"></i><br>Pic Lib</div>
 		</div>
@@ -377,7 +354,7 @@ height:50px;background-color: grey;
 				
 		</div>
 		<div class="right " style0="background-color: #eeeeee;display:flex;flex-direction: column;">
-		 <div id="edit_toolbar" ></div>
+		 
 		 <div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
 			<div style="position0: absolute; width: 100%; height:90%; border:1 solid;border-color: red">
 				<div class="layui-tab">
@@ -405,7 +382,19 @@ height:50px;background-color: grey;
 			
 		</div>
 		
-		<div id="inter_editor" class="toolbox">
+		
+		<div id="toolbar_basic" class="toolbox" style="left:50px">
+				<div class="title"></div>
+				<div class="content" style="height:250px"> 
+				<div style="height:50px;background-color: grey" class="edit_toolbar">
+				<button id="oper_save"  title="save"><i class="fa fa-floppy-o fa-3x"></i></button>
+				<span id="edit_toolbar" class="edit_toolbar"></span>
+				</div>
+					<iframe src="hmi_left_basic_di.jsp" height="200px" width="100%"></iframe>
+				</div>
+		</div>
+		
+		<div id="inter_editor" class="toolbox" style="left:50px;top:385px;">
 				<div class="title"><h3>Interface</h3></div>
 				<div class="content" style="height:300px"> 
 							<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
@@ -427,6 +416,8 @@ height:50px;background-color: grey;
 					
 				</div>
 		</div>
+		
+		
 	</div>
 
 
@@ -434,31 +425,8 @@ height:50px;background-color: grey;
 
 <script>
 
-function toolbox_init(which){//which参数指定的是哪一个窗口的id，比如"#dialog"
-	var offestLeft;
-	var offestTop;
-	var right=false;
-	$(which).mousedown(function(e){
-				var x=e.clientX;
-				var y=e.clientY;
-				var styleLeft=$(which).css("left");
-				var styleTop=$(which).css("top");
-				offestLeft=x-parseInt(styleLeft);
-				offestTop=y-parseInt(styleTop);
-				right=true;
-										  });
-	
-	$(which).mousemove(function(e){
-									 if(right){
-				var nowLeft=e.clientX-offestLeft;
-				var nowTop=e.clientY-offestTop;
-				$(which).css("left",nowLeft).css("top",nowTop);}
-										  });
-	$(which).mouseup(function(e){				   
-					right=false;			   
-								   });
-}
 toolbox_init("#inter_editor");
+toolbox_init("#toolbar_basic");
 
 var tab_id = "<%=tabid%>" ;
 var catid="<%=catid%>";
@@ -474,6 +442,10 @@ layui.use('element', function(){
   //…
 });
 
+$('#oper_save').click(function()
+		{
+	tab_save();
+		});
 
 
 var panel = null;

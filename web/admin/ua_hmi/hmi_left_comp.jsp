@@ -13,13 +13,9 @@ boolean bedit ="true".equals(request.getParameter("edit")) ;
 %><html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/ajax.js" ></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="oc"/>
+</jsp:include>
 </head>
 <style>
 .oc-toolbar .toolbarbtn
@@ -30,6 +26,11 @@ font-size: 13px;
 
 width:100px;height:120px;
 
+}
+
+select option
+{
+font-size: 12px;
 }
 
 .toolbarbtn div
@@ -55,7 +56,7 @@ left:10px;
 <body marginwidth="0" marginheight="0">
 <table width='100%' height='99%'>
  <tr>
- <td valign="top" width="25%">Category <a href="javascript:add_cat()">+Add</a>
+ <td valign="top" width="25%">Category <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
    <select id='var_cat' multiple="multiple" style="width: 100%;height: 100%" onchange="cat_sel_chg()">
 <%
 	for(CompCat cc:ccs)
@@ -67,7 +68,7 @@ left:10px;
    </select>
  </td>
  <td id="td_add_comp" valign="top" width="75%" class="oc-toolbar">
- 	Components <a href="javascript:add_comp()">+Add</a>
+ 	Components <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_comp()">+Add</button>
  	<div  id="var_items" class="btns" >
  		<div class="toolbarbtn" onclick="" title=""><img src="" /></div>
  	</div>
@@ -79,7 +80,7 @@ left:10px;
  </tr>
 </table>
  <div  class="oc_menu"  style=" display: none;position: absolute;background: #6E6C79;z-index: 60000">
-        <div data-type="edit" class="menu"  data-cat="" data-id=""  style="cursor:pointer;" ><span>编辑</span></div>
+        <div data-type="edit" class="menu"  data-cat="" data-id=""  style="cursor:pointer;" ><span>Edit</span></div>
  </div>
 
 <script>

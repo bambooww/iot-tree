@@ -155,7 +155,7 @@ public class DevCat implements IResNode
 	{
 		ArrayList<DevDef> rets = new ArrayList<>() ;
 		
-		File catdir=  driver.getDevCatDir(this.getName()) ;
+		File catdir=  driver.getDevCatDir(this.getId()) ;
 		if(!catdir.exists())
 			return rets;
 		File[] fs = catdir.listFiles(new FileFilter() {

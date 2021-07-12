@@ -59,7 +59,7 @@
 <style>
 .oc-toolbar .toolbarbtn
 {
-width:40px;height:40px;margin: 5px;
+width:30px;height:30px;margin: 3px;
 font-size: 13px;
 background-color: #eeeeee
 }
@@ -79,7 +79,7 @@ for(BtnItem bi:BTNS)
 {
 %>
     <div class="toolbarbtn" onclick="<%=bi.op %>" title="<%=bi.title %>">
-     <img src="<%=bi.icon %>" />
+     <img src="<%=bi.icon %>" width="30px" height="30px" />
     </div>
 <%
 }

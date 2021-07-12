@@ -380,6 +380,8 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		
 		this.ua_tree.init().on("loaded.jstree",(e,data)=>{
 			//console.log("loaded...",data);
+			if(tree_opt.on_loaded)
+				tree_opt.on_loaded(data);
 			this.redraw(false,true,false) ;
 		})
 		.on("redraw.jstree",(e,data)=>{

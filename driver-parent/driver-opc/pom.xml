@@ -4,7 +4,7 @@
   <parent>
     <artifactId>driver-parent</artifactId>
     <groupId>org.iottree.driver</groupId>
-    <version>0.93.4</version>
+    <version>0.93.7</version>
 
   </parent>
 

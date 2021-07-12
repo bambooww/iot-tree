@@ -28,6 +28,7 @@
 	{
 		ArrayList<UAHmi> rets=  new ArrayList<>() ;
 		listSubHmis(cxtnode,rets,ignorehmi) ;
+		/*
 		List<UANode> subns = cxtnode.getSubNodes() ;
 		if(subns==null)
 			return rets ;
@@ -37,6 +38,7 @@
 				continue ;//no include self node
 			listSubHmis(subn,rets,ignorehmi) ;
 		}
+		*/
 		return rets ;
 	}
 %><%

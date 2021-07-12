@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%>
-<%@ page import="java.util.*,
+<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%><%@ page import="java.util.*,
 				java.io.*,
 				java.util.*,
 				java.net.*"%><%
@@ -8,6 +7,7 @@
 	{
 	case "copy":
 		String itemjson = request.getParameter("items_json") ;
+		//System.out.println("copyed:"+itemjson);	
 		if(itemjson!=null)
 		{
 			session.setAttribute("items_json", itemjson) ;
@@ -20,4 +20,3 @@
 		break;
 	}
 %>
-
