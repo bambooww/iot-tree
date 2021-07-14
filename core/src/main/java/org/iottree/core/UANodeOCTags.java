@@ -32,15 +32,18 @@ public abstract class UANodeOCTags extends UANodeOC
 	 * 
 	 * @param new_self create by copySelfWithNewId
 	 */
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	@Override
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id);
+		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
 		UANodeOCTags self = (UANodeOCTags)new_self ;
 		self.tags.clear();
 		for(UATag t:tags)
 		{
 			UATag nt = new UATag() ;
-			t.copyTreeWithNewSelf(nt,ownerid,copy_id);
+			if(root_subnode_id)
+				nt.id  = this.getNextIdByRoot();
+			t.copyTreeWithNewSelf(nt,ownerid,copy_id,root_subnode_id);
 			self.tags.add(nt) ;
 		}
 	}

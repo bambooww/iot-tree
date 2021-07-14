@@ -9,7 +9,7 @@
 				{
 					String path = tg.getNodePath();
 					//out.write("{\"text\": \""+tg.getTitle()+"-"+tg.getName()+"\"") ;
-					out.write("{\"text\": \""+tg.getName()+"\"") ;
+					out.write("{\"text\": \""+tg.getName()+"\",\"name\":\""+tg.getName()+"\",\"title\":\""+tg.getTitle()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\",\"path\":\""
 						+path+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
@@ -95,7 +95,9 @@ if(dev==null)
 }
 %>[
 	{
-			"text":"<%=dev.getTitle()%>-<%=dev.getName() %>"
+			"text":"<%=dev.getName() %>"
+			,"name":"<%=dev.getName()%>"
+			,"title":"<%=dev.getTitle()%>"
 			  ,"id":"<%=dev.getId() %>"
 			  ,"type":"dev"
 			  ,"path":"<%=dev.getNodePath()%>"

@@ -381,11 +381,16 @@ background-color: #ffffff;
 }
 
 .subitem{
-      width:100%;
+    width:100%;
 }
+
+.subitem th,.subitem td{
+	//border:1px solid #888;
+}
+
 .subitem_toolbar{
         width:100%;
-        height: 30px;
+        height0: 30px;
         border:solid 1px;
         font-size: small;
         font-weight:bold;
@@ -466,8 +471,6 @@ background-color: #fff ;
 		 <i id="prj_btn_stop"  class="fa fa-stop fa-lg top_btn" style="color:grey" title="stop project" onclick="prj_run(false)"></i>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
-		 
-			
 			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
 			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
 			<%--
@@ -496,31 +499,31 @@ background-color: #fff ;
 		         <div id="conn" style="width:110%;height:100%;float:left;overflow:auto;">
 		           <div class="subitem"  v-for="connector in connectors" style="width:91%">
 		               	 <div class="subitem_toolbar" v-bind:id="'cp_'+connector.id" v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp">
-		               	      <table style="width:100%;">
+		               	      <table style="width:100%;border: 1">
 			               	 		<tr>
-										<td width="80%">
-											{{ connector.title }} [{{ connector.tp }}] - {{connector.static_txt}}
+										<td width="80%" style="white-space: nowrap;">
+											{{ connector.title }} [{{ connector.tp }}] <br/> {{connector.static_txt}}
 										</td>
 										<%--
 										<td width="25px">
 											<a v-bind:href="'javascript:edit_cp(\''+connector.tp+'\',\''+connector.id+'\')'"><i class="fa fa-pencil" aria-hidden="true"></i></a>
 										</td>
 										 --%>
-										<td width="35px" >
+										<td width="20%" >
 											<div style="width:20px;height:20px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;</div>
 										</td>
 									</tr>
 								</table>
-		               	     </div>
+		               	  </div>
 		               	  <div class="subitem_content">
 		               	 	    <div class="subitem_li" v-for="connection in connector.connections" v-bind:id="'conn_' + connection.id" 
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
-										<td width="70%">
+										<td width="90%">
 											{{connection.title}} [{{connection.name}}]<br> {{connection.static_txt}}
 										</td>
-										<td width="25px">&nbsp;</td>
+										
 										<td width="25px">
 											<div style="width:15px;height:15px;background-color: grey;"  v-bind:id="'conn_st_'+connection.id" >&nbsp;</div>
 										</td>
@@ -756,6 +759,8 @@ var layuiEle ;
 
 var curTabIF =  $("#if_main")[0] ;
 
+var copiedItem = null ;
+
 layui.use('element', function(){
 	layuiEle = layui.element;
 	layuiEle.on('tab', function(data)
@@ -781,6 +786,11 @@ layui.use('element', function(){
 
 var cxt_menu = {
 	"prj":[
+		
+		{op_name:"paste_ch",op_title:"Paste Channel",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+			//console.log(copiedItem);
+			return copiedItem!=null&&copiedItem.type=="ch";
+		}},
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
@@ -789,15 +799,19 @@ var cxt_menu = {
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
-		
+		{op_name:"paste_dev",op_title:"Paste Device",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+			//console.log(copiedItem);
+			return copiedItem!=null&&copiedItem.type=="dev";
+		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
 		{op_name:"new_dev",op_title:"<wbt:lang>new_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_new_dev},
-		
 		{op_name:"edit_ch",op_title:"<wbt:lang>edit_ch</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_ch},
 		{op_name:"del_ch",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_ch},
 		
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
+		
+		{op_name:"cp_ch",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		
 		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return !tn.run;
@@ -813,6 +827,8 @@ var cxt_menu = {
 		{op_name:"edit_dev",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_dev},
 		{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
+		
+		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		
 		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
@@ -888,6 +904,41 @@ function update_prj_run(brun)
 function refresh_ui()
 {
 	ua_panel.refresh_ui();
+}
+
+function act_node_copy(n,op)
+{
+	copiedItem = n ;
+}
+
+function act_node_paste(n,op)
+{
+	if(copiedItem==null)
+		return ;
+	let ppath=n.path ;
+	
+	if(n.type=="prj")
+	{//paste ch
+		if(copiedItem.type!='ch')
+			return ;
+		
+	}
+	else if(n.type=='ch')
+	{
+		if(copiedItem.type!='dev')
+			return ;
+	}
+	else
+		return ;
+	send_ajax("./ua/node_copy_paste_ajax.jsp",{ppath:n.path,path:copiedItem.path},(bsucc,ret)=>{
+		if(!bsucc||ret!="succ")
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		refresh_ui();
+	});
+	
 }
 
 function edit_cp(cptp,cpid)

@@ -93,7 +93,10 @@
 		else
 			out.print(",") ;
 		String drvfit = "";
-		String drvt = ch.getDriver().getTitle() ;
+		DevDriver drv = ch.getDriver();
+		String drvt = "none";
+		if(drv!=null)
+			drvt = drv.getTitle() ;
 		if(!ch.isDriverFit())
 			drvfit = "<span class=tn_warn title='"+drvt+" is not fit'>drv?</span>" ;
 		else

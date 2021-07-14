@@ -74,6 +74,11 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	}
 	
 	
+	public void setDefNameTitle(String name,String title,String desc) throws Exception
+	{
+		this.setNameTitle(name, title, desc);
+		this.save();
+	}
 //	
 //	/**
 //	 * 
@@ -128,7 +133,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	UADev updateUADev(UADev dev,String name,String title,String desc)
 	{
 		String id = dev.getId() ;
-		super.copyTreeWithNewSelf(dev,id,true); //recreate tree
+		super.copyTreeWithNewSelf(dev,id,true,false); //recreate tree
 		dev.id = id ;
 		dev.setNameTitle(name, title, desc);
 		dev.setDevRefId(this.getId());

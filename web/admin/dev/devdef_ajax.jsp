@@ -28,13 +28,31 @@ if(cat==null)
 switch(op)
 {
 case "add":
+case "edit":
 	String name = request.getParameter("name") ;
 	String title = request.getParameter("title") ;
 	String desc = request.getParameter("desc") ;
 	try
 	{
-		DevDef dc = cat.addDevDef(name, title, desc) ;
-		out.print("succ") ;
+		if("add".equals(op))
+		{
+			DevDef dc = cat.addDevDef(name, title, desc) ;
+			out.print("succ") ;
+		}
+		else
+		{
+			if(!Convert.checkReqEmpty(request, out, "id"))
+				return ;
+			String id = request.getParameter("id") ;
+			DevDef ddef = cat.getDevDefById(id);
+			if(ddef==null)
+			{
+				out.print("no Device Definition found") ;
+				break;
+			}
+			ddef.setDefNameTitle(name,title,desc) ;
+			out.print("succ") ;
+		}
 	}
 	catch(Exception e)
 	{

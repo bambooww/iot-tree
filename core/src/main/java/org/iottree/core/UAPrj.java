@@ -120,9 +120,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	// }
 	
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id);
+		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
 		UAPrj self = (UAPrj)new_self ;
 		self.script = this.script ;
 		self.scriptInt = this.scriptInt ;
@@ -130,7 +130,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		for(UACh ch:this.chs)
 		{
 			UACh nt = new UACh() ;
-			ch.copyTreeWithNewSelf(nt,ownerid,copy_id);
+			if(root_subnode_id)
+				nt.id = this.getNextIdByRoot();
+			ch.copyTreeWithNewSelf(nt,ownerid,copy_id, root_subnode_id);
 			self.chs.add(nt) ;
 		}
 	}
@@ -236,6 +238,41 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		chs.remove(ch);
 		save();
 	}
+	
+	
+	public UACh deepPasteCh(UACh ch) throws Exception
+	{
+		String newn = ch.getName();
+		newn = this.calNextSubNameAuto(newn);
+		return deepPasteCh(ch, newn,ch.getTitle());
+	}
+	
+	public UACh deepPasteCh(UACh ch,String newname,String newtitle) throws Exception
+	{
+		UANode oldn = this.getSubNodeByName(newname);
+		if(oldn!=null)
+		{
+			throw new Exception("ch name ["+newname+"] already existed");
+		}
+		
+		UACh newch = new UACh();
+		
+		ch.copyTreeWithNewSelf(newch, null, false,true);
+		newch.id=this.getNextIdByRoot();
+		newch.name = newname;
+//		UACh newch = new UACh ch.deepCopyMe();
+//		newch.id=this.getNextIdByRoot();
+		this.chs.add(newch);
+		this.constructNodeTree();
+//		
+		for(UADev tmpd:newch.devs)
+		{
+			tmpd.updateByDevDef();
+		}
+		this.constructNodeTree();
+		this.save();
+		return newch;
+	}
 
 	
 	public void setHmiMainId(String hmiid) throws Exception
@@ -332,7 +369,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 
 	public void save() throws Exception
 	{
-		UAManager.getInstance().saveRep(this);
+		UAManager.getInstance().savePrj(this);
 	}
 
 	/**

@@ -28,16 +28,18 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	 * @param new_self create by copySelfWithNewId
 	 */
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id) ;
+		super.copyTreeWithNewSelf(new_self,ownerid, copy_id,root_subnode_id) ;
 		UANodeOCTagsGCxt self = (UANodeOCTagsGCxt)new_self ;
 		//
 		self.taggs.clear();
 		for(UATagG tagg:taggs)
 		{
 			UATagG ntg = new UATagG() ;
-			tagg.copyTreeWithNewSelf(ntg,ownerid, copy_id);
+			if(root_subnode_id)
+				ntg.id = this.getNextIdByRoot();
+			tagg.copyTreeWithNewSelf(ntg,ownerid, copy_id, root_subnode_id);
 			self.taggs.add(ntg) ;
 		}
 	}

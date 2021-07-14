@@ -71,7 +71,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	 * 
 	 * @param new_self create by copySelfWithNewId
 	 */
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
 		if(Convert.isNotNullEmpty(ownerid))
 			ownerid+="-" ;
@@ -332,6 +332,45 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 				return subn ;
 		}
 		return null;
+	}
+	
+	/**
+	 * when do copy paste operation,name may auto created.
+	 * to avoid confliction,node can use this method to create next name
+	 * @param newname
+	 * @return
+	 */
+	protected String calNextSubNameAuto(String newname)
+	{
+		UANode subn = this.getSubNodeByName(newname);
+		if(subn==null)
+			return newname ;
+		int k = newname.lastIndexOf("_");
+		String leftn=newname;
+		int cc = 0 ;
+		if(k>0)
+		{
+			String rstr = newname.substring(k+1);
+			try
+			{
+				cc  =Integer.parseInt(rstr);
+				leftn = newname.substring(0,k);
+			}
+			catch(Exception ee)
+			{
+				
+			}
+		}
+		
+		String tmpn = null;
+		do
+		{
+			cc ++;
+			tmpn=leftn+"_"+cc;
+			subn = this.getSubNodeByName(tmpn);
+		}
+		while(subn!=null);
+		return tmpn;
 	}
 	
 	

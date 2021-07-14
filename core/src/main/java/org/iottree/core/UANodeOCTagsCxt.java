@@ -54,15 +54,17 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	}
 	
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id) ;
+		super.copyTreeWithNewSelf(new_self,ownerid, copy_id, root_subnode_id) ;
 		UANodeOCTagsCxt self = (UANodeOCTagsCxt)new_self ;
 		self.hmis.clear();
 		for(UAHmi hmi:hmis)
 		{
 			UAHmi nt = new UAHmi() ;
-			hmi.copyTreeWithNewSelf(nt,ownerid,copy_id);
+			if(root_subnode_id)
+				nt.id = this.getNextIdByRoot();
+			hmi.copyTreeWithNewSelf(nt,ownerid,copy_id, root_subnode_id);
 			self.hmis.add(nt) ;
 		}
 	}

@@ -203,11 +203,11 @@ public class UAManager implements IResCxt
 		return r ;
 	}
 	
-	void saveRep(UAPrj rep) throws Exception
+	void savePrj(UAPrj prj) throws Exception
 	{
-		XmlData xd = DataTranserXml.extractXmlDataFromObj(rep) ;
+		XmlData xd = DataTranserXml.extractXmlDataFromObj(prj) ;
 		//XmlData xd = rep.toUAXmlData();
-		XmlData.writeToFile(xd, getPrjFile(rep.getId()));
+		XmlData.writeToFile(xd, getPrjFile(prj.getId()));
 	}
 	
 	public void delRep(String id)
@@ -259,7 +259,7 @@ public class UAManager implements IResCxt
 			throw new Exception("name="+name+" is existed!") ;
 		}
 		r = new UAPrj(name,title,desc) ;
-		saveRep(r);
+		savePrj(r);
 		reps.add(r);
 		return r ;
 	}
@@ -406,7 +406,7 @@ public class UAManager implements IResCxt
 			p.id = tmpid ;
 			if(Convert.isNotNullEmpty(newname))
 				p.name = newname ;
-			saveRep(p) ;
+			savePrj(p) ;
 		}
 		
 		if(Convert.isNotNullEmpty(newid))

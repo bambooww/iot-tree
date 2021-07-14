@@ -5,7 +5,6 @@
 		<webapp name="ROOT" />		
 		<webapp name="_js" />
 		<webapp name="_iottree" />
-		<webapp name="opencharts" />
 	</webapps>
 	
 	<system>

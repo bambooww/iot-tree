@@ -8,11 +8,16 @@
 	java.net.*,
 	java.util.*"%>
 <%
-
+	String name = request.getParameter("name") ;
+	String title = request.getParameter("title") ;
+	if(name==null)
+		name = "" ;
+	if(title==null)
+		title = "" ;
 %>
 <html>
 <head>
-<title>Category Add</title>
+<title>Add</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -29,13 +34,13 @@ dlg.resize_to(400,220);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-block">
-      <input type="text" id="name" name="title" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="title" value="<%=name %>" placeholder="Pls input name" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Title:</label>
     <div class="layui-input-block">
-      <input type="text" id="title" name="title" required  lay-verify="required" placeholder="Pls input title" autocomplete="off" class="layui-input">
+      <input type="text" id="title" name="title" value="<%=title %>" placeholder="Pls input title" autocomplete="off" class="layui-input">
     </div>
   </div>
  </form>
@@ -78,9 +83,6 @@ function do_submit(cb)
 		return ;
 	}
 	cb(true,{name:n,title:tt});
-	//var dbname=document.getElementById('db_name').value;
-	
-	//document.getElementById('form1').submit() ;
 }
 
 </script>

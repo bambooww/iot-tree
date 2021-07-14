@@ -7,6 +7,8 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.DataTranserXml;
+import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -56,7 +58,23 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return (UACh)this.getParentNode() ;
 	}
 	
-	public UAPrj getRep()
+	@Override
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	{
+		super.copyTreeWithNewSelf(new_self,ownerid, copy_id,root_subnode_id) ;
+		UADev self = (UADev)new_self ;
+		self.devRefId = this.devRefId;
+	}
+	
+	UADev deepCopyMe() throws Exception
+	{
+		XmlData xd = DataTranserXml.extractXmlDataFromObj(this) ;
+		UADev newd = new UADev() ;
+		DataTranserXml.injectXmDataToObj(newd, xd);
+		return newd;
+	}
+	
+	public UAPrj getPrj()
 	{
 		UACh ch = getBelongTo();
 		if(ch==null)
@@ -105,6 +123,17 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return dd ;
 	}
 	
+	boolean updateByDevDef()
+	{
+		DevDef dd = getDevDef() ;
+		if(dd==null)
+			return false;
+		
+		//newdev.setNameTitle(newname, newtitle, "");
+		
+		dd.updateUADev(this,this.name, this.title, desc) ;
+		return true;
+	}
 	/**
 	 * get branch to be refered
 	 * @return

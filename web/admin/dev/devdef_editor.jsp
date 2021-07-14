@@ -487,6 +487,7 @@ layui.use('element', function(){
 
 var cxt_menu = {
 	"dev":[
+		{op_name:"edit_devdef",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_devdef},
 		{op_name:"new_tag",op_title:"<wbt:lang>new_tag</wbt:lang>",op_icon:"fa fa-tag",op_action:act_node_new_tag},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg},
@@ -540,6 +541,54 @@ $("#right_tabs_btn").click(function(){
 		$("#right_tabs").css("top","0px") ;
 	}
 });
+
+function act_edit_devdef(n,op)
+{
+	console.log(n) ;
+	var id = n.id ;
+	var name = n.name ;
+	var title= n.title ;
+	dlg.open("cat_edit.jsp?id="+id+"&name="+name+"&title="+title,
+			{title:"Edit Device"},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit" ;
+						 ret.cat=cat_name;
+						 ret.drv=drv_name;
+						 ret.id = id ;
+						 var pm = {
+									type : 'post',
+									url : "./devdef_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if("succ"!=ret)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								refresh_ui();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 
 function act_prop(n,op)
 {

@@ -174,9 +174,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * 
 	 * @param new_self create by copySelfWithNewId
 	 */
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	@Override
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id);
+		super.copyTreeWithNewSelf(new_self,ownerid, copy_id, root_subnode_id);
 		UATag nt = (UATag)new_self ;
 		nt.bMidExp = this.bMidExp;
 		

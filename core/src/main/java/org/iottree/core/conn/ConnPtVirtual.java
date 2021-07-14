@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.UACh;
 import org.iottree.core.UATag;
@@ -50,7 +51,11 @@ public class ConnPtVirtual extends ConnPt
 	@Override
 	public boolean isConnReady()
 	{
-		return this.getConnProvider().isRunning();
+		ConnProvider cp = this.getConnProvider();
+		if(cp==null)
+			return false;
+		
+		return cp.isRunning();
 		//return false;
 	}
 	

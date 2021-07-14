@@ -124,9 +124,9 @@ function UATree(tree_opt)
 						
 						'items' :(node)=>{
 							//this.get_type(node)==='ch''
-							console.log(node)
+							//console.log(node)
 							var tp = node.original.type
-							console.log(tp) ;
+							//console.log(tp) ;
 							return this.get_cxt_menu(tp,node.original) ;
 		                }
 					},

@@ -1,5 +1,6 @@
 package org.iottree.core;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.*;
 
@@ -68,16 +69,18 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	}
 	
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id);
+		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
 		UACh self = (UACh)new_self ;
 		self.drvName = this.drvName ;
 		self.devs.clear();
 		for(UADev dev:devs)
 		{
 			UADev ndev = new UADev() ;
-			dev.copyTreeWithNewSelf(ndev,ownerid,copy_id);
+			if(root_subnode_id)
+				ndev.id = this.getNextIdByRoot();
+			dev.copyTreeWithNewSelf(ndev,ownerid,copy_id,root_subnode_id);
 			self.devs.add(ndev) ;
 		}
 	}
@@ -229,6 +232,42 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	public boolean isDriverFit() throws Exception
 	{
 		return chkDriverFit(drvName) ;
+	}
+	
+	public UACh deepCopyMe() throws Exception
+	{
+		XmlData xd = DataTranserXml.extractXmlDataFromObj(this) ;
+		UACh newch = new UACh() ;
+		DataTranserXml.injectXmDataToObj(newch, xd);
+		return newch;
+	}
+	
+	
+	public UADev deepPasteDev(UADev dev) throws Exception
+	{
+		String newn = dev.getName();
+		newn = this.calNextSubNameAuto(newn);
+		return deepPasteDev(dev, newn,dev.getTitle());
+	}
+	
+	public UADev deepPasteDev(UADev dev,String newname,String newtitle) throws Exception
+	{
+		UANode oldn = this.getSubNodeByName(newname);
+		if(oldn!=null)
+		{
+			throw new Exception("device name ["+newname+"] already existed");
+		}
+		UADev newdev = dev.deepCopyMe();
+		newdev.id=this.getNextIdByRoot();
+		newdev.name=newname;
+		newdev.title=newtitle;
+		this.devs.add(newdev);
+		this.constructNodeTree();
+		
+		newdev.updateByDevDef();
+		this.constructNodeTree();
+		this.save();
+		return newdev;
 	}
 	
 	public List<UADev> getDevs()
@@ -588,6 +627,10 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 	public DevDriver.State RT_getState()
 	{
 		DevDriver drv = this.getDriver() ;
+		if(drv==null)
+		{
+			return DevDriver.State.not_run;
+		}
 		return drv.getDriverState() ;
 	}
 

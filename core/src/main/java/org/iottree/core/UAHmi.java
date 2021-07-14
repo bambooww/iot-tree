@@ -45,9 +45,9 @@ public class UAHmi extends UANodeOC implements IOCUnit
 		return (UANodeOCTagsCxt)this.getParentNode() ;
 	}
 	
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id)
+	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id);
+		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
 		UAHmi self = (UAHmi)new_self ;
 		self.hmiTp = this.hmiTp ;
 	}

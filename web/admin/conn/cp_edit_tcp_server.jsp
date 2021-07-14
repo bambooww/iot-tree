@@ -45,11 +45,7 @@ List<ConnProTcpServer.AcceptedSockHandler> ashs = ConnProTcpServer.getAcceptedSo
 <html>
 <head>
 <title>tcp client cp editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);
 </script>
