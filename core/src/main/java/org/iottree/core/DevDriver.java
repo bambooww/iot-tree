@@ -46,6 +46,26 @@ public abstract class DevDriver  implements IPropChecker
 	
 	private static transient HashMap<String,List<DevCat>> drvName2devCats = new HashMap<>();
 	
+	DevCat reloadCat(String catid) throws Exception
+	{
+		DevCat c = this.loadCat(catid) ;
+		if(c==null)
+			return null;
+		
+		List<DevCat> cats = getDevCats() ;
+		
+		for(int i = 0,n=cats.size();i<n;i++)
+		{
+			DevCat cat = cats.get(i);
+			if(cat.getId().equals(catid))
+			{
+				cats.set(i, c) ;
+				return c;
+			}
+		}
+		cats.add(c);
+		return c ;
+	}
 	/**
 	 * get or load dev cats
 	 * @return
@@ -104,7 +124,7 @@ public abstract class DevDriver  implements IPropChecker
 		return null ;
 	}
 	
-	private File getDrvDir()
+	File getDrvDir()
 	{
 		File fb = DevManager.getDevFileBase() ;
 		return new File(fb,"devdef/drv_"+getName()+"/") ;

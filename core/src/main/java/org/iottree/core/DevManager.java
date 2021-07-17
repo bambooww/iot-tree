@@ -3,10 +3,12 @@ package org.iottree.core;
 import java.io.*;
 import java.util.*;
 
+import org.iottree.core.basic.IdName;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -137,6 +139,109 @@ public class DevManager implements IResCxt
 		}
 		return null ;
 	}
+	
+	
+	public File exportDevCatTo(String drvname,String catname,File fout) throws IOException
+	{
+		DevCat dc = getDevCat(drvname,catname);
+		if(dc==null)
+			return null ;
+		
+		
+		File dcatdir = dc.getDevCatDir();
+		List<File> fs = Arrays.asList(dcatdir) ;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "devcat") ;
+		metam.put("drvname", drvname) ;
+		metam.put("catid", dc.getId()) ;
+		metam.put("catname", catname) ;
+		
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		
+		ZipUtil.zipFileOut(metatxt,fs,fout) ;
+		return fout;
+	}
+	
+	public File exportDevCatToTmp(String drvname,String catname) throws IOException
+	{
+		String fn = drvname+"_"+catname+".zip";
+		File fout = new File(Config.getDataDirBase()+"/tmp/"+fn) ;
+		exportDevCatTo(drvname,catname,fout);
+		return fout;
+	}
+	
+	
+	public File backupDevCatToZip(String drvname,String catname) throws IOException
+	{
+		String fn = drvname+"_"+catname+"_"+System.currentTimeMillis()+".zip";
+		File fout = new File(Config.getDataBackupDir(),"devcat/"+fn) ;
+		exportDevCatTo(drvname,catname,fout);
+		return fout;
+	}
+	
+	public HashMap<String,String> parseDevCatZipFileMeta(File zipf) throws Exception
+	{
+		ArrayList<IdName> rets =new ArrayList<>() ;
+		
+		String metatxt = ZipUtil.readZipMeta(zipf);
+		if(metatxt==null||metatxt.equals(""))
+			return null ;
+		HashMap<String,String> pms = Convert.transPropStrToMap(metatxt) ;
+		if(!"devcat".equals(pms.get("tp")))
+			return null ;
+		String drvn = pms.get("drvname") ;
+		String catn = pms.get("catname") ;
+		String catid = pms.get("catid") ;
+		if(Convert.isNullOrEmpty(drvn)||Convert.isNullOrEmpty(catn)||Convert.isNullOrEmpty(catid))
+			return null ;
+		return pms ;
+	}
+	
+
+	public boolean importDevCatZipFile(File zipf,String catid,String catname,String drvname) throws Exception
+	{
+		HashMap<String,String> pms = parseDevCatZipFileMeta(zipf) ;
+		if(pms==null)
+			return false;
+		//String drvn = pms.get("drvname") ;
+		//String catn = pms.get("catname") ;
+		if( !catid.contentEquals(pms.get("catid")) 
+			||  !catname.contentEquals(pms.get("catname"))
+			||  !drvname.contentEquals(pms.get("drvname")))
+			return false;
+		
+		DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
+		if(dd==null)
+			return false;
+		
+		String catdirname = "cat_"+catid+"/" ;
+		String catdirname1 = "cat_"+catid+"\\" ;
+		List<String> ens = ZipUtil.readZipEntrys(zipf) ;
+		HashMap<String,String> outens = new HashMap<>() ;
+		for(String en:ens)
+		{
+			if(en.startsWith(catdirname)||en.startsWith(catdirname1))
+			{
+				outens.put(en,en) ;
+			}
+		}
+		
+		File drvdir = dd.getDrvDir() ;
+		File oldcatdir = new File(drvdir,catdirname) ;
+		if(oldcatdir.exists())
+		{//back up
+			backupDevCatToZip(drvname,catname) ;
+			Convert.deleteDir(oldcatdir) ;
+		}
+		
+		ZipUtil.readZipOut(zipf, outens, dd.getDrvDir());
+		
+		//load cat
+		dd.reloadCat(catid);
+		
+		return true;
+	}
+	
 //	private DevCat loadCatModels(File catdir) throws Exception
 //	{
 //		File catf = new File(catdir,"cat.json") ;
@@ -220,6 +325,14 @@ public class DevManager implements IResCxt
 				return dd ;
 		}
 		return null ;
+	}
+	
+	public DevCat getDevCat(String drvname,String catname)
+	{
+		DevDriver dd = this.getDriver(drvname);
+		if(dd==null)
+			return null ;
+		return dd.getDevCatByName(catname) ;
 	}
 	
 	DevDriver createDriverIns(String name)

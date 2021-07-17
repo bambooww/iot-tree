@@ -26,7 +26,7 @@ case "add":
 
 	try
 	{
-		dc = UAManager.getInstance().addRep(name, title, desc) ;
+		dc = UAManager.getInstance().addPrj(name, title, desc) ;
 		out.print("succ="+dc.getId()) ;
 		return ;
 	}

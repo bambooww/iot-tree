@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
 	java.io.*,
 	org.iottree.core.*,
+	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
 	"%><%!

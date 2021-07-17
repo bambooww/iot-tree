@@ -19,24 +19,32 @@ if(!Convert.checkReqEmpty(request, out, "tmpfn"))
 		return ;
 	}
 	
-	List<IdName> idnames = UAManager.getInstance().parsePrjZipFile(tmpf) ;
-	if(idnames==null||idnames.size()<=0)
+	DevManager devmgr = DevManager.getInstance() ;
+	HashMap<String,String> pms = devmgr.parseDevCatZipFileMeta(tmpf) ;
+	if(pms==null)
 	{
-		out.print("no project found") ;
+		out.print("no invalid Device Definition file") ;
 		return ;
 	}
 	
-	String idstr = "" ;
-	String namestr="" ;
+	String catid = pms.get("catid");
+	String catname = pms.get("catname");
+	String drvname = pms.get("drvname") ;
+	
+	DevDriver dd = devmgr.getDriver(drvname) ;
+	if(dd==null)
+	{
+		out.print("no Driver found") ;
+		return ;
+	}
+	
+	DevCat devcat = dd.getDevCatByName(catname) ;
+	
 %>
 <html>
 <head>
-<title>project importer</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<title>Device Definition Category importer</title>
+<jsp:include page="../head.jsp"></jsp:include>
 <style type="text/css">
 .imp_item
 {
@@ -52,82 +60,23 @@ dlg.resize_to(600,400);
 </script>
 </head>
 <body>
+Driver [<%=dd.getTitle() %>] - Device Definition Category [<%=catname %>] will be imported
 <%
-for(IdName idn:idnames)
+if(devcat!=null)
 {
-	String id = idn.getId() ;
-	String name = idn.getName() ;
-	idstr += ",\""+id+"\"" ;
-	namestr +=",\""+name+"\"" ;
-	UAPrj oldp = UAManager.getInstance().getPrjById(idn.getId()) ;
-	UAPrj namep = UAManager.getInstance().getPrjByName(idn.getName()) ;
-	String bgcolor = "#8dd35f" ;
-	String prompt="New project will import" ;
-	boolean b_can_imp=true;
-	if(oldp!=null)
-	{
-		bgcolor = "#ff8080" ;
-		prompt = "Project is already existed " ;
-		if(oldp.RT_isRunning())
-		{
-			prompt=",it's in running.";
-			b_can_imp = false;
-		}
-	}
-	else if(namep!=null)
-	{
-		prompt = "Project with this name already existed " ;
-	}
 %>
-<div class="imp_item" style="background-color: <%=bgcolor%>">
-  <table style="height:100%;width:100%">
-    <tr>
-      <td colspan="3" align="center"><h3><%=prompt %></h3></td>
-    </tr>
-    <tr>
-      <td valign="middle" >
-
-      </td>
-      <td>Title:<%=idn.getTitle() %>  Name:<input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" /></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td colspan="3" align="center">
-      <input type="radio" id="" name="radio_<%=id %>" value="ignore">Do not import
-<%
-	if(oldp!=null)
-	{
-%>
-      <input type="radio" id="" name="radio_<%=id %>" value="replace" checked="checked">Replace
-<%
-	}
-	else if(namep!=null)
-	{
-%><input type="radio" id="" name="radio_<%=id %>" value="rename" checked="checked">Rename to import<%
-	}
-	else
-	{
-%><input type="radio" id="" name="radio_<%=id %>" value="new" checked="checked">Create New One<%
-	}
-%>
-	
-     
-      </td>
-    </tr>
-    <tr>
-  </table>
-	 
-</div>
+	Device Definition Category [<%=catname %>] <%=devcat.getTitle() %> is already existed.<br>
+	Importer will replace it. 
 <%
 }
-
-idstr=idstr.substring(1) ;
 %>
 </body>
 <script type="text/javascript">
 var tmpfn = "<%=tmpfn%>" ;
-var ids=[<%=idstr%>];
-var names = [<%=namestr%>] ;
+var catid="<%=catid%>";
+var catname="<%=catname%>";
+var drvname="<%=drvname%>";
+
 function win_close()
 {
 	dlg.close(0);
@@ -136,37 +85,9 @@ function win_close()
 
 function do_submit(cb)
 {
-	var pms = {tmpfn:tmpfn} ;
-	var b = false;
-	for(var i=0 ;i < ids.length ; i ++)
-	{
-		var id = ids[i] ;
-		var name = names[i] ;
-		var v = $("input[name='radio_"+id+"']:checked").val();
-		if("ignore"==v)
-			continue ;
-		if("rename"==v)
-		{
-			var newname = $("#inputn_"+id).val() ;
-			if(newname=name)
-			{
-				dlg.msg("name ["+newname+"] must be changed") ;
-				return ;
-			}
-			pms["id_"+id]="rename_"+newname ;
-		}
-		else
-			pms["id_"+id]=v ;
-		b=true ;
-	}
+	var pms = {tmpfn:tmpfn,catid:catid,catname:catname,drvname:drvname} ;
 	
-	if(!b)
-	{
-		dlg.msg("please select to import!") ;
-		return ;
-	}
-	
-	send_ajax('prj_imp_ajax.jsp',pms,function(bsucc,ret)
+	send_ajax('cat_imp_ajax.jsp',pms,function(bsucc,ret)
 	{
 		if(!bsucc || ret.indexOf('succ')<0)
 		{

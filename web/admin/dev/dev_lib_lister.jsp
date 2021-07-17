@@ -11,9 +11,12 @@
 	boolean bmgr ="true".equals(request.getParameter("mgr")) ;
 	
 	String drv = request.getParameter("drv") ;
+	if(drv==null)
+		drv="" ;
 	DevDriver limit_drv = null;
 	if(Convert.isNotNullEmpty(drv))
 		limit_drv = DevManager.getInstance().getDriver(drv) ;
+	boolean hide_drv = "true".equals(request.getParameter("hide_drv")) ;
 %><html>
 <head>
 <title></title>
@@ -50,6 +53,10 @@ background-color: #eeeeee
 <body marginwidth="0" marginheight="0">
 <table width='100%' height='99%'>
  <tr>
+ <%
+ if(null==limit_drv || !hide_drv)
+ {
+ %>
   <td valign="top" width="25%">
  Drivers
    <select id='var_drv' multiple="multiple" style="width: 100%;height: 100%" onchange="drv_sel_chg()">
@@ -67,10 +74,13 @@ background-color: #eeeeee
 	 }
  else
  {
-%><option value="<%=limit_drv.getName() %>"><%=limit_drv.getTitle() %></option><%
+%><option value="<%=limit_drv.getName() %>" selected="selected"><%=limit_drv.getTitle() %></option><%
  }
  %>   </select>
   </td>
+<%
+ }
+%>
  <td valign="top" width="25%">Category
  <%
  if(bmgr)
@@ -126,13 +136,16 @@ background-color: #eeeeee
 </table>
  
 <script>
-
-var cur_drv = null ;
+var hide_drv = <%=hide_drv%>
+var cur_drv = "<%=drv%>" ;
+var cur_drv_tt = "<%=limit_drv.getTitle()%>" ;
 var cur_catid = null ;
 var bmgr=<%=bmgr%>;
 
 function get_cur_drv_name_title()
 {
+	if(hide_drv)
+		return [cur_drv,cur_drv_tt] ;
 	var vv = $("#var_drv").val() ;
 	var tt =  $("#var_drv option:selected").text() ;
 	if(vv==null||vv==undefined||vv==""||vv.length==0)
@@ -157,7 +170,7 @@ function get_cur_cat_name_title()
 	return [catid,cattt] ;
 }
 
-function get_cur_catid()
+function get_cur_cat_name()
 {
 	return get_cur_cat_name_title()[0];
 }
@@ -274,6 +287,8 @@ var table = null ;
 
 var cur_selected = null ;
 
+//var on_devdef_selected = null ;
+
 layui.use('table', function()
 {
   table = layui.table;
@@ -325,6 +340,8 @@ layui.use('table', function()
 		  //console.log(vv) ;
 		  cur_selected.cat_name=vv.cat ;
 		  cur_selected.cat_title=vv.cat_tt ;
+		  if(parent.on_devdef_selected)
+			  parent.on_devdef_selected(cur_selected) ;
 		  $("#selected_prompt").html("you select:"+data.t)
 	  }
 	});
@@ -482,6 +499,8 @@ function add_devdef()
 			]);
 }
 
+
+drv_sel_chg();
 
 </script>
 

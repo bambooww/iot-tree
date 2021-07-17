@@ -325,6 +325,11 @@ public abstract class ConnProvider implements IXmlDataValidator
 	public void setConnPtByJson(String jsonstr) throws Exception
 	{
 		JSONObject jo = new JSONObject(jsonstr) ;
+		setConnPtByJson(jo);
+	}
+	
+	public ConnPt setConnPtByJson(JSONObject jo) throws Exception
+	{
 		String id = jo.getString("id") ;
 		ConnPt cpt = this.getConnById(id) ;
 		boolean badd = false;
@@ -344,6 +349,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 		//inject
 		cpt.injectByJson(jo);
 		setConnPt(cpt) ;
+		return cpt ;
 	}
 	
 	public boolean delConnPt(String connid) throws Exception

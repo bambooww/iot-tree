@@ -100,7 +100,7 @@ public class Lang
 		}
 	}
 
-	String defaultLang = "cn";
+	String defaultLang = "en";
 
 	DataClass langDC = null;
 

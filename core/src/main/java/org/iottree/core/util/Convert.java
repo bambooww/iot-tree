@@ -505,22 +505,22 @@ public class Convert
 
 		return;
 	}
-	
+
 	public static boolean checkVarName(String n, StringBuilder invalidreson)
 	{
-		return checkVarName(n, true, invalidreson) ;
+		return checkVarName(n, true, invalidreson);
 	}
-	
-	public static void checkVarName(String n,boolean letterfirst)
+
+	public static void checkVarName(String n, boolean letterfirst)
 	{
 		StringBuilder sb = new StringBuilder();
-		if (!checkVarName(n,letterfirst, sb))
+		if (!checkVarName(n, letterfirst, sb))
 			throw new IllegalArgumentException(sb.toString());
 
 		return;
 	}
 
-	public static boolean checkVarName(String n, boolean letterfirst,StringBuilder invalidreson)
+	public static boolean checkVarName(String n, boolean letterfirst, StringBuilder invalidreson)
 	{
 		if (n == null || n.equals(""))
 		{
@@ -529,7 +529,7 @@ public class Convert
 		}
 
 		char c1 = n.charAt(0);
-		if(letterfirst)
+		if (letterfirst)
 		{
 			boolean bc1 = (c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z');
 			if (!bc1)
@@ -561,22 +561,23 @@ public class Convert
 		}
 		return true;
 	}
-	
+
 	/**
-	 * chk string cannot contains '"\/<>& 
+	 * chk string cannot contains '"\/<>&
+	 * 
 	 * @param title
 	 * @return
 	 */
-	public static boolean checkVarTitle(String title,StringBuilder failedr)
+	public static boolean checkVarTitle(String title, StringBuilder failedr)
 	{
 		final String INVALID_CS = "\'\"\\/<>&";
 		final int len = INVALID_CS.length();
-		for(int i = 0 ; i < len ; i ++)
+		for (int i = 0; i < len; i++)
 		{
-			char c = INVALID_CS.charAt(i) ;
-			if(title.indexOf(c)>=0)
+			char c = INVALID_CS.charAt(i);
+			if (title.indexOf(c) >= 0)
 			{
-				failedr.append("cannot contains ").append(INVALID_CS) ;
+				failedr.append("cannot contains ").append(INVALID_CS);
 				return false;
 			}
 		}
@@ -723,8 +724,7 @@ public class Convert
 					sb.append(tmpbc);
 			}
 			return sb.toString();
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			return s;
 		}
@@ -766,7 +766,6 @@ public class Convert
 	// return s;
 	// }
 	// }
-
 
 	/**
 	 * 得到某一年的起始时间和结束时间
@@ -981,23 +980,23 @@ public class Convert
 				}
 			}
 			return ret;
-		}
-		catch (IOException ioe)
+		} catch (IOException ioe)
 		{
 			return ret;
 		}
 	}
 
-	public static String transMapToPropStr(HashMap<String,String> mp)
+	public static String transMapToPropStr(HashMap<String, String> mp)
 	{
-		StringBuilder ret = new  StringBuilder() ;
-		for(Map.Entry<String, String> n2v:mp.entrySet())
+		StringBuilder ret = new StringBuilder();
+		for (Map.Entry<String, String> n2v : mp.entrySet())
 		{
-			ret.append(n2v.getKey()+"="+n2v.getValue()+"\r\n") ;
+			ret.append(n2v.getKey() + "=" + n2v.getValue() + "\r\n");
 		}
-		
-		return ret.toString() ;
+
+		return ret.toString();
 	}
+
 	/**
 	 * 从流中读取字典映射
 	 * 
@@ -1087,47 +1086,47 @@ public class Convert
 		return ret;
 	}
 
-//	public static void sort(List<?> ll)
-//	{
-//		if (ll == null)
-//			return;
-//
-//		if (ll.size() <= 0)
-//			return;
-//
-//		Comparable<?>[] ss = new Comparable[ll.size()];
-//
-//		ll.toArray(ss);
-//
-//		Arrays.sort(ss);
-//
-//		ll.clear();
-//		for (Comparable<?> c : ss)
-//		{
-//			ll.add(c);
-//		}
-//	}
-//
-//	public static void sort(List ll, Comparator cp)
-//	{
-//		if (ll == null)
-//			return;
-//
-//		if (ll.size() <= 0)
-//			return;
-//
-//		Object[] ss = new Object[ll.size()];
-//
-//		ll.toArray(ss);
-//
-//		Arrays.sort(ss, cp);
-//
-//		ll.clear();
-//		for (Object c : ss)
-//		{
-//			ll.add(c);
-//		}
-//	}
+	// public static void sort(List<?> ll)
+	// {
+	// if (ll == null)
+	// return;
+	//
+	// if (ll.size() <= 0)
+	// return;
+	//
+	// Comparable<?>[] ss = new Comparable[ll.size()];
+	//
+	// ll.toArray(ss);
+	//
+	// Arrays.sort(ss);
+	//
+	// ll.clear();
+	// for (Comparable<?> c : ss)
+	// {
+	// ll.add(c);
+	// }
+	// }
+	//
+	// public static void sort(List ll, Comparator cp)
+	// {
+	// if (ll == null)
+	// return;
+	//
+	// if (ll.size() <= 0)
+	// return;
+	//
+	// Object[] ss = new Object[ll.size()];
+	//
+	// ll.toArray(ss);
+	//
+	// Arrays.sort(ss, cp);
+	//
+	// ll.clear();
+	// for (Object c : ss)
+	// {
+	// ll.add(c);
+	// }
+	// }
 
 	/**
 	 * 根据jsp页面中的http请求获得页面对应的相关模块（构件）名称
@@ -1159,7 +1158,6 @@ public class Convert
 		return r;
 	}
 
-
 	public static String encodeHexUrl(String pv)
 	{
 		if (pv == null)
@@ -1172,8 +1170,7 @@ public class Convert
 		{
 			byte[] buf = pv.getBytes("UTF-8");
 			return "=h=" + Convert.byteArray2HexStr(buf);
-		}
-		catch (UnsupportedEncodingException ee)
+		} catch (UnsupportedEncodingException ee)
 		{
 			throw new RuntimeException(ee.getMessage());
 		}
@@ -1193,8 +1190,7 @@ public class Convert
 			try
 			{
 				return new String(buf, "UTF-8");
-			}
-			catch (UnsupportedEncodingException ee)
+			} catch (UnsupportedEncodingException ee)
 			{
 				throw new RuntimeException(ee.getMessage());
 			}
@@ -1211,8 +1207,7 @@ public class Convert
 					return s;
 
 				return URLDecoder.decode(URLDecoder.decode(hexu, "US-ASCII"), "UTF-8");
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				throw new RuntimeException(e.getMessage());
 			}
@@ -1249,8 +1244,7 @@ public class Convert
 					return s;
 
 				return URLDecoder.decode(URLDecoder.decode(u, "US-ASCII"), "UTF-8");
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				// throw new RuntimeException(e.getMessage());
 				return s;
@@ -1622,8 +1616,7 @@ public class Convert
 
 		return rets;
 	}
-	
-	
+
 	public static LinkedList<String> splitStrWithLinkedList(String str, String delimi)
 	{
 		if (isNullOrEmpty(str))
@@ -1636,34 +1629,35 @@ public class Convert
 
 		return rets;
 	}
-	
+
 	/**
 	 * 支持空字符串输出，如果切割符合前端或中间为空字符串，也输出
+	 * 
 	 * @param str
 	 * @param delimi
 	 * @param has_empty
 	 * @return
 	 */
-	public static List<String> splitStrWith(String str, String delimi,boolean has_empty)
+	public static List<String> splitStrWith(String str, String delimi, boolean has_empty)
 	{
 		if (isNullOrEmpty(str))
 			return null;
 
 		ArrayList<String> rets = new ArrayList<String>();
-		StringTokenizer st = new StringTokenizer(str, delimi,true);
+		StringTokenizer st = new StringTokenizer(str, delimi, true);
 		boolean last_t = false;
 		while (st.hasMoreTokens())
 		{
-			String nt = st.nextToken() ;
-			if(nt.length()==1&&delimi.contains(nt))
-			{//本次输出为分割符
-				if(last_t)
-				{//上一次已经是切分串，不做任何处理
+			String nt = st.nextToken();
+			if (nt.length() == 1 && delimi.contains(nt))
+			{// 本次输出为分割符
+				if (last_t)
+				{// 上一次已经是切分串，不做任何处理
 					last_t = false;
 				}
 				else
-				{//上一次是分隔符，此次还是，则加入一个空字符串
-					rets.add("") ;
+				{// 上一次是分隔符，此次还是，则加入一个空字符串
+					rets.add("");
 				}
 			}
 			else
@@ -2004,13 +1998,13 @@ public class Convert
 	{
 		if (!f.exists() || f.isDirectory())
 			return null;
-		
+
 		HashMap<String, String> ret = new HashMap<String, String>();
-		try(FileInputStream fis = new FileInputStream(f);
+		try (FileInputStream fis = new FileInputStream(f);
 				InputStreamReader isr = new InputStreamReader(fis);
 				BufferedReader br = new BufferedReader(isr);)
 		{
-			
+
 			String ln = null;
 			while ((ln = br.readLine()) != null)
 			{
@@ -2024,12 +2018,10 @@ public class Convert
 				else
 					ret.put(ln, "");
 			}
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			return null;
 		}
-		
 
 		return ret;
 	}
@@ -2039,10 +2031,9 @@ public class Convert
 		if (!f.getParentFile().exists())
 			f.getParentFile().mkdirs();
 
-		try(FileOutputStream fos = new FileOutputStream(f);
+		try (FileOutputStream fos = new FileOutputStream(f);
 				OutputStreamWriter w = new OutputStreamWriter(fos, "UTF-8");)
 		{
-			
 
 			if (pnv != null)
 			{
@@ -2195,14 +2186,14 @@ public class Convert
 	 */
 	public static String readFileTxt(File f, String encod) throws IOException
 	{
-		byte[] bs = readFileBuf(f) ;
-			if (Convert.isNullOrEmpty(encod))
-				return new String(bs);
-			else
-				return new String(bs, encod);
+		byte[] bs = readFileBuf(f);
+		if (Convert.isNullOrEmpty(encod))
+			return new String(bs);
+		else
+			return new String(bs, encod);
 	}
-	
-	public static byte[] readFileBuf(File f)throws IOException
+
+	public static byte[] readFileBuf(File f) throws IOException
 	{
 		if (f.length() > 10485760)
 			throw new RuntimeException("file is too long");
@@ -2212,32 +2203,32 @@ public class Convert
 			int size = fis.available();
 			byte[] buffer = new byte[size];
 			fis.read(buffer);
-			return buffer ;
+			return buffer;
 		}
 	}
-	
-	public static List<String> readFileTxtLines(File f,String encod) throws IOException
+
+	public static List<String> readFileTxtLines(File f, String encod) throws IOException
 	{
 		if (f.length() > 10485760)
 			throw new RuntimeException("file is too long");
-		
-		ArrayList<String> ss = new ArrayList<>() ;
+
+		ArrayList<String> ss = new ArrayList<>();
 		try (FileInputStream fis = new FileInputStream(f);)
 		{
 			InputStreamReader isr = null;
 			if (Convert.isNullOrEmpty(encod))
 				isr = new InputStreamReader(fis);
 			else
-				isr = new InputStreamReader(fis,encod) ;
-			
+				isr = new InputStreamReader(fis, encod);
+
 			BufferedReader br = new BufferedReader(isr);
-			String ln ;
-			while((ln=br.readLine())!=null)
+			String ln;
+			while ((ln = br.readLine()) != null)
 			{
-				ln=ln.trim() ;
-				if(ln.contentEquals("")||ln.startsWith("#"))
-					continue ;
-				ss.add(ln) ;
+				ln = ln.trim();
+				if (ln.contentEquals("") || ln.startsWith("#"))
+					continue;
+				ss.add(ln);
 			}
 		}
 		return ss;
@@ -2306,43 +2297,60 @@ public class Convert
 			throw new IllegalArgumentException(message);
 		}
 	}
-	
+
 	/**
 	 * jsp中用来支持判断request参数是否为空的判断支持
+	 * 
 	 * @param req
 	 * @param out
 	 * @param pns
 	 * @return
 	 */
-	public static boolean checkReqEmpty(HttpServletRequest req,Writer out,String ...pns)
-		throws IOException
+	public static boolean checkReqEmpty(HttpServletRequest req, Writer out, String... pns) throws IOException
 	{
-		for(String pn:pns)
+		for (String pn : pns)
 		{
 			String pv = req.getParameter(pn);
-			if(isNullOrEmpty(pv))
+			if (isNullOrEmpty(pv))
 			{
-				out.write("input "+pn+" is empty");
+				out.write("input " + pn + " is empty");
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	public static boolean checkReqEmpty(HttpServletRequest req,String errinf,Writer out,String ...pns)
+
+	public static boolean checkReqEmpty(HttpServletRequest req, String errinf, Writer out, String... pns)
 			throws IOException
+	{
+		for (String pn : pns)
 		{
-			for(String pn:pns)
+			String pv = req.getParameter(pn);
+			if (isNullOrEmpty(pv))
 			{
-				String pv = req.getParameter(pn);
-				if(isNullOrEmpty(pv))
+				out.write(errinf);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean deleteDir(File dir)
+	{
+		if (dir.isDirectory())
+		{
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++)
+			{
+				boolean success = deleteDir(new File(dir, children[i]));
+				if (!success)
 				{
-					out.write(errinf);
 					return false;
 				}
 			}
-			return true;
 		}
+		return dir.delete();
+	}
 
 	public static void main(String[] args) throws Exception
 	{
@@ -2357,8 +2365,7 @@ public class Convert
 			System.out.println("res=" + Convert.toDecimalDigitsStr(324.2321, 3));
 			System.out.println("res=" + Convert.toDecimalDigitsStr(234658.34543333, 4));
 			System.out.println("res=" + Convert.toDecimalDigitsStr(234658.34543778E5, 2));
-		}
-		catch (Exception eee)
+		} catch (Exception eee)
 		{
 			eee.printStackTrace();
 		}

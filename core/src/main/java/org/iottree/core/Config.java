@@ -336,6 +336,13 @@ public class Config
 		
 	}
 	
+	public static File getDataBackupDir()
+	{
+		String dir = getDataDirBase()+"backup/" ;
+		File r= new File(dir) ;
+		return r ;
+	}
+	
 	public static String getDataTmpDir()
 	{
 		return getDataDirBase()+"tmp/" ;

@@ -7,11 +7,15 @@
 	java.util.*,
 	java.net.*,
 	java.util.*"%><%
-if(!Convert.checkReqEmpty(request, out, "id"))
+if(!Convert.checkReqEmpty(request, out, "drvn","catn"))
 	return;
-String id = request.getParameter("id") ;
+String drvn = request.getParameter("drvn") ;
+String catn = request.getParameter("catn") ;
 
-File fout =UAManager.getInstance().exportPrjToTmp(id) ;
+
+File fout =DevManager.getInstance().exportDevCatToTmp(drvn, catn) ;
+if(fout==null)
+	return ;
 try(FileInputStream fis = new FileInputStream(fout);)
 {
 	WebRes.renderFile(response, fout.getName(), fis) ;

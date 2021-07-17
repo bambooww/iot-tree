@@ -224,27 +224,14 @@ public class UAManager implements IResCxt
 		File df = getPrjFileSubDir(id) ;
 		if(df.exists())
 		{
-			deleteDir(df) ;
+			Convert.deleteDir(df) ;
 		}
 		
 		this.reps.remove(prj) ;
 	}
 	
-	private static boolean deleteDir(File dir) {
-        if (dir.isDirectory())
-        {
-            String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        return dir.delete();
-    }
 	
-	public UAPrj addRep(String name,String title,String desc) throws Exception
+	public UAPrj addPrj(String name,String title,String desc) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,sb))

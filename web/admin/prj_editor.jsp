@@ -10,9 +10,9 @@
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return ;
 	//String op = request.getParameter("op");
-	String repid = request.getParameter("id");
+	String prjid = request.getParameter("id");
 	//String id = request.getParameter("id");
-	UAPrj rep = UAManager.getInstance().getPrjById(repid);
+	UAPrj rep = UAManager.getInstance().getPrjById(prjid);
 	if(rep==null)
 	{
 		out.print("no prj found!");
@@ -596,7 +596,8 @@ background-color: #fff ;
         </div>
     </div>
 <script>
-var repid="<%=repid%>";
+var repid="<%=prjid%>";
+var prjid="<%=prjid%>";
 var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
 
 var connpro_menu = [
@@ -690,20 +691,29 @@ function on_conn_ui_showed()
 	        		var cpid = $(this).attr("cp_id");
 	        		var cptp = $(this).attr("cp_tp");
 	        		var brun = $(this).attr("cp_run")=='true';
-	        		var tt = "Start" ;
+	        		var tt = "<i class='fa fa-play'></i> Start" ;
 	        		if(brun)
-	        			tt = "Stop" ;
+	        			tt = "<i class='fa fa-stop'></i> Stop" ;
 					d.push({ content : tt, callback:()=>{
 							rt_cp_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
-					d.push({content:'Add Connection',callback:()=>{
+					d.push({content:'<i class="fa fa-link"></i> Add Connection',callback:()=>{
 						edit_cpt(cptp,cpid,"") ;
 					}});
-					d.push({content:'sm_divider'});
-					d.push({ content : 'Edit Connector', callback:()=>{
+					
+					d.push({ content : '<i class="fa fa-pencil"></i> Edit Connector', callback:()=>{
 						edit_cp(cptp,cpid) ;
 					}});
+					if(cptp=='tcp_server')
+					{
+						d.push({content:'sm_divider'});
+						d.push({ content : '<i class="fa fa-magic"></i> Config Wizard', callback:()=>{
+							config_wizard(cptp,cpid) ;
+						}});
+					}
+					
+					d.push({content:'sm_divider'});
 					d.push({ content : '<i class="fa fa-times"></i> Delete Connector', callback:()=>{
 						del_cp(cpid);
 					}}) ;
@@ -730,9 +740,9 @@ function on_conn_ui_showed()
 	        		var cptp = $(this).attr("cp_tp");
 	        		var connid = $(this).attr("conn_id");
 	        		var brun = $(this).attr("conn_ready")=='true';
-	        		var tt = "Start" ;
+	        		var tt = "<i class='fa fa-play'></i> Start" ;
 	        		if(brun)
-	        			tt = "Stop" ;
+	        			tt = "<i class='fa fa-stop'></i> Stop" ;
 					d.push({ content : tt, callback:()=>{
 							rt_cpt_start_stop(cpid);
 						}});
@@ -941,6 +951,8 @@ function act_node_paste(n,op)
 	
 }
 
+
+
 function edit_cp(cptp,cpid)
 {
 	dlg.open_win("conn/cp_edit_"+cptp+".jsp?repid="+repid+"&cpid="+cpid,
@@ -1018,6 +1030,44 @@ function del_cp(cpid)
 			dlg.msg(err);
 		});
 	})) ;
+}
+
+function config_wizard(cptp,cpid)
+{
+	dlg.open("conn/wizard_ash_to_ch.jsp?prjid="+prjid+"&cpid="+cpid,
+			{title:"generation of connector and channel Wizard",w:'500px',h:'400px'},
+			['Generate','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						
+						ret.prjid=prjid;
+						ret.cpid = cpid ;
+						let pm = {jsontxt:JSON.stringify(ret)} ;
+						send_ajax('conn/wizard_ash_to_ch_ajax.jsp',pm,function(bsucc,ret)
+						{
+							if(!bsucc || ret.indexOf('succ')<0)
+							{
+								dlg.msg(""+ret);
+								return ;
+							}
+							dlg.msg(ret);
+							dlg.close();
+							refresh_ui() ;
+						},false);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function set_connprovider(jo,cb)

@@ -201,9 +201,11 @@ public abstract class ConnPt implements IXmlDataValidator
 		if(Convert.isNotNullEmpty(id))
 			this.id = id ; 
 		this.name = jo.getString("name") ;
-		this.title = jo.getString("title") ;
-		this.desc = jo.getString("desc") ;
-		this.bEnable = jo.getBoolean("enable") ;
+		this.title = jo.optString("title") ;
+		if(Convert.isNullOrEmpty(this.title))
+			this.title = this.name;
+		this.desc = jo.optString("desc") ;
+		this.bEnable = jo.optBoolean("enable") ;
 		if(Convert.isNullOrEmpty(name))
 			throw new Exception("input json must has name param") ;
 		StringBuilder sb = new StringBuilder() ;

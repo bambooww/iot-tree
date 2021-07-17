@@ -194,7 +194,9 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 					        	<span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x"></i>
-							</span>&nbsp;&nbsp; Import</a>
+							</span>&nbsp;&nbsp; Import
+							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
+							</a>
 					        	&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_export()">
 							<span class="fa-stack">
@@ -406,25 +408,6 @@ function comp_cat_import()
 	
 }
 
-
-function devdef_cat_export()
-{
-	var w = document.getElementById("devdef_lister").contentWindow ;
-	if(!w||!w.get_sel_cat_ids)
-	{
-		dlg.msg("no comp cat selected") ;
-		return ;
-	}
-	var catids = w.get_sel_cat_ids() ;
-	if(catids==null||catids.length==0)
-	{
-		dlg.msg("please select component catetory");
-		return ;
-	}
-		
-	window.open("./ua_hmi/comp_lib_export.jsp?catid="+catids[0]) ;
-}
-
 function exp_prj(id)
 {
 	window.open("./ua/prj_export.jsp?id="+id) ;
@@ -498,6 +481,101 @@ function imp_prj()
 {
 	add_file.click() ;
 }
+
+
+
+function devdef_cat_export()
+{
+	var w = document.getElementById("devdef_lister").contentWindow ;
+	
+	var drvnt = w.get_cur_drv_name_title();
+	if(drvnt==null)
+	{
+		dlg.msg("no Driver selected") ;
+		return;
+	}
+	var catname = w.get_cur_cat_name() ;
+	if(catname==null||catname=="")
+	{
+		dlg.msg("please select Device Definition Category catetory");
+		return ;
+	}
+		
+	window.open("./dev/cat_export.jsp?drvn="+drvnt[0]+"&catn="+catname) ;
+}
+
+
+
+function devdef_cat_import()
+{
+	devlib_add_file.click();
+}
+
+
+function devlib_before_imp(tmpfn)
+{
+
+	dlg.open("dev/cat_import.jsp?tmpfn="+tmpfn,
+			{title:"Import Device Definition",w:'500px',h:'400px'},
+			['Do Import','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 //enable_btn(true);
+							 return;
+						 }
+						 //console.log(ret);
+						 dlg.msg(ret) ;
+						 
+						 var w = document.getElementById("devdef_lister").contentWindow ;
+						 w.drv_sel_chg();
+						 dlg.close();
+						 
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function devlib_add_file_onchg()
+{
+	//$("#"+id).
+	var fs = $("#devlib_add_file")[0].files ;
+	if(fs==undefined||fs==null||fs.length<=0)
+	{
+		return ;
+	}
+	var f = fs[0];
+
+	//upload
+	var fd = new FormData();
+    //fd.append("cxtid",cur_cxtid) ;
+    fd.append("file",f);
+     $.ajax({"url": "dev/cat_imp_upload.jsp",type: "post","processData": false,"contentType": false,
+		"data": fd,
+		success: function(data)
+       	{
+ 	  		//dlg.msg(data);
+ 	  		//document.location.href=document.location.href;
+ 	  		if(data.indexOf("succ=")==0)
+ 	  			devlib_before_imp(data.substring(5)) ;
+ 	  		else
+ 	  			dlg.msg(data) ;
+   　  },
+      　error: function(data)
+         {
+  				dlg.msg("upload failed");
+　　　}
+  　　});
+}
+
 
 function logout()
 {

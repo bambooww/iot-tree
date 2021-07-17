@@ -9,6 +9,8 @@
   <dd_node id="1001" name="delete" name_cn="删除" name_en="Delete" />
   <dd_node id="1001" name="new_dev" name_cn="新增设备" name_en="New Device" />
   <dd_node id="1001" name="add_dev" name_cn="新增设备" name_en="Add Device" />
+  <dd_node id="1001" name="edit_dev" name_cn="编辑设备" name_en="Edit Device" />
+  <dd_node id="1001" name="refresh_dev" name_cn="刷新设备" name_en="Refresh Device" />
     
   <dd_node id="1001" name="new_tag" name_cn="新增标签" name_en="New Tag" />
   <dd_node id="1001" name="new_tag_group" name_cn="新增标签组" name_en="New Tag Group" />
@@ -22,6 +24,15 @@
   <dd_node id="1004" name="ok" name_cn="确认" name_en="Ok"/>  
   <dd_node id="1004" name="cancel" name_cn="关闭" name_en="Cancel"/> 
   <dd_node id="1004" name="pls_input" name_cn="请输入" name_en="Please input "/>
-  <dd_node id="1004" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/> 
+  <dd_node id="1004" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/>
+  
+  <dd_node id="1004" name="select_drv" name_cn="选择驱动" name_en="Select Driver"/>
+  
+  <dd_node id="1004" name="edit_ch" name_cn="编辑通道" name_en="Edit Channel"/>
+  
+  <dd_node id="1004" name="start" name_cn="启动" name_en="Start"/>
+  <dd_node id="1004" name="stop" name_cn="停止" name_en="Stop"/>
+  <dd_node id="1004" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
+    
   
 </dd_class>
