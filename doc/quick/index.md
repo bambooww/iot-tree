@@ -35,6 +35,7 @@
 
 [查看详细][qn_conn_tcpserver]
 
+
 ## 5 快速了解交互UI(HMI)
 
 IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的定义、在线编辑和层次包含引用。
@@ -56,7 +57,7 @@ IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的
 [qn_devdef]: ./quick_know_devdef.md
 [qn_hmi]: ./quick_know_hmi.md
 [qn_server]: ./quick_know_server.md
+[qn_conn_tcpserver]: ./quick_know_tcpserver_connector.md
 
-[qn_conn_tcpserver]: ./quick_know_connector_tpcserver.md
 [advanced_link]: ../advanced/index.md
 
