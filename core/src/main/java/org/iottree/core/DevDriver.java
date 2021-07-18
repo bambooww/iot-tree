@@ -103,6 +103,18 @@ public abstract class DevDriver  implements IPropChecker
 		return dc;
 	}
 	
+	public void delDevCat(String catid)
+	{
+		DevCat dc=  this.getDevCatById(catid) ;
+		if(dc==null)
+			return ;
+		File catdir = dc.getDevCatDir() ;
+		if(!catdir.exists())
+			return ;
+		Convert.deleteDir(catdir) ;
+		this.getDevCats().remove(dc) ;
+	}
+	
 	public DevDef getDevDefById(String id)
 	{
 		for(DevCat dc:getDevCats())

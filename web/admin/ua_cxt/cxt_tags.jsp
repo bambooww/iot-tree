@@ -151,8 +151,15 @@ for(UATag tag:cur_tags)
         <td><%=tag.getValTp() %></td>
         <td><%=(tag.isCanWrite()?"✔":"") %></td>
         <td>
+<%
+if(!brefed)
+{
+%>
         <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
         <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
+<%
+}
+%>
         </td>
       </tr>
 <%

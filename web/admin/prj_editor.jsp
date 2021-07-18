@@ -1050,8 +1050,11 @@ function config_wizard(cptp,cpid)
 						ret.prjid=prjid;
 						ret.cpid = cpid ;
 						let pm = {jsontxt:JSON.stringify(ret)} ;
+						
+						dlg.loading(true);
 						send_ajax('conn/wizard_ash_to_ch_ajax.jsp',pm,function(bsucc,ret)
 						{
+							dlg.loading(false);
 							if(!bsucc || ret.indexOf('succ')<0)
 							{
 								dlg.msg(""+ret);

@@ -7,9 +7,14 @@
 				org.iottree.core.util.*
 				"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "drv","cat","id"))
+	if(!Convert.checkReqEmpty(request, out, "drv","id"))
 		return ;
 	String catname = request.getParameter("cat");
+	if(catname==null)
+		catname="" ;
+	String catid = request.getParameter("catid");
+	if(catid==null)
+		catid="" ;
 	String drvname = request.getParameter("drv");
 	String id = request.getParameter("id");
 	DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
@@ -18,7 +23,11 @@
 		out.print("no driver found") ;
 		return ;
 	}
-	DevCat cat = dd.getDevCatByName(catname) ;
+	DevCat cat = null;
+	if(Convert.isNotNullEmpty(catname))
+		cat = dd.getDevCatByName(catname) ;
+	else if(Convert.isNotNullEmpty(catid))
+		cat = dd.getDevCatById(catid);
 	if(cat==null)
 	{
 		out.print("no cat found") ;
@@ -454,6 +463,7 @@ background-color: #ffffff;
 <script>
 var drv_name="<%=drvname%>";
 var cat_name="<%=catname%>";
+var cat_id="<%=catid%>";
 var id="<%=id%>";
 
 var layuiEle ;
@@ -518,7 +528,7 @@ function on_tree_node_selected(tn)
 
 var ua_tree = new UATree({
 		eleid:"tree",
-		data_url:"devdef_tree_ajax.jsp?drv="+drv_name+"&cat="+cat_name+"&id="+id,
+		data_url:"devdef_tree_ajax.jsp?drv="+drv_name+"&cat="+cat_name+"&catid="+cat_id+"&id="+id,
 		cxt_menu:cxt_menu,
 		on_selected:on_tree_node_selected
 		}) ;

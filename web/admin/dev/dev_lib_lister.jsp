@@ -17,6 +17,9 @@
 	if(Convert.isNotNullEmpty(drv))
 		limit_drv = DevManager.getInstance().getDriver(drv) ;
 	boolean hide_drv = "true".equals(request.getParameter("hide_drv")) ;
+	String drv_tt = "" ;
+	if(limit_drv!=null)
+		drv_tt = limit_drv.getTitle();
 %><html>
 <head>
 <title></title>
@@ -87,6 +90,7 @@ background-color: #eeeeee
  {
  %> 
    <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
+   <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="del_cat()">Delete</button>
 <%
  }
 %>
@@ -138,7 +142,7 @@ background-color: #eeeeee
 <script>
 var hide_drv = <%=hide_drv%>
 var cur_drv = "<%=drv%>" ;
-var cur_drv_tt = "<%=limit_drv.getTitle()%>" ;
+var cur_drv_tt = "<%=drv_tt%>" ;
 var cur_catid = null ;
 var bmgr=<%=bmgr%>;
 
@@ -157,7 +161,7 @@ function get_cur_drv_name_title()
 	return [vv,tt] ;
 }
 
-function get_cur_cat_name_title()
+function get_cur_cat_id_title()
 {
 	var catid = $("#var_cat").val() ;
 	var cattt =  $("#var_cat option:selected").text() ;
@@ -172,7 +176,7 @@ function get_cur_cat_name_title()
 
 function get_cur_cat_name()
 {
-	return get_cur_cat_name_title()[0];
+	return get_cur_cat_id_title()[0];
 }
 
 
@@ -201,7 +205,7 @@ function drv_sel_chg()
 		var tmps = "" ;
 		for(var a of ret)
 		{
-			tmps += "<option value='"+a.n+"'>"+a.t+"-["+a.n+"]</option>";
+			tmps += "<option value='"+a.id+"'>"+a.t+"-["+a.n+"]</option>";
 		}
 		$("#var_cat").html(tmps) ;
 	}).fail(function(req, st, err) {
@@ -258,6 +262,29 @@ function add_cat()
 				}
 			]);
 }
+
+function del_cat()
+{
+	var drv_cat = get_cur_drv_cat() ;
+	if(drv_cat==null)
+	{
+		dlg.msg("please select driver and category");
+		return ;
+	}
+	var drv = drv_cat.drv ;
+	var catid  = drv_cat.cat ;
+
+	if(dlg.confirm("Deleting the category will delete all the devices below. Are you sure?",null,()=>{
+		send_ajax("../dev/cat_ajax.jsp",{drv:drv,op:'del',catid:catid},(bsucc,ret)=>{
+			if(!bsucc||ret!='succ')
+			{
+				dlg.msg(ret) ;
+				return ;
+			}
+			drv_sel_chg() ;
+		});
+	})) ;
+}
 					
 function get_cur_drv_cat()
 {
@@ -265,7 +292,7 @@ function get_cur_drv_cat()
 	if(n_t==null)
 		return null;
 	var drv = n_t[0] ;
-	var catnt = get_cur_cat_name_title();
+	var catnt = get_cur_cat_id_title();
 	if(catnt==null)
 		return null;
 	var catn  = catnt[0] ;
@@ -326,7 +353,7 @@ layui.use('table', function()
 	  else if(lay_evt==='devdef_edit')
 	  {
 		  var vv = get_cur_drv_cat()
-		  window.open("devdef_editor.jsp?drv="+vv.drv+"&cat="+vv.cat+"&id="+data.id) ;
+		  window.open("devdef_editor.jsp?drv="+vv.drv+"&catid="+vv.cat+"&id="+data.id) ;
 	  }
 	  else if(lay_evt==='devdef_sel')
 	  {
@@ -369,7 +396,7 @@ function show_table()
 	table.render({
 	    elem: '#tb_devdefs'
 	    ,height: "full-120"
-	    ,url: 'devdef_ajax.jsp?op=list_tb&drv='+drv_cat.drv+'&cat='+drv_cat.cat+"&mgr="+bmgr
+	    ,url: 'devdef_ajax.jsp?op=list_tb&drv='+drv_cat.drv+'&catid='+drv_cat.cat+"&mgr="+bmgr
 	    ,page0: {layout:['prev', 'page', 'next'],limit:10,theme:"#c00"} //open page
 	    ,cols: [[ //head
 	    	{field: 'n', title: 'Name', width:'40%'}
@@ -401,35 +428,6 @@ else
 	  });
 }
 
-function list_devdefs0()
-{
-	var pm = {
-			type : 'post',
-			url : "./devdef_ajax.jsp",
-			data :{op:"list",drv:cur_drv,cat:catn}
-		};
-	$.ajax(pm).done((ret)=>{
-		if(typeof(ret)=='string')
-		{
-			if(ret.indexOf("[")!=0)
-			{
-				dlg.msg(ret) ;
-				return ;
-			}
-			eval("ret="+ret) ;
-		}
-		var tmps = "" ;
-		for(var a of ret)
-		{
-			tmps += "<div id='"+a.id+"' class0=\"toolbarbtn\" style=\"text-align:center;width:50px;height:60px;border:solid 1px\" onclick=\"devdef_clk('"+a.id+"')\" >"
-			+"<div id='panel_"+a.id+"' style='background-color: #2f2f2f;width:40px;height:40px'></div>"
-			+"<div >"+a.t+"</div></div>";
-		}
-		$("#var_devdefs").html(tmps) ;
-	}).fail(function(req, st, err) {
-		dlg.msg(err);
-	});
-}
 
 function refresh_table()
 {
@@ -450,7 +448,7 @@ function add_devdef()
 		return;
 	}
 	var drv = n_t[0] ;
-	var catnt = get_cur_cat_name_title() ;
+	var catnt = get_cur_cat_id_title() ;
 	if(catnt==null)
 	{
 		dlg.msg("please select a category!");

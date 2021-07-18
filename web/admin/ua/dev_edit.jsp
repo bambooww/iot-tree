@@ -93,7 +93,7 @@ dlg.resize_to(600,400);
 	  </div>
   </div>
      <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:lang>device</wbt:lang>:</label>
+    <label class="layui-form-label">Device:</label>
     <div class="layui-input-inline">
       <input type="hidden" id="devdef_id" name="devdef_id"  value="<%=ddid%>"/>
       <input type="text" id="devdef_tt" name="devdef_tt" value="<%=ddtt %>" readonly="readonly"  value=""   lay-verify="required" autocomplete="off" class="layui-input">
@@ -103,7 +103,7 @@ dlg.resize_to(600,400);
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
     <div class="layui-input-block">
-      <textarea name="desc" id="desc" placeholder="<wbt:lang>pls_input</wbt:lang><wbt:lang>description</wbt:lang>" class="layui-textarea"><%=desc %></textarea>
+      <textarea name="desc" id="desc"  class="layui-textarea"><%=desc %></textarea>
     </div>
   </div>
 </form>

@@ -65,11 +65,13 @@ Project->Channel->Device->Tag Group*->TagGroup*
 如果你了解了本部分内容。那么你后续对IOT-Tree Server其他部分的理解就省心了。
 IOT-Tree Server看似复杂，其实整体思路还是很简洁的。只要牢牢抓住这颗“树”，你会发现她是多么简单，同时又能满足你的复杂业务需求。
 
-# 4 补充
-# 4.1 接入-通道-驱动之间的关系
+## 4 补充
+### 4.1 接入-通道-驱动之间的关系
 IOT-Tree基于本文所说的树形结构的基础之上，还有两个概念比较重要。那就是围绕通道(Channel)关联的接入和设备驱动。
  
 详细内容请点击查看
 [接入(Connector)-通道(Channel)-驱动(Driver)之间的关系][cn_conn_drv]
+
+### 4.2 设备定义
 
 [cn_conn_drv]: ./quick_know_ch_conn_drv.md

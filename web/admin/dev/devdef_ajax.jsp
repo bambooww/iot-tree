@@ -7,19 +7,25 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "drv","op","cat"))
+if(!Convert.checkReqEmpty(request, out, "drv","op"))
 	return ;
 boolean bmgr=  "true".equals(request.getParameter("mgr")) ;
 String op = request.getParameter("op");
 String drvname = request.getParameter("drv");
 String catname = request.getParameter("cat") ;
+String catid = request.getParameter("catid") ;
 DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
 if(dd==null)
 {
 	out.print("no driver found") ;
 	return ;
 }
-DevCat cat = dd.getDevCatByName(catname) ;
+
+DevCat cat = null;
+if(Convert.isNotNullEmpty(catname))
+	cat = dd.getDevCatByName(catname) ;
+else if(Convert.isNotNullEmpty(catid))
+	cat = dd.getDevCatById(catid) ;
 if(cat==null)
 {
 	out.print("no cat found") ;
@@ -48,7 +54,7 @@ case "edit":
 			DevDef ddef = cat.getDevDefById(id);
 			if(ddef==null)
 			{
-				out.print("no Device Definition found") ;
+				out.print("no device definition found") ;
 				break;
 			}
 			ddef.setDefNameTitle(name,title,desc) ;

@@ -34,6 +34,11 @@ case "add":
 case "chg":
 	break;
 case "del":
+	if(!Convert.checkReqEmpty(request, out, "catid"))
+		return ;
+	String catid = request.getParameter("catid") ;
+	dd.delDevCat(catid) ;
+	out.print("succ") ;
 	break;
 case "list":
 	List<DevCat> cats = dd.getDevCats() ;
@@ -45,7 +50,7 @@ case "list":
 			bfirst=false;
 		else
 			out.print(",");
-		out.print("{\"n\":\""+dc.getName() +"\",\"t\":\""+dc.getTitle() +"\"}");
+		out.print("{\"id\":\""+dc.getId()+"\",\"n\":\""+dc.getName() +"\",\"t\":\""+dc.getTitle() +"\"}");
 	}
 	out.print("]") ;
 	break ;

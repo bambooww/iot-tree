@@ -11,6 +11,7 @@
   <dd_node id="1001" name="add_dev" name_cn="新增设备" name_en="Add Device" />
   <dd_node id="1001" name="edit_dev" name_cn="编辑设备" name_en="Edit Device" />
   <dd_node id="1001" name="refresh_dev" name_cn="刷新设备" name_en="Refresh Device" />
+  <dd_node id="1001" name="device" name_cn="设备" name_en="Device" />
     
   <dd_node id="1001" name="new_tag" name_cn="新增标签" name_en="New Tag" />
   <dd_node id="1001" name="new_tag_group" name_cn="新增标签组" name_en="New Tag Group" />

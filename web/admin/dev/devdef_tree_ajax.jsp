@@ -70,9 +70,14 @@
 					}
 				}
 %><%
-if(!Convert.checkReqEmpty(request, out, "drv","cat","id"))
+if(!Convert.checkReqEmpty(request, out, "drv","id"))
 	return ;
 String catname = request.getParameter("cat");
+if(catname==null)
+	catname="" ;
+String catid = request.getParameter("catid");
+if(catid==null)
+	catid="" ;
 String drvname = request.getParameter("drv");
 String id = request.getParameter("id");
 DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
@@ -81,7 +86,11 @@ if(dd==null)
 	out.print("no driver found") ;
 	return ;
 }
-DevCat cat = dd.getDevCatByName(catname) ;
+DevCat cat = null;
+if(Convert.isNotNullEmpty(catname))
+	cat = dd.getDevCatByName(catname) ;
+else if(Convert.isNotNullEmpty(catid))
+	cat = dd.getDevCatById(catid);
 if(cat==null)
 {
 	out.print("no cat found") ;
