@@ -30,6 +30,7 @@
   <dd_node id="1004" name="select_drv" name_cn="选择驱动" name_en="Select Driver"/>
   
   <dd_node id="1004" name="edit_ch" name_cn="编辑通道" name_en="Edit Channel"/>
+  <dd_node id="1004" name="modify" name_cn="修改" name_en="Modify"/>
   
   <dd_node id="1004" name="start" name_cn="启动" name_en="Start"/>
   <dd_node id="1004" name="stop" name_cn="停止" name_en="Stop"/>

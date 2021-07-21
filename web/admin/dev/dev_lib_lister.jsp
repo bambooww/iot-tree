@@ -471,7 +471,7 @@ function add_devdef()
 						 
 						 ret.op="add" ;
 						 ret.drv=drv;
-						 ret.cat = catn ;
+						 ret.catid = catn ;
 						 var pm = {
 									type : 'post',
 									url : "./devdef_ajax.jsp",

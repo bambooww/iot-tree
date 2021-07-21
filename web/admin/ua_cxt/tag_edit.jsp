@@ -93,7 +93,8 @@ dlg.resize_to(600,600);
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
     <div class="layui-input-inline" style="width: 120px;">
-      <select  id="vt"  name="vt" lay-verify="required" class="layui-input">
+      <select  id="vt"  name="vt"  class="layui-input" placeholder="">
+        <option value="">-</option>
 <%
 for(UAVal.ValTP vt:UAVal.ValTP.values())
 {

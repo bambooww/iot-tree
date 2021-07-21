@@ -46,16 +46,23 @@ IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的
 
 [查看详细][qn_hmi]
 
+[编辑操作说明][qn_hmi_edit]
+
 ## 6 快速了解IOT-Tree Server作为你的后台支撑系统
 
 和数据库服务软件类似，IOT-Tree Server也可以作为你的设备管理系统服务软件，作为你的IT基础设施的一部分。
 
 [查看详细][qn_server]
 
+## 7 快速了解IOT-Tree Server的项目
+
+快速了解了上面这么多内容，就把IOT-Tree Server项目Project作为整体快速了解的收尾吧。
+
 [qn_tree]: ./quick_know_tree.md
 [qn_chconndrv]: ./quick_know_ch_conn_drv.md
 [qn_devdef]: ./quick_know_devdef.md
 [qn_hmi]: ./quick_know_hmi.md
+[qn_hmi_edit]: ./quick_know_hmi_edit.md
 [qn_server]: ./quick_know_server.md
 [qn_conn_tcpserver]: ./quick_know_tcpserver_connector.md
 
