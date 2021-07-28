@@ -852,7 +852,7 @@ var cxt_menu = {
 		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui},
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi},
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi},
-		{op_name:"access_ui",op_title:"<wbt:lang>Access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access_hmi},
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access_hmi},
 		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi},
 	]
 }

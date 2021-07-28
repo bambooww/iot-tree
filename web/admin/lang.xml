@@ -34,6 +34,8 @@
   
   <dd_node id="1004" name="start" name_cn="启动" name_en="Start"/>
   <dd_node id="1004" name="stop" name_cn="停止" name_en="Stop"/>
+  
+  <dd_node id="1004" name="access" name_cn="访问" name_en="Access"/>
   <dd_node id="1004" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
     
   
