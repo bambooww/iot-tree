@@ -12,7 +12,16 @@
 if(!Convert.checkReqEmpty(request, out, "tmpfn"))
 	return;
 	String tmpfn = request.getParameter("tmpfn");
-	File tmpf = new File(Config.getDataTmpDir(),tmpfn) ;
+	boolean bdemo = "true".equals(request.getParameter("demo")) ;
+	File tmpf = null;
+	if(bdemo)
+	{
+		tmpf = new File(Config.getDataDirBase()+"/demo/",tmpfn) ;
+	}
+	else
+	{
+		tmpf = new File(Config.getDataTmpDir(),tmpfn) ;
+	}
 	if(!tmpf.exists())
 	{
 		out.print("no upload file found") ;
@@ -126,6 +135,7 @@ idstr=idstr.substring(1) ;
 </body>
 <script type="text/javascript">
 var tmpfn = "<%=tmpfn%>" ;
+var demo = <%=bdemo%>
 var ids=[<%=idstr%>];
 var names = [<%=namestr%>] ;
 function win_close()
@@ -136,7 +146,7 @@ function win_close()
 
 function do_submit(cb)
 {
-	var pms = {tmpfn:tmpfn} ;
+	var pms = {tmpfn:tmpfn,demo:demo} ;
 	var b = false;
 	for(var i=0 ;i < ids.length ; i ++)
 	{

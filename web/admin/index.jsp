@@ -18,14 +18,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
     <title>IOT-Tree</title>
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="head.jsp"/>
             <link href="./inc/common.css" rel="stylesheet" type="text/css">
         <link href="./inc/index.css" rel="stylesheet" type="text/css">
 
@@ -447,10 +440,9 @@ function add_file_onchg()
 }
 
 
-function before_imp(tmpfn)
+function before_imp(tmpfn,bdemo)
 {
-
-	dlg.open("ua/prj_import.jsp?tmpfn="+tmpfn,
+	dlg.open("ua/prj_import.jsp?tmpfn="+tmpfn+"&demo="+bdemo,
 			{title:"Import project",w:'500px',h:'400px'},
 			['Do Import','Cancel'],
 			[
@@ -482,7 +474,32 @@ function imp_prj()
 	add_file.click() ;
 }
 
-
+function imp_prj_demo()
+{
+	dlg.open("ua/prj_demo_list.jsp",
+			{title:"Import Demo project",w:'500px',h:'400px'},
+			['Select','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 //console.log(ret);
+						 dlg.close();
+						 //document.location.href=document.location.href;
+						 before_imp(ret,true);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 
 function devdef_cat_export()
 {

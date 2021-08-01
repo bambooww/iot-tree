@@ -98,6 +98,7 @@ for(int i = 0 ; i < nts_num ; i ++)
 	ConnManager.getInstance().setConnJoin(prjid, connid, ch.getId()) ;
 }
 
-prj.save();
+
+prj.save(true);
 
 %>succ

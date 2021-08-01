@@ -143,10 +143,14 @@ function UATree(tree_opt)
 				}
 		);
 
-		$("#"+this.id).parent().scroll(()=>{
+		$("#"+this.id).scroll(()=>{
 			if(this.on_tree_scrolled)
 				this.on_tree_scrolled() ; 
 		});
+		//$("#"+this.id).parent().scroll(()=>{
+		//	if(this.on_tree_scrolled)
+		//		this.on_tree_scrolled() ; 
+		//});
 
 		this.jsTree.on('activate_node.jstree',(e,data)=>{
 			if(this.on_selected!=undefined&&this.on_selected!=null)

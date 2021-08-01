@@ -14,7 +14,16 @@ org.apache.commons.fileupload.disk.*"%><%!
 if(!Convert.checkReqEmpty(request, out, "tmpfn"))
 	return;
 String tmpfn = request.getParameter("tmpfn") ;
-File tmpf = new File(Config.getDataTmpDir(),tmpfn) ;
+boolean bdemo = "true".equals(request.getParameter("demo")) ;
+File tmpf = null;
+if(bdemo)
+{
+	tmpf = new File(Config.getDataDirBase()+"/demo/",tmpfn) ;
+}
+else
+{
+	tmpf = new File(Config.getDataTmpDir(),tmpfn) ;
+}
 if(!tmpf.exists())
 {
 	out.print("no upload file found") ;

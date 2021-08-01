@@ -244,6 +244,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	{
 		String pnp = tn.getNodePathCxt() ;
 		String np = this.getNodePathCxt() ;
+		//System.out.println(this.getClass().getName()+" np="+np+"   "+tn.getClass().getName()+"  pnp="+pnp);
     	return np.substring(pnp.length()+1) ;
 	}
 	

@@ -369,6 +369,15 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 
 	public void save() throws Exception
 	{
+		save(false);
+	}
+	public void save(boolean reinit) throws Exception
+	{
+		if(reinit)
+		{
+			this.RT_init(true, true);
+			this.constructNodeTree();
+		}
 		UAManager.getInstance().savePrj(this);
 	}
 

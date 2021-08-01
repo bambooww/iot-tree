@@ -556,7 +556,7 @@ background-color: #fff ;
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
-           		<div id="tree"  style="width:100%;overflow: hidden;left:-30px;position:absolute"></div>
+           		<div id="tree"  style="width:100%;overflow:auto;left:-30px;position:absolute;height:700px"></div>
            		<div style="width:100%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>
@@ -646,6 +646,14 @@ function resize_iframe_h()
 	   var h = $(window).height()-80;
 	   $("iframe").css("height",h+"px");
 }
+
+function resize_tree()
+{
+	var h = $(window).height()-90;
+	$("#tree").css("height",h+"px");
+}
+
+resize_tree();
 
 $("#right_tabs_btn").click(function(){
 	if("fixed"==$("#right_tabs").css("position"))
@@ -1827,6 +1835,8 @@ function leftcat_close()
 var resize_cc = 0 ;
 $(window).resize(function(){
 	resize_iframe_h();
+	
+	resize_tree();
 	//panel.updatePixelSize() ;
 	resize_cc ++ ;
 	if(resize_cc<=1)
