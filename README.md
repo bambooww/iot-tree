@@ -25,10 +25,12 @@ IOT-Tree Server能干什么
 
 当然，按照我们的开源策略，您的大部分项目都可以免费使用。
 
-<img src="doc/img/prj3.png">
+,<img src="./doc/img/prj3.png">
 
 ### 参考案例
-[灯光控制][lamp_demo]   [水泵控制][pump_demo]
+[灯光控制][lamp_demo] 
+
+<div style="display:none">  [水泵控制][pump_demo] </div>
 
 
 [pump_demo]:./doc/case/example_psd.md
@@ -40,7 +42,7 @@ IOT-Tree Server能干什么
 
 [嵌入式控制器例子][embed_ctrl_demo]  
 
-[embed_ctrl_demo]:./doc/case/example_embed_demo.md
+[embed_ctrl_demo]:./doc/case/example_embed.md
 
 ## 1.3 系统可以作为云端专用物联网server
 
