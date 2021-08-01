@@ -762,7 +762,7 @@ function ws_conn()
     };
     ws.onmessage = function (event) {
 
-    	//console.log(event.data) ;
+    	console.log(event.data) ;
     	//hmiModel.fireModelPropBindData(event.data) ;
     	var d = null ;
     	eval("d="+event.data) ;

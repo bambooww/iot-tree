@@ -607,8 +607,17 @@ var connpro_menu = [
 	{content:'COM',callback : function(){edit_cp("com","");}},
 	{content:'sm_divider'},
 	
-	{content:'HTTP Connector',header: true},
-	{content:'<i class="fa fa-link"></i> HTTP JSON',callback:function(){dlg.msg("HTTP JSON")}},
+	{content:'Message Connector',header: true},
+	{content:'<i class="fa fa-link"></i> HTTP Url',callback:function(){
+		edit_cp("http","");
+		//dlg.msg("support later")
+	}},
+	{content:'<i class="fa fa-link"></i> MQTT',callback:function(){
+		edit_cp("mqtt","");
+	}},
+	{content:'<i class="fa fa-link"></i> WebSocket Client',callback:function(){
+		edit_cp("ws_client","");
+	}},
 	{content:'sm_divider'},
 	
 	{content:'Others',header: true},
@@ -630,16 +639,28 @@ $('#btn_menu_conn').click(function(){
 	});
 });
 
+
+
+function resize_iframe_h()
+{
+	   var h = $(window).height()-80;
+	   $("iframe").css("height",h+"px");
+}
+
 $("#right_tabs_btn").click(function(){
 	if("fixed"==$("#right_tabs").css("position"))
 	{//position:
 		$("#right_tabs").css("position","inherit") ;
+		resize_iframe_h();
 	}
 	else
 	{
 		$("#right_tabs").css("position","fixed") ;
 		$("#right_tabs").css("left","0px") ;
 		$("#right_tabs").css("top","0px") ;
+		
+		var h = $(window).height()-40;
+		 $("iframe").css("height",h+"px");
 	}
 });
 
@@ -955,7 +976,7 @@ function act_node_paste(n,op)
 
 function edit_cp(cptp,cpid)
 {
-	dlg.open_win("conn/cp_edit_"+cptp+".jsp?repid="+repid+"&cpid="+cpid,
+	dlg.open_win("conn/cp_edit_"+cptp+".jsp?prjid="+repid+"&cpid="+cpid,
 			{title:"["+cptp+"] Connections Provider Editor",w:'800',h:'535'},
 			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
 			[
@@ -1114,7 +1135,7 @@ function del_cpt(cpid,connid)
 function edit_cpt(cptp,cpid,connid)
 {
 	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?repid="+repid+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" Connection Editor",w:'800',h:'750'},
+			{title:cptp+" Connection Editor",w:'800',h:'650'},
 			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
 			[
 				function(dlgw)
@@ -1802,11 +1823,6 @@ function leftcat_close()
 	slide_toggle($('#left_panel'));
 }
 
-function resize_iframe_h()
-{
-	   var h = $(window).height() -80;
-	   $("iframe").css("height",h+"px");
-}
 
 var resize_cc = 0 ;
 $(window).resize(function(){

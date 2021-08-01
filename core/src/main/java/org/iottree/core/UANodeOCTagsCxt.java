@@ -253,19 +253,26 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		for(UATag tg : tags)
 		{
 			UAVal val = tg.RT_getVal() ;
-			if(val==null)
-				continue ;
+			//if(val==null)
+			//	continue ;
 			
 			boolean bvalid = false;
 			Object v=null ;
 			long dt = -1 ;
 			long dt_chg=-1 ;
 
-			bvalid = val.isValid() ;
-			v = val.getObjVal() ;
 			
-			dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
-			dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+			if(val!=null)
+			{
+				bvalid = val.isValid() ;
+				v = val.getObjVal() ;
+				dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
+				dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+			}
+			else
+			{
+				dt_chg = System.currentTimeMillis();
+			}
 			
 			if(lastdt>0&&dt_chg<=lastdt)
 				continue ;

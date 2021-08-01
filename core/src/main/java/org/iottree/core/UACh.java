@@ -312,6 +312,7 @@ public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
 		devs.add(d);
 		constructNodeTree();
 		this.getBelongTo().save();
+		d.RT_init(true, false);
 		return d ;
 	}
 	

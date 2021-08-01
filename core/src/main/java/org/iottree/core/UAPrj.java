@@ -577,11 +577,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		
 		this.setSysTag("_name", "", "", ValTP.vt_str);
 		this.setSysTag("_title", "", "", ValTP.vt_str);
-		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
+		//this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
 		this.setSysTag("_date", "yyyy-MM-dd hh:mm:ss", "", ValTP.vt_str);
 		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
 		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int16);
 		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int16);
+		this.setSysTag("_hour", "current hour0-23 int16 value", "", ValTP.vt_int16);
+		this.setSysTag("_minute", "current minute 0-59 int16 value", "", ValTP.vt_int16);
+		this.setSysTag("_second", "current second 0-59 int16 value", "", ValTP.vt_int16);
 		
 		this.RT_setSysTagVal("_name", this.getName(),true) ;
 		this.RT_setSysTagVal("_title", this.getTitle(),true) ;
@@ -598,11 +601,17 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		short y = (short)d.get(Calendar.YEAR);
 		short m =  (short)(d.get(Calendar.MONTH)+1);
 		short day =   (short)d.get(Calendar.DAY_OF_MONTH) ;
+		short hour = (short)d.get(Calendar.HOUR_OF_DAY);
+		short min =  (short)d.get(Calendar.MINUTE);
+		short sec =  (short)d.get(Calendar.SECOND);
 		
-		//this.RT_setSysTagVal("_date",Convert.toFullYMDHMS(d.getTime()),true) ;
+		this.RT_setSysTagVal("_date",Convert.toFullYMDHMS(d.getTime()),true) ;
 		this.RT_setSysTagVal("_date_year",y,true) ;
 		this.RT_setSysTagVal("_date_month", m,true) ;
 		this.RT_setSysTagVal("_date_day", day,true) ;
+		this.RT_setSysTagVal("_hour", hour,true) ;
+		this.RT_setSysTagVal("_minute", min,true) ;
+		this.RT_setSysTagVal("_second", sec,true) ;
 	}
 	
 	private Thread rtTh = null ;
@@ -718,8 +727,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			{
 				startStopConn(false);
 				startStopCh(false);
+				
 				rtRun=false;
 				rtTh = null ;
+				
+				RT_runFlush();
 			}
 		}
 		

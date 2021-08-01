@@ -10,9 +10,9 @@
 	java.net.*,
 	java.util.*
 	"%><%
-	if(!Convert.checkReqEmpty(request, out, "repid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
-String repid = request.getParameter("repid") ;
+String repid = request.getParameter("prjid") ;
 String cpid = request.getParameter("cpid") ;
 ConnProCOM cp = null ;
 if(Convert.isNullOrEmpty(cpid))

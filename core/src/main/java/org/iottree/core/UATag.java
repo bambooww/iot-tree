@@ -94,7 +94,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 */
 	private transient UAValList valsCacheList = null ;
 	
-	private transient UAVal curVal = null ;
+	private transient UAVal curVal = new UAVal(false,null,System.currentTimeMillis()) ;
 	
 	public UATag()
 	{

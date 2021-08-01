@@ -247,6 +247,7 @@ public class UAManager implements IResCxt
 		}
 		r = new UAPrj(name,title,desc) ;
 		savePrj(r);
+		r.RT_init(true, false);
 		reps.add(r);
 		return r ;
 	}
@@ -397,7 +398,10 @@ public class UAManager implements IResCxt
 		}
 		
 		if(Convert.isNotNullEmpty(newid))
+		{
+			p.RT_init(true, true);
 			this.reps.add(p) ;
+		}
 		this.updatePrjList();	
 		p.constructNodeTree();
 		return true;

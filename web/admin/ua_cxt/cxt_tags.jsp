@@ -32,6 +32,8 @@ if(!(node instanceof UANodeOCTags))
 	out.print("node has no tags") ;
 	return ;
 }
+
+String node_cxtpath = node.getNodePath();
 UANodeOCTags node_tags = (UANodeOCTags)node;
 //UATagList taglist  = node_tags.getTagList() ;
 
@@ -268,6 +270,7 @@ for(UANodeOCTags tn:tns)
 </body>
 <script>
 var path = "<%=path%>" ;
+var cxt_path= "<%=node_cxtpath%>";
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
@@ -502,7 +505,10 @@ function show_cxt_dyn(p,cxt)
 		var tagp =p+n ;
 		var bvalid = tg.valid ;
 		var dt = tg.dt ;
-		var strv = tg.v ;
+		
+		var strv ="";
+		if(tg.v!=null)
+			strv = ""+tg.v ;
 		var strdt = "" ;
 		if(dt>0)
 			strdt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
@@ -538,7 +544,7 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	send_ajax('cxt_script_test.jsp','path='+path+'&txt='+utf8UrlEncode(scode),
+	send_ajax('cxt_script_test.jsp','path='+cxt_path+'&txt='+utf8UrlEncode(scode),
 		function(bsucc,ret)
 		{
 			document.getElementById('script_res').value = ret ;

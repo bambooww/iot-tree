@@ -361,8 +361,8 @@ function open_devlib()
 function add_prj()
 {
 	dlg.open("ua/prj_edit.jsp",
-			{title:"新增容器",w:'500px',h:'400px'},
-			['确定','取消'],
+			{title:"Add Project",w:'500px',h:'400px'},
+			['Ok','Cancel'],
 			[
 				function(dlgw)
 				{

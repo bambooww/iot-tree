@@ -40,58 +40,60 @@ public class ServerTomcat implements IServerBootComp
 			throw new RuntimeException("no Webapps found!") ;
 		}
 		
-			// int tomcatp =
-			// Convert.parseToInt32(appele.getAttribute("port"),80) ;
-			String CATALINA_HOME = Config.getConfigFileBase() + "/tomcat/";
-			String tomcatcn = "org.apache.catalina.startup.Tomcat" ;
-			tomcat = (Tomcat)cl.loadClass(tomcatcn).getDeclaredConstructor().newInstance();//new Tomcat();
-			//tomcat.
-			// tomcat.
-			if(w.getAjpPort()>0)
-			{
-				Connector ajpc = new Connector("AJP/1.3");
-				ajpc.setPort(w.getAjpPort());
-				tomcat.getService().addConnector(ajpc);
-			}
+		// int tomcatp =
+		// Convert.parseToInt32(appele.getAttribute("port"),80) ;
+		String CATALINA_HOME = Config.getConfigFileBase() + "/tomcat/";
+		//String tomcatcn = "org.apache.catalina.startup.Tomcat" ;
+		//tomcat = (Tomcat)cl.loadClass(tomcatcn).getDeclaredConstructor().newInstance();//new Tomcat();
+		tomcat = new Tomcat();
+		//tomcat.
+		// tomcat.
+		if(w.getAjpPort()>0)
+		{
+			Connector ajpc = new Connector("AJP/1.3");
+			ajpc.setPort(w.getAjpPort());
+			tomcat.getService().addConnector(ajpc);
+		}
 
-			if(w.getSslPort()>0)
-			{
-				Connector sslc = getSslConnector(w.getSslPort());
-				tomcat.getService().addConnector(sslc);
-			}
-			
-			Connector norc = getNorConnector(w.getPort());
-			tomcat.getService().addConnector(norc);
-			
-			tomcat.setBaseDir(CATALINA_HOME);
-			
-			String wbase = Config.getWebappBase();
-			File wbf = new File(wbase);
-			//tomcat.setPort(w.getPort());
-			for (Webapp app : w.getAppList())
-			{
-				String appn = app.getAppName();
-				String path = app.getPath() ;
-				String fp = wbase + "/" + appn;
-				if(Convert.isNotNullEmpty(path))
-					fp = wbase+"/"+path ;
-				if (!(new File(fp).exists()))
-					continue;
+		if(w.getSslPort()>0)
+		{
+			Connector sslc = getSslConnector(w.getSslPort());
+			tomcat.getService().addConnector(sslc);
+		}
+		
+		tomcat.setPort(w.getPort());
+		//Connector norc = getNorConnector(w.getPort());
+		//tomcat.getService().addConnector(norc);
+		
+		tomcat.setBaseDir(CATALINA_HOME);
+		
+		String wbase = Config.getWebappBase();
+		File wbf = new File(wbase);
+		//tomcat.setPort(w.getPort());
+		for (Webapp app : w.getAppList())
+		{
+			String appn = app.getAppName();
+			String path = app.getPath() ;
+			String fp = wbase + "/" + appn;
+			if(Convert.isNotNullEmpty(path))
+				fp = wbase+"/"+path ;
+			if (!(new File(fp).exists()))
+				continue;
 
-				if ("ROOT".equals(appn))
-				{
-					//System.out.println("starting webapp=ROOT");
-					tomcat.addWebapp("", fp);
-				}
-				else// if("system".equals(dirn))
-				{
-					///System.out.println("starting webapp="+appn);
-					tomcat.addWebapp("/" + appn, fp);
-				}
+			if ("ROOT".equals(appn))
+			{
+				//System.out.println("starting webapp=ROOT");
+				tomcat.addWebapp("", fp);
 			}
-			
-			System.out.println("web port: "+w.getPort()) ;
-			tomcat.start();
+			else// if("system".equals(dirn))
+			{
+				///System.out.println("starting webapp="+appn);
+				tomcat.addWebapp("/" + appn, fp);
+			}
+		}
+		
+		System.out.println("web port: "+w.getPort()) ;
+		tomcat.start();
 	}
 	
 	private static Connector getNorConnector(int port)
