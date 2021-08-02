@@ -21,8 +21,20 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 <jsp:include page="head.jsp"/>
             <link href="./inc/common.css" rel="stylesheet" type="text/css">
         <link href="./inc/index.css" rel="stylesheet" type="text/css">
+ <style>
+ .btn_sh
+ {
+  //display:none;
+  visibility: hidden;
+ }
+ 
+ .btn_sh_c:hover .btn_sh
+ {
+visibility: visible;
+ }
 
-    </head>
+ </style>
+</head>
 <body aria-hidden="false">
 	<div class="iot-top-menu-wrap">
 		<div class="container">
@@ -118,13 +130,49 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 	for(UAPrj rep:reps)
 {
 %>
-	<div class="aw-item">
+	<div class="aw-item btn_sh_c">
 	   
        <a class="img aw-border-radius-5" >
          <i class="fa fa-sitemap fa-1x"></i>
        </a>
        <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8"><%=rep.getTitle() %></a>
-       <div class="inline-block pull-right text-left">
+       <div class="inline-block pull-right text-left ">
+
+          
+          <span class="btn_sh">
+<%
+if(!rep.isMainPrj())
+{
+%>
+          <span>
+           <a class=" " href="javascript:set_prj_main('<%=rep.getId()%>')" title="set as main">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  &nbsp;&nbsp;M
+							</span>
+           </a>
+           </span>
+<%
+}
+if(rep.isAutoStart())
+{
+%><a class=" " href="javascript:set_prj_auto_start('<%=rep.getId()%>',false)" title="unset auto start">
+<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  &nbsp;&nbsp;A
+							</span>
+</a><%
+}
+else
+{
+%><a class=" " href="javascript:set_prj_auto_start('<%=rep.getId()%>',true)" title="set auto start">
+<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  &nbsp;&nbsp;A
+							</span>
+</a><%
+}
+%>
            <a class0="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
               <span class="fa-stack">
 							  <i class="fa fa-square-o fa-stack-2x"></i>
@@ -144,11 +192,26 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 							  <i class="fa fa fa-times fa-stack-1x"></i>
 							</span>
            </a>
+           </span>
+           
+           <div style="width:150px;border:0px solid;float: right">&nbsp;
+<%
+if(rep.isMainPrj())
+{
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Main</span><%
+}
+
+if(rep.isAutoStart())
+{
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Auto Start</span><%
+}
+%>
+         </div>
        </div>
 
        <div class="text-color-999">
            <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
-           • modified date:<span class="text-color-666"><%=new Date(rep.getSavedDT()) %></span>
+           • modified date:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
        </div>
    </div>
 <%
@@ -157,7 +220,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 
 							</div>
 						</div>
-						
+						<%--
 						<div class="mod-footer">
 							<div class="meta">
 																
@@ -175,7 +238,7 @@ List<UAPrj> reps = UAManager.getInstance().listPrjs();
 								</div>
 							</div>
 						</div>
-						
+						 --%>
 					</div>
 					
 					<div class="iot-mod iot-question-detail iot-item">
@@ -309,6 +372,30 @@ function open_rep(id)
 {
 	window.open("prj_editor.jsp?id="+id);
 	//window.open("ua_rep.jsp?repid="+id);
+}
+
+function set_prj_main(id)
+{
+	send_ajax('ua/prj_ajax.jsp',{op:"main",id:id},function(bsucc,ret){
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		document.location.href=document.location.href;
+	});
+}
+
+function set_prj_auto_start(id,b)
+{
+	send_ajax('ua/prj_ajax.jsp',{op:"auto_start",id:id,auto_start:b},function(bsucc,ret){
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		document.location.href=document.location.href;
+	});
 }
 
 function show_hide(id)

@@ -2,6 +2,8 @@ package org.iottree.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
@@ -126,6 +128,53 @@ public class UAManager implements IResCxt
 		return reps;
 	}
 	
+	
+	transient String defaultPrjId = null ;
+	/**
+	 * get default repository
+	 * @return
+	 * @throws IOException 
+	 */
+	public UAPrj getPrjDefault() throws IOException
+	{
+		if(defaultPrjId!=null)
+		{
+			if(Convert.isNullOrEmpty(defaultPrjId))
+				return null ;
+			return this.getPrjById(defaultPrjId);
+		}
+		
+		File f = getPrjDefaultFile();
+		if(!f.exists())
+			return null ;
+		
+		String defid = Convert.readFileTxt(f, "utf-8");
+		if(Convert.isNullOrEmpty(defid))
+		{
+			defaultPrjId = "" ;
+		}
+		else
+		{
+			defaultPrjId = defid ;
+		}
+		return this.getPrjById(defaultPrjId);
+	}
+	
+	public void setPrjDefault(UAPrj prj) throws FileNotFoundException, IOException
+	{
+		String id = "";
+		if(prj!=null)
+		{
+			id = prj.getId();
+		}
+		File f = getPrjDefaultFile();
+		try(FileOutputStream fos = new FileOutputStream(f);)
+		{
+			fos.write(prj.getId().getBytes());
+		}
+		defaultPrjId = id ;
+	}
+	
 	public UAPrj getPrjById(String id)
 	{
 //		if(true)
@@ -162,16 +211,7 @@ public class UAManager implements IResCxt
 		return null ;
 	}
 	
-	/**
-	 * get default repository
-	 * @return
-	 */
-	public UAPrj getPrjDefault()
-	{
-		if(reps.size()<=0)
-			return null ;
-		return reps.get(0) ;
-	}
+	
 	
 	static File getPrjDataDir()
 	{
@@ -187,6 +227,12 @@ public class UAManager implements IResCxt
 	static File getPrjFile(String id)
 	{
 		String fp = Config.getDataDirBase() + "/prjs/prj_"+id+".xml";
+		return new File(fp);
+	}
+	
+	static File getPrjDefaultFile()
+	{
+		String fp = Config.getDataDirBase() + "/prjs/default.txt";
 		return new File(fp);
 	}
 	
@@ -437,6 +483,12 @@ public class UAManager implements IResCxt
 				@Override
 				public void run()
 				{
+					for(UAPrj prj:UAManager.this.listPrjs())
+					{
+						if(prj.isAutoStart())
+							prj.RT_start();
+					}
+					
 					while(uaMonTh!=null)
 					{
 						try

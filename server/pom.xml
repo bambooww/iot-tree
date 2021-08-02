@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.94.1</version>
+    <version>0.94.2</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -215,6 +215,7 @@
 								<copy file="./iot-tree.bat.txt" tofile="../_output/iot-tree.bat" />
 								<copy file="./iot-tree-setup.bat.txt" tofile="../_output/iot-tree-setup.bat" />
 								<copy file="./iot-tree.sh.txt" tofile="../_output/iot-tree.sh" />
+								<copy file="./license.txt" tofile="../_output/license.txt" />
 								<copy file="./iot-tree-service-start.sh.txt" tofile="../_output/iot-tree-service-start.sh" />
 								<copy file="./iot-tree-service-stop.sh.txt" tofile="../_output/iot-tree-service-stop.sh" />
 								<copy file="../core/target/iottree-core-${project.version}.jar" tofile="../_output/lib/iottree-core-${project.version}.jar" />

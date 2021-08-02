@@ -49,6 +49,27 @@ case "del":
 	UAManager.getInstance().delRep(id) ;
 	out.print("ok") ;
 	break ;
+case "main":
+	dc = UAManager.getInstance().getPrjById(id) ;
+	if(dc==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
+	UAManager.getInstance().setPrjDefault(dc);
+	out.print("ok");
+	return ;
+case "auto_start":
+	dc = UAManager.getInstance().getPrjById(id) ;
+	if(dc==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
+	boolean b = "true".equals(request.getParameter("auto_start")) ;
+	dc.setAutoStart(b);
+	out.print("ok");
+	return;
 case "start":
 case "stop":
 	if(!Convert.checkReqEmpty(request, out, "id"))

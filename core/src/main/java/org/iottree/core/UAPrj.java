@@ -49,7 +49,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 
 	//@data_obj(obj_c = UAConn.class)
 	//List<UAConn> conns = new ArrayList<>();
-
+	@data_val(param_name = "auto_start")
+	boolean bAutoStart = false;
 
 
 	/**
@@ -160,6 +161,19 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 //		rets.addAll(conns) ;
 //		return rets ;
 //	}
+	
+	public boolean isAutoStart()
+	{
+		return this.bAutoStart;
+	}
+	
+	public void setAutoStart(boolean b) throws Exception
+	{
+		if(this.bAutoStart==b)
+			return ;
+		this.bAutoStart = b ;
+		this.save();
+	}
 
 	public List<UACh> getChs()
 	{
@@ -381,6 +395,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		UAManager.getInstance().savePrj(this);
 	}
 
+	
+	public boolean isMainPrj() throws IOException
+	{
+		return UAManager.getInstance().getPrjDefault()==this;
+	}
 	/**
 	 * get rep sub dir which can save content related this rep e.g hmi
 	 * 

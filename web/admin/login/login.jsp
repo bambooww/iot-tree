@@ -12,6 +12,15 @@
 "%>
 <%@ taglib uri="wb_tag" prefix="wbt"%><%
 	boolean has_setpsw = LoginUtil.checkAdminSetPsw() ;
+    if(!has_setpsw)
+    {
+    	Boolean b = (Boolean)session.getAttribute("accept_license_terms");
+    	if(b==null||!b)
+    	{
+    		response.sendRedirect("license_terms.jsp");
+    		return ;
+    	}
+    }
 %><!DOCTYPE html>
 <html>
 <head>
