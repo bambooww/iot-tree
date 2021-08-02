@@ -10,6 +10,7 @@
 	
 %><%if(!Convert.checkReqEmpty(request, out, "repid"))
 	return;
+
 String repid = request.getParameter("repid") ;
 String op = request.getParameter("op") ;
 if(op==null)
