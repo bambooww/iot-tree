@@ -34,16 +34,20 @@ Java >= 1.8 (Please make sure the environment path has been set)
 
 下载压缩包，解压到你希望的目录下面即可
 
+<a href="http://121.40.64.41/iottree/" target="_blank">下载地址</a>
+
 [en]
 # Installation
 
 Download zip file,and unzip to directory you wanted.
+
+<a href="http://121.40.64.41/iottree/" target="_blank">download address</a>
 [/en]
 
 
 # 配置
 
-使用文本编辑器打开config.xml文件，配置里面的访问端口9090
+使用文本编辑器打开config.xml文件，配置里面的访问端口,默认值是9090，你可以修改成其他的端口号
 
 # 启动
 
