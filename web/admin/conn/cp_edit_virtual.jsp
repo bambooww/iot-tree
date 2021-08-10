@@ -15,6 +15,7 @@
 String repid = request.getParameter("prjid") ;
 String cpid = request.getParameter("cpid") ;
 ConnProVirtual cp = null ;
+
 if(Convert.isNullOrEmpty(cpid))
 {
 	cp = new ConnProVirtual() ;

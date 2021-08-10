@@ -25,7 +25,14 @@
 dlg.resize_to(400,600);
 </script>
 </head>
+<style>
+tr:hover
+{
+	background-color: grey;
+}
+</style>
 <body>
+Selected:<span id="seled"></span>
 <table class="layui-table" lay-size="sm">
   <colgroup>
     <col width="100" />
@@ -39,7 +46,7 @@ for(DevDriver dd:dds)
 <tr onclick="sel_drv('<%=dd.getName()%>','<%=dd.getTitle() %>')">
       <td><%=dd.getName()%></td>
       <td><%=dd.getTitle() %></td>
-    </tr>
+</tr>
 <%
 }
 %>
@@ -86,6 +93,7 @@ function win_close()
 function sel_drv(n,t)
 {
 	seled_drv={name:n,title:t} ;
+	$("#seled").html(t);
 }
 
 function do_submit(cb)

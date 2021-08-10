@@ -15,7 +15,7 @@ import org.iottree.core.conn.ConnPtVirtual;
 import org.json.JSONObject;
 
 @data_class
-public class UACh extends UANodeOCTagsCxt implements IOCUnit,IOCDyn
+public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 {
 	@data_val(param_name = "drv")
 	String drvName = null ;

@@ -30,6 +30,11 @@ public class ConnProTcpClient extends ConnProvider
 		return "tcp_client" ;
 	}
 	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{

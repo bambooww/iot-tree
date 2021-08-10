@@ -476,7 +476,7 @@ function init_iottpanel()
 		plug_cb:editor_plugcb
 	}) ;
 	hmiView = new oc.hmi.HMICompView(hmiModel,panel,editor,{
-		copy_paste_url:"util/copy_paste_ajax.jsp",
+		copy_paste_url:"../util/copy_paste_ajax.jsp",
 		loaded_cb:()=>{
 			inter_refresh();
 		}

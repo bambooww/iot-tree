@@ -1702,7 +1702,7 @@ public class Convert
 			return "";
 	}
 
-	public static String combineWith(String[] ss, char delimi)
+	public static String combineWith(Object[] ss, char delimi)
 	{
 		if (ss == null)
 			return null;

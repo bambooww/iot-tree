@@ -8,9 +8,9 @@
 	java.net.*,
 	java.util.*"%><%!
 %><%
-if(!Convert.checkReqEmpty(request, out, "repid","op"))
+if(!Convert.checkReqEmpty(request, "{\"res\":\"no prjid and op input\"}",out, "prjid","op"))
 	return;
-String repid = request.getParameter("repid") ;
+String repid = request.getParameter("prjid") ;
 String op = request.getParameter("op") ;
 switch(op)
 {
@@ -75,7 +75,7 @@ case "cp_set":
 	}
 	break ;
 case "cp_del":
-	if(!Convert.checkReqEmpty(request, out, "cpid"))
+	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cpid"))
 		return;
 	String cpid = request.getParameter("cpid") ;
 	try
@@ -92,25 +92,32 @@ case "cp_del":
 	}
 	break ;
 case "conn_set":
-	if(!Convert.checkReqEmpty(request, out, "cpid","json"))
+	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cptp","json"))
 		return;
+	String cptp = request.getParameter("cptp") ;
 	cpid = request.getParameter("cpid") ;
 	json = request.getParameter("json");
 	//System.out.println("json="+json) ;
 	try
 	{
-		ConnProvider cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+		ConnProvider cp = ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp) ;
+		if(cp==null)
+		{
+			cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+		}
+		
 		cp.setConnPtByJson(json);
 		out.print("{\"res\":true}");
 	}
 	catch(Exception e)
 	{
+		//e.printStackTrace();
 		out.print("{\"res\":false,\"err\":\""+e.getMessage()+"\"}");
 		return ;
 	}
 	break ;
 case "conn_del":
-	if(!Convert.checkReqEmpty(request, out, "cpid","connid"))
+	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cpid","connid"))
 		return;
 	cpid = request.getParameter("cpid") ;
 	String connid = request.getParameter("connid") ;

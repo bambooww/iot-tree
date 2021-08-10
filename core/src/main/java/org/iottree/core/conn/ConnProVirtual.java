@@ -22,6 +22,12 @@ public class ConnProVirtual  extends ConnProvider
 	{
 		return "virtual";
 	}
+	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()

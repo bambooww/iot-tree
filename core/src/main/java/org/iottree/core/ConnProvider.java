@@ -107,7 +107,9 @@ public abstract class ConnProvider implements IXmlDataValidator
 		{
 			return null ;
 		}
-		return  (ConnProvider)c.newInstance() ;
+		ConnProvider cp =  (ConnProvider)c.newInstance() ;
+		//cp.setName(cp_tp);
+		return cp ;
 	}
 	/**
 	 * 获得所有的ConnProvider
@@ -207,6 +209,12 @@ public abstract class ConnProvider implements IXmlDataValidator
 			cptxds.add(cpxd) ;
 		}
 		return xd ;
+	}
+	
+	void setName(String name)//,String title)
+	{
+		this.name = name ;
+		//this.title = title ;
 	}
 	
 	public boolean fromXmlData(XmlData xd,StringBuilder failedr)
@@ -382,6 +390,8 @@ public abstract class ConnProvider implements IXmlDataValidator
 	 * @return
 	 */
 	public abstract String getProviderType() ;
+	
+	public abstract boolean isSingleProvider() ;
 	
 	public abstract Class<? extends ConnPt> supportConnPtClass() ;
 	

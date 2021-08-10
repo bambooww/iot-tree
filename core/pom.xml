@@ -46,6 +46,17 @@
 			<artifactId>sdk-server</artifactId>
 			
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.milo</groupId>
+		    <artifactId>stack-client</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.milo</groupId>
+		    <artifactId>stack-server</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>dictionary-manager</artifactId>

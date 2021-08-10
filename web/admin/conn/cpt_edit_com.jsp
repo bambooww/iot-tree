@@ -10,18 +10,21 @@
 	java.net.*,
 	java.util.*
 	"%><%
-	if(!Convert.checkReqEmpty(request, out, "repid","cpid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
-String repid = request.getParameter("repid") ;
-String cpid = request.getParameter("cpid") ;
-String connid = request.getParameter("connid") ;
-ConnProCOM cp = (ConnProCOM)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
-ConnPtCOM cpt = null ;
+String repid = request.getParameter("prjid") ;
+String cptp = ConnPtCOM.TP;//request.getParameter("cptp") ;
+ConnProCOM cp = (ConnProCOM)ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp);
 if(cp==null)
 {
-	out.print("no ConnProvider found") ;
+	out.print("no single provider found with "+cptp);
 	return ;
 }
+
+String cpid = cp.getId();//.getParameter("cpid") ;
+String connid = request.getParameter("connid") ;
+ConnPtCOM cpt = null ;
+
 
 if(Convert.isNullOrEmpty(connid))
 {

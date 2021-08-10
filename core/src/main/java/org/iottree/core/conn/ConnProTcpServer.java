@@ -190,6 +190,12 @@ public class ConnProTcpServer extends ConnProvider
 		return TP;
 	}
 	
+	public boolean isSingleProvider()
+	{
+		return false;
+	}
+	
+	
 	public String getLocalIP()
 	{
 		if(localIP==null)

@@ -75,6 +75,11 @@ public class ConnProCOM extends ConnProvider
 		return "com" ;
 	}
 	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{

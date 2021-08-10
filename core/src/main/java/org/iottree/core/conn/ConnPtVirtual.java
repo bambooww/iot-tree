@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 public class ConnPtVirtual extends ConnPt
 {
+	public static String TP = "virtual" ;
 	
 	public static final int RUN_ST_NOTRUN = 0 ;
 	
@@ -39,7 +40,7 @@ public class ConnPtVirtual extends ConnPt
 	@Override
 	public String getConnType()
 	{ 
-		return "virtual";
+		return TP;
 	}
 
 	@Override

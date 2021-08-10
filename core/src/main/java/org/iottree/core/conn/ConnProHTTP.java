@@ -11,11 +11,17 @@ public class ConnProHTTP extends ConnProvider
 	{
 		return "http";
 	}
+	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return ConnPtMSG.class;
+		return ConnPtHTTP.class;
 	}
 
 	@Override

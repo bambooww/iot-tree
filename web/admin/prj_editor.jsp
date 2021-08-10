@@ -482,7 +482,7 @@ background-color: #fff ;
 <div class='hj-wrap' style="opacity: 1.0;">
         <div id="div_conn" class="hj-transverse-split-div subwin" style="width:20%">
 			<div class="subwin_toolbar">
-			<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>
+			<span style="left:20px;display:none" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>
 			<%--
 			Connectors
 				<button type="button" class="btn btn-default"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
@@ -501,8 +501,8 @@ background-color: #fff ;
 		               	 <div class="subitem_toolbar" v-bind:id="'cp_'+connector.id" v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp">
 		               	      <table style="width:100%;border: 1">
 			               	 		<tr>
-										<td width="80%" style="white-space: nowrap;">
-											{{ connector.title }} [{{ connector.tp }}] <br/> {{connector.static_txt}}
+										<td width="80%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
+											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span> {{ connector.title }} [{{ connector.tp }}]
 										</td>
 										<%--
 										<td width="25px">
@@ -520,8 +520,8 @@ background-color: #fff ;
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
-										<td width="90%">
-											{{connection.title}} [{{connection.name}}]<br> {{connection.static_txt}}
+										<td width="90%" v-bind:title="connection.static_txt">
+											{{connection.title}} [{{connection.name}}]
 										</td>
 										
 										<td width="25px">
@@ -601,27 +601,29 @@ var prjid="<%=prjid%>";
 var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
 
 var connpro_menu = [
-	{content:'Stream Connector',header: true},
-	{content:'Tcp Client',callback:function(){edit_cp("tcp_client","");}},
+	{content:'Connector Provider',header: true},
 	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
-	{content:'COM',callback : function(){edit_cp("com","");}},
 	{content:'sm_divider'},
-	
-	{content:'Message Connector',header: true},
-	{content:'<i class="fa fa-link"></i> HTTP Url',callback:function(){
+	{content:'<i class="fa fa-link"></i> Connector',header: true},
+	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
+	{content:'COM',callback : function(){edit_cpt("com","","");}},
+	{content:'OPC UA',callback:function(){edit_cpt("opc_ua","","");}},
+	{content:'OPC DA',callback:function(){edit_cpt("opc_da","","");}},
+	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
+	{content:'HTTP Url',callback:function(){
 		edit_cp("http","");
 		//dlg.msg("support later")
 	}},
-	{content:'<i class="fa fa-link"></i> MQTT',callback:function(){
-		edit_cp("mqtt","");
+	{content:'MQTT',callback:function(){
+		edit_cpt("mqtt","","");
 	}},
-	{content:'<i class="fa fa-link"></i> WebSocket Client',callback:function(){
-		edit_cp("ws_client","");
+	{content:'WebSocket Client',callback:function(){
+		edit_cpt("ws_client","","");
 	}},
 	{content:'sm_divider'},
 	
 	{content:'Others',header: true},
-	{content:'Virtual',callback : function(){edit_cp("virtual","");}}
+	{content:'Virtual',callback : function(){edit_cpt("virtual","","");}}
 ];
 
 var tree_menu = [
@@ -633,7 +635,7 @@ var tree_menu = [
 
 $('#btn_menu_conn').click(function(){
 	$(this).selectMenu({
-		title : 'Add Connector Provider ',
+		title : 'Add Connector ',
 		regular : true,
 		data : connpro_menu
 	});
@@ -776,6 +778,12 @@ function on_conn_ui_showed()
 							rt_cpt_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
+					if(cptp=="opc_ua")
+					{
+						d.push({ content : '<i class="fa fa-pencil"></i> Opc Setup', callback:()=>{
+							edit_opc_setup(cptp,cpid,connid) ;
+						}});
+					}
 					d.push({ content : '<i class="fa fa-eye"></i> Monitor', callback:()=>{
 						window.open("./conn/cpt_mon.jsp?repid="+repid+"&cpid="+cpid+"&connid="+connid) ;
 					}});
@@ -843,12 +851,15 @@ var cxt_menu = {
 			return copiedItem!=null&&copiedItem.type=="dev";
 		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
+		
+		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg},
+		
 		{op_name:"new_dev",op_title:"<wbt:lang>new_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_new_dev},
 		{op_name:"edit_ch",op_title:"<wbt:lang>edit_ch</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_ch},
 		{op_name:"del_ch",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_ch},
 		
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
-		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
+		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		
 		{op_name:"cp_ch",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		
@@ -858,7 +869,6 @@ var cxt_menu = {
 		{op_name:"ch_stop",op_title:"<wbt:lang>stop</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return tn.run;
 		}},
-		
 		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
@@ -873,16 +883,34 @@ var cxt_menu = {
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"tagg":[
-		{op_name:"new_tag",op_title:"<wbt:lang>new_tag</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
-		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:""},
-		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:""}
+		
+		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi,op_chk:(tn)=>{
+			return !tn.in_dev;
+		}},
+		{op_name:"modify_tagg",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_tagg,op_chk:(tn)=>{
+			return !tn.in_dev;
+		}},
+		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
+			return !tn.in_dev;
+		}},
+		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
+			return !tn.in_dev;
+		}}
 	],
 	"hmi":[
-		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui},
-		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi},
-		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi},
+		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui,op_chk:(tn)=>{
+			return !tn.ref;
+		}},
+		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi,op_chk:(tn)=>{
+			return !tn.ref;
+		}},
+		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi,op_chk:(tn)=>{
+			return !tn.ref;
+		}},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access_hmi},
-		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi},
+		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi,op_chk:(tn)=>{
+			return !tn.ref;
+		}},
 	]
 }
 
@@ -899,8 +927,8 @@ function on_tree_loaded(data)
 }
 
 var ua_panel = new UAPanel(
-		{eleid:"conn" ,data_url:"./conn/cp_ajax.jsp?op=list&repid="+repid,ui_showed:on_conn_ui_showed},
-		{eleid:"conn_ch",join_url:"./conn/cp_ajax.jsp?repid="+repid},
+		{eleid:"conn" ,data_url:"./conn/cp_ajax.jsp?op=list&prjid="+repid,ui_showed:on_conn_ui_showed},
+		{eleid:"conn_ch",join_url:"./conn/cp_ajax.jsp?prjid="+repid},
 		{eleid:"tree",data_url:"prj_tree_ajax.jsp?id="+repid,cxt_menu:cxt_menu,
 				on_selected:on_tree_node_selected,
 				on_loaded:on_tree_loaded}
@@ -1045,10 +1073,12 @@ function del_cp(cpid)
 	var pm = {
 			type : 'post',
 			url : "./conn/cp_ajax.jsp",
-			data :{repid:repid,op:'cp_del',cpid:cpid}
+			data :{prjid:repid,op:'cp_del',cpid:cpid}
 		};
 	if(dlg.confirm("delete this connector?",null,()=>{
 		$.ajax(pm).done((ret)=>{
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
 			if(!ret.res)
 			{
 				dlg.msg(ret.err) ;
@@ -1107,9 +1137,11 @@ function set_connprovider(jo,cb)
 		var pm = {
 				type : 'post',
 				url : "./conn/cp_ajax.jsp",
-				data :{repid:repid,op:'cp_set',json:JSON.stringify(jo)}
+				data :{prjid:repid,op:'cp_set',json:JSON.stringify(jo)}
 			};
 		$.ajax(pm).done((ret)=>{
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
 			if(ret.res)
 				cb(true,"") ;
 			else
@@ -1124,10 +1156,12 @@ function del_cpt(cpid,connid)
 	var pm = {
 			type : 'post',
 			url : "./conn/cp_ajax.jsp",
-			data :{repid:repid,op:'conn_del',cpid:cpid,connid:connid}
+			data :{prjid:repid,op:'conn_del',cpid:cpid,connid:connid}
 		};
 	if(dlg.confirm("delete this connection?",null,()=>{
 		$.ajax(pm).done((ret)=>{
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
 			if(!ret.res)
 			{
 				dlg.msg(ret.err) ;
@@ -1140,10 +1174,28 @@ function del_cpt(cpid,connid)
 	})) ;
 }
 
+function edit_opc_setup(cptp,cpid,connid)
+{
+	dlg.open_win("./conn/opc_client/opc_ua_brw.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"Opc UA Setup",w:'800',h:'550'},
+			['Ok',{title:'Cancel',style:"primary"}],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+				
+			]);
+}
+
 function edit_cpt(cptp,cpid,connid)
 {
-	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?repid="+repid+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" Connection Editor",w:'800',h:'650'},
+	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:cptp+" Connection Editor",w:'800',h:'550'},
 			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
 			[
 				function(dlgw)
@@ -1154,7 +1206,7 @@ function edit_cpt(cptp,cpid,connid)
 							dlg.msg(ret) ;
 							return ;
 						}
-						set_connpt(ret,cpid,(bok,msg)=>{
+						set_connpt(ret,cptp,cpid,(bok,msg)=>{
 							if(!bok)
 							{
 								dlg.msg(msg) ;
@@ -1173,7 +1225,7 @@ function edit_cpt(cptp,cpid,connid)
 							dlg.msg(ret) ;
 							return ;
 						}
-						set_connpt(ret,cpid,(bok,msg)=>{
+						set_connpt(ret,cptp,cpid,(bok,msg)=>{
 							if(!bok)
 							{
 								dlg.msg(msg) ;
@@ -1197,20 +1249,43 @@ function edit_cpt(cptp,cpid,connid)
 }
 
 
-function set_connpt(jo,cpid,cb)
+function act_new_tagg(n,op)
+{
+	tagg_add_edit(false,n.path,()=>{
+		refresh_ui() ;
+	});
+}
+
+function act_edit_tagg(n,op)
+{
+	tagg_add_edit(true,n.path,()=>{
+		refresh_ui() ;
+	});
+}
+
+function act_del_tagg(n,op)
+{
+	tagg_del(n.path,()=>{
+		refresh_ui() ;
+	}) ;
+}
+
+function set_connpt(jo,cptp,cpid,cb)
 {
 		var pm = {
 				type : 'post',
 				url : "./conn/cp_ajax.jsp",
-				data :{repid:repid,cpid:cpid,op:'conn_set',json:JSON.stringify(jo)}
+				data :{prjid:repid,cptp:cptp,cpid:cpid,op:'conn_set',json:JSON.stringify(jo)}
 			};
 		$.ajax(pm).done((ret)=>{
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
 			if(ret.res)
 				cb(true,"") ;
 			else
 				cb(false,ret.err) ;
 		}).fail(function(req, st, err) {
-			dlg.msg(err);
+			dlg.msg("ajax err="+st);
 		});
 }
 

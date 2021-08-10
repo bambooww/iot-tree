@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseResultMask;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
@@ -57,10 +58,12 @@ public class BrowseExample implements ClientExample
 
 			for (ReferenceDescription rd : references)
 			{
-				logger.info("{} Node={}", indent, rd.getBrowseName().getName());
+				QualifiedName qn = rd.getBrowseName();
+				String tn = rd.getTypeDefinition().getType().name();
+				logger.info("{} Node={}", indent, qn.getName()+" "+tn);
 
 				// recursively browse to children
-				rd.getNodeId().local().ifPresent(nodeId -> browseNode(indent + "  ", client, nodeId));
+				rd.getNodeId().toNodeId(client.getNamespaceTable()).ifPresent(nodeId -> browseNode(indent + "  ", client, nodeId));
 			}
 		} catch (InterruptedException | ExecutionException e)
 		{

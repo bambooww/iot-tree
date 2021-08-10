@@ -713,6 +713,8 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 				data :{op:op,connid:connid,chid:chid}
 			};
 		$.ajax(pm).done((ret)=>{
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
 			if(ret.res)
 				this.redraw(true,true,false) ;
 			else

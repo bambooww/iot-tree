@@ -23,7 +23,7 @@
 		
 		<guava.version>29.0-jre</guava.version>
 		<paho.version>1.2.4</paho.version>
-		<milo.version>0.4.2</milo.version>
+		<milo.version>0.6.3</milo.version>
 		<graalvm.version>20.3.0</graalvm.version>
 		<fastjson.version>1.2.74</fastjson.version>
 		
@@ -92,6 +92,17 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>dictionary-manager</artifactId>
+			<version>${milo.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.eclipse.milo</groupId>
+		    <artifactId>stack-client</artifactId>
+			<version>${milo.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.milo</groupId>
+		    <artifactId>stack-server</artifactId>
 			<version>${milo.version}</version>
 		</dependency>
 		<dependency>

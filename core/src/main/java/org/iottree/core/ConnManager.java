@@ -63,6 +63,34 @@ public class ConnManager
 		}
 	}
 	
+	public ConnProvider getOrCreateConnProviderSingle(String prjid,String tp) throws Exception
+	{
+		List<ConnProvider> cps = getConnProviders(prjid) ;
+		ConnProvider rcp = null ; 
+		for(ConnProvider cp:cps)
+		{
+			if(cp.getProviderType().equals(tp))
+			{
+				rcp = cp;
+				break;
+			}
+		}
+		
+		if(rcp!=null)
+		{
+			if(!rcp.isSingleProvider())
+				return null ;
+			return rcp ;
+		}
+		//create
+		rcp = ConnProvider.newInstance(tp);
+		if(!rcp.isSingleProvider())
+			return null ;
+		rcp.setName(tp);
+		rcp = setConnProvider(prjid,rcp);
+		return rcp ;
+	}
+	
 	public ConnProvider getConnProviderById(String repid,String cpid) throws Exception
 	{
 		List<ConnProvider> cps = getConnProviders(repid) ;
@@ -147,13 +175,13 @@ public class ConnManager
 //		
 //	}
 	
-	void saveConnProvidersByRepId(String repid) throws Exception
+	void saveConnProvidersByPrjId(String prjid) throws Exception
 	{
-		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(prjid) ;
 		if(rep==null)
-			throw new Exception("no rep found with id="+repid) ;
+			throw new Exception("no rep found with id="+prjid) ;
 		
-		List<ConnProvider> cps = this.getConnProviders(repid) ;
+		List<ConnProvider> cps = this.getConnProviders(prjid) ;
 		XmlData xd = new XmlData() ;
 		List<XmlData> xds = xd.getOrCreateSubDataArray("cps") ;
 		for(ConnProvider cp:cps)
@@ -168,8 +196,14 @@ public class ConnManager
 	{
 		List<ConnProvider> cps = this.getConnProviders(repid) ;
 		if(!cps.contains(cp))
+		{
 			cps.add(cp) ;
-		saveConnProvidersByRepId(repid) ;
+			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
+			if(rep==null)
+				throw new Exception("no rep found with id="+repid) ;
+			cp.belongTo = rep;
+		}
+		saveConnProvidersByPrjId(repid) ;
 		return cp ;
 	}
 	
@@ -241,7 +275,7 @@ public class ConnManager
 		
 		List<ConnProvider> cps = this.getConnProviders(repid) ;
 		cps.remove(cp) ;
-		saveConnProvidersByRepId(repid) ;
+		saveConnProvidersByPrjId(repid) ;
 		return true ;
 	}
 	

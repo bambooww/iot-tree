@@ -26,7 +26,7 @@ Quick Know IOTTree - Lamp Demo
 
 ## 2.1 登陆管理界面
 
-当你按照配置完成IOT-Tree Server之后，访问 http://youip:port/admin/进入管理界面，如果你是第一次访问管理界面，那么需要设置输入管理员密码。如果已经设置了密码，那么只需要输入密码登陆即可。
+当你按照配置完成IOT-Tree Server之后，访问 `http://youip:port/admin/ 进入管理界面，如果你是第一次访问管理界面，那么需要设置输入管理员密码。如果已经设置了密码，那么只需要输入密码登陆即可。
 
 <img src="../img/demo_home.png">
 
@@ -56,7 +56,7 @@ Quick Know IOTTree - Lamp Demo
 
 其中，这个设备已经在系统内部定义完成。新增设备之后，设备的数据定义和自带的一个控制开关面板UI都自动进入到项目中。
 
-此时，点击项目根节点lamp_demo，并在主内容区点击[Tags]标签。你会发现项目下面的所有上下文内容，打开Show System Tags开关，你可以看到包所有的上下文（含系统内部自定义）。如下图：
+此时，点击项目根节点lamp_demo，并在主内容区点击[Tags]标签。你会发现项目下面的所有上下文内容，打开Show System Tags开关，你可以看到所有的上下文定义（含系统内部自定义）。如下图：
 
 <img src="../img/demo_prj_cxt_all.png">
 
@@ -100,8 +100,8 @@ Quick Know IOTTree - Lamp Demo
 
 <img src="../img/demo_drv_run_o.png">
 
-记录下两种填充风格（后续会用到脚本中）：
-1 运行填充风格 圆形梯度 rad;#0df92c|#355730
+记录下两种填充风格（后续会用到脚本中）：  
+1 运行填充风格 圆形梯度 rad;#0df92c|#355730  
 2 非运行填充风格 单色 #355730
 
 

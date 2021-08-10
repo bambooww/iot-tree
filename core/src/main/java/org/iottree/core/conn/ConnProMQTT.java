@@ -11,6 +11,12 @@ public class ConnProMQTT extends ConnProvider
 	{
 		return "mqtt";
 	}
+	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()

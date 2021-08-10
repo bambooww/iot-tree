@@ -58,7 +58,21 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 //		return belongToDev;
 //	}
 	
-	
+	public boolean isInDev()
+	{
+		UANode pn = this ;
+		do
+		{
+			pn = pn.getParentNode();
+			if(pn==null)
+				return false;
+			if(pn instanceof UADev)
+				return true ;
+			if(pn instanceof DevDef)
+				return true;
+		}while(pn!=null);
+		return false;
+	}
 	
 	public boolean chkValid()
 	{

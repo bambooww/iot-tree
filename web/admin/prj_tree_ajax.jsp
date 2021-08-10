@@ -10,6 +10,7 @@
 					out.write("{\"text\": \""+tg.getName()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
+					out.write(",\"in_dev\":"+tg.isInDev()) ;
 					out.write(",\"children\": [") ;
 					List<UATagG> tgs = tg.getSubTagGs() ;
 					boolean bfirst = true ;
@@ -29,20 +30,21 @@
 					out.write("]}") ;
 				}
 	
-				public static void renderTagGroupInDev(Writer out,UADev dev) throws Exception
+				public static void renderTagGroupInCxt(boolean bfirst,Writer out,UANodeOCTagsGCxt dev) throws Exception
 				{
 					//DevDef dd = dev.getDevDef();
 					List<UATagG> tgs = dev.getSubTagGs();
-					if(tgs==null)
-						return ;
-					boolean bfirst = true ;
-					for(UATagG tg:tgs)
+					//boolean bfirst = true ;
+					if(tgs!=null)
 					{
-						if(bfirst)
-							bfirst = false;
-						else
-							out.write(',') ;
-						renderTagGroup(out,tg);
+						for(UATagG tg:tgs)
+						{
+							if(bfirst)
+								bfirst = false;
+							else
+								out.write(',') ;
+							renderTagGroup(out,tg);
+						}
 					}
 					
 					renderHmis(bfirst,out,dev) ;
@@ -60,7 +62,8 @@
 						if(bfirst) bfirst=false;
 						else out.write(",") ;
 						
-						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\"") ;
+						boolean ref = hmi.isRefedNode();
+						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\",\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
 						out.write(",\"tp\":\"hmi\",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
 					}
@@ -139,13 +142,14 @@
 			   ,"icon":"icon_dev"
 			  ,"children": [
 <%
-renderTagGroupInDev(out,dev) ;
+renderTagGroupInCxt(true,out,dev) ;
 %>
 			   ]
 			}
 	<%
 		}
-renderHmis(bf2,out,ch) ;
+		renderTagGroupInCxt(bf2,out, ch);
+		//renderHmis(bf2,out,ch) ;
 %>
 		  ]
 		}

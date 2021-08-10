@@ -15,7 +15,7 @@ import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.
 
 public class RestrictedAccessFilter implements AttributeFilter {
 
-    private static final Set<AccessLevel> INTERNAL_ACCESS = AccessLevel.READ_WRITE;
+	private static final Set<AccessLevel> INTERNAL_ACCESS = AccessLevel.READ_WRITE;
 
     private final Function<Object, Set<AccessLevel>> accessLevelsFn;
 
@@ -30,10 +30,9 @@ public class RestrictedAccessFilter implements AttributeFilter {
 
             Set<AccessLevel> accessLevels = identity.map(accessLevelsFn).orElse(INTERNAL_ACCESS);
 
-            return ubyte(AccessLevel.getMask(accessLevels));
+            return AccessLevel.toValue(accessLevels);
         } else {
             return ctx.getAttribute(attributeId);
         }
     }
-
 }

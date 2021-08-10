@@ -54,6 +54,12 @@ public class ConnProWSClient extends ConnProvider
 	{
 		return "ws_client";
 	}
+	
+	public boolean isSingleProvider()
+	{
+		return true;
+	}
+	
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
