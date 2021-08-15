@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
@@ -19,6 +20,7 @@ import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscriptionManager
 import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderTypeNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaDataTypeNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableTypeNode;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
@@ -53,10 +55,15 @@ import org.json.JSONObject;
 public class ConnPtOPCUA extends ConnPt
 {
 	// String appName = null;
+	// tcp http https ws wss
+	String opcProtocal = "tcp";
 
 	String opcHost = "";
 
 	int opcPort = 49320;
+	
+	// "" or /xxx
+	String opcPath = "" ;
 
 	int reqTimeout = 5000;
 
@@ -83,8 +90,10 @@ public class ConnPtOPCUA extends ConnPt
 	{
 		XmlData xd = super.toXmlData();
 		// xd.setParamValue("opc_app_name", this.appName);
+		xd.setParamValue("opc_proto", this.opcProtocal);
 		xd.setParamValue("opc_host", this.opcHost);
 		xd.setParamValue("opc_port", this.opcPort);
+		xd.setParamValue("opc_path", this.opcPath);
 		xd.setParamValue("opc_req_to", this.reqTimeout);
 		xd.setParamValue("opc_user", this.idUser);
 		xd.setParamValue("opc_psw", this.idPsw);
@@ -98,8 +107,10 @@ public class ConnPtOPCUA extends ConnPt
 
 		// this.appName = xd.getParamValueStr("opc_app_name",
 		// "iottree_opc_client_"+this.getName());
+		this.opcProtocal = xd.getParamValueStr("opc_proto", "tcp");
 		this.opcHost = xd.getParamValueStr("opc_host", "");
 		this.opcPort = xd.getParamValueInt32("opc_port", 49320);
+		this.opcPath = xd.getParamValueStr("opc_path", "");
 		this.reqTimeout = xd.getParamValueInt32("opc_req_to", 5000);
 		this.idUser = xd.getParamValueStr("opc_user", "");
 		this.idPsw = xd.getParamValueStr("opc_psw", "");
@@ -127,8 +138,10 @@ public class ConnPtOPCUA extends ConnPt
 		super.injectByJson(jo);
 
 		// this.appName =optJSONString(jo,"opc_app_name",getOpcAppNameDef()) ;
+		this.opcProtocal = optJSONString(jo, "opc_proto", "tcp");
 		this.opcHost = optJSONString(jo, "opc_host", "");
 		this.opcPort = optJSONInt(jo, "opc_port", 49320);
+		this.opcPath = optJSONString(jo, "opc_path", "");
 		this.reqTimeout = optJSONInt(jo, "opc_req_to", 5000);
 		this.idUser = optJSONString(jo, "opc_user", "");
 		this.idPsw = optJSONString(jo, "opc_psw", "");
@@ -145,6 +158,13 @@ public class ConnPtOPCUA extends ConnPt
 	// return getOpcAppNameDef();
 	// return appName ;
 	// }
+	
+	public String getOpcProtocal()
+	{
+		if(Convert.isNullOrEmpty(this.opcProtocal))
+			return "tcp";
+		return this.opcProtocal;
+	}
 
 	public String getOpcHost()
 	{
@@ -162,10 +182,15 @@ public class ConnPtOPCUA extends ConnPt
 			return "";
 		return "" + this.opcPort;
 	}
+	
+	public String getOpcPath()
+	{
+		return opcPath ;
+	}
 
 	public String getOpcEndPointURI()
 	{
-		return "opc.tcp://" + this.opcHost + ":" + this.opcPort;
+		return "opc."+this.getOpcProtocal()+"://" + this.opcHost + ":" + this.opcPort+this.opcPath;
 	}
 
 	public int getOpcReqTimeout()
@@ -286,6 +311,95 @@ public class ConnPtOPCUA extends ConnPt
     	writeUaNodeTreeJson(w,uaClient,nodeid);
     }
     
+    public void writeUaNodeTreeJson(Writer w) throws Exception
+    {
+    	if(uaClient==null)
+    	{
+    		throw new Exception("no UaClient connected");
+    	}
+    	
+    	//find /Root/Objects nodes
+    	UaNode root =  findUaNodeByPath(uaClient,new String[] {"Objects"}) ;
+    	if(root==null)
+    		throw new Exception("no /Root/Objects/ node found");
+    		
+//    	UaObjectNode uaou= new UaObjectNode(
+//    			uaClient,
+//                getNodeId(),
+//                getBrowseName(),
+//                getDisplayName(),
+//                getDescription(),
+//                getWriteMask(),
+//                getUserWriteMask(),
+//                getEventNotifier()
+//        );
+    	
+    	//NodeId nid = n.getNodeId() ;
+    	
+    	w.write("{\"id\":\""+UUID.randomUUID().toString()+"\"");
+    	w.write(",\"nc\":0");
+    	w.write(",\"icon\": \"fa fa-sitemap fa-lg\"");
+    	
+    	w.write(",\"text\":\""+this.getOpcEndPointURI()+"\"");
+    	//w.write(",\"state\": {\"opened\": true}");
+    	
+    	List<? extends UaNode> nodes = uaClient.getAddressSpace().browseNodes(root);
+    	if(nodes!=null&&nodes.size()>0)
+    	{
+	        w.write(",\"children\":[");
+	        //
+	        boolean bfirst = true;
+	        for (UaNode node : nodes)
+	        {
+	        	String bn = node.getBrowseName().getName();
+	        	if(bn.startsWith("_"))
+	        		continue;
+	        	
+	        	if(node instanceof UaVariableNode)
+	        		continue;
+	        	
+	        	if(bfirst) bfirst=false;
+	        	else w.write(',');
+	        	
+	        	writeUaNodeTreeJson(w,uaClient,node);
+	        }
+	        w.write("]");
+    	}
+        w.write("}");
+        
+    	//writeUaNodeTreeJson(w,uaClient,root);
+    }
+    
+    public static UaNode findUaNodeByPath(OpcUaClient client,String[] path) throws UaException
+    {
+    	NodeId nid = Identifiers.RootFolder;
+    	
+    	UaNode pn = client.getAddressSpace().getNode(nid);
+    	if(pn==null)
+    		return null ;
+    	for(String p:path)
+    	{
+    		List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(pn);
+        	if(nodes==null||nodes.size()<=0)
+        		return null ;
+        	boolean bgit = false;
+	        for (UaNode node : nodes)
+	        {
+	        	String bn = node.getBrowseName().getName();
+	        	if(p.equals(bn))
+	        	{
+	        		pn = node ;
+	        		bgit = true;
+	        		break ;
+	        	}
+	        }
+	        if(!bgit)
+	        	return null ;
+    	}
+    	
+    	return pn ;
+    }
+    
     public static void writeUaNodeTreeJson(Writer w,OpcUaClient client,String nodeid) throws Exception
     {
     	NodeId nid = null;
@@ -312,6 +426,7 @@ public class ConnPtOPCUA extends ConnPt
     	
     	w.write("{\"id\":\""+nid.toParseableString()+"\"");
     	w.write(",\"nc\":"+n.getNodeClass().getValue());
+    	w.write(",\"icon\": \"fa fa-folder fa-lg\"");
     	w.write(",\"text\":\""+n.getDisplayName().getText()+"\"");
     	//w.write(",\"state\": {\"opened\": true}");
     	

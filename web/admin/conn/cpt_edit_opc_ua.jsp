@@ -50,6 +50,9 @@ String desc = cpt.getDesc();
 //String opc_epuri  = cpt.getOpcEndPointURI();
 String host = cpt.getOpcHost() ;
 String port  = cpt.getOpcPortStr() ;
+String opc_proto = cpt.getOpcProtocal();
+String opc_path = cpt.getOpcPath();
+
 int opc_reqto = cpt.getOpcReqTimeout();
 String opc_user = cpt.getOpcIdUser();
 String opc_psw = cpt.getOpcIdPsw();
@@ -98,7 +101,16 @@ dlg.resize_to(600,400);
 	    <input type="text" id="opc_req_to" name="opc_req_to" value="<%=opc_reqto%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
-  
+   <div class="layui-form-item">
+    <label class="layui-form-label">Opc Proto:</label>
+    <div class="layui-input-inline">
+      <input type="text" id="opc_proto" name="opc_proto" value="<%=opc_proto%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid">Opc Path:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="opc_path" name="opc_path" value="<%=opc_path%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	  </div>
+  </div>
   <%--
   <div class="layui-form-item">
     <label class="layui-form-label">Opc App Name:</label>
@@ -284,7 +296,26 @@ function do_submit(cb)
 		opc_psw="";
 	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:host,opc_port:vp,opc_req_to:opc_reqto,opc_user:opc_user,opc_psw:opc_psw});
+	var opc_proto= $('#opc_proto').val();
+	if(opc_proto==null||opc_proto=='')
+	{
+		//cb(false,'Please input Opc Id User') ;
+		opc_proto="";
+		//return ;
+	}
+	
+	var opc_path = $('#opc_path').val();
+	if(opc_path==null||opc_path=='')
+	{
+		//cb(false,'Please input Opc Id password') ;
+		//return ;
+		opc_path="";
+	}
+	
+	
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:host,opc_port:vp,
+		opc_proto:opc_proto,opc_path:opc_path,
+		opc_req_to:opc_reqto,opc_user:opc_user,opc_psw:opc_psw});
 }
 
 </script>

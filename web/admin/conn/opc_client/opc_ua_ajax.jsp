@@ -52,7 +52,7 @@ case "sub":
 	cpt.opcBrowseNodeOut(out);
 	break ;
 case "tree":
-	cpt.writeUaNodeTreeJson(out, null);
+	cpt.writeUaNodeTreeJson(out);
 	break;
 case "sub_nodes":
 	if(!Convert.checkReqEmpty(request, out, "nodeid"))

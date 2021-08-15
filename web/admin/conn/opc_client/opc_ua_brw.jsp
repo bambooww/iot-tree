@@ -260,7 +260,7 @@ function init_tree()
 						},
 						'themes' : {
 							'responsive' : false,
-							//'variant' : 'small',
+							'variant' : 'small',
 							'stripes' : true
 						}
 					},
