@@ -136,7 +136,7 @@ function select_drv()
 {
 	dlg.open_win("drv_selector.jsp?edit=true",
 			{title:"<wbt:lang>sel_drv_title</wbt:lang>",w:'400',h:'535'},
-			[{title:'<wbt:lang>ok</wbt:lang>',style:""},{title:'<wbt:lang>cancel</wbt:lang>',style:"primary"}],
+			[{title:'<wbt:lang>ok</wbt:lang>',style:""},{title:'Clear',style:"primary"},{title:'<wbt:lang>cancel</wbt:lang>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -153,6 +153,12 @@ function select_drv()
 						}
 					}) ;
 					
+				},
+				function(dlgw)
+				{
+					$("#drv_title").val("") ;
+					$("#drv").val("") ;
+					dlg.close();
 				},
 				function(dlgw)
 				{
@@ -176,7 +182,7 @@ function do_submit(cb)
 		return ;
 	}
 	var drv = $('#drv').val() ;
-	if(drv==null||drv=='')
+	if(false)//if(drv==null||drv=='')
 	{
 		cb(false,'请选择驱动') ;
 		return ;

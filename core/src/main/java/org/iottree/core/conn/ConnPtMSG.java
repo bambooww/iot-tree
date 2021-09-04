@@ -1,6 +1,8 @@
 package org.iottree.core.conn;
 
-import org.iottree.core.ConnPt;
+import java.util.HashMap;
+import java.util.List;
+
 
 /**
  * based on msg connections,
@@ -8,20 +10,11 @@ import org.iottree.core.ConnPt;
  * @author jason.zhu
  *
  */
-public abstract class ConnPtMSG  extends ConnPt
+public abstract class ConnPtMSG  extends ConnPtBinder
 {
-	@Override
-	public String getStaticTxt()
-	{
-		return null;
-	}
-
-	@Override
-	public boolean isConnReady()
-	{
-		
-		return false;
-	}
+	public abstract List<String> getMsgTopics() ;
 	
+	protected abstract void onRecvedMsg(String topic,byte[] bs) throws Exception;
 	
+	public abstract boolean sendMsg(String topic,byte[] bs) throws Exception ;
 }

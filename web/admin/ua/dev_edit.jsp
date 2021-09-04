@@ -40,6 +40,11 @@
 		return ;
 	}
 	
+	if(!ch.hasDriver())
+	{
+		out.print("Channel has no Device Driver") ;
+		return ;
+	}
 	DevDriver drv = ch.getDriver() ;
 	if(!ch.isDriverFit())
 	{

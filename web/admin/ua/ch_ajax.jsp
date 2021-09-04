@@ -39,7 +39,7 @@
 			return ;
 		}
 		//String chid = request.getParameter("chid");
-		if(!Convert.checkReqEmpty(request, out, "drv","name"))
+		if(!Convert.checkReqEmpty(request, out, "name"))
 			return;
 		String drv = request.getParameter("drv");
 		String name=request.getParameter("name");

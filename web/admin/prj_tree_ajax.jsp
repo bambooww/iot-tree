@@ -9,7 +9,7 @@
 				{
 					out.write("{\"text\": \""+tg.getName()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
-					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
+					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
 					out.write(",\"children\": [") ;
 					List<UATagG> tgs = tg.getSubTagGs() ;
@@ -79,7 +79,7 @@
 	}%>[
 	
 	{
-	"text":"<%=rep.getName() %>"
+	"text":"<%=rep.getName() %>&nbsp;&nbsp;<span id='share_run' ><i id='' class='fa fa fa-share-alt-square fa-lg'></i></span>"
 	,"id":"<%=rep.getId() %>"
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
@@ -100,10 +100,13 @@
 		String drvt = "none";
 		if(drv!=null)
 			drvt = drv.getTitle() ;
-		if(!ch.isDriverFit())
-			drvfit = "<span class=tn_warn title='"+drvt+" is not fit'>drv?</span>" ;
-		else
-			drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
+		if(ch.hasDriver())
+		{
+			if(!ch.isDriverFit())
+				drvfit = "<span class=tn_warn title='"+drvt+" is not fit'>drv?</span>" ;
+			else
+				drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
+		}
 %>
 		{
 		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"

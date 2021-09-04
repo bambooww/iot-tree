@@ -4,6 +4,8 @@
 	org.iottree.core.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
+				org.iottree.core.node.*,
+				org.iottree.core.util.xmldata.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -85,6 +87,12 @@ case "stop":
 	else
 		dc.RT_stop();
 	out.print(op+" ok") ;
+	break ;
+case "share":
+	XmlData tmpxd = XmlData.parseFromHttpRequest(request, "dx_") ;
+	boolean benable = "true".equalsIgnoreCase(request.getParameter("enable")) ;
+	PrjShareManager.getInstance().setSharer(id,benable,tmpxd) ;
+	out.print("ok");
 	break ;
 }
 %>

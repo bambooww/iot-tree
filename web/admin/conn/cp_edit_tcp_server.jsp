@@ -55,7 +55,7 @@ dlg.resize_to(600,400);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-inline">
-      <input type="text" id="name" name="name" value="<%=name%>"  class="layui-input">
+      <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">

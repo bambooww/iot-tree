@@ -15,7 +15,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	List<UATag> tags = new ArrayList<>();
 	
 	// -  for system tags
-	
+	@data_obj(param_name="sys_tags",obj_c=UATag.class)
 	private transient ArrayList<UATag> sysTags = null;
 	
 	public UANodeOCTags()
@@ -168,6 +168,52 @@ public abstract class UANodeOCTags extends UANodeOC
 				d.setTagMid(name,title,desc,addr,vt) ;
 			else
 				d.setTagNor(name,title,desc,addr,vt,canw,srate) ;
+		}
+		save();
+		return d ;
+	}
+	
+	UATag addOrUpdateTagSys(String tagid,
+			boolean bmid,String name,String title,String desc,
+			String addr,UAVal.ValTP vt,boolean canw,long srate) throws Exception
+	{
+		UAUtil.assertUAName(name);
+		UATag d = null ;
+		if(Convert.isNotNullEmpty(tagid))
+		{
+			d = this.getTagById(tagid) ;
+			if(d==null)
+				throw new Exception("no tag with id="+tagid+" found!") ;
+		}
+		
+		UANode tmpn = getSubNodeByName(name) ;
+		
+		if(d==null&&tmpn!=null)
+			return null ;
+			//throw new IllegalArgumentException("tag with name="+name+" existed") ;
+		if(d!=null&&tmpn!=null&&d!=tmpn)
+			return null ;
+			//throw new IllegalArgumentException("tag with name="+name+" existed") ;
+		
+		if(d==null)
+		{
+			if(bmid)
+				d = new UATag(name,title,desc,addr,vt) ;
+			else
+			{
+				d = new UATag();
+				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
+			}
+			d.id = this.getNextIdByRoot() ;
+			tags.add(d) ;
+			constructNodeTree();
+		}
+		else
+		{
+			if(bmid)
+				d.setTagMid(name,title,desc,addr,vt) ;
+			else
+				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
 		}
 		save();
 		return d ;

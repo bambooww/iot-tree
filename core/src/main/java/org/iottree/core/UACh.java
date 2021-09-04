@@ -103,6 +103,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		List<UANode> rets = super.getSubNodes();
 		rets.addAll(devs);
+		
 		return rets;
 	}
 	
@@ -125,6 +126,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	
 	public DevDriver getDriver()
 	{
+		if(Convert.isNullOrEmpty(this.drvName))
+			return null ;
+		
 		if(devDrv!=null)
 			return devDrv;
 		if(Convert.isNullOrEmpty(this.drvName))
@@ -140,13 +144,15 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	
 	public boolean setDriverName(String drvname) throws Exception
 	{
-		if(!chkDriverFit(drvname))
+		if(Convert.isNotNullEmpty(drvname)&&!chkDriverFit(drvname))
 			return false;
 		
 		if(drvname.equals(this.drvName))
 			return true ;
 		
 		this.drvName = drvname ;
+		
+		devDrv.RT_stop(true);
 		devDrv = null ;
 		getDriver();
 		
@@ -232,6 +238,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	public boolean isDriverFit() throws Exception
 	{
 		return chkDriverFit(drvName) ;
+	}
+	
+	public boolean hasDriver()
+	{
+		return Convert.isNotNullEmpty(drvName);
 	}
 	
 	public UACh deepCopyMe() throws Exception
@@ -675,4 +686,49 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return null;
 	}
 
+	/**
+	 * IOTTree Node support
+	 * 
+	 * @param xd
+	 * @throws Exception
+	 */
+	public void Node_refreshByPrjXmlData(XmlData xd) throws Exception
+	{
+		UAPrj r = new UAPrj() ;
+		DataTranserXml.injectXmDataToObj(r, xd);
+		//other prj make all as sub node
+		List<UANode> subnodes = r.getSubNodes() ;
+		for(UANode subn:subnodes)
+		{
+			Node_refreshBySubNode(this,subn) ;
+		}
+	}
+	
+	private void Node_refreshBySubNode(UANodeOCTagsGCxt gcxt,UANode uan) throws Exception
+	{
+		if(uan instanceof UANodeOCTagsGCxt)
+		{
+			UANodeOCTagsGCxt tmptg = (UANodeOCTagsGCxt)uan ;
+			UATagG tg = gcxt.addTagG(uan.getName(), uan.getTitle(), uan.getDesc()) ;
+			List<UANode> tmpsubs = tmptg.getSubNodes();
+			if(tmpsubs!=null)
+			{
+				for(UANode tmpsub:tmpsubs)
+				{
+					Node_refreshBySubNode(tg,tmpsub) ;
+				}
+			}
+		}
+		else if(uan instanceof UATag)
+		{
+			UATag t = (UATag)uan ;
+			UANode tmpn = gcxt.getSubNodeByName(t.getName()) ;
+			if(tmpn==null)
+			{
+				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", t.getValTp(), t.bCanWrite, t.scanRate) ;
+			}
+		}
+		
+		
+	}
 }

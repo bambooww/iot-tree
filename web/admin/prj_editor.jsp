@@ -520,12 +520,14 @@ background-color: #fff ;
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
-										<td width="90%" v-bind:title="connection.static_txt">
+										<td width="70%" v-bind:title="connection.static_txt">
 											{{connection.title}} [{{connection.name}}]
 										</td>
-										
 										<td width="25px">
-											<div style="width:15px;height:15px;background-color: grey;"  v-bind:id="'conn_st_'+connection.id" >&nbsp;</div>
+											<span v-bind:id="'conn_st_'+connection.id"><i class="fa fa-chain-broken fa-lg"></i></span>
+										</td>
+										<td width="25px">
+											<div style="width:15px;height:15px;background-color: grey;"  v-bind:id="'conn_run_'+connection.id" >&nbsp;</div>
 										</td>
 										
 									</tr>
@@ -603,6 +605,7 @@ var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi
 var connpro_menu = [
 	{content:'Connector Provider',header: true},
 	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
+	{content:'Tcp Server For Opc Agent',callback:function(){edit_cp("opc_agent","");}},
 	{content:'sm_divider'},
 	{content:'<i class="fa fa-link"></i> Connector',header: true},
 	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
@@ -621,14 +624,18 @@ var connpro_menu = [
 		edit_cpt("ws_client","","");
 	}},
 	{content:'sm_divider'},
+	{content:'IOTTree Node',callback:function(){
+		edit_cpt("iottree_node","","");
+	}},
+	{content:'sm_divider'},
 	
 	{content:'Others',header: true},
 	{content:'Virtual',callback : function(){edit_cpt("virtual","","");}}
 ];
 
 var tree_menu = [
-	{content:'Add',header: true},
-	{content:'Add Channel',callback:function(){act_rep_new_ch();}},
+	{content:'Share',header: true},
+	{content:'Share as a node',callback:function(){share_as_node();}},
 	{content:'sm_divider'},
 	
 ];
@@ -641,7 +648,28 @@ $('#btn_menu_conn').click(function(){
 	});
 });
 
-
+function share_as_node()
+{
+	dlg.open("./ua/prj_share.jsp?prjid="+prjid,{title:"Share project as a node",w:'500px',h:'400px'},
+			['Ok','Close'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,txt)=>{
+						if(!bsucc)
+						{
+							dlg.msg(txt);
+							return ;
+						}
+						dlg.close();
+					});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 
 function resize_iframe_h()
 {
@@ -770,18 +798,30 @@ function on_conn_ui_showed()
 	        		var cpid = $(this).attr("cp_id");
 	        		var cptp = $(this).attr("cp_tp");
 	        		var connid = $(this).attr("conn_id");
-	        		var brun = $(this).attr("conn_ready")=='true';
+	        		var bconn = $(this).attr("conn_ready")=='true';
 	        		var tt = "<i class='fa fa-play'></i> Start" ;
-	        		if(brun)
+	        		if(bconn)
 	        			tt = "<i class='fa fa-stop'></i> Stop" ;
 					d.push({ content : tt, callback:()=>{
 							rt_cpt_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
-					if(cptp=="opc_ua")
+					if(cptp=="opc_ua"||cptp=="opc_agent")
 					{
-						d.push({ content : '<i class="fa fa-pencil"></i> Opc Setup', callback:()=>{
-							edit_opc_setup(cptp,cpid,connid) ;
+						d.push({ content : '<i class="fa fa-pencil"></i> Bind', callback:()=>{
+							edit_bind_setup(cptp,cpid,connid) ;
+						}});
+					}
+					if(cptp=="mqtt")
+					{
+						d.push({ content : '<i class="fa fa-pencil"></i> Test', callback:()=>{
+							edit_mqtt_test(cptp,cpid,connid) ;
+						}});
+					}
+					if(cptp=="iottree_node")
+					{
+						d.push({ content : '<i class="fa fa fa-history"></i> Syn Tree', callback:()=>{
+							iottree_node_syn_tree(cptp,cpid,connid) ;
 						}});
 					}
 					d.push({ content : '<i class="fa fa-eye"></i> Monitor', callback:()=>{
@@ -1024,6 +1064,7 @@ function edit_cp(cptp,cpid)
 							dlg.msg(ret) ;
 							return ;
 						}
+						ret.tp = cptp;
 						set_connprovider(ret,(bok,msg)=>{
 							if(!bok)
 							{
@@ -1174,16 +1215,47 @@ function del_cpt(cpid,connid)
 	})) ;
 }
 
-function edit_opc_setup(cptp,cpid,connid)
+function edit_bind_setup(cptp,cpid,connid)
 {
-	dlg.open_win("./conn/opc_client/opc_ua_brw.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"Opc UA Setup",w:'800',h:'550'},
+	dlg.open_win("./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"Binding Setting ["+cptp+"]",w:'800',h:'550'},
 			['Ok',{title:'Cancel',style:"primary"}],
 			[
 				function(dlgw)
 				{
+					var bindids = dlgw.get_selected_vals();
+					
 					dlg.close();
 				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+				
+			]);
+}
+
+
+function edit_mqtt_test(cptp,cpid,connid)
+{
+	dlg.open_win("./conn/ext/cpt_msg_pub_test.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"Message Send/Publish Tester ["+cptp+"]",w:'800',h:'550'},
+			[{title:'Close',style:"primary"}],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+				
+			]);
+}
+
+function iottree_node_syn_tree(cptp,cpid,connid)
+{
+	dlg.open_win("./conn/ext/cpt_iottree_node_syn.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"IOTTree Node Synchroniation ["+cptp+"]",w:'800',h:'550'},
+			[{title:'Close',style:"primary"}],
+			[
 				function(dlgw)
 				{
 					dlg.close();
@@ -1926,6 +1998,23 @@ function prj_rt()
 		var v = ret ;
 		update_prj_run(ret.run);
 		
+		var c = "grey" ;
+		var t = "not share";
+		if(ret.share)
+		{
+			if(ret.share_run)
+			{
+				c = "green" ;
+				t = "Share and connection ok" ;
+			}
+			else
+			{
+				c = "red" ;
+				t = "share and connection failure "
+			}
+		}
+		$("#share_run").css("color",c);
+		$("#share_run").attr("title",t);
 		for(var cp of ret.cps)
 		{
 			var id =cp.cp_id ;
@@ -1936,7 +2025,11 @@ function prj_rt()
 			{
 				var cid = conn.conn_id;
 				var bready = conn.ready ;
-				$("#conn_st_"+cid).css("background-color",bready?"green":"red");
+				
+				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link fa-lg'></i>":"<i class='fa fa-chain-broken fa-lg'></i>");//.css("background-color",bready?"green":"red");
+				$("#conn_st_"+cid).css("color",bready?"green":"red");
+				$("#conn_st_"+cid).attr("title",bready?"connection is ready":"connection is not ready");
+				$("#conn_run_"+cid).css("background-color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
 			}
 		}

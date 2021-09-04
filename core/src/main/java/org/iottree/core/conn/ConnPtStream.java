@@ -13,20 +13,23 @@ import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.DesInputStream;
+import org.iottree.core.util.DesOutputStream;
 
-public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
+public abstract class ConnPtStream extends ConnPtBinder implements IConnEndPoint
 {
 
+	public static String TP = "stream" ;
 	
 	
 	private MonInputStream monInputS = null ;
 	
 	private MonOutputStream monOutputS = null ;
 
+	private DesInputStream inputEnc = null ;
+	private DesOutputStream outputEnc = null ;
 	
-	
-	
-	public static String TP = "stream" ;
+	private String encKey = null ;
 	
 	//private transient boolean 
 	
@@ -39,9 +42,9 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 	}
 	
 	
-	public final InputStream getInputStream()
+	public final InputStream getInputStream()// throws Exception
 	{
-		InputStream inputs = getInputStreamInner() ;
+		InputStream inputs = getInputStreamInnerEnc() ;
 		if(inputs==null)
 			return null ;
 		if(monInputS == null)
@@ -59,7 +62,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 	
 	public final OutputStream getOutputStream()
 	{
-		OutputStream outputs = getOutputStreamInner() ;
+		OutputStream outputs = getOutputStreamInnerEnc() ;
 		if(outputs==null)
 			return null ;
 		if(monOutputS == null)
@@ -73,6 +76,70 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		
 		monOutputS.setWrapperOutputStream(outputs);
 		return monOutputS ;
+	}
+	
+	
+
+	public synchronized void setEncKey(String ekey) throws Exception
+	{
+		encKey = ekey ;
+		inputEnc = null ;
+		outputEnc = null ;
+	}
+	
+	
+	
+	private synchronized InputStream getInputStreamInnerEnc()// throws Exception
+	{
+		InputStream ins =  getInputStreamInner() ;
+		if(ins==null)
+			return null ;
+		if(encKey==null||encKey.contentEquals(""))
+			return ins ;
+		
+		if(inputEnc==null||inputEnc.getInnerInputStream()!=ins)
+		{
+			byte[] kk = encKey.getBytes() ;
+			try
+			{
+				inputEnc = new DesInputStream(kk,ins);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		return inputEnc ;
+		
+	}
+	
+	
+	
+	
+	private synchronized OutputStream getOutputStreamInnerEnc() //throws Exception
+	{
+		OutputStream outs = getOutputStreamInner();
+		if(outs==null)
+			return null ;
+
+		if(encKey==null||encKey.contentEquals(""))
+			return outs ;
+		
+		if(outputEnc==null||outputEnc.getInnerOutputStream()!=outs)
+		{
+			byte[] kk = encKey.getBytes() ;
+			try
+			{
+				outputEnc = new DesOutputStream(kk,outs);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+		return outputEnc ;
 	}
 	
 	protected abstract InputStream getInputStreamInner() ;

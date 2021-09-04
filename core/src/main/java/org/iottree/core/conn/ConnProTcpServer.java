@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
+import org.iottree.core.UACh;
 import org.iottree.core.basic.NameTitleVal;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -423,11 +425,20 @@ public class ConnProTcpServer extends ConnProvider
 	}
 	
 	private transient long lastChkSockItemDT = -1 ;
+	private transient int chkConnedCC = 0 ;
 	
 	private void chkSockItems()
 	{
 		if(System.currentTimeMillis()-lastChkSockItemDT<5000)
 			return ;
+		
+		boolean bchk_conned = false;
+		chkConnedCC ++ ;
+		if(chkConnedCC>=10)
+		{
+			chkConnedCC = 0 ;
+			bchk_conned = true;
+		}
 		
 		try
 		{
@@ -439,6 +450,31 @@ public class ConnProTcpServer extends ConnProvider
 					if(asi.isTimeout(this.freeSockTO))
 						toitems.add(asi) ;
 				}
+				else
+				{
+					try
+					{
+						ConnPtTcpAccepted cpta = asi.getAssignedCPT();
+						UACh ch = cpta.getJoinedCh() ;
+						if(ch==null||bchk_conned)
+						{
+							try
+							{
+								asi.getSocket().sendUrgentData(0);
+							}
+							catch(IOException ioe)
+							{
+								cpta.close();
+								toitems.add(asi);
+							}
+						}
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+				//cpta.checkConn();
 			}
 			
 			//close timeout and del

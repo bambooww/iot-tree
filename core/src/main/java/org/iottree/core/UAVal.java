@@ -135,7 +135,11 @@ public class UAVal //extends JSObMap
 		switch(tp)
 		{
 		case vt_bool:
-			return "true".equalsIgnoreCase(strv) || Convert.parseToDouble(strv, -1)>0;
+			if("true".equalsIgnoreCase(strv))
+				return true;
+			if("false".equalsIgnoreCase(strv))
+				return false;
+			return  Convert.parseToDouble(strv, -1)>0;
 		case vt_byte:
 			return Byte.parseByte(strv) ;
 		case vt_char:

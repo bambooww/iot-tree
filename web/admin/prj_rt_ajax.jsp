@@ -16,7 +16,10 @@
 		return;
 	}
 	
-%>{"run":<%=rep.RT_isRunning()%>,
+	boolean bshare = rep.isShare() ;
+	boolean bshare_r = rep.isShareRunning();
+	
+%>{"run":<%=rep.RT_isRunning()%>,"share":<%=bshare%>,"share_run":<%=bshare_r%>,
 	"cps":
 <%
 	ConnManager.getInstance().renderRTJson(id, out) ;

@@ -318,6 +318,16 @@ if(rep.isAutoStart())
 				</div>
 				<!--right side -->
 				<div class="iot-side-bar">
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <h3>Services</h3>
+					    </div>
+					    <div class="mod-body">
+					       
+					       <a href="javascript:service_setup()">setup</a>
+					        
+					    </div>
+					</div>
 					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
@@ -703,6 +713,19 @@ function logout()
         	dlg.msg(e);
         }
     });
+}
+
+function service_setup()
+{
+	dlg.open("service/service_mgr.jsp",
+			{title:"Service Manager",w:'500px',h:'400px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 </script>
 </html>

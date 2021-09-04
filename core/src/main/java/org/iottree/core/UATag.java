@@ -599,13 +599,19 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
+	public void RT_setValStr(String strv,boolean ignore_nochg)
+	{
+		Object objv = UAVal.transStr2ObjVal(this.getValTp(), strv);
+		RT_setVal(objv, ignore_nochg);
+	}
+	
 	@HostAccess.Export
 	public void RT_setVal(Object v)
 	{
 		this.RT_setVal(v,true);
 	}
 	
-	void RT_setUAVal(UAVal uav)
+	public void RT_setUAVal(UAVal uav)
 	{
 		this.curVal = uav ;
 		HIS_setVal(uav) ;

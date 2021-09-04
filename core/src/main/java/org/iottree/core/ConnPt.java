@@ -391,6 +391,8 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	protected void fireConnReady()
 	{
+		onConnReadyOrNot(true) ;
+		
 		if(this.bindedDrv==null)
 			return ;
 		this.bindedDrv.RT_onConnReady(this);
@@ -398,11 +400,20 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	protected void fireConnInvalid()
 	{
+		onConnReadyOrNot(false) ;
 		if(this.bindedDrv==null)
 			return ;
 		this.bindedDrv.RT_onConnInvalid(this);
 	}
 	
+	/**
+	 * override it will do something
+	 * @param r
+	 */
+	protected void onConnReadyOrNot(boolean r)
+	{
+		
+	}
 
 	protected  void onMonDataRecv(boolean binputs,byte[] bs)
 	{

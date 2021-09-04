@@ -52,7 +52,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
-public class ConnPtOPCUA extends ConnPt
+public class ConnPtOPCUA extends ConnPtBinder
 {
 	// String appName = null;
 	// tcp http https ws wss
@@ -132,6 +132,8 @@ public class ConnPtOPCUA extends ConnPt
 			return defv;
 		return jo.optInt(name);
 	}
+	
+	
 
 	protected void injectByJson(JSONObject jo) throws Exception
 	{
@@ -145,6 +147,11 @@ public class ConnPtOPCUA extends ConnPt
 		this.reqTimeout = optJSONInt(jo, "opc_req_to", 5000);
 		this.idUser = optJSONString(jo, "opc_user", "");
 		this.idPsw = optJSONString(jo, "opc_psw", "");
+	}
+	
+	public List<String> transBindIdToPath(String bindid)
+	{
+		return null ;
 	}
 
 	private String getOpcAppNameDef()
@@ -311,7 +318,12 @@ public class ConnPtOPCUA extends ConnPt
     	writeUaNodeTreeJson(w,uaClient,nodeid);
     }
     
-    public void writeUaNodeTreeJson(Writer w) throws Exception
+    public  void writeBindBeSelectedTreeJson(Writer w) throws Exception
+    {
+    	writeUaNodeTreeJson(w,true) ;
+    }
+    
+    public void writeUaNodeTreeJson(Writer w,boolean b_var) throws Exception
     {
     	if(uaClient==null)
     	{
@@ -341,7 +353,7 @@ public class ConnPtOPCUA extends ConnPt
     	w.write(",\"icon\": \"fa fa-sitemap fa-lg\"");
     	
     	w.write(",\"text\":\""+this.getOpcEndPointURI()+"\"");
-    	//w.write(",\"state\": {\"opened\": true}");
+    	w.write(",\"state\": {\"opened\": true}");
     	
     	List<? extends UaNode> nodes = uaClient.getAddressSpace().browseNodes(root);
     	if(nodes!=null&&nodes.size()>0)
@@ -355,13 +367,13 @@ public class ConnPtOPCUA extends ConnPt
 	        	if(bn.startsWith("_"))
 	        		continue;
 	        	
-	        	if(node instanceof UaVariableNode)
+	        	if(!b_var&&node instanceof UaVariableNode)
 	        		continue;
 	        	
 	        	if(bfirst) bfirst=false;
 	        	else w.write(',');
 	        	
-	        	writeUaNodeTreeJson(w,uaClient,node);
+	        	writeUaNodeTreeJson(w,uaClient,node,b_var);
 	        }
 	        w.write("]");
     	}
@@ -412,7 +424,7 @@ public class ConnPtOPCUA extends ConnPt
     	UaNode nd = client.getAddressSpace().getNode(nid);
     	if(nd==null)
     		return ;
-    	writeUaNodeTreeJson(w,client,nd);
+    	writeUaNodeTreeJson(w,client,nd,false);
     }
     /**
      * complate to jstree
@@ -420,37 +432,44 @@ public class ConnPtOPCUA extends ConnPt
      * @param n
      * @throws IOException
      */
-    public static void writeUaNodeTreeJson(Writer w,OpcUaClient client,UaNode n) throws Exception
+    public static void writeUaNodeTreeJson(Writer w,OpcUaClient client,UaNode n,boolean b_var) throws Exception
     {
     	NodeId nid = n.getNodeId() ;
     	
+    	boolean bvar = n instanceof UaVariableNode;
+    	
     	w.write("{\"id\":\""+nid.toParseableString()+"\"");
     	w.write(",\"nc\":"+n.getNodeClass().getValue());
-    	w.write(",\"icon\": \"fa fa-folder fa-lg\"");
+    	if(bvar)
+    		w.write(",\"icon\": \"fa fa-tag fa-lg\"");
+    	else
+    		w.write(",\"icon\": \"fa fa-folder fa-lg\"");
     	w.write(",\"text\":\""+n.getDisplayName().getText()+"\"");
     	//w.write(",\"state\": {\"opened\": true}");
-    	
-    	List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(n);
-    	if(nodes!=null&&nodes.size()>0)
+    	if(!bvar)
     	{
-	        w.write(",\"children\":[");
-	        //
-	        boolean bfirst = true;
-	        for (UaNode node : nodes)
-	        {
-	        	String bn = node.getBrowseName().getName();
-	        	if(bn.startsWith("_"))
-	        		continue;
-	        	
-	        	if(node instanceof UaVariableNode)
-	        		continue;
-	        	
-	        	if(bfirst) bfirst=false;
-	        	else w.write(',');
-	        	
-	        	writeUaNodeTreeJson(w,client,node);
-	        }
-	        w.write("]");
+	    	List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(n);
+	    	if(nodes!=null&&nodes.size()>0)
+	    	{
+		        w.write(",\"children\":[");
+		        //
+		        boolean bfirst = true;
+		        for (UaNode node : nodes)
+		        {
+		        	String bn = node.getBrowseName().getName();
+		        	if(bn.startsWith("_"))
+		        		continue;
+		        	
+		        	if(!b_var && node instanceof UaVariableNode)
+		        		continue;
+		        	
+		        	if(bfirst) bfirst=false;
+		        	else w.write(',');
+		        	
+		        	writeUaNodeTreeJson(w,client,node,b_var);
+		        }
+		        w.write("]");
+	    	}
     	}
         w.write("}");
     }
@@ -648,7 +667,7 @@ public class ConnPtOPCUA extends ConnPt
 
 			//uaClient.getStackClient().getNamespaceTable()
 			uaClient.getSubscriptionManager().addSubscriptionListener(subLis);
-
+			
 			uaClient.connect();
 		} catch (Exception e)
 		{

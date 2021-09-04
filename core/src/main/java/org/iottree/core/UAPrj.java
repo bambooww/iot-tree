@@ -27,6 +27,8 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
 import org.iottree.core.cxt.UARtSystem;
+import org.iottree.core.node.PrjShareManager;
+import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
@@ -237,7 +239,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			throw new IllegalArgumentException("ch with name="+name+" existed") ;
 		ch.setNameTitle(name, title, desc);
 		
-		if(drvname.equals(ch.getDriverName()))
+		if(drvname!=null&&drvname.equals(ch.getDriverName()))
 		{
 			save();
 			return ch;
@@ -745,6 +747,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 					RT_runFlush();
 					
 					runScriptInterval() ;
+					
+					runShareInterval();
 				}
 			}
 			catch(Exception e)
@@ -756,6 +760,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 				startStopConn(false);
 				startStopCh(false);
 				
+				PrjSharer ps =getSharer();
+				if(ps!=null)
+					ps.runStop();
+				
 				rtRun=false;
 				rtTh = null ;
 				
@@ -766,8 +774,40 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	};
 	
 	
-
-
+	public PrjSharer getSharer()
+	{
+		return  PrjShareManager.getInstance().getSharer(this.getId());
+	}
+	
+	private void runShareInterval()
+	{
+		PrjSharer ps =getSharer();
+		if(ps==null)
+			return ;
+		if(ps.isEnable())
+			ps.runInLoop();
+		else
+			ps.runStop();
+	}
+	/**
+	 * judge share or not
+	 * @return
+	 */
+	public boolean isShare()
+	{
+		PrjSharer ps =getSharer();
+		if(ps==null)
+			return false;
+		return ps.isEnable() ;
+	}
+	
+	public boolean isShareRunning()
+	{
+		PrjSharer ps =getSharer();
+		if(ps==null)
+			return false;
+		return ps.isRunning() ;
+	}
 	
 	
 	private ScriptEngine engine = null ;

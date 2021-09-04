@@ -5,11 +5,12 @@ import org.iottree.core.ConnPt;
 
 public class ConnProMQTT extends ConnProvider
 {
-
+	public static final String TP ="mqtt" ;
+	
 	@Override
 	public String getProviderType()
 	{
-		return "mqtt";
+		return TP;
 	}
 	
 	public boolean isSingleProvider()
@@ -22,7 +23,7 @@ public class ConnProMQTT extends ConnProvider
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
 		// TODO Auto-generated method stub
-		return ConnPtMSG.class;
+		return ConnPtMQTT.class;
 	}
 
 	@Override
@@ -31,12 +32,38 @@ public class ConnProMQTT extends ConnProvider
 		// TODO Auto-generated method stub
 		return 1000;
 	}
+	
+	public void stop()
+	{
+		super.stop() ;
+		
+		disconnAll();
+	}
+	
+	public void disconnAll() //throws IOException
+	{
+		for(ConnPt ci:this.listConns())
+		{
+			try
+			{
+				ConnPtMQTT conn = (ConnPtMQTT)ci ;
+				conn.disconnect();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	protected void connpRunInLoop() throws Exception
 	{
-		// TODO Auto-generated method stub
-		
+		for(ConnPt ci:this.listConns())
+		{
+			ConnPtMQTT citc = (ConnPtMQTT)ci ;
+			citc.checkConn() ;
+		}
 	}
-
+	
 }

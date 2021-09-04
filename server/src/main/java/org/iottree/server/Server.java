@@ -9,6 +9,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.service.ServiceManager;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 
@@ -114,6 +115,8 @@ public class Server
 		ServerTomcat st = new ServerTomcat();
 		st.startTomcat(tbs_loader);
 
+		
+		ServiceManager.getInstance();
 		//System.out.println(" all web comp loaded,fire event");
 		//runFileMon();
 		UAManager.getInstance().start();

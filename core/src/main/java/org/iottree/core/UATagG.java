@@ -36,6 +36,12 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 	{
 		super(name,title,desc);
 	}
+	
+	
+	UATagG(UANodeOCTagsGCxt tg)
+	{
+		super(tg.name,tg.title,tg.desc);
+	}
 //	
 //	void constructNodeTree()
 //	{

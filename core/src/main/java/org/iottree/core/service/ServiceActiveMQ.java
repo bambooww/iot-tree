@@ -1,0 +1,108 @@
+package org.iottree.core.service;
+
+import java.util.HashMap;
+
+import javax.management.ObjectName;
+
+import org.apache.activemq.broker.BrokerFactory;
+import org.apache.activemq.broker.BrokerPlugin;
+import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.jmx.ManagementContext;
+import org.apache.activemq.spring.*;
+import org.iottree.core.Config;
+
+public class ServiceActiveMQ extends AbstractService
+{
+	BrokerService broker = null;
+
+	@Override
+	public String getName()
+	{
+		return "active_mq";
+	}
+
+	@Override
+	public String getTitle()
+	{
+		return "Apache Active MQ";
+	}
+
+	@Override
+	protected void initService(HashMap<String, String> pms) throws Exception
+	{
+		super.initService(pms);
+		
+		System.setProperty("org.apache.activemq.default.directory.prefix", Config.getDataDirBase()+"/active_mq/");
+		System.setProperty("activemq.conf",Config.getDataDirBase()+"/active_mq/conf/");
+		System.setProperty("activemq.data",Config.getDataDirBase()+"/active_mq/data/");
+		
+	}
+	
+
+	@Override
+	synchronized public boolean startService()
+	{
+		if(broker!=null)
+			return true;
+		
+		try
+		{
+			//bad code
+//			BrokerFactory.resetStartDefault();
+//			broker = BrokerFactory.createBroker("xbean:"+Config.getDataDirBase()+"active_mq/conf/activemq.xml");
+			
+			//good code
+			broker = new BrokerService();
+			broker.setBrokerName("iottree_activemq");
+			broker.addConnector("tcp://0.0.0.0:61616?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
+			broker.addConnector("mqtt://0.0.0.0:1883?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
+			//broker.addConnector("ws://0.0.0.0:61614?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
+			//broker.getBrokerDataDirectory()
+			//broker.setMessageAuthorizationPolicy(messageAuthorizationPolicy);
+			broker.setPlugins(new BrokerPlugin[] { new ActiveMQAuthPlugin("")});
+			//broker.
+			ManagementContext cxt = new ManagementContext();
+			
+			//cxt.registerMBean(new ActiveMQAuthPlugin(""), new ObjectName("auth_plug"));
+			broker.setManagementContext(cxt);
+			
+			broker.start();
+			System.out.println(" service ["+this.getTitle()+"] started");
+			return true;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+
+	}
+
+	@Override
+	public boolean stopService()
+	{
+		if(broker==null)
+			return true;
+		try
+		{
+			broker.stop();
+			//SpringBrokerContext sbc = (SpringBrokerContext)broker.getBrokerContext();
+			return true;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		finally
+		{
+			broker = null ;
+		}
+
+	}
+
+	@Override
+	public boolean isRunning()
+	{
+		return broker!=null&&broker.isStarted() ;
+	}
+
+}
