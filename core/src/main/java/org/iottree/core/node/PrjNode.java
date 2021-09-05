@@ -131,6 +131,9 @@ public abstract class PrjNode implements IXmlDataable
 				SW_callerOnPush(msg.content) ;
 				
 				break;
+			case w:
+				SW_shareOnWrite(msg.sorId,msg.content) ;
+				break ;
 			}
 		}
 		catch(Exception e)
@@ -155,6 +158,13 @@ public abstract class PrjNode implements IXmlDataable
 		if(nodeAdp!=null)
 			nodeAdp.SW_sharerOnReq(callerprjid, cont);
 	}
+	
+	protected void SW_shareOnWrite(String callerprjid,byte[] cont) throws Exception
+	{
+		if(nodeAdp!=null)
+			nodeAdp.SW_sharerOnWrite(callerprjid, cont);
+	}
+	
 	
 	protected void SW_callerOnPush(byte[] cont) throws Exception
 	{

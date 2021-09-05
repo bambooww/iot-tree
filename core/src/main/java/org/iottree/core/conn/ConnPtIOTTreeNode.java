@@ -11,8 +11,11 @@ import org.iottree.core.UACh;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsGCxt;
 import org.iottree.core.UATag;
+import org.iottree.core.UAUtil;
 import org.iottree.core.UAVal;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
+import org.iottree.core.cxt.UACodeItem;
+import org.iottree.core.cxt.UAContext;
 import org.iottree.core.node.PrjCaller;
 import org.iottree.core.node.PrjCallerMQTT;
 import org.iottree.core.node.PrjNodeAdapter;
@@ -38,6 +41,12 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	
 	private transient PrjCaller prjCaller = null ; 
 	
+	private transient long shareDT = -1 ;
+	
+	private transient boolean shareWritable = false ;
+	
+	private transient long lastPushDT = -1 ;
+	
 	public ConnPtIOTTreeNode()
 	{
 //		this.topics.add("iottree/node");
@@ -60,6 +69,21 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		//prjCaller.init();
 		//prjCaller.fromXmlData(xd);
 		return prjCaller ;
+	}
+	
+	public boolean isShareWritable()
+	{
+		return shareWritable;
+	}
+	
+	public long getShareDT()
+	{
+		return this.shareDT;
+	}
+	
+	public long getLastPushDT()
+	{
+		return this.lastPushDT;
 	}
 	
 	
@@ -101,6 +125,9 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		if(Convert.isNullOrEmpty(jsonstr))
 			return ;
 		JSONObject jo = new JSONObject(jsonstr);
+		shareWritable = jo.optBoolean("share_writable", false) ;
+		shareDT = jo.optLong("share_dt", -1) ;
+		lastPushDT = System.currentTimeMillis();
 		updateChCxtDyn(ch,jo);
 	}
 	
@@ -147,6 +174,25 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 			updateChCxtDyn((UANodeOCTagsGCxt)uan,sub) ;
 		}
 	}
+	
+	
+
+//	/**
+//	 * based on channel joined to this connpt.
+//	 * write 
+//	 * @param nodepath
+//	 * @param strv
+//	 */
+//	public boolean writeShareTag(String nodepath,String strv)
+//	{
+//		if(!shareWritable)
+//			return false;//cannot write
+//		
+//		
+//		this.getCaller().sendMsg(tarprjid, mt, msg);
+//		UATag uat = (UATag)UAUtil.findNodeByPath(nodepath);
+//		this.
+//	}
 //	public MqttEndPoint getMqttEP()
 //	{
 //		if(mqttEP!=null)
@@ -155,6 +201,21 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 //				.withCallback(this.mqttCB);;
 //		return mqttEP ;
 //	}
+	
+	public void runOnWrite(UATag tag,Object val) throws Exception
+	{
+		UACh ch = this.getJoinedCh();
+		if(ch==null)
+		{
+			return ;
+		}
+		
+		String path = tag.getNodeCxtPathIn(ch);
+		String strv = "" ;
+		if(val!=null)
+			strv = val.toString() ;
+		this.getCaller().callShareWriter(path, strv);
+	}
 
 	@Override
 	public XmlData toXmlData()

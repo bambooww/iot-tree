@@ -14,9 +14,11 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.iottree.core.UATag;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
+
 
 public class ConnPtMQTT extends ConnPtMSG
 {
@@ -143,6 +145,12 @@ public class ConnPtMQTT extends ConnPtMSG
 			System.out.println("mqtt onRecvedMsg=" + topic + " " + new String(bs,"utf-8"));
 
 		
+	}
+	
+	public void runOnWrite(UATag tag,Object val) throws Exception
+	{
+		throw new Exception("no impl") ;
+		//it may send some msg
 	}
 
 	synchronized void disconnect() // throws IOException

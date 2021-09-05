@@ -3,6 +3,8 @@ package org.iottree.core.node;
 import java.util.HashMap;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
+import org.iottree.core.UAUtil;
 import org.iottree.core.node.NodeMsg.MsgTp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
@@ -42,6 +44,17 @@ public abstract class PrjCaller extends PrjNode
 		
 		this.sendMsg(sharePrjId, MsgTp.req, null);
 	}
+	
+	
+	public void callShareWriter(String path,String strv) throws Exception
+	{
+		if(Convert.isNullOrEmpty(sharePrjId))
+			throw new Exception("no share project") ;
+		
+		String jstr = "{\"path\":\""+path+"\",\"strv\":\""+strv+"\"}";
+		this.sendMsg(sharePrjId, MsgTp.w, jstr.getBytes("UTF-8"));
+	}
+	
 	
 //	protected void SW_callerOnResp(String shareprjid,byte[] cont) throws Exception
 //	{

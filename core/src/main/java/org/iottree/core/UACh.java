@@ -11,6 +11,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.json.JSONObject;
 
@@ -209,6 +210,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		ConnPt cpt = this.getConnPt() ;
 		return cpt!=null&&cpt instanceof ConnPtVirtual ;
+	}
+	
+	public boolean isConnMsg() throws Exception
+	{
+		ConnPt cpt = this.getConnPt() ;
+		return cpt!=null&&cpt instanceof ConnPtMSG ;
 	}
 	/**
 	 * check driver is fit for this ch or not

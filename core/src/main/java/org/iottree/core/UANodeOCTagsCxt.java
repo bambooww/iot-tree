@@ -244,10 +244,35 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		CXT_renderJson(w,-1);
 	}
 	
+	public void CXT_renderJson(Writer w,HashMap<String,Object> extpms) throws IOException
+	{
+		CXT_renderJson(w,-1,extpms);
+	}
+	
 	public boolean CXT_renderJson(Writer w,long lastdt) throws IOException
 	{
+		return CXT_renderJson(w,lastdt,null);
+	}
+	
+	public boolean CXT_renderJson(Writer w,long lastdt,HashMap<String,Object> extpms) throws IOException
+	{
 		boolean bchged = false;
-		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.name+"\",\"tags\":[") ;
+		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.name+"\"");
+		if(extpms!=null)
+		{
+			for(Map.Entry<String,Object> n2v:extpms.entrySet())
+			{
+				String tmpn = n2v.getKey() ;
+				if("id".contentEquals(tmpn)||"n".contentEquals(tmpn))
+					throw new RuntimeException("extend pms cannot has name id and n") ;
+				Object tmpv = n2v.getValue() ;
+				if(tmpv instanceof Boolean||tmpv instanceof Number)
+					w.write(",\""+tmpn+"\":"+tmpv);
+				else
+					w.write(",\""+tmpn+"\":\""+tmpv+"\"");
+			}
+		}
+		w.write(",\"tags\":[") ;
 		boolean bfirst = true ;
 		List<UATag> tags = this.listTags();
 		for(UATag tg : tags)
@@ -310,7 +335,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				bfirst = false ;
 			//w.write("\""+subtg.getName()+"\":");
 			
-			if(subtg.CXT_renderJson(w,lastdt))
+			if(subtg.CXT_renderJson(w,lastdt,null))
 				bchged = true ;
 		}
 		w.write("]}");

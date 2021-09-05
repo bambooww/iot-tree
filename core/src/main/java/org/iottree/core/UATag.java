@@ -15,6 +15,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
@@ -650,6 +651,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				cpt.runOnWrite(this, v);
 				return true;
 			}
+			else if(ch.isConnMsg())
+			{
+				ConnPtMSG cpt = (ConnPtMSG)ch.getConnPt();
+				cpt.runOnWrite(this,v) ;
+				return true;
+			}
 			else
 			{
 				return RT_writeValDriver(v);
@@ -666,10 +673,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
-		if(da==null)
-			return false;
-		
-		ValTP tp = da.getValTP();
+		ValTP tp = null;
+		if(da!=null)
+			tp = da.getValTP();
+		else
+			tp = this.getValTp();
 		Object v = UAVal.transStr2ObjVal(tp, strv);
 		if(v==null)
 			return false;

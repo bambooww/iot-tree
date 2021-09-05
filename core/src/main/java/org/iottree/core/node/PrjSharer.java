@@ -6,7 +6,10 @@ import java.util.HashMap;
 
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
+import org.iottree.core.UAUtil;
 import org.iottree.core.node.NodeMsg.MsgTp;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
@@ -25,6 +28,11 @@ public abstract class PrjSharer extends PrjNode
 	private transient long lastR = -1 ;
 	
 	private long pushInterval = 10000 ;
+	
+	/**
+	 * allow write or not
+	 */
+	private boolean bWrite = true;
 //	public abstract void start() ;
 //	
 //	public abstract void stop() ;
@@ -61,7 +69,11 @@ public abstract class PrjSharer extends PrjNode
 			return ;
 		StringWriter sw = new StringWriter() ;
 		
-		p.CXT_renderJson(sw);
+		HashMap<String,Object> extpms = new HashMap<>() ;
+		extpms.put("share_writable", bWrite) ;
+		extpms.put("share_dt", System.currentTimeMillis()) ;
+		p.CXT_renderJson(sw,extpms);
+		
 		byte[] bs = sw.toString().getBytes("UTF-8") ;
 		
 		this.sendMsg(null, NodeMsg.MsgTp.push, bs);
@@ -79,6 +91,29 @@ public abstract class PrjSharer extends PrjNode
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(p) ;
 		this.sendMsg(callerprjid, MsgTp.resp, xd.toBytesWithUTF8());
 	}
+	
+	protected void SW_shareOnWrite(String callerprjid,byte[] cont) throws Exception
+	{
+		//System.out.println("SW_sharerOnReq ") ;
+		
+		UAPrj p = UAManager.getInstance().getPrjById(this.getPrjId()) ;
+		if(p==null)
+			return ;
+		String jstr = new String(cont,"UTF-8") ;
+		JSONObject jo = new JSONObject(jstr) ;
+		String path = jo.optString("path");
+		String strv = jo.optString("strv") ;
+		if(Convert.isNullOrEmpty(path))
+			return ;
+		
+		UATag t = (UATag)p.getDescendantNodeByPath(path) ;
+		if(t==null)
+			return ;
+		t.RT_writeValStr(strv) ;
+		//this.sendMsg(callerprjid, MsgTp.resp, xd.toBytesWithUTF8());
+	}
+	
+	
 	
 	public abstract void runStop();
 	

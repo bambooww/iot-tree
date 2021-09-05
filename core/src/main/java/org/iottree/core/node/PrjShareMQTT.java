@@ -21,10 +21,11 @@ public class PrjShareMQTT extends PrjSharer
 		mqttEP = new MqttEndPoint("iottree_prj_sharer_"+prjid) ;
 		
 		XmlData pxd = this.getParamXD() ;
-		mqttEP.withParamsXml(pxd).withCallback(mqttCB)
-			.withListenTopic("_n/+/"+prjid+"/req")
-			.withListenTopic("_n/+/"+prjid+"/resp")
-			.withListenTopic("_n/+/"+prjid+"/push");
+		mqttEP.withParamsXml(pxd).withCallback(mqttCB);
+		for(NodeMsg.MsgTp mt:NodeMsg.MsgTp.values())
+		{
+			mqttEP.withListenTopic("_n/+/"+prjid+"/"+mt) ;
+		}
 	}
 	
 	public MqttEndPoint getMqttEP()
