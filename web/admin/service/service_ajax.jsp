@@ -32,6 +32,20 @@ case "stop":
 		as.stopService() ;
 	out.print("ok") ;
 	break;
+case "setup":
+	if(!Convert.checkReqEmpty(request, out,"n"))
+		return;
+	n = request.getParameter("n") ;
+	as = ServiceManager.getInstance().getService(n) ;
+	if(as==null)
+	{
+		out.print("no service found") ;
+		return ;
+	}
+	HashMap<String,String> pms = Convert.parseFromRequest(request, null);
+	as.setService(pms);
+	out.print("ok") ;
+	break ;
 case "list":
 	break ;
 }

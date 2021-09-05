@@ -62,7 +62,7 @@ public class ServiceManager
 	{
 		File f = new File(Config.getDataDirBase()+"service/"+servicename+".txt") ;
 		if(!f.exists())
-			return null ;
+			return new HashMap<>() ;
 		return Convert.loadPropFile(f) ;
 	}
 	

@@ -24,6 +24,7 @@ if(prj==null)
 PrjShareMQTT ps = (PrjShareMQTT)PrjShareManager.getInstance().getSharer(prjid) ;
 
 boolean benable = true;
+boolean bwrite=true;
 String host = "";
 String port  = "";
 
@@ -32,10 +33,15 @@ String user = "";
 String psw = "";
 int conn_int = 60;
 
+long push_int = 10 ;
+
 String chked_en = "" ;
+String chked_w = "" ;
 if(ps!=null)
 {
 	benable = ps.isEnable();
+	bwrite = ps.isWritable();
+	push_int = ps.getPushInterval() ;
 	
 	MqttEndPoint cpt = ps.getMqttEP();
 	host = cpt.getMQTTHost();
@@ -49,6 +55,8 @@ if(ps!=null)
 
 if(benable)
 	chked_en = "checked=checked";
+if(bwrite)
+	chked_w = "checked=checked";
 %>
 <html>
 <head>
@@ -70,6 +78,10 @@ dlg.resize_to(700,400);
     <label class="layui-form-label">Enable:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid">Writable:</div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	    <input type="checkbox" id="writable" name="writable" <%=chked_w%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
   <%--
@@ -108,6 +120,13 @@ dlg.resize_to(700,400);
 	    <input type="text" id="mqtt_psw" name="mqtt_psw" value="<%=psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">Push Interval:</label>
+    <div class="layui-input-inline">
+      <input type="text" id="push_int" name="push_int" value="<%=push_int%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+    </div>
+    
+  </div>
   <div class="layui-form-item">
     <label class="layui-form-label"></label>
     <div class="layui-input-inline">
@@ -137,6 +156,7 @@ function win_close()
 function do_submit(cb)
 {
 	var ben = $("#enable").prop("checked") ;
+	var bw =  $("#writable").prop("checked") ;
 	
 	var host = $('#mqtt_host').val();
 	if(host==null||host=='')
@@ -155,8 +175,6 @@ function do_submit(cb)
 	{
 		cb(false,'Please input valid port') ;
 	}
-	
-
 	
 	var conn_to = $('#mqtt_conn_to').val();
 	if(conn_to==null||conn_to=='')
@@ -186,10 +204,15 @@ function do_submit(cb)
 		mqtt_psw="";
 	}
 	
+	var push_int = $("#push_int").val() ;
+	if(push_int==null||push_int=='')
+		push_int="" ;
+	
 	
 	var pm = {op:"share",id:prjid,enable:ben,"dx_/mqtt_host:string":host
 			,"dx_/mqtt_port:int32":vp,
-			"dx_/mqtt_conn_to:int32":conn_to,"dx_/mqtt_user:string":mqtt_user,"dx_/mqtt_psw:string":mqtt_psw}
+			"dx_/mqtt_conn_to:int32":conn_to,"dx_/mqtt_user:string":mqtt_user,"dx_/mqtt_psw:string":mqtt_psw,
+			"push_int":push_int,"w":bw}
 	send_ajax("prj_ajax.jsp",pm,function(bsucc,ret){
 		if(bsucc&&"ok"==ret)
 		{

@@ -91,7 +91,9 @@ case "stop":
 case "share":
 	XmlData tmpxd = XmlData.parseFromHttpRequest(request, "dx_") ;
 	boolean benable = "true".equalsIgnoreCase(request.getParameter("enable")) ;
-	PrjShareManager.getInstance().setSharer(id,benable,tmpxd) ;
+	boolean bw =  "true".equalsIgnoreCase(request.getParameter("w")) ;
+	long pushint = Convert.parseToInt64(request.getParameter("push_int"), 10000) ;
+	PrjShareManager.getInstance().setSharer(id,benable,bw,pushint,tmpxd) ;
 	out.print("ok");
 	break ;
 }

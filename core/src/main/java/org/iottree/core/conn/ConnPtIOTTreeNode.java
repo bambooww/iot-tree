@@ -111,24 +111,31 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		UACh ch = this.getJoinedCh();
 		if(ch==null)
 			return ;
-		System.out.println("xmldata==="+xd.toXmlString());
+		//System.out.println("xmldata==="+xd.toXmlString());
 		ch.Node_refreshByPrjXmlData(xd);
-		System.out.println("ch refresh by prj ok ") ;
+		//System.out.println("ch refresh by prj ok ") ;
 	}
 	
 	private void onNodeSharePush(String jsonstr) throws Exception
 	{
-		UACh ch = this.getJoinedCh();
-		if(ch==null)
-			return ;
-		
-		if(Convert.isNullOrEmpty(jsonstr))
-			return ;
-		JSONObject jo = new JSONObject(jsonstr);
-		shareWritable = jo.optBoolean("share_writable", false) ;
-		shareDT = jo.optLong("share_dt", -1) ;
-		lastPushDT = System.currentTimeMillis();
-		updateChCxtDyn(ch,jo);
+		try
+		{
+			UACh ch = this.getJoinedCh();
+			if(ch==null)
+				return ;
+			
+			if(Convert.isNullOrEmpty(jsonstr))
+				return ;
+			JSONObject jo = new JSONObject(jsonstr);
+			shareWritable = jo.optBoolean("share_writable", false) ;
+			shareDT = jo.optLong("share_dt", -1) ;
+			
+			updateChCxtDyn(ch,jo);
+		}
+		finally
+		{
+			lastPushDT = System.currentTimeMillis();
+		}
 	}
 	
 	private void updateChCxtDyn(UANodeOCTagsGCxt p,JSONObject curcxt)
@@ -204,6 +211,9 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	
 	public void runOnWrite(UATag tag,Object val) throws Exception
 	{
+		if(!this.shareWritable)
+			throw new Exception("remote node cannot be write");
+		
 		UACh ch = this.getJoinedCh();
 		if(ch==null)
 		{
@@ -296,6 +306,8 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	public boolean isConnReady()
 	{
 		if (prjCaller == null)
+			return false;
+		if(System.currentTimeMillis()-this.lastPushDT>30000)
 			return false;
 		return prjCaller.isConnReady();
 	}

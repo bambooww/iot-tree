@@ -32,12 +32,34 @@ public abstract class PrjSharer extends PrjNode
 	/**
 	 * allow write or not
 	 */
-	private boolean bWrite = true;
+	private boolean bWrite = false;
 //	public abstract void start() ;
 //	
 //	public abstract void stop() ;
 //	
 //	public abstract boolean isRunning() ;
+	
+	public long getPushInterval()
+	{
+		return pushInterval ;
+	}
+	
+	public boolean isWritable()
+	{
+		return bWrite ;
+	}
+	
+	public PrjSharer withWritable(boolean bw)
+	{
+		this.bWrite = bw ;
+		return this ;
+	}
+	
+	public PrjSharer withPushInterval(long intv)
+	{
+		this.pushInterval = intv ;
+		return this ;
+	}
 	
 	public void runInLoop()
 	{
@@ -95,6 +117,8 @@ public abstract class PrjSharer extends PrjNode
 	protected void SW_shareOnWrite(String callerprjid,byte[] cont) throws Exception
 	{
 		//System.out.println("SW_sharerOnReq ") ;
+		if(!this.bWrite)
+			return ;
 		
 		UAPrj p = UAManager.getInstance().getPrjById(this.getPrjId()) ;
 		if(p==null)
@@ -125,6 +149,7 @@ public abstract class PrjSharer extends PrjNode
 	{
 		XmlData xd = super.toXmlData() ;
 		xd.setParamValue("push_int", this.pushInterval);
+		xd.setParamValue("w", bWrite);
 		return xd ;
 	}
 	
@@ -132,6 +157,7 @@ public abstract class PrjSharer extends PrjNode
 	{
 		super.fromXmlData(xd);
 		this.pushInterval = xd.getParamValueInt64("push_int", 10000) ;
+		this.bWrite = xd.getParamValueBool("w", false) ;
 	}
 	
 	public void fromJSON(JSONObject jo) throws Exception

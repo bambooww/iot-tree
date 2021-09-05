@@ -637,8 +637,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return dd.RT_writeVal(dev, da, v);
 	}
 	
-	
 	public boolean RT_writeVal(Object v) //throws Exception
+	{
+		return RT_writeVal(v,null) ;
+	}
+	
+	public boolean RT_writeVal(Object v,StringBuilder failedr) //throws Exception
 	{
 		UACh ch = this.getBelongToCh();
 		if(ch==null)
@@ -664,12 +668,20 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			if(failedr!=null)
+				failedr.append(e.getMessage()) ;
+			else
+				e.printStackTrace();
 			return false;
 		}
 	}
 	
 	public boolean RT_writeValStr(String strv) // throws Exception
+	{
+		return RT_writeValStr(strv,null) ;
+	}
+	
+	public boolean RT_writeValStr(String strv,StringBuilder failedr) // throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
@@ -682,7 +694,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(v==null)
 			return false;
 		
-		return RT_writeVal(v) ;
+		return RT_writeVal(v,failedr) ;
 	}
 	
 	

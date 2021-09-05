@@ -1741,6 +1741,24 @@ public class Convert
 		}
 		return ret;
 	}
+	
+	public static HashMap<String,String> parseFromRequest(HttpServletRequest req,String prefix)
+	{
+		HashMap<String,String> rets = new HashMap<>() ;
+		for(Enumeration<String> ens = req.getParameterNames();ens.hasMoreElements();)
+		{
+			String n = ens.nextElement() ;
+			String v = req.getParameter(n) ;
+			if(Convert.isNotNullEmpty(prefix))
+			{
+				if(!n.startsWith(prefix))
+					continue ;
+				n = n.substring(prefix.length()) ;
+			}
+			rets.put(n,v) ;
+		}
+		return rets;
+	}
 
 	/**
 	 * 转换字符串到适合的文件名称

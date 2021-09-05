@@ -16,11 +16,7 @@
 <html>
 <head>
 <title>channel editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);
 </script>
@@ -28,16 +24,135 @@ dlg.resize_to(600,400);
 </style>
 </head>
 <body>
+
+<table class="layui-table">
+  <colgroup>
+    <col width="150">
+    <col width="200">
+    <col>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th></th>
+    </tr> 
+  </thead>
+  <tbody>
 <%
 for(AbstractService as:ass)
 {
+	String run_c = "grey" ;
+	String run_t = "disabled" ;
+	if(as.isEnable())
+	{
+		if(as.isRunning())
+		{
+			run_c = "green" ;
+			run_t = "running" ;
+		}
+		else
+		{
+			run_c = "red" ;
+			run_t = "pause" ;
+		}
+	}
 %>
-<%=as.getTitle() %>  <a href="javascript:start_stop(true,'<%=as.getName()%>')">start</a> <a href="javascript:start_stop(false,'<%=as.getName()%>')">stop</a> <br>
+  
+    <tr>
+      <td><%=as.getTitle() %></td>
+      <td><%=as.getBrief() %></td>
+      <td><span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t %></td>
+      <td>
+<%
+if(as.isEnable())
+{
+	if(as.isRunning())
+	{
+%>
+
+		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop service" onclick="start_stop(false,'<%=as.getName()%>')"></i>
+		 
+<%
+	}
+	else
+	{
+%>
+<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start service" onclick="start_stop(true,'<%=as.getName()%>')"></i>
+<%
+	}
+}
+%>
+        
+        <a href="javascript:edit_server('<%=as.getName()%>')"><i class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a> 
+	  </td>
+    </tr>
+    
+
 <%
 }
 %>
+
+  </tbody>
+</table>
 </body>
 <script type="text/javascript">
+
+
+var table = null ;
+
+var cur_selected = null ;
+
+//var on_devdef_selected = null ;
+
+layui.use('table', function()
+{
+  table = layui.table;
+});
+
+function refresh_ui()
+{
+	document.location.href=document.location.href;
+}
+
+function edit_server(n)
+{
+	dlg.open("service_edit_"+n+".jsp",
+			{title:"active mq setup",w:'500px',h:'400px'},
+			['Ok','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						ret.n = n;
+						ret.op='setup';
+						dlg.loading(true);
+						send_ajax('service_ajax.jsp',ret,function(bsucc,ret)
+						{
+							dlg.loading(false);
+							if(!bsucc || ret.indexOf('ok')<0)
+							{
+								dlg.msg(""+ret);
+								return ;
+							}
+							dlg.close();
+							refresh_ui();
+						},false);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 
 function start_stop(b,n)
 {

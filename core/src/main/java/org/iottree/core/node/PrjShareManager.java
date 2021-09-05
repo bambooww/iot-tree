@@ -35,7 +35,9 @@ public class PrjShareManager
 	{}
 	
 	
-	public PrjSharer setSharer(String prjid,boolean enbale,XmlData paramxd) throws Exception
+	public PrjSharer setSharer(String prjid,boolean enbale,
+			boolean bwritable,long push_int,
+			XmlData paramxd) throws Exception
 	{
 		UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 		if(prj==null)
@@ -51,7 +53,8 @@ public class PrjShareManager
 //		{
 //			if(ps.)
 //		}
-		ps.withPrjId(prjid, enbale).withParam(paramxd) ;
+		ps	.withWritable(bwritable).withPushInterval(push_int)
+			.withParam(paramxd).withPrjId(prjid, enbale) ;
 		saveSharer(ps) ;
 		
 		id2share.put(prjid, ps) ;

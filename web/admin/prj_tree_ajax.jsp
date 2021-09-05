@@ -100,7 +100,8 @@
 		String drvt = "none";
 		if(drv!=null)
 			drvt = drv.getTitle() ;
-		if(ch.hasDriver())
+		boolean hasdrv = ch.hasDriver();
+		if(hasdrv)
 		{
 			if(!ch.isDriverFit())
 				drvfit = "<span class=tn_warn title='"+drvt+" is not fit'>drv?</span>" ;
@@ -109,7 +110,7 @@
 		}
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
 		  ,"id":"<%=ch.getId() %>"
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"

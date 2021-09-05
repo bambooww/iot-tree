@@ -10,21 +10,39 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.ManagementContext;
 import org.apache.activemq.spring.*;
 import org.iottree.core.Config;
+import org.iottree.core.util.Convert;
 
 public class ServiceActiveMQ extends AbstractService
 {
+	public static final String NAME = "active_mq";
 	BrokerService broker = null;
+	
+	boolean mqttEn = false;
+	int mqttPort = 1883;
+
+	boolean tcpEn = false;
+	int tcpPort = 60001;
 
 	@Override
 	public String getName()
 	{
-		return "active_mq";
+		return NAME;
 	}
 
 	@Override
 	public String getTitle()
 	{
 		return "Apache Active MQ";
+	}
+	
+	public String getBrief()
+	{
+		String ret = "" ;
+		if(mqttEn)
+			ret += "mqtt port="+this.mqttPort+"<br>" ;
+		if(tcpEn)
+			ret += "tcp port="+this.tcpPort+"<br>" ;
+		return ret ;
 	}
 
 	@Override
@@ -36,8 +54,32 @@ public class ServiceActiveMQ extends AbstractService
 		System.setProperty("activemq.conf",Config.getDataDirBase()+"/active_mq/conf/");
 		System.setProperty("activemq.data",Config.getDataDirBase()+"/active_mq/data/");
 		
+		mqttEn = "true".equals(pms.get("mqtt_en")) ;
+		mqttPort = Convert.parseToInt32(pms.get("mqtt_port"), 1883) ;
+		
+		tcpEn = "true".equals(pms.get("tcp_en")) ;
+		tcpPort = Convert.parseToInt32(pms.get("tcp_port"), 60001) ;
 	}
 	
+	public boolean isMqttEn()
+	{
+		return mqttEn ;
+	}
+	
+	public String getMqttPortStr()
+	{
+		return ""+mqttPort ;
+	}
+	
+	public boolean isTcpEn()
+	{
+		return tcpEn ;
+	}
+	
+	public String getTcpPortStr()
+	{
+		return ""+tcpPort ;
+	}
 
 	@Override
 	synchronized public boolean startService()

@@ -43,8 +43,11 @@ case "w":
 		return ;
 	}
 	String strv = request.getParameter("v") ;
-	tag.RT_writeValStr(strv);
-	out.print("write value ok") ;
+	StringBuilder failedr = new StringBuilder() ;
+	if(tag.RT_writeValStr(strv,failedr))
+		out.print("write value ok") ;
+	else
+		out.print(failedr.toString()) ;
 	break ;
 default:
 	
