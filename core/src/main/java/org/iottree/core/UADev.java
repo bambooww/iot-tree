@@ -233,8 +233,13 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 //				return this.modelUid ;
 			}
 		}
-		return super.getPropValue(groupn, itemn);
+		Object locv = super.getPropValue(groupn, itemn);
+		if(locv==null) //override from devdef
+			locv = this.getDevDef().getPropValue(groupn, itemn) ;
+		
+		return locv;
 	}
+	
 	
 	public boolean setPropValue(String groupn,String itemn,String strv)
 	{

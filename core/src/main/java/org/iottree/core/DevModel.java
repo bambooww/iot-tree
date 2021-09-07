@@ -68,22 +68,22 @@ public abstract class DevModel // extends DevDef implements IPropChecker
 	
 	final protected boolean getPropValBool(String groupn,String itemn,boolean defv)
 	{
-		return this.belongToDev.getPropValueBool(groupn, itemn, defv);
+		return this.belongToDev.getOrDefaultPropValueBool(groupn, itemn, defv);
 	}
 	
 	final protected long getPropValInt(String groupn,String itemn,long defv)
 	{
-		return this.belongToDev.getPropValueLong(groupn, itemn, defv);
+		return this.belongToDev.getOrDefaultPropValueLong(groupn, itemn, defv);
 	}
 	
 	final protected double getPropValFloat(String groupn,String itemn,double defv)
 	{
-		return this.belongToDev.getPropValueDouble(groupn, itemn, defv);
+		return this.belongToDev.getOrDefaultPropValueDouble(groupn, itemn, defv);
 	}
 	
 	final protected String getPropValStr(String groupn,String itemn,String defv)
 	{
-		return this.belongToDev.getPropValueStr(groupn, itemn, defv);
+		return this.belongToDev.getOrDefaultPropValueStr(groupn, itemn, defv);
 	}
 	//-----------------------------
 	

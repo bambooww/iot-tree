@@ -26,9 +26,25 @@ public abstract class PropNode extends JSObMap
 		return propn2Val.get(k);
 	}
 	
-	public String getPropValueStr(String groupn,String itemn,String defv)
+	public boolean isSetPropValue(String groupn,String itemn)
+	{
+		Object ov = getPropValue(groupn,itemn);
+		return ov!=null;
+	}
+	
+	private Object getDefaultPropValue(String groupn,String itemn)
+	{
+		PropItem p = this.getPropItem(groupn, itemn) ;
+		if(p==null)
+			return null ;
+		return p.getDefaultVal() ;
+	}
+	
+	public String getOrDefaultPropValueStr(String groupn,String itemn,String defv)
 	{
 		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			v = getDefaultPropValue(groupn,itemn);
 		if(v==null)
 			return defv ;
 		if(v instanceof String)
@@ -36,9 +52,11 @@ public abstract class PropNode extends JSObMap
 		return v.toString();
 	}
 	
-	public boolean getPropValueBool(String groupn,String itemn,boolean defv)
+	public boolean getOrDefaultPropValueBool(String groupn,String itemn,boolean defv)
 	{
 		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			v = getDefaultPropValue(groupn,itemn);
 		if(v==null)
 			return defv ;
 		if(v instanceof Boolean)
@@ -46,9 +64,11 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public long getPropValueLong(String groupn,String itemn,long defv)
+	public long getOrDefaultPropValueLong(String groupn,String itemn,long defv)
 	{
 		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			v = getDefaultPropValue(groupn,itemn);
 		if(v==null)
 			return defv ;
 		if(v instanceof Number)
@@ -56,9 +76,11 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public int getPropValueInt(String groupn,String itemn,int defv)
+	public int getOrDefaultPropValueInt(String groupn,String itemn,int defv)
 	{
 		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			v = getDefaultPropValue(groupn,itemn);
 		if(v==null)
 			return defv ;
 		if(v instanceof Number)
@@ -66,9 +88,11 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public double getPropValueDouble(String groupn,String itemn,double defv)
+	public double getOrDefaultPropValueDouble(String groupn,String itemn,double defv)
 	{
 		Object v = getPropValue(groupn,itemn);
+		if(v==null)
+			v = getDefaultPropValue(groupn,itemn);
 		if(v==null)
 			return defv ;
 		if(v instanceof Number)

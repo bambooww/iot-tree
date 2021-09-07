@@ -1,9 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@ page import="java.util.*,java.io.*,
+<%@ page import="java.util.*,java.io.*,org.json.*,
+  org.iottree.core.util.*,
 	org.iottree.core.util.logger.*
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
+
+//String txt = Convert.readFileTxt(new File("D:/work/work_dj/nha_node/testdir/r_comp3/filetp_check.json"), "utf-8") ;
+//JSONArray jarr = new JSONArray(txt);
+
 ILogger[] logs = LoggerManager.getAllLoggers() ;
 Arrays.sort(logs, new Comparator<ILogger>(){
 

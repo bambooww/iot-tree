@@ -359,6 +359,27 @@ public class PropItem
 		return this.defaultVal;
 	}
 	
+	public Number getDefaultValNum()
+	{
+		if(this.defaultVal==null)
+			return null ;
+		return (Number)this.defaultVal ; 
+	}
+	
+	public Boolean getDefaultValBool()
+	{
+		if(this.defaultVal==null)
+			return null ;
+		return (Boolean)this.defaultVal ; 
+	}
+	
+	public String getDefaultValStr()
+	{
+		if(this.defaultVal==null)
+			return null ;
+		return this.defaultVal.toString() ; 
+	}
+	
 	public boolean isTxtMultiLine()
 	{
 		return this.bTxtMultiLine ;
