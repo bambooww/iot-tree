@@ -102,6 +102,12 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	public UATagG addTagG(String name,String title,String desc)
 			 throws Exception
 	{
+		return addTagG(name,title,desc,true);
+	}
+	
+	public UATagG addTagG(String name,String title,String desc,boolean bsave)
+			 throws Exception
+	{
 		UAUtil.assertUAName(name);
 		
 //		UATagG d = this.getSubTagGByName(name) ;
@@ -114,7 +120,8 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		d.id = this.getNextIdByRoot() ;
 		taggs.add(d);
 		constructNodeTree();
-		this.save();
+		if(bsave)
+			this.save();
 		return d ;
 	}
 	
@@ -122,13 +129,15 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	{
 		UAUtil.assertUAName(name);
 
-		UATagG ch = this.getSubTagGByName(name);
-		if (ch != null&&ch!=tagg)
+		UATagG subtg = this.getSubTagGByName(name);
+		if (subtg != null&&subtg!=tagg)
 		{
 			throw new IllegalArgumentException("tagg with name=" + name + " existed");
 		}
+		
 		//ch = new UAHmi(name, title, desc, "");
-		tagg.setNameTitle(name, title, desc);
+		if(!tagg.setNameTitle(name, title, desc))
+			return tagg; //not chg
 		// ch.belongTo = this;
 		//hmis.add(ch);
 		this.constructNodeTree();

@@ -709,6 +709,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		{
 			Node_refreshBySubNode(this,subn) ;
 		}
+		this.save();
 	}
 	
 	private void Node_refreshBySubNode(UANodeOCTagsGCxt gcxt,UANode uan) throws Exception
@@ -716,7 +717,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		if(uan instanceof UANodeOCTagsGCxt)
 		{
 			UANodeOCTagsGCxt tmptg = (UANodeOCTagsGCxt)uan ;
-			UATagG tg = gcxt.addTagG(uan.getName(), uan.getTitle(), uan.getDesc()) ;
+			String tmpn = tmptg.getName();
+			UATagG nn = (UATagG)gcxt.getSubNodeByName(tmpn) ;
+			UATagG tg = null;
+			if(nn!=null)
+				tg = gcxt.updateTagG(nn, uan.getName(), uan.getTitle(), uan.getDesc()) ;
+			else
+				tg = gcxt.addTagG(uan.getName(), uan.getTitle(), uan.getDesc(),false) ;
 			List<UANode> tmpsubs = tmptg.getSubNodes();
 			if(tmpsubs!=null)
 			{
@@ -732,7 +739,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			UANode tmpn = gcxt.getSubNodeByName(t.getName()) ;
 			if(tmpn==null)
 			{
-				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", t.getValTp(), t.bCanWrite, t.scanRate) ;
+				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", t.getValTp(), t.bCanWrite, t.scanRate,false) ;
 			}
 		}
 		

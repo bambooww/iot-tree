@@ -42,7 +42,6 @@ public class OpcUAClientDrv extends DevDriver
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

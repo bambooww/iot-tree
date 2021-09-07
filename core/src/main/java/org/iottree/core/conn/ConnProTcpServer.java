@@ -504,7 +504,8 @@ public class ConnProTcpServer extends ConnProvider
 	private  void onSockConnIdAccepted(Socket sock,String connid)
 	{
 		//TODO check connid already existed or not 
-		System.out.println("onSockConnIdAccepted connid="+connid) ;
+		if(log.isDebugEnabled())
+			System.out.println("onSockConnIdAccepted connid="+connid) ;
 		ConnPtTcpAccepted cpt = getConnPtTcpBySockId(connid) ;
 		AcceptedSockItem asi = new AcceptedSockItem(sock,connid,cpt);
 		if(cpt!=null)

@@ -48,14 +48,28 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		setNameTitle(name,title,desc);
 	}
 	
-	void setNameTitle(String name,String title,String desc)
+	boolean setNameTitle(String name,String title,String desc)
 	{
 		Convert.checkVarName(name);
 		if(name.startsWith("_"))
 			throw new IllegalArgumentException("name cannot start with _") ;
-		this.name = name ;
-		this.title = title ;
-		this.desc = desc ;
+		boolean b = false;
+		if(!name.equals(this.name))
+		{
+			this.name = name ;
+			b = true ;
+		}
+		if(!title.equals(this.title))
+		{
+			this.title = title ;
+			b = true ;
+		}
+		if(!desc.equals(this.desc))
+		{
+			this.desc = desc ;
+			b = true ;
+		}
+		return b;
 	}
 	
 	void setNameTitleSys(String name,String title,String desc)

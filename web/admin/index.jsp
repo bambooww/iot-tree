@@ -361,6 +361,14 @@ if(rep.isAutoStart())
 					            </div>
 					</div>
 
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <h3>Others</h3>
+					    </div>
+					    <div class="mod-body">
+					       <a href="javascript:log_ctrl()">log controller</a>           
+					     </div>
+					</div>
 				</div>
 				<!-- end 侧边栏 -->
 			</div>
@@ -719,6 +727,19 @@ function service_setup()
 {
 	dlg.open("service/service_mgr.jsp",
 			{title:"Service Manager",w:'500px',h:'400px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function log_ctrl()
+{
+	dlg.open("util/log_mgr.jsp",
+			{title:"Log Controller",w:'700px',h:'600px'},
 			['Close'],
 			[
 				function(dlgw)

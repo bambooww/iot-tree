@@ -120,16 +120,14 @@ public abstract class DevAddr
 	
 	public void RT_setVal(Object v,boolean chk_chg)
 	{
-		if(v==null)
-		{
-			//uaVal.bValid=false;
-			uaVal.setVal(false, null, -1);
-			return;
-		}
-		
 		if(chk_chg)
 		{
-			if(uaVal.isValid() && v.equals(uaVal.getObjVal()))
+			if(v==null)
+			{//
+				if(!uaVal.isValid())
+					return ;
+			}
+			else if(uaVal.isValid() && v.equals(uaVal.getObjVal()))
 			{
 				return ;
 			}
@@ -138,7 +136,10 @@ public abstract class DevAddr
 //		uaVal.objVal = v ;
 //		uaVal.valDT=System.currentTimeMillis() ;
 //		uaVal.bValid=true;
-		uaVal.setVal(true, v, System.currentTimeMillis());
+		if(v==null)
+			uaVal.setVal(false, null, System.currentTimeMillis());
+		else
+			uaVal.setVal(true, v, System.currentTimeMillis());
 		
 		//set his
 		this.getBelongTo().RT_setUAVal(uaVal);

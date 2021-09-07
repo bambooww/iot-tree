@@ -16,7 +16,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	// -  for system tags
 	@data_obj(param_name="sys_tags",obj_c=UATag.class)
-	private transient ArrayList<UATag> sysTags = null;
+	ArrayList<UATag> sysTags = new ArrayList<>();
 	
 	public UANodeOCTags()
 	{
@@ -175,7 +175,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	UATag addOrUpdateTagSys(String tagid,
 			boolean bmid,String name,String title,String desc,
-			String addr,UAVal.ValTP vt,boolean canw,long srate) throws Exception
+			String addr,UAVal.ValTP vt,boolean canw,long srate,boolean bsave) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null ;
@@ -205,7 +205,10 @@ public abstract class UANodeOCTags extends UANodeOC
 				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
 			}
 			d.id = this.getNextIdByRoot() ;
-			tags.add(d) ;
+			if(d.isSysTag())
+				sysTags.add(d);
+			else
+				tags.add(d) ;
 			constructNodeTree();
 		}
 		else
@@ -215,7 +218,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			else
 				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
 		}
-		save();
+		if(bsave)
+			save();
 		return d ;
 	}
 	
@@ -309,7 +313,17 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	public UATag getTagByName(String n)
 	{
-		for(UATag t:tags)
+		List<UATag> sss = null ;
+		if(n.startsWith("_"))
+		{
+			if(this.sysTags==null)
+				return null ;
+			sss = sysTags ;
+		}
+		else
+			sss = tags ;
+		
+		for(UATag t:sss)
 		{
 			if(n.contentEquals(t.getName()))
 				return t ;
@@ -324,6 +338,12 @@ public abstract class UANodeOCTags extends UANodeOC
 			if(id.contentEquals(t.getId()))
 				return t ;
 		}
+		if(sysTags==null)
+			return null ;
+		
+		for(UATag t:sysTags)
+			if(id.contentEquals(t.getId()))
+				return t ;
 		return null ;
 	}
 	
@@ -425,8 +445,8 @@ public abstract class UANodeOCTags extends UANodeOC
 	 */
 	void RT_init(boolean breset,boolean b_sub)
 	{
-		if(breset)
-			sysTags= null ;
+		//if(breset)
+		//	sysTags= null ;
 		
 		if(b_sub)
 		{

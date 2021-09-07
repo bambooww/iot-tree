@@ -4,7 +4,7 @@
   <parent>
     <artifactId>driver-parent</artifactId>
     <groupId>org.iottree.driver</groupId>
-    <version>0.94.2</version>
+    <version>0.94.3</version>
 
   </parent>
 
@@ -30,6 +30,15 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+	    <groupId> javafish.clients.opc</groupId>
+	    <artifactId>jeasyopc</artifactId>
+	    <scope>system</scope>
+	    <version>2.5</version>
+	     <systemPath>${basedir}/lib/jeasyopc.jar</systemPath>
+	</dependency>
+	
   </dependencies>
 
   <build>

@@ -501,16 +501,18 @@ background-color: #fff ;
 		               	 <div class="subitem_toolbar" v-bind:id="'cp_'+connector.id" v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp">
 		               	      <table style="width:100%;border: 1">
 			               	 		<tr>
-										<td width="80%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
-											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span> {{ connector.title }} [{{ connector.tp }}]
+										<td width="90%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
+											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span>
+											<span style="width:15px;height:15px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											&nbsp;{{ connector.title }} [{{ connector.tp }}]
 										</td>
 										<%--
 										<td width="25px">
 											<a v-bind:href="'javascript:edit_cp(\''+connector.tp+'\',\''+connector.id+'\')'"><i class="fa fa-pencil" aria-hidden="true"></i></a>
 										</td>
 										 --%>
-										<td width="20%" >
-											<div style="width:20px;height:20px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;</div>
+										<td width="20px" >
+											
 										</td>
 									</tr>
 								</table>
@@ -520,16 +522,17 @@ background-color: #fff ;
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
-										<td width="70%" v-bind:title="connection.static_txt">
+										<td width="90%" v-bind:title="connection.static_txt">
 											{{connection.title}} [{{connection.name}}]
 										</td>
-										<td width="25px">
+										<td width="20px">
 											<span v-bind:id="'conn_st_'+connection.id"><i class="fa fa-chain-broken fa-lg"></i></span>
 										</td>
+										<%--
 										<td width="25px">
-											<div style="width:15px;height:15px;background-color: grey;"  v-bind:id="'conn_run_'+connection.id" >&nbsp;</div>
+											<div style="width:15px;height:15px;"  v-bind:id="'conn_run_'+connection.id" ><i class="fa fa-cog fa-lg"></i></div>
 										</td>
-										
+										 --%>
 									</tr>
 								</table>
 		               	 	</div>
@@ -2029,7 +2032,7 @@ function prj_rt()
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link fa-lg'></i>":"<i class='fa fa-chain-broken fa-lg'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",bready?"green":"red");
 				$("#conn_st_"+cid).attr("title",bready?"connection is ready":"connection is not ready");
-				$("#conn_run_"+cid).css("background-color",bready?"green":"red");
+				$("#conn_run_"+cid).css("color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
 			}
 		}

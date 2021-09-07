@@ -437,7 +437,6 @@ public abstract class DevDriver  implements IPropChecker
 					{
 						Thread.sleep(1000);
 					
-					
 						//System.out.println("-----1-------");
 						if(!RT_runInLoop(failedr))
 							break ;
@@ -451,7 +450,7 @@ public abstract class DevDriver  implements IPropChecker
 			catch(Exception e)
 			{
 				System.err.println(e.getMessage()) ;
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 			finally
 			{
