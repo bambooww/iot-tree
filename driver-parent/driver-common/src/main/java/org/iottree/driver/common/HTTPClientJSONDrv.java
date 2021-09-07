@@ -217,7 +217,7 @@ public class HTTPClientJSONDrv extends DevDriver
 	@Override
 	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
 	{
-		String url = this.getBelongToCh().getPropValueStr("conns", "url", null) ;
+		String url = this.getBelongToCh().getOrDefaultPropValueStr("conns", "url", null) ;
 		if(url==null||url.contentEquals(""))
 			return false;
 

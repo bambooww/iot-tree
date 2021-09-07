@@ -3,6 +3,8 @@ package org.iottree.driver.common.modbus;
 import java.util.*;
 
 import org.iottree.driver.common.modbus.ModbusCmd;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataUtil;
 import org.iottree.driver.common.modbus.*;
 import org.iottree.core.DevAddr;
@@ -15,6 +17,8 @@ import org.iottree.driver.common.*;
 
 public class ModbusBlock
 {
+	static ILogger log = LoggerManager.getLogger("Modbus_Lib");
+	
 	int devId = 1 ;
 	short addrTp = -1 ;
 	
@@ -136,8 +140,7 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd =  new ModbusCmdReadBits(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegPos()-cur_reg+1) ;
-			curcmd.setRecvTimeout(reqTO);
-			curcmd.setRecvEndTimeout(recvTO);
+			
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setScanIntervalMS(this.interReqMs);
 			cmd2addr.put(curcmd, curaddrs);
@@ -154,11 +157,20 @@ public class ModbusBlock
 			
 			curcmd =  new ModbusCmdReadBits(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegPos()-cur_reg+1) ;
-			curcmd.setRecvTimeout(reqTO);
-			curcmd.setRecvEndTimeout(recvTO);
+			//curcmd.setRecvTimeout(reqTO);
+			//curcmd.setRecvEndTimeout(recvTO);
 			
 			cmd2addr.put(curcmd, curaddrs);
 		}
+		
+		for(ModbusCmd mc:cmd2addr.keySet())
+		{
+			mc.setRecvTimeout(reqTO);
+			mc.setRecvEndTimeout(recvTO);
+			if(log.isDebugEnabled())
+				log.debug("init modbus cmd="+mc);
+		}
+		
 		
 		return true;
 	}
@@ -191,8 +203,8 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegEnd()-cur_reg);
-			curcmd.setRecvTimeout(reqTO);
-			curcmd.setRecvEndTimeout(recvTO);
+			//curcmd.setRecvTimeout(reqTO);
+			//curcmd.setRecvEndTimeout(recvTO);
 			
 			cmd2addr.put(curcmd, curaddrs);
 				
@@ -207,9 +219,17 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegEnd()-cur_reg);
-			curcmd.setRecvTimeout(reqTO);
-			curcmd.setRecvEndTimeout(recvTO);
+			//curcmd.setRecvTimeout(reqTO);
+			//curcmd.setRecvEndTimeout(recvTO);
 			cmd2addr.put(curcmd, curaddrs);
+		}
+		
+		for(ModbusCmd mc:cmd2addr.keySet())
+		{
+			mc.setRecvTimeout(reqTO);
+			mc.setRecvEndTimeout(recvTO);
+			if(log.isDebugEnabled())
+				log.debug("init modbus cmd="+mc);
 		}
 		
 		return true;

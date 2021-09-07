@@ -622,7 +622,7 @@ public abstract class ModbusCmd
 	
 	public String toString()
 	{
-		return "[dev:" + this.slaveAddr + ":" + this.recvTimeout + ":" + this.recvEndTimeout + "]";
+		return "{dev:" + this.slaveAddr + ",recv_to:" + this.recvTimeout + ",recv_end_to:" + this.recvEndTimeout + "}";
 	}
 
 }

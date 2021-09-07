@@ -66,18 +66,21 @@ public class ModbusDevItem //extends DevModel
 		}
 		maddrs= tmpads ;
 		
-		int devid = (int)uaDev.getPropValueLong("modbus_spk", "mdev_addr", 1);
+		int devid = (int)uaDev.getOrDefaultPropValueLong("modbus_spk", "mdev_addr", 1);
 		//int devid = Integer.parseInt(uaDev.getId());
 		
-		failAfterSuccessive = devDef.getPropValueInt("timing", "failed_tryn", 3);
+		failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
 		
-		int blocksize = devDef.getPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
+		int blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
 		if(blocksize<=0)
 			blocksize=32;
 		
-		long reqto = devDef.getPropValueLong("timing", "req_to", 1000) ;
-		long recvto = devDef.getPropValueLong("timing", "recv_to", 200) ;
-		long inter_ms = devDef.getPropValueLong("timing", "inter_req", 100) ;
+		
+		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;;//devDef.getPropValueLong("timing", "req_to", 1000) ;
+		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;
+		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 100) ;
+		
+		
 		//create modbus cmd and address mapping
 		List<ModbusAddr> coil_in_addrs = filterAndSortAddrs(ModbusAddr.COIL_INPUT) ;
 		List<ModbusAddr> coil_out_addrs = filterAndSortAddrs(ModbusAddr.COIL_OUTPUT) ;

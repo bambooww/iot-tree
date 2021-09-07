@@ -112,28 +112,28 @@ public class MQTTClientDrv extends DevDriver
 	protected boolean RT_initDriver(StringBuilder failedr) throws Exception
 	{
 		UACh ch = this.getBelongToCh() ;
-		host = ch.getPropValueStr("mqtt_conn", "server_host", null);
+		host = ch.getOrDefaultPropValueStr("mqtt_conn", "server_host", null);
 		if (Convert.isNullOrEmpty(host))
 		{
 			failedr.append("no server host set");
 			return false;
 		}
 		topics = new ArrayList<>();
-		port =  ch.getPropValueInt("mqtt_conn", "server_port", 1833);
+		port =  ch.getOrDefaultPropValueInt("mqtt_conn", "server_port", 1833);
 		String serveruri = "tcp://" + host + ":" + port;
 
 		int qos = 1;
-		String clientId = ch.getPropValueStr("mqtt_conn", "clientid", "client1");
-		String userName = ch.getPropValueStr("mqtt_conn", "username", "");
-		String userPsw = ch.getPropValueStr("mqtt_conn", "userpsw", "");
+		String clientId = ch.getOrDefaultPropValueStr("mqtt_conn", "clientid", "client1");
+		String userName = ch.getOrDefaultPropValueStr("mqtt_conn", "username", "");
+		String userPsw = ch.getOrDefaultPropValueStr("mqtt_conn", "userpsw", "");
 
 		/**
 		 * connection timeout with second
 		 */
-		int connTimeout = (int) ch.getPropValueInt("mqtt_conn", "conn_to_sec", 10);
+		int connTimeout = (int) ch.getOrDefaultPropValueInt("mqtt_conn", "conn_to_sec", 10);
 		
 
-		int keepAliveInterval = (int) ch.getPropValueInt("mqtt_conn", "ka_int", 20);
+		int keepAliveInterval = (int) ch.getOrDefaultPropValueInt("mqtt_conn", "ka_int", 20);
 		
 		
 
@@ -145,7 +145,7 @@ public class MQTTClientDrv extends DevDriver
 		}
 		for (UADev dev : devs)
 		{
-			String topic = dev.getPropValueStr("mqtt_tag", "topic", null);
+			String topic = dev.getOrDefaultPropValueStr("mqtt_tag", "topic", null);
 			if (Convert.isNullOrEmpty(topic))
 				continue;
 			topics.add(topic);
@@ -218,7 +218,7 @@ public class MQTTClientDrv extends DevDriver
 		
 		for(UADev uad:ch.getDevs())
 		{
-			String topicfilter = uad.getPropValueStr("mqtt_tag", "topic", null);
+			String topicfilter = uad.getOrDefaultPropValueStr("mqtt_tag", "topic", null);
 			if(Convert.isNullOrEmpty(topicfilter))
 				continue ;
 			if(!MqttTopic.isMatched(topicfilter, topic))
