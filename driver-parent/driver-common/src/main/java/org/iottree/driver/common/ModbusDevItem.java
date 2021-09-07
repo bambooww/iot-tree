@@ -77,7 +77,7 @@ public class ModbusDevItem //extends DevModel
 		
 		long reqto = devDef.getPropValueLong("timing", "req_to", 1000) ;
 		long recvto = devDef.getPropValueLong("timing", "recv_to", 200) ;
-		long inter_ms = devDef.getPropValueLong("timing", "inter_req", 0) ;
+		long inter_ms = devDef.getPropValueLong("timing", "inter_req", 100) ;
 		//create modbus cmd and address mapping
 		List<ModbusAddr> coil_in_addrs = filterAndSortAddrs(ModbusAddr.COIL_INPUT) ;
 		List<ModbusAddr> coil_out_addrs = filterAndSortAddrs(ModbusAddr.COIL_OUTPUT) ;
@@ -173,6 +173,30 @@ public class ModbusDevItem //extends DevModel
 		}
 		
 		return ret ;
+	}
+	
+	/**
+	 * outer find connection is broken,it will call this method
+	 * so,it can make related tag to show err
+	 */
+	void doModbusCmdErr()
+	{
+		if(mbCoilIn != null)
+		{
+			mbCoilIn.runCmdsErr();
+		}
+		if(mbCoilOut != null)
+		{
+			mbCoilOut.runCmdsErr();
+		}
+		if(mbRegIn != null)
+		{
+			mbRegIn.runCmdsErr();
+		}
+		if(mbRegHold != null)
+		{
+			mbRegHold.runCmdsErr();
+		}
 	}
 
 	public boolean RT_writeVal(DevAddr da, Object v)

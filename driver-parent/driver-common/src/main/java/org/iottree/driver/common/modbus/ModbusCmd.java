@@ -190,13 +190,13 @@ public abstract class ModbusCmd
 	protected long scanIntervalMS = 100;
 
 	
-	protected long maxRecvTOMS = 60;
+	protected long maxRecvTOMS = 60000;
 
 	private int scanErrIntervalMulti = 0;
 
 	protected long recvTimeout = RECV_TIMEOUT_DEFAULT;
 
-	private boolean bFixTO = false;//
+	protected boolean bFixTO = true;//
 
 	protected long recvEndTimeout = RECV_END_TIMEOUT_DEFAULT;
 	
@@ -589,7 +589,7 @@ public abstract class ModbusCmd
 		// if(rc==urx_count_last)
 
 		if (rc > urx_count_last)
-		{// �����������
+		{//
 			urx_count_last = rc;
 			tt_c = System.currentTimeMillis();
 			return rc;

@@ -138,7 +138,8 @@ public class ModbusBlock
 						devId,cur_reg,lastma.getRegPos()-cur_reg+1) ;
 			curcmd.setRecvTimeout(reqTO);
 			curcmd.setRecvEndTimeout(recvTO);
-			curcmd.setRecvTimeout(reqTO);
+			//curcmd.setRecvTimeout(reqTO);
+			//curcmd.setScanIntervalMS(this.interReqMs);
 			cmd2addr.put(curcmd, curaddrs);
 				
 			cur_reg = regp ;
@@ -153,6 +154,8 @@ public class ModbusBlock
 			
 			curcmd =  new ModbusCmdReadBits(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegPos()-cur_reg+1) ;
+			curcmd.setRecvTimeout(reqTO);
+			curcmd.setRecvEndTimeout(recvTO);
 			
 			cmd2addr.put(curcmd, curaddrs);
 		}
@@ -188,6 +191,8 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegEnd()-cur_reg);
+			curcmd.setRecvTimeout(reqTO);
+			curcmd.setRecvEndTimeout(recvTO);
 			
 			cmd2addr.put(curcmd, curaddrs);
 				
@@ -202,7 +207,8 @@ public class ModbusBlock
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
 						devId,cur_reg,lastma.getRegEnd()-cur_reg);
-			
+			curcmd.setRecvTimeout(reqTO);
+			curcmd.setRecvEndTimeout(recvTO);
 			cmd2addr.put(curcmd, curaddrs);
 		}
 		
@@ -214,7 +220,7 @@ public class ModbusBlock
 		if(addrs==null)
 			return ;
 		for(ModbusAddr ma:addrs)
-			ma.RT_setVal(null); //TODO may be set mem table some tags to error
+			ma.RT_setVal(null); 
 	}
 	
 
@@ -271,8 +277,14 @@ public class ModbusBlock
 		
 	}
 	
+	public void runCmdsErr()
+	{
+		runReadCmdsErr() ;
+	}
+	
 	private void transMem2Addrs(List<ModbusAddr> addrs)
 	{
+		//System.out.println("transMem2Addrs "+this.recvTO+" fix=");
 		//mem to addrs
 		for(ModbusAddr ma:addrs)
 		{
@@ -307,6 +319,9 @@ public class ModbusBlock
 		{
 			if(!mc.tickCanRun())
 				continue ;
+			
+			Thread.sleep(this.interReqMs);
+			
 			List<ModbusAddr> addrs = cmd2addr.get(mc) ;
 			mc.doCmd(ep.getOutputStream(), ep.getInputStream());
 			if(mc instanceof ModbusCmdReadBits)
@@ -358,6 +373,20 @@ public class ModbusBlock
 		return ret ;
 	}
 	
+	private boolean runReadCmdsErr() //throws Exception
+	{
+		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
+		boolean ret = true;
+		for(ModbusCmd mc:cmd2addr.keySet())
+		{
+			
+			List<ModbusAddr> addrs = cmd2addr.get(mc) ;
+			setAddrError(addrs);
+			//transMem2Addrs(addrs);
+		}
+		return ret ;
+	}
+	
 	private LinkedList<ModbusCmd> writeCmds = new LinkedList<>() ;
 	
 	private void runWriteCmdAndClear(IConnEndPoint ep) throws Exception
@@ -388,6 +417,8 @@ public class ModbusBlock
 			bvs[0] = (Boolean)v;
 			//mc = new ModbusCmdWriteBits(scanInterMS,this.devId,ma.getRegPos(),bvs) ;
 			mc = new ModbusCmdWriteBit(scanInterMS,this.devId,ma.getRegPos(), (Boolean)v) ;
+			mc.setRecvTimeout(reqTO);
+			mc.setRecvEndTimeout(recvTO);
 			break ;
 		case ModbusAddr.REG_HOLD:
 			if(!(v instanceof Number))
@@ -441,6 +472,8 @@ public class ModbusBlock
 			
 			 mc = new ModbusCmdWriteWords(this.scanInterMS,
 						devId,ma.getRegPos(),vals);
+			 mc.setRecvTimeout(reqTO);
+			mc.setRecvEndTimeout(recvTO);
 			 break;
 		default:
 			return false;

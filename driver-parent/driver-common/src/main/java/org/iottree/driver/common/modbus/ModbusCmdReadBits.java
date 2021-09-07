@@ -232,21 +232,16 @@ public class ModbusCmdReadBits extends ModbusCmd
 	        rlen = com_stream_recv_chk_len_timeout(ins) ;
 	        if(rlen==0)
 	            continue ;
-	        //�жϷ��������Ƿ��������
+	        //
 	        if(mayrlen>0)
-	        {//ֻ��Ҫ�жϽ��ճ��Ⱦ���
+	        {//ֻ
 	            if(rlen>=mayrlen)
-	                break ;//���ս���
+	                break ;//
 	        }
 	        else
-	        {//�жϵ�ַ�ͳ���
-//	        	if(rlen>0)
-//	        	{
-//	        		
-//	        		System.out.println(">>>>"+Convert.byteArray2HexStr(mbuss_adu,0,rlen)) ;
-//	        	}
+	        {
 	            if(mbuss_adu[0]!=(byte)slaveAddr)
-	            {//���ո�ʽ����
+	            {//
 	                break ;
 	            }
 	            if(rlen<3)
@@ -262,7 +257,7 @@ public class ModbusCmdReadBits extends ModbusCmd
 	            }
 	            else
 	            {//
-	                mayrlen = (((int)mbuss_adu[2]) & 0xFF)+5;//�����ֽڳ�����Ϣ��ǰ��3�ֽ�+����crc
+	                mayrlen = (((int)mbuss_adu[2]) & 0xFF)+5;//
 	            }
 	        }
 	        
@@ -277,7 +272,10 @@ public class ModbusCmdReadBits extends ModbusCmd
 	        ret_val_ok = false;
 	        
 	        if(rlen<=0)
+	        {
+	        	//System.out.println("   modbuscmd read bits == recvTimeout="+recvTimeout+" fix="+bFixTO);
 	        	return ERR_RECV_TIMEOUT ;//recvTimeout may be adjust
+	        }
 	        if(rlen<mayrlen)
 	        	return ERR_RECV_END_TIMEOUT ;//recvEndTimeout may be adjust
 	        else
@@ -293,7 +291,6 @@ public class ModbusCmdReadBits extends ModbusCmd
 	        return ERR_CRC ;//��֤ʧ��
 	    }
 	    
-	    //pdata��4���ֽڿ�ʼ����mayrlen-3֮ǰ���������ؿ��������
 	    HashMap<Integer,Object> addr2val = new HashMap<Integer,Object>() ;
 	    
 	    for(i=0 ; i< regNum ; i ++)

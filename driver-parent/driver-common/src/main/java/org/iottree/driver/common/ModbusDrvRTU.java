@@ -2,9 +2,11 @@ package org.iottree.driver.common;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.ConnException;
 import org.iottree.core.ConnManager;
 import org.iottree.core.ConnPt;
 import org.iottree.core.DevAddr;
@@ -19,10 +21,14 @@ import org.iottree.core.basic.ValChker;
 import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.util.NetUtil;
 import org.iottree.core.util.NetUtil.Adapter;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 
 
 public class ModbusDrvRTU extends DevDriver
 {
+	private static ILogger log = LoggerManager.getLogger(ModbusDrvRTU.class) ;
+	
 	@Override
 	public String getName()
 	{
@@ -202,17 +208,32 @@ public class ModbusDrvRTU extends DevDriver
 		if(!cpt.isConnReady())
 			return true ;// do nothing
 		
-		//try
+		if(log.isDebugEnabled())
+			log.debug("RT_runInLoop conn ready ,run do modbus");
+		try
 		{
 			for(ModbusDevItem mdi:modbusDevItems)
 			{
 				mdi.doModbusCmd(cpt);
 			}
 		}
-//		catch(SocketException se)
-//		{
-//			
-//		}
+		catch(ConnException se)
+		{
+			if(log.isDebugEnabled())
+				log.debug("RT_runInLoop err", se);
+			cpt.close();
+			
+			for(ModbusDevItem mdi:modbusDevItems)
+			{
+				mdi.doModbusCmdErr();
+			}
+			
+		}
+		catch(Exception e)
+		{
+			if(log.isErrorEnabled())
+				log.debug("RT_runInLoop err", e);
+		}
 		return true;
 	}
 	
