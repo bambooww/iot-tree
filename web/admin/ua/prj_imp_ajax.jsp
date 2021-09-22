@@ -57,13 +57,14 @@ for(IdName idn:idnames)
 	if(pv.startsWith("rename_"))
 	{
 		String newn = pv.substring(7) ;
+		String newtt = pms.get(idn.getId()+"_title");
 		UAPrj oldp = UAManager.getInstance().getPrjByName(newn) ;
 		if(oldp!=null)
 		{
 			out.print("project with name ["+newn+"] already existed") ;
 			return ;
 		}
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, newn);
+		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, newn,newtt);
 	}
 	else if(pv.equals("replace"))
 	{
@@ -74,11 +75,11 @@ for(IdName idn:idnames)
 			return ;
 		}
 		//do replace
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null);
+		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
 	}
 	else
 	{//new
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null);
+		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
 	}
 }
 %>succ

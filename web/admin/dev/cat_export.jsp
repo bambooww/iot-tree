@@ -7,13 +7,13 @@
 	java.util.*,
 	java.net.*,
 	java.util.*"%><%
-if(!Convert.checkReqEmpty(request, out, "drvn","catn"))
+if(!Convert.checkReqEmpty(request, out, "drvn","catid"))
 	return;
 String drvn = request.getParameter("drvn") ;
-String catn = request.getParameter("catn") ;
+String catid = request.getParameter("catid") ;
 
 
-File fout =DevManager.getInstance().exportDevCatToTmp(drvn, catn) ;
+File fout =DevManager.getInstance().exportDevCatToTmp(drvn, catid) ;
 if(fout==null)
 	return ;
 try(FileInputStream fis = new FileInputStream(fout);)

@@ -165,6 +165,8 @@ public class UAVal //extends JSObMap
 		case  vt_uint64:
 			UnsignedLong ulong = UnsignedLong.valueOf(strv) ;
 			return ulong ;
+		case vt_str:
+			return strv ;
 		default:
 			throw new RuntimeException("unknow valtp="+tp) ;
 		}
@@ -196,6 +198,13 @@ public class UAVal //extends JSObMap
 		objVal = val ;
 		if(valdt>0)
 			valDT = valdt ;
+	}
+	
+	public UAVal(String err,Exception errob)
+	{
+		this.bValid = false;
+		this.valErr = err ;
+		this.valErrOb = errob;
 	}
 	
 	public UAVal copyMe()
@@ -289,6 +298,21 @@ public class UAVal //extends JSObMap
 	public Object getObjVal()
 	{
 		return objVal ;
+	}
+	
+	public String getStrVal(int dec_digits)
+	{
+		if(objVal==null)
+			return "" ;
+		
+		if(dec_digits>0)
+		{
+			if(objVal instanceof Float || objVal instanceof Double)
+			{
+				return Convert.toDecimalDigitsStr(((Number)objVal).doubleValue(), dec_digits,false) ;
+			}
+		}
+		return objVal.toString() ;
 	}
 	
 	public boolean isValid()

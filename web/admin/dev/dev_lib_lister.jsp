@@ -174,7 +174,7 @@ function get_cur_cat_id_title()
 	return [catid,cattt] ;
 }
 
-function get_cur_cat_name()
+function get_cur_cat_id()
 {
 	return get_cur_cat_id_title()[0];
 }

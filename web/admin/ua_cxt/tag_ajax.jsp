@@ -17,9 +17,11 @@
 		String title = request.getParameter("title");
 		String desc = request.getParameter("desc");
 		String addr = request.getParameter("addr");
+		 
 		boolean bmid = "true".equalsIgnoreCase(request.getParameter("mid")) ;
 
 		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
+		int dec_digits = Convert.parseToInt32(request.getParameter("dec_digits"),-1);
 		UAVal.ValTP dt = UAVal.getValTp(vt) ;
 		long srate = Convert.parseToInt64(request.getParameter("srate"),100);
 		String strcanw = request.getParameter("canw") ;
@@ -27,8 +29,10 @@
 
 		float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
+		
+		String trans = request.getParameter("trans") ;
 
-		UATag ret = nt.addOrUpdateTag(id,bmid,name, title, desc,addr,dt,canw,srate) ;
+		UATag ret = nt.addOrUpdateTag(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
 		return ret ;
 	}
 %><%
@@ -110,10 +114,10 @@ case "rt":
 		
 		boolean valid = val.isValid() ;
 		long dt = val.getValDT();
-		Object obv = val.getObjVal() ;
-		String strv = "";
-		if(obv!=null)
-			strv = ""+obv ;
+		//Object obv = val.getObjVal() ;
+		
+		String strv = val.getStrVal(tg.getDecDigits()) ;
+		
 		out.print("{\"tag_id\":\""+tg.getId()+"\",\"dt\":"+dt+",\"valid\":"+valid+",\"strv\":\""+strv+"\"}") ;
 	}
 	out.print("]");

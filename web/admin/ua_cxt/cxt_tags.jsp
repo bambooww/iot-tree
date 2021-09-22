@@ -2,6 +2,7 @@
 <%@ page import="java.util.*,
 	java.io.*,
 	org.iottree.core.*,
+	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
 	"%><%!
@@ -126,7 +127,8 @@ if(!brefed)
         <th>Tag Name</th>
         <th>Title</th>
         <th>Address</th>
-        <th>Value Type</th>
+        <th> Raw Value Type</th>
+        <th> Transfer</th>
         <th>Write</th>
         <th></th>
      </tr>
@@ -136,6 +138,10 @@ if(!brefed)
 for(UATag tag:cur_tags)
 {
 	String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+	String trans = "" ;
+	ValTranser vt = tag.getValTranserObj() ;
+	if(vt!=null)
+		trans = vt.toTitleString();
 %>
    <tr id="tag_<%=tag.getId() %>"  tag_id="<%=tag.getId()%>">
 <%
@@ -150,7 +156,8 @@ for(UATag tag:cur_tags)
         <td title="<%=cxtpath%>"><%=tag.getName() %></td>
         <td><%=tag.getTitle() %></td>
         <td><%=tag.getAddress() %></td>
-        <td><%=tag.getValTp() %></td>
+        <td><%=tag.getValTpRaw() %></td>
+        <td><%=trans %></td>
         <td><%=(tag.isCanWrite()?"✔":"") %></td>
         <td>
 <%
@@ -229,7 +236,7 @@ for(UANodeOCTags tn:tns)
 
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
-        <td id="ctag_v_<%=cxtpath%>"></td>
+        <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>
         <td>
@@ -508,13 +515,17 @@ function show_cxt_dyn(p,cxt)
 		
 		var strv ="";
 		if(tg.v!=null)
-			strv = ""+tg.v ;
+			strv = tg.strv ;
+		var strerr = tg.err ;
 		var strdt = "" ;
 		if(dt>0)
 			strdt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
 		show_ele_html("ctag_v_"+tagp,strv,true) ;
 		show_ele_html("ctag_dt_"+tagp,strdt) ;
-		show_ele_html("ctag_q_"+tagp,(bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>")) ;
+		var qstr = bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>";
+		if(!bvalid&&strerr!=null&&strerr!=""&&strerr!=undefined)
+			qstr += "<span title='"+strerr+"'>err</span>";
+		show_ele_html("ctag_q_"+tagp,qstr) ;
 	}
 	
 	for(var sub of cxt.subs)

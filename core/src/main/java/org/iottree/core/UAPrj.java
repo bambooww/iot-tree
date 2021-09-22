@@ -67,6 +67,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	@data_val(param_name = "script_int")
 	long scriptInt = 10000 ;
 	
+	
+	@data_val(param_name = "midtag_int")
+	long midTagScriptInt = 100 ;
+	
 	@data_val(param_name = "hmi_main_id")
 	String hmiMainId = null;
 	
@@ -74,6 +78,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	 * last script date time
 	 */
 	transient long scriptRunDT = System.currentTimeMillis() ;
+	
+	transient long midTagScriptRunDT = System.currentTimeMillis() ;
 	
 	/**
 	 * check js script ok or not
@@ -496,23 +502,23 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		return rets;
 	}
 	
-	protected void listTagsAll(List<UATag> tgs,boolean bmid)
-	{
-		if(bmid)
-		{
-			for(UATag tg:listTags())
-			{
-				if(tg.isMidExpress())
-					tgs.add(tg) ;
-			}
-		}
-		else
-			tgs.addAll(this.listTags());
-		 for(UACh d:chs)
-		{
-			d.listTagsAll(tgs,bmid);
-		}
-	 }
+//	protected void listTagsAll(List<UATag> tgs,boolean bmid)
+//	{
+//		if(bmid)
+//		{
+//			for(UATag tg:listTags())
+//			{
+//				if(tg.isMidExpress())
+//					tgs.add(tg) ;
+//			}
+//		}
+//		else
+//			tgs.addAll(this.listTags());
+//		 for(UACh d:chs)
+//		{
+//			d.listTagsAll(tgs,bmid);
+//		}
+//	 }
 
 	/**
 	 * 
@@ -652,7 +658,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		if(rtTh!=null)
 			return true;
-		rtTh = new Thread(runner);
+		rtTh = new Thread(runner,"iottree-prj-"+this.getName());
 		rtRun = true;
 		rtTh.start();
 		return true;
@@ -745,6 +751,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 					}catch(Exception e) {}
 					
 					RT_runFlush();
+					
+					runMidTagsScript();
 					
 					runScriptInterval() ;
 					
@@ -920,6 +928,21 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		}
 	}
 	
+	void runMidTagsScript()
+	{
+		if(System.currentTimeMillis() - this.midTagScriptRunDT<this.midTagScriptInt)
+			return ;//no run
+		
+		try
+		{
+			CXT_calMidTagsVal();
+		}
+		finally
+		{
+			this.midTagScriptRunDT = System.currentTimeMillis() ;
+		}
+		
+	}
 
 	public class JSOb
 	{

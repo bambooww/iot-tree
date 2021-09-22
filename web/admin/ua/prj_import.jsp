@@ -79,7 +79,7 @@ for(IdName idn:idnames)
 		prompt = "Project is already existed " ;
 		if(oldp.RT_isRunning())
 		{
-			prompt=",it's in running.";
+			prompt+=",it's in running.";
 			b_can_imp = false;
 		}
 	}
@@ -97,7 +97,9 @@ for(IdName idn:idnames)
       <td valign="middle" >
 
       </td>
-      <td>Title:<%=idn.getTitle() %>  Name:<input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" /></td>
+      <td>Name:<input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" /><br>
+      Title:<input type="text" id="inputt_<%=id %>" value="<%=idn.getTitle() %>  " />
+      </td>
       <td></td>
     </tr>
     <tr>
@@ -110,7 +112,8 @@ for(IdName idn:idnames)
       <input type="radio" id="" name="radio_<%=id %>" value="replace" checked="checked">Replace
 <%
 	}
-	else if(namep!=null)
+	
+    if(namep!=null)
 	{
 %><input type="radio" id="" name="radio_<%=id %>" value="rename" checked="checked">Rename to import<%
 	}
@@ -131,6 +134,7 @@ for(IdName idn:idnames)
 }
 
 idstr=idstr.substring(1) ;
+namestr=namestr.substring(1) ;
 %>
 </body>
 <script type="text/javascript">
@@ -158,11 +162,13 @@ function do_submit(cb)
 		if("rename"==v)
 		{
 			var newname = $("#inputn_"+id).val() ;
-			if(newname=name)
+			if(newname==name)
 			{
 				dlg.msg("name ["+newname+"] must be changed") ;
 				return ;
 			}
+			var tt=$("#inputt_"+id).val();
+			pms["id_"+id+"_title"]=tt;
 			pms["id_"+id]="rename_"+newname ;
 		}
 		else
@@ -176,6 +182,8 @@ function do_submit(cb)
 		return ;
 	}
 	
+	console.log(pms);
+	
 	send_ajax('prj_imp_ajax.jsp',pms,function(bsucc,ret)
 	{
 		if(!bsucc || ret.indexOf('succ')<0)
@@ -185,6 +193,7 @@ function do_submit(cb)
 		}
 		cb(true,ret);
 	},false);
+	
 	//document.getElementById('form1').submit() ;
 }
 

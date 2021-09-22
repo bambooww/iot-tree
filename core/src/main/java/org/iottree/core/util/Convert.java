@@ -429,9 +429,9 @@ public class Convert
 			return tmpv.toString();
 		}
 
-		while (rStr.length() < dec_digit_num)
-			rStr += "#";
-		java.text.DecimalFormat df = new java.text.DecimalFormat("##." + rStr);
+		for (int i = 0 ; i  < dec_digit_num ; i ++)
+			rStr += "0";
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0." + rStr);
 		return df.format(d);
 	}
 

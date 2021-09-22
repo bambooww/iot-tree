@@ -135,7 +135,7 @@ public abstract class UANodeOCTags extends UANodeOC
 
 	public UATag addOrUpdateTag(String tagid,
 			boolean bmid,String name,String title,String desc,
-			String addr,UAVal.ValTP vt,boolean canw,long srate) throws Exception
+			String addr,UAVal.ValTP vt,int dec_digits,boolean canw,long srate,String trans) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null ;
@@ -155,9 +155,9 @@ public abstract class UANodeOCTags extends UANodeOC
 		if(d==null)
 		{
 			if(bmid)
-				d = new UATag(name,title,desc,addr,vt) ;
+				d = new UATag(name,title,desc,addr,vt,dec_digits) ;
 			else
-				d = new UATag(name,title,desc,addr,vt,canw,srate) ;
+				d = new UATag(name,title,desc,addr,vt,dec_digits,canw,srate) ;
 			d.id = this.getNextIdByRoot() ;
 			tags.add(d) ;
 			constructNodeTree();
@@ -165,17 +165,18 @@ public abstract class UANodeOCTags extends UANodeOC
 		else
 		{
 			if(bmid)
-				d.setTagMid(name,title,desc,addr,vt) ;
+				d.setTagMid(name,title,desc,addr,vt,dec_digits) ;
 			else
-				d.setTagNor(name,title,desc,addr,vt,canw,srate) ;
+				d.setTagNor(name,title,desc,addr,vt,dec_digits,canw,srate) ;
 		}
+		d.setValTranser(trans);
 		save();
 		return d ;
 	}
 	
 	UATag addOrUpdateTagSys(String tagid,
 			boolean bmid,String name,String title,String desc,
-			String addr,UAVal.ValTP vt,boolean canw,long srate,boolean bsave) throws Exception
+			String addr,UAVal.ValTP vt,int dec_digits,boolean canw,long srate,boolean bsave) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null ;
@@ -198,11 +199,11 @@ public abstract class UANodeOCTags extends UANodeOC
 		if(d==null)
 		{
 			if(bmid)
-				d = new UATag(name,title,desc,addr,vt) ;
+				d = new UATag(name,title,desc,addr,vt,dec_digits) ;
 			else
 			{
 				d = new UATag();
-				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
+				d.setTagSys(name,title,desc,addr,vt,dec_digits,canw,srate) ;
 			}
 			d.id = this.getNextIdByRoot() ;
 			if(d.isSysTag())
@@ -214,9 +215,9 @@ public abstract class UANodeOCTags extends UANodeOC
 		else
 		{
 			if(bmid)
-				d.setTagMid(name,title,desc,addr,vt) ;
+				d.setTagMid(name,title,desc,addr,vt,dec_digits) ;
 			else
-				d.setTagSys(name,title,desc,addr,vt,canw,srate) ;
+				d.setTagSys(name,title,desc,addr,vt,dec_digits,canw,srate) ;
 		}
 		if(bsave)
 			save();
@@ -290,18 +291,52 @@ public abstract class UANodeOCTags extends UANodeOC
 	public final List<UATag> listTagsAll()
 	{
 		ArrayList<UATag> rets =new ArrayList<>() ;
-		listTagsAll(rets,false);
+		listTagsAll(rets,true,false);
 		return rets ;
 	}
 	
 	public final List<UATag> listTagsMidAll()
 	{
 		ArrayList<UATag> rets =new ArrayList<>() ;
-		listTagsAll(rets,true);
+		listTagsAll(rets,true,true);
 		return rets ;
 	}
 	
-	protected abstract void listTagsAll(List<UATag> tgs,boolean bmid) ;
+	private final void listTagsAll(List<UATag> tgs,boolean include_sys,boolean bmid_only)
+	{
+		List<UATag> tags = null;
+		
+		if(bmid_only)
+		{
+			for(UATag tg:listTags())
+			{
+				if(tg.isMidExpress())
+					tgs.add(tg) ;
+			}
+		}
+		else
+		{
+			if(include_sys)
+				tags = listTags() ;
+			else
+				tags = getNorTags() ;
+			
+			tgs.addAll(tags) ;
+		}
+			
+		
+			
+		List<UANode> ns = this.getSubNodes() ;
+		if(ns==null)
+			return ;
+		for(UANode n:ns)
+		{
+			if(n instanceof UANodeOCTags)
+			{
+				((UANodeOCTags)n).listTagsAll(tgs,include_sys,bmid_only) ;
+			}
+		}
+	}
 	
 	
 //	{
@@ -425,6 +460,11 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	protected final synchronized void setSysTag(String name,String title,String desc,UAVal.ValTP vt)
 	{
+		setSysTag(name,title, desc, vt,-1);
+	}
+	
+	protected final synchronized void setSysTag(String name,String title,String desc,UAVal.ValTP vt,int dec_digits)
+	{
 		if(!name.startsWith("_"))
 			throw new IllegalArgumentException("system tag name must start with _") ;
 		if(sysTags==null)
@@ -433,11 +473,11 @@ public abstract class UANodeOCTags extends UANodeOC
 		if(t==null)
 		{
 			t = new UATag();
-			t.setTagSys(name,title,desc,"", vt,false,200);
+			t.setTagSys(name,title,desc,"", vt,dec_digits,false,200);
 			sysTags.add(t) ;
 		}
 		else
-			t.setTagSys(name, title, desc, "", vt, false, 200);
+			t.setTagSys(name, title, desc, "", vt,dec_digits, false, 200);
 	}
 	
 	/**

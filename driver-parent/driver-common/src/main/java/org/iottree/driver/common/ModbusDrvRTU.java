@@ -213,6 +213,8 @@ public class ModbusDrvRTU extends DevDriver
 	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
 	{
 		ConnPtStream cpt = (ConnPtStream)this.getBindedConnPt() ;
+		if(cpt==null)
+			return true ;
 		//if(true)
 		//	throw new Exception("test") ;
 		if(!cpt.isConnReady())
@@ -241,6 +243,7 @@ public class ModbusDrvRTU extends DevDriver
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			if(log.isErrorEnabled())
 				log.debug("RT_runInLoop err", e);
 		}

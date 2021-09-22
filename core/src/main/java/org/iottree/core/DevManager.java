@@ -141,9 +141,9 @@ public class DevManager implements IResCxt
 	}
 	
 	
-	public File exportDevCatTo(String drvname,String catname,File fout) throws IOException
+	public File exportDevCatTo(String drvname,String catid,File fout) throws IOException
 	{
-		DevCat dc = getDevCat(drvname,catname);
+		DevCat dc = getDevCatWithCatId(drvname,catid);
 		if(dc==null)
 			return null ;
 		
@@ -154,7 +154,7 @@ public class DevManager implements IResCxt
 		metam.put("tp", "devcat") ;
 		metam.put("drvname", drvname) ;
 		metam.put("catid", dc.getId()) ;
-		metam.put("catname", catname) ;
+		metam.put("catname", dc.getName()) ;
 		
 		String metatxt=  Convert.transMapToPropStr(metam) ;
 		
@@ -333,6 +333,14 @@ public class DevManager implements IResCxt
 		if(dd==null)
 			return null ;
 		return dd.getDevCatByName(catname) ;
+	}
+	
+	public DevCat getDevCatWithCatId(String drvname,String catid)
+	{
+		DevDriver dd = this.getDriver(drvname);
+		if(dd==null)
+			return null ;
+		return dd.getDevCatById(catid) ;
 	}
 	
 	DevDriver createDriverIns(String name)

@@ -153,6 +153,13 @@ public class JSObMap  extends HashMap<String,Object> implements ProxyObject
 			{
 				ov = transValueNumber(value,c);
 			}
+			else if(c==Boolean.class)
+			{
+				if(value.isBoolean())
+					ov = value.asBoolean() ;
+				else if(value.isNumber())
+					ov = value.asInt()>0;
+			}
 			else
 				ov = value.as(c) ;
 		}

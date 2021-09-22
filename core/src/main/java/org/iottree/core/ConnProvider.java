@@ -526,7 +526,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 			if (runTh != null)
 				return;
 			
-			runTh = new Thread(runner);
+			runTh = new Thread(runner,"iottree-connp-"+this.getName());
 			runTh.start();
 		}
 	}

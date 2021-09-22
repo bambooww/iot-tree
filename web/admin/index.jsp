@@ -616,14 +616,14 @@ function devdef_cat_export()
 		dlg.msg("no Driver selected") ;
 		return;
 	}
-	var catname = w.get_cur_cat_name() ;
-	if(catname==null||catname=="")
+	var catid = w.get_cur_cat_id() ;
+	if(catid==null||catid=="")
 	{
 		dlg.msg("please select Device Definition Category catetory");
 		return ;
 	}
 		
-	window.open("./dev/cat_export.jsp?drvn="+drvnt[0]+"&catn="+catname) ;
+	window.open("./dev/cat_export.jsp?drvn="+drvnt[0]+"&catid="+catid) ;
 }
 
 

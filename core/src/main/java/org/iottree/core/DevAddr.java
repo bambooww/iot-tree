@@ -136,12 +136,17 @@ public abstract class DevAddr
 //		uaVal.objVal = v ;
 //		uaVal.valDT=System.currentTimeMillis() ;
 //		uaVal.bValid=true;
+		UATag tag = this.getBelongTo() ;
 		if(v==null)
+		{
 			uaVal.setVal(false, null, System.currentTimeMillis());
+			tag.RT_setUAVal(uaVal);
+		}
 		else
+		{
 			uaVal.setVal(true, v, System.currentTimeMillis());
+			tag.RT_setValRaw(v);
+		}
 		
-		//set his
-		this.getBelongTo().RT_setUAVal(uaVal);
 	}
 }

@@ -378,7 +378,7 @@ public class UAManager implements IResCxt
 		return rets ;
 	}
 	
-	public boolean importPrjZipFile(File zipf,String id,String newid,String newname) throws Exception
+	public boolean importPrjZipFile(File zipf,String id,String newid,String newname,String newtitle) throws Exception
 	{
 		if(Convert.isNotNullEmpty(newname))
 		{
@@ -440,6 +440,8 @@ public class UAManager implements IResCxt
 			p.id = tmpid ;
 			if(Convert.isNotNullEmpty(newname))
 				p.name = newname ;
+			if(Convert.isNotNullEmpty(newtitle))
+				p.title= newtitle;
 			savePrj(p) ;
 		}
 		
@@ -517,7 +519,7 @@ public class UAManager implements IResCxt
 		if(uaMonTh!=null)
 			return ;
 		
-		uaMonTh = new Thread(uaMonRunner) ;
+		uaMonTh = new Thread(uaMonRunner,"iottree-ua_mon") ;
 		uaMonTh.start();
 	}
 	

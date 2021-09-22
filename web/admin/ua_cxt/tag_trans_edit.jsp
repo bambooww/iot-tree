@@ -1,0 +1,281 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="
+	org.iottree.core.*,
+				org.iottree.core.util.*,
+				org.iottree.core.basic.*,
+	java.io.*,
+	java.util.*,
+	java.net.*,
+	java.util.*
+	"%><%!
+
+	 %><%
+	
+%>
+<html>
+<head>
+<title>Tag Transfer Editor </title>
+<script src="/_js/jquery-1.12.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<script src="/_js/dlg_layer.js"></script>
+<script src="/_js/layui/layui.all.js"></script>
+<script src="/_js/dlg_layer.js"></script>
+<script>
+dlg.resize_to(590,600);
+</script>
+
+</head>
+<body>
+<form class="layui-form" action="">
+	<div class="layui-form-item">
+    <label class="layui-form-label">&nbsp;</label>
+    <div class="layui-input-block">
+      <input type="radio" name="name" value="none" title="None" checked="checked" lay-filter="name">
+<%
+for(ValTranser vt: ValTranser.listValTransers())
+{
+%> <input lay-filter="name" type="radio" name="name" value="<%=vt.getName() %>" title="<%=vt.getTitle() %>"  onchange="show_card()"/><%
+}
+%>
+     
+    </div>
+   </div>
+   
+  <div class="layui-card" id="card_none" style="display:none">
+  <div class="layui-card-header">None</div>
+  <div class="layui-card-body">
+  	No transfer
+  </div>
+  </div>
+  
+  <div class="layui-card" id="card_scaling" style="display:none">
+  <div class="layui-card-header">Scaling</div>
+  <div class="layui-card-body">
+    <div class="layui-form-item">
+    <label class="layui-form-label">Scaling Type</label>
+    <div class="layui-input-block">
+      <input type="radio" name="tp" value="1" title="Linear" checked="checked" lay-filter="tp">
+  	<input type="radio" name="tp" value="2" title="Square root"  lay-filter="tp">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Raw Value Range</label>
+    <div class="layui-input-block">
+      <div class="layui-form-mid">High:</div>
+<div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="raw_high" name="raw_high" value="" class="layui-input"/>
+	  </div>
+      <div class="layui-form-mid">Low:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="raw_low" name="raw_low" value="" class="layui-input"/>
+	  </div>
+	  
+    </div>
+  </div>
+     
+     <div class="layui-form-item">
+    <label class="layui-form-label">Scaled Data type</label>
+    <div class="layui-input-inline" style="width: 120px;">
+      <select  id="scaled_vt"  name="scaled_vt"  class="layui-input" placeholder="">
+        <option value="">-</option>
+<%
+for(UAVal.ValTP vt:UAVal.ValTP.values())
+{
+	String sel="" ;
+	if(vt==UAVal.ValTP.vt_double)
+		sel = "selected=\'selected\'";
+	 %><option value="<%=vt.getInt()%>" <%=sel %>><%=vt.getStr() %></option><%
+}
+%>
+      </select>
+    </div>
+    
+    </div>
+    
+    <div class="layui-form-item">
+    <label class="layui-form-label">Scaled Value Range</label>
+    <div class="layui-input-block">
+      <div class="layui-form-mid">High:</div>
+<div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="scaled_high" name="scaled_high" value="" class="layui-input"/> 
+	  </div>
+      <div class="layui-form-mid">Clamp</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="checkbox" id="scaled_high_c" name="scaled_high_c" title="Clamp" lay-skin="switch" >
+	  </div>
+	  
+    </div>
+  </div>
+  
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-block">
+      <div class="layui-form-mid">Low:</div>
+<div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="scaled_low" name="scaled_low" value="" class="layui-input"/> 
+	  </div>
+      <div class="layui-form-mid">Clamp</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="checkbox" id="scaled_low_c" name="scaled_low_c"  title="Clamp" lay-skin="switch"> 
+	  </div>
+	  
+    </div>
+  </div>
+
+  </div>
+</div>
+
+ </form>
+</body>
+<script type="text/javascript">
+var form ;
+var transdd = dlg.get_opener_w().trans_dd ;
+if(transdd==null)
+	transdd={} ;
+	
+layui.use('form', function(){
+	  form = layui.form;
+	  
+	  $("input[type=radio][name=name][value="+transdd._n+"]").attr("checked",true);
+	  
+	  form.on('radio(name)', function (data) {
+		　　
+		　var n = data.value;
+			show_card();
+		});
+		
+	  form.render();
+});
+
+function get_val(n,defv)
+{
+	var v = transdd[n] ;
+	if(v)
+		return v ;
+	return ""+defv ;
+}
+
+function show_card()
+{
+	$("#card_none").css("display","none") ;
+	$("#card_scaling").css("display","none") ;
+	
+	var n = $("input[name='name']:checked").val();
+	if(n==null||n=="")
+		return ;
+	
+	$("#card_"+n).css("display","") ;
+	if(n=="scaling")
+	{
+		console.log(transdd) ;
+		$("input[type=radio][name=tp][value="+transdd.tp+"]").attr("checked",true);
+		$("#raw_high").val(get_val("raw_high",1000)) ;
+		$("#raw_low").val(get_val("raw_low",0)) ;
+		$("#scaled_high").val(get_val("scaled_high",1000)) ;
+		$("#scaled_low").val(get_val("scaled_low",0)) ;
+		if(transdd.scaled_high_c)
+			$("#scaled_high_c").attr("checked",true);
+		if(transdd.scaled_low_c)
+			$("#scaled_low_c").attr("checked",true);
+		if(transdd.scaled_vt)
+			$("#scaled_vt").val(transdd.scaled_vt) ;
+		
+		form.render();
+	}
+	
+}
+
+show_card();
+
+function get_input_val(id,defv,bnum)
+{
+	var n = $('#'+id).val();
+	if(n==null||n=='')
+	{
+		return defv ;
+	}
+	if(bnum)
+		return parseInt(n);
+	return n;
+}
+
+function do_submit(cb)
+{
+	var n = $("input[name='name']:checked").val();
+	if(n==null||n=="")
+	{
+		cb(false,"please select one transfer ");
+		return ;
+	}
+	
+	switch(n)
+	{
+	case 'scaling':
+		if(!get_scaling(n,cb))
+			return ;
+		break;
+	case "none":
+		transdd._n="none" ;
+		transdd._t = "";
+		break ;
+	default:
+		cb(false,"unknown transfer name="+n);
+		return ;
+	}
+	
+	
+	cb(true,transdd);
+	return ;
+}
+
+function get_scaling(n,cb)
+{
+	var tp = $("input[name='tp']:checked").val();
+	if(!tp)
+	{
+		cb(false,"please select scaling type") ;
+		return false;
+	}
+	tp = parseInt(tp) ;
+	var tp_tt = $("input[name='tp']:checked").attr("title") ;
+	var raw_h = get_input_val("raw_high",null,true) ;
+	var raw_l = get_input_val("raw_low",null,true) ;
+	if(raw_h==null||raw_l==null)
+	{
+		cb(false,"please input raw value") ;
+		return false;
+	}
+	
+	var scaled_h = get_input_val("scaled_high",null,true) ;
+	var scaled_l = get_input_val("scaled_low",null,true) ;
+	if(scaled_h==null||scaled_l==null)
+	{
+		cb(false,"please input scaled value") ;
+		return false;
+	}
+	
+	var vt = $("#scaled_vt").val() ;
+	if(vt==null||vt=="")
+	{
+		cb(false,"please select Scaled Data type") ;
+		return false;
+	}
+	var vttt = $("#scaled_vt").find("option:selected").text(); 
+	
+	transdd._n = n ;
+	transdd._t = n +" - "+vttt;
+	transdd.tp = tp;
+	transdd.raw_high = raw_h ;
+	transdd.raw_low = raw_l ;
+	transdd.scaled_high = scaled_h ;
+	transdd.scaled_low = scaled_l ;
+	transdd.scaled_high_c = $('#scaled_high_c').is(':checked')
+	transdd.scaled_low_c = $('#scaled_low_c').is(':checked')
+	transdd.scaled_vt = vt ;
+	return true;
+}
+
+</script>
+</html>

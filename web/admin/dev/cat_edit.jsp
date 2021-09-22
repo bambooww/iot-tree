@@ -34,13 +34,13 @@ dlg.resize_to(400,220);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-block">
-      <input type="text" id="name" name="title" value="<%=name %>" placeholder="Pls input name" class="layui-input">
+      <input type="text" id="name" name="title" value="<%=name %>"  class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Title:</label>
     <div class="layui-input-block">
-      <input type="text" id="title" name="title" value="<%=title %>" placeholder="Pls input title" autocomplete="off" class="layui-input">
+      <input type="text" id="title" name="title" value="<%=title %>"  autocomplete="off" class="layui-input">
     </div>
   </div>
  </form>

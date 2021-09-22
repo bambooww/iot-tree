@@ -391,24 +391,24 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	}
 	
 	
-	protected void listTagsAll(List<UATag> tgs,boolean bmid)
-	{
-		if(bmid)
-		{
-			for(UATag tg:listTags())
-			{
-				if(tg.isMidExpress())
-					tgs.add(tg) ;
-			}
-		}
-		else
-			tgs.addAll(this.listTags());
-		
-		 for(UADev d:devs)
-		{
-			d.listTagsAll(tgs,bmid);
-		}
-	}
+//	protected void listTagsAll(List<UATag> tgs,boolean bmid)
+//	{
+//		if(bmid)
+//		{
+//			for(UATag tg:listTags())
+//			{
+//				if(tg.isMidExpress())
+//					tgs.add(tg) ;
+//			}
+//		}
+//		else
+//			tgs.addAll(this.listTags());
+//		
+//		 for(UADev d:devs)
+//		{
+//			d.listTagsAll(tgs,false,bmid);
+//		}
+//	}
 	
 	public boolean delFromParent() throws Exception
 	{
@@ -708,6 +708,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		for(UANode subn:subnodes)
 		{
 			Node_refreshBySubNode(this,subn) ;
+			
 		}
 		this.save();
 	}
@@ -739,10 +740,19 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			UANode tmpn = gcxt.getSubNodeByName(t.getName()) ;
 			if(tmpn==null)
 			{
-				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", t.getValTp(), t.bCanWrite, t.scanRate,false) ;
+				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", 
+						t.getValTp(),t.getDecDigits(), t.bCanWrite, t.scanRate,false) ;
 			}
 		}
-		
+		else if(uan instanceof UAHmi)
+		{
+			UAHmi hmi = (UAHmi)uan ;
+			//hmi.
+			//gcxt.addHmi("",  hmi.getName(), hmi.getTitle(), hmi.getDesc(), null);
+			// TODO: 1,up node must has sub node's lib comp
+			//            2 hmi may use sub node project res,it must syn too
+			//            it's must be designed carefully
+		}
 		
 	}
 }

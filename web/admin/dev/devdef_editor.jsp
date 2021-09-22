@@ -498,8 +498,8 @@ layui.use('element', function(){
 var cxt_menu = {
 	"dev":[
 		{op_name:"edit_devdef",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_devdef},
-		{op_name:"new_tag",op_title:"<wbt:lang>new_tag</wbt:lang>",op_icon:"fa fa-tag",op_action:act_node_new_tag},
-		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
+		//{op_name:"new_tag",op_title:"<wbt:lang>new_tag</wbt:lang>",op_icon:"fa fa-tag",op_action:act_node_new_tag},
+		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:""},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},

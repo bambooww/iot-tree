@@ -221,6 +221,7 @@ public abstract class DevDriver  implements IPropChecker
 		}
 		return null ;
 	}
+	
 		
 		//-------driver self
 	UACh belongToCh = null ;
@@ -410,7 +411,7 @@ public abstract class DevDriver  implements IPropChecker
 			return false;
 
 		bRun = true ;
-		rtTh = new Thread(runner);
+		rtTh = new Thread(runner,"iottree-devdriver-"+this.getName());
 		rtTh.start();
 		return true;
 	}

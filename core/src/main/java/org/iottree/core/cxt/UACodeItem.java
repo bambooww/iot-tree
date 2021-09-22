@@ -60,8 +60,7 @@ public class UACodeItem
 		if(Convert.isNullOrEmpty(this.codeTxt))
 			return false;
 		this.cxt = cxt ;
-		String tmps = "" ;
-		this.codeTxt = this.codeTxt.trim();
+		String tmps =  this.codeTxt = this.codeTxt.trim();
 		boolean bblock = false;
 		if(codeTxt.startsWith("{"))
 		{//block 

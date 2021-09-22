@@ -239,6 +239,21 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 	}
 	
+	final void CXT_calMidTagsVal()
+	{
+		//cal sub first
+		List<UANodeOCTagsCxt> subncxts = this.getSubNodesCxt() ;
+		if(subncxts!=null)
+		{
+			for(UANodeOCTagsCxt subncxt:subncxts)
+			{
+				subncxt.CXT_calMidTagsVal();
+			}
+		}
+		
+		CXT_calMidTagsValLocal();
+	}
+	
 	public void CXT_renderJson(Writer w) throws IOException
 	{
 		CXT_renderJson(w,-1);
@@ -283,16 +298,21 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			
 			boolean bvalid = false;
 			Object v=null ;
+			String strv = "" ;
 			long dt = -1 ;
 			long dt_chg=-1 ;
-
+			String str_err = "" ;
 			
 			if(val!=null)
 			{
 				bvalid = val.isValid() ;
 				v = val.getObjVal() ;
+				strv = val.getStrVal(tg.getDecDigits()) ;
 				dt = val.getValDT();//Convert.toFullYMDHMS(new Date(val.getValDT())) ;
 				dt_chg = val.getValChgDT() ;//Convert.toFullYMDHMS(new Date(val.getValChgDT())) ;
+				str_err = val.getErr() ;
+				if(str_err==null)
+					str_err = "" ;
 			}
 			else
 			{
@@ -313,13 +333,13 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			if(bvalid)
 			{
 				if(vtp.isNumberVT()||vtp==ValTP.vt_bool)
-					w.write("\",\"valid\":"+bvalid+",\"v\":"+v+",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+					w.write("\",\"valid\":"+bvalid+",\"v\":"+strv+",\"strv\":\""+strv+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
 				else
-					w.write("\",\"valid\":"+bvalid+",\"v\":\""+v+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+					w.write("\",\"valid\":"+bvalid+",\"v\":\""+strv+"\",\"strv\":\""+strv+"\",\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
 			}
 			else
 			{
-				w.write("\",\"valid\":"+bvalid+",\"v\":null,\"dt\":"+dt+",\"chgdt\":"+dt_chg+"}") ;
+				w.write("\",\"valid\":"+bvalid+",\"v\":null,\"dt\":"+dt+",\"chgdt\":"+dt_chg+",\"err\":\""+str_err+"\"}") ;
 			}
 			
 			bchged = true ;

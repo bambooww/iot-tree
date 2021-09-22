@@ -15,6 +15,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.basic.ValTranser;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.UACodeItem;
@@ -73,7 +74,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return valTp.getStr();
 	}
 	
-	
+	@data_val(param_name = "dec_digits")
+	int decDigits = -1 ;
 
 	@data_val(param_name = "w")
 	boolean bCanWrite = true ;
@@ -87,6 +89,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="transer")
 	String valTranser=null;
 	
+	
+	
 	@data_val(param_name="val_cache_len")
 	int valChgedCacheLen = 100 ;
 	
@@ -97,36 +101,41 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient UAVal curVal = new UAVal(false,null,System.currentTimeMillis()) ;
 	
+	private transient ValTranser valTransObj=  null ;
+	
 	public UATag()
 	{
 		super();
 	}
 	
-	public UATag(String name,String title,String desc,String addr,UAVal.ValTP vt,boolean canwrite,long srate)
+	public UATag(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
 		super(name,title,desc) ;
 		this.addr = addr ;
 		this.valTp = vt ;
 		this.bCanWrite = canwrite ;
 		this.scanRate = srate;
+		this.decDigits = dec_digits ;
 	}
 	
-	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,boolean canwrite,long srate)
+	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
 		setNameTitle(name,title,desc) ;
 		this.addr = addr ;
 		this.valTp = vt ;
 		this.bCanWrite = canwrite ;
 		this.scanRate = srate;
+		this.decDigits = dec_digits ;
 	}
 	
-	void setTagSys(String name,String title,String desc,String addr,UAVal.ValTP vt,boolean canwrite,long srate)
+	void setTagSys(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
 		setNameTitleSys(name,title,desc) ;
 		this.addr = addr ;
 		this.valTp = vt ;
 		this.bCanWrite = canwrite ;
 		this.scanRate = srate;
+		this.decDigits = dec_digits ;
 	}
 	
 	public UATag(DevItem item)
@@ -146,7 +155,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * @param addrexp
 	 * @param vt
 	 */
-	UATag(String name,String title,String desc,String addrexp,UAVal.ValTP vt)
+	UATag(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits)
 	{
 		super(name,title,desc) ;
 		this.bMidExp = true ;
@@ -154,9 +163,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.valTp = vt ;
 		this.bCanWrite = false ;
 		this.scanRate = -1;
+		this.decDigits = dec_digits ;
 	}
 	
-	void setTagMid(String name,String title,String desc,String addrexp,UAVal.ValTP vt)
+	void setTagMid(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits)
 	{
 		setNameTitle(name,title,desc) ;
 		this.bMidExp = true ;
@@ -164,6 +174,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.valTp = vt ;
 		this.bCanWrite = false ;
 		this.scanRate = -1;
+		this.decDigits = dec_digits ;
 	}
 	
 //	public static UATag newMidExpTag(String name,String title,String desc,String addrexp,UAVal.ValTP vt)
@@ -184,6 +195,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		nt.addr = this.addr ;
 		nt.valTp = this.valTp;
+		nt.decDigits = this.decDigits ;
 		nt.bCanWrite = this.bCanWrite ;
 		nt.scanRate = this.scanRate ;
 		
@@ -279,7 +291,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			return null ;
 		if(devAddr!=null)
 			return devAddr;
-		UAVal.ValTP vt = getValTp() ;
+		UAVal.ValTP vt = getValTpRaw() ;
 		if(vt==null)
 			return null ;
 		DevDriver dd =getRelatedDriver();
@@ -293,14 +305,58 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	
 	
-	public UAVal.ValTP getValTp()
+	public UAVal.ValTP getValTpRaw()
 	{
 		return valTp ;
+	}
+	
+	public UAVal.ValTP getValTp()
+	{
+		ValTranser vt = this.getValTranserObj() ;
+		if(vt==null)
+			return valTp ;
+		return vt.getTransValTP() ;
+	}
+	
+	public int getDecDigits()
+	{
+		return decDigits ;
 	}
 	
 	public long getScanRate()
 	{
 		return this.scanRate ;
+	}
+	
+	public String getValTranser()
+	{
+		return this.valTranser;
+	}
+	
+	public void setValTranser(String valtstr)
+	{
+		this.valTranser = valtstr ;
+		valTransObj = null ;
+	}
+	
+	public ValTranser getValTranserObj()
+	{
+		if(this.valTransObj!=null)
+			return this.valTransObj;
+		if(Convert.isNullOrEmpty(this.valTranser)||"null".equals(this.valTranser))
+			return null ;
+		
+		this.valTransObj = ValTranser.parseValTranser(this,this.valTranser) ;
+		return this.valTransObj;
+	}
+	
+	public void setValTranserObj(ValTranser vt)
+	{
+		this.valTransObj = vt ;
+		if(vt==null)
+			this.valTranser = null ;
+		else
+			this.valTranser = vt.toString() ;
 	}
 	
 	public boolean isCanWrite()
@@ -526,12 +582,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 			Object ob = ci.runCode() ;
 			v.setVal(true, ob, System.currentTimeMillis());
+			
 		}
 		catch(Exception e)
 		{
-			v.setValException(null, e);
-			e.printStackTrace();
+			v.setValException(e.getMessage(), e);
+			//e.printStackTrace();
+			
 		}
+		
+		this.RT_setUAVal(v);
 		return v;
 	}
 	
@@ -600,9 +660,42 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
+	public void RT_setValErr(String err,Exception e)
+	{
+		UAVal uav = new UAVal(err,e) ;
+		RT_setUAVal(uav);
+	}
+	
+	public void RT_setValRaw(Object v,boolean ignore_nochg)
+	{
+		ValTranser vt = this.getValTranserObj() ;
+		if(vt!=null)
+		{
+			try
+			{
+				v = vt.transVal(v) ;
+				v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
+				}
+			catch(Exception ee)
+			{
+				this.RT_setValErr(ee.getMessage(),ee);
+				return ;
+			}
+		}
+		
+		UAVal uav = this.curVal;//RT_getVal();
+		if(ignore_nochg && uav!=null)
+		{
+			if(uav.isValid() && uav.getObjVal().equals(v))
+				return ;
+		}
+		uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		RT_setUAVal(uav);
+	}
+	
 	public void RT_setValStr(String strv,boolean ignore_nochg)
 	{
-		Object objv = UAVal.transStr2ObjVal(this.getValTp(), strv);
+		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
 		RT_setVal(objv, ignore_nochg);
 	}
 	
@@ -616,6 +709,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		this.curVal = uav ;
 		HIS_setVal(uav) ;
+	}
+	
+	/**
+	 * driver get value,may has transfer
+	 * @param v
+	 * @throws Exception 
+	 */
+	public void RT_setValRaw(Object v)
+	{
+		this.RT_setValRaw(v,true);
 	}
 	
 	private boolean RT_writeValDriver(Object v)
@@ -689,7 +792,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(da!=null)
 			tp = da.getValTP();
 		else
-			tp = this.getValTp();
+			tp = this.getValTpRaw();
 		Object v = UAVal.transStr2ObjVal(tp, strv);
 		if(v==null)
 			return false;
@@ -701,8 +804,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public UAVal RT_getVal()
 	{
 		return this.curVal ;
-		
-
 	}
 	
 	

@@ -161,22 +161,22 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	}
 
 	
-	protected void listTagsAll(List<UATag> tgs,boolean bmid)
-	{
-		if(bmid)
-		{
-			for(UATag tg:listTags())
-			{
-				if(tg.isMidExpress())
-					tgs.add(tg) ;
-			}
-		}
-		else
-			tgs.addAll(this.listTags());
-		for(UATagG tg:taggs)
-		{
-			tg.listTagsAll(tgs,bmid) ;
-		}
-	}
+//	protected void listTagsAll(List<UATag> tgs,boolean bmid)
+//	{
+//		if(bmid)
+//		{
+//			for(UATag tg:listTags())
+//			{
+//				if(tg.isMidExpress())
+//					tgs.add(tg) ;
+//			}
+//		}
+//		else
+//			tgs.addAll(this.listTags());
+//		for(UATagG tg:taggs)
+//		{
+//			tg.listTagsAll(tgs,bmid) ;
+//		}
+//	}
 	
 }

@@ -339,7 +339,7 @@ public class ConnProTcpServer extends ConnProvider
 			if(this.acceptTh!=null)
 				return ;
 			
-			this.acceptTh = new Thread(acceptRunner);
+			this.acceptTh = new Thread(acceptRunner,"iottree-connp-tcpserver "+this.getName());
 			this.acceptTh.start();
 		}
 	}
