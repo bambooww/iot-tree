@@ -8,10 +8,13 @@ import java.util.Set;
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.broker.ProducerBrokerExchange;
+import org.apache.activemq.broker.region.Subscription;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.activemq.command.ConnectionInfo;
+import org.apache.activemq.command.ConsumerInfo;
 import org.apache.activemq.command.Message;
+import org.apache.activemq.command.ProducerInfo;
 import org.apache.activemq.jaas.GroupPrincipal;
 import org.apache.activemq.security.AbstractAuthenticationBroker;
 import org.apache.activemq.security.SecurityContext;
@@ -68,8 +71,44 @@ public class ActiveMQAuthBroker extends AbstractAuthenticationBroker {
 			ActiveMQTopic topic = (ActiveMQTopic)dest ;
 			topicn = topic.getTopicName();
 		}
-		//System.out.println("AuthBroker ["+username+"] send msg ("+topicn+")->"+dest+" "+dest.getClass().getCanonicalName()+"\r\n"+messageSend.getClass().getCanonicalName()+"\r\n"+messageSend) ;
+		System.out.println("AuthBroker ["+username+"] send msg ("+topicn+")->"+dest+" "+dest.getClass().getCanonicalName()+"\r\n"+messageSend.getClass().getCanonicalName()+"\r\n"+messageSend) ;
         super.send(producerExchange, messageSend);
+    }
+	
+	@Override
+    public Subscription addConsumer(ConnectionContext context, ConsumerInfo info) throws Exception {
+		SecurityContext sc  = context.getSecurityContext();
+		String username = sc.getUserName() ;
+		ActiveMQDestination dest = info.getDestination() ;
+		
+		String topicn = null ;
+		if(dest instanceof ActiveMQTopic)
+		{
+			ActiveMQTopic topic = (ActiveMQTopic)dest ;
+			topicn = topic.getTopicName();
+		}
+		
+		System.out.println("AuthBroker ["+username+"] addConsumer ("+topicn+")->"+dest+" "+dest.getClass().getCanonicalName()+"\r\n") ;
+		
+        return super.addConsumer(context, info);
+    }
+	
+	@Override
+    public void addProducer(ConnectionContext context, ProducerInfo info) throws Exception {
+		SecurityContext sc  = context.getSecurityContext();
+		String username = sc.getUserName() ;
+		ActiveMQDestination dest = info.getDestination() ;
+		
+		String topicn = null ;
+		if(dest instanceof ActiveMQTopic)
+		{
+			ActiveMQTopic topic = (ActiveMQTopic)dest ;
+			topicn = topic.getTopicName();
+		}
+		
+		System.out.println("AuthBroker ["+username+"] addProducer ("+topicn+")->"+dest+" "+"\r\n") ;
+		
+        super.addProducer(context, info);
     }
 
 	public SecurityContext authenticate(String username, String password, X509Certificate[] peerCertificates)
@@ -77,7 +116,7 @@ public class ActiveMQAuthBroker extends AbstractAuthenticationBroker {
 		SecurityContext securityContext = null;
 		// User user = getUser(username);
 		//通过jsonUrl 验证用户信息
-		//System.out.println("AuthBroker find user ="+username+" psw="+password) ;
+		System.out.println("AuthBroker authenticate user ="+username+" psw="+password) ;
 
 		// if (user != null && user.getPass_word().equals(password))
 		if (true) {
@@ -89,7 +128,6 @@ public class ActiveMQAuthBroker extends AbstractAuthenticationBroker {
 					return groups;
 				}
 			};
-
 		} else {
 			throw new SecurityException("AuthPlugin authenticate failed");
 		}

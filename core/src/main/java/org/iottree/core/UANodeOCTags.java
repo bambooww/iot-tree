@@ -174,6 +174,25 @@ public abstract class UANodeOCTags extends UANodeOC
 		return d ;
 	}
 	
+	
+	public UATag renameRefedTag(String tagid,String name,String title,String desc) throws Exception
+	{
+		if(!this.isRefedNode())
+			throw new Exception("Node is not refered") ;
+		
+		UATag d = this.getTagById(tagid) ;
+		if(d==null)
+			throw new Exception("no tag with id="+tagid+" found!") ;
+		
+		UANode tmpn = getSubNodeByName(name) ;
+		if(tmpn!=null&&d!=tmpn)
+			throw new IllegalArgumentException("tag with name="+name+" existed") ;
+		d.setReNameTitle(name, title, desc);
+		save();
+		return d ;
+		
+	}
+	
 	UATag addOrUpdateTagSys(String tagid,
 			boolean bmid,String name,String title,String desc,
 			String addr,UAVal.ValTP vt,int dec_digits,boolean canw,long srate,boolean bsave) throws Exception
@@ -292,6 +311,13 @@ public abstract class UANodeOCTags extends UANodeOC
 	{
 		ArrayList<UATag> rets =new ArrayList<>() ;
 		listTagsAll(rets,true,false);
+		return rets ;
+	}
+	
+	public final List<UATag> listTagsNorAll()
+	{
+		ArrayList<UATag> rets =new ArrayList<>() ;
+		listTagsAll(rets,false,false);
 		return rets ;
 	}
 	

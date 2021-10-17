@@ -90,16 +90,8 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	//var dbname=document.getElementById('db_name').value;
-	var pms = {name:n,title:tt,desc:desc,op:"add"} ;
-	send_ajax('prj_ajax.jsp',pms,function(bsucc,ret)
-	{
-		if(!bsucc || ret.indexOf('succ')<0)
-		{
-			cb(false,ret) ;
-			return ;
-		}
-		cb(true,ret);
-	},false);
+	cb(true,{name:n,title:tt,desc:desc})
+	
 	//document.getElementById('form1').submit() ;
 }
 

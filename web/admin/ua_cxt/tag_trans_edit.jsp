@@ -48,7 +48,25 @@ for(ValTranser vt: ValTranser.listValTransers())
   	No transfer
   </div>
   </div>
-  
+       <div class="layui-form-item">
+    <label class="layui-form-label">Data type</label>
+    <div class="layui-input-inline" style="width: 120px;">
+      <select  id="_vt"  name="_vt"  class="layui-input" placeholder="">
+        <option value="">-</option>
+<%
+for(UAVal.ValTP vt:UAVal.ValTP.values())
+{
+	String sel="" ;
+	if(vt==UAVal.ValTP.vt_double)
+		sel = "selected=\'selected\'";
+	 %><option value="<%=vt.getInt()%>" <%=sel %>><%=vt.getStr() %></option><%
+}
+%>
+      </select>
+    </div>
+    
+    </div>
+    
   <div class="layui-card" id="card_scaling" style="display:none">
   <div class="layui-card-header">Scaling</div>
   <div class="layui-card-body">
@@ -74,24 +92,7 @@ for(ValTranser vt: ValTranser.listValTransers())
     </div>
   </div>
      
-     <div class="layui-form-item">
-    <label class="layui-form-label">Scaled Data type</label>
-    <div class="layui-input-inline" style="width: 120px;">
-      <select  id="scaled_vt"  name="scaled_vt"  class="layui-input" placeholder="">
-        <option value="">-</option>
-<%
-for(UAVal.ValTP vt:UAVal.ValTP.values())
-{
-	String sel="" ;
-	if(vt==UAVal.ValTP.vt_double)
-		sel = "selected=\'selected\'";
-	 %><option value="<%=vt.getInt()%>" <%=sel %>><%=vt.getStr() %></option><%
-}
-%>
-      </select>
-    </div>
-    
-    </div>
+
     
     <div class="layui-form-item">
     <label class="layui-form-label">Scaled Value Range</label>
@@ -126,7 +127,19 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 
   </div>
 </div>
-
+  <div class="layui-card" id="card_js" style="display:none">
+  <div class="layui-card-header">JS</div>
+  <div class="layui-card-body">
+    <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-block">
+    ($tag,$input)=>{
+      <textarea rows="20" cols="60" id="js_txt"></textarea>
+    }
+    </div>
+  </div>
+  </div>
+  </div>
  </form>
 </body>
 <script type="text/javascript">
@@ -134,6 +147,8 @@ var form ;
 var transdd = dlg.get_opener_w().trans_dd ;
 if(transdd==null)
 	transdd={} ;
+
+console.log(transdd);
 	
 layui.use('form', function(){
 	  form = layui.form;
@@ -161,15 +176,20 @@ function show_card()
 {
 	$("#card_none").css("display","none") ;
 	$("#card_scaling").css("display","none") ;
+	$("#card_js").css("display","none") ;
 	
 	var n = $("input[name='name']:checked").val();
 	if(n==null||n=="")
 		return ;
 	
+	if(transdd._vt)
+		$("#_vt").val(transdd._vt) ;
+	
 	$("#card_"+n).css("display","") ;
-	if(n=="scaling")
+	switch(n)
 	{
-		console.log(transdd) ;
+	case "scaling":
+		//console.log(transdd) ;
 		$("input[type=radio][name=tp][value="+transdd.tp+"]").attr("checked",true);
 		$("#raw_high").val(get_val("raw_high",1000)) ;
 		$("#raw_low").val(get_val("raw_low",0)) ;
@@ -179,12 +199,15 @@ function show_card()
 			$("#scaled_high_c").attr("checked",true);
 		if(transdd.scaled_low_c)
 			$("#scaled_low_c").attr("checked",true);
-		if(transdd.scaled_vt)
-			$("#scaled_vt").val(transdd.scaled_vt) ;
 		
-		form.render();
+		
+		
+		break;
+	case "js":
+		$("#js_txt").val(get_val("js",""));
+		break;
 	}
-	
+	form.render();
 }
 
 show_card();
@@ -210,10 +233,22 @@ function do_submit(cb)
 		return ;
 	}
 	
+	var vt = $("#_vt").val() ;
+	if(vt==null||vt=="")
+	{
+		cb(false,"please select Data type") ;
+		return false;
+	}
+	
+	
 	switch(n)
 	{
 	case 'scaling':
-		if(!get_scaling(n,cb))
+		if(!get_scaling(n,vt,cb))
+			return ;
+		break;
+	case "js":
+		if(!get_js(n,vt,cb))
 			return ;
 		break;
 	case "none":
@@ -230,8 +265,9 @@ function do_submit(cb)
 	return ;
 }
 
-function get_scaling(n,cb)
+function get_scaling(n,vt,cb)
 {
+	
 	var tp = $("input[name='tp']:checked").val();
 	if(!tp)
 	{
@@ -256,16 +292,12 @@ function get_scaling(n,cb)
 		return false;
 	}
 	
-	var vt = $("#scaled_vt").val() ;
-	if(vt==null||vt=="")
-	{
-		cb(false,"please select Scaled Data type") ;
-		return false;
-	}
-	var vttt = $("#scaled_vt").find("option:selected").text(); 
+	
+	var vttt = $("#_vt").find("option:selected").text(); 
 	
 	transdd._n = n ;
 	transdd._t = n +" - "+vttt;
+	transdd._vt = vt ;
 	transdd.tp = tp;
 	transdd.raw_high = raw_h ;
 	transdd.raw_low = raw_l ;
@@ -273,7 +305,24 @@ function get_scaling(n,cb)
 	transdd.scaled_low = scaled_l ;
 	transdd.scaled_high_c = $('#scaled_high_c').is(':checked')
 	transdd.scaled_low_c = $('#scaled_low_c').is(':checked')
-	transdd.scaled_vt = vt ;
+	
+	return true;
+}
+
+function get_js(n,vt,cb)
+{
+	
+	var jstxt = $("#js_txt").val() ;
+	if(jstxt==null||(jstxt=trim(jstxt))=="")
+	{
+		cb(false,"please input js code") ;
+		return false;
+	}
+	
+	transdd._n = n ;
+	transdd._t = "js";
+	transdd._vt = vt ;
+	transdd.js = jstxt ;
 	return true;
 }
 

@@ -19,7 +19,7 @@ if(p==null)
 File fout =UAManager.getInstance().exportPrjToTmp(id) ;
 try(FileInputStream fis = new FileInputStream(fout);)
 {
-	WebRes.renderFile(response, "prj_"+p.getName(), fis) ;
+	WebRes.renderFile(response, "prj_"+p.getName()+".zip", fis) ;
 }
 
 fout.delete();

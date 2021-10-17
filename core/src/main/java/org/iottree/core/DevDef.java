@@ -2,7 +2,9 @@ package org.iottree.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
@@ -11,6 +13,7 @@ import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -132,11 +135,41 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	
 	UADev updateUADev(UADev dev,String name,String title,String desc)
 	{
+		List<UATag> oldtags = dev.listTagsNorAll();
+		//keep rename info
+		HashMap<String,UATag> path2tag_rename = new HashMap<>() ;
+		for(UATag oldt:oldtags)
+		{
+			String rn = oldt.getReName();
+			String rt = oldt.getReTitle() ;
+			String rd = oldt.getReDesc() ;
+			if(Convert.isNullOrEmpty(rn)&&Convert.isNullOrEmpty(rt)&&Convert.isNullOrEmpty(rd))
+				continue ;
+			
+			UATag oldbt = (UATag)oldt.getRefBranchNode();
+			//String pk = oldt.getNodeCxtPathIn(dev) ; // it may err with renameed name
+			String pk = oldbt.getNodeCxtPathIn(this) ;
+			path2tag_rename.put(pk, oldt) ;
+		}
+		
 		String id = dev.getId() ;
 		super.copyTreeWithNewSelf(dev,id,true,false); //recreate tree
 		dev.id = id ;
 		dev.setNameTitle(name, title, desc);
 		dev.setDevRefId(this.getId());
+		
+		//recover renamed info
+		for(Map.Entry<String, UATag> p2t:path2tag_rename.entrySet())
+		{
+			UANode tmpn = dev.getDescendantNodeByPath(p2t.getKey()) ;
+			if(tmpn==null)
+				continue ;
+			if(!(tmpn instanceof UATag))
+				continue ;
+			UATag tart = (UATag)tmpn ;
+			UATag oldt = p2t.getValue() ;
+			tart.setReNameTitle(oldt.getReName(), oldt.getReTitle(), oldt.getReDesc()) ;
+		}
 		return dev;
 	}
 	

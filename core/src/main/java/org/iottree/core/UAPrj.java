@@ -281,7 +281,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		
 		ch.copyTreeWithNewSelf(newch, null, false,true);
 		newch.id=this.getNextIdByRoot();
-		newch.name = newname;
+		//newch.name = newname;
+		newch.setNameTitle(newname, null, null) ;
 //		UACh newch = new UACh ch.deepCopyMe();
 //		newch.id=this.getNextIdByRoot();
 		this.chs.add(newch);
@@ -652,13 +653,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	
 	private Thread rtTh = null ;
 	
-	private boolean rtRun = false;
+	private volatile boolean rtRun = false;
 	
 	synchronized public boolean RT_start()
 	{
 		if(rtTh!=null)
 			return true;
-		rtTh = new Thread(runner,"iottree-prj-"+this.getName());
+		rtTh = new Thread(this::prjRun,"iottree-prj-"+this.getName());
 		rtRun = true;
 		rtTh.start();
 		return true;
@@ -728,58 +729,62 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		}
 	}
 	
-	
-	private Runnable runner = new Runnable() {
-
-		@Override
-		public void run()
+	private void prjRun()
+	{
+		try
 		{
-			try
+			//StringBuilder failedr = new StringBuilder() ;
+			//start connprovider
+			startStopConn(true);
+			
+			//start channel drivers
+			startStopCh(true) ;
+			
+			while(rtRun)
 			{
-				//StringBuilder failedr = new StringBuilder() ;
-				//start connprovider
-				startStopConn(true);
-				
-				//start channel drivers
-				startStopCh(true) ;
-				
-				while(rtRun)
+				try
 				{
-					try
-					{
-						Thread.sleep(5);
-					}catch(Exception e) {}
-					
-					RT_runFlush();
-					
-					runMidTagsScript();
-					
-					runScriptInterval() ;
-					
-					runShareInterval();
-				}
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				startStopConn(false);
-				startStopCh(false);
-				
-				PrjSharer ps =getSharer();
-				if(ps!=null)
-					ps.runStop();
-				
-				rtRun=false;
-				rtTh = null ;
+					Thread.sleep(5);
+				}catch(Exception e) {}
 				
 				RT_runFlush();
+				
+				runMidTagsScript();
+				
+				runScriptInterval() ;
+				
+				runShareInterval();
 			}
 		}
-		
-	};
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			startStopConn(false);
+			startStopCh(false);
+			
+			PrjSharer ps =getSharer();
+			if(ps!=null)
+				ps.runStop();
+			
+			rtRun=false;
+			rtTh = null ;
+			
+			RT_runFlush();
+		}
+	}
+	
+//	private Runnable runner = new Runnable() {
+//
+//		@Override
+//		public void run()
+//		{
+//			
+//		}
+//		
+//	};
 	
 	
 	public PrjSharer getSharer()

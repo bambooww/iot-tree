@@ -131,7 +131,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		
 		//newdev.setNameTitle(newname, newtitle, "");
 		
-		dd.updateUADev(this,this.name, this.title, desc) ;
+		dd.updateUADev(this,this.getName(), this.getTitle(), this.getDesc()) ;
 		return true;
 	}
 	/**

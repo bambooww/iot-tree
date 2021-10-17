@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.UATag;
+import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlVal.*;
@@ -51,7 +52,7 @@ public abstract class ValTranser
 				return null ;
 			vt.belongTo = tag ;
 		}
-		return null ;
+		return vt ;
 	}
 	
 	private static ArrayList<ValTranser> TRANSERS = null;// new ArrayList<>() ;
@@ -66,10 +67,14 @@ public abstract class ValTranser
 		TRANSERS = ss ;
 		return ss ;
 	}
-	/**
-	 * value type after transfered
-	 */
-	XmlValType transValTp = null ;
+//	/**
+//	 * value type after transfered
+//	 */
+//	XmlValType transValTp = null ;
+//	
+
+	UAVal.ValTP transVT = UAVal.ValTP.vt_double;
+	
 	
 	String units = null;
 	
@@ -87,8 +92,13 @@ public abstract class ValTranser
 	public abstract String getTitle() ;//may multi language
 	
 	public abstract Object transVal(Object v) throws Exception;
+
+
+	public ValTP getTransValTP()
+	{
+		return transVT;
+	}
 	
-	public abstract ValTP getTransValTP() ;
 	
 	public Exception getTransErr()
 	{
@@ -106,6 +116,11 @@ public abstract class ValTranser
 		jo.put("_n", this.getName()) ;
 		if(units!=null)
 			jo.put("_u",this.units);
+		if(transVT!=null)
+		{
+			jo.put("_vt", transVT.getInt());
+			jo.put("_vtt", transVT.getStr());
+		}
 		return jo;
 	}
 	
@@ -117,6 +132,8 @@ public abstract class ValTranser
 		if(!this.getName().equals(n))
 			return false;
 		this.units = m.optString("_u");
+		int vt = m.optInt("_vt",UAVal.ValTP.vt_double.getInt()) ;
+		transVT = UAVal.getValTp(vt);
 		return true;
 	}
 	

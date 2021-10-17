@@ -471,6 +471,19 @@ function add_prj()
 							 //enable_btn(true);
 							 return;
 						 }
+						 
+						ret.op="add" ;
+						send_ajax('./ua/prj_ajax.jsp',ret,function(bsucc,rr)
+						{
+							if(!bsucc || rr.indexOf('succ')<0)
+							{
+								dlg.msg(rr);
+								return ;
+							}
+							 dlg.close();
+							 document.location.href=document.location.href;
+						},false);
+							
 						 //console.log(ret);
 						 dlg.close();
 						 document.location.href=document.location.href;

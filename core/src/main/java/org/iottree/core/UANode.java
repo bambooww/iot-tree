@@ -24,13 +24,13 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	String id = null ;
 	
 	@data_val
-	String name = "" ;
+	private String name = "" ;
 	
 	@data_val
-	String title = "" ;
+	private String title = "" ;
 	
 	@data_val
-	String desc="" ;
+	private String desc="" ;
 	
 	transient UANode parentNode = null ;
 	
@@ -48,23 +48,47 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		setNameTitle(name,title,desc);
 	}
 	
+//	protected boolean setNameTitle(String name,String title)
+//	{
+//		Convert.checkVarName(name);
+//		if(name.startsWith("_"))
+//			throw new IllegalArgumentException("name cannot start with _") ;
+//		boolean b = false;
+//		if(!name.equals(this.name))
+//		{
+//			this.name = name ;
+//			b = true ;
+//		}
+//		if(title!=null&&!title.equals(this.title))
+//		{
+//			this.title = title ;
+//			b = true ;
+//		}
+//		
+//		return b;
+//	}
+	
 	boolean setNameTitle(String name,String title,String desc)
 	{
-		Convert.checkVarName(name);
-		if(name.startsWith("_"))
-			throw new IllegalArgumentException("name cannot start with _") ;
 		boolean b = false;
-		if(!name.equals(this.name))
+		if(name!=null)
 		{
-			this.name = name ;
-			b = true ;
+			Convert.checkVarName(name);
+			if(name.startsWith("_"))
+				throw new IllegalArgumentException("name cannot start with _") ;
+			if(!name.equals(this.name))
+			{
+				this.name = name ;
+				b = true ;
+			}
 		}
-		if(!title.equals(this.title))
+		
+		if(title!=null&&!title.equals(this.title))
 		{
 			this.title = title ;
 			b = true ;
 		}
-		if((desc==null&&this.desc!=null)||!desc.equals(this.desc))
+		if(desc!=null&&(desc==null&&this.desc!=null)||!desc.equals(this.desc))
 		{
 			this.desc = desc ;
 			b = true ;
@@ -248,10 +272,10 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		UANode p = this.getParentNode() ;
 		if(p==null)
 		{
-			return "."+this.name ;
+			return "."+this.getName() ;
 		}
 		String ppn = p.getNodePathCxt() ;
-		return ppn+"."+this.name;
+		return ppn+"."+this.getName();
 	}
 	
 	public String getNodeCxtPathIn(UANode tn)

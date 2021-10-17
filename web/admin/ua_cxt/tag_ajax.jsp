@@ -27,12 +27,32 @@
 		String strcanw = request.getParameter("canw") ;
 		boolean canw = "true".equalsIgnoreCase(strcanw);
 
-		float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
-		float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
+		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
+		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
 		String trans = request.getParameter("trans") ;
 
 		UATag ret = nt.addOrUpdateTag(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
+		return ret ;
+	}
+	
+	private static UATag renameTag(UANode n,HttpServletRequest request) throws Exception
+	{
+		if(!(n instanceof UANodeOCTags))
+			return null ;
+		UANodeOCTags nt = (UANodeOCTags)n;
+		if(!nt.isRefedNode())
+		{
+			return null ;
+		}
+		String id = request.getParameter("id") ;
+		String name=request.getParameter("name");
+		String title = request.getParameter("title");
+		String desc = request.getParameter("desc");
+		
+		String trans = request.getParameter("trans") ;
+
+		UATag ret = nt.renameRefedTag(id,name, title, desc) ;
 		return ret ;
 	}
 %><%
@@ -89,6 +109,18 @@ case "del_tag":
 		boolean b =t.delFromParent();
 	}
 	out.print("succ="+tagid) ;
+	break ;
+case "rename_tag":
+	try
+	{
+		tag = renameTag(n,request) ;
+		out.print("succ="+tag.getId()) ;
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage());
+		return ;
+	}
 	break ;
 case "copy":
 case "paste":

@@ -38,6 +38,8 @@ case "add":
 		return ;
 	}
 case "edit":
+	dc = UAManager.getInstance().updatePrj(id,name, title, desc);
+	out.print("succ="+dc.getId()) ;
 	break ;
 case "del":
 	if(!Convert.checkReqEmpty(request, out, "id"))

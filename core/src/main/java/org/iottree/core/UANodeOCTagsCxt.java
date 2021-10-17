@@ -272,7 +272,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	public boolean CXT_renderJson(Writer w,long lastdt,HashMap<String,Object> extpms) throws IOException
 	{
 		boolean bchged = false;
-		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.name+"\"");
+		w.write("{\"id\":\""+this.id+"\",\"n\":\""+this.getName()+"\"");
 		if(extpms!=null)
 		{
 			for(Map.Entry<String,Object> n2v:extpms.entrySet())

@@ -40,7 +40,7 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 	
 	UATagG(UANodeOCTagsGCxt tg)
 	{
-		super(tg.name,tg.title,tg.desc);
+		super(tg.getName(),tg.getTitle(),tg.getDesc());
 	}
 //	
 //	void constructNodeTree()

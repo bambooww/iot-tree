@@ -21,8 +21,6 @@ public class ValTransScaling extends ValTranser
 	double rawLow = 0;
 	double rawHigh = 1000;
 	
-	UAVal.ValTP scaledVT = UAVal.ValTP.vt_double;
-	
 	double scaledHigh = 1000;
 	boolean scaledHighClamp = false;
 	
@@ -55,17 +53,6 @@ public class ValTransScaling extends ValTranser
 	public double getRawHigh()
 	{
 		return rawHigh ;
-	}
-	
-	public ValTP getScaledValTP()
-	{
-		return this.scaledVT ;
-	}
-	
-	@Override
-	public ValTP getTransValTP()
-	{
-		return getScaledValTP();
 	}
 	
 	public double getScaledHigh()
@@ -129,8 +116,7 @@ public class ValTransScaling extends ValTranser
 		ret.put("tp", this.tp) ;
 		ret.put("raw_low", rawLow);
 		ret.put("raw_high", rawHigh);
-		if(scaledVT!=null)
-			ret.put("scaled_vt", scaledVT.getInt());
+		
 		ret.put("scaled_high", scaledHigh);
 		ret.put("scaled_high_c", scaledHighClamp);
 		
@@ -149,8 +135,7 @@ public class ValTransScaling extends ValTranser
 		this.tp = m.optInt("tp", SCALING_LINEAR) ;
 		rawLow = m.optDouble("raw_low", 0);
 		rawHigh = m.optDouble("raw_high", 1000);
-		int vt = m.optInt("scaled_vt",UAVal.ValTP.vt_double.getInt()) ;
-		scaledVT = UAVal.getValTp(vt);
+		
 		scaledHigh = m.optDouble("scaled_high", 1000);
 		scaledHighClamp = m.optBoolean("scaled_high_c", false);
 		

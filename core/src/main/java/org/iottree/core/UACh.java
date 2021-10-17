@@ -277,8 +277,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		}
 		UADev newdev = dev.deepCopyMe();
 		newdev.id=this.getNextIdByRoot();
-		newdev.name=newname;
-		newdev.title=newtitle;
+//		newdev.name=newname;
+//		newdev.title=newtitle;
+		newdev.setNameTitle(newname, newtitle,null) ;
 		this.devs.add(newdev);
 		this.constructNodeTree();
 		

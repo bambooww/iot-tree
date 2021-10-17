@@ -15,8 +15,6 @@ public class ValTransJS extends ValTranser
 	public static final String NAME = "js";
 	
 	
-	UAVal.ValTP scaledVT = UAVal.ValTP.vt_double;
-	
 	String jsStr = null ;
 	
 	@Override
@@ -28,18 +26,6 @@ public class ValTransJS extends ValTranser
 	public String getTitle()
 	{
 		return "JS";
-	}
-	
-	
-	public ValTP getScaledValTP()
-	{
-		return this.scaledVT ;
-	}
-	
-	@Override
-	public ValTP getTransValTP()
-	{
-		return getScaledValTP();
 	}
 	
 	public String getJsStr()
@@ -75,7 +61,7 @@ public class ValTransJS extends ValTranser
 		if(cxt== null)
 			return null;
 		
-		codeItem = new UACodeItem("",this.jsStr) ;
+		codeItem = new UACodeItem("","{"+this.jsStr+"}")  ;
 		codeItem.initItem(cxt, "$tag","$input") ;
 		return codeItem;
 	}
@@ -94,7 +80,7 @@ public class ValTransJS extends ValTranser
 	public boolean fromTransJO(JSONObject m)
 	{
 		boolean r = super.fromTransJO(m);
-		this.jsStr = m.optString("tp", null) ;
+		this.jsStr = m.optString("js", null) ;
 		return r;
 	}
 }

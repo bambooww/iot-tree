@@ -298,6 +298,21 @@ public class UAManager implements IResCxt
 		return r ;
 	}
 	
+	public UAPrj updatePrj(String id,String name,String title,String desc) throws Exception
+	{
+		UAUtil.assertUAName(name);
+		
+		UAPrj prj = this.getPrjById(id) ;
+		if(prj==null)
+			throw new IllegalArgumentException("prj no existed") ;
+		UAPrj tmpprj = this.getPrjByName(name) ;
+		if(tmpprj!=null&&tmpprj!=prj)
+			throw new IllegalArgumentException("prj with name="+name+" existed") ;
+		prj.setNameTitle(name, title, desc);
+		savePrj(prj) ;
+		return prj ;
+	}
+	
 	
 	public boolean exportPrj(String prjid,File fout) throws IOException
 	{
@@ -439,9 +454,9 @@ public class UAManager implements IResCxt
 		{
 			p.id = tmpid ;
 			if(Convert.isNotNullEmpty(newname))
-				p.name = newname ;
+				p.setNameTitle(newname,null,null) ;
 			if(Convert.isNotNullEmpty(newtitle))
-				p.title= newtitle;
+				p.setNameTitle(null,newtitle,null);
 			savePrj(p) ;
 		}
 		

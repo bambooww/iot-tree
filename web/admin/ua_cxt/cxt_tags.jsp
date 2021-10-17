@@ -43,6 +43,12 @@ List<UATag> cur_tags = node_tags.getNorTags() ;
 List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
 boolean brefowner = node_tags.isRefOwner();
 boolean brefed = node_tags.isRefedNode() ;
+
+String hmitt = "" ;
+if(bhmi)
+{
+	hmitt ="UI ["+hmi.getNodePath()+"]";
+}
 %><html>
 <head>
 <title></title>
@@ -86,6 +92,8 @@ td
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
+<%--
+
 <%
 if(!bhmi)
 {
@@ -112,7 +120,7 @@ if(!brefed)
 %>
 </blockquote>
 <div style="height:100px;overflow: auto;">
-<table class="oc_div_list" id="tb_cur" >
+<table class="oc_div_list" >
   <thead>
      <tr>
 <%
@@ -180,24 +188,45 @@ if(!brefed)
 <%
 }//end if(bhmi)
 
-String hmitt = "" ;
-if(bhmi)
-{
-	hmitt ="UI ["+hmi.getNodePath()+"]";
-}
+
 %>
 <hr class="layui-bg-green">
+
+--%>
  <blockquote class="layui-elem-quote "><%=hmitt %> Context under  [<%=node_tags.getNodePath() %>]
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+   
+   <%
+ 	if(bdevdef)
+ 	{
+ %>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
+<%
+ 	}
+%>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+Add Middle Tag</button>&nbsp;&nbsp;
+ 	<%--
+ 	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
+ 	 --%>
   <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
  </div>
 </blockquote>
 <div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
-<table class="oc_div_list" style="margin-top:10px">
+<table class="oc_div_list" style="margin-top:10px" id="tb_cur" >
   <thead>
      <tr>
+     <th>
+     <%
+	if(!brefed)
+	{
+%>
+        <input type="checkbox" lay-skin="primary"  id="chkall" onclick="sel_tags_all()"/>
+<%
+	}
+%></th>
         <th>Mid</th>
     <th>Tag</th>
+    <th>Title</th>
         <th>Address</th>
         <th>Value Type</th>
         
@@ -205,6 +234,7 @@ if(bhmi)
         <th>Timestamp</th>
         <th>Quality</th>
         <th>Write</th>
+        <th></th>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -224,16 +254,26 @@ for(UANodeOCTags tn:tns)
 	for(UATag tag:tags)
 	{
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+		boolean bloc = tag.getParentNode()==node_tags;
 		String cssstr="" ;
 		if(tag.isSysTag())
 			cssstr="color:grey";
 		else
 			cssstr="color:blue";
 %>
-   <tr id="ctag_<%=tag.getId() %>"  tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>">
-        <td></td>
+   <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>">
+   <td style="text-align: center;">
+   <%
+	if(!brefed&&bloc)
+	{
+%>
+        <input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/>
+<%
+	}
+%></td>
+        <td style="text-align: center;"><%=(tag.isMidExpress()?"✔":"") %></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>"><%=cxtpath%></span></td>
-
+<td><%=tag.getTitle() %></td>
         <td><%=tag.getAddress() %></td>
         <td><%=tag.getValTp() %></td>
         <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
@@ -249,6 +289,17 @@ for(UANodeOCTags tn:tns)
 	}
 %>
         </td>
+                <td>
+<%
+if(!brefed&&bloc&&!tag.isSysTag())
+{
+%>
+        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
+        <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
+<%
+}
+%>&nbsp;	
+        </td>
       </tr>
 <%
 	}
@@ -258,6 +309,10 @@ for(UANodeOCTags tn:tns)
 </table>
 </div>
 </form>
+<%
+if(brefed)
+{
+%>
 <table width='100%' border='1' height="120">
 <tr>
  <td>
@@ -274,6 +329,10 @@ for(UANodeOCTags tn:tns)
   </td>
  </tr>
 </table>
+<%
+}
+%>
+<br><br>
 </body>
 <script>
 var path = "<%=path%>" ;
@@ -301,13 +360,13 @@ document.oncontextmenu = function() {
 }
 function init_right_menu()
 {
-	if(b_refed)
-		return ;
+	//if(b_refed)
+	//	return ;
 	$('#tb_cur').mouseup(function(e) {
 	    if (3 == e.which)
 	    {
 	    	$('.sm_container').css("display","none") ;
-	    	
+	    	/*
 	        $(this).selectMenu({
 	        	title0:'Add Tag',
 	        	regular : true,
@@ -321,10 +380,11 @@ function init_right_menu()
 					return d;
 				}
 	        });
+	    	*/
 	    }
 	})
 
-	$('#tb_cur tr[id*="tag_"]').mouseup(function(e) {
+	$('#tb_cur tr[id*="ctag_"]').mouseup(function(e) {
 	    if (3 == e.which)
 	    {
 	    	e.stopPropagation();
@@ -333,29 +393,44 @@ function init_right_menu()
 	    	$('.sm_container').css("display","none") ;
 	    	var t_path = $(this).attr("tag_path");
 	    	var t_id = $(this).attr("tag_id");
+	    	var t_loc = $(this).attr("tag_loc")=='true';
+	    	var t_sys = $(this).attr("tag_sys")=='true';
+	    	
 	        $(this).selectMenu({
 	        	title0:'Modify Tag',
 	        	regular : true,
 	        	rightClick : true,
 	        	data : ()=>{
-					var d = [
-						{ content : 'Add Tag', callback:()=>{
-							add_or_modify_tag("");
-						}},
-						{ content : 'Modify Tag', callback:()=>{
-							add_or_modify_tag(t_id);
-						}},
-						{ content : 'Copy Tag', callback:()=>{
-							copy_tag($(this).attr("tag_id"));
-						}},
-						{ content : 'Paste Tag', callback:()=>{
-							paste_tag(t_id);
-						}},
-						{ content : 'Delete Tag', callback:()=>{
-							del_tag(t_id);
-						}},
-					];
-					return d;
+	        		if(b_refed&&!t_sys)
+	        		{
+	        			return [{ content : 'Rename Tag', callback:()=>{
+							rename_tag(t_path,t_id);
+						}}];
+	        		}
+	        		
+	        		if(t_loc&&!t_sys)
+	        		{
+	        			return  [
+							//{ content : 'Add Tag', callback:()=>{
+							//	add_or_modify_tag("");
+							//}},
+							
+							{ content : 'Modify Tag', callback:()=>{
+								add_or_modify_tag(t_id);
+							}},
+							{ content : 'Copy Tag', callback:()=>{
+								copy_tag($(this).attr("tag_id"));
+							}},
+							{ content : 'Paste Tag', callback:()=>{
+								paste_tag(t_id);
+							}},
+							{ content : 'Delete Tag', callback:()=>{
+								del_tag(t_id);
+							}},
+						];
+	        		}
+	        		
+					return [];
 				}
 	        });
 	    }
@@ -446,6 +521,47 @@ function add_or_modify_tag(id,bmid)
 						dlg.close();
 					}
 				]);
+}
+
+function rename_tag(p,id)
+{
+	dlg.open("./tag_rename.jsp?path="+p+"&id="+id,
+			{title:"Rename Refered Tag",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.path=p ;
+						 ret.op = "rename_tag";
+						 ret.id = id ;
+						 //console.log(ret);
+						 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.close();
+								document.location.href=document.location.href;
+							},false);
+							
+						 
+						 //document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function del_tag(id)

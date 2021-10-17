@@ -22,6 +22,11 @@ import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author jason.zhu
+ *
+ */
 @data_class
 public class UATag extends UANode implements IOCDyn //UANode UABox
 {
@@ -29,6 +34,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	//transient  UATagG parentTagG = null ;
 	//transient UATagList belongToTL = null ;
+	
+	@data_val
+	String rename = null ;
+	
+	@data_val
+	String retitle = null ;
+	
+	@data_val
+	String redesc = null ;
+	
 	/**
 	 * is middle express tqg
 	 */
@@ -177,11 +192,97 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.decDigits = dec_digits ;
 	}
 	
+	/**
+	 * tag in project may has it's own name title and desc
+	 * so there are defined by rename retitle redesc
+	 * 
+	 * @param n
+	 * @param t
+	 * @param d
+	 */
+	public boolean setReNameTitle(String name,String title,String desc)
+	{
+		boolean b = false;
+		Convert.checkVarName(name);
+		if(name.startsWith("_"))
+			throw new IllegalArgumentException("name cannot start with _") ;
+		if(!name.equals(this.rename))
+		{
+			this.rename = name ;
+			b = true ;
+		}
+		
+		if(!title.equals(this.retitle))
+		{
+			this.retitle = title ;
+			b = true ;
+		}
+		if((desc==null&&this.redesc!=null)||!desc.equals(this.redesc))
+		{
+			this.redesc = desc ;
+			b = true ;
+		}
+		return b;
+	}
+	
+	public String getReName()
+	{
+		return this.rename ;
+	}
+	
+	public String getReTitle()
+	{
+		return this.retitle ;
+	}
+	
+	public String getReDesc()
+	{
+		return this.redesc;
+	}
 //	public static UATag newMidExpTag(String name,String title,String desc,String addrexp,UAVal.ValTP vt)
 //	{
 //		
 //	}
 	
+	@Override
+	public String getName()
+	{
+		if(Convert.isNullOrEmpty(this.rename))
+			return super.getName() ;
+		return this.rename ;
+	}
+	
+	
+	public String getNameSor()
+	{
+		return super.getName();
+	}
+	
+	@Override
+	public String getTitle()
+	{
+		if(Convert.isNullOrEmpty(this.retitle))
+			return super.getTitle() ;
+		return this.retitle ;
+	}
+	
+	public String getTitleSor()
+	{
+		return super.getTitle() ;
+	}
+	
+	@Override
+	public String getDesc()
+	{
+		if(Convert.isNullOrEmpty(this.redesc))
+			return super.getDesc() ;
+		return this.redesc ;
+	}
+	
+	public String getDescSor()
+	{
+		return super.getDesc() ;
+	}
 	/**
 	 * 
 	 * @param new_self create by copySelfWithNewId
@@ -191,6 +292,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		super.copyTreeWithNewSelf(new_self,ownerid, copy_id, root_subnode_id);
 		UATag nt = (UATag)new_self ;
+		nt.rename = this.rename ;
+		nt.retitle = this.retitle ;
+		nt.redesc = this.redesc;
 		nt.bMidExp = this.bMidExp;
 		
 		nt.addr = this.addr ;
@@ -211,7 +315,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public boolean isSysTag()
 	{
-		return this.name.startsWith("_") ;
+		return this.getName().startsWith("_") ;
 	}
 	
 	@Override
@@ -674,8 +778,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			try
 			{
 				v = vt.transVal(v) ;
-				v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
-				}
+				v = UAVal.transStr2ObjVal(vt.getTransValTP(),v.toString()) ;
+				//v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
+			}
 			catch(Exception ee)
 			{
 				this.RT_setValErr(ee.getMessage(),ee);

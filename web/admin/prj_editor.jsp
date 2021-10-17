@@ -884,7 +884,11 @@ var cxt_menu = {
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
+		
+		{op_name:"edit_prj",op_title:"Edit Project",op_icon:"fa fa-pencil",op_action:act_edit_prj},
+		
 		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
+		
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true},
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
@@ -1437,6 +1441,45 @@ function act_rep_new_ch(n,op)
 function act_edit_ch(n,op)
 {
 	add_or_edit_ch(null,n.path);
+}
+
+function act_edit_prj(n,op)
+{
+	dlg.open("ua/prj_edit.jsp?id="+prjid,
+			{title:"Edit Project",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 //enable_btn(true);
+							 return;
+						 }
+						ret.id = prjid;
+						ret.op="edit" ;
+						send_ajax('./ua/prj_ajax.jsp',ret,function(bsucc,rr)
+						{
+							if(!bsucc || rr.indexOf('succ')<0)
+							{
+								dlg.msg(rr);
+								return ;
+							}
+							 dlg.close();
+							 document.location.href=document.location.href;
+						},false);
+							
+						 //console.log(ret);
+						
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function act_del_ch(n,op)
