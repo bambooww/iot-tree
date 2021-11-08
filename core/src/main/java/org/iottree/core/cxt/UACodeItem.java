@@ -55,7 +55,7 @@ public class UACodeItem
 		initItem(cxt) ;
 	}
 	
-	public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
+	synchronized public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
 	{
 		if(Convert.isNullOrEmpty(this.codeTxt))
 			return false;

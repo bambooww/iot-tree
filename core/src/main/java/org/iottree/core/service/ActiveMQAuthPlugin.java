@@ -1,7 +1,10 @@
 package org.iottree.core.service;
 
+import java.util.HashMap;
+
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerPlugin;
+import org.iottree.core.util.Convert;
 
 /**
  * automation用来支持activemq接入用户权限验证的
@@ -24,6 +27,7 @@ public class ActiveMQAuthPlugin implements BrokerPlugin {
 
 	String authUrl = null ;
 	
+	private HashMap<String,String> user2psw = new HashMap<>() ;
 	/**
 	 * 
 	 * @param auth_url 内部微服务提供的接入验证url接口
@@ -36,7 +40,14 @@ public class ActiveMQAuthPlugin implements BrokerPlugin {
 	
 	public Broker installPlugin(Broker broker) throws Exception {
 		System.out.println("AuthPlugin >>>installPlugin with url= "+authUrl) ;
-		return new ActiveMQAuthBroker(broker,authUrl);
+		return new ActiveMQAuthBroker(broker,authUrl,this.user2psw);
 	}
 
+	public ActiveMQAuthPlugin asUser(String username,String psw)
+	{
+		if(Convert.isNullOrEmpty(username))
+				return this ;
+		user2psw.put(username, psw) ;
+		return this ;
+	}
 }

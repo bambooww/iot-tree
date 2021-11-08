@@ -70,4 +70,11 @@ public class ModbusCmdEx extends  ModbusCmd
 	    
 	}
 
+	@Override
+	protected int reqRespTCP(OutputStream ous, InputStream ins) throws Exception
+	{
+		
+		return 0;
+	}
+
 }

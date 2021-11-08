@@ -9,6 +9,8 @@ import java.lang.reflect.Parameter;
 import java.sql.Connection;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.iottree.core.util.Convert;
 import org.json.*;
 
@@ -30,6 +32,8 @@ public class DataTranserXml
 		
 		public void afterXmlDataInject(XmlData xd) ;
 	}
+	
+	
 	
 	public static XmlData extractXmlDataFromObj(Object o) throws Exception
 	{
@@ -256,6 +260,7 @@ public class DataTranserXml
 
 		return true;
 	}
+	
 	
 	private static boolean paramValue2ObjMethod(Object o, Method m, data_val xmlv, XmlData tarxd) throws Exception
 	{

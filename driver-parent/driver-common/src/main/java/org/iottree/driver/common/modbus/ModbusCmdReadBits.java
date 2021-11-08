@@ -341,8 +341,8 @@ public class ModbusCmdReadBits extends ModbusCmd
 		pdata[0] = (byte) ((lastTcpCC >> 8) & 0xFF) ;
 		pdata[1] = (byte) (lastTcpCC & 0xFF) ;
 		pdata[2] = pdata[3] = 0 ;
-		pdata[4] = 0 ;//�����ֽ�����λ
-		pdata[5] = 6 ;//�����ֽ�����λ
+		pdata[4] = 0 ;//length hi
+		pdata[5] = 6 ;//length lo
 		//pdu
 		pdata[6] = (byte) slaveAddr ;
 	    pdata[7] = (byte) fc ;
@@ -408,13 +408,13 @@ public class ModbusCmdReadBits extends ModbusCmd
 	    	return 0 ;//err
 	    }
 	    if(recvpdu[1]!=(byte)fc)
-        {//���������
+        {//reponse error
             //if(mbuss_adu[1]==(byte)(fc+0x80))
 	    	ret_val_ok = false ;
 	    	return 0 ;
         }
 	    
-	    //pdata��4���ֽڿ�ʼ����mayrlen-3֮ǰ���������ؿ��������
+	    //
 	    HashMap<Integer,Object> addr2val = new HashMap<Integer,Object>() ;
 	    
 	    for(i=0 ; i< regNum ; i ++)

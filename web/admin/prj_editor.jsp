@@ -674,6 +674,23 @@ function share_as_node()
 			]);
 }
 
+
+function task_setup()
+{
+	add_tab("___task","Tasks","./ua/prj_task.jsp?prjid="+prjid) ;
+	/*
+	dlg.open("./ua/prj_task.jsp?prjid="+prjid,{title:"setup project task",w:'800px',h:'400px'},
+			['Close'],
+			[
+				
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	*/
+}
+
 function resize_iframe_h()
 {
 	   var h = $(window).height()-80;
@@ -887,7 +904,7 @@ var cxt_menu = {
 		
 		{op_name:"edit_prj",op_title:"Edit Project",op_icon:"fa fa-pencil",op_action:act_edit_prj},
 		
-		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
+		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true},
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
@@ -916,7 +933,7 @@ var cxt_menu = {
 		{op_name:"ch_stop",op_title:"<wbt:lang>stop</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return tn.run;
 		}},
-		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
+		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"dev":[
@@ -926,7 +943,7 @@ var cxt_menu = {
 		
 		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		
-		{op_name:"open_cxt",op_title:"<wbt:lang>data_cxt</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_data_cxt},
+		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"tagg":[
@@ -1826,17 +1843,19 @@ function act_hmi_edit_ui(n,op)
 }
 */
 
-function act_open_data_cxt(n,op)
+function act_open_cxt_script(n,op)
 {
-	dlg.open("ua_cxt/cxt_var_lister.jsp?path="+n.path,
-			{title:"Data Context",w:'850px',h:'600px'},
-			['Cancel'],
+	
+	dlg.open("ua_cxt/cxt_script.jsp?path="+n.path,
+			{title:"Context Script Tester",w:'450px',h:'500px'},
+			['Close'],
 			[
 				function(dlgw)
 				{
 					dlg.close();
 				}
 			]);
+	
 }
 
 function add_tab(id,title,u)
@@ -2036,6 +2055,18 @@ $(window).resize(function(){
 		draw_fit();
 	});
 	
+function clk_share_run()
+{
+	event.stopPropagation();
+	share_as_node();
+}
+
+function clk_task_run()
+{
+	event.stopPropagation();
+	task_setup();
+}
+	
 function prj_rt()
 {
 	send_ajax("./prj_rt_ajax.jsp",{id:repid},(bsucc,ret)=>{
@@ -2061,6 +2092,25 @@ function prj_rt()
 		}
 		$("#share_run").css("color",c);
 		$("#share_run").attr("title",t);
+		
+		c = "grey" ;
+		t = "no task";
+		if(ret.task)
+		{
+			if(ret.task_run)
+			{
+				c = "green" ;
+				t = "task is running" ;
+			}
+			else
+			{
+				c = "red" ;
+				t = "task is not running "
+			}
+		}
+		$("#task_run").css("color",c);
+		$("#task_run").attr("title",t);
+		
 		for(var cp of ret.cps)
 		{
 			var id =cp.cp_id ;

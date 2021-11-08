@@ -179,7 +179,7 @@ function update_dyn(txt)
 	var r = null ;
 	eval("r="+txt) ;
 	//log("r="+ret) ;
-	$('#updt').html("更新时间"+r.dt) ;
+	$('#updt').html(r.dt) ;
 	var num = r.vals.length ;
 	for(var i = 0 ; i < num ; i++)
 	{

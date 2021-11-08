@@ -24,7 +24,7 @@ public class JsCxt
 	{
 		String script_txt = "var robj="+"{a:10,b:["
 				+ "{n:'aaa',val:10,dt:123123123},"
-				+ "{n:'a下a',val:3.5410,dt:123123123},"
+				+ "{n:'aa',val:3.5410,dt:123123123},"
 				+ "{n:'bbb中文',val:8,dt:123123123}"
 				+ "]}\r\n" ;
 		ScriptEngineManager manager = new ScriptEngineManager();

@@ -79,7 +79,7 @@
 	}%>[
 	
 	{
-	"text":"<%=rep.getName() %>&nbsp;&nbsp;<span id='share_run' ><i id='' class='fa fa fa-share-alt-square fa-lg'></i></span>"
+	"text":"<%=rep.getName() %>&nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i class='fa fa-circle-o-notch fa-lg'></i></span>"
 	,"id":"<%=rep.getId() %>"
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"

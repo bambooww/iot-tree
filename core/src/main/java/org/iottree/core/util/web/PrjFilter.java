@@ -88,7 +88,22 @@ public class PrjFilter implements Filter
 		}
 		else
 		{
-			req.getRequestDispatcher("/node_list.jsp?path="+uri).forward(req, resp);
+			String op = req.getParameter("op");
+			if(op==null)
+				op="" ;
+			switch(op)
+			{
+			case "cxt":
+				req.getRequestDispatcher("/node_cxt.jsp?path="+uri).forward(req, resp);
+				break ;
+			case "list":
+				req.getRequestDispatcher("/node_list.jsp?path="+uri).forward(req, resp);
+				break ;
+			default:
+				req.getRequestDispatcher("/node_cxt.jsp?path="+uri).forward(req, resp);
+				break ;
+			}
+			
 			return ;
 		}
 	}

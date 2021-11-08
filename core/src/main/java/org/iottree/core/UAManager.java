@@ -218,13 +218,13 @@ public class UAManager implements IResCxt
 		return new File(Config.getDataDirBase() + "/prjs/") ;
 	}
 	
-	static File getPrjFileSubDir(String id)
+	public static File getPrjFileSubDir(String id)
 	{
 		String fp = Config.getDataDirBase() + "/prjs/prj_"+id+"/";
 		return new File(fp) ;
 	}
 	
-	static File getPrjFile(String id)
+	public static File getPrjFile(String id)
 	{
 		String fp = Config.getDataDirBase() + "/prjs/prj_"+id+".xml";
 		return new File(fp);

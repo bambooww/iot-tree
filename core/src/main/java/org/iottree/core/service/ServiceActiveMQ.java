@@ -22,6 +22,9 @@ public class ServiceActiveMQ extends AbstractService
 
 	boolean tcpEn = false;
 	int tcpPort = 60001;
+	
+	String authUser = null ;
+	String authPsw = null ;
 
 	@Override
 	public String getName()
@@ -59,6 +62,9 @@ public class ServiceActiveMQ extends AbstractService
 		
 		tcpEn = "true".equals(pms.get("tcp_en")) ;
 		tcpPort = Convert.parseToInt32(pms.get("tcp_port"), 60001) ;
+		
+		authUser = pms.get("auth_user") ;
+		authPsw = pms.get("auth_psw") ;
 	}
 	
 	public boolean isMqttEn()
@@ -80,6 +86,16 @@ public class ServiceActiveMQ extends AbstractService
 	{
 		return ""+tcpPort ;
 	}
+	
+	public String getAuthUser()
+	{
+		return authUser ;
+	}
+	
+	public String getAuthPsw()
+	{
+		return authPsw ;
+	}
 
 	@Override
 	synchronized public boolean startService()
@@ -87,6 +103,8 @@ public class ServiceActiveMQ extends AbstractService
 		if(broker!=null)
 			return true;
 		
+		if(!mqttEn && !tcpEn)
+			return false;
 		try
 		{
 			//bad code
@@ -96,12 +114,25 @@ public class ServiceActiveMQ extends AbstractService
 			//good code
 			broker = new BrokerService();
 			broker.setBrokerName("iottree_activemq");
-			broker.addConnector("tcp://0.0.0.0:61616?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
-			broker.addConnector("mqtt://0.0.0.0:1883?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
+			if(tcpEn)
+				broker.addConnector("tcp://0.0.0.0:"+this.tcpPort+"?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
+			
+			if(mqttEn)
+				broker.addConnector("mqtt://0.0.0.0:"+mqttPort+"?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
 			//broker.addConnector("ws://0.0.0.0:61614?maximumConnections=1000&wireFormat.maxFrameSize=104857600");
 			//broker.getBrokerDataDirectory()
 			//broker.setMessageAuthorizationPolicy(messageAuthorizationPolicy);
-			broker.setPlugins(new BrokerPlugin[] { new ActiveMQAuthPlugin("")});
+			if(Convert.isNullOrEmpty(authUser))
+			{
+				authUser = "" ;
+			}
+			if(Convert.isNullOrEmpty(authPsw))
+			{
+				authPsw = "" ;
+			}
+			broker.setPlugins(new BrokerPlugin[] {
+					new ActiveMQAuthPlugin("").asUser(authUser, authPsw)
+					});
 			//broker.
 			ManagementContext cxt = new ManagementContext();
 			

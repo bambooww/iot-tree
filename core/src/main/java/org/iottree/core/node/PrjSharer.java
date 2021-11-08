@@ -88,7 +88,7 @@ public abstract class PrjSharer extends PrjNode
 	{
 		UAPrj p = UAManager.getInstance().getPrjById(this.getPrjId()) ;
 		if(p==null)
-			return ;
+			throw new Exception("no prj found");
 		StringWriter sw = new StringWriter() ;
 		
 		HashMap<String,Object> extpms = new HashMap<>() ;

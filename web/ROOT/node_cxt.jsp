@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%>
+<%@ page contentType="text/json;charset=UTF-8" isELIgnored="false"%>
 <%@ page
 	import="java.util.*,
 				java.io.*,
@@ -26,10 +26,12 @@
 	
 	
 	UANodeOCTags ntags = (UANodeOCTags)n ;
-	List<UAHmi> hmis = null ;
-	if(n instanceof UANodeOCTagsCxt)
+	if(!(n instanceof UANodeOCTagsCxt))
 	{
-		UANodeOCTagsCxt ntcxt = (UANodeOCTagsCxt)n ;
-		hmis = ntcxt.getHmis() ;
+		out.print("not node oc tags cxt") ;
+		return ;
 	}
+	
+	UANodeOCTagsCxt ntcxt = (UANodeOCTagsCxt)n ;
+	ntcxt.CXT_renderJson(out) ;
 %>

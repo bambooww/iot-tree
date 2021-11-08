@@ -306,7 +306,10 @@ public class MqttEndPoint
 			// topic125 = client.getTopic(TOPIC125);
 			
 			for (String topic : this.topics)
+			{
 				client.subscribe(topic, 0);
+				System.out.println(" mqtt ep subscribe topic="+topic) ;
+			}
 			
 			bLastConnFailed = false;
 		} catch (Exception e)

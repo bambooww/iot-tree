@@ -12,7 +12,7 @@ public class PrjShareMQTT extends PrjSharer
 	
 	//private Thread th = null ;
 	
-	public void init()
+	public synchronized void init()
 	{
 		if(mqttEP!=null)
 			return ;

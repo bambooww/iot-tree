@@ -26,7 +26,8 @@
 	if(tcp_en)
 		chked_tcp_en = "checked=checked";
 	
-	
+	String user = ser.getAuthUser() ;
+	String psw = ser.getAuthPsw() ;
 %>
 <html>
 <head>
@@ -64,7 +65,16 @@ dlg.resize_to(600,400);
 	    <input type="text" id="tcp_port" name="tcp_port" value="<%=tcp_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
-  
+  <div class="layui-form-item">
+    <label class="layui-form-label">User:</label>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="user" name="user"  class="layui-input" value="<%=user%>">
+	  </div>
+	  <div class="layui-form-mid">Password:</div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	    <input type="password" id="psw" name="psw" value="<%=psw%>"  class="layui-input">
+	  </div>
+  </div>
   
 </form>
 </body>
@@ -108,9 +118,11 @@ function do_submit(cb)
 	{
 		cb(false,'Please input valid tcp port') ;
 	}
-	
+	var auth_user = $('#user').val();
+	var auth_psw = $('#psw').val();
 	var enable = mqtt_en||tcp_en ;
-	cb(true,{enable:enable,mqtt_en:mqtt_en,mqtt_port:mqtt_port,tcp_en:tcp_en,tcp_port:tcp_port});
+	cb(true,{enable:enable,mqtt_en:mqtt_en,mqtt_port:mqtt_port,tcp_en:tcp_en,tcp_port:tcp_port,
+		auth_user:auth_user,auth_psw:auth_psw});
 }
 
 </script>

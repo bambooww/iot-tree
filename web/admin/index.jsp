@@ -6,10 +6,12 @@
 	java.util.*,
 	java.net.*,
 	java.util.*,
+	org.iottree.core.cxt.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
 List<UAPrj> reps = UAManager.getInstance().listPrjs();
+UAContext.getOrLoadJsApi() ;
 %><!DOCTYPE html>
 <html class="">
 <head>

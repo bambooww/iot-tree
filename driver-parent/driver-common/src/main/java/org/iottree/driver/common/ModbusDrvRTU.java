@@ -161,7 +161,7 @@ public class ModbusDrvRTU extends DevDriver
 
 	private static ModbusAddr msAddr = new ModbusAddr() ;
 	
-	private ArrayList<ModbusDevItem> modbusDevItems = new ArrayList<>() ;
+	protected ArrayList<ModbusDevItem> modbusDevItems = new ArrayList<>() ;
 	
 	@Override
 	public DevAddr getSupportAddr()

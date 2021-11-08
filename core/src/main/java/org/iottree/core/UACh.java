@@ -153,8 +153,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		
 		this.drvName = drvname ;
 		
-		devDrv.RT_stop(true);
-		devDrv = null ;
+		if(devDrv!=null)
+		{
+			devDrv.RT_stop(true);
+			devDrv = null ;
+		}
+		
 		getDriver();
 		
 		//save

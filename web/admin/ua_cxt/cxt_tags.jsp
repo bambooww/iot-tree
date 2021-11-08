@@ -260,8 +260,23 @@ for(UANodeOCTags tn:tns)
 			cssstr="color:grey";
 		else
 			cssstr="color:blue";
+		String tt = "" ;
+		if(tag.getDesc()!=null)
+			tt += tag.getDesc() ;
+		if(tag.getNameSor()!=null)
+			tt += "&#10;sor name:"+tag.getNameSor();
+		if(tag.getTitleSor()!=null)
+			tt += "&#10;sor title:"+tag.getTitleSor();
+		if(tag.getDescSor()!=null)
+			tt += "&#10;sor desc:"+tag.getDescSor();
+		
+		String addr = tag.getAddress() ;
+		if(addr.length()>10)
+			addr = addr.substring(0,10)+"..." ;
 %>
-   <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>">
+   <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
+   	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
+   	title="<%=tt%>">
    <td style="text-align: center;">
    <%
 	if(!brefed&&bloc)
@@ -274,7 +289,7 @@ for(UANodeOCTags tn:tns)
         <td style="text-align: center;"><%=(tag.isMidExpress()?"✔":"") %></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>"><%=cxtpath%></span></td>
 <td><%=tag.getTitle() %></td>
-        <td><%=tag.getAddress() %></td>
+        <td><%=addr%></td>
         <td><%=tag.getValTp() %></td>
         <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
@@ -635,7 +650,7 @@ function show_cxt_dyn(p,cxt)
 		var strerr = tg.err ;
 		var strdt = "" ;
 		if(dt>0)
-			strdt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
+			strdt =new Date(dt).format("hh:mm:ss");//yyyy-MM-dd 
 		show_ele_html("ctag_v_"+tagp,strv,true) ;
 		show_ele_html("ctag_dt_"+tagp,strdt) ;
 		var qstr = bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>";

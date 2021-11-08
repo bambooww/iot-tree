@@ -424,10 +424,22 @@ public abstract class ModbusCmd
 	{
 		int r = 0;
 		//System.out.println("doCmdInner --1") ;
-		if (this.protocal == Protocol.tcp)
-			r = reqRespTCP(outs, ins);
-		else
+		switch(this.protocal)
+		{
+		case rtu:
 			r = reqRespRTU(outs, ins);
+			break;
+		case tcp:
+			r = reqRespTCP(outs, ins);
+			break;
+		case ascii:
+			r = reqRespASCII(outs, ins);
+			break;
+		default:
+			break;
+		}
+		
+			
 		//System.out.println("doCmdInner --2 r="+r) ;
 //		if (r < 0)
 //		{
@@ -505,10 +517,14 @@ public abstract class ModbusCmd
 	 */
 	protected abstract int reqRespRTU(OutputStream ous, InputStream ins) throws Exception;
 
-	protected int reqRespTCP(OutputStream ous, InputStream ins) throws Exception
+	
+	protected abstract int reqRespTCP(OutputStream ous, InputStream ins) throws Exception;
+	
+	protected int reqRespASCII(OutputStream ous, InputStream ins) throws Exception
 	{
 		return 0;
 	}
+	
 
 	protected void clearInputStream(InputStream inputs) throws IOException
 	{

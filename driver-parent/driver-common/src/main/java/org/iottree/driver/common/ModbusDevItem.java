@@ -123,6 +123,21 @@ public class ModbusDevItem //extends DevModel
 		return true;
 	}
 	
+	public void setModbusProtocal(ModbusCmd.Protocol p)
+	{
+		if(mbCoilIn!=null)
+			mbCoilIn.setModbusProtocal(p);
+		
+		if(mbCoilOut!=null)
+			mbCoilOut.setModbusProtocal(p);
+		
+		if(mbRegIn!=null)
+			mbRegIn.setModbusProtocal(p);
+		
+		if(mbRegHold!=null)
+			mbRegHold.setModbusProtocal(p);
+	}
+	
 	private List<ModbusAddr> filterAndSortAddrs(short addrtp)
 	{
 		ArrayList<ModbusAddr> r = new ArrayList<>() ;

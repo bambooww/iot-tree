@@ -20,10 +20,12 @@ import org.iottree.core.util.xmldata.data_val;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
+import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
 import org.iottree.core.cxt.UARtSystem;
@@ -33,6 +35,8 @@ import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.res.ResManager;
+import org.iottree.core.task.Task;
+import org.iottree.core.task.TaskManager;
 import org.json.JSONObject;
 
 /**
@@ -41,7 +45,7 @@ import org.json.JSONObject;
  * @author zzj
  */
 @data_class
-public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResNode,ISaver
+public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IResNode,ISaver,IJSOb
 {
 	@data_obj(obj_c = UACh.class)
 	List<UACh> chs = new ArrayList<>();
@@ -825,16 +829,28 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	
 	private ScriptEngine engine = null ;
 	
-	private ScriptEngine getJSEngine()
+	public ScriptEngine getJSEngine()
 	{
 		if(engine!=null)
 			return engine ;
 		
+		engine = createJSEngine();
+		
+		return engine ;
+	}
+	
+	public ScriptEngine createJSEngine()
+	{
 		ScriptEngineManager manager = new ScriptEngineManager();
-		engine = manager.getEngineByName(JS_NAME);
+		ScriptEngine engine = manager.getEngineByName(JS_NAME);
 		engine.put("polyglot.js.allowHostAccess", true);
 		engine.put("polyglot.js.allowAllAccess",true);
 		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
+		
+		engine.put("$this", jsOb);
+		engine.put("$prj", jsOb);
+		engine.put("$sys", new GSys());
+		engine.put("$debug", new Debug());
 		
 		return engine ;
 	}
@@ -845,10 +861,12 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		return this.jsSetOk ;
 	}
 	
+	
+	private static String FN_PRJ_SCRIPT= "_rt_prj_script_run" ;
+	
 	/**
 	 * 被外界调度的脚本运行过程
 	 */
-	
 	private boolean setupJsScript()
 	{
 		if(script==null)
@@ -865,7 +883,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		ScriptEngine engine = getJSEngine() ;
 		try
 		{
-			engine.eval("function _rt_rep_script_run(){\r\n"
+			engine.eval("function "+FN_PRJ_SCRIPT+"(){\r\n"
 						 +script
 						+"}\r\n");
 			this.jsSetError = null ;
@@ -874,9 +892,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			//Bindings bds = engine.getBindings(ScriptContext.ENGINE_SCOPE);
 			
 			
-			engine.put("$this", new JSOb());
-			engine.put("$sys", new GSys());
-			engine.put("$debug", new Debug());
+			
 			jsSetOk = true;
 		}
 		catch(Exception ee)
@@ -917,7 +933,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		try
 		{
 			Invocable jsInvoke = (Invocable) getJSEngine();
-			jsInvoke.invokeFunction("_rt_rep_script_run");
+			jsInvoke.invokeFunction(FN_PRJ_SCRIPT);
 		}
 		catch(ScriptException se)
 		{
@@ -948,9 +964,22 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		}
 		
 	}
+	
+	void runJsTasks()
+	{
+		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
+		if(jsts==null||jsts.size()<=0)
+			return ;
+		
+		for(Task jst:jsts)
+		{
+			jst.runInLoop(this);
+		}
+	}
 
 	public class JSOb
 	{
+		@HostAccess.Export
 		public boolean set_tag_val(String ch_name,String dev_name,String tagn,Object v)
 		{
 			UACh ch = UAPrj.this.getChByName(ch_name) ;
@@ -966,9 +995,23 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 			UAPrj.this.CXT_calMidTagsValLocal();
 			return true;
 		}
+		
+		@HostAccess.Export
+		public String get_rt_json(long lastdt) throws IOException
+		{
+			StringWriter sw =new StringWriter() ;
+			UAPrj.this.CXT_renderJson(sw,lastdt);
+			return sw.toString() ;
+		}
 	}
 
 
+	private transient JSOb jsOb = new JSOb() ;
+	
+	public JSOb getJSOb()
+	{
+		return jsOb;
+	}
 	
 	private transient ResDir resDir = null ;
 
@@ -989,6 +1032,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 	{
 		return UAManager.getInstance();
 	}
+	
+	
 	/**
 	 * 
 	 * @return

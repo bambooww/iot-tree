@@ -42,6 +42,8 @@ public class ModbusBlock
 	
 	transient int failedCount = 0 ;
 	
+	transient ModbusCmd.Protocol modbusProtocal = ModbusCmd.Protocol.rtu;
+	
 	public ModbusBlock(int devid,short addrtp,List<ModbusAddr> addrs,
 			int block_size,long scan_inter_ms,int failed_successive)
 	{
@@ -144,7 +146,7 @@ public class ModbusBlock
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setScanIntervalMS(this.interReqMs);
 			cmd2addr.put(curcmd, curaddrs);
-				
+			
 			cur_reg = regp ;
 			curaddrs = new ArrayList<>() ;
 			curaddrs.add(ma) ;
@@ -233,6 +235,16 @@ public class ModbusBlock
 		}
 		
 		return true;
+	}
+	
+	public void setModbusProtocal(ModbusCmd.Protocol p)
+	{
+		modbusProtocal = p;
+		
+		for(ModbusCmd mc:cmd2addr.keySet())
+		{
+			mc.setProtocol(p);
+		}
 	}
 	
 	private void setAddrError(List<ModbusAddr> addrs)
@@ -439,6 +451,7 @@ public class ModbusBlock
 			mc = new ModbusCmdWriteBit(scanInterMS,this.devId,ma.getRegPos(), (Boolean)v) ;
 			mc.setRecvTimeout(reqTO);
 			mc.setRecvEndTimeout(recvTO);
+			//mc.setProtocol(modbusProtocal);
 			break ;
 		case ModbusAddr.REG_HOLD:
 			if(!(v instanceof Number))
@@ -498,7 +511,7 @@ public class ModbusBlock
 		default:
 			return false;
 		}
-		
+		mc.setProtocol(modbusProtocal);
 
 		synchronized(writeCmds)
 		{

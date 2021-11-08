@@ -64,11 +64,17 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		if(prjCaller!=null)
 			return prjCaller ;
 		
-		prjCaller = new PrjCallerMQTT();
-		prjCaller.withAdapter(nodeAdp);
-		//prjCaller.init();
-		//prjCaller.fromXmlData(xd);
-		return prjCaller ;
+		synchronized(this)
+		{
+			if(prjCaller!=null)
+				return prjCaller ;
+			
+			prjCaller = new PrjCallerMQTT();
+			prjCaller.withAdapter(nodeAdp);
+			//prjCaller.init();
+			//prjCaller.fromXmlData(xd);
+			return prjCaller ;
+		}
 	}
 	
 	public boolean isShareWritable()
