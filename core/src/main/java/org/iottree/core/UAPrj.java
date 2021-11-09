@@ -834,27 +834,12 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		if(engine!=null)
 			return engine ;
 		
-		engine = createJSEngine();
-		
-		return engine ;
-	}
-	
-	public ScriptEngine createJSEngine()
-	{
-		ScriptEngineManager manager = new ScriptEngineManager();
-		ScriptEngine engine = manager.getEngineByName(JS_NAME);
-		engine.put("polyglot.js.allowHostAccess", true);
-		engine.put("polyglot.js.allowAllAccess",true);
-		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
-		
+		engine = UAManager.createJSEngine();
+
 		engine.put("$this", jsOb);
 		engine.put("$prj", jsOb);
-		engine.put("$sys", new GSys());
-		engine.put("$debug", new Debug());
-		
 		return engine ;
 	}
-	
 	
 	boolean isJsSetOk()
 	{
@@ -973,7 +958,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot,IOCUnit, IOCDyn,IRes
 		
 		for(Task jst:jsts)
 		{
-			jst.runInLoop(this);
+			jst.RT_start();
 		}
 	}
 

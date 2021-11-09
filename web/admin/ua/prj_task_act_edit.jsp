@@ -84,12 +84,14 @@ dlg.resize_to(800,600);
   </ul>
   <div class="layui-tab-content">
     <div class="layui-tab-item">
-    ($prj,$cxt,$task)-&gt;{
+  
       <textarea id="ta_init_sc" rows="20" cols="180" style="width:99%;height:70%"><%=init_sc %></textarea>
-      }
+      
     </div>
     <div class="layui-tab-item layui-show">
+   function(){
       <textarea id="ta_run_sc" rows="20" cols="180" style="width:99%;height:70%"><%=run_sc %></textarea>
+      }
     </div>
     <div class="layui-tab-item">
       <textarea id="ta_end_sc" rows="20" cols="180" style="width:99%;height:70%"><%=end_sc %></textarea>

@@ -610,7 +610,6 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return ss ;
 	}
 	
-	public static final String JS_NAME="graal.js";//"nashorn"; //
 }
 
 

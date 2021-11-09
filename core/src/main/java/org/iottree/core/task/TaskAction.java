@@ -160,30 +160,26 @@ public class TaskAction
 
 		try
 		{
-			engine.eval("var __JsTaskAction_global_" + this.getId() + "={}\r\n");
+			//engine.eval("var __JsTaskAction_global_" + this.getId() + "={}\r\n");
 
 			if (Convert.isNotNullTrimEmpty(this.initScript))
 			{
-				engine.eval("function __JsTaskAction_init_" + this.getId() + "(){\r\n"
-						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.initScript + "}\r\n");
-				Invocable jsInvoke = (Invocable) engine;
-				jsInvoke.invokeFunction("__JsTaskAction_init_" + this.getId());
+				//engine.eval("function __JsTaskAction_init_" + this.getId() + "(){\r\n"
+				//		+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.initScript + "}\r\n");
+				//Invocable jsInvoke = (Invocable) engine;
+				//jsInvoke.invokeFunction("__JsTaskAction_init_" + this.getId());
+				engine.eval(this.initScript) ;
 			}
 
 			if (Convert.isNotNullTrimEmpty(this.runScript))
 			{
 				engine.eval("function __JsTaskAction_run_" + this.getId() + "(){\r\n"
-						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.runScript + "}\r\n");
+						//+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.runScript + "}\r\n");
+						+ this.runScript + "}\r\n");
 				this.bRunScriptReady = true;
 			}
 
-			if (Convert.isNotNullTrimEmpty(this.endScript))
-			{
-				engine.eval("function __JsTaskAction_end_" + this.getId() + "(){\r\n"
-						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.endScript + "}\r\n");
-				this.bEndScriptReady = true;
-			}
-
+			
 			// engine.eval(reader)
 			this.initScriptErr = null;
 			// js set ok
@@ -227,13 +223,21 @@ public class TaskAction
 
 	public void runEnd(UAPrj p)
 	{
-		if (!bEndScriptReady)
-			return;
+//		if (!bEndScriptReady)
+//			return;
 
 		try
 		{
-			Invocable jsInvoke = (Invocable) p.getJSEngine();
-			jsInvoke.invokeFunction("__JsTaskAction_end_" + this.getId(), p.getJSOb(), this);
+			if (Convert.isNotNullTrimEmpty(this.endScript))
+			{
+//				engine.eval("function __JsTaskAction_end_" + this.getId() + "(){\r\n"
+//						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.endScript + "}\r\n");
+				 this.task.getScriptEngine().eval(this.endScript) ;
+				//this.bEndScriptReady = true;
+			}
+
+			//Invocable jsInvoke = (Invocable) p.getJSEngine();
+			//jsInvoke.invokeFunction("__JsTaskAction_end_" + this.getId(), p.getJSOb(), this);
 
 		}
 		catch ( ScriptException se)

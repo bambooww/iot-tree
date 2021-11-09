@@ -12,6 +12,9 @@
 		return ;
 	//String op = request.getParameter("op");
 	String node_path = request.getParameter("path");
+	String tp = request.getParameter("tp") ;
+	if(tp==null)
+		tp = "" ;
 	UANode n = UAUtil.findNodeByPath(node_path) ;
 	if(n==null)
 	{
@@ -33,5 +36,14 @@
 	}
 	
 	UANodeOCTagsCxt ntcxt = (UANodeOCTagsCxt)n ;
-	ntcxt.CXT_renderJson(out) ;
+	switch(tp)
+	{
+	case "tags_list":
+		ntcxt.CXT_renderTagsJson(out, false, -1) ;
+		break ;
+	default:
+		ntcxt.CXT_renderJson(out) ;
+		break ;
+	}
+	
 %>

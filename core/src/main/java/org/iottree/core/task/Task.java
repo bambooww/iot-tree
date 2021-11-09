@@ -198,7 +198,7 @@ public class Task
 	
 	private void taskRunInit()
 	{
-		scriptEng = this.prj.createJSEngine() ;
+		scriptEng = UAManager.createJSEngine() ;
 		scriptEng.put("$task", this);
 		//scriptEng = this.prj.
 		for(TaskAction ta:this.actions)
@@ -293,32 +293,32 @@ public class Task
 	{
 
 	}
-
-	private transient boolean bInited = false;
-
-	public void runInLoop(UAPrj p)
-	{
-		if (!bInited)
-		{
-			try
-			{
-				// runInit(p);
-			}
-			finally
-			{
-				bInited = true;
-			}
-			return;
-		}
-
-		// if(!this.bInitScriptOk)
-		// return ;
-		//
-		// if(System.currentTimeMillis()-lastRunDT<intervalMS)
-		// return ;
-		//
-		// this.runInterval(p) ;
-	}
+//
+//	private transient boolean bInited = false;
+//
+//	public void runInLoop(UAPrj p)
+//	{
+//		if (!bInited)
+//		{
+//			try
+//			{
+//				// runInit(p);
+//			}
+//			finally
+//			{
+//				bInited = true;
+//			}
+//			return;
+//		}
+//
+//		// if(!this.bInitScriptOk)
+//		// return ;
+//		//
+//		// if(System.currentTimeMillis()-lastRunDT<intervalMS)
+//		// return ;
+//		//
+//		// this.runInterval(p) ;
+//	}
 
 	public boolean isEnable()
 	{

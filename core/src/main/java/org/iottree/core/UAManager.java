@@ -7,15 +7,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.function.Predicate;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
+import org.iottree.core.util.js.Debug;
+import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.xmldata.*;
 
 import com.google.common.eventbus.EventBus;
@@ -37,6 +43,34 @@ public class UAManager implements IResCxt
 			return instance ;
 		}
 	}
+	
+
+	public static final String JS_NAME="graal.js";//"nashorn"; //
+
+	public static ScriptEngine createJSEngine()
+	{
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine engine = manager.getEngineByName(JS_NAME);
+		engine.put("polyglot.js.allowHostAccess", true);
+		engine.put("polyglot.js.allowAllAccess",true);
+		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
+		
+		engine.put("$sys", new GSys());
+		engine.put("$debug", new Debug());
+		
+		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		if(gvar2obj!=null)
+		{
+			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
+			{
+				engine.put("$$"+n2o.getKey(), n2o.getValue());
+			}
+		}
+		
+		return engine ;
+	}
+	
+	
 	
 	private ArrayList<UAPrj> reps = null;
 	

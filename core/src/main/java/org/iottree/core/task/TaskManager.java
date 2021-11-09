@@ -131,7 +131,6 @@ public class TaskManager
 	
 	synchronized public Task setTask(String prjid,Task jst) throws Exception
 	{
-		saveTask(prjid,jst);
 		List<Task> ts = getTasks(prjid);
 		int s = ts.size() ;
 		for(int i = 0 ; i < s ; i ++)
@@ -144,8 +143,8 @@ public class TaskManager
 				return jst ;
 			}
 		}
-		
 		ts.add(jst) ;
+		saveTask(prjid,jst);
 		return jst ;
 	}
 	
@@ -167,8 +166,8 @@ public class TaskManager
 		Task t = getTask(prjid,taskid) ;
 		if(t==null)
 			throw new Exception("no task found") ;
-		t.setAction(ta) ;
 		
+		t.setAction(ta) ;
 		this.saveTask(prjid, t);
 	}
 	
@@ -177,6 +176,11 @@ public class TaskManager
 		Task t = getTask(prjid,taskid) ;
 		if(t==null)
 			return false;
-		return t.delAction(actid)!=null ;
+		if(t.delAction(actid)!=null)
+		{
+			this.saveTask(prjid, t);
+			return true;
+		}
+		return false;
 	}
 }

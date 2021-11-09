@@ -1,6 +1,6 @@
 package org.iottree.core.ext;
 
-public class JsPlugin
+public class AbstractJsPlugin
 {
-
+	
 }

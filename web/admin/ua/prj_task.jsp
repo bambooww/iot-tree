@@ -141,8 +141,8 @@ if(tas!=null&&tas.size()>0)
     <tr>
        <td></td>
       <td><%=ta.getName() %></td>
-      <td><%=ta.getDesc() %></td>
-      <td> <a href="javascript:void" onclick="">run_script</a></td>
+     
+      <td colspan="2"> <a href="javascript:void" onclick="">run_script</a></td>
       <td>
       <a href="javascript:add_or_edit_task_act('<%=prjid %>','<%=jt.getId()%>','<%=ta.getId()%>')"><i title="edit task action" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a>
 	   <a href="javascript:task_act_del('<%=prjid %>','<%=jt.getId()%>','<%=ta.getId()%>')" style="color:red"><i title="delete task action" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
@@ -164,61 +164,6 @@ if(tas!=null&&tas.size()>0)
  	
 <script>
 var prjid = "<%=prjid%>" ;
-
-var table = null ;
-
-var cur_selected = null ;
-
-//var on_devdef_selected = null ;
-
-layui.use('table', function()
-{
-  table = layui.table;
-  table.on('tool(tb_tasks)', function(obj){ // lay-filter="mc_acc_list"
-	  var data = obj.data; //cur d
-	  var lay_evt = obj.event; // lay-event
-	  var tr = obj.tr; //tr DOM
-	 
-	  if(lay_evt === 'detail'){ //查看
-	    //do somehing
-	    
-	  }
-	  else if(lay_evt === 'task_del')
-	  {
-	    
-	  }
-	  else if(lay_evt === 'edit')
-	  { 
-	    //add_edit(data) ;
-	  }
-	  else if(lay_evt==='task_add')
-	  {
-		  add_or_edit_task(prjid,null);
-	  }
-	  else if(lay_evt==='task_edit')
-	  {
-		  add_or_edit_task(prjid,data.id) ;
-	  }
-	  else if(lay_evt==='task_sel')
-	  {
-		  //console.log(data) ;
-		  cur_selected = {} ; 
-		  cur_selected.id=data.id ;
-		  cur_selected.name=data.n ;
-		  cur_selected.title=data.t ;
-		  
-		  var vv = get_cur_drv_cat()
-		  //console.log(vv) ;
-		  cur_selected.cat_name=vv.cat ;
-		  cur_selected.cat_title=vv.cat_tt ;
-		  if(parent.on_devdef_selected)
-			  parent.on_devdef_selected(cur_selected) ;
-		  $("#selected_prompt").html("you select:"+data.t)
-	  }
-	});
-  
-  
-});
 
 function task_del(prjid,id)
 {
@@ -346,16 +291,18 @@ function add_or_edit_task_act(prjid,taskid,id)
 
 function task_act_del(prjid,taskid,actid)
 {
-	layer.confirm('delete selected task?', function(index)
+	layer.confirm('delete selected action?', function(index)
 		    {
 		    	send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=act_del&taskid="+taskid+"&actid="+actid,function(bsucc,ret){
 		    		if(bsucc&&ret=='succ')
-		    			obj.del();
+		    		{
+			    		document.location.href=document.location.href;
+		    		}
 		    		else
 		    			layer.msg("del err:"+ret) ;
 		    	}) ;
 		      
-		      document.location.href=document.location.href;
+		      
 		    });
 }
 

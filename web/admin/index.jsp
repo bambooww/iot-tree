@@ -11,7 +11,7 @@
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
 List<UAPrj> reps = UAManager.getInstance().listPrjs();
-UAContext.getOrLoadJsApi() ;
+//UAContext.getOrLoadJsApi() ;
 %><!DOCTYPE html>
 <html class="">
 <head>
