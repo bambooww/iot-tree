@@ -98,10 +98,24 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return this.devRefId ;
 	}
 	
+	public boolean hasDevRefId()
+	{
+		return Convert.isNotNullEmpty(this.devRefId) ;
+	}
+	
 	void setDevRefId(String defid)
 	{
 		this.devRefId = defid ;
 	}
+	
+
+	protected int getRefLockedLoc()
+	{
+		if(hasDevRefId())
+			return REF_LOCKED ;
+		return REF_LOCKED_NOT;//super.getRefLockedLoc() ;
+	}
+	
 	
 	long defMemUpDT = -1 ;
 	
@@ -235,7 +249,11 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		}
 		Object locv = super.getPropValue(groupn, itemn);
 		if(locv==null) //override from devdef
-			locv = this.getDevDef().getPropValue(groupn, itemn) ;
+		{
+			DevDef ddef = this.getDevDef() ;
+			if(ddef!=null)
+				locv = ddef.getPropValue(groupn, itemn) ;
+		}
 		
 		return locv;
 	}

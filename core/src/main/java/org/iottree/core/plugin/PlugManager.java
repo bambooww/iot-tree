@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.Config;
-import org.iottree.core.ext.AbstractPlugin;
 import org.iottree.core.util.Convert;
 
 /**
@@ -90,7 +89,7 @@ public class PlugManager
 			try
 			{
 				HashMap<String,Object> n2o = pd.getOrLoadJsApiObjs() ;
-				if(n2o!=null)
+				if(n2o==null)
 					continue ;
 				ret.putAll(n2o);
 			}

@@ -86,6 +86,14 @@ public class TaskManager
 		return new File(prjdir,"task_"+taskid+".xml") ;
 	}
 	
+	public File findTaskFile(String prjid,String taskid)
+	{
+		File tf = this.getTaskFile(prjid, taskid) ;
+		if(!tf.exists())
+			return null ;
+		return tf ;
+	}
+	
 	private List<Task> loadJsTasks(String prjid) throws Exception
 	{
 		UAPrj p = UAManager.getInstance().getPrjById(prjid) ;

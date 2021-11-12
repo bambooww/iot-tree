@@ -3,6 +3,8 @@ package org.iottree.core.plugin;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -11,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.iottree.core.Config;
-import org.iottree.core.ext.AbstractPlugin;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,10 +24,14 @@ public class PlugDir
 	private String title = null ; 
 	
 	private File plugDirF = null ;
+	
+	//private HashMap<String,String> params = new HashMap<>() ;
 
 	private URLClassLoader plugCL = null ;
 	
-	private HashMap<String,String> jsapi_name2class = new HashMap<String, String>();
+	//private HashMap<String,JSONObject> jsapi_name2json = new HashMap<String, JSONObject>();
+	
+	JSONArray js_api_arr = null;
 	
 	private HashMap<String,Object> jsapi_name2ob = null;//new HashMap<>();
 	
@@ -58,21 +63,8 @@ public class PlugDir
 		if(Convert.isNullOrEmpty(this.title))
 			this.title = name ;
 		
-		JSONArray jsapis = jo.optJSONArray("js_api") ;
-		if(jsapis!=null)
-		{
-			int n = jsapis.length() ;
-			for(int i = 0 ; i < n ; i ++)
-			{
-				JSONObject job = jsapis.getJSONObject(i) ;
-				String name = job.optString("name") ;
-				String classn = job.optString("class") ;
-				if(Convert.isNullOrEmpty(name)||Convert.isNullOrEmpty(classn))
-					continue ;
-				
-				jsapi_name2class.put(name, classn) ;
-			}
-		}
+		js_api_arr = jo.optJSONArray("js_api") ;
+		
 		
 		return true ;
 	}
@@ -122,7 +114,7 @@ public class PlugDir
 		String ss = "file:"+classesf.getCanonicalPath().replace('\\', '/')+"/";
 		urllist.add(new URL(ss));
 		
-		File libsf = new File(plugDirF,"libs/");
+		File libsf = new File(plugDirF,"lib/");
 		File[] jarfs = libsf.listFiles(new FileFilter() {
 
 			@Override
@@ -148,39 +140,90 @@ public class PlugDir
 		return plugCL;
 	}
 	
+	private void initPlugObj(Object ob,HashMap<String,String> params) // throws NoSuchMethodException, SecurityException
+	{
+		try
+		{
+			Method m = ob.getClass().getDeclaredMethod("init_plug", File.class,HashMap.class);
+			m.setAccessible(true);
+			m.invoke(ob, plugDirF,params);
+		}
+		catch(NoSuchMethodException nse)
+		{
+			
+		}
+		catch(SecurityException se)
+		{
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private Object loadJsApiOb(JSONObject job) throws Exception
+	{
+
+		String name = job.optString("name") ;
+		String classn = job.optString("class") ;
+		if(Convert.isNullOrEmpty(name)||Convert.isNullOrEmpty(classn))
+			return null ;
+		JSONObject paramjo = job.optJSONObject("params") ;
+		HashMap<String,String> params = new HashMap<>() ;
+		if(paramjo!=null)
+		{
+			for(String pn:paramjo.keySet())
+			{
+				String pv = paramjo.get(pn).toString();
+				params.put(pn, pv);
+			}
+		}
+		
+		URLClassLoader cl = this.getOrLoadCL() ;
+			Class<?> cc = cl.loadClass(classn);
+			if(cc==null)
+				return null ;
+	        Object ob =  cc.newInstance();
+	        if(ob instanceof AbstractPlugin)
+	        {
+	        	AbstractPlugin ap = (AbstractPlugin)ob;
+	        	ap.initPlugin(this);
+	        }
+	        //System.out.println("1");
+	        initPlugObj(ob,params);
+	        return ob;
+		
+	}
+	
 	public HashMap<String,Object> getOrLoadJsApiObjs() throws MalformedURLException, IOException //throws Exception
 	{
 		if(this.jsapi_name2ob!=null)
 			return jsapi_name2ob;
-		
-		String cn = this.jsapi_name2class.get(name) ;
-		if(Convert.isNullOrEmpty(cn))
-			return null ;
-		
+
 		synchronized(this)
 		{
 			if(this.jsapi_name2ob!=null)
 				return jsapi_name2ob;
 			
 			jsapi_name2ob = new HashMap<>() ;
-			URLClassLoader cl = this.getOrLoadCL() ;
-			for(Map.Entry<String, String> n2c:jsapi_name2class.entrySet())
+			
+			if(this.js_api_arr!=null)
 			{
-				try
+				int n = js_api_arr.length() ;
+				for(int i = 0 ; i < n ; i ++)
 				{
-					Class<?> cc = cl.loadClass(n2c.getValue());
-					if(cc==null)
-						continue ;
-			        Object ob =  cc.newInstance();
-			        if(ob instanceof AbstractPlugin)
-			        {
-			        	
-			        }
-			        jsapi_name2ob.put(n2c.getKey(), ob) ;
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
+					JSONObject job = js_api_arr.getJSONObject(i) ;
+					try
+					{
+						Object ob = loadJsApiOb(job);
+						jsapi_name2ob.put(name, ob) ;
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 			

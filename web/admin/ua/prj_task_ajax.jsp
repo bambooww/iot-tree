@@ -5,6 +5,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.util.xmldata.*,
+	org.iottree.core.util.web.*,
 	org.iottree.core.comp.*
 	"%><%!
 
@@ -62,6 +63,27 @@ case "del":
 		out.print("succ") ;
 	else
 		out.print("del error") ;	
+	break;
+case "export":
+	if(!Convert.checkReqEmpty(request, out, "taskid"))
+		return ;
+	Task expt = TaskManager.getInstance().getTask(prjid, taskid);
+	if(expt==null)
+	{
+		out.print("no task found") ;
+		return ;
+	}
+	File ft = TaskManager.getInstance().findTaskFile(prjid, taskid) ;
+	if(ft==null)
+	{
+		out.print("no task file found") ;
+		return ;
+	}
+	
+	try(FileInputStream fis = new FileInputStream(ft);)
+	{
+		WebRes.renderFile(response, "task_"+expt.getName()+".xml", fis) ;
+	}
 	break;
 case "act_add":
 case "act_edit":

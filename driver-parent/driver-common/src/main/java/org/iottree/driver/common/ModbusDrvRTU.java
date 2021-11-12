@@ -178,6 +178,10 @@ public class ModbusDrvRTU extends DevDriver
 		//create modbus cmds
 		for(UADev dev:devs)
 		{
+//			if(dev.getName().equals("enc600"))
+//			{
+//				System.out.println("enc600") ;
+//			}
 			ModbusDevItem mdi = new ModbusDevItem(dev) ;
 			StringBuilder devfr = new StringBuilder() ;
 			if(!mdi.init(devfr))
@@ -231,6 +235,7 @@ public class ModbusDrvRTU extends DevDriver
 		}
 		catch(ConnException se)
 		{
+			se.printStackTrace();
 			if(log.isDebugEnabled())
 				log.debug("RT_runInLoop err", se);
 			cpt.close();

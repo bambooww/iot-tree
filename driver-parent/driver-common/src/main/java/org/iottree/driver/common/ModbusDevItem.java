@@ -71,10 +71,11 @@ public class ModbusDevItem //extends DevModel
 		
 		failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
 		
-		int blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
+		int blocksize = 32;
+		if(devDef!=null)
+			blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
 		if(blocksize<=0)
 			blocksize=32;
-		
 		
 		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;;//devDef.getPropValueLong("timing", "req_to", 1000) ;
 		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;

@@ -82,19 +82,19 @@ dlg.resize_to(600,400);
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="name" id="name" value="<%=name %>" placeholder="<wbt:lang>pls_input</wbt:lang><wbt:lang>name</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="name" id="name" value="<%=name %>" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>name</wbt:lang>" autocomplete="off" class="layui-input"/>
     </div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
     <div class="layui-input-block">
-      <input type="text" name="title" id="title" value="<%=title %>" placeholder="<wbt:lang>pls_input</wbt:lang><wbt:lang>title</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="title" id="title" value="<%=title %>" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>title</wbt:lang>" autocomplete="off" class="layui-input"/>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>driver</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()" placeholder="<wbt:lang>pls_input</wbt:lang><wbt:lang>driver</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>driver</wbt:lang>" autocomplete="off" class="layui-input"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />
       <%--
       <select name="drv" id="drv" >
@@ -178,8 +178,7 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'请输入标题') ;
-		return ;
+		tt = n;
 	}
 	var drv = $('#drv').val() ;
 	if(false)//if(drv==null||drv=='')

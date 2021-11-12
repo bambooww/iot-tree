@@ -160,14 +160,15 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'<wbt:lang>pls_input_title</wbt:lang>') ;
-		return ;
+		//cb(false,'<wbt:lang>pls_input_title</wbt:lang>') ;
+		//return ;
+		tt = n ;
 	}
 	var devdef_id = $("#devdef_id").val() ;
 	if(devdef_id==null||devdef_id=="")
 	{
-		cb(false,'<wbt:lang>pls_select_dev</wbt:lang>') ;
-		return ;
+		//cb(false,'<wbt:lang>pls_select_dev</wbt:lang>') ;
+		//return ;
 	}
 	var desc = document.getElementById('desc').value;
 	if(desc==null)

@@ -138,6 +138,7 @@ public class ConnPtTcpClient extends ConnPtStream
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
 				disconnect() ;
 			}
 			return true;
@@ -158,6 +159,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		} catch (Exception ee)
 		{
 			//System.out.println("conn to "+this.getStaticTxt()+" err") ;
+			//ee.printStackTrace();
 			disconnect();
 			return false;
 		}
@@ -168,6 +170,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		if (sock == null)
 			return;
 
+		System.out.println("ConnPtTcpClient disconnect ["+this.getName());
 		try
 		{
 			try

@@ -11,6 +11,7 @@
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
+					out.write(",\"ref_locked\":"+tg.isRefLocked()) ;
 					out.write(",\"children\": [") ;
 					List<UATagG> tgs = tg.getSubTagGs() ;
 					boolean bfirst = true ;
@@ -136,11 +137,12 @@
 			{
 				deft = devdef.getTitle() ;
 			}
+			boolean ref_locked = dev.isRefLocked();
 %>
 			{
 				"text":"<span title='<%=dev.getTitle()%>'><%=dev.getName() %></span>[<%=deft%>] <%=devok%>"
 			  ,"id":"<%=dev.getId() %>"
-			  ,"type":"dev"
+			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"
 			  ,"state": {"opened": false}
 			   ,"icon":"icon_dev"

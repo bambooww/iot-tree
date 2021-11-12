@@ -355,6 +355,7 @@ public class ModbusCmdReadBits extends ModbusCmd
 	    //pdata[6] = (byte)((crc>>8) & 0xFF) ;
 	    //pdata[7] = (byte)(crc & 0xFF) ;
 	    
+	    //System.out.println("hex="+Convert.byteArray2HexStr(pdata)) ;
 	    clearInputStream(ins) ;
 	    ous.write(pdata) ;
 	    ous.flush() ;

@@ -21,7 +21,7 @@ import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.*;
 
 import org.iottree.core.*;
-import org.iottree.core.ext.AbstractPlugin;
+import org.iottree.core.plugin.AbstractPlugin;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;

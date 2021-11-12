@@ -28,10 +28,20 @@ if(node instanceof UAHmi)
 	hmi = (UAHmi)node ;
 	node = node.getParentNode() ;
 }
+
+boolean b_tags_g = false;
 if(!(node instanceof UANodeOCTags))
 {
 	out.print("node has no tags") ;
 	return ;
+}
+
+b_tags_g = node instanceof UANodeOCTagsGCxt ;
+
+boolean ref_locked = false;
+if(b_tags_g)
+{
+	ref_locked = ((UANodeOCTagsGCxt)node).isRefLocked();
 }
 
 String node_cxtpath = node.getNodePath();
@@ -197,7 +207,7 @@ if(!brefed)
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%
- 	if(bdevdef)
+ 	if(bdevdef||!ref_locked)
  	{
  %>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
@@ -306,7 +316,7 @@ for(UANodeOCTags tn:tns)
         </td>
                 <td>
 <%
-if(!brefed&&bloc&&!tag.isSysTag())
+if(!ref_locked&&bloc&&!tag.isSysTag())
 {
 %>
         <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;

@@ -80,6 +80,17 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 		return false;
 	}
 	
+	protected int getRefLockedLoc()
+	{
+		if(super.getRefLockedLoc()!=0)
+			return super.getRefLockedLoc();
+
+		UANode pn = this.getParentNode() ;
+		if(pn!=null&&pn instanceof UACh)
+			return REF_LOCKED_NOT;
+		return REF_LOCKED_UNKNOWN ;
+	}
+	
 	public boolean chkValid()
 	{
 		return true;

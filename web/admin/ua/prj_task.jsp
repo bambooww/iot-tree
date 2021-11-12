@@ -55,6 +55,14 @@ background-color: #eeeeee
  <blockquote class="layui-elem-quote ">Task List
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_task('<%=prjid %>',null)">+Add Task</button>
+ 	
+ 	 <button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_task()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;Import Task
+							</button>
+							
  </div>
 </blockquote>
 <%
@@ -126,6 +134,14 @@ if(jt.isEnable())
 	  <th>
 <a href="javascript:add_or_edit_task_act('<%=prjid %>','<%=jt.getId()%>',null)"><i title="add action" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
       
+      <a href="javascript:export_task('<%=prjid %>','<%=jt.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span>
+           </a>
+           
+          
 	  </th>
     </tr> 
   </thead>
@@ -178,6 +194,11 @@ function task_del(prjid,id)
 		      
 		      document.location.href=document.location.href;
 		    });
+}
+
+function export_task(prjid,taskid)
+{
+	window.open("prj_task_ajax.jsp?op=export&prjid="+prjid+"&taskid="+taskid) ;
 }
 
 function add_or_edit_task(prjid,id)

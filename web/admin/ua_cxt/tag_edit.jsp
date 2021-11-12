@@ -239,8 +239,9 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'please input title') ;
-		return ;
+		//cb(false,'please input title') ;
+		//return ;
+		tt = n ;
 	}
 	var desc = document.getElementById('desc').value;
 	if(desc==null)

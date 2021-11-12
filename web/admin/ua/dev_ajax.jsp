@@ -12,7 +12,7 @@
 	{
 		String chpath = request.getParameter("ch_path") ;
 		String devpath = request.getParameter("dev_path") ;
-		if(!Convert.checkReqEmpty(request, out, "name","devdef_id"))
+		if(!Convert.checkReqEmpty(request, out, "name"))//,"devdef_id"))
 			return;
 		UACh ch  = null;
 		UADev dev = null ;

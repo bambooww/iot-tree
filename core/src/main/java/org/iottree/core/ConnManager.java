@@ -286,14 +286,17 @@ public class ConnManager
 		List<ConnJoin> rets = getOrLoadConnJoins(repid) ;
 		
 		ArrayList<ConnJoin> invalidcjs = new ArrayList<>() ;
-		for(ConnJoin cj:rets)
+		synchronized(this)
 		{
-			if(!this.checkConnJoinValid(repid, cj))
-				invalidcjs.add(cj) ;
-		}
-		if(invalidcjs.size()>0)
-		{
-			rets.removeAll(invalidcjs) ;
+			for(ConnJoin cj:rets)
+			{
+				if(!this.checkConnJoinValid(repid, cj))
+					invalidcjs.add(cj) ;
+			}
+			if(invalidcjs.size()>0)
+			{
+				rets.removeAll(invalidcjs) ;
+			}
 		}
 		
 		return rets ;

@@ -88,7 +88,9 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 			this.title = title ;
 			b = true ;
 		}
-		if(desc!=null&&(desc==null&&this.desc!=null)||!desc.equals(this.desc))
+		if(desc==null)
+			desc = "" ;
+		if(!desc.equals(this.desc))
 		{
 			this.desc = desc ;
 			b = true ;

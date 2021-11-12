@@ -2205,7 +2205,7 @@ public class Convert
 	public static String readFileTxt(File f, String encod) throws IOException
 	{
 		byte[] bs = readFileBuf(f);
-		if (Convert.isNullOrEmpty(encod))
+		if (isNullOrEmpty(encod))
 			return new String(bs);
 		else
 			return new String(bs, encod);

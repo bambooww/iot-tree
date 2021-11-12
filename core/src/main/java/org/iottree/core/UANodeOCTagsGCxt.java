@@ -3,14 +3,28 @@ package org.iottree.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.basic.PropGroup;
+import org.iottree.core.basic.PropItem;
+import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
+import org.iottree.core.util.xmldata.data_val;
 
 @data_class
 public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 {
-
+	public static final int REF_LOCKED_UNKNOWN = 0 ;
+	public static final int REF_LOCKED = 1 ;
+	public static final int REF_LOCKED_NOT = -1 ;
+	/**
+	 * 0-unknown and inheret from parent
+	 * 1 - locked loc ,will override parent
+	 * -1 - not locked loc,will override parent
+	 */
+	@data_val(param_name="ref_locked_loc")
+	int refLockedLoc = REF_LOCKED_UNKNOWN;
+	
 	@data_obj(obj_c=UATagG.class)
 	List<UATagG> taggs = new ArrayList<>() ;
 	
@@ -64,6 +78,123 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		return rets;
 	}
 	
+//	/**
+//	 * check this node can edit tag or node in project.
+//	 * 1)node is UADev or UATagG
+//	 * 2) UADev has no refdev id
+//	 * 
+//	 * @return
+//	 */
+//	public boolean canEditInPrj()
+//	{
+//		UADev d = getBelongToDev();
+//		if(d==null)
+//			return false;
+//		return !d.hasDevRefId();
+//	}
+	
+	/**
+	 * UADev ref from DevDef or other IOTTree Node will lock sub tree structure
+	 * so it's tags cannot be edited. 
+	 * @return
+	 */
+	public final boolean isRefLocked()
+	{
+		int rl = getRefLockedLoc() ;
+		if(rl>0)
+			return true ;
+		if(rl<0)
+			return false;
+		
+		//check parent
+		UANode curn = this ;
+		while((curn=curn.getParentNode())!=null)
+		{
+			if(curn instanceof UANodeOCTagsGCxt)
+			{
+				UANodeOCTagsGCxt pn = (UANodeOCTagsGCxt)curn ;
+				rl = pn.getRefLockedLoc() ;
+				if(rl>0)
+					return true ;
+				if(rl<0)
+					return false;
+			}
+		}
+		return false;
+	}
+	
+	
+	protected int getRefLockedLoc()
+	{
+		return refLockedLoc ;
+	}
+	
+	public UANodeOCTagsGCxt withRefLockedLoc(int rl)
+	{
+		this.refLockedLoc = rl ;
+		return this;
+	}
+	
+	
+	static ArrayList<PropGroup> cxt_tags = null;//new ArrayList<>();
+	static
+	{
+//		PropGroup pg = new PropGroup("cxt_tags","Context Tags") ;
+//		pg.addPropItem(new PropItem("ref_locked","Ref Locked","Can edit tags context or not",PValTP.vt_bool,true,
+//				null,null,0));
+//		//ddPropItem(new PropItem("desc","Description","Object's Description",PValTP.vt_str,false,null,null,""));
+//		
+//		cxt_tags.add(pg) ;
+	}
+	
+	
+	@Override
+	public List<PropGroup> listPropGroups()
+	{
+		if(cxt_tags!=null)
+			return cxt_tags;
+		ArrayList<PropGroup> pgs = new ArrayList<>() ;
+		List<PropGroup> lpgs = super.listPropGroups() ;
+		if(lpgs!=null)
+			pgs.addAll(lpgs) ;
+		
+		PropGroup pg = new PropGroup("cxt_tags","Context Tags") ;
+		pg.addPropItem(new PropItem("ref_locked","Ref Locked","Can edit tags context or not",PValTP.vt_bool,true,
+				null,null,0));
+		pgs.add(pg) ;
+		//
+		cxt_tags = pgs;
+		return pgs;
+	}
+	
+	public Object getPropValue(String groupn,String itemn)
+	{
+		if("cxt_tags".contentEquals(groupn))
+		{
+			switch(itemn)
+			{
+			case "ref_locked":
+				return this.isRefLocked();
+			
+			}
+		}
+		return super.getPropValue(groupn, itemn);
+	}
+	
+	
+	
+	UADev getBelongToDev()
+	{
+		if(this instanceof UADev)
+			return (UADev)this ;
+		UANode curn = this ;
+		while((curn=curn.getParentNode())!=null)
+		{
+			if(this instanceof UADev)
+				return (UADev)curn ;
+		}
+		return null ;
+	}
 
 	public List<UATagG> getSubTagGs()
 	{

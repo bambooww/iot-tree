@@ -113,6 +113,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return (UAPrj)this.getParentNode() ;
 	}
 	
+
+	protected int getRefLockedLoc()
+	{
+		return 1 ;
+	}
+	
+	
 	public boolean chkValid()
 	{
 		if(Convert.isNullOrEmpty(drvName))
@@ -321,17 +328,29 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	public UADev addDev(String name,String title,String desc,String devdef_id) throws Exception
 	{
 		UAUtil.assertUAName(name);
-		DevDriver drv = this.getDriver() ;
-		DevDef dd = drv.getDevDefById(devdef_id) ;
-		if(dd==null)
-			throw new Exception("no device definition found") ;
 		
 		UADev d = getDevByName(name);
 		if(d!=null)
 		{
 			throw new IllegalArgumentException("dev with name="+name+" existed") ;
 		}
-		d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
+		
+		DevDriver drv = this.getDriver() ;
+		DevDef dd = null;
+		if(Convert.isNotNullEmpty(devdef_id))
+		{
+			dd = drv.getDevDefById(devdef_id) ;
+			if(dd==null)
+				throw new Exception("no device definition found") ;
+			d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
+		}
+		else
+		{
+			d = new UADev();
+			d.id = this.getNextIdByRoot() ;
+			d.setNameTitle(name, title, desc);
+		}
+		
 		devs.add(d);
 		constructNodeTree();
 		this.getBelongTo().save();
@@ -712,13 +731,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		List<UANode> subnodes = r.getSubNodes() ;
 		for(UANode subn:subnodes)
 		{
-			Node_refreshBySubNode(this,subn) ;
+			Node_refreshBySubNode(this,subn,true) ;
 			
 		}
 		this.save();
 	}
 	
-	private void Node_refreshBySubNode(UANodeOCTagsGCxt gcxt,UANode uan) throws Exception
+	private void Node_refreshBySubNode(UANodeOCTagsGCxt gcxt,UANode uan,boolean firstlvl) throws Exception
 	{
 		if(uan instanceof UANodeOCTagsGCxt)
 		{
@@ -730,12 +749,14 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 				tg = gcxt.updateTagG(nn, uan.getName(), uan.getTitle(), uan.getDesc()) ;
 			else
 				tg = gcxt.addTagG(uan.getName(), uan.getTitle(), uan.getDesc(),false) ;
+			if(firstlvl)
+				tg.withRefLockedLoc(REF_LOCKED);
 			List<UANode> tmpsubs = tmptg.getSubNodes();
 			if(tmpsubs!=null)
 			{
 				for(UANode tmpsub:tmpsubs)
 				{
-					Node_refreshBySubNode(tg,tmpsub) ;
+					Node_refreshBySubNode(tg,tmpsub,false) ;
 				}
 			}
 		}
