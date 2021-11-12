@@ -204,7 +204,7 @@ public class ModbusBlock
 			
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
-						devId,cur_reg,lastma.getRegEnd()-cur_reg);
+						devId,cur_reg,(lastma.getRegEnd()-cur_reg)/2);
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setRecvEndTimeout(recvTO);
 			
@@ -220,7 +220,7 @@ public class ModbusBlock
 		{
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
-						devId,cur_reg,lastma.getRegEnd()-cur_reg);
+						devId,cur_reg,(lastma.getRegEnd()-cur_reg)/2);
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setRecvEndTimeout(recvTO);
 			cmd2addr.put(curcmd, curaddrs);
@@ -435,7 +435,14 @@ public class ModbusBlock
 		}
 		
 		for(ModbusCmd mc:cmds)
+		{
+			if(!mc.tickCanRun())
+				continue ;
+			
+			Thread.sleep(this.interReqMs);
+			
 			mc.doCmd(ep.getOutputStream(), ep.getInputStream());
+		}
 	}
 	
 	public boolean setWriteCmdAsyn(ModbusAddr ma, Object v)
@@ -503,8 +510,16 @@ public class ModbusBlock
 				return false;
 			}
 			
-			 mc = new ModbusCmdWriteWords(this.scanInterMS,
+			if(vals.length==1)
+			{
+				mc = new ModbusCmdWriteWord(this.scanInterMS,
+						devId,ma.getRegPos(),vals[0]);
+			}
+			else
+			{
+				mc = new ModbusCmdWriteWords(this.scanInterMS,
 						devId,ma.getRegPos(),vals);
+			}
 			 mc.setRecvTimeout(reqTO);
 			mc.setRecvEndTimeout(recvTO);
 			 break;
