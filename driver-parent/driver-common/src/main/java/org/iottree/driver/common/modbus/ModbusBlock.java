@@ -17,6 +17,8 @@ import org.iottree.driver.common.*;
 
 public class ModbusBlock
 {
+	public static final long MAX_Demotion_DELAY = 30000 ;
+	
 	static ILogger log = LoggerManager.getLogger("Modbus_Lib");
 	
 	int devId = 1 ;
@@ -43,6 +45,17 @@ public class ModbusBlock
 	transient int failedCount = 0 ;
 	
 	transient ModbusCmd.Protocol modbusProtocal = ModbusCmd.Protocol.rtu;
+	
+	
+	/**
+	 * 
+	 */
+	private transient long lastFailedDT = -1 ;
+	
+	/**
+	 * Number of consecutive errors
+	 */
+	private transient int lastFailedCC  = 0 ;
 	
 	public ModbusBlock(int devid,short addrtp,List<ModbusAddr> addrs,
 			int block_size,long scan_inter_ms,int failed_successive)
@@ -196,17 +209,20 @@ public class ModbusBlock
 				continue ;
 			}
 			
-			if(ma.getRegEnd()<=cur_reg+this.blockSize)
+			int endbytes = (ma.getRegPos()-cur_reg)*2+2;
+			//if(ma.getRegEnd()<=cur_reg+this.blockSize)
+			if(endbytes<=cur_reg+this.blockSize)
 			{
 				curaddrs.add(ma) ;
 				continue;
 			}
 			
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
+			int regnum = (lastma.getRegPos()-cur_reg)*2+lastma.getValTP().getValByteLen() ;
+			regnum = regnum/2+regnum%2;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
-						devId,cur_reg,(lastma.getRegEnd()-cur_reg)/2);
-			//curcmd.setRecvTimeout(reqTO);
-			//curcmd.setRecvEndTimeout(recvTO);
+						devId,cur_reg,regnum);
+			
 			
 			cmd2addr.put(curcmd, curaddrs);
 				
@@ -219,8 +235,11 @@ public class ModbusBlock
 		if(curaddrs.size()>0)
 		{
 			ModbusAddr lastma = curaddrs.get(curaddrs.size()-1) ;
+			//int regnum = lastma.getRegEnd()-cur_reg;
+			int regnum = (lastma.getRegPos()-cur_reg)*2+lastma.getValTP().getValByteLen() ;
+			regnum = regnum/2+regnum%2;
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
-						devId,cur_reg,(lastma.getRegEnd()-cur_reg)/2);
+						devId,cur_reg,regnum);
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setRecvEndTimeout(recvTO);
 			cmd2addr.put(curcmd, curaddrs);
@@ -331,8 +350,16 @@ public class ModbusBlock
 		if(!bfailed)
 		{
 			failedCount = 0 ;
+			
+			lastFailedDT = -1 ;
+			lastFailedCC  = 0 ;
 			return false;
 		}
+		
+		lastFailedDT = System.currentTimeMillis() ;
+		lastFailedCC  ++ ;
+		if(lastFailedCC>3600)
+			lastFailedCC = 3600 ;
 		
 		failedCount ++;
 		if(failedCount>=this.failedSuccessive)
@@ -341,6 +368,25 @@ public class ModbusBlock
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean checkDemotionCanRun()
+	{
+		if(lastFailedCC<=0)
+			return true ;
+		
+		long dur_dt = lastFailedCC*1000;
+		if(dur_dt>MAX_Demotion_DELAY)
+		{
+			dur_dt =  MAX_Demotion_DELAY ;
+		}
+		if(System.currentTimeMillis() - lastFailedDT<dur_dt)
+		{
+			//System.out.println(" checkDemotionCanRun false---"+this.devId+" dur="+dur_dt);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private boolean runReadCmds(IConnEndPoint ep) throws Exception

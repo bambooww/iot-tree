@@ -162,21 +162,29 @@ public class ModbusDevItem //extends DevModel
 		boolean ret = true ;
 		if(mbCoilIn != null)
 		{
+			if(!mbCoilIn.checkDemotionCanRun())
+				return false;
 			if(!mbCoilIn.runCmds(ep))
 				ret = false;
 		}
 		if(mbCoilOut != null)
 		{
+			if(!mbCoilOut.checkDemotionCanRun())
+				return false;
 			if(!mbCoilOut.runCmds(ep))
 				ret= false;
 		}
 		if(mbRegIn != null)
 		{
+			if(!mbRegIn.checkDemotionCanRun())
+				return false;
 			if(!mbRegIn.runCmds(ep))
 				ret=false;
 		}
 		if(mbRegHold != null)
 		{
+			if(!mbRegHold.checkDemotionCanRun())
+				return false;
 			if(!mbRegHold.runCmds(ep))
 				ret=false;
 		}

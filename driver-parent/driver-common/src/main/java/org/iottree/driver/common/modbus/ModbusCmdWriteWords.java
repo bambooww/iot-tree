@@ -97,32 +97,32 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	        rlen = com_stream_recv_chk_len_timeout(ins) ;
 	        if(rlen==0)
 	            continue ;
-	        //�жϷ��������Ƿ��������
+	       
 	        if(mayrlen>0)
-	        {//ֻ��Ҫ�жϽ��ճ��Ⱦ���
+	        {
 	            if(rlen>=mayrlen)
-	                break ;//���ս���
+	                break ;
 	        }
 	        else
-	        {//�жϵ�ַ�ͳ���
+	        {
 	            if(mbuss_adu[0]!=(byte)slaveAddr)
-	            {//���ո�ʽ����
+	            {
 	                break ;
 	            }
 	            if(rlen<3)
 	                continue ;
 	            
 	            if(mbuss_adu[1]!=(byte)MODBUS_FC_WRITE_MULTI_REG)
-	            {//���������
+	            {
 	                if(mbuss_adu[1]==(byte)(MODBUS_FC_WRITE_MULTI_REG+0x80))
-	                {//�豸���ش���
+	                {
 	                	err_code =0xFF & ((int)mbuss_adu[2]) ; 
 	                }
 	                break ;
 	            }
 	            else
 	            {//
-	                mayrlen = 8;//�����ֽڳ�����Ϣ��ǰ��3�ֽ�+����crc
+	                mayrlen = 8;
 	            }
 	        }
 	        
@@ -131,7 +131,7 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	    }
 	    
 	    if(mayrlen<=0 || rlen<mayrlen)
-	    {//���մ�����Ϣ or time out
+	    {// or time out
 	        com_stream_end() ;
 	        if(rlen<=0)
 	        	return ERR_RECV_TIMEOUT ;//recvTimeout may be adjust
@@ -140,10 +140,7 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	        else
 	        	return 0 ;//err
 	    }
-	    
-	    /////
-//	  ������յ����ݣ���ַ�͹�����
-	    //crc��֤
+
 	    if(crc!=modbus_crc16_check(mbuss_adu,6))//mayrlen-2))
 	    {
 	        com_stream_end() ;
@@ -170,8 +167,8 @@ public class ModbusCmdWriteWords extends ModbusCmd
 		pdata[0] = (byte) ((lastTcpCC >> 8) & 0xFF) ;
 		pdata[1] = (byte) (lastTcpCC & 0xFF) ;
 		pdata[2] = pdata[3] = 0 ;
-		pdata[4] = 0 ;//�����ֽ�����λ
-		pdata[5] = (byte)(7+bcount) ;//�����ֽ�����λ
+		pdata[4] = 0 ;
+		pdata[5] = (byte)(7+bcount) ;
 		//pdu
 
 		pdata[6] = (byte)slaveAddr ;
@@ -191,7 +188,7 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	    clearInputStream(ins) ;
 	    ous.write(pdata) ;
 	    ous.flush() ;
-	    //��ȡǰ6���ֽ�
+	    
 	    byte[] read_mbap = new byte[6];
 	    do
 	    {
@@ -238,7 +235,7 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	    	return 0 ;//err
 	    }
 	    if(recvpdu[1]!=pdata[7])
-        {//���������
+        {
             //if(mbuss_adu[1]==(byte)(fc+0x80))
 	    	return 0 ;
         }
