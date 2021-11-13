@@ -21,6 +21,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	@data_val(param_name = "drv")
 	String drvName = null ;
 	
+	@data_val(param_name = "drv_int")
+	long devIntMS = 1000 ;
 //	/**
 //	 * javascript run with interval
 //	 */
@@ -130,6 +132,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	public String getDriverName()
 	{
 		return drvName ;
+	}
+	
+	public long getDriverIntMS()
+	{
+		return this.devIntMS;
 	}
 	
 	public DevDriver getDriver()
@@ -492,6 +499,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		else
 			r.addPropItem(new PropItem("drv","Driver","Device Driver used by Channel",PValTP.vt_str,true,null,null,""));
 		
+		r.addPropItem(new PropItem("drv_intv","Driver scan interval","Driver scan interval on every loop",PValTP.vt_int,
+				false,null,null,1000));
+				
 		//r.addPropItem(new PropItem("script","JavaScript","JavaScript run interval by Channel",PValTP.vt_str,false,null,null,"")
 		//		.withTxtMultiLine(true));
 		
@@ -508,6 +518,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			{
 			case "drv":
 				return this.drvName;
+			case "drv_intv":
+				return devIntMS;
 //			case "script":
 //				return this.script ;
 //			case "script_int":
@@ -534,6 +546,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 					chPGS=null;//
 				}
 				return true;//do nothing
+			case "drv_intv":
+				devIntMS = Convert.parseToInt64(strv, 1000);
+				return true;
 //			case "script":
 //				this.script = strv ;
 //				return true ;

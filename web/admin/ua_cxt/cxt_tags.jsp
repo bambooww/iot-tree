@@ -203,7 +203,9 @@ if(!brefed)
 <hr class="layui-bg-green">
 
 --%>
- <blockquote class="layui-elem-quote "><%=hmitt %> Context under  [<%=node_tags.getNodePath() %>]
+ <blockquote class="layui-elem-quote ">&nbsp;
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %></div>
+  <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%
@@ -249,6 +251,7 @@ if(!brefed)
    </thead>
    <tbody id="div_list_bd_">
 <%
+int tags_num = 0 ;
 for(UANodeOCTags tn:tns)
 {
 	//if(tn.getRefBranchNode()!=null)
@@ -263,6 +266,8 @@ for(UANodeOCTags tn:tns)
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
 	{
+		tags_num ++ ;
+		
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 		boolean bloc = tag.getParentNode()==node_tags;
 		String cssstr="" ;
@@ -335,7 +340,7 @@ if(!ref_locked&&bloc&&!tag.isSysTag())
 </div>
 </form>
 <%
-if(brefed)
+//if(brefed)
 {
 %>
 <table width='100%' border='1' height="120">
@@ -365,6 +370,9 @@ var cxt_path= "<%=node_cxtpath%>";
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
+
+var tags_num = <%=tags_num%>;
+$("#tags_num").html(tags_num);
 
 layui.use('form', function(){
 	  var form = layui.form;

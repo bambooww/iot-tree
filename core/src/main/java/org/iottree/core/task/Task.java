@@ -228,7 +228,10 @@ public class Task
 		}
 	}
 
-	private void taskRun()
+	
+	private Runnable taskRunner=new Runnable()
+			{
+	public void run()
 	{
 		try
 		{
@@ -256,6 +259,7 @@ public class Task
 			rtTh = null;
 		}
 	}
+			};
 
 	synchronized public boolean RT_start()
 	{
@@ -265,7 +269,7 @@ public class Task
 		if (rtTh != null)
 			return true;
 		
-		rtTh = new Thread(this::taskRun, "iottree-task-" + this.prj.getName() + "-" + this.getName());
+		rtTh = new Thread(taskRunner, "iottree-task-" + this.prj.getName() + "-" + this.getName());
 		rtRun = true;
 		rtTh.start();
 		return true;

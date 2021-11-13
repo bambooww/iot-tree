@@ -116,7 +116,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient UAVal curVal = new UAVal(false,null,System.currentTimeMillis()) ;
 	
-	private transient ValTranser valTransObj=  null ;
+	private transient Object curRawVal = null ;
+	
+	private transient ValTranser valTransObj = null ;
 	
 	public UATag()
 	{
@@ -770,8 +772,22 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
-	public void RT_setValRaw(Object v,boolean ignore_nochg)
+	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg)
 	{
+		if(ignore_nochg)
+		{
+			if(curRawVal==null)
+			{
+				if(v==null)
+					return ;
+			}
+			else if(curRawVal.equals(v))
+				return ;
+		}
+		
+		
+		curRawVal = v ;
+		
 		ValTranser vt = this.getValTranserObj() ;
 		if(vt!=null)
 		{
@@ -789,11 +805,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		UAVal uav = this.curVal;//RT_getVal();
-		if(ignore_nochg && uav!=null)
-		{
-			if(uav.isValid() && uav.getObjVal().equals(v))
-				return ;
-		}
+//		if(ignore_nochg && uav!=null)
+//		{
+//			if(uav.isValid() && uav.getObjVal().equals(v))
+//				return ;
+//		}
 		uav = new UAVal(true,v,System.currentTimeMillis()) ;
 		RT_setUAVal(uav);
 	}
@@ -914,6 +930,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public Object JS_get(String  key)
 	{
+//		if("kwh_di".equals(this.getName()))
+//		{
+//			System.out.println("kwh_val");
+//		}
+		
 		Object obj  = super.JS_get(key) ;
 		if(obj!=null)
 			return obj ;
@@ -921,6 +942,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		UAVal uav = this.RT_getVal() ;
 		if(uav==null)
 			return null ;
+		
 		
 		switch(key.toLowerCase())
 		{

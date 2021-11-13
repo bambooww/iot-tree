@@ -106,7 +106,7 @@ public class Server
 					if (Convert.isNullOrEmpty(serv_comp_cn))
 						continue;
 
-					//System.out.println("find server comp::" + serv_comp_cn);
+					//System.out.println("find server comp:" + serv_comp_cn);
 					
 				}
 			}

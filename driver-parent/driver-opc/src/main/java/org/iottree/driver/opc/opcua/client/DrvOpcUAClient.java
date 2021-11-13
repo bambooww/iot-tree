@@ -27,40 +27,6 @@ public class DrvOpcUAClient
         Security.addProvider(new BouncyCastleProvider());
     }
 	
-//    public void createCert(String issuer,Date notBefore,Date notAfter,String certDestPath,
-//            BigInteger serial,String keyPassword,String alias) throws Exception{
-//        //产生公私钥对
-//        KeyPairGenerator kpg = KeyPairGenerator.getInstance(Default_KeyPairGenerator);
-//        kpg.initialize(Default_KeySize);
-//        KeyPair keyPair = kpg.generateKeyPair();
-//        PublicKey publicKey = keyPair.getPublic();  
-//        PrivateKey privateKey = keyPair.getPrivate();  
-//        // 组装证书
-//        X500Name issueDn = new X500Name(issuer);  
-//        X500Name subjectDn = new X500Name(issuer);  
-//        //组装公钥信息  
-//        SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo  
-//                 .getInstance(new ASN1InputStream(publicKey.getEncoded())  
-//                         .readObject());
-//
-//        X509v3CertificateBuilder builder = new X509v3CertificateBuilder(  
-//                issueDn, serial, notBefore, notAfter, subjectDn,  
-//                subjectPublicKeyInfo); 
-//         //证书的签名数据  
-//        ContentSigner sigGen = new JcaContentSignerBuilder(Default_Signature).build(privateKey);  
-//        X509CertificateHolder holder = builder.build(sigGen); 
-//        byte[] certBuf = holder.getEncoded();  
-//        X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance(cert_type).generateCertificate(new ByteArrayInputStream(certBuf));  
-//        // 创建KeyStore,存储证书
-//        KeyStore store = KeyStore.getInstance(Default_keyType);
-//        store.load(null, null);
-//        store.setKeyEntry(alias, keyPair.getPrivate(),   
-//                 keyPassword.toCharArray(), new Certificate[] { certificate });
-//        FileOutputStream fout =new FileOutputStream(certDestPath);
-//        store.store(fout, keyPassword.toCharArray());       
-//        fout.close(); 
-//    }
-	
 	private OpcUaClient createClient(String opcurl) throws Exception {
         Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
         Files.createDirectories(securityTempDir);

@@ -62,7 +62,10 @@ public class ValTransJS extends ValTranser
 			return null;
 		
 		codeItem = new UACodeItem("","{"+this.jsStr+"}")  ;
-		codeItem.initItem(cxt, "$tag","$input") ;
+		synchronized(cxt)
+		{
+			codeItem.initItem(cxt, "$tag","$input") ;
+		}
 		return codeItem;
 	}
 	

@@ -55,7 +55,7 @@ public class UACodeItem
 		initItem(cxt) ;
 	}
 	
-	synchronized public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
+	public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
 	{
 		if(Convert.isNullOrEmpty(this.codeTxt))
 			return false;
@@ -85,10 +85,8 @@ public class UACodeItem
 		{
 			//cxt.getScriptEngine().eval(this.codeTxt);
 			
-			Compilable cp = (Compilable)cxt.getScriptEngine() ;
-			codeCS = cp.compile(tmps) ;
-			if(bblock)
-				codeCS.eval() ;
+			codeCS = cxt.scriptCompile(bblock, tmps);
+			
 //			if(blockFn!=null)
 //			{
 //				codeCS.eval() ;
@@ -188,9 +186,10 @@ public class UACodeItem
 	
 	public Object runCodeFunc(Object... paramvals) throws NoSuchMethodException, ScriptException
 	{
-		//function name must no in obj
-		Invocable inv = (Invocable)cxt.getScriptEngine() ;
-		return inv.invokeFunction(blockFn, paramvals) ;
+//		//function name must no in obj
+//		Invocable inv = (Invocable)cxt.getScriptEngine() ;
+//		return inv.invokeFunction(blockFn, paramvals) ;
+		return cxt.scriptInvoke(blockFn, paramvals) ;
 	}
 	
 	
@@ -223,6 +222,6 @@ public class UACodeItem
 	public void delBlockCode() throws ScriptException
 	{
 		//this.cxt.getScriptEngine().eval("delete "+UAContext.FN_TEMP_VAR+"."+blockFn) ;
-		this.cxt.getScriptEngine().eval("delete "+blockFn) ;
+		this.cxt.scriptEval("delete "+blockFn) ;
 	}
 }

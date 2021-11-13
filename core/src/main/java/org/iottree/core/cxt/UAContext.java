@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import javax.script.Bindings;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.Invocable;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -100,11 +103,33 @@ public class UAContext
 //	}
 	
 
-	ScriptEngine getScriptEngine()
+	private ScriptEngine getScriptEngine()
 	{
 		return scriptEng;
 	}
 
+	public synchronized void scriptEval(String jstxt) throws ScriptException
+	{
+		scriptEng.eval(jstxt) ;
+	}
+	
+	public synchronized Object scriptInvoke(String fn,Object... paramvals) throws NoSuchMethodException, ScriptException
+	{
+		Invocable inv = (Invocable)getScriptEngine() ;
+		return inv.invokeFunction(fn, paramvals) ;
+	}
+	
+	public  CompiledScript scriptCompile(boolean bblock,String jstxt) throws ScriptException
+	{
+		synchronized(UAContext.class)
+		{
+			Compilable cp = (Compilable)getScriptEngine() ;
+			CompiledScript cs = cp.compile(jstxt) ;
+			if(bblock)
+				cs.eval() ;
+			return cs ;
+		}
+	}
 	/**
 	 * templary code to run
 	 * 
