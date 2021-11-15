@@ -712,6 +712,14 @@ public class ConnPtOPCUA extends ConnPtBinder
 	{
 		return uaClient != null;
 	}
+	
+	public String getConnErrInfo()
+	{
+		if(uaClient==null)
+			return "no connection" ;
+		else
+			return null ;
+	}
 
 	synchronized void disconnect() // throws IOException
 	{

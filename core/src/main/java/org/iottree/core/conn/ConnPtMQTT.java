@@ -126,6 +126,14 @@ public class ConnPtMQTT extends ConnPtMSG
 		return mqttEP.isConnReady();
 	}
 	
+	public String getConnErrInfo()
+	{
+		if(mqttEP==null)
+			return "no connection" ;
+		return mqttEP.getConnErrInfo() ;
+			
+	}
+	
 	public List<String> getMsgTopics()
 	{
 		return getMqttEP().getMQTTTopics() ;

@@ -508,7 +508,10 @@ public class ConnManager
 				if(bf1) bf1=false;
 				else out.print(",") ;
 				
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"ready\":"+conn.isConnReady()+"}");
+				String connerr = conn.getConnErrInfo() ;
+				if(connerr==null)
+					connerr = "" ;
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\"}");
 			}
 			
 			out.print("]}");

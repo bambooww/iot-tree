@@ -272,6 +272,14 @@ public class ConnPtCOM extends ConnPtStream
 	{
 		return serialPort!=null;
 	}
+	
+	public String getConnErrInfo()
+	{
+		if(serialPort==null)
+			return "no connection" ;
+		else
+			return null ;
+	}
 
 	@Override
 	public void close() throws IOException

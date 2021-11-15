@@ -69,10 +69,12 @@ public class UAContext
 	{
 
 		nodeCxt = nodecxt;
+		
+		UAPrj prj = (UAPrj)nodecxt.getTopNode();
 
 		seMgr = new ScriptEngineManager();
 		
-		scriptEng = UAManager.createJSEngine();
+		scriptEng = UAManager.createJSEngine(prj);
 
 		//for graal - object must be public and not inner class,
 		  // and function must has HostAccess.Export annotation

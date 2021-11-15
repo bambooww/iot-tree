@@ -522,7 +522,7 @@ background-color: #fff ;
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
-										<td width="90%" v-bind:title="connection.static_txt">
+										<td width="90%" >
 											{{connection.title}} [{{connection.name}}]
 										</td>
 										<td width="20px">
@@ -962,7 +962,7 @@ var cxt_menu = {
 			return !tn.ref_locked;
 		}},
 		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
-			return !tn.ref_locked;
+			return true;//!tn.ref_locked;
 		}}
 	],
 	"hmi":[
@@ -2099,20 +2099,20 @@ function prj_rt()
 		
 		c = "grey" ;
 		t = "no task";
-		if(ret.task)
+		if(ret.task_run_num>0)
 		{
-			if(ret.task_run)
-			{
-				c = "green" ;
-				t = "task is running" ;
-			}
-			else
-			{
-				c = "red" ;
-				t = "task is not running "
-			}
+			c = "green" ;
+			t = ret.task_run_num+" tasks running" ;
+			$("#task_run_icon").addClass("fa-spin").css("color",c);
+			
 		}
-		$("#task_run").css("color",c);
+		else
+		{
+			c = "red" ;
+			t = "no task running "
+			$("#task_run_icon").removeClass("fa-spin").css("color",c);
+		}
+		
 		$("#task_run").attr("title",t);
 		
 		for(var cp of ret.cps)
@@ -2125,12 +2125,18 @@ function prj_rt()
 			{
 				var cid = conn.conn_id;
 				var bready = conn.ready ;
+				var connerr = conn.conn_err;
 				
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link fa-lg'></i>":"<i class='fa fa-chain-broken fa-lg'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",bready?"green":"red");
-				$("#conn_st_"+cid).attr("title",bready?"connection is ready":"connection is not ready");
+				$("#conn_st_"+cid).attr("title",bready?"connection is ready":connerr);
 				$("#conn_run_"+cid).css("color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
+				
+				var tt = conn.static_txt ;
+				if(tt==null||tt=="")
+					tt = bready?"connection is ready":connerr ;
+				$("#conn_"+cid).attr("title",tt) ;
 			}
 		}
 		

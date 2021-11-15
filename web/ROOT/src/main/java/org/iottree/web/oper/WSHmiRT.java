@@ -73,7 +73,7 @@ public class WSHmiRT extends WSServer
 			return session ;
 		}
 		
-		public UAPrj getRep()
+		public UAPrj getPrj()
 		{
 			return prj ;
 		}
@@ -117,26 +117,35 @@ public class WSHmiRT extends WSServer
 		void onTick() throws IOException
 		{
 			UAHmi hmi = getHmi() ;
-			
+			UAPrj prj = getPrj();
 			
 			long lastdt = lastDT ;
 			lastDT = System.currentTimeMillis() ;
 			
+			
 			UANodeOCTagsCxt ntags = hmi.getBelongTo() ;
 			
 			StringWriter sw = new StringWriter();
-			if(ntags.CXT_renderJson(sw,lastdt))
+			sw.write("{\"prj_id\":\""+prj.getId()+"\",\"cxt_path\":\""+ntags.getNodePathCxt()+"\",\"prj_run\":"+prj.RT_isRunning());
+			if(prj.RT_isRunning())
 			{
-				String txt = sw.toString() ;
-				try
+				StringWriter sw_rt = new StringWriter();
+				if(ntags.CXT_renderJson(sw_rt,lastdt))
 				{
-					sendTxt(txt);
-				} catch (IllegalStateException ise)
-				{
-					ise.printStackTrace();
+					sw.write(",\"cxt_rt\":") ;
+					sw.write(sw_rt.toString());
 				}
 			}
+			sw.write("}");
 			
+			String txt = sw.toString() ;
+			try
+			{
+				sendTxt(txt);
+			} catch (IllegalStateException ise)
+			{
+				ise.printStackTrace();
+			}
 			
 //			if(!bhas_data)
 //			{

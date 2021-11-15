@@ -47,7 +47,7 @@ public class UAManager implements IResCxt
 
 	public static final String JS_NAME="graal.js";//"nashorn"; //
 
-	public static ScriptEngine createJSEngine()
+	public static ScriptEngine createJSEngine(UAPrj prj)
 	{
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName(JS_NAME);
@@ -55,7 +55,7 @@ public class UAManager implements IResCxt
 		engine.put("polyglot.js.allowAllAccess",true);
 		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
 		
-		engine.put("$sys", new GSys());
+		engine.put("$sys", new GSys(prj));
 		engine.put("$debug", new Debug());
 		
 		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();

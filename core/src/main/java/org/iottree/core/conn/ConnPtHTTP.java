@@ -24,5 +24,10 @@ public class ConnPtHTTP extends ConnPt
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public String getConnErrInfo()
+	{
+		return null ;
+	}
 
 }

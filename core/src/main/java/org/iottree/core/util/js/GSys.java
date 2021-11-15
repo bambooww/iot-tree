@@ -4,11 +4,19 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 
 public class GSys
 {
 	boolean bPrintOn = true;
+	
+	UAPrj prj = null ;
+	
+	public GSys(UAPrj p)
+	{
+		this.prj = p ;
+	}
 
 	@HostAccess.Export
 	public void println(String s) throws Exception
@@ -186,5 +194,20 @@ public class GSys
 	public void sleep(long ms) throws Exception
 	{
 		Thread.sleep(ms);
+	}
+	
+	public long tick_ms()
+	{
+		return System.currentTimeMillis();
+	}
+	
+	public long tick_second()
+	{
+		return System.currentTimeMillis()/1000;
+	}
+	
+	public void alert(String title,boolean bvoice)
+	{
+		//this.prj.t
 	}
 }

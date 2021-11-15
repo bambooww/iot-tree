@@ -198,7 +198,7 @@ public class Task
 	
 	private void taskRunInit()
 	{
-		scriptEng = UAManager.createJSEngine() ;
+		scriptEng = UAManager.createJSEngine(this.prj) ;
 		scriptEng.put("$task", this);
 		//scriptEng = this.prj.
 		for(TaskAction ta:this.actions)

@@ -95,6 +95,15 @@ public class PrjCallerMQTT extends PrjCaller
 		return mqttEP.isConnReady();
 	}
 	
+	public String getConnErrInfo()
+	{
+		if(mqttEP==null)
+			return "no connection";
+		if(mqttEP.isConnReady())
+			return null ;
+		return mqttEP.getConnErrInfo() ;
+	}
+	
 	public void disconnect()
 	{
 		if(mqttEP==null)

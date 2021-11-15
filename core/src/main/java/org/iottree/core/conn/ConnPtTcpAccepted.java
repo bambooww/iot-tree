@@ -194,6 +194,14 @@ public class ConnPtTcpAccepted extends ConnPtStream
 	{
 		return sock!=null;
 	}
+	
+	public String getConnErrInfo()
+	{
+		if(sock==null)
+			return "no connection" ;
+		else
+			return null ;
+	}
 
 	@Override
 	public void close() throws IOException

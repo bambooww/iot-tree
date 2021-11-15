@@ -360,6 +360,8 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	public abstract boolean isConnReady() ;
 	
+	public abstract String getConnErrInfo() ;
+	
 	public boolean hasJoinedCh() throws Exception
 	{
 		return getJoinedCh()!=null ;

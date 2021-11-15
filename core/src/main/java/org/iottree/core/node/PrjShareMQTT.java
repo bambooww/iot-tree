@@ -72,6 +72,7 @@ public class PrjShareMQTT extends PrjSharer
 	protected void sendMsg(NodeMsg nm) throws Exception
 	{
 		String topic = MqttUtil.calMqttTopic(nm) ;
+		//System.out.println(" Share MQTT send="+topic) ;
 		this.getMqttEP().publish(topic, nm.getContent());
 		//this.getMqttEP().publish(topic, data);
 	}

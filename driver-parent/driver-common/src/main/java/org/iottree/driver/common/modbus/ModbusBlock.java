@@ -223,7 +223,6 @@ public class ModbusBlock
 			curcmd = new ModbusCmdReadWords(this.getFC(),this.scanInterMS,
 						devId,cur_reg,regnum);
 			
-			
 			cmd2addr.put(curcmd, curaddrs);
 				
 			cur_reg = regp ;

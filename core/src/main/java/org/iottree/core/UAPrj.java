@@ -741,6 +741,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 				// start channel drivers
 				startStopCh(true);
+				
+				startStopTask(true) ;
 
 				while (rtRun)
 				{
@@ -767,6 +769,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 			}
 			finally
 			{
+				startStopTask(false);
 				startStopConn(false);
 				startStopCh(false);
 
@@ -836,7 +839,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		if (engine != null)
 			return engine;
 
-		engine = UAManager.createJSEngine();
+		engine = UAManager.createJSEngine(this);
 
 		engine.put("$this", jsOb);
 		engine.put("$prj", jsOb);
@@ -949,7 +952,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 	}
 
-	void runJsTasks()
+	private void startStopTask(boolean b)
 	{
 		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
 		if (jsts == null || jsts.size() <= 0)
@@ -957,8 +960,26 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 		for (Task jst : jsts)
 		{
-			jst.RT_start();
+			if(b)
+				jst.RT_start();
+			else
+				jst.RT_stop();
 		}
+	}
+	
+	public int getTaskRunningNum()
+	{
+		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
+		if (jsts == null || jsts.size() <= 0)
+			return 0;
+
+		int r = 0 ;
+		for (Task jst : jsts)
+		{
+			if(jst.RT_isRunning())
+				r ++ ;
+		}
+		return r;
 	}
 
 	public class JSOb

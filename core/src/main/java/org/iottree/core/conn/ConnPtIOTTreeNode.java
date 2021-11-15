@@ -318,6 +318,14 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		return prjCaller.isConnReady();
 	}
 	
+	public String getConnErrInfo()
+	{
+		if (prjCaller == null)
+			return null;
+		if(prjCaller.isConnReady())
+			return null ;
+		return prjCaller.getConnErrInfo() ;
+	}
 	
 	public boolean sendMsg(String topic,byte[] bs) throws Exception
 	{

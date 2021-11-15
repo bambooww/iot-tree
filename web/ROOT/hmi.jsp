@@ -276,6 +276,22 @@ position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;to
 {
 margin-top:5px;
 }
+
+.overlay_msg
+{
+	position:absolute;
+	background:#888888;
+	opacity:0.8;
+	clear:both;	
+	top:50px;
+	left:50px;
+	border:solid 3px;
+	text-align:center;
+	vertical-align:middle;
+	width:300px;
+	height:130px;
+	zIndex:65535;
+}
 </style>
 
 </head>
@@ -738,8 +754,85 @@ function log(txt)
 	console.log(txt) ;
 }
 
+var overlay_div = null ;
+var overlay_msg_div = null ;
+
+function show_overlay(bshow,title)
+{
+	if(overlay_div == null)
+	{
+		overlay_div = document.createElement('div');
+		overlay_div.style.position = 'absolute';
+		overlay_div.style.background = "#000000";
+		//overlay_div.style.filter = 'alpha(opacity=40)';
+		overlay_div.style.opacity = 0.4;
+		overlay_div.style.top = 0;
+		overlay_div.style.left = 0 ;
+		overlay_div.style.width = '100%';
+		overlay_div.style.height = '100%';
+		
+		overlay_div.style.zIndex=65534;
+		document.body.appendChild(overlay_div);
+	}
+	
+	if(overlay_msg_div == null)
+	{
+		overlay_msg_div = $(document.createElement('div'));//;
+		var wh = $(window).height();
+		var ww = $(window).width();
+		var w=300;
+		var h=w*0.618;
+		var left=ww/2-w/2;
+		var top=wh/2-h/2;
+		overlay_msg_div.css("position","absolute");
+		overlay_msg_div.css("background","#888888");
+		overlay_msg_div.css("opacity","0.8");
+		overlay_msg_div.css("clear","both");	
+		overlay_msg_div.css("top",top+"px");
+		overlay_msg_div.css("left",left+"px");
+		overlay_msg_div.css("border","solid 3px");
+		overlay_msg_div.css("text-align","center");
+		overlay_msg_div.css("vertical-align","middle");
+		overlay_msg_div.css("width",w+"px");
+		overlay_msg_div.css("height",h+"px");
+		overlay_msg_div.css("zIndex","65535");
+		overlay_msg_div.css("color","#ffffff");
+		overlay_msg_div.css("font-size","30px");
+		
+		//overlay_msg_div.addClass("overlay_msg");
+		$(document.body).append(overlay_msg_div);
+
+	}
+	
+	overlay_msg_div.html(title);
+	if(bshow)
+	{
+		overlay_msg_div.css("display","");
+		overlay_div.style.display = '';
+	}
+	else
+	{
+		overlay_msg_div.css("display","none");
+		overlay_div.style.display = 'none';
+	}
+}
+
+
+
+
 var ws = null;
 
+var ws_opened = false;
+
+function check_ws()
+{
+	if(ws!=null&&ws_opened)
+		return ;
+	
+	ws_conn() ;
+	
+	setTimeout(check_ws,5000) ;
+}
 
 function ws_conn()
 {
@@ -749,38 +842,50 @@ function ws_conn()
     } else if ('MozWebSocket' in window) {
         ws = new MozWebSocket(url);
     } else {
-        alert('WebSocket is not supported by this browser.');
-        return;
+        log('WebSocket is not supported by this browser.');
+        return false ;
     }
     
-   
     ws.onopen = function () {
         //setConnected(true);
         log('Info: WebSocket connection opened.');
-        
+        ws_opened = true;
+        show_overlay(false);
         hmiModel.setWebSocket(ws);
     };
     ws.onmessage = function (event) {
 
-    	console.log(event.data) ;
+    	//console.log(event.data) ;
     	//hmiModel.fireModelPropBindData(event.data) ;
     	var d = null ;
     	eval("d="+event.data) ;
-    	//if(typeof(ret) == 'string')
-		//	eval("ret="+ret) ;
-		hmiModel.updateRtNodes(d);
+    	if(d.cxt_rt)
+    	{
+    		hmiModel.updateRtNodes(d.cxt_rt);
+    	}
+    	
+    	if(d.prj_run)
+    		show_overlay(false);
+    	else
+    		show_overlay(true,"project is not running.");
     };
     ws.onclose = function (event) {
-       
+    	show_overlay(true,"conn broken");
+    	ws_disconn();
+    	setTimeout(check_ws,5000) ;
         log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
     };
+    
+    return true;
 }	
 
 function ws_disconn() {
+	
     if (ws != null) {
         ws.close();
         ws = null;
     }
+    ws_opened = false;
 }
 
 if(prj_name!=null&&prj_name!="")

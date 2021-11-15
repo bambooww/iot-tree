@@ -9,17 +9,18 @@
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
 	String id = request.getParameter("id");
-	UAPrj rep = UAManager.getInstance().getPrjById(id);
-	if(rep==null)
+	UAPrj prj = UAManager.getInstance().getPrjById(id);
+	if(prj==null)
 	{
-		out.print("no repository found!");
+		out.print("no project found!");
 		return;
 	}
 	
-	boolean bshare = rep.isShare() ;
-	boolean bshare_r = rep.isShareRunning();
+	boolean bshare = prj.isShare() ;
+	boolean bshare_r = prj.isShareRunning();
+	int run_task_n = prj.getTaskRunningNum() ;
 	
-%>{"run":<%=rep.RT_isRunning()%>,"share":<%=bshare%>,"share_run":<%=bshare_r%>,
+%>{"run":<%=prj.RT_isRunning()%>,"share":<%=bshare%>,"share_run":<%=bshare_r%>,"task_run_num":<%=run_task_n%>,
 	"cps":
 <%
 	ConnManager.getInstance().renderRTJson(id, out) ;

@@ -60,6 +60,18 @@ public class ConnPtVirtual extends ConnPt
 		//return false;
 	}
 	
+	public String getConnErrInfo()
+	{
+		ConnProvider cp = this.getConnProvider();
+		if(cp==null)
+			return "no connection";
+		
+		if(cp.isRunning())
+			return null ;
+		else
+			return "Conn Provider is not running" ;
+	}
+	
 	public String getIntervalScript()
 	{
 		if(this.script==null)

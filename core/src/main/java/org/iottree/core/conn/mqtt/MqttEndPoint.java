@@ -38,6 +38,8 @@ public class MqttEndPoint
 	
 	transient private MqttCallback callback = null ;
 	
+	transient private String connErrInfo = null ;
+	
 	public MqttEndPoint(String id)
 	{
 		this.id = id;
@@ -241,7 +243,17 @@ public class MqttEndPoint
 	{
 		if (client == null)
 			return false;
-		return client.isConnected();
+		boolean b = client.isConnected();
+		return b;
+	}
+	
+	/**
+	 * conn err
+	 * @return
+	 */
+	public String getConnErrInfo()
+	{
+		return this.connErrInfo ;
 	}
 	
 	public synchronized void disconnect() // throws IOException
@@ -286,8 +298,8 @@ public class MqttEndPoint
 		
 		try
 		{
-			client = new MqttClient("tcp://" + mqttHost + ":" + mqttPort, this.id,
-					new MemoryPersistence());
+			String tar = "tcp://" + mqttHost + ":" + mqttPort;
+			client = new MqttClient(tar, this.id,new MemoryPersistence());
 
 			MqttConnectOptions options = new MqttConnectOptions();
 			options.setCleanSession(true);
@@ -308,7 +320,7 @@ public class MqttEndPoint
 			for (String topic : this.topics)
 			{
 				client.subscribe(topic, 0);
-				System.out.println(" mqtt ep subscribe topic="+topic) ;
+				System.out.println(" mqtt conned to ["+tar+"] subscribe topic="+topic) ;
 			}
 			
 			bLastConnFailed = false;
@@ -317,6 +329,7 @@ public class MqttEndPoint
 			if(!bLastConnFailed)
 				e.printStackTrace();
 			
+			connErrInfo = e.getMessage() ;
 			bLastConnFailed = true;
 		}
 	}

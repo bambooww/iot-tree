@@ -33,6 +33,8 @@ public abstract class PrjCaller extends PrjNode
 	
 	public abstract boolean isConnReady();
 	
+	public abstract String getConnErrInfo();
+	
 	public abstract void disconnect() ;
 	
 	public abstract void checkConn() ;
