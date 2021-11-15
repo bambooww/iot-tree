@@ -13,6 +13,7 @@ import org.iottree.core.UACh;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAPrj.JSOb;
+import org.iottree.core.cxt.UAContext;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
@@ -35,7 +36,7 @@ import org.iottree.core.util.xmldata.data_val;
 @data_class
 public class Task
 {
-	public static long DEFAULT_INT_MS = 10000 ;
+	public static long DEFAULT_INT_MS = 10000;
 	@data_val
 	String id = null;
 
@@ -107,77 +108,77 @@ public class Task
 		this.desc = d;
 		return this;
 	}
-	
+
 	public long getIntervalMS()
 	{
-		return this.intervalMS ;
+		return this.intervalMS;
 	}
-	
+
 	public Task withIntervalMS(long ms)
 	{
-		if(ms<=0)
-			throw new IllegalArgumentException("interval ms must >0") ;
-		this.intervalMS = ms ;
-		return this ;
+		if (ms <= 0)
+			throw new IllegalArgumentException("interval ms must >0");
+		this.intervalMS = ms;
+		return this;
 	}
 
 	public List<TaskAction> getActions()
 	{
 		return this.actions;
 	}
-	
+
 	public TaskAction getActionById(String id)
 	{
-		for(TaskAction ta:this.actions)
+		for (TaskAction ta : this.actions)
 		{
-			if(ta.getId().equals(id))
-				return ta ;
+			if (ta.getId().equals(id))
+				return ta;
 		}
-		return null ;
+		return null;
 	}
 
 	public TaskAction setAction(TaskAction ta)
 	{
-		int s = this.actions.size() ;
-		for(int i = 0 ; i < s ; i ++)
+		int s = this.actions.size();
+		for (int i = 0; i < s; i++)
 		{
 			TaskAction act = this.actions.get(i);
-			if(act.getId().equals(ta.getId()))
+			if (act.getId().equals(ta.getId()))
 			{
-				this.actions.set(i,ta) ;
-				return ta ;
+				this.actions.set(i, ta);
+				return ta;
 			}
 		}
-		
-		this.actions.add(ta) ;
+
+		this.actions.add(ta);
 		return ta;
 	}
-	
+
 	public TaskAction delAction(String actid)
 	{
-		int s = this.actions.size() ;
-		for(int i = 0 ; i < s ; i ++)
+		int s = this.actions.size();
+		for (int i = 0; i < s; i++)
 		{
 			TaskAction act = this.actions.get(i);
-			if(act.getId().equals(actid))
+			if (act.getId().equals(actid))
 			{
-				return this.actions.remove(i) ;
+				return this.actions.remove(i);
 			}
 		}
-		return null ;
+		return null;
 	}
-	
+
 	public boolean isValid()
 	{
-		if(this.actions==null||actions.size()<=0)
+		if (this.actions == null || actions.size() <= 0)
 			return false;
 		boolean r = false;
-		for(TaskAction ta:actions)
+		for (TaskAction ta : actions)
 		{
-			if(ta.isValid())
-				r = true ;
+			if (ta.isValid())
+				r = true;
 		}
-		return r ;
+		return r;
 	}
 
 	public long getLastRunDT()
@@ -193,82 +194,89 @@ public class Task
 	private Thread rtTh = null;
 
 	private volatile boolean rtRun = false;
-	
-	private ScriptEngine scriptEng = null ;
-	
+
+	private ScriptEngine scriptEng = null;
+
+	private UAContext cxt = null;
+
 	private void taskRunInit()
 	{
-		scriptEng = UAManager.createJSEngine(this.prj) ;
+		cxt = new UAContext(this.prj);
+		scriptEng = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
+											// ;
 		scriptEng.put("$task", this);
-		//scriptEng = this.prj.
-		for(TaskAction ta:this.actions)
+		// scriptEng = this.prj.
+		for (TaskAction ta : this.actions)
 		{
 			ta.initTaskAction(this);
 		}
 	}
-	
+
 	public ScriptEngine getScriptEngine()
 	{
 		return scriptEng;
 	}
 	
+	public UAContext getContext()
+	{
+		return cxt ;
+	}
+
 	private void taskRunInt()
 	{
-		for(TaskAction ta:this.actions)
+		for (TaskAction ta : this.actions)
 		{
 			ta.runInterval(this.prj);
 		}
 	}
-	
+
 	private void taskRunEnd()
 	{
-		for(TaskAction ta:this.actions)
+		for (TaskAction ta : this.actions)
 		{
 			ta.runEnd(this.prj);
 		}
 	}
 
-	
-	private Runnable taskRunner=new Runnable()
-			{
-	public void run()
-	{
-		try
+	private Runnable taskRunner = new Runnable() {
+		public void run()
 		{
-			taskRunInit();
-			
-			while (rtRun)
+			try
 			{
-				Thread.sleep(intervalMS);
-				taskRunInt();
+				taskRunInit();
+
+				while (rtRun)
+				{
+					Thread.sleep(intervalMS);
+					taskRunInt();
+				}
+			}
+			catch ( InterruptedException ie)
+			{
+				// do nothing
+			}
+			catch ( Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				taskRunEnd();
+
+				rtRun = false;
+				rtTh = null;
 			}
 		}
-		catch(InterruptedException ie)
-		{
-			//do nothing
-		}
-		catch ( Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			taskRunEnd();
-			
-			rtRun = false;
-			rtTh = null;
-		}
-	}
-			};
+	};
 
 	synchronized public boolean RT_start()
 	{
-		if(!isValid())
+		if (!isValid())
 			return false;
-		
+
 		if (rtTh != null)
 			return true;
-		
+
 		rtTh = new Thread(taskRunner, "iottree-task-" + this.prj.getName() + "-" + this.getName());
 		rtRun = true;
 		rtTh.start();
@@ -277,14 +285,13 @@ public class Task
 
 	public void RT_stop()
 	{
-		Thread t = rtTh ;
+		Thread t = rtTh;
 		if (t == null)
 			return;
 
-		
 		t.interrupt();
 		taskRunEnd();
-		rtTh = null ;
+		rtTh = null;
 		rtRun = false;
 	}
 
@@ -297,32 +304,32 @@ public class Task
 	{
 
 	}
-//
-//	private transient boolean bInited = false;
-//
-//	public void runInLoop(UAPrj p)
-//	{
-//		if (!bInited)
-//		{
-//			try
-//			{
-//				// runInit(p);
-//			}
-//			finally
-//			{
-//				bInited = true;
-//			}
-//			return;
-//		}
-//
-//		// if(!this.bInitScriptOk)
-//		// return ;
-//		//
-//		// if(System.currentTimeMillis()-lastRunDT<intervalMS)
-//		// return ;
-//		//
-//		// this.runInterval(p) ;
-//	}
+	//
+	// private transient boolean bInited = false;
+	//
+	// public void runInLoop(UAPrj p)
+	// {
+	// if (!bInited)
+	// {
+	// try
+	// {
+	// // runInit(p);
+	// }
+	// finally
+	// {
+	// bInited = true;
+	// }
+	// return;
+	// }
+	//
+	// // if(!this.bInitScriptOk)
+	// // return ;
+	// //
+	// // if(System.currentTimeMillis()-lastRunDT<intervalMS)
+	// // return ;
+	// //
+	// // this.runInterval(p) ;
+	// }
 
 	public boolean isEnable()
 	{

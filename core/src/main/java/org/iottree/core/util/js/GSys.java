@@ -209,5 +209,6 @@ public class GSys
 	public void alert(String title,boolean bvoice)
 	{
 		//this.prj.t
+		System.out.println("out alert="+title+" voice="+bvoice) ;
 	}
 }

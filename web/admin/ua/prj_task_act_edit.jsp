@@ -76,25 +76,26 @@ dlg.resize_to(800,600);
       <input type="text" name="desc" id="desc" value="<%=desc %>" autocomplete="off" class="layui-input"/>
     </div>
   </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">init script</label>
+    <div class="layui-input-block" >
+      <textarea id="ta_init_sc" rows="5" cols="180" style="width:99%;height:50%"><%=init_sc %></textarea>
+    </div>
+  </div>
   <div class="layui-tab" lay-filter="tabDemo">
   <ul class="layui-tab-title">
-    <li  lay-id="1">init script</li>
+    
     <li class="layui-this" lay-id="2">run script</li>
     <li lay-id="3">end script</li>
   </ul>
   <div class="layui-tab-content">
-    <div class="layui-tab-item">
-  
-      <textarea id="ta_init_sc" rows="20" cols="180" style="width:99%;height:70%"><%=init_sc %></textarea>
-      
-    </div>
     <div class="layui-tab-item layui-show">
    function(){
-      <textarea id="ta_run_sc" rows="20" cols="180" style="width:99%;height:70%"><%=run_sc %></textarea>
+      <textarea id="ta_run_sc" rows="20" cols="180" style="width:99%;height:20%"><%=run_sc %></textarea>
       }
     </div>
     <div class="layui-tab-item">
-      <textarea id="ta_end_sc" rows="20" cols="180" style="width:99%;height:70%"><%=end_sc %></textarea>
+      <textarea id="ta_end_sc" rows="20" cols="180" style="width:99%;height:20%"><%=end_sc %></textarea>
 	</div>
     
   </div>

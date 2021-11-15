@@ -164,18 +164,15 @@ public class TaskAction
 
 			if (Convert.isNotNullTrimEmpty(this.initScript))
 			{
-				//engine.eval("function __JsTaskAction_init_" + this.getId() + "(){\r\n"
-				//		+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.initScript + "}\r\n");
-				//Invocable jsInvoke = (Invocable) engine;
-				//jsInvoke.invokeFunction("__JsTaskAction_init_" + this.getId());
-				engine.eval(this.initScript) ;
+				//engine.eval(this.initScript) ;
+				this.task.getContext().scriptEval(this.initScript);
 			}
 
 			if (Convert.isNotNullTrimEmpty(this.runScript))
 			{
-				engine.eval("function __JsTaskAction_run_" + this.getId() + "(){\r\n"
+				this.task.getContext().scriptEval("function __JsTaskAction_run_" + this.getId() + "(){\r\n"
 						//+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.runScript + "}\r\n");
-						+ this.runScript + "}\r\n");
+						+ this.runScript + "\r\n}");
 				this.bRunScriptReady = true;
 			}
 
@@ -188,6 +185,7 @@ public class TaskAction
 		}
 		catch ( Exception ee)
 		{
+			System.out.println("Task ["+this.task.getName()+"] init action ["+this.getName()+"] err") ;
 			ee.printStackTrace();
 			this.initScriptErr = ee.getMessage();
 			bInitScriptOk = false;
@@ -203,8 +201,9 @@ public class TaskAction
 
 		try
 		{
-			Invocable jsInvoke = (Invocable) this.task.getScriptEngine();
-			jsInvoke.invokeFunction("__JsTaskAction_run_" + this.getId());
+			this.task.getContext().scriptInvoke("__JsTaskAction_run_" + this.getId());
+			//Invocable jsInvoke = (Invocable) this.task.getScriptEngine();
+			//jsInvoke.invokeFunction("__JsTaskAction_run_" + this.getId());
 			this.bLastRunOk = true;
 		}
 		catch ( ScriptException se)
@@ -232,13 +231,13 @@ public class TaskAction
 			{
 //				engine.eval("function __JsTaskAction_end_" + this.getId() + "(){\r\n"
 //						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.endScript + "}\r\n");
-				 this.task.getScriptEngine().eval(this.endScript) ;
+				 //this.task.getScriptEngine().eval(this.endScript) ;
+				 this.task.getContext().scriptEval(this.endScript);
 				//this.bEndScriptReady = true;
 			}
 
 			//Invocable jsInvoke = (Invocable) p.getJSEngine();
 			//jsInvoke.invokeFunction("__JsTaskAction_end_" + this.getId(), p.getJSOb(), this);
-
 		}
 		catch ( ScriptException se)
 		{

@@ -872,7 +872,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		ScriptEngine engine = getJSEngine();
 		try
 		{
-			engine.eval("function " + FN_PRJ_SCRIPT + "(){\r\n" + script + "}\r\n");
+			engine.eval("function " + FN_PRJ_SCRIPT + "(){\r\n" + script + "\r\n}");
 			this.jsSetError = null;
 			// js set ok
 

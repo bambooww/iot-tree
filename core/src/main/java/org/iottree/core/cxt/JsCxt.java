@@ -42,7 +42,7 @@ public class JsCxt
 		
 		engine.eval("function _do_adapter(){\r\n"
 				 +script_txt
-				+"}\r\n");
+				+"\r\n}");
 		return engine ;
 	}
 	

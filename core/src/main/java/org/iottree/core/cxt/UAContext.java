@@ -63,9 +63,9 @@ public class UAContext
 	private transient ScriptEngine scriptEng = null;
 	
 	
-	public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
+	//public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
 
-	public UAContext(UANodeOCTagsCxt nodecxt) throws ScriptException
+	public UAContext(UANodeOCTagsCxt nodecxt)// throws ScriptException
 	{
 
 		nodeCxt = nodecxt;
@@ -96,7 +96,7 @@ public class UAContext
 			if(v!=null)
 				scriptEng.put(n, v);
 		}
-		scriptEng.eval("var " + FN_TEMP_VAR + "={};");
+		//scriptEng.eval("var " + FN_TEMP_VAR + "={};");
 	}
 
 //	public Bindings getJsObBindings()
@@ -105,7 +105,7 @@ public class UAContext
 //	}
 	
 
-	private ScriptEngine getScriptEngine()
+	public ScriptEngine getScriptEngine()
 	{
 		return scriptEng;
 	}
