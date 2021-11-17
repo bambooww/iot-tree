@@ -42,9 +42,15 @@ public class Task
 
 	@data_val
 	String name = null;
+	
+	@data_val
+	String title = null ;
 
 	@data_val
 	String desc = null;
+	
+	@data_val(param_name = "enable")
+	boolean bEnable = false ;
 
 	@data_val(param_name = "int_ms")
 	long intervalMS = DEFAULT_INT_MS;
@@ -52,7 +58,9 @@ public class Task
 	@data_obj(param_name = "actions", obj_c = TaskAction.class)
 	List<TaskAction> actions = new ArrayList<>();
 
-	private transient UAPrj prj = null;
+	private transient String prjId = null ;
+	
+	//private transient UAPrj prj = null;
 
 	private transient boolean bLastRunOk = false;
 
@@ -64,15 +72,15 @@ public class Task
 
 	private transient String lastRunErr = null;
 
-	public Task(UAPrj prj)
+	public Task(String prjid)
 	{
-		this.prj = prj;
+		this.prjId = prjid;
 		this.id = CompressUUID.createNewId();
 	}
 
 	public UAPrj getPrj()
 	{
-		return prj;
+		return UAManager.getInstance().getPrjById(this.prjId) ;
 	}
 
 	public String getId()
@@ -85,6 +93,17 @@ public class Task
 		this.id = id;
 		return this;
 	}
+	
+	public boolean isEnable()
+	{
+		return this.bEnable ;
+	}
+	
+	public Task withEnable(boolean b)
+	{
+		this.bEnable = b ;
+		return this ;
+	}
 
 	@HostAccess.Export
 	public String getName()
@@ -94,8 +113,24 @@ public class Task
 
 	public Task withName(String n)
 	{
+		StringBuilder sb = new StringBuilder();
+		if(!Convert.checkVarName(n, true, sb))
+			throw new IllegalArgumentException(sb.toString()) ;
 		this.name = n;
 		return this;
+	}
+	
+	public String getTitle()
+	{
+		if(this.title==null)
+			return "" ;
+		return this.title ;
+	}
+	
+	public Task withTitle(String t)
+	{
+		this.title = t ;
+		return this ;
 	}
 
 	public String getDesc()
@@ -199,17 +234,24 @@ public class Task
 
 	private UAContext cxt = null;
 
-	private void taskRunInit()
+	private boolean taskRunInit()
 	{
-		cxt = new UAContext(this.prj);
+		cxt = new UAContext(this.getPrj());
 		scriptEng = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
 											// ;
 		scriptEng.put("$task", this);
 		// scriptEng = this.prj.
+		boolean bret = false;
 		for (TaskAction ta : this.actions)
 		{
-			ta.initTaskAction(this);
+			if(!ta.isEnable())
+				continue ;
+			if(ta.initTaskAction(this))
+			{
+				bret = true ;
+			}
 		}
+		return bret ;
 	}
 
 	public ScriptEngine getScriptEngine()
@@ -226,7 +268,9 @@ public class Task
 	{
 		for (TaskAction ta : this.actions)
 		{
-			ta.runInterval(this.prj);
+			if(!ta.isEnable())
+				continue ;
+			ta.runInterval(this.getPrj());
 		}
 	}
 
@@ -234,17 +278,27 @@ public class Task
 	{
 		for (TaskAction ta : this.actions)
 		{
-			ta.runEnd(this.prj);
+			if(!ta.isEnable())
+				continue ;
+			ta.runEnd(this.getPrj());
 		}
 	}
 
 	private Runnable taskRunner = new Runnable() {
 		public void run()
 		{
+			if(!taskRunInit())
+			{
+				System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init failed,it cannot run") ;
+				return ;
+			}
+			else
+			{
+				System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init ok to run") ;
+			}
+			
 			try
 			{
-				taskRunInit();
-
 				while (rtRun)
 				{
 					Thread.sleep(intervalMS);
@@ -271,13 +325,16 @@ public class Task
 
 	synchronized public boolean RT_start()
 	{
+		if(!this.isEnable())
+			return false;
+		
 		if (!isValid())
 			return false;
 
 		if (rtTh != null)
 			return true;
 
-		rtTh = new Thread(taskRunner, "iottree-task-" + this.prj.getName() + "-" + this.getName());
+		rtTh = new Thread(taskRunner, "iottree-task-" + this.getPrj().getName() + "-" + this.getName());
 		rtRun = true;
 		rtTh.start();
 		return true;
@@ -330,10 +387,5 @@ public class Task
 	// //
 	// // this.runInterval(p) ;
 	// }
-
-	public boolean isEnable()
-	{
-		return true;
-	}
 
 }

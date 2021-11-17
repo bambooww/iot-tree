@@ -359,7 +359,7 @@ public class ModbusCmdReadBits extends ModbusCmd
 	    clearInputStream(ins) ;
 	    ous.write(pdata) ;
 	    ous.flush() ;
-	    //��ȡǰ6���ֽ�
+	    //
 	    byte[] read_mbap = new byte[6];
 	    do
 	    {

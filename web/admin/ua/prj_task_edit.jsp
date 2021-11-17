@@ -23,23 +23,32 @@
 		}
 	}
 String name = "" ;
+String title = "" ;
 long int_ms = Task.DEFAULT_INT_MS ;
 String desc = "" ;
-
+boolean benable = false;
 if(jst!=null)
 {
 		name = jst.getName() ;
+		title = jst.getTitle() ;
 		desc = jst.getDesc() ;
 		int_ms = jst.getIntervalMS();
+		benable = jst.isEnable() ;
 }
 
 if(id==null)
 	id = "" ;
 if(name==null)
 	name = "" ;
-
+if(title==null)
+	title = "" ;
 if(desc==null)
 	desc = "" ;
+
+String chked_en = "" ;
+
+if(benable)
+	chked_en = "checked=checked";
 %>
 <html>
 <head>
@@ -55,10 +64,20 @@ dlg.resize_to(600,300);
 </head>
 <body>
 <form class="layui-form" action="">
- <div class="layui-form-item">
+<div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" name="name" id="name" value="<%=name%>" autocomplete="off" class="layui-input"/>
+	  </div>
+	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	  <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">Title</label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="name" id="name" value="<%=name%>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="title" id="title" value="<%=title%>" autocomplete="off" class="layui-input"/>
     </div>
     <label class="layui-form-mid">Interval MS</label>
     <div class="layui-input-inline">
@@ -74,6 +93,12 @@ dlg.resize_to(600,300);
 </form>
 </body>
 <script type="text/javascript">
+
+layui.use('form', function(){
+	  var form = layui.form;
+	  form.render();
+	});
+	
 function win_close()
 {
 	dlg.close(0);
@@ -87,17 +112,18 @@ function do_submit(cb)
 		return ;
 	}
 	
+	var t = document.getElementById('title').value;
 	//var desc = document.getElementById('desc').value;
 	//if(desc==null)
 		desc =$("#desc").val(); ;
-		
+		var ben = $("#enable").prop("checked") ;
 	var int_ms = $("#int_ms").val();
 	var int_ms = parseInt(int_ms);
 	if(int_ms==NaN||int_ms<=0)
 	{
 		cb(false,'Please input valid interval ms') ;
 	}
-	cb(true,{name:n,desc:desc,int_ms:int_ms})
+	cb(true,{name:n,title:t,desc:desc,int_ms:int_ms,enable:ben})
 	
 	//document.getElementById('form1').submit() ;
 }

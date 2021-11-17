@@ -28,6 +28,9 @@ public class TaskAction
 
 	@data_val
 	String desc = null;
+	
+	@data_val(param_name = "enable")
+	boolean bEnable = true ;
 	/**
 	 * run once before run
 	 */
@@ -101,6 +104,18 @@ public class TaskAction
 		this.desc = d;
 		return this;
 	}
+	
+
+	public boolean isEnable()
+	{
+		return this.bEnable ;
+	}
+	
+	public TaskAction withEnable(boolean b)
+	{
+		this.bEnable = b ;
+		return this ;
+	}
 
 	public String getInitScript()
 	{
@@ -153,6 +168,9 @@ public class TaskAction
 
 	boolean initTaskAction(Task t)
 	{
+		if(!this.isEnable())
+			return false;
+		
 		this.task = t;
 		ScriptEngine engine = this.task.getScriptEngine();
 		engine.put("$task_action", this);
@@ -196,6 +214,9 @@ public class TaskAction
 
 	void runInterval(UAPrj p)
 	{
+		if(!this.isEnable())
+			return;
+		
 		if (!bRunScriptReady)
 			return;
 
@@ -222,6 +243,8 @@ public class TaskAction
 
 	public void runEnd(UAPrj p)
 	{
+		if(!this.isEnable())
+			return;
 //		if (!bEndScriptReady)
 //			return;
 

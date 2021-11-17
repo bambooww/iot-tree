@@ -111,8 +111,8 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 
 	protected int getRefLockedLoc()
 	{
-		if(hasDevRefId())
-			return REF_LOCKED ;
+		//if(hasDevRefId())
+		//	return REF_LOCKED ;
 		return REF_LOCKED_NOT;//super.getRefLockedLoc() ;
 	}
 	

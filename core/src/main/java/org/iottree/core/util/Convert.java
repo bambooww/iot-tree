@@ -524,7 +524,8 @@ public class Convert
 	{
 		if (n == null || n.equals(""))
 		{
-			invalidreson.append("name cannot be null or empty!");
+			if(invalidreson!=null)
+				invalidreson.append("name cannot be null or empty!");
 			return false;
 		}
 
@@ -534,7 +535,8 @@ public class Convert
 			boolean bc1 = (c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z');
 			if (!bc1)
 			{
-				invalidreson.append("name first char must be a-z A-Z");
+				if(invalidreson!=null)
+					invalidreson.append("name first char must be a-z A-Z");
 				return false;
 			}
 		}
@@ -543,7 +545,8 @@ public class Convert
 			boolean bc1 = (c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z') || c1 == '_';
 			if (!bc1)
 			{
-				invalidreson.append("name first char must be a-z A-Z _");
+				if(invalidreson!=null)
+					invalidreson.append("name first char must be a-z A-Z _");
 				return false;
 			}
 		}
@@ -555,7 +558,8 @@ public class Convert
 			boolean bc = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
 			if (!bc)
 			{
-				invalidreson.append("invalid char =" + c);
+				if(invalidreson!=null)
+					invalidreson.append("invalid char =" + c);
 				return false;
 			}
 		}

@@ -86,6 +86,7 @@ public class UAManager implements IResCxt
 		constrcuctTree();
 	}
 	
+	
 	private void constrcuctTree()
 	{
 		for(UAPrj r:reps)
@@ -136,7 +137,6 @@ public class UAManager implements IResCxt
 				}
 			}
 		}
-		
 		
 		return reps;
 	}

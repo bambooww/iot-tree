@@ -34,6 +34,8 @@ String init_sc = "" ;
 String run_sc = "" ;
 String end_sc = "" ;
 
+boolean benable = true ;
+
 if(ta!=null)
 {
 		name = ta.getName() ;
@@ -41,6 +43,7 @@ if(ta!=null)
 		init_sc = ta.getInitScript();
 		run_sc =  ta.getRunScript();
 		end_sc =ta.getEndScript();
+		benable = ta.isEnable() ;
 }
 
 if(actid==null)
@@ -51,6 +54,11 @@ if(title==null)
 	title = "" ;
 if(desc==null)
 	desc = "" ;
+
+String chked_en = "" ;
+
+if(benable)
+	chked_en = "checked=checked";
 %>
 <html>
 <head>
@@ -66,6 +74,16 @@ dlg.resize_to(800,600);
 </head>
 <body>
 <form class="layui-form" action="">
+<div class="layui-form-item">
+    <label class="layui-form-label">Enable:</label>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid"></div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	  
+	  </div>
+  </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
@@ -105,6 +123,12 @@ dlg.resize_to(800,600);
 </body>
 <script type="text/javascript">
 
+
+layui.use('form', function(){
+	  var form = layui.form;
+	  form.render();
+	});
+	
 function win_close()
 {
 	dlg.close(0);
@@ -122,11 +146,12 @@ function do_submit(cb)
 	//var desc = document.getElementById('desc').value;
 	//if(desc==null)
 		desc ='' ;
+		var ben = $("#enable").prop("checked") ;
 	var init_sc = $("#ta_init_sc").val();
 	var run_sc = $("#ta_run_sc").val();
 	var end_sc = $("#ta_end_sc").val();
 	//var dbname=document.getElementById('db_name').value;
-	cb(true,{"dx_/name:string":n,"dx_/desc:string":desc,"dx_/init_script:string":init_sc,"dx_/run_script:string":run_sc,"dx_/end_script:string":end_sc})
+	cb(true,{"dx_/enable:bool":ben,"dx_/name:string":n,"dx_/desc:string":desc,"dx_/init_script:string":init_sc,"dx_/run_script:string":run_sc,"dx_/end_script:string":end_sc})
 	
 	//document.getElementById('form1').submit() ;
 }

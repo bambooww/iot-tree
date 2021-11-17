@@ -623,6 +623,20 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 		this.RT_setSysTagVal("_name", this.getName(), true);
 		this.RT_setSysTagVal("_title", this.getTitle(), true);
+		
+		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
+		if (jsts != null&&jsts.size()>0)
+		{
+			for (Task jst : jsts)
+			{
+				String n = jst.getName() ;
+				if(Convert.isNullOrEmpty(n))
+					continue ;
+				if(!Convert.checkVarName(n, false, null))
+					continue;
+				this.setSysTag("_task_"+n, "task is running or not","",ValTP.vt_bool) ;
+			}
+		}
 	}
 
 	@Override
@@ -647,6 +661,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		this.RT_setSysTagVal("_hour", hour, true);
 		this.RT_setSysTagVal("_minute", min, true);
 		this.RT_setSysTagVal("_second", sec, true);
+		
+		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
+		if (jsts != null)
+		{
+			for (Task jst : jsts)
+			{
+				String n = jst.getName() ;
+				if(Convert.isNullOrEmpty(n))
+					continue ;
+				this.RT_setSysTagVal("_task_"+n, jst.RT_isRunning()) ;
+			}
+		}
 	}
 
 	private Thread rtTh = null;

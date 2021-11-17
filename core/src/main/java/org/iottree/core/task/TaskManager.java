@@ -96,9 +96,6 @@ public class TaskManager
 	
 	private List<Task> loadJsTasks(String prjid) throws Exception
 	{
-		UAPrj p = UAManager.getInstance().getPrjById(prjid) ;
-		if(p==null)
-			throw new Exception("no prj found") ;
 		 File  prjdir = UAManager.getPrjFileSubDir(prjid);
 		 if(!prjdir.exists())
 			 return null ;
@@ -121,7 +118,7 @@ public class TaskManager
 			 XmlData xd = XmlData.readFromFile(tf);
 			 if(xd==null)
 				 continue;
-			 Task jst=new Task(p);
+			 Task jst=new Task(prjid);
 			 if(!DataTranserXml.injectXmDataToObj(jst, xd))
 				 continue;
 			 rets.add(jst);
@@ -141,17 +138,19 @@ public class TaskManager
 	{
 		List<Task> ts = getTasks(prjid);
 		int s = ts.size() ;
-		for(int i = 0 ; i < s ; i ++)
+		int i ;
+		for(i = 0 ; i < s ; i ++)
 		{
 			Task t = ts.get(i);
 			if(t.getId().equals(jst.getId()))
 			{
 				jst.actions = t.actions ;
 				ts.set(i,jst) ;
-				return jst ;
+				break ;
 			}
 		}
-		ts.add(jst) ;
+		if(i>=s)
+			ts.add(jst) ;
 		saveTask(prjid,jst);
 		return jst ;
 	}

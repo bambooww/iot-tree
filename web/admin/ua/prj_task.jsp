@@ -99,14 +99,17 @@ for(Task jt:jts)
   <thead>
     <tr>
       <th><%=jt.getName() %></th>
-      <th><%="" %></th>
+      <th><%=jt.getTitle() %></th>
       
       <th>
-      <span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t %>
       
       <%
 if(jt.isEnable())
 {
+%>
+<span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t %>
+      
+<%
 	if(jt.RT_isRunning())
 	{
 %>
@@ -121,6 +124,11 @@ if(jt.isEnable())
 <i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start task" onclick="start_stop(true,'<%=jt.getId()%>')"></i>
 <%
 	}
+}
+else
+{
+%><span id="" style="width:20px;height:20px;background-color: grey;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Disabled
+<%
 }
 %>
         

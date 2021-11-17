@@ -2,6 +2,7 @@ package org.iottree.core.util.js;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Date;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAPrj;
@@ -36,6 +37,11 @@ public class GSys
 	public void print_set(boolean b)
 	{
 		bPrintOn = b;
+	}
+	
+	public String get_date_str()
+	{
+		return Convert.toFullYMDHMS(new Date());
 	}
 
 	@HostAccess.Export

@@ -25,7 +25,8 @@ if(prj==null)
 String taskid = request.getParameter("taskid") ;
 String actid =  request.getParameter("actid") ;
 String name = request.getParameter("name") ;
-
+String title = request.getParameter("title") ;
+boolean ben = "true".equals(request.getParameter("enable"));
 String desc = request.getParameter("desc") ;
 long int_ms = Convert.parseToInt64(request.getParameter("int_ms"), Task.DEFAULT_INT_MS) ;
 
@@ -34,12 +35,11 @@ switch(op)
 {
 case "add":
 case "edit":
-	Task jst = new Task(prj) ;
-	
-	jst.withName(name).withIntervalMS(int_ms).withDesc(desc);//.withInitScript(initsc).withRunScript(runsc).withEndScript(endsc) ;
-	
+	Task jst = new Task(prj.getId()) ;
 	try
 	{
+		jst.withName(name).withEnable(ben).withTitle(title).withIntervalMS(int_ms).withDesc(desc);//.withInitScript(initsc).withRunScript(runsc).withEndScript(endsc) ;
+		
 		if("edit".equals(op))
 		{
 			if(!Convert.checkReqEmpty(request, out, "taskid"))
@@ -52,7 +52,7 @@ case "edit":
 	}
 	catch(Exception e)
 	{
-		e.printStackTrace();
+		//e.printStackTrace();
 		out.print(e.getMessage()) ;
 	}
 	break;

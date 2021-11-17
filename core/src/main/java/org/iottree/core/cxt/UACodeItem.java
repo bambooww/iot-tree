@@ -175,7 +175,10 @@ public class UACodeItem
 	{
 		if(blockFn!=null)
 			return runCodeFunc();
-		return codeCS.eval() ;
+		synchronized(cxt)
+		{
+			return codeCS.eval() ;
+		}
 //		if(blockFn==null)
 //			return codeCS.eval() ;
 //		//Invocable inv = (Invocable)cxt.getScriptEngine() ;
