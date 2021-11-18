@@ -45,6 +45,7 @@
 <script src="/_js/oc/oc.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<script src="/_js/oc/hmi_util.js"></script>
   <!-- 
 
 -->
@@ -369,6 +370,7 @@ margin-top:5px;
 
 var layuiEle ;
 var path="<%=path%>";
+$util.hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;

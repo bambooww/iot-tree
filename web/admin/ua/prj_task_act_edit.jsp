@@ -59,6 +59,9 @@ String chked_en = "" ;
 
 if(benable)
 	chked_en = "checked=checked";
+
+UAPrj prj = jst.getPrj() ;
+String prj_path = prj.getNodePath() ;
 %>
 <html>
 <head>
@@ -98,6 +101,7 @@ dlg.resize_to(800,600);
     <label class="layui-form-label">init script</label>
     <div class="layui-input-block" >
       <textarea id="ta_init_sc" rows="5" cols="180" style="width:99%;height:50%"><%=init_sc %></textarea>
+      <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
   </div>
   <div class="layui-tab" lay-filter="tabDemo">
@@ -122,7 +126,8 @@ dlg.resize_to(800,600);
 </form>
 </body>
 <script type="text/javascript">
-
+var prjid="<%=prjid%>";
+var prj_path = "<%=prj_path%>" ;
 
 layui.use('form', function(){
 	  var form = layui.form;
@@ -156,5 +161,57 @@ function do_submit(cb)
 	//document.getElementById('form1').submit() ;
 }
 
+
+function insert_tag()
+{
+	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?path="+prj_path,//+"&val="+tmpv,
+			{title:"Select Tag in Context",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					var ret = dlgw.get_val() ;
+					insertAtCursor("ta_init_sc", ret);
+					 dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function insertAtCursor(txtarea_id, txt)
+{
+	var txtarea = document.getElementById(txtarea_id) ;
+	if(txtarea==null)
+		return ;
+	if (document.selection)
+	{//IE support
+		txtarea.focus();
+		sel = document.selection.createRange();
+		sel.text = txt;
+		sel.select();
+	}
+	else if(txtarea.selectionStart || txtarea.selectionStart == '0')
+	{//MOZILLA/NETSCAPE support
+		var startPos = txtarea.selectionStart;
+		var endPos = txtarea.selectionEnd;
+		// save scrollTop before insert www.keleyi.com
+		var restoreTop = txtarea.scrollTop;
+		txtarea.value = txtarea.value.substring(0, startPos) + txt + txtarea.value.substring(endPos, txtarea.value.length);
+		if (restoreTop > 0) {
+		txtarea.scrollTop = restoreTop;
+		}
+		txtarea.focus();
+		txtarea.selectionStart = startPos + txt.length;
+		txtarea.selectionEnd = startPos + txt.length;
+	}
+	else
+	{
+		txtarea.value += txt;
+		txtarea.focus();
+	}
+}
 </script>
 </html>

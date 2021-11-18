@@ -45,7 +45,9 @@ dlg.resize_to(500,500);
   <div class="layui-form-item" id="divtjs" style="display:none;">
     <label class="layui-form-label">Client Script:</label>
     <div class="layui-input-block">
+    ()=>{
       <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10"></textarea>
+      }
       <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
     
@@ -235,9 +237,6 @@ function editplug_get(cb)
 	}
 	
 	return {bexp:bexp,jstxt:jstxt,unbind:bunbind};
-	//var dbname=document.getElementById('db_name').value;
-	
-	//document.getElementById('form1').submit() ;
 }
 </script>
 </html>

@@ -69,6 +69,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	 */
 	@data_val(param_name = "script_int")
 	long scriptInt = 10000;
+	
 
 	@data_val(param_name = "midtag_int")
 	long midTagScriptInt = 100;
@@ -76,6 +77,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	@data_val(param_name = "hmi_main_id")
 	String hmiMainId = null;
 
+	@data_val
+	String operators = null ;
+	
+	@data_val(param_name="perm_dur")
+	int permDur = 300 ;
 	/**
 	 * last script date time
 	 */
@@ -351,13 +357,20 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 		r.addPropItem(new PropItem("script_int", "JavaScript Interval", "JavaScript run interval(ms)", PValTP.vt_int,
 				false, null, null, "10000"));
-
+		
+		r.addPropItem(new PropItem("operators", "Operators",
+				"Operators may has name and password,it's may need to input when do some operation command.", PValTP.vt_str, false, null, null,
+				"").withTxtMultiLine(true));
+		
+		r.addPropItem(new PropItem("perm_dur", "Permission duration In seconds",
+				"Duration of authority after operator authentication.", PValTP.vt_int, false, null, null,
+				"300"));
 		return r;
 	}
 
 	public Object getPropValue(String groupn, String itemn)
 	{
-		if ("rep".contentEquals(groupn))
+		if ("prj".contentEquals(groupn))
 		{
 			switch (itemn)
 			{
@@ -365,6 +378,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 				return this.script;
 			case "script_int":
 				return this.scriptInt;
+			case "operators":
+				return this.operators;
+			case "perm_dur":
+				return this.permDur ;
 			}
 		}
 		return super.getPropValue(groupn, itemn);
@@ -372,7 +389,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 	public boolean setPropValue(String groupn, String itemn, String strv)
 	{
-		if ("rep".contentEquals(groupn))
+		if ("prj".contentEquals(groupn))
 		{
 			switch (itemn)
 			{
@@ -381,6 +398,12 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 				return true;
 			case "script_int":
 				this.scriptInt = Long.parseLong(strv);
+				return true;
+			case "operators":
+				this.operators=strv; 
+				return true ;
+			case "perm_dur":
+				this.permDur = Integer.parseInt(strv) ;
 				return true;
 			}
 
@@ -976,6 +999,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 			this.midTagScriptRunDT = System.currentTimeMillis();
 		}
 
+	}
+	
+	
+	public boolean checkOperator(String user,String psw)
+	{
+		if(Convert.isNullOrEmpty(this.operators))
+			return false;
+		HashMap<String,String> pms = Convert.transPropStrToMap(this.operators) ;
+		String v = pms.get(user) ;
+		if(Convert.isNullOrEmpty(v))
+			return false;
+		return v.equals(psw) ;
 	}
 
 	private void startStopTask(boolean b)

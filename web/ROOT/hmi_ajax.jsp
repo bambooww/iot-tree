@@ -13,13 +13,12 @@
 		tp= "" ;
 	UAHmi hmi = null ;
 	UANode branchn =null;
-	String hmipath = null ;
+	String hmipath = request.getParameter("hmi_path") ;
 	switch(tp)
 	{
 	case "subp":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_path"))
 			return;
-		hmipath = request.getParameter("hmi_path") ;
 		hmi =  UAUtil.findHmiByPath(hmipath) ;
 		if(hmi==null)
 		{
@@ -58,7 +57,7 @@
 	case "sub":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_id"))
 			return;
-		hmipath = request.getParameter("hmi_path") ;
+		//hmipath = request.getParameter("hmi_path") ;
 		String subid = request.getParameter("sub_id") ;
 		hmi = UAUtil.findHmiByPath(hmipath) ;
 		if(hmi==null)
@@ -139,6 +138,29 @@
 		}
 		
 		ntags.CXT_renderJson(out);
+		break ;
+	case "auth":
+		if(!Convert.checkReqEmpty(request, out, "hmi_path","user","psw"))
+			return;
+		String user = request.getParameter("user") ;
+		String psw = request.getParameter("psw") ;
+		hmi =  UAUtil.findHmiByPath(hmipath) ;
+		if(hmi==null)
+		{
+			out.print("no path hmi found") ;
+			return ;
+		}
+		topn = hmi.getTopNode() ;
+		if(!(topn instanceof UAPrj))
+		{
+			out.print("hmi no in project") ;
+			return ;
+		}
+		UAPrj topprj = (UAPrj)topn ;
+		if(!topprj.checkOperator(user, psw))
+			out.print("check operation permission failed") ;
+		else
+			out.print("succ");
 		break ;
 	default:
 		if(!Convert.checkReqEmpty(request, out, "path"))

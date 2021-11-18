@@ -8,6 +8,8 @@ import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 
+import com.ibm.icu.util.Calendar;
+
 public class GSys
 {
 	boolean bPrintOn = true;
@@ -48,6 +50,52 @@ public class GSys
 	public void log(String s) throws Exception
 	{
 		System.out.println(s);
+	}
+	
+	public int year()
+	{
+		return Calendar.getInstance().get(Calendar.YEAR) ;
+	}
+	
+	/**
+	 * 1-12
+	 * @return
+	 */
+	public int month()
+	{
+		return Calendar.getInstance().get(Calendar.MONTH)+1 ;
+	}
+	
+	public int day_of_month()
+	{
+		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH) ;
+	}
+	
+	/**
+	 * 1-7
+	 * monday - sunday
+	 * @return
+	 */
+	public int day_of_week()
+	{
+		int v = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) ;
+		if(v==1)
+			return 7 ;
+		return v-1 ;
+	}
+	
+	/**
+	 * 0-24
+	 * @return
+	 */
+	public int hour_of_day()
+	{
+		return Calendar.getInstance().get(Calendar.HOUR_OF_DAY) ;
+	}
+	
+	public int minute()
+	{
+		return Calendar.getInstance().get(Calendar.MINUTE) ;
 	}
 
 	/**

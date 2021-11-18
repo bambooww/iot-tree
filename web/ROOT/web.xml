@@ -1,33 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web>
 	<authorization desc="">
-		<default is_login="false" support_portal="true"/>
-		<location path="main.jsp" is_login="true"/>
-		<location path="index.jsp" is_login="true"/>
+		<default is_login="false" />
 	</authorization>
-	<serv_mgr desc="客户关系管理">
-		<mgr_node name="user_mgr" title="工作台">
-			<mgr_node name="user" title="我的主页" url="user_mgr/user_mgr.jsp"/>
-			<mgr_node name="role" title="日历" url="user_mgr/role_mgr.jsp"/>
-			<mgr_node name="org" title="行动" url="user_mgr/org_mgr.jsp"/>
-			<mgr_node name="" title="消息" url="user_mgr/tmp_auth_mgr.jsp" />
-		</mgr_node>
-		<mgr_node name="workday_mgr" title="客户管理" url="workday_mgr/wd_mgr_by_orgnode.jsp" />
-		<mgr_node name="" title="市场" url="dd_mgr/dd_mgr.jsp" />
-		<mgr_node name="" title="销售">
-			<mgr_node name="" title="流程实例监控" url="biz/mgr/biz_flow_mon.jsp" />
-		</mgr_node>
-		<mgr_node name="" title="服务">
-			<mgr_node name="" title="日志实时控制" url="log_mgr/log_mgr.jsp" />
-		</mgr_node>
-		<mgr_node name="" title="费用管理">
-			<mgr_node name="" title="任务控制" url="task_mgr/task_mgr.jsp" />
-		</mgr_node>
-		<mgr_node name="" title="知识管理">
-			<mgr_node name="" title="内存使用" url="sys/jvm.jsp" />
-		</mgr_node>
-		<mgr_node name="" title="报表">
-			<mgr_node name="" title="内存使用" url="sys/jvm.jsp" />
-		</mgr_node>
-	</serv_mgr>
+	
 </web>
