@@ -7,28 +7,43 @@ public class DataUtil
 {
 	public final static byte[] intToBytes(int i)
 	{
+		return intToBytes(i,false);
+	}
+	
+	public final static byte[] intToBytes(int i,boolean bmodbus)
+	{
 		// int is 32bits, 4Bytes
 		byte[] bytes = new byte[4];
 
-		intToBytes(i, bytes,0);
+		intToBytes(i, bytes,0,bmodbus);
 
 		return bytes;
 	}
 	
-	public final static void intToBytes(int i,byte[] bytes,int offset)
+	public final static void intToBytes(int i,byte[] bytes,int offset,boolean bmodbus)
 	{
 		// int is 32bits, 4Bytes
 		//byte[] bytes = new byte[4];
-
-		bytes[offset+3] = (byte) (i & 0xFF);
-
-		i = i >>> 8;
-		bytes[offset+2] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+1] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset] = (byte) (i & 0xFF);
-
+		if(bmodbus)
+		{// b3 b2 b1 b0 - b1 b0 b3 b2
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+0] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+3] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+		}
+		else
+		{
+			bytes[offset+3] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset] = (byte) (i & 0xFF);
+		}
 		//return bytes;
 	}
 	
@@ -66,117 +81,161 @@ public class DataUtil
 		bytes[offset] = (byte) (i & 0xFF);
 	}
 	
-	public final static int bytesToInt(byte[] bytes)
+	public final static int bytesToInt(byte[] bytes,boolean bmodbus)
 	{
-		return bytesToInt(bytes,0);
+		return bytesToInt(bytes,0,bmodbus);
 	}
 
-	public final static int bytesToInt(byte[] bytes,int offset)
+	public final static int bytesToInt(byte[] bytes,int offset,boolean bmodbus)
 	{
 		if (bytes == null || bytes.length < 4+offset)
 			throw new IllegalArgumentException("byte array size must be "+(4+offset));
 
 		int i = 0;
-		i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
-		i = (i << 8) | (bytes[offset+2] & 0xFF);
-		i = (i << 8) | (bytes[offset+3] & 0xFF);
+		if(bmodbus)
+		{ // b0 b1 b2 b3  - b2 b3 b0 b1 (based word)
+			i = ((bytes[offset+2] & 0xFF) << 8) | (bytes[offset+3] & 0xFF);
+			i = (i << 8) | (bytes[offset+0] & 0xFF);
+			i = (i << 8) | (bytes[offset+1] & 0xFF);
+		}
+		else
+		{
+			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
+			i = (i << 8) | (bytes[offset+2] & 0xFF);
+			i = (i << 8) | (bytes[offset+3] & 0xFF);
+		}
 
 		return i;
 	}
 	
 	public final static byte[] longToBytes(long i)
 	{
+		return longToBytes( i,false);
+	}
+	
+	public final static byte[] longToBytes(long i,boolean bmodbus)
+	{
 		byte[] bytes = new byte[8];
-		longToBytes(i,bytes,0);
+		longToBytes(i,bytes,0,bmodbus);
 		return bytes;
 	}
 
-	public final static void longToBytes(long i,byte[] bytes,int offset)
+	public final static void longToBytes(long i,byte[] bytes,int offset,boolean bmodbus)
 	{
 		// long is 64bits, 8Bytes
-		
-
-		bytes[offset+7] = (byte) (i & 0xFF);
-
-		i = i >>> 8;
-		bytes[offset+6] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+5] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+4] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+3] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+2] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+1] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset] = (byte) (i & 0xFF);
-
+		if(bmodbus)
+		{// b7 b6 b5 b4 b3 b2 b1 b0 - b1 b0 b3 b2 b5 b4 b7 b6
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+0] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+3] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+5] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+4] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+7] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+6] = (byte) (i & 0xFF);
+		}
+		else
+		{
+			bytes[offset+7] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+6] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+5] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+4] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+3] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset] = (byte) (i & 0xFF);
+		}
 		
 	}
 
-	public final static long bytesToLong(byte[] bytes)
+	public final static long bytesToLong(byte[] bytes,boolean bmodbus)
 	{
-		return bytesToLong(bytes,0);
+		return bytesToLong(bytes,0,bmodbus);
 	}
 	
-	public final static long bytesToLong(byte[] bytes,int offset)
+	public final static long bytesToLong(byte[] bytes,int offset,boolean bmodbus)
 	{
 		if (bytes == null || bytes.length < 8+offset)
 			throw new IllegalArgumentException("byte array size must be "+(8+offset));
 
 		long i = 0;
 
-		i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
-		i = (i << 8) | (bytes[offset+2] & 0xFF);
-		i = (i << 8) | (bytes[offset+3] & 0xFF);
-		i = (i << 8) | (bytes[offset+4] & 0xFF);
-		i = (i << 8) | (bytes[offset+5] & 0xFF);
-		i = (i << 8) | (bytes[offset+6] & 0xFF);
-		i = (i << 8) | (bytes[offset+7] & 0xFF);
+		if(bmodbus)
+		{// b0 b1 b2 b3 b4 b5 b6 b7  - b6 b7 b4 b5 b2 b3 b0 b1
+			i = ((bytes[offset+6] & 0xFF) << 8) | (bytes[offset+7] & 0xFF);
+			i = (i << 8) | (bytes[offset+4] & 0xFF);
+			i = (i << 8) | (bytes[offset+5] & 0xFF);
+			i = (i << 8) | (bytes[offset+2] & 0xFF);
+			i = (i << 8) | (bytes[offset+3] & 0xFF);
+			i = (i << 8) | (bytes[offset+0] & 0xFF);
+			i = (i << 8) | (bytes[offset+1] & 0xFF);
+		}
+		else
+		{
+			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
+			i = (i << 8) | (bytes[offset+2] & 0xFF);
+			i = (i << 8) | (bytes[offset+3] & 0xFF);
+			i = (i << 8) | (bytes[offset+4] & 0xFF);
+			i = (i << 8) | (bytes[offset+5] & 0xFF);
+			i = (i << 8) | (bytes[offset+6] & 0xFF);
+			i = (i << 8) | (bytes[offset+7] & 0xFF);
+		}
 		// i = (i << 8) | (bytes [3] & 0xFF) ;
 		return i;
 	}
 
 	public final static byte[] floatToBytes(float f)
 	{
-		return intToBytes(Float.floatToIntBits(f));
+		return intToBytes(Float.floatToIntBits(f),false);
 	}
 	
 	public final static void floatToBytes(float f,byte[] bs,int offset)
 	{
-		intToBytes(Float.floatToIntBits(f),bs,offset);
+		intToBytes(Float.floatToIntBits(f),bs,offset,false);
 	}
 
 	public final static float bytesToFloat(byte[] bytes)
 	{
-		return Float.intBitsToFloat(bytesToInt(bytes));
+		return Float.intBitsToFloat(bytesToInt(bytes,false));
 	}
 	
 	public final static float bytesToFloat(byte[] bytes,int offset)
 	{
-		return Float.intBitsToFloat(bytesToInt(bytes,offset));
+		return Float.intBitsToFloat(bytesToInt(bytes,offset,false));
 	}
 
 	public final static byte[] doubleToBytes(double f)
 	{
-		return longToBytes(Double.doubleToLongBits(f));
+		return longToBytes(Double.doubleToLongBits(f),false);
 	}
 	
 	public final static void doubleToBytes(double f,byte[] bs,int offset)
 	{
-		longToBytes(Double.doubleToLongBits(f),bs,offset);
+		longToBytes(Double.doubleToLongBits(f),bs,offset,false);
 	}
 
 	public final static double bytesToDouble(byte[] bytes)
 	{
-		return Double.longBitsToDouble(bytesToLong(bytes));
+		return Double.longBitsToDouble(bytesToLong(bytes,false));
 	}
 	
 	public final static double bytesToDouble(byte[] bytes,int offset)
 	{
-		return Double.longBitsToDouble(bytesToLong(bytes,offset));
+		return Double.longBitsToDouble(bytesToLong(bytes,offset,false));
 	}
 
 	public final static byte booleanToByte(boolean b)
@@ -233,7 +292,7 @@ public class DataUtil
 	public static long readLong(InputStream in) throws IOException
 	{
 
-		return bytesToLong(readBytes(in, 8));
+		return bytesToLong(readBytes(in, 8),false);
 	}
 
 	/**
@@ -262,7 +321,7 @@ public class DataUtil
 	public static int readInt(InputStream in) throws IOException
 	{
 
-		return bytesToInt(readBytes(in, 4));
+		return bytesToInt(readBytes(in, 4),false);
 	}
 
 	/**

@@ -2852,7 +2852,7 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 		// write head
 		osw.write('?');
 		int len = calCompactNotXmlLen();
-		osw.write(DataUtil.intToBytes(len));
+		osw.write(DataUtil.intToBytes(len,false));
 		// write len
 		writeCompactNotXmlXmlData(osw);
 	}
@@ -2867,7 +2867,7 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 			XmlVal xvi = i.getValue();
 			osw.write(XmlVal.T_PROP);
 			byte[] nbs = n.getBytes("UTF-8");
-			osw.write(DataUtil.intToBytes(nbs.length));
+			osw.write(DataUtil.intToBytes(nbs.length,false));
 			osw.write(nbs);
 			xvi.writeCompactToStream(osw);
 			osw.write(100 + XmlVal.T_PROP);
@@ -2883,7 +2883,7 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 				osw.write(XmlVal.T_XMLDATA_SUB_ARRAY);
 
 				byte[] nbs = n.getBytes("UTF-8");
-				osw.write(DataUtil.intToBytes(nbs.length));
+				osw.write(DataUtil.intToBytes(nbs.length,false));
 				osw.write(nbs);
 
 				for (XmlData tmpxd : xdp.xmlDatas)
@@ -2896,7 +2896,7 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 			{
 				osw.write(XmlVal.T_XMLDATA_SUB);
 				byte[] nbs = n.getBytes("UTF-8");
-				osw.write(DataUtil.intToBytes(nbs.length));
+				osw.write(DataUtil.intToBytes(nbs.length,false));
 				osw.write(nbs);
 
 				xdp.xmlData.writeCompactNotXmlXmlData(osw);
