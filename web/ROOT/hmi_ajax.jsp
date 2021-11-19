@@ -3,6 +3,7 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.res.*,
+	org.iottree.web.oper.*,
 	org.iottree.core.comp.*,
 	java.io.*,
 	java.util.*,
@@ -11,9 +12,23 @@
 	String tp = request.getParameter("tp");
 	if(tp==null)
 		tp= "" ;
+	UAPrj prj = null ;
 	UAHmi hmi = null ;
 	UANode branchn =null;
 	String hmipath = request.getParameter("hmi_path") ;
+	if(Convert.isNotNullEmpty(hmipath))
+	{
+		hmi =  UAUtil.findHmiByPath(hmipath) ;
+		if(hmi!=null)
+		{
+			UANode topn = hmi.getTopNode() ;
+			if(topn instanceof UAPrj)
+			{
+				prj = (UAPrj)topn ;
+			}
+		}
+	}
+
 	switch(tp)
 	{
 	case "subp":
@@ -139,25 +154,31 @@
 		
 		ntags.CXT_renderJson(out);
 		break ;
+	case "auth_ok":
+		if(hmi==null||prj==null)
+		{
+			out.print("no project hmi found or input") ;
+			return ;
+		}
+		if(OperAuth.checkSessionAuthOk(session,prj))
+		{
+			out.print("ok") ;
+			return ;
+		}
+		out.print("failed") ;
+		break ;
 	case "auth":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","user","psw"))
 			return;
+		if(hmi==null||prj==null)
+		{
+			out.print("no project hmi found or input") ;
+			return ;
+		}
 		String user = request.getParameter("user") ;
 		String psw = request.getParameter("psw") ;
-		hmi =  UAUtil.findHmiByPath(hmipath) ;
-		if(hmi==null)
-		{
-			out.print("no path hmi found") ;
-			return ;
-		}
-		topn = hmi.getTopNode() ;
-		if(!(topn instanceof UAPrj))
-		{
-			out.print("hmi no in project") ;
-			return ;
-		}
-		UAPrj topprj = (UAPrj)topn ;
-		if(!topprj.checkOperator(user, psw))
+		
+		if(!OperAuth.checkSessionAuth(session, prj, user, psw))
 			out.print("check operation permission failed") ;
 		else
 			out.print("succ");

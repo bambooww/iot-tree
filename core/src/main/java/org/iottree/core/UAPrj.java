@@ -1012,6 +1012,15 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 			return false;
 		return v.equals(psw) ;
 	}
+	
+	/**
+	 * ger operation permission seconds
+	 * @return
+	 */
+	public long getOperPermDurSec()
+	{
+		return this.permDur;
+	}
 
 	private void startStopTask(boolean b)
 	{

@@ -429,12 +429,15 @@ public class WSHmiRT extends WSServer
 				String hmipath = job.getString("hmipath");
 				String diid = job.getString("diid");
 				String eventn = job.getString("name");
-				Object val = job.get("val");
+				Object val = job.opt("val");
 				String strval = null;
-				if (val instanceof String)
-					strval = (String) val;
-				else
-					strval = JSONObject.valueToString(val);
+				if(val!=null)
+				{
+					if (val instanceof String)
+						strval = (String) val;
+					else
+						strval = JSONObject.valueToString(val);
+				}
 				onHmiEvent(cxtpath, hmipath, diid, eventn, strval);
 				break;
 			}
