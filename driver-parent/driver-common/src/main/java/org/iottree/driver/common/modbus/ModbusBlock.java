@@ -209,9 +209,9 @@ public class ModbusBlock
 				continue ;
 			}
 			
-			int endbytes = (ma.getRegPos()-cur_reg)*2+2;
+			int bytelen = (regp-cur_reg)*2+2;
 			//if(ma.getRegEnd()<=cur_reg+this.blockSize)
-			if(endbytes<=cur_reg+this.blockSize)
+			if(bytelen<=this.blockSize)
 			{
 				curaddrs.add(ma) ;
 				continue;
@@ -525,17 +525,17 @@ public class ModbusBlock
 			case vt_uint32:
 				vals = new int[2] ;
 				int intv = nv.intValue() ;
-				vals[0] = (intv>>16) & 0xFFFF ;
-				vals[1] = intv & 0xFFFF ;
+				vals[1] = (intv>>16) & 0xFFFF ;
+				vals[0] = intv & 0xFFFF ;
 				break ;
 			case vt_int64:
 			case vt_uint64:
 				vals = new int[4] ;
 				long longv = nv.longValue() ;
-				vals[0] = (int)((longv>>48) & 0xFFFF) ;
-				vals[1] = (int)((longv>>32) & 0xFFFF) ;
-				vals[2] = (int)((longv>>16) & 0xFFFF) ;
-				vals[3] = (int)(longv & 0xFFFF) ;
+				vals[3] = (int)((longv>>48) & 0xFFFF) ;
+				vals[2] = (int)((longv>>32) & 0xFFFF) ;
+				vals[1] = (int)((longv>>16) & 0xFFFF) ;
+				vals[0] = (int)(longv & 0xFFFF) ;
 				break ;
 			case vt_float:
 				vals = new int[2] ;
