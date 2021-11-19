@@ -29,7 +29,7 @@ public class ModbusBlock
 	int blockSize = 32 ;
 	long scanInterMS = 100 ;
 	
-	MemTable<MemSeg8> memTb = new MemTable<>(8,65536) ;
+	MemTable<MemSeg8> memTb = new MemTable<>(8,65536*2) ;
 	
 	transient HashMap<ModbusCmd,List<ModbusAddr>> cmd2addr = new HashMap<>() ;
 	
