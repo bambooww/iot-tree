@@ -188,6 +188,7 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	{
 		return regPos + this.getValTP().getValByteLen() ;
 	}
+	
 
 	public int getBitPos()
 	{

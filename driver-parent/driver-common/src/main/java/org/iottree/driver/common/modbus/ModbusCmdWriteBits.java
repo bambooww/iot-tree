@@ -51,6 +51,16 @@ public class ModbusCmdWriteBits extends ModbusCmd
 //		System.arraycopy(ret_vals, 0, rets,0,ret_val_num) ;
 //		return rets ;
 //	}
+	
+	public int calRespLenRTU()
+	{
+		return -1 ;
+	}
+
+	public short getFC()
+	{
+		return MODBUS_FC_WRITE_MULTI_COIL ;
+	}
 
 	protected int reqRespRTU(
 			OutputStream ous,InputStream ins)

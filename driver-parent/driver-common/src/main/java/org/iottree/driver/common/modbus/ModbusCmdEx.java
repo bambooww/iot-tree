@@ -33,6 +33,11 @@ public class ModbusCmdEx extends  ModbusCmd
 		return respData ;
 	}
 	
+	public int calRespLenRTU()
+	{
+		return -1 ;
+	}
+	
 	@Override
 	protected int reqRespRTU(OutputStream ous, InputStream ins) throws Exception
 	{

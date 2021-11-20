@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.w3c.dom.Element;
 
-public class ModbusCmdReadWords extends ModbusCmd
+public class ModbusCmdReadWords extends ModbusCmdRead
 {
 	static ModbusCmdReadWords createReqMC(byte[] bs,int[] pl)
 	{
@@ -219,6 +219,11 @@ public class ModbusCmdReadWords extends ModbusCmd
 			rs[k] = r[k] ;
 		return rs ;
 	}
+	
+	public int calRespLenRTU()
+	{
+		return 3+regNum*2+2 ;
+	}
 
 	protected int reqRespRTU(
 			OutputStream ous,InputStream ins)
@@ -254,42 +259,38 @@ public class ModbusCmdReadWords extends ModbusCmd
 	        rlen = com_stream_recv_chk_len_timeout(ins) ;
 	        if(rlen==0)
 	            continue ;
-	        //�жϷ��������Ƿ��������
+	        //
 	        if(mayrlen>0)
-	        {//ֻ��Ҫ�жϽ��ճ��Ⱦ���
+	        {//
 	            if(rlen>=mayrlen)
-	                break ;//���ս���
+	                break ;//
 	        }
 	        else
-	        {//�жϵ�ַ�ͳ���
+	        {//
 	            if(mbuss_adu[0]!=(byte)slaveAddr)
-	            {//���ո�ʽ����
+	            {//
 	                break ;
 	            }
 	            if(rlen<3)
 	                continue ;
-	            
-	            
-	            
+
 	            if(mbuss_adu[1]!=(byte)fc)
-	            {//���������
+	            {//
 	                if(mbuss_adu[1]==(byte)(fc+0x80))
-	                {//�豸���ش���
+	                {//
 	                    //*perrc = mbuss_adu[2] ; 
 	                }
 	                break ;
 	            }
 	            else
 	            {//
-	                mayrlen = (((int)mbuss_adu[2]) & 0xFF)+5;//�����ֽڳ�����Ϣ��ǰ��3�ֽ�+����crc
+	                mayrlen = (((int)mbuss_adu[2]) & 0xFF)+5;
 	            }
 	        }
 	    }
-	    
-	    
 
 	    if(mayrlen<=0 || rlen<mayrlen)
-	    {//���մ�����Ϣ or time out
+	    {//
 	        com_stream_end() ;
 	        up_val_ok = false ;
 	        if(rlen<=0)
@@ -300,20 +301,15 @@ public class ModbusCmdReadWords extends ModbusCmd
 	        	return 0 ;//err
 	    }
 	    
-	    
-	    //������յ����ݣ���ַ�͹�����
-	    //crc��֤
 	    crc = modbus_crc16_check(mbuss_adu,mayrlen-2);
 	    if((((byte)(crc>>8)) != (byte)mbuss_adu[mayrlen-2] || ((byte)(crc & 0xFF)) != mbuss_adu[mayrlen-1]))
 	    {
 	        com_stream_end() ;
-	        return ERR_CRC ;//��֤ʧ��
+	        return ERR_CRC ;
 	    }
 	    
 	    
 	    HashMap<Integer,Object> addr2val = new HashMap<Integer,Object>() ;
-	    
-	    //pdata��4���ֽڿ�ʼ����mayrlen-3֮ǰ���������ؿ��������
 	    for(i=0 ; i< regNum ; i ++)
 	    {
 	        int tmpv = ((int)mbuss_adu[3+i*2]) & 0xFF ;

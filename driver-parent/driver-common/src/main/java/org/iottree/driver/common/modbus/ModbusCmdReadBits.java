@@ -8,7 +8,7 @@ import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 
 
-public class ModbusCmdReadBits extends ModbusCmd
+public class ModbusCmdReadBits extends ModbusCmdRead
 {
 	
 	int regAddr = 0 ;
@@ -198,6 +198,11 @@ public class ModbusCmdReadBits extends ModbusCmd
 			rs[k] = r[k] ;
 		return rs ;
 	}
+	
+	public int calRespLenRTU()
+	{
+		return 3+regNum/8+((regNum%8)>0?1:0)+2 ;
+	}
 
 	protected int reqRespRTU(
 			OutputStream ous,InputStream ins)
@@ -248,9 +253,9 @@ public class ModbusCmdReadBits extends ModbusCmd
 	                continue ;
 	            
 	            if(mbuss_adu[1]!=(byte)fc)
-	            {//���������
+	            {//
 	                if(mbuss_adu[1]==(byte)(fc+0x80))
-	                {//�豸���ش���
+	                {//
 	                    //*perrc = mbuss_adu[2] ; 
 	                }
 	                break ;
@@ -260,14 +265,11 @@ public class ModbusCmdReadBits extends ModbusCmd
 	                mayrlen = (((int)mbuss_adu[2]) & 0xFF)+5;//
 	            }
 	        }
-	        
-	        //////////////
-	        
 	    }
 	    
 	    
 	    if(mayrlen<=0 || rlen<mayrlen)
-	    {//���մ�����Ϣ or time out
+	    {//
 	        com_stream_end() ;
 	        ret_val_ok = false;
 	        
@@ -282,13 +284,11 @@ public class ModbusCmdReadBits extends ModbusCmd
 	        	return 0 ;//err
 	    }
 	    
-	    //������յ����ݣ���ַ�͹�����
-	    //crc��֤
 	    crc = modbus_crc16_check(mbuss_adu,mayrlen-2);
 	    if((((byte)(crc>>8)) != (byte)mbuss_adu[mayrlen-2] || ((byte)(crc & 0xFF)) != mbuss_adu[mayrlen-1]))
 	    {
 	        com_stream_end() ;
-	        return ERR_CRC ;//��֤ʧ��
+	        return ERR_CRC ;
 	    }
 	    
 	    HashMap<Integer,Object> addr2val = new HashMap<Integer,Object>() ;
@@ -318,13 +318,6 @@ public class ModbusCmdReadBits extends ModbusCmd
 	    com_stream_end() ;
 	    
 	    ret_val_ok = true;
-	    
-//	    for(int k=0;k<regNum;k++)
-//	    {
-//	    	System.out.print(" "+(ret_vals[k]?1:0)) ;
-//	    }
-//	    
-//	    System.out.println("") ;
 	    return regNum ;
 	    
 	}

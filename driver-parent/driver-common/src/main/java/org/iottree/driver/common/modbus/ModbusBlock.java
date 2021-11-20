@@ -3,6 +3,7 @@ package org.iottree.driver.common.modbus;
 import java.util.*;
 
 import org.iottree.driver.common.modbus.ModbusCmd;
+import org.iottree.driver.common.modbus.sniffer.SnifferCmd;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataUtil;
@@ -386,6 +387,32 @@ public class ModbusBlock
 		}
 		
 		return true;
+	}
+	
+	public void onSnifferCmd(SnifferCmd sc)
+	{
+		if(this.devId!=sc.getDevId())
+			return ;
+		
+		for(ModbusCmd mc:cmd2addr.keySet())
+		{
+			List<ModbusAddr> addrs = cmd2addr.get(mc) ;
+			onSnifferCmd(sc,mc,addrs);
+		}
+	}
+	
+	private void onSnifferCmd(SnifferCmd sc,ModbusCmd mc,List<ModbusAddr> addrs)
+	{
+		for(ModbusAddr maddr:addrs)
+		{
+			Object ov = sc.getValByAddr(maddr) ;
+			if(ov==null)
+				continue ;
+			
+			maddr.RT_setVal(ov);
+		}
+		
+		return ;
 	}
 	
 	private boolean runReadCmds(IConnEndPoint ep) throws Exception

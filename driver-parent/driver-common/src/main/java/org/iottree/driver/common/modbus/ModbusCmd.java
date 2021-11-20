@@ -263,6 +263,8 @@ public abstract class ModbusCmd
 
 		protocal = p;
 	}
+	
+	public abstract short getFC();
 
 	public static int addCRC(byte[] data, int dlen)
 	{
@@ -507,6 +509,8 @@ public abstract class ModbusCmd
 		//System.out.println("doCmdInner --9") ;
 	}
 
+	public abstract int calRespLenRTU();
+	
 	/**
 	 * 
 	 * 

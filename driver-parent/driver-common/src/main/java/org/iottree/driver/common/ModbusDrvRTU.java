@@ -23,11 +23,16 @@ import org.iottree.core.util.NetUtil;
 import org.iottree.core.util.NetUtil.Adapter;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.driver.common.modbus.sniffer.SnifferRTUCh;
 
 
 public class ModbusDrvRTU extends DevDriver
 {
 	private static ILogger log = LoggerManager.getLogger(ModbusDrvRTU.class) ;
+	
+	private boolean bSniffer = false;
+	
+	private SnifferRTUCh snifferCh = null ;
 	
 	@Override
 	public String getName()
@@ -46,10 +51,20 @@ public class ModbusDrvRTU extends DevDriver
 		return new ModbusDrvRTU() ;
 	}
 	
+	private static final int SNIFFER_MODEL = 1 ;
+	
 	@Override
 	public List<PropGroup> getPropGroupsForCh()
 	{
-		return null ;
+		ArrayList<PropGroup> pgs = new ArrayList<>() ;
+		PropGroup gp = new PropGroup("modbus_ch","Modbus in Channel");
+		
+		PropItem pi = new PropItem("run_model","Modbus Driver Run Model","",PValTP.vt_int,false,
+				new String[] {"Normal","Sniffer"},new Object[] {0,SNIFFER_MODEL},0) ;
+		
+		gp.addPropItem(pi);
+		pgs.add(gp) ;
+		return pgs ;
 	}
 
 
@@ -171,6 +186,12 @@ public class ModbusDrvRTU extends DevDriver
 	
 	protected  boolean initDriver(StringBuilder failedr) throws Exception
 	{
+		Object pv = this.getBelongToCh().getPropValue("modbus_ch", "run_model") ;
+		if(pv!=null&&pv instanceof Number)
+		{
+			bSniffer = ((Number)pv).intValue() == SNIFFER_MODEL;
+		}
+		
 		List<UADev> devs = this.getBelongToCh().getDevs() ;
 		
 		ArrayList<ModbusDevItem> mdis=  new ArrayList<>() ;
@@ -196,6 +217,11 @@ public class ModbusDrvRTU extends DevDriver
 			failedr.append("no modbus cmd inited in driver") ;
 			return false;
 		}
+		
+		if(bSniffer)
+		{
+			snifferCh = new SnifferRTUCh();
+		}
 		return true ;
 	}
 	
@@ -211,6 +237,14 @@ public class ModbusDrvRTU extends DevDriver
 	protected void RT_onConnInvalid(ConnPt cp)
 	{
 		
+	}
+	
+	protected long getRunInterval()
+	{
+		if(bSniffer)
+			return 10 ;
+		else
+			return super.getRunInterval();
 	}
 
 	@Override
@@ -228,9 +262,28 @@ public class ModbusDrvRTU extends DevDriver
 			log.debug("RT_runInLoop conn ready ,run do modbus");
 		try
 		{
-			for(ModbusDevItem mdi:modbusDevItems)
+			if(bSniffer)
+			{//
+				//System.out.println(" RT_runInLoop in sniffer") ;
+				InputStream inputs = cpt.getInputStream();
+				int dlen = inputs.available() ;
+				if(dlen<=0)
+					return true;
+				byte[] bs = new byte[dlen] ;
+				inputs.read(bs) ;
+				snifferCh.onSniffedData(bs,(sc)->{
+					for(ModbusDevItem mdi:modbusDevItems)
+					{
+						mdi.onSnifferCmd(sc);
+					}
+				});
+			}
+			else
 			{
-				mdi.doModbusCmd(cpt);
+				for(ModbusDevItem mdi:modbusDevItems)
+				{
+					mdi.doModbusCmd(cpt);
+				}
 			}
 		}
 		catch(ConnException se)

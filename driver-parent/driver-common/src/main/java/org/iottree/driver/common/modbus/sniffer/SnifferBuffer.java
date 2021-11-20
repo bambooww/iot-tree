@@ -50,13 +50,15 @@ public class SnifferBuffer
 			int rlen = bs.length-fpos ;
 			if(rlen>len)
 			{
-				System.arraycopy(bs, fpos, buf, offset, len);
+				if(buf!=null)
+					System.arraycopy(bs, fpos, buf, offset, len);
 				fpos += len ;
 				break ;
 			}
 			
 			//
-			System.arraycopy(bs, fpos, buf, offset, rlen);
+			if(buf!=null)
+				System.arraycopy(bs, fpos, buf, offset, rlen);
 			fpos =0 ;
 			offset += rlen ;
 			len -= rlen ;
@@ -80,6 +82,11 @@ public class SnifferBuffer
 	public boolean readData(byte[] buf,int offset,int len)
 	{
 		return readData(buf,offset,len,true) ;
+	}
+	
+	public boolean skipLen(int len)
+	{
+		return readData(null,0,len,true) ;
 	}
 	
 	public int readNextChar()

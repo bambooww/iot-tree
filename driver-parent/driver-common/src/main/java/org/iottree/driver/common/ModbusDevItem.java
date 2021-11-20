@@ -10,6 +10,10 @@ import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.conn.ConnPtStream;
 import org.iottree.driver.common.modbus.ModbusBlock;
 import org.iottree.driver.common.modbus.ModbusCmd;
+import org.iottree.driver.common.modbus.ModbusCmdRead;
+import org.iottree.driver.common.modbus.ModbusCmdReadBits;
+import org.iottree.driver.common.modbus.ModbusCmdReadWords;
+import org.iottree.driver.common.modbus.sniffer.SnifferCmd;
 
 /**
  * every UADev in channel may has this object fit for runtime running
@@ -202,6 +206,29 @@ public class ModbusDevItem //extends DevModel
 		return ret ;
 	}
 	
+	void onSnifferCmd(SnifferCmd sc)
+	{
+		ModbusCmdRead mcr = sc.getFindedCmd();
+		byte[] fdd = sc.getFindedData() ;
+		if(mcr instanceof ModbusCmdReadBits)
+		{
+			if(mbCoilIn != null)
+			{
+				mbCoilIn.onSnifferCmd(sc);
+			}
+			if(mbCoilOut != null)
+			{
+				mbCoilOut.onSnifferCmd(sc);
+			}
+		}
+		else if(mcr instanceof ModbusCmdReadWords)
+		{
+			if(mbRegIn!=null)
+				mbRegIn.onSnifferCmd(sc);
+			if(mbRegHold!=null)
+				mbRegHold.onSnifferCmd(sc);
+		}
+	}
 	/**
 	 * outer find connection is broken,it will call this method
 	 * so,it can make related tag to show err

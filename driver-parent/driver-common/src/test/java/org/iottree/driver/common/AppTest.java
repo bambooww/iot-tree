@@ -3,7 +3,9 @@ package org.iottree.driver.common;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.iottree.core.util.Convert;
 import org.iottree.driver.common.modbus.sniffer.SnifferBuffer;
+import org.iottree.driver.common.modbus.sniffer.SnifferRTUCh;
 import org.junit.Test;
 
 /**
@@ -70,6 +72,26 @@ public class AppTest
     	assertTrue(0==snb.getBufLen());
     	
     	assertTrue(-1==snb.readNextChar());
+    	
+    	snb.addData("12".getBytes());
+    	snb.addData("3".getBytes());
+    	snb.addData("456".getBytes());
+    	
+    	snb.skipLen(4) ;
+    	assertTrue(2==snb.getBufLen());
+    	assertTrue(snb.readData(buf, 0, 2)) ;
+    	assertTrue(new String(buf,0,2).equals("56"));
     }
     
+    @Test
+    public void testSnifferCh()
+    {
+    	byte[] bs1 = Convert.hexStr2ByteArray("01 04 10 10 00 0A 75 08 01 04 14 42 47 33 33 3F 47 EF 9E 41 78 F5 C3 3F 80 00 00 00 03 94 5D 86 5F 02 04 10 10 00 0A 75 3B");
+    	byte[] bs2 = Convert.hexStr2ByteArray("02 04 10 10 00 0A 75 3B 02 04 14 42 5A 00 00 3F 5B E7 6D 41 88 3D 71 3F 80 00 00 00 00 C3 0C D7 2D");
+    	SnifferRTUCh sch = new SnifferRTUCh() ;
+    	sch.onSniffedData(bs1,null);
+    	assertTrue(sch.getSnifferCmd("1_4_4112_10")!=null);
+    	sch.onSniffedData(bs2,null);
+    	assertTrue(sch.getSnifferCmd("2_4_4112_10")!=null);
+    }
 }
