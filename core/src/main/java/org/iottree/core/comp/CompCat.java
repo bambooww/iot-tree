@@ -110,7 +110,7 @@ public class CompCat implements IResNode
 	public File getCatDirFile()
 	{
 		File fb = CompManager.getInstance().fileDirBase ;
-		return new File(fb,dirName);
+		return new File(fb,dirName+"/");
 	}
 	
 	public List<CompItem> getItems()

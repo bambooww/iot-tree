@@ -230,11 +230,13 @@ String pg0="" ;
 <%
 for(PropGroup pg:pgs)
 {
+	String pgn = pg.getName() ;
+	List<PropItem> pis = pg.getPropItems() ;
 %>
-<table id="tb_pg_<%=pg.getName() %>" class="pi_edit_table">
+<table id="tb_pg_<%=pgn %>" class="pi_edit_table">
     <tr><td colspan="2" class="td_left" style="font-weight: bold;color: #000000;background-color: #f0f0f0"><%=pg.getTitle() %></td></tr>
 <%
-	for(PropItem pi:pg.getPropItems())
+	for(PropItem pi:pis)
 	{
 %>
   <tr id="pi_<%=pi.getName()%>" onclick="sel_pi('<%=pi.getName()%>')">

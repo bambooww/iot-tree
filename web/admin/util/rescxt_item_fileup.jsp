@@ -29,8 +29,10 @@ org.apache.commons.fileupload.disk.*"%><%!
 		 	}
 		 	return ret;
 		 }
-%><%if (!ServletFileUpload.isMultipartContent(request)) {
-    // 如果不是则停止
+%><%
+
+if (!ServletFileUpload.isMultipartContent(request))
+{
     PrintWriter writer = response.getWriter();
     writer.println("Error: form must has enctype=multipart/form-data");
     writer.flush();

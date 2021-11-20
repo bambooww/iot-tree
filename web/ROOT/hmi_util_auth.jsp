@@ -25,13 +25,13 @@ dlg.resize_to(400,250);
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>user</wbt:lang></label>
     <div class="layui-input-inline">
-      <input type="text" name="user" id="user" class="layui-input"/>
+      <input type="text" name="user" id="user" class="layui-input" autocomplete="new-password"/>
     </div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>psw</wbt:lang></label>
     <div class="layui-input-inline">
-      <input type="password" name="psw" id="psw" class="layui-input" />
+      <input type="password" name="psw" id="psw" class="layui-input" autocomplete="new-password"/>
     </div>
   </div>
    

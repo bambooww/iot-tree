@@ -369,7 +369,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		UAUtil.assertUAName(name);
 
-		if(!devdef_id.equals(dev.getDevRefId()))
+		if(Convert.isNotNullEmpty(devdef_id) && !devdef_id.equals(dev.getDevRefId()))
 		{
 			DevDriver drv = this.getDriver() ;
 			DevDef dd = drv.getDevDefById(devdef_id) ;

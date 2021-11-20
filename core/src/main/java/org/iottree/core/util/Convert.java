@@ -1081,11 +1081,23 @@ public class Convert
 		if (hexstr.equals(""))
 			return new byte[0];
 
-		int s = hexstr.length() / 2;
-		byte[] ret = new byte[s];
-		for (int i = 0; i < s; i++)
+		if(hexstr.indexOf(' ')<0)
 		{
-			ret[i] = (byte) Short.parseShort(hexstr.substring(i * 2, i * 2 + 2), 16);
+			int s = hexstr.length() / 2;
+			byte[] ret = new byte[s];
+			for (int i = 0; i < s; i++)
+			{
+				ret[i] = (byte) Short.parseShort(hexstr.substring(i * 2, i * 2 + 2), 16);
+			}
+			return ret;
+		}
+		
+		List<String> ss = Convert.splitStrWith(hexstr, " ") ;
+		int s = ss.size() ;
+		byte[] ret = new byte[s];
+		for (int i = 0; i < s ; i++)
+		{
+			ret[i] = (byte) Short.parseShort(ss.get(i), 16);
 		}
 		return ret;
 	}

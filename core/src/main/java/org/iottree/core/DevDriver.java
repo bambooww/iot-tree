@@ -418,13 +418,24 @@ public abstract class DevDriver implements IPropChecker
 		rtTh.start();
 		return true;
 	}
+	
+	/**
+	 * when >= 0,it will override DriverIntMS in channel
+	 * @return
+	 */
+	protected long getRunInterval()
+	{
+		return -1 ;
+	}
 
 	Runnable runner = new Runnable() {
 		public void run()
 		{
 			try
 			{
-				long drv_int = DevDriver.this.getBelongToCh().getDriverIntMS() ;
+				long drv_int = getRunInterval();
+				if(drv_int<0)
+					drv_int = DevDriver.this.getBelongToCh().getDriverIntMS() ;
 				if(drv_int<0)
 					drv_int = 0 ;
 				

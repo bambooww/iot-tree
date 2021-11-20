@@ -101,10 +101,13 @@ public class ResDir //Comparable<ResDir>
 					return false;
 				return true;
 			}});
-		for(File f:fs)
+		if(fs!=null)
 		{
-			ResItem ri =  new ResItem(f);
-			rets.add(ri) ;
+			for(File f:fs)
+			{
+				ResItem ri =  new ResItem(f);
+				rets.add(ri) ;
+			}
 		}
 		return rets ;
 	}
