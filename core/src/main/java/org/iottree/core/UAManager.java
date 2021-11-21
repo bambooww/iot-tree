@@ -574,6 +574,12 @@ public class UAManager implements IResCxt
 	
 	synchronized public void stop()
 	{
+		for(UAPrj prj:UAManager.this.listPrjs())
+		{
+			if(prj.RT_isRunning())
+				prj.RT_stop();
+		}
+		
 		uaMonTh=null;
 	}
 	

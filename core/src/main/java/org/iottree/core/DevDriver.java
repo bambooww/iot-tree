@@ -414,7 +414,7 @@ public abstract class DevDriver implements IPropChecker
 			return false;
 
 		bRun = true;
-		rtTh = new Thread(runner, "iottree-devdriver-" + this.getName());
+		rtTh = new Thread(runner, "iottree-devdriver-" +this.getBelongToCh().getName()+" "+ this.getName());
 		rtTh.start();
 		return true;
 	}
@@ -453,7 +453,7 @@ public abstract class DevDriver implements IPropChecker
 					{
 						Thread.sleep(drv_int);
 
-						// System.out.println("-----1-------");
+						//System.out.println("-----1-------");
 						if (!RT_runInLoop(failedr))
 							break;
 					}

@@ -28,45 +28,46 @@ public class Server
 				do
 				{
 					ln = br.readLine();
-					if(ln!=null)
-						System.out.print("\r\n"+ln);
+					if (ln != null)
+						System.out.print("\r\n" + ln);
 					else
 					{
-						System.out.print("   version "+Config.getVersion());
-						System.out.print("\r\n\r\n") ;
-						break ;
+						System.out.print("   version " + Config.getVersion());
+						System.out.print("\r\n\r\n");
+						break;
 					}
-				}
-				while (ln != null);
-				
+				} while (ln != null);
+
 			}
-		} catch (Exception ee)
+		}
+		catch ( Exception ee)
 		{
 		}
 	}
 
-	static void startServer() throws Exception
+	static void startServer(boolean bservice) throws Exception
 	{
 		printBanner();
 
-		if(Config.isDebug())
+		if (Config.isDebug())
 			System.out.println("user.dir=" + System.getProperties().getProperty("user.dir"));
 
-		//System.out.println("java.class.path=" + System.getProperties().getProperty("java.class.path"));
+		// System.out.println("java.class.path=" +
+		// System.getProperties().getProperty("java.class.path"));
 
 		Config.loadConf();
 
-//		ClassLoader tbs_loader = null;
-//
-//		if (tbs_loader != null)
-//		{
-//			Thread.currentThread().setContextClassLoader(tbs_loader);
-//			SecurityClassLoad.securityClassLoad(tbs_loader);
-//		} else
-//		{
-//			tbs_loader = Thread.currentThread().getContextClassLoader();
-//		}
-		
+		// ClassLoader tbs_loader = null;
+		//
+		// if (tbs_loader != null)
+		// {
+		// Thread.currentThread().setContextClassLoader(tbs_loader);
+		// SecurityClassLoad.securityClassLoad(tbs_loader);
+		// } else
+		// {
+		// tbs_loader = Thread.currentThread().getContextClassLoader();
+		// }
+
 		ClassLoader tbs_loader = Thread.currentThread().getContextClassLoader();
 
 		String jdkhome = System.getProperties().getProperty("java.home");
@@ -81,7 +82,7 @@ public class Server
 			return;
 		}
 
-		if(Config.isDebug())
+		if (Config.isDebug())
 			System.out.println("java.home=" + jdkhome);
 
 		System.getProperties().setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
@@ -106,8 +107,8 @@ public class Server
 					if (Convert.isNullOrEmpty(serv_comp_cn))
 						continue;
 
-					//System.out.println("find server comp:" + serv_comp_cn);
-					
+					// System.out.println("find server comp:" + serv_comp_cn);
+
 				}
 			}
 		}
@@ -115,107 +116,99 @@ public class Server
 		ServerTomcat st = new ServerTomcat();
 		st.startTomcat(tbs_loader);
 
-		
 		ServiceManager.getInstance();
-		//System.out.println(" all web comp loaded,fire event");
-		//runFileMon();
+		// System.out.println(" all web comp loaded,fire event");
+		// runFileMon();
 		UAManager.getInstance().start();
-		
-		//new Thread(consoleRunner).start();
+
+		if(bservice)
+			new Thread(Server::runFileMon,"").start();
+		else
+			consoleRunner.run();
+		// new Thread(consoleRunner).start();
 	}
 
 	static void stopServer()
 	{
+		UAManager.getInstance().stop();
 		try
 		{
 			ServerBootCompMgr.getInstance().stopAllBootComp();
 		}
-		catch (Exception ee)
+		catch ( Exception ee)
 		{
 		}
 
 		//
-		
+
 	}
-	
-	
-	static Runnable consoleRunner = new Runnable()
-			{
+
+	static Runnable consoleRunner = new Runnable() {
 		public void run()
 		{
-			try {
-			
-		ServerCtrlHandler sch = new ServerCtrlHandler(System.in);
-		sch.handle();
-		stopServer();
+			try
+			{
+
+				ServerCtrlHandler sch = new ServerCtrlHandler(System.in);
+				sch.handle();
+				stopServer();
 			}
-			catch(Exception e)
+			catch ( Exception e)
 			{
 				e.printStackTrace();
 			}
 		}
-			};
-	
-	
-	private static void runFileMon() throws IOException
+	};
+
+	private static void runFileMon()// throws IOException
 	{
-		File wf = new File("./iottree_running.flag");
-		wf.createNewFile();
-		File stopwf = new File("./iottree_stopped.flag");
-		if (stopwf.exists())
-			stopwf.delete();
-
-		while (wf.exists())
+		try
 		{
-			try
+			File wf = new File("./iottree_running.flag");
+			wf.createNewFile();
+			File stopwf = new File("./iottree_stopped.flag");
+			if (stopwf.exists())
+				stopwf.delete();
+	
+			while (wf.exists())
 			{
-				Thread.sleep(3000);
+				try
+				{
+					Thread.sleep(3000);
+				}
+				catch ( Exception ex)
+				{
+				}
 			}
-			catch (Exception ex)
-			{
-			}
+	
+			// exit
+			stopServer();
+			stopwf.createNewFile();
 		}
-
-		// exit
-		stopServer();
-		stopwf.createNewFile();
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) throws Exception
 	{
-		startServer();
-
-		try
+		boolean bservice = false;
+		if (args.length > 0)
 		{
-			// Give users some time to read the message before exiting
-			// Thread.sleep(5000);
-			
-		}
-		catch (Exception ex)
-		{
-		}
-
-		if ("service".equals(System.getProperty("runas")))
-		{
-			//ServerCtrlServer.getInstance().start();
-		}
-		else if (args.length > 0)
-		{
-			switch(args[0])
+			switch (args[0])
 			{
 			case "linux_nohup":
 			case "service":
-				runFileMon();
-				break ;
+				bservice = true ;
+				break;
 			}
-			
-		}
-		else
-		{
-			consoleRunner.run();
-			
-		}
 
-		//System.exit(0);
+		}
+		
+		startServer(bservice);
+		
+
+		// System.exit(0);
 	}
 }

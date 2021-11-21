@@ -12,8 +12,9 @@ public class ServiceWrapperMain implements WrapperListener
 	{
 		try
 		{
-			Server.startServer() ;
-			return 1;
+			Server.startServer(true) ;
+			//start ok return null *
+			return null;
 		}
 		catch(Throwable t)
 		{
@@ -26,10 +27,13 @@ public class ServiceWrapperMain implements WrapperListener
 	{
 		try
 		{
+			Server.stopServer() ;
 			//ServerBootCompMgr.getInstance().stopAllBootComp();
 		}
 		catch(Exception ee)
-		{}
+		{
+			ee.printStackTrace();
+		}
 		
 		//System.exit( extcode );
         return extcode;
@@ -42,7 +46,7 @@ public class ServiceWrapperMain implements WrapperListener
 
 	public static void main( String[] args )
     {
-        System.out.println( "Initializing..." );
+        System.out.println( "Initializing iottree..." );
         
         // Start the application.  If the JVM was launched from the native
         //  Wrapper then the application will wait for the native Wrapper to
