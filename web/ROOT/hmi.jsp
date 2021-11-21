@@ -10,6 +10,7 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
+   String user = request.getParameter("user") ;
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
 	UAHmi uahmi = UAUtil.findHmiByPath(path) ;
@@ -17,6 +18,7 @@
 	{
 		out.print("no hmi node found") ;
 	}
+	String hmitt = uahmi.getTitle();
 	UANode topn = uahmi.getTopNode() ;
 	UAPrj prj = null ;
 	String prjid = "" ;
@@ -28,12 +30,15 @@
 		prjid = prj.getId() ;
 		prjname = prj.getName() ;
 	}
+	
+	if(user==null)
+		user = "" ;
 	//String repname = rep.getName() ;
 %><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>hmi shower</title>
+<title><%=hmitt %></title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
@@ -322,7 +327,7 @@ margin-top:5px;
 			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
 				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增数据库"  onclick="store_add_db()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="add new store"  onclick="store_add_db()">
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -336,7 +341,7 @@ margin-top:5px;
 				
 				<div id="win_act_conn" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group" style="width:40px">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增接入"  onclick="conn_add()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title=""  onclick="conn_add()">
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -370,6 +375,7 @@ margin-top:5px;
 
 var layuiEle ;
 var path="<%=path%>";
+$util.hmi_user="<%=user%>";
 $util.hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;

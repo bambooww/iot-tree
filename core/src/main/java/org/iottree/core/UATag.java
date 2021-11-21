@@ -22,6 +22,8 @@ import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.json.JSONObject;
 
+import com.sun.tools.sjavac.Log;
+
 /**
  * 
  * @author jason.zhu
@@ -133,6 +135,26 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.bCanWrite = canwrite ;
 		this.scanRate = srate;
 		this.decDigits = dec_digits ;
+	}
+	
+	UATag(UATag t,String newname)
+	{
+		super(newname,t.getTitle(),t.getDesc()) ;
+		
+		this.rename = null ;
+		this.retitle = null;
+		String redesc = null ;
+		
+		bMidExp = t.bMidExp;
+		this.addr = t.addr;
+		this.valTp = t.valTp;
+		this.decDigits = t.decDigits ;
+
+		this.bCanWrite = t.bCanWrite ;
+		this.scanRate = t.scanRate ;
+		
+		this.valTranser=t.valTranser;
+		this.valChgedCacheLen = t.valChgedCacheLen ;
 	}
 	
 	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
@@ -846,6 +868,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(this.isMidExpress())
 			return false;
+		
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
 		if(da==null)
@@ -858,6 +881,24 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(dd==null)
 			return false;
 
+		ValTranser vtrans = this.getValTranserObj() ;
+		if(vtrans!=null)
+		{
+			try
+			{
+				v = vtrans.inverseTransVal(v) ;
+				if(v==null)
+					return false;
+				v = UAVal.transStr2ObjVal(this.getValTpRaw(),v.toString()) ;
+			}
+			catch(Exception ee)
+			{
+				//if(Log.isDebugging())
+				ee.printStackTrace();
+				return false;
+			}
+		}
+		
 		return dd.RT_writeVal(dev, da, v);
 	}
 	

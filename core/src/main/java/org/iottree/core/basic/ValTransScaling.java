@@ -105,7 +105,39 @@ public class ValTransScaling extends ValTranser
 			rv = this.scaledLow ;
 		if(this.scaledNegate)
 			rv = -rv ;
+		ValTP tvtp = this.getTransValTP() ;
+		if(tvtp!=null)
+			return UAVal.transStr2ObjVal(tvtp, ""+rv) ;
 		return rv ;
+	}
+	
+	public Object inverseTransVal(Object v) throws Exception
+	{
+		Number inval = (Number)v ;
+		double tv = inval.doubleValue() ;
+		double raw_v ;
+		if(this.scaledNegate)
+			tv = -tv ;
+		
+		if(this.scaledHighClamp&&tv>this.scaledHigh)
+			tv = this.scaledHigh ;
+		if(this.scaledLowClamp&&tv<this.scaledLow)
+			tv = this.scaledLow ;
+		
+		switch(tp)
+		{
+		case SCALING_LINEAR:
+			 raw_v = (tv - this.scaledLow)/ ((this.scaledHigh - this.scaledLow)/(this.rawHigh - this.rawLow))  + this.rawLow  ;
+			break;
+		case SCALING_SQUARE_ROOT:
+			double tmpv = (tv - scaledLow)/ (scaledHigh - scaledLow);
+			raw_v = tmpv*tmpv*(rawHigh - rawLow)+rawLow ;
+			break;
+		default:
+			return null ;
+		}
+		
+		return raw_v;
 	}
 	
 	@Override

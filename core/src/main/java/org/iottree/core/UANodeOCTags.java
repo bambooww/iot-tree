@@ -174,6 +174,29 @@ public abstract class UANodeOCTags extends UANodeOC
 		return d ;
 	}
 	
+	public UATag addTagByCopy(UATag cp_tag) throws Exception
+	{
+		String name = cp_tag.getName() ;
+		UATag oldtag = null;
+		int c = 0 ;
+		do
+		{
+			oldtag = this.getTagByName(name) ;
+			if(oldtag!=null)
+			{
+				c ++ ;
+				name = cp_tag.getName()+c ;
+			}
+		}while(oldtag!=null);
+		
+		UATag newtag = new UATag(cp_tag,name) ;
+		newtag.id = this.getNextIdByRoot() ;
+		tags.add(newtag) ;
+		constructNodeTree();
+		
+		save();
+		return newtag ;
+	}
 	
 	public UATag renameRefedTag(String tagid,String name,String title,String desc) throws Exception
 	{

@@ -356,7 +356,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			else
 			{
 				w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-						+ str_err + "\"}");
+						+ Convert.plainToJsStr(str_err) + "\"}");
 			}
 
 			bchged = true;
@@ -451,7 +451,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				else
 				{
 					w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-							+ str_err + "\"}");
+							+ Convert.plainToJsStr(str_err) + "\"}");
 				}
 
 			}

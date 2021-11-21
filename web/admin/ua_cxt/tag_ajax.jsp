@@ -123,7 +123,54 @@ case "rename_tag":
 	}
 	break ;
 case "copy":
+	String tagidsstr = (String)request.getParameter("tagids") ;
+	tagids = Convert.splitStrWith(tagidsstr, ",") ;
+	if(tagids==null||tagids.size()<=0)
+	{
+		out.print("no tag id input") ;
+		break ;
+	}
+	
+	session.setAttribute("tags_copied", new String[]{path,tagidsstr} ) ;
+	out.print("succ") ;
+	break;
 case "paste":
+	String[] copied = (String[])session.getAttribute("tags_copied") ;
+	if(copied==null)
+	{
+		out.print("no tags copied") ;
+		break ;
+	}
+	String cp_path = copied[0] ;
+	UANode cp_node = UAUtil.findNodeByPath(cp_path);
+	if(cp_node==null||!(cp_node instanceof UANodeOCTags))
+	{
+		out.print("no node copied") ;
+		break ;
+	}
+	UANodeOCTags cp_ntags = (UANodeOCTags)cp_node ;
+	tagids = Convert.splitStrWith(copied[1], ",") ;
+	if(tagids==null||tagids.size()<=0)
+	{
+		out.print("no tag id copied") ;
+		break ;
+	}
+	
+	if(!(n instanceof UANodeOCTags))
+	{
+		out.print("not tags node") ;
+		break ;
+	}
+	
+	UANodeOCTags cur_ntags = (UANodeOCTags)n ;
+	for(String cp_tagid:tagids)
+	{
+		UATag cptag = cp_ntags.getTagById(cp_tagid) ;
+		if(cptag==null)
+			continue ;
+		cur_ntags.addTagByCopy(cptag);
+	}
+	out.print("succ") ;
 	break;
 case "rt":
 	if(!(n instanceof UANodeOCTags))

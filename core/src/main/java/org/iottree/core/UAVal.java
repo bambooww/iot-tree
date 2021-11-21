@@ -132,6 +132,13 @@ public class UAVal //extends JSObMap
 		if(strv==null||"".contentEquals(strv))
 			return null ;
 	
+		if(tp.isNumberVT() && !tp.isNumberFloat())
+		{
+			int k = strv.indexOf('.') ;
+			if(k>=0)
+				strv = strv.substring(0,k) ;
+		}
+		
 		switch(tp)
 		{
 		case vt_bool:

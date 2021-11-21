@@ -93,6 +93,7 @@ public abstract class ValTranser
 	
 	public abstract Object transVal(Object v) throws Exception;
 
+	public abstract Object inverseTransVal(Object v) throws Exception ;
 
 	public ValTP getTransValTP()
 	{

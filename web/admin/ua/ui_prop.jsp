@@ -43,6 +43,10 @@
 	*/
 	String t = n.getTitle();
 	boolean bdlg = !"false".equals(request.getParameter("dlg")) ;
+	
+	List<PropGroup> pgs = n.listPropGroups();
+	if(pgs==null)
+		pgs = new ArrayList<>(0);
 %><!DOCTYPE html>
 <html>
 <head>
@@ -72,6 +76,7 @@ body {
 .prop_table
 {
 width:99%;
+height:80%;
 border: 0px;
 margin: 0 auto;
 }
@@ -198,18 +203,33 @@ width:100%;
 <script type="text/javascript">
 </script>
 <body>
+ <blockquote class="layui-elem-quote "><%=n.getNodePathTitle() %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<%=n.getNodePath() %>]
+ <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+		<%
+if(!bdlg)
+{
+%>
+<div style="border:0px solid #ffff00;height:45px;text-align:right;padding-right:30px">
+<button id="btn_apply" type="button" class="layui-btn layui-btn-sm  layui-btn-warm layui-btn-disabled" style="margin-right:5px;width:80px" onclick="dlg.btn_clk('x20210306090015_1',1)">Apply</button>
+<button id="btn_help" type="button" class="layui-btn layui-btn-sm  layui-btn-primary " style="margin-right:5px;width:80px" onclick="dlg.btn_clk('x20210306090015_1',3)">Help</button>
+</div>
+<%
+}
+%>
+ </div>
+</blockquote>
 <table class="prop_table" >
-  <tr>
-    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path"><%=n.getNodePathTitle() %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<%=n.getNodePath() %>]</div></td>
+<tr>
+  <%--
+    
+    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path"></div></td>
   </tr>
   <tr>
     <td style="width:30%" >
     	<div id="editcats" class="prop_edit_cat">
     		<ul class="site-dir layui-layer-wrap" style="display: block;">
 <%
-List<PropGroup> pgs = n.listPropGroups();
-if(pgs==null)
-	pgs = new ArrayList<>(0);
+
 String pg0="" ;
 
 	for(PropGroup pg:pgs)
@@ -224,7 +244,8 @@ String pg0="" ;
 </ul>
 		</div>
     </td>
-    <td style="width:70%;vertical-align: top;"  >
+     --%>
+    <td style="width:90%;vertical-align: top;"  >
     <div id="editpanel"  class="prop_edit_panel" >
      
 <%
@@ -320,6 +341,7 @@ String sel="" ;
     </td>
   </tr>
 </table>
+<%--
 <%
 if(!bdlg)
 {
@@ -331,12 +353,13 @@ if(!bdlg)
 <%
 }
 %>
+ --%>
 </body>
 <script type="text/javascript">
 //var repid="";
 var path = "<%=path%>" ;
 var nodeid="<%=n.getId()%>";
-var pg0="<%=pg0%>" ;
+
 var bdirty=false;
 function sel_pg(pgn)
 {
@@ -351,12 +374,15 @@ function show_pg_props(pgn)
 	
 }
 
+var cur_txt="";
+
+
 function pop_multi_ln_edit(inputid)
 {
 	var input = document.getElementById(inputid) ;
-	var tmps = input.value ;
+	cur_txt = input.value ;
 	dlg.open("ui_prop_multiln.jsp",
-			{title:"<wbt:lang>edit_txt</wbt:lang>",w:'500px',h:'400px',txt:tmps},
+			{title:"<wbt:lang>edit_txt</wbt:lang>",w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
@@ -368,8 +394,8 @@ function pop_multi_ln_edit(inputid)
 							 return;
 						 }
 						 input.value=ret.txt ;
-						 dlg.btn_set_enable(1,true);
-						 bdirty=true;
+						 
+						 setDirty(true) ;
 						 dlg.close() ;
 				 	});
 				},
@@ -462,7 +488,7 @@ function load_val()
 		init_chg();
 	});
 }
-sel_pg(pg0);
+//sel_pg(pg0);
 load_val();
 
 function get_prop_vals()

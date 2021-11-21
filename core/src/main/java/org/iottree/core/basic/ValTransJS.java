@@ -17,6 +17,8 @@ public class ValTransJS extends ValTranser
 	
 	String jsStr = null ;
 	
+	String inverseJsStr = null ;
+	
 	@Override
 	public String getName()
 	{
@@ -44,13 +46,25 @@ public class ValTransJS extends ValTranser
 		return ci.runCodeFunc(this.getBelongTo(),v);
 	}
 	
+	@Override
+	public Object inverseTransVal(Object v) throws Exception
+	{
+		UACodeItem ci = getCodeItemInverse() ;
+		if(ci==null)
+			throw new Exception("no inverse js code item ") ;
+		
+		return ci.runCodeFunc(this.getBelongTo(),v);
+	}
+	
 	private transient UACodeItem codeItem = null ;
+	
+	private transient UACodeItem codeItemInverse = null ;
 	
 	//private transient UAVal midVal = null ;
 	
 	
 	
-	public UACodeItem getCodeItem() throws ScriptException
+	UACodeItem getCodeItem() throws ScriptException
 	{
 		if(codeItem!=null)
 			return codeItem;
@@ -69,6 +83,25 @@ public class ValTransJS extends ValTranser
 		return codeItem;
 	}
 	
+	UACodeItem getCodeItemInverse() throws ScriptException
+	{
+		if(codeItemInverse!=null)
+			return codeItemInverse;
+		if(Convert.isNullOrEmpty(inverseJsStr))
+			return null ;
+		
+		UAContext cxt = this.getBelongTo().CXT_getBelongToCxt();
+		if(cxt== null)
+			return null;
+		
+		codeItemInverse = new UACodeItem("","{"+this.inverseJsStr+"}")  ;
+		synchronized(cxt)
+		{
+			codeItemInverse.initItem(cxt, "$tag","$input") ;
+		}
+		return codeItemInverse;
+	}
+	
 	@Override
 	public JSONObject toTransJO()
 	{
@@ -76,6 +109,8 @@ public class ValTransJS extends ValTranser
 		
 		if(jsStr!=null)
 			ret.put("js", jsStr);
+		if(this.inverseJsStr!=null)
+			ret.put("inverse_js", this.inverseJsStr);
 		return ret;
 	}
 	
@@ -84,6 +119,8 @@ public class ValTransJS extends ValTranser
 	{
 		boolean r = super.fromTransJO(m);
 		this.jsStr = m.optString("js", null) ;
+		this.inverseJsStr = m.optString("inverse_js", null) ;
 		return r;
 	}
+	
 }

@@ -131,10 +131,18 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
   <div class="layui-card-header">JS</div>
   <div class="layui-card-body">
     <div class="layui-form-item">
-    <label class="layui-form-label"></label>
+    <label class="layui-form-label">transfer</label>
     <div class="layui-input-block">
     ($tag,$input)=>{
-      <textarea rows="20" cols="60" id="js_txt"></textarea>
+      <textarea rows="10" cols="60" id="js_txt"></textarea>
+    }
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">inverser</label>
+    <div class="layui-input-block">
+     ($tag,$input)=>{
+      <textarea rows="10" cols="60" id="inverse_js_txt"></textarea>
     }
     </div>
   </div>
@@ -205,6 +213,8 @@ function show_card()
 		break;
 	case "js":
 		$("#js_txt").val(get_val("js",""));
+		$("#inverse_js_txt").val(get_val("inverse_js",""));
+		
 		break;
 	}
 	form.render();
@@ -313,6 +323,8 @@ function get_js(n,vt,cb)
 {
 	
 	var jstxt = $("#js_txt").val() ;
+	var inverse_jstxt = $("#inverse_js_txt").val() ;
+	
 	if(jstxt==null||(jstxt=trim(jstxt))=="")
 	{
 		cb(false,"please input js code") ;
@@ -323,6 +335,7 @@ function get_js(n,vt,cb)
 	transdd._t = "js";
 	transdd._vt = vt ;
 	transdd.js = jstxt ;
+	transdd.inverse_js = inverse_jstxt;
 	return true;
 }
 

@@ -14,7 +14,7 @@
 %>
 <html>
 <head>
-<title>add ch</title>
+<title></title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
@@ -41,12 +41,15 @@ function win_close()
 
 function init_val()
 {
-	var opts = get_dlg_w().opener_opts ;
-	if(!opts)
-		return ;
-	if(!opts.txt)
-		return ;
-	$("#txt").val(opts.txt) ;
+	var txt = get_dlg_w().opener.cur_txt;
+	if(txt==null)
+		txt="" ;
+	//var opts = get_dlg_w().opener_opts ;
+	//if(!opts)
+	//	return ;
+	//if(!opts.txt)
+	//	return ;
+	$("#txt").val(txt) ;
 }
 
 init_val() ;

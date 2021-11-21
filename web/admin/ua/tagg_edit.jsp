@@ -109,8 +109,9 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'请输入标题') ;
-		return ;
+		//cb(false,'请输入标题') ;
+		//return ;
+		tt = n ;
 	}
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
