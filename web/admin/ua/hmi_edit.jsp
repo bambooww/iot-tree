@@ -98,14 +98,13 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'请输入名称') ;
+		cb(false,'please input name') ;
 		return ;
 	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'请输入标题') ;
-		return ;
+		tt = n ;
 	}
 	var desc ='' ;
 	

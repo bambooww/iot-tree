@@ -309,7 +309,6 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			// continue ;
 
 			boolean bvalid = false;
-			Object v = null;
 			String strv = "";
 			long dt = -1;
 			long dt_chg = -1;
@@ -318,7 +317,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			if (val != null)
 			{
 				bvalid = val.isValid();
-				v = val.getObjVal();
+				Object v = val.getObjVal();
 				strv = val.getStrVal(tg.getDecDigits());
 				dt = val.getValDT();// Convert.toFullYMDHMS(new
 									// Date(val.getValDT())) ;

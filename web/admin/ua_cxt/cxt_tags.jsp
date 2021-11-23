@@ -232,7 +232,7 @@ if(!brefed)
 	//if(!brefed)
 	{
 %>
-        <input type="checkbox" lay-skin="primary"  id="chkall" onclick="sel_tags_all()"/>
+        <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
 <%
 	}
 %></th>
@@ -386,12 +386,17 @@ var b_sys = <%=bsys%>;
 
 var tags_num = <%=tags_num%>;
 $("#tags_num").html(tags_num);
-
+var form = null;
 layui.use('form', function(){
-	  var form = layui.form;
+	  form = layui.form;
 	  
 	  if(b_sys)
 	  	$("#show_sys").attr('checked', 'checked');
+	  
+	  form.on('checkbox(chkall)', function(obj){
+		  var bshow = obj.elem.checked ;
+          sel_tags_all();
+      });
 	  
 	  form.on('switch(show_sys)', function(obj){
 		  var bshow = obj.elem.checked ;
@@ -423,7 +428,7 @@ function init_right_menu()
 {
 	//if(b_refed)
 	//	return ;
-	$('#tb_cur').mouseup(function(e) {
+	$(document.body).mouseup(function(e) {
 	    if (3 == e.which)
 	    {
 	    	$('.sm_container').css("display","none") ;
@@ -535,15 +540,16 @@ function paste_tag()
 
 function sel_tags_all()
 {
-	var tb = document.getElementById("tb_"+path) ;
-	var inputchkall = document.getElementById("chkall_"+path) ;
-	var bchk = $(inputchkall).prop("checked") ;
-	var tb = $(tb) ;
-	var r = "" ;
-	tb.find("input").each(function(){
-		$(this).prop('checked',bchk);
-	  });
-	return r ;
+	//var tb = document.getElementById("tb_"+path) ;
+	//var inputchkall = document.getElementById("chkall_"+path) ;
+	var bchk = $("#chkall").prop("checked") ;
+	
+	$('input:checkbox').each(function(i){
+	       var id = $(this).attr('id');
+	      if(id.indexOf("chk_")==0)
+	    	  $(this).prop('checked',bchk);
+	      });
+	form.render();
 }
 
 function get_selected_ids_in_table()

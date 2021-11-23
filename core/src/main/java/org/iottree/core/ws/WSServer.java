@@ -1,64 +1,281 @@
 package org.iottree.core.ws;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.websocket.CloseReason;
 import javax.websocket.Session;
+import javax.websocket.CloseReason.CloseCodes;
+
+import org.iottree.core.UAHmi;
+import org.iottree.core.UANodeOCTagsCxt;
+import org.iottree.core.UAPrj;
+import org.json.JSONObject;
 
 
 public abstract class WSServer// extends ConnServer
 {
 
-	protected String getSessionHead(Session session,String name)
-	{
-		Map<String, List<String>> heads = (Map<String, List<String>>) session.getUserProperties().get("req_head");
-		
-		List<String> vvs = heads.get(name);
-		if (vvs == null || vvs.size() <= 0)
-		{
-			return null;
-		}
-		return vvs.get(0);
-	}
-	
-//	public abstract ConnServer getConnServer() ;
-//
-//	ConnAuth getAuthFromSession(String connid, Session session)
+//	protected String getSessionHead(Session session,String name)
 //	{
-//		// get apnid and apnauth
+//		Map<String, List<String>> heads = (Map<String, List<String>>) session.getUserProperties().get("req_head");
 //		
-//		//Map<String, List<String>> heads = (Map<String, List<String>>) session.getUserProperties().get("req_head");
-//
-//		String r_enc = getSessionHead(session,ConnAuth.PN_AUTH_R_KEY);
-//		String id_enc = getSessionHead(session,ConnAuth.PN_AUTH_ID_KEY);
-//		
-//		String bdef = getSessionHead(session,ConnAuth.PN_AUTH_DEFAULT);
-//		boolean bdefault_key = "1".equals(bdef) ;
-//				
-//		
-//		String apnkey = null;
-//		if(bdefault_key)
-//			apnkey = ConnAuth.DEFAULT_KEY ;
-//		else
-//			apnkey = getConnServer().getSupporter().getConnKey(connid);
-//		
-//		ConnAuth serverauth = new ConnAuth(connid, apnkey);
-//
-//		try
+//		List<String> vvs = heads.get(name);
+//		if (vvs == null || vvs.size() <= 0)
 //		{
-//			// 使用client提供的随机密钥
-//			serverauth.setRandomDesKeyEncoded(r_enc);
-//			if (!serverauth.checkConnIdEncoded(id_enc))
-//			{
-//				return null;// 验证失败
-//			}
-//		}
-//		catch (Exception ee)
-//		{
-//			ee.printStackTrace();
 //			return null;
 //		}
-//		return serverauth;
+//		return vvs.get(0);
 //	}
 	
+
+	public static class SessionItem
+	{
+		private final Session session;
+		private final UAPrj prj;
+		private final UANodeOCTagsCxt nodecxt;
+		private final UAHmi hmi;
+
+		private long lastDT = -1;
+
+		// private boolean bFirstTick=true ;
+
+		public SessionItem(Session s, UAPrj rep, UANodeOCTagsCxt nodecxt, UAHmi hmi)
+		{
+			this.session = s;
+			this.prj = rep;
+			this.nodecxt = nodecxt;
+			this.hmi = hmi;
+		}
+
+		public Session getSession()
+		{
+			return session;
+		}
+
+		public UAPrj getPrj()
+		{
+			return prj;
+		}
+
+		public UAHmi getHmi()
+		{
+			return hmi;
+		}
+
+		/**
+		 * get dyn json for rep_editor
+		 * 
+		 * @return
+		 */
+		public String getRepDynJsonStr()
+		{
+			long curt = System.currentTimeMillis();
+			JSONObject jobj = prj.toOCDynJSON(lastDT);
+			lastDT = curt;
+			return jobj.toString(2);
+		}
+
+		public UANodeOCTagsCxt getNodeTagCxt()
+		{
+			return nodecxt;
+		}
+		
+		private void closeSessionOnError(Exception e)
+		{
+			CloseReason cr = new CloseReason(CloseCodes.CLOSED_ABNORMALLY, e.getMessage());
+			try
+			{
+				session.close(cr);
+			}
+			catch ( IOException ioe2)
+			{
+				// Ignore
+			}
+		}
+
+		public void sendTxt(String txt)
+		{
+			try
+			{
+				session.getBasicRemote().sendText(txt);
+			}
+			catch (IllegalStateException ise)
+			{
+				closeSessionOnError(ise);
+			}
+			catch ( IOException ioe)
+			{
+				closeSessionOnError(ioe);
+			}
+		}
+
+		void onTick() throws IOException
+		{
+			UAHmi hmi = getHmi();
+			UAPrj prj = getPrj();
+
+			long lastdt = lastDT;
+			lastDT = System.currentTimeMillis();
+
+			UANodeOCTagsCxt ntags = hmi.getBelongTo();
+
+			StringWriter sw = new StringWriter();
+			sw.write("{\"prj_id\":\"" + prj.getId() + "\",\"cxt_path\":\"" + ntags.getNodePathCxt() + "\",\"prj_run\":"
+					+ prj.RT_isRunning());
+			if (prj.RT_isRunning())
+			{
+				StringWriter sw_rt = new StringWriter();
+				if (ntags.CXT_renderJson(sw_rt, lastdt))
+				{
+					sw.write(",\"cxt_rt\":");
+					sw.write(sw_rt.toString());
+				}
+			}
+			sw.write("}");
+
+			String txt = sw.toString();
+			try
+			{
+				sendTxt(txt);
+			}
+			catch ( IllegalStateException ise)
+			{
+				ise.printStackTrace();
+			}
+
+			// if(!bhas_data)
+			// {
+			// return ;//do nothing
+			// }
+
+			// System.out.println("session id="+this.getSession().getId()+" has
+			// git data") ;
+
+		}
+	}
+
+	private static ConcurrentHashMap<Session, SessionItem> sess2item = new ConcurrentHashMap<>();
+
+	public static synchronized void addSessionItem(SessionItem si)
+	{
+		sess2item.put(si.getSession(), si);
+
+		 //System.out.println(" add session ,num="+sess2item.size()) ;
+	}
+
+	public static synchronized void removeSessionItem(Session sess)
+	{
+		sess2item.remove(sess);
+
+		//System.out.println(" remove session ,num="+sess2item.size()) ;
+	}
+
+	public static int getSessionNum()
+	{
+		return sess2item.size();
+	}
+
+	public static Collection<SessionItem> getSessionItems()
+	{
+		return Collections.unmodifiableCollection(sess2item.values());
+	}
+
+	public static HashMap<UAHmi, List<SessionItem>> getHmiSessions()
+	{
+		Collection<SessionItem> sis = getSessionItems();
+		if (sis == null)
+			return null;
+		HashMap<UAHmi, List<SessionItem>> rets = new HashMap<>();
+		for (SessionItem si : sis)
+		{
+			UAHmi h = si.getHmi();
+			List<SessionItem> sss = rets.get(h);
+			if (sss == null)
+			{
+				sss = new ArrayList<>();
+				rets.put(h, sss);
+			}
+			sss.add(si);
+		}
+		return rets;
+	}
+
+	private static Timer timer = null;
+
+	private static final long TICK_DELAY = 1000;
+
+	protected static void tick()
+	{
+		for (SessionItem si : getSessionItems())
+		{
+			long st = System.currentTimeMillis() ;
+			try
+			{
+				si.onTick();
+			}
+			catch ( Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				//System.out.println("tick cost="+(System.currentTimeMillis()-st));
+			}
+		}
+
+		// HashMap<UAHmi,List<SessionItem>> hmi2sis = getHmiSessions() ;
+		// if(hmi2sis==null||hmi2sis.size()<0)
+		// return ;
+		//
+		// for (Map.Entry<UAHmi,List<SessionItem>> h2si:hmi2sis.entrySet())
+		// {
+		//
+		// }
+	}
+
+	public synchronized static void startTimer()
+	{
+		if (timer != null)
+			return;
+
+		// System.out.println(" hmi rt -- start timer") ;
+
+		timer = new Timer(WSServer.class.getSimpleName() + " Timer");
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run()
+			{
+				try
+				{
+					tick();
+				}
+				catch ( RuntimeException e)
+				{
+					// log.error("Caught to prevent timer from shutting down" +
+					// e.getMessage());
+				}
+			}
+		}, TICK_DELAY, TICK_DELAY);
+	}
+
+	public synchronized static void stopTimer()
+	{
+		if (timer != null)
+		{
+			// System.out.println(" hmi rt -- stop timer") ;
+			timer.cancel();
+			timer = null;
+		}
+	}
+
 }

@@ -956,7 +956,7 @@ var cxt_menu = {
 			return !tn.in_dev;
 		}},
 		{op_name:"modify_tagg",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_tagg,op_chk:(tn)=>{
-			return !tn.in_dev;
+			return true;// !tn.in_dev;
 		}},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;

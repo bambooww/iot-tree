@@ -33,7 +33,7 @@ import org.iottree.core.ws.WebSocketConfig;
 import org.json.JSONObject;
 
 @ServerEndpoint(value = "/ws/cxt_rt/{repname}/{nodeid}", configurator = WebSocketConfig.class)
-public class WSCxtRT extends WSServer
+public class WSCxtRT// extends WSServer
 {
 	static
 	{
@@ -226,6 +226,8 @@ public class WSCxtRT extends WSServer
 			timer = null ;
 		}
 	}
+	
+	
 	
 	@OnOpen
 	public void onOpen(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "nodeid") String nodeid) throws Exception //

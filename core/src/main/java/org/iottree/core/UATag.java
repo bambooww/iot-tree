@@ -122,6 +122,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient ValTranser valTransObj = null ;
 	
+	//for value not chg check,when tag is inited or 
+	// reload,not chg check will ignore
+	private transient boolean bInitLoaded = true ;
+	
 	public UATag()
 	{
 		super();
@@ -796,8 +800,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg)
 	{
-		if(ignore_nochg)
+		if(ignore_nochg && !bInitLoaded)
 		{
+			
+			
 			if(curRawVal==null)
 			{
 				if(v==null)
@@ -807,6 +813,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				return ;
 		}
 		
+		if(bInitLoaded)
+			bInitLoaded = false;
 		
 		curRawVal = v ;
 		

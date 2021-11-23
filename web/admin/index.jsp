@@ -7,6 +7,7 @@
 	java.net.*,
 	java.util.*,
 	org.iottree.core.cxt.*,
+	org.iottree.core.ws.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
@@ -333,12 +334,10 @@ if(rep.isAutoStart())
 					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Tag Indicator</h3>
+					        <h3>Number of sessions</h3>
 					    </div>
 					    <div class="mod-body">
-					       
-					       TODO 1.2v
-					        
+					       <%=WSServer.getSessionNum() %>
 					    </div>
 					</div>
 

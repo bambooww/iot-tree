@@ -372,6 +372,12 @@ margin-top:5px;
  
 <script>
 
+document.addEventListener('touchmove', function (event) {
+	    event.preventDefault();
+ }, false);
+document.addEventListener('touchmove', function (event) {
+window.event.returnValue = false;
+}, false);
 
 var layuiEle ;
 var path="<%=path%>";
@@ -828,19 +834,6 @@ function show_overlay(bshow,title)
 
 
 
-var ws = null;
-
-var ws_opened = false;
-
-function check_ws()
-{
-	if(ws!=null&&ws_opened)
-		return ;
-	
-	ws_conn() ;
-	
-	setTimeout(check_ws,5000) ;
-}
 
 function ws_conn()
 {
@@ -877,10 +870,10 @@ function ws_conn()
     	else
     		show_overlay(true,"project is not running.");
     };
+    
     ws.onclose = function (event) {
     	show_overlay(true,"conn broken");
     	ws_disconn();
-    	setTimeout(check_ws,5000) ;
         log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
     };
     
@@ -896,8 +889,43 @@ function ws_disconn() {
     ws_opened = false;
 }
 
-if(prj_name!=null&&prj_name!="")
+var ws = null;
+var ws_last_chk = -1 ;
+var ws_opened = false;
+
+function check_ws()
+{
+	if(ws!=null&&ws_opened)
+	{
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+
+	if(ws==null)
+	{
+		ws_disconn();
+		ws_conn();
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+	
+	//ws_opened==false;
+	var dt = new Date().getTime();
+	if(dt-ws_last_chk<20000)
+		return ;
+	//time out
+	ws_disconn();
 	ws_conn();
+	ws_last_chk = new Date().getTime();
+	return ;
+}
+
+
+check_ws();
+setInterval(check_ws,5000) ;
+
+//if(prj_name!=null&&prj_name!="")
+//	ws_conn();
 
 function cxt_rt()
 {
