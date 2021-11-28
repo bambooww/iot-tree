@@ -19,7 +19,7 @@ if(node==null)
 {
 	out.print("node not found"); 
 	return ;
-} 
+}
 UAHmi hmi = null ;
 boolean bhmi = false;
 if(node instanceof UAHmi)
@@ -50,7 +50,7 @@ UANodeOCTags node_tags = (UANodeOCTags)node;
 
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
 List<UATag> cur_tags = node_tags.getNorTags() ;
-List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
+//List<UANodeOCTags>  tns = node_tags.listTags() ;
 boolean brefowner = node_tags.isRefOwner();
 boolean brefed = node_tags.isRefedNode() ;
 
@@ -102,6 +102,107 @@ td
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
+<%--
+
+<%
+if(!bhmi)
+{
+%>
+<blockquote class="layui-elem-quote"><%=node_tags.getNodePathTitle() %> [<%=node_tags.getNodePath() %>]
+<%
+if(!brefed)
+{
+%>
+ <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ <%
+ 	if(bdevdef)
+ 	{
+ %>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
+<%
+ 	}
+%>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+Add Middle Tag</button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
+ </div>
+<%
+}
+%>
+</blockquote>
+<div style="height:100px;overflow: auto;">
+<table class="oc_div_list" >
+  <thead>
+     <tr>
+<%
+	if(!brefed)
+	{
+%>
+        <th><input type="checkbox" lay-skin="primary"  id="chkall" onclick="sel_tags_all()"/></th>
+<%
+	}
+%>
+        <th>Mid</th>
+        <th>Tag Name</th>
+        <th>Title</th>
+        <th>Address</th>
+        <th> Raw Value Type</th>
+        <th> Transfer</th>
+        <th>Write</th>
+        <th></th>
+     </tr>
+   </thead>
+   <tbody id="div_list_bd_">
+<%
+for(UATag tag:cur_tags)
+{
+	String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+	String trans = "" ;
+	ValTranser vt = tag.getValTranserObj() ;
+	if(vt!=null)
+		trans = vt.toTitleString();
+%>
+   <tr id="tag_<%=tag.getId() %>"  tag_id="<%=tag.getId()%>">
+<%
+	if(!brefed)
+	{
+%>
+        <td style="text-align: center;"><input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/></td>
+<%
+	}
+%>
+        <td><%=(tag.isMidExpress()?"✔":"") %></td>
+        <td title="<%=cxtpath%>"><%=tag.getName() %></td>
+        <td><%=tag.getTitle() %></td>
+        <td><%=tag.getAddress() %></td>
+        <td><%=tag.getValTpRaw() %></td>
+        <td><%=trans %></td>
+        <td><%=(tag.isCanWrite()?"✔":"") %></td>
+        <td>
+<%
+if(!brefed)
+{
+%>
+        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
+        <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
+<%
+}
+%>
+        </td>
+      </tr>
+<%
+}
+%>
+    </tbody>
+</table>
+</div>
+<%
+}//end if(bhmi)
+
+
+%>
+<hr class="layui-bg-green">
+
+--%>
  <blockquote class="layui-elem-quote ">&nbsp;
  <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %></div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
@@ -149,22 +250,10 @@ td
      </tr>
    </thead>
    <tbody id="div_list_bd_">
-<%--   
 <%
 int tags_num = 0 ;
-for(UANodeOCTags tn:tns)
-{
-	//if(tn.getRefBranchNode()!=null)
-	//	continue ;
-	List<UATag> tags = null;
-	if(bsys)
-		tags = tn.listTags() ;
-	else
-		tags = tn.getNorTags() ;
-	
-	String tn_id = tn.getId() ;
-	String tn_path = tn.getNodePath() ;
-	for(UATag tag:tags)
+
+	for(UATag tag:cur_tags)
 	{
 		tags_num ++ ;
 		
@@ -194,7 +283,7 @@ for(UANodeOCTags tn:tns)
 			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
 %>
    <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
-   	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
+    tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
    	title="<%=tt%>"
 <%
 if(bloc&&!tag.isSysTag())
@@ -245,11 +334,9 @@ if(bloc&&!tag.isSysTag())
         </td>
       </tr>
 <%
-	}
 }
 %>
     </tbody>
-     --%>
 </table>
 </div>
 </form>
@@ -285,7 +372,7 @@ var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
 
-var tags_num = 0;//<%=0%>;
+var tags_num = <%=tags_num%>;
 $("#tags_num").html(tags_num);
 var form = null;
 layui.use('form', function(){
@@ -311,33 +398,25 @@ document.oncontextmenu = function() {
     return false;
 }
 
-var b_ctrl_down = false;
-var b_shift_down=false;
-var b_menu_show=false;
+
+function get_selected_tagids()
+{
+	var tagids = "" ;
+	$('input:checkbox:checked').each(function(i){
+	       var id = $(this).attr('id');
+	      if(id.indexOf("chk_")==0)
+	    	  if(tagids!='')
+	    		  tagids += ',' ;
+	    	  tagids += id.substr(4) ;
+	      });
+	return tagids ;
+}
 
 function init_right_menu()
 {
-	 $(document).keydown(function(e){
-		 if(e.keyCode==17)
-			 b_ctrl_down=true;
-		 else if(e.keyCode==16)
-			 b_shift_down = true ;
-		// console.log(e.keyCode);
-		 });
-	 $(document).keyup(function(e){
-		 if(e.keyCode==17)
-			 b_ctrl_down=false;
-		 else if(e.keyCode==16)
-			 b_shift_down = false ;
-		 });
+	//if(b_refed)
+	//	return ;
 	$(document.body).mouseup(function(e) {
-		if(1==e.which)
-		{
-			on_tag_mousedown(null);
-			on_tag_mouseup(null);
-			return ;
-		}
-		
 	    if (3 == e.which)
 	    {
 	    	$('.sm_container').css("display","none") ;
@@ -361,71 +440,19 @@ function init_right_menu()
 	    	
 	    }
 	})
-	
-	init_tr();
-}
 
-function init_tr()
-{
-	$('#tb_cur tr[id*="ctag_"]').mouseenter(function(e) {
-		var t_id = $(this).attr("tag_id");
-		var t_path = $(this).attr("tag_path");
-    	var t_loc = $(this).attr("tag_loc")=='true';
-    	var t_sys = $(this).attr("tag_sys")=='true';
-    	
-		if(t_loc&&!t_sys)
-		{
-			on_tag_mouseenter(t_id);
-			return ;
-		}
-	});
-	
-	$('#tb_cur tr[id*="ctag_"]').mouseout(function(e) {
-		var t_id = $(this).attr("tag_id");
-		var t_path = $(this).attr("tag_path");
-    	var t_loc = $(this).attr("tag_loc")=='true';
-    	var t_sys = $(this).attr("tag_sys")=='true';
-    	
-		if(t_loc&&!t_sys)
-		{
-			on_tag_mouseout(t_id);
-			return ;
-		}
-	});
-	
-	$('#tb_cur tr[id*="ctag_"]').mousedown(function(e) {
-		var t_id = $(this).attr("tag_id");
-		var t_path = $(this).attr("tag_path");
-    	var t_loc = $(this).attr("tag_loc")=='true';
-    	var t_sys = $(this).attr("tag_sys")=='true';
-    	
-		if(1==e.which&&t_loc&&!t_sys)
-		{
-			on_tag_mousedown(t_id);
-			return ;
-		}
-	});
-	
 	$('#tb_cur tr[id*="ctag_"]').mouseup(function(e) {
-		var t_id = $(this).attr("tag_id");
-		var t_path = $(this).attr("tag_path");
-    	var t_loc = $(this).attr("tag_loc")=='true';
-    	var t_sys = $(this).attr("tag_sys")=='true';
-    	
-		if(1==e.which&&t_loc&&!t_sys)
-		{
-			e.stopPropagation();
-			on_tag_mouseup(t_id);
-			return ;
-		}
-		
 	    if (3 == e.which)
 	    {
 	    	e.stopPropagation();
 	    	
 	    	//$('body').selectMenu({rightClick : true}) ;//clear outter menu
 	    	$('.sm_container').css("display","none") ;
-	    	b_menu_show=true;
+	    	var t_path = $(this).attr("tag_path");
+	    	var t_id = $(this).attr("tag_id");
+	    	var t_loc = $(this).attr("tag_loc")=='true';
+	    	var t_sys = $(this).attr("tag_sys")=='true';
+	    	
 	        $(this).selectMenu({
 	        	title0:'Modify Tag',
 	        	regular : true,
@@ -449,18 +476,9 @@ function init_tr()
 								copy_tag($(this).attr("tag_id"));
 							}});
 	        			if(get_selected_tagids()!='')
-	        			{
-	        				r.push({ content : 'Copy Selected Tag', callback:()=>{
-								
+							r.push({ content : 'Copy Selected Tag', callback:()=>{
 								copy_tag(get_selected_tagids());
 							}});
-	        				
-	        				r.push({ content : 'Delete Selected Tag', callback:()=>{
-								
-								del_tag(get_selected_tagids());
-							}});
-	        			}
-							
 							
 	        			r.push({ content : 'Paste Tag', callback:()=>{
 								paste_tag();
@@ -475,7 +493,6 @@ function init_tr()
 					return [];
 				}
 	        });
-
 	    }
 	})
 
@@ -505,25 +522,7 @@ function paste_tag()
 					dlg.msg(ret);
 					return ;
 				}
-				//document.location.href=document.location.href;
-				refresh_tags();
-			},false);
-}
-
-function copy_paste_tag(path,tagids,cb)
-{
-	
-	send_ajax('./tag_ajax.jsp',{op:"paste",path:path,tag_ids:tagids},function(bsucc,ret)
-			{
-				if(!bsucc || ret.indexOf('succ=')<0)
-				{
-					dlg.msg(ret);
-					return ;
-				}
-				var retids = ret.substr(5);
-				if(cb)
-					cb(retids) ;
-				refresh_tags();
+				document.location.href=document.location.href;
 			},false);
 }
 
@@ -586,7 +585,7 @@ function add_or_modify_tag(id,bmid)
 							 
 							 ret.path=path ;
 							 ret.op = "edit_tag";
-							 //ret.id = id ;
+							 ret.id = id ;
 							 //console.log(ret);
 							 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
 								{
@@ -596,7 +595,7 @@ function add_or_modify_tag(id,bmid)
 										return ;
 									}
 									dlg.close();
-									refresh_tags();
+									document.location.href=document.location.href;
 								},false);
 								
 							 
@@ -637,7 +636,7 @@ function rename_tag(p,id)
 									return ;
 								}
 								dlg.close();
-								refresh_tags();
+								document.location.href=document.location.href;
 							},false);
 							
 						 
@@ -678,7 +677,7 @@ function del_tag(id)
 					return ;
 				}
 				dlg.close();
-				refresh_tags();
+				document.location.href=document.location.href;
 			},false);
 	 });
 }
@@ -763,128 +762,6 @@ function run_script_test(fn)
 		{
 			document.getElementById('script_res').value = ret ;
 		},false) ;
-}
-
-function refresh_tags()
-{
-	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys,function(bsucc,ret){
-		$("#div_list_bd_").html(ret);
-		init_tr();
-		
-		var tn = $('#tb_cur tr[id*="ctag_"]:last-child').attr("tag_num");
-		$("#tags_num").html(tn);
-	},false);
-}
-
-
-refresh_tags();
-
-var tag_mdown=false;
-var tag_sels=[] ;
-
-
-
-function get_selected_tagids()
-{
-	var tagids = "" ;
-	for(var tid of tag_sels)
-	{
-    	  if(tagids!='')
-    		  tagids += ',' ;
-    	  tagids += tid;
-	}
-	return tagids ;
-}
-
-function redraw_tags()
-{
-	$('#tb_cur tr[id*="ctag_"]').each(function(i){
-		 var tid = $(this).attr("tag_id");
-		 if(tag_sels.indexOf(tid)>=0)
-			 $(this).css("background","#0078d7");
-		 else
-			 $(this).css("background","");
-	});
-}
-
-function find_tag_ids_from_to(f_tid,t_tid)
-{
-	var tmpids=[];
-	$('#tb_cur tr[id*="ctag_"]').each(function(i){
-		 var tid = $(this).attr("tag_id");
-		tmpids.push(tid) ;
-	});
-	var f_idx = tmpids.indexOf(f_tid) ;
-	var t_idx = tmpids.indexOf(t_tid) ;
-	if(f_idx<0||t_idx<0)
-		return [] ;
-	if(f_idx>t_idx)
-	{
-		var k = f_idx ;
-		f_idx = t_idx ;
-		t_idx = k ;
-	}
-	var ret=[] ;
-	for(var i = f_idx ; i <= t_idx ; i ++)
-	{
-		ret.push(tmpids[i]) ;
-	}
-	return ret ;
-}
-
-function on_tag_mousedown(tagid)
-{
-	if(b_menu_show)
-	{
-		b_menu_show=false;
-		return ;
-	}
-		
-	tag_mdown = true ;
-	if(b_ctrl_down)
-	{
-		
-	}
-	else if(b_shift_down)
-	{
-		if(tag_sels.length<=0)
-			return ;
-		
-		var sids = find_tag_ids_from_to(tag_sels[tag_sels.length-1],tagid);
-		if(sids!=null&&sids.length>0)
-			tag_sels.pushAll(sids) ;
-	}
-	else	
-		tag_sels=[];
-	
-	if(tagid!=null&&tagid!=''&&tag_sels.indexOf(tagid)<0)
-		tag_sels.push(tagid);
-	redraw_tags();
-}
-
-function on_tag_mouseenter(tagid)
-{
-	if(!tag_mdown)
-		return ;
-	//if(tag_sels.indexOf(tagid)>=0)
-	//	tag_sels.remove(tagid) ;
-	//else
-		tag_sels.push(tagid);
-	redraw_tags();
-}
-
-function on_tag_mouseout(tagid)
-{
-	if(!tag_mdown)
-		return ;
-	
-	//tag_sels.remove(tagid);
-	//redraw_tags();
-}
-
-function on_tag_mouseup(tagid)
-{
-	tag_mdown= false;
 }
 
 </script>

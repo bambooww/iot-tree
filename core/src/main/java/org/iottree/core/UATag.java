@@ -141,16 +141,19 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.decDigits = dec_digits ;
 	}
 	
-	UATag(UATag t,String newname)
+	UATag(UATag t,String newname,String newtitle,String newaddr)
 	{
-		super(newname,t.getTitle(),t.getDesc()) ;
+		super(newname,newtitle,t.getDesc()) ;
 		
 		this.rename = null ;
 		this.retitle = null;
-		String redesc = null ;
+		this.redesc = null ;
 		
 		bMidExp = t.bMidExp;
-		this.addr = t.addr;
+		if(Convert.isNotNullEmpty(newaddr))
+			this.addr = newaddr ;
+		else
+			this.addr = t.addr;
 		this.valTp = t.valTp;
 		this.decDigits = t.decDigits ;
 

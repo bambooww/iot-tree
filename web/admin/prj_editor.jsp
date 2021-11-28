@@ -463,7 +463,7 @@ background-color: #fff ;
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
-		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 20px solid">
+		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 20px solid" >
 		<%=rep.getTitle()%>
 		</div>
 		 <div style="position:relative;float: right;right:320px;margin-right:30px;width:110px;margin-top:10px;font: 20px solid;color:#fff5e2;background-color: #515658">
@@ -575,10 +575,10 @@ background-color: #fff ;
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>
 			    <li >Properties</li>
-			    <li >Accessibility</li>
+			    
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
-			  	<div class="layui-tab-item layui-show" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
+			  	<div class="layui-tab-item layui-show" style="position:relative;top:0px;bottom:0px;width:99%;height:99%">
 			      <iframe id="if_tags" src="./ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
 				
@@ -591,9 +591,10 @@ background-color: #fff ;
 			      <iframe id="if_main" src="rep_editor_graph.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
  --%>
-				<div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
+				<%--
 			       <iframe id="if_access" src="./ua_cxt/cxt_accessor.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
-				</div>
+			        --%>
+		
 			  </div>
 			</div>
 		    </div>
@@ -862,34 +863,6 @@ function on_conn_ui_showed()
 }
 
 
-var layuiEle ;
-
-var curTabIF =  $("#if_main")[0] ;
-
-var copiedItem = null ;
-
-layui.use('element', function(){
-	layuiEle = layui.element;
-	layuiEle.on('tab', function(data)
-		{
-			var ifrm= null ;
-			if(data.index==0)
-			{//main hmi
-				ifrm = $("#if_main")[0] ;
-			}
-			else
-			{
-				var id = $(this).attr('lay-id');
-				ifrm = $("#if_"+id)[0] ;
-			}
-			if(ifrm!=null)
-			{
-				curTabIF = ifrm ;
-				//console.log(curTabIF) ;
-			}
-		});
-	layuiEle.render();
-});
 
 var cxt_menu = {
 	"prj":[
@@ -986,7 +959,8 @@ function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","./ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
 	$("#if_tags").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
-	$("#if_access").attr("src","./ua_cxt/cxt_accessor.jsp?tabid=main&path="+tn.path);
+	//$("#if_context").attr("src","./ua_cxt/cxt_accessor.jsp?tabid=main&path="+tn.path);
+	//$("#if_context").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
 }
 
 function on_tree_loaded(data)
@@ -1795,10 +1769,6 @@ function act_hmi_edit_ui(n,op)
 	add_tab(n.id,n.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
-
-if(hmi_main.path!=null&&hmi_main.path!="")
-	add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
-
 /*
 function act_new_hmi(n,op)
 {
@@ -2174,6 +2144,43 @@ function rt_cp_start_stop(cp_id)
 		return ;
 	},false) ;
 }
+
+
+var layuiEle ;
+
+var curTabIF =  $("#if_main")[0] ;
+
+var copiedItem = null ;
+
+layui.use('element', function(){
+	layuiEle = layui.element;
+	layuiEle.on('tab', function(data)
+		{
+			var ifrm= null ;
+			if(data.index==0)
+			{//main hmi
+				ifrm = $("#if_main")[0] ;
+			}
+			else
+			{
+				var id = $(this).attr('lay-id');
+				ifrm = $("#if_"+id)[0] ;
+			}
+			if(ifrm!=null)
+			{
+				curTabIF = ifrm ;
+				//console.log(curTabIF) ;
+			}
+		});
+	
+	layuiEle.render();
+	
+
+
+	if(hmi_main.path!=null&&hmi_main.path!="")
+		add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
+
+});
 
 setInterval(prj_rt,3000) ;
 </script>

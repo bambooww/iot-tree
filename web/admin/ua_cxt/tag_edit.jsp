@@ -16,6 +16,8 @@
 		return ""+o ;
 	}
 	 %><%
+	 if(!Convert.checkReqEmpty(request, out, "path"))
+			return ;
 	boolean bmid = "true".equalsIgnoreCase(request.getParameter("mid")) ;
 	String path = request.getParameter("path") ;
 	String id = request.getParameter("id") ;
@@ -30,15 +32,25 @@
 	boolean canw = false;
 	String desc = "" ;
 	String trans = null ;
-	if(Convert.isNotNullEmpty(path) && Convert.isNotNullEmpty(id))
+	
+	if(id==null)
+		id = "" ;
+	
+
+	UANodeOCTags n = (UANodeOCTags)UAUtil.findNodeByPath(path);
+	if(n==null)
 	{
-		UANodeOCTags n = (UANodeOCTags)UAUtil.findNodeByPath(path);
-		if(n==null)
-		{
-			out.print("no node with path="+path) ;
-			return ;
-		}
+		out.print("no node with path="+path) ;
+		return ;
+	}
+	if( Convert.isNotNullEmpty(id))
+	{
  		tag = n.getTagById(id) ;
+ 		if(tag==null)
+ 		{
+ 			out.print("no edit tag found") ;
+ 			return ;
+ 		}
  		name = tag.getName() ;
  		title = tag.getTitle() ;
  		desc = tag.getDesc() ;
@@ -63,6 +75,16 @@
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
+<style type="text/css">
+.btn-group button {
+    left:10px;
+    padding: 10px 24px;
+    cursor: pointer;
+    width: 90%; 
+    display: block; 
+}
+
+</style>
 <script>
 dlg.resize_to(600,500);
 </script>
@@ -70,14 +92,17 @@ dlg.resize_to(600,500);
 </head>
 <body>
 <form class="layui-form" action="">
+ <table style="width:100%	">
+   <tr>
+     <td width="80%">
 	<input type="hidden" id="id" name="name" value="<%=html_str(id)%>">
 	  <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width: 100px;">
       <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
+	  <div class="layui-input-inline" style="width: 100px;">
 	    <input type="text" id="title" name="title" lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
 	  
@@ -97,7 +122,7 @@ dlg.resize_to(600,500);
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
-    <div class="layui-input-inline" style="width: 120px;">
+    <div class="layui-input-inline" style="width: 80px;">
       <select  id="vt"  name="vt"  class="layui-input" placeholder="">
         <option value="">-</option>
 <%
@@ -109,7 +134,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
       </select>
     </div>
     <div class="layui-form-mid">Decimal Digits:</div>
-    <div class="layui-input-inline" style="width: 120px;">
+    <div class="layui-input-inline" style="width: 50px;">
       <input type="text" id="dec_digits" name="dec_digits" placeholder="" autocomplete="off" class="layui-input">
     </div>
     </div>
@@ -137,10 +162,22 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
     </div>
   </div>
+  </td>
+  <td>
+  <div class="btn-group">
+    <button onclick="on_new_tag()" >New</button>
+    <button onclick="on_copy_tag()">Copy</button>
+    <button>Delete</button>
+    </div>
+  </td>
+  </tr>
+  </table>
  </form>
 </body>
 <script type="text/javascript">
 
+var node_path="<%=path%>";
+var tag_id = "<%=id%>"
 var bmid = <%=bmid%>;
 
 var name= "<%=html_str(name) %>" ;
@@ -259,6 +296,23 @@ function do_submit(cb)
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;
+}
+
+function on_new_tag()
+{
+	event.preventDefault() || (event.returnValue = false);
+	document.location.href="./tag_edit.jsp?path="+node_path;
+}
+
+function on_copy_tag()
+{
+	event.preventDefault() || (event.returnValue = false);
+	if(id=='')
+		return ;
+	//console.log(dlg.get_opener_w())
+	dlg.get_opener_w().copy_paste_tag(node_path,tag_id,(newid)=>{
+		document.location.href="./tag_edit.jsp?path="+node_path+"&id="+newid;
+	});
 }
 
 </script>
