@@ -1,6 +1,8 @@
 package org.iottree.core;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -111,7 +113,8 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	 * 
 	 * @param new_self create by copySelfWithNewId
 	 */
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id,
+			HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
 		if(Convert.isNotNullEmpty(ownerid))
 			ownerid+="-" ;
@@ -139,6 +142,19 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		if(r==null)
 			throw new RuntimeException("no root found") ;
 		return r.getRootNextId() ;
+	}
+	
+	public int getRelatedFiles(List<File> fs)
+	{
+		//ArrayList<File> rets = new ArrayList<>() ;
+		if(this instanceof IRelatedFile)
+			fs.add(((IRelatedFile)this).getRelatedFile()) ;
+		List<UANode> subns = this.getSubNodes() ;
+		if(subns==null)
+			return fs.size() ;
+		for(UANode n:subns)
+			n.getRelatedFiles(fs);
+		return fs.size() ;
 	}
 	
 	private IRoot getRoot()

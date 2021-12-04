@@ -59,11 +59,15 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	}
 	
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
+			boolean copy_id,boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id,root_subnode_id) ;
-		UADev self = (UADev)new_self ;
-		self.devRefId = this.devRefId;
+		super.copyTreeWithNewSelf(root,new_self,ownerid, copy_id,root_subnode_id,rf2new) ;
+		if(new_self instanceof UADev)
+		{
+			UADev self = (UADev)new_self ;
+			self.devRefId = this.devRefId;
+		}
 	}
 	
 	UADev deepCopyMe() throws Exception
@@ -137,7 +141,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return dd ;
 	}
 	
-	boolean updateByDevDef()
+	boolean updateByDevDef(HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
 		DevDef dd = getDevDef() ;
 		if(dd==null)
@@ -145,7 +149,8 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		
 		//newdev.setNameTitle(newname, newtitle, "");
 		
-		dd.updateUADev(this,this.getName(), this.getTitle(), this.getDesc()) ;
+		//dd.updateUADev(this,this.getName(), this.getTitle(), this.getDesc()) ;
+		dd.deepCopyUADev(this.getPrj(),this,this.getName(), this.getTitle(), this.getDesc(),rf2new) ;
 		return true;
 	}
 	/**
@@ -215,6 +220,10 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		if(uad!=null)
 		{//add driver prop used in this channel
 			List<PropGroup> drvpgs = uad.getPropGroupsForDevInCh();//.getPropGroupsForDev() ;
+			if(drvpgs!=null)
+				pgs.addAll(drvpgs);
+			
+			drvpgs = uad.getPropGroupsForDevDef();
 			if(drvpgs!=null)
 				pgs.addAll(drvpgs);
 		}

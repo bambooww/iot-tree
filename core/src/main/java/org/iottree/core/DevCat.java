@@ -137,6 +137,21 @@ public class DevCat implements IResNode
 		XmlData.writeToFile(xd, ff);
 	}
 	
+	public void delDevDef(DevDef dd)
+	{
+		File f = dd.getDevDefFile();
+		if(f.exists())
+		{
+			f.delete();
+		}
+		File df = dd.getDevDefDir() ;
+		if(df.exists())
+		{
+			Convert.deleteDir(df) ;
+		}
+		this.getDevDefs().remove(dd);
+	}
+	
 	private DevDef loadDevDef(String id) throws Exception
 	{
 		File catdir=  getDevCatDir();
@@ -209,6 +224,36 @@ public class DevCat implements IResNode
 		this.getDevDefs().add(r) ;
 		r.constructNodeTree();
 		return r ;
+	}
+	
+	
+	public DevDef setDevDefFromPrj(UADev dev,String name,String title) throws Exception
+	{
+		DevDef dd = this.getDevDefByName(name) ;
+		boolean bnew = false;
+		if(dd==null)
+		{
+			dd = new DevDef(this,name,title,"") ;
+			bnew=true;
+		}
+		
+		//DevDef dd = new DevDef(this,name,title,"") ;
+		//copy dev to def
+		
+		String id = dd.getId() ;
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
+		dev.copyTreeWithNewSelf(dd,dd,"",false,true,rf2new); //recreate tree
+		dd.id = id ;
+		dd.setNameTitle(name, title, "");
+		
+		saveDevDef(dd);
+		
+		if(bnew)
+			this.getDevDefs().add(dd) ;
+		dd.constructNodeTree();
+		
+		Convert.copyRelatedFile(rf2new);
+		return dd ;
 	}
 
 	ResDir resCxt = null ;

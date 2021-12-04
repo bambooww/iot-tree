@@ -153,7 +153,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		}
 		
 		String id = dev.getId() ;
-		super.copyTreeWithNewSelf(dev,id,true,false); //recreate tree
+		super.copyTreeWithNewSelf(null,dev,id,true,false,null); //recreate tree
 		dev.id = id ;
 		dev.setNameTitle(name, title, desc);
 		dev.setDevRefId(this.getId());
@@ -174,16 +174,42 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	}
 	
 	/**
+	 * all node with new id will be copied by def
+	 * 
+	 * @param dev
+	 * @param name
+	 * @param title
+	 * @param desc
+	 * @return
+	 */
+	UADev deepCopyUADev(IRoot root,UADev dev,String name,String title,String desc,
+			HashMap<IRelatedFile,IRelatedFile> rf2new)
+	{
+		
+		//List<UATag> oldtags = dev.listTagsNorAll();
+		
+		String id = dev.getId() ;
+		
+		super.copyTreeWithNewSelf(root,dev,"",false,true,rf2new); //recreate tree
+		dev.id = id ;
+		dev.setNameTitle(name, title, desc);
+		dev.setDevRefId(this.getId());
+		
+		return dev;
+	}
+	
+	/**
 	 * update dev sub tree node only
 	 * @param dev
 	 * @return
 	 */
-	UADev updateUADev(UADev dev)
+	UADev updateUADev(UAPrj prj,UADev dev,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
 		String n = dev.getName() ;
 		String t = dev.getTitle() ;
 		String d = dev.getDesc() ;
-		return updateUADev(dev,n,t,d) ;
+		//return updateUADev(dev,n,t,d) ;
+		return deepCopyUADev(prj,dev, n, t, d,rf2new) ;
 	}
 //	
 //	public UATagG addTagG(String name,String title,String desc)

@@ -131,7 +131,7 @@
 			String deft = "" ;
 			if(devdef==null)
 			{
-				devok = "<span class=tn_warn title='"+dev.getTitle()+" is not def'>dev?</span>" ;
+				devok = "";//"<span class=tn_warn title='"+dev.getTitle()+" is not def'>dev?</span>" ;
 			}
 			else
 			{

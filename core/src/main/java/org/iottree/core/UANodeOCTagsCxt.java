@@ -53,17 +53,25 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	}
 
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self, String ownerid, boolean copy_id, boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self, String ownerid, 
+			boolean copy_id, boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self, ownerid, copy_id, root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self, ownerid, copy_id, root_subnode_id,rf2new);
 		UANodeOCTagsCxt self = (UANodeOCTagsCxt) new_self;
 		self.hmis.clear();
 		for (UAHmi hmi : hmis)
 		{
 			UAHmi nt = new UAHmi();
+			
 			if (root_subnode_id)
-				nt.id = this.getNextIdByRoot();
-			hmi.copyTreeWithNewSelf(nt, ownerid, copy_id, root_subnode_id);
+			{
+				if(root!=null)
+					nt.id = root.getRootNextId();
+				else
+					nt.id = this.getNextIdByRoot();
+			}
+			//	nt.id = this.getNextIdByRoot();
+			hmi.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
 			self.hmis.add(nt);
 		}
 	}

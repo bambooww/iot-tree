@@ -11,7 +11,7 @@
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
-List<UAPrj> reps = UAManager.getInstance().listPrjs();
+List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 //UAContext.getOrLoadJsApi() ;
 %><!DOCTYPE html>
 <html class="">
@@ -128,12 +128,21 @@ visibility: visible;
 				           
 						</div>
 						<div class="mod-body">
-							<div class="content markitup-box" style="height:100%">
+							<div class="content markitup-box" style="height:200px:overflow:auto">
 <%
-	for(UAPrj rep:reps)
+	int cc = 0 ;
+	for(UAPrj rep:prjs)
 {
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		if(cc>6)
+		{
+			tmpid = "div_prj_"+rep.getId() ;
+			cssstr = "display:none";
+		}
 %>
-	<div class="aw-item btn_sh_c">
+	<div class="aw-item btn_sh_c" id="<%=tmpid%>" style="<%=cssstr%>">
 	   
        <a class="img aw-border-radius-5" >
          <i class="fa fa-sitemap fa-1x"></i>
@@ -219,6 +228,13 @@ if(rep.isAutoStart())
    </div>
 <%
 }
+	
+	if(cc>6)
+	{
+%>
+<div style="border:0px solid #ffff00;height:45px;text-align:right;padding-right:30px;"><a id="more_prj_show"  onclick="more_prj()">more projects...</a></div>
+<%
+	}
 %>
 
 							</div>
@@ -391,6 +407,25 @@ function open_rep(id)
 {
 	window.open("prj_editor.jsp?id="+id);
 	//window.open("ua_rep.jsp?repid="+id);
+}
+
+function more_prj()
+{
+	var ps =$("#more_prj_show");
+	var bshow = ps.attr("b_show")=="1" ;
+	if(bshow)
+	{
+		$("div [id^='div_prj_']").css("display","none") ;
+		ps.html("more project...");
+		ps.attr("b_show","0") ;
+	}
+	else
+	{
+		$("div [id^='div_prj_']").css("display","") ;
+		ps.html("^^^");
+		ps.attr("b_show","1") ;
+	}
+	
 }
 
 function set_prj_main(id)

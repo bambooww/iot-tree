@@ -50,7 +50,7 @@ case "del":
 		out.print("ok") ;
 		return ;
 	}
-	UAManager.getInstance().delRep(id) ;
+	UAManager.getInstance().delPrj(id) ;
 	out.print("ok") ;
 	break ;
 case "main":

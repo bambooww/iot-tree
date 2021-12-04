@@ -31,14 +31,14 @@ if(cat==null)
 	out.print("no cat found") ;
 	return ;
 }
-
+String name = request.getParameter("name") ;
+String title = request.getParameter("title") ;
+String desc = request.getParameter("desc") ;
 switch(op)
 {
 case "add":
 case "edit":
-	String name = request.getParameter("name") ;
-	String title = request.getParameter("title") ;
-	String desc = request.getParameter("desc") ;
+	
 	try
 	{
 		if("add".equals(op))
@@ -70,7 +70,50 @@ case "edit":
 case "chg":
 	break;
 case "del":
+	if(!Convert.checkReqEmpty(request, out, "id"))
+		return ;
+	String id = request.getParameter("id") ;
+	DevDef ddef = cat.getDevDefById(id);
+	if(ddef==null)
+	{
+		out.print("no device definition found") ;
+		break;
+	}
+	cat.delDevDef(ddef);
+	out.print("succ") ;
 	break;
+case "chk_name":
+	if(!Convert.checkReqEmpty(request, out, "catid","name"))
+		return ;
+	
+	DevCat dcat = DevManager.getInstance().getDevCatWithCatId(drvname, catid);//(drvname, catname);
+	if(dcat==null)
+	{
+		out.print("no category found") ;
+		return ;
+	}
+	DevDef tmpdd = dcat.getDevDefByName(name) ;
+	out.print((tmpdd==null)?"no":"ok");
+	break ;
+case "add_by_prj":
+	if(!Convert.checkReqEmpty(request, out, "devpath","catid","name"))
+		return ;
+	String devpath = request.getParameter("devpath") ;
+	UADev dev = (UADev)UAUtil.findNodeByPath(devpath);
+	if(dev==null)
+	{
+		out.print("no device found");
+		return ;
+	}
+	dcat = DevManager.getInstance().getDevCatWithCatId(drvname, catid);//(drvname, catname);
+	if(dcat==null)
+	{
+		out.print("no category found") ;
+		return ;
+	}
+	DevDef newdd = dcat.setDevDefFromPrj(dev, name, title);
+	out.print("succ="+newdd.getId()) ;
+	break ;
 case "list":
 	List<DevDef> dds = cat.getDevDefs() ;
 	out.print("[") ;

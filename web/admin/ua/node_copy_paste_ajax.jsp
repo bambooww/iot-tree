@@ -31,8 +31,15 @@ if(node instanceof UADev)
 		out.print("copy paste is not matched");
 		return;
 	}
-	((UACh)pnode).deepPasteDev((UADev)node);
-	out.print("succ");
+	try
+	{
+		((UACh)pnode).deepPasteDev((UADev)node);
+		out.print("succ");
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage());
+	}
 	return;
 }
 
@@ -43,8 +50,15 @@ if(node instanceof UACh)
 		out.print("copy paste is not matched");
 		return;
 	}
-	((UAPrj)pnode).deepPasteCh((UACh)node);
-	out.print("succ");
+	try
+	{
+		((UAPrj)pnode).deepPasteCh((UACh)node);
+		out.print("succ");
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage());
+	}
 	return;
 }
 //UADev dev = (UADev)node;

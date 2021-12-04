@@ -36,8 +36,10 @@
 	if(id==null)
 		id = "" ;
 	
-
-	UANodeOCTags n = (UANodeOCTags)UAUtil.findNodeByPath(path);
+	UANode tmpn = UAUtil.findNodeByPath(path);
+	if(tmpn instanceof UAHmi)
+		tmpn = tmpn.getParentNode();
+	UANodeOCTags n = (UANodeOCTags)tmpn;
 	if(n==null)
 	{
 		out.print("no node with path="+path) ;

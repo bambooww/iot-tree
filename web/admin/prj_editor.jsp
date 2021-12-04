@@ -289,7 +289,7 @@ display: none;
 }
 
 ul.layui-tab-title li:nth-child(3) i{
-display: none;
+display0: none;
 }
 
 .layui-tab-content {
@@ -459,7 +459,7 @@ background-color: #fff ;
 <script type="text/javascript">
 
 </script>
-<body class="layout-body">
+<body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
@@ -544,7 +544,7 @@ background-color: #fff ;
 	            <div id="conn_ch" style="width:25%;height:100%;overflow:hidden;float:left;border-top: solid 1px;border-color: #cccccc;"> </div>
             
 	      </div>
-	      <label class="hj-transverse-split-label"></label>
+	     
 	    </div>
        
         <div id="div_brw" class="hj-transverse-split-div subwin" style="width:20%">
@@ -562,7 +562,7 @@ background-color: #fff ;
            </div>
            <div class="subwin_content" style="overflow:auto">
            		<div id="tree"  style="width:100%;overflow:auto;left:-30px;position:absolute;height:700px"></div>
-           		<div style="width:100%;overflow: hidden;height:100px">&nbsp;</div>
+           		<div style="width:80%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>
         </div>
@@ -912,11 +912,13 @@ var cxt_menu = {
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"dev":[
+		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"edit_dev",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_dev},
-		{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
+		//{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
 		
 		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
+		{op_name:"add_to_lib",op_title:"Add To Library",op_icon:"fa fa-files-o",op_action:act_node_add_to_lib},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
@@ -1233,7 +1235,6 @@ function edit_bind_setup(cptp,cpid,connid)
 				{
 					dlg.close();
 				}
-				
 			]);
 }
 
@@ -1587,6 +1588,47 @@ function act_ch_sel_drv(n,op)
 								dlg.close();
 								//refresh_ui() ;
 								ua_panel.redraw(false,false,true) ;
+							},false);
+							
+						 
+						 //document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function act_node_add_to_lib(n,op)
+{
+	dlg.open("dev/devdef_add_from_prj.jsp?devpath="+n.path,
+			{title:"Add to Library",w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.devpath=n.path ;
+						 ret.op='add_by_prj';
+						 //console.log(ret);
+						 send_ajax('dev/devdef_ajax.jsp',ret,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.msg("add ok");
+								dlg.close();
+								
 							},false);
 							
 						 
@@ -2177,8 +2219,8 @@ layui.use('element', function(){
 	
 
 
-	if(hmi_main.path!=null&&hmi_main.path!="")
-		add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
+	//if(hmi_main.path!=null&&hmi_main.path!="")
+	//	add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
 
 });
 

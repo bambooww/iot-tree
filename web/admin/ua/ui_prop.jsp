@@ -76,7 +76,7 @@ body {
 .prop_table
 {
 width:99%;
-height:80%;
+height:99%;
 border: 0px;
 margin: 0 auto;
 }
@@ -105,7 +105,7 @@ overflow: auto;
 .prop_edit_panel
 {
 border: 1px solid #cccccc;
-height:350px;
+height0:550px;
 padding: 0px;
 margin: 2px;
 overflow: auto;
@@ -203,8 +203,10 @@ width:100%;
 <script type="text/javascript">
 </script>
 <body>
- <blockquote class="layui-elem-quote "><%=n.getNodePathTitle() %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<%=n.getNodePath() %>]
- <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ <blockquote class="layui-elem-quote">&nbsp;
+  <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18px"><%=n.getNodePathTitle() %></div>
+  <div style="left:20px;top:25px;position:absolute;font-size:10px;"> [<%=n.getNodePath() %>]</div>
+   <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
 		<%
 if(!bdlg)
 {

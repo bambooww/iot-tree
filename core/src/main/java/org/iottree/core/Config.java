@@ -76,7 +76,6 @@ public class Config
 		try
 		{
 			configFileBase = new File(configFileBase).getCanonicalPath() ;
-			System.out.println("file base="+configFileBase) ;
 		}
 		catch(Exception e)
 		{

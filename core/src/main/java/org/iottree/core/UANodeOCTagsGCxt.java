@@ -1,6 +1,7 @@
 package org.iottree.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.basic.PropGroup;
@@ -42,9 +43,10 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	 * @param new_self create by copySelfWithNewId
 	 */
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
+			boolean copy_id,boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id,root_subnode_id) ;
+		super.copyTreeWithNewSelf(root,new_self,ownerid, copy_id,root_subnode_id,rf2new) ;
 		UANodeOCTagsGCxt self = (UANodeOCTagsGCxt)new_self ;
 		//
 		self.taggs.clear();
@@ -52,8 +54,13 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		{
 			UATagG ntg = new UATagG() ;
 			if(root_subnode_id)
-				ntg.id = this.getNextIdByRoot();
-			tagg.copyTreeWithNewSelf(ntg,ownerid, copy_id, root_subnode_id);
+			{
+				if(root!=null)
+					ntg.id = root.getRootNextId();
+				else
+					ntg.id = this.getNextIdByRoot();
+			}
+			tagg.copyTreeWithNewSelf(root,ntg,ownerid, copy_id, root_subnode_id,rf2new);
 			self.taggs.add(ntg) ;
 		}
 	}

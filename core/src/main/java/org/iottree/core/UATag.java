@@ -3,6 +3,7 @@ package org.iottree.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.script.ScriptException;
@@ -319,9 +320,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * @param new_self create by copySelfWithNewId
 	 */
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
+			boolean copy_id,boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid, copy_id, root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self,ownerid, copy_id, root_subnode_id,rf2new);
 		UATag nt = (UATag)new_self ;
 		nt.rename = this.rename ;
 		nt.retitle = this.retitle ;

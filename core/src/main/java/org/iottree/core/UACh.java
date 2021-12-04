@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
+import org.apache.commons.io.FileUtils;
 import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
@@ -72,9 +73,10 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	}
 	
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
+			boolean copy_id,boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self,ownerid,copy_id,root_subnode_id,rf2new);
 		UACh self = (UACh)new_self ;
 		self.drvName = this.drvName ;
 		self.devs.clear();
@@ -82,8 +84,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		{
 			UADev ndev = new UADev() ;
 			if(root_subnode_id)
-				ndev.id = this.getNextIdByRoot();
-			dev.copyTreeWithNewSelf(ndev,ownerid,copy_id,root_subnode_id);
+			{
+				if(root!=null)
+					ndev.id = root.getRootNextId() ;
+				else
+					ndev.id = this.getNextIdByRoot();
+			}
+			dev.copyTreeWithNewSelf(root,ndev,ownerid,copy_id,root_subnode_id,rf2new);
 			self.devs.add(ndev) ;
 		}
 	}
@@ -281,6 +288,16 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	
 	public UADev deepPasteDev(UADev dev) throws Exception
 	{
+		DevDriver chdrv = this.getDriver() ;
+		DevDef dd = dev.getDevDef() ;
+		DevDriver devdrv = null;
+		if(dd!=null)
+			devdrv = dd.getBelongToDrv();
+		if(chdrv!=null&&devdrv!=null)
+		{
+			if(!chdrv.equals(devdrv))
+				throw new Exception("driver is not matched!") ;
+		}
 		String newn = dev.getName();
 		newn = this.calNextSubNameAuto(newn);
 		return deepPasteDev(dev, newn,dev.getTitle());
@@ -301,9 +318,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		this.devs.add(newdev);
 		this.constructNodeTree();
 		
-		newdev.updateByDevDef();
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
+		newdev.updateByDevDef(rf2new);
 		this.constructNodeTree();
 		this.save();
+		Convert.copyRelatedFile(rf2new);
 		return newdev;
 	}
 	
@@ -344,12 +363,19 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		
 		DevDriver drv = this.getDriver() ;
 		DevDef dd = null;
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
 		if(Convert.isNotNullEmpty(devdef_id))
 		{
 			dd = drv.getDevDefById(devdef_id) ;
 			if(dd==null)
 				throw new Exception("no device definition found") ;
-			d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
+			//d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
+			UADev dev = new UADev() ;
+			dev.id = this.getNextIdByRoot() ;
+			
+			
+			d = dd.deepCopyUADev(this.getBelongTo(),dev,name, title, desc,rf2new) ;
+			
 		}
 		else
 		{
@@ -361,6 +387,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		devs.add(d);
 		constructNodeTree();
 		this.getBelongTo().save();
+		Convert.copyRelatedFile(rf2new);
 		d.RT_init(true, false);
 		return d ;
 	}
@@ -394,17 +421,19 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return dev ;
 	}
 	
-	public UADev refreshDev(UADev dev) throws Exception
-	{
-		DevDef dd = dev.getDevDef() ;
-		if(dd==null)
-			throw new Exception("no device definition found") ;
-		
-		dd.updateUADev(dev) ;
-		constructNodeTree();
-		this.getBelongTo().save();
-		return dev ;
-	}
+//	public UADev refreshDev0(UADev dev) throws Exception
+//	{
+//		DevDef dd = dev.getDevDef() ;
+//		if(dd==null)
+//			throw new Exception("no device definition found") ;
+//		
+//		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>() ;
+//		dd.updateUADev(this.getBelongTo(),dev,rf2new) ;
+//		constructNodeTree();
+//		this.getBelongTo().save();
+//		Convert.copyRelatedFile(rf2new);
+//		return dev ;
+//	}
 
 	public UADev delDevById(String id) throws Exception
 	{
@@ -417,8 +446,15 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	
 	void delDev(UADev d) throws Exception
 	{
+		List<File> fs = new ArrayList<>() ;
+		d.getRelatedFiles(fs);
 		devs.remove(d) ;
 		this.getBelongTo().save();
+		for(File tmpf:fs)
+		{
+			if(tmpf.exists())
+				tmpf.delete();
+		}
 	}
 	
 	

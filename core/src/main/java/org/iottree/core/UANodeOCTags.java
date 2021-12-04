@@ -2,6 +2,7 @@ package org.iottree.core;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,17 +36,24 @@ public abstract class UANodeOCTags extends UANodeOC
 	 *            create by copySelfWithNewId
 	 */
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self, String ownerid, boolean copy_id, boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self, String ownerid, 
+			boolean copy_id, boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self, ownerid, copy_id, root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self, ownerid, copy_id, root_subnode_id,rf2new);
 		UANodeOCTags self = (UANodeOCTags) new_self;
 		self.tags.clear();
 		for (UATag t : tags)
 		{
 			UATag nt = new UATag();
 			if (root_subnode_id)
-				nt.id = this.getNextIdByRoot();
-			t.copyTreeWithNewSelf(nt, ownerid, copy_id, root_subnode_id);
+			{
+				if(root!=null)
+					nt.id = root.getRootNextId();
+				else
+					nt.id = this.getNextIdByRoot();
+			}
+				
+			t.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
 			self.tags.add(nt);
 		}
 	}

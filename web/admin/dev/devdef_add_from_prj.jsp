@@ -7,19 +7,26 @@
 	"%><%!
 
 %><%
-	List<DevDriver> dds = DevManager.getInstance().getDrivers() ;
-	boolean bmgr ="true".equals(request.getParameter("mgr")) ;
-	
-	String drv = request.getParameter("drv") ;
-	if(drv==null)
-		drv="" ;
-	DevDriver limit_drv = null;
-	if(Convert.isNotNullEmpty(drv))
-		limit_drv = DevManager.getInstance().getDriver(drv) ;
+
+if(!Convert.checkReqEmpty(request, out, "devpath"))
+	return ;
+String devpath = request.getParameter("devpath") ;
+UADev dev = (UADev)UAUtil.findNodeByPath(devpath);
+if(dev==null)
+{
+	out.print("no device found");
+	return ;
+}
+DevDriver dd = dev.getBelongTo().getDriver() ;
+if(dd==null)
+{
+	out.print("no driver found");
+	return ;
+}
+
+	String drv = dd.getName() ;
 	boolean hide_drv = "true".equals(request.getParameter("hide_drv")) ;
-	String drv_tt = "" ;
-	if(limit_drv!=null)
-		drv_tt = limit_drv.getTitle();
+	String drv_tt = dd.getTitle();
 %><html>
 <head>
 <title></title>
@@ -56,82 +63,18 @@ background-color: #eeeeee
 <body marginwidth="0" marginheight="0">
 <table width='100%' height='99%'>
  <tr>
- <%
- if(null==limit_drv || !hide_drv)
- {
- %>
-  <td valign="top" width="25%">
- Drivers
-   <select id='var_drv' multiple="multiple" style="width: 100%;height: 100%" onchange="drv_sel_chg()">
-<%
-	if(limit_drv==null)
-	{
 
-	for(DevDriver dd:dds)
-	{
-%><option value="<%=dd.getName() %>"><%=dd.getTitle() %></option><%
-	}
-%>
-
- <%
-	 }
- else
- {
-%><option value="<%=limit_drv.getName() %>" selected="selected"><%=limit_drv.getTitle() %></option><%
- }
- %>   </select>
-  </td>
-<%
- }
-%>
  <td valign="top" width="25%">Category
- <%
- if(bmgr)
- {
- %> 
-   <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
-   <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="del_cat()">Delete</button>
-<%
- }
-%>
+ <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
+ 
    <select id='var_cat' multiple="multiple" style="width: 100%;height: 100%" onchange="cat_sel_chg()">
    </select>
  </td>
  <td id="td_add_comp" valign="top" width="75%" class="oc-toolbar">
- 	Devices <span id="selected_prompt"></span>
- <%
- if(bmgr)
- {
- %> 
- 	<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_devdef()">+Add</button>
-<%
- }
-%>
- 	<table id="tb_devdefs"  lay-filter="tb_devdefs"  lay-size="sm" lay-even="true" style="width:100%"></table>
- 	  <script type="text/html" id="row_toolbar">
-<div class="layui-btn-group">
-  
-			{{#  if(d.id==""){ }}
-	<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="devdef_add">Add</button>
-			{{#  } else{ }}
-	<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="devdef_edit">Edit</button>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="devdef_del">Del</button>						
-			{{#  } }}
+ 	Device Name:<input type="text" id="devdef_name" /> Title<input type="text" id="devdef_title" />
 
-  </div>
-	</script>
-	 	  <script type="text/html" id="sel_toolbar">
-<div class="layui-btn-group">
-{{#  if(d.id!=""){ }}
-		<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="devdef_sel">Select</button>
-{{#  } }}
-  </div>
-	</script>
-<%--
- 	<div  id="var_devdefs" class="btns" >
- 		<div class="toolbarbtn" onclick="" title=""><img src="" /></div>
- 	</div>
- 	 --%>
+ 	<table id="tb_devdefs"  lay-filter="tb_devdefs"  lay-size="sm" lay-even="true" style="width:100%"></table>
+ 	
  </td>
  
  </tr>
@@ -145,22 +88,6 @@ var hide_drv = <%=hide_drv%>
 var cur_drv = "<%=drv%>" ;
 var cur_drv_tt = "<%=drv_tt%>" ;
 var cur_catid = null ;
-var bmgr=<%=bmgr%>;
-
-function get_cur_drv_name_title()
-{
-	if(hide_drv)
-		return [cur_drv,cur_drv_tt] ;
-	var vv = $("#var_drv").val() ;
-	var tt =  $("#var_drv option:selected").text() ;
-	if(vv==null||vv==undefined||vv==""||vv.length==0)
-	{
-		//dlg.msg("please select a Driver!");
-		return null;
-	}
-	vv = vv[0];
-	return [vv,tt] ;
-}
 
 function get_cur_cat_id_title()
 {
@@ -180,14 +107,49 @@ function get_cur_cat_id()
 	return get_cur_cat_id_title()[0];
 }
 
+function do_submit(cb)
+{
+	var drv_cat = get_cur_drv_cat() ;
+	if(drv_cat==null||drv_cat=='')
+	{
+		dlg.msg("please select category");
+		return ;
+	}
+	var n = $("#devdef_name").val() ;
+	var t = $("#devdef_title").val() ;
+	if(n==null||n=='')
+	{
+		dlg.msg("please input device name") ;
+		return ;
+	}
+	if(t==null||t=='')
+		t= n ;
+	var pm = {
+			type : 'post',
+			url : "./devdef_ajax.jsp",
+			data :{op:"chk_name",drv:cur_drv,catid:drv_cat.cat,name:n}
+		};
+	$.ajax(pm).done((ret)=>{
+		if(typeof(ret)=='string')
+		{
+			if(ret=="ok")
+			{
+				layer.confirm('device with ame = '+n+' already exists, do you want to overwrite it?', function(index)
+						{
+							cb(true,{drv:cur_drv,catid:drv_cat.cat,name:n,title:t});
+						 });
+			}
+			else
+			{
+				cb(true,{drv:cur_drv,catid:drv_cat.cat,name:n,title:t});
+			}
+		}
+	});
+}
+
 
 function drv_sel_chg()
 {
-	var n_t = get_cur_drv_name_title();
-	if(n_t==null)
-		return;
-	cur_drv = n_t[0] ;
-	
 	var pm = {
 			type : 'post',
 			url : "./cat_ajax.jsp",
@@ -215,15 +177,8 @@ function drv_sel_chg()
 }
 
 function add_cat()
-{
-	var n_t = get_cur_drv_name_title();
-	if(n_t==null)
-	{
-		dlg.msg("please select a Driver!");
-		return;
-	}
-		
-	var drv = n_t[0] ;
+{		
+	var drv = cur_drv;
 	dlg.open("cat_edit.jsp",
 			{title:"Add Device Category"},
 			['Ok','Cancel'],
@@ -289,10 +244,7 @@ function del_cat()
 					
 function get_cur_drv_cat()
 {
-	var n_t = get_cur_drv_name_title();
-	if(n_t==null)
-		return null;
-	var drv = n_t[0] ;
+	var drv = cur_drv;
 	var catnt = get_cur_cat_id_title();
 	if(catnt==null)
 		return null;
@@ -329,12 +281,11 @@ layui.use('table', function()
 	    //do somehing
 	    
 	  }
-	  else if(lay_evt === 'devdef_del')
+	  else if(lay_evt === 'del')
 	  {
 	    layer.confirm('delete selected device?', function(index)
 	    {
-	    	var vv = get_cur_drv_cat()
-	    	send_ajax("devdef_ajax.jsp","op=del&drv="+vv.drv+"&catid="+vv.cat+"&id="+data.id,function(bsucc,ret){
+	    	send_ajax("dlcunit_ajax.jsp","op=del&id="+data.Uid,function(bsucc,ret){
 	    		if(bsucc&&ret=='succ')
 	    			obj.del();
 	    		else
@@ -375,10 +326,12 @@ layui.use('table', function()
 	  }
 	});
   
-  table.on('row(dl_list)', function(obj)
+  table.on('row(tb_devdefs)', function(obj)
 		  {
 			  var data = obj.data; //cur d
 			  
+			  $("#devdef_name").val(data.n) ;
+			  $("#devdef_title").val(data.t) ;
 			});
   
 });
@@ -398,25 +351,11 @@ function show_table()
 	table.render({
 	    elem: '#tb_devdefs'
 	    ,height: "full-120"
-	    ,url: 'devdef_ajax.jsp?op=list_tb&drv='+drv_cat.drv+'&catid='+drv_cat.cat+"&mgr="+bmgr
+	    ,url: 'devdef_ajax.jsp?op=list_tb&drv='+drv_cat.drv+'&catid='+drv_cat.cat
 	    ,page0: {layout:['prev', 'page', 'next'],limit:10,theme:"#c00"} //open page
 	    ,cols: [[ //head
 	    	{field: 'n', title: 'Name', width:'40%'}
 	    	,{field: 't', title: 'Title', width:'40%'}
-<%
-if(bmgr)
-{
-%>
-,{field: 'Oper', title: '', width:'20%',toolbar: '#row_toolbar'}
-<%
-}
-else
-{
-%>
-,{field: 'Oper', title: '', width:'20%',toolbar: '#sel_toolbar'}
-<%
-}
-%>
 	    ]]
 	    ,done:function(res, curr, count){
 	   	 table_cur_page = curr ;

@@ -8,6 +8,8 @@ import java.net.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
+import org.iottree.core.IRelatedFile;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -2384,6 +2386,19 @@ public class Convert
 			}
 		}
 		return dir.delete();
+	}
+	
+	public static void copyRelatedFile(HashMap<IRelatedFile,IRelatedFile> rf2new) throws IOException
+	{
+		for(Map.Entry<IRelatedFile,IRelatedFile> rf2rf:rf2new.entrySet())
+		{
+			IRelatedFile sor_rf = rf2rf.getKey() ;
+			File sorf = sor_rf.getRelatedFile() ;
+			if(!sorf.exists())
+				continue ;
+			IRelatedFile tar_rf = rf2rf.getValue() ;
+			FileUtils.copyFile(sorf, tar_rf.getRelatedFile());
+		}
 	}
 
 	public static void main(String[] args) throws Exception

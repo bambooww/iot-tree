@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.bind.BindDI;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
-public class UAHmi extends UANodeOC implements IOCUnit
+public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 {
 	@data_val(param_name = "tp")
 	String hmiTp = "" ;
@@ -45,11 +46,15 @@ public class UAHmi extends UANodeOC implements IOCUnit
 		return (UANodeOCTagsCxt)this.getParentNode() ;
 	}
 	
-	protected void copyTreeWithNewSelf(UANode new_self,String ownerid,boolean copy_id,boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
+			boolean copy_id,boolean root_subnode_id,
+			HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self,ownerid,copy_id,root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self,ownerid,copy_id,root_subnode_id,rf2new);
 		UAHmi self = (UAHmi)new_self ;
 		self.hmiTp = this.hmiTp ;
+		if(rf2new!=null)
+			rf2new.put(this, self);
 	}
 	
 	public String getHmiTp()
@@ -84,6 +89,16 @@ public class UAHmi extends UANodeOC implements IOCUnit
 			return rbhmi.getHmiUIFile() ;
 		}
 		
+		ISaver saver = (ISaver)this.getTopNode() ;
+		
+		File subdir = saver.getSaverDir();
+		if(!subdir.exists())
+			subdir.mkdirs() ;
+		return new File(subdir,"hmi_"+this.getId()+".txt") ;
+	}
+	
+	public File getRelatedFile()
+	{
 		ISaver rep = (ISaver)this.getTopNode() ;
 		
 		File subdir = rep.getSaverDir();

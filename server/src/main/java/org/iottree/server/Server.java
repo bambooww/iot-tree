@@ -33,6 +33,7 @@ public class Server
 					else
 					{
 						System.out.print("   version " + Config.getVersion());
+						System.out.println("\r\nfile base="+Config.getConfigFileBase()) ;
 						System.out.print("\r\n\r\n");
 						break;
 					}

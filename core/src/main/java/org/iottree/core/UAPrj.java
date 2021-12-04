@@ -137,9 +137,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	// }
 
 	@Override
-	protected void copyTreeWithNewSelf(UANode new_self, String ownerid, boolean copy_id, boolean root_subnode_id)
+	protected void copyTreeWithNewSelf(IRoot root,UANode new_self, String ownerid, 
+			boolean copy_id, boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
 	{
-		super.copyTreeWithNewSelf(new_self, ownerid, copy_id, root_subnode_id);
+		super.copyTreeWithNewSelf(root,new_self, ownerid, copy_id, root_subnode_id,rf2new);
 		UAPrj self = (UAPrj) new_self;
 		self.script = this.script;
 		self.scriptInt = this.scriptInt;
@@ -148,8 +149,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		{
 			UACh nt = new UACh();
 			if (root_subnode_id)
-				nt.id = this.getNextIdByRoot();
-			ch.copyTreeWithNewSelf(nt, ownerid, copy_id, root_subnode_id);
+			{
+				if(root!=null)
+					nt.id = root.getRootNextId() ;
+				else
+					nt.id = this.getNextIdByRoot();
+			}
+			ch.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
 			self.chs.add(nt);
 		}
 	}
@@ -283,7 +289,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 		UACh newch = new UACh();
 
-		ch.copyTreeWithNewSelf(newch, null, false, true);
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
+		ch.copyTreeWithNewSelf(null,newch, null, false, true,rf2new);
 		newch.id = this.getNextIdByRoot();
 		// newch.name = newname;
 		newch.setNameTitle(newname, null, null);
@@ -292,12 +299,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		this.chs.add(newch);
 		this.constructNodeTree();
 		//
-		for (UADev tmpd : newch.devs)
-		{
-			tmpd.updateByDevDef();
-		}
-		this.constructNodeTree();
+//		for (UADev tmpd : newch.devs)
+//		{
+//			tmpd.updateByDevDef(rf2new);
+//		}
+//		this.constructNodeTree();
 		this.save();
+		Convert.copyRelatedFile(rf2new);
 		return newch;
 	}
 

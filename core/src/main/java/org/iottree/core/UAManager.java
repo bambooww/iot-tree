@@ -290,7 +290,7 @@ public class UAManager implements IResCxt
 		XmlData.writeToFile(xd, getPrjFile(prj.getId()));
 	}
 	
-	public void delRep(String id)
+	public void delPrj(String id)
 	{
 		UAPrj prj = getPrjById(id);
 		if(prj==null)
