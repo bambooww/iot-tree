@@ -75,7 +75,7 @@ public class DocUtil
 	
 	private static List<LangItem> langItems = null ;
 	
-	private static LangItem langDef = null ;
+	//private static LangItem langDef = null ;
 	
 	private static List<File> rootFiles = null ;
 	
@@ -123,8 +123,8 @@ public class DocUtil
 				continue ;
 			LangItem lni = new LangItem(s,dir) ;
 			lnitems.add(lni) ;
-			if(lndef.equals(s))
-				langDef = lni;
+//			if(lndef.equals(s))
+//				langDef = lni;
 		}
 		langItems = lnitems ;
 		
@@ -162,7 +162,8 @@ public class DocUtil
 		}
 		rootFiles = rfs ;
 
-		if(langDef!=null&&langItems.size()>0)
+		//if(langDef!=null&&langItems.size()>0)
+		if(langItems.size()>0)
 			return true ;
 		else
 			return false;
@@ -242,16 +243,29 @@ public class DocUtil
 							cur_li = null ;
 						else
 							cur_li = litem ;
-						continue ;
+						
+						//break;
+						//add empty ln
+						ln = "" ;
 					}
 				}
 				
-				LangItem li = cur_li ;
-				if(li==null)
-					li = langDef ;
-				FileOutputStream fos = li.getOrCreateFileOut(subn);
-				fos.write(ln.getBytes("utf-8"));
-				fos.write(next_ln);
+				byte[] bs = ln.getBytes("utf-8");
+				if(cur_li!=null)
+				{
+					FileOutputStream fos = cur_li.getOrCreateFileOut(subn);
+					fos.write(bs);
+					fos.write(next_ln);
+				}
+				else
+				{
+					for(LangItem li:langItems)
+					{
+						FileOutputStream fos = li.getOrCreateFileOut(subn);
+						fos.write(bs);
+						fos.write(next_ln);
+					}
+				}
 			}
 		}
 		
