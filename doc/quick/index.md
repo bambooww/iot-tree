@@ -1,62 +1,87 @@
-快速理解IOT-Tree Server
+
+
+Quick understanding IOT-Tree Server
 ==
 
-如果你想深入了解IOT-Tree Server，那么建议你阅读本部分内容，每个内容都不多，你只需要花费很少的时间就可以搞定。本部分内容掌握之后，你可以更好的利用IOT-Tree Server，让她给你带来更大的价值。
-
-当然，如果本部分内容你都掌握，同时你还想深入，那么建议你查看[高级内容][advanced_link]
-
-# 内容清单
-
-## 1 快速理解IOT-Tree Server的树
-
-本部分内容是理解IOT-Tree Server整体的关键部分。IOT-Tree Server建立的项目，某种意义上就是一颗树。树的根部是项目(Project)，接下来是通道(Channel)（通道可以关联设备驱动Device Driver和接入Connector）。通道下面是设备(Device)。
-
-[查看详细][qn_tree]
-
-## 2 快速理解 接入(Connector)-通道(Channel)-驱动(Driver)
-
-在IOT-Tree Server树状层次结构基础上，围绕通道(Channel)，IOT-Tree Server对通信接入和设备驱动专门做了单独的子系统。
-
-通过理解此部分的内容，你可以对IOT-Tree Server就会有个整体的认识。
-
-[查看详细][qn_chconndrv]
-
-## 3 快速理解设备定义Device Definition
-
-在IOT-Tree Server中的设备都需要预先定义，这些定义都必须在某个已经存在的驱动下面。
-
-通过预先定义的设备，不仅可以为你积累越来越多的设备，而且厂家还可也根据自身设备的复杂程度，通过设备定义来屏蔽复杂的驱动知识和专业的参数配置，让设备使用人员更加轻松。
-
-[查看详细][qn_devdef]
-
-## 4 快速理解TcpServer接入器
-
-很多云端物联网系统都提供了TcpServer方式的接入，这种系统一般都可以支持大量的分散的底层设备或工业现场的接入。IOT-Tree Server专门针对此情景，设定了Tcp Server接入支持。
-
-[查看详细][qn_conn_tcpserver]
 
 
-## 5 快速了解交互UI(HMI)
 
-IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的定义、在线编辑和层次包含引用。
+If you want to know more about IOT tree server, you are recommended to read this section. There are not many contents, and you only need to spend a little time to do it. After mastering the contents of this part, you can make better use of IOT tree server to bring you greater value.
 
-所有的UI都基于Web方式进行管理、编辑和部署。这是IOT-Tree Server给你带来巨大方便的重要部分。
+Of course, if you have mastered this part and you want to go deeper, it is recommended that you read [advanced content][advanced_link]
 
-最重要的，在设备定义(Device Definition)中，你也可以根据设备的情况定义和设备相关的交互UI组件。这样，这些设备管理的UI组件和设备一样，可以直接在项目中重复引用。
 
-[查看详细][qn_hmi]
 
-[编辑操作说明][qn_hmi_edit]
 
-## 6 快速了解IOT-Tree Server作为你的后台支撑系统
+# List
 
-和数据库服务软件类似，IOT-Tree Server也可以作为你的设备管理系统服务软件，作为你的IT基础设施的一部分。
 
-[查看详细][qn_server]
 
-## 7 快速了解IOT-Tree Server的项目
+## 1 Quickly understand the tree of IOT tree server
 
-快速了解了上面这么多内容，就把IOT-Tree Server项目Project作为整体快速了解的收尾吧。
+This part is a key part for understanding the whole IOT tree server. The project established by IOT tree server is a tree in a sense. The root of the tree is the project, followed by the channel (the channel can be associated with the device driver and the access connector). Below the channel is the device.
+
+[detail][qn_tree]
+
+
+
+
+
+## 2 Connector - Channel - Driver
+
+Based on the tree hierarchy of IOT tree server, IOT tree server has made a separate subsystem for communication access and device driver around the channel.
+
+By understanding the contents of this section, you can have an overall understanding of IOT tree server.
+
+[detail][qn_chconndrv]
+
+
+
+
+## 3 Quickly understand device definition
+
+Devices in IOT-Tree server can be defined in advance. These definitions must be under an existing driver.
+
+Through pre-defined device, you can not only accumulate more and more equipment for you, but also manufacturers can shield complex driving knowledge and professional parameter configuration through equipment definition according to the complexity of their own equipment, so as to make equipment users easier.
+
+[detail][qn_devdef]
+
+
+
+## 4 Quickly understand tcpserver accessor
+
+Many cloud IOT systems provide tcpserver access, which can generally support a large number of decentralized underlying devices or industrial site access. The IOT tree server specifically sets TCP server access support for this scenario.
+
+[detail][qn_conn_tcpserver]
+
+
+
+
+## 5 Quick understanding of interactive UI (HMI)
+
+IOT tree server directly supports the definition, online editing and reference of human-computer interface UI in the tree hierarchy management structure.
+
+All UIs are managed, edited and deployed based on the web. This is an important part of IOT tree server that brings you great convenience.
+
+Most importantly, in the device definition, you can also define interactive UI components related to the device according to the situation of the device. In this way, the UI components managed by these devices, like devices, can be directly referenced repeatedly in the project.
+
+[detail][qn_hmi]
+
+[Edit operating instructions][qn_hmi_edit]
+
+
+
+## 6 Quickly understand IOT tree server as your background support system
+
+Similar to database service software, IOT tree server can also be used as your device management system service software as part of your IT infrastructure.
+
+[detail][qn_server]
+
+
+
+## 7 Quickly learn about IOT tree server projects
+
+With a quick understanding of the above contents, let's take the IOT tree server project as the end of the overall quick understanding.
 
 [qn_tree]: ./quick_know_tree.md
 [qn_chconndrv]: ./quick_know_ch_conn_drv.md
