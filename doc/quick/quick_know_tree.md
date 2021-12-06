@@ -1,99 +1,159 @@
-快速理解IOT-Tree Server的树
+
+
+Quickly understand the tree of IOT tree server
 ==
-本部分内容是理解IOT-Tree Server整体的关键部分。IOT-Tree Server建立的项目，某种意义上就是一颗树（一颗倒置的树或树根结构）。树的顶部是项目(Project)，接下来是通道(Channel)（通道可以关联设备驱动Device Driver和接入Connector），通道下面是设备Device或TagGroup。
+
+
+
+
+This part is a key part for understanding the whole IOT tree server. The project established by IOT tree server is, in a sense, a tree (an inverted tree or tree root structure). At the top of the tree is the project, followed by the channel (the channel can be associated with the device driver and access connector), and below the channel is the device or taggroup.
+
 
 <img src="../img/tree1.png"/>
 
-## 1 树的层次和内部数据
 
-### 1.1 树的层次
+## 1 Tree hierarchy and internal data
 
-为了便于理解和方便使用，IOT-Tree Server的每个项目，其主要的结构都是  Project->Channel->Device/TagGroup三个层次,另外，可以根据需要在Device和TagGroup下面还可以有更多级TagGroup。
 
-其中，设备(Device)可以是一个简单开关量模块对应的设备，也可以是一个复杂的设备组合，甚至可以是一个工业现场子站。它只能属于某个通道。
 
-那么，你可能就会问了，既然设备(Device)这么复杂，在通道(Channel)下面这么单一的层次能描述这么多内容么。当然不可能，接着在设备下面，如果要描述更复杂的层次关系，则还可也加入标签组（Tag Group),并且在标签组下面还可也增加子标签组。
 
-另外，如果某个通道对应的是另一个IOT-Tree Server节点，则通道下面会直接以TagGroup的方式对被引用的项目层次结构。被引用节点下面的通道和设备都由对应层次的TagGroup替代。
+### 1.1 Tree hierarchy
 
-现在，我们一个复杂一些的项目数状层次就可以是如下结构：
 
-Project->Channel->Device->Tag Group*->TagGroup*
 
-或
+
+
+For ease of understanding and use, the main structure of each project of IOT tree server is project - > Channel - > device / taggroup. In addition, there can be more taggroups under channel, device and taggroup.
+
+Among them, the device can be a device corresponding to a simple switching value module, a complex device combination, or even an industrial field substation. It can only belong to a channel.
+
+Then, you may ask, since the device is so complex, can such a single level under the channel describe so many contents. Of course, it is impossible. Then, if you want to describe a more complex hierarchical relationship under the equipment, you can also add a tag group, and you can also add sub tag groups under the tag group.
+
+In addition, if a channel corresponds to another IOT tree server node, the referenced project hierarchy will be directly in the form of taggroup under the channel. The channels and devices under the referenced node are replaced by the taggroup of the corresponding level.
+
+Now, a more complex project hierarchy can be as follows:
+
+Project->Channel->Device/TagGroup->Tag Group*->TagGroup*
+
+or
 
 Project->Channel->Tag Group*->TagGroup*->TagGroup*
 
-很明显，设备越复杂，越需要在内部分层，你只需要多加一些Tag Group就行了。
+Obviously, the more complex the device, the more it needs to be layered internally. You just need to add some tag groups.
 
-### 1.2 树结构下面的数据标签Tag
 
-接下来，你肯定也能想到，我的项目-通道-设备-组层次关系有了，那就剩下在这个树形结构里面的数据了。我们把不同层次树节点内部的数据，统一为标签Tag。一个树节点可以包含多个Tag。
 
-如下图，通道下面定义的标签
+
+### 1.2 Data tag tag under tree structure
+
+Next, you can certainly think that my project channel device group hierarchical relationship has been established, and there is only the data in this tree structure. We unify the data in different levels of tree nodes into tags. A tree node can contain multiple tags.
+
+As shown below, the label defined below the channel
+
 <img src="../img/tree_tag1.png"/>
-又如，设备下面预先定义的标签
+
+
+Another example is the predefined label under the device
+
 <img src="../img/tree_tag2.png"/>
 
-标签组及标签组下面的标签
+
+
+taggroup and tag below taggroup
+
 <img src="../img/tree_tag3.png"/>
 
-### 1.3 节点其他包含的内容（功能节点）
 
-树形节点除了标签之外，还可也定义一些其他元素。如人机交互UI、存储策略等。这些节点的存在，都限定于上面规定的整体结构。
+
+### 1.3 Content contained in other nodes (function nodes)
+
+In addition to labels, tree nodes can also define some other elements. Such as human-computer interaction UI, storage strategy, etc. The existence of these nodes is limited to the overall structure specified above.
+
 <img src="../img/tree_hmis.png"/>
 
-你可能已经猜到，我在某个树节点下面定义了一个UI画面，那么此节点下面的所有的标签都应该可以被这个UI画面所使用。如，在通道下面定义的UI画面，应该可以引用这个通道下面的所有设备数据，或者更进一步，UI画面还可也把下面的设备UI作为子画面组件直接包含到自身的画面中——这个使用情景想想都让人感到激动，对吧。好用的软件系统就应该这样的。
 
-嗯，对的，IOT-Tree Server就是这么为你考虑的。这个就涉及到另一个规定，节点之间的关系约定。
 
-## 2 树形节点间的关系
+As you may have guessed, I have defined a UI screen under a tree node, so all the tags under this node should be used by this UI screen. For example, the UI screen defined under the channel should be able to reference all the device data under the channel, or further, the UI screen can also directly include the following Device UI as a sub screen component into its own screen - this use scenario is exciting to think about, right. Easy to use software system should be like this.
 
-### 2.1 约定
+Well, yes, that's what IOT tree server considers for you. This involves another provision, the Relationship Agreement between nodes.
 
-某个树节点内部的功能节点，可以访问同级或底层被包含节点的所有资源。
 
-命名约定：
-IOT-Tree Server所有节点的名称都必须符合以下规定
-1 必须以a-z A-Z开头，后续字母必须在a-z A-Z _ 范围内。不允许出现任何其他字母。（因为以'_'开始名称是系统内部命名）
-2 同一个树节点下的子节点，名称不能重复。
 
-之所以对命名如此规定，是因为IOT-Tree Server对外提供的接口，基本以命名为基础，严格规定是为了方便外部系统的调用，同时减少出错的可能性。
 
-### 2.2 约定-例子说明
+## 2 Relationship between tree nodes
 
-上面约定可能让你没啥激动的感觉，还是举个例子吧：
+
+
+
+### 2.1 Appointment
+
+A function node within a tree node can access all resources of the same level or underlying included nodes.
+
+Naming convention:
+
+The names of all nodes of IOT tree server must comply with the following regulations
+
+1 must start with A-Z and A-Z, and the subsequent letters must be in A-Z and A-Z_ Within. No other letters are allowed. (because the name starting with '' is an internal system name)
+
+2. The names of child nodes under the same tree node cannot be duplicate.
+
+The reason why the naming is so specified is that the external interfaces provided by IOT tree server are basically based on naming. The strict regulations are to facilitate the call of external systems and reduce the possibility of errors.
+
+
+
 
 <img src="../img/tree_r1.png">
 
-如上图，在项目节点下面定义的UI节点mainui,就可以使用同级的另外两个UI定义节点fac和sub1，还可也使用两个通道ch1，ch2及通道下面的所有资源。
 
-在此UI编辑过程中，可以引用这些节点下的所有tag，绑定到自己的某个图元上。或者，可以直接把其他UI节点作为自己的一部分。很明显，这个约定不仅简单清晰，同时也给项目的实现带来了很大的组织方便。比如，某个界面UI可能会被多个地方使用，则可以先单独进行定义，然后被其他界面UI直接引用即可。
 
-### 2.3 节点上下文
 
-每个节点可以访问自身及所有子节点的全部标签。在不同的节点下，所有的标签列表组成了此节点的上下文(Context).如下图：
+As shown in the figure above, the UI node MainUI defined under the project node can use the other two UI definition nodes fac and sub1 at the same level, as well as the two channels ch1 and CH2 and all resources under the channel.
+
+During UI editing, you can reference all tags under these nodes and bind them to one of your own elements. Alternatively, you can directly take other UI nodes as part of yourself. Obviously, this agreement is not only simple and clear, but also brings great organizational convenience to the implementation of the project. For example, if an interface UI may be used in multiple places, it can be defined separately and then directly referenced by other interface UIs.
+
+
+
+
+### 2.3 Node context
+
+Each node can access all labels of itself and all child nodes. Under different nodes, all tag lists form the context of this node, as shown in the following figure:
 
 <img src="../img/tree_cxt1.png">
 
-通道channel1下面的自身标签，及此节点下的所有节点。上下文每个节点相对于c1，不同层级以符号"."作为间隔。
 
-## 3 总结
-如果你了解了本部分内容。那么你后续对IOT-Tree Server其他部分的理解就省心了。
-IOT-Tree Server看似复杂，其实整体思路还是很简洁的。只要牢牢抓住这颗“树”，你会发现她是多么简单，同时又能满足你的复杂业务需求。
 
-## 4 补充
-### 4.1 接入-通道-驱动之间的关系
-IOT-Tree基于本文所说的树形结构的基础之上，还有两个概念比较重要。那就是围绕通道(Channel)关联的接入和设备驱动。
- 
-详细内容请点击查看
-[接入(Connector)-通道(Channel)-驱动(Driver)之间的关系][cn_conn_drv]
+The self label under channel Channel1 and all nodes under this node. Each node of the context is separated by the symbol "." at different levels relative to C1.
 
-### 4.2 设备定义
 
-在通道下面新增设备时，必须指定对应的设备定义。IOT-Tree Server为此专门实现了设备库功能。
 
-您可以查看相关文档 [设备定义][dev_def]
+
+## 3 summary
+
+If you understand this section. Then your subsequent understanding of other parts of IOT tree server will be relieved.
+
+IOT tree server seems complex, but the overall idea is still very simple. As long as you firmly grasp this "tree", you will find how simple it is and can meet your complex business needs at the same time.
+
+
+
+
+## 4 supplement
+
+### 4.1 relationship between access channel drive
+
+IOT tree is based on the tree structure mentioned in this paper. There are two important concepts. That is, the access and device drivers associated around the channel.
+
+Please click to view the details
+
+[relationship between connector channel driver] [cn_conn_drv]
+
+
+
+### 4.2 Device definition
+
+When adding a device under a channel, you must specify the corresponding device definition. IOT tree server specifically implements the device library function for this purpose.
+
+You can view the relevant documents [device definition] [dev_def]
+
 
 [cn_conn_drv]: ./quick_know_ch_conn_drv.md
 [dev_def]: ./quick_know_devdef.md
