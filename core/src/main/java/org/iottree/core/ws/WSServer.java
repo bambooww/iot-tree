@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ import javax.websocket.CloseReason.CloseCodes;
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
+import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
 
@@ -45,7 +48,8 @@ public abstract class WSServer// extends ConnServer
 		private final UANodeOCTagsCxt nodecxt;
 		private final UAHmi hmi;
 
-		private long lastDT = -1;
+		//private long lastDT = -1;
+		private transient HashMap<UATag,Long> tag2lastdt = new HashMap<>() ;
 
 		// private boolean bFirstTick=true ;
 
@@ -72,18 +76,18 @@ public abstract class WSServer// extends ConnServer
 			return hmi;
 		}
 
-		/**
-		 * get dyn json for rep_editor
-		 * 
-		 * @return
-		 */
-		public String getRepDynJsonStr()
-		{
-			long curt = System.currentTimeMillis();
-			JSONObject jobj = prj.toOCDynJSON(lastDT);
-			lastDT = curt;
-			return jobj.toString(2);
-		}
+//		/**
+//		 * get dyn json for rep_editor
+//		 * 
+//		 * @return
+//		 */
+//		public String getRepDynJsonStr()
+//		{
+//			long curt = System.currentTimeMillis();
+//			JSONObject jobj = prj.toOCDynJSON(lastDT);
+//			lastDT = curt;
+//			return jobj.toString(2);
+//		}
 
 		public UANodeOCTagsCxt getNodeTagCxt()
 		{
@@ -124,8 +128,8 @@ public abstract class WSServer// extends ConnServer
 			UAHmi hmi = getHmi();
 			UAPrj prj = getPrj();
 
-			long lastdt = lastDT;
-			lastDT = System.currentTimeMillis();
+			//long lastdt = lastDT;
+			//lastDT = System.currentTimeMillis();
 
 			UANodeOCTagsCxt ntags = hmi.getBelongTo();
 
@@ -135,10 +139,14 @@ public abstract class WSServer// extends ConnServer
 			if (prj.RT_isRunning())
 			{
 				StringWriter sw_rt = new StringWriter();
-				if (ntags.CXT_renderJson(sw_rt, lastdt))
+				
+				//long tmp_maxdt = ntags.CXT_renderJson(sw_rt,tag2lastdt,null) ;
+				//System.out.println(" lastdt="+Convert.toFullYMDHMS(new Date(lastdt))+" rendmax="+Convert.toFullYMDHMS(new Date(tmp_maxdt)));
+				if (ntags.CXT_renderJson(sw_rt, tag2lastdt,null))
 				{
 					sw.write(",\"cxt_rt\":");
 					sw.write(sw_rt.toString());
+					//lastDT = tmp_maxdt ;
 				}
 			}
 			sw.write("}");

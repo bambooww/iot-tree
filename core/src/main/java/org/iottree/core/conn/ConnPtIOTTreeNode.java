@@ -158,6 +158,7 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 			//var tagp =p+n ;
 			boolean bvalid = tg.optBoolean("valid",false) ;
 			long dt = tg.optLong("dt", -1) ;
+			long chgdt = tg.optLong("chgdt",-1) ;
 			
 			Object ov = tg.opt("v") ;
 			String strv = "";
@@ -165,7 +166,7 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 				strv =""+ov;
 			//set to cxt
 			ov = UAVal.transStr2ObjVal(tag.getValTp(), strv) ;
-			UAVal uav = new UAVal(bvalid, ov,dt);
+			UAVal uav = new UAVal(bvalid, ov,dt,chgdt);
 			//tag.RT_setValStr(strv, true);
 			tag.RT_setUAVal(uav);
 			 

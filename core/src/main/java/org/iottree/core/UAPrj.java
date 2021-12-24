@@ -811,13 +811,26 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 					{
 					}
 
+//					long st = System.currentTimeMillis() ;
+//					long et = System.currentTimeMillis() ;
 					RT_runFlush();
-
+					
+//					et = System.currentTimeMillis() ;
+//					System.out.println("run flush cost="+(et-st));
+//					st = System.currentTimeMillis() ;
+					
 					runMidTagsScript();
 
+//					et = System.currentTimeMillis() ;
+//					System.out.println("run flush cost="+(et-st));
 					runScriptInterval();
+					
+//					st = System.currentTimeMillis() ;
 
 					runShareInterval();
+					
+//					et = System.currentTimeMillis() ;
+//					System.out.println("run flush cost="+(et-st));
 				}
 			}
 			catch ( Exception e)

@@ -212,7 +212,8 @@ public class UACodeItem
 		try
 		{
 			Object v = runCode() ;
-			return new UAVal(true,v,System.currentTimeMillis()) ;
+			long cdt = System.currentTimeMillis() ;
+			return new UAVal(true,v,cdt,cdt) ;
 		}
 		catch(Exception e)
 		{

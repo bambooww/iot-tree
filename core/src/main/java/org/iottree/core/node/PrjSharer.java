@@ -94,7 +94,7 @@ public abstract class PrjSharer extends PrjNode
 		HashMap<String,Object> extpms = new HashMap<>() ;
 		extpms.put("share_writable", bWrite) ;
 		extpms.put("share_dt", System.currentTimeMillis()) ;
-		p.CXT_renderJson(sw,extpms);
+		p.CXT_renderJson(sw,null,extpms);
 		
 		byte[] bs = sw.toString().getBytes("UTF-8") ;
 		

@@ -118,7 +118,8 @@ public class PropBindItem
 			
 			if(veq)
 				return lastVal ;
-			lastVal =  new UAVal(true,v,System.currentTimeMillis()) ;
+			long cdt = System.currentTimeMillis();
+			lastVal =  new UAVal(true,v,cdt,cdt) ;
 			return lastVal;
 		}
 		catch(Exception e)

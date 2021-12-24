@@ -104,8 +104,8 @@ dlg.resize_to(600,500);
       <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
-	  <div class="layui-input-inline" style="width: 100px;">
-	    <input type="text" id="title" name="title" lay-verify="required" autocomplete="off" class="layui-input">
+	  <div class="layui-input-inline" style="width: 200px;">
+	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
 	  </div>
 	  
   </div>

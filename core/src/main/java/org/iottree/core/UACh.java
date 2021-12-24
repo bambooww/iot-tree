@@ -295,7 +295,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			devdrv = dd.getBelongToDrv();
 		if(chdrv!=null&&devdrv!=null)
 		{
-			if(!chdrv.equals(devdrv))
+			if(!chdrv.getName().equals(devdrv.getName()))
 				throw new Exception("driver is not matched!") ;
 		}
 		String newn = dev.getName();

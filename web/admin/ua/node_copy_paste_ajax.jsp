@@ -9,58 +9,103 @@
 	java.net.*,
 	java.util.*"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "ppath","path"))
+if(!Convert.checkReqEmpty(request, out, "op","path"))
 	return;
 
-	
+String op = request.getParameter("op") ;
 String ppath = request.getParameter("ppath") ;
 String path = request.getParameter("path") ;
-UANode pnode = UAManager.getInstance().findNodeByPath(ppath);
-UANode node = UAManager.getInstance().findNodeByPath(path);
-if(pnode==null||node==null)
-{
-	out.print("node not found") ;
-	return ;
-}
 
-System.out.println(ppath+" <- "+path);
-if(node instanceof UADev)
+switch(op)
 {
-	if(!(pnode instanceof UACh))
+case "copy":
+	session.setAttribute("_node_copied_path", path) ;
+	out.print("succ");
+	break ;
+case "paste":
+	UANode pnode = null;
+	UANode node = null;
+	if(Convert.isNullOrEmpty(ppath))
 	{
-		out.print("copy paste is not matched");
+		ppath = path ;
+		path = (String)session.getAttribute("_node_copied_path") ;
+		if(Convert.isNullOrEmpty(path))
+		{
+			out.print("no copied node") ;
+			return ;
+		}
+	}
+	
+	pnode = UAManager.getInstance().findNodeByPath(ppath);
+	node = UAManager.getInstance().findNodeByPath(path);
+	if(pnode==null||node==null)
+	{
+		out.print("node not found") ;
+		return ;
+	}
+
+	System.out.println(ppath+" <- "+path);
+	if(node instanceof UADev)
+	{
+		if(!(pnode instanceof UACh))
+		{
+			out.print("copy paste is not matched");
+			return;
+		}
+		try
+		{
+			((UACh)pnode).deepPasteDev((UADev)node);
+			out.print("succ");
+		}
+		catch(Exception e)
+		{
+			out.print(e.getMessage());
+		}
 		return;
 	}
-	try
+
+	if(node instanceof UACh)
 	{
-		((UACh)pnode).deepPasteDev((UADev)node);
-		out.print("succ");
+		if(!(pnode instanceof UAPrj))
+		{
+			out.print("copy paste is not matched");
+			return;
+		}
+		try
+		{
+			((UAPrj)pnode).deepPasteCh((UACh)node);
+			out.print("succ");
+		}
+		catch(Exception e)
+		{
+			out.print(e.getMessage());
+		}
+		return;
 	}
-	catch(Exception e)
+	
+	if(node instanceof UAHmi)
 	{
-		out.print(e.getMessage());
+		if(!(pnode instanceof UANodeOCTagsCxt))
+		{
+			out.print("copy paste is not matched");
+			return;
+		}
+		try
+		{
+			((UANodeOCTagsCxt)pnode).pasteHmi((UAHmi)node);
+			out.print("succ");
+		}
+		catch(Exception e)
+		{
+			out.print(e.getMessage());
+		}
+		return ;
 	}
+	out.print("paste failed,may be not matched") ;
 	return;
 }
 
-if(node instanceof UACh)
-{
-	if(!(pnode instanceof UAPrj))
-	{
-		out.print("copy paste is not matched");
-		return;
-	}
-	try
-	{
-		((UAPrj)pnode).deepPasteCh((UACh)node);
-		out.print("succ");
-	}
-	catch(Exception e)
-	{
-		out.print(e.getMessage());
-	}
-	return;
-}
+
 //UADev dev = (UADev)node;
 //dev.
-%>succ
+%>

@@ -867,25 +867,24 @@ function on_conn_ui_showed()
 var cxt_menu = {
 	"prj":[
 		
-		{op_name:"paste_ch",op_title:"Paste Channel",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
-			//console.log(copiedItem);
-			return copiedItem!=null&&copiedItem.type=="ch";
-		}},
+		
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
 		
 		{op_name:"edit_prj",op_title:"Edit Project",op_icon:"fa fa-pencil",op_action:act_edit_prj},
-		
+		{op_name:"paste_ch",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+			//console.log(copiedItem);
+			return true;//copiedItem!=null&&copiedItem.type=="ch";
+		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true},
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
-		{op_name:"paste_dev",op_title:"Paste Device",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
-			//console.log(copiedItem);
-			return copiedItem!=null&&copiedItem.type=="dev";
+		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+			return true;//copiedItem!=null&&copiedItem.type=="dev";
 		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
 		
@@ -916,7 +915,7 @@ var cxt_menu = {
 		{op_name:"edit_dev",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_dev},
 		//{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
-		
+		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
 		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		{op_name:"add_to_lib",op_title:"Add To Library",op_icon:"fa fa-files-o",op_action:act_node_add_to_lib},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
@@ -936,6 +935,7 @@ var cxt_menu = {
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
+		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
 		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
 			return true;//!tn.ref_locked;
 		}}
@@ -947,6 +947,7 @@ var cxt_menu = {
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
+		{op_name:"cp_hmi",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
@@ -1020,10 +1021,20 @@ function refresh_ui()
 function act_node_copy(n,op)
 {
 	copiedItem = n ;
+	send_ajax("./ua/node_copy_paste_ajax.jsp",{op:"copy",path:copiedItem.path},(bsucc,ret)=>{
+		if(!bsucc||ret!="succ")
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		dlg.msg("copied ok") ;
+	});
 }
 
 function act_node_paste(n,op)
 {
+	/*
+}
 	if(copiedItem==null)
 		return ;
 	let ppath=n.path ;
@@ -1041,7 +1052,9 @@ function act_node_paste(n,op)
 	}
 	else
 		return ;
-	send_ajax("./ua/node_copy_paste_ajax.jsp",{ppath:n.path,path:copiedItem.path},(bsucc,ret)=>{
+	*/
+	//send_ajax("./ua/node_copy_paste_ajax.jsp",{op:"paste",ppath:n.path,path:copiedItem.path},(bsucc,ret)=>{
+	send_ajax("./ua/node_copy_paste_ajax.jsp",{op:"paste",path:n.path},(bsucc,ret)=>{
 		if(!bsucc||ret!="succ")
 		{
 			dlg.msg(ret) ;

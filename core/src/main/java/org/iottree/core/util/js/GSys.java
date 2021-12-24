@@ -154,6 +154,12 @@ public class GSys
 		return fb.get();
 	}
 
+	@HostAccess.Export
+	public float int2float(int intv)
+	{
+		 return Float.intBitsToFloat(intv);  
+	}
+	//public float int2float(int intv,)
 	/**
 	 * 把modbus高位2字节，低位2字节转换为float
 	 * 

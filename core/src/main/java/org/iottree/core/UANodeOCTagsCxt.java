@@ -167,6 +167,26 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			f.delete();
 	}
 
+	/**
+	 * 
+	 * @param hmi
+	 * @return
+	 * @throws Exception 
+	 */
+	public UAHmi pasteHmi(UAHmi hmi) throws Exception
+	{
+		UAHmi nt = new UAHmi();
+		
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
+		nt.id = this.getNextIdByRoot() ;
+		hmi.copyTreeWithNewSelf((IRoot)this.getTopNode(),nt, null, false, true, rf2new);
+		hmis.add(nt);
+		this.constructNodeTree();
+		save();
+		Convert.copyRelatedFile(rf2new);
+		return nt ;
+	}
+	
 	public List<UANode> getSubNodes()
 	{
 		List<UANode> rets = super.getSubNodes();
@@ -276,22 +296,29 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 
 	public void CXT_renderJson(Writer w) throws IOException
 	{
-		CXT_renderJson(w, -1);
+		CXT_renderJson(w, null,null);
 	}
 
-	public void CXT_renderJson(Writer w, HashMap<String, Object> extpms) throws IOException
-	{
-		CXT_renderJson(w, -1, extpms);
-	}
-
+//	public void CXT_renderJson(Writer w, HashMap<String, Object> extpms) throws IOException
+//	{
+//		CXT_renderJson(w, -1, extpms);
+//	}
+//
 	public boolean CXT_renderJson(Writer w, long lastdt) throws IOException
 	{
-		return CXT_renderJson(w, lastdt, null);
+		return CXT_renderJson(w, null,lastdt, null);
 	}
 
-	public boolean CXT_renderJson(Writer w, long lastdt, HashMap<String, Object> extpms) throws IOException
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, HashMap<String, Object> extpms) throws IOException
 	{
-		boolean bchged = false;
+		return CXT_renderJson(w, tag2lastdt, -1,extpms);
+	}
+
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms) throws IOException
+	{
+		boolean bchg=false;
+		//long maxdt=-1 ;
+		
 		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\"");
 		if (extpms != null)
 		{
@@ -331,6 +358,11 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 									// Date(val.getValDT())) ;
 				dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
 											// Date(val.getValChgDT())) ;
+				//if(dt>maxdt)
+				//	maxdt = dt ;
+//				if(dt_chg>maxdt)
+//					maxdt = dt_chg ;
+				
 				str_err = val.getErr();
 				if (str_err == null)
 					str_err = "";
@@ -340,8 +372,22 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				dt_chg = System.currentTimeMillis();
 			}
 
-			if (lastdt > 0 && dt_chg <= lastdt)
-				continue;
+			if(tag2lastdt!=null)
+			{
+				Long lastdt = tag2lastdt.get(tg) ;
+				if (lastdt!=null && lastdt > 0 && dt_chg <= lastdt)
+					continue;
+				
+				lastdt = dt_chg ;
+				tag2lastdt.put(tg, lastdt);
+			}
+			else if(g_lastdt>0)
+			{
+				if (dt_chg <= g_lastdt)
+					continue;
+			}
+			
+			bchg=true;
 
 			if (!bfirst)
 				w.write(",");
@@ -366,7 +412,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 						+ Convert.plainToJsStr(str_err) + "\"}");
 			}
 
-			bchged = true;
+			//bchged = true;
 		}
 		w.write("],\"subs\":[");
 
@@ -379,12 +425,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				bfirst = false;
 			// w.write("\""+subtg.getName()+"\":");
 
-			if (subtg.CXT_renderJson(w, lastdt, null))
-				bchged = true;
+			if(subtg.CXT_renderJson(w, tag2lastdt, null))
+				bchg=true;
 		}
 		w.write("]}");
 
-		return bchged;
+		return bchg;
 	}
 
 	public boolean CXT_renderTagsJson(Writer w, boolean bsys, long lastdt) throws IOException

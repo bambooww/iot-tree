@@ -199,12 +199,14 @@ public class UAVal //extends JSObMap
 		
 	}
 	
-	public UAVal(boolean bvalid,Object val,long valdt)
+	public UAVal(boolean bvalid,Object val,long valdt,long val_chgdt)
 	{
 		bValid = bvalid ;
 		objVal = val ;
 		if(valdt>0)
 			valDT = valdt ;
+		if(val_chgdt>0)
+			valChgDT = val_chgdt ;
 	}
 	
 	public UAVal(String err,Exception errob)
@@ -275,7 +277,13 @@ public class UAVal //extends JSObMap
 		}
 		
 		objVal = val ;
-		this.valChgDT = valDT = valdt;
+		this.valChgDT = valdt;
+		this.valDT = valdt;
+	}
+	
+	void setValDT(long valdt)
+	{
+		this.valDT = valdt ;
 	}
 	
 	synchronized public void setValErr(String err)

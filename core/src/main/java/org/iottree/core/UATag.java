@@ -117,7 +117,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 */
 	private transient UAValList valsCacheList = null ;
 	
-	private transient UAVal curVal = new UAVal(false,null,System.currentTimeMillis()) ;
+	private transient UAVal curVal = new UAVal(false,null,-1,-1) ;
 	
 	private transient Object curRawVal = null ;
 	
@@ -125,7 +125,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	//for value not chg check,when tag is inited or 
 	// reload,not chg check will ignore
-	private transient boolean bInitLoaded = true ;
+	//private transient boolean bInitLoaded = true ;
 	
 	public UATag()
 	{
@@ -454,6 +454,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			return valTp ;
 		return vt.getTransValTP() ;
 	}
+	
 	
 	public int getDecDigits()
 	{
@@ -785,15 +786,24 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * for systag etc
 	 * @param v
 	 */
-	public void RT_setVal(Object v,boolean ignore_nochg)
+	@HostAccess.Export
+	public void RT_setVal(Object v)
 	{
-		UAVal uav = this.curVal;//RT_getVal();
-		if(ignore_nochg && uav!=null)
+		long cdt = System.currentTimeMillis() ;
+		//UAVal uav = ;//RT_getVal();
+		//boolean bchg = true; 
+		if(this.curVal!=null)
 		{
-			if(uav.isValid() && uav.getObjVal().equals(v))
+			//if(uav.isValid() && uav.getObjVal().equals(v))
+			//	return ;
+			if(this.curVal.isValid()&&v.equals(this.curVal.getObjVal()))
+			{
+				this.curVal.setVal(true, v, cdt);
 				return ;
+			}
 		}
-		uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		
+		UAVal uav = new UAVal(true,v,cdt,cdt) ;
 		RT_setUAVal(uav);
 	}
 	
@@ -805,61 +815,68 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg)
 	{
-		if(ignore_nochg && !bInitLoaded)
+		boolean bval_chg = true;
+		if(curRawVal==null)
 		{
-			
-			
-			if(curRawVal==null)
-			{
-				if(v==null)
-					return ;
-			}
-			else if(curRawVal.equals(v))
-				return ;
+			if(v==null)
+				bval_chg= false ;
 		}
-		
-		if(bInitLoaded)
-			bInitLoaded = false;
+		else if(curRawVal.equals(v))
+		{
+			bval_chg = false ;
+		}
 		
 		curRawVal = v ;
 		
-		ValTranser vt = this.getValTranserObj() ;
-		if(vt!=null)
+		//if(bval_chg || this.curVal==null)
 		{
-			try
+			ValTranser vt = this.getValTranserObj() ;
+			if(vt!=null)
 			{
-				v = vt.transVal(v) ;
-				v = UAVal.transStr2ObjVal(vt.getTransValTP(),v.toString()) ;
-				//v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
-			}
-			catch(Exception ee)
-			{
-				this.RT_setValErr(ee.getMessage(),ee);
-				return ;
+				try
+				{
+					v = vt.transVal(v) ;
+					v = UAVal.transStr2ObjVal(vt.getTransValTP(),v.toString()) ;
+					//v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
+				}
+				catch(Exception ee)
+				{
+					this.RT_setValErr(ee.getMessage(),ee);
+					return ;
+				}
 			}
 		}
 		
-		UAVal uav = this.curVal;//RT_getVal();
+//		UAVal uav = this.curVal;//RT_getVal();
 //		if(ignore_nochg && uav!=null)
 //		{
 //			if(uav.isValid() && uav.getObjVal().equals(v))
 //				return ;
 //		}
-		uav = new UAVal(true,v,System.currentTimeMillis()) ;
+		
+		long cdt = System.currentTimeMillis() ;
+		
+		if(this.curVal!=null&&!bval_chg)
+		{
+			this.curVal.setVal(true,v,cdt);
+			return ;
+		}
+		
+		UAVal uav = new UAVal(true,v,cdt,cdt) ;
 		RT_setUAVal(uav);
 	}
 	
-	public void RT_setValStr(String strv,boolean ignore_nochg)
+	public void RT_setValStr(String strv)
 	{
 		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
-		RT_setVal(objv, ignore_nochg);
+		RT_setVal(objv);
 	}
-	
-	@HostAccess.Export
-	public void RT_setVal(Object v)
-	{
-		this.RT_setVal(v,true);
-	}
+//	
+//	
+//	public void RT_setVal(Object v)
+//	{
+//		this.RT_setVal(v,true);
+//	}
 	
 	public void RT_setUAVal(UAVal uav)
 	{
@@ -1046,7 +1063,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			RT_writeVal(v) ;
 			return ;
 		case "_value":
-			this.RT_setVal(v, true);
+			this.RT_setVal(v);
 			return;
 		default:
 			break ;//do nothing

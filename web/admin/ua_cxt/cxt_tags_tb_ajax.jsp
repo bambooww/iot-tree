@@ -6,12 +6,51 @@
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
 	"%><%!
-
+	private static class TagComp implements Comparator<UATag>
+	{
+		String sortBy = null ;
+		
+		public TagComp(String sortby)
+		{
+			this.sortBy = sortby ;
+			if(this.sortBy==null)
+				this.sortBy="" ;
+		}
+		
+		public int compare(UATag t1,UATag t2)
+		{
+			switch(sortBy)
+			{
+			case "addr":
+				String addr1 = t1.getAddress() ;
+				String addr2 = t2.getAddress() ;
+				if(addr1==null)
+					addr1="" ;
+				if(addr2==null)
+					addr2="" ;
+				return addr1.compareTo(addr2) ;
+			case "title":
+				String title1 = t1.getTitle() ;
+				String title2 = t2.getTitle() ;
+				return title1.compareTo(title2) ;
+			case "valtp":
+				String vtstr1 = t1.getValTp().getStr();//.getTitle() ;
+				String vtstr2 = t2.getValTp().getStr();
+				return vtstr1.compareTo(vtstr2) ;
+			default:
+				return t1.getName().compareTo(t2.getName());
+			}
+			
+		}
+	}
 %><%
 if(!Convert.checkReqEmpty(request, out, "path"))
 	return ;
 //boolean bdev = "true".equals(request.getParameter("bdev")) ;
 //boolean bmgr ="true".equals(request.getParameter("mgr")) ;
+String sortby = request.getParameter("sortby") ;
+if(sortby==null)
+	sortby="" ;
 boolean bsys = "true".equals(request.getParameter("sys")) ;
 String path = request.getParameter("path") ;
 UANode node = UAUtil.findNodeByPath(path) ;
@@ -54,6 +93,8 @@ List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
 boolean brefowner = node_tags.isRefOwner();
 boolean brefed = node_tags.isRefedNode() ;
 
+TagComp tag_comp = new TagComp(sortby);
+Collections.sort(cur_tags, tag_comp) ;
 String hmitt = "" ;
 if(bhmi)
 {
@@ -72,6 +113,7 @@ for(UANodeOCTags tn:tns)
 	else
 		tags = tn.getNorTags() ;
 	
+	Collections.sort(tags, tag_comp) ;
 	String tn_id = tn.getId() ;
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
@@ -142,6 +184,7 @@ if(bloc&&!tag.isSysTag())
         <td><%=valtp_str %></td>
         <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
+        <td id="ctag_chgdt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>
         <td>
 <%

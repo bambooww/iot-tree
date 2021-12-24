@@ -686,7 +686,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		UATag t = this.getSysTagByName(name);
 		if (t == null)
 			return false;
-		t.RT_setVal(v, ignore_nochg);
+		t.RT_setVal(v);
 		return true;
 	}
 

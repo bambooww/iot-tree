@@ -440,7 +440,7 @@ public abstract class DevDriver implements IPropChecker
 					drv_int = 0 ;
 				
 				StringBuilder failedr = new StringBuilder();
-				System.out.println(" driver [" + DevDriver.this.getName() + " " + DevDriver.this + "] started");
+				System.out.println(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] started");
 
 				// bind
 				bindConnPt();
@@ -456,6 +456,10 @@ public abstract class DevDriver implements IPropChecker
 						//System.out.println("-----1-------");
 						if (!RT_runInLoop(failedr))
 							break;
+					}
+					catch(InterruptedException ie)
+					{
+						
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
@@ -477,7 +481,9 @@ public abstract class DevDriver implements IPropChecker
 
 	private void stopDriver()
 	{
-		System.out.println(" drv stop -- " + this.getBelongToCh().getTitle());
+		if(!bRun)
+			return ;
+		
 		try
 		{
 			bRun = false;
@@ -490,6 +496,8 @@ public abstract class DevDriver implements IPropChecker
 		{
 			ee.printStackTrace();
 		}
+		
+		System.out.println(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] stopped");
 		rtTh = null;
 	}
 

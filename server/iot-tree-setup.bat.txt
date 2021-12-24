@@ -9,7 +9,7 @@ if "%1"=="stop" goto stop
 :install
 set PATH="%JAVA_HOME%\bin\";%PATH%
 if NOT DEFINED JAVA_HOME goto :no_java_home
-java -cp ./lib/iottree-server-0.94.7.jar org.iottree.server.ServiceWrapperUtil
+java -cp ./lib/* org.iottree.server.ServiceWrapperUtil
 wrapper.exe -i "%IOTTREE_HOME%/wrapper.conf"
 goto finally
 

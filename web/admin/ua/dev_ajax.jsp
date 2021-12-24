@@ -107,7 +107,7 @@
 			out.print("no dev node found");
 			return ;
 		}
-		dev.getBelongTo().refreshDev(dev) ;
+		//dev.getBelongTo().refreshDev(dev) ;
 		
 			out.print("succ="+dev.getId()) ;
 			return ;

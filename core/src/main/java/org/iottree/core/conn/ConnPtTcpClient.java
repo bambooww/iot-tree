@@ -19,11 +19,11 @@ public class ConnPtTcpClient extends ConnPtStream
 	String host = null;
 
 	int port = -1;
-	
+
 	/**
 	 * conn timeout in millissecond
 	 */
-	int connTimeoutMS = 3000 ;
+	int connTimeoutMS = 3000;
 
 	Socket sock = null;
 
@@ -39,10 +39,10 @@ public class ConnPtTcpClient extends ConnPtStream
 	{
 		super(cp, name, title, desc);
 	}
-	
+
 	public String getConnType()
 	{
-		return "tcp_client" ;
+		return "tcp_client";
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		XmlData xd = super.toXmlData();
 		xd.setParamValue("host", host);
 		xd.setParamValue("port", port);
-		xd.setParamValue("conn_to",connTimeoutMS);
+		xd.setParamValue("conn_to", connTimeoutMS);
 		return xd;
 	}
 
@@ -61,24 +61,23 @@ public class ConnPtTcpClient extends ConnPtStream
 		boolean r = super.fromXmlData(xd, failedr);
 		this.host = xd.getParamValueStr("host");
 		this.port = xd.getParamValueInt32("port", 8081);
-		this.connTimeoutMS = xd.getParamValueInt32("conn_to", 3000) ;
+		this.connTimeoutMS = xd.getParamValueInt32("conn_to", 3000);
 		return r;
 	}
-	
+
 	protected void injectByJson(JSONObject jo) throws Exception
 	{
 		super.injectByJson(jo);
-		
-		
-		this.host = jo.getString("host") ;
-		this.port = jo.getInt("port") ;
-		this.connTimeoutMS = jo.getInt("conn_to") ;
+
+		this.host = jo.getString("host");
+		this.port = jo.getInt("port");
+		this.connTimeoutMS = jo.getInt("conn_to");
 	}
 
 	public String getHost()
 	{
-		if(host==null)
-			return "" ;
+		if (host == null)
+			return "";
 		return host;
 	}
 
@@ -86,19 +85,18 @@ public class ConnPtTcpClient extends ConnPtStream
 	{
 		return port;
 	}
-	
+
 	public String getPortStr()
 	{
-		if(port<=0)
-			return "" ;
-		return ""+port;
+		if (port <= 0)
+			return "";
+		return "" + port;
 	}
-	
+
 	public int getConnTimeout()
 	{
-		return connTimeoutMS ;
+		return connTimeoutMS;
 	}
-	
 
 	@Override
 	protected InputStream getInputStreamInner()
@@ -116,7 +114,6 @@ public class ConnPtTcpClient extends ConnPtStream
 	{
 		return this.host + ":" + this.port;
 	}
-	
 
 	private synchronized boolean connect()
 	{
@@ -127,26 +124,27 @@ public class ConnPtTcpClient extends ConnPtStream
 				try
 				{
 					disconnect();
-				} catch (Exception e)
+				}
+				catch ( Exception e)
 				{
 				}
 			}
-			
+
 			try
 			{
 				sock.sendUrgentData(0xFF);
 			}
-			catch(Exception e)
+			catch ( Exception e)
 			{
 				e.printStackTrace();
-				disconnect() ;
+				disconnect();
 			}
 			return true;
 		}
 
 		try
 		{
-			
+
 			sock = new Socket(host, port);
 			sock.setSoTimeout(connTimeoutMS);
 			sock.setTcpNoDelay(true);
@@ -156,51 +154,60 @@ public class ConnPtTcpClient extends ConnPtStream
 			this.fireConnReady();
 
 			return true;
-		} catch (Exception ee)
+		}
+		catch ( Exception ee)
 		{
-			//System.out.println("conn to "+this.getStaticTxt()+" err") ;
-			//ee.printStackTrace();
+			// System.out.println("conn to "+this.getStaticTxt()+" err") ;
+			// ee.printStackTrace();
 			disconnect();
 			return false;
 		}
 	}
 
-	synchronized void disconnect() //throws IOException
+	void disconnect() // throws IOException
 	{
 		if (sock == null)
 			return;
 
-		System.out.println("ConnPtTcpClient disconnect ["+this.getName());
-		try
+		synchronized (this)
 		{
+			System.out.println("ConnPtTcpClient disconnect [" + this.getName());
 			try
 			{
-				if (inputS != null)
-					inputS.close();
-			} catch (Exception e)
-			{
-			}
+				try
+				{
+					if (inputS != null)
+						inputS.close();
+				}
+				catch ( Exception e)
+				{
+				}
 
-			try
-			{
-				if (outputS != null)
-					outputS.close();
-			} catch (Exception e)
-			{
-			}
+				try
+				{
+					if (outputS != null)
+						outputS.close();
+				}
+				catch ( Exception e)
+				{
+				}
 
-			try
-			{
-				if (sock != null)
-					sock.close();
-			} catch (Exception e)
-			{
+				try
+				{
+					if (sock != null)
+						sock.close();
+				}
+				catch ( Exception e)
+				{
+				}
+
 			}
-		} finally
-		{
-			inputS = null;
-			outputS = null;
-			sock = null;
+			finally
+			{
+				inputS = null;
+				outputS = null;
+				sock = null;
+			}
 		}
 	}
 
@@ -208,16 +215,16 @@ public class ConnPtTcpClient extends ConnPtStream
 
 	void checkConn()
 	{
-		if(System.currentTimeMillis()-lastChk<5000)
-			return ;
-		
+		if (System.currentTimeMillis() - lastChk < 5000)
+			return;
+
 		try
 		{
 			connect();
 		}
 		finally
 		{
-			lastChk = System.currentTimeMillis() ;
+			lastChk = System.currentTimeMillis();
 		}
 	}
 
@@ -236,15 +243,15 @@ public class ConnPtTcpClient extends ConnPtStream
 	@Override
 	public boolean isConnReady()
 	{
-		return sock!=null;
+		return sock != null;
 	}
-	
+
 	public String getConnErrInfo()
 	{
-		if(sock==null)
-			return "no connection" ;
+		if (sock == null)
+			return "no connection";
 		else
-			return null ;
+			return null;
 	}
 
 	@Override

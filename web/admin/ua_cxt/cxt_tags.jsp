@@ -135,14 +135,15 @@ td
 <%
 	}
 %></th>
-        <th>Mid</th>
-    <th>Tag</th>
-    <th>Title</th>
-        <th>Address</th>
-        <th>Value Type</th>
+        <th >Mid</th>
+    	<th sort_by="name">Tag</th>
+    	<th sort_by="title">Title</th>
+        <th sort_by="addr">Address</th>
+        <th sort_by="valtp">Value Type</th>
         
         <th>Value</th>
-        <th>Timestamp</th>
+        <th>Update DT</th>
+        <th>Change DT</th>
         <th>Quality</th>
         <th>Write</th>
         <th></th>
@@ -284,6 +285,7 @@ var cxt_path= "<%=node_cxtpath%>";
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
+var sort_by=null ;
 
 var tags_num = 0;//<%=0%>;
 $("#tags_num").html(tags_num);
@@ -310,6 +312,7 @@ layui.use('form', function(){
 document.oncontextmenu = function() {
     return false;
 }
+
 
 var b_ctrl_down = false;
 var b_shift_down=false;
@@ -715,16 +718,21 @@ function show_cxt_dyn(p,cxt)
 		var tagp =p+n ;
 		var bvalid = tg.valid ;
 		var dt = tg.dt ;
+		var chgdt = tg.chgdt;
 		
 		var strv ="";
 		if(tg.v!=null)
 			strv = tg.strv ;
 		var strerr = tg.err ;
 		var strdt = "" ;
+		var strchgdt = "" ;
 		if(dt>0)
-			strdt =new Date(dt).format("hh:mm:ss");//yyyy-MM-dd 
+			strdt =new Date(dt).format("hh:mm:ss");//yyyy-MM-dd
+		if(chgdt>0)
+			strchgdt = new Date(dt).format("yyyy-MM-dd hh:mm:ss");//
 		show_ele_html("ctag_v_"+tagp,strv,true) ;
 		show_ele_html("ctag_dt_"+tagp,strdt) ;
+		show_ele_html("ctag_chgdt_"+tagp,strchgdt) ;
 		var qstr = bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>";
 		if(!bvalid&&strerr!=null&&strerr!=""&&strerr!=undefined)
 			qstr += "<span title='"+strerr+"'>err</span>";
@@ -767,7 +775,7 @@ function run_script_test(fn)
 
 function refresh_tags()
 {
-	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys,function(bsucc,ret){
+	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys+"&sortby="+sort_by,function(bsucc,ret){
 		$("#div_list_bd_").html(ret);
 		init_tr();
 		
@@ -776,6 +784,16 @@ function refresh_tags()
 	},false);
 }
 
+
+$("th").click(function() {
+    var sortby = $(this).attr("sort_by");
+    if(sortby==undefined||sortby==''||sortby==null)
+    	return ;
+    if(sort_by==sortby)
+    	return ;
+    sort_by = sortby ;
+    refresh_tags();
+});
 
 refresh_tags();
 

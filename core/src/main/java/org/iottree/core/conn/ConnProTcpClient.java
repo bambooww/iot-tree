@@ -94,14 +94,17 @@ public class ConnProTcpClient extends ConnProvider
 
 
 	
-	public void disconnAll() //throws IOException
+	private void disconnAll() //throws IOException
 	{
 		for(ConnPt ci:this.listConns())
 		{
 			try
 			{
 				ConnPtTcpClient conn = (ConnPtTcpClient)ci ;
+//				long st = System.currentTimeMillis() ;
 				conn.disconnect();
+//				long et = System.currentTimeMillis() ;
+//				System.out.println(" conn="+conn.getName()+" cost="+(et-st));
 			}
 			catch(Exception e)
 			{
