@@ -1,72 +1,97 @@
-接入(Connector)-通道(Channel)-驱动(Driver)
+
+
+Connector-Channel-Driver
 ==
 
-[IOT-Tree Server的树][qn_tree]从纵向对一个项目涉及的所有设备和资源进行了规整。那么以通道(Channel)为中心，设备运行需要用到的通信和驱动从横向进行了整合。
+
+
+
+[IOT tree server tree] [qn_tree] arranges all devices and resources involved in a project vertically. With the channel as the center, the communication and drivers required for device operation are integrated horizontally.
+
 
 ```
                Project
                  |
 Connector --> Channel <-- Driver
                  |
-               Device
+            Device/Tag Group
                  |
                Tag Group
                  |
                Tag
 ```
 
-在上下层次关系中，通道(Channel)某种意义上可以看成项目下面的设备分类。她是一种抽象概念，把设备可能用到的同一个接入和设备运行所需要的协议和驱动进行了统一。
 
-也即是，在一个通道下面的所有设备，都使用相同的设备驱动，并且如何有需要，则使用统一的通信接入。
 
-## 1 设备驱动
-当前物联网世间已经存在非常多的标准通信协议，如Modbus、Can...等等。IOT-Tree Server为了能够支持和扩展越来越多的设备，专门实现了可插拔的设备驱动支持。我们未来会有越来越多的驱动来支持你的需要。
+In the hierarchical relationship, the channel can be regarded as the deivces classification under the project in a sense. It is an abstract concept that unifies the protocols and drivers required for the same access and device operation that may be used by the device.
 
-### 1.1 设备定义Device Definition
-为了能够更加方便非专业人士的使用。IOT-Tree Server内部所有的设备都需要定义，定义设备需要对设备对应的协议比较了解，这需要相关的专业知识。和传统的OPC Server类似，专业人员可以通过选择设备驱动，设置设备参数，设置标签及标签对应驱动地址参数等完成设备的定义。IOT-Tree Server专门设置了设备定义的组织和管理功能，这些功能独立与项目。
+That is, all devices under one channel use the same device driver, and if necessary, use unified communication access.
 
-一旦设备定义完成，在项目中就可以直接引用定义好的设备，形成项目中具体的设备。这些具体的设备需要后续的参数设置非常少，甚至可以没有。
 
-所有的设备定义都必须在驱动下面。如果一个设备支持多种协议，而IOT-Tree Server针对不同协议都有对应的驱动，那么一个设备在IOT-Tree Server中就可能会有多个定义，每个定义在不同的驱动下面。
 
-需要了解更详细的设备定义，请点击这里： [设备定义 Device Definition][qn_devdef]
 
-### 1.2 在通道上选择驱动
+## 1 Device drive
 
-在某个通道(Channel)选定驱动之后，通道下面可使用的设备也就限定了——只能选择在这个驱动下面定义的设备。
+At present, there are many standard communication protocols in the Internet of things, such as modbus, can... And so on. In order to support and expand more and more devices, IOT tree server specifically implements pluggable device driver support. We will have more and more drivers to support your needs in the future.
 
-## 2 通信接入Connector
-当前不管在工业通信现场还是在互联网领域，已经存在了各种各样的通信方式和通信协议。
 
-更进一步，在物联网领域，一个系统很可能存在分散在广大范围内的设备进行远程接入。
 
-还有一种情况是，一些系统会有专门的物联网网关，网关下面接入很多设备，然后通过网关转换成互联网的Tcp/IP协议。
 
-不同于一些传统的工业OPC软件系统（这些软件往往把设备驱动和通信组合在一起），IOT-Tree把通信和接入专门作为一个子系统存在，而驱动在设计时，则尽可能地重用通信接入。
+### 1.1 Device definition
 
-通信接入Connector在IOT-Tree Server的项目中只能和通道(Channel)关联，由此和通道(Channel)下面选定的驱动间接的建立了联系。
+In order to be more convenient to use. IOT tree server specifically sets the organization and management functions of device definitions, which are independent of the project., Equipment definitions are managed through two levels: classification and equipment.
 
-很明显，通道和接入关联的时候，需要根据驱动进行有效性判断，如果接入和驱动不匹配，则也是无效的。
+The equipment defined below the channel needs to have a better understanding of the corresponding protocol of the equipment, which requires relevant professional knowledge. Similar to the traditional OPC server, professionals can complete the definition of devices by selecting device drivers, setting device parameters, setting labels and driving address parameters corresponding to labels.
 
-当然，某些驱动自身直接带了通信链接功能（这种情况在HttpClient等方式的一些驱动下面很常见），这种驱动也就不需要对应的通道(Channel)关联接入了。
+Once the equipment definition is completed, the defined equipment can be directly referenced in the project to form the specific equipment in the project. These specific devices require very few or no subsequent parameter settings.
 
-### 2.1 通信监视功能
+All device definitions must be under the driver. If a device supports multiple protocols and the IOT tree server has corresponding drivers for different protocols, a device may have multiple definitions in the IOT tree server, each defined under different drivers.
 
-通信接入的独立，不仅可以简化驱动的开发和重用，还可也在通信层引入的更多的益处。如通信的维持、监视等。
 
-IOT-Tree Server可以更加项目的需要设定或限定通信接入的相关参数，可以使得接入更加优化。同时，还可也更加接入提供的在线监视功能，跟踪项目运行过程中的通信数据。更加方便项目的运行。
+For more detailed device definitions, please click here: 
+[device definition][qn_devdef]
 
-如下图Modbus RTU通信数据的跟踪展示：
+
+
+### 1.2 Select the drive on the channel
+
+After a driver is selected for a channel, the available devices under the channel are limited - only the devices defined under the driver can be selected.
+
+
+
+
+## 2 Communication access connector
+
+At present, there are various communication modes and protocols in both industrial communication field and Internet field.
+
+Further, in the field of Internet of things, a system is likely to have devices scattered in a wide range for remote access.
+
+In another case, some systems will have special Internet of things gateways. Many devices are connected under the gateway, and then converted into TCP/IP protocol of the Internet through the gateway.
+
+Different from some traditional industrial OPC software systems (these software often combine device driver and communication), IOT tree takes communication and access as a subsystem, and the driver reuses communication access as much as possible in design.
+
+In the IOT tree server project, the communication access connector can only be associated with the channel, which establishes an indirect connection with the driver selected under the channel.
+
+Obviously, when the channel is associated with the access, it is necessary to judge the effectiveness according to the driver. If the access and driver do not match, it is also invalid.
+
+Of course, some drivers directly carry the communication link function (this is common under some drivers such as httpclient), and this driver does not need the associated access of the corresponding channel.
+
+
+
+### 2.1 Communication monitoring function
+
+The independence of communication access can not only simplify the development and reuse of drivers, but also introduce more benefits in the communication layer. Such as maintenance and monitoring of communication.
+
+IOT tree server can set or limit the relevant parameters of communication access according to the needs of the project, which can make the access more optimized. At the same time, it can also access the online monitoring function provided to track the communication data during the operation of the project. It is more convenient for the operation of the project.
+
+The following figure shows the tracking display of Modbus RTU communication data:
 
 <img src="../img/conn_mon.png" />
 
 
-## 3 接入、通道和驱动的运行方式
 
-在IOT-Tree Server中，接入可以独立运行，而驱动则在通道内部运行。驱动在实现时，需要考虑在通道中关联的接入状态的变化时做出相应的应对，如接入链接断开或恢复的情况。
-
-
-
+## 3 run mode of connector, channel and drive
+In IOT tree server, the connector can run independently, while the driver runs inside the channel. When the driver is implemented, it needs to consider the corresponding response when the associated access state in the channel changes, such as the disconnection or recovery of the access link.
 
 
 

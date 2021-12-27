@@ -1,66 +1,96 @@
-人机交互(HMI)
+
+
+Monitoring UI,Human computer interaction(HMI)
 ==
 
-IOT-Tree Server在树状层次基础上，不同节点里面可以定义人机交互UI界面或组件。
 
 
-## 1 人机交互节点
 
-IOT-Tree Server一个很激动人心的功能是能够在你的项目中，直接提供在线的交互UI界面定义、设计和发布。
+IOT tree server can define HMI UI interfaces or components in different nodes on the basis of tree hierarchy.
 
-在项目(Prjoect)-通道(Channel)-设备(Device)-标签组(Tag Group)的每个层级都可以定义对应的UI界面。并且遵循节点包含相关资源访问。比如，设备(Device)下面的UI界面，可以引用设备和设备下面所有节点的资源。而项目(Project)根目录下的UI界面，可以使用整个项目的所有资源——这个资源包含子节点下的UI子界面。
 
-下面还是以具体的例子来说明：
 
-## 2 在项目中定义UI组件
 
-IOT-Tree Server项目下面有通道（Channel）分级，接下来就是从设备库中选择添加的具体设备实例。设备以下部分受限制与设备定义，内部的Tag、TagGroup以及人机交互UI都已经限定。由此，项目中要定义自己的UI只能在项目根节点和通道（Channel）节点下。
 
-如下图所示，UI节点mainui和m1是属于项目根节点下面，而uch1属于通道c1，它们都属于项目下面定义的UI。
+## 1 HMI node
 
-其中，uch1可以使用通道c1下面的所有资源。而mainui和m1可以使用整个项目的全部资源。
+An exciting feature of IOT tree server is that it can directly provide online interactive UI interface definition, design and release in your project.
+
+Corresponding UI interfaces can be defined at each level of project - Channel - device - tag group. And follow the node contains related resource access. For example, the UI interface under the device can reference the resources of the device and all nodes under the device. The UI interface under the root directory of the project can use all the resources of the whole project - this resource includes the UI sub node under the sub node.
+
+The following is a specific example:
+
+
+
+
+
+## 2 Defining UI components in a project
+
+As shown in the following figure, UI nodes MainUI and M1 belong to the root node of the project, while uch1 belongs to channel C1. They both belong to the UI defined under the project.
+
+Among them, uch1 can use all resources under channel C1. MainUI and M1 can use all the resources of the whole project.
 
 <img src="../img/hmi_prj_ch.png"/>
 
-## 3 在设备定义（Device Definition）
 
-如果你对设备定义不了解，请参考[快速理解-设备定义(Device Definition)][qn_devdef]。
 
-通过设备驱动、设备分类和设备定义。你可以在设备对应的Tag、TagGroup定义完成之后，接着针对设备做设备自身能够提供的UI组件。特别是针对特殊、专业的复杂设备，由于项目使用人员在大部分情况下是无法深入理解设备内部运行机制的。
 
-此时，项目实施人员对于设备控制画面、监控逻辑以及如何有效的展示UI会面临巨大的挑战。最合理的做法就是设备厂家提供设备定义，并且在定义好驱动参数和Tag数据之后，定义设备专有的多方面的监控画面。这样可以大大简化项目人员对设备的使用。
+## 3 UI node in device definition
 
-## 4 编辑和访问UI
+If you don't understand the device definition, please refer to [quick understanding - device definition][qn_devdef].
 
-在IOT-Tree Server定义好UI之后，由于UI也属于“树”型层次的一个节点。其中，节点定义的名称(Name)符合“树”型管理的约束。
+Through device driver, device classification and device definition. After defining the tag and taggroup corresponding to the device, you can make UI components that can be provided by the device itself. Especially for special and professional complex equipment, project users cannot deeply understand the internal operation mechanism of the equipment in most cases.
 
-要编辑UI内部的具体内容，只需要鼠标右键对应节点，选择Edit UI即可。
+At this time, project implementers will face great challenges in equipment control screen, monitoring logic and how to effectively display UI. The most reasonable way is that the device manufacturer provides the device definition, and after defining the driving parameters and tag data, define the equipment specific multi-faceted monitoring ui. This can greatly simplify the use of device by project personnel.
 
-同理，外部要访问此UI的路径也非常简单——只需要访问由项目到HMI UI节点的名称组成的路径。在项目管理树中，鼠标右键，选择Access即可打开新窗口，进行hmi ui应用访问。如下图：
+
+
+## 4 Edit and access UI
+
+After the IOT tree server defines the UI, because the UI also belongs to a node in the "tree" level. The name of the node definition conforms to the constraints of tree management.
+
+To edit the specific content inside the UI, just right-click the corresponding node and select Edit UI.
+
+Similarly, the external path to access this UI is also very simple - you only need to access the path composed of the name of the project to the HMI UI node. In the project management tree, right-click and select access to open a new window for HMI UI application access. As shown below:
+
 
 <img src="../img/hmi_prj_edit_access.png">
 
-打开的UI展示和url路径如下图：
+
+
+The open UI page and URL path are as follows:
 
 <img src="../img/hmi_access1.png">
 
-## 5 编辑和外部访问UI操作说明
 
-HMI UI在项目中编辑操作请参考 [人机交互UI(HMI UI)编辑操作说明][qn_hmi_edit]
 
-对于外部访问操作非常简单，除了UI内部自身定义的交互之外，外部访问UI基本操作只支持放大缩小、内容自适应显示窗口和鼠标漫游操作。
 
-如下图：
+
+## 5 Edit or external access UI operation instructions
+
+For the editing operation of HMI UI in the project, please refer to [human machine interaction UI (HMI UI) editing operation instructions][qn_hmi_edit]
+
+The external access operation is very simple. In addition to the interaction defined within the UI, the basic operations of the external access UI only support zoom in and out, content adaptive display window and mouse roaming.
+
+As shown below:
+
 
 <img src="../img/hmi_access2.png">。
 
-### 鼠标滚轮放大缩小
 
-转动鼠标滚轮，可以以当前鼠标光标位置为中心，对显示画面进行放大缩小。
 
-### 鼠标漫游
 
-鼠标右键点击画面不松开，移动时可以整体对画面进行漫游。
+### Mouse wheel zoom in and out
+
+Turn the mouse wheel to zoom in and out the display screen with the current mouse cursor position as the center.
+
+
+
+
+
+### Mouse roaming
+
+Right click the picture without releasing it. When moving, you can roam the picture as a whole.
 
 
 [qn_hmi_edit]: ./quick_know_hi_edit.md

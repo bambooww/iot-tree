@@ -6,10 +6,11 @@ Quickly understand the tree of IOT tree server
 
 
 
-This part is a key part for understanding the whole IOT tree server. The project established by IOT tree server is, in a sense, a tree (an inverted tree or tree root structure). At the top of the tree is the project, followed by the channel (the channel can be associated with the device driver and access connector), and below the channel is the device or taggroup.
+This is a key part for understanding the whole IOT tree server. The project established by IOT tree server is, in a sense, a tree (an inverted tree or tree root structure). At the top of the tree is the project, followed by the channel (the channel can be associated with the device driver and access connector), and below the channel is the device or taggroup.
 
 
 <img src="../img/tree1.png"/>
+
 
 
 ## 1 Tree hierarchy and internal data
@@ -23,13 +24,13 @@ This part is a key part for understanding the whole IOT tree server. The project
 
 
 
-For ease of understanding and use, the main structure of each project of IOT tree server is project - > Channel - > device / taggroup. In addition, there can be more taggroups under channel, device and taggroup.
+For ease of understanding and use, the main structure of each project of IOT tree server is Project -> Channel -> Device/TagGroup. In addition, there can be more TagGroups under Channel, Device and TagGroup.
 
 Among them, the device can be a device corresponding to a simple switching value module, a complex device combination, or even an industrial field substation. It can only belong to a channel.
 
-Then, you may ask, since the device is so complex, can such a single level under the channel describe so many contents. Of course, it is impossible. Then, if you want to describe a more complex hierarchical relationship under the equipment, you can also add a tag group, and you can also add sub tag groups under the tag group.
+Then, you may ask, since the device may be so complex, can such a single level under the channel describe so many contents. Of course, it is impossible. Then, if you want to describe a more complex hierarchical relationship under the device, you can also add a TagGroup, and you can also add sub TagGroups under the TagGroup.
 
-In addition, if a channel corresponds to another IOT tree server node, the referenced project hierarchy will be directly in the form of taggroup under the channel. The channels and devices under the referenced node are replaced by the taggroup of the corresponding level.
+In addition, if a channel corresponds to another IOT tree server node, the referenced project hierarchy will be directly in the form of TagGroup under the channel. The channels and devices under the referenced node are replaced by the TagGroup of the corresponding level.
 
 Now, a more complex project hierarchy can be as follows:
 
@@ -39,27 +40,27 @@ or
 
 Project->Channel->Tag Group*->TagGroup*->TagGroup*
 
-Obviously, the more complex the device, the more it needs to be layered internally. You just need to add some tag groups.
+Obviously, the more complex the device, the more it needs to be layered internally. You just need to add some TagGroups.
 
 
 
 
 ### 1.2 Data tag tag under tree structure
 
-Next, you can certainly think that my project channel device group hierarchical relationship has been established, and there is only the data in this tree structure. We unify the data in different levels of tree nodes into tags. A tree node can contain multiple tags.
+Next, you can also think of how to store the data in the tree structure when my project channel device taggroup hierarchy is established. We unify the data in different levels of tree nodes into tags. A tree node can contain multiple tags.
 
-As shown below, the label defined below the channel
+As shown below, the tags defined below the channel
 
 <img src="../img/tree_tag1.png"/>
 
 
-Another example is the predefined label under the device
+Another example is the predefined tags under the device
 
 <img src="../img/tree_tag2.png"/>
 
 
 
-taggroup and tag below taggroup
+tags below TagGroup
 
 <img src="../img/tree_tag3.png"/>
 
@@ -67,13 +68,13 @@ taggroup and tag below taggroup
 
 ### 1.3 Content contained in other nodes (function nodes)
 
-In addition to labels, tree nodes can also define some other elements. Such as human-computer interaction UI, storage strategy, etc. The existence of these nodes is limited to the overall structure specified above.
+In addition to tags, tree nodes can also define some other elements. Such as human-computer interaction UI. The existence of these nodes is limited to the overall structure specified above.
 
 <img src="../img/tree_hmis.png"/>
 
 
 
-As you may have guessed, I have defined a UI screen under a tree node, so all the tags under this node should be used by this UI screen. For example, the UI screen defined under the channel should be able to reference all the device data under the channel, or further, the UI screen can also directly include the following Device UI as a sub screen component into its own screen - this use scenario is exciting to think about, right. Easy to use software system should be like this.
+As you may have guessed, I have defined a UI node under a tree node, so all the tags under this node should be used by this UI node. For example, the UI node defined under the channel should be able to reference all the device data under the channel, or further, the UI node can also directly include the following Device UI as a sub component into its own screen - this use scenario is exciting to think about, right. Easy to use software system should be like this.
 
 Well, yes, that's what IOT tree server considers for you. This involves another provision, the Relationship Agreement between nodes.
 
@@ -85,19 +86,19 @@ Well, yes, that's what IOT tree server considers for you. This involves another 
 
 
 
-### 2.1 Appointment
-
-A function node within a tree node can access all resources of the same level or underlying included nodes.
-
-Naming convention:
+### 2.1 Agreement
+#### 2.1. 1 naming convention
 
 The names of all nodes of IOT tree server must comply with the following regulations
 
-1 must start with A-Z and A-Z, and the subsequent letters must be in A-Z and A-Z_ Within. No other letters are allowed. (because the name starting with '' is an internal system name)
+(1) It must start with a-a A-Z, and subsequent letters must be in the range of a-z A-Z 0-9 _ No other letters are allowed. (because names starting with '_' are internal system names)
 
-2. The names of child nodes under the same tree node cannot be duplicate.
+(2) Child nodes under the same tree node cannot have duplicate names.
 
-The reason why the naming is so specified is that the external interfaces provided by IOT tree server are basically based on naming. The strict regulations are to facilitate the call of external systems and reduce the possibility of errors.
+The reason why the naming is so specified is that the external interfaces provided by IOT-Tree Server are basically based on naming. The strict regulations are to facilitate the call of external systems and reduce the possibility of errors.
+
+#### 2.1. 2 access agreement
+A function node within a tree node can access all resources of the same level or underlying included nodes.
 
 
 
@@ -129,9 +130,9 @@ The self label under channel Channel1 and all nodes under this node. Each node o
 
 ## 3 summary
 
-If you understand this section. Then your subsequent understanding of other parts of IOT tree server will be relieved.
+If you understand this section. Then your subsequent understanding of other parts of IOT-Tree server will be relieved.
 
-IOT tree server seems complex, but the overall idea is still very simple. As long as you firmly grasp this "tree", you will find how simple it is and can meet your complex business needs at the same time.
+IOT-Tree Server seems complex, but the overall idea is still very simple. As long as you firmly grasp this "tree", you will find how simple it is and can meet your complex business needs at the same time.
 
 
 
@@ -150,9 +151,9 @@ Please click to view the details
 
 ### 4.2 Device definition
 
-When adding a device under a channel, you must specify the corresponding device definition. IOT tree server specifically implements the device library function for this purpose.
+When adding a device under a channel, you can specify the corresponding device definition. IOT tree server specifically implements the device library function for this purpose.
 
-You can view the relevant documents [device definition] [dev_def]
+You can view the relevant documents [device definition][dev_def]
 
 
 [cn_conn_drv]: ./quick_know_ch_conn_drv.md

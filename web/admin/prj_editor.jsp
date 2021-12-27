@@ -927,7 +927,7 @@ var cxt_menu = {
 	"tagg":[
 		
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi,op_chk:(tn)=>{
-			return !tn.in_dev;
+			return true;//return !tn.in_dev;
 		}},
 		{op_name:"modify_tagg",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_tagg,op_chk:(tn)=>{
 			return true;// !tn.in_dev;
