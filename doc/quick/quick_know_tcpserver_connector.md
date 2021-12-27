@@ -1,87 +1,145 @@
-快速理解TcpServer接入器
+
+
+Quickly understand tcpserver connector
 ==
 
-## 1 TcpServer接入器使用背景
 
-如果您有个云端服务器（有着固定公网地址），并且准备作为物联网项目的接入服务器。
 
-你的项目很可能是相对比较简单的采集设备，每个监测点在特定的位置采集的指标相对固定。就好比气象站，每个监测点都很相似，大致采集的数据指标诸如气温、湿度、风速、风向和降雨量等等。但这样的监测点数量可能比较多，同时分布比较广。
 
-每个监测点你可能会使用一个GPRS或4G通信模块，这个设备能够通过电信无线网络接入互联网，也就是可以和您的云端服务建立链接。这个通信设备在本地则提供了最简单的RS485接口。由此，你的现场监测传感器大概率能够提供RS485 Modbus RTU对接接口和协议。这样，你的现场监测电路可以做的非常简单，只需要简单供电和一个RS485总线就搞定了。
 
-那么，你如何把数据传递到云端服务器呢？当然也可以采用最简单的方式：你的GPRS/4G通信模块主动链接你的云端服务器，成功建立tcp链接之后，立刻发送自己的身份和验证信息，云端服务器确定链接的身份之后，接下来就成为了此监测节点的主管理端（master），通信模块在后续的工作仅仅是透明转发本地RS485总线和云端的互相往来的数据即可（当然也包含链接断了之后的自动重新链接）。
+## 1 Tcpserver connector usage background
 
-以上的使用方式非常简单而有效。接下来你肯定会问了，既然设备通信这么简单了，云端我该怎么办呢？
+If you have a cloud server (with a fixed public network address) and are ready to serve as an access server for the Internet of things project.
 
-很简单，在你的项目中使用IOT-Tree Server吧，你会发现云端也会简单到让你感叹！
-## 2 在云端使用IOT-Tree Server管理所有设备和数据
+Your project is likely to be a relatively simple collection device, and the indicators collected by each monitoring point at a specific location are relatively fixed. Just like the weather station, each monitoring point is very similar. The roughly collected data indicators are such as temperature, humidity, wind speed, wind direction and rainfall. However, the number of such monitoring points may be large and widely distributed.
 
-你可以参考[quick start][quick_start]在你的云端服务器轻松安装部署IOT-Tree Server。
+You may use a GPRS or 4G communication module at each monitoring point. This device can access the Internet through Telecom wireless network, that is, it can establish a link with your cloud service. This communication device provides the simplest RS485 interface locally. Thus, your field monitoring sensor can probably provide RS485 Modbus RTU docking interface and protocol. In this way, your field monitoring circuit can be very simple. You only need a simple power supply and an RS485 bus.
 
-接着，你可以查看IOT-Tree Server具体某个设备驱动协议下面是否有你的现场设备。如果还没有，那请参考[quick know device definition][qn_devdef],在已经部署的IOT-Tree Server中定义好你的现场监测设备。这些都搞定后，接下来就很简单了。
+So, how do you deliver data to cloud servers? Of course, you can also use the simplest method: your GPRS / 4G communication module actively links to your cloud server. After successfully establishing the TCP link, it immediately sends its own identity and authentication information. After the cloud server determines the identity of the link, Next, it becomes the master of the monitoring node. The subsequent work of the communication module is only to transparently forward the mutual data between the local RS485 bus and the cloud (of course, it also includes the automatic relink after the link is broken).
 
-### 2.1 建立Tcp Server Connector
+The above usage is very simple and effective. Next, you must ask, since device communication is so simple, what should I do in the cloud?
 
-参考下图，增加Connector Provider - TcpServer
+Very simple, use IOT-Tree server in your project, and you will find that the cloud will be so simple that you sigh!
+
+
+
+
+## 2 Use IOT tree server to manage all devices and data in the cloud
+
+You can refer to [quick start][quick_start] to easily install and deploy IOT tree server on your cloud server.
+
+Next, you can check whether there is your field device under a specific device driver protocol of IOT-Tree server. If not, please refer to [quick know device definition][qn_devdef] to define your on-site monitoring device in the deployed IOT-Tree server. When all this is done, it's easy.
+
+
+
+
+### 2.1 Establish TCP server connector
+
+Refer to the figure below and add connector provider - Tcp Server
+
 <img src="../img/tcpserver_add.png">
-通过设定TcpServer端口、链接标四判定方式等。如此，IOT-Server就成为了一个接入服务器。
 
-启动之后，TcpServer会接受到远端每个监测点的tcp链接。由此，每个现场接入都会有个对应的链接Connector。
 
-参考下图，在tcpserver下面添加Connector。其中，conn必须设定对应的接入id，这个id会和现场接入匹配。
+
+By setting tcpserver port, Conn identity, etc. In this way, IOT server becomes an access server.
+
+After project startup, tcpserver will accept the TCP link to each remote monitoring point. Thus, each field access will have a corresponding link connector.
+
+Referring to the figure below, add connector under tcpserver. Among them, Conn must set the corresponding access ID, which will match the field access.
+
+
 <img src="../img/tcpserver_conn_add.png"/>
 
-### 2.2 为每个链接Connector添加通道Channel和对应的驱动
-参考下图，在Browser树中添加通道(含选择设备驱动)，我们设备在此例子中使用Modbus RTU协议的驱动。
+
+
+### 2.2 Add channels and corresponding drivers for each link connector
+
+Referring to the figure below, add a channel (including selecting a device driver) in the Browser tree. In this example, we use the driver of Modbus RTU protocol.
+
+
 <img src="../img/ch_add.png" />
 
-建立通道Channel和链接Connector之间的关联
+
+
+Establish an association between the channel and the connector
+
+
 <img src="../img/join1.png" />
 
-### 2.3 选择添加设备，运行查看接入数据
 
-在通道下面鼠标右键，选择添加设备。如下图：
+
+### 2.3 Select Add device and run to view access data
+
+Right click under the channel and select Add device. As shown below
+
+
 <img src="../img/dev_add.png">
-其中设备已经通过设备管理进行了添加，具体可以参考[设备定义][qn_devdef]。此时，可以直接通过设备选择就可以直接获取，如下图：
+
+
+
+Devices have been added through device management. For details, please refer to [device definition][qn_devdef]. At this time, it can be obtained directly through device selection, as shown in the following figure:
+
+
 <img src="../img/dev_add_selection.png"/>
 
-添加设备成功后，点击Browser树中的新增加设备节点，并且在右边主内容区Tab标签选择[Tags],可以发现在设备定义中定义的设备相关标签和子节点都已经加入到项目中。如下图：
+
+
+After adding a device successfully, click the new device node in the browser tree and select [tags] from the tab tab tab in the main content area on the right. You can find that the device related tags and child nodes defined in the device definition have been added to the project. As shown below:
+
+
 <img src="../img/dev_add_tags.png">
-更进一步，设备定义的关联节点也都成为了项目的一部分，如此设备对应的监控画面UI组件等。如下图
+
+
+
+
+Furthermore, the associated nodes defined by the device have also become part of the project, such as the monitoring UI node corresponding to the device. As shown below
+
+
 <img src="../img/dev_add_hmi.png">
 
-具体的设备加入到通道下面时，可能还需要根据项目中的实际情况做很少的参数设置。比如，本例子由于使用Modbus RTU驱动，加入到通道的设备很可能在总线上需要设定自己的地址（Modbus 1字节地址）。此时，你可以点击主设备节点，并切换内容区到Properties标签。在此，你可以修改在此通道下的设备Modbus地址。如下图：
+
+
+When specific device is added to the channel, few parameter settings may need to be made according to the actual situation of the project. For example, in this example, due to the use of Modbus RTU driver, the device added to the channel may need to set its own address (Modbus 1 byte address) on the bus. At this time, you can click the main device node and switch the content area to the Properties tab. Here, you can modify the device MODBUS address under this channel. As shown below:
+
+
 <img src="../img/dev_add_pms.png">
 
-其他设备也类似，你可以重复以上过程，增加接入、通道和设备。
-
-在此，你应该已经发现了。一个TcpServer下面的接入数量和现场设备一样多。比如，典型的可能有几十个，每个接入链接都需要对应一个通道Channel，而且每个通道下面的设备都相似。
-
-IOT-Tree考虑到这种情况了，专门在TcpServer Provider上面增加了一个向导。你可以通过向导快速的完成接入、通道、设备的添加，以及接入和通道的关联。详情请查看 [TcpServer快速接入向导][qn_tcpserver_wizard]。
 
 
+Other devices are similar. You can repeat the above process to add connector, channels and devices.
 
-到此为止，你可以启动项目，如果你的现场设备、接入和配置参数都正常，则可以在Tags标签界面下面看到接入成功之后的实时数据。
+Here, you should have found out. The number of accesses under a tcpserver is the same as that of field devices. For example, there may be dozens of typical connector links. Each connector link needs to correspond to a channel, and the devices under each channel are similar.
+
+IOT tree considers this situation and adds a wizard to the tcpserver provider. You can quickly complete the addition of connector, channel and device, as well as the association between access and channel through the wizard. For details, please see [tcpserver quick access wizard][qn_tcpserver_wizard].
+
+So far, you can start the project. If your field devices, connector and configuration parameters are normal, you can see the real-time data after successfully connected under the tags tab.
 
 
-### 2.4 使用在线编辑组态UI建立你的项目监控画面
 
-本部分请参考 
 
-[人机交互(HMI)][qn_hmi]
 
-[人机交互UI(HMI UI)编辑操作说明][qn_hmi_w]
+### 2.4 Use the online editor to create your project monitoring UI
+Please refer to this section
 
-### 2.5 使用存储机制，自动存储你的设备数据
+[human computer interaction (HMI)][qn_hmi]
 
-本部分内容预期在1.2版本实现，敬请期待。
+[human computer interaction UI (HMI UI) editing instructions][qn_hmi_w]
 
-你可以通过Restful接口，定时读取项目所有的标签实时数据，然后根据自己的需要进行数据库的存储和数据使用。
 
-### 2.6 使用IOT-Tree Server RestFUL接口给你的应用提供api
 
-你可以通过项目主内容区，Accessibility标签查看项目中所有的http restful api和对应的数据格式。
 
+### 2.5 Use the storage mechanism to automatically store your device data
+
+This part is expected to be implemented in version 1.2. Please look forward to it.
+
+Through restful interface, you can regularly read all label real-time data of the project, and then store and use the database according to your own needs.
+
+
+
+
+### 2.6 Use IOT-Tree server restful interface to provide API for your application
+
+You can view all HTTP restful APIs and corresponding data formats in the project through the accessibility tab in the main content area of the project.
 
 
 [qn_devdef]:./quick_know_device_definition.md

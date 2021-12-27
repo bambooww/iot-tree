@@ -11,18 +11,20 @@
 
 In order to run IOT tree, you need the following conditions:
 
-Java running environment version is above 1.8, and ensure that your running environment is specific to Java environment variables such as path Java_ Home has been set.
+Java running environment version is above 1.8, and ensure that your running environment is specific to Java environment variables such as path JAVA_HOME has been set.
 
 For example:
 
-In Windows environment, your Java installation directory is C:\JDK1.8, please set
+In Windows environment, if your Java installation directory is C:\JDK1.8, please set
 
 ```
 set PATH=%PATH%;c:\jdk1.8\bin
 set JAVA_HOME=c:\jdk1.8
 ```
 
+
 在Linux环境下，请设置
+
 
 
 
@@ -71,6 +73,28 @@ Open the browser and enter the host address to install and start IOT tree in the
 ```
 http://localhost:9090
 ```
+
+
+
+# Register as a service under Windows Environment
+
+Use the administrator to open the CMD window and go to your IOT tree server installation directory through the command line, assuming that your directory is D:\IOT_ tree
+
+Enter the following command to register the IOT tree server as a Windows service, which can be started automatically when Windows starts.
+```
+cd d:\iot_tree
+iot-tree-setup.bat install
+```
+
+Of course, if you want to unregister a service, you just need to run it
+
+```
+iot-tree-setup.bat uninstall
+```
+After successful registration, you can open the windows service manager and see the following:
+
+<img src="./img/win_ser.png">
+
 
 
 # boot automatically in linux
