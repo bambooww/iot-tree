@@ -215,6 +215,7 @@
 								<copy file="./iot-tree.bat.txt" tofile="../_output/iot-tree.bat" />
 								<copy file="./iot-tree-setup.bat.txt" tofile="../_output/iot-tree-setup.bat" />
 								<copy file="./iot-tree.sh.txt" tofile="../_output/iot-tree.sh" />
+								<copy file="./iot-tree-start.sh.txt" tofile="../_output/iot-tree-start.sh" />
 								<copy file="./license.txt" tofile="../_output/license.txt" />
 								<copy file="./iot-tree-service-start.sh.txt" tofile="../_output/iot-tree-service-start.sh" />
 								<copy file="./iot-tree-service-stop.sh.txt" tofile="../_output/iot-tree-service-stop.sh" />

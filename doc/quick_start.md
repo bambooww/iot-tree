@@ -97,9 +97,22 @@ After successful registration, you can open the windows service manager and see 
 
 
 
-# boot automatically in linux
+# Background startup under linux environment
 
-After the above configurations are successful, you can configure the service to start automatically.
+Enter the following command in IOT tree directory to make IOT tree run in background mode:
+
+```
+./iot-tree-service-start. sh
+```
+
+After startup, the original console output will be input to nohup.out file.You can use tail - f nohup.out to view.
+If you want to stop the daemon, run:
+
+```
+./iot-tree-service-stop. sh
+```
+
+Of course, you can also use the systemd related mechanism to set iot-tree-service.sh start As a service mode, it will runs automatically with the start of the system.
 
 
 
