@@ -24,7 +24,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConnPtIOTTreeNode  extends ConnPtMSG
+public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 {
 //	private String mqttHost = null;
 //	private int mqttPort = 1883;

@@ -23,9 +23,12 @@ set JAVA_HOME=c:\jdk1.8
 ```
 
 
-在Linux环境下，请设置
+In Linux environment, please set the current user .profile file, (assuming you install Java in /usr/java/jdk1.8.0_281)
 
-
+```
+export JAVA_HOME=/usr/java/jdk1.8.0_281
+export PATH=$JAVA_HOME/bin:$PATH
+```
 
 
 # Installation
@@ -78,7 +81,7 @@ http://localhost:9090
 
 # Register as a service under Windows Environment
 
-Use the administrator to open the CMD window and go to your IOT tree server installation directory through the command line, assuming that your directory is D:\IOT_ tree
+Use the administrator to open the CMD window and go to your IOT tree server installation directory through the command line, assuming that your directory is d:\IOT_ tree
 
 Enter the following command to register the IOT tree server as a Windows service, which can be started automatically when Windows starts.
 ```
@@ -102,17 +105,17 @@ After successful registration, you can open the windows service manager and see 
 Enter the following command in IOT tree directory to make IOT tree run in background mode:
 
 ```
-./iot-tree-service-start. sh
+./iot-tree-service-start.sh
 ```
 
 After startup, the original console output will be input to nohup.out file.You can use tail - f nohup.out to view.
 If you want to stop the daemon, run:
 
 ```
-./iot-tree-service-stop. sh
+./iot-tree-service-stop.sh
 ```
 
-Of course, you can also use the systemd related mechanism to set iot-tree-service.sh start As a service mode, it will runs automatically with the start of the system.
+you can also use the systemd related mechanism to set iot-tree-service.sh start As a service mode, it will runs automatically with the start of the system.
 
 
 

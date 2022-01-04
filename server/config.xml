@@ -3,7 +3,8 @@
 
  	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web">
  	 	<webapp name="admin" />
-		<webapp name="ROOT" />		
+		<webapp name="ROOT" />
+		<webapp name="doc" />
 		<webapp name="_js" />
 		<webapp name="_iottree" />
 		<webapp name="opencharts" path="../../opencharts" />

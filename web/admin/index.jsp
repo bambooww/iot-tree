@@ -58,7 +58,7 @@ visibility: visible;
 				<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 				  <ul class="nav navbar-nav">
 					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i> Home</a></li>
-					  <li><a href=""><i class="icon icon-topic"></i> Helper</a></li>
+					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i> Helper</a></li>
 				  </ul>
 				</nav>
 			</div>

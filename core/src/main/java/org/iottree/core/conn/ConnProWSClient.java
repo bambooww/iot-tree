@@ -65,7 +65,7 @@ public class ConnProWSClient extends ConnProvider
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
 		// TODO Auto-generated method stub
-		return ConnPtMSG.class;
+		return ConnPtMSGTopic.class;
 	}
 
 	@Override

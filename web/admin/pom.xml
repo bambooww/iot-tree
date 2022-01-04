@@ -4,7 +4,7 @@
 		<groupId>org.iottree.web</groupId>
 		<artifactId>web-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>0.95.1</version>
+		<version>0.95.2</version>
 	</parent>
   <artifactId>admin</artifactId>
   <packaging>jar</packaging>
@@ -57,6 +57,9 @@
     <artifactId>guava</artifactId>
 
 </dependency>
+
+
+
 	</dependencies>
 	
 	<build>

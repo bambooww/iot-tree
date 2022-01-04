@@ -20,7 +20,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
 
-public class ConnPtMQTT extends ConnPtMSG
+public class ConnPtMQTT extends ConnPtMSGTopic
 {
 //	private String mqttHost = null;
 //	private int mqttPort = 1883;

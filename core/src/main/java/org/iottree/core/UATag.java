@@ -17,7 +17,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValTranser;
-import org.iottree.core.conn.ConnPtMSG;
+import org.iottree.core.conn.ConnPtMSGTopic;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
@@ -952,7 +952,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 			else if(ch.isConnMsg())
 			{
-				ConnPtMSG cpt = (ConnPtMSG)ch.getConnPt();
+				ConnPtMSGTopic cpt = (ConnPtMSGTopic)ch.getConnPt();
 				cpt.runOnWrite(this,v) ;
 				return true;
 			}
