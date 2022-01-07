@@ -21,6 +21,9 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
+import org.iottree.driver.nbiot.msg.WMMsg;
+import org.iottree.driver.nbiot.msg.WMMsgReport;
+import org.iottree.driver.nbiot.msg.WMMsgValveReq;
 
 public class WaterMeter1Drv //extends DevDriver
 {
@@ -328,6 +331,38 @@ public class WaterMeter1Drv //extends DevDriver
 	}
 	
 	
+	int rep_st = 0 ;
+	
+	IOnReport onReport = new IOnReport() {
+
+		@Override
+		public List<WMMsg> onMsgReport(WMMsgReport report)
+		{
+			if(rep_st==0)
+			{
+				rep_st = 1 ;
+				return null ;
+			}
+			
+			ArrayList<WMMsg> rets = new ArrayList<>();
+			if(rep_st==1)
+			{
+				WMMsgValveReq m  = new WMMsgValveReq();
+				m.setMeterAddr(report.getMeterAddr());
+				m.setValveOpen(false);
+				rets.add(m);
+				rep_st = 2 ;
+			}
+			else if(rep_st==2)
+			{
+				WMMsgValveReq m  = new WMMsgValveReq();
+				m.setMeterAddr(report.getMeterAddr());
+				m.setValveOpen(true);
+				rets.add(m);
+				rep_st = 0 ;
+			}
+			return rets;
+		}} ;
 
 	private class ASHThread extends Thread
 	{
@@ -346,7 +381,7 @@ public class WaterMeter1Drv //extends DevDriver
 			{
 				connapt = new WaterMeterConnAccepted() ;
 				connapt.setAcceptedSocket(this.sock) ;
-				
+				connapt.setOnReport(onReport);
 				connapt.runInTh(freeSockTO) ;
 			}
 			catch(Exception e)

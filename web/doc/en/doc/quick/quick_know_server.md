@@ -1,39 +1,61 @@
-IOT-Tree Server后台支撑系统
+
+
+Quickly understand IOT-Tree Server as your background support system
 ==
-就像数据库系统，IOT-Tree Server也可以作为你IT基础设施的一部分。
 
-还是以使用例子的方式来说明。
 
-# 1 利用IOT-Tree Server管理你的设备
-你的IT基础设施在遇到设备需要统一管理的时候，IOT-Tree Server的接入、通道和设备功能，能够大大解放你的工作量。使用IOT-Tree Server，你可以快速的规整各种复杂设备。
 
-这些设备不一定是你可以看得见的硬件设备和电器电路，也可以是某个7x24小时运行的软件，或者是某个机房服务器运行状态。所有这些差异，只需要有对应的驱动即可。
 
-设备配置规整之后，IOT-Tree Server使用统一的数状组织来规范整体数据结构，后续你的其他系统就可以方便的利用这些数据了。
+Like a database system, IOT-Tree Server can also be part of your IT infrastructure.
 
-这部分内容是IOT-Tree的基础功能，你可以参考其他相关文档就行了。
+It is also illustrated by using examples.
 
-# 2 使用http restful接口访问规整后的设备数据
 
-IOT-Tree Server通过web方式提供了通道-设备-标签组-标签组成的json数据格式给外部调用。简单清晰的api和数据结构，可以为其他IT软件系统直接提供实时设备运行工况等信息。
 
-# 3 使用Store功能提供数据库方式的接口
-IOT-Tree Server基于自身的树形层次结构，提供了多种策略的数据存储功能。你可以根据自身的数据库软件，通过IOT-Tree Server的存储配置，使得设备实时或历史运行数据得到高效的分类和记录。
 
-我们会不断改进和新增存储策略，并且可以支持多种关系数据库或实时数据库。
+# 1 Manage your device with IOT-Tree Server
 
-基于存储配置，你的IT应用后续可以直接访问对应的数据库系统即可。你可以使用传统的IT开发手段来整合IOT-Tree Server的能力。
+When your IT infrastructure needs unified management of equipment, the access, channel and equipment functions of IOT tree server can greatly liberate your workload. Using IOT tree server, you can quickly organize various complex devices.
 
-# 4 整合IOT-Tree Server内部的在线定制UI
+These devices are not necessarily the hardware devices and electrical circuits you can see, but also the software running for a 7x24 hour, or the running state of a server in a computer room. All these differences only need to have corresponding drivers.
 
-你已经知道，IOT-Tree内部有着非常强大的UI在线定义工具。在树形层次下，可以灵活的定义你的具体业务所需要的展示UI界面或控制UI界面。部署之后，你也可以直接通过非常直观的URL方式，访问IOT-Tree Server的这些UI界面，并包含到你的业务系统页面中。当然，有些页面你也可以设计成手机屏幕的尺寸，这样你的移动端app也可以整合这些UI了。
+After the device configuration is regular, IOT tree server uses a unified digital organization to standardize the overall data structure, and your other systems can easily use these data in the future.
 
-# 5 更深入的整合IOT-Tree Server
+This part is the basic function of IOT tree. You can refer to other relevant documents.
 
-## 5.1 权限验证
 
-如果你的应用整合了IOT-Tree的UI等url内容，那么接下来你肯定会想到这些UI对应的链接如何与你的应用系统使用相同的权限呢？
 
-IOT-Tree Server使用权限插件配置功能，你的业务系统可以提供一个接受权限查询的url，并且配置到IOT-Tree Server你的项目权限验证中。当IOT-Tree Server输出某个url的UI时，会发起查询权限请求，当前用户能不能访问一个内容，就交给你的应用来控制啦！
+# 2 Use the HTTP restful interface to access the structured device data
+
+IOT-Tree Server provides JSON data format composed of channel device tag group tag to external calls through web. Simple and clear API and data structure can directly provide real-time device operating conditions and other information for other IT software systems.
+
+
+
+
+# 3 Use the store function to provide a database interface
+
+IOT-Tree Server provides data storage functions of multiple policies based on its own tree hierarchy. You can efficiently classify and record the real-time or historical operation data of the device through the storage configuration of IOT-Tree Server according to your own database software.
+
+We will constantly improve and add storage strategies, and can support a variety of relational databases or real-time databases.
+
+Based on the storage configuration, your IT application can directly access the corresponding database system in the future. You can use traditional IT development methods to integrate the capabilities of IOT-Tree Server.
+
+
+
+
+# 4 Integrate online customized UI inside IOT tree server
+
+As you already know, IOT-Tree has a very powerful UI online definition tool. At the tree level, you can flexibly define the display UI interface or control UI interface required by your specific business. After deployment, you can also directly access these UI interfaces of IOT-Tree Server through a very intuitive URL and include them in your business system page. Of course, some pages can also be designed to the size of the mobile screen, so that your mobile app can integrate these UIs.
+
+
+
+
+# 5 Deeper consolidation of IOT tree server
+
+## 5.1 authority verification
+
+If your application integrates the UI and other URL contents of IOT tree, you will certainly think about how the links corresponding to these UIs use the same permissions as your application system?
+
+IOT tree server uses the permission plug-in configuration function. Your business system can provide a URL to accept permission query and configure it to IOT tree server for your project permission verification. When the IOT tree server outputs the UI of a URL, it will initiate a query permission request. Whether the current user can access a content is up to your application to control!
 
 ## 5.2 

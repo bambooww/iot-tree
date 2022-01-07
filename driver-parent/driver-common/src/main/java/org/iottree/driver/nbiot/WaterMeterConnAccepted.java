@@ -14,6 +14,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.driver.nbiot.msg.WMMsg;
 import org.iottree.driver.nbiot.msg.WMMsgReceipt;
 import org.iottree.driver.nbiot.msg.WMMsgReport;
+import org.iottree.driver.nbiot.msg.WMMsgValveResp;
 import org.json.JSONObject;
 
 public class WaterMeterConnAccepted
@@ -47,10 +48,18 @@ public class WaterMeterConnAccepted
 
 	OutputStream outputS = null;
 	
+	Boolean bValve = null;
+	
+	IOnReport onReport= null;
+	
 	public WaterMeterConnAccepted()
 	{
 	}
 
+	public void setOnReport(IOnReport onrep)
+	{
+		this.onReport = onrep ;
+	}
 	
 	public String getConnType()
 	{
@@ -83,11 +92,14 @@ public class WaterMeterConnAccepted
 		}
 	}
 	
+	
+	int report_st = 0;
 
 	void runInTh(long timeout_ms) throws Exception
 	{
 		WMMsg msg = null ;
 		long st = System.currentTimeMillis() ;
+		int run = 1;
 		do
 		{
 			Thread.sleep(1);
@@ -106,12 +118,34 @@ public class WaterMeterConnAccepted
 			System.out.println(msg) ;
 			if(msg instanceof WMMsgReport)
 			{
-				WMMsgReceipt receipt = ((WMMsgReport)msg).createReceipt(false) ;
+				System.out.println(" find report ="+msg);
+				List<WMMsg> req_msgs = this.onReport.onMsgReport((WMMsgReport)msg) ;
+				if(req_msgs==null||req_msgs.size()<=0)
+				{
+					WMMsgReceipt receipt = ((WMMsgReport)msg).createReceipt(false) ;
+					receipt.setMeterAddr(msg.getMeterAddr());
+					receipt.writeOut(outputS);
+					return ;
+				}
+				
+				run = req_msgs.size() ;
+				WMMsgReceipt receipt = ((WMMsgReport)msg).createReceipt(true) ;
+				receipt.setMeterAddr(msg.getMeterAddr());
 				receipt.writeOut(outputS);
-				System.out.println(" find report and send receipt="+receipt.toWriteOutHexStr());
+				
+				for(WMMsg req:req_msgs)
+				{
+					req.writeOut(outputS);
+				}
+				
+			}
+			else if(msg instanceof WMMsgValveResp)
+			{
+				System.out.println(" find valve resp="+msg.toString());
+				run --;
 			}
 		}
-		while(msg==null);
+		while(run>0);
 	}
 
 	protected InputStream getInputStreamInner()

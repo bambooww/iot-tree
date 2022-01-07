@@ -1,172 +1,252 @@
-快速了解 - 灯光控制演示
-==
 
 
 Quick Know IOTTree - Lamp Demo
 ==
 
 
-# 1 最简单得例子（控制一个灯光）
 
-本文的通过最简单得演示，可以让你在5分钟之内直观了解IOTTree能给你带来的价值。
 
-演示中只有一个灯光，灯光设备通过RS485 Modbus RTU接口提供对接。灯光设备已经在IOTTree中的设备管理中定义，如果你想深入了解设备是如何定义的，那么你需要了解Modbus RTU协议，和[快速理解-设备定义(Device Definition)][qn_devdef]。
+# 1 The simplest example (controlling a light)
+
+Through the simplest demonstration, you can intuitively understand the value iottree can bring to you in 5 minutes.
+
+There is only one light in the demonstration, and the light equipment provides docking through RS485 Modbus RTU interface. Lighting devices have been defined in the device management in iottree. If you want to understand how devices are defined, you need to understand the Modbus RTU protocol and [quick understanding - device definition][qn_devdef].
+
 
 <img src="../img/demo_lamp_rs485.png">
 
-如上图,灯光设备接入RS485总线,在我们的演示软件运行在PC端，通过USB-RS485转接也接入RS485总线.这样构成了运行在PC端IOT-Tree Server的主(Master)设备和灯光从设备(Slave)
 
-其中,USB-RS485转接器如下图:
+
+As shown in the figure above, the lighting device is connected to the RS485 bus. When our demonstration software runs on the PC, it is also connected to the RS485 bus through usb-rs485 transfer This constitutes the master device and slave device running on the IOT tree server on the PC side
+
+The usb-rs485 adapter is shown in the figure below:
 
 <img src="../img/usb_rs485.png"/>
 
-电路非常简单,接下来我们看看IOT-Tree能给我们带来了哪些方便。如果你还没有安装IOT-Tree Server,可以参考[快速入门][qn_start]下载和安装IOT-Tree Server。
 
-# 2 配置项目
 
-## 2.1 登陆管理界面
+The circuit is very simple. Next, let's see what convenience IOT-Tree Server can bring us. If you have not installed IOT-Tree Server, you can refer to [quick start][qn_start] to download and install it.
 
-当你按照配置完成IOT-Tree Server之后，访问 `http://youip:port/admin/ 进入管理界面，如果你是第一次访问管理界面，那么需要设置输入管理员密码。如果已经设置了密码，那么只需要输入密码登陆即可。
+
+
+
+# 2 Config Project
+## 2.1 Login Admin Panel
+After you complete the IOT tree server according to the configuration, access http://youip:port/admin/ Enter the management interface. If you are visiting the management interface for the first time, you need to set and enter the administrator password. If the password has been set, you only need to enter the password to log in.
+
 
 <img src="../img/demo_home.png">
 
-点击Local Projects Add按钮，在弹出窗口填写项目名称和标题,如下图：
+
+
+Click Local Projects Add button and fill in the project name and title in the pop-up window, as shown below:
+
 
 <img src="../img/demo_add_prj.png">
 
-确定完成之后，我们看到Local Projects下面新增了这个项目条目，如下图：
+
+
+After OK button clicked, we can see that this project entry is added under Local Projects, as shown in the following figure:
+
 
 <img src="../img/demo_prj_list1.png">。
 
-点击此项目，会打开一个新的项目管理浏览器窗口。在此，我们可以开始对项目进行相关的配置。如建立通道、增加接入和添加设备。
 
-## 2.2 建立通道和添加设备
 
-在项目管理窗口中，鼠标右键点击Browser下面的lamp_demo根节点，选择"New Channel"菜单项，在弹出的通道编辑窗口中，填写通道名称、标题和驱动。如下图：
+Clicking this item will open a new project management browser window. Here, we can start to configure the project. Such as establishing channels, creation connector and adding device.
+
+
+
+
+## 2.2 Establishing channels and adding devices
+
+In the project management window, right-click lamp_demo under browser root node, select the "New Channel" menu item, and fill in the channel name, title and driver in the pop-up channel editing window. As shown below:
+
 
 <img src="../img/demo_add_ch.png">
 
-其中，驱动选择Modbus RTU。完成之后，在lamp_demo根节点下面，就会出现这个新增的通道节点。接着，我们鼠标右键此通道节点，选择菜单项"New Device",就可以添加设备了。如下图：
+
+
+Among them, the drive selects Modbus RTU. After that, this new channel node will appear under the lamp_demo root node. Then, right-click the channel node and select the menu item "New Device" to add devices. As shown below:
+
 
 <img src="../img/demo_ch_added.png">
 
-在弹出的设备编辑窗口中，填写设备名称和标题。并且点击设备选择按钮，在弹出的设备选择列表中，选择 "驱动Modbus RTU" - "设备分类Demo" - "设备Switch Lamp"。完成之后，通道c1下面就有了这个设备节点。如下图：
+
+
+In the pop-up device editing window, fill in the device name and title. Click the device selection button and select "driver Modbus RTU" - "device classification demo" - "device switch lamp" in the pop-up device selection list. After completion, the device node is under channel c1. As shown below:
+
 
 <img src="../img/demo_dev_add.png">
 
-其中，这个设备已经在系统内部定义完成。新增设备之后，设备的数据定义和自带的一个控制开关面板UI都自动进入到项目中。
 
-此时，点击项目根节点lamp_demo，并在主内容区点击[Tags]标签。你会发现项目下面的所有上下文内容，打开Show System Tags开关，你可以看到所有的上下文定义（含系统内部自定义）。如下图：
+
+The device has been defined in the system. After adding a device, the data definition of the device and its own control switch panel UI will automatically enter the project.
+
+At this point, click the project root node lamp_demo and click the [tags] tab in the main content area. You will find all the context contents under the project. Turn on the Show System Tags switch, and you can see all the context definitions (including customization within the system). As shown below:
 
 <img src="../img/demo_prj_cxt_all.png">
 
-其中，在项目上下文表格中，你会发现不同层次节点对应的上下文标签以及设备自定义的标签。这些标签在运行时，会有自身的值。这些上下文也即是项目的数据基础，你可以在此基础之上定义更高层的应用节点，如UI、存储策略等。
 
-接下来，我们就在项目下面建立一个监控画面UI。
 
-## 2.3 添加监控UI
+In the project context table, you will find the context tags corresponding to different level nodes and the tags customized by the device. These tags have their own values at run time. These contexts are the data base of the project, on which you can define higher-level application nodes, such as UI, storage strategy, etc.
 
-鼠标右键项目根节点，选择"New HMI"菜单项，在弹出的编辑窗口中，填写名称和标题。如下图：
+Next, we will create a monitoring UI under the project.
+
+
+
+
+## 2.3 Add monitoring UI
+
+Right click the project root node, select "New HMI" menu item, and fill in the name and title in the pop-up editing window. As shown below:
+
 
 <img src="../img/demo_hmi_add.png">
 
-确定完成之后，我们会在项目根节点下面看到新增的hmi节点mainui。鼠标右键此节点，选择"Edit UI"菜单，你可以看到在主内容区出现一个新的Main UI编辑标签页。在这里面，我们就可以开始编辑这个ui界面了。如下图：
+
+
+After click OK, we will see the new HMI node mainui under the project root node. Right click this node and select the "Edit UI" menu. You can see that a new Main UI editing tab appears in the main content area. From here, we can start editing the UI interface. As shown below:
+
 
 <img src="../img/demo_edit_hmi.png">
 
-### 2.3.1 添加背景框
 
-在UI编辑区左上角工具栏中，选择矩形绘画工具，然后在绘图区点击左键，并拉开一个区域，松开左键就在绘图区新建了一个矩形图元。
 
-在绘图区右边属性栏，对width和height两个属性分别填入300和600设定矩形图元的宽度和高度。
+### 2.3.1 Add background box
 
-对Locked属性选择yes，对图元进行锁定，这样此背景图元就无法进行拖拉移位。
+In the toolbar at the upper left corner of the UI editing area, select the rectangular drawing tool, and then click the left button in the drawing area to open an area. Release the left button to create a new rectangular element in the drawing area.
 
-对Fill Style属性编辑框中，输入#77787c。如下图所示：
+In the Properties bar on the right of the drawing area, fill 300 and 600 for "width" and "height" respectively(set the width and height of the rectangular element).
+
+Select Yes for the "locked" property to lock the element, so that the background element cannot be dragged and shifted.
+
+In the edit box for the fill style property, enter #77787c. As shown in the figure below:
+
 
 <img src="../img/demo_ui_bk_add1.png">
 
-### 2.3.2 添加显示文字
 
-在工具栏中选择文本图元，并在绘图区点击添加文本图元。通过鼠标拖拉调整尺寸和位置，做相关的排版。
 
-通过属性栏对文本内容、文本颜色和字体进行调修改，最终效果如下：
+### 2.3.2 Add display text
+
+Select the text element in the toolbar and click add text element in the drawing area. Drag and drop the mouse to adjust the size and position and make relevant typesetting.
+
+Adjust and modify the text content, text color and font through the properties bar. The final effect is as follows:
+
 
 <img src="../img/demo_ui_txt_add.png">
 
-### 2.3.3 添加项目驱动运行状态
 
-在文本Project running右边，添加一个圆形图元。在选中此图元情况下，点击Fill Style属性值编辑按钮，在弹出的填充风格选择Radial标签，同时选择两种颜色。如下图：
+
+### 2.3.3 Add project driver running state
+
+To the right of the text "Project Running", add a circular element. When this element is selected, click the fill style property value Edit button, select the "Radial" label in the pop-up Filling Ftyle, and select two colors at the same time. As shown below:
+
 
 <img src="../img/demo_drv_run_o.png">
 
-记录下两种填充风格（后续会用到脚本中）：  
-1 运行填充风格 圆形梯度 rad;#0df92c|#355730  
-2 非运行填充风格 单色 #355730
 
 
-### 2.3.4 添加设备面板
+Record two filling styles (which will be used in the script later):
+1 running:the filling style circular gradient rad#0df92c|#355730
+2 non running fill style monochrome #355730
 
-点击绘图区左边资源栏上下文子HMI图标。显示Context Sub HMI窗口。由于在上下文已经存在了定制设备，并且设备存在一个控制面板子图。这个子图也就同时在项目的上下文中。
 
-鼠标点击拖拽/c1/lamp/lamp1这个子图，并释放到绘图区域。然后基于在背景框调整这个面板子图的排版位置。如下图：
+
+
+### 2.3.4 Add device panel
+
+Click the context Sub HMI icon in the resource bar on the left of the drawing area. The context sub HMI window is displayed. Because the custom device already exists in the context, and the device has a control panel sub diagram. This subgraph is also in the context of the project.
+
+Click and drag the subgraph /c1/lamp/lamp1 and release it to the drawing area. Then adjust the layout position of the panel subgraph based on the background box. As shown below:
+
 
 <img src="../img/demo_ui_sub_hmi.png">
 
-### 2.3.5 绑定上下文数据
 
-我们已经基本准备好了监控画面，接下来可以设置第二个文本框显示系统时间，同时对圆形图元绑定驱动运行状态对应填充颜色变化。
 
-#### 2.3.5.1 在第二个文本框绑定显示时间
+### 2.3.5 binding context data
+
+We have basically prepared the monitoring ui. Next, we can set the second text box to display the system time. At the same time, we can bind the circular element to driver state to change the corresponding filling color.
+
+#### 2.3.5.1 bind the display time in the second text box
+
 
 <img src="../img/demo_prop_bind1.png">
 
-如图所示，选中第二个文本框，点击属性text边上的bind按钮，弹出绑定编辑窗口。
 
-在Bind Properties窗口中，选择context tag并点击Tag输入框。在打开的上下文标签选择框中，选择"_date"。确定之后使得第二个文本框绑定了时间字符串标签。如下图：
+
+As shown in the figure, select the second text box and click the bind button next to property text to pop up the binding editing window.
+
+In the Bind Properties window, select "context tag" and click the "Tag" input box. In the context tag selection box that opens, select "_date". After confirmation, the second text box is bound with the time string label. As shown below:
+
 
 <img src="../img/demo_prop_bind2.png">
 
-#### 2.3.5.2 在圆形图元绑定驱动运行状态
 
-与上面类似，选中圆形图元，在Fill Style属性边上点击Bind按钮。
 
-在弹出的窗口中选择js express选项。因为Fill Style要求输入字符串，而上下文中的Tag是个bool值。所以需要根据Tag的bool值输出对应的填充字符串。如下图：
+#### 2.3.5.2 Circular element binding drive running state
+
+Similar to the above, select the circular element and click the bind button next to the fill style property.
+
+Select the JS express option in the pop-up window. Because fill style requires an input string, and tag in the context is a bool value. Therefore, you need to output the corresponding fill string according to the bool value of tag. As shown below:
+
 
 <img src="../img/demo_prop_bind3.png">
 
-在js express选项中，填写了js脚本。逻辑非常简单，如果驱动标签c1._driver_run._pv的值为true，则输出亮色填充，否则输出暗色填充。
 
-## 2.4 添加串口接入
 
-我们的项目配置接近完成，现在就剩下和外部设备通信了。
+In the "js express" option, the JS script code is filled in. The logic is very simple if you drive the tag "c1_driver_run._pv" value is true, a bright fill is output; otherwise, a dark fill is output.
 
-我们usb转串口在系统生成了串口COM3。所以，我们只需要建立IOT-Tree Server到COM3的链接。
 
-在项目中左边接入设置Connectors，下拉菜单选择新增串口Connection Provider。在弹出的窗口填写名称和标题。如下图：
+
+
+## 2.4 Add COM connector
+
+Our project configuration is almost complete, and now we are left to communicate with external devices.
+
+We convert USB to serial port and generate serial port COM3 in the system. Therefore, we only need to establish the link between IOT-Tree Server and COM3.
+
+In the project, click Connectors on the left, and select "Add  Connection Provider"-"COM" from the drop-down menu. Fill in the name and title in the pop-up window. As shown below:
+
 
 <img src="../img/demo_cp_com.png">
 
-添加成功之后，接入列表中出现了串口接入分类，鼠标右键此分类，选择菜单项"Add Connection"，在弹出的串口链接编辑串口填写串口参数。包括名称标题、端口号COM3、波特率等。如下图：
+
+
+After adding successfully, the COM Connector Provider appears in the list. Right click the provider, select the menu item "Add Connection", edit the COM port in the pop-up ui, and fill in the COM port parameters. Including name, title, port number COM3, baud rate, etc. As shown below:
+
 
 <img src="../img/demo_cpt_com.png">
 
-添加成功之后，左边链接新增了一个接入项。此时在Connectors和Browser之间有个关联区域。接着我们需要对接入和通道之间建立关联。点击新增的conn1右边的关联点，拖拽拉出连接线，然后在通道左边的关联点释放，这样就把连接和通道建立了关联。如下图：
+
+
+After adding successfully, an connector item is added to the left link. At this time, there is an association area between connectors and browser. Then we need to establish an association between connector and channel. Click the association point on the right of the new conn1, drag and pull out the connection line, and then release it at the association point on the left of the channel, so as to establish an association between the connector and the channel. As shown below:
+
 
 <img src="../img/demo_conn_join.png">
 
+
+
 # 3 运行项目
 
-在项目配置界面上方点击启动按钮。然后在UI节点mainui鼠标右键，选择菜单项"Access"。系统打开新的浏览器访问窗口。这个窗口链接就是IOT-Tree Server对此UI的对外应用访问窗口。
-http://host:port/lamp_demo/mainui。如下图：
+Click the "start project" button at the top of the project configuration. Then right click the UI node "mainui" and select the menu item "Access". The system opens a new browser access window. This window link is the external application access URL of IOT-Tree Server for this UI.
+
+http://host:port/lamp_demo/mainui. As shown below:
+
 
 <img src="../img/demo_prj_start.png">
 
-外部访问界面如下，这个访问界面也支持移动端。
+
+The external access ui is as follows. This access url also supports the mobile terminal.
+
 
 <img src="../img/demo_mainui.png">
 
-你可以发现项目启动之后，系统时间会一直变动。点击灯光开关，可以对总线上的灯光进行控制。
+
+
+You can find that the system time will change after the project is started. Click the light switch to control the light on the bus.
+
 
 [qn_start]: ../quick_start.md
 [qn_devdef]: ../quick/quick_know_devdef.md

@@ -29,14 +29,24 @@
 ##### <a doc_path="cn/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;3.4 快速理解TcpServer接入器</a>
 ##### <a doc_path="cn/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;3.5 快速了解交互UI(HMI)</a>
 
+##### <a doc_path="cn/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;3.6 快速了解IOT-Tree Server作为你的后台支撑系统</a>
 
 
 
 
 
 
+#### <a doc_path="cn/doc/advanced/index.md" >4 深入理解</a>
+##### <a doc_path="cn/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;4.1 自定义UI的控件</a>
 
 
+
+
+
+
+#### <a doc_path="cn/doc/case/index.md" >5 案例和最佳实践</a>
+##### <a doc_path="cn/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;5.1 简单的灯光控制</a>
+##### <a doc_path="cn/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;5.2 工业现场自动化系统</a>
 
 
 

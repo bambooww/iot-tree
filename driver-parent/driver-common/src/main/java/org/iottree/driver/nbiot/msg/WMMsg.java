@@ -249,6 +249,11 @@ public abstract class WMMsg
 					msg.setMeterAddr(addr);
 					msg.setMsgFunc(func);
 				}
+				else if(f1==0x82&& f2==0x02)
+				{//
+					msg = new WMMsgValveResp() ;
+					msg.setMeterAddr(addr);
+				}
 				else
 				{
 					return null ;

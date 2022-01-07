@@ -11,6 +11,8 @@ import org.iottree.core.util.Convert;
 import org.iottree.driver.nbiot.msg.WMMsg;
 import org.iottree.driver.nbiot.msg.WMMsgReceipt;
 import org.iottree.driver.nbiot.msg.WMMsgReport;
+import org.iottree.driver.nbiot.msg.WMMsgValveReq;
+import org.iottree.driver.nbiot.msg.WMMsgValveResp;
 import org.junit.Test;
 
 public class WMMsgTest
@@ -53,4 +55,19 @@ public class WMMsgTest
     	//A16801020304050607080101211228215755B616
     	
     }
+	
+	@Test
+	public void test2() throws IOException
+	{
+		WMMsgValveReq req= new WMMsgValveReq() ;
+		req.setMeterAddr(new byte[] {0x10, 00,0,0x12,0x34,0x56,0x78,(byte)0x90});
+		System.out.println("valve req="+req.toWriteOutHexStr()) ;
+		
+		byte[] tmpbs = Convert.hexStr2ByteArray("A1 68 10 00 00 12 34 56 78 90 82 02 55 04 16");
+		ByteArrayInputStream bais = new ByteArrayInputStream(tmpbs) ; 
+		WMMsgValveResp msg = (WMMsgValveResp)WMMsg.parseMsg(bais) ;
+		System.out.println("valve resp="+msg) ;
+    	//assertTrue(msg!=null);
+		
+	}
 }
