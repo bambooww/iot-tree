@@ -48,7 +48,7 @@ If a device is complex but has defined the interface elements it can provide, yo
 Of course, according to our open source strategy, most of your projects can be used for free.
 
 
-<img src="./doc/img/prj3.png">
+<img src="./web/doc/en/doc/img/prj3.png">
 
 
 
@@ -58,20 +58,12 @@ Of course, according to our open source strategy, most of your projects can be u
 
 <div style="display:none">  [Pump Controller Demo][pump_demo] </div>
 
-
-[pump_demo]:./doc/case/example_psd.md
-[lamp_demo]:./doc/case/example_lamp_demo.md
-
-
 ## 1.2 embedded into the device
 
 If you have an embedded device with sufficient performance to run Java virtual machine, IOT tree server can easily make your device a controller. And the controller can support online configuration and UI design, and provide online real-time operation services.
 
 [Embedded Demo][embed_ctrl_demo]  
 
-
-
-[embed_ctrl_demo]:./doc/case/example_embed.md
 
 
 
@@ -107,6 +99,13 @@ This distributed function can greatly facilitate the linkage of cross regional m
 
 
 
-[quick_start]: ./doc/quick_start.md
-[quick_link]: ./doc/quick/index.md
-[demo_link]: ./doc/case/index.md
+[quick_start]: ./web/doc/en/doc/quick_start.md
+[quick_link]: ./web/doc/en/doc/quick/index.md
+[demo_link]: ./web/doc/en/doc/case/index.md
+
+
+
+[pump_demo]: ./web/doc/en/doc/case/example_psd.md
+[lamp_demo]: ./web/doc/en/doc/case/example_lamp_demo.md
+[embed_ctrl_demo]: ./web/doc/en/doc/case/example_embed.md
+
