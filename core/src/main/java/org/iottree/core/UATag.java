@@ -23,8 +23,6 @@ import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.json.JSONObject;
 
-import com.sun.tools.sjavac.Log;
-
 /**
  * 
  * @author jason.zhu

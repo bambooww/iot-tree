@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
-<%@page import = "java.util.* , java.io.* , java.net.*,org.iottree.core.* " %>
+<%@page import = "java.io.PrintStream,java.util.* , java.io.* , java.net.*,org.iottree.core.* " %>
 <%
   StringBuffer u = request.getRequestURL() ;
   URL tmpu = new URL(u.toString()) ;
@@ -121,7 +121,7 @@ servlet path=<%=request.getServletPath() %><br>
  RequestDispatcher rd = request.getRequestDispatcher("abc.jsp") ;
  if(rd==null)
  {
-   System.out.println("dispatcher is null!") ;
+   out.println("dispatcher is null!") ;
    return ;
  }
  //rd.include(request, response);
@@ -177,7 +177,7 @@ serverinfo=<%=context.getServerInfo()%>
 <b>syste props</b>
 <br>
 <%
-  Properties ps = System.getProperties() ;
+  Properties ps = java.lang.System.getProperties() ;
   for(Enumeration en = ps.propertyNames();en.hasMoreElements();)
   {
     String n = (String)en.nextElement() ;

@@ -16,6 +16,8 @@ import org.w3c.dom.Element;
 public class Server
 {
 	static ClassLoader dynCL = null;
+	
+	static ServerTomcat serverTomcat = null ; 
 
 	private static void printBanner()
 	{
@@ -114,8 +116,8 @@ public class Server
 			}
 		}
 
-		ServerTomcat st = new ServerTomcat();
-		st.startTomcat(tbs_loader);
+		serverTomcat = new ServerTomcat();
+		serverTomcat.startTomcat(tbs_loader);
 
 		ServiceManager.getInstance();
 		// System.out.println(" all web comp loaded,fire event");
@@ -123,14 +125,30 @@ public class Server
 		UAManager.getInstance().start();
 
 		if(bservice)
+		{
 			new Thread(Server::runFileMon,"").start();
+		}
 		else
+		{
 			consoleRunner.run();
+		}
 		// new Thread(consoleRunner).start();
 	}
 
 	static void stopServer()
 	{
+		if(serverTomcat!=null)
+		{
+			try
+			{
+				serverTomcat.stopComp();
+			}
+			catch(Exception e)
+			{
+				
+			}
+		}
+		
 		UAManager.getInstance().stop();
 		try
 		{

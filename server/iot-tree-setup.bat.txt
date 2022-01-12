@@ -1,3 +1,4 @@
+@echo off
 
 if NOT DEFINED IOTTREE_HOME set IOTTREE_HOME=%cd%
 

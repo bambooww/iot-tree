@@ -2,8 +2,10 @@ package org.iottree.server;
 
 import java.io.File;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.jasper.servlet.JasperInitializer;
 import org.iottree.core.Config;
 import org.iottree.core.Config.Webapp;
 import org.iottree.core.util.Convert;
@@ -57,8 +59,8 @@ public class ServerTomcat implements IServerBootComp
 
 		if(w.getSslPort()>0)
 		{
-			Connector sslc = getSslConnector(w.getSslPort());
-			tomcat.getService().addConnector(sslc);
+//			Connector sslc = getSslConnector(w.getSslPort());
+//			tomcat.getService().addConnector(sslc);
 		}
 		
 		tomcat.setPort(w.getPort());
@@ -80,18 +82,21 @@ public class ServerTomcat implements IServerBootComp
 			if (!(new File(fp).exists()))
 				continue;
 
+			Context cxt = null ;
 			if ("ROOT".equals(appn))
 			{
 				//System.out.println("starting webapp=ROOT");
-				tomcat.addWebapp("", fp);
+				cxt = tomcat.addWebapp("", fp);
 			}
 			else// if("system".equals(dirn))
 			{
 				///System.out.println("starting webapp="+appn);
-				tomcat.addWebapp("/" + appn, fp);
+				cxt = tomcat.addWebapp("/" + appn, fp);
 			}
+			cxt.addServletContainerInitializer(new JasperInitializer(), null);
 		}
 		
+		tomcat.getConnector() ;//call it to list port
 		System.out.println("web port: "+w.getPort()) ;
 		tomcat.start();
 	}
@@ -112,7 +117,9 @@ public class ServerTomcat implements IServerBootComp
 		connector.setPort(port);
 		connector.setSecure(true);
 		connector.setScheme("https");
+		//connector.setProperty(name, value)
 		connector.setAttribute("keyAlias", "tomcat");
+		//connector.set
 		connector.setAttribute("keystorePass", "123456");
 		connector.setAttribute("keystoreType", "JKS");
 		connector.setAttribute("keystoreFile", "../keystore.jks");
@@ -148,6 +155,7 @@ public class ServerTomcat implements IServerBootComp
 	{
 		if(tomcat==null)
 			return ;
+		tomcat.stop();
 		tomcat.destroy();
 	}
 

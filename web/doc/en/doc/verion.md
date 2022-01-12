@@ -21,3 +21,9 @@ Multilingual support for documents
 Improve the organization of help files inside the installation package. Through /doc, you can directly access the system's own documents, which support multiple languages.
 
 
+
+
+## 1 version 0.95.3
+Upgrade embedded Tomcat to 9.x version. Avoid the bug that the system class cannot be found in JSP compilation in jdk17 environment
+
+

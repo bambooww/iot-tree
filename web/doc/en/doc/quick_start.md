@@ -75,15 +75,24 @@ Open the browser and enter the host address to install and start IOT tree in the
 
 ```
 http://localhost:9090
+
 ```
+
+
+The first administrative login needs to accept the software license terms and enter the administrator password. Please keep this password in mind. This password is required for subsequent administrator logins of this system.
+
+After the administrator logs in, you can see the main management ui of the system. You can add projects and other related follow-up work under this. If you need help, you can also click "helper" above to open the help document.
+
+<img src="./img/qs_1.png">
+
 
 
 
 # Register as a service under Windows Environment
 
-Use the administrator to open the CMD window and go to your IOT tree server installation directory through the command line, assuming that your directory is d:\IOT_ tree
+Use the administrator to open the CMD window and go to your IOT-Tree Server installation directory through the command line, assuming that your directory is d:\iot_tree
 
-Enter the following command to register the IOT tree server as a Windows service, which can be started automatically when Windows starts.
+Enter the following command to register the IOT-Tree Server as a Windows service, which can be started automatically when Windows starts.
 ```
 cd d:\iot_tree
 iot-tree-setup.bat install

@@ -13,6 +13,7 @@
 /.vscode/
 /web/opencharts/
 /server/tomcat/
+/server/tomcat8/
 
 *.bat
 

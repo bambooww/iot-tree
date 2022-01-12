@@ -44,7 +44,7 @@ case "paste":
 		return ;
 	}
 
-	System.out.println(ppath+" <- "+path);
+	//System.out.println(ppath+" <- "+path);
 	if(node instanceof UADev)
 	{
 		if(!(pnode instanceof UACh))

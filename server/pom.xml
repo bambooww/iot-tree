@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.95.2</version>
+    <version>0.95.3</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -228,6 +228,7 @@
 								<delete file="../_output/lib/jsp-api-2.2.jar" />
 			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
 			                    <delete file="../_output/lib/servlet-api-2.5.jar" />
+			                    <delete file="../_output/lib/javax.servlet-api-3.1.0.jar" />
 			                    <delete file="../_output/lib/tomcat-catalina-2.2.jar" />
 			                     <delete>
 				                    <fileset dir="../_output/web/admin/target/" includes="*.*" />

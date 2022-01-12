@@ -4,7 +4,7 @@
 		<groupId>org.iottree.web</groupId>
 		<artifactId>web-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>0.95.2</version>
+		<version>0.95.3</version>
 	</parent>
   <artifactId>admin</artifactId>
   <packaging>jar</packaging>
@@ -42,7 +42,7 @@
 			<version>2.2</version>
 			<systemPath>${basedir}/../../server/tomcat/lib/websocket-api.jar</systemPath>
 		</dependency>
-		    
+		   <!-- 
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
@@ -51,7 +51,7 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
     </dependency>
-    
+     -->
 <dependency>
     <groupId>com.google.guava</groupId>
     <artifactId>guava</artifactId>
