@@ -39,17 +39,32 @@
 
 #### <a doc_path="en/doc/advanced/index.md" >4 Advanced</a>
 ##### <a doc_path="en/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;4.1 Customize UI Components</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Custom JS script plug-in</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Define project tasks</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Implementing control scripts using project tasks</a>
 
 
 
 
 
 
-#### <a doc_path="en/doc/case/index.md" >5 Cases and best practices</a>
-##### <a doc_path="en/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;5.1 Lamp Demo</a>
-##### <a doc_path="en/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;5.2 Automation</a>
+#### <a doc_path="en/doc/advanced/adv_plugin.md" >5 Develop plugins </a>
+##### <a doc_path="en/doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;5.1 JsApi Plugin</a>
+##### <a doc_path="en/doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;5.2 Authority plugin</a>
 
 
+
+
+
+#### <a doc_path="en/doc/case/index.md" >6 Cases and best practices</a>
+##### <a doc_path="en/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Lamp Demo</a>
+##### <a doc_path="en/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Automation</a>
+
+
+
+
+
+#### <a doc_path="en/doc/version.md" >6 Version </a>
 
 
 <script>

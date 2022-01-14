@@ -8,9 +8,11 @@
 
 # 运行条件
 
-为了运行IOT-Tree,你需要有如下条件：
+为了运行IOT-Tree Server,你需要有如下条件：
 
-Java 运行环境版本在1.8以上，并且确保你的运行环境针对Java的环境变量如Path JAVA_HOME已经被设置好了。
+Java运行环境版本在1.8及以上，并且确保你的运行环境针对Java的环境变量如Path JAVA_HOME已经被设置好了。
+
+如果你还没有安装Java运行环境，请到<a href="https://www.oracle.com/java/technologies/" target="_blank">Oracle Java</a>或其他相关网站下载并根据提示安装，选择Java SE版本即可。
 
 例如：
 那么windows环境下，您的Java安装目录为 c:\jdk1.8，请设置
@@ -20,6 +22,16 @@ Java 运行环境版本在1.8以上，并且确保你的运行环境针对Java�
 set PATH=%PATH%;c:\jdk1.8\bin
 set JAVA_HOME=c:\jdk1.8
 ```
+
+这两个环境变量最好在windows下"高级系统设置"-"系统属性"-"环境变量"中进行设置。设置完成之后，打开一个cmd窗口，输入以下命令进行检查。
+
+
+```
+echo %PATH%
+echo %JAVA_HOME%
+java -version
+```
+
 
 在Linux环境下，请设置当前用户.profile文件，（假设你java安装在/usr/java/jdk1.8.0_281）
 
@@ -122,3 +134,38 @@ iot-tree-setup.bat uninstall
 
 
 
+
+# 查看系统内部自带的演示项目
+
+您如果是第一次使用IOT-Tree Server，那么可以尝试导入系统内部自带的演示项目进行最直观的感受。访问下面的登录系统管理链接。
+```
+http://localhost:9090/admin/
+```
+在Local Projects区块中，点击Import Demo。选择其中的演示项目，如下图：
+
+
+
+
+<img src="./img/imp_demo1.png" />
+
+
+选择之后，在导入项目提示中，点击Do Import,如下图：
+
+
+
+<img src="./img/imp_demo2.png" />
+
+
+成功之后，项目列表出现了您刚刚导入的演示项目。点击此项目，在弹出的新窗口中，展示了此项目的管理配置界面。在此，你可以看到项目的左边Connector部分，中间的Browser部分和右边的Tab主内容显示区域：
+
+
+
+<img src="./img/imp_demo3.png" />
+<img src="./img/imp_demo4.png" />
+
+
+在中间Browser部分展开的树节点，选中一个UI节点，鼠标右键，在弹出的菜单中选择"Edit UI"，可以看到在右边新增一个UI编辑子窗口。如下图：
+
+
+
+<img src="./img/imp_demo5.png" />

@@ -38,17 +38,31 @@
 
 #### <a doc_path="cn/doc/advanced/index.md" >4 深入理解</a>
 ##### <a doc_path="cn/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;4.1 自定义UI的控件</a>
+##### <a doc_path="cn/doc/advanced/adv_js_plugin.md" target="main">&nbsp;&nbsp;&nbsp;4.2 自定义JS脚本插件</a>
+##### <a doc_path="cn/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;4.3 定义项目任务</a>
+##### <a doc_path="cn/doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;4.4 使用项目任务实现控制脚本</a>
 
 
 
 
 
+#### <a doc_path="cn/doc/advanced/adv_plugin.md" >5 插件开发</a>
+##### <a doc_path="cn/doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;5.1 JsApi</a>
+##### <a doc_path="cn/doc/advanced/adv_plugin_auto.md" target="main">&nbsp;&nbsp;&nbsp;5.2 权限插件</a>
 
-#### <a doc_path="cn/doc/case/index.md" >5 案例和最佳实践</a>
-##### <a doc_path="cn/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;5.1 简单的灯光控制</a>
-##### <a doc_path="cn/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;5.2 工业现场自动化系统</a>
 
 
+
+
+#### <a doc_path="cn/doc/case/index.md" >6 案例和最佳实践</a>
+##### <a doc_path="cn/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;6.1 简单的灯光控制</a>
+##### <a doc_path="cn/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;6.2 工业现场自动化系统</a>
+
+
+
+
+
+#### <a doc_path="cn/doc/version.md" >6 版本说明</a>
 
 
 

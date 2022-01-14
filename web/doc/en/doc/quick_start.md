@@ -9,9 +9,11 @@
 
 # Prerequisites
 
-In order to run IOT tree, you need the following conditions:
+In order to run IOT-Tree Server, you need the following conditions:
 
-Java running environment version is above 1.8, and ensure that your running environment is specific to Java environment variables such as path JAVA_HOME has been set.
+Java running environment version 1.8 and above, and ensure that your running environment is specific to Java environment variables such as path JAVA_HOME has been set.
+
+If you have not installed the Java runtime environment, please go to <a href="https://www.oracle.com/java/technologies/" target="_blank">Oracle Java</a> or other relevant websites to download and install it according to the prompts, and select the Java SE version.
 
 For example:
 
@@ -21,6 +23,16 @@ In Windows environment, if your Java installation directory is C:\JDK1.8, please
 set PATH=%PATH%;c:\jdk1.8\bin
 set JAVA_HOME=c:\jdk1.8
 ```
+
+
+These two environment variables are best set in "advanced system settings" - "system properties" - "environment variables" under windows. After setting, open a CMD window and enter the following command to check.
+
+```
+echo %PATH%
+echo %JAVA_HOME%
+java -version
+```
+
 
 
 In Linux environment, please set the current user .profile file, (assuming you install Java in /usr/java/jdk1.8.0_281)
@@ -128,3 +140,38 @@ you can also use the systemd related mechanism to set iot-tree-service.sh start 
 
 
 
+
+
+
+# View the built-in demonstration items in the system
+
+If you are using IOT-Tree Server for the first time, you can try to import the built-in demonstration project of the system for the most intuitive experience. Visit the login system management link below.
+```
+http://localhost:9090/admin/
+```
+In the Local Projects block, click Import Demo. Select one of the demonstration items, as shown below:
+
+
+<img src="./img/imp_demo1.png" />
+
+
+
+After selection, click "Do Import" in the import project prompt, as shown below:
+
+
+<img src="./img/imp_demo2.png" />
+
+
+
+After success, the demo project you just imported appears in the project list. Click this item to display the management configuration ui of this item in the pop-up new window. Here, you can see the connector part on the left, the browser part in the middle and the tab main content display area on the right:
+
+
+<img src="./img/imp_demo3.png" />
+<img src="./img/imp_demo4.png" />
+
+
+
+In the tree node expanded in the middle browser section, select a UI node, right-click, and select Edit UI in the pop-up menu to see a new UI editing sub window on the right. As shown below:
+
+
+<img src="./img/imp_demo5.png" />

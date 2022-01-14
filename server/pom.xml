@@ -192,6 +192,7 @@
 			                            <include>data/dev_drv/</include>
 			                            <include>data/comp_lib/</include>
 			                            <include>data/demo/</include>
+			                            <include>data/plugins/demo/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>
