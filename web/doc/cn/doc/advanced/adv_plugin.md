@@ -48,6 +48,11 @@ js_api插件可以使得IOT-Tree Server服务器端JS脚本支持更多的特殊
 
 ## 2.2 authority插件
 
+IOT-Tree Server对外提供了多种服务接口，如树形节点下面的实时数据上下文，监控画面的展示访问等。这些内容可能通过浏览器嵌入到您的业务系统中。
 
+另外，如果你定义的设备操作界面还可能需要用户进行指令的输入和下达，而你的业务系统已经有一套用户和权限，如何让IOT-Tree Server统一使用您已经存在的用户和权限管理机制。可以使用authority插件实现。
+
+你可以点击此处查看更详细的说明:[插件开发-authority][plug_auth]
 
 [plug_js_api]: ./adv_plugin_jsapi.md
+[plug_auth]: ./adv_plugin_auth.md

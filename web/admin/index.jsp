@@ -370,12 +370,12 @@ if(rep.isAutoStart())
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Remote Connections</h3>
+					        <h3>Plugins and Extends</h3>
 					    </div>
 					    <div class="mod-body">
-					                
-					                
-					            </div>
+					    	<a href="javascript:open_plugins()" style="background:#aaaaaa;">Plugins</a>&nbsp;
+					    	<a href="javascript:open_ext_prop()" style="background:#aaaaaa;">Extend Properties</a>
+					    </div>
 					</div>
 
 					<div class="iot-mod iot-text-align-justify">
@@ -560,6 +560,10 @@ function exp_prj(id)
 	window.open("./ua/prj_export.jsp?id="+id) ;
 }
 
+function open_plugins()
+{
+	window.open("./ua/plugins.jsp") ;
+}
 
 function add_file_onchg()
 {
