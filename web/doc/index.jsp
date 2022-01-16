@@ -64,6 +64,7 @@ visibility: visible;
 					  <li><a href="javascript:set_lang('en')" ><i class="icon icon-home"></i> English</a></li>
 					  <li><a href="javascript:set_lang('cn')" ><i class="icon icon-topic"></i> 中文</a></li>
 					  <li><a href="javascript:set_lang('jp')" ><i class="icon icon-topic"></i> 日本語</a></li>
+					  <li><a href="javascript:set_lang('nl')" ><i class="icon icon-topic"></i> Nederlands</a></li>
 				  </ul>
 				</nav>
 				

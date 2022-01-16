@@ -1,7 +1,7 @@
 What is IOT-Tree Server?
 ==
- <a href="../../cn/README.md" target="_blank">中文</a>
- <a href="../../jp/README.md" target="_blank">日本語</a>
+ <a href="../../cn/doc/README.md" target="_blank">中文</a>
+ <a href="../../jp/doc/README.md" target="_blank">日本語</a>
  
 IOT tree server is a service software system with Internet of things access, data normalization and human-computer interaction display.
 

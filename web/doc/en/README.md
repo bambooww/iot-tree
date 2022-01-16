@@ -34,7 +34,11 @@ IOT-Tree Server is an open source software developed using Java. It's admin ui i
 
 
 
+
+
 # 1 What does IOT-Tree Server do?
+
+
 
 
 
@@ -51,6 +55,8 @@ If a device is complex but has defined the ui elements it can provide, you only 
 
 
 
+
+
 <img src="./doc/img/prj3.png">
 
 
@@ -63,11 +69,14 @@ If a device is complex but has defined the ui elements it can provide, you only 
 
 
 
+
+
 ## 1.2 embedded into the device
 
 If you have an embedded device with sufficient performance to run Java virtual machine, IOT-Tree Server can easily make your device a controller. And the controller can support online configuration and UI design, and provide online real-time operation services.
 
 [Embedded Demo][embed_ctrl_demo]
+
 
 
 
@@ -85,11 +94,14 @@ According to our open source strategy, most of your projects can be used for fre
 
 
 
+
+
 ## 1.4 As a node of distributed applications
 
 IOT-Tree Server can be deployed as a shared node based on multiple communication modes by project. The local node is a complete automatic monitoring site that can run independently. Other IOT-Tree Servers in the network can refer to this node in the project to become a part of themselves and become the upper level node of this node.
 
 This distributed function can greatly facilitate the linkage of cross regional monitoring sites. For example, each monitoring site only needs broadband for secure communication with the cloud message queue server, which can easily form a hierarchical relationship. The top IOT-Tree Server node system can monitor the communication link and use this communication state as the system communication exception to deal with multiple related functions.
+
 
 
 
@@ -103,6 +115,7 @@ This distributed function can greatly facilitate the linkage of cross regional m
 [Demo][demo_link]
 
 If you encounter problems with the system or have suggestions, you can send us email feedback: iottree@hotmail.com
+
 
 
 
