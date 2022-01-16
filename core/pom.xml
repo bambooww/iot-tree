@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>0.95.3</version>
+		<version>0.95.4</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -103,7 +103,7 @@
 			<version>2.2</version>
 			<systemPath>${basedir}/../server/tomcat/lib/jsp-api.jar</systemPath>
 		</dependency>
-	<!-- 
+	
 	<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>websocket-api</artifactId>
@@ -111,7 +111,7 @@
 			<version>2.2</version>
 			<systemPath>${basedir}/../server/tomcat/lib/websocket-api.jar</systemPath>
 		</dependency>
-		 -->
+		 
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 		    <groupId>org.json</groupId>

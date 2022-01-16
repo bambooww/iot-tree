@@ -83,6 +83,8 @@ Similar to database service software, IOT tree server can also be used as your d
 
 With a quick understanding of the above contents, let's take the IOT tree server project as the end of the overall quick understanding.
 
+[detial][qn_prj_edit]
+
 
 
 [qn_tree]: ./quick_know_tree.md
@@ -92,6 +94,8 @@ With a quick understanding of the above contents, let's take the IOT tree server
 [qn_hmi_edit]: ./quick_know_hmi_edit.md
 [qn_server]: ./quick_know_server.md
 [qn_conn_tcpserver]: ./quick_know_tcpserver_connector.md
+
+[qn_prj_edit]: ./quick_know_prj_edit.md
 
 [advanced_link]: ../advanced/index.md
 

@@ -73,6 +73,15 @@ public class ServiceWrapperUtil
 			String ln = null;
 			while((ln=br.readLine())!=null)
 			{
+				if(ln.startsWith("wrapper.java.command="))
+				{
+					File jdkdir = new File("./jdk/") ;
+					if(jdkdir.exists())
+					{
+						ln = "wrapper.java.command=.\\jdk\\bin\\java" ;
+					}
+				}
+				
 				if(ln.startsWith("wrapper.java.classpath.2="))
 				{
 					ln = "wrapper.java.classpath.2="+getClasspathStr() ;

@@ -7,9 +7,23 @@
 
 
 
+# Downloading and Unzip
+
+Download zip file,and unzip to directory you wanted.
+
+If your running environment is windows, it is recommended to download the "iot-tree-xx.xx.x-winjdk.zip" version. This version comes with the JDK of "windows x64" version, so that you can start it in the simplest way.
+
+<a href="http://121.40.64.41/iottree/" target="_blank">download address</a>
+
+
+
+
+
 # Prerequisites
 
-In order to run IOT-Tree Server, you need the following conditions:
+If your running environment is windows x64 and you have downloaded the "iot-tree-xx.xx.x-winjdk.zip" version, you have all the running conditions. The following operating conditions do not need to be concerned.
+
+## iot-tree-xx.xx.x.zip version running conditions
 
 Java running environment version 1.8 and above, and ensure that your running environment is specific to Java environment variables such as path JAVA_HOME has been set.
 
@@ -43,14 +57,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 
-# Installation
-
-Download zip file,and unzip to directory you wanted.
-
-<a href="http://121.40.64.41/iottree/" target="_blank">download address</a>
-
-
-
 
 # Modify configuration
 
@@ -59,6 +65,33 @@ Use a text editor to open the config.xml file and configure the access port in i
 
 
 # Start
+
+## Service registration, start and stop in panel mode under Windows x64 environment
+
+In Windows x64 environment, IOT tree server provides a control panel to support the registration, start and stop of system services, which is very convenient for your use.
+
+In the installation directory, double-click the file iottree_win_panel.exe. Because the program requires administrator permission, after you authorize, the system will start the control panel, as shown in the following figure:
+
+
+<img src="./img/win_panel1.png"/>
+
+
+
+
+Click the button "Register Service". If the registration is successful, a successful prompt will pop up. At this point, you can click the "Start" button to start the IOT-Tree Server. After a prompt of success pops up, you can see that the running status on the panel also changes, as shown in the following figure:
+
+
+<img src="./img/win_panel2.png" />
+
+
+
+
+You can also click "Stop" to stop the service, or click "Unregister Service" to cancel the service registration.
+
+
+
+
+## Command start
 
 Run iot-tree.bat under Windows
 
@@ -100,7 +133,9 @@ After the administrator logs in, you can see the main management ui of the syste
 
 
 
-# Register as a service under Windows Environment
+# Register as a service in command mode under Windows Environment
+
+
 
 Use the administrator to open the CMD window and go to your IOT-Tree Server installation directory through the command line, assuming that your directory is d:\iot_tree
 

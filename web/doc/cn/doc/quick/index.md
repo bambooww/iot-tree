@@ -81,6 +81,8 @@ IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的
 
 快速了解了上面这么多内容，就把IOT-Tree Server项目Project作为整体快速了解的收尾吧。
 
+[查看详细][qn_prj_edit]
+
 
 
 
@@ -91,6 +93,8 @@ IOT-Tree Server直接在树状层次管理结构中支持人机交互界面UI的
 [qn_hmi_edit]: ./quick_know_hmi_edit.md
 [qn_server]: ./quick_know_server.md
 [qn_conn_tcpserver]: ./quick_know_tcpserver_connector.md
+
+[qn_prj_edit]: ./quick_know_prj_edit.md
 
 [advanced_link]: ../advanced/index.md
 

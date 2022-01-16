@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.95.3</version>
+    <version>0.95.4</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -181,9 +181,13 @@
 			                        <includes>
 			                            <include>log/logging.properties</include>
 			                            <include>log/logging_debug.properties</include>
+			                            <include>log/wrapper.log</include>
+			                            <include>log/tail.exe</include>
+			                            <include>log/tt.bat</include>
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
 			                            <include>wrapper.*</include>
+			                            <include>iottree_win_panel.exe</include>
 			                        </includes>
 			                    </resource>
 			                    <resource>
@@ -245,8 +249,13 @@
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
 			                    
 			                    <echo message="package zip file" />
-			                    <zip basedir="../_output/" destfile="../_output/iot-tree-${project.version}.zip" />
-			                     
+			                    <zip basedir="../_output/" destfile="../_output/iot-tree-${project.version}-winjdk.zip" />
+			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
+					                  <fileset dir="../_output/">
+					                    <exclude name="jdk/"/>
+					                    <exclude name="iot-tree-0.95.4-win.zip"/>
+					                  </fileset>
+                				</zip>
 							</tasks>
 						</configuration>
 					</execution>

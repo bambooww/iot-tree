@@ -3,11 +3,17 @@ echo ----------------------------------------
 echo Starting IOT-Tree Server
 echo ----------------------------------------
 
+if exist jdk (
+set JAVA_HOME=.\jdk
+)
+
+if NOT DEFINED JAVA_HOME goto :no_java_home
+
+echo JAVA_HOME=%JAVA_HOME%
 
 set PATH="%JAVA_HOME%\bin\";%PATH%
 
 if NOT DEFINED MAIN_CLASS set MAIN_CLASS=org.iottree.server.Server
-if NOT DEFINED JAVA_HOME goto :no_java_home
 
 if NOT DEFINED IOTTREE_HOME set IOTTREE_HOME=%cd%
 

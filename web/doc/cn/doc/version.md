@@ -30,3 +30,10 @@
 
 内嵌Tomcat支持升级到9.x版本。避免jdk17环境下jsp编译找不到System类的bug
 
+
+
+
+### 版本 0.95.4
+windows环境下面增加自带jdk版本的安装包，同时提供了win_panel功能
+
+

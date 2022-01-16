@@ -6,10 +6,23 @@
 
 
 
+# 下载解压
+
+下载压缩包，解压到你希望的目录下面即可。
+
+如你运行环境是windows，推荐下载"iot-tree-xx.xx.x-winjdk.zip"版本，这个版本内部自带windows x64版本的jdk，这样你可以使用最简单的方式启动。
+
+<a href="http://121.40.64.41/iottree/" target="_blank">下载地址</a>
+
+
+
+
+
 # 运行条件
 
-为了运行IOT-Tree Server,你需要有如下条件：
+如你运行环境是windows x64，并且下载了"iot-tree-xx.xx.x-winjdk.zip"版本，那么你已经具备了全部的运行条件。下面的运行条件也就不需要关心了。
 
+## iot-tree-xx.xx.x.zip版本运行条件
 Java运行环境版本在1.8及以上，并且确保你的运行环境针对Java的环境变量如Path JAVA_HOME已经被设置好了。
 
 如果你还没有安装Java运行环境，请到<a href="https://www.oracle.com/java/technologies/" target="_blank">Oracle Java</a>或其他相关网站下载并根据提示安装，选择Java SE版本即可。
@@ -41,14 +54,6 @@ export JAVA_HOME=/usr/java/jdk1.8.0_281
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
-# 安装
-
-下载压缩包，解压到你希望的目录下面即可
-
-<a href="http://121.40.64.41/iottree/" target="_blank">下载地址</a>
-
-
-
 
 # 配置
 
@@ -57,6 +62,33 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 
 # 启动
+
+## windows X64环境下面板方式注册、启动和停止
+
+在Windows X64环境下，IOT-Tree Server提供了一个控制面板，用来支持系统服务的注册、启动和停止等控制，极大地方便您的使用。
+
+在安装目录中，双击文件iottree_win_panel.exe。由于程序需要管理员权限，你确定授权之后，系统会则启动了控制面板，如下图：
+
+
+
+
+<img src="./img/win_panel1.png"/>
+
+
+点击按钮"Register Service",如果注册成功，则会弹出成功提示。此时，您就可以点击"Start"按钮启动IOT-Tree Server，弹出提示成功之后，你可以看到面板上的运行状态也有变化，如下图：
+
+
+
+
+<img src="./img/win_panel2.png" />
+
+
+您也可以点击"Stop"按钮停止服务，或者点击"Unregister Service"进行取消服务注册。
+
+
+
+
+## 命令启动方式
 
 Windows下运行 iot-tree.bat
 
@@ -96,7 +128,8 @@ http://localhost:9090
 <img src="./img/qs_1.png">
 
 
-# Windows环境下，注册成服务
+# Windows环境下，命令方式注册成服务
+
 使用管理员打开Cmd窗口，并通过命令行到你的IOT-Tree Server安装目录，假设你的目录为 d:\iot_tree
 则输入如下命令，即可把IOT-Tree Server注册成windows的服务，可以在windows启动时，自动启动。
 

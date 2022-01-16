@@ -1,16 +1,16 @@
-﻿namespace win_panel
+﻿namespace iottree
 {
     partial class FormMain
     {
         /// <summary>
-        /// 必需的设计器变量。
+        /// 
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// 清理所有正在使用的资源。
+        /// 。
         /// </summary>
-        /// <param name="disposing">如果应释放托管资源，为 true；否则为 false。</param>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -23,8 +23,8 @@
         #region Windows 窗体设计器生成的代码
 
         /// <summary>
-        /// 设计器支持所需的方法 - 不要修改
-        /// 使用代码编辑器修改此方法的内容。
+        /// 
+        /// 
         /// </summary>
         private void InitializeComponent()
         {
@@ -33,13 +33,14 @@
             this.lbTitle = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.lklbLog = new System.Windows.Forms.LinkLabel();
             this.btnRegService = new System.Windows.Forms.Button();
             this.btnUnregService = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.cxtMenuNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openPanelMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.cxtMenuNotify.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +57,7 @@
             // 
             // btnStart
             // 
+            this.btnStart.Enabled = false;
             this.btnStart.Location = new System.Drawing.Point(12, 74);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(124, 35);
@@ -66,6 +68,7 @@
             // 
             // btnStop
             // 
+            this.btnStop.Enabled = false;
             this.btnStop.Location = new System.Drawing.Point(154, 74);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(125, 35);
@@ -74,15 +77,16 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // linkLabel1
+            // lklbLog
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(199, 31);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(59, 12);
-            this.linkLabel1.TabIndex = 2;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Check Log";
+            this.lklbLog.AutoSize = true;
+            this.lklbLog.Location = new System.Drawing.Point(199, 31);
+            this.lklbLog.Name = "lklbLog";
+            this.lklbLog.Size = new System.Drawing.Size(59, 12);
+            this.lklbLog.TabIndex = 2;
+            this.lklbLog.TabStop = true;
+            this.lklbLog.Text = "Check Log";
+            this.lklbLog.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lklbLog_LinkClicked);
             // 
             // btnRegService
             // 
@@ -134,12 +138,17 @@
             this.menuExit.Text = "Exit";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
+            // timer
+            // 
+            this.timer.Interval = 3000;
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(291, 249);
-            this.Controls.Add(this.linkLabel1);
+            this.ClientSize = new System.Drawing.Size(291, 212);
+            this.Controls.Add(this.lklbLog);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnUnregService);
             this.Controls.Add(this.btnRegService);
@@ -149,7 +158,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FormMain";
-            this.Text = "IOTTree Control Panel";
+            this.Text = "IOTTree Panel";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
@@ -165,13 +174,14 @@
         private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel lklbLog;
         private System.Windows.Forms.Button btnRegService;
         private System.Windows.Forms.Button btnUnregService;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip cxtMenuNotify;
         private System.Windows.Forms.ToolStripMenuItem openPanelMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menuExit;
+        private System.Windows.Forms.Timer timer;
     }
 }
 

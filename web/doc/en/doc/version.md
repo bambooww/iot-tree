@@ -27,3 +27,10 @@ Improve the organization of help files inside the installation package. Through 
 The embedded Tomcat supports upgrading to 9.0 X version. Avoid the bug that the system class cannot be found in JSP compilation in jdk17 environment
 
 
+
+
+### version 0.95.4
+The installation package with JDK version is added under Windows environment, and win_panel is provided at the same time.
+
+
+
