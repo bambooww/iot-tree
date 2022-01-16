@@ -9,6 +9,8 @@ What is IOT-Tree Server?
 
 
 
+
+
 IOT-Tree Server is a service software system with Internet of things access, data normalization and human-computer interaction display.
 
 She uses a clear architecture, including communication connection, channel, device driver, data tag and other levels. The Internet of things system is managed and organized in a tree like manner in all aspects.
@@ -16,6 +18,8 @@ She uses a clear architecture, including communication connection, channel, devi
 Based on this tree management, IOT-Tree Server provides the design, configuration and online application of online configuration interface (Human-Computer Interaction Interface) based on Web.
 
 IOT-Tree Server is an open source software developed using Java. It's admin ui is completely web-based.
+
+
 
 
 
