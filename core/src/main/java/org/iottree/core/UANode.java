@@ -2,6 +2,7 @@ package org.iottree.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.xmldata.*;
+import org.json.JSONObject;
 
 @data_class
 public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.ITranser //IOC
@@ -34,6 +36,11 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	@data_val
 	private String desc="" ;
 	
+	@data_val(param_name = "ext_attr_str")
+	private String extAttrStr = "" ;
+	
+	transient JSONObject extAttrJO = null ;
+	
 	transient UANode parentNode = null ;
 	
 	//transient State nodeState = State.st_not_setup; 
@@ -50,6 +57,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		setNameTitle(name,title,desc);
 	}
 	
+	public abstract String getNodeTp() ;
 //	protected boolean setNameTitle(String name,String title)
 //	{
 //		Convert.checkVarName(name);
@@ -268,6 +276,42 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return desc;
 	}
 	
+	
+	public String getExtAttrStr()
+	{
+		return this.extAttrStr ;
+	}
+	
+	public void setExtAttrStr(String astr)
+	{
+		this.extAttrStr = astr ;
+		this.extAttrJO = null ;
+	}
+	
+	public JSONObject getExtAttrJO()
+	{
+		if(extAttrJO!=null)
+			return extAttrJO;
+		
+		if(Convert.isNullOrEmpty(this.extAttrStr))
+			return null ;
+		
+		extAttrJO = new JSONObject(extAttrStr) ;
+		return extAttrJO;
+	}
+	
+	/**
+	 * 
+	 * @param classn
+	 * @return string or [string]
+	 */
+	public Object getExtAttrValue(String classn)
+	{
+		JSONObject jo = getExtAttrJO() ;
+		if(jo==null)
+			return null ;
+		return jo.opt(classn) ;
+	}
 	
 	public UANode getParentNode()
 	{

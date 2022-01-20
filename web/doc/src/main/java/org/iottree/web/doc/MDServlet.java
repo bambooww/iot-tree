@@ -40,18 +40,39 @@ public class MDServlet extends HttpServlet
 //		super.doGet(req, resp);
 //	}
 	
-	private File path2file(String path)
+	private String webappBase = null ;
+	
+	private String getWebappBase(HttpServletRequest req)
 	{
-		return new File(Config.getWebappBase()+"/"+path) ;
+		if(webappBase!=null)
+			return webappBase;
+		try
+		{
+			return Config.getWebappBase();
+		}
+		catch(Throwable e)
+		{
+			webappBase = req.getSession().getServletContext().getRealPath("/")+"/../";
+			
+			return webappBase;
+		}
+	}
+	
+	private File path2file(HttpServletRequest req,String path) throws IOException
+	{
+		String webappbase = getWebappBase(req) ;
+		File tmpf = new File(webappbase+path) ;
+		//System.out.println(" path2file="+path+" " +tmpf.getCanonicalPath());
+		return tmpf ;
 	}
 
-	public String getMdHtml(String path) throws IOException
+	public String getMdHtml(HttpServletRequest req,String path) throws IOException
 	{
 		String txt = null;//path2txt.get(path) ;
 		if(txt!=null)
 			return txt;
 		
-		File f = path2file(path) ;
+		File f = path2file(req,path) ;
 		if(!f.exists())
 			return null ;
 		
@@ -82,7 +103,7 @@ public class MDServlet extends HttpServlet
 		
 		if(uri.endsWith(".md"))
 		{
-			String txt = getMdHtml(uri) ;
+			String txt = getMdHtml(req,uri) ;
 			if(txt==null)
 				return ;
 			

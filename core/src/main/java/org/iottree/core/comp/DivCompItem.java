@@ -1,6 +1,6 @@
 package org.iottree.core.comp;
 
-import org.iottree.core.util.dict.DataNode;
+import org.iottree.core.dict.DataNode;
 
 /**
  * div component item,related js [IDIDivComp]

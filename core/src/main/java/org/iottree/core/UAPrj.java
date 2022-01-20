@@ -47,6 +47,8 @@ import org.json.JSONObject;
 @data_class
 public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IResNode, ISaver, IJSOb
 {
+	public static final String NODE_TP = "prj" ;
+	
 	@data_obj(obj_c = UACh.class)
 	List<UACh> chs = new ArrayList<>();
 
@@ -115,6 +117,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	public UAPrj(String name, String title, String desc)
 	{
 		super(name, title, desc);
+	}
+	
+	public String getNodeTp()
+	{
+		return NODE_TP;
 	}
 
 	public String getRootIdPrefix()

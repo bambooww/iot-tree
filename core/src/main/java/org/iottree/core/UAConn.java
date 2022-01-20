@@ -30,6 +30,11 @@ public class UAConn extends UANode
 		this.connTp = conntp ;
 	}
 	
+	public String getNodeTp()
+	{
+		return "";
+	}
+	
 	public String getMemberTp()
 	{
 		return MEMBER_TP ;

@@ -253,7 +253,7 @@
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jdk/"/>
-					                    <exclude name="iot-tree-0.95.4-win.zip"/>
+					                    <exclude name="iot-tree-0.95.4-winjdk.zip"/>
 					                  </fileset>
                 				</zip>
 							</tasks>

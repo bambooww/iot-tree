@@ -24,6 +24,7 @@ import org.json.JSONObject;
 @data_class
 public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner // extends UANodeOC
 {
+	public static final String NODE_TP = "dev" ;
 	/**
 	 * null or empty means device is not limited by any model
 	 * so,tags used by this device must be carefully used and
@@ -56,6 +57,11 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	public UACh getBelongTo()
 	{
 		return (UACh)this.getParentNode() ;
+	}
+	
+	public String getNodeTp()
+	{
+		return NODE_TP;
 	}
 	
 	@Override

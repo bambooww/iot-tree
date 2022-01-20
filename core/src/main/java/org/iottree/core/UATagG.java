@@ -18,6 +18,8 @@ import com.google.common.base.Splitter;
 @data_class
 public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 {
+	public static final String NODE_TP = "tagg" ;
+	
 	//transient UADev belongToDev = null;
 	
 	//transient UATagG parentTagG = null ;
@@ -43,6 +45,10 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 		super(tg.getName(),tg.getTitle(),tg.getDesc());
 	}
 //	
+	public String getNodeTp()
+	{
+		return NODE_TP;
+	}
 //	void constructNodeTree()
 //	{
 //		for(UATagG tgg:taggs)

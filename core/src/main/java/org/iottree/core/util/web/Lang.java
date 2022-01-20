@@ -13,9 +13,9 @@ import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.iottree.core.util.dict.DataClass;
-import org.iottree.core.util.dict.DataNode;
-import org.iottree.core.util.dict.DictManager;
+import org.iottree.core.dict.DataClass;
+import org.iottree.core.dict.DataNode;
+import org.iottree.core.dict.DictManager;
 import org.xml.sax.SAXException;
 
 /**
@@ -127,7 +127,7 @@ public class Lang
 	{
 		if (langDC == null)
 			return "[X]" + key + "[X]";
-		DataNode dn = langDC.findDataNodeByName(key);
+		DataNode dn = langDC.getNodeByName(key);
 		if (dn == null)
 			return "[X]" + key + "[X]";
 		String tmps = dn.getNameByLang(defaultLang);
@@ -142,7 +142,7 @@ public class Lang
 		if (langDC == null)
 			return null;
 
-		return langDC.findDataNodeByName(key);
+		return langDC.getNodeByName(key);
 	}
 	
 	public DataClass getLangDataClass()
@@ -156,8 +156,8 @@ public class Lang
 			return new ArrayList<DataNode>() ;
 		
 		ArrayList<DataNode> rets = new ArrayList<DataNode>() ;
-		DataNode[] dns = langDC.getRootNodes() ;
-		if(dns==null||dns.length<=0)
+		List<DataNode> dns = langDC.getRootNodes() ;
+		if(dns==null||dns.size()<=0)
 			return rets ;
 		for(DataNode dn:dns)
 		{
@@ -177,7 +177,7 @@ public class Lang
 			lang = defaultLang;
 		}
 
-		DataNode dn = langDC.findDataNodeByName(key);
+		DataNode dn = langDC.getNodeByName(key);
 		if (dn == null)
 			return "[X]" + key + "[X]";
 		String tmps = dn.getNameByLang(lang);

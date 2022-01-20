@@ -80,7 +80,7 @@
 	}%>[
 	
 	{
-	"text":"<%=rep.getName() %>&nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-o-notch fa-lg'></i></span>"
+	"text":"<%=rep.getName() %>&nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-o-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>"
 	,"id":"<%=rep.getId() %>"
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"

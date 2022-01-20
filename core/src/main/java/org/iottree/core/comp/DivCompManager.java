@@ -15,9 +15,9 @@ import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.dict.DataClass;
-import org.iottree.core.util.dict.DataNode;
-import org.iottree.core.util.dict.DictManager;
+import org.iottree.core.dict.DataClass;
+import org.iottree.core.dict.DataNode;
+import org.iottree.core.dict.DictManager;
 
 /**
  * scan /_iottree/di_div_comps to acquire div component all

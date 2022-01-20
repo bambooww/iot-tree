@@ -2095,6 +2095,12 @@ function clk_task_run()
 	event.stopPropagation();
 	task_setup();
 }
+
+function clk_dd()
+{
+	event.stopPropagation();
+	add_tab("___dd","Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
+}
 	
 function prj_rt()
 {

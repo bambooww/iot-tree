@@ -19,6 +19,8 @@ import org.json.JSONObject;
 @data_class
 public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 {
+	public static final String NODE_TP = "ch" ;
+	
 	@data_val(param_name = "drv")
 	String drvName = null ;
 	
@@ -70,6 +72,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		super(name,title,desc);
 		this.drvName = drvname ;
+	}
+	
+	public String getNodeTp()
+	{
+		return NODE_TP;
 	}
 	
 	@Override

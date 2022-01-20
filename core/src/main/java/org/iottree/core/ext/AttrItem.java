@@ -5,7 +5,7 @@ package org.iottree.core.ext;
  * 
  * @author jason.zhu
  */
-public class PropItem
+public class AttrItem
 {
 	String name = null ;
 	
@@ -13,7 +13,7 @@ public class PropItem
 	
 	String desc = null ;
 	
-	public PropItem()
+	public AttrItem()
 	{}
 	
 	public String getName()

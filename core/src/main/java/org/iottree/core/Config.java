@@ -761,6 +761,8 @@ public class Config
 	public static Element getConfElement(String name)
 	{
 		Element re = loadConf();
+		if(re==null)
+			return null ;
 		NodeList nl = re.getElementsByTagName(name);
 		if(nl==null||nl.getLength()<=0)
 		{//try load debug

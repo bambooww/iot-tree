@@ -103,7 +103,7 @@ td
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %></div>
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_tag_ext('<%=node_tags.getNodePath() %>')" title="Set extended properties"><i class="fa fa fa-paperclip" aria-hidden="true"></i></div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
@@ -146,7 +146,7 @@ td
         <th>Change DT</th>
         <th>Quality</th>
         <th>Write</th>
-        <th></th>
+        <th>Oper</th>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -903,6 +903,46 @@ function on_tag_mouseout(tagid)
 function on_tag_mouseup(tagid)
 {
 	tag_mdown= false;
+}
+
+function bind_tag_ext(path)
+{
+	dlg.open("../util/prj_dict_bind_selector.jsp?path="+path,
+			{title:"Ext Binder",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.path=path ;
+						 ret.op = "set_ext_attr";
+						 //ret.id = id ;
+						 console.log(ret);
+						 send_ajax('./cxt_tags_ext_attr_ajax.jsp',ret,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.close();
+							},false);
+							
+						 
+						 //document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 </script>

@@ -34,6 +34,11 @@ public class UATagList extends UANode implements IOCList //UANodeOC
 		//super.constructNodeTree();
 	}
 	
+	public String getNodeTp()
+	{
+		return "";
+	}
+	
 	public String getMemberTp()
 	{
 		return MEMBER_TP ;

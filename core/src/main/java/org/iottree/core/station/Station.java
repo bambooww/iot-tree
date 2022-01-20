@@ -15,6 +15,11 @@ import org.json.JSONObject;
 public class Station extends UANode
 {
 
+	public String getNodeTp()
+	{
+		return "";
+	}
+	
 	@Override
 	public List<UANode> getSubNodes()
 	{

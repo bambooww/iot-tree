@@ -50,6 +50,11 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		belongToCat = dc ;
 	}
 	
+	public String getNodeTp()
+	{
+		return "";
+	}
+	
 	public String getRootIdPrefix()
 	{
 		return "d" ;

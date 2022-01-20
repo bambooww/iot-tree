@@ -31,6 +31,8 @@ import org.json.JSONObject;
 @data_class
 public class UATag extends UANode implements IOCDyn //UANode UABox
 {
+	public static final String NODE_TP  ="tag" ;
+	
 	transient UANodeOCTags belongToNode = null ;
 	
 	//transient  UATagG parentTagG = null ;
@@ -161,6 +163,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		this.valTranser=t.valTranser;
 		this.valChgedCacheLen = t.valChgedCacheLen ;
+	}
+	
+	public String getNodeTp()
+	{
+		return NODE_TP;
 	}
 	
 	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)

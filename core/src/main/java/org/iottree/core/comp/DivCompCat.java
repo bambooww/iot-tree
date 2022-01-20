@@ -2,7 +2,7 @@ package org.iottree.core.comp;
 
 import java.util.*;
 
-import org.iottree.core.util.dict.DataClass;
+import org.iottree.core.dict.DataClass;
 
 public class DivCompCat
 {

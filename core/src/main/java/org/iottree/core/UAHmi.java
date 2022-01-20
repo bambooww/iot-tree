@@ -27,6 +27,8 @@ import org.json.JSONObject;
 @data_class
 public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 {
+	public static final String NODE_TP = "hmi" ;
+	
 	@data_val(param_name = "tp")
 	String hmiTp = "" ;
 	
@@ -39,6 +41,11 @@ public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 		super(name,title,desc);
 		//this.connTp = conntp ;
 		hmiTp = tp ;
+	}
+	
+	public String getNodeTp()
+	{
+		return NODE_TP;
 	}
 	
 	public UANodeOCTagsCxt getBelongTo()

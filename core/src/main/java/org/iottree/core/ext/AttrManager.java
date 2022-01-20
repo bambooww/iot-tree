@@ -11,40 +11,40 @@ import org.iottree.core.task.Task;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 
-public class PropManager
+public class AttrManager
 {
-	private static PropManager instance = null ;
+	private static AttrManager instance = null ;
 	
-	public static PropManager getInstance()
+	public static AttrManager getInstance()
 	{
 		if(instance!=null)
 			return instance ;
 		
-		synchronized(PropManager.class)
+		synchronized(AttrManager.class)
 		{
 			if(instance!=null)
 				return instance ;
 			
-			instance = new PropManager() ;
+			instance = new AttrManager() ;
 			return instance ;
 		}
 	}
 	
 
-	private HashMap<String,List<PropItem>> prj2props = new HashMap<>();
+	private HashMap<String,List<AttrItem>> prj2props = new HashMap<>();
 	
 	
 	
-	private PropManager()
+	private AttrManager()
 	{}
 	
-	public List<PropItem> getPropItems(String prjid)
+	public List<AttrItem> getPropItems(String prjid)
 	{
-		List<PropItem> ts = prj2props.get(prjid) ;
+		List<AttrItem> ts = prj2props.get(prjid) ;
 		if(ts!=null)
 			return ts ;
 		
-		synchronized(PropItem.class)
+		synchronized(AttrItem.class)
 		{
 			ts = prj2props.get(prjid) ;
 			if(ts!=null)
@@ -81,7 +81,7 @@ public class PropManager
 //	}
 	
 	
-	private List<PropItem> loadPropItems(String prjid) throws Exception
+	private List<AttrItem> loadPropItems(String prjid) throws Exception
 	{
 		 File  prjdir = UAManager.getPrjFileSubDir(prjid);
 		 if(!prjdir.exists())
@@ -99,7 +99,7 @@ public class PropManager
 		 if(tfs==null||tfs.length<=0)
 			 return null ;
 		 
-		 ArrayList<PropItem> rets = new ArrayList<>() ;
+		 ArrayList<AttrItem> rets = new ArrayList<>() ;
 //		 for(File tf:tfs)
 //		 {
 //			 XmlData xd = XmlData.readFromFile(tf);

@@ -1,6 +1,6 @@
 package org.iottree.core.ext;
 
-public class PropBindItem
+public class AttrBindItem
 {
 
 }

@@ -119,7 +119,7 @@ for(UANodeOCTags tn:tns)
 	for(UATag tag:tags)
 	{
 		tags_num ++ ;
-		
+		String tagpath = tag.getNodePath();//.getNodePathCxt() ;
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 		boolean bloc = tag.getParentNode()==node_tags;
 		String cssstr="" ;
@@ -205,8 +205,9 @@ if(bloc&&!tag.isSysTag())
         <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
 <%
 }
-%>&nbsp;	
+%>&nbsp;	&nbsp;<a href="javascript:bind_tag_ext('<%=tagpath%>')" title="Set extended properties"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
         </td>
+        
       </tr>
 <%
 	}
