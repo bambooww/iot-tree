@@ -85,6 +85,7 @@ for(Task jt:jts)
 	
 	List<TaskAction> tas = jt.getActions(); 
 %>
+<form class="layui-form" action="">
 <div>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
  	
@@ -161,12 +162,17 @@ if(tas!=null&&tas.size()>0)
 <%
 	for(TaskAction ta:tas)
 	{
+		
 %>
     <tr>
-       <td></td>
-      <td><%=ta.getName() %></td>
-     
-      <td colspan="2"> <a href="javascript:void" onclick="">run_script</a></td>
+       <td><%=ta.getName() %></td>
+      
+      <td colspan="3">
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','init')" class="layui-btn layui-btn-<%=(ta.hasInitScript()?"normal":"primary") %> layui-border-blue layui-btn-sm">init script</button>
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','run')" class="layui-btn layui-btn-<%=(ta.hasRunScript()?"normal":"primary") %> layui-border-blue layui-btn-sm" >run in loop script</button>
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','end')" class="layui-btn layui-btn-<%=(ta.hasEndScript()?"normal":"primary") %> layui-border-blue layui-btn-sm">end script</button>
+      	
+      </td>
       <td>
       <a href="javascript:add_or_edit_task_act('<%=prjid %>','<%=jt.getId()%>','<%=ta.getId()%>')"><i title="edit task action" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a>
 	   <a href="javascript:task_act_del('<%=prjid %>','<%=jt.getId()%>','<%=ta.getId()%>')" style="color:red"><i title="delete task action" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
@@ -184,10 +190,71 @@ if(tas!=null&&tas.size()>0)
 <%
 }
 %>
-
- 	
+</form>
+<div style="display:none">
+ <textarea id="ta_js"></textarea>
+</div>
 <script>
 var prjid = "<%=prjid%>" ;
+var prjpath = "<%=prj.getNodePath()%>" ;
+var form = null;
+layui.use('form', function(){
+	  form = layui.form;
+	  form.render();
+});
+
+var taskact_js = null;
+var taskact_js_txt = '' ;
+
+function show_script()
+{
+	dlg.open("../ua_cxt/cxt_script.jsp?op=task&path="+prjpath+"&taskid="+taskact_js.taskid+"&opener_txt_id=ta_js",
+			{title:'Edit JS'},['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					var jstxt = dlgw.get_edited_js() ;
+					 if(jstxt==null)
+						 jstxt='' ;
+					 taskact_js.op='act_js_write';
+					 taskact_js.jstxt=jstxt;
+					 taskact_js = {prjid:prjid,op:'act_js_write',taskid:taskid,actid:actid,jstp:jstp,jstxt:jstxt} ;
+						
+						send_ajax("prj_task_ajax.jsp",taskact_js,function(bsucc,ret){
+							if(bsucc&&ret.indexOf('succ')!=0)
+							{
+								dlg.msg(ret) ;
+								return ;
+							}
+							dlg.close() ;
+						}) ;
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function edit_task_js(taskid,actid,jstp)
+{
+	event.preventDefault();
+	
+	taskact_js = {prjid:prjid,op:'act_js_read',taskid:taskid,actid:actid,jstp:jstp} ;
+	
+	send_ajax("prj_task_ajax.jsp",taskact_js,function(bsucc,ret){
+		if(bsucc&&ret.indexOf('succ=')!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		
+		$("#ta_js").val(ret.substring(5)) ;
+		show_script();
+	}) ;
+	
+	
+}
 
 function task_del(prjid,id)
 {

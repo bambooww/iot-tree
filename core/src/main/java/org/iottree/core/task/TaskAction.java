@@ -63,12 +63,16 @@ public class TaskAction
 
 	private transient String lastRunErr = null;
 
-	private transient Task task = null;
+	transient Task task = null;
 
 	public TaskAction()
 	{
-
 		this.id = CompressUUID.createNewId();
+	}
+	
+	public Task getTask()
+	{
+		return this.task ;
 	}
 
 	public String getId()
@@ -129,6 +133,11 @@ public class TaskAction
 		this.initScript = c;
 		return this;
 	}
+	
+	public boolean hasInitScript()
+	{
+		return Convert.isNotNullEmpty(this.initScript) ;
+	}
 
 	public String getRunScript()
 	{
@@ -141,6 +150,11 @@ public class TaskAction
 	{
 		this.runScript = c;
 		return this;
+	}
+	
+	public boolean hasRunScript()
+	{
+		return Convert.isNotNullEmpty(this.runScript) ;
 	}
 
 	public String getEndScript()
@@ -155,6 +169,11 @@ public class TaskAction
 		this.endScript = c;
 		return this;
 	}
+	
+	public boolean hasEndScript()
+	{
+		return Convert.isNotNullEmpty(this.endScript) ;
+	}
 
 	public boolean isValid()
 	{
@@ -166,12 +185,12 @@ public class TaskAction
 		return bInitScriptOk;
 	}
 
-	boolean initTaskAction(Task t)
+	boolean initTaskAction()
 	{
 		if(!this.isEnable())
 			return false;
 		
-		this.task = t;
+		
 		ScriptEngine engine = this.task.getScriptEngine();
 		engine.put("$task_action", this);
 		// reg function

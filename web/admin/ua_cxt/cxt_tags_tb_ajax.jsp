@@ -205,7 +205,12 @@ if(bloc&&!tag.isSysTag())
         <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
 <%
 }
-%>&nbsp;	&nbsp;<a href="javascript:bind_tag_ext('<%=tagpath%>')" title="Set extended properties"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
+
+String ext_str = tag.getExtAttrStr() ;
+String ext_color = "" ;
+if(Convert.isNotNullEmpty(ext_str))
+	ext_color="color:#17c680" ;
+%>&nbsp;	&nbsp;<a href="javascript:bind_tag_ext('<%=tagpath%>')" title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
         </td>
         
       </tr>

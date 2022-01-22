@@ -28,6 +28,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
+import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
@@ -105,6 +106,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	 * script run error
 	 */
 	private transient String jsRunError = null;
+	
+	private transient UAContext context = null ;
 
 	public UAPrj()
 	{
@@ -909,18 +912,33 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		return ps.isRunning();
 	}
 
-	private ScriptEngine engine = null;
-
+//	private ScriptEngine engine = null;
+//
+//	private ScriptEngine getJSEngine0()
+//	{
+//		if (engine != null)
+//			return engine;
+//
+//		engine = UAManager.createJSEngine(this);
+//
+//		engine.put("$this", jsOb);
+//		engine.put("$prj", jsOb);
+//		return engine;
+//	}
+	
 	private ScriptEngine getJSEngine()
 	{
-		if (engine != null)
-			return engine;
-
-		engine = UAManager.createJSEngine(this);
-
-		engine.put("$this", jsOb);
-		engine.put("$prj", jsOb);
-		return engine;
+		if(this.context!=null)
+			return this.context.getScriptEngine() ;
+		
+		synchronized(this)
+		{
+			if(this.context!=null)
+				return this.context.getScriptEngine() ;
+			
+			this.context = new UAContext(this) ;
+			return this.context.getScriptEngine() ;
+		}
 	}
 
 	boolean isJsSetOk()
@@ -1100,11 +1118,17 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		}
 
 		@HostAccess.Export
-		public String get_rt_json(long lastdt) throws IOException
+		public String get_rt_json(Long lastdt) throws IOException
 		{
 			StringWriter sw = new StringWriter();
 			UAPrj.this.CXT_renderJson(sw, lastdt);
 			return sw.toString();
+		}
+		
+		@HostAccess.Export
+		public String get_rt_json() throws IOException
+		{
+			return get_rt_json(-1L) ;
 		}
 	}
 

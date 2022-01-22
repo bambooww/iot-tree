@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
@@ -19,6 +21,8 @@ import org.json.JSONObject;
 @data_class
 public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.ITranser //IOC
 {
+	static ILogger log = LoggerManager.getLogger("UANode") ;
+	
 	public static enum State
 	{
 		
@@ -296,8 +300,17 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		if(Convert.isNullOrEmpty(this.extAttrStr))
 			return null ;
 		
-		extAttrJO = new JSONObject(extAttrStr) ;
-		return extAttrJO;
+		try
+		{
+			extAttrJO = new JSONObject(extAttrStr) ;
+			return extAttrJO;
+		}
+		catch(Exception e)
+		{
+			if(log.isDebugEnabled())
+				log.debug("", e);
+			return null ;
+		}
 	}
 	
 	/**

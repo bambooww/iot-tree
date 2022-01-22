@@ -558,6 +558,7 @@ background-color: #fff ;
 				  <a class="btn "  href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
+				  &nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-o-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
@@ -879,6 +880,7 @@ var cxt_menu = {
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true},
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
@@ -908,6 +910,7 @@ var cxt_menu = {
 			return tn.run;
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"dev":[
@@ -922,6 +925,7 @@ var cxt_menu = {
 			return !tn.ref_locked;
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
 	],
 	"tagg":[
@@ -936,6 +940,7 @@ var cxt_menu = {
 			return !tn.ref_locked;
 		}},
 		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
 			return true;//!tn.ref_locked;
 		}}
@@ -951,7 +956,7 @@ var cxt_menu = {
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
-		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access_hmi},
+		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
@@ -1802,7 +1807,7 @@ function act_del_hmi(n,op)
 	});
 }
 
-function act_access_hmi(n,op)
+function act_access(n,op)
 {
 	window.open(n.path);
 }

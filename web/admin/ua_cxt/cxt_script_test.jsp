@@ -7,13 +7,16 @@
 	org.iottree.*,
 	org.iottree.core.*,
 	org.iottree.core.cxt.*,
+	org.iottree.core.task.*,
 	org.iottree.core.util.*,
 	org.iottree.core.util.xmldata.*"%><%!
 	
 %><%
-	if(!Convert.checkReqEmpty(request, out, "path"))
+if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 String op = request.getParameter("op");
+if(op==null)
+	op="" ;
 String path=request.getParameter("path");
 /*
 String id = request.getParameter("id");
@@ -38,7 +41,7 @@ if(!(n instanceof UANodeOCTagsCxt))
 	return ;
 }
 UANodeOCTagsCxt cxt = (UANodeOCTagsCxt)n ;
-
+UAPrj prj = (UAPrj)cxt.getTopNode() ;
 String txt = request.getParameter("txt") ;
 if(Convert.isNullOrEmpty(txt))
 {
@@ -46,24 +49,46 @@ if(Convert.isNullOrEmpty(txt))
 	return ;
 }
 
-txt = URLDecoder.decode(txt,"UTF-8") ;
+//txt = URLDecoder.decode(txt,"UTF-8") ;
 
 long st = System.currentTimeMillis() ;
 //Object obj = dnd.runCodeForTest(txt);
-UAContext cxtr = cxt.RT_getContext() ;
+UAContext cxtr = null;
 long et = System.currentTimeMillis() ;
-Object obj = null;
-try
+switch(op)
 {
-	//System.out.println("run js code") ;
-	obj = cxtr.runCode(txt);
-}
-catch(Exception e)
-{
-	obj = "err:"+e.getMessage();
-	e.printStackTrace();
-}
+case "task":
+	if(!Convert.checkReqEmpty(request, out, "taskid"))
+		return;
+	String taskid = request.getParameter("taskid") ;
+	Task task = TaskManager.getInstance().getTask(prj.getId(), taskid) ;
+	if(task==null)
+	{
+		out.print("no task found") ;
+		return ;
+	}
+	cxtr = task.getContext() ;
+	String ret = cxtr.testScript(txt) ;
+	out.print(ret) ;
+	break ;
+default:
+	cxtr = cxt.RT_getContext() ;
+	Object obj = null;
+	try
+	{
+		//System.out.println("run js code") ;
+		obj = cxtr.runCode(txt);
+	}
+	catch(Exception e)
+	{
+		obj = "err:"+e.getMessage();
+		e.printStackTrace();
+	}
 
 //System.out.println(sb.toString()) ;
 %>res=[<%=""+obj%>]
 cost ms=<%=(et-st)%>
+<%
+	break ;
+}
+%>

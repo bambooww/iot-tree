@@ -72,36 +72,34 @@ String prj_path = prj.getNodePath() ;
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(800,600);
+dlg.resize_to(850,700);
 </script>
 </head>
 <body>
 <form class="layui-form" action="">
 <div class="layui-form-item">
-    <label class="layui-form-label">Enable:</label>
-	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
-	  </div>
-	  <div class="layui-form-mid"></div>
-	  <div class="layui-input-inline" style="width: 70px;">
-	  
-	  </div>
-  </div>
- <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
+     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="name" id="name" value="<%=name%>" autocomplete="off" class="layui-input"/>
     </div>
-    <label class="layui-form-mid"><wbt:lang>desc</wbt:lang></label>
-    <div class="layui-input-inline">
+	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	  <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label"><wbt:lang>desc</wbt:lang></label>
+    <div class="layui-input-block" >
       <input type="text" name="desc" id="desc" value="<%=desc %>" autocomplete="off" class="layui-input"/>
     </div>
+   
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label">init script</label>
     <div class="layui-input-block" >
-      <textarea id="ta_init_sc" rows="5" cols="180" style="width:99%;height:50%"><%=init_sc %></textarea>
-      <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
+      <textarea id="ta_init_sc" rows="5" cols="180" style="width:99%;height:45%"><%=init_sc %></textarea>
+      <br/><a class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</a>
+      <a class="layui-form-mid layui-word-aux" onclick="test_script()">test</a>
     </div>
   </div>
   <div class="layui-tab" lay-filter="tabDemo">

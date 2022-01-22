@@ -167,7 +167,7 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	send_ajax('cxt_script_test.jsp','path='+path+'&txt='+utf8UrlEncode(scode),
+	send_ajax('cxt_script_test.jsp',{path:path,txt:scode},
 		function(bsucc,ret)
 		{
 			document.getElementById('script_res').value = ret ;

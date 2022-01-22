@@ -121,12 +121,13 @@ public class TaskManager
 			 Task jst=new Task(prjid);
 			 if(!DataTranserXml.injectXmDataToObj(jst, xd))
 				 continue;
+			 jst.refreshActions();
 			 rets.add(jst);
 		 }
 		 return rets;
 	}
 	
-	private void saveTask(String prjid,Task t) throws Exception
+	void saveTask(String prjid,Task t) throws Exception
 	{
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(t) ;
 		//XmlData xd = rep.toUAXmlData();
@@ -168,6 +169,14 @@ public class TaskManager
 		return true ;
 	}
 	
+	public TaskAction getTaskAction(String prjid,String taskid,String actid)
+	{
+		Task t = this.getTask(prjid, taskid);
+		if(t==null)
+			return null ;
+		return t.getActionById(actid) ;
+	}
+	
 	public void setTaskAction(String prjid,String taskid,TaskAction ta) throws Exception
 	{
 		Task t = getTask(prjid,taskid) ;
@@ -177,6 +186,8 @@ public class TaskManager
 		t.setAction(ta) ;
 		this.saveTask(prjid, t);
 	}
+	
+	
 	
 	public boolean delTaskAction(String prjid,String taskid,String actid) throws Exception
 	{

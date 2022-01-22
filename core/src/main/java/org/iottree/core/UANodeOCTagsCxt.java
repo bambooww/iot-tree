@@ -19,6 +19,7 @@ import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
+import org.json.JSONObject;
 
 /**
  * node support
@@ -334,6 +335,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 					w.write(",\"" + tmpn + "\":\"" + tmpv + "\"");
 			}
 		}
+		
+		JSONObject jo = this.getExtAttrJO() ;
+		if(jo!=null)
+		{
+			w.write(",\"ext_attr\":" + jo.toString() );
+		}
 		w.write(",\"tags\":[");
 		boolean bfirst = true;
 		List<UATag> tags = this.listTags();
@@ -401,35 +408,46 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			{
 				if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
 					w.write("\",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
-							+ ",\"chgdt\":" + dt_chg + "}");
+							+ ",\"chgdt\":" + dt_chg );
 				else
 					w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":" + dt
-							+ ",\"chgdt\":" + dt_chg + "}");
+							+ ",\"chgdt\":" + dt_chg );
 			}
 			else
 			{
 				w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-						+ Convert.plainToJsStr(str_err) + "\"}");
+						+ Convert.plainToJsStr(str_err)+"\"" );
 			}
 
+			jo = tg.getExtAttrJO() ;
+			if(jo!=null)
+			{
+				w.write(",\"ext_attr\":" + jo.toString() );
+			}
+			
+			w.write("}");
 			//bchged = true;
 		}
-		w.write("],\"subs\":[");
-
-		bfirst = true;
-		for (UANodeOCTagsCxt subtg : this.getSubNodesCxt())
+		w.write("]");
+		
+		List<UANodeOCTagsCxt> subtgs = this.getSubNodesCxt() ;
+		if(subtgs!=null&&subtgs.size()>0)
 		{
-			if (!bfirst)
-				w.write(",");
-			else
-				bfirst = false;
-			// w.write("\""+subtg.getName()+"\":");
+			w.write(",\"subs\":[");
+			bfirst = true;
+			for (UANodeOCTagsCxt subtg : subtgs)
+			{
+				if (!bfirst)
+					w.write(",");
+				else
+					bfirst = false;
 
-			if(subtg.CXT_renderJson(w, tag2lastdt, null))
-				bchg=true;
+				if(subtg.CXT_renderJson(w, tag2lastdt, null))
+					bchg=true;
+			}
+			w.write("]");
 		}
-		w.write("]}");
-
+		w.write("}");
 		return bchg;
 	}
 

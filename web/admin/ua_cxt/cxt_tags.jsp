@@ -59,6 +59,12 @@ if(bhmi)
 {
 	hmitt ="UI ["+hmi.getNodePath()+"]";
 }
+
+String ext_str = node_tags.getExtAttrStr() ;
+String ext_color = "" ;
+if(Convert.isNotNullEmpty(ext_str))
+	ext_color="color:#17c680" ;
+
 %><html>
 <head>
 <title></title>
@@ -103,7 +109,7 @@ td
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_tag_ext('<%=node_tags.getNodePath() %>')" title="Set extended properties"><i class="fa fa fa-paperclip" aria-hidden="true"></i></div>
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_tag_ext('<%=node_tags.getNodePath() %>')" title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
@@ -738,10 +744,12 @@ function show_cxt_dyn(p,cxt)
 			qstr += "<span title='"+strerr+"'>err</span>";
 		show_ele_html("ctag_q_"+tagp,qstr) ;
 	}
-	
-	for(var sub of cxt.subs)
+	if(cxt.subs)
 	{
-		show_cxt_dyn(p+sub.n+".",sub) ;
+		for(var sub of cxt.subs)
+		{
+			show_cxt_dyn(p+sub.n+".",sub) ;
+		}
 	}
 }
 
@@ -766,7 +774,7 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	send_ajax('cxt_script_test.jsp','path='+cxt_path+'&txt='+utf8UrlEncode(scode),
+	send_ajax('cxt_script_test.jsp',{'path':cxt_path,txt:scode},
 		function(bsucc,ret)
 		{
 			document.getElementById('script_res').value = ret ;
@@ -932,10 +940,11 @@ function bind_tag_ext(path)
 									return ;
 								}
 								dlg.close();
+								document.location.href=document.location.href;
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //
 				 	});
 				},
 				function(dlgw)

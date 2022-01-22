@@ -117,6 +117,66 @@ case "act_del":
 	else
 		out.print("del error") ;	
 	break;
+case "act_js_read":
+	if(!Convert.checkReqEmpty(request, out, "taskid","actid","jstp"))
+		return ;
+	String jstp = request.getParameter("jstp") ;
+	ta = TaskManager.getInstance(). getTaskAction(prjid,taskid,actid) ;
+	if(ta==null)
+	{
+		out.print("no Task Action found") ;
+		return ;
+	}
+	switch(jstp)
+	{
+	case "init":
+		out.print("succ=");
+		out.print(ta.getInitScript()) ;
+		break;
+	case "run":
+		out.print("succ=");
+		out.print(ta.getRunScript()) ;
+		break;
+	case "end":
+		out.print("succ=");
+		out.print(ta.getEndScript()) ;
+		break;
+	default:
+		out.print("unknown jstp") ;
+		break ;
+	}
+	break ;
+case "act_js_write":
+	if(!Convert.checkReqEmpty(request, out, "taskid","actid","jstp"))
+		return ;
+	jstp = request.getParameter("jstp") ;
+	String jstxt = request.getParameter("jstxt") ;
+	if(jstxt==null)
+		jstxt= "" ;
+	ta = TaskManager.getInstance(). getTaskAction(prjid,taskid,actid) ;
+	if(ta==null)
+	{
+		out.print("no Task Action found") ;
+		return ;
+	}
+	switch(jstp)
+	{
+	case "init":
+		ta.withInitScript(jstxt) ;
+		break;
+	case "run":
+		ta.withRunScript(jstxt) ;
+		break;
+	case "end":
+		ta.withEndScript(jstxt) ;
+		break;
+	default:
+		out.print("unknown jstp") ;
+		return ;
+	}
+	ta.getTask().save();
+	out.print("succ");
+	break ;
 case "list":
 	List<Task> jts = TaskManager.getInstance().getTasks(prjid);
 	out.print("[") ;

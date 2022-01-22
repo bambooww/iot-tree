@@ -3,6 +3,8 @@ package org.iottree.core.cxt;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,6 +27,7 @@ import org.graalvm.polyglot.proxy.*;
 
 import org.iottree.core.*;
 import org.iottree.core.plugin.AbstractPlugin;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
@@ -59,9 +62,12 @@ public class UAContext
 
 	UANodeOCTagsCxt nodeCxt = null;
 
-	private transient ScriptEngineManager seMgr = null;
+	//private transient ScriptEngineManager seMgr = null;
 	private transient ScriptEngine scriptEng = null;
 	
+	private Debug debug = new Debug() ;
+	
+	private GSys sys = new GSys() ;
 	
 	//public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
 
@@ -72,15 +78,16 @@ public class UAContext
 		
 		UAPrj prj = (UAPrj)nodecxt.getTopNode();
 
-		seMgr = new ScriptEngineManager();
+		//seMgr = new ScriptEngineManager();
 		
-		scriptEng = UAManager.createJSEngine(prj);
+		scriptEng = createJSEngine();
 
 		//for graal - object must be public and not inner class,
 		  // and function must has HostAccess.Export annotation
 		
-		
 		scriptEng.put("$this", nodecxt);
+		scriptEng.put("$prj", prj);
+		
 		if(nodecxt instanceof IJSOb)
 		{
 			scriptEng.put("$this", ((IJSOb)nodecxt).getJSOb());
@@ -98,11 +105,33 @@ public class UAContext
 		}
 		//scriptEng.eval("var " + FN_TEMP_VAR + "={};");
 	}
+	
+	
 
-//	public Bindings getJsObBindings()
-//	{
-//		return jsObBindings;
-//	}
+	public static final String JS_NAME="graal.js";//"nashorn"; //
+
+	private ScriptEngine createJSEngine()
+	{
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine engine = manager.getEngineByName(JS_NAME);
+		engine.put("polyglot.js.allowHostAccess", true);
+		engine.put("polyglot.js.allowAllAccess",true);
+		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
+
+		engine.put("$debug",debug);
+		engine.put("$system",sys);
+		
+		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		if(gvar2obj!=null)
+		{
+			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
+			{
+				engine.put("$$"+n2o.getKey(), n2o.getValue());
+			}
+		}
+		
+		return engine ;
+	}
 	
 
 	public ScriptEngine getScriptEngine()
@@ -154,4 +183,33 @@ public class UAContext
 
 	// public Compl
 	
+	/**
+	 * 
+	 * @param jstxt
+	 * @return
+	 */
+	public String testScript(String jstxt)
+	{
+		StringWriter sw =new StringWriter() ;
+		PrintWriter pw = new PrintWriter(sw) ;
+		try
+		{
+			this.debug.setOutPipe(pw);
+			this.scriptEval(jstxt);
+			pw.println("--- test script end ---") ;
+			pw.flush(); 
+			return sw.toString() ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace(pw);
+			pw.flush(); 
+			return sw.toString() ;
+		}
+		finally
+		{
+			this.debug.setOutPipe(null);
+		}
+		
+	}
 }

@@ -2,6 +2,8 @@ package org.iottree.core.task;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 import javax.script.Invocable;
@@ -156,6 +158,14 @@ public class Task
 		this.intervalMS = ms;
 		return this;
 	}
+	
+	void refreshActions()
+	{
+		for (TaskAction ta : this.actions)
+		{
+			ta.task = this ;
+		}
+	}
 
 	public List<TaskAction> getActions()
 	{
@@ -186,6 +196,8 @@ public class Task
 		}
 
 		this.actions.add(ta);
+		
+		refreshActions();
 		return ta;
 	}
 
@@ -201,6 +213,12 @@ public class Task
 			}
 		}
 		return null;
+	}
+	
+	
+	public void save() throws Exception
+	{
+		TaskManager.getInstance().saveTask(this.prjId, this);
 	}
 
 	public boolean isValid()
@@ -236,17 +254,15 @@ public class Task
 
 	private boolean taskRunInit()
 	{
-		cxt = new UAContext(this.getPrj());
-		scriptEng = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
-											// ;
-		scriptEng.put("$task", this);
+		getContext() ;
+		
 		// scriptEng = this.prj.
 		boolean bret = false;
 		for (TaskAction ta : this.actions)
 		{
 			if(!ta.isEnable())
 				continue ;
-			if(ta.initTaskAction(this))
+			if(ta.initTaskAction())
 			{
 				bret = true ;
 			}
@@ -256,12 +272,29 @@ public class Task
 
 	public ScriptEngine getScriptEngine()
 	{
+		if(scriptEng!=null)
+			return scriptEng;
+		
+		getContext();
 		return scriptEng;
 	}
 	
 	public UAContext getContext()
 	{
-		return cxt ;
+		if(cxt!=null)
+			return cxt ;
+		
+		synchronized(this)
+		{
+			if(cxt!=null)
+				return cxt ;
+			
+			cxt = new UAContext(this.getPrj());
+			scriptEng = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
+			// ;
+			scriptEng.put("$task", this);
+			return cxt ;
+		}
 	}
 
 	private void taskRunInt()
@@ -361,31 +394,5 @@ public class Task
 	{
 
 	}
-	//
-	// private transient boolean bInited = false;
-	//
-	// public void runInLoop(UAPrj p)
-	// {
-	// if (!bInited)
-	// {
-	// try
-	// {
-	// // runInit(p);
-	// }
-	// finally
-	// {
-	// bInited = true;
-	// }
-	// return;
-	// }
-	//
-	// // if(!this.bInitScriptOk)
-	// // return ;
-	// //
-	// // if(System.currentTimeMillis()-lastRunDT<intervalMS)
-	// // return ;
-	// //
-	// // this.runInterval(p) ;
-	// }
-
+	
 }

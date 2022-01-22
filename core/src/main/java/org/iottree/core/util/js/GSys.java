@@ -14,11 +14,11 @@ public class GSys
 {
 	boolean bPrintOn = true;
 	
-	UAPrj prj = null ;
+	//UAPrj prj = null ;
 	
-	public GSys(UAPrj p)
+	public GSys()//(UAPrj p)
 	{
-		this.prj = p ;
+		//this.prj = p ;
 	}
 
 	@HostAccess.Export
