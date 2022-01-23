@@ -339,8 +339,46 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		JSONObject jo = this.getExtAttrJO() ;
 		if(jo!=null)
 		{
-			w.write(",\"ext_attr\":" + jo.toString() );
+			w.write(",\"ext\":" + jo.toString() );
 		}
+
+		if(renderJsonTags(w, tag2lastdt, g_lastdt))
+			bchg = true;
+		
+		if(renderJsonSubs(w, tag2lastdt))
+			bchg = true ;
+		
+		w.write("}");
+		return bchg;
+	}
+
+	private boolean renderJsonSubs(Writer w, HashMap<UATag, Long> tag2lastdt) throws IOException
+	{
+		boolean bchg =false;
+		boolean bfirst;
+		List<UANodeOCTagsCxt> subtgs = this.getSubNodesCxt() ;
+		if(subtgs!=null&&subtgs.size()>0)
+		{
+			w.write(",\"subs\":[");
+			bfirst = true;
+			for (UANodeOCTagsCxt subtg : subtgs)
+			{
+				if (!bfirst)
+					w.write(",");
+				else
+					bfirst = false;
+
+				if(subtg.CXT_renderJson(w, tag2lastdt, null))
+					bchg=true;
+			}
+			w.write("]");
+		}
+		return bchg;
+	}
+
+	private boolean renderJsonTags(Writer w, HashMap<UATag, Long> tag2lastdt, long g_lastdt) throws IOException
+	{
+		boolean bchg=false;
 		w.write(",\"tags\":[");
 		boolean bfirst = true;
 		List<UATag> tags = this.listTags();
@@ -419,35 +457,16 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 						+ Convert.plainToJsStr(str_err)+"\"" );
 			}
 
-			jo = tg.getExtAttrJO() ;
+			JSONObject jo = tg.getExtAttrJO() ;
 			if(jo!=null)
 			{
-				w.write(",\"ext_attr\":" + jo.toString() );
+				w.write(",\"ext\":" + jo.toString() );
 			}
 			
 			w.write("}");
 			//bchged = true;
 		}
 		w.write("]");
-		
-		List<UANodeOCTagsCxt> subtgs = this.getSubNodesCxt() ;
-		if(subtgs!=null&&subtgs.size()>0)
-		{
-			w.write(",\"subs\":[");
-			bfirst = true;
-			for (UANodeOCTagsCxt subtg : subtgs)
-			{
-				if (!bfirst)
-					w.write(",");
-				else
-					bfirst = false;
-
-				if(subtg.CXT_renderJson(w, tag2lastdt, null))
-					bchg=true;
-			}
-			w.write("]");
-		}
-		w.write("}");
 		return bchg;
 	}
 

@@ -344,19 +344,29 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	
 	public String getNodePathCxt()
 	{
+		return getNodePathCxt(".");
+	}
+	
+	public String getNodePathCxt(String spliter)
+	{
 		UANode p = this.getParentNode() ;
 		if(p==null)
 		{
-			return "."+this.getName() ;
+			return this.getName() ;
 		}
-		String ppn = p.getNodePathCxt() ;
-		return ppn+"."+this.getName();
+		String ppn = p.getNodePathCxt(spliter) ;
+		return ppn+spliter+this.getName();
 	}
 	
 	public String getNodeCxtPathIn(UANode tn)
 	{
-		String pnp = tn.getNodePathCxt() ;
-		String np = this.getNodePathCxt() ;
+		return getNodeCxtPathIn(tn,".") ;
+	}
+	
+	public String getNodeCxtPathIn(UANode tn,String spliter)
+	{
+		String pnp = tn.getNodePathCxt(spliter) ;
+		String np = this.getNodePathCxt(spliter) ;
 		//System.out.println(this.getClass().getName()+" np="+np+"   "+tn.getClass().getName()+"  pnp="+pnp);
     	return np.substring(pnp.length()+1) ;
 	}

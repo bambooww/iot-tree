@@ -62,7 +62,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
 <b title="<%=n.getNodePathTitle()%>"> <%=n.getNodePath() %> </b>
-<input type='button' value='run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" />
+<input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" />
 
 <table border='1' style="height:90%;width:100%">
  <tr height="75%">

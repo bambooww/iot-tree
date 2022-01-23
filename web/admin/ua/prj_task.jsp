@@ -218,8 +218,7 @@ function show_script()
 						 jstxt='' ;
 					 taskact_js.op='act_js_write';
 					 taskact_js.jstxt=jstxt;
-					 taskact_js = {prjid:prjid,op:'act_js_write',taskid:taskid,actid:actid,jstp:jstp,jstxt:jstxt} ;
-						
+					 
 						send_ajax("prj_task_ajax.jsp",taskact_js,function(bsucc,ret){
 							if(bsucc&&ret.indexOf('succ')!=0)
 							{

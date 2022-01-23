@@ -10,6 +10,7 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
+	String filter = request.getParameter("filter") ;
 	//String op = request.getParameter("op");
 	String node_path = request.getParameter("path");
 	String tp = request.getParameter("tp") ;
@@ -42,7 +43,14 @@
 		ntcxt.CXT_renderTagsJson(out, false, -1) ;
 		break ;
 	default:
-		ntcxt.CXT_renderJson(out) ;
+		if(Convert.isNotNullEmpty(filter))
+		{
+			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(out,ntcxt,filter) ;
+		}
+		else
+		{
+			ntcxt.CXT_renderJson(out) ;
+		}
 		break ;
 	}
 	
