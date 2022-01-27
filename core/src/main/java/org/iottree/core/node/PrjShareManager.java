@@ -88,7 +88,7 @@ public class PrjShareManager
 		if(prj==null)
 			return null ;
 		
-		File f = new File(prj.getRepSubDir(),"node_share.xml") ;
+		File f = new File(prj.getPrjSubDir(),"node_share.xml") ;
 		if(!f.exists())
 			return null ;
 		
@@ -112,7 +112,7 @@ public class PrjShareManager
 		if(prj==null)
 			throw new Exception("no prj found") ;
 		
-		File f = new File(prj.getRepSubDir(),"node_share.xml") ;
+		File f = new File(prj.getPrjSubDir(),"node_share.xml") ;
 		
 		XmlData tmpxd = ps.toXmlData() ;
 		XmlData.writeToFile(tmpxd, f);

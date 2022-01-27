@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,7 @@ import org.iottree.core.UADev;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UATagG;
+import org.iottree.core.basic.JSObMap;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Document;
@@ -35,7 +37,7 @@ import org.w3c.dom.Element;
  * 
  * @author Jason Zhu
  */
-public class DataClass
+public class DataClass extends JSObMap
 {
 	public static final String ATTRN_EXT_ATTR_NAMES = "ext_attr_names" ;
 	public static final String ATTRN_EXT_ATTR_TITLES = "ext_attr_titles" ;
@@ -58,6 +60,9 @@ public class DataClass
 	 * default title
 	 */
 	String title = null ;
+	
+	
+	boolean bEnable=true;
 		/**
 	 * 
 	 */
@@ -156,6 +161,7 @@ public class DataClass
 		if(Convert.isNullOrEmpty(name))
 			return false;
 		title = ele.getAttribute("title") ;
+		bEnable = !"false".equals(ele.getAttribute("__enable")) ;
 		
 		version = ele.getAttribute("version");
 		
@@ -257,6 +263,15 @@ public class DataClass
 		return this.getNameBySysLan(this.name) ;
 	}
 
+	public boolean isClassEnable()
+	{
+		return this.bEnable ;
+	}
+	
+	public void setClassEnable(boolean b)
+	{
+		this.bEnable = b ;
+	}
 	
 	public String getNameBySysLan(String defv)
 	{
@@ -344,6 +359,11 @@ public class DataClass
 	public String getExtAttrValue(String pn)
 	{
 		return extNameVals.get(pn) ;
+	}
+	
+	public Set<String> getExtAttrNames()
+	{
+		return this.extNameVals.keySet() ;
 	}
 	
 	public boolean hasExtAttr(String pn)
@@ -547,11 +567,13 @@ public class DataClass
 		tw.write("<dd_class id=\""+this.getClassId()+"\" name=\""+this.getClassName()+"\"") ;
 		if(title!=null)
 			tw.write(" title=\""+this.title+"\"") ;
+		if(!bEnable)
+			tw.write(" __enable=\"false\"") ;
 		for(Map.Entry<String, String> n2v:extNameVals.entrySet())
 		{
 			String pn = n2v.getKey() ;
 			String pv = n2v.getValue() ;
-			if("id".equals(pn)||"name".equals(pn)||"title".equals(pn))
+			if("id".equals(pn)||"name".equals(pn)||"title".equals(pn)||"__enable".equals(pn))
 				continue ;
 			tw.write(" "+pn+"=\"");
 			tw.write(Convert.plainToHtml(pv));
@@ -567,6 +589,45 @@ public class DataClass
 			}
 		}
 		tw.write("</dd_class>") ;
-		
+		tw.flush();
+	}
+	
+	
+	@Override
+	public Object JS_get(String  key)
+	{
+		switch(key)
+		{
+		case "_id":
+			return this.classId;
+		case "_name":
+			return this.name ;
+		case "_title":
+			return this.title ;
+		case "_names":
+			return this.getExtAttrNames() ;
+		}
+		DataNode dn = this.getNodeByName(key) ;
+		if(dn!=null)
+			return dn ;
+		return this.getExtAttrValue(key) ;
+	}
+	
+	@Override
+	public List<Object> JS_names()
+	{
+		ArrayList<Object> ss = new ArrayList<>() ;
+		ss.add("_id") ;
+		ss.add("_name") ;
+		ss.add("_names") ;
+		ss.add("_title") ;
+		ss.addAll(getExtAttrNames()) ;
+		List<DataNode> dns = this.getRootNodes() ;
+		if(dns!=null)
+		{
+			for(DataNode dn:dns)
+				ss.add(dn.getName()) ;
+		}
+		return ss ;
 	}
 }

@@ -14,6 +14,7 @@ import javax.script.ScriptException;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
+import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -454,14 +455,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	 * 
 	 * @return
 	 */
-	public File getRepSubDir()
+	public File getPrjSubDir()
 	{
 		return UAManager.getPrjFileSubDir(this.getId());
 	}
 
 	public File getSaverDir()
 	{
-		return getRepSubDir();
+		return getPrjSubDir();
 	}
 
 	File getRepFile()
@@ -628,6 +629,110 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		return this.id;
 	}
 
+	private File getLocalTagsValFile()
+	{
+		return new File(this.getSaverDir(),"local_tags_val.xml") ;
+	}
+	
+
+	private transient XmlData localTagVals = null ;
+	
+	private transient long localTagsLastRun = -1 ;
+	
+	private void loadLocalTagsValue() throws Exception
+	{
+		File f = getLocalTagsValFile() ;
+		localTagVals = XmlData.readFromFile(f) ;
+		List<UATag> localtags = listTagsLocalAll() ;
+		for(UATag tag:localtags)
+		{
+			if(tag.isLocalAutoSave() && localTagVals!=null)
+			{
+				String pn = tag.getNodePathCxt();
+				Object objv = localTagVals.getParamValue(pn) ;
+				if(objv!=null)
+				{
+					tag.RT_setValStr(""+objv);
+					continue;
+				}
+			}
+			
+			String strv = tag.getLocalDefaultVal() ;
+			if(strv!=null)
+				tag.RT_setValStr(strv);
+			
+		}
+	}
+	
+	
+	private void saveLocalTagsValue() throws Exception
+	{
+		File f = getLocalTagsValFile() ;
+		XmlData xd = new XmlData() ;
+		List<UATag> localtags = listTagsLocalAll() ;
+		boolean bchged = false;
+		
+		for(UATag tag:localtags)
+		{
+			if(!tag.isLocalAutoSave())
+				continue ;
+			
+			UAVal uav = tag.RT_getVal() ;
+			if(uav==null||!uav.isValid())
+				continue ;
+			
+			Object v = uav.getObjVal() ;
+			if(v==null)
+				continue ;
+			String defv = tag.getLocalDefaultVal() ;
+			if(defv!=null&&defv.equals(v.toString()))
+				continue ;
+			String pn = tag.getNodePathCxt() ;
+			if(!bchged)
+			{
+				if(localTagVals!=null)
+				{
+					Object oldv = localTagVals.getParamValue(pn) ;
+					if(!v.equals(oldv))
+					{
+						bchged = true;
+					}
+				}
+				else
+				{
+					bchged=true;
+				}
+			}
+			xd.setParamValue(pn, v);
+		}
+		
+		if(bchged)
+		{//chged will save
+			XmlData.writeToFile(xd, f);
+			localTagVals = xd ;
+		}
+	}
+	
+	private void runLocalTagsSave()
+	{
+		if(System.currentTimeMillis()-localTagsLastRun<5000)
+			return ;
+		
+		try
+		{
+			saveLocalTagsValue();
+		}
+		catch(Exception e)
+		{
+			if(log.isDebugEnabled())
+				log.debug("save local tags value err", e);
+		}
+		finally
+		{
+			localTagsLastRun = System.currentTimeMillis();
+		}
+	}
+	
 	// @Override
 	// public List<ResDir> getResCxts()
 	// {
@@ -677,6 +782,16 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 					continue;
 				this.setSysTag("_task_"+n, "task is running or not","",ValTP.vt_bool) ;
 			}
+		}
+		
+		try
+		{
+			//load local tags
+			loadLocalTagsValue();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -799,6 +914,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		{
 			try
 			{
+				RT_init(true, true) ;
+				
 				//old context with js env will rebuild
 				RT_reContext();
 				
@@ -841,6 +958,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 					
 //					et = System.currentTimeMillis() ;
 //					System.out.println("run flush cost="+(et-st));
+					
+					runLocalTagsSave();
 				}
 			}
 			catch ( Exception e)
@@ -1129,6 +1248,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		public String get_rt_json() throws IOException
 		{
 			return get_rt_json(-1L) ;
+		}
+		
+		public String filter_rt_by_extname(String mid_ext,String tag_ext) throws IOException
+		{
+			StringWriter sw = new StringWriter();
+			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(sw, UAPrj.this, mid_ext,tag_ext);
+			return sw.toString();
+			
 		}
 	}
 

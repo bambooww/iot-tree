@@ -56,12 +56,16 @@ dlg.resize_to(600,400);
 </script>
 <body>
 <form class="layui-form" action="">
-
+<blockquote class="layui-elem-quote ">
+<div>Node Path:<%=path %></div>
+</blockquote>
 <%
 String dc_names = "" ;
 for(DataClass dc:pdc.getDataClassAll())
 {
 	if(!dc.isBindFor(node.getNodeTp()))
+		continue ;
+	if(!dc.isClassEnable())
 		continue ;
 	dc_names+=",'"+dc.getClassName()+"'" ;
 	boolean bmulti = dc.isBindMulti() ;
@@ -70,10 +74,7 @@ for(DataClass dc:pdc.getDataClassAll())
 		tp = "checkbox" ;
 	
 %>
-
-<blockquote class="layui-elem-quote ">
-<div><%=dc.getClassTitle() %></div>
-</blockquote>
+<div style="background-color: grey;top:0px;margin:0"><%=dc.getClassTitle() %></div>
 <div class="layui-form-item" id="dc_<%=dc.getClassName() %>" dc_multi="<%=bmulti %>" >
   <div class="layui-input-block"  >
 <%
@@ -86,7 +87,7 @@ for(DataClass dc:pdc.getDataClassAll())
 </span>
 <%
 	}
-%>
+%> <button onclick="clear_sel('<%=dc.getClassName() %>')">Clear</button>
     </div>
   </div>
 <%
@@ -105,6 +106,7 @@ var form = null ;
 var cur_pn= null ;
 
 var jstr = <%=jstr%> ;
+
 
 function set_val_in_dc(dc)
 {
@@ -149,6 +151,21 @@ layui.use('form', function(){
 });
 
 
+function clear_sel(dc)
+{
+	
+	event.preventDefault() || (event.returnValue = false);
+	var ob = $("#dc_"+dc) ;
+	ob.find("input[type=checkbox]:checked").each(function(){
+		$(this).prop("checked",false) ;
+	}) ;
+	
+	ob.find("input[type=radio]:checked").each(function(){
+		$(this).prop("checked",false) ;
+	}) ;
+	form.render();
+}
+
 function get_val_in_dc(dc)
 {
 	var ob = $('#dc_'+dc);
@@ -176,16 +193,23 @@ function get_val_in_dc(dc)
 function do_submit(cb)
 {
 	var ret={} ;
+	var bgit = false;
 	for(var dcn of dc_names)
 	{
 		var v = get_val_in_dc(dcn) ;
 		if(v==null)
 			continue ;
 		ret[dcn] = v ;
+		bgit=true;
 	}
 	
+	if(!bgit)
+		ret="" ;
+	else
+		ret = JSON.stringify(ret);
+	
 	//console.log(ret) ;
-	cb(true,{jstr:JSON.stringify(ret)});
+	cb(true,{jstr:ret});
 	
 }
 </script>

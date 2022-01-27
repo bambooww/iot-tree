@@ -48,12 +48,13 @@ case "edit_dc":
 case "add_dc":
 	String bind_for = request.getParameter("bind_for") ;
 	boolean bind_m = "multi".equals(request.getParameter("bind_style")) ;
+	boolean benable = !"false".equals(request.getParameter("enable")) ;
 	try
 	{
 		if(dc==null)
-			dc = pdc.addDataClass(name, title,bind_for,bind_m,null) ;
+			dc = pdc.addDataClass(name, title,benable,bind_for,bind_m,null) ;
 		else
-			pdc.updateDataClass(classid, name, title,bind_for,bind_m,null) ;
+			pdc.updateDataClass(classid, name, title,benable,bind_for,bind_m,null) ;
 		
 		out.print("succ") ;
 	}

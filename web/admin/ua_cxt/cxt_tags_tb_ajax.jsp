@@ -163,12 +163,20 @@ if(bloc&&!tag.isSysTag())
    <%
 	if(bloc)
 	{
+		//String ss = "✔";
+		
 %>
         <input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/>
 <%
 	}
+   
+   String t = "" ;
+   if(tag.isLocalTag())
+	   t = "L" ;
+   else if(tag.isMidExpress())
+	   t = "M" ;
 %></td>
-        <td style="text-align: center;"><%=(tag.isMidExpress()?"✔":"") %></td>
+        <td style="text-align: center;"><%=t %></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>" 
 <%
 if(bloc&&!tag.isSysTag())
@@ -208,9 +216,13 @@ if(bloc&&!tag.isSysTag())
 
 String ext_str = tag.getExtAttrStr() ;
 String ext_color = "" ;
+String tagt = "Set extended properties" ;
 if(Convert.isNotNullEmpty(ext_str))
+{
 	ext_color="color:#17c680" ;
-%>&nbsp;	&nbsp;<a href="javascript:bind_tag_ext('<%=tagpath%>')" title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
+	tagt = ext_str.replaceAll("\\r", "&#10;").replaceAll("\\n", "&#13;").replaceAll("\"","&#34;") ;
+}
+%>&nbsp;	&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
         </td>
         
       </tr>

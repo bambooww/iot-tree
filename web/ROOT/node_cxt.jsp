@@ -10,7 +10,8 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
-	String filter = request.getParameter("filter") ;
+	String mid_ext = request.getParameter("mid_ext") ;
+	String tag_ext = request.getParameter("tag_ext") ;
 	//String op = request.getParameter("op");
 	String node_path = request.getParameter("path");
 	String tp = request.getParameter("tp") ;
@@ -43,9 +44,9 @@
 		ntcxt.CXT_renderTagsJson(out, false, -1) ;
 		break ;
 	default:
-		if(Convert.isNotNullEmpty(filter))
+		if(Convert.isNotNullEmpty(mid_ext)||Convert.isNotNullEmpty(tag_ext))
 		{
-			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(out,ntcxt,filter) ;
+			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(out,ntcxt,mid_ext,tag_ext) ;
 		}
 		else
 		{

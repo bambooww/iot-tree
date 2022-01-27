@@ -320,7 +320,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		boolean bchg=false;
 		//long maxdt=-1 ;
 		
-		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\"");
+		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"tp\":\""+this.getNodeTp()+"\"");
 		if (extpms != null)
 		{
 			for (Map.Entry<String, Object> n2v : extpms.entrySet())
@@ -385,38 +385,11 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		for (UATag tg : tags)
 		{
 			UAVal val = tg.RT_getVal();
-			// if(val==null)
-			// continue ;
-
-			boolean bvalid = false;
-			String strv = "";
-			long dt = -1;
 			long dt_chg = -1;
-			String str_err = "";
-
+			
 			if (val != null)
-			{
-				bvalid = val.isValid();
-				Object v = val.getObjVal();
-				strv = val.getStrVal(tg.getDecDigits());
-				dt = val.getValDT();// Convert.toFullYMDHMS(new
-									// Date(val.getValDT())) ;
-				dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
-											// Date(val.getValChgDT())) ;
-				//if(dt>maxdt)
-				//	maxdt = dt ;
-//				if(dt_chg>maxdt)
-//					maxdt = dt_chg ;
+				dt_chg = val.getValChgDT();
 				
-				str_err = val.getErr();
-				if (str_err == null)
-					str_err = "";
-			}
-			else
-			{
-				dt_chg = System.currentTimeMillis();
-			}
-
 			if(tag2lastdt!=null)
 			{
 				Long lastdt = tag2lastdt.get(tg) ;
@@ -438,33 +411,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				w.write(",");
 			else
 				bfirst = false;
-			// w.write("\""+tg.getName()+"\":");
-			w.write("{\"n\":\"");
-			w.write(tg.getName());
-			ValTP vtp = tg.getValTp();
-			if (bvalid)
-			{
-				if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
-					w.write("\",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
-							+ ",\"chgdt\":" + dt_chg );
-				else
-					w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":" + dt
-							+ ",\"chgdt\":" + dt_chg );
-			}
-			else
-			{
-				w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-						+ Convert.plainToJsStr(str_err)+"\"" );
-			}
-
-			JSONObject jo = tg.getExtAttrJO() ;
-			if(jo!=null)
-			{
-				w.write(",\"ext\":" + jo.toString() );
-			}
 			
-			w.write("}");
-			//bchged = true;
+			tg.renderJson(null,w);
 		}
 		w.write("]");
 		return bchg;

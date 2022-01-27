@@ -56,7 +56,7 @@
 
 #### <a doc_path="cn/doc/case/index.md" >6 案例和最佳实践</a>
 ##### <a doc_path="cn/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;6.1 简单的灯光控制</a>
-##### <a doc_path="cn/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;6.2 工业现场自动化系统</a>
+##### <a doc_path="cn/doc/case/example_auto.md" target="main">&nbsp;&nbsp;&nbsp;6.2 工业现场自动化系统</a>
 
 
 

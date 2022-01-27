@@ -134,7 +134,7 @@ public class ConnManager
 	 */
 	private File getConnFile(UAPrj rep)
 	{
-		File subdir = rep.getRepSubDir() ;
+		File subdir = rep.getPrjSubDir() ;
 		if(!subdir.exists())
 			subdir.mkdirs() ;
 		return new File(subdir,"conns.xml") ;
@@ -431,7 +431,7 @@ public class ConnManager
 	
 	private File getConnJoinFile(UAPrj rep)
 	{
-		File subdir = rep.getRepSubDir() ;
+		File subdir = rep.getPrjSubDir() ;
 		if(!subdir.exists())
 			subdir.mkdirs() ;
 		return new File(subdir,"conn_joins.xml") ;

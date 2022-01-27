@@ -17,7 +17,11 @@
 		String title = request.getParameter("title");
 		String desc = request.getParameter("desc");
 		String addr = request.getParameter("addr");
-		 
+		
+		boolean bloc = "true".equalsIgnoreCase(request.getParameter("bloc")) ;
+		String loc_defv = request.getParameter("loc_defv") ;
+		boolean bloc_autosave = "true".equalsIgnoreCase(request.getParameter("bloc_autosave")) ;
+		
 		boolean bmid = "true".equalsIgnoreCase(request.getParameter("mid")) ;
 
 		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
@@ -32,7 +36,9 @@
 		
 		String trans = request.getParameter("trans") ;
 
-		UATag ret = nt.addOrUpdateTag(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
+		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
+		ret.asLocal(bloc, loc_defv, bloc_autosave);
+		nt.save();
 		return ret ;
 	}
 	

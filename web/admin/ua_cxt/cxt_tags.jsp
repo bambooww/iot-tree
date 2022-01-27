@@ -109,12 +109,12 @@ td
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_tag_ext('<%=node_tags.getNodePath() %>')" title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_ext('<%=node_tags.getNodePath() %>')" id="node_ext_<%=node_tags.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%
- 	if(bdevdef||!ref_locked)
+ 	if(true) //(bdevdef||!ref_locked)
  	{
  %>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
@@ -141,7 +141,7 @@ td
 <%
 	}
 %></th>
-        <th >Mid</th>
+        <th style="width:15px;">T</th>
     	<th sort_by="name">Tag</th>
     	<th sort_by="title">Title</th>
         <th sort_by="addr">Address</th>
@@ -576,12 +576,11 @@ function add_or_modify_tag(id,bmid)
 	var tt = "Modify Tag";
 	if(id==null||id=='')
 		tt = "Add Tag" ;
+	var u = "./tag_edit.jsp?path="+path+"&id="+id
 	if(bmid)
-		bmid = true;
-	else
-		bmid = false;
-		dlg.open("./tag_edit.jsp?path="+path+"&id="+id+"&mid="+bmid,
-				{title:tt,w:'500px',h:'400px'},
+		u+="&mid=true";
+
+		dlg.open(u,{title:tt,w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
@@ -913,7 +912,7 @@ function on_tag_mouseup(tagid)
 	tag_mdown= false;
 }
 
-function bind_tag_ext(path)
+function bind_ext(path)
 {
 	dlg.open("../util/prj_dict_bind_selector.jsp?path="+path,
 			{title:"Ext Binder",w:'500px',h:'400px'},
@@ -932,15 +931,20 @@ function bind_tag_ext(path)
 						 ret.op = "set_ext_attr";
 						 //ret.id = id ;
 						 console.log(ret);
-						 send_ajax('./cxt_tags_ext_attr_ajax.jsp',ret,function(bsucc,ret)
+						 send_ajax('./cxt_node_ext_attr_ajax.jsp',ret,function(bsucc,rr)
 							{
-								if(!bsucc || ret.indexOf('succ')<0)
+								if(!bsucc || rr.indexOf('succ=')<0)
 								{
-									dlg.msg(ret);
+									dlg.msg(rr);
 									return ;
 								}
 								dlg.close();
-								document.location.href=document.location.href;
+								var id = rr.substring(5) ;
+								if(ret.jstr)
+									$("#node_ext_"+id).css("color","#17c680") ;
+								else
+									$("#node_ext_"+id).css("color","#111111") ;
+								//document.location.href=document.location.href;
 							},false);
 							
 						 

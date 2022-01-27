@@ -10,6 +10,8 @@ import java.util.*;
 import javax.servlet.jsp.PageContext;
 
 import org.iottree.core.Config;
+import org.iottree.core.UANode;
+import org.iottree.core.basic.JSObMap;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 
@@ -18,7 +20,7 @@ import org.w3c.dom.Element;
  * 
  * @author Jason Zhu
  */
-public class DataNode implements Comparable<DataNode>
+public class DataNode extends JSObMap implements Comparable<DataNode>
 {
 	/**
 	 * name
@@ -370,4 +372,35 @@ public class DataNode implements Comparable<DataNode>
 		return this.orderNo - o.orderNo;
 	}
 
+	public Object JS_get(String  key)
+	{
+		switch(key)
+		{
+		case "_name":
+			return this.name ;
+		case "_title":
+			return this.title ;
+		}
+		String tmps = this.getAttr(key) ;
+		if(tmps!=null)
+			return tmps ;
+		return this.getChildNodeByName(key) ;
+	}
+	
+	public List<Object> JS_names()
+	{
+		ArrayList<Object> ss = new ArrayList<>() ;
+		ss.add("_name") ;
+		ss.add("_title") ;
+		for(String tmps:this.getAttrNames())
+			ss.add(tmps) ;
+		
+		List<DataNode> subns = this.getChildNodes() ;
+		if(subns!=null)
+		{
+			for(DataNode n:subns)
+				ss.add(n.getName()) ;
+		}
+		return ss ;
+	}
 }

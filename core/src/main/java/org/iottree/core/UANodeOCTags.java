@@ -16,6 +16,9 @@ public abstract class UANodeOCTags extends UANodeOC
 {
 	@data_obj(obj_c = UATag.class)
 	List<UATag> tags = new ArrayList<>();
+	
+	//@data_obj(param_name = "local_tags",obj_c = UATag.class)
+	//List<UATag> localTags = new ArrayList<>();
 
 	// - for system tags
 	@data_obj(param_name = "sys_tags", obj_c = UATag.class)
@@ -70,6 +73,8 @@ public abstract class UANodeOCTags extends UANodeOC
 		rets.addAll(tags);
 		if (sysTags != null)
 			rets.addAll(sysTags);
+//		if(localTags!=null)
+//			rets.addAll(localTags);
 		return rets;
 	}
 
@@ -140,8 +145,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			}
 		}
 	}
-
-	public UATag addOrUpdateTag(String tagid, boolean bmid, String name, String title, String desc, String addr,
+	
+	public UATag addOrUpdateTagInMem(String tagid, boolean bmid, String name, String title, String desc, String addr,
 			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, String trans) throws Exception
 	{
 		UAUtil.assertUAName(name);
@@ -177,8 +182,17 @@ public abstract class UANodeOCTags extends UANodeOC
 				d.setTagNor(name, title, desc, addr, vt, dec_digits, canw, srate);
 		}
 		d.setValTranser(trans);
-		save();
+		//save();
 		return d;
+	}
+
+	public UATag addOrUpdateTag(String tagid, boolean bmid, String name, String title, String desc, String addr,
+			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, String trans) throws Exception
+	{
+		UATag tag = addOrUpdateTagInMem(tagid, bmid, name, title, desc, addr,
+				vt, dec_digits, canw, srate, trans) ;
+		save();
+		return tag;
 	}
 
 	/**
@@ -427,6 +441,11 @@ public abstract class UANodeOCTags extends UANodeOC
 	{
 		return tags;
 	}
+	
+//	public List<UATag> getLocalTags()
+//	{
+//		return localTags ;
+//	}
 
 	/**
 	 * list local mid tags
@@ -447,29 +466,44 @@ public abstract class UANodeOCTags extends UANodeOC
 	public final List<UATag> listTagsAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
-		listTagsAll(rets, true, false);
+		listTagsAll(rets, true, false,false);
 		return rets;
 	}
 
 	public final List<UATag> listTagsNorAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
-		listTagsAll(rets, false, false);
+		listTagsAll(rets, false, false,false);
+		return rets;
+	}
+	
+	public final List<UATag> listTagsLocalAll()
+	{
+		ArrayList<UATag> rets = new ArrayList<>();
+		listTagsAll(rets, false, false,true);
 		return rets;
 	}
 
 	public final List<UATag> listTagsMidAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
-		listTagsAll(rets, true, true);
+		listTagsAll(rets, true, true,false);
 		return rets;
 	}
 
-	private final void listTagsAll(List<UATag> tgs, boolean include_sys, boolean bmid_only)
+	private final void listTagsAll(List<UATag> tgs, boolean include_sys, boolean bmid_only,boolean blocal_only)
 	{
 		List<UATag> tags = null;
 
-		if (bmid_only)
+		if(blocal_only)
+		{
+			for (UATag tg : listTags())
+			{
+				if (tg.isLocalTag())
+					tgs.add(tg);
+			}
+		}
+		else if (bmid_only)
 		{
 			for (UATag tg : listTags())
 			{
@@ -494,7 +528,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		{
 			if (n instanceof UANodeOCTags)
 			{
-				((UANodeOCTags) n).listTagsAll(tgs, include_sys, bmid_only);
+				((UANodeOCTags) n).listTagsAll(tgs, include_sys, bmid_only,blocal_only);
 			}
 		}
 	}
@@ -573,17 +607,19 @@ public abstract class UANodeOCTags extends UANodeOC
 		{
 			return null;
 		}
+		
 		ArrayList<DevAddr> addrs = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		for (UATag tag : tags)
 		{
-			if (tag.isMidExpress())
+			if (tag.isMidExpress()||tag.isLocalTag())
 				continue;
 			DevAddr da = tag.getDevAddr(sb);
 			if (da == null)
 				continue;
 			addrs.add(da);
 		}
+		
 		return addrs;
 	}
 

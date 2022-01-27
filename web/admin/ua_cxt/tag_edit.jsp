@@ -19,12 +19,16 @@
 	 if(!Convert.checkReqEmpty(request, out, "path"))
 			return ;
 	boolean bmid = "true".equalsIgnoreCase(request.getParameter("mid")) ;
+	//boolean blocal= "true".equalsIgnoreCase(request.getParameter("local")) ;
 	String path = request.getParameter("path") ;
 	String id = request.getParameter("id") ;
 	UATag tag = null ;
 	String name= "" ;
 	String title = "" ;
 	String addr = "" ;
+	boolean blocal=false;
+	String local_defval = "" ;
+	boolean local_autosave = false;
 	UAVal.ValTP valtp = null ;
 	String valtp_str = "" ;
 	long srate = 200;
@@ -58,6 +62,9 @@
  		desc = tag.getDesc() ;
  		bmid = tag.isMidExpress();
  		addr = tag.getAddress() ;
+ 		blocal = tag.isLocalTag() ;
+ 		local_defval = tag.getLocalDefaultVal() ;
+ 		local_autosave = tag.isLocalAutoSave() ;
  		valtp = tag.getValTpRaw() ;
  		if(valtp!=null)
  			valtp_str = ""+valtp.getInt() ;
@@ -88,7 +95,7 @@
 
 </style>
 <script>
-dlg.resize_to(600,500);
+dlg.resize_to(800,500);
 </script>
 
 </head>
@@ -96,7 +103,7 @@ dlg.resize_to(600,500);
 <form class="layui-form" action="">
  <table style="width:100%	">
    <tr>
-     <td width="80%">
+     <td width="90%">
 	<input type="hidden" id="id" name="name" value="<%=html_str(id)%>">
 	  <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
@@ -108,19 +115,6 @@ dlg.resize_to(600,500);
 	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
 	  </div>
 	  
-  </div>
-
-    <div class="layui-form-item">
-    <label class="layui-form-label"><%=(bmid?"Express":"Address") %>:</label>
-    <div class="layui-input-block">
-      <input type="text"  id="addr"  name="addr"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-    </div>
-  </div>
-    <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
-      <input type="text"  id="desc"  name="desc"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
-    </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
@@ -137,9 +131,55 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     </div>
     <div class="layui-form-mid">Decimal Digits:</div>
     <div class="layui-input-inline" style="width: 50px;">
-      <input type="text" id="dec_digits" name="dec_digits" placeholder="" autocomplete="off" class="layui-input">
+      <input type="text" id="dec_digits" name="dec_digits" class="layui-input">
     </div>
+    <div class="layui-form-mid">R/W:</div>
+    <div class="layui-input-inline" style="width: 150px;">
+      <select id="canw"  name="canw" class="layui-input">
+        <option value="false">Read Only</option>
+        <option value="true">Read/Write</option>
+      </select>
     </div>
+  </div>
+<%
+
+String loc_set="display:none" ;
+	String loc_autosave_chk="" ;
+	String loc_chked = "" ;
+	if(blocal)
+	{
+		loc_chked= "checked=checked" ;
+		loc_set="" ;
+	}
+	if(local_autosave)
+		loc_autosave_chk = "checked=checked" ;
+%>
+    <div class="layui-form-item">
+    <div class="layui-form-label">Local</div>
+	  <div class="layui-input-inline" style="width: 100px;">
+	   <input type="checkbox" id="local" name="local" <%=loc_chked%> lay-skin="switch"  lay-filter="local" class="layui-input">
+	  </div>
+	  <div id="local_setting" style="<%=loc_set%>">
+    <label class="layui-form-mid">DefaultVal</label>
+    <div class="layui-input-inline">
+      <input type="text"  id="local_defval"  name="local_defval"  class="layui-input" style="width: 150px;">
+    </div>
+    <div class="layui-form-mid">Auto Save</div>
+	  <div class="layui-input-inline" style="width: 80px;">
+	   <input type="checkbox" id="local_autosave" name="local_autosave" <%=loc_autosave_chk%> lay-skin="switch"  lay-filter="local_autosave" class="layui-input">
+	  </div>
+	</div>
+  </div>
+
+    <div class="layui-form-item" id="addr_setting">
+    <label class="layui-form-label"><%=(bmid?"Express":"Address") %>:</label>
+    <div class="layui-input-block">
+      <input type="text"  id="addr"  name="addr"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+  
+  
     
   <%--
    <div class="layui-form-item">
@@ -149,28 +189,29 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     </div>
   </div>
    --%>
-    <div class="layui-form-item">
-    <label class="layui-form-label">Client access</label>
-    <div class="layui-input-block">
-      <select id="canw"  name="canw" class="layui-input">
-        <option value="false">Read Only</option>
-        <option value="true">Read/Write</option>
-      </select>
-    </div>
-  </div>
-  <div class="layui-form-item">
+    
+
+  <div class="layui-form-item" id="transfer_setting">
     <label class="layui-form-label">Transfer</label>
     <div class="layui-input-block">
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
     </div>
   </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">Description:</label>
+    <div class="layui-input-block">
+      <input type="text"  id="desc"  name="desc"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+    </div>
+  </div>
   </td>
   <td>
-  <div class="btn-group">
-    <button onclick="on_new_tag()" >New</button>
-    <button onclick="on_copy_tag()">Copy</button>
-    <button>Delete</button>
+ <div class="layui-btn-container">
+    <button onclick="on_new_tag()"  class="layui-btn">&nbsp;New&nbsp;&nbsp;</button>
+    <button onclick="on_copy_tag()" class="layui-btn">&nbsp;Copy&nbsp;</button>
+    <button  class="layui-btn">Delete</button>
     </div>
+    
   </td>
   </tr>
   </table>
@@ -191,6 +232,26 @@ var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
 var canw = "<%=canw%>"
 var trans_dd = <%=trans%>;
+var bloc=<%=blocal%>
+var loc_devf="<%=html_str(local_defval)%>" ;
+var bloc_autosave = <%=local_autosave%> ;
+
+function update_form()
+{
+	var bloc = $("#local").prop("checked") ;
+	if(bloc)
+	{
+		$("#local_setting").css("display","") ;
+		$("#addr_setting").css("display","none") ;
+		$("#transfer_setting").css("display","none") ;
+	}
+	else
+	{
+		$("#local_setting").css("display","none") ;
+		$("#addr_setting").css("display","") ;
+		$("#transfer_setting").css("display","") ;
+	}
+}
 
 
 layui.use('form', function(){
@@ -206,7 +267,14 @@ layui.use('form', function(){
 	  $("#vt").val(vt) ;
 	  $("#srate").val(srate) ;
 	  $("#canw").val(canw) ;
+	  $("#local_defval").val(loc_devf) ;
 	  
+	  form.on('switch(local)', function(obj){
+		        var b = obj.elem.checked ;
+		  update_form();
+		  });
+	  
+	  update_form();
 	  form.render();
 });
 	
@@ -286,6 +354,10 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
+	var bloc = $("#local").prop("checked") ;
+	var loc_defv = get_input_val("local_defval") ;
+	var bloc_autosave = $("#local_autosave").prop("checked") ;
+	
 	var canw = get_input_val("canw",null)=="true";
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
@@ -293,7 +365,8 @@ function do_submit(cb)
 		dec_digits:get_input_val("dec_digits",-1,true),
 		srate:get_input_val("srate",100,true),
 		canw:canw,
-		trans:JSON.stringify(trans_dd)
+		trans:JSON.stringify(trans_dd),
+		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave
 		});
 	//var dbname=document.getElementById('db_name').value;
 	

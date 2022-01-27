@@ -24,6 +24,7 @@ PrjDataClass pdc = DictManager.getInstance().getPrjDataClassByPrjId(prjid) ;
 String id = request.getParameter("id") ;
 
 String name = "" ;
+boolean benable = true;
 String title = "" ;
 String desc = "" ;
 List<String> bind_for = null ;
@@ -42,7 +43,11 @@ if(Convert.isNotNullEmpty(id))
 	title = dc.getClassTitle() ;
 	bind_for = dc.getBindForList() ;
 	bind_m = dc.isBindMulti() ;
+	benable = dc.isClassEnable() ;
 }
+String chked = "" ;
+if(benable)
+	chked = "checked='checked'" ;
 %>
 <html>
 <head>
@@ -65,6 +70,10 @@ dlg.resize_to(600,400);
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="name" id="name" value="<%=name %>" class="layui-input"/>
     </div>
+    <div class="layui-form-mid">Enable</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label">Title</label>
@@ -81,7 +90,7 @@ dlg.resize_to(600,400);
 	{
 		String tmpn = DataClass.BIND_FOR[k] ;
 		String tmpt=  DataClass.BIND_FOR_TITLE[k] ;
-		String chked = "" ;
+		chked = "" ;
 		if(dc!=null&&dc.hasBindFor(tmpn))
 			chked="checked=checked" ;
 %>
@@ -170,7 +179,8 @@ function do_submit(cb)
 	var bind_style=$("input[name='bind_style']:checked").val();
 	if(!bind_style)
 		bind_style="" ;
-	cb(true,{name:n,title:tt,desc:desc,bind_for:bind_for,bind_style:bind_style});
+	var ben = $("#enable").prop("checked") ;
+	cb(true,{name:n,title:tt,enable:ben,desc:desc,bind_for:bind_for,bind_style:bind_style});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

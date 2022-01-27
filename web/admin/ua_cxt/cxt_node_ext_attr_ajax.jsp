@@ -37,7 +37,7 @@ case "set_ext_attr":
 	{
 		n.setExtAttrStr(jstr) ;
 		prj.save() ;
-		out.print("succ") ;
+		out.print("succ="+n.getId()) ;
 	}
 	catch(Exception e)
 	{

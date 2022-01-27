@@ -34,3 +34,9 @@ The installation package with JDK version is added under Windows environment, an
 
 
 
+
+### version 0.95.5
+Add local tag support. Local tag can exist as a global variable under the project node and is not associated with the driver under the channel. And automatic saving can be set.
+
+
+

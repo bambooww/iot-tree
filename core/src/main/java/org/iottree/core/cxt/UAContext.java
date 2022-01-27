@@ -26,6 +26,8 @@ import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.*;
 
 import org.iottree.core.*;
+import org.iottree.core.dict.DictManager;
+import org.iottree.core.dict.PrjDataClass;
 import org.iottree.core.plugin.AbstractPlugin;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -88,6 +90,10 @@ public class UAContext
 		scriptEng.put("$this", nodecxt);
 		scriptEng.put("$prj", prj);
 		
+		PrjDataClass pdc = DictManager.getInstance().getPrjDataClassByPrjId(prj.getId()) ;
+		if(pdc!=null)
+			scriptEng.put("$dict", pdc);
+		
 		if(nodecxt instanceof IJSOb)
 		{
 			scriptEng.put("$this", ((IJSOb)nodecxt).getJSOb());
@@ -120,6 +126,8 @@ public class UAContext
 
 		engine.put("$debug",debug);
 		engine.put("$system",sys);
+		engine.put("$sys",sys);
+		engine.put("$dict",sys);
 		
 		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)

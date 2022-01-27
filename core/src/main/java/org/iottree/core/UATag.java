@@ -1,5 +1,7 @@
 package org.iottree.core;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,6 +67,29 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	String addr = "" ;
 	
 	private transient DevAddr devAddr = null ;
+	
+	/**
+	 * node local var tag or not
+	 * if true. Tag addr is ignore and this tag value will not related driver
+	 * it can be set default value,and it can be set writable, and be auto saved
+	 */
+	@data_val(param_name = "local")
+	boolean bLocal = false;
+	
+	/**
+	 * tag default value. it can be set for readonly tag.
+	 */
+	@data_val(param_name = "local_default")
+	String localDefaultVal = null ;
+	
+	/**
+	 * true will make this tag's value auto saved when value is set to changed
+	 * so,it will not lost last value when server is reboot.
+	 * 
+	 * it can be used for setup control parameter by user in hmi etc.
+	 */
+	@data_val(param_name = "local_auto_save")
+	boolean bLocalAutoSave = false;
 
 	
 	private UAVal.ValTP valTp = null;
@@ -354,6 +379,29 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public boolean isSysTag()
 	{
 		return this.getName().startsWith("_") ;
+	}
+	
+	public boolean isLocalTag()
+	{
+		return this.bLocal ;
+	}
+	
+	public String getLocalDefaultVal()
+	{
+		return this.localDefaultVal;
+	}
+	
+	public boolean isLocalAutoSave()
+	{
+		return this.bLocalAutoSave ;
+	}
+	
+	public UATag asLocal(boolean blocal,String defval,boolean autosave)
+	{
+		this.bLocal = blocal ;
+		this.localDefaultVal = defval ;
+		this.bLocalAutoSave = autosave ;
+		return this ;
 	}
 	
 	@Override
@@ -937,6 +985,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return dd.RT_writeVal(dev, da, v);
 	}
 	
+	private boolean RT_writeValLocal(Object v)
+	{
+		RT_setVal(v);
+		return true;
+	}
+	
 	public boolean RT_writeVal(Object v) //throws Exception
 	{
 		return RT_writeVal(v,null) ;
@@ -944,6 +998,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public boolean RT_writeVal(Object v,StringBuilder failedr) //throws Exception
 	{
+		if(this.isLocalTag())
+		{
+			return RT_writeValLocal(v);
+		}
+		
 		UACh ch = this.getBelongToCh();
 		if(ch==null)
 			return false;
@@ -1097,4 +1156,73 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return null;
 	}
 	
+	public void renderJson(UANode innode,Writer w) throws IOException
+	{
+		UAVal val = RT_getVal();
+		// if(val==null)
+		// continue ;
+
+		boolean bvalid = false;
+		String strv = "";
+		long dt = -1;
+		long dt_chg = -1;
+		String str_err = "";
+
+		if (val != null)
+		{
+			bvalid = val.isValid();
+			//Object v = val.getObjVal();
+			strv = val.getStrVal(getDecDigits());
+			dt = val.getValDT();// Convert.toFullYMDHMS(new
+								// Date(val.getValDT())) ;
+			dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
+
+			str_err = val.getErr();
+			if (str_err == null)
+				str_err = "";
+		}
+		else
+		{
+			dt_chg = System.currentTimeMillis();
+		}
+
+		
+		// w.write("\""+tg.getName()+"\":");
+		w.write("{\"n\":\"");
+		if(innode==null)
+			w.write(getName());
+		else
+			w.write(this.getNodeCxtPathIn(innode, "_"));
+		w.write("\",\"t\":\"");
+		w.write(getTitle());
+		if(innode!=null)
+		{
+			w.write("\",\"p\":\"");
+			w.write(this.getNodeCxtPathIn(innode));
+		}
+		ValTP vtp = getValTp();
+		if (bvalid)
+		{
+			if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
+				w.write("\",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
+						+ ",\"chgdt\":" + dt_chg );
+			else
+				w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":" + dt
+						+ ",\"chgdt\":" + dt_chg );
+		}
+		else
+		{
+			w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
+					+ Convert.plainToJsStr(str_err)+"\"" );
+		}
+
+		JSONObject jo = getExtAttrJO() ;
+		if(jo!=null)
+		{
+			w.write(",\"ext\":" + jo.toString() );
+		}
+		
+		w.write("}");
+		//bchged = true;
+	}
 }

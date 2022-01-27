@@ -12,9 +12,12 @@ import java.io.StringReader;
 import java.util.*;
 
 import org.iottree.core.UAManager;
+import org.iottree.core.UANode;
+import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.util.Convert;
 
-public class PrjDataClass
+public class PrjDataClass extends JSObMap// implements IJSOb
 {
 	String prjId = null ;
 	
@@ -39,6 +42,16 @@ public class PrjDataClass
 	public DataClass getDataClassById(String id)
 	{
 		return id2dc.get(id) ;
+	}
+	
+	public DataClass getDataClassByName(String name)
+	{
+		for(DataClass dc:id2dc.values())
+		{
+			if(dc.getClassName().equals(name))
+				return dc ;
+		}
+		return null ;
 	}
 
 	private File[] getPrjDDFiles(String prjid)
@@ -96,6 +109,7 @@ public class PrjDataClass
 			}
 			catch(Exception e)					
 			{
+				System.out.println("load dd file ["+tmpf.getAbsolutePath()+"] err") ;
 				e.printStackTrace();
 			}
 		}
@@ -137,9 +151,10 @@ public class PrjDataClass
 		return true ;
 	}
 	
-	public DataClass addDataClass(String name,String title,String bind_for,boolean bind_multi,HashMap<String,String> props) throws IOException
+	public DataClass addDataClass(String name,String title,boolean benable,String bind_for,boolean bind_multi,HashMap<String,String> props) throws IOException
 	{
 		DataClass dc = DataClass.createNewClass(name, title) ;
+		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
 		dc.setBindMulti(bind_multi);
 		dc.setExtAttrs(props);
@@ -148,7 +163,7 @@ public class PrjDataClass
 		return dc ;
 	}
 
-	public boolean updateDataClass(String classid,String name,String title,
+	public boolean updateDataClass(String classid,String name,String title,boolean benable,
 			String bind_for,boolean bind_multi,HashMap<String,String> props) throws IOException
 	{
 		DataClass dc = this.getDataClassById(classid) ;
@@ -156,6 +171,7 @@ public class PrjDataClass
 			return false;
 		dc.name = name ;
 		dc.title = title ;
+		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
 		dc.setBindMulti(bind_multi);
 		dc.setExtAttrs(props);
@@ -211,5 +227,47 @@ public class PrjDataClass
 		if(rets.size()>0)
 			saveDataClass(dc) ;
 		return rets ;
+	}
+//	
+//	public class JSOb
+//	{
+//		public String get_dd_val(String classn,String dn)
+//		{
+//			DataClass dc = PrjDataClass.this.getDataClassByName(classn);
+//			if(dc==null)
+//				return null ;
+//			DataNode dn = dc.getNodeByName(dn) ;
+//		}
+//	}
+//	
+//	JSOb jsob = new JSOb() ;
+//
+//	@Override
+//	public Object getJSOb()
+//	{
+//		return jsob;
+//	}
+//	
+
+	
+	@Override
+	public Object JS_get(String  key)
+	{
+		return this.getDataClassByName(key) ;
+	}
+	
+	@Override
+	public List<Object> JS_names()
+	{
+		ArrayList<Object> ss = new ArrayList<>() ;
+		
+		Collection<DataClass> dcs = getDataClassAll() ;
+		//List<UANode> subns = this.getSubNodes() ;
+		if(dcs!=null)
+		{
+			for(DataClass dc:dcs)
+				ss.add(dc.getClassName()) ;
+		}
+		return ss ;
 	}
 }
