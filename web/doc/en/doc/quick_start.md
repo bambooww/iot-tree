@@ -16,7 +16,7 @@ Download zip file,and unzip to directory you wanted.
 
 If your running environment is windows, it is recommended to download the "iot-tree-xx.xx.x-winjdk.zip" version. This version comes with the JDK of "windows x64" version, so that you can start it in the simplest way.
 
-<a href="http://121.40.64.41/iottree/" target="_blank">download address</a>
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">download address</a>
 
 
 

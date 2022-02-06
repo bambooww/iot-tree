@@ -17,6 +17,7 @@ IOT tree server is an open source software developed using Java. It's interface 
 
 [Demo][demo_link]
 
+[Download][dl_link]
 
 # 1 What does IOT tree server do?
 
@@ -90,7 +91,7 @@ If you encounter problems with the system or have suggestions, you can send us e
 [quick_start]: ./web/doc/en/doc/quick_start.md
 [quick_link]: ./web/doc/en/doc/quick/index.md
 [demo_link]: ./web/doc/en/doc/case/index.md
-
+[dl_link]: https://github.com/bambooww/iot-tree/releases
 
 
 [pump_demo]: ./web/doc/en/doc/case/example_psd.md

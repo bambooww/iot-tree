@@ -12,7 +12,7 @@
 
 如你运行环境是windows，推荐下载"iot-tree-xx.xx.x-winjdk.zip"版本，这个版本内部自带windows x64版本的jdk，这样你可以使用最简单的方式启动。
 
-<a href="http://121.40.64.41/iottree/" target="_blank">下载地址</a>
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">下载地址</a>
 
 
 

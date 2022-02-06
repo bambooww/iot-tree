@@ -5,19 +5,29 @@ Case of industrial automation system
 ==
 
 
-# 1 现场和控制要求
 
-## 1.1 现场设施和控制要求
 
-工业现场某个子系统有一个储水罐，进水口后面有个水泵，通过控制水泵的启停对储水罐进行入水控制。储水罐高5米，需要对水位进行监测和控制，确保控制水位保持在一定的区间内。
 
-出水口对接工业流程的下一个子系统。并且，在出水口水流速度加入一种药剂，此药剂通过另外一个独立的自动化设备提供，控制药剂投加通过电动阀门的开度进行控制。
+# 1 site and control requirements 
 
-控制要求如下：
+## 1.1 site facilities and control requirements 
 
-（1）当水位低于低位值1.1米时，水泵必须启动输入水，而水位高于4.5米时水泵必须停止，以防止水溢出。通过控制水位在一定的范围内，保证输出用水不间断。
 
-（2）利用水流速度和开度的参考比例表，根据出水口流速，控制药剂投加管道上的阀门开度。（注：出水口流速由下一个子系统控制，对于本系统而言是不确定的）
+
+
+
+
+One of the subsystems in the industrial field has a water storage tank. There is a pump behind the water inlet. The water storage tank is controlled by controlling the start and stop of the pump. The water tank is 5 meters high, so water level needs to be monitored and controlled to ensure that the water level is kept within a certain range. 
+
+The outlet docks with the next subsystem of the industrial process. In addition, an agent is added to the water flow rate at the outlet, which is provided by another independent automation device to control the application of the agent through the opening of the electric valve. 
+
+The control requirements are as follows: 
+
+(1) When the water level is below the low value of 1.1 meters, the pump must start the input water, and when the water level is above 4.5 meters, the pump must stop to prevent water overflow. By controlling the water level within a certain range, the output water can be guaranteed uninterrupted. 
+
+(2) Use the reference scale tables of water flow velocity and opening to control the opening of the valve on the pipeline for dispensing medicines according to the flow rate of the outlet. (Note: The outlet flow rate is controlled by the next subsystem, which is indeterminate for this system) 
+
+
 
 <img src="../img/case_auto1.png"/>
 
@@ -43,9 +53,9 @@ Case of industrial automation system
 
 ### 1.2.3 上位控制计算机或嵌入式控制器
 
-以上设备通过一根双绞屏蔽电缆作为RS485总线接入上位系统。上位系统可以是一台工控机，也可以是嵌入式ARM控制器，内部都安装配置了IOT-Tree Server。
+以上设备通过一根双绞屏蔽电缆作为RS485总线接入上位系统，所有的设备串口参数为[9600 N 8 1]。上位系统可以是一台工控机，也可以是嵌入式ARM控制器，内部都安装配置了IOT-Tree Server。
 
-RS485总线接入上位控制器，在软件内部对应串口COM5。当然，你也可以配置一个RS485转以太网的串口服务器模块。使得IOT-Tree Server可以通过Tcp方式透明访问RS485总线。现场使用企业内网，IOT-Tree Server对于的设备地址为192.168.0.18。串口服务器地址192.168.0.10
+RS485总线接入上位控制器，在软件内部对应串口COM5。当然，你也可以配置一个RS485转以太网的串口服务器模块。使得IOT-Tree Server可以通过Tcp方式透明访问RS485总线。现场使用企业内网，IOT-Tree Server对于的设备地址为192.168.0.18。串口服务器地址192.168.0.10，端口12345。
 
 # 2 上位系统IOT-Tree Server作为子系统控制器配置
 
@@ -65,3 +75,83 @@ watertank
 Water tank and Medicament dosing
 ```
 成功之后，在Local Projects列表中，就会出现新增加的项目。点击此项目，即可进入项目详细配置界面。
+
+## 2.2 新增Connector
+
+如果你运行IOT-Tree Server的设备直接通过串口连接现场RS485总线，则应该选择Connector - COM。如果通过以太网Tcp转RS485的串口服务器连接，那么应该选择Connector - Tcp Client方式。
+
+他们分别对应的输入如下图：
+
+<img src="../img/case_auto3.png">
+
+以下内容，都以Tcp Client方式进行进行推进。接下来我们就要在树形Browser里面新增Channel-Device两个层次的内容了。
+
+## 2.3 新增通道和设备
+
+Browser下面已经有个项目根节点"watertank"，鼠标右键在弹出的菜单中选择"New Channel"，在弹出的对话框中，输入或选择如下内容。确定之后，"watertank"下面新增了这个通道。
+```
+Name = ch1
+Title = channel1
+Driver = Modbus RTU
+```
+
+<img src="../img/case_auto4.png">
+
+在通道下面，我们就可以添加设备了。在RS485总线上的设备有3个：开关量模块、模拟量模块和流量计。我们分别取名为dio、aio、flowmeter。
+
+在新增的通道节点鼠标右键选择"New Device"，在弹出对话框中，只需要填写如下内容，其中里面的Device选项保留空（原因是当前的设备并没有存入设备库）：
+```
+Name = dio
+```
+<img src="../img/case_auto5.png">
+
+通过相同方式我们只需要填写一个设备Name，新增另外两个设备aio、flowmeter。
+
+设备添加完成之后，通道下面就有了这3个设备节点，此时在主内容区域，点击"Properties"标签页，并且选择点击设备节点dio。您可以看到Modbus RTU设备详细的设置参数列表显示其中。由于dio设备的地址是11，我们只需要修改"Modbus Device Address"这一项的内容改为11，并且点击右上角的"Apply"按钮即可。如下图：
+
+<img src="../img/case_auto6.png">
+
+您接着点击另外两个设备aio、flowmeter节点，并且修改"Modbus Device Address"对应的参数分别为12、13。注意：不要忘记点击"Apply"按钮生效！
+
+## 2.4 新增设备Tags
+
+### 2.4.1 水泵控制开关量模块对应Tags
+
+现在，我们应设置设备内部关联的数据了。在主内容区域点击"[Tags]"标签，然后点击设备节点"dio"，在标签下面的内容区域显示路径"/watertank/ch1/dio",此时列表区域没有任何Tag数据。
+
+鼠标点击"+Add Tag"按钮，在弹出的对话框输入如下内容：
+```
+Name = pstart
+Title = pump start do0
+Data type = bool
+R/W = Read/Write
+Address = 000001
+```
+此Tags对应水泵启动线圈输出do0，如下图：
+<img src="../img/case_auto7.png">
+
+我们用同样的操作新增另外两个Tag，分别对应水泵停止线圈，水泵运行状态反馈无源触点。
+```
+Name = pstop
+Title = pump stop do1
+Data type = bool
+R/W = Read/Write
+Address = 000002
+```
+```
+Name = p_running
+Title = pump running state di0
+Data type = bool
+R/W = Read Only
+Address = 100001
+```
+最终，在设备节点"dio"下面，有3个Tags，如下图：
+
+<img src="../img/case_auto8.png">
+
+### 2.4.2 水位和阀门控制模拟量Tags
+
+
+
+### 2.4.3 电磁流量计流速Tag
+

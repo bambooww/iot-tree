@@ -29,6 +29,8 @@ IOT-Tree Server是使用Java开发的开源软件。其管理界面完全基于W
 
 [案例演示][demo_link]
 
+[下载][dl_link]
+
 
 
 
@@ -126,6 +128,7 @@ IOT-Tree Server可以以项目为单位，基于多种通信方式部署成一�
 [quick_link]: ./doc/quick/index.md
 [demo_link]: ./doc/case/index.md
 
+[dl_link]: https://github.com/bambooww/iot-tree/releases
 
 [pump_demo]: ./doc/case/example_psd.md
 [lamp_demo]: ./doc/case/example_lamp_demo.md
