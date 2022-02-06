@@ -1,22 +1,24 @@
 package org.iottree.driver.common.modbus.slave;
 
 /**
- * 支持bool值的内存表
- * 此表是数据Provider和modbus具体指令处理的一个中间数据区
+ * bool value mem table
  * 
- * 通过此数据区，外界可以通过modbus读取bool值，而provider更新里面的内容
+ * this is middle data area between Provider and Modbus Cmd Handler
+ * 
+ * outter will read bool values from here,and provider can update data here
+ * 
  * @author jasonzhu
  *
  */
 public class MBitsTable
 {
 	/**
-	 * 本数据区对应的寄存器起始地址
+	 * 
 	 */
 	int regAddr = -1 ;
 	
 	/**
-	 * 数据数量
+	 *
 	 */
 	int regNum = -1 ;
 	

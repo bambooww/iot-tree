@@ -49,10 +49,11 @@ public class MSlaveManager
 		{
 			MSlave ms = null ;
 			String t = sele.getAttribute("type");
+			if(Convert.isNullOrEmpty(t))
+				t = "tcp_server";
+
 			if("tcp_server".equals(t))
 			{
-				
-				
 				ms = new MSlaveTcpServer() ;
 			}
 			else if("tcp_client".equals(t))

@@ -32,7 +32,6 @@ public class ModbusDevItem //extends DevModel
 	
 	private transient UADev uaDev = null ;
 	private transient DevDef devDef = null ;
-	//private transient UACh 
 	
 	/**
 	 * failed after num successive will make device to be failed 

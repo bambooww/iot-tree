@@ -305,6 +305,8 @@ public class UAManager implements IResCxt
 		savePrj(r);
 		r.RT_init(true, false);
 		reps.add(r);
+		
+		this.updatePrjList();
 		return r ;
 	}
 	

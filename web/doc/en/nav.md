@@ -58,7 +58,7 @@
 
 #### <a doc_path="en/doc/case/index.md" >6 Cases and best practices</a>
 ##### <a doc_path="en/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Lamp Demo</a>
-##### <a doc_path="en/doc/case/example_case.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Automation</a>
+##### <a doc_path="en/doc/case/case_auto.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Automation</a>
 
 
 

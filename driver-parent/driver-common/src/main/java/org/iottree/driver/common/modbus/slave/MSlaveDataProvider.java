@@ -442,6 +442,8 @@ public abstract class MSlaveDataProvider
 	 * 3
 	 */
 	protected abstract SlaveData acquireData(int idx,int num) ;
+	
+	protected abstract boolean injectData(SlaveData sd) ;
 }
 
 
@@ -464,6 +466,11 @@ class TestBitProvider extends MSlaveDataProvider
 			bds.datas[i] = bv ;
 		
 		return bds;
+	}
+	
+	protected boolean injectData(SlaveData sd)
+	{
+		return false;
 	}
 }
 
@@ -489,6 +496,10 @@ class TestWordProvider extends MSlaveDataProvider
 		return bds;
 	}
 	
+	protected boolean injectData(SlaveData sd)
+	{
+		return false;
+	}
 }
 
 class TestDoubleProvider extends MSlaveDataProvider
@@ -510,5 +521,10 @@ class TestDoubleProvider extends MSlaveDataProvider
 			bds.datas[i] = (double)i+0.1;
 		
 		return bds;
+	}
+	
+	protected boolean injectData(SlaveData sd)
+	{
+		return false;
 	}
 }

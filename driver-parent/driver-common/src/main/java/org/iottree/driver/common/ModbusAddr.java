@@ -51,6 +51,11 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	@Override
 	public DevAddr parseAddr(String str, ValTP vtp,StringBuilder failedr)
 	{
+		return parseModbusAddr(str, vtp,failedr) ;
+	}
+	
+	static public ModbusAddr parseModbusAddr(String str, ValTP vtp,StringBuilder failedr)
+	{
 		String addr = str ;
 		if(Convert.isNullOrEmpty(str)||str.length()<2)
 		{

@@ -65,7 +65,7 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 			@Override
 			public boolean accept(File dir, String name)
 			{
-				return name.startsWith("dd_")&&name.endsWith(".xml");
+				return name.startsWith("dict_")&&name.endsWith(".xml");
 			}} ;
 		
 		return prjdir.listFiles(ff) ;	
@@ -76,14 +76,14 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 		File  prjdir = UAManager.getPrjFileSubDir(prjid);
 		if(!prjdir.exists())
 			return null ;
-		return new File(prjdir,"dd_"+classid+".xml") ;
+		return new File(prjdir,"dict_"+classid+".xml") ;
 	}
 	
 	private String getClassIdByFile(File f)
 	{
 		String fn = f.getName() ;
 		int len = fn.length() ;
-		return fn.substring(3,len-4) ;
+		return fn.substring(5,len-4) ;
 	}
 	
 	public boolean loadAll()

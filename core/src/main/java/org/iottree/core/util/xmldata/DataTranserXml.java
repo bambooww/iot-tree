@@ -21,6 +21,7 @@ import org.json.*;
  */
 public class DataTranserXml
 {
+	public static final String PN_CLASSN = "__cn__" ; 
 	/**
 	 * object implemtns this to make some opter after extraction or injection
 	 * @author zzj
@@ -310,13 +311,21 @@ public class DataTranserXml
 			{
 				XmlData subxd = new XmlData();
 				if (extractXmlDataFromObj(subo, subxd))
+				{
 					subxds.add(subxd);
+					if(xmld.obj_c()==Object.class)
+						subxd.setParamValue(PN_CLASSN, subo.getClass().getCanonicalName());
+				}
 			}
 		} else
 		{
 			XmlData tmpxd = new XmlData();
 			if (extractXmlDataFromObj(pv, tmpxd))
+			{
 				tarxd.setSubDataSingle(n, tmpxd);
+				if(xmld.obj_c()==Object.class)
+					tmpxd.setParamValue(PN_CLASSN, pv.getClass().getCanonicalName());
+			}
 		}
 
 		return true;
@@ -342,13 +351,21 @@ public class DataTranserXml
 			{
 				XmlData subxd = new XmlData();
 				if (extractXmlDataFromObj(subo, subxd))
+				{
 					subxds.add(subxd);
+					if(datao.obj_c()==Object.class)
+						subxd.setParamValue(PN_CLASSN, subo.getClass().getCanonicalName());
+				}
 			}
 		} else
 		{
 			XmlData tmpxd = new XmlData();
 			if (extractXmlDataFromObj(pv, tmpxd))
+			{
 				tarxd.setSubDataSingle(n, tmpxd);
+				if(datao.obj_c()==Object.class)
+					tmpxd.setParamValue(PN_CLASSN, pv.getClass().getCanonicalName());
+			}
 		}
 
 		return true;
@@ -361,16 +378,28 @@ public class DataTranserXml
 		String n = f.getName();
 		if (!"".contentEquals(xmld.param_name()))
 			n = xmld.param_name();
-		Class dc = f.getType();
+		Class<?> dc = f.getType();
 		if (List.class.isAssignableFrom(dc))
 		{
-			List<XmlData> subxds = tarxd.getOrCreateSubDataArray(n);
+			List<XmlData> subxds = tarxd.getSubDataArray(n);
 			if (subxds == null)
 				return false;
 			ArrayList vs = new ArrayList();
 			for (XmlData subxd : subxds)
 			{
-				Object subo = xmld.obj_c().getConstructor().newInstance();
+				Class<?> objc = xmld.obj_c() ;
+				if(objc==Object.class)
+				{
+					String cn = subxd.getParamValueStr(PN_CLASSN);
+					if(Convert.isNullOrEmpty(cn))
+						continue ;
+					objc = Class.forName(cn) ;
+				}
+				if(objc==null)
+					continue ;
+				
+				Object subo = objc.getConstructor().newInstance();
+				
 				if (injectXmDataToObj(subo, subxd))
 				{
 					if(subo instanceof data_obj_checker)
@@ -388,7 +417,18 @@ public class DataTranserXml
 			XmlData subxd = tarxd.getSubDataSingle(n);
 			if (subxd == null)
 				return false;
-			Object subo = xmld.obj_c().getConstructor().newInstance();
+			Class<?> objc = xmld.obj_c() ;
+			if(objc==Object.class)
+			{
+				String cn = subxd.getParamValueStr(PN_CLASSN);
+				if(Convert.isNullOrEmpty(cn))
+					return false ;
+				objc = Class.forName(cn) ;
+			}
+			if(objc==null)
+				return false ;
+			
+			Object subo = objc.getConstructor().newInstance();
 			if (injectXmDataToObj(subo, subxd))
 			{
 				if(subo instanceof data_obj_checker)
@@ -426,8 +466,17 @@ public class DataTranserXml
 			ArrayList vs = new ArrayList();
 			for (XmlData subxd : subxds)
 			{
-
-				Object subo = xmld.obj_c().getConstructor().newInstance();
+				Class<?> objc = xmld.obj_c() ;
+				if(objc==Object.class)
+				{
+					String cn = subxd.getParamValueStr(PN_CLASSN);
+					if(Convert.isNullOrEmpty(cn))
+						continue;
+					objc = Class.forName(cn) ;
+				}
+				if(objc==null)
+					continue ;
+				Object subo = objc.getConstructor().newInstance();
 				if (injectXmDataToObj(subo, subxd))
 					vs.add(subo);
 
@@ -438,7 +487,17 @@ public class DataTranserXml
 			XmlData subxd = tarxd.getSubDataSingle(n);
 			if (subxd == null)
 				return false;
-			Object subo = xmld.obj_c().getConstructor().newInstance();
+			Class<?> objc = xmld.obj_c() ;
+			if(objc==Object.class)
+			{
+				String cn = subxd.getParamValueStr(PN_CLASSN);
+				if(Convert.isNullOrEmpty(cn))
+					return false ;
+				objc = Class.forName(cn) ;
+			}
+			if(objc==null)
+				return false ;
+			Object subo = objc.getConstructor().newInstance();
 			if (injectXmDataToObj(subo, subxd))
 				m.invoke(o, subo);
 		}

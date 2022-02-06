@@ -120,6 +120,11 @@ public class ModbusBlock
 		return addrs ;
 	}
 	
+	public MemTable<MemSeg8> getMemTable()
+	{
+		return this.memTb ;
+	}
+	
 	public boolean initReadCmds()
 	{
 		if(this.isBitCmd())
@@ -256,6 +261,32 @@ public class ModbusBlock
 		return true;
 	}
 	
+	/**
+	 * init as slave block.
+	 * it will set all bool value=false
+	 *                   word value=0
+	 */
+	public void initAsSlave()
+	{
+		boolean bbit = isBitCmd();
+		for(ModbusAddr ma:this.addrs)
+		{
+			int regpos = ma.getRegPos() ;
+			//ma.getAddrTp()
+			int endpos = ma.getRegEnd() ;
+			int n = (endpos-regpos)/2;
+			if(bbit)
+			{
+				memTb.setValBool(regpos/8, regpos%8, false);
+			}
+			else
+			{
+				for(int k = 0 ; k < n; k ++)
+					memTb.setValNumber(ValTP.vt_int16, (regpos+k)*2, 0);
+			}
+		}
+	}
+	
 	public void setModbusProtocal(ModbusCmd.Protocol p)
 	{
 		modbusProtocal = p;
@@ -292,32 +323,32 @@ public class ModbusBlock
 		return null;
 	}
 	
-//	private boolean setValByAddr(ModbusAddr da,Object v)
-//	{
-//		UAVal.ValTP vt = da.getValTP();
-//		if(vt==null)
-//			return false ;
-//		if(vt==UAVal.ValTP.vt_bool)
-//		{
-//			boolean bv = false;
-//			if(v instanceof Boolean)
-//				bv = (Boolean)v ;
-//			else if(v instanceof Number)
-//				bv = ((Number)v).doubleValue()>0 ;
-//			else
-//				return false;
-//			memTb.setValBool(da.getRegPos(),da.getBitPos(),bv) ;
-//			return true;
-//		}
-//		else if(vt.isNumberVT())
-//		{
-//			if(!(v instanceof Number))
-//				return false;
-//			memTb.setValNumber(vt,da.getRegPos(),(Number)v) ;
-//			return true;
-//		}
-//		return false;
-//	}
+	public boolean setValByAddr(ModbusAddr da,Object v)
+	{
+		UAVal.ValTP vt = da.getValTP();
+		if(vt==null)
+			return false ;
+		if(vt==UAVal.ValTP.vt_bool)
+		{
+			boolean bv = false;
+			if(v instanceof Boolean)
+				bv = (Boolean)v ;
+			else if(v instanceof Number)
+				bv = ((Number)v).doubleValue()>0 ;
+			else
+				return false;
+			memTb.setValBool(da.getRegPos(),da.getBitPos(),bv) ;
+			return true;
+		}
+		else if(vt.isNumberVT())
+		{
+			if(!(v instanceof Number))
+				return false;
+			memTb.setValNumber(vt,da.getRegPos(),(Number)v) ;
+			return true;
+		}
+		return false;
+	}
 	
 	
 	

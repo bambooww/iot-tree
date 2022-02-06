@@ -19,5 +19,6 @@ public @interface data_obj
 	
 	//boolean multi() default false;
 	//default Object.class
-	Class obj_c()  ;
+	Class obj_c()  default Object.class;
+	
 }

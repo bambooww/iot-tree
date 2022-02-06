@@ -169,7 +169,6 @@ public class MSlaveTcpConn implements Runnable
 	}
 	
 	/**
-	 * ���ݶ������������ݣ���÷��ؽ��
 	 * @param reqbs
 	 * @return
 	 */

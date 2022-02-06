@@ -8,6 +8,7 @@
 	java.util.*,
 	org.iottree.core.cxt.*,
 	org.iottree.core.ws.*,
+	org.iottree.core.sim.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
@@ -36,6 +37,10 @@ List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 visibility: visible;
  }
 
+.fz a
+{
+background:#aaaaaa; 
+}
  </style>
 </head>
 <body aria-hidden="false">
@@ -72,11 +77,11 @@ visibility: visible;
 				</form>
 			</div>
 			end search -->
-			<!-- user -->
+
 			<div class="iot-user-nav">
 					<div class="iot-top-user"><a class="login" href="javascript:logout()">logout</a></div>
 			</div>
-			<!-- end user -->
+
 			
 		</div>
 	</div>
@@ -334,6 +339,104 @@ if(rep.isAutoStart())
 					    </div>
 					</div>
 					
+					<div class="iot-mod iot-question-detail iot-item">
+					    <div class="mod-head">
+					        <h1 style="width:200px">Simulator</h1>
+					        
+					        <div style="float:left;top:5px;position: absolute;left:210px" >
+					        <a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_or_edit_simins()">
+							
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-plus fa-stack-1x"></i>
+							</span>&nbsp;Add
+							</a>&nbsp;&nbsp;&nbsp;&nbsp;
+							
+					        	<a href="javascript:comp_cat_import()"><span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							</span>&nbsp;&nbsp; Import</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a href="javascript:comp_cat_export()"><span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span> Export</a>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:comp_help()">
+							<span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-question fa-stack-1x"></i>
+							</span>
+							</a>
+							
+					        </div>
+					        
+					        <div style="float:right;top:5px;position: absolute;right:10px" onclick="show_hide('cont_sim')"><i class="fa fa-bars fa-lg"></i></div>
+					    </div>
+					    <div class="mod-body"  id="cont_sim" style="display:none">
+							<div class="content markitup-box" style="height:200px:overflow:auto">
+<%
+	List<SimInstance> inss = SimManager.getInstance().getInstances();
+	for(SimInstance ins:inss)
+{
+		String cssstr = "" ;
+		String tmpid = "div_simins_"+ins.getId() ;
+%>
+	<div class="aw-item btn_sh_c" id="<%=tmpid%>" >
+	   
+       <a class="img aw-border-radius-5" >
+         <i class="fa fa-sitemap fa-1x"></i>
+       </a>
+       <a class="text title" href="javascript:open_simins('<%=ins.getId()%>')" data-id="8"><%=ins.getTitle() %></a>
+       <div class="inline-block pull-right text-left ">
+
+          
+          <span class="btn_sh">
+
+           <a class0="btn btn-success download-btn white" href="javascript:add_or_edit_simins('<%=ins.getId()%>')" title="show detail">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-pencil fa-stack-1x"></i>
+							</span>
+           </a>
+           
+           <a class0="btn btn-success"  href="javascript:exp_simins('<%=ins.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							</span>
+           </a>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:del_simins('<%=ins.getId()%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa fa-times fa-stack-1x"></i>
+							</span>
+           </a>
+           </span>
+           
+           <div style="width:150px;border:0px solid;float: right">&nbsp;
+<%
+if(false)
+{
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Auto Start</span><%
+}
+%>
+         </div>
+       </div>
+
+       <div class="text-color-999">
+           <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
+           • modified date:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(ins.getSavedDT())) %></span>
+       </div>
+   </div>
+<%
+}
+%>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 				<!--right side -->
 				<div class="iot-side-bar">
@@ -341,7 +444,7 @@ if(rep.isAutoStart())
 					    <div class="mod-head">
 					        <h3>Services</h3>
 					    </div>
-					    <div class="mod-body">
+					    <div class="mod-body fz">
 					       
 					       <a href="javascript:service_setup()">setup</a>
 					        
@@ -352,7 +455,7 @@ if(rep.isAutoStart())
 					    <div class="mod-head">
 					        <h3>Number of sessions</h3>
 					    </div>
-					    <div class="mod-body">
+					    <div class="mod-body fz">
 					       <%=WSServer.getSessionNum() %>
 					    </div>
 					</div>
@@ -361,7 +464,7 @@ if(rep.isAutoStart())
 					    <div class="mod-head">
 					        <h3>Store Adapters</h3>
 					    </div>
-					    <div class="mod-body">
+					    <div class="mod-body fz">
 					       
 					       TODO 1.2v
 					        
@@ -370,11 +473,12 @@ if(rep.isAutoStart())
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Plugins and Extends</h3>
+					        <h3>Plugins and Dict</h3>
 					    </div>
-					    <div class="mod-body">
-					    	<a href="javascript:open_plugins()" style="background:#aaaaaa;">Plugins</a>&nbsp;
-					    	<a href="javascript:open_ext_prop()" style="background:#aaaaaa;">Extend Properties</a>
+					    <div class="mod-body fz">
+					    	<a href="javascript:open_plugins()" >Plugins</a>&nbsp;
+					    	<a href="javascript:open_ext_prop()" >Global Dict</a>
+					    	
 					    </div>
 					</div>
 
@@ -382,8 +486,9 @@ if(rep.isAutoStart())
 					    <div class="mod-head">
 					        <h3>Others</h3>
 					    </div>
-					    <div class="mod-body">
-					       <a href="javascript:log_ctrl()">log controller</a>           
+					    <div class="mod-body fz">
+					       <a href="javascript:log_ctrl()" >log controller</a>
+					        <a href="javascript:sim_slave()">Modbus Slave Simulator</a>
 					     </div>
 					</div>
 				</div>
@@ -519,10 +624,7 @@ function add_prj()
 							 dlg.close();
 							 document.location.href=document.location.href;
 						},false);
-							
-						 //console.log(ret);
-						 dlg.close();
-						 document.location.href=document.location.href;
+						
 				 	});
 				},
 				function(dlgw)
@@ -782,6 +884,84 @@ function service_setup()
 			{title:"Service Manager",w:'500px',h:'400px'},
 			['Close'],
 			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function sim_slave()
+{
+	dlg.open("simulator/mslave_mgr.jsp",
+			{title:"Modbus Slave Simulators",w:'500px',h:'400px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function open_simins(id)
+{
+	window.open("./sim/sim_ins_mgr.jsp?insid="+id);
+	//window.open("ua_rep.jsp?repid="+id);
+}
+
+function del_simins(id)
+{
+	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+    {
+		send_ajax('sim/sim_ajax.jsp',{op:"ins_del",insid:id},function(bsucc,ret){
+			if(!bsucc||ret!='succ')
+			{
+				dlg.msg(ret) ;
+				return ;
+			}
+			document.location.href=document.location.href;
+		});
+     });
+}
+
+function add_or_edit_simins(insid)
+{
+	var tt = "Add Simulator Instance";
+	if(insid)
+		tt = "Edit Simulator Instance";
+	else
+		insid="" ;
+	dlg.open("sim/sim_ins_edit.jsp?insid="+insid,
+			{title:tt,w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 //enable_btn(true);
+							 return;
+						 }
+						 ret.insid = insid ;
+						 if(insid)
+							 ret.op="ins_edit" ;
+						 else
+							ret.op="ins_add" ;
+						send_ajax('./sim/sim_ajax.jsp',ret,function(bsucc,rr)
+						{
+							if(!bsucc || rr.indexOf('succ')<0)
+							{
+								dlg.msg(rr);
+								return ;
+							}
+							 dlg.close();
+							 document.location.href=document.location.href;
+						},false);
+				 	});
+				},
 				function(dlgw)
 				{
 					dlg.close();
