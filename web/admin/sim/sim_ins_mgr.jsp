@@ -97,11 +97,13 @@ for(SimChannel ch:chs)
 	String ch_tpt = ch.getTpTitle() ;
 	String run_c = "grey" ;
 	String run_t = "disabled" ;
+	String run_icon="" ;
 	
 	if(ch.RT_isRunning())
 	{
 		run_c = "green" ;
 		run_t = "running" ;
+		run_icon="fa-spin";
 	}
 	else
 	{
@@ -110,7 +112,7 @@ for(SimChannel ch:chs)
 	}
 	
 	List<SimDev> devs = ch.listDevItems() ;
-	SimConn conn = ch.getConn() ;
+	SimCP conn = ch.getConn() ;
 	String connt = "No Conn" ;
 	if(conn!=null)
 		connt = conn.getConnTitle() ;
@@ -138,27 +140,27 @@ for(SimChannel ch:chs)
             	if(ch.isEnable())
             {
             %>
-<span id="" style="width:20px;height:20px;background-color: <%=run_c%>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t%>
+<span id="" style="width:20px;height:20px;color: <%=run_c%>;" ><i class="fa fa-cog <%=run_icon %> fa-lg"></i></span>&nbsp;<%=run_t%>
       
 <%
       	if(ch.RT_isRunning())
       	{
       %>
 
-		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop task" onclick="start_stop(false,'<%=ch.getId()%>')"></i>
+		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop task" onclick="ch_start_stop(false,'<%=ch.getId()%>')"></i>
 		 
 <%
 		 	}
 		 	else
 		 	{
 		 %>
-<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start" onclick="start_stop(true,'<%=ch.getId()%>')"></i>
+<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start" onclick="ch_start_stop(true,'<%=ch.getId()%>')"></i>
 <%
 	}
 }
 else
 {
-%><span id="" style="width:20px;height:20px;background-color: grey;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Disabled
+%><span id="" style="width:20px;height:20px;color: grey;" ><i class="fa fa-cog fa-lg"></i></span>&nbsp;Disabled
 <%
 	}
 %>
@@ -190,18 +192,22 @@ else
 	for(SimDev ta:devs)
 	{
 %>
-    <tr>
+    <tr title="<%=ta.getTitle()%>">
        <td><img src="../inc/sm_icon_dev.png"/><%=ta.getName() %><a href="javascript:add_or_edit_dev('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId() %>','<%=ta.getId() %>')"><i title="edit device" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a></td>
       
-      <td colspan="3">
+      <td colspan="2">
       <%=ta.getDevTitle() %>
       	<a onclick="dev_setup('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId() %>','<%=ta.getId() %>')" ><i title="setup device" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a>
       	<button onclick="dev_tags_edit('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId() %>','<%=ta.getId() %>')" class="layui-btn layui-btn-<%=(false?"normal":"primary") %> layui-border-blue layui-btn-sm" >Tags</button>
       	
       </td>
       <td>
+       <a href="javascript:dev_del(''<%=ch.getId() %>','<%=ta.getId() %>')" title="delete device"  style="color:red"><i class="fa fa-times fa-lg " aria-hidden="true"></i></a>
+      </td>
+      <td>
       
-	   <a href="javascript:task_act_del(''<%=ch.getId() %>','<%=ta.getId() %>')" style="color:red"><i title="delete task action" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
+	  
+	   <a id="dev_rt_<%=ta.getId() %>" href="javascript:dev_rt('<%=ch_tp %>','<%=ch.getId() %>','<%=ta.getId() %>')" title="device runtime"  style="color:#00537c"><i id="dev_run_icon" class="fa fa-cog fa-lg"></i></a>
 	 
       </td>
     </tr>
@@ -535,14 +541,14 @@ function dev_setup(tp,tpt,chid,id)
 			]);
 }
 
-function task_act_del(prjid,taskid,actid)
+function dev_del(chid,devid)
 {
-	layer.confirm('delete selected action?', function(index)
+	layer.confirm('delete selected device?', function(index)
 		    {
-		    	send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=act_del&taskid="+taskid+"&actid="+actid,function(bsucc,ret){
+		    	send_ajax("sim_ajax.jsp","insid="+insid+"&op=dev_del&chid="+chid+"&devid="+devid,function(bsucc,ret){
 		    		if(bsucc&&ret=='succ')
 		    		{
-			    		document.location.href=document.location.href;
+		    			refresh_me();
 		    		}
 		    		else
 		    			layer.msg("del err:"+ret) ;
@@ -553,20 +559,20 @@ function task_act_del(prjid,taskid,actid)
 }
 
 
-function start_stop(b,taskid)
+function ch_start_stop(b,chid)
 {
-	var op = "start" ;
+	var op = "ch_start" ;
 	if(!b)
-		op = "stop";
+		op = "ch_stop";
 	$.ajax({
         type: 'post',
-        url:'prj_task_ajax.jsp',
-        data: {op:op,prjid:prjid,taskid:taskid},
+        url:'sim_ajax.jsp',
+        data: {op:op,insid:insid,chid:chid},
         async: true,  
         success: function (result) {  
-        	if("ok"==result)
+        	if("succ"==result)
         	{
-        		document.location.href=document.location.href ;
+        		refresh_me();
         	}
         	else
         	{
@@ -578,6 +584,12 @@ function start_stop(b,taskid)
         	dlg.msg(e);
         }
     });
+}
+
+function dev_rt(tp,chid,id)
+{
+	
+	document.getElementById("rightf").src = tp+"_rt.jsp?insid="+insid+"&chid="+chid+"&devid="+id;	
 }
 
 </script>

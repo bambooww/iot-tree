@@ -11,6 +11,7 @@ import java.util.List;
 import org.iottree.core.UATag;
 import org.iottree.core.sim.SimChannel;
 import org.iottree.core.sim.SimConn;
+import org.iottree.core.sim.SimCP;
 import org.iottree.core.sim.SimDev;
 import org.iottree.core.task.TaskAction;
 import org.iottree.core.util.CompressUUID;
@@ -97,7 +98,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	}
 	
 		
-	protected void RT_runInThread() throws Exception
+	protected void RT_runConnInLoop(SimConn sc) throws Exception
 	{
 		//System.out.println(">>modbus runner="+this.getClass().getCanonicalName()+" on port="+socket.getRemoteSocketAddress());
 
@@ -118,13 +119,13 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			{
 				//
 				delay(1) ;
+//				
+//				SimCP conn = getConn() ;
+//				if(conn==null)
+//					continue ;
 				
-				SimConn conn = getConn() ;
-				if(conn==null)
-					continue ;
-				
-				InputStream inputs =conn.getConnInputStream();
-				OutputStream outputs = conn.getConnOutputStream();
+				InputStream inputs =sc.getConnInputStream();
+				OutputStream outputs = sc.getConnOutputStream();
 				if(inputs==null)
 					continue;
 				
@@ -142,7 +143,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 						if(System.currentTimeMillis()-last_no_dt>5000)
 						{
 							last_no_dt = System.currentTimeMillis() ;
-							conn.pulseConn();
+							sc.pulseConn();
 						}
 						else
 						{
@@ -219,7 +220,6 @@ public class SlaveChannel extends SimChannel  implements Runnable
 				}
 				while(pl[0]>=0) ;
 			}// end of while
-		
 	}
 	
 	/**
@@ -266,6 +266,8 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			List<SlaveDevSeg> segs = di.getSegs() ;
 			for(SlaveDevSeg seg:segs)
 			{
+				if(seg.getFC()!=fc)
+					continue ;
 				int seg_regidx = seg.getRegIdx() ;
 				int seg_regnum = seg.getRegNum() ;
 				if(req_idx+req_num<=seg_regidx)
@@ -273,14 +275,15 @@ public class SlaveChannel extends SimChannel  implements Runnable
 				if(req_idx>seg_regidx+seg_regnum)
 					continue ;
 				
-				SlaveData sd = seg.getSlaveData() ;
-				if(sd==null || !(sd instanceof BoolDatas))
-				{
-					continue ;
-				}
-				BoolDatas msb = (BoolDatas)sd ;
-				//
-				boolean[] bs = msb.getBoolDatas();//.getBoolUsingDatas() ;
+//				SlaveData sd = seg.getSlaveData() ;
+//				if(sd==null || !(sd instanceof BoolDatas))
+//				{
+//					continue ;
+//				}
+//				BoolDatas msb = (BoolDatas)sd ;
+//				//
+//				boolean[] bs = msb.getBoolDatas();//.getBoolUsingDatas() ;
+				boolean[] bs = seg.getSlaveDataBool() ;
 				if(bs==null)
 					continue ;
 				
@@ -307,7 +310,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	
 	private byte[] onReqAndRespWords(ModbusCmdReadWords mcb)
 	{
-		
+		int fc = mcb.getFC() ;
 		short devid = mcb.getDevAddr();
 		
 		int req_idx = mcb.getRegAddr() ;
@@ -327,6 +330,8 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			List<SlaveDevSeg> segs = di.getSegs() ;
 			for(SlaveDevSeg seg:segs)
 			{
+				if(seg.getFC()!=fc)
+					continue ;
 				int seg_regidx = seg.getRegIdx() ;
 				int seg_regnum = seg.getRegNum() ;
 				if(req_idx+req_num<=seg_regidx)
@@ -334,14 +339,16 @@ public class SlaveChannel extends SimChannel  implements Runnable
 				if(req_idx>seg_regidx+seg_regnum)
 					continue ;
 				
-				SlaveData sd = seg.getSlaveData() ;
-				if(sd==null || !(sd instanceof Int16Datas))
-				{
-					continue ;
-				}
-				Int16Datas msb = (Int16Datas)sd ;
+//				SlaveData sd = seg.getSlaveData() ;
+//				if(sd==null || !(sd instanceof Int16Datas))
+//				{
+//					continue ;
+//				}
+//				Int16Datas msb = (Int16Datas)sd ;
 
-				short[] bs = msb.getInt16Datas() ;
+//				short[] bs = msb.getInt16Datas() ;
+				
+				short[] bs = seg.getSlaveDataInt16() ;
 				if(bs==null)
 					continue ;
 				
@@ -363,5 +370,17 @@ public class SlaveChannel extends SimChannel  implements Runnable
 		}
 		
 		return ModbusCmdReadWords.createResp(devid,mcb.getFC(),resp);
+	}
+
+	@Override
+	protected void onConnOk(SimConn sc)
+	{
+		
+	}
+
+	@Override
+	protected void onConnBroken(SimConn sc)
+	{
+		
 	}
 }

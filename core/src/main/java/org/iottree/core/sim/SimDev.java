@@ -94,9 +94,7 @@ public abstract class SimDev
 	}
 	
 	
-	public boolean RT_init(StringBuilder failedr)
-	{
-		return false;
-	}
+	public abstract void init();
 	
+	public abstract boolean RT_init(StringBuilder failedr);
 }

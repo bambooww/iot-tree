@@ -3,6 +3,7 @@ package org.iottree.core.sim;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -86,8 +87,8 @@ public abstract class SimChannel implements Runnable
 
 	transient SimInstance belongTo = null;
 
-	@data_obj(param_name = "conn")
-	transient SimConn conn = null;
+	@data_obj(param_name = "cp")
+	transient SimCP cp = null;
 
 	Thread thread = null;
 
@@ -156,14 +157,15 @@ public abstract class SimChannel implements Runnable
 		return this;
 	}
 
-	public SimConn getConn()
+	public SimCP getConn()
 	{
-		return this.conn;
+		return this.cp;
 	}
 
-	public void setConn(SimConn c) throws Exception
+	public void setConn(SimCP c) throws Exception
 	{
-		this.conn = c;
+		this.cp = c;
+		this.cp.asChannel(this) ;
 		this.save();
 	}
 
@@ -270,33 +272,59 @@ public abstract class SimChannel implements Runnable
 	{
 		belongTo.saveChannel(this);
 	}
+	
+	public boolean init()
+	{
+		for(SimDev dev:devs)
+		{
+			dev.init();
+		}
+		
+		if (cp != null)
+		{
+			this.cp.asChannel(this) ;
+		}
+		
+		if(cp==null)
+			return false;
+		
+		return true;
+	}
 
 	public boolean RT_init(StringBuilder failedr)
 	{
-		if (conn == null)
+		if(cp==null)
 		{
 			failedr.append("no conn found in channel");
 			return false;
 		}
 
-		if(!conn.RT_init(failedr))
+		if(!cp.RT_init(failedr))
 			return false;
 		
 		
 		return true;
 	}
 
-	protected abstract void RT_runInThread() throws Exception;
+	protected abstract void RT_runConnInLoop(SimConn conn) throws Exception;
 
 	public void run()
 	{
-		// System.out.println(">>modbus
-		// runner="+this.getClass().getCanonicalName()+" on
-		// port="+socket.getRemoteSocketAddress());
-
 		try
 		{
-			RT_runInThread();
+			while(thread!=null)
+			{
+				try
+				{
+					//RT_runInThread();
+					cp.RT_runInLoop();
+				}
+				catch(SocketException e)
+				{
+					//e.printStackTrace();
+					System.out.println(" warn:"+e.getMessage());
+				}
+			}
 		}
 		catch ( Throwable e)
 		{
@@ -341,22 +369,25 @@ public abstract class SimChannel implements Runnable
 	synchronized public void RT_stop()
 	{
 		Thread t = thread;
-		if(t==null)
-			return ;
+		if(t!=null)
+		{
+			try
+			{
+				t.interrupt();
+				thread=null ;
+			}
+			finally
+			{
+				thread=null ;
+			}
+		}
 		
-		t.interrupt(); 
-		thread=null ;
+		this.cp.RT_stop();
 	}
 
-	void onConnOk()
-	{
+	protected abstract void onConnOk(SimConn sc);
 
-	}
-
-	void onConnBroken()
-	{
-
-	}
+	protected abstract void onConnBroken(SimConn sc);
 	// @Override
 	// public XmlData toXmlData()
 	// {

@@ -2,13 +2,14 @@ package org.iottree.core.sim;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
 
 @data_class
-public class SimConnCOM extends SimConn
+public class SimCPCom extends SimCP
 {
 	@data_val(param_name = "com_id")
 	String comId = null;
@@ -18,19 +19,6 @@ public class SimConnCOM extends SimConn
 		return "COM-" ;
 	}
 	
-	@Override
-	public InputStream getConnInputStream()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public OutputStream getConnOutputStream()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String toConfigStr()
@@ -46,32 +34,32 @@ public class SimConnCOM extends SimConn
 		return false;
 	}
 
-	@Override
-	public void startConn()
+	public List<SimConn> getConns()
 	{
-		// TODO Auto-generated method stub
-		
+		return null ;
 	}
 
-	@Override
-	public void stopConn()
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public boolean isConn()
+	public boolean RT_init(StringBuilder failedr)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+
 	@Override
-	public void pulseConn() throws Exception
+	public void RT_runInLoop() throws Exception
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
+
+	@Override
+	public void RT_stop()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

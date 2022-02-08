@@ -33,7 +33,7 @@ IOT-Tree Serverは、Javaを使用して開発されたオープンソースソ�
 
 [ケーススタディ][demo_link]
 
-[ダウンロード][dl_link]
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">ダウンロード</a>
 
 
 

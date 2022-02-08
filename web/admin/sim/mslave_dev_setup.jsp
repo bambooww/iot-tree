@@ -107,44 +107,41 @@ if(benable)
   </div>
 </div>
 </div>
+<b>Segments</b>
 <table id="view_colorval"  class="layui-table" lay-filter="dl_list"  lay-size="sm" lay-even="true" style="width:95%" border="1">
    <thead style="background-color: #cccccc">
      <tr>
-	  <td>FC</td>
-	  <td>Address</td>
-	  <td>Length</td>
+	  <td style="width:45%">FC</td>
+	  <td  style="width:25%">Address</td>
+	  <td style="width:30%">Length</td>
 	  
-	  <td></td>
+	  <td style="width:5%"></td>
 	</tr>
   </thead>
-  <tbody id="color_list">
+  <tbody id="item_list">
 	
   </tbody>
   <tfoot>
-    <td style="width:15%">
-		<select>
+  	<tr>
+    <td >
+		<select id="sel_fc">
 <%
 for(Map.Entry<Integer,String> f2t:SlaveDevSeg.listFCs().entrySet())
 {
 	int k = f2t.getKey() ;
 	String t = k+":"+f2t.getValue() ;
-%><option value="<%=k%>"><%=t %></option><%
+%><option id="fc_<%=k %>" fc_t="<%=t %>" value="<%=k%>"><%=t %></option><%
 }
 %>
 		</select>
     </td>
-	 <td style="width:15%"><input id="input_ev" type="text" size="2" /></td>
-	 <td style="width:30%"><input id="input_t" type="text" size="10" /></td>
+	 <td><input id="input_regidx" type="number" size="2"  style="width:50px" onchange="fit_num('input_regidx',0)"/></td>
+	 <td ><input id="input_regnum" type="number" size="10"  style="width:50px" onchange="fit_num('input_regnum',1)"/></td>
 	  
-	  <td><a href="javascript:add_item()"><i class="fa fa-plus fa-lg " aria-hidden="true"></i></a></td>
+	  <td style="width:5%"><a href="javascript:add_item()"><i class="fa fa-plus fa-lg" aria-hidden="true"></i></a></td>
 	</tr>
   </tfoot>
 </table>
-<div class="layui-form-item">
-  		<div class="layui-input-block">
-  			<button class="layui-btn layui-btn-normal" type="button" lay-filter="set_param" onclick="set_view()">Set</button>
-  		</div>
-  	</div>
 </body>
 <script type="text/javascript">
 
@@ -187,40 +184,69 @@ function get_new_id()
 }
 
 
-function add_item_c(sv,ev,color,t)
+function add_item_c(nid,fc,regidx,regnum)
 {
-	var nid = get_new_id() ;
+	if(!nid)
+		nid = get_new_id() ;
+	var fc_t = $("#fc_"+fc).attr("fc_t") ;
 	var str = "<tr id='"+nid+"'>"+
-	  "<td>"+sv+"</td>"+
-	  "<td>"+ev+"</td>"+
-	  "<td>"+t+"</td>"+
-	  "<td>"+color+"</td>"+
-	  "<td><span style='width:30px;height:30px;background-color: "+color+";cursor: crosshair'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td>"+
+	  "<td id='fc_"+nid+"' vv='"+fc+"'>"+fc_t+"</td>"+
+	  "<td id='regidx_"+nid+"' vv='"+regidx+"'>"+regidx+"</td>"+
+	  "<td id='regnum_"+nid+"' vv='"+regnum+"'>"+regnum+"</td>"+
 	  "<td><a href=\"javascript:del_item('"+nid+"')\">X</a></td></tr>";
-	$('#color_list').append(str) ;
+	$('#item_list').append(str) ;
 }
-
 <%
 
 	for(SlaveDevSeg seg:segs)
 	{
-		
+		String id = seg.getId() ;
+		int fc = seg.getFC() ;
+		int regidx = seg.getRegIdx() ;
+		int regnum = seg.getRegNum() ;
 %>
-add_item_c('<%=""%>','<%=""%>','<%=""%>','<%=""%>');
+add_item_c('<%=id%>',<%=fc%>,<%=regidx%>,<%=regnum%>);
 <%
 	}
 
 %>
 
+function fit_num(id,minv)
+{
+	var ob = $("#"+id);
+	var v = ob.val() ;
+	var v = parseInt(v);
+	if(v==NaN||v<minv)
+	{
+		ob.val(minv) ;
+		return ;
+	}
+	if(v<=0)
+		ob.val(minv) ;
+}
+
 function add_item()
 {
-	var sv = $('#input_sv').val();
-	var ev = $('#input_ev').val();
-	var t = $('#input_t').val();
-	add_item_c(sv,ev,$('#input_c').val(),t);
-	$('#input_sv').val(ev);
-	$('#input_ev').val("");
-	$('#input_t').val("");
+	var fc = $('#sel_fc').val();
+	//var fc_t = $("#fc_"+fc).attr("fc_t") ;
+	var regidx = $('#input_regidx').val();
+	var regnum = $('#input_regnum').val();
+	var regidx = parseInt(regidx);
+	if(isNaN(regidx)||regidx<0)
+	{
+		dlg.msg("Address must be integer >= 0") ;
+		return ;
+	}
+	var regnum = parseInt(regnum);
+	if(isNaN(regnum)||regnum<=0)
+	{
+		dlg.msg("Length must be integer > 0") ;
+		return ;
+	}
+	add_item_c(null,fc,regidx,regnum);
+
+	$('#input_regidx').val(""+(regidx+1));
+	$('#input_regnum').val("");
 }
 
 function del_item(id)
@@ -229,27 +255,42 @@ function del_item(id)
 	$("#"+id).remove();
 }
 
-function set_view()
+function get_segs()
 {
-	var pm = "viewid="+$('#view_id').val() ;
-	pm += "&viewtitle="+utf8UrlEncode($('#view_title').val()) ;
-	
-	var ct="" ;
-	var bfirst=true ;
-	$('#color_list').children('tr').each(function(){
-		if(bfirst)bfirst=false;
-		else ct+='|' ;
+	var ret = [] ;
+	$('#item_list tr').each(function(i){
+		var tmpid = $(this).attr("id") ;
 		var tds = $(this).children('td') ;
-		var sv = tds.eq(0).html() ;
-		var ev = tds.eq(1).html() ;
-		var t = tds.eq(2).html() ;
-		var color=tds.eq(3).html() ;
-		ct += sv+":"+ev+":"+color+":"+t ;
+		var seg={} ;
+		seg.id = tmpid ;
+		seg.fc = parseInt(tds.eq(0).attr("vv")) ;
+		seg.reg_idx = parseInt(tds.eq(1).attr("vv")) ;
+		seg.reg_num = parseInt(tds.eq(2).attr("vv")) ;
+		ret.push(seg) ;
 	});
-	pm += "&cl="+utf8UrlEncode(ct) ;
-	send_ajax("dlv_edit_ajax.jsp?op=set",pm,function(bsucc,ret){
-		dlg.msg(ret);
-	}) ;
+	return ret ;
+}
+
+function do_submit(cb)
+{
+	var devid = document.getElementById('addr').value;
+	var devid = parseInt(devid);
+	if(isNaN(devid)||devid<=0||devid>254)
+	{
+		cb(false,'Please input Modbus Device Id (1-254)') ;
+		return ;
+	}
+	var segs = get_segs() ;
+	if(segs.length<=0)
+	{
+		cb(false,'Please input segments') ;
+		return ;
+	}
+	var r = {dev_addr:devid,segs:get_segs()};
+	console.log(r) ;
+	cb(true,{jstr:JSON.stringify(r)})
+	
+	//document.getElementById('form1').submit() ;
 }
 </script>
 </html>

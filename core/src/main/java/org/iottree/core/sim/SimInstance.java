@@ -93,6 +93,7 @@ public class SimInstance
 				if(ch==null)
 					continue ;
 				ch.belongTo = this;
+				ch.init();
 				rets.add(ch) ;
 			}
 			catch(Exception e)
@@ -222,16 +223,16 @@ public class SimInstance
 		return null ;
 	}
 	
-	public SimChannel setChannelBasic(SimChannel sdi) throws Exception
+	public SimChannel setChannelBasic(SimChannel sch) throws Exception
 	{
-		String n = sdi.getName() ;
+		String n = sch.getName() ;
 		if(Convert.isNullOrEmpty(n))
 			throw new Exception("name cannot be null or empty") ;
 		StringBuilder sb=  new StringBuilder() ;
 		if(!Convert.checkVarName(n, true, sb))
 			throw new Exception(sb.toString()) ;
 		
-		String chid = sdi.getId() ;
+		String chid = sch.getId() ;
 		SimChannel oldch = this.getChannel(chid) ;
 		if(oldch!=null)
 		{
@@ -250,21 +251,23 @@ public class SimInstance
 		int s = chs.size();
 		for (int i = 0; i < s; i++)
 		{
-			SimChannel dev = chs.get(i);
-			if (dev.getId().equals(sdi.getId()))
+			SimChannel ch = chs.get(i);
+			if (ch.getId().equals(sch.getId()))
 			{
-				dev.name = sdi.name ;
-				dev.title = sdi.title ;
-				dev.bEnable = sdi.bEnable ;
-				dev.save();
-				return dev;
+				ch.name = sch.name ;
+				ch.title = sch.title ;
+				ch.bEnable = sch.bEnable ;
+				ch.save();
+				ch.init();
+				return ch;
 			}
 		}
 
-		sdi.belongTo = this;
-		chs.add(sdi);
-		sdi.save();
+		sch.belongTo = this;
+		chs.add(sch);
+		sch.save();
+		sch.init();
 		//refreshActions();
-		return sdi;
+		return sch;
 	}
 }

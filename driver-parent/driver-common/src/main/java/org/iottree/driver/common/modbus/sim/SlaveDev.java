@@ -48,7 +48,7 @@ public class SlaveDev extends SimDev// implements IXmlDataable
 	
 	public String getDevTitle()
 	{
-		return "Addr="+this.devAddr ;
+		return "Addr="+this.devAddr +" Seg Num="+segs.size() ;
 	}
 	
 	public int getDevAddr()
@@ -61,69 +61,25 @@ public class SlaveDev extends SimDev// implements IXmlDataable
 		return this.segs;
 	}
 	
+	
+	public SlaveDevSeg getSegById(String id)
+	{
+		for(SlaveDevSeg seg:this.segs)
+		{
+			if(seg.getId().equals(id))
+				return seg ;
+		}
+		return null ;
+	}
+	
+	public void init()
+	{
+		for(SlaveDevSeg seg:segs)
+			seg.init() ;
+	}
+	
 	public boolean RT_init(StringBuilder failedr)
 	{
-		List<ModbusAddr> tmpads = new ArrayList<>() ;
-		StringBuilder sb = new StringBuilder() ;
-		List<UATag> tags = this.getTags() ;
-		for(UATag tag:tags)
-		{
-				if (tag.isMidExpress()||tag.isLocalTag())
-					continue;
-				String str = tag.getAddress() ;
-				UAVal.ValTP vtp = tag.getValTpRaw() ;
-				ModbusAddr ma = ModbusAddr.parseModbusAddr(str, vtp, sb) ;
-				if(ma==null)
-					continue ;
-				tmpads.add(ma);
-		}
-		maddrs = tmpads ;
-		
-		List<ModbusAddr> coil_in_addrs = filterAndSortAddrs(ModbusAddr.COIL_INPUT) ;
-		List<ModbusAddr> coil_out_addrs = filterAndSortAddrs(ModbusAddr.COIL_OUTPUT) ;
-		List<ModbusAddr> reg_input_addrs = filterAndSortAddrs(ModbusAddr.REG_INPUT) ;
-		List<ModbusAddr> reg_hold_addrs = filterAndSortAddrs(ModbusAddr.REG_HOLD) ;
-		
-		if(coil_in_addrs.size()>0)
-		{
-			ModbusBlock mb = new ModbusBlock(devAddr,ModbusAddr.COIL_INPUT,coil_in_addrs,
-					32,100,0);
-			if(mb.initReadCmds())
-			{
-				mbCoilIn = mb;
-				mb.initAsSlave();
-			}
-		}
-		if(coil_out_addrs.size()>0)
-		{
-			ModbusBlock mb = new ModbusBlock(devAddr,ModbusAddr.COIL_OUTPUT,coil_out_addrs,
-					32,100,0);
-			if(mb.initReadCmds())
-			{
-				mbCoilOut = mb;
-				mb.initAsSlave();
-			}
-		}
-		if(reg_input_addrs.size()>0)
-		{
-			ModbusBlock mb = new ModbusBlock(devAddr,ModbusAddr.REG_INPUT,reg_input_addrs,
-					32,100,0);
-			if(mb.initReadCmds())
-			{
-				mbRegIn = mb;
-				mb.initAsSlave();
-			}
-		}
-		if(reg_hold_addrs.size()>0)
-		{
-			ModbusBlock mb = new ModbusBlock(devAddr,ModbusAddr.REG_HOLD,reg_hold_addrs,
-					32,100,0);
-			if(mb.initReadCmds())
-			{
-				mbRegHold = mb;
-				mb.initAsSlave();
-			}
-		}
 		
 		return true;
 	}

@@ -31,7 +31,7 @@ IOT-Tree Server is an open source software developed using Java. It's admin ui i
 
 [Demo][demo_link]
 
-[Download][dl_link]
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">Download</a>
 
 
 

@@ -29,15 +29,15 @@ out.print("no channel (bus) found") ;
 return ;
 	}
 
-	SimConn conn = sch.getConn() ;
+	SimCP conn = sch.getConn() ;
 
 String local_ip = "";//cp.getLocalIP() ;
-int local_port = SimConnTcp.DEF_PORT;
+int local_port = SimCPTcp.DEF_PORT;
 if(conn!=null)
 {
-	if(conn instanceof SimConnTcp)
+	if(conn instanceof SimCPTcp)
 	{
-		SimConnTcp sct = (SimConnTcp)conn ;
+		SimCPTcp sct = (SimCPTcp)conn ;
 		local_ip = sct.getServerIp() ;
 		local_port = sct.getServerPort() ;
 	}

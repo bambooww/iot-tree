@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import java.util.LinkedHashMap;
 
 import org.iottree.core.util.CompressUUID;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -383,12 +384,31 @@ public class SlaveDevSeg
 			return fc2titles ;
 		
 		LinkedHashMap<Integer,String> f2t = new LinkedHashMap<>() ;
-		f2t.put(1, "Coil Status(R/W)") ;
-		f2t.put(2, "Input Status(R)") ;
-		f2t.put(3, "Holding Register(R/W)") ;
-		f2t.put(4, "Input Register(R)") ;
+		f2t.put(1, "Coil Status(R/W Bool)") ;
+		f2t.put(2, "Input Status(R Bool)") ;
+		f2t.put(3, "Holding Register(R/W Word)") ;
+		f2t.put(4, "Input Register(R Word)") ;
 		fc2titles = f2t ;
 		return f2t ;
+	}
+	
+	public static String getAddressStr(int fc,int reg)
+	{
+		if(reg<0||reg>65535)
+			throw new IllegalArgumentException("reg must be in 0-65535") ;
+		switch(fc)
+		{
+		case 1:
+			return String.format("%06d", reg+1);  
+		case 2:
+			return "1"+String.format("%05d", reg+1);
+		case 3:
+			return "4"+String.format("%05d", reg+1);
+		case 4:
+			return "3"+String.format("%05d", reg+1);
+		default:
+			return null ;
+		}
 	}
 	
 	@data_val
@@ -406,11 +426,13 @@ public class SlaveDevSeg
 	@data_val(param_name = "reg_num")
 	int regNum = 0;
 
-	@data_val(param_name = "int_ms")
-	long intervalMS = 3000;
+	//@data_val(param_name = "int_ms")
+	//long intervalMS = 3000;
+	
+	private transient boolean[] boolDatas = null ;
+	
+	private transient short[] int16Datas = null ;
 
-	
-	
 	public SlaveDevSeg()
 	{
 		this.id = CompressUUID.createNewId() ;
@@ -426,6 +448,11 @@ public class SlaveDevSeg
 		return fc ;
 	}
 	
+	public String getFCTitle()
+	{
+		return listFCs().get(this.fc) ;
+	}
+	
 	public int getRegIdx()
 	{
 		return regIdx ;
@@ -436,27 +463,151 @@ public class SlaveDevSeg
 		return regNum ;
 	}
 	
+	public String getAddressStr(int reg)
+	{
+		return getAddressStr(this.fc,reg) ;
+	}
+	
+	public boolean canWriter()
+	{
+		return fc==1 || fc==3;
+	}
 //	public abstract XmlVal.XmlValType getDataType();
 //	
 //	protected abstract boolean initSlaveData() ;
 //	
-	/**
-	 * 
-	 * @return
-	 */
-	public SlaveData getSlaveData()
+	
+	boolean init()
 	{
 		switch(this.fc)
 		{
 		case 1:
 		case 2:
+			boolDatas = new boolean[regNum] ;
+			for(int i = 0 ; i < boolDatas.length ; i ++)
+				boolDatas[i] = false;
+			return true ;
 		case 3:
 		case 4:
+			int16Datas = new short[regNum] ;
+			for(int i = 0 ; i < int16Datas.length ; i ++)
+				int16Datas[i] = 0;
+			return true ;
 		default:
-			return null ;
+			return false;
 		}
 	}
 	
+	public boolean isBoolData()
+	{
+		return this.fc==1 || this.fc==2 ;
+	}
+	
+	boolean RT_init(StringBuilder failedr)
+	{
+		switch(this.fc)
+		{
+		case 1:
+		case 2:
+			boolDatas = new boolean[regNum] ;
+			for(int i = 0 ; i < boolDatas.length ; i ++)
+				boolDatas[i] = false;
+			return true ;
+		case 3:
+		case 4:
+			int16Datas = new short[regNum] ;
+			for(int i = 0 ; i < int16Datas.length ; i ++)
+				int16Datas[i] = 0;
+			return true ;
+		default:
+			return false;
+		}
+	}
+	
+	public String RT_getDataJsonArrStr()
+	{
+		StringBuilder sb = new StringBuilder() ;
+		switch(this.fc)
+		{
+		case 1:
+		case 2:
+			sb.append("[") ;
+			for(int i = 0 ; i < boolDatas.length ; i ++)
+			{
+				if(i==0)
+					sb.append(boolDatas[i]) ;
+				else
+					sb.append(",").append(boolDatas[i]) ;
+			}
+			sb.append("]") ;
+			return sb.toString() ;
+		case 3:
+		case 4:
+			sb.append("[") ;
+			for(int i = 0 ; i < int16Datas.length ; i ++)
+			{
+				if(i==0)
+					sb.append(int16Datas[i]) ;
+				else
+					sb.append(",").append(int16Datas[i]) ;
+			}
+			sb.append("]") ;
+			return sb.toString() ;
+		default:
+			return null;
+		}
+	}
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public SlaveData getSlaveData()
+//	{
+//		switch(this.fc)
+//		{
+//		case 1:
+//		case 2:
+//		case 3:
+//		case 4:
+//		default:
+//			return null ;
+//		}
+//	}
+	
+	
+	public boolean[] getSlaveDataBool()
+	{
+		return boolDatas ;
+	}
+	
+	public void setSlaveDataBool(int reg,boolean v)
+	{
+		boolDatas[reg] = v ;
+	}
+	
+	public short[] getSlaveDataInt16()
+	{
+		return int16Datas ;
+	}
+	
+	public void setSlaveDataInt16(int reg,short v)
+	{
+		int16Datas[reg] = v ;
+	}
+	
+	public void setSlaveDataStr(int reg,String v)
+	{
+		if(this.isBoolData())
+		{
+			boolean bv = "true".equals(v) ||"1".equals(v) ;
+			setSlaveDataBool(reg,bv) ;
+		}
+		else
+		{
+			short tmpv = (short)Convert.parseToInt32(v, (short)0) ;
+			setSlaveDataInt16(reg,tmpv) ;
+		}
+	}
 
 	public void onMasterWriteBools(int idx,boolean[] datas)
 	{

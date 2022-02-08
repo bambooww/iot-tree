@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
 	java.io.*,
+	org.json.*,
 	org.iottree.core.*,
 	org.iottree.core.task.*,
 	org.iottree.core.basic.*,
@@ -97,7 +98,7 @@ case "ch_conn":
 	if(!Convert.checkReqEmpty(request, out, "insid","chid","tp"))
 		return ;
 	String tp = request.getParameter("tp") ;
-	SimConn conn = SimConn.createNewInstance(tp) ;
+	SimCP conn = SimCP.createNewInstance(tp) ;
 	if(conn==null)
 	{
 		out.print("no conn found with tp="+tp) ;
@@ -188,15 +189,21 @@ case "dev_setup":
 		out.print("no channel found") ;
 		return ;
 	}
-	if(!Convert.checkReqEmpty(request, out, "chid","devid"))
+	if(!Convert.checkReqEmpty(request, out, "chid","devid","jstr"))
 		return ;
+	
 	dev = sch.createNewDev() ;
-	tmpxd = XmlData.parseFromHttpRequest(request, "dx_");
-	DataTranserXml.injectXmDataToObj(dev, tmpxd) ;
-	dev.withId(devid) ;
+	String jstr = request.getParameter("jstr") ;
+	//tmpxd = XmlData.parseFromHttpRequest(request, "dx_");
+	//DataTranserXml.injectXmDataToObj(dev, tmpxd) ;
+	
 	//ta.withName(name).withInitScript(c)
 	try
 	{
+		JSONObject jo = new JSONObject(jstr) ;
+		DataTranserJSON.injectJSONToObj(dev, jo) ;
+		dev.withId(devid) ;
+		
 		sch.setDevExt(dev) ;
 		//sch.save() ;
 		out.print("succ") ;
@@ -234,20 +241,27 @@ case "list":
 	out.print("]") ;
 	*/
 	break ;
-case "start":
-case "stop":
-	if(!Convert.checkReqEmpty(request, out,"insid"))
+case "ch_start":
+case "ch_stop":
+	if(!Convert.checkReqEmpty(request, out,"insid","chid"))
 		return;
-	if(ins==null)
+	if(sch==null)
 	{
 		out.print("no channel found") ;
 		return ;
 	}
-	if("start".equals(op))
-		sch.RT_start();
+	StringBuilder sb = new StringBuilder() ;
+	if("ch_start".equals(op))
+	{
+		if(!sch.RT_start(sb))
+		{
+			out.print(sb.toString()) ;
+			return ;
+		}
+	}
 	else
 		sch.RT_stop();
-	out.print("ok") ;
+	out.print("succ") ;
 	break;
 
 }%>

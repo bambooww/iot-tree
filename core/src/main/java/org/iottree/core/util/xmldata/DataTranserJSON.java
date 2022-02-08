@@ -361,6 +361,7 @@ public class DataTranserJSON
 			int subn = subjarr.length() ;
 			for (int i = 0 ; i < subn ; i ++)
 			{
+				subo = xmld.obj_c().getConstructor().newInstance();
 				JSONObject tmpjo = subjarr.getJSONObject(i);
 				if(injectJSONToObj(subo, tmpjo))
 					vs.add(subo);
@@ -418,6 +419,7 @@ public class DataTranserJSON
 			int subn = subjarr.length() ;
 			for (int i = 0 ; i < subn ; i ++)
 			{
+				subo = xmld.obj_c().getConstructor().newInstance();
 				JSONObject tmpjo = subjarr.getJSONObject(i);
 				if(injectJSONToObj(subo, tmpjo))
 					vs.add(subo);

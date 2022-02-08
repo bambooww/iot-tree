@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>driver-parent</artifactId>
 		<groupId>org.iottree.driver</groupId>
-		<version>0.95.5</version>
+		<version>0.95.6</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>iottree-driver-common</artifactId>
