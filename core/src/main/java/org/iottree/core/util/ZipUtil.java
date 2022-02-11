@@ -19,7 +19,16 @@ public class ZipUtil
 		if (!pf.exists())
 			pf.mkdirs();
 
-		try (FileOutputStream fos = new FileOutputStream(zipoutf); ZipOutputStream zos = new ZipOutputStream(fos);)
+		try (FileOutputStream fos = new FileOutputStream(zipoutf); )
+		{
+			zipOut(metatxt, files, fos) ;
+		}
+	}
+	
+	
+	public static void zipOut(String metatxt, List<File> files, OutputStream outputs) throws IOException
+	{
+		try (ZipOutputStream zos = new ZipOutputStream(outputs);)
 		{
 			if (metatxt != null)
 			{

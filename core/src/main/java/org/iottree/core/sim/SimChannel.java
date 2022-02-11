@@ -14,6 +14,8 @@ import org.iottree.core.UATag;
 import org.iottree.core.task.TaskAction;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
@@ -27,8 +29,11 @@ import org.iottree.core.util.xmldata.data_val;
  *
  */
 @data_class
-public abstract class SimChannel implements Runnable
+public abstract class SimChannel extends SimNode implements Runnable
 {
+	private ILogger log = LoggerManager.getLogger(SimChannel.class) ;
+	
+	
 	private static final String[] CH_CNS = new String[] { "org.iottree.driver.common.modbus.sim.SlaveChannel" };
 
 	static private LinkedHashMap<String, SimChannel> TP2CH = null;
@@ -70,14 +75,6 @@ public abstract class SimChannel implements Runnable
 		return (SimChannel) sc.getClass().newInstance();
 	}
 
-	@data_val(param_name = "id")
-	protected String id = null;
-
-	@data_val(param_name = "n")
-	protected String name = null;
-
-	@data_val(param_name = "t")
-	protected String title = null;
 
 	@data_obj(param_name = "devs")
 	ArrayList<SimDev> devs = new ArrayList<>();
@@ -94,7 +91,7 @@ public abstract class SimChannel implements Runnable
 
 	public SimChannel()
 	{
-		this.id = CompressUUID.createNewId();
+		//this.id = CompressUUID.createNewId();
 	}
 
 	public abstract String getTp();
@@ -111,40 +108,6 @@ public abstract class SimChannel implements Runnable
 		return this;
 	}
 
-	public String getId()
-	{
-		return this.id;
-	}
-
-	public SimChannel withId(String id)
-	{
-		this.id = id;
-		return this;
-	}
-
-	public String getName()
-	{
-		return this.name;
-	}
-
-	public SimChannel withName(String n)
-	{
-		this.name = n;
-		return this;
-	}
-
-	public String getTitle()
-	{
-		if (Convert.isNotNullEmpty(this.title))
-			return this.title;
-		return this.name;
-	}
-
-	public SimChannel withTitle(String t)
-	{
-		this.title = t;
-		return this;
-	}
 
 	public boolean isEnable()
 	{
@@ -234,11 +197,13 @@ public abstract class SimChannel implements Runnable
 				dev.name = sdi.name;
 				dev.title = sdi.title;
 				dev.bEnable = sdi.bEnable;
+				dev.init();
 				this.save();
 				return dev;
 			}
 		}
 
+		sdi.init();
 		this.devs.add(sdi);
 		this.save();
 		// refreshActions();
@@ -259,7 +224,7 @@ public abstract class SimChannel implements Runnable
 				sdi.title = dev.title;
 				sdi.bEnable = dev.bEnable;
 				this.devs.set(i, sdi);
-
+				sdi.init();
 				this.save();
 				return sdi;
 			}
@@ -321,8 +286,8 @@ public abstract class SimChannel implements Runnable
 				}
 				catch(SocketException e)
 				{
-					//e.printStackTrace();
-					System.out.println(" warn:"+e.getMessage());
+					if(log.isDebugEnabled())
+						log.debug(" warn:"+e.getMessage());
 				}
 			}
 		}
@@ -384,26 +349,30 @@ public abstract class SimChannel implements Runnable
 		
 		this.cp.RT_stop();
 	}
-
+	
 	protected abstract void onConnOk(SimConn sc);
 
 	protected abstract void onConnBroken(SimConn sc);
-	// @Override
-	// public XmlData toXmlData()
-	// {
-	// XmlData xd = new XmlData() ;
-	// xd.setParamValue("id", this.id);
-	// xd.setParamValue("n", this.name);
-	// if(this.title!=null)
-	// xd.setParamValue("t", this.title);
-	// return xd;
-	// }
-	//
-	// @Override
-	// public void fromXmlData(XmlData xd)
-	// {
-	// this.id = xd.getParamValueStr("id") ;
-	// this.title = xd.getParamValueStr("t") ;
-	// this.name = xd.getParamValueStr("n") ;
-	// }
+
+
+
+	public Object JS_get(String key)
+	{
+		Object r = super.JS_get(key);
+		if (r != null)
+			return r;
+		return this.getDevByName(key);
+	}
+
+	public List<Object> JS_names()
+	{
+		List<Object> rets = super.JS_names();
+
+		for (SimDev dev : this.listDevItems())
+		{
+			rets.add(dev.getName());
+		}
+		return rets;
+	}
+	
 }

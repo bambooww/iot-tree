@@ -63,16 +63,7 @@ dlg.resize_to(700,500) ;
       	
       	
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
-  <button onclick="edit_ins_js('<%=ins.getId()%>','','init')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm">init script</button>
-  <button onclick="edit_ins_js('<%=ins.getId()%>','','run')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm" >run in loop script</button>
-  <button onclick="edit_ins_js('<%=ins.getId()%>','','end')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm">end script</button>
-   
-  <div class="btn-group open "  id="menu_tree_add_ch" style="border:solid 1px;">
-	  <a class="btn layui-btn layui-btn-sm" href="#" ><i class="fa fa-exchange fa-lg"></i> +Add Channel(Bus)</a>
-	  <a class="btn layui-btn layui-btn-sm"  href="#">
-	    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
-	  </a>
-  </div>
+  
 
  	<%--
  		<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_ch('')">+Add Channel(Bus)</button>
@@ -85,10 +76,22 @@ dlg.resize_to(700,500) ;
 							 --%>
  </div>
 </blockquote>
+<form class="layui-form" action="" >
 <table style="width:100%;height:90%;border:solid 1px;" >
   <tr>
     <td style="width:50%;height:100%;" valign="top">
       <div style="width:100%;height:100%;overflow: auto;">
+  
+  <div class="btn-group open "  id="menu_tree_add_ch" style="border:solid 1px;">
+	  <a class="btn layui-btn layui-btn-sm" href="#" ><i class="fa fa-exchange fa-lg"></i> +Add Channel(Bus)</a>
+	  <a class="btn layui-btn layui-btn-sm"  href="#">
+	    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
+	  </a>
+  </div>
+  <button onclick="edit_ins_js('init')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm">init script</button>
+  <button onclick="edit_ins_js('run')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm" >run in loop script</button>
+  <button onclick="edit_ins_js('end')" class="layui-btn layui-btn-<%=(false?"normal":"primary")%> layui-border-blue layui-btn-sm">end script</button>
+   
 <%
 	List<SimChannel> chs = ins.getChannels();
 for(SimChannel ch:chs)
@@ -117,7 +120,7 @@ for(SimChannel ch:chs)
 	if(conn!=null)
 		connt = conn.getConnTitle() ;
 %>
-<form class="layui-form" action="" >
+
 <table class="layui-table">
   <colgroup>
     <col width="200">
@@ -164,21 +167,15 @@ else
 <%
 	}
 %>
+<span id="ch_rt_<%=ch.getId()%>" ></span>
       </th>
        <th>
 		
 	   <a href="javascript:ch_del('<%=ch.getId()%>')" style="color:red"><i title="delete channel" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
 	  </th>
 	  <th>
-<a href="javascript:add_or_edit_dev('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId()%>')"><i title="add device" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
+<a href="javascript:add_or_edit_dev('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId()%>')"><i title="add device" class="fa-solid fa-square-plus fa-lg" aria-hidden="true"></i></a>
       
-      <a href="javascript:export_ch('<%=ch.getId()%>')" title="export">
-              <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
-							</span>
-           </a>
-           
           
 	  </th>
     </tr> 
@@ -222,8 +219,6 @@ else
 <%
 }
 %>
-
-</form>
   </div>
 </td>
     <td style="width:100%;height:100%" valign="top">
@@ -231,6 +226,7 @@ else
     </td>
   </tr>
 </table>
+</form>
 <div style="display:none">
  <textarea id="ta_js"></textarea>
 </div>
@@ -243,8 +239,8 @@ layui.use('form', function(){
 	  form.render();
 });
 
-var taskact_js = null;
-var taskact_js_txt = '' ;
+var ins_js = null;
+var ins_js_txt = '' ;
 
 function refresh_me()
 {
@@ -268,7 +264,7 @@ $('#menu_tree_add_ch').click(function(){
 
 function show_script()
 {
-	dlg.open("../ua_cxt/cxt_script.jsp?op=task&path="+prjpath+"&taskid="+taskact_js.taskid+"&opener_txt_id=ta_js",
+	dlg.open("sim_script.jsp?insid="+insid+"&opener_txt_id=ta_js&jstp="+ins_js.jstp,
 			{title:'Edit JS'},['Ok','Cancel'],
 			[
 				function(dlgw)
@@ -276,10 +272,10 @@ function show_script()
 					var jstxt = dlgw.get_edited_js() ;
 					 if(jstxt==null)
 						 jstxt='' ;
-					 taskact_js.op='act_js_write';
-					 taskact_js.jstxt=jstxt;
+					 ins_js.op='ins_js_write';
+					 ins_js.jstxt=jstxt;
 					 
-						send_ajax("prj_task_ajax.jsp",taskact_js,function(bsucc,ret){
+						send_ajax("sim_ajax.jsp",ins_js,function(bsucc,ret){
 							if(bsucc&&ret.indexOf('succ')!=0)
 							{
 								dlg.msg(ret) ;
@@ -295,13 +291,13 @@ function show_script()
 			]);
 }
 
-function edit_task_js(taskid,actid,jstp)
+function edit_ins_js(jstp)
 {
 	event.preventDefault();
 	
-	taskact_js = {prjid:prjid,op:'act_js_read',taskid:taskid,actid:actid,jstp:jstp} ;
+	ins_js = {insid:insid,op:'ins_js_read',jstp:jstp} ;
 	
-	send_ajax("prj_task_ajax.jsp",taskact_js,function(bsucc,ret){
+	send_ajax("sim_ajax.jsp",ins_js,function(bsucc,ret){
 		if(bsucc&&ret.indexOf('succ=')!=0)
 		{
 			dlg.msg(ret) ;
@@ -588,9 +584,26 @@ function ch_start_stop(b,chid)
 
 function dev_rt(tp,chid,id)
 {
-	
 	document.getElementById("rightf").src = tp+"_rt.jsp?insid="+insid+"&chid="+chid+"&devid="+id;	
 }
+
+function sim_rt()
+{
+	send_ajax("sim_ajax.jsp","insid="+insid+"&op=rt",function(bsucc,ret){
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			return ;
+		}
+		var ob = null;
+		eval("ob="+ret) ;
+		for(var ch of ob)
+		{
+			$("#ch_rt_"+ch.id).html(ch.rt) ;
+		}
+	}) ;
+}
+
+setInterval(sim_rt,3000);
 
 </script>
 

@@ -33,6 +33,11 @@ public class SimCPCom extends SimCP
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public int getConnsNum()
+	{
+		return 0;
+	}
 
 	public List<SimConn> getConns()
 	{

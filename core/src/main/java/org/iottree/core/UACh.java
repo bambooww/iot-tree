@@ -420,6 +420,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		else
 		{
 			dev.setNameTitle(name, title, desc);
+			dev.setDevRefId(null);
 		}
 		
 		this.RT_init(false, true);

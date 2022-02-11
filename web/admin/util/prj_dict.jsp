@@ -59,10 +59,7 @@ background-color: #eeeeee
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_dc('<%=prjid %>',null)">+Add Data Class</button>
  	
  	 <button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_task()">
-							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
-							</span>&nbsp;Import Data Class
+							 <i class="fa-solid fa-file-import"></i>&nbsp;Import Data Class
 							</button>
 							
  </div>
@@ -93,10 +90,7 @@ for(DataClass dc:dcs)
 	  <a onclick="del_dc('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Delete Data Node" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
       
       <a href="javascript:import_dc_txt('<%=prjid %>','<%=dc.getClassId()%>')" title="Import by Txt">
-              <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-left fa-stack-1x"></i>
-							</span>
+             <i class="fa-solid fa-file-import"></i>
            </a>
 	  </th>
     </tr> 

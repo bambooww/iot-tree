@@ -103,7 +103,7 @@ for(SlaveDevSeg seg:segs)
 <%
 	for(int i = 0 ; i < regnum ; i ++)
 	{
-		String addr_str = seg.getAddressStr(i) ;
+		String addr_str = seg.getAddressStr(regidx+i) ;
 %><%=addr_str %>: <span id="r_<%=segid%>_<%=i%>" onclick="set_reg_val('<%=segid%>',<%=i%>)" style="cursor:hand;"></span>&nbsp;<%
 	}
 %>

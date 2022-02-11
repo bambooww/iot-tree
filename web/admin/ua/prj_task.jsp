@@ -57,10 +57,7 @@ background-color: #eeeeee
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_task('<%=prjid %>',null)">+Add Task</button>
  	
  	 <button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_task()">
-							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
-							</span>&nbsp;Import Task
+							 <i class="fa-solid fa-file-import"></i>&nbsp;Import Task
 							</button>
 							
  </div>
@@ -144,10 +141,7 @@ else
 <a href="javascript:add_or_edit_task_act('<%=prjid %>','<%=jt.getId()%>',null)"><i title="add action" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
       
       <a href="javascript:export_task('<%=prjid %>','<%=jt.getId()%>')" title="export">
-              <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
-							</span>
+             <i class="fa-solid fa-file-export"></i>
            </a>
            
           

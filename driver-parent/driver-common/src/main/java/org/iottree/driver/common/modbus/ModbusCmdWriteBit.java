@@ -16,6 +16,13 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	
 	boolean bwVal = false;
 	
+	int fc = ModbusCmd.MODBUS_FC_WRITE_SINGLE_COIL;
+	
+	public ModbusCmdWriteBit(int devid)
+	{
+		super(1000,devid) ;
+	}
+	
 	public ModbusCmdWriteBit(long scan_inter_ms,
 			int s_addr,int reg_addr,boolean bval)
 	{
@@ -34,11 +41,20 @@ public class ModbusCmdWriteBit extends ModbusCmd
 		this(-1,s_addr,reg_addr,bval) ;
 	}
 	
-
 //	public ModbusCmdWriteBit(DevCtrlPtBindInfo.BindInfoModbus bim,boolean bval)
 //	{
 //		this(-1,bim.getDevAddr(),bim.getRegAddr(),bval) ;
 //	}
+	
+	public int getRegAddr()
+	{
+		return this.regAddr;
+	}
+	
+	public boolean getWriteVal()
+	{
+		return this.bwVal ;
+	}
 	
 	
 	public void setWriteVal(boolean b)
@@ -117,16 +133,16 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	                continue ;
 	            
 	            if(mbuss_adu[1]!=(byte)MODBUS_FC_WRITE_SINGLE_COIL)
-	            {//���������
+	            {//
 	                if(mbuss_adu[1]==(byte)(MODBUS_FC_WRITE_SINGLE_COIL+0x80))
-	                {//�豸���ش���
+	                {//
 	                    //*perrc = mbuss_adu[2] ; 
 	                }
 	                break ;
 	            }
 	            else
 	            {//
-	                mayrlen = 8;//�����ֽڳ�����Ϣ��ǰ��3�ֽ�+����crc
+	                mayrlen = 8;//
 	            }
 	        }
 	        
@@ -135,7 +151,7 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	    }
 	    
 	    if(mayrlen<=0 || rlen<mayrlen)
-	    {//���մ�����Ϣ or time out
+	    {//
 	        com_stream_end() ;
 	        if(rlen<=0)
 	        	return ERR_RECV_TIMEOUT ;//recvTimeout may be adjust
@@ -144,10 +160,7 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	        else
 	        	return 0 ;//err
 	    }
-	    
-	    /////
-//	  ������յ����ݣ���ַ�͹�����
-	    //crc��֤
+
 	    if(crc!=modbus_crc16_check(mbuss_adu,6))//mayrlen-2))
 	    {
 	        com_stream_end() ;
@@ -171,8 +184,8 @@ public class ModbusCmdWriteBit extends ModbusCmd
 		pdata[0] = (byte) ((lastTcpCC >> 8) & 0xFF) ;
 		pdata[1] = (byte) (lastTcpCC & 0xFF) ;
 		pdata[2] = pdata[3] = 0 ;
-		pdata[4] = 0 ;//�����ֽ�����λ
-		pdata[5] = 6 ;//�����ֽ�����λ
+		pdata[4] = 0 ;//
+		pdata[5] = 6 ;//
 		//pdu
 
 	    ret_val_num = 0 ;
@@ -194,7 +207,7 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	    clearInputStream(ins) ;
 	    ous.write(pdata) ;
 	    ous.flush() ;
-	    //��ȡǰ6���ֽ�
+	    //
 	    byte[] read_mbap = new byte[6];
 	    do
 	    {
@@ -241,7 +254,7 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	    	return 0 ;//err
 	    }
 	    if(recvpdu[1]!=pdata[7])
-        {//���������
+        {//
             //if(mbuss_adu[1]==(byte)(fc+0x80))
 	    	return 0 ;
         }
@@ -251,4 +264,57 @@ public class ModbusCmdWriteBit extends ModbusCmd
 	    return 1 ;
 	}
 	
+
+	static ModbusCmdWriteBit createReqMC(byte[] bs,int[] pl)
+	{
+		if(bs.length<8)
+			return null ;
+		
+		int crc = modbus_crc16_check(bs,6);
+		if(bs[6]!=(byte)((crc>>8) & 0xFF) ||
+				bs[7]!=(byte)(crc & 0xFF))
+		{
+			return null ;
+		}
+		
+	    
+		short addr = (short)(bs[0] & 0xFF) ;
+		short fc =  (short)(bs[1] & 0xFF) ;
+		
+		int reg_addr = (int)(0xFF & bs[2]) ;
+		reg_addr <<= 8 ;
+		reg_addr += (int)(0xFF & bs[3]) ;
+		
+		boolean bv = (bs[4]==(byte)0xFF) ;
+		
+		if(bs.length>8)
+			pl[0] = 8 ;
+		else
+			pl[0] = -1 ;
+		
+		return new ModbusCmdWriteBit(addr,reg_addr,bv) ;
+	}
+	
+	
+	public static byte[] createResp(short addr,int reg_addr,boolean bdata)
+	{
+		byte[] data = new byte[8] ;
+		
+		
+		data[0] = (byte)addr ;
+		data[1] = MODBUS_FC_WRITE_SINGLE_COIL;
+		data[2] = (byte)(reg_addr>>8) ;
+		data[3] = (byte)(reg_addr) ;
+		if(bdata)
+			data[4] = (byte)0xFF ;
+		else
+			data[4] = 0 ;
+		data[5] = 0 ;
+		
+		int crc = modbus_crc16_check(data,6);
+	    data[6] = (byte)((crc>>8) & 0xFF) ;
+	    data[7] = (byte)(crc & 0xFF) ;
+		
+		return data ;
+	}
 }

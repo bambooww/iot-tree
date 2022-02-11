@@ -27,7 +27,7 @@ public class SimCPTcp extends SimCP
 	int serverPort = DEF_PORT ;
 	//SerialPort serialPort = null;
 	
-	static class TcpConn extends SimConn
+	class TcpConn extends SimConn
 	{
 		Socket socket = null ;
 		
@@ -35,10 +35,12 @@ public class SimCPTcp extends SimCP
 		
 		OutputStream outputs = null ;
 		
-		public TcpConn(SimChannel ch,SimCP cp,Socket sock) throws IOException
+		public TcpConn(SimChannel ch,SimCPTcp cp,Socket sock) throws IOException
 		{
 			super(ch,cp) ;
 			this.socket = sock ;
+			this.socket.setSoTimeout(10000);
+			//this.socket.set
 			this.inputs = sock.getInputStream() ;
 			this.outputs = sock.getOutputStream() ;
 			
@@ -87,30 +89,47 @@ public class SimCPTcp extends SimCP
 				}
 				catch(Exception e) {}
 				
-				socket.close();
+				try
+				{
+					socket.close();
+				}
+				catch(Exception e) {}
+				
+				decreaseConn(this);
 			}
 			finally
 			{
-				decreaseConn(this);
+				
 			}
 		}
 	}
 	
-	static ArrayList<TcpConn> allConns = new ArrayList<>() ;
+	ArrayList<TcpConn> allConns = new ArrayList<>() ;
 	
-	static synchronized void increaseConn(TcpConn tc)
+	void increaseConn(TcpConn tc)
 	{
-		allConns.add(tc) ;
-		System.out.println(" sim cp tcp add conn,cur num="+allConns.size()) ;
+		synchronized(allConns)
+		{
+			allConns.add(tc) ;
+			//System.out.println(" sim cp tcp add conn,cur num="+allConns.size()) ;
+		}
 	}
 	
-	static synchronized void decreaseConn(TcpConn tc)
+	void decreaseConn(TcpConn tc)
 	{
-		allConns.remove(tc) ;
-		System.out.println(" sim cp tcp remove conn,cur num="+allConns.size()) ;
+		synchronized(allConns)
+		{
+			allConns.remove(tc) ;
+			//System.out.println(" sim cp tcp remove conn,cur num="+allConns.size()) ;
+		}
 	}
 	
-	static synchronized List<SimConn> listAllConns()
+	public int getConnsNum()
+	{
+		return allConns.size();
+	}
+	
+	public synchronized List<SimConn> listAllConns()
 	{
 		ArrayList<SimConn> rets = new ArrayList<>() ;
 		rets.addAll(allConns) ;

@@ -130,15 +130,15 @@ public class ConnPtTcpClient extends ConnPtStream
 				}
 			}
 
-			try
-			{
-				sock.sendUrgentData(0xFF);
-			}
-			catch ( Exception e)
-			{
-				e.printStackTrace();
-				disconnect();
-			}
+//			try
+//			{//   ****** this code may cause tcp reset with 90s interval *****
+//				sock.sendUrgentData(0xFF);
+//			}
+//			catch (Exception e)
+//			{
+//				System.out.println(" ConnPtTcpClient will disconnect by sending err:"+e.getMessage()) ;
+//				disconnect();
+//			}
 			return true;
 		}
 
@@ -148,6 +148,7 @@ public class ConnPtTcpClient extends ConnPtStream
 			sock = new Socket(host, port);
 			sock.setSoTimeout(connTimeoutMS);
 			sock.setTcpNoDelay(true);
+			sock.setKeepAlive(true);
 			inputS = sock.getInputStream();
 			outputS = sock.getOutputStream();
 
@@ -157,8 +158,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		}
 		catch ( Exception ee)
 		{
-			// System.out.println("conn to "+this.getStaticTxt()+" err") ;
-			// ee.printStackTrace();
+			System.out.println(" ConnPtTcpClient will disconnect by connect err:"+ee.getMessage()) ;
 			disconnect();
 			return false;
 		}

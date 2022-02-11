@@ -133,6 +133,9 @@ public class ConnProTcpClient extends ConnProvider
 	{
 		for(ConnPt ci:this.listConns())
 		{
+			if(!ci.isEnable())
+				continue ;
+			
 			ConnPtTcpClient citc = (ConnPtTcpClient)ci ;
 			citc.checkConn() ;
 		}

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -103,11 +104,33 @@ public class MDServlet extends HttpServlet
 		
 		if(uri.endsWith(".md"))
 		{
+			boolean boutline = !"false".equals(req.getParameter("outline")) ;
+			if(uri.endsWith("/nav.md"))
+				boutline=false;
 			String txt = getMdHtml(req,uri) ;
 			if(txt==null)
 				return ;
+			PrintWriter w = resp.getWriter() ;
+			if(boutline)
+			{
+				w.write("<html><head><script src=\"/_js/jquery-1.12.0.min.js\"></script>"
+						+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_js/layui/css/layui.css\" />\r\n" + 
+					"<script src=\"/_js/layui/layui.all.js\"></script>"+
+					"<script src=\"/_js/layui/layui.all.js\"></script>"+
+					"<link  href=\"/_js/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" >"+
+					"</head><body>"
+					+ "<div style='position:absolute;left:10px;right:200px'>") ;
+			}
 			
-			resp.getWriter().write(txt);
+			w.write(txt);
+			if(boutline)
+			{
+				w.write("</div>"
+						+ "<div id='outline_div' class=\"layui-layer layui-layer-page layui-layer-dir\" type=\"page\" times=\"1\" showtime=\"0\" contype=\"object\" style=\"z-index: 19891015; position: fixed; top: 33px; left: 994px; margin-left: -15px;\"><div class=\"layui-layer-title\" style=\"cursor: move;\">Outline</div><div id=\"\" class=\"layui-layer-content\">"
+						+ "<ul id=\"outline_list\" class=\"site-dir layui-layer-wrap\" style=\"display: block;\">\r\n" + 
+						"</ul></div><span class=\"layui-layer-setwin\"></span><span class=\"layui-layer-resize\"></span></div>"+
+						"</body><script src=\"/doc/doc.js\"></script></html>");
+			}
 			return ;
 		}
 

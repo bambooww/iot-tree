@@ -2,6 +2,8 @@ package org.iottree.driver.common.modbus;
 
 public abstract class ModbusCmdRead extends ModbusCmd
 {
+	protected ModbusCmdRead()
+	{}
 
 	public ModbusCmdRead(long scan_inter_ms, int dev_addr)
 	{

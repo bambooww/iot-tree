@@ -127,7 +127,7 @@ function sel_devdef()
 {
 	dlg.open_win("../dev/dev_lib_lister.jsp?drv="+drv_name,
 			{title:"Select Device in Library",w:'1000',h:'560'},
-			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			['<wbt:lang>ok</wbt:lang>','No choice','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -139,6 +139,12 @@ function sel_devdef()
 					}//sel.cat_title+"-"+
 					$("#devdef_tt").val(sel.title+"["+sel.name+"]") ;
 					$("#devdef_id").val(sel.id) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					$("#devdef_tt").val("") ;
+					$("#devdef_id").val("") ;
 					dlg.close();
 				},
 				function(dlgw)

@@ -33,11 +33,37 @@ public class ModbusCmdWriteBits extends ModbusCmd
 		this(-1,s_addr,reg_addr,bvals) ;
 	}
 	
-//	public ModbusCmdWriteBits(DevCtrlPtBindInfo.BindInfoModbus bim,boolean[] bvals)
+//	static ModbusCmdWriteBits createReqMC(byte[] bs,int[] pl)
 //	{
-//		this(-1,bim.getDevAddr(),bim.getRegAddr(),bvals) ;
+//		if(bs.length<8)
+//			return null ;
+//		
+//		int crc = modbus_crc16_check(bs,6);
+//		if(bs[6]!=(byte)((crc>>8) & 0xFF) ||
+//				bs[7]!=(byte)(crc & 0xFF))
+//		{
+//			return null ;
+//		}
+//		
+//		short addr = (short)(bs[0] & 0xFF) ;
+//		short fc =  (short)(bs[1] & 0xFF) ;
+//		
+//		int reg_addr = (int)(0xFF & bs[2]) ;
+//		reg_addr <<= 8 ;
+//		reg_addr += (int)(0xFF & bs[3]) ;
+//		
+//		int reg_num =  (int)(0xFF & bs[4]) ;
+//		reg_num <<= 8 ;
+//		reg_num += (int)(0xFF & bs[5]) ;
+//		
+//		if(bs.length>8)
+//			pl[0] = 8 ;
+//		else
+//			pl[0] = -1 ;
+//		
+//		return new ModbusCmdWriteBits(,
+//				addr,reg_addr,reg_num) ;
 //	}
-	
 	
 	public void setWriteVal(boolean[] bs)
 	{

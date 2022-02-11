@@ -100,23 +100,23 @@ background:#aaaaaa;
 							<a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_prj()">
 							
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-plus fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;Add
 							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:imp_prj()">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;Import
 							 <input type="file" id='add_file' onchange="add_file_onchg()" name="file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:imp_prj_demo()">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;Import Demo
 							</a>
 							
@@ -164,8 +164,8 @@ if(!rep.isMainPrj())
           <span>
            <a class=" " href="javascript:set_prj_main('<%=rep.getId()%>')" title="set as main">
               <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  &nbsp;&nbsp;M
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa-thin fa-m  fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
            </span>
@@ -175,7 +175,7 @@ if(rep.isAutoStart())
 {
 %><a class=" " href="javascript:set_prj_auto_start('<%=rep.getId()%>',false)" title="unset auto start">
 <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
 							  &nbsp;&nbsp;A
 							</span>
 </a><%
@@ -184,29 +184,29 @@ else
 {
 %><a class=" " href="javascript:set_prj_auto_start('<%=rep.getId()%>',true)" title="set auto start">
 <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  &nbsp;&nbsp;A
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa-thin fa-a  fa-stack-1x fa-inverse"></i>
 							</span>
 </a><%
 }
 %>
            <a class0="btn btn-success download-btn white" href="javascript:open_rep('<%=rep.getId()%>')" title="show detail">
-              <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-pencil fa-stack-1x"></i>
+              <span class="fa-stack fa-1x">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
-           
-           <a class0="btn btn-success"  href="javascript:exp_prj('<%=rep.getId()%>')" title="export">
+
+           <a href="javascript:exp_prj('<%=rep.getId()%>')" title="export">
               <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
            <a class0="btn btn-success " style="color: #e33a3e" href="javascript:del_rep('<%=rep.getId()%>')" title="delete">
               <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-times fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
            </span>
@@ -272,24 +272,24 @@ if(rep.isAutoStart())
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        	<a href="javascript:devdef_cat_import()">
 					        	<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp; Import
 							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 					        	&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_export()">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp;Export
 							</a>
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:devdef_help()">
+					        	<a  title="device library help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_devlib.md" target="_blank">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-question fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-question fa-stack-1x fa-inverse"></i>
 							</span>
 							</a>
 							
@@ -312,20 +312,20 @@ if(rep.isAutoStart())
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        	<a href="javascript:comp_cat_import()"><span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp; Import</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a href="javascript:comp_cat_export()"><span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span> Export</a>
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:comp_help()">
+					        	<a  title="git help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_hmilib.md" target="_blank">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-question fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-question fa-stack-1x fa-inverse"></i>
 							</span>
 							</a>
 							
@@ -347,26 +347,21 @@ if(rep.isAutoStart())
 					        <a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_or_edit_simins()">
 							
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-plus fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;Add
 							</a>&nbsp;&nbsp;&nbsp;&nbsp;
 							
-					        	<a href="javascript:comp_cat_import()"><span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-down fa-stack-1x"></i>
+					        	<a href="javascript:sim_ins_import()"><span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp; Import</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a href="javascript:comp_cat_export()"><span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
-							</span> Export</a>
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a class0="btn btn-success"  title="git help" style="width:100px;height:40px;" href="javascript:comp_help()">
+					        	<a title="simulator help" style="width:100px;height:40px;" href="/doc/en/sim/index.md" target="_blank">
 							<span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-question fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-question fa-stack-1x fa-inverse"></i>
 							</span>
 							</a>
 							
@@ -396,23 +391,24 @@ if(rep.isAutoStart())
 
            <a class0="btn btn-success download-btn white" href="javascript:add_or_edit_simins('<%=ins.getId()%>')" title="show detail">
               <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-pencil fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
            
            <a class0="btn btn-success"  href="javascript:exp_simins('<%=ins.getId()%>')" title="export">
               <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x"></i>
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
            <a class0="btn btn-success " style="color: #e33a3e" href="javascript:del_simins('<%=ins.getId()%>')" title="delete">
-              <span class="fa-stack">
-							  <i class="fa fa-square-o fa-stack-2x"></i>
-							  <i class="fa fa fa-times fa-stack-1x"></i>
+               <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
+           
            </span>
            
            <div style="width:150px;border:0px solid;float: right">&nbsp;
@@ -488,7 +484,7 @@ if(false)
 					    </div>
 					    <div class="mod-body fz">
 					       <a href="javascript:log_ctrl()" >log controller</a>
-					        <a href="javascript:sim_slave()">Modbus Slave Simulator</a>
+					       
 					     </div>
 					</div>
 				</div>
@@ -891,19 +887,6 @@ function service_setup()
 			]);
 }
 
-function sim_slave()
-{
-	dlg.open("simulator/mslave_mgr.jsp",
-			{title:"Modbus Slave Simulators",w:'500px',h:'400px'},
-			['Close'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
 function open_simins(id)
 {
 	window.open("./sim/sim_ins_mgr.jsp?insid="+id);
@@ -923,6 +906,11 @@ function del_simins(id)
 			document.location.href=document.location.href;
 		});
      });
+}
+
+function exp_simins(id)
+{
+	window.open("./sim/sim_ins_export.jsp?insid="+id) ;
 }
 
 function add_or_edit_simins(insid)

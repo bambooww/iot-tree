@@ -68,14 +68,7 @@ if(Convert.isNotNullEmpty(ext_str))
 %><html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/ajax.js" ></script>
-<script src="/_js/layui/layui.all.js"></script>
-  <link   href="/_js/layui/css/layui.css" rel="stylesheet" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp"></jsp:include>
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 <script src="/_js/selectmenu/selectmenu.min.js"></script>
 </head>
@@ -129,7 +122,7 @@ td
  </div>
 </blockquote>
 <div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
-<table class="oc_div_list" style="margin-top:10px" id="tb_cur" >
+<table class="oc_div_list" style="margin-top:10px;width:99%" id="tb_cur" >
   <thead>
      <tr>
      <th>

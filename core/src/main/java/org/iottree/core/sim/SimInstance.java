@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+
+import org.iottree.core.UAPrj;
+import org.iottree.core.cxt.UAContext;
+import org.iottree.core.task.TaskAction;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
@@ -15,26 +21,49 @@ import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 
 @data_class
-public class SimInstance
+public class SimInstance extends SimNode
 {
-	@data_val(param_name = "id")
-	String id = null ;
-	
-	@data_val(param_name = "n")
-	String name = null ;
-	
-	@data_val(param_name = "t")
-	String title = null ;
-	
 	@data_val(param_name = "en")
 	boolean bEnable = true ;
 	
+	/**
+	 * run once before run
+	 */
+	@data_val(param_name = "init_script")
+	String initScript = null;
+
+	/**
+	 * run interval script
+	 */
+	@data_val(param_name = "run_script")
+	String runScript = null;
+
+	/**
+	 * run once when task is stoping.
+	 */
+	@data_val(param_name = "end_script")
+	String endScript = null;
+	
+	
+	private transient boolean bInitScriptOk = false, bRunScriptReady = false, bEndScriptReady = false;
+	
+	private transient boolean bLastRunOk = false;
+
+	// private transient String runScriptErr = null ;
+
+	// private transient boolean bEndScriptOk = false;
+
+	private transient long lastRunDT = -1;
+
+	private transient String lastRunErr = null,initScriptErr=null;
+	
+	private SimContext cxt = null ;
 	//@data_obj(obj_c = SimChannel.class,param_name = "chs")
 	private ArrayList<SimChannel> channels = null;//new ArrayList<>() ; 
 	
 	public SimInstance()
 	{
-		this.id = CompressUUID.createNewId();
+		//this.id = CompressUUID.createNewId();
 	}
 	
 	public SimInstance withBasic(SimChannel osch)
@@ -145,54 +174,71 @@ public class SimInstance
 		return true ;
 	}
 	
-	public String getId()
-	{
-		return this.id ;
-	}
-	
-	public SimInstance withId(String id)
-	{
-		this.id = id ;
-		return this ;
-	}
-	
-	public String getName()
-	{
-		return this.name ;
-	}
-	
-	public SimInstance withName(String n) throws Exception
-	{
-		StringBuilder chkf = new StringBuilder() ;
-		if(!Convert.checkVarName(n, true, chkf))
-			throw new Exception(chkf.toString()) ;
-		
-		this.name = n ;
-		return this ;
-	}
-	
-	public String getTitle()
-	{
-		if(Convert.isNotNullEmpty(this.title))
-			return this.title ;
-		return this.name ;
-	}
-	
-	public SimInstance withTitle(String t)
-	{
-		this.title = t ;
-		return this ;
-	}
 	
 	public boolean isEnable()
 	{
 		return this.bEnable ;
 	}
 	
+
 	public SimInstance withEnable(boolean b)
 	{
 		this.bEnable = b ;
 		return this ;
+	}
+	
+	public String getInitScript()
+	{
+		if (this.initScript == null)
+			return "";
+		return this.initScript;
+	}
+
+	public SimInstance withInitScript(String c)
+	{
+		this.initScript = c;
+		return this;
+	}
+	
+	public boolean hasInitScript()
+	{
+		return Convert.isNotNullEmpty(this.initScript) ;
+	}
+
+	public String getRunScript()
+	{
+		if (this.runScript == null)
+			return "";
+		return this.runScript;
+	}
+
+	public SimInstance withRunScript(String c)
+	{
+		this.runScript = c;
+		return this;
+	}
+	
+	public boolean hasRunScript()
+	{
+		return Convert.isNotNullEmpty(this.runScript) ;
+	}
+
+	public String getEndScript()
+	{
+		if (this.endScript == null)
+			return "";
+		return this.endScript;
+	}
+
+	public SimInstance withEndScript(String c)
+	{
+		this.endScript = c;
+		return this;
+	}
+	
+	public boolean hasEndScript()
+	{
+		return Convert.isNotNullEmpty(this.endScript) ;
 	}
 	
 	public long getSavedDT()
@@ -269,5 +315,162 @@ public class SimInstance
 		sch.init();
 		//refreshActions();
 		return sch;
+	}
+	
+	public SimContext getContext()
+	{
+		if(cxt!=null)
+			return cxt ;
+		
+		synchronized(this)
+		{
+			if(cxt!=null)
+				return cxt ;
+			
+			cxt = new SimContext(this);
+			ScriptEngine se = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
+			// ;
+			se.put("$ins", this);
+			return cxt ;
+		}
+	}
+	
+	public boolean isInitScriptOk()
+	{
+		return bInitScriptOk;
+	}
+	
+	public Object JS_get(String  key)
+	{
+		Object ob = super.JS_get(key) ;
+		if(ob!=null)
+			return ob ;
+		
+		return this.getChannelByName(key) ;
+	}
+	
+	public List<Object> JS_names()
+	{
+		List<Object> ss = super.JS_names() ;
+		for(SimChannel ch:this.getChannels())
+		{
+			ss.add(ch.getName()) ;
+		}
+		return ss ;
+	}
+
+	boolean initInstance()
+	{
+		if(!this.isEnable())
+			return false;
+		
+		
+//		ScriptEngine engine = this.getScriptEngine();
+//		engine.put("$task_action", this);
+		// reg function
+
+		try
+		{
+			//engine.eval("var __JsTaskAction_global_" + this.getId() + "={}\r\n");
+
+			if (Convert.isNotNullTrimEmpty(this.initScript))
+			{
+				//engine.eval(this.initScript) ;
+				this.getContext().scriptEval(this.initScript);
+			}
+
+			if (Convert.isNotNullTrimEmpty(this.runScript))
+			{
+				this.getContext().scriptEval("function __JsTaskAction_run_" + this.getId() + "(){\r\n"
+						//+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.runScript + "}\r\n");
+						+ this.runScript + "\r\n}");
+				this.bRunScriptReady = true;
+			}
+
+			
+			// engine.eval(reader)
+			this.initScriptErr = null;
+			// js set ok
+
+			bInitScriptOk = true;
+		}
+		catch ( Exception ee)
+		{
+			System.out.println("SimInstance ["+this.getName()+"] init err") ;
+			ee.printStackTrace();
+			this.initScriptErr = ee.getMessage();
+			bInitScriptOk = false;
+		}
+
+		return bInitScriptOk;
+	}
+
+	void runInterval(UAPrj p)
+	{
+		if(!this.isEnable())
+			return;
+		
+		if (!bRunScriptReady)
+			return;
+
+		try
+		{
+			this.getContext().scriptInvoke("__JsTaskAction_run_" + this.getId());
+			//Invocable jsInvoke = (Invocable) this.task.getScriptEngine();
+			//jsInvoke.invokeFunction("__JsTaskAction_run_" + this.getId());
+			this.bLastRunOk = true;
+		}
+		catch ( ScriptException se)
+		{
+			this.lastRunErr = se.getMessage();
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			lastRunDT = System.currentTimeMillis();
+		}
+	}
+
+	public void runEnd(UAPrj p)
+	{
+		if(!this.isEnable())
+			return;
+//		if (!bEndScriptReady)
+//			return;
+
+		try
+		{
+			if (Convert.isNotNullTrimEmpty(this.endScript))
+			{
+//				engine.eval("function __JsTaskAction_end_" + this.getId() + "(){\r\n"
+//						+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.endScript + "}\r\n");
+				 //this.task.getScriptEngine().eval(this.endScript) ;
+				 this.getContext().scriptEval(this.endScript);
+				//this.bEndScriptReady = true;
+			}
+
+			//Invocable jsInvoke = (Invocable) p.getJSEngine();
+			//jsInvoke.invokeFunction("__JsTaskAction_end_" + this.getId(), p.getJSOb(), this);
+		}
+		catch ( ScriptException se)
+		{
+			this.lastRunErr = se.getMessage();
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			// lastRunDT = System.currentTimeMillis();
+		}
+	}
+	
+	public void saveSelf() throws Exception
+	{
+		SimManager.getInstance().saveInstance(this); ;
 	}
 }

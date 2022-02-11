@@ -2,9 +2,12 @@ package org.iottree.driver.common.modbus;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.util.HashMap;
 
 import org.iottree.core.util.Convert;
+import org.iottree.driver.common.modbus.ModbusParserResp.RespRet;
+import org.iottree.driver.common.modbus.ModbusParserResp.RespRetReadBits;
 import org.w3c.dom.Element;
 
 
@@ -21,6 +24,21 @@ public class ModbusCmdReadBits extends ModbusCmdRead
 	Boolean[] last_vals = null ;
 	
 	short fc = MODBUS_FC_READ_COILS ;
+	
+	
+	ModbusCmdReadBits(int dev_addr,short fc)
+	{
+		super(1000,dev_addr) ;
+		switch(fc)
+		{
+		case MODBUS_FC_READ_COILS://rw
+		case MODBUS_FC_READ_DISCRETE_INPUT:// readonly
+			this.fc = fc ;
+			break ;
+		default:
+			throw new IllegalArgumentException("invalid fc") ;
+		}
+	}
 	
 	public ModbusCmdReadBits(short fc,long scan_inter_ms,
 			int dev_addr,int reg_addr,int reg_num)
@@ -78,7 +96,7 @@ public class ModbusCmdReadBits extends ModbusCmdRead
 		if(bs.length>8)
 			pl[0] = 8 ;
 		else
-			pl[0] = -1 ;
+			pl[0] = -1 ;//end
 		
 		return new ModbusCmdReadBits(fc,-1,
 				addr,reg_addr,reg_num) ;
@@ -204,6 +222,69 @@ public class ModbusCmdReadBits extends ModbusCmdRead
 		return 3+regNum/8+((regNum%8)>0?1:0)+2 ;
 	}
 
+	protected int reqRespRTU1(
+			OutputStream ous,InputStream ins)
+		throws Exception
+	{
+		byte[] pdata = new byte[8] ;
+		pdata[0] = (byte)slaveAddr ;
+		
+	    pdata[1] = (byte)fc ;
+	    pdata[2] = (byte) ((regAddr >> 8) & 0xFF) ;
+	    pdata[3] = (byte) (regAddr & 0xFF) ;
+	    pdata[4] = (byte) (regNum >> 8) ;
+	    pdata[5] = (byte) (regNum & 0xFF) ;
+	    
+	    int crc = modbus_crc16_check(pdata,6);
+	    pdata[6] = (byte)((crc>>8) & 0xFF) ;
+	    pdata[7] = (byte)(crc & 0xFF) ;
+	    //System.out.println("req>>"+Convert.byteArray2HexStr(pdata)) ;
+	    clearInputStream(ins) ;
+	    ous.write(pdata) ;
+	    ous.flush() ;
+	    
+	    //////////////////////////////////////
+	    //
+	    
+	    ModbusParserResp mp_resp = new ModbusParserResp() ;
+	    mp_resp.initDevFC(slaveAddr, fc, regNum) ;
+	    RespRet rr = mp_resp.parseRespCmdRTU(ins) ;
+	    if(rr.isDiscard())
+	    {
+	    	return ERR_CRC ;
+	    }
+	    if(rr.isErrRet())
+	    	return ERR_RET ;
+	    
+	    RespRetReadBits rrrb = (RespRetReadBits)rr ;
+	    boolean[] bvs = rrrb.getReadVals() ;
+	    HashMap<Integer,Object> addr2val = new HashMap<Integer,Object>() ;
+	    
+	    for(int i=0 ; i< regNum ; i ++)
+	    {
+	        boolean bv = bvs[i];
+	        ret_vals[i] = bv ;
+	        
+	        if(!((Object)bv).equals(last_vals[i]))
+	        	addr2val.put(regAddr+i,bv) ;
+	        
+	        last_vals[i] = bv ;
+	    }
+	    
+	    //
+	    
+	    if(addr2val.size()>0 && 
+	    		this.belongToRunner!=null &&
+	    		this.belongToRunner.runLis!=null)
+	    {
+	    	this.belongToRunner.runLis.onModbusReadChanged(this, addr2val) ;
+	    }
+	    
+	    ret_val_ok = true;
+	    return regNum ;
+	    
+	}
+	
 	protected int reqRespRTU(
 			OutputStream ous,InputStream ins)
 		throws Exception
@@ -256,7 +337,7 @@ public class ModbusCmdReadBits extends ModbusCmdRead
 	            {//
 	                if(mbuss_adu[1]==(byte)(fc+0x80))
 	                {//
-	                    //*perrc = mbuss_adu[2] ; 
+	                    //*perrc = mbuss_adu[2] ;
 	                }
 	                break ;
 	            }

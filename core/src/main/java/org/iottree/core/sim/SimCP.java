@@ -63,6 +63,9 @@ public abstract class SimCP
 	
 	public abstract List<SimConn> getConns() ;
 	
+
+	public abstract int getConnsNum();
+	
 	public static SimCP fromConfig(String confstr)
 	{
 		JSONObject jo = new JSONObject(confstr) ;

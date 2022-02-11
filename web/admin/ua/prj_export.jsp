@@ -13,9 +13,14 @@ if(!Convert.checkReqEmpty(request, out, "id"))
 String id = request.getParameter("id") ;
 UAPrj p = UAManager.getInstance().getPrjById(id);
 if(p==null)
+{
+	out.print("no prj found") ;
 	return;
+}
 
+UAManager.getInstance().exportPrj(response,id) ;
 
+/*
 File fout =UAManager.getInstance().exportPrjToTmp(id) ;
 try(FileInputStream fis = new FileInputStream(fout);)
 {
@@ -23,4 +28,5 @@ try(FileInputStream fis = new FileInputStream(fout);)
 }
 
 fout.delete();
+*/
 %>

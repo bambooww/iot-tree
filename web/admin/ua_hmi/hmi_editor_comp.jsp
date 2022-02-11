@@ -33,18 +33,9 @@
 <head>
 <meta charset="utf-8">
 <title>HMI Component Editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.js"></script>
-<script src="/_js/oc/oc_util.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp">
+ <jsp:param value="true" name="oc"/>
+</jsp:include>
 	
 <style>
 body {
@@ -120,7 +111,7 @@ body {
 
 .top_btn
 {
-	color:#009999;
+	color:#ffffff;
 	margin-top: 5px;
 	margin-left:20px;
 	cursor: pointer;
@@ -301,9 +292,9 @@ height:50px;background-color: grey;
  <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
 		<%=cc.getTitle()%>-<%=ci.getTitle()%>
 		</div>
- <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
-			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
-		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
+ <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#ffffff">
+			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" ></i>
+		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()"></i>
 </div>
 </div>
 
@@ -311,7 +302,7 @@ height:50px;background-color: grey;
 		<%--
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
 			 --%>
-			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')"><i class="fa fa-picture-o fa-3x lr_btn"></i><br>Icon</div>
+			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')"><i class="fa-regular fa-image fa-3x lr_btn"></i><br>Icon</div>
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)"><i class="fa fa-cubes fa-3x lr_btn"></i><br>Pic Lib</div>
 		</div>
 		<div id="left_panel" class="left_panel_win" pop_width="300px" >
@@ -387,7 +378,7 @@ height:50px;background-color: grey;
 				<div class="title"></div>
 				<div class="content" style="height:250px"> 
 				<div style="height:50px;background-color: grey" class="edit_toolbar">
-				<button id="oper_save"  title="save"><i class="fa fa-floppy-o fa-3x"></i></button>
+				<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
 				<span id="edit_toolbar" class="edit_toolbar"></span>
 				</div>
 					<iframe src="hmi_left_basic_di.jsp" height="200px" width="100%"></iframe>
@@ -803,7 +794,7 @@ $(document).ready(function()
  		
 	$('#lr_btn_fitwin').click(function()
 	{
-		draw_fit();
+		//draw_fit();
    	});
 
  	init_iottpanel();

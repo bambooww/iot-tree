@@ -2,6 +2,7 @@ package org.iottree.driver.common.modbus.sim;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +25,9 @@ import org.iottree.core.util.xmldata.data_val;
 import org.iottree.driver.common.modbus.ModbusCmd;
 import org.iottree.driver.common.modbus.ModbusCmdReadBits;
 import org.iottree.driver.common.modbus.ModbusCmdReadWords;
+import org.iottree.driver.common.modbus.ModbusCmdWriteBit;
+import org.iottree.driver.common.modbus.ModbusCmdWriteWord;
+import org.iottree.driver.common.modbus.ModbusParserReq;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.BoolDatas;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.Int16Datas;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.SlaveData;
@@ -37,8 +41,7 @@ import org.iottree.driver.common.modbus.sim.SlaveDevSeg.SlaveData;
 @data_class
 public class SlaveChannel extends SimChannel  implements Runnable
 {
-	
-		
+	private ArrayList<Integer> limitIds = null; 
 	public SlaveChannel()
 	{
 		
@@ -84,6 +87,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			return false;
 		}
 		
+		ArrayList<Integer> ids = new ArrayList<>() ;
 		for(SimDev dev:devs)
 		{
 			if(!dev.RT_init(failedr))
@@ -91,21 +95,40 @@ public class SlaveChannel extends SimChannel  implements Runnable
 				return false;
 			}
 			
-			
+			SlaveDev sd = (SlaveDev)dev;
+			ids.add(sd.getDevAddr()) ;
 		}
+		limitIds = ids ;
+		
 		
 		return true ;
 	}
 	
-		
 	protected void RT_runConnInLoop(SimConn sc) throws Exception
 	{
-		//System.out.println(">>modbus runner="+this.getClass().getCanonicalName()+" on port="+socket.getRemoteSocketAddress());
-
-
-			//SerialPort sp = null;
-			//byte[] rdata = new byte[255];
-			                         
+		ModbusParserReq mp = (ModbusParserReq)sc.getRelatedOb() ;
+		if(mp==null)
+		{
+			mp = new ModbusParserReq() ;
+			mp.asLimitDevIds(limitIds);
+			sc.setRelatedOb(mp);
+		}
+		
+		PushbackInputStream inputs = sc.getPushbackInputStream();
+		ModbusCmd reqmc = mp.parseReqCmdInLoopRTU(inputs) ;
+		if(reqmc==null)
+			return ;
+		byte[] respbs = onReqAndResp(reqmc) ;
+		if(respbs!=null)
+		{
+			OutputStream outputs = sc.getConnOutputStream() ;
+			outputs.write(respbs) ;
+			outputs.flush() ;
+		}
+	}
+		
+	protected void RT_runConnInLoop0(SimConn sc) throws Exception
+	{
 			//boolean b_in_recv = false;
 			int last_dlen = 0 ;
 			long last_dt = -1 ;
@@ -232,20 +255,106 @@ public class SlaveChannel extends SimChannel  implements Runnable
 		if(mc==null)
 			return null ;
 		
+		return onReqAndResp(mc);
+	}
+
+	private byte[] onReqAndResp(ModbusCmd mc)
+	{
 		if(mc instanceof ModbusCmdReadBits)
 		{
 			ModbusCmdReadBits mcb =(ModbusCmdReadBits)mc ;
-			return onReqAndRespBits(mcb);
+			return onReqAndRespReadBits(mcb);
 		}
 		else if(mc instanceof ModbusCmdReadWords)
 		{
-			return onReqAndRespWords((ModbusCmdReadWords)mc) ;
+			return onReqAndRespReadWords((ModbusCmdReadWords)mc) ;
+		}
+		else if(mc instanceof ModbusCmdWriteBit)
+		{
+			ModbusCmdWriteBit wb = (ModbusCmdWriteBit)mc ;
+			return onReqAndRespWriteBit(wb) ;
+		}
+		else if(mc instanceof ModbusCmdWriteWord)
+		{
+			ModbusCmdWriteWord ww = (ModbusCmdWriteWord)mc ;
+			return onReqAndRespWriteWord(ww) ;
 		}
 		
 		return null ;
 	}
+	
+	private byte[] onReqAndRespWriteBit(ModbusCmdWriteBit mcb)
+	{
+		short fc = mcb.getFC() ;
+		
+		short devid = mcb.getDevAddr();
+		
+		int req_idx = mcb.getRegAddr() ;
+		boolean bv = mcb.getWriteVal() ;
+		
+		for(SimDev d:this.listDevItems())
+		{
+			SlaveDev di = (SlaveDev)d ;
+			if(di.getDevAddr()!=devid)
+				continue ;
 
-	private byte[] onReqAndRespBits(ModbusCmdReadBits mcb)
+			List<SlaveDevSeg> segs = di.getSegs() ;
+			for(SlaveDevSeg seg:segs)
+			{
+				if(seg.getFC()!=ModbusCmd.MODBUS_FC_READ_COILS)
+					continue ;
+				int seg_regidx = seg.getRegIdx() ;
+				int seg_regnum = seg.getRegNum() ;
+				if(req_idx<seg_regidx)
+					continue ;
+				if(req_idx>=seg_regidx+seg_regnum)
+					continue ;
+				
+				seg.setSlaveDataBool(req_idx-seg_regidx,bv) ;
+				break ;
+			}
+		}
+		
+		return ModbusCmdWriteBit.createResp(devid,req_idx,bv);
+	}
+	
+	
+	private byte[] onReqAndRespWriteWord(ModbusCmdWriteWord mcb)
+	{
+		short fc = mcb.getFC() ;
+		
+		short devid = mcb.getDevAddr();
+		
+		int req_idx = mcb.getRegAddr() ;
+		int bv = mcb.getWriteVal() ;
+		
+		for(SimDev d:this.listDevItems())
+		{
+			SlaveDev di = (SlaveDev)d ;
+			if(di.getDevAddr()!=devid)
+				continue ;
+
+			List<SlaveDevSeg> segs = di.getSegs() ;
+			for(SlaveDevSeg seg:segs)
+			{
+				if(seg.getFC()!=ModbusCmd.MODBUS_FC_READ_HOLD_REG)
+					continue ;
+				int seg_regidx = seg.getRegIdx() ;
+				int seg_regnum = seg.getRegNum() ;
+				if(req_idx<seg_regidx)
+					continue ;
+				if(req_idx>=seg_regidx+seg_regnum)
+					continue ;
+				
+				seg.setSlaveDataInt16(req_idx-seg_regidx,(short)bv) ;
+				break ;
+			}
+		}
+		
+		return ModbusCmdWriteWord.createResp(devid,(short)req_idx,(short)bv);
+	}
+
+	private byte[] onReqAndRespReadBits(ModbusCmdReadBits mcb)
 	{
 		short fc = mcb.getFC() ;
 		
@@ -308,7 +417,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	}
 	
 	
-	private byte[] onReqAndRespWords(ModbusCmdReadWords mcb)
+	private byte[] onReqAndRespReadWords(ModbusCmdReadWords mcb)
 	{
 		int fc = mcb.getFC() ;
 		short devid = mcb.getDevAddr();

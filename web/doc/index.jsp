@@ -73,7 +73,7 @@ visibility: visible;
 	</div>
 	<table style="width:100%;height:90%;">
 		<tr>
-			<td style="width:20%"><iframe id="nav" src="en/nav.md" style="width:100%;height:100%;overflow: auto"></iframe></td>
+			<td style="width:20%"><iframe id="nav" src="en/nav.md?outline=false" style="width:100%;height:100%;overflow: auto"></iframe></td>
 			<td style="width:80%"><iframe id="main" src="en/README.md" style="width:100%;height:100%;"></iframe></td>
 		</tr>
 	</table>

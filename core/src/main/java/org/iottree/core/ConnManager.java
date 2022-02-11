@@ -511,7 +511,7 @@ public class ConnManager
 				String connerr = conn.getConnErrInfo() ;
 				if(connerr==null)
 					connerr = "" ;
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\"}");
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\"}");
 			}
 			
 			out.print("]}");

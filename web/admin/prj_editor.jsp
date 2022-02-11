@@ -450,8 +450,10 @@ background-color: #fff ;
 
 #tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
 #tree .icon_dev {background:url('./inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px; }
+#tree .icon_prj {background:url('./inc/sm_icon_tree.png') 0 0 no-repeat; width:24px;height:24px;}
 #tree .icon_ch {background:url('./inc/sm_icon_ch.png') 0 0 no-repeat; width:24px;height:24px;display:none;}
 #tree .icon_tagg {background:url('./inc/sm_icon_tagg.png') 0 0 no-repeat; width:24px;height:24px;}
+#tree .icon_hmi {background:url('./inc/sm_icon_hmi.png') 0 0 no-repeat; width:24px;height:24px;}
 
 </style>
 
@@ -558,7 +560,7 @@ background-color: #fff ;
 				  <a class="btn "  href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
-				  &nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-o-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
+				  &nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
@@ -901,7 +903,7 @@ var cxt_menu = {
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		
-		{op_name:"cp_ch",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
+		{op_name:"cp_ch",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
 		
 		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return !tn.run;
@@ -911,7 +913,7 @@ var cxt_menu = {
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
-		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
+		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper",op_action:act_prop,default:true}
 	],
 	"dev":[
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
@@ -919,8 +921,8 @@ var cxt_menu = {
 		//{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
 		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
-		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
-		{op_name:"add_to_lib",op_title:"Add To Library",op_icon:"fa fa-files-o",op_action:act_node_add_to_lib},
+		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
+		{op_name:"add_to_lib",op_title:"Add To Library",op_icon:"fa fa-copy",op_action:act_node_add_to_lib},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
@@ -952,7 +954,7 @@ var cxt_menu = {
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
-		{op_name:"cp_hmi",op_title:"Copy",op_icon:"fa fa-files-o",op_action:act_node_copy},
+		{op_name:"cp_hmi",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
@@ -2162,16 +2164,24 @@ function prj_rt()
 				var cid = conn.conn_id;
 				var bready = conn.ready ;
 				var connerr = conn.conn_err;
-				
+				var benable = conn.enable;
+				var color = "grey";
+				if(benable)
+				{
+					color = bready?"green":"red" ;
+				}
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link fa-lg'></i>":"<i class='fa fa-chain-broken fa-lg'></i>");//.css("background-color",bready?"green":"red");
-				$("#conn_st_"+cid).css("color",bready?"green":"red");
+				$("#conn_st_"+cid).css("color",color);
 				$("#conn_st_"+cid).attr("title",bready?"connection is ready":connerr);
 				$("#conn_run_"+cid).css("color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
 				
 				var tt = conn.static_txt ;
 				if(tt==null||tt=="")
-					tt = bready?"connection is ready":connerr ;
+					if(benable)
+						tt = bready?"connection is ready":connerr ;
+					else
+						tt = "not enabled";
 				$("#conn_"+cid).attr("title",tt) ;
 			}
 		}

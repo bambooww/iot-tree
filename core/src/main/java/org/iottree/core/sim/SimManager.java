@@ -3,14 +3,22 @@ package org.iottree.core.sim;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.iottree.core.Config;
 import org.iottree.core.DevDef;
-import org.iottree.core.UAManager;
 import org.iottree.core.task.Task;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ZipUtil;
+import org.iottree.core.util.web.Mime;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -243,4 +251,35 @@ public class SimManager
 			return oldins ;
 		}
 	}
+	
+	
+	public boolean exportIns(HttpServletResponse resp, String insid) throws IOException
+	{
+		SimInstance ins = this.getInstance(insid) ;
+		if(ins==null)
+			return false;
+		
+		File insdir = this.getInsDir(insid) ;
+		if(!insdir.exists())
+			return false;
+		
+		String filename = "sim_"+ins.getName()+".zip" ;
+		List<File> fs = Arrays.asList(insdir) ;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "sim_ins") ;
+		metam.put("insid", insid) ;
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		
+		resp.addHeader("Content-Disposition", "attachment; filename="
+				+ new String(filename.getBytes(), "iso8859-1"));
+
+		resp.setContentType(Mime.getContentType(filename));
+		
+		ServletOutputStream os = resp.getOutputStream();
+		ZipUtil.zipOut(metatxt,fs,os) ;
+		os.flush();
+	
+		return true;
+	}
+	
 }

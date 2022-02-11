@@ -22,54 +22,19 @@ import org.iottree.core.util.xmldata.data_val;
  * @author jason.zhu
  */
 @data_class
-public abstract class SimDev
+public abstract class SimDev extends SimNode
 {
-	
-	@data_val
-	String id = null ;
-	
-	@data_val
-	String name = null ;
-	
-	@data_val
-	String title = null ;
-	
-	
-	
 	@data_val(param_name = "en")
 	boolean bEnable = true ;
 
-	@data_obj(obj_c = UATag.class)
-	List<UATag> tags = new ArrayList<>();
-	
+	@data_obj(obj_c = SimTag.class)
+	List<SimTag> tags = new ArrayList<>();
 	
 	public SimDev()
 	{
-		this.id = CompressUUID.createNewId() ;
-		//this.devId = devid ;
-		//devDef = dd ;
+		
 	}
 	
-	public String getId()
-	{
-		return id ;
-	}
-	
-	public SimDev withId(String id)
-	{
-		this.id = id ;
-		return this ;
-	}
-	
-	public String getName()
-	{
-		return name ;
-	}
-	
-	public String getTitle()
-	{
-		return this.title ;
-	}
 	
 	public abstract String getDevTitle() ; 
 	
@@ -78,9 +43,19 @@ public abstract class SimDev
 		return this.bEnable ;
 	}
 	
-	public List<UATag> getTags()
+	public List<SimTag> getTags()
 	{
 		return tags ;
+	}
+	
+	public SimTag getTagByName(String name)
+	{
+		for(SimTag t:tags)
+		{
+			if(name.equals(t.getName()))
+				return t ;
+		}
+		return null ;
 	}
 	
 	public SimDev asDevTags(List<UATag> tags)
@@ -88,8 +63,12 @@ public abstract class SimDev
 		//this.devId = devid ;
 		if(tags==null)
 			this.tags = new ArrayList<>() ;
-		else
-			this.tags = tags ;
+		
+		for(UATag uat:tags)
+		{
+			//this.tags = tags ;
+		}
+		
 		return this ;
 	}
 	
@@ -97,4 +76,23 @@ public abstract class SimDev
 	public abstract void init();
 	
 	public abstract boolean RT_init(StringBuilder failedr);
+	
+	public Object JS_get(String key)
+	{
+		Object r = super.JS_get(key);
+		if (r != null)
+			return r;
+		return this.getTagByName(key);
+	}
+
+	public List<Object> JS_names()
+	{
+		List<Object> rets = super.JS_names();
+
+		for (SimTag t : this.getTags())
+		{
+			rets.add(t.getName());
+		}
+		return rets;
+	}
 }

@@ -147,7 +147,7 @@ public abstract class ModbusCmd
 			return null;
 
 		//
-		short addr = (short) (req[0] & 0xFF);
+		//short addr = (short) (req[0] & 0xFF);
 		short fc = (short) (req[1] & 0xFF);
 
 		switch (fc)
@@ -159,8 +159,9 @@ public abstract class ModbusCmd
 		case MODBUS_FC_READ_INPUT_REG:
 			return ModbusCmdReadWords.createReqMC(req, pl);
 		case MODBUS_FC_WRITE_SINGLE_COIL:
+			return ModbusCmdWriteBit.createReqMC(req, pl);
 		case MODBUS_FC_WRITE_SINGLE_REG:
-
+			return ModbusCmdWriteWord.createReqMC(req, pl);
 		case MODBUS_FC_WRITE_MULTI_COIL:
 		case MODBUS_FC_WRITE_MULTI_REG:
 		default:
@@ -176,6 +177,8 @@ public abstract class ModbusCmd
 	public final static int ERR_RECV_END_TIMEOUT = -2;
 
 	public final static int ERR_CRC = -3;
+	
+	public final static int ERR_RET = -4;
 
 	
 	final static int MAX_SCAN_MULTI = 50;
@@ -225,6 +228,9 @@ public abstract class ModbusCmd
 	transient int errCount = 0;
 
 	protected transient int lastTcpCC = 0;
+	
+	protected ModbusCmd()
+	{}
 
 	public ModbusCmd(long scan_inter_ms, int dev_addr)
 	{
@@ -417,6 +423,8 @@ public abstract class ModbusCmd
 		}
 		catch (Exception e)
 		{
+			//System.out.println("do cmd err-------------------") ;
+			//e.printStackTrace();
 			increaseErrCount();
 			throw e;
 		}

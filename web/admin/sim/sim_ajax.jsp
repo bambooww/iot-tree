@@ -45,7 +45,7 @@ case "ins_edit":
 		if(ins==null)
 			ins = new SimInstance() ;
 		
-		ins.withName(name).withTitle(title).withEnable(ben) ;
+		ins.withEnable(ben).withName(name).withTitle(title) ;
 		SimManager.getInstance().setInstanceBasic(ins) ;
 		out.print("succ") ;
 	}
@@ -263,5 +263,88 @@ case "ch_stop":
 		sch.RT_stop();
 	out.print("succ") ;
 	break;
-
+case "rt":
+	if(!Convert.checkReqEmpty(request, out, "insid"))
+		return ;
+	if(ins==null)
+	{
+		out.print("no instance found") ;
+		return ;
+	}
+	
+	out.print("[") ;
+	boolean bfirst = true ;
+	for(SimChannel ch:ins.getChannels())
+	{
+		if(bfirst) bfirst=false;
+		else out.print(",") ;
+		
+		
+		SimCP scp = ch.getConn();
+		String rt = "" ;
+		if(scp!=null)
+			rt = ""+scp.getConnsNum();
+		
+		out.print("{\"id\":\""+ch.getId()+"\",\"n\":\""+ch.getName()+"\",\"rt\":\""+rt+"\"}") ;
+	}
+	out.print("]") ;
+	break ;
+case "ins_js_read":
+	if(!Convert.checkReqEmpty(request, out, "insid","jstp"))
+		return ;
+	String jstp = request.getParameter("jstp") ;
+	if(ins==null)
+	{
+		out.print("no Instance found") ;
+		return ;
+	}
+	switch(jstp)
+	{
+	case "init":
+		out.print("succ=");
+		out.print(ins.getInitScript()) ;
+		break;
+	case "run":
+		out.print("succ=");
+		out.print(ins.getRunScript()) ;
+		break;
+	case "end":
+		out.print("succ=");
+		out.print(ins.getEndScript()) ;
+		break;
+	default:
+		out.print("unknown jstp") ;
+		break ;
+	}
+	break ;
+case "ins_js_write":
+	if(!Convert.checkReqEmpty(request, out, "insid","jstxt","jstp"))
+		return ;
+	jstp = request.getParameter("jstp") ;
+	String jstxt = request.getParameter("jstxt") ;
+	if(jstxt==null)
+		jstxt= "" ;
+	if(ins==null)
+	{
+		out.print("no Instance found") ;
+		return ;
+	}
+	switch(jstp)
+	{
+	case "init":
+		ins.withInitScript(jstxt) ;
+		break;
+	case "run":
+		ins.withRunScript(jstxt) ;
+		break;
+	case "end":
+		ins.withEndScript(jstxt) ;
+		break;
+	default:
+		out.print("unknown jstp") ;
+		return ;
+	}
+	ins.saveSelf();
+	out.print("succ");
+	break ;
 }%>

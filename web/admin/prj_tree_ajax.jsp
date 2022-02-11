@@ -66,7 +66,7 @@
 						boolean ref = hmi.isRefedNode();
 						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\",\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
-						out.write(",\"tp\":\"hmi\",\"icon\":\"fa fa-puzzle-piece fa-lg\",\"state\": {\"opened\": true}}") ;
+						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_hmi\",\"state\": {\"opened\": true}}") ;
 					}
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
@@ -84,7 +84,7 @@
 	,"id":"<%=rep.getId() %>"
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
-	,"icon": "fa fa-sitemap fa-lg"
+	,"icon": "icon_prj"
 	,"state": {"opened": true}
 	,"children": [
 

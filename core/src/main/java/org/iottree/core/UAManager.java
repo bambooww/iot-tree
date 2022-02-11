@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
@@ -24,6 +26,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
+import org.iottree.core.util.web.Mime;
 import org.iottree.core.util.xmldata.*;
 
 import com.google.common.eventbus.EventBus;
@@ -325,6 +328,30 @@ public class UAManager implements IResCxt
 		return prj ;
 	}
 	
+	public boolean exportPrj(HttpServletResponse resp, String prjid) throws IOException
+	{
+		UAPrj p = this.getPrjById(prjid) ;
+		if(p==null)
+			return false;
+		
+		String filename = "prj_"+p.getName()+".zip";
+		List<File> fs = Arrays.asList(UAManager.getPrjFile(prjid),UAManager.getPrjFileSubDir(prjid)) ;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "prj") ;
+		metam.put("prjid", prjid) ;
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		
+		resp.addHeader("Content-Disposition", "attachment; filename="
+				+ new String(filename.getBytes(), "iso8859-1"));
+
+		resp.setContentType(Mime.getContentType(filename));
+		
+		ServletOutputStream os = resp.getOutputStream();
+		ZipUtil.zipOut(metatxt,fs,os) ;
+		os.flush();
+	
+		return true;
+	}
 	
 	public boolean exportPrj(String prjid,File fout) throws IOException
 	{
@@ -358,6 +385,8 @@ public class UAManager implements IResCxt
 			return fout ;
 		return null;
 	}
+	
+	
 	
 	public List<IdName> parsePrjZipFile(File zipf) throws Exception
 	{

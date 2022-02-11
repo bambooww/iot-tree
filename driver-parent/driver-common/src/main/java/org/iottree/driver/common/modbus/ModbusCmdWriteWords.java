@@ -31,11 +31,38 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	{
 		this(-1,s_addr,reg_addr,vals) ;
 	}
-	
-//	public ModbusCmdWriteWords(DevCtrlPtBindInfo.BindInfoModbus bim,int[] vals)
+
+//	static ModbusCmdWriteWords createReqMC(byte[] bs,int[] pl)
 //	{
-//		this(-1,bim.getDevAddr(),bim.getRegAddr(),vals) ;
+//		if(bs.length<8)
+//			return null ;
+//		
+//		int crc = modbus_crc16_check(bs,6);
+//		if(bs[6]!=(byte)((crc>>8) & 0xFF) ||
+//				bs[7]!=(byte)(crc & 0xFF))
+//		{
+//			return null ;
+//		}
+//		
+//	    
+//		short addr = (short)(bs[0] & 0xFF) ;
+//		short fc =  (short)(bs[1] & 0xFF) ;
+//		
+//		int reg_addr = (int)(0xFF & bs[2]) ;
+//		reg_addr <<= 8 ;
+//		reg_addr += (int)(0xFF & bs[3]) ;
+//		
+//		int val =  (int)(0xFF & bs[4]) ;
+//		val <<= 8 ;
+//		val += (int)(0xFF & bs[5]) ;
+//		if(bs.length>8)
+//			pl[0] = 8 ;
+//		else
+//			pl[0] = -1 ;
+//		
+//		return new ModbusCmdWriteWords(addr,reg_addr,vals) ;
 //	}
+	
 	
 	
 	public void setWriteVal(int[] vs)

@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.iottree.core.ConnException;
@@ -19,6 +20,7 @@ import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValChker;
 import org.iottree.core.conn.ConnPtStream;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.NetUtil;
 import org.iottree.core.util.NetUtil.Adapter;
 import org.iottree.core.util.logger.ILogger;
@@ -258,8 +260,8 @@ public class ModbusDrvRTU extends DevDriver
 		if(!cpt.isConnReady())
 			return true ;// do nothing
 		
-		if(log.isDebugEnabled())
-			log.debug("RT_runInLoop conn ready ,run do modbus");
+		//if(log.isDebugEnabled())
+		//	log.debug("RT_runInLoop conn ready ,run do modbus");
 		try
 		{
 			if(bSniffer)
@@ -288,6 +290,7 @@ public class ModbusDrvRTU extends DevDriver
 		}
 		catch(ConnException se)
 		{
+			//System.out.println("errdt==="+Convert.toFullYMDHMS(new Date()));
 			se.printStackTrace();
 			if(log.isDebugEnabled())
 				log.debug("RT_runInLoop err", se);
