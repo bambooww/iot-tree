@@ -9,9 +9,6 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.iottree.core.UAPrj;
-import org.iottree.core.cxt.UAContext;
-import org.iottree.core.task.TaskAction;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
@@ -56,6 +53,8 @@ public class SimInstance extends SimNode
 	private transient long lastRunDT = -1;
 
 	private transient String lastRunErr = null,initScriptErr=null;
+	
+	private transient Thread insTh = null ;
 	
 	private SimContext cxt = null ;
 	//@data_obj(obj_c = SimChannel.class,param_name = "chs")
@@ -359,10 +358,13 @@ public class SimInstance extends SimNode
 		return ss ;
 	}
 
-	boolean initInstance()
+	boolean initInstance(StringBuilder failedr)
 	{
 		if(!this.isEnable())
+		{
+			failedr.append("instance is disabled") ;
 			return false;
+		}
 		
 		
 //		ScriptEngine engine = this.getScriptEngine();
@@ -381,7 +383,7 @@ public class SimInstance extends SimNode
 
 			if (Convert.isNotNullTrimEmpty(this.runScript))
 			{
-				this.getContext().scriptEval("function __JsTaskAction_run_" + this.getId() + "(){\r\n"
+				this.getContext().scriptEval("function __JsSimIns_run_" + this.getId() + "(){\r\n"
 						//+ "var $global=__JsTaskAction_global_" + this.getId() + ";\r\n" + this.runScript + "}\r\n");
 						+ this.runScript + "\r\n}");
 				this.bRunScriptReady = true;
@@ -398,6 +400,7 @@ public class SimInstance extends SimNode
 		{
 			System.out.println("SimInstance ["+this.getName()+"] init err") ;
 			ee.printStackTrace();
+			failedr.append(ee.getMessage()) ;
 			this.initScriptErr = ee.getMessage();
 			bInitScriptOk = false;
 		}
@@ -405,7 +408,7 @@ public class SimInstance extends SimNode
 		return bInitScriptOk;
 	}
 
-	void runInterval(UAPrj p)
+	void runInterval()
 	{
 		if(!this.isEnable())
 			return;
@@ -415,7 +418,7 @@ public class SimInstance extends SimNode
 
 		try
 		{
-			this.getContext().scriptInvoke("__JsTaskAction_run_" + this.getId());
+			this.getContext().scriptInvoke("__JsSimIns_run_" + this.getId());
 			//Invocable jsInvoke = (Invocable) this.task.getScriptEngine();
 			//jsInvoke.invokeFunction("__JsTaskAction_run_" + this.getId());
 			this.bLastRunOk = true;
@@ -434,7 +437,7 @@ public class SimInstance extends SimNode
 		}
 	}
 
-	public void runEnd(UAPrj p)
+	public void runEnd()
 	{
 		if(!this.isEnable())
 			return;
@@ -472,5 +475,100 @@ public class SimInstance extends SimNode
 	public void saveSelf() throws Exception
 	{
 		SimManager.getInstance().saveInstance(this); ;
+	}
+	
+	private Runnable insRunner = new Runnable()
+			{
+
+				@Override
+				public void run()
+				{
+					try
+					{
+						while(insTh!=null)
+						{
+							try
+							{
+								Thread.sleep(10);
+							}
+							catch(Exception e) {}
+							
+							runInterval();
+						}
+					}
+					finally
+					{
+						runEnd() ;
+						//
+						for(SimChannel ch:getChannels())
+						{
+							if(!ch.isEnable())
+								continue ;
+							ch.RT_stop();
+						}
+					}
+				}
+			};
+	
+	public synchronized boolean RT_start(StringBuilder failedr)
+	{
+		if(insTh!=null)
+			return true ;
+		
+		if(!initInstance(failedr))
+			return false;
+		
+		boolean ch_start_ok = true;
+		for(SimChannel ch:this.getChannels())
+		{
+			if(!ch.isEnable())
+				continue ;
+			
+			if(!ch.RT_start(failedr))
+			{
+				ch_start_ok = false;
+				break ;
+			}
+		}
+		
+		if(!ch_start_ok)
+		{
+			for(SimChannel ch:this.getChannels())
+			{
+				if(!ch.isEnable())
+					continue ;
+				
+				ch.RT_stop();
+			}
+			return false;
+		}
+		
+		insTh = new Thread(insRunner);
+		insTh.start(); 
+		return true ;
+	}
+	
+	public boolean RT_isRunning()
+	{
+		return insTh!=null ;
+	}
+	
+	public synchronized void RT_stop()
+	{
+		insTh = null ;
+	}
+	
+	public synchronized void RT_interrupt()
+	{
+		for(SimChannel ch:getChannels())
+		{
+			ch.RT_stop();
+		}
+		
+		Thread t = insTh ;
+		if(t==null)
+			return ;
+		t.interrupt();
+		insTh = null ;
 	}
 }

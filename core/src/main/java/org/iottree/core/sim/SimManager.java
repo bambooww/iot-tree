@@ -204,8 +204,16 @@ public class SimManager
 			Convert.deleteDir(f) ;
 		}
 		
-		this.instances.remove(sc);
-		return true;
+		int s = this.instances.size() ;
+		for(int i = 0 ; i < s ; i ++)
+		{
+			if(this.instances.get(i).getId().equals(id))
+			{
+				this.instances.remove(i) ;
+				return true ;
+			}
+		}
+		return false;
 	}
 	
 	private SimInstance loadInstance(File f) throws Exception

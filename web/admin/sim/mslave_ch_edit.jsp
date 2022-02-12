@@ -126,7 +126,7 @@ function do_submit(cb)
 	}*/
 	
 	//cb(true,{dx_/n:string=name:n,title:t,enable:ben})
-	cb(true,{"dx_/en:bool":ben,"dx_/n:string":n,"dx_/t:string":t})
+	cb(true,{"dx_/en:bool":ben,"dx_/name:string":n,"dx_/title:string":t})
 	//document.getElementById('form1').submit() ;
 }
 

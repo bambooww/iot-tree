@@ -221,7 +221,7 @@ case "act_del":
 	if(TaskManager.getInstance().delTaskAction(prjid, taskid,actid))
 		out.print("succ") ;
 	else
-		out.print("del error") ;	
+		.0=/ut.print("del error") ;	
 	*/
 	break;
 
@@ -241,6 +241,30 @@ case "list":
 	out.print("]") ;
 	*/
 	break ;
+case "ins_start":
+case "ins_stop":
+	if(!Convert.checkReqEmpty(request, out,"insid"))
+		return;
+	if(ins==null)
+	{
+		out.print("no instance found") ;
+		return ;
+	}
+	StringBuilder sb = new StringBuilder() ;
+	if("ins_start".equals(op))
+	{
+		if(!ins.RT_start(sb))
+		{
+			out.print(sb.toString()) ;
+			return ;
+		}
+	}
+	else
+	{
+		ins.RT_stop();
+	}
+	out.print("succ") ;
+	break;
 case "ch_start":
 case "ch_stop":
 	if(!Convert.checkReqEmpty(request, out,"insid","chid"))
@@ -250,7 +274,7 @@ case "ch_stop":
 		out.print("no channel found") ;
 		return ;
 	}
-	StringBuilder sb = new StringBuilder() ;
+	sb = new StringBuilder() ;
 	if("ch_start".equals(op))
 	{
 		if(!sch.RT_start(sb))
@@ -260,7 +284,9 @@ case "ch_stop":
 		}
 	}
 	else
+	{
 		sch.RT_stop();
+	}
 	out.print("succ") ;
 	break;
 case "rt":
@@ -346,5 +372,19 @@ case "ins_js_write":
 	}
 	ins.saveSelf();
 	out.print("succ");
+	break ;
+case "ins_js_test":
+	if(!Convert.checkReqEmpty(request, out, "insid","txt"))
+		return ;
+	jstxt = request.getParameter("txt") ;
+	if(jstxt==null)
+		jstxt= "" ;
+	if(ins==null)
+	{
+		out.print("no Instance found") ;
+		return ;
+	}
+	String ret = ins.getContext().testScript(jstxt) ;
+	out.print(ret) ;
 	break ;
 }%>

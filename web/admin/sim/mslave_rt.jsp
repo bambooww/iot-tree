@@ -84,7 +84,7 @@ if(benable)
 </head>
 <body>
  <legend><%=sch.getTitle() %> - <%=dev.getTitle() %>  runtime controller</legend>
-<b>Segments</b>
+<b>Segments under [<%=sch.getName() %>.<%=dev.getName() %>]</b>
 
 <%
 for(SlaveDevSeg seg:segs)
@@ -104,7 +104,13 @@ for(SlaveDevSeg seg:segs)
 	for(int i = 0 ; i < regnum ; i ++)
 	{
 		String addr_str = seg.getAddressStr(regidx+i) ;
-%><%=addr_str %>: <span id="r_<%=segid%>_<%=i%>" onclick="set_reg_val('<%=segid%>',<%=i%>)" style="cursor:hand;"></span>&nbsp;<%
+		SlaveTag st = seg.getSlaveTag(i) ;
+		String tagn = "" ;
+		if(st!=null)
+			tagn = st.getName();
+%><%=addr_str %>: <span id="r_<%=segid%>_<%=i%>" onclick="set_reg_val('<%=segid%>',<%=i%>)" style="cursor:hand;"></span>&nbsp;
+<span id="tag_<%=segid%>_<%=i%>" onclick="set_reg_tag('<%=segid%>',<%=i%>)" style="cursor:hand;">T&nbsp;<%=tagn %></span>
+<%
 	}
 %>
 	</div>
@@ -126,6 +132,11 @@ layui.use('element', function(){
 	  var element = layui.element;
 
 	});
+	
+function refresh_me()
+{
+	document.location.href=document.location.href;
+}
 
 function refresh_rt()
 {
@@ -146,7 +157,7 @@ function refresh_rt()
 		}
 	});
 }
-	
+
 function set_reg_val(segid,idx)
 {
 	event.preventDefault();
@@ -189,7 +200,51 @@ function set_reg_val(segid,idx)
 				}
 			]);
 }
+
+function set_reg_tag(segid,idx)
+{
+	event.preventDefault();
+	dlg.open("mslave_tag_input.jsp?insid="+insid+"&chid="+chid+"&devid="+devid+"&segid="+segid+"&regidx="+idx,
+			{title:"Set Tag"},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="set_tag" ;
+						 ret.chid = chid ;
+						 ret.insid = insid ;
+						 ret.devid = devid ;
+						 ret.segid=segid ;
+						 ret.regidx = idx ;
+							send_ajax("./mslave_rt_ajax.jsp",ret,function(bsucc,rr){
+								if(!bsucc||"succ"!=rr)
+								{
+									dlg.msg(rr) ;
+									return ;
+								}
+								
+								dlg.close();
+								refresh_me();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 refresh_rt() ;
-	setInterval(refresh_rt,3000) ;
+setInterval(refresh_rt,3000) ;
 </script>
 </html>

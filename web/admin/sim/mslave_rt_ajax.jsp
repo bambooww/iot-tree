@@ -64,6 +64,26 @@ case "input_v":
 	seg.setSlaveDataStr(regidx, strv);
 	out.print("succ") ;
 	break ;
+case "set_tag":
+	if(!Convert.checkReqEmpty(request, out,"segid","regidx"))
+		return ;
+	if(regidx<0)
+	{
+		out.print("invalid regidx input") ;
+		return ;
+	}
+	String name = request.getParameter("name") ;
+	try
+	{
+		dev.setTag(segid, regidx, name) ;
+		sch.save();
+		out.print("succ") ;
+	}
+	catch(Exception ee)
+	{
+		out.print(ee.getMessage()) ;
+	}
+	break ;
 default:
 
 	out.print("{ \"segs\":[");

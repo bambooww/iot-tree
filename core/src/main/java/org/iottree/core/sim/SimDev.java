@@ -1,16 +1,9 @@
 package org.iottree.core.sim;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.iottree.core.DevAddr;
-import org.iottree.core.DevDef;
 import org.iottree.core.UATag;
-import org.iottree.core.UAVal;
-import org.iottree.core.util.CompressUUID;
-import org.iottree.core.util.xmldata.IXmlDataable;
-import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -27,8 +20,6 @@ public abstract class SimDev extends SimNode
 	@data_val(param_name = "en")
 	boolean bEnable = true ;
 
-	@data_obj(obj_c = SimTag.class)
-	List<SimTag> tags = new ArrayList<>();
 	
 	public SimDev()
 	{
@@ -43,33 +34,45 @@ public abstract class SimDev extends SimNode
 		return this.bEnable ;
 	}
 	
-	public List<SimTag> getTags()
+	transient private List<SimTag> simTags = null ; 
+	
+	protected abstract List<SimTag> listSimTagsInner() ;
+	
+	public List<SimTag> getSimTags()
 	{
-		return tags ;
+		if(simTags!=null)
+			return simTags ;
+		
+		List<SimTag> rets = listSimTagsInner() ;
+		if(rets==null)
+			rets = new ArrayList<>() ;
+		
+		for(SimTag st:rets)
+			st.belongTo = this ;
+		
+		simTags = rets ;
+		return rets ;
 	}
 	
-	public SimTag getTagByName(String name)
+	protected void clearBuffer()
 	{
-		for(SimTag t:tags)
-		{
-			if(name.equals(t.getName()))
-				return t ;
-		}
-		return null ;
+		simTags = null ;
 	}
 	
-	public SimDev asDevTags(List<UATag> tags)
+	
+	public SimTag getSimTagByName(String n)
 	{
-		//this.devId = devid ;
+		List<SimTag> tags = getSimTags() ;
 		if(tags==null)
-			this.tags = new ArrayList<>() ;
+			return null ;
 		
-		for(UATag uat:tags)
+		for(SimTag tag:tags)
 		{
-			//this.tags = tags ;
+			if(n.equals(tag.getName()))
+				return tag;
 		}
 		
-		return this ;
+		return null ;
 	}
 	
 	
@@ -82,17 +85,23 @@ public abstract class SimDev extends SimNode
 		Object r = super.JS_get(key);
 		if (r != null)
 			return r;
-		return this.getTagByName(key);
+		return this.getSimTagByName(key);
 	}
 
 	public List<Object> JS_names()
 	{
 		List<Object> rets = super.JS_names();
 
-		for (SimTag t : this.getTags())
+		List<SimTag> tags = getSimTags() ;
+		if(tags!=null)
 		{
-			rets.add(t.getName());
+			for(SimTag tag:tags)
+			{
+				String n = tag.getName() ;
+				rets.add(n);
+			}
 		}
+		
 		return rets;
 	}
 }

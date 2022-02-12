@@ -60,7 +60,50 @@ dlg.resize_to(700,500) ;
 <body marginwidth="0" marginheight="0">
  <blockquote class="layui-elem-quote ">Simulation Instance [<%=ins.getTitle() %>]
  
-      	
+      	<%
+      	String run_c0 = "grey" ;
+    	String run_t0 = "disabled" ;
+    	String run_icon0="" ;
+    	
+    	if(ins.RT_isRunning())
+    	{
+    		run_c0 = "green" ;
+    		run_t0 = "running" ;
+    		run_icon0="fa-spin";
+    	}
+    	else
+    	{
+    		run_c0 = "red" ;
+    		run_t0 = "stopped" ;
+    	}
+    	
+            if(ins.isEnable())
+            {
+            %>
+<span id="" style="width:20px;height:20px;color: <%=run_c0%>;" ><i class="fa fa-cog <%=run_icon0 %> fa-lg"></i></span>&nbsp;<%=run_t0%>
+      
+<%
+      	if(ins.RT_isRunning())
+      	{
+      %>
+
+		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop" onclick="ins_start_stop(false,'<%=ins.getId()%>')"></i>
+		 
+<%
+		 	}
+		 	else
+		 	{
+		 %>
+<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start" onclick="ins_start_stop(true,'<%=ins.getId()%>')"></i>
+<%
+	}
+}
+else
+{
+%><span id="" style="width:20px;height:20px;color: grey;" ><i class="fa fa-cog fa-lg"></i></span>&nbsp;Disabled
+<%
+	}
+%>
       	
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
   
@@ -138,7 +181,7 @@ for(SimChannel ch:chs)
    
       </th>
       <th>
-      
+<%--      
       <%
             	if(ch.isEnable())
             {
@@ -163,20 +206,20 @@ for(SimChannel ch:chs)
 }
 else
 {
-%><span id="" style="width:20px;height:20px;color: grey;" ><i class="fa fa-cog fa-lg"></i></span>&nbsp;Disabled
+%>
+
+<span id="" style="width:20px;height:20px;color: grey;" ><i class="fa fa-cog fa-lg"></i></span>&nbsp;Disabled
 <%
 	}
 %>
-<span id="ch_rt_<%=ch.getId()%>" ></span>
+ --%>
+connections=<span id="ch_rt_<%=ch.getId()%>" ></span>
       </th>
        <th>
-		
 	   <a href="javascript:ch_del('<%=ch.getId()%>')" style="color:red"><i title="delete channel" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
 	  </th>
 	  <th>
 <a href="javascript:add_or_edit_dev('<%=ch_tp %>','<%=ch_tpt %>','<%=ch.getId()%>')"><i title="add device" class="fa-solid fa-square-plus fa-lg" aria-hidden="true"></i></a>
-      
-          
 	  </th>
     </tr> 
   </thead>
@@ -552,6 +595,34 @@ function dev_del(chid,devid)
 		      
 		      
 		    });
+}
+
+
+function ins_start_stop(b,chid)
+{
+	var op = "ins_start" ;
+	if(!b)
+		op = "ins_stop";
+	$.ajax({
+        type: 'post',
+        url:'sim_ajax.jsp',
+        data: {op:op,insid:insid},
+        async: true,  
+        success: function (result) {  
+        	if("succ"==result)
+        	{
+        		refresh_me();
+        	}
+        	else
+        	{
+        		dlg.msg(result) ;
+        	}
+        },
+        error:function(req,err,e)
+        {
+        	dlg.msg(e);
+        }
+    });
 }
 
 

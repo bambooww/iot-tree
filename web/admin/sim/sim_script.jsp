@@ -114,13 +114,8 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	var pm = {insid:insid,txt:scode} ;
-	if(taskid!='')
-	{
-		pm.taskid = taskid;
-		pm.op='task';
-	}
-	send_ajax('cxt_script_test.jsp',pm,function(bsucc,ret)
+	var pm = {op:"ins_js_test",insid:insid,txt:scode} ;
+	send_ajax('sim_ajax.jsp',pm,function(bsucc,ret)
 		{
 			document.getElementById('script_res').value = ret ;
 		},false) ;

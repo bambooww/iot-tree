@@ -8,12 +8,16 @@ import java.net.Socket;
 import org.iottree.core.ConnProvider;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
 public class ConnPtTcpClient extends ConnPtStream
 {
+	public static ILogger log = LoggerManager.getLogger(ConnPtTcpClient.class) ;
+	
 	public static String TP = "tcp_client";
 
 	String host = null;
@@ -158,7 +162,11 @@ public class ConnPtTcpClient extends ConnPtStream
 		}
 		catch ( Exception ee)
 		{
-			System.out.println(" ConnPtTcpClient will disconnect by connect err:"+ee.getMessage()) ;
+			if(log.isDebugEnabled())
+			{
+				log.debug(" ConnPtTcpClient will disconnect by connect err:"+ee.getMessage()) ;
+				ee.printStackTrace(); 
+			}
 			disconnect();
 			return false;
 		}
@@ -171,7 +179,7 @@ public class ConnPtTcpClient extends ConnPtStream
 
 		synchronized (this)
 		{
-			System.out.println("ConnPtTcpClient disconnect [" + this.getName());
+			//System.out.println("ConnPtTcpClient disconnect [" + this.getName());
 			try
 			{
 				try
