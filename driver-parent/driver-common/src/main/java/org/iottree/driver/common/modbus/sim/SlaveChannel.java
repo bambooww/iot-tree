@@ -492,4 +492,26 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	{
 		
 	}
+	
+	public Object JS_get(String key)
+	{
+		Object r = super.JS_get(key);
+		if(r!=null)
+			return r ;
+		
+		switch(key)
+		{
+		case "_tp":
+			return this.getTp();
+		}
+		
+		return null ;
+	}
+
+	public List<Object> JS_names()
+	{
+		List<Object> rets = super.JS_names();
+		rets.add("_tp") ;
+		return rets;
+	}
 }

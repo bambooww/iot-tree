@@ -3,12 +3,16 @@ package org.iottree.driver.common.modbus.sim;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
+import org.iottree.core.sim.SimTag;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.iottree.core.util.xmldata.data_class;
+import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 
 @data_class
@@ -429,6 +433,10 @@ public class SlaveDevSeg
 	//@data_val(param_name = "int_ms")
 	//long intervalMS = 3000;
 	
+	@data_obj(obj_c = SlaveTag.class)
+	List<SlaveTag> tags = new ArrayList<>();
+	
+	
 	private transient boolean[] boolDatas = null ;
 	
 	private transient short[] int16Datas = null ;
@@ -472,10 +480,59 @@ public class SlaveDevSeg
 	{
 		return fc==1 || fc==3;
 	}
+	
+	public List<SlaveTag> getSlaveTags()
+	{
+		return this.tags ;
+	}
+	
+	public SlaveTag getSlaveTag(int regidx)
+	{
+		if(this.tags==null)
+			return null ;
+		
+		for(SlaveTag tag:this.tags)
+		{
+			if(tag.getRegIdx()==regidx)
+				return tag ;
+		}
+		return null ;
+	}
 //	public abstract XmlVal.XmlValType getDataType();
 //	
 //	protected abstract boolean initSlaveData() ;
 //	
+	
+	public SlaveTag setSlaveTag(int idx,String name)
+	{
+		SlaveTag st = this.getSlaveTag(idx) ;
+		if(st==null)
+		{
+			st = new SlaveTag(name,idx) ;
+			this.tags.add(st) ;
+		}
+		else
+		{
+			st.asName(name) ;
+		}
+		return st ;
+	}
+	
+	public SlaveTag removeSlaveTag(int regidx)
+	{
+		if(this.tags==null)
+			return null ;
+		
+		for(SlaveTag tag:this.tags)
+		{
+			if(tag.getRegIdx()==regidx)
+			{
+				tags.remove(tag) ;
+				return tag ;
+			}
+		}
+		return null ;
+	}
 	
 	boolean init()
 	{
@@ -609,6 +666,18 @@ public class SlaveDevSeg
 		}
 	}
 
+	public Object getSlaveData(int reg)
+	{
+		if(this.isBoolData())
+		{
+			return boolDatas[reg] ;
+		}
+		else
+		{
+			return this.int16Datas[reg] ;
+		}
+	}
+	
 	public void onMasterWriteBools(int idx,boolean[] datas)
 	{
 		
