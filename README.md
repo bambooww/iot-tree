@@ -91,7 +91,7 @@ If you encounter problems with the system or have suggestions, you can send us e
 [quick_link]: ./web/doc/en/doc/quick/index.md
 [demo_link]: ./web/doc/en/doc/case/index.md
 [dl_link]: https://github.com/bambooww/iot-tree/releases
-[case_auto_demo]: ./doc/case/case_auto.md
+[case_auto_demo]: ./web/doc/en/doc/case/case_auto.md
 
 [pump_demo]: ./web/doc/en/doc/case/example_psd.md
 [lamp_demo]: ./web/doc/en/doc/case/example_lamp_demo.md
