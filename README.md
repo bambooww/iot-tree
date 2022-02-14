@@ -43,9 +43,11 @@ Of course, according to our open source strategy, most of your projects can be u
 
 
 ### Use Case
-[Lamp Demo][lamp_demo] 
+<div style="display:none">[Lamp Demo][lamp_demo] </div>
 
 <div style="display:none">  [Pump Controller Demo][pump_demo] </div>
+
+[Demonstration of Industrial Automation][case_auto_demo]
 
 ## 1.2 embedded into the device
 

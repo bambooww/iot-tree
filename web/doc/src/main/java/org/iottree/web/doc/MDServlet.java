@@ -126,7 +126,8 @@ public class MDServlet extends HttpServlet
 			if(boutline)
 			{
 				w.write("</div>"
-						+ "<div id='outline_div' class=\"layui-layer layui-layer-page layui-layer-dir\" type=\"page\" times=\"1\" showtime=\"0\" contype=\"object\" style=\"z-index: 19891015; position: fixed; top: 33px; left: 994px; margin-left: -15px;\"><div class=\"layui-layer-title\" style=\"cursor: move;\">Outline</div><div id=\"\" class=\"layui-layer-content\">"
+						+ "<div id='outline_div' class=\"layui-layer layui-layer-page layui-layer-dir\" type=\"page\" times=\"1\" showtime=\"0\" contype=\"object\" style=\"z-index: 19891015; position: fixed; top: 33px; left: 994px; margin-left: -15px;\">"
+						+ "<div id='outline_head' class=\"layui-layer-title\" style=\"cursor: move;\">Outline</div><div id=\"\" class=\"layui-layer-content\">"
 						+ "<ul id=\"outline_list\" class=\"site-dir layui-layer-wrap\" style=\"display: block;\">\r\n" + 
 						"</ul></div><span class=\"layui-layer-setwin\"></span><span class=\"layui-layer-resize\"></span></div>"+
 						"</body><script src=\"/doc/doc.js\"></script></html>");

@@ -202,8 +202,21 @@ var taskact_js_txt = '' ;
 
 function show_script()
 {
+	var tt = "Edit JS" ;
+	switch(taskact_js.jstp)
+	{
+	case "init":
+		tt = "Edit Init Script (run once)" ;
+		break ;
+	case "run":
+		tt = "Edit Run Script (run interval)" ;
+		break;
+	case "end":
+		tt = "Edit End Script (run once)" ;
+		break;
+	}
 	dlg.open("../ua_cxt/cxt_script.jsp?op=task&path="+prjpath+"&taskid="+taskact_js.taskid+"&opener_txt_id=ta_js",
-			{title:'Edit JS'},['Ok','Cancel'],
+			{title:tt},['Ok','Cancel'],
 			[
 				function(dlgw)
 				{
@@ -220,6 +233,7 @@ function show_script()
 								return ;
 							}
 							dlg.close() ;
+							document.location.href=document.location.href;
 						}) ;
 				},
 				function(dlgw)

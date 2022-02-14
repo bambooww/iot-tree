@@ -177,13 +177,13 @@ public class TaskManager
 		return t.getActionById(actid) ;
 	}
 	
-	public void setTaskAction(String prjid,String taskid,TaskAction ta) throws Exception
+	public void setTaskActionBasic(String prjid,String taskid,TaskAction ta) throws Exception
 	{
 		Task t = getTask(prjid,taskid) ;
 		if(t==null)
 			throw new Exception("no task found") ;
 		
-		t.setAction(ta) ;
+		t.setActionBasic(ta) ;
 		this.saveTask(prjid, t);
 	}
 	

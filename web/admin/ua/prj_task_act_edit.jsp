@@ -72,7 +72,7 @@ String prj_path = prj.getNodePath() ;
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(850,700);
+dlg.resize_to(650,400);
 </script>
 </head>
 <body>
@@ -88,12 +88,12 @@ dlg.resize_to(850,700);
 	  </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:lang>desc</wbt:lang></label>
+    <label class="layui-form-label">desc</label>
     <div class="layui-input-block" >
       <input type="text" name="desc" id="desc" value="<%=desc %>" autocomplete="off" class="layui-input"/>
     </div>
-   
   </div>
+<%--
    <div class="layui-form-item">
     <label class="layui-form-label">init script</label>
     <div class="layui-input-block" >
@@ -119,7 +119,9 @@ dlg.resize_to(850,700);
 	</div>
     
   </div>
-</div>
+  </div>
+  --%>
+
   
 </form>
 </body>
@@ -153,8 +155,8 @@ function do_submit(cb)
 	var init_sc = $("#ta_init_sc").val();
 	var run_sc = $("#ta_run_sc").val();
 	var end_sc = $("#ta_end_sc").val();
-	//var dbname=document.getElementById('db_name').value;
-	cb(true,{"dx_/enable:bool":ben,"dx_/name:string":n,"dx_/desc:string":desc,"dx_/init_script:string":init_sc,"dx_/run_script:string":run_sc,"dx_/end_script:string":end_sc})
+	//"dx_/init_script:string":init_sc,"dx_/run_script:string":run_sc,"dx_/end_script:string":end_sc
+	cb(true,{"dx_/enable:bool":ben,"dx_/name:string":n,"dx_/desc:string":desc})
 	
 	//document.getElementById('form1').submit() ;
 }

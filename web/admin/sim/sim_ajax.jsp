@@ -387,4 +387,13 @@ case "ins_js_test":
 	String ret = ins.getContext().testScript(jstxt) ;
 	out.print(ret) ;
 	break ;
+case "imp_demo":
+	if(!Convert.checkReqEmpty(request, out, "fn"))
+		return ;
+	String fn = request.getParameter("fn") ;
+	File impf = new File(SimManager.getSimDir(),"./demo/"+fn) ;
+	if(SimManager.getInstance().importIns(impf)!=null)
+		out.print("succ") ;
+	else
+		out.print("import failedr") ;
 }%>

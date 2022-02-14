@@ -65,9 +65,11 @@ If a device is complex but has defined the ui elements it can provide, you only 
 
 
 ### Use Case
-[Lamp Demo][lamp_demo] 
+<div style="display:none">[Lamp Demo][lamp_demo] </div>
 
 <div style="display:none">  [Pump Controller Demo][pump_demo] </div>
+
+[Demonstration of Industrial Automation][case_auto_demo]
 
 
 
@@ -128,6 +130,7 @@ If you encounter problems with the system or have suggestions, you can send us e
 [dl_link]: https://github.com/bambooww/iot-tree/releases
 
 [pump_demo]: ./doc/case/example_psd.md
+[case_auto_demo]: ./doc/case/case_auto.md
 [lamp_demo]: ./doc/case/example_lamp_demo.md
 
 [embed_ctrl_demo]: ./doc/case/example_embed.md

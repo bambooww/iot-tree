@@ -60,8 +60,17 @@ if("slide".equals(tp))
 
  <%
 }
- %>
- 
+else
+{
+%>
+<form style="height:150px">
+    <label for="val" style="font-size:3em">Input Value:</label>
+    <input type="number" name="val" id="val" data-highlight="true"
+		value="<%=val%>" onchange="val_chged()">
+</form>
+<%
+}
+%>
 </body>
 <script type="text/javascript">
 

@@ -68,9 +68,12 @@ IOT-Tree Serverは、Javaを使用して開発されたオープンソースソ�
 
 ### 参考事例
 
-[ライトコントロール][lamp_demo]
+<div style="display:none">[ライトコントロール][lamp_demo]</div>
 
 <div style="display:none">[ポンプ制御][pump_demo]</div>
+
+[工業自動化プレゼンテーション][case_auto_demo]
+
 
 
 
@@ -131,6 +134,7 @@ IOT-Tree Serverは、プロジェクト単位で、複数の通信方式に基�
 [dl_link]: https://github.com/bambooww/iot-tree/releases
 
 [pump_demo]: ./doc/case/example_psd.md
+[case_auto_demo]: ./doc/case/case_auto.md
 [lamp_demo]: ./doc/case/example_lamp_demo.md
 
 [embed_ctrl_demo]: ./doc/case/example_embed.md

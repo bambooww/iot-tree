@@ -60,12 +60,13 @@ public class SlaveTag extends SimTag
 
 	public Object JS_get(String key)
 	{
+		Object r = super.JS_get(key) ;
+		if(r!=null)
+			return r ;
 		switch(key)
 		{
 		case "_regidx":
 			return regIdx ;
-		case "_value":
-			return this.getValue() ;
 		default:
 			return null ;
 		}
@@ -73,35 +74,9 @@ public class SlaveTag extends SimTag
 
 	public List<Object> JS_names()
 	{
-		ArrayList<Object> rets = new ArrayList<>() ;
+		List<Object> rets = super.JS_names() ;
 		rets.add("_regidx");
-		rets.add("_value");
 		return rets ;
 	}
 	
-	public Class<?> JS_type(String key)
-	{
-		switch(key.toLowerCase())
-		{
-		case "_value":
-			return this.getValueTp();
-		default:
-			break ;//do nothing
-		}
-		return null ;
-	}
-	
-	public void JS_set(String key,Object v)
-	{
-		switch(key.toLowerCase())
-		{
-		case "_value":
-			this.setValue(v);
-			return;
-		default:
-			break ;//do nothing
-		}
-		
-		super.JS_set(key, v);
-	}
 }

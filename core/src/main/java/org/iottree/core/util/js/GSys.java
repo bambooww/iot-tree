@@ -144,6 +144,8 @@ public class GSys
 	// bb.get(ret);
 	// return ret;
 	// }
+	
+	
 
 	// byte[]转float
 	@HostAccess.Export
@@ -158,6 +160,17 @@ public class GSys
 	public float int2float(int intv)
 	{
 		 return Float.intBitsToFloat(intv);  
+	}
+	
+	public int float2int(float v)
+	{
+		return Float.floatToIntBits(v) ;
+	}
+	
+	public short[] float2short(float v)
+	{
+		int iv = Float.floatToIntBits(v) ;
+		return new short[] {(short)((iv>>16)&0xFFFF),(short)(iv&0xFFFF)};
 	}
 	//public float int2float(int intv,)
 	/**

@@ -182,7 +182,7 @@ public class Task
 		return null;
 	}
 
-	public TaskAction setAction(TaskAction ta)
+	public TaskAction setActionBasic(TaskAction ta)
 	{
 		int s = this.actions.size();
 		for (int i = 0; i < s; i++)
@@ -190,6 +190,9 @@ public class Task
 			TaskAction act = this.actions.get(i);
 			if (act.getId().equals(ta.getId()))
 			{
+				ta.initScript = act.initScript;
+				ta.runScript = act.runScript ;
+				ta.endScript = act.endScript ;
 				this.actions.set(i, ta);
 				return ta;
 			}
@@ -262,6 +265,7 @@ public class Task
 		{
 			if(!ta.isEnable())
 				continue ;
+			ta.task = this ;
 			if(ta.initTaskAction())
 			{
 				bret = true ;

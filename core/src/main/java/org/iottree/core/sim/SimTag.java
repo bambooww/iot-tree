@@ -50,5 +50,56 @@ public abstract class SimTag  extends JSObMap
 	
 	public abstract void setValue(Object val) ;
 	
+
+	public Object JS_get(String key)
+	{
+		switch(key)
+		{
+		case "_value":
+		case "_v":
+		case "_pv":
+			return this.getValue() ;
+		default:
+			return null ;
+		}
+	}
+
+	public List<Object> JS_names()
+	{
+		ArrayList<Object> rets = new ArrayList<>() ;
+		rets.add("_value");
+		rets.add("_v");
+		rets.add("_pv");
+		return rets ;
+	}
 	
+	public Class<?> JS_type(String key)
+	{
+		switch(key.toLowerCase())
+		{
+		case "_value":
+		case "_v":
+		case "_pv":
+			return this.getValueTp();
+		default:
+			break ;//do nothing
+		}
+		return null ;
+	}
+	
+	public void JS_set(String key,Object v)
+	{
+		switch(key.toLowerCase())
+		{
+		case "_value":
+		case "_v":
+		case "_pv":
+			this.setValue(v);
+			return;
+		default:
+			break ;//do nothing
+		}
+		
+		super.JS_set(key, v);
+	}
 }

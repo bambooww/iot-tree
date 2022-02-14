@@ -36,9 +36,12 @@ dlg.resize_to(500,620);
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
     <div class="layui-input-block">
-    ($event,$view,$panel,$container,$this)=&gt;
+    ($event,$view,$panel,$container,$util,$this)=&gt;{
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="8"></textarea>
+      }
+      <%--
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('clientjs')">insert tag</div>
+       --%>
     </div>
     
   </div>
@@ -50,7 +53,9 @@ if(bsjs)
     <label class="layui-form-label">Server JS:</label>
     <div class="layui-input-block">
       $event.fire_to_server() must be called in client js to be triggered.
+      ($input)=&gt;{
       <textarea id="serverjs" name="serverjs" placeholder="" class="layui-textarea" rows="8"></textarea>
+      }
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('serverjs')">insert tag</div>
     </div>
   </div>

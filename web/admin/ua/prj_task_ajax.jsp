@@ -100,7 +100,7 @@ case "act_edit":
 			ta.withId(actid) ;
 		}
 		
-		TaskManager.getInstance().setTaskAction(prjid,taskid, ta);
+		TaskManager.getInstance().setTaskActionBasic(prjid,taskid, ta);
 		out.print("succ") ;
 	}
 	catch(Exception e)

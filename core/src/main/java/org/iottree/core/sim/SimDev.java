@@ -40,18 +40,22 @@ public abstract class SimDev extends SimNode
 	
 	public List<SimTag> getSimTags()
 	{
-		if(simTags!=null)
-			return simTags ;
+		List<SimTag> r = simTags;
+		if(r!=null)
+			return r ;
 		
-		List<SimTag> rets = listSimTagsInner() ;
-		if(rets==null)
-			rets = new ArrayList<>() ;
-		
-		for(SimTag st:rets)
-			st.belongTo = this ;
-		
-		simTags = rets ;
-		return rets ;
+		synchronized(this)
+		{
+			List<SimTag> rets = listSimTagsInner() ;
+			if(rets==null)
+				rets = new ArrayList<>() ;
+			
+			for(SimTag st:rets)
+				st.belongTo = this ;
+			
+			simTags = rets ;
+			return rets ;
+		}
 	}
 	
 	protected void clearBuffer()
@@ -86,6 +90,25 @@ public abstract class SimDev extends SimNode
 		if (r != null)
 			return r;
 		return this.getSimTagByName(key);
+	}
+	
+//	@Override
+//	public void JS_set(String key, Object v)
+//	{
+//		// TODO Auto-generated method stub
+//		super.JS_set(key, v);
+//	}
+	
+	@Override
+	public Class<?> JS_type(String key)
+	{
+		SimTag st = this.getSimTagByName(key);
+		if(st!=null)
+		{
+			return st.getClass();
+		}
+		
+		return super.JS_type(key);
 	}
 
 	public List<Object> JS_names()

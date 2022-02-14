@@ -48,7 +48,7 @@
 <script src="/_js/oc/oc.js?v=<%=Config.getVersion()%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
-<script src="/_js/oc/hmi_util.js"></script>
+<script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
   <!-- 
 
 -->

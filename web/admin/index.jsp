@@ -356,7 +356,13 @@ if(rep.isAutoStart())
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp; Import</a>
-							
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a class0="btn btn-success"  href="javascript:imp_simins_demo()">
+							<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
+							</span>&nbsp;Import Demo
+							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a title="simulator help" style="width:100px;height:40px;" href="/doc/en/sim/index.md" target="_blank">
 							<span class="fa-stack">
@@ -369,7 +375,7 @@ if(rep.isAutoStart())
 					        
 					        <div style="float:right;top:5px;position: absolute;right:10px" onclick="show_hide('cont_sim')"><i class="fa fa-bars fa-lg"></i></div>
 					    </div>
-					    <div class="mod-body"  id="cont_sim" style="display:none">
+					    <div class="mod-body"  id="cont_sim" style0="display:none">
 							<div class="content markitup-box" style="height:200px:overflow:auto">
 <%
 	List<SimInstance> inss = SimManager.getInstance().getInstances();
@@ -748,6 +754,42 @@ function imp_prj_demo()
 						 dlg.close();
 						 //document.location.href=document.location.href;
 						 before_imp(ret,true);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+function imp_simins_demo()
+{
+	dlg.open("sim/sim_demo_list.jsp",
+			{title:"Import Demo Simulator Instance",w:'500px',h:'400px'},
+			['Select','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 send_ajax("./sim/sim_ajax.jsp",{op:"imp_demo",fn:ret},(bsucc,ret)=>{
+							 if(!bsucc||ret!='succ')
+							{
+								 dlg.msg(ret) ;
+								 return ;
+							}
+							dlg.close();
+							document.location.href=document.location.href;
+						 });
+						
+						 
 				 	});
 				},
 				function(dlgw)

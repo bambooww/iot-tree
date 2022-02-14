@@ -15,7 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.iottree.core.Config;
 import org.iottree.core.DevDef;
+import org.iottree.core.UAManager;
+import org.iottree.core.UAPrj;
+import org.iottree.core.basic.IdName;
 import org.iottree.core.task.Task;
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.web.Mime;
@@ -106,7 +110,7 @@ public class SimManager
 //		return sch ;
 //	}
 	
-	private File getSimDir()
+	public static File getSimDir()
 	{
 		return new File(Config.getDataDirBase()+"simulator/") ;
 	}
@@ -161,17 +165,9 @@ public class SimManager
 		
 		for(File insdir:insdirs)
 		{
-			File insf = new File(insdir,INS_FN);
-			if(!insf.exists())
-				continue ;
-			
-			String insid = getInsIdByDir(insdir) ;
 			try
 			{
-				SimInstance sc = loadInstance(insf) ;
-				if(sc==null)
-					continue ;
-				sc.withId(insid) ;
+				SimInstance sc = loadInsByDir(insdir);
 				ret.add(sc) ;
 			}
 			catch(Exception e)
@@ -180,6 +176,21 @@ public class SimManager
 			}
 		}
 		return ret;
+	}
+	
+	private SimInstance loadInsByDir(File insdir) throws Exception
+	{
+		File insf = new File(insdir,INS_FN);
+		if(!insf.exists())
+			return null ;
+		
+		String insid = getInsIdByDir(insdir) ;
+			SimInstance sc = loadInstance(insf) ;
+			if(sc==null)
+				return null ; ;
+			sc.withId(insid) ;
+			return sc;
+
 	}
 	
 	void saveInstance(SimInstance ins) throws Exception
@@ -290,4 +301,41 @@ public class SimManager
 		return true;
 	}
 	
+	public SimInstance importIns(File zipf) throws Exception
+	{
+		if(!zipf.exists())
+			return null;
+		
+		String zmeta = ZipUtil.readZipMeta(zipf) ;
+		if(Convert.isNullOrEmpty(zmeta))
+			return null;
+		HashMap<String,String> metam = Convert.transPropStrToMap(zmeta) ;
+		if(!"sim_ins".equals(metam.get("tp")))
+			return null;
+		String id = metam.get("insid") ;
+		List<String> ens = ZipUtil.readZipEntrys(zipf) ;
+		HashMap<String,String> outens = new HashMap<>() ;
+		
+		String prefix = "sim_"+id+"/" ;
+		String newid = CompressUUID.createNewId();
+		for(String en:ens)
+		{
+			String fit_en = en.replaceAll("\\\\", "/") ;
+			if(fit_en.startsWith(prefix))
+			{
+				String taren = "sim_"+newid+"/"+en.substring(prefix.length()) ;
+				outens.put(en, taren) ;
+			}
+			//find prj
+		}
+		
+		ZipUtil.readZipOut(zipf, outens, getSimDir());
+		
+		SimInstance sc = loadInsByDir(new File(getSimDir(),"sim_"+newid+"/")) ;
+		if(sc==null)
+			return null ;
+		sc.withId(newid) ;
+		instances.add(0, sc);
+		return sc ;
+	}
 }
