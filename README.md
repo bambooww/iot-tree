@@ -43,9 +43,6 @@ Of course, according to our open source strategy, most of your projects can be u
 
 
 ### Use Case
-<div style="display:none">[Lamp Demo][lamp_demo] </div>
-
-<div style="display:none">  [Pump Controller Demo][pump_demo] </div>
 
 [Demonstration of Industrial Automation][case_auto_demo]
 
@@ -94,7 +91,7 @@ If you encounter problems with the system or have suggestions, you can send us e
 [quick_link]: ./web/doc/en/doc/quick/index.md
 [demo_link]: ./web/doc/en/doc/case/index.md
 [dl_link]: https://github.com/bambooww/iot-tree/releases
-
+[case_auto_demo]: ./doc/case/case_auto.md
 
 [pump_demo]: ./web/doc/en/doc/case/example_psd.md
 [lamp_demo]: ./web/doc/en/doc/case/example_lamp_demo.md
