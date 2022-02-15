@@ -40,3 +40,10 @@ Add local tag support. Local tag can exist as a global variable under the projec
 
 
 
+Version 0.95.6 
+
+Support for the new Modbus Slave device simulator and an example of the entire process of industrial automation field implementation have been added. Improve Modbus protocol-related support to resolve bugs that occasionally interrupt connections. 
+
+
+
+
