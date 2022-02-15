@@ -176,7 +176,7 @@ if(rep.isAutoStart())
 %><a class=" " href="javascript:set_prj_auto_start('<%=rep.getId()%>',false)" title="unset auto start">
 <span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
-							  &nbsp;&nbsp;A
+							  <i class="fa-thin fa-a  fa-stack-1x fa-inverse"></i>
 							</span>
 </a><%
 }
@@ -356,6 +356,7 @@ if(rep.isAutoStart())
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp; Import</a>
+							<input type="file" id='add_sim_file' onchange="add_sim_file_onchg()" name="file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<a class0="btn btn-success"  href="javascript:imp_simins_demo()">
 							<span class="fa-stack">
@@ -998,6 +999,46 @@ function add_or_edit_simins(insid)
 				}
 			]);
 }
+
+
+
+function add_sim_file_onchg()
+{
+	//$("#"+id).
+	var fs = $("#add_sim_file")[0].files ;
+	if(fs==undefined||fs==null||fs.length<=0)
+	{
+		return ;
+	}
+	var f = fs[0];
+
+	//upload
+	var fd = new FormData();
+    //fd.append("cxtid",cur_cxtid) ;
+    fd.append("file",f);
+     $.ajax({"url": "./sim/sim_upload_imp.jsp",type: "post","processData": false,"contentType": false,
+		"data": fd,
+		success: function(data)
+       	{
+ 	  		if(data.indexOf("succ")==0)
+ 	  			document.location.href=document.location.href;
+ 	  		else
+ 	  			dlg.msg(data) ;
+   　  },
+      　error: function(data)
+         {
+  				dlg.msg("upload import failed");
+　　　}
+  　　});
+}
+
+
+
+function sim_ins_import()
+{
+	add_sim_file.click() ;
+}
+
 
 function log_ctrl()
 {
