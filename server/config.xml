@@ -14,8 +14,14 @@
 		<server_comp class="org.iottree.ua.driver.opcua.server.OpcUAServerComp"/>
 	</system>
 	
-	<modbus>
-		<slave></slave>
-	</modbus>
+	<!-- 
+	<plug_auth name="auth_demo" 
+			login_url="http://abc.xx.com/login/login.jsp"
+			token_cookie_name="token"
+			no_read_right_prompt="No read permission"
+			no_write_right_prompt="No write permission"
+			>
+	</plug_auth>
+	 -->
 	
 </iottree>

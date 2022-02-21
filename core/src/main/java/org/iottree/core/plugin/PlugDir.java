@@ -35,6 +35,10 @@ public class PlugDir
 	JSONArray js_api_arr = null;
 
 	private HashMap<String, Object> jsapi_name2ob = null;// new HashMap<>();
+	
+	JSONArray js_auth_arr = null ;
+	
+	//private HashMap<String, Object> auth_name2ob = null;
 
 	public PlugDir(File plugdirf)
 	{
@@ -66,7 +70,7 @@ public class PlugDir
 			this.title = name;
 
 		js_api_arr = jo.optJSONArray("js_api");
-
+		js_auth_arr = jo.optJSONArray("auth") ;
 		return true;
 	}
 
@@ -165,7 +169,7 @@ public class PlugDir
 		}
 	}
 
-	private Object loadJsApiOb(JSONObject job) throws Exception
+	private Object loadJsOb(JSONObject job) throws Exception
 	{
 
 		String name = job.optString("name");
@@ -220,7 +224,7 @@ public class PlugDir
 					String nn = job.getString("name") ;
 					try
 					{
-						Object ob = loadJsApiOb(job);
+						Object ob = loadJsOb(job);
 						jsapi_name2ob.put(nn, ob);
 						
 						System.out.println(" plug ["+name+"] load js api object [$$"+nn+"]") ;
@@ -234,6 +238,35 @@ public class PlugDir
 
 			return jsapi_name2ob;
 		}
+	}
+	
+	
+	public Object loadAuthObj(String name) throws MalformedURLException, IOException
+	{
+			if (this.js_auth_arr == null)
+				return null ;
+			
+			int n = js_auth_arr.length();
+			for (int i = 0; i < n; i++)
+			{
+				JSONObject job = js_auth_arr.getJSONObject(i);
+				String nn = job.getString("name") ;
+				if(!name.equals(nn))
+					continue ;
+				try
+				{
+					Object ob = loadJsOb(job);					
+					System.out.println(" plug ["+name+"] load js auth object ["+nn+"] ok") ;
+					return ob ;
+				}
+				catch ( Exception e)
+				{
+					e.printStackTrace();
+					System.err.println(" plug ["+name+"] load js auth object ["+nn+"] failed") ;
+				}
+			}
+			
+			return null ;
 	}
 
 }

@@ -6,9 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
+import javax.websocket.EndpointConfig;
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
+
+import org.iottree.core.util.Convert;
 
 
 public class WebSocketConfig extends ServerEndpointConfig.Configurator{
@@ -31,8 +34,42 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator{
         	reqhead = new HashMap<>() ;
         }
         config.getUserProperties().put("req_head", reqhead);
+        config.getUserProperties().put(HttpSession.class.getName(),httpSession);
     }
 	
+	
+	public static HttpSession getHttpSession(EndpointConfig config)
+	{
+		return (HttpSession)config.getUserProperties().get(HttpSession.class.getName()) ;
+	}
+	
+	public static String getCookieValue(EndpointConfig config,String name)
+	{
+		Map<String,List<String>> heads = (Map<String,List<String>>)config.getUserProperties().get("req_head");
+		if(heads==null)
+			return null ;
+		List<String> cks = heads.get("cookie") ;
+		if(cks==null||cks.size()<=0)
+			return null ;
+		
+		String ckstr = cks.get(0) ;
+		for(String tmps : Convert.splitStrWith(ckstr, ";"))
+		{
+			tmps = tmps.trim() ;
+			int k = tmps.indexOf('=') ;
+			String n = tmps ;
+			String v="" ;
+			if(k>=0)
+			{
+				n = tmps.substring(0,k) ;
+				v = tmps.substring(k+1) ;
+			}
+			
+			if(n.equals(name))
+				return v ;
+		}
+		return null ;
+	}
 //    /**
 //     * ServerEndpointExporter 作用
 //     *

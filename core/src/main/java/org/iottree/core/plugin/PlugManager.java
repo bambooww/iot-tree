@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -99,5 +100,93 @@ public class PlugManager
 			}
 		}
 		return ret ;
+	}
+	
+	
+//	public HashMap<String,Object> getAuthAll()
+//	{
+//		HashMap<String,Object> ret = new HashMap<>() ;
+//		for(PlugDir pd:this.name2plug.values())
+//		{
+//			try
+//			{
+//				HashMap<String,Object> n2o = pd.getOrLoadAuthObjs() ;
+//				if(n2o==null)
+//					continue ;
+//				ret.putAll(n2o);
+//			}
+//			catch(Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//		}
+//		return ret ;
+//	}
+	
+	public Object getAuthObj()
+	{
+		Element ele = Config.getConfElement("plug_auth") ;
+		if(ele==null)
+			return null;
+		String name = ele.getAttribute("name") ;
+		if(Convert.isNullOrEmpty(name))
+			return null ;
+		
+		for(PlugDir pd:this.name2plug.values())
+		{
+			try
+			{
+				Object o = pd.loadAuthObj(name) ;
+				if(o!=null)
+					return o ;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return null ;
+	}
+	
+	private transient boolean plugAuthGit = false;
+	private transient PlugAuth plugAuth = null ;
+	
+	public PlugAuth getPlugAuth()// throws Exception
+	{
+		if(plugAuthGit)
+			return plugAuth ;
+		
+		try
+		{
+			Element ele = Config.getConfElement("plug_auth") ;
+			if(ele==null)
+				return null;
+			String name = ele.getAttribute("name") ;
+			if(Convert.isNullOrEmpty(name))
+				return null ;
+			String token_cookie = ele.getAttribute("token_cookie_name") ;
+			if(Convert.isNullOrEmpty(token_cookie))
+				token_cookie = "token" ;
+			
+			String no_r_p = ele.getAttribute("no_read_right_prompt") ;
+			String no_w_p = ele.getAttribute("no_write_right_prompt") ;
+			
+			Object ob = getAuthObj();
+			if(ob==null)
+			{
+				//throw new Exception("no plug_auth ["+name+"] found") ;
+				System.err.println("no plug_auth ["+name+"] found") ;
+			}
+			plugAuth = new PlugAuth(ob,token_cookie) ;
+			plugAuth.asNoRightPrompt(no_r_p, no_w_p) ;
+			plugAuth.initAuth() ;
+			
+			return plugAuth;
+		}
+		finally
+		{
+			plugAuthGit = true ;
+		}
 	}
 }

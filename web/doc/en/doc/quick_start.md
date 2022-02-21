@@ -10,7 +10,8 @@
 
 
 
-# Downloading and Unzip
+
+# 1 Downloading and Unzip
 
 Download zip file,and unzip to directory you wanted.
 
@@ -22,11 +23,11 @@ If your running environment is windows, it is recommended to download the "iot-t
 
 
 
-# Prerequisites
+# 2 Prerequisites
 
 If your running environment is windows x64 and you have downloaded the "iot-tree-xx.xx.x-winjdk.zip" version, you have all the running conditions. The following operating conditions do not need to be concerned.
 
-## iot-tree-xx.xx.x.zip version running conditions
+## 2.1 iot-tree-xx.xx.x.zip version running conditions
 
 Java running environment version 1.8 and above, and ensure that your running environment is specific to Java environment variables such as path JAVA_HOME has been set.
 
@@ -61,15 +62,15 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 
 
-# Modify configuration
+# 3 Modify configuration
 
 Use a text editor to open the config.xml file and configure the access port in it. The default value is 9090. You can modify it to other port numbers
 
 
 
-# Start
+# 4 Start
 
-## Service registration, start and stop in panel mode under Windows x64 environment
+## 4.1 Service registration, start and stop in panel mode under Windows x64 environment
 
 In Windows x64 environment, IOT tree server provides a control panel to support the registration, start and stop of system services, which is very convenient for your use.
 
@@ -94,7 +95,7 @@ You can also click "Stop" to stop the service, or click "Unregister Service" to 
 
 
 
-## Command start
+## 5 Command start
 
 Run iot-tree.bat under Windows
 
@@ -117,7 +118,7 @@ iottree->
 ```
 
 
-# Access the management ui and modify the administrator password
+# 6 Access the management ui and modify the administrator password
 
 Open the browser and enter the host address to install and start IOT tree in the address bar. As follows:
 
@@ -136,7 +137,7 @@ After the administrator logs in, you can see the main management ui of the syste
 
 
 
-# Register as a service in command mode under Windows Environment
+# 7 Register as a service in command mode under Windows Environment
 
 
 
@@ -159,7 +160,7 @@ After successful registration, you can open the windows service manager and see 
 
 
 
-# Background startup under linux environment
+# 8 Background startup under linux environment
 
 Enter the following command in IOT tree directory to make IOT tree run in background mode:
 
@@ -181,7 +182,7 @@ you can also use the systemd related mechanism to set iot-tree-service.sh start 
 
 
 
-# View the built-in demonstration items in the system
+# 9 View the built-in demonstration items in the system
 
 If you are using IOT-Tree Server for the first time, you can try to import the built-in demonstration project of the system for the most intuitive experience. Visit the login system management link below.
 ```

@@ -12,7 +12,7 @@ function outline()
 {
 	//var idstr = "" ;
 	var listr = "" ;
-	$("h2,h3,h4,h5,h6").each(function(){
+	$("h1,h2,h3,h4,h5,h6").each(function(){
 		hcount ++ ;
 		var tmpid = "h_"+hcount ;
 		var ob = $(this) ;

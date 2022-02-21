@@ -3,9 +3,7 @@ echo ----------------------------------------
 echo Starting IOT-Tree Server
 echo ----------------------------------------
 
-if exist jdk (
-set JAVA_HOME=.\jdk
-)
+if exist jdk set JAVA_HOME=.\jdk
 
 if NOT DEFINED JAVA_HOME goto :no_java_home
 

@@ -25,16 +25,24 @@ boolean bhmi = false;
 if(node instanceof UAHmi)
 {
 	bhmi = true ;
+	hmi = (UAHmi)node;
+}
+/*
+if(node instanceof UAHmi)
+{
+	bhmi = true ;
 	hmi = (UAHmi)node ;
 	node = node.getParentNode() ;
-}
-
+}*/
+UANodeOCTags node_tags = null;
+boolean b_tags=(node instanceof UANodeOCTags);
 boolean b_tags_g = false;
+/*
 if(!(node instanceof UANodeOCTags))
 {
 	out.print("node has no tags") ;
 	return ;
-}
+}*/
 
 b_tags_g = node instanceof UANodeOCTagsGCxt ;
 
@@ -45,14 +53,28 @@ if(b_tags_g)
 }
 
 String node_cxtpath = node.getNodePath();
-UANodeOCTags node_tags = (UANodeOCTags)node;
+if(node instanceof UANodeOCTags)
+	node_tags = (UANodeOCTags)node;
 //UATagList taglist  = node_tags.getTagList() ;
 
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
-List<UATag> cur_tags = node_tags.getNorTags() ;
-List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
-boolean brefowner = node_tags.isRefOwner();
-boolean brefed = node_tags.isRefedNode() ;
+List<UATag> cur_tags = null; 
+List<UANodeOCTags>  tns =null;
+
+boolean brefowner = false;
+boolean brefed = false;
+
+String ext_str = null;
+
+if(node_tags!=null)
+{
+	cur_tags = node_tags.getNorTags() ;
+	tns = node_tags.listSelfAndSubTagsNode() ;
+	brefowner = node_tags.isRefOwner();
+	brefed = node_tags.isRefedNode() ;
+	ext_str = node_tags.getExtAttrStr() ;
+}
+
 
 String hmitt = "" ;
 if(bhmi)
@@ -60,7 +82,6 @@ if(bhmi)
 	hmitt ="UI ["+hmi.getNodePath()+"]";
 }
 
-String ext_str = node_tags.getExtAttrStr() ;
 String ext_color = "" ;
 if(Convert.isNotNullEmpty(ext_str))
 	ext_color="color:#17c680" ;
@@ -102,11 +123,13 @@ td
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node_tags.getNodePath() %> <a href="javascript:bind_ext('<%=node_tags.getNodePath() %>')" id="node_ext_<%=node_tags.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node.getNodePath() %> <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%
+   if(b_tags)
+   {
  	if(true) //(bdevdef||!ref_locked)
  	{
  %>
@@ -119,21 +142,22 @@ td
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
   <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
+<%
+   }
+%>
  </div>
 </blockquote>
+<%
+if(b_tags)
+{
+%>
 <div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
 <table class="oc_div_list" style="margin-top:10px;width:99%" id="tb_cur" >
   <thead>
      <tr>
      <th>
-     <%
-	//if(!brefed)
-	{
-%>
         <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
-<%
-	}
-%></th>
+</th>
         <th style="width:15px;">T</th>
     	<th sort_by="name">Tag</th>
     	<th sort_by="title">Title</th>
@@ -149,112 +173,16 @@ td
      </tr>
    </thead>
    <tbody id="div_list_bd_">
-<%--   
-<%
-int tags_num = 0 ;
-for(UANodeOCTags tn:tns)
-{
-	//if(tn.getRefBranchNode()!=null)
-	//	continue ;
-	List<UATag> tags = null;
-	if(bsys)
-		tags = tn.listTags() ;
-	else
-		tags = tn.getNorTags() ;
-	
-	String tn_id = tn.getId() ;
-	String tn_path = tn.getNodePath() ;
-	for(UATag tag:tags)
-	{
-		tags_num ++ ;
-		
-		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
-		boolean bloc = tag.getParentNode()==node_tags;
-		String cssstr="" ;
-		if(tag.isSysTag())
-			cssstr="color:grey";
-		else
-			cssstr="color:blue";
-		String tt = "" ;
-		if(tag.getDesc()!=null)
-			tt += tag.getDesc() ;
-		if(tag.getNameSor()!=null)
-			tt += "&#10;sor name:"+tag.getNameSor();
-		if(tag.getTitleSor()!=null)
-			tt += "&#10;sor title:"+tag.getTitleSor();
-		if(tag.getDescSor()!=null)
-			tt += "&#10;sor desc:"+tag.getDescSor();
-		
-		String addr = tag.getAddress() ;
-		if(addr.length()>10)
-			addr = addr.substring(0,10)+"..." ;
-		
-		String valtp_str = tag.getValTp().getStr();
-		if(tag.getValTranserObj()!=null)
-			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
-%>
-   <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
-   	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
-   	title="<%=tt%>"
-<%
-if(bloc&&!tag.isSysTag())
-{
-%>
-   	 ondblclick="add_or_modify_tag('<%=tag.getId()%>')"
-<%
-}
-%>
-   	 >
-   <td style="text-align: center;">
-   <%
-	if(bloc)
-	{
-%>
-        <input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/>
-<%
-	}
-%></td>
-        <td style="text-align: center;"><%=(tag.isMidExpress()?"✔":"") %></td>
-<td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>"><%=cxtpath%></span></td>
-<td><%=tag.getTitle() %></td>
-        <td><%=addr%></td>
-        <td><%=valtp_str %></td>
-        <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
-        <td id="ctag_dt_<%=cxtpath%>"></td>
-        <td id="ctag_q_<%=cxtpath%>"></td>
-        <td>
-<%
-	if(tag.isCanWrite())
-	{
-%>
-        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" size="8"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
-<%
-	}
-%>
-        </td>
-                <td>
-<%
-if(bloc&&!tag.isSysTag())
-{
-%>
-        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
-        <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
-<%
-}
-%>&nbsp;	
-        </td>
-      </tr>
-<%
-	}
-}
-%>
+
     </tbody>
-     --%>
 </table>
 </div>
+<%
+}
+%>
 </form>
 <%
-//if(brefed)
+if(b_tags)
 {
 %>
 <table width='100%' border='1' height="120">
@@ -280,6 +208,7 @@ if(bloc&&!tag.isSysTag())
 </body>
 <script>
 var path = "<%=path%>" ;
+var b_tags = <%=b_tags%> ;
 var cxt_path= "<%=node_cxtpath%>";
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
@@ -789,6 +718,8 @@ function run_script_test(fn)
 
 function refresh_tags()
 {
+	if(!b_tags)
+		return ;
 	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys+"&sortby="+sort_by,function(bsucc,ret){
 		$("#div_list_bd_").html(ret);
 		init_tr();

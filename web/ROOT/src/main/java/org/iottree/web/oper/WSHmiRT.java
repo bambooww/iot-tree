@@ -1,6 +1,7 @@
 package org.iottree.web.oper;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -21,6 +23,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.CloseReason.CloseCodes;
+import javax.websocket.EndpointConfig;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
@@ -35,6 +38,9 @@ import org.iottree.core.UAVal;
 import org.iottree.core.bind.BindDI;
 import org.iottree.core.bind.EventBindItem;
 import org.iottree.core.bind.PropBindItem;
+import org.iottree.core.plugin.PlugAuth;
+import org.iottree.core.plugin.PlugAuthUser;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WSServer;
 import org.iottree.core.ws.WebSocketConfig;
@@ -43,6 +49,7 @@ import org.json.JSONObject;
 @ServerEndpoint(value = "/_ws/hmi/{prjname}/{hmiid}", configurator = WebSocketConfig.class)
 public class WSHmiRT extends WSServer
 {
+	private static final String PAU = "_pau_" ;
 	static
 	{
 
@@ -52,7 +59,7 @@ public class WSHmiRT extends WSServer
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam(value = "prjname") String prjname,
-			@PathParam(value = "hmiid") String hmiid) throws Exception //
+			@PathParam(value = "hmiid") String hmiid,EndpointConfig config) throws Exception //
 	{
 		UAPrj rep = UAManager.getInstance().getPrjByName(prjname);
 		if (rep == null)
@@ -68,6 +75,32 @@ public class WSHmiRT extends WSServer
 		}
 
 		UANodeOCTagsCxt nodecxt = hmi.getBelongTo();
+		
+		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+		if(pa!=null)
+		{
+			try
+			{
+				
+				if(!pa.checkReadRight(nodecxt.getNodePath(), config))
+				{//no right
+					session.close();
+					return;
+				}
+			}
+			catch(Exception e)
+			{
+				//e.printStackTrace();
+				//PrintWriter w = resp.getWriter();
+				e.printStackTrace();
+				//w.write(e.getMessage());
+				return ;
+			}
+			
+			PlugAuthUser pau = pa.checkUserByWebSocket(config) ;
+			if(pau!=null)
+				session.getUserProperties().put(PAU, pau) ;
+		}
 
 		SessionItem si = new SessionItem(session, rep, nodecxt, hmi);
 		addSessionItem(si);
@@ -91,6 +124,35 @@ public class WSHmiRT extends WSServer
 	{
 	}
 
+	private boolean checkEventRight(Session session,String path)
+	{
+		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+		if(pa==null)
+			return true ;
+		
+		PlugAuthUser pau = (PlugAuthUser)session.getUserProperties().get(PAU) ;
+		if(pau==null)
+			return false;
+		
+		try
+		{
+			
+			if(!pa.checkWriteRight(path, pau.getRegName()))
+			{//no right
+				return false;
+			}
+			return true;
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+			//PrintWriter w = resp.getWriter();
+			e.printStackTrace();
+			//w.write(e.getMessage());
+			return false;
+		}
+		
+	}
 	@OnMessage
 	public void onMessageTxt(Session session, String msg) throws Exception
 	{// {tp:"event",repid:this.repId,hmiid:this.hmiId,diid:diid,name:eventn,val:eventv}
@@ -107,6 +169,10 @@ public class WSHmiRT extends WSServer
 				// {tp:"event",cxtpath:cxtpath,hmipath:hmipath,diid:diid,name:eventn,val:eventv}
 				// ;
 				String cxtpath = job.getString("cxtpath");
+				if(!checkEventRight(session,cxtpath))
+				{
+					return ;
+				}
 				String hmipath = job.getString("hmipath");
 				String diid = job.getString("diid");
 				String eventn = job.getString("name");

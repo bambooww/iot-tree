@@ -24,24 +24,25 @@
 
 
 
-#### <a doc_path="en/doc/quick/index.md" >3 Quick Know</a>
-##### <a doc_path="en/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;3.1 Quickly understand the tree of IOT tree server</a>
-##### <a doc_path="en/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;3.2 Connector-Channel-Driver</a>
-##### <a doc_path="en/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;3.3 Quickly understand device definition</a>
-##### <a doc_path="en/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;3.4 Quickly understand tcpserver connector</a>
-##### <a doc_path="en/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Monitoring UI,Human computer interaction(HMI)</a>
-##### <a doc_path="en/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;3.6 Quickly understand IOT tree server as your background support system</a>
+
+#### <a doc_path="en/doc/case/index.md" >3 Cases and best practices</a>
+##### <a doc_path="en/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;3.1 Lamp Demo</a>
+##### <a doc_path="en/doc/case/case_auto.md" target="main">&nbsp;&nbsp;&nbsp;3.2 Automation</a>
+##### <a doc_path="en/doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.3 Sniffe RS485 MODBUS bus data</a>
+##### <a doc_path="en/doc/case/case_jsplugin_db.md" target="main">&nbsp;&nbsp;&nbsp;3.4 Automatically record to relational database (including JS plug-in development)</a>
+
+##### <a doc_path="en/doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Integrate HMI into your system (including permission plug-in development)</a>
 
 
 
 
-
-
-#### <a doc_path="en/doc/advanced/index.md" >4 Advanced</a>
-##### <a doc_path="en/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;4.1 Customize UI Components</a>
-##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Custom JS script plug-in</a>
-##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Define project tasks</a>
-##### <a doc_path="en/doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Implementing control scripts using project tasks</a>
+#### <a doc_path="en/doc/quick/index.md" >4 Quick Know</a>
+##### <a doc_path="en/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;4.1 Quickly understand the tree of IOT tree server</a>
+##### <a doc_path="en/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Connector-Channel-Driver</a>
+##### <a doc_path="en/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Quickly understand device definition</a>
+##### <a doc_path="en/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Quickly understand tcpserver connector</a>
+##### <a doc_path="en/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.5 Monitoring UI,Human computer interaction(HMI)</a>
+##### <a doc_path="en/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Quickly understand IOT tree server as your background support system</a>
 
 
 
@@ -56,15 +57,19 @@
 
 
 
-#### <a doc_path="en/doc/case/index.md" >6 Cases and best practices</a>
-##### <a doc_path="en/doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Lamp Demo</a>
-##### <a doc_path="en/doc/case/case_auto.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Automation</a>
+
+#### <a doc_path="en/doc/advanced/index.md" >6 Advanced</a>
+##### <a doc_path="en/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Customize UI Components</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Custom JS script plug-in</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Define project tasks</a>
+##### <a doc_path="en/doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;6.4 Implementing control scripts using project tasks</a>
 
 
 
 
 
-#### <a doc_path="en/doc/version.md" >6 Version </a>
+
+#### <a doc_path="en/doc/version.md" >7 Version </a>
 
 
 <script>

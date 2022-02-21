@@ -40,10 +40,19 @@ Add local tag support. Local tag can exist as a global variable under the projec
 
 
 
-Version 0.95.6 
+### Version 0.95.6 
 
 Support for the new Modbus Slave device simulator and an example of the entire process of industrial automation field implementation have been added. Improve Modbus protocol-related support to resolve bugs that occasionally interrupt connections. 
 
 
 
 
+
+### version 0.95.7
+Add access rights plug-in support, and it contains a demo reference; Corresponding document [best practice document][ref_hmi_auth] added in this document
+
+
+
+
+
+[ref_hmi_auth]:./case/case_ref_hmi_auth.md

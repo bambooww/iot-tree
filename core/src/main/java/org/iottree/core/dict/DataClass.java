@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.iottree.core.Config;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
+import org.iottree.core.UAHmi;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UATagG;
@@ -43,8 +44,8 @@ public class DataClass extends JSObMap
 	public static final String ATTRN_EXT_ATTR_TITLES = "ext_attr_titles" ;
 	public static final String ATTRN_EXT_ATTR_DESCS = "ext_attr_descs" ;
 	
-	public static final String[] BIND_FOR = {"all",UAPrj.NODE_TP,UACh.NODE_TP,UADev.NODE_TP,UATagG.NODE_TP,UATag.NODE_TP} ;
-	public static final String[] BIND_FOR_TITLE = {"All","Project","Channel","Device","TagGroup","Tag"} ;
+	public static final String[] BIND_FOR = {"all",UAPrj.NODE_TP,UACh.NODE_TP,UADev.NODE_TP,UATagG.NODE_TP,UATag.NODE_TP,UAHmi.NODE_TP} ;
+	public static final String[] BIND_FOR_TITLE = {"All","Project","Channel","Device","TagGroup","Tag","Hmi"} ;
 	
 	/**
 	 * id

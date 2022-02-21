@@ -48,3 +48,12 @@ windows环境下面增加自带jdk版本的安装包，同时提供了win_panel�
 新增 Modbus Slave 设备模拟器的支持，新增一个完整工业自动化现场的实施全过程例子。改进Modbus协议相关支持，解决连接偶尔中断的bug。
 
 
+
+
+### 版本 0.95.7
+新增访问权限插件支持，并且里面包含一个demo参考；本新增对应文档 [最佳实践文档][ref_hmi_auth]
+
+
+
+
+[ref_hmi_auth]:./case/case_ref_hmi_auth.md

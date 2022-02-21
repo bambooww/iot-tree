@@ -136,12 +136,12 @@ namespace iottree
                     e.Cancel = false;
                     break;
                 case CloseReason.FormOwnerClosing:
-                    e.Cancel = true;
-                    hideWin();
+                    //e.Cancel = true;
+                    //hideWin();
                     break;
                 case CloseReason.MdiFormClosing:
-                    e.Cancel = true;
-                    hideWin();
+                    //e.Cancel = true;
+                    //hideWin();
                     break;
                 case CloseReason.None:
                     break;
@@ -149,8 +149,8 @@ namespace iottree
                     e.Cancel = false;
                     break;
                 case CloseReason.UserClosing:
-                    e.Cancel = true;
-                    hideWin();
+                    //e.Cancel = true;
+                    //hideWin();
                     break;
                 case CloseReason.WindowsShutDown:
                     e.Cancel = false;

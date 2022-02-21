@@ -65,8 +65,9 @@ public class ServiceWrapperUtil
 	
 	private static void setupWrapperClasspath() throws IOException
 	{
+		File conf_sor = new File("./wrapper.sor.conf");
 		File conff = new File("./wrapper.conf");
-		String txt = readFileTxt(conff, "utf-8") ;
+		String txt = readFileTxt(conf_sor, "utf-8") ;
 		BufferedReader br = new BufferedReader( new StringReader(txt)) ;
 		try(FileOutputStream fos = new FileOutputStream(conff);)
 		{

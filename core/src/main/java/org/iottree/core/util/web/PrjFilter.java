@@ -1,6 +1,7 @@
 package org.iottree.core.util.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpSession;
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANode;
 import org.iottree.core.UAUtil;
+import org.iottree.core.plugin.PlugAuth;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 
 public class PrjFilter implements Filter
@@ -78,6 +81,29 @@ public class PrjFilter implements Filter
 		if(node==null)
 		{
 			return ;
+		}
+		
+		//check right
+		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+		if(pa!=null)
+		{
+			try
+			{
+				if(!pa.checkReadRight(node.getNodePath(), req))
+				{//no right
+					resp.getWriter().write(pa.getNoReadRightPrompt());
+					return ;
+				}
+			}
+			catch(Exception e)
+			{
+				//e.printStackTrace();
+				PrintWriter w = resp.getWriter();
+				w.write("check read right exception:");
+				e.printStackTrace(w);
+				//w.write(e.getMessage());
+				return ;
+			}
 		}
 		
 		if(node instanceof UAHmi)

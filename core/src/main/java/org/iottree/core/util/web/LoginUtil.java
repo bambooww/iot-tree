@@ -8,6 +8,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.iottree.core.Config;
+import org.iottree.core.plugin.PlugAuth;
+import org.iottree.core.plugin.PlugAuthUser;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.SecureUtil;
 
@@ -73,6 +76,17 @@ public class LoginUtil
 	
 	public static boolean doLogin(HttpServletRequest req,String username,String password) throws Exception
 	{
+		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+		if(pa!=null && pa.canCheckAdminUser())
+		{
+			PlugAuthUser u = pa.checkAdminUser(username, password);
+			if(u==null)
+				return false;
+			req.getSession().setAttribute(ADMIN_LOGIN, true);
+			return true ;
+		}
+		
+		
 		if(!"admin".equals(username))
 			return false;
 		UserAuthItem uai = loadUserAuthItem(username) ;

@@ -4,6 +4,7 @@
 				java.io.*,
 				java.util.*,
 				org.iottree.core.*,
+				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
 				java.net.*"%>
@@ -11,6 +12,7 @@
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
    String user = request.getParameter("user") ;
+   
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
 	UAHmi uahmi = UAUtil.findHmiByPath(path) ;
@@ -31,6 +33,14 @@
 		prjname = prj.getName() ;
 	}
 	
+	PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+	String n_w_p = "" ;
+	boolean can_write = true ;
+	if(pa!=null)
+	{
+		can_write  = pa.checkWriteRight(path, request) ;
+		n_w_p = Convert.plainToJsStr(pa.getNoWriteRightPrompt()) ;
+	}
 	//String repname = rep.getName() ;
 %><!DOCTYPE html>
 <html>
@@ -300,7 +310,7 @@ margin-top:5px;
 
 </head>
 <script type="text/javascript">
-
+dlg.dlg_top=true;
 
 </script>
 <body class="layout-body">
@@ -384,6 +394,9 @@ $util.hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;
+var can_write=<%=can_write%>;
+var no_write_p = "<%=n_w_p%>" ;
+$util.hmi_can_write = can_write;
 
 layui.use('element', function(){
 	layuiEle = layui.element;
@@ -424,31 +437,6 @@ function on_panel_mousemv(p,d)
 	$("#p_info").html("["+p.x+","+p.y+"] - ("+Math.round(d.x*10)/10+","+Math.round(d.y*10)/10+")");
 }
 
-function init_iottpanel0()
-{
-	hmiModel = new oc.hmi.HMIModel({
-		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
-		comp_url:"/comp_ajax.jsp?op=comp_load",
-	});
-	
-	panel = new oc.hmi.HMIPanel("main_panel",{
-		on_mouse_mv:on_panel_mousemv,
-		on_model_chg:on_model_chg
-	});
-	//editor = new oc.DrawEditor("edit_props","edit_events",panel,{
-	//	plug_cb:editor_plugcb
-	//}) ;
-	hmiView = new oc.hmi.HMIView(repid,hmiid,hmiModel,panel,null,{
-		copy_paste_url:"util/copy_paste_ajax.jsp",show_only:true,
-		
-	});
-	
-	hmiView.init();
-	
-	loadLayer = hmiView.getLayer();
-	intedit = hmiView.getInteract();
-}
-
 
 function draw_fit()
 {
@@ -470,6 +458,10 @@ function init_iottpanel()
 		comp_url:"/comp_ajax.jsp?op=comp_load",
 		hmi_path:path
 	});
+	
+	hmiModel.setCanWrite(can_write,()=>{
+		dlg.msg(no_write_p) ;
+	})
 	
 	panel = new oc.hmi.HMIPanel("main_panel",{
 		on_mouse_mv:on_panel_mousemv,

@@ -228,7 +228,7 @@ After adding successfully, an connector item is added to the left link. At this 
 
 
 
-# 3 运行项目
+# 3 Run project
 
 Click the "start project" button at the top of the project configuration. Then right click the UI node "mainui" and select the menu item "Access". The system opens a new browser access window. This window link is the external application access URL of IOT-Tree Server for this UI.
 

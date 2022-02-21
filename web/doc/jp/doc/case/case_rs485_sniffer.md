@@ -1,4 +1,27 @@
 
 
-# 1 使用情景
-在一些工业现场，已经存在一些设备，这些设备使用RS485总线进行通信。
+
+
+
+
+
+
+
+
+<img src="../img/sniffer1.png">
+
+
+
+
+
+
+
+
+
+
+<img src="../img/sniffer2.png">
+
+
+
+
+[case_auto]: ./case_auto.md

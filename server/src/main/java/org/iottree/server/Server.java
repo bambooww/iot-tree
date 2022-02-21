@@ -78,7 +78,7 @@ public class Server
 		if (jdkhome == null || jdkhome.equals(""))
 		{
 			System.out.println("Error:No java.home found.....");
-			System.out.println("    You can start with -D option,like: -Djdk.home=c:/jdk1.5 ");
+			System.out.println("    You can start with -D option,like: -Djdk.home=c:/jdk ");
 			System.out.println("    or you can config it in [tomato.conf]");
 			System.out.println("    and try start server again!");
 			System.exit(0);
