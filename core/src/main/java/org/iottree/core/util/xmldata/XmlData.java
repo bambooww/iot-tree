@@ -322,12 +322,13 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 		return rets;
 	}
 	
-	public void fromNameStrValMap(HashMap<String,String> n2v)
+	public XmlData fromNameStrValMap(HashMap<String,String> n2v)
 	{
 		for(Map.Entry<String, String> nv:n2v.entrySet())
 		{
 			this.setParamValue(nv.getKey(), nv.getValue()) ;
 		}
+		return this;
 	}
 
 	public Object removeParamValue(String pn)

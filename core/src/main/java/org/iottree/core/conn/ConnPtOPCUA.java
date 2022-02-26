@@ -738,4 +738,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 		}
 	}
 
+	public void RT_writeValByBind(String tagpath,String strv)
+	{
+		//TODO 
+	}
 }

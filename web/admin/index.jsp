@@ -402,6 +402,26 @@ if(rep.isAutoStart())
 							  <i class="fa fa fa-pencil fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
+<%
+if(ins.isAutoStart())
+{
+%><a class=" " href="javascript:set_simins_auto_start('<%=ins.getId()%>',false)" title="unset auto start">
+<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa-thin fa-a  fa-stack-1x fa-inverse"></i>
+							</span>
+</a><%
+}
+else
+{
+%><a class=" " href="javascript:set_simins_auto_start('<%=ins.getId()%>',true)" title="set auto start">
+<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa-thin fa-a  fa-stack-1x fa-inverse"></i>
+							</span>
+</a><%
+}
+%>
            
            <a class0="btn btn-success"  href="javascript:exp_simins('<%=ins.getId()%>')" title="export">
               <span class="fa-stack">
@@ -420,7 +440,7 @@ if(rep.isAutoStart())
            
            <div style="width:150px;border:0px solid;float: right">&nbsp;
 <%
-if(false)
+if(ins.isAutoStart())
 {
 %>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Auto Start</span><%
 }
@@ -559,6 +579,20 @@ function set_prj_auto_start(id,b)
 		document.location.href=document.location.href;
 	});
 }
+
+function set_simins_auto_start(id,b)
+{
+	send_ajax('sim/sim_ajax.jsp',{op:"auto_start",insid:id,auto_start:b},function(bsucc,ret){
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		document.location.href=document.location.href;
+	});
+}
+
+
 
 function show_hide(id)
 {

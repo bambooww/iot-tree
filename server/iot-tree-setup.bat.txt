@@ -7,9 +7,7 @@ if "%1"=="uninstall" goto uninstall
 if "%1"=="start" goto start
 if "%1"=="stop" goto stop
 
-if exist jdk (
-set JAVA_HOME=.\jdk
-)
+if exist jre set JAVA_HOME=.\jre
 
 echo JAVA_HOME=%JAVA_HOME%
 

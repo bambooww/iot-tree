@@ -19,6 +19,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValTranser;
+import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSGTopic;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.UACodeItem;
@@ -472,6 +473,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public String getAddress()
 	{
+		if(addr==null)
+			return "" ;
 		return addr ;
 	}
 	
@@ -1018,6 +1021,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			{
 				ConnPtMSGTopic cpt = (ConnPtMSGTopic)ch.getConnPt();
 				cpt.runOnWrite(this,v) ;
+				return true;
+			}
+			else if(ch.isConnBind())
+			{
+				ConnPtBinder cpt = (ConnPtBinder)ch.getConnPt();
+				cpt.RT_writeValByBind(this.getNodeCxtPathIn(ch), v.toString());
 				return true;
 			}
 			else

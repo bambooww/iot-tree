@@ -952,6 +952,26 @@ public class Convert
 		}
 	}
 
+	public static HashMap<String, String> transPropStrToMap(String inputs,String delimi,String kv_div)
+	{
+		HashMap<String, String> ret = new HashMap<String, String>();
+		if (inputs == null)
+			return ret;
+		List<String> strs = Convert.splitStrWith(inputs, delimi);
+		for(String str:strs)
+		{
+			String pn = str ;
+			String pv = "" ;
+			int i = str.indexOf(kv_div) ;
+			if(i>=0)
+			{
+				pn = str.substring(0,i) ;
+				pv = str.substring(i+1) ;
+			}
+			ret.put(pn, pv) ;
+		}
+		return ret ;
+	}
 	/**
 	 * 对输入形如 xx=yy 的字符串进行映射转换
 	 * 

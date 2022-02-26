@@ -81,6 +81,22 @@ public class ServiceWrapperUtil
 					{
 						ln = "wrapper.java.command=.\\jdk\\bin\\java" ;
 					}
+					else
+					{
+						jdkdir = new File("./jre/") ;
+						if(jdkdir.exists())
+						{
+							ln = "wrapper.java.command=.\\jre\\bin\\java" ;
+						}
+						else
+						{
+							jdkdir = new File("./jre8_x86/") ;
+							if(jdkdir.exists())
+							{
+								ln = "wrapper.java.command=.\\jre8_x86\\bin\\java" ;
+							}
+						}
+					}
 				}
 				
 				if(ln.startsWith("wrapper.java.classpath.2="))

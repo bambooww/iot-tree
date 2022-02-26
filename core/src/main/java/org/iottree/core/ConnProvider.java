@@ -122,6 +122,11 @@ public abstract class ConnProvider implements IXmlDataValidator
 		return rets ;
 	}
 	
+	public static boolean hasConnProvider(String cptp)
+	{
+		return tp2cp.get(cptp)!=null;
+	}
+	
 	static ConnProvider parseFromXmlData(XmlData xd,StringBuilder failedreson)
 	{
 		String tp = xd.getParamValueStr("type") ;

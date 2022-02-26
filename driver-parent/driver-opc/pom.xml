@@ -4,7 +4,7 @@
   <parent>
     <artifactId>driver-parent</artifactId>
     <groupId>org.iottree.driver</groupId>
-    <version>0.95.7</version>
+    <version>0.95.8</version>
 
   </parent>
 
@@ -30,7 +30,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+    <!-- 
     <dependency>
 	    <groupId> javafish.clients.opc</groupId>
 	    <artifactId>jeasyopc</artifactId>
@@ -38,7 +38,7 @@
 	    <version>2.5</version>
 	     <systemPath>${basedir}/lib/jeasyopc.jar</systemPath>
 	</dependency>
-	
+	 -->
 	<dependency>
 	    <groupId>org.openscada.jinterop</groupId>
 	    <artifactId>org.openscada.jinterop.core</artifactId>

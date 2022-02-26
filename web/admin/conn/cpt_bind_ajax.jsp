@@ -16,7 +16,7 @@
 	"%><%!
 	
 	%><%
-if(!Convert.checkReqEmpty(request, out, "prjid","cptp","op"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","cptp","op"))
 	return;
 String repid = request.getParameter("prjid") ;
 String op = request.getParameter("op");
@@ -61,10 +61,53 @@ case "sub":
 	//cpt.opcBrowseNodeOut(out);
 	break ;
 case "tree":
-	cpt.writeBindBeSelectedTreeJson(out);
+	boolean blist = "true".equalsIgnoreCase(request.getParameter("list")) ;
+	try
+	{
+		cpt.writeBindBeSelectedTreeJson(out,blist);
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage()) ;
+	}
 	break;
 case "set_binds":
-	//cpt.setBindList(bindids)
+	try
+	{
+		String bindidstr = request.getParameter("bindids") ;
+		String mapstr =  request.getParameter("mapstr") ;
+		List<String> bindids = Convert.splitStrWith(bindidstr, "|") ;
+		Map<String,String> bm = Convert.transPropStrToMap(mapstr,"|","=") ;
+		cpt.setBindList(bindids);
+		cpt.setBindMapTag2Conn(bm) ;
+		cpt.getConnProvider().save();
+		out.print("succ");
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage());
+	}
+	break ;
+case "syn_bind_tags":
+	// create group and tags in channel by bind list
+	try
+	{
+		String bindidstr = request.getParameter("bindids") ;
+		List<String> bindids = Convert.splitStrWith(bindidstr, "|") ;
+		UACh ch = cpt.getJoinedCh() ;
+		if(ch==null)
+		{
+			out.print("no joined channel") ;
+			return ;
+		}
+		bindids = cpt.transBindIdsToConnLeafPath(bindids) ;
+		ch.Path_refreshByPathList(bindids);
+		out.print("succ") ;
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage());
+	}
 	break ;
 case "sub_nodes":
 	if(!Convert.checkReqEmpty(request, out, "nodeid"))

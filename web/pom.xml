@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.95.7</version>
+    <version>0.95.8</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <packaging>pom</packaging>
@@ -21,9 +21,15 @@
   </properties>
 
   <dependencies>
-         <dependency>
+      <dependency>
 	    <groupId>org.iottree</groupId>
 	    <artifactId>iottree-core</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.iottree.ext</groupId>
+	    <artifactId>iottree-ext-opcda</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
 	

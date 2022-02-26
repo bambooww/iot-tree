@@ -224,7 +224,18 @@ case "act_del":
 		.0=/ut.print("del error") ;	
 	*/
 	break;
-
+case "auto_start":
+	if(!Convert.checkReqEmpty(request, out,"insid"))
+		return;
+	if(ins==null)
+	{
+		out.print("no instance found") ;
+		return ;
+	}
+	boolean b = "true".equals(request.getParameter("auto_start")) ;
+	ins.setAutoStart(b);
+	out.print("ok");
+	return;
 case "list":
 	/*
 	List<Task> jts = TaskManager.getInstance().getTasks(prjid);

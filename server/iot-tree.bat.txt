@@ -3,7 +3,9 @@ echo ----------------------------------------
 echo Starting IOT-Tree Server
 echo ----------------------------------------
 
-if exist jdk set JAVA_HOME=.\jdk
+if exist jre set JAVA_HOME=.\jre
+if not exist jre if exist jre8_x86 set JAVA_HOME=.\jre8_x86
+
 
 if NOT DEFINED JAVA_HOME goto :no_java_home
 
@@ -27,7 +29,7 @@ goto run_server
 
 @REM echo CLASSPATH=%CLASSPATH%
 
-"%JAVA_HOME%\bin\java" -cp %CLASSPATH% %MAIN_CLASS% %1
+"%JAVA_HOME%\bin\java" -cp "%CLASSPATH%" %MAIN_CLASS% %1
 goto finally
 
 :no_java_home

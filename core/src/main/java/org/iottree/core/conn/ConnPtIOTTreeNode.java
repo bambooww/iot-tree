@@ -346,6 +346,11 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 
 		
 	}
+	
+	public void RT_writeValByBind(String tagpath,String strv)
+	{
+		//TODO 
+	}
 
 	synchronized void disconnect() // throws IOException
 	{

@@ -16,7 +16,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.DesInputStream;
 import org.iottree.core.util.DesOutputStream;
 
-public abstract class ConnPtStream extends ConnPtBinder implements IConnEndPoint
+public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 {
 
 	public static String TP = "stream" ;

@@ -409,6 +409,27 @@ public abstract class UANodeOCTags extends UANodeOC
 		save();
 		return d;
 	}
+	
+	public UATag addTag(String name,String title,String desc,UAVal.ValTP vt,boolean bsave) throws Exception
+	{
+		UAUtil.assertUAName(name);
+		UANode tmpn = getSubNodeByName(name);
+		// UATagG tgg = this.getSubTagGByName(name) ;
+		// UATag d = getTagByName(name);
+		// if(tgg!=null||d!=null)
+		if (tmpn != null)
+		{
+			throw new IllegalArgumentException("tag with name=" + name + " existed");
+		}
+		
+		UATag d = new UATag(name,title,desc,null,vt,0,false,200);
+		d.id = this.getNextIdByRoot();
+		tags.add(d);
+		constructNodeTree();
+		if(bsave)
+			save();
+		return d;
+	}
 
 	public boolean delTag(UATag t) throws Exception
 	{

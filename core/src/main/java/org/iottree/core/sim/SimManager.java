@@ -338,4 +338,22 @@ public class SimManager
 		instances.add(0, sc);
 		return sc ;
 	}
+	
+	public void start()
+	{
+		for(SimInstance simins:getInstances())
+		{
+			StringBuilder sb = new StringBuilder() ;
+			if(simins.isAutoStart())
+				simins.RT_start(sb);
+		}
+	}
+	
+	public void stop()
+	{
+		for(SimInstance simins:getInstances())
+		{
+			simins.RT_stop();
+		}
+	}
 }

@@ -848,10 +848,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 	public void RT_stop()
 	{
+		rtRun = false;
+		
 		if (rtTh == null)
 			return;
-
-		rtRun = false;
 	}
 
 	public boolean RT_isRunning()

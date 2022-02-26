@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>0.95.7</version>
+		<version>0.95.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -111,7 +111,14 @@
 			<version>2.2</version>
 			<systemPath>${basedir}/../server/tomcat/lib/websocket-api.jar</systemPath>
 		</dependency>
-		 
+	
+		<dependency>
+			<groupId>gun.io</groupId>
+			<artifactId>RXTXcomm</artifactId>
+			<scope>system</scope>
+			<version>2.2</version>
+			<systemPath>${basedir}/lib/RXTXcomm.jar</systemPath>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
 		    <groupId>org.json</groupId>
@@ -124,13 +131,13 @@
 		    <artifactId>commons-fileupload</artifactId>
 		    <version>1.4</version>
 		</dependency>
-		
+<!-- 
 		<dependency>
 		    <groupId>org.bidib.jbidib.org.qbang.rxtx</groupId>
 		    <artifactId>rxtxcomm</artifactId>
 		    <version>2.2</version>
 		</dependency>
-		
+ -->
 		<!-- https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket -->
 		<dependency>
 		    <groupId>org.java-websocket</groupId>

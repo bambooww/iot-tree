@@ -35,6 +35,8 @@ public class SimInstance extends SimNode
 	@data_val(param_name = "run_script")
 	String runScript = null;
 
+	@data_val(param_name = "auto_start")
+	boolean bAutoStart = false;
 	/**
 	 * run once when task is stoping.
 	 */
@@ -179,6 +181,19 @@ public class SimInstance extends SimNode
 		return this.bEnable ;
 	}
 	
+	public boolean isAutoStart()
+	{
+		return this.bAutoStart;
+	}
+
+	public void setAutoStart(boolean b) throws Exception
+	{
+		if (this.bAutoStart == b)
+			return;
+		this.bAutoStart = b;
+		this.saveSelf();
+	}
+
 
 	public SimInstance withEnable(boolean b)
 	{

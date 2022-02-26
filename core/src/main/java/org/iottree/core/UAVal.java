@@ -102,6 +102,13 @@ public class UAVal //extends JSObMap
 		}
 	}
 	
+	public static ValTP getValTp(String tpstr)
+	{
+		if(!tpstr.startsWith("vt_"))
+			tpstr = "vt_"+tpstr ;
+		return ValTP.valueOf(tpstr);
+	}
+	
 	public static ValTP getValTp(int iv)
 	{
 		switch(iv)
@@ -207,6 +214,12 @@ public class UAVal //extends JSObMap
 			valDT = valdt ;
 		if(val_chgdt>0)
 			valChgDT = val_chgdt ;
+	}
+	
+	public static UAVal createByStrVal(ValTP vt,String strv,long valdt,long val_chgdt)
+	{
+		Object objv = transStr2ObjVal(vt,strv) ;
+		return new UAVal(true,objv,valdt,val_chgdt) ;
 	}
 	
 	public UAVal(String err,Exception errob)

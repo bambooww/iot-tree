@@ -30,6 +30,7 @@ public class ServerTomcat implements IServerBootComp
 		System.setProperty("catalina.home","./tomcat");
 		System.setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip","*");
 		System.setProperty("java.io.tmpdir","./tomcat/temp");
+		
 	}
 	
 	Tomcat tomcat = null ;

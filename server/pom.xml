@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.95.7</version>
+    <version>0.95.8</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -24,6 +24,13 @@
 	    <artifactId>iottree-core</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
+	
+	<dependency>
+	    <groupId>org.iottree.ext</groupId>
+	    <artifactId>iottree-ext-opcda</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
+  
 
     <dependency>
       <groupId>junit</groupId>
@@ -198,6 +205,7 @@
 			                            <include>data/demo/</include>
 			                            <include>data/simulator/demo/</include>
 			                            <include>data/plugins/mail/</include>
+			                            <include>data/plugins/auth_demo/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>
@@ -250,13 +258,39 @@
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
 			                    
 			                    <echo message="package zip file" />
-			                    <zip basedir="../_output/" destfile="../_output/iot-tree-${project.version}-winjdk.zip" />
-			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
+			                    
+			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
 					                  <fileset dir="../_output/">
-					                    <exclude name="jdk/"/>
-					                    <exclude name="iot-tree-${project.version}-winjdk.zip"/>
+					                    <exclude name="jre/"/>
+					                    <exclude name="iot-tree-${project.version}.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
+                				
+                				<delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
+			                    <!-- 
+			                    <zip basedir="../_output/" destfile="../_output/iot-tree-${project.version}-winjre.zip" />
+			                     -->
+			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
+					                  <fileset dir="../_output/">
+					                    <exclude name="jre8_x86/"/>
+					                    <exclude name="jre/"/>
+					                    <exclude name="iot-tree-${project.version}.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                  </fileset>
+                				</zip>
+			                    <zip destfile="../_output/iot-tree-${project.version}-winjre.zip" >
+					                  <fileset dir="../_output/">
+					                    <exclude name="jre8_x86/"/>
+					                    <exclude name="iot-tree-${project.version}.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                  </fileset>
+                				</zip>
+			                   
+                				
 							</tasks>
 						</configuration>
 					</execution>

@@ -186,6 +186,11 @@ public class ConnPtMQTT extends ConnPtMSGTopic
 	{
 		publish(topic, txt.getBytes("utf-8"), 1);
 	}
+	
+	public void RT_writeValByBind(String tagpath,String strv)
+	{
+		//TODO 
+	}
 
 	MqttCallback mqttCB = new MqttCallback() {
 

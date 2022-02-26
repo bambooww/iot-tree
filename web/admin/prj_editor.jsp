@@ -617,8 +617,15 @@ var connpro_menu = [
 	{content:'<i class="fa fa-link"></i> Connector',header: true},
 	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
 	{content:'COM',callback : function(){edit_cpt("com","","");}},
-	{content:'OPC UA',callback:function(){edit_cpt("opc_ua","","");}},
-	{content:'OPC DA',callback:function(){edit_cpt("opc_da","","");}},
+	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
+<%
+	if(ConnProvider.hasConnProvider("opc_da"))
+	{
+%>
+	{content:'OPC DA Client',callback:function(){edit_cpt("opc_da","","");}},
+<%
+	}
+%>
 	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'HTTP Url',callback:function(){
 		edit_cp("http","");
@@ -830,7 +837,7 @@ function on_conn_ui_showed()
 							rt_cpt_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
-					if(cptp=="opc_ua"||cptp=="opc_agent")
+					if(cptp=="opc_ua"||cptp=="opc_agent"||cptp=="opc_da")
 					{
 						d.push({ content : '<i class="fa fa-pencil"></i> Bind', callback:()=>{
 							edit_bind_setup(cptp,cpid,connid) ;
@@ -1247,9 +1254,19 @@ function edit_bind_setup(cptp,cpid,connid)
 			[
 				function(dlgw)
 				{
-					var bindids = dlgw.get_selected_vals();
+					var bindstr = dlgw.get_bindlist_valstr();
+					var mapstr = dlgw.get_map_vals();
 					
-					dlg.close();
+					send_ajax('./conn/cpt_bind_ajax.jsp',{op:"set_binds",bindids:bindstr,mapstr:mapstr,prjid:repid,cptp:cptp,cpid:cpid,connid:connid},
+							function(bsucc,ret){
+						if(!bsucc || ret!='succ')
+						{
+							dlg.msg(ret) ;
+							return ;
+						}
+						dlg.close();
+					});
+					
 				},
 				function(dlgw)
 				{

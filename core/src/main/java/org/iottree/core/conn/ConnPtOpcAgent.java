@@ -12,23 +12,25 @@ public class ConnPtOpcAgent extends ConnPtTcpAccepted
 {
 	private Thread recvTh = null ;
 	
-	@Override
-	public List<String> transBindIdToPath(String bindid)
-	{
-		return null;
-	}
-
-	@Override
-	public void writeBindBeSelectedTreeJson(Writer w) throws Exception
-	{
-		w.write("{\"id\":\""+UUID.randomUUID().toString()+"\"");
-    	w.write(",\"nc\":0");
-    	w.write(",\"icon\": \"fa fa-sitemap fa-lg\"");
-    	
-    	w.write(",\"text\":\""+this.getTitle()+"\"");
-    	w.write(",\"state\": {\"opened\": true}");
-		w.write("}");
-	}
+//	@Override
+//	public List<String> transBindIdToPath(String bindid)
+//	{
+//		return null;
+//	}
+//
+//	@Override
+//	public void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only) throws Exception
+//	{
+//		w.write("{\"id\":\""+UUID.randomUUID().toString()+"\"");
+//    	w.write(",\"nc\":0");
+//    	w.write(",\"icon\": \"fa fa-sitemap fa-lg\"");
+//    	
+//    	w.write(",\"text\":\""+this.getTitle()+"\"");
+//    	w.write(",\"state\": {\"opened\": true}");
+//		w.write("}");
+//	}
+	
+	
 
 	@Override
 	public String getConnType()
@@ -116,5 +118,7 @@ public class ConnPtOpcAgent extends ConnPtTcpAccepted
 		cmdEP.dispose();
 		cmdEP = null ;
 	}
+	
+	
 	
 }

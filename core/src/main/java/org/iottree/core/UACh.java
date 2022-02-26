@@ -12,6 +12,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSGTopic;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.json.JSONObject;
@@ -248,6 +249,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		ConnPt cpt = this.getConnPt() ;
 		return cpt!=null&&cpt instanceof ConnPtMSGTopic ;
+	}
+	
+	public boolean isConnBind() throws Exception
+	{
+		ConnPt cpt = this.getConnPt()  ;
+		return cpt!=null&&cpt instanceof ConnPtBinder ;
 	}
 	/**
 	 * check driver is fit for this ch or not
@@ -839,5 +846,78 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			//            it's must be designed carefully
 		}
 		
+	}
+	
+	/**
+	 * outer provides tag path list,in which path like xxx.xx.tag:valtp
+	 * 
+	 * ch will create or update Tag Group and Tags in this ch
+	 * 
+	 * @param tag_paths
+	 * @throws Exception 
+	 */
+	public void Path_refreshByPathList(List<String> tag_paths) throws Exception
+	{
+		if(tag_paths==null||tag_paths.size()<=0)
+			return ;
+		
+		boolean bdirty = false;
+		for(String p:tag_paths)
+		{
+			if(Path_refreshByPath(p,false))
+				bdirty = true ;
+		}
+		if(bdirty)
+			this.save();
+	}
+	
+	public boolean Path_refreshByPath(String tag_path,boolean bsave) throws Exception
+	{
+		int i = tag_path.indexOf(':') ;
+		if(i<=0)
+			return false;
+		
+		String path = tag_path.substring(0,i) ;
+		String valtp = tag_path.substring(i+1) ;
+		//check val tp
+		ValTP vtp = UAVal.getValTp(valtp);
+		if(vtp==null)
+			return false;
+		
+		List<String> pp = Convert.splitStrWith(path, ".") ;
+		int g_n = pp.size()-1 ;
+		
+		if(g_n<=0)
+		{
+			return false;
+		}
+		
+		boolean bdirty = false;
+		UANodeOCTagsGCxt gcxt = this ;
+		for(i = 0 ; i < g_n ; i ++)
+		{//add or create tag group
+			String n = pp.get(i);
+			UANodeOCTagsGCxt tmpn = (UANodeOCTagsGCxt)gcxt.getSubNodeByName(n);
+			if(tmpn==null)
+			{
+				tmpn = gcxt.addTagG(n, n, "",false) ;
+				bdirty=true;
+			}
+			gcxt = tmpn ;
+		}
+		
+		String lastn = pp.get(pp.size()-1) ;
+		UANode n = gcxt.getSubNodeByName(lastn) ;
+		if(n==null)
+		{
+			gcxt.addTag(lastn,lastn,"",vtp,false) ;
+			bdirty = true ;
+		}
+		
+		if(bdirty&&bsave)
+		{
+			this.save();
+		}
+		return bdirty ;
 	}
 }
