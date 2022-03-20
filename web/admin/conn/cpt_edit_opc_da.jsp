@@ -53,7 +53,7 @@ String host = cpt.getOpcHost() ;
 if(Convert.isNullOrEmpty(host))
 	host = "localhost";
 String progid = cpt.getProgId() ;
-
+long int_ms = cpt.getUpdateIntMs() ;
 String cp_tp = cp.getProviderType() ;
 %>
 <html>
@@ -121,6 +121,17 @@ for(String cid:progids)
 	 
   </div>
 
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline">
+     
+    </div>
+	 <div class="layui-form-mid">Update Interval</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
+	  </div>
+  </div>
+  
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-block">
@@ -148,6 +159,9 @@ layui.use('form', function(){
 		  setDirty();
 		  });
 	  $("#prog_id").on("input",function(e){
+		  setDirty();
+		  });
+	  $("#int_ms").on("input",function(e){
 		  setDirty();
 		  });
 	  
@@ -227,8 +241,19 @@ function do_submit(cb)
 		return ;
 	}
 	
+	var int_ms = $('#int_ms').val();
+	if(int_ms==null||int_ms=='')
+	{
+		cb(false,'Please input Update interval') ;
+		return ;
+	}
+	int_ms = parseInt(int_ms);
+	if(int_ms==NaN||int_ms<0)
+	{
+		cb(false,'Please input valid Update interval') ;
+	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host,prog_id:prog_id});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:opc_host,prog_id:prog_id,int_ms:int_ms});
 }
 
 </script>

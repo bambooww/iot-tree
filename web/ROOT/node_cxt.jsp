@@ -23,36 +23,36 @@
 		out.print("no node found") ;
 	}
 	
-	if(!(n instanceof UANodeOCTags))
+	
+	//UANodeOCTags ntags = (UANodeOCTags)n ;
+	if(n instanceof UANodeOCTagsCxt)
 	{
-		out.print("not node oc tags") ;
+		UANodeOCTagsCxt ntcxt = (UANodeOCTagsCxt)n ;
+		switch(tp)
+		{
+		case "tags_list":
+			ntcxt.CXT_renderTagsJson(out, false, -1) ;
+			break ;
+		default:
+			if(Convert.isNotNullEmpty(mid_ext)||Convert.isNotNullEmpty(tag_ext))
+			{
+				UANodeFilter.JSON_renderMidNodesWithTagsByExtName(out,ntcxt,mid_ext,tag_ext) ;
+			}
+			else
+			{
+				ntcxt.CXT_renderJson(out) ;
+			}
+			break ;
+		}
 		return ;
 	}
 	
-	
-	UANodeOCTags ntags = (UANodeOCTags)n ;
-	if(!(n instanceof UANodeOCTagsCxt))
+	if(n instanceof UATag)
 	{
-		out.print("not node oc tags cxt") ;
+		UATag tag = (UATag)n;
+		tag.CXT_renderTagJson(out) ;
 		return ;
 	}
 	
-	UANodeOCTagsCxt ntcxt = (UANodeOCTagsCxt)n ;
-	switch(tp)
-	{
-	case "tags_list":
-		ntcxt.CXT_renderTagsJson(out, false, -1) ;
-		break ;
-	default:
-		if(Convert.isNotNullEmpty(mid_ext)||Convert.isNotNullEmpty(tag_ext))
-		{
-			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(out,ntcxt,mid_ext,tag_ext) ;
-		}
-		else
-		{
-			ntcxt.CXT_renderJson(out) ;
-		}
-		break ;
-	}
-	
+	out.print("unkown cxt") ;
 %>

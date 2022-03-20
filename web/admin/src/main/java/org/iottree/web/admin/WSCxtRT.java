@@ -1,6 +1,7 @@
 package org.iottree.web.admin;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -11,7 +12,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -28,11 +31,12 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.ws.WSServer;
 import org.iottree.core.ws.WebSocketConfig;
 import org.json.JSONObject;
 
-@ServerEndpoint(value = "/ws/cxt_rt/{repname}/{nodeid}", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/_ws/cxt_rt/{prjname}/{nodeid}", configurator = WebSocketConfig.class)
 public class WSCxtRT// extends WSServer
 {
 	static
@@ -45,19 +49,26 @@ public class WSCxtRT// extends WSServer
 		private final Session session;
 		private final UAPrj rep;
 		private final UANodeOCTagsCxt nodecxt;
-		
+		EndpointConfig config = null;
 		private long lastDT = -1 ;
 		
-		public SessionItem(Session s,UAPrj rep,UANodeOCTagsCxt nodecxt)
+		public SessionItem(Session s,UAPrj rep,UANodeOCTagsCxt nodecxt,EndpointConfig config)
 		{
 			this.session = s ;
 			this.rep = rep ;
 			this.nodecxt = nodecxt ;
+			this.config = config;
 		}
 		
 		public Session getSession()
 		{
 			return session ;
+		}
+		
+		public boolean checkRight()
+		{
+			HttpSession hs = WebSocketConfig.getHttpSession(config) ;
+			return LoginUtil.checkAdminLogin(hs) ;
 		}
 		
 		public UAPrj getRep()
@@ -84,6 +95,8 @@ public class WSCxtRT// extends WSServer
 		
 		public void sendTxt(String txt)
 		{
+			if(!checkRight())
+				return ;
 			try {
 	            session.getBasicRemote().sendText(txt);
 	        } catch (IOException ioe) {
@@ -105,14 +118,14 @@ public class WSCxtRT// extends WSServer
 	{
 		sess2item.put(si.getSession(), si) ;
 		
-		System.out.println(" add session ,num="+sess2item.size()) ;
+		//System.out.println(" add session ,num="+sess2item.size()) ;
 	}
 	
 	public static synchronized void removeSessionItem(Session sess)
 	{
 		sess2item.remove(sess) ;
 		
-		System.out.println(" remove session ,num="+sess2item.size()) ;
+		//System.out.println(" remove session ,num="+sess2item.size()) ;
 	}
 	
 	public static int getSessionNum()
@@ -134,6 +147,16 @@ public class WSCxtRT// extends WSServer
 		for (SessionItem si : getSessionItems())
 		{
 			UANodeOCTagsCxt ntags = si.getNodeTagCxt() ;
+			StringWriter sw = new StringWriter() ;
+			String txt=  null ;
+			try
+			{
+				ntags.CXT_renderJson(sw);
+				txt = sw.toString();
+			}
+			catch(Exception e)
+			{}
+			/*
 			String txt = null ;
 			if(ntags==null)
 			{
@@ -181,7 +204,7 @@ public class WSCxtRT// extends WSServer
 				sb.append("]}") ;
 				txt = sb.toString();
 			}
-			
+			*/
 			if(txt==null)
 				continue ;
 			try
@@ -199,7 +222,7 @@ public class WSCxtRT// extends WSServer
 		if(timer!=null)
 			return ;
 		
-		System.out.println(" cxt rt  --  start timer") ;
+		//System.out.println(" cxt rt  --  start timer") ;
 		
 		timer = new Timer(WSCxtRT.class.getSimpleName() + " Timer");
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -221,7 +244,7 @@ public class WSCxtRT// extends WSServer
 	{
 		if (timer != null)
 		{
-			System.out.println(" cxt rt  --  stop timer") ;
+			//System.out.println(" cxt rt  --  stop timer") ;
 			timer.cancel();
 			timer = null ;
 		}
@@ -230,9 +253,16 @@ public class WSCxtRT// extends WSServer
 	
 	
 	@OnOpen
-	public void onOpen(Session session, @PathParam(value = "repname") String repname,@PathParam(value = "nodeid") String nodeid) throws Exception //
+	public void onOpen(Session session, @PathParam(value = "prjname") String prjname,
+			@PathParam(value = "nodeid") String nodeid,EndpointConfig config) throws Exception //
 	{
-		UAPrj rep = UAManager.getInstance().getPrjByName(repname) ;
+		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
+		if(!LoginUtil.checkAdminLogin(hs))
+		{
+			session.close();
+			return ;
+		}
+		UAPrj rep = UAManager.getInstance().getPrjByName(prjname) ;
 		if(rep==null)
 		{
 			session.close();
@@ -259,7 +289,7 @@ public class WSCxtRT// extends WSServer
 //			}
 //		}
 
-		SessionItem si = new SessionItem(session,rep,nodecxt);
+		SessionItem si = new SessionItem(session,rep,nodecxt,config);
 		addSessionItem(si) ;
 		
 		startTimer() ;

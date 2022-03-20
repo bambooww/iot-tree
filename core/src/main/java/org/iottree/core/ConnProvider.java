@@ -556,6 +556,18 @@ public abstract class ConnProvider implements IXmlDataValidator
 	{
 		return runTh != null ;
 	}
+	
+	/**
+	 * ConnProvider impl may provider some promp msg to user
+	 * 1)new conn or new device found
+	 * 2)may license not support
+	 * 3) some error info ;
+	 * @return
+	 */
+	public String getPromptMsg()
+	{
+		return null;
+	}
 
 	public void dispose()
 	{

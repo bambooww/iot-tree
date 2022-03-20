@@ -436,65 +436,39 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			// String tn_path = tn.getNodePath() ;
 			for (UATag tg : tags)
 			{
-				String cxtpath = tg.getNodeCxtPathIn(this);
-				boolean bloc = tg.getParentNode() == this;
-
-				UAVal val = tg.RT_getVal();
-
-				boolean bvalid = false;
-				// Object v=null ;
-				String strv = "";
-				long dt = -1;
 				long dt_chg = -1;
-				String str_err = "";
+				
+				
+				UAVal val = tg.RT_getVal();
 
 				if (val != null)
 				{
-					bvalid = val.isValid();
-					// v = val.getObjVal() ;
-					strv = val.getStrVal(tg.getDecDigits());
-					dt = val.getValDT();// Convert.toFullYMDHMS(new
-										// Date(val.getValDT())) ;
+								// Date(val.getValDT())) ;
 					dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
-												// Date(val.getValChgDT())) ;
-					str_err = val.getErr();
-					if (str_err == null)
-						str_err = "";
+						
 				}
 				else
 				{
 					dt_chg = System.currentTimeMillis();
 				}
 
+
 				if (lastdt > 0 && dt_chg <= lastdt)
 					continue;
+				
 
 				if (!bfirst)
 					w.write(",");
 				else
 					bfirst = false;
 
-				w.write("{\"p\":\"" + cxtpath + "\",\"t\":\"" + tg.getTitle() + "\",\"vt\":\"" + tg.getValTp() + "\"");
-
-				ValTP vtp = tg.getValTp();
-				if (bvalid)
-				{
-					if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
-						w.write(",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
-								+ ",\"chgdt\":" + dt_chg + "}");
-					else
-						w.write(",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":"
-								+ dt + ",\"chgdt\":" + dt_chg + "}");
-				}
-				else
-				{
-					w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-							+ Convert.plainToJsStr(str_err) + "\"}");
-				}
+				tg.CXT_renderTagJson(w) ;
 
 			}
 		}
 		w.write("]");
 		return true;
 	}
+	
+	
 }

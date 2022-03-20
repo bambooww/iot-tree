@@ -75,8 +75,9 @@
 	bottom: 0;
 	z-index: 999;
 	width: 45px;
-	overflow-x: hidden
-	background-color: #aaaaaa;
+	overflow-x: hidden;
+	background-color:#aaaaaa;
+	
 }
 
 
@@ -309,14 +310,17 @@ margin-top:5px;
 
 		<div class="left " style="overflow: hidden;">
 		
-			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-cube fa-3x lr_btn"></i><br>&nbsp;</div>
+			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-puzzle-piece fa-3x lr_btn"></i><br>&nbsp;</div>
 			<%--
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic',230)" title="Basic"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>&nbsp;</div>
 			 --%>
+			<div id="leftcat_comp" onclick="leftcat_sel('comp','HMI Components',500)" title="Components"><i class="fa fa-cogs fa-3x lr_btn"></i><br>&nbsp; </div>
 			<div id="leftcat_divcomp" onclick="leftcat_sel('divcomp','Components',330)" title="Controller"><i class="fa fa-cog fa-3x lr_btn"></i><br> &nbsp;</div>
+			<%--
 			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')" title="Icon"><i class="fa fa-image fa-3x lr_btn"></i><br>&nbsp;</div>
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)" title="Pic Library"><i class="fa fa-cubes fa-3x lr_btn"></i><br>&nbsp;</div>
-			<div id="leftcat_comp" onclick="leftcat_sel('comp','HMI Components',500)" title="Components"><i class="fa fa-cogs fa-3x lr_btn"></i><br>&nbsp; </div>
+			 --%>
+			
 <%
 if(bprj)
 {

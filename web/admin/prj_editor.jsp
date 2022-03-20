@@ -512,9 +512,10 @@ background-color: #fff ;
 										<td width="25px">
 											<a v-bind:href="'javascript:edit_cp(\''+connector.tp+'\',\''+connector.id+'\')'"><i class="fa fa-pencil" aria-hidden="true"></i></a>
 										</td>
+										<i class="fa-solid fa-meteor"></i>
 										 --%>
 										<td width="20px" >
-											
+											<span style="width:20px;height:20px;color:red;display:none" v-bind:cp_id="connector.id"  v-bind:id="'cp_pmsg_'+connector.id" onclick="show_cp_pmsg(this)"><i class="fa-solid fa-bolt fa-beat-fade"></i></span>
 										</td>
 									</tr>
 								</table>
@@ -557,10 +558,12 @@ background-color: #fff ;
            --%>
            <div class="btn-group open"  id="btn_menu_tree">
 				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> Browser</a>
+				  <%--
 				  <a class="btn "  href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
-				  &nbsp;&nbsp;<span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
+				   --%>
+				  &nbsp;&nbsp;<span><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span><span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
@@ -614,9 +617,10 @@ var connpro_menu = [
 	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
 	{content:'Tcp Server For Opc Agent',callback:function(){edit_cp("opc_agent","");}},
 	{content:'sm_divider'},
-	{content:'<i class="fa fa-link"></i> Connector',header: true},
+	{content:'<i class="fa fa-link"></i> Link',header: true},
 	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
 	{content:'COM',callback : function(){edit_cpt("com","","");}},
+	{content:'<i class="fa fa-link"></i> OPC',header: true},
 	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
 <%
 	if(ConnProvider.hasConnProvider("opc_da"))
@@ -627,8 +631,9 @@ var connpro_menu = [
 	}
 %>
 	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
+	{content:'<i class="fa fa-link"></i> Message',header: true},
 	{content:'HTTP Url',callback:function(){
-		edit_cp("http","");
+		edit_cpt("http","","");
 		//dlg.msg("support later")
 	}},
 	{content:'MQTT',callback:function(){
@@ -752,11 +757,13 @@ $('#btn_left_showhidden').click(function(){
 });
 
 $('#btn_menu_tree').click(function(){
+	/*
 	$(this).selectMenu({
 		title : 'Tree Browser',
 		regular : true,
 		data : tree_menu
 	});
+	*/
 });
 
 document.oncontextmenu = function() {
@@ -2125,6 +2132,20 @@ function clk_dd()
 	event.stopPropagation();
 	add_tab("___dd","Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
 }
+
+function show_cp_pmsg(ob)
+{
+	var cpid = $(ob).attr("cp_id");
+	dlg.open("conn/cp_pmsg_show.jsp?prjid="+prjid+"&cpid="+cpid,
+			{title:"Show Message",w:'450px',h:'500px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 	
 function prj_rt()
 {
@@ -2174,6 +2195,11 @@ function prj_rt()
 		{
 			var id =cp.cp_id ;
 			var brun = cp.run ;
+			var pmsg = cp.pmsg ;
+			if(pmsg)
+				$("#cp_pmsg_"+id).css("display","");
+			else
+				$("#cp_pmsg_"+id).css("display","none");
 			$("#cp_st_"+id).css("background-color",brun?"green":"red");
 			$("#cp_"+id).attr("cp_run",""+brun) ;
 			for(var conn of cp.connections)

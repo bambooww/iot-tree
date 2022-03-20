@@ -9,6 +9,7 @@
 	org.iottree.core.cxt.*,
 	org.iottree.core.ws.*,
 	org.iottree.core.sim.*,
+	org.iottree.pro.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
@@ -64,6 +65,7 @@ background:#aaaaaa;
 				  <ul class="nav navbar-nav">
 					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i> Home</a></li>
 					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i> Helper</a></li>
+					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i> Feedback</a></li>
 				  </ul>
 				</nav>
 			</div>
@@ -79,7 +81,17 @@ background:#aaaaaa;
 			end search -->
 
 			<div class="iot-user-nav">
-					<div class="iot-top-user"><a class="login" href="javascript:logout()">logout</a></div>
+					<div class="iot-top-user"><a class="login" href="javascript:logout()">logout</a>
+					
+<%
+List<IPro> pros = ProManager.getInstance().listPros() ;
+if(pros.size()>0)
+{
+%>
+&nbsp;&nbsp;&nbsp;<a class="login" href="javascript:pro_mgr()">Pro</a>
+<%
+}
+%></div>
 			</div>
 
 			
@@ -1078,6 +1090,19 @@ function log_ctrl()
 {
 	dlg.open("util/log_mgr.jsp",
 			{title:"Log Controller",w:'700px',h:'600px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function pro_mgr()
+{
+	dlg.open("pro/pro_mgr.jsp",
+			{title:"Pro Manager",w:'700px',h:'600px'},
 			['Close'],
 			[
 				function(dlgw)

@@ -5,7 +5,7 @@
     <listener>
         <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
     </listener>
-    
+ 
     <filter>
         <filter-name>PrjFilter</filter-name>
         <filter-class>org.iottree.core.util.web.PrjFilter</filter-class>
@@ -18,8 +18,8 @@
         <filter-name>PrjFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    	 
-   <!-- 
+    
+    <!-- 
 	<servlet>
 	  	<servlet-name>PrjServlet</servlet-name>
 	  	<servlet-class>org.iottree.core.util.web.PrjServlet</servlet-class>
@@ -28,7 +28,7 @@
 	  	<servlet-name>PrjServlet</servlet-name>
 	  	<url-pattern>/*</url-pattern>
 	  </servlet-mapping>
-	   -->
+	 -->
     <jsp-config>
         <taglib>
             <taglib-uri>wb_tag</taglib-uri>

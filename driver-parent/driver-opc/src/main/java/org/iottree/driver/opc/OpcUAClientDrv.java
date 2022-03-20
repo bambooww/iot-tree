@@ -21,7 +21,6 @@ public class OpcUAClientDrv extends DevDriver
 	@Override
 	public DevDriver copyMe()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

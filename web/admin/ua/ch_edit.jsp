@@ -82,19 +82,19 @@ dlg.resize_to(600,400);
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="name" id="name" value="<%=name %>" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>name</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="name" id="name" value="<%=name %>"  class="layui-input"/>
     </div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
     <div class="layui-input-block">
-      <input type="text" name="title" id="title" value="<%=title %>" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>title</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="title" id="title" value="<%=title %>"  class="layui-input"/>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>driver</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()" placeholder0="<wbt:lang>pls_input</wbt:lang><wbt:lang>driver</wbt:lang>" autocomplete="off" class="layui-input"/>
+      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />
       <%--
       <select name="drv" id="drv" >
@@ -115,7 +115,7 @@ for(DevDriver dd:dds)
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
     <div class="layui-input-block">
-      <textarea name="desc" id="desc" placeholder="<wbt:lang>pls_input</wbt:lang><wbt:lang>description</wbt:lang>" class="layui-textarea"><%=desc %></textarea>
+      <textarea name="desc" id="desc" class="layui-textarea"><%=desc %></textarea>
     </div>
   </div>
 </form>
@@ -172,7 +172,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'请输入名称') ;
+		cb(false,'Please input name') ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -183,7 +183,7 @@ function do_submit(cb)
 	var drv = $('#drv').val() ;
 	if(false)//if(drv==null||drv=='')
 	{
-		cb(false,'请选择驱动') ;
+		cb(false,'Please select driver') ;
 		return ;
 	}
 	var desc = document.getElementById('desc').value;

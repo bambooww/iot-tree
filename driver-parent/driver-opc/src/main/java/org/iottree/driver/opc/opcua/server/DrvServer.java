@@ -71,6 +71,9 @@ public class DrvServer
 
 	public DrvServer() throws Exception
 	{
+		String dirb = Config.getDataDirBase() ;
+		if(dirb==null)
+			throw new RuntimeException("no DataDirBase found") ;
 		File security_dir = new File(Config.getDataDirBase(), "security");
 		if (!security_dir.exists() && !security_dir.mkdirs())
 		{

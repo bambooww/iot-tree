@@ -54,5 +54,14 @@ Add access rights plug-in support, and it contains a demo reference; Correspondi
 
 
 
+### version 0.95.8
+Upgrade the running environment to openjdk-jre17. Modify the implementation of connector binder architecture and add OPC DA client Connector support.
+
+
+
+
+### version 0.95.9
+Use Mozilla Public License Version 2.0 (MPL). Add third-party plug-in license support.
+
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

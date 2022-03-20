@@ -3,6 +3,7 @@ package org.iottree.core.util.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.util.Convert;
 
@@ -26,16 +28,57 @@ public class PrjServlet extends HttpServlet
 	{
 	}
 	
-//	@Override
-//	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-//	{
-//		super.doGet(req, resp);
-//	}
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	{
+		super.doGet(req, resp);
+		
+		doGetPost(req,resp) ;
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	{
+		super.doPost(req, resp);
+		
+		doGetPost(req,resp) ;
+	}
 
 	
-	protected void service(HttpServletRequest req, HttpServletResponse resp)
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	{
+		super.doPut(req, resp);
+		//update restful api
+		resp.setContentType("text/html;charset=UTF-8");
+		String uri = req.getRequestURI();
+		//String qs = req.getQueryString();
+		
+		if(uri.startsWith("/iottree"))
+			uri = uri.substring(8) ;
+		
+		UANode node = UAUtil.findNodeByPath(uri) ;
+		if(node==null)
+			return ;
+		
+		if(!(node instanceof UATag))
+			return ;
+		
+		UATag tag = (UATag)node ;
+		for(Enumeration<String> ens = req.getParameterNames() ;ens.hasMoreElements();)
+		{
+			String pn = ens.nextElement() ;
+			String pv = req.getParameter(pn) ;
+			tag.JS_set(pn, pv);
+		}
+		
+	}
+	
+	private void doGetPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, java.io.IOException
 	{
+		String m = req.getMethod() ;
+		
 		HttpSession session = req.getSession();
 		//this.getServletContext()..getRequestDispatcher(getServletInfo())
 		resp.setContentType("text/html;charset=UTF-8");

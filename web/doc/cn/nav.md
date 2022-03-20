@@ -31,6 +31,8 @@
 
 ##### <a doc_path="cn/doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 整合HMI画面到你的系统中（含权限插件开发）</a>
 
+##### <a doc_path="cn/doc/case/case_opc_da.md" target="main">&nbsp;&nbsp;&nbsp;3.6 通过OPC DA Client接入数据</a>
+
 
 
 

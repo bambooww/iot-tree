@@ -8,12 +8,11 @@
 		<webapp name="_iottree" />
 	</webapps>
 	
+	<!-- opc ua server support. 
 	<system>
-		
-		<server_comp class="org.iottree.ua.driver.opcua.server.OpcUAServerComp"/>
-		
+		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServerComp"/>
 	</system>
-	
+	 -->
 	<!-- 
 	<plug_auth name="auth_demo" 
 			login_url="http://abc.xx.com/login/login.jsp"

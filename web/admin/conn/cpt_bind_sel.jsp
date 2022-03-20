@@ -437,7 +437,7 @@ function on_tree_node_sel(n)
 {
 	//"prjid="+prjid+"&op=sub_nodes&connid="+connid+"&nodeid="+n.id
 	cur_sel_node = n ;
-	//console.log(n) ;
+	console.log(n) ;
 }
 
 function get_sel_tree_nodes()
@@ -465,17 +465,16 @@ function sel_or_not(b)
 		
 		for(var tn of tns)
 		{
-			if(tn.nc!='tagg' && tn.nc!='tag')
+			if(tn.tp!='tagg' && tn.tp!='tag')
 				continue ;
 			var v = tn.id;
 			if(tn.nc=='tag')
 				v += ":"+tn.vt ;
 			if(has_selected_val(v))
-				return ;
+				continue ;
 			$("#bind_selected").append("<option value='"+v+"'>"+v+"</option>");
-			return ;
 		}
-		
+		return;
 	}
 	
 	//un sel
@@ -502,7 +501,7 @@ function map_or_not(b)
 		}
 		
 		var tn = tns[0] ;
-		if(tn.nc!='tag')
+		if(tn.tp!='tag')
 		{
 			dlg.msg("please select a tag node left") ;
 			return ;

@@ -499,7 +499,10 @@ public class ConnManager
 			if(bf) bf=false;
 			else out.print(",") ;
 			boolean br = cp.isRunning() ;
-			out.print("{\"cp_id\":\""+cp.getId()+"\",\"run\":"+br+",\"connections\":[");
+			String pmsg = cp.getPromptMsg();
+			if(pmsg==null)
+				pmsg = "" ;
+			out.print("{\"cp_id\":\""+cp.getId()+"\",\"run\":"+br+",\"pmsg\":\""+pmsg+"\",\"connections\":[");
 			
 			List<ConnPt> conns = cp.listConns() ;
 			boolean bf1=true;

@@ -62,8 +62,11 @@ visibility: visible;
 				      <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i> Github</a></li>
 					  <li><a href="javascript:set_lang('en')" ><i class="icon icon-home"></i> English</a></li>
 					  <li><a href="javascript:set_lang('cn')" ><i class="icon icon-topic"></i> 中文</a></li>
+					  <%--
 					  <li><a href="javascript:set_lang('jp')" ><i class="icon icon-topic"></i> 日本語</a></li>
 					  <li><a href="javascript:set_lang('nl')" ><i class="icon icon-topic"></i> Nederlands</a></li>
+					   --%>
+					  <li><a href="mailto:iottree@hotmail.com" ><i class="icon icon-topic"></i> Feedback</a></li>
 				  </ul>
 				</nav>
 				

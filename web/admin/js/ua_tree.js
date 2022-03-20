@@ -121,12 +121,9 @@ function UATree(tree_opt)
 						return this.get_type(a) === this.get_type(b) ? (this.get_text(a) > this.get_text(b) ? 1 : -1) : (this.get_type(a) >= this.get_type(b) ? 1 : -1);
 					},
 					'contextmenu' : { //
-						
+						select_node : false,
 						'items' :(node)=>{
-							//this.get_type(node)==='ch''
-							//console.log(node)
 							var tp = node.original.type
-							//console.log(tp) ;
 							return this.get_cxt_menu(tp,node.original) ;
 		                }
 					},

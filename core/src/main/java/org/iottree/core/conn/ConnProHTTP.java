@@ -5,11 +5,12 @@ import org.iottree.core.ConnPt;
 
 public class ConnProHTTP extends ConnProvider
 {
-
+	public static final String TP = "http" ;
+	
 	@Override
 	public String getProviderType()
 	{
-		return "http";
+		return TP;
 	}
 	
 	public boolean isSingleProvider()
@@ -28,7 +29,7 @@ public class ConnProHTTP extends ConnProvider
 	protected long connpRunInterval()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return 100;
 	}
 
 	@Override

@@ -190,11 +190,11 @@ if(bloc&&!tag.isSysTag())
 		<td><%=tag.getTitle() %></td>
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
-        <td style="width:100px" id="ctag_v_<%=cxtpath%>"></td>
+        <td style="width:80px" id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_chgdt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>
-        <td>
+        <td style="white-space: nowrap;">
 <%
 	if(tag.isCanWrite())
 	{
@@ -204,12 +204,12 @@ if(bloc&&!tag.isSysTag())
 	}
 %>
         </td>
-                <td>
+                <td style="white-space: nowrap;">
 <%
 if(bloc&&!tag.isSysTag())
 {
 %>
-        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa-solid fa-times" aria-hidden="true"></i></a>&nbsp;&nbsp;
+        <a href="javascript:del_tag('<%=tag.getId()%>')"><i class="fa-solid fa-times" aria-hidden="true"></i></a>&nbsp;
         <a href="javascript:add_or_modify_tag('<%=tag.getId()%>')"><i class="fa fa-pencil " aria-hidden="true"></i></a>
 <%
 }
@@ -222,7 +222,8 @@ if(Convert.isNotNullEmpty(ext_str))
 	ext_color="color:#17c680" ;
 	tagt = ext_str.replaceAll("\\r", "&#10;").replaceAll("\\n", "&#13;").replaceAll("\"","&#34;") ;
 }
-%>&nbsp;	&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
+%>&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
+&nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
         
       </tr>

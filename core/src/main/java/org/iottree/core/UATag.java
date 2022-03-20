@@ -1133,10 +1133,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		switch(key.toLowerCase())
 		{
 		case "_pv":
-			RT_writeVal(v) ;
+			if(v instanceof String)
+				RT_writeValStr((String)v) ;
+			else
+				RT_writeVal(v) ;
 			return ;
 		case "_value":
-			this.RT_setVal(v);
+			if(v instanceof String)
+				RT_setValStr((String)v) ;
+			else
+				this.RT_setVal(v);
 			return;
 		default:
 			break ;//do nothing
@@ -1164,6 +1170,64 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		return null;
 	}
+	
+	public void CXT_renderTagJson(Writer w) throws IOException
+	{
+		long dt_chg = -1;
+		
+		//String cxtpath = this.getNodeCxtPathIn(this);
+		boolean bloc = this.getParentNode() == this;
+
+		UAVal val = this.RT_getVal();
+
+		boolean bvalid = false;
+		// Object v=null ;
+		String strv = "";
+		long dt = -1;
+		
+		String str_err = "";
+
+		if (val != null)
+		{
+			bvalid = val.isValid();
+			// v = val.getObjVal() ;
+			strv = val.getStrVal(this.getDecDigits());
+			dt = val.getValDT();// Convert.toFullYMDHMS(new
+								// Date(val.getValDT())) ;
+			dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
+										// Date(val.getValChgDT())) ;
+			str_err = val.getErr();
+			if (str_err == null)
+				str_err = "";
+		}
+		else
+		{
+			dt_chg = System.currentTimeMillis();
+		}
+
+
+
+
+		w.write("{\"p\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\"");
+
+		ValTP vtp = this.getValTp();
+		if (bvalid)
+		{
+			if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
+				w.write(",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
+						+ ",\"chgdt\":" + dt_chg + "}");
+			else
+				w.write(",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":"
+						+ dt + ",\"chgdt\":" + dt_chg + "}");
+		}
+		else
+		{
+			w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
+					+ Convert.plainToJsStr(str_err) + "\"}");
+		}
+
+	}
+
 	
 	public void renderJson(UANode innode,Writer w) throws IOException
 	{

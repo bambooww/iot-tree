@@ -33,6 +33,8 @@
 
 ##### <a doc_path="en/doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Integrate HMI into your system (including permission plug-in development)</a>
 
+##### <a doc_path="en/doc/case/case_opc_da.md" target="main">&nbsp;&nbsp;&nbsp;3.6 Access data through OPC DA Client</a>
+
 
 
 

@@ -1,205 +1,373 @@
+Mozilla Public License Version 2.0
+==================================
+
+1. Definitions
+--------------
+
+1.1. "Contributor"
+    means each individual or legal entity that creates, contributes to
+    the creation of, or owns Covered Software.
+
+1.2. "Contributor Version"
+    means the combination of the Contributions of others (if any) used
+    by a Contributor and that particular Contributor's Contribution.
+
+1.3. "Contribution"
+    means Covered Software of a particular Contributor.
+
+1.4. "Covered Software"
+    means Source Code Form to which the initial Contributor has attached
+    the notice in Exhibit A, the Executable Form of such Source Code
+    Form, and Modifications of such Source Code Form, in each case
+    including portions thereof.
+
+1.5. "Incompatible With Secondary Licenses"
+    means
+
+    (a) that the initial Contributor has attached the notice described
+        in Exhibit B to the Covered Software; or
 
-  TERMS AND CONDITIONS OF COMMONS PUBLIC LICENSE
+    (b) that the Covered Software was made available under the terms of
+        version 1.1 or earlier of the License, but not also under the
+        terms of a Secondary License.
 
- 如果你的系统需要做非常高速的实时控制，请不要依赖IOT-Tree Server完成此任务，建议使用本地的PLC或专门的控制器实现，我们对此不作任何承担。
- 
- 请不要使用IOT-Tree Server为如下系统做监控：
- 1）任何能够对生命造成伤害或痛苦的装置或设施，都不允许使用IOT-Tree Server。这些生命包括我们能够看到的任何动物。这些设施包括屠宰场、养殖场等，但不限于这些场所。
- 2）IOT-Tree Server不能用于制造武器或其他专门用于伤害生命等用途的设备或场所。
- 3）IOT-Tree Server不能用于各个国家法律禁止设备或场所使用。
+1.6. "Executable Form"
+    means any form of the work other than Source Code Form.
 
-知识共享组织(Creative Commons Corporation)不是一家律师事务所也不对外提供法律服务。提供本许可协议文本并不导致 “律师—当事人” 关系的建立。知识共享组织按其现状(As Is) 提供这些信息。知识共享组织对于所提供的信息不提供任何担保，也不对因使用该信息而造成的损失承担损害赔偿责任。
+1.7. "Larger Work"
+    means a work that combines Covered Software with other material, in
+    a separate file or files, that is not Covered Software.
 
- CREATIVE COMMONS ORGANIZATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF THIS LICENSE DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON A "STATUS QUO (AS-IS)" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE INFORMATION PROVIDED HEREIN, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM ITS USE.
+1.8. "License"
+    means this document.
 
- 
+1.9. "Licensable"
+    means having the right to grant, to the maximum extent possible,
+    whether at the time of the initial grant or subsequently, any and
+    all of the rights conveyed by this License.
 
-协议文本License
+1.10. "Modifications"
+    means any of the following:
 
-本作品（定义如下）的提供是以适用知识共享组织的公共许可（ 简称“CCPL” 或 “许可”）条款为前提的。本作品受著作权法以及其他相关法律的保护。对本作品的使用不得超越本许可协议授权的范围。
+    (a) any file in Source Code Form that results from an addition to,
+        deletion from, or modification of the contents of Covered
+        Software; or
 
-THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.
+    (b) any new file in Source Code Form that contains any Covered
+        Software.
 
- 
+1.11. "Patent Claims" of a Contributor
+    means any patent claim(s), including without limitation, method,
+    process, and apparatus claims, in any patent Licensable by such
+    Contributor that would be infringed, but for the grant of the
+    License, by the making, using, selling, offering for sale, having
+    made, import, or transfer of either its Contributions or its
+    Contributor Version.
 
-如您行使本许可授予的使用本作品的权利，就表明您接受并同意遵守本许可的条款。鉴于本许可为合同，在您接受这些条款和规定的前提下，许可人授予您本许可所包括的权利。
+1.12. "Secondary License"
+    means either the GNU General Public License, Version 2.0, the GNU
+    Lesser General Public License, Version 2.1, the GNU Affero General
+    Public License, Version 3.0, or any later versions of those
+    licenses.
 
-BY EXERCISING ANY RIGHTS TO THE WORK PROVIDED HERE, YOU ACCEPT AND AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE. TO THE EXTENT THIS LICENSE MAY BE CONSIDERED TO BE A CONTRACT, THE LICENSOR GRANTS YOU THE RIGHTS CONTAINED HERE IN CONSIDERATION OF YOUR ACCEPTANCE OF SUCH TERMS AND CONDITIONS.
+1.13. "Source Code Form"
+    means the form of the work preferred for making modifications.
 
- 
+1.14. "You" (or "Your")
+    means an individual or a legal entity exercising rights under this
+    License. For legal entities, "You" includes any entity that
+    controls, is controlled by, or is under common control with You. For
+    purposes of this definition, "control" means (a) the power, direct
+    or indirect, to cause the direction or management of such entity,
+    whether by contract or otherwise, or (b) ownership of more than
+    fifty percent (50%) of the outstanding shares or beneficial
+    ownership of such entity.
 
-1、定义Definitions
+2. License Grants and Conditions
+--------------------------------
 
-a. “演绎作品”指基于本作品，或基于本作品与其他已存在作品之上而创作的作品，例如翻译、改编、编曲或对文学、艺术或科学作品的其他变更，包括以摄制电影的方法对作品的改编，或其他任何对本作品进行改造、转换、或改编后的形式，包含任何可辨认为源自原始作品的修改形式。在本许可定义之下构成汇编作品的作品不视为演绎作品。为避免疑义，并为本许可之目的，当演绎对象为音乐作品、表演或录音制品时，将其依时间序列关系与动态影像配合一致而形成的结果，视为演绎作品。为本许可之目的，基于表演、录音制品及广播电视节目而形成的创作成果，亦适用本许可关于“演绎作品”的规定。
+2.1. Grants
 
-"Adaptation" means a work based upon the Work, or upon the Work and other pre-existing works, such as a translation, adaptation, derivative work, arrangement of music or other alterations of a literary or artistic work, or phonogram or performance and includes cinematographic adaptations or any other form in which the Work may be recast, transformed, or adapted including in any form recognizably derived from the original, except that a work that constitutes a Compilation will not be considered an Adaptation for the purpose of this License. For the avoidance of doubt, where the Work is a musical work, the synchronization of the Work in timed-relation with a moving image ("synching") will be considered an Adaptation for the purpose of this License. For the purposes of this License, this License will be applicable to a work based upon performances, phonograms and broadcasts.
+Each Contributor hereby grants You a world-wide, royalty-free,
+non-exclusive license:
 
- 
+(a) under intellectual property rights (other than patent or trademark)
+    Licensable by such Contributor to use, reproduce, make available,
+    modify, display, perform, distribute, and otherwise exploit its
+    Contributions, either on an unmodified basis, with Modifications, or
+    as part of a Larger Work; and
 
-b. “汇编作品”是指由于对内容的选择和编排而构成智力创作的文学、艺术或科学作品的集合，其中本作品以完整且未经修改的形式和另外一部或多部作品组成集合的整体，而各组成作品本身是分开且独立的，例如百科全书、文选、数据汇编作品，以及本条第g款所列作品之外的作品或者标的。在本许可定义之下构成汇编作品的作品不视为演绎作品（定义如上）。
+(b) under Patent Claims of such Contributor to make, use, sell, offer
+    for sale, have made, import, and otherwise transfer either its
+    Contributions or its Contributor Version.
 
- "Compilation" means a collection of literary or artistic works, such as encyclopedias and anthologies, a copyrightable compilation of data, or other works or subject matter other than works listed in Section 1(g) below, which, by reason of the selection and arrangement of their contents, constitute intellectual creations, in which the Work is included in its entirety in unmodified form along with one or more other contributions, each constituting separate and independent works in themselves, which together are assembled into a collective whole. A work that constitutes a Compilation will not be considered an Adaptation (as defined above) for the purposes of this License.
+2.2. Effective Date
 
-c. “发行”指以出售或者其他权利移转方式向公众提供本作品或者演绎作品的原件或者复 制件。
+The licenses granted in Section 2.1 with respect to any Contribution
+become effective for each Contribution on the date the Contributor first
+distributes such Contribution.
 
-"Distribute" means to make available to the public the original and copies of the Work or Adaptation, as appropriate, through sale or other transfer of ownership. 
+2.3. Limitations on Grant Scope
 
- 
+The licenses granted in this Section 2 are the only rights granted under
+this License. No additional rights or licenses will be implied from the
+distribution or licensing of Covered Software under this License.
+Notwithstanding Section 2.1(b) above, no patent license is granted by a
+Contributor:
 
-d. “授权要素”是指许可人所选择的、并标示在本许可文本标题中的下列基本属性：署名，非商业性使用和相同方式共享。
+(a) for any code that a Contributor has removed from Covered Software;
+    or
 
-"License Elements" means the following high-level license attributes as selected by Licensor and indicated in the title of this License: Attribution, Noncommercial
+(b) for infringements caused by: (i) Your and any other third party's
+    modifications of Covered Software, or (ii) the combination of its
+    Contributions with other software (except as part of its Contributor
+    Version); or
 
-h. “您”指以前就本作品没有违反过本许可条款，或曾违反过条款但已获得许可人明确同 意，依据本许可行使权利的自然人、法人或者其他组织。
-
- "You" means a natural person, legal person or other organization exercising rights under this License who has not previously violated the terms of this License with respect to the Work, or who has received express permission from the Licensor to exercise rights under this License despite a previous violation. 
-
- 
-
-“公开传播”指公开朗诵本作品以及以任何方式或程序，包括以有线、无线的方式或通过信息网络公开传播本作品的公开朗诵；或向公众提供本作品，使公众可以在固定的时间和地点或者自己选定的时间和地点获得本作品；或以任何方式或程序公开表演本作品或向公众传播本作品的表演，包括通过信息网络传播本作品的表演；或以任何方式，包括符号、声音或图像，广播或转播、重播本作品。上述定义包括但不限于《中华人民共和国著作权法》规定的“展览”、“表演”、“放映”、“广播”或通过信息网络向公众传播等作品传播方式。
-
-"Publicly Perform" means to perform public recitations of the Work and to communicate to the public those public recitations, by any means or process, including by wire or wireless means or public digital performance; to make available to the public Works in such a way that members of the public may access these Works from a place and at a place individually chosen by them; to perform the Work to the public by any means or process and the communication to the public of the performances of the Work, including by public digital performance; to broadcast and rebroadcast the Work by any means including signs, sounds or images. The preceding definition includes without limitation, “publicly display”, “publicly perform”, “publicly present”, “publicly broadcast” and “publicly transmit via network”.
-
- 
-
-j. “著作人身权”指作者对其受著作权保护的作品所享有的发表权、署名权、修改权以及保护作品完整权。
-
-“Moral rights” means the rights an original author has to make the final decision as to whether or not to publish and whether to require attribution, control alteration, or require maintaining the creative integrity of the original work. 
-
- 
-
-k. “复制”指将作品制作一份或者多份，包括但不限于录音、录像、将作品固定于载体上或者复制固定后的作品，也包括以数字形式或其它电子媒介的形式存储受保护的表演或录音制品。
-
-"Reproduce" means to make copies of the Work by any means including without limitation by sound or visual recordings and the right of fixation and reproducing fixations of the Work, including storage of a protected performance or phonogram in digital form or other electronic medium. 
-
- 
-
-2、 合理使用。本许可无意削减、限制、或约束您基于著作权法或其他相关法律有关著作权保护的限制或例外的规定对本作品的合法使用。 
-
-Fair Use. Nothing in this License is intended to reduce, limit, or restrict any lawful uses free from copyright or rights arising from limitations or exceptions that are provided for in connection with the copyright protection under copyright law or other applicable laws.
-
- 
-
-3、授权。根据本许可的条款和条件，许可人在此授予您全球性、免版税、非独占并且在本作品的著作权存续期间内均有效的许可，就本作品行使以下权利：
-
-License Grant. Subject to the terms and conditions of this License, Licensor hereby grants You a worldwide, royalty-free, non-exclusive, perpetual (for the duration of the applicable copyright) license to exercise the rights in the Work as stated below:
-
- 
-
-a. 复制本作品，将本作品收入一个或多个汇编作品中，复制汇编作品中收录的本作品；
-
-to Reproduce the Work, to incorporate the Work into one or more Compilations, and to Reproduce the Work as incorporated in the Compilations;
-
- 
-
-b. 创作和复制演绎作品，但是任何演绎作品，包括任何形式的翻译作品，均需以合理方式清楚地标示、区分或以其他方法表明原作品已经修改变更。例如，翻译作品可以标明“原作品已由英文翻译为西班牙文”，或者改编作品可以标明“原作品已做修改”；
-
-to create and Reproduce Adaptations provided that any such Adaptation, including any translation in any medium, takes reasonable steps to clearly label, demarcate or otherwise identify that changes were made to the original Work. For example, a translation could be marked "The original work was translated from English to Spanish," or a modification could indicate "The original work has been modified.";
-
- 
-
-c. 发行、公开传播本作品（包括汇编作品中收录的本作品）；
-
-to Distribute and Publicly Perform the Work including as incorporated in Compilations; and,
-
- 
-
-d. 发行、公开传播演绎作品。 to Distribute and Publicly Perform Adaptations.
-
- 
-
-以上权利可在任何现有的或者以后出现的并为可适用的法律认可的媒体和形式上行使。上述权利包括为在其他媒体和形式上行使权利而必须进行技术性修改的权利。许可人在此保留所有未明示授予的权利，包括但不限于由第4条第e款所规定的权利。 
-
-The above rights may be exercised in all media and formats whether now known or hereafter devised to the extent permitted by applicable law. The above rights include the right to make such modifications as are technically necessary to exercise the rights in other media and formats. Subject to Section 8(f), all rights not expressly granted by Licensor are hereby reserved, including but not limited to the rights described in Section 4(e). 
-
- 
-
-4、限制。第3条的授权须受以下条款的限制：
-
-Restrictions. The license granted'
-Section 3 above is expressly made subject to and limited by the following restrictions:
-
- 
-
-a. 只有在遵守本许可条款的情况下，您可发行、公开传播本作品。在您发行、公开传播本作品的每份复制件中，您必须附上一份本许可的复制件或本许可的网址（Uniform Resource Identifier）。 您不得就本作品提出或增加任何条款，从而限制本许可条款或者限制获得本作品的第三方行使本许可条款所赋予的权利。您不得对本作品进行分许可。您必须在您发行或公开传播的每份作品复制件中完整保留所有与本许可条款及免责条款相关的声明。在发行、公开传播本作品时，您不得使用任何技术性的措施限制获得本作品的第三方实施本许可协议授予的权利的能力。本款（第4条a款）规定同样适用于收录在汇编作品中的本作品，但并不要求本作品外的汇编作品受本许可条款的约束。
-
-在创作汇编作品时，若接到任何许可人的通知，您必须按照其要求，在可行范围内删除汇编作品中根据第4条d款的要求所作的有关原始作者的身份及其他有关原始作品的相关信息的标注。在创作演绎作品时，若接到任何许可人的通知，您必须根据其要求，在可行范围内删除演绎作品中根据第4条d款的要求所作的有关原始作者的身份及其他有关原始作品的相关信息的标注。
-
-You may Distribute or Publicly Perform the Work only under the terms of this License. You must include a copy of, or the Internet Address (Uniform Resource Identifier) for, this License with every copy of the Work You Distribute or Publicly Perform. You may not offer or impose any terms on the Work that restrict the terms of this License or the ability of the recipient of the Work to exercise the rights granted to that recipient under the terms of the License. You may not sublicense the Work. You must keep intact all notices that refer to this License and to the disclaimer of warranties with every copy of the Work You Distribute or Publicly Perform. When You Distribute or Publicly Perform the Work, You may not impose any effective technological measures on the Work that restrict the ability of a recipient of the Work from You to exercise the rights granted to that recipient under the terms of the License. This Section 4(a) applies to the Work as incorporated in a Compilation, but this does not require the Compilation apart from the Work itself to be made subject to the terms of this License. If You create a Compilation, upon notice from any Licensor You must, to the extent practicable, remove from the Compilation any indication as required by Section 4(d), as requested. If You create an Adaptation, upon notice from any Licensor You must, to the extent practicable, remove from the Adaptation any indication as required by Section 4(d), as requested.
-
- 
-
-b. 只有在遵守（i）本许可条款、(ii)或者与本许可条款具有相同授权要素的后续版本、(iii)或者与本许可条款具有相同授权要素的其他司法管辖区的知识共享许可协议或者其后续版本（例如， 署名-非商业性使用-相同方式共享 3.0 美国）（统称“所适用许可协议”）的情况下，您可发行、公开传播演绎作品。在您发行、公开传播的演绎作品的每份复制件中，您必须附上一份所适用许可协议的复制件或网址（Uniform Resource Identifier）。
-
-您不得就演绎作品提出或增加任何条款，从而限制所适用许可协议的条款，或者限制获得演绎作品的第三方行使所适用许可协议所赋予的权利。在您发行、公开传播包含本作品的演绎作品的每份复制件中，您必须完整保留所有与所适用许可协议及免责条款相关的声明。
-
-在发行、公开传播演绎作品时，您不得使用任何
-、技术性的措施限制获得演绎作品的第三方行使所适用许可协议所赋予权利的能力。本款（第4条b款）规定同样适用于收录在汇编作品中的演绎作品，但并不要求除基于本作品的演绎作品外的汇编作品受所适用许可协议的约束。
-
-You may Distribute or Publicly Perform an Adaptation only under: (i) the terms of this License; (ii) a later version of this License with the same License Elements as this License; (iii) a Creative Commons jurisdiction license (either this or a later license version) that contains the same License Elements as this License (e.g., Attribution-NonCommercial-ShareAlike 3.0 US) ("Applicable License"). You must include a copy of, or the Internet Address, for Applicable License with every copy of each Adaptation You Distribute or Publicly Perform. You may not offer or impose any terms on the Adaptation that restrict the terms of the Applicable License or the ability of the recipient of the Adaptation to exercise the rights granted to that recipient under the terms of the Applicable License. You must keep intact all notices that refer to the Applicable License and to the disclaimer of warranties with every copy of the Work as included in the Adaptation You Distribute or Publicly Perform. When You Distribute or Publicly Perform the Adaptation, You may not impose any effective technological measures on the Adaptation that restrict the ability of a recipient of the Adaptation from You to exercise the rights granted to that recipient under the terms of the Applicable License. This Section 4(b) applies to the Adaptation as incorporated in a Compilation, but this does not require the Compilation apart from the Adaptation itself to be made subject to the terms of the Applicable License. 
-
- 
-
-c. 您不得以任何形式行使以上第3条授予您的权利去谋取或因此获得商业利益或个人金钱报偿。但是，如交换过程中无任何金钱报偿，通过数字文件共享方式或其他方式用本作品去交换其他著作权作品将不被视为谋取或因此获得商业利益或个人金钱报偿。
-
-You may not exercise any of the rights granted to You in Section 3 above in any manner to pursue, or as a result, to gain commercial advantage or private monetary compensation. The exchange of the Work for other copyrighted works by means of digital file-sharing or otherwise shall not be considered to be pursuing, or as a result, gaining commercial advantage or private monetary compensation, provided there is no payment of any monetary compensation in connection with the exchange of copyrighted works.
-
- 
-
-d. 在发行、公开传播本作品或任何演绎、汇编作品时，除非适用本条第a款之要求，您必须完整保留所有关于本作品的著作权声明，并以适合所使用的媒体或工具的形式提供下述信息：（i）在原始作者的姓名（或笔名）已被提供的情况下，给出该姓名（或笔名），和/或在原始作者和/或许可人以许可人的著作权声明、服务条款或其他合理的方式，指定可以在作品上署名的他方当事人的情况下，给出该他方当事人的名称（“署名方”）；（ii）在本作品标题已被提供的情况下，给出本作品的标题；（iii）并在合理可行的程度上，标明许可人指定需与本作品同时出现的网址，除非该网址没有涉及到本作品的著作权声明或者关于本作品的许可信息；（iv）若为演绎作品，则依第3条b款之要求，须指明演绎作品中使用的本作品的作者姓名和作品名称（例如，“某作者作品的法语译本”，或“基于某作者作品的电影剧本”）。本款（第4条d款）要求的对作者姓名和作品名称的指明可采取任何合理方式，但在演绎作品或汇编作品中，如果已经指明了演绎作品的作者或汇编作品的所有内含作品的作者，那么对本作品名称和作者姓名的指明须同时出现在任何其他作者姓名出现的地方，并至少与对其他作者的指明一样显著。为避免疑义，本款有关标示作者姓名和作品名称之规定，仅适用于前述署名的用途，未事先另行取得原始作者、许可人及（或）署名人的书面同意，您不得以明示或者默示的方式主张或暗示，您本人或您对作品的使用与原始作者、许可人及（或）署名人有关联或者已获得上述人士的赞助或者支持。
-
-If You Distribute, or Publicly Perform the Work or any Adaptations or Compilations, You must, unless a request has been made pursuant to Section 4(a), keep intact all copyright notices for the Work and provide, reasonable to the medium or means You are utilizing: (i) the name of the Original Author (or pseudonym, if applicable) if the name of the Original Author is supplied, and/or if the Original Author and/or Licensor designate another party or parties (e.g., a sponsor institute, publishing entity, journal) for attribution ("Attribution Parties") in Licensor's copyright notice, terms of service or by other reasonable means, the name of such party or parties; (ii) the title of the Work if the name of the Original Author is supplied; (iii) to the extent reasonably practicable, in the form of the Internet Address, if any, that Licensor specifies to be associated with the Work, unless such Internet Address does not refer to the copyright notice or licensing information for the Work; and, (iv) consistent with Section 3(b), in the case of an Adaptation, an indication identifying the use of the Work in the Adaptation (e.g., "French translation of the Work by Original Author," or "Screenplay based on original Work by Original Author"). The indication required by this Section 4(d) may be implemented in any reasonable manner; provided, however, that in the case of a Adaptation or Compilation, at a minimum such indication will appear, if an indication for all contributing authors of the Adaptation or Compilation appears, then as part of these indications and in a manner at least as prominent as the indications for the other contributing authors. For the avoidance of doubt, You may only use the indication required by this Section for the purpose of attribution in the manner set out above and, by exercising Your rights under this License, You may not implicitly or explicitly assert or imply any connection with, sponsorship or endorsement by the Original Author, Licensor and/or Attribution Parties, as appropriate, of You or Your use of the Work, without the separate, express prior written permission of the Original Author, Licensor and/or Attribution Parties.、;bftfvgi】】‘’‘’‘’‘’‘’‘’】‘’‘’‘’‘’‘’‘；’‘’‘’【【==本许可授予的权利时未遵守本许可第4条c款有关非商业性使用的规定，许可人保留向您收取本作品使用费的权利，许可人可以自行或者通过其所参加的著作权集体管理组织向您收取本作品的使用费。
-
-For the avoidance of doubt: the Licensor reserves the right to collect royalties, whether individually or, in the event that the Licensor is a member of collective administration organization of copyright that administers voluntary licensing schemes, via that organization, from any exercise by You of the rights granted under this License that is for a purpose or use which is otherwise than noncommercial as permitted under Section 4(c). 
-
- 
-
-f. 在您复制、发行或公开传播本作品或者包含本作品的演绎作品或汇编作品时，您不得歪曲、篡改或采取其他与本作品相关的侵害行为侵犯原始作者的著作人身权。
-
-If You Reproduce, Distribute or Publicly Perform the Work either by itself or as part of any Adaptations or Compilations, You must not distort, mutilate, modify or take other derogatory action in relation to the Work which would be prejudicial to the Original Author's Moral Rights. 
-
- 
-
-5、声明、保证和免责条款Representations, Warranties and Disclaimer
-
-除非本许可的当事人相互以书面的方式做出相反约定或所适用的法律允许，许可人按其现状提供本作品，对本作品不作任何明示或者默示、依照法律或者其他规定的陈述或担保，包括但是不限于任何有关权利归属、可否商业性使用、是否符合特定的目的、未侵害他人权利、不具有潜在的或者其他缺陷、准确性或者不论能否被发现的错误不存在的担保。有些司法管辖区不允许排除前述默示保证，因此这些排除性规定并不一定适用于您。
-
-UNLESS OTHERWISE MUTUALLY AGREED TO BY THE PARTIES IN WRITING AND TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR OFFERS THE WORK STATUS QUO AND MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND CONCERNING THE WORK, EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NONINFRINGEMENT, OR THE ABSENCE OF LATENT OR OTHER DEFECTS, ACCURACY, OR THE PRESENCE OF ABSENCE OF ERRORS, WHETHER OR NOT DISCOVERABLE. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO THIS EXCLUSION MAY NOT APPLY TO YOU.
-
- 
-
-6、责任限制条款Limitation on Liability.
-
-除非属于相关法律所要求的范围，许可人在任何情况下都不对您因本许可或因使用本作品而产生的任何直接损失、间接损失或惩罚性赔偿负责，即使许可人已被告知发生此类损害的可能性。
-
-EXCEPT TO THE EXTENT REQUIRED BY APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE TO YOU FOR ANY DIRECT, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF THIS LICENSE OR THE USE OF THE WORK, EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
- 
-
-7、终止条款Termination
-
-a. 在您违反本许可任何条款时，本许可及其所授予的权利将自动终止。然而，根据本许可从您处获取演绎作品或汇编作品的自然人、法人或者其他组织，如果他们仍完全遵守相关条款，则他们的许可不会随之终止。即使本许可被终止，第1、2、5、6、7、8条仍然有效。
-
-This License and the rights granted hereunder will terminate automatically upon any breach by You of the terms of this License. Natural persons, legal persons or other organizations who have received Adaptations or Compilations from You under this License, however, will not have their licenses terminated provided such natural persons, legal persons or other organizations remain in full compliance with those licenses. Sections 1, 2, 5, 6, 7, and 8 will remain valid despite any termination of this License.
-
- 
-
-在上述条款及条件的前提下，此处授予的许可在法定著作权保护期限内有效。即便如此，许可人保留依其他许可条款发行本作品及在任何时候停止发行本作品的权利；但是，许可人的上述权利不能被用于撤销本许可（或任何其他在本许可条款下授予的或必须授予的许可）的目的，除本条第a款指明的终止外，本许可将保持其完全效力。
-
-Subject to the above terms and conditions, the license granted here is perpetual (for the duration of the applicable copyright in the Work). Notwithstanding the above, Licensor reserves the right to release the Work under different license terms or to stop distributing the Work at any time; provided, however that any such election will not serve to withdraw this License (or any other license that has been, or is required to be, granted under the terms of this License), and this License will continue in full force and effect unless terminated as stated above.
-
- 
-
-8、其他事项Miscellaneous
-
-a. 当您发行、公开传播本作品或汇编作品时，许可人给获得作品的第三方提供本作品的许可，其条款和条件与您所获得的许可相同。 b. 当您发行或公开传播演绎作品时，许可人给获得作品的第三方提供本作品的许可，其条款和条件与您所获得的许可相同。 c. 如因相关法律，本许可的某一条款无效或不能履行，本许可其余条款的有效性和可履行性不受影响。如本许可的当事人未采取进一步措施，此类无效条款应在最小的必要范围内修改以使其有效和可履行。 d. 除非当事人书面同意并签字放弃某条款和允许某违约行为，本许可的任何条款或规定都不应被视为已被放弃，或被视为允许此违约行为。 e. 本许可构成相关当事人与本授权作品相关的全部协议。除已在此处确认的之外，并不存在任何与本作品相关的谅解备忘录、协议或声明。许可人不受您提出的任何附加规定约束。未经许可人与您双方书面同意，本许可不得更改。
-
-Each time You Distribute or Publicly Perform the Work or a Compilation, the Licensor offers to the recipient a license to the Work on the same terms and conditions as the license granted to You under this License. b. Each time You Distribute or Publicly Perform an Adaptation, Licensor offers to the recipient a license to the original Work on the same terms and conditions as the license granted to You under this License. c. If any provision of this License is invalid or unenforceable under applicable law, it shall not affect the validity or enforceability of the remainder of the terms of this License, and without further action by the parties to this agreement, such provision shall be reformed to the minimum extent necessary to make such provision valid and enforceable. d. No term or provision of this License shall be deemed waived and no breach consented to unless such waiver or consent shall be in writing and signed by the party to be charged with such waiver or consent. e. This License constitutes the entire agreement between the parties with respect to the Work licensed here. There are no understandings, agreements or representations with respect to the Work not specified here. Licensor shall not be bound by any additional provisions that may appear in any communication from You. This License may not be modified without the mutual written agreement of the Licensor and You.
-
- 
-
-知识共享组织声明Creative Commons Notice
-
-知识共享组织不是本许可协议的一方，对本作品不作任何相关保证。在任何法律理论上，知识共享组织不对您或任何其他方的任何损失负责，包括但不限于与本许可相关的直接损失和间接损失。虽然有上述两点，但如果知识共享组织已明确标识自己为许可人，它将承担许可人的全部权利和义务。 除用于向公众表明本作品是依照知识共享组织公共许可(CCPL)授权许可以外，除非事先另有书面约定，知识共享组织不会授权任何一方使用“知识共享”商标和其他相关商标及标识。任何被允许的使用都必须符合知识共享组织的现行商标使用准则．该准则已在其网站上发布或可应要求随时提供。为避免疑义，本段关于商标的限制性规定不构成本许可之一部分。
-
-Creative Commons organization is not a party to this License, and makes no warranty whatsoever in connection with the Work. Creative Commons will not be liable to Licensee or any party on any legal theory for any damages whatsoever, including without limitation any direct or consequential damages arising in connection to this license. Notwithstanding the foregoing two (2) sentences, if Creative Commons has expressly identified itself as the Licensor hereunder, it shall have all rights and obligations of Licensor. Except for the limited purpose of indicating to the public that the Work is licensed under the CCPL, Creative Commons does not authorize the use by either party of the trademark "Creative Commons" or any related trademark or logo of Creative Commons without the prior written consent of Creative Commons. Any permitted use will be in compliance with Creative Commons' then-current trademark usage guidelines, as may be published on its website or otherwise made available upon request from time to time. For the avoidance of doubt, this trademark restriction does not form part of this License.
+(c) under Patent Claims infringed by Covered Software in the absence of
+    its Contributions.
+
+This License does not grant any rights in the trademarks, service marks,
+or logos of any Contributor (except as may be necessary to comply with
+the notice requirements in Section 3.4).
+
+2.4. Subsequent Licenses
+
+No Contributor makes additional grants as a result of Your choice to
+distribute the Covered Software under a subsequent version of this
+License (see Section 10.2) or under the terms of a Secondary License (if
+permitted under the terms of Section 3.3).
+
+2.5. Representation
+
+Each Contributor represents that the Contributor believes its
+Contributions are its original creation(s) or it has sufficient rights
+to grant the rights to its Contributions conveyed by this License.
+
+2.6. Fair Use
+
+This License is not intended to limit any rights You have under
+applicable copyright doctrines of fair use, fair dealing, or other
+equivalents.
+
+2.7. Conditions
+
+Sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted
+in Section 2.1.
+
+3. Responsibilities
+-------------------
+
+3.1. Distribution of Source Form
+
+All distribution of Covered Software in Source Code Form, including any
+Modifications that You create or to which You contribute, must be under
+the terms of this License. You must inform recipients that the Source
+Code Form of the Covered Software is governed by the terms of this
+License, and how they can obtain a copy of this License. You may not
+attempt to alter or restrict the recipients' rights in the Source Code
+Form.
+
+3.2. Distribution of Executable Form
+
+If You distribute Covered Software in Executable Form then:
+
+(a) such Covered Software must also be made available in Source Code
+    Form, as described in Section 3.1, and You must inform recipients of
+    the Executable Form how they can obtain a copy of such Source Code
+    Form by reasonable means in a timely manner, at a charge no more
+    than the cost of distribution to the recipient; and
+
+(b) You may distribute such Executable Form under the terms of this
+    License, or sublicense it under different terms, provided that the
+    license for the Executable Form does not attempt to limit or alter
+    the recipients' rights in the Source Code Form under this License.
+
+3.3. Distribution of a Larger Work
+
+You may create and distribute a Larger Work under terms of Your choice,
+provided that You also comply with the requirements of this License for
+the Covered Software. If the Larger Work is a combination of Covered
+Software with a work governed by one or more Secondary Licenses, and the
+Covered Software is not Incompatible With Secondary Licenses, this
+License permits You to additionally distribute such Covered Software
+under the terms of such Secondary License(s), so that the recipient of
+the Larger Work may, at their option, further distribute the Covered
+Software under the terms of either this License or such Secondary
+License(s).
+
+3.4. Notices
+
+You may not remove or alter the substance of any license notices
+(including copyright notices, patent notices, disclaimers of warranty,
+or limitations of liability) contained within the Source Code Form of
+the Covered Software, except that You may alter any license notices to
+the extent required to remedy known factual inaccuracies.
+
+3.5. Application of Additional Terms
+
+You may choose to offer, and to charge a fee for, warranty, support,
+indemnity or liability obligations to one or more recipients of Covered
+Software. However, You may do so only on Your own behalf, and not on
+behalf of any Contributor. You must make it absolutely clear that any
+such warranty, support, indemnity, or liability obligation is offered by
+You alone, and You hereby agree to indemnify every Contributor for any
+liability incurred by such Contributor as a result of warranty, support,
+indemnity or liability terms You offer. You may include additional
+disclaimers of warranty and limitations of liability specific to any
+jurisdiction.
+
+4. Inability to Comply Due to Statute or Regulation
+---------------------------------------------------
+
+If it is impossible for You to comply with any of the terms of this
+License with respect to some or all of the Covered Software due to
+statute, judicial order, or regulation then You must: (a) comply with
+the terms of this License to the maximum extent possible; and (b)
+describe the limitations and the code they affect. Such description must
+be placed in a text file included with all distributions of the Covered
+Software under this License. Except to the extent prohibited by statute
+or regulation, such description must be sufficiently detailed for a
+recipient of ordinary skill to be able to understand it.
+
+5. Termination
+--------------
+
+5.1. The rights granted under this License will terminate automatically
+if You fail to comply with any of its terms. However, if You become
+compliant, then the rights granted under this License from a particular
+Contributor are reinstated (a) provisionally, unless and until such
+Contributor explicitly and finally terminates Your grants, and (b) on an
+ongoing basis, if such Contributor fails to notify You of the
+non-compliance by some reasonable means prior to 60 days after You have
+come back into compliance. Moreover, Your grants from a particular
+Contributor are reinstated on an ongoing basis if such Contributor
+notifies You of the non-compliance by some reasonable means, this is the
+first time You have received notice of non-compliance with this License
+from such Contributor, and You become compliant prior to 30 days after
+Your receipt of the notice.
+
+5.2. If You initiate litigation against any entity by asserting a patent
+infringement claim (excluding declaratory judgment actions,
+counter-claims, and cross-claims) alleging that a Contributor Version
+directly or indirectly infringes any patent, then the rights granted to
+You by any and all Contributors for the Covered Software under Section
+2.1 of this License shall terminate.
+
+5.3. In the event of termination under Sections 5.1 or 5.2 above, all
+end user license agreements (excluding distributors and resellers) which
+have been validly granted by You or Your distributors under this License
+prior to termination shall survive termination.
+
+************************************************************************
+*                                                                      *
+*  6. Disclaimer of Warranty                                           *
+*  -------------------------                                           *
+*                                                                      *
+*  Covered Software is provided under this License on an "as is"       *
+*  basis, without warranty of any kind, either expressed, implied, or  *
+*  statutory, including, without limitation, warranties that the       *
+*  Covered Software is free of defects, merchantable, fit for a        *
+*  particular purpose or non-infringing. The entire risk as to the     *
+*  quality and performance of the Covered Software is with You.        *
+*  Should any Covered Software prove defective in any respect, You     *
+*  (not any Contributor) assume the cost of any necessary servicing,   *
+*  repair, or correction. This disclaimer of warranty constitutes an   *
+*  essential part of this License. No use of any Covered Software is   *
+*  authorized under this License except under this disclaimer.         *
+*                                                                      *
+************************************************************************
+
+************************************************************************
+*                                                                      *
+*  7. Limitation of Liability                                          *
+*  --------------------------                                          *
+*                                                                      *
+*  Under no circumstances and under no legal theory, whether tort      *
+*  (including negligence), contract, or otherwise, shall any           *
+*  Contributor, or anyone who distributes Covered Software as          *
+*  permitted above, be liable to You for any direct, indirect,         *
+*  special, incidental, or consequential damages of any character      *
+*  including, without limitation, damages for lost profits, loss of    *
+*  goodwill, work stoppage, computer failure or malfunction, or any    *
+*  and all other commercial damages or losses, even if such party      *
+*  shall have been informed of the possibility of such damages. This   *
+*  limitation of liability shall not apply to liability for death or   *
+*  personal injury resulting from such party's negligence to the       *
+*  extent applicable law prohibits such limitation. Some               *
+*  jurisdictions do not allow the exclusion or limitation of           *
+*  incidental or consequential damages, so this exclusion and          *
+*  limitation may not apply to You.                                    *
+*                                                                      *
+************************************************************************
+
+8. Litigation
+-------------
+
+Any litigation relating to this License may be brought only in the
+courts of a jurisdiction where the defendant maintains its principal
+place of business and such litigation shall be governed by laws of that
+jurisdiction, without reference to its conflict-of-law provisions.
+Nothing in this Section shall prevent a party's ability to bring
+cross-claims or counter-claims.
+
+9. Miscellaneous
+----------------
+
+This License represents the complete agreement concerning the subject
+matter hereof. If any provision of this License is held to be
+unenforceable, such provision shall be reformed only to the extent
+necessary to make it enforceable. Any law or regulation which provides
+that the language of a contract shall be construed against the drafter
+shall not be used to construe this License against a Contributor.
+
+10. Versions of the License
+---------------------------
+
+10.1. New Versions
+
+Mozilla Foundation is the license steward. Except as provided in Section
+10.3, no one other than the license steward has the right to modify or
+publish new versions of this License. Each version will be given a
+distinguishing version number.
+
+10.2. Effect of New Versions
+
+You may distribute the Covered Software under the terms of the version
+of the License under which You originally received the Covered Software,
+or under the terms of any subsequent version published by the license
+steward.
+
+10.3. Modified Versions
+
+If you create software not governed by this License, and you want to
+create a new license for such software, you may create and use a
+modified version of this License if you rename the license and remove
+any references to the name of the license steward (except to note that
+such modified license differs from this License).
+
+10.4. Distributing Source Code Form that is Incompatible With Secondary
+Licenses
+
+If You choose to distribute Source Code Form that is Incompatible With
+Secondary Licenses under the terms of this version of the License, the
+notice described in Exhibit B of this License must be attached.
+
+Exhibit A - Source Code Form License Notice
+-------------------------------------------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+If it is not possible or desirable to put the notice in a particular
+file, then You may include the notice in a location (such as a LICENSE
+file in a relevant directory) where a recipient would be likely to look
+for such a notice.
+
+You may add additional accurate notices of copyright ownership.
+
+Exhibit B - "Incompatible With Secondary Licenses" Notice
+---------------------------------------------------------
+
+  This Source Code Form is "Incompatible With Secondary Licenses", as
+  defined by the Mozilla Public License, v. 2.0.

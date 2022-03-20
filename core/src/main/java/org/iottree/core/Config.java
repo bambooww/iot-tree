@@ -544,6 +544,12 @@ public class Config
 				{
 					dataFileBase = f.getParentFile().getCanonicalPath() +"/";
 				}
+				
+				System.setProperty("iottree.data_dir",getDataDirBase());
+				File tmpdir = new File(getDataDirBase()+"/tmp/") ;
+				if(!tmpdir.exists())
+					tmpdir.mkdirs() ;
+				System.setProperty("iottree.tmp_dir",getDataDirBase()+"/tmp/");
 				//System.out.println("Data File Base="+dataFileBase) ;
 				
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));

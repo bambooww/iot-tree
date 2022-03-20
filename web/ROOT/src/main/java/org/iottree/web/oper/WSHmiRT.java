@@ -49,6 +49,7 @@ import org.json.JSONObject;
 @ServerEndpoint(value = "/_ws/hmi/{prjname}/{hmiid}", configurator = WebSocketConfig.class)
 public class WSHmiRT extends WSServer
 {
+	
 	private static final String PAU = "_pau_" ;
 	static
 	{

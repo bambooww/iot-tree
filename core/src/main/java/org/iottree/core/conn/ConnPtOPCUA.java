@@ -318,8 +318,9 @@ public class ConnPtOPCUA extends ConnPtBinder
     	writeUaNodeTreeJson(w,uaClient,nodeid);
     }
     
-    public  void writeBindBeSelectedTreeJson(Writer w) throws Exception
-    {
+    @Override
+	public void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only) throws Exception
+	{
     	writeUaNodeTreeJson(w,true) ;
     }
     
@@ -441,9 +442,15 @@ public class ConnPtOPCUA extends ConnPtBinder
     	w.write("{\"id\":\""+nid.toParseableString()+"\"");
     	w.write(",\"nc\":"+n.getNodeClass().getValue());
     	if(bvar)
+    	{
+    		w.write(",\"tp\": \"tag\"");
     		w.write(",\"icon\": \"fa fa-tag fa-lg\"");
+    	}
     	else
+    	{
+    		w.write(",\"tp\": \"tagg\"");
     		w.write(",\"icon\": \"fa fa-folder fa-lg\"");
+    	}
     	w.write(",\"text\":\""+n.getDisplayName().getText()+"\"");
     	//w.write(",\"state\": {\"opened\": true}");
     	if(!bvar)
@@ -551,6 +558,13 @@ public class ConnPtOPCUA extends ConnPtBinder
 	        
     	}
     	w.write("]");
+    }
+    
+    @Override
+    protected List<String> transBindIdToConnLeafPath(String bindid)
+    {
+    	//this.get
+    	return null ;
     }
 	
 //	private static void browseNode(List<ReferenceDescription> rds,String indent, OpcUaClient client, NodeId browseRoot)

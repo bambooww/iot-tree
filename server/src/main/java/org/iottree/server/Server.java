@@ -7,11 +7,13 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.security.SecurityClassLoad;
 import org.apache.catalina.startup.Tomcat;
 import org.iottree.core.Config;
+import org.iottree.core.ConnProvider;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.service.ServiceManager;
 import org.iottree.core.sim.SimManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IServerBootComp;
 import org.w3c.dom.Element;
 
 public class Server
@@ -19,6 +21,8 @@ public class Server
 	static ClassLoader dynCL = null;
 	
 	static ServerTomcat serverTomcat = null ; 
+	
+	static ArrayList<IServerBootComp> serverComps = new ArrayList<>() ;
 
 	private static void printBanner()
 	{
@@ -111,8 +115,19 @@ public class Server
 					if (Convert.isNullOrEmpty(serv_comp_cn))
 						continue;
 
-					// System.out.println("find server comp:" + serv_comp_cn);
-
+					try
+					{
+						System.out.println("find server comp:" + serv_comp_cn);
+						ServerBootCompMgr.registerServerBoolComp(serv_comp_cn) ;
+						
+//						Class<?> c = Class.forName(serv_comp_cn) ;
+//						IServerBootComp comp = (IServerBootComp)c.newInstance(); 
+//						serverComps.add(comp) ;
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -126,7 +141,12 @@ public class Server
 		UAManager.getInstance().start();
 		
 		SimManager.getInstance().start();
+		
+		ConnProvider.getAllConnProviders();
 
+		for(String n:ServerBootCompMgr.getInstance().getAllServerBootNames())
+			ServerBootCompMgr.getInstance().startBootComp(n);
+		
 		if(bservice)
 		{
 			new Thread(Server::runFileMon,"").start();

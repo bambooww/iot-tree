@@ -60,6 +60,9 @@ public class ConnProOPCUA extends ConnProvider
 		for(ConnPt ci:this.listConns())
 		{
 			ConnPtOPCUA citc = (ConnPtOPCUA)ci ;
+			if(!citc.isEnable())
+				continue;
+			
 			citc.checkConn() ;
 		}
 	}

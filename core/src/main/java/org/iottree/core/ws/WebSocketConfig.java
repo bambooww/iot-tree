@@ -23,9 +23,7 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator{
     public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
         HttpSession httpSession = (HttpSession)request.getHttpSession();
         if (Objects.isNull(httpSession)){
-            //log.error("httpSession为空, header = [{}], 请登录!", request.getHeaders());
-            //throw new JMakerException("httpSession为空, 请登录!");
-        	
+            return ;
         }
         Map<String,List<String>> reqhead = request.getHeaders() ;
         //log.debug("webSocket握手, sessionId = [{}]",reqhead);

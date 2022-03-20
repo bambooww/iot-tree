@@ -15,11 +15,15 @@ if(!Convert.checkReqEmpty(request, out, "path"))
 boolean bsys = "true".equals(request.getParameter("sys")) ;
 String path = request.getParameter("path") ;
 UANode node = UAUtil.findNodeByPath(path) ;
+
 if(node==null)
 {
 	out.print("node not found"); 
 	return ;
 } 
+UAPrj prj = (UAPrj)node.getTopNode() ;
+String prj_name = prj.getName() ;
+String node_id = node.getId() ;
 UAHmi hmi = null ;
 boolean bhmi = false;
 if(node instanceof UAHmi)
@@ -116,6 +120,8 @@ th
 }
 td
 {font-size: 12px;
+overflow:hidden;
+text-overflow:ellipsis;
 }
 
 
@@ -123,7 +129,11 @@ td
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node.getNodePath() %> <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a></div>
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node.getNodePath() %> 
+ <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
+ <a href="javascript:node_access('<%=node.getNodePath() %>')" id="node_access_<%=node.getId() %>"  title="Access" ><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
+ 
+ </div>
   <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
@@ -182,13 +192,13 @@ if(b_tags)
 %>
 </form>
 <%
-if(b_tags)
+if(false)//(b_tags)
 {
 %>
 <table width='100%' border='1' height="120">
 <tr>
  <td>
- script test <input type='button' value='run' onclick="run_script_test('')"/> <input type='button' value='ttt' onclick="run_script_test1()"/>
+ script test <input type='button' value='run' onclick="run_script_test('')"/> 
  </td>
  <td>script test result</td>
 </tr>
@@ -207,6 +217,8 @@ if(b_tags)
 <br><br>
 </body>
 <script>
+var prj_name = "<%=prj_name%>" ;
+var node_id = "<%=node_id%>" ;
 var path = "<%=path%>" ;
 var b_tags = <%=b_tags%> ;
 var cxt_path= "<%=node_cxtpath%>";
@@ -682,6 +694,100 @@ function show_cxt_dyn(p,cxt)
 	}
 }
 
+//if(!b_devdef)
+//	setInterval(cxt_rt,3000) ;
+
+function log(txt)
+{
+	console.log(txt) ;
+}
+
+var ws = null;
+var ws_last_chk = -1 ;
+var ws_opened = false;
+
+function ws_conn()
+{
+    var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id;
+    if ('WebSocket' in window) {
+        ws = new WebSocket(url);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(url);
+    } else {
+        log('WebSocket is not supported by this browser.');
+        return false ;
+    }
+    
+    ws.onopen = function () {
+        //setConnected(true);
+        log('Info: WebSocket connection opened.');
+        ws_opened = true;
+    };
+    ws.onmessage = function (event) {
+
+    	//console.log(event.data) ;
+    	//hmiModel.fireModelPropBindData(event.data) ;
+    	var d = null ;
+    	eval("d="+event.data) ;
+    	//console.log(d) ;
+    	show_cxt_dyn("",d);
+    };
+    
+    ws.onclose = function (event) {
+    	ws_disconn();
+        log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
+    };
+    
+    return true;
+}	
+
+function ws_disconn() {
+	
+    if (ws != null) {
+        ws.close();
+        ws = null;
+    }
+    ws_opened = false;
+}
+
+
+function check_ws()
+{
+	if(ws!=null&&ws_opened)
+	{
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+
+	if(ws==null)
+	{
+		ws_disconn();
+		ws_conn();
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+	
+	//ws_opened==false;
+	var dt = new Date().getTime();
+	if(dt-ws_last_chk<20000)
+		return ;
+	//time out
+	ws_disconn();
+	ws_conn();
+	ws_last_chk = new Date().getTime();
+	return ;
+}
+
+if(!b_devdef)
+{
+	check_ws();
+	setInterval(check_ws,5000) ;
+	//setInterval(cxt_rt,3000) ;
+}
+
+
+
+
 var MAX_VAL_SHOWLEN = 20 ;
 
 function show_ele_html(n,v,chklen,title)
@@ -701,8 +807,7 @@ function show_ele_html(n,v,chklen,title)
 		ele.innerHTML=v||"" ;
 }
 
-if(!b_devdef)
-	setInterval(cxt_rt,3000) ;
+
 	
 function run_script_test(fn)
 {
@@ -894,6 +999,11 @@ function bind_ext(path)
 					dlg.close();
 				}
 			]);
+}
+
+function node_access(p)
+{
+	window.open(p) ;
 }
 
 </script>

@@ -328,7 +328,7 @@ public class Convert
 	}
 
 	/**
-	 * 判断字符串是否为空
+	 * judge str null or empty
 	 * 
 	 * @param s
 	 * @return
@@ -955,7 +955,7 @@ public class Convert
 	public static HashMap<String, String> transPropStrToMap(String inputs,String delimi,String kv_div)
 	{
 		HashMap<String, String> ret = new HashMap<String, String>();
-		if (inputs == null)
+		if (Convert.isNullOrEmpty(inputs))
 			return ret;
 		List<String> strs = Convert.splitStrWith(inputs, delimi);
 		for(String str:strs)

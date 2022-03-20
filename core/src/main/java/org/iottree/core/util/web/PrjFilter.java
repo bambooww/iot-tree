@@ -2,6 +2,7 @@ package org.iottree.core.util.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -9,12 +10,14 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANode;
+import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
@@ -22,13 +25,21 @@ import org.iottree.core.util.Convert;
 
 public class PrjFilter implements Filter
 {
-
+	private static final String METHOD_DELETE = "DELETE";
+    private static final String METHOD_HEAD = "HEAD";
+    private static final String METHOD_GET = "GET";
+    private static final String METHOD_OPTIONS = "OPTIONS";
+    private static final String METHOD_POST = "POST";
+    private static final String METHOD_PUT = "PUT";
+    private static final String METHOD_TRACE = "TRACE";
+    
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException
 	{
 		
 	}
 
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException
@@ -120,6 +131,36 @@ public class PrjFilter implements Filter
 				tp = "" ;
 			if(op==null)
 				op="" ;
+			String method = req.getMethod();
+
+			if(node instanceof UATag)
+			{
+				if (method.equals(METHOD_POST)||method.equals(METHOD_PUT))
+				{
+					if(pa!=null)
+					{
+						try
+						{
+							if(!pa.checkWriteRight(node.getNodePath(), req))
+							{//no right
+								resp.getWriter().write(pa.getNoWriteRightPrompt());
+								return ;
+							}
+						}
+						catch(Exception e)
+						{
+							//e.printStackTrace();
+							PrintWriter w = resp.getWriter();
+							w.write("check write right exception:");
+							e.printStackTrace(w);
+							//w.write(e.getMessage());
+							return ;
+						}
+					}
+					doPut(req, resp);
+				    return ;
+				}
+			}
 			switch(op)
 			{
 			case "cxt":
@@ -135,6 +176,36 @@ public class PrjFilter implements Filter
 			
 			return ;
 		}
+	}
+	
+	
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	{
+		//super.doPut(req, resp);
+		//update restful api
+		resp.setContentType("text/html;charset=UTF-8");
+		String uri = req.getRequestURI();
+		//String qs = req.getQueryString();
+		
+		if(uri.startsWith("/iottree"))
+			uri = uri.substring(8) ;
+		
+		UANode node = UAUtil.findNodeByPath(uri) ;
+		if(node==null)
+			return ;
+		
+		if(!(node instanceof UATag))
+			return ;
+		
+		UATag tag = (UATag)node ;
+		//String pv0 = req.getParameter("_pv") ;
+		for(Enumeration<String> ens = req.getParameterNames() ;ens.hasMoreElements();)
+		{
+			String pn = ens.nextElement() ;
+			String pv = req.getParameter(pn) ;
+			tag.JS_set(pn, pv);
+		}
+		
 	}
 
 	@Override

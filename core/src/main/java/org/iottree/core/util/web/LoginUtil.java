@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.iottree.core.Config;
 import org.iottree.core.plugin.PlugAuth;
@@ -127,7 +128,14 @@ public class LoginUtil
 	 */
 	public static boolean checkAdminLogin(HttpServletRequest req)
 	{
-		Object ob = req.getSession().getAttribute(ADMIN_LOGIN);
+		return checkAdminLogin(req.getSession());
+	}
+	
+	public static boolean checkAdminLogin(HttpSession hs)
+	{
+		if(hs==null)
+			return false;
+		Object ob = hs.getAttribute(ADMIN_LOGIN);
 		if(ob==null)
 			return false;
 		if(!(ob instanceof Boolean))
