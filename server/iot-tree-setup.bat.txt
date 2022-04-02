@@ -1,13 +1,15 @@
 @echo off
 
+
+if exist jre set JAVA_HOME=.\jre
+if exist jre8_x86 set JAVA_HOME=.\jre8_x86
+
 if NOT DEFINED IOTTREE_HOME set IOTTREE_HOME=%cd%
 
 if "%1"=="install" goto install
 if "%1"=="uninstall" goto uninstall
 if "%1"=="start" goto start
 if "%1"=="stop" goto stop
-
-if exist jre set JAVA_HOME=.\jre
 
 echo JAVA_HOME=%JAVA_HOME%
 

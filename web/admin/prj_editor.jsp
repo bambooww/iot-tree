@@ -504,9 +504,11 @@ background-color: #fff ;
 		               	      <table style="width:100%;border: 1">
 			               	 		<tr>
 										<td width="90%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
+<%--
 											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span>
-											<span style="width:15px;height:15px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;&nbsp;&nbsp;&nbsp;</span>
-											&nbsp;{{ connector.title }} [{{ connector.tp }}]
+											 --%>
+											&nbsp;&nbsp;<span style="left:5px;width:15px;height:15px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											[{{ connector.tp }}]{{ connector.title }} 
 										</td>
 										<%--
 										<td width="25px">
@@ -522,15 +524,19 @@ background-color: #fff ;
 		               	  </div>
 		               	  <div class="subitem_content">
 		               	 	    <div class="subitem_li" v-for="connection in connector.connections" v-bind:id="'conn_' + connection.id" 
-		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id">
+		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id" v-bind:tt="connection.title +' '+connection.name">
 		               	 		<table style="width:100%;">
 			               	 		<tr>
+			               	 		<td width0="10px">
+											<span v-bind:id="'conn_st_'+connection.id"><i class="fa fa-chain-broken "></i></span>
+										</td>
 										<td width="90%" >
 											{{connection.title}} [{{connection.name}}]
 										</td>
-										<td width="20px">
-											<span v-bind:id="'conn_st_'+connection.id"><i class="fa fa-chain-broken fa-lg"></i></span>
+										<td width0="10px">
+											<span v-bind:id="'conn_new_'+connection.id"></span>
 										</td>
+										
 										<%--
 										<td width="25px">
 											<div style="width:15px;height:15px;"  v-bind:id="'conn_run_'+connection.id" ><i class="fa fa-cog fa-lg"></i></div>
@@ -613,15 +619,16 @@ var prjid="<%=prjid%>";
 var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
 
 var connpro_menu = [
-	{content:'Connector Provider',header: true},
-	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
-	{content:'Tcp Server For Opc Agent',callback:function(){edit_cp("opc_agent","");}},
-	{content:'sm_divider'},
+	//{content:'Connector Provider',header: true},
+	
+//	{content:'Tcp Server For Opc Agent',callback:function(){edit_cp("opc_agent","");}},
+//	{content:'sm_divider'},
 	{content:'<i class="fa fa-link"></i> Link',header: true},
 	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
 	{content:'COM',callback : function(){edit_cpt("com","","");}},
+	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
 	{content:'<i class="fa fa-link"></i> OPC',header: true},
-	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
+//	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
 <%
 	if(ConnProvider.hasConnProvider("opc_da"))
 	{
@@ -630,7 +637,7 @@ var connpro_menu = [
 <%
 	}
 %>
-	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
+//	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'<i class="fa fa-link"></i> Message',header: true},
 	{content:'HTTP Url',callback:function(){
 		edit_cpt("http","","");
@@ -802,6 +809,14 @@ function on_conn_ui_showed()
 					d.push({ content : '<i class="fa fa-pencil"></i> Edit Connector', callback:()=>{
 						edit_cp(cptp,cpid) ;
 					}});
+					
+					
+					d.push({content:'sm_divider'});
+					d.push({ content : '<i class="fa fa-arrow-rotate-right"></i> Reset', callback:()=>{
+						reset_cp(cptp,cpid) ;
+					}});
+					
+					
 					if(cptp=='tcp_server')
 					{
 						d.push({content:'sm_divider'});
@@ -836,6 +851,7 @@ function on_conn_ui_showed()
 	        		var cpid = $(this).attr("cp_id");
 	        		var cptp = $(this).attr("cp_tp");
 	        		var connid = $(this).attr("conn_id");
+	        		var conntt = $(this).attr("tt");
 	        		var bconn = $(this).attr("conn_ready")=='true';
 	        		var tt = "<i class='fa fa-play'></i> Start" ;
 	        		if(bconn)
@@ -847,7 +863,7 @@ function on_conn_ui_showed()
 					if(cptp=="opc_ua"||cptp=="opc_agent"||cptp=="opc_da")
 					{
 						d.push({ content : '<i class="fa fa-pencil"></i> Bind', callback:()=>{
-							edit_bind_setup(cptp,cpid,connid) ;
+							edit_bind_setup(cptp,cpid,connid,conntt) ;
 						}});
 					}
 					if(cptp=="mqtt")
@@ -1086,7 +1102,20 @@ function act_node_paste(n,op)
 	
 }
 
-
+function reset_cp(cptp,cpid)
+{
+	send_ajax("conn/cp_ajax.jsp",{prjid:repid,op:"cp_init",cpid:cpid},function(bsucc,ret){
+		if(!bsucc)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		if(ret.res)
+			dlg.msg("send reset ok") ;
+		else
+			dlg.msg(ret.err) ;
+	})
+}
 
 function edit_cp(cptp,cpid)
 {
@@ -1253,10 +1282,10 @@ function del_cpt(cpid,connid)
 	})) ;
 }
 
-function edit_bind_setup(cptp,cpid,connid)
+function edit_bind_setup(cptp,cpid,connid,tt)
 {
 	dlg.open_win("./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"Binding Setting ["+cptp+"]",w:'800',h:'550'},
+			{title:"Binding Setting ["+cptp+"] "+tt,w:'800',h:'550'},
 			['Ok',{title:'Cancel',style:"primary"}],
 			[
 				function(dlgw)
@@ -2208,14 +2237,22 @@ function prj_rt()
 				var bready = conn.ready ;
 				var connerr = conn.conn_err;
 				var benable = conn.enable;
+				var bnewdev = conn.new_devs;
 				var color = "grey";
 				if(benable)
 				{
 					color = bready?"green":"red" ;
 				}
-				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link fa-lg'></i>":"<i class='fa fa-chain-broken fa-lg'></i>");//.css("background-color",bready?"green":"red");
+				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link'></i>":"<i class='fa fa-chain-broken'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",color);
 				$("#conn_st_"+cid).attr("title",bready?"connection is ready":connerr);
+				if(bnewdev)
+				{
+					$("#conn_new_"+cid).html("<i class='fa-solid fa-calendar-plus fa-lg fa-beat-fade' onclick=\"show_conn_new_dev('"+id+"','"+cid+"')\"></i>") ;
+					$("#conn_new_"+cid).css("color","green") ;
+				}
+				else
+					$("#conn_new_"+cid).html("") ;
 				$("#conn_run_"+cid).css("color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
 				
@@ -2242,6 +2279,19 @@ function prj_rt()
 				tn.run = brun ;
 		}
 	},false) ;
+}
+
+function show_conn_new_dev(cpid,cid)
+{
+	dlg.open("conn/cpt_new_devs.jsp?prjid="+prjid+"&cpid="+cpid+"&cid="+cid,
+			{title:"New Devices Found",w:'450px',h:'500px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function rt_cp_start_stop(cp_id)

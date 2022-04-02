@@ -1,6 +1,7 @@
 package org.iottree.core.service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.activemq.broker.Broker;
 import org.apache.activemq.broker.BrokerPlugin;
@@ -25,22 +26,22 @@ import org.iottree.core.util.Convert;
  */
 public class ActiveMQAuthPlugin implements BrokerPlugin {
 
-	String authUrl = null ;
+	//String authUrl = null ;
 	
 	private HashMap<String,String> user2psw = new HashMap<>() ;
 	/**
 	 * 
 	 * @param auth_url 内部微服务提供的接入验证url接口
 	 */
-	public ActiveMQAuthPlugin(String auth_url)
+	public ActiveMQAuthPlugin() //String auth_url)
 	{
-		authUrl = auth_url ;
+		//authUrl = auth_url ;
 		
 	}
 	
 	public Broker installPlugin(Broker broker) throws Exception {
-		System.out.println("AuthPlugin >>>installPlugin with url= "+authUrl) ;
-		return new ActiveMQAuthBroker(broker,authUrl,this.user2psw);
+	//	System.out.println("AuthPlugin >>>installPlugin with url= "+authUrl) ;
+		return new ActiveMQAuthBroker(broker,this.user2psw);
 	}
 
 	public ActiveMQAuthPlugin asUser(String username,String psw)
@@ -48,6 +49,14 @@ public class ActiveMQAuthPlugin implements BrokerPlugin {
 		if(Convert.isNullOrEmpty(username))
 				return this ;
 		user2psw.put(username, psw) ;
+		return this ;
+	}
+	
+	public ActiveMQAuthPlugin asUsers(Map<String,String> u2p)
+	{
+		if(user2psw==null)
+			return this ;
+		user2psw.putAll(u2p);
 		return this ;
 	}
 }

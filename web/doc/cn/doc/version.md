@@ -65,4 +65,10 @@ windows环境下面增加自带jdk版本的安装包，同时提供了win_panel�
 
 
 
+
+### 版本 0.96.0
+改进完善OPC-DA相关功能。新增支持消息方式的数据接入，处理和通道关联。并支持mqtt等具体协议。
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

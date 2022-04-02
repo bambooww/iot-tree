@@ -22,24 +22,24 @@ import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.util.Convert;
+import org.iottree.core.ws.WSRoot.SessionItem;
 import org.json.JSONObject;
-
 
 public abstract class WSServer// extends ConnServer
 {
 
-//	protected String getSessionHead(Session session,String name)
-//	{
-//		Map<String, List<String>> heads = (Map<String, List<String>>) session.getUserProperties().get("req_head");
-//		
-//		List<String> vvs = heads.get(name);
-//		if (vvs == null || vvs.size() <= 0)
-//		{
-//			return null;
-//		}
-//		return vvs.get(0);
-//	}
-	
+	// protected String getSessionHead(Session session,String name)
+	// {
+	// Map<String, List<String>> heads = (Map<String, List<String>>)
+	// session.getUserProperties().get("req_head");
+	//
+	// List<String> vvs = heads.get(name);
+	// if (vvs == null || vvs.size() <= 0)
+	// {
+	// return null;
+	// }
+	// return vvs.get(0);
+	// }
 
 	public static class SessionItem
 	{
@@ -48,8 +48,8 @@ public abstract class WSServer// extends ConnServer
 		private final UANodeOCTagsCxt nodecxt;
 		private final UAHmi hmi;
 
-		//private long lastDT = -1;
-		private transient HashMap<UATag,Long> tag2lastdt = new HashMap<>() ;
+		// private long lastDT = -1;
+		private transient HashMap<UATag, Long> tag2lastdt = new HashMap<>();
 
 		// private boolean bFirstTick=true ;
 
@@ -76,24 +76,24 @@ public abstract class WSServer// extends ConnServer
 			return hmi;
 		}
 
-//		/**
-//		 * get dyn json for rep_editor
-//		 * 
-//		 * @return
-//		 */
-//		public String getRepDynJsonStr()
-//		{
-//			long curt = System.currentTimeMillis();
-//			JSONObject jobj = prj.toOCDynJSON(lastDT);
-//			lastDT = curt;
-//			return jobj.toString(2);
-//		}
+		// /**
+		// * get dyn json for rep_editor
+		// *
+		// * @return
+		// */
+		// public String getRepDynJsonStr()
+		// {
+		// long curt = System.currentTimeMillis();
+		// JSONObject jobj = prj.toOCDynJSON(lastDT);
+		// lastDT = curt;
+		// return jobj.toString(2);
+		// }
 
 		public UANodeOCTagsCxt getNodeTagCxt()
 		{
 			return nodecxt;
 		}
-		
+
 		private void closeSessionOnError(Exception e)
 		{
 			CloseReason cr = new CloseReason(CloseCodes.CLOSED_ABNORMALLY, e.getMessage());
@@ -113,7 +113,7 @@ public abstract class WSServer// extends ConnServer
 			{
 				session.getBasicRemote().sendText(txt);
 			}
-			catch (IllegalStateException ise)
+			catch ( IllegalStateException ise)
 			{
 				closeSessionOnError(ise);
 			}
@@ -128,8 +128,8 @@ public abstract class WSServer// extends ConnServer
 			UAHmi hmi = getHmi();
 			UAPrj prj = getPrj();
 
-			//long lastdt = lastDT;
-			//lastDT = System.currentTimeMillis();
+			// long lastdt = lastDT;
+			// lastDT = System.currentTimeMillis();
 
 			UANodeOCTagsCxt ntags = hmi.getBelongTo();
 
@@ -139,14 +139,17 @@ public abstract class WSServer// extends ConnServer
 			if (prj.RT_isRunning())
 			{
 				StringWriter sw_rt = new StringWriter();
-				
-				//long tmp_maxdt = ntags.CXT_renderJson(sw_rt,tag2lastdt,null) ;
-				//System.out.println(" lastdt="+Convert.toFullYMDHMS(new Date(lastdt))+" rendmax="+Convert.toFullYMDHMS(new Date(tmp_maxdt)));
-				if (ntags.CXT_renderJson(sw_rt, tag2lastdt,null))
+
+				// long tmp_maxdt = ntags.CXT_renderJson(sw_rt,tag2lastdt,null)
+				// ;
+				// System.out.println(" lastdt="+Convert.toFullYMDHMS(new
+				// Date(lastdt))+" rendmax="+Convert.toFullYMDHMS(new
+				// Date(tmp_maxdt)));
+				if (ntags.CXT_renderJson(sw_rt, tag2lastdt, null))
 				{
 					sw.write(",\"cxt_rt\":");
 					sw.write(sw_rt.toString());
-					//lastDT = tmp_maxdt ;
+					// lastDT = tmp_maxdt ;
 				}
 			}
 			sw.write("}");
@@ -178,14 +181,14 @@ public abstract class WSServer// extends ConnServer
 	{
 		sess2item.put(si.getSession(), si);
 
-		 //System.out.println(" add session ,num="+sess2item.size()) ;
+		// System.out.println(" add session ,num="+sess2item.size()) ;
 	}
 
 	public static synchronized void removeSessionItem(Session sess)
 	{
 		sess2item.remove(sess);
 
-		//System.out.println(" remove session ,num="+sess2item.size()) ;
+		// System.out.println(" remove session ,num="+sess2item.size()) ;
 	}
 
 	public static int getSessionNum()
@@ -218,15 +221,17 @@ public abstract class WSServer// extends ConnServer
 		return rets;
 	}
 
-	private static Timer timer = null;
+	// private static Timer timer = null;
 
 	private static final long TICK_DELAY = 1000;
+
+	private static Thread th = null;
 
 	protected static void tick()
 	{
 		for (SessionItem si : getSessionItems())
 		{
-			long st = System.currentTimeMillis() ;
+			long st = System.currentTimeMillis();
 			try
 			{
 				si.onTick();
@@ -237,7 +242,8 @@ public abstract class WSServer// extends ConnServer
 			}
 			finally
 			{
-				//System.out.println("tick cost="+(System.currentTimeMillis()-st));
+				// System.out.println("tick
+				// cost="+(System.currentTimeMillis()-st));
 			}
 		}
 
@@ -253,37 +259,81 @@ public abstract class WSServer// extends ConnServer
 
 	public synchronized static void startTimer()
 	{
-		if (timer != null)
+		if (th != null)
 			return;
 
 		// System.out.println(" hmi rt -- start timer") ;
-
-		timer = new Timer(WSServer.class.getSimpleName() + " Timer");
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
+		th = new Thread(new Runnable() {
 			public void run()
 			{
 				try
 				{
-					tick();
+					while(th!=null)
+					{
+						try
+						{
+							Thread.sleep(TICK_DELAY);
+							if(th==null)
+								break;
+							tick();
+						}
+						catch (Exception e)
+						{
+							// log.error("Caught to prevent timer from shutting down" +
+							// e.getMessage());
+						}
+					}
 				}
-				catch ( RuntimeException e)
+				finally
 				{
-					// log.error("Caught to prevent timer from shutting down" +
-					// e.getMessage());
+					th = null ;
 				}
 			}
-		}, TICK_DELAY, TICK_DELAY);
+		},WSServer.class.getSimpleName() + " Timer") ;
+		
+		th.start();
+//		timer = new Timer(WSServer.class.getSimpleName() + " Timer");
+//		timer.scheduleAtFixedRate(new TimerTask() {
+//			@Override
+//			public void run()
+//			{
+//				try
+//				{
+//					tick();
+//				}
+//				catch ( RuntimeException e)
+//				{
+//					// log.error("Caught to prevent timer from shutting down" +
+//					// e.getMessage());
+//				}
+//			}
+//		}, TICK_DELAY, TICK_DELAY);
 	}
 
-	public synchronized static void stopTimer()
+	public synchronized static void stopTimer(boolean bforce)
 	{
-		if (timer != null)
+		Thread t = th;
+		if (t == null)
+			return;
+
+		if(bforce)
+			t.interrupt();
+		th = null;
+		
+		if(!bforce)
 		{
-			// System.out.println(" hmi rt -- stop timer") ;
-			timer.cancel();
-			timer = null;
+			try
+			{
+				Thread.sleep(TICK_DELAY);
+			}
+			catch(Exception e) {}
 		}
+		// if (timer != null)
+		// {
+		// // System.out.println(" hmi rt -- stop timer") ;
+		// timer.cancel();
+		// timer = null;
+		// }
 	}
 
 }

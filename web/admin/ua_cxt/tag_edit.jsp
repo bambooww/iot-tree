@@ -107,11 +107,11 @@ dlg.resize_to(800,500);
 	<input type="hidden" id="id" name="name" value="<%=html_str(id)%>">
 	  <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
-    <div class="layui-input-inline" style="width: 100px;">
+    <div class="layui-input-inline" style="width: 200px;">
       <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
-	  <div class="layui-input-inline" style="width: 200px;">
+	  <div class="layui-input-inline" style="width: 300px;">
 	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
 	  </div>
 	  

@@ -511,17 +511,24 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	 * @param path
 	 * @return
 	 */
-	public final UANode getDescendantNodeByPath(LinkedList<String> path)
+	public final UANode getDescendantNodeByPath(List<String> path)
 	{
-		if(path.size()<=0)
+		return getDescendantNodeByPath(path,0) ;
+	}
+	
+	private final UANode getDescendantNodeByPath(List<String> path,int idx)
+	{
+		if(path.size()<=idx)
 			return this ;
-		String n = path.removeFirst() ;
+		String n = path.get(idx) ;
 		UANode nn = this.getSubNodeByName(n) ;
 		if(nn==null)
 			return null ;
-		if(path.size()<=0)
+		
+		idx ++ ;
+		if(path.size()<=idx)
 			return nn ;
-		return nn.getDescendantNodeByPath(path) ;
+		return nn.getDescendantNodeByPath(path,idx) ;
 	}
 	
 	public UANode getDescendantNodeByPath(String pathstr)

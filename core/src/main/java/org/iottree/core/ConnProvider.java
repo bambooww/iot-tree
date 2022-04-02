@@ -300,6 +300,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 		if(title==null)
 			return "";
 		return title ;
+		
 	}
 	
 	public String getDesc()
@@ -483,6 +484,13 @@ public abstract class ConnProvider implements IXmlDataValidator
 	}
 	
 	protected abstract long connpRunInterval() ;
+	
+	
+	protected void RT_connpInit() throws Exception
+	{
+		
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -495,6 +503,13 @@ public abstract class ConnProvider implements IXmlDataValidator
 		{
 			try
 			{
+				RT_connpInit();
+				
+				for(ConnPt cp:listConns())
+				{
+					cp.RT_connInit() ;
+				}
+				
 				while (runTh != null)
 				{
 					try
@@ -504,6 +519,9 @@ public abstract class ConnProvider implements IXmlDataValidator
 					catch (Exception e)
 					{
 					}
+					
+					if(runTh==null)
+						break ;
 
 					connpRunInLoop();
 				}
@@ -515,7 +533,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 			finally
 			{
 				runTh = null;
-				stop();
+				//stop();
 			}
 		}
 	};
@@ -546,8 +564,16 @@ public abstract class ConnProvider implements IXmlDataValidator
 			if (runTh == null)
 				return;
 			
-			runTh.interrupt();
+			//runTh.interrupt();
 			runTh = null;
+			
+//			try
+//			{
+//				Thread.sleep(connpRunInterval());
+//			}
+//			catch (Exception e)
+//			{
+//			}
 		}
 	}
 	
@@ -572,5 +598,10 @@ public abstract class ConnProvider implements IXmlDataValidator
 	public void dispose()
 	{
 		stop();
+	}
+	
+	public void reInit() throws Exception
+	{
+		
 	}
 }

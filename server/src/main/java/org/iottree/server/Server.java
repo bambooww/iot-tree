@@ -14,6 +14,7 @@ import org.iottree.core.service.ServiceManager;
 import org.iottree.core.sim.SimManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
+import org.iottree.core.ws.WSHelper;
 import org.w3c.dom.Element;
 
 public class Server
@@ -160,6 +161,25 @@ public class Server
 
 	static void stopServer()
 	{
+		
+		UAManager.getInstance().stop();
+		
+		SimManager.getInstance().stop();
+		
+		WSHelper.onSysClose();
+		
+		try
+		{
+			ServerBootCompMgr.getInstance().stopAllBootComp();
+			
+			Thread.sleep(5000);
+		}
+		catch ( Exception ee)
+		{
+		}
+
+		
+		//
 		if(serverTomcat!=null)
 		{
 			try
@@ -172,19 +192,6 @@ public class Server
 			}
 		}
 		
-		UAManager.getInstance().stop();
-		
-		SimManager.getInstance().stop();
-		try
-		{
-			ServerBootCompMgr.getInstance().stopAllBootComp();
-		}
-		catch ( Exception ee)
-		{
-		}
-
-		//
-
 	}
 
 	static Runnable consoleRunner = new Runnable() {

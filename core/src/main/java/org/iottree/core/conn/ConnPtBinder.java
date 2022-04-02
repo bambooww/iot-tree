@@ -1,14 +1,19 @@
 package org.iottree.core.conn;
 
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.UACh;
+import org.iottree.core.UANode;
+import org.iottree.core.UATag;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
@@ -24,6 +29,28 @@ import org.json.JSONObject;
  */
 public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 {
+	public static class BindItem
+	{
+		String path ;
+		
+		String vt ;
+		
+		public BindItem(String p,String vt)
+		{
+			this.path = p ;
+			this.vt = vt ;
+		}
+		
+		public String getPath()
+		{
+			return path ;
+		}
+		
+		public String getValTp()
+		{
+			return vt; 
+		}
+	}
 	private HashMap<String,String> bindParams = new HashMap<>() ;
 	
 	/**
@@ -38,7 +65,7 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 	 * 
 	 * channel must has tag defined,then map to connector tree node
 	 */
-	private HashMap<String,String> bindMap = new HashMap<>() ;
+	private LinkedHashMap<String,String> bindMap = new LinkedHashMap<>() ;
 	
 
 	private transient Map<String,String> tag2conn = null ;
@@ -109,11 +136,38 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 	 * value = node path in connector 
 	 * @param bm
 	 */
-	public final void setBindMapTag2Conn(Map<String,String> bm)
+	public final void setBindMapTag2Conn(Map<String,String> bm,boolean b_clear_old,boolean create_tag) throws Exception
 	{
-		bindMap.clear(); 
+		UACh ch = null;
+		if(create_tag)
+		{
+			ch = this.getJoinedCh() ;
+			if(ch==null)
+				throw new Exception("no joined channel") ;
+		}
+		
+		HashMap<String,String> nbm = new HashMap<>() ;
+		for(Map.Entry<String,String> n2v:bm.entrySet())
+		{
+			String tagp = n2v.getKey() ;
+			if(ch!=null)
+			{
+				StringBuilder failedr = new StringBuilder() ;
+				UATag t = getOrCreateTagByPath(ch, tagp,failedr) ;
+				if(t==null)
+					throw new Exception(failedr.toString()) ;
+			}
+			int k = tagp.lastIndexOf(":") ;
+			if(k>0)
+				tagp = tagp.substring(0,k) ;
+			nbm.put(tagp, n2v.getValue()) ;
+		}
+		
+		if(b_clear_old)
+			bindMap.clear(); 
+		
 		if(bm!=null)
-			bindMap.putAll(bm) ;
+			bindMap.putAll(nbm) ;
 		conn2tags = null ;
 		tag2conn = null;
 	}
@@ -176,6 +230,122 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 		return r ;
 	}
 	
+	public String exportBindMap() throws Exception
+	{
+		UACh ch = this.getJoinedCh() ;
+		Map<String,String> bm = getBindMap();
+		StringBuilder sb = new StringBuilder() ;
+		for(Map.Entry<String, String> b2t:bm.entrySet())
+		{
+			String t = b2t.getKey() ;
+			String b = b2t.getValue() ;
+			int k = t.lastIndexOf(':') ;
+			String p = t;
+			if(k>0)
+				p = t.substring(0,k);
+			if(ch!=null)
+			{
+				UANode tn = ch.getDescendantNodeByPath(p) ;
+				if(tn==null||!(tn instanceof UATag))
+				{
+					continue ;
+				}
+				UATag tag = (UATag)tn ;
+				if(k<0)
+				{
+					t += ":"+tag.getValTpRaw().getStr();
+				}
+			}
+			sb.append(b+"="+t+"\r\n") ;
+		}
+		return sb.toString() ;
+	}
+	
+	private static UATag getOrCreateTagByPath(UACh ch,String tagp,StringBuilder failedr)
+	{
+		int m = tagp.lastIndexOf(":");
+		String p = tagp ;
+		String vt = null ;
+		if(m>0)
+		{
+			p = tagp.substring(0,m) ;
+			vt = tagp.substring(m+1) ;
+		}
+		UATag tag = ch.getTagByPath(p) ;
+		if(tag!=null)
+			return tag ;
+
+		try
+		{
+			return ch.addTagWithGroupByPath(p, vt, false);
+		}
+		catch(Exception e)
+		{
+			failedr.append("bind failed with add tag err="+e.getMessage()+"\r\n") ;
+			return null ;
+		}
+	}
+	
+	public int importBindMap(String txt,boolean bcreate_tag,StringBuilder result) throws Exception
+	{
+		UACh ch = this.getJoinedCh() ;
+		if(ch==null)
+			throw new Exception("no joined channel") ;
+		
+		List<String> lns = Convert.transMultiLineStrToList(txt, true, true) ;
+		boolean b_new_tag = false;
+		HashMap<String,String> tagp2bp = new HashMap<>() ;
+		int cc = 0 ;
+		for(String ln:lns)
+		{
+			int k = ln.indexOf('=') ;
+			if(k<=0)
+				continue ;
+			String opcp = ln.substring(0,k).trim() ;
+			String tagp = ln.substring(k+1).trim() ;
+			if("".equals(opcp)||"".equals(tagp))
+				continue ;
+			
+			int m = tagp.lastIndexOf(":");
+			String p = tagp ;
+			String vt = null ;
+			if(m>0)
+			{
+				p = tagp.substring(0,m) ;
+				vt = tagp.substring(m+1) ;
+			}
+			UATag tag = ch.getTagByPath(p) ;
+			if(tag==null)
+			{
+				if(!bcreate_tag)
+				{
+					result.append("bind failed with no tag ="+p+"\r\n") ;
+					continue ;
+				}
+				try
+				{
+					tag = ch.addTagWithGroupByPath(p, vt, false);
+					b_new_tag = true;
+				}
+				catch(Exception e)
+				{
+					result.append("bind failed with add tag err="+e.getMessage()+"\r\n") ;
+					continue ;
+				}
+			}
+			
+			tagp2bp.put(tagp, opcp) ;
+			cc ++ ;
+		}// end of for
+		
+		if(b_new_tag)
+			ch.save();
+		
+		setBindMapTag2Conn(tagp2bp,false,false);
+		this.getConnProvider().save();
+		return cc ;
+	}
+	
 	public abstract void RT_writeValByBind(String tagpath,String strv) ;
 	
 	
@@ -219,13 +389,20 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 		List<String> bs = xd.getParamXmlValStrs("bind_list") ;
 		if(bs!=null)
 		{
-			bindList.addAll(bs);
+			//bindList.addAll(bs);
 		}
 		
 		pmxd = xd.getSubDataSingle("bind_map") ;
 		if(pmxd!=null)
 		{
-			this.setBindMapTag2Conn(pmxd.toNameStrValMap());
+			try
+			{
+				this.setBindMapTag2Conn(pmxd.toNameStrValMap(),true,false);
+			}
+			catch(Exception e) 
+			{
+				e.printStackTrace();
+			}
 		}
 		return r ;
 	}
@@ -270,8 +447,61 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 		return null ;
 	}
 	
-	public  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only) throws Exception
+	public HashMap<String,String> Tmp_readValStrsByPaths(List<String> paths) throws Exception
 	{
-		
+		return null ;
 	}
+	
+	public abstract void clearBindBeSelectedCache() ;
+	
+	public abstract List<BindItem> getBindBeSelectedItems() throws Exception;
+	
+	
+	private List<BindItem> searchItems(String sk) throws Exception
+	{
+		List<BindItem> items = getBindBeSelectedItems() ;
+		if(items==null||items.size()<=0)
+			return items ;
+		sk = sk.toLowerCase() ;
+		ArrayList<BindItem> rets = new ArrayList<>() ;
+		for(BindItem item:items)
+		{
+			String fn = item.getPath().toLowerCase() ;
+			if(fn.indexOf(sk)>=0)
+				rets.add(item) ;
+		}
+		return rets ;
+	}
+	
+
+	public final int writeBindBeSelectedListRows(Writer w,String searchkey,int idx,int size) throws Exception
+	{
+		List<BindItem> dis = null;
+		if(Convert.isNullOrEmpty(searchkey))
+			dis = getBindBeSelectedItems() ;
+		else
+			dis = searchItems(searchkey) ;
+		int s = dis.size() ;
+		if(s<idx)
+			return 0 ;
+		
+		int last = idx+size ;
+		int ret = 0 ;
+		w.write("[");
+		boolean bfirst = true ;
+		for(int i = idx ; i < s && i < last ; i++)
+		{
+			if(bfirst) bfirst=false;
+			else w.write(",");
+			BindItem did = dis.get(i) ;
+			w.write("{\"path\":\"" + did.getPath() + "\"");
+			w.write(",\"vt\":\""+did.getValTp()+"\"}");
+			ret ++ ;
+		}
+		w.write("]");
+		return ret ;
+	}
+
+
+	public abstract  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only,boolean force_refresh) throws Exception;
 }

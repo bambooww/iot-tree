@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import java.io.Writer;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -20,12 +21,15 @@ import org.iottree.core.node.PrjCaller;
 import org.iottree.core.node.PrjCallerMQTT;
 import org.iottree.core.node.PrjNodeAdapter;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 {
+	static ILogger log = LoggerManager.getLogger("ConnPtIOTTreeNode") ; 
 //	private String mqttHost = null;
 //	private int mqttPort = 1883;
 //	private String mqttUser = null;
@@ -126,6 +130,8 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 	{
 		try
 		{
+			if(log.isDebugEnabled())
+				log.debug("onNodeSharePush="+jsonstr);
 			UACh ch = this.getJoinedCh();
 			if(ch==null)
 				return ;
@@ -135,7 +141,8 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 			JSONObject jo = new JSONObject(jsonstr);
 			shareWritable = jo.optBoolean("share_writable", false) ;
 			shareDT = jo.optLong("share_dt", -1) ;
-			
+			//if(log.isDebugEnabled())
+			//	log.debug("onNodeSharePush before updateChCxtDyn");
 			updateChCxtDyn(ch,jo);
 		}
 		finally
@@ -147,45 +154,49 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 	private void updateChCxtDyn(UANodeOCTagsGCxt p,JSONObject curcxt)
 	{
 		JSONArray jos = curcxt.optJSONArray("tags");
-		
-		for(int i = 0,n = jos.length() ; i<n ; i++)
+		if(jos!=null)
 		{
-			JSONObject tg = jos.getJSONObject(i);
-			String name = tg.getString("n");
-			UATag tag = p.getTagByName(name) ;
-			if(tag==null)
-				continue ;
-			//var tagp =p+n ;
-			boolean bvalid = tg.optBoolean("valid",false) ;
-			long dt = tg.optLong("dt", -1) ;
-			long chgdt = tg.optLong("chgdt",-1) ;
-			
-			Object ov = tg.opt("v") ;
-			String strv = "";
-			if(ov!=null&&ov!=JSONObject.NULL)
-				strv =""+ov;
-			//set to cxt
-			ov = UAVal.transStr2ObjVal(tag.getValTp(), strv) ;
-			UAVal uav = new UAVal(bvalid, ov,dt,chgdt);
-			//tag.RT_setValStr(strv, true);
-			tag.RT_setUAVal(uav);
-			 
+			for(int i = 0,n = jos.length() ; i<n ; i++)
+			{
+				JSONObject tg = jos.getJSONObject(i);
+				String name = tg.getString("n");
+				UATag tag = p.getTagByName(name) ;
+				if(tag==null)
+					continue ;
+				//var tagp =p+n ;
+				boolean bvalid = tg.optBoolean("valid",false) ;
+				long dt = tg.optLong("dt", -1) ;
+				long chgdt = tg.optLong("chgdt",-1) ;
+				
+				Object ov = tg.opt("v") ;
+				String strv = "";
+				if(ov!=null&&ov!=JSONObject.NULL)
+					strv =""+ov;
+				//set to cxt
+				ov = UAVal.transStr2ObjVal(tag.getValTp(), strv) ;
+				UAVal uav = new UAVal(bvalid, ov,dt,chgdt);
+				//tag.RT_setValStr(strv, true);
+				tag.RT_setUAVal(uav);
+			}
 		}
 		
 		JSONArray subs = curcxt.optJSONArray("subs");
-		for(int i = 0, n = subs.length(); i < n ; i ++)
+		if(subs!=null)
 		{
-			JSONObject sub = subs.getJSONObject(i);
-			
-			String subn = sub.getString("n") ;
-			
-			UANode uan = p.getSubNodeByName(subn) ;
-			if(uan==null)
-				continue ;
-			if(!(uan instanceof UANodeOCTagsGCxt))
-				continue ;
-			
-			updateChCxtDyn((UANodeOCTagsGCxt)uan,sub) ;
+			for(int i = 0, n = subs.length(); i < n ; i ++)
+			{
+				JSONObject sub = subs.getJSONObject(i);
+				
+				String subn = sub.getString("n") ;
+				
+				UANode uan = p.getSubNodeByName(subn) ;
+				if(uan==null)
+					continue ;
+				if(!(uan instanceof UANodeOCTagsGCxt))
+					continue ;
+				
+				updateChCxtDyn((UANodeOCTagsGCxt)uan,sub) ;
+			}
 		}
 	}
 	
@@ -233,6 +244,19 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 			strv = val.toString() ;
 		this.getCaller().callShareWriter(path, strv);
 	}
+	
+//	@Override
+//	public  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only,boolean force_refresh) throws Exception
+//	{
+//		
+//	}
+//	
+//	@Override
+//	public int writeBindBeSelectedListRows(Writer w, int idx, int size)
+//	{
+//		
+//		return 0;
+//	}
 
 	@Override
 	public XmlData toXmlData()

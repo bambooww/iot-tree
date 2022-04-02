@@ -232,32 +232,50 @@ width:100%;
 {
  background-color: #1e90ff;
 }
+
 </style>
 <script>
 dlg.resize_to(600,520);
 </script>
 </head>
 <body>
-<table class="prop_table" >
+<table class="prop_table" style="border:solid 1px" >
   <tr>
-    <td style="width:50%" >
-    <div id="prop_edit_path" class="prop_edit_path">[<%=cptp %>] <%=cp.getName() %>/<%=cpt.getName() %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-     <button id="btn_tree_list" class="layui-btn layui-btn-xs layui-btn-primary" title="set tree or list" onclick="set_tree_list()"><i class="fa-solid fa-folder-tree"></i></button>
+    <td style="width:45%" >
+    <div id="prop_edit_path" class="prop_edit_path">[<%=cptp %>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    
+    
 <%--
+ <button id="btn_tree_list" class="layui-btn layui-btn-xs layui-btn-primary" title="set tree or list" onclick="set_tree_list()"><i class="fa-solid fa-folder-tree"></i></button>
         <button class="layui-btn layui-btn-xs layui-btn-primary" title="set bind parameters" onclick="set_bind_pm()"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
          --%>
-         <button class="layui-btn layui-btn-xs layui-btn-primary" title="refresh" onclick="refresh_tree()"><i class="fa fa-refresh" aria-hidden="true"></i></button> 
+         <button class="layui-btn layui-btn-xs layui-btn-primary" title="refresh" onclick="refresh_tb_list()"><i class="fa fa-refresh" aria-hidden="true"></i></button> 
+         &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="inp_search" size="10" onkeydown="do_search_ret(event)"/>
+         <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search()" title="search"><i class="fa-solid fa-magnifying-glass"></i></button>
+         <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search(true)" title="clear search"><i class="fa-solid fa-eraser"></i></button>
     </div>
-    	<div id="bind_tree" class="prop_edit_cat" style="height:420px;">
-    		
-		</div>
+       <div id="list_table" class="prop_edit_cat" style="height:420px">
+    	<table style="width:100%;border:0px" class='besel'>
+    		<thead>
+    			<tr style="background-color: #f0f0f0">
+    				<td width="70%">Path</td>
+    				<td width="10%">Type</td>
+    				<td width="20%">Value</td>
+    			</tr>
+    		</thead>
+    		<tbody id="bind_tb_body" style="height0:390px">
+    			
+    		</tbody>
+		</table>
+	</div>
     </td>
-    <td style="width:50%" >
-      <table style="border:0px">
+    <td style="width:55%" >
+      <table style="border:0px;height:100%">
+      <%--
        <tr style="height:30%;border:solid 0px">
 	       <td style="width:5%;vertical-align:middle;"  >
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="sel_or_not(true)"><i class="fa-solid fa-arrow-right"></i></button><br><br>
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="sel_or_not(false)"><i class="fa-solid fa-arrow-left"></i></button>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="copy_or_not(true)"><i class="fa-solid fa-arrow-right"></i></button><br><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="copy_or_not(false)"><i class="fa-solid fa-arrow-left"></i></button>
 	    </td>
 	    <td style="width:95%;vertical-align: top;height:50%"  >
 	    <div id="prop_edit_path" class="prop_edit_path">Bind Copy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -275,16 +293,20 @@ dlg.resize_to(600,520);
 		 </div>
 	    </td>
        </tr>
-       <tr style="height:70%;border:solid 0px">
+       --%>
+       <tr style="height:100%;border:solid 0px">
          <td style="width:5%;vertical-align:middle;"  >
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(true)"><i class="fa-solid fa-arrow-right"></i></button><br><br>
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(false)"><i class="fa-solid fa-arrow-left"></i></button>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(true)" title="bind to tag"><i class="fa-solid fa-arrow-right"></i></button><br><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="copy_map()" title="copy create tag and bind"><i class="fa fa-angles-right"></i><br><i class="fa fa-tag"></i></button><br><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(false)" title="unbind from tag"><i class="fa-solid fa-arrow-left"></i></button>
 	    </td>
 	    <td style="width:95%;vertical-align: top;height:100%"  >
 	    <div id="prop_edit_path" class="prop_edit_path">Bind Map &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      
+      <button id="btn_tag_syn" class="layui-btn layui-btn-xs layui-btn-primary" title="export" onclick="bind_export()"><i class="fa-solid fa-arrow-up"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
+      <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="import" onclick="bind_import()"><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
+      <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="add tag in channel" onclick="add_tag()"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
     </div>
-	    <div id=""  class="prop_edit_panel" style="height:210px">
+	    <div id=""  class="prop_edit_panel" style="height:420px">
 	       <table style="width:100%;overflow: auto;" >
 	       	 <thead>
 	       	   <tr>
@@ -319,7 +341,8 @@ dlg.resize_to(600,520);
 		vtstr = vt.getStr();
 %>
   <td><%=c_p %></td>
-  <td><%=tagp %>:<%=vtstr %></td>
+  <td title="<%=tag.getTitle()%>"><%=tagp %>:<%=vtstr %></td>
+   <td></td>
 </tr>
 <%
 	}
@@ -345,12 +368,34 @@ var map_show_len = <%=map_show_len%> ;
 
 var cur_bind_map_tr = null ;
 
+var b_ctrl_down = false;
+var b_shift_down=false;
+$(document).keydown(function(e){
+ if(e.keyCode==17)
+	 b_ctrl_down=true;
+ else if(e.keyCode==16)
+	 b_shift_down = true ;
+ });
+$(document).keyup(function(e){
+ if(e.keyCode==17)
+	 b_ctrl_down=false;
+ else if(e.keyCode==16)
+	 b_shift_down = false ;
+ });
+	 
+
 $("#tb_bind_map tr").click(function(){
 	cur_bind_map_tr = $(this) ;
-	var tagp = $(this).attr("tagp") ;
-	console.log(tagp) ;
+	//var tagp = $(this).attr("tagp") ;
+	//console.log(tagp) ;
 	refresh_bind_map();
 });
+
+function on_right(ob)
+{
+	cur_bind_map_tr = $(ob) ;
+	refresh_bind_map();
+}
 
 function refresh_bind_map()
 {
@@ -361,115 +406,120 @@ function refresh_bind_map()
 		cur_bind_map_tr.addClass("map_sel") ;
 }
 
-
-function init_tree()
+function add_tag()
 {
-		$.jstree.destroy();
-		this.jsTree = $('#bind_tree').jstree(
+	dlg.open("../ua/tag_path_simple.jsp",
+			{title:"Edit Tag Path Under Channel",w:'500px',h:'400px'},
+			['Ok','Close'],
+			[
+				function(dlgw)
 				{
-					'core' : {
-						'data' : {
-							//'url' : "cpt_bind_ajax.jsp?prjid="+prjid+"&op=tree&cpid="+cpid+"&cptp="+cptp+"&connid="+connid,
-							"dataType" : "json"
-						},
-						'check_callback' : function(o, n, p, i, m) {
-							if(m && m.dnd && m.pos !== 'i') { return false; }
-							if(o === "move_node" || o === "copy_node") {
-								if(this.get_node(n).parent === this.get_node(p).id) { return false; }
-							}
-							return true;
-						},
-						'themes' : {
-							'responsive' : false,
-							'variant' : 'small',
-							'stripes' : true
-						}
-					},
-					'contextmenu' : { //
-						
-						'items' :(node)=>{
-							//this.get_type(node)==='ch''
-							//console.log(node)
-							var tp = node.original.type
-							//console.log(tp) ;
-							return this.get_cxt_menu(tp,node.original) ;
-		                }
-					},
-					'types' : {
-						'default' : { 'icon' : 'folder' },
-						'file' : { 'valid_children' : [], 'icon' : 'file' }
-					},
-					'unique' : {
-						'duplicate' : function (name, counter) {
-							return name + ' ' + counter;
-						}
-					},
-					'plugins' : ['state','dnd','types','contextmenu','unique']
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 if(add_bind_item("",ret.path+":"+ret.vt))
+							 dlg.close() ;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
 				}
-		)
-		
-		this.jsTree.on('activate_node.jstree',(e,data)=>{
-			on_tree_node_sel(data.node.original)
-		})
+			]);
 }
 
-var b_list = true ;
-
-function set_tree_list()
+var uid_cc = 0 ;
+function new_id()
 {
-	var btl = $('#btn_tree_list');
-	if(b_list)
-	{
-		b_list=false;
-		btl.html("<i class='fa fa-list'></i>");
-	}
-	else
-	{
-		b_list=true ;
-		btl.html("<i class='fa-solid fa-folder-tree'></i>");
-	}
-	refresh_tree();
+	uid_cc ++ ;
+	return "i"+uid_cc ;
 }
 
-var cur_sel_node = null ;
-
-function on_tree_node_sel(n)
+function add_bind_item(bpath,tpath)
 {
-	//"prjid="+prjid+"&op=sub_nodes&connid="+connid+"&nodeid="+n.id
-	cur_sel_node = n ;
-	console.log(n) ;
-}
-
-function get_sel_tree_nodes()
-{
-	var tns = $('#bind_tree').jstree(true).get_selected(true);
-	var rets=[] ;
-	for(var tn of tns)
+	var k = tpath.indexOf(':') ;
+	if(k<0)
 	{
-		rets.push(tn.original) ;
+		dlg.msg("tag path must end with value type like :int16") ;
+		return false;
 	}
-	return rets;
+	var vt = tpath.substring(k+1) ;
+	var tagp = tpath.substring(0,k) ;
+	if(!chk_var_path(tagp,true))
+	{
+		dlg.msg("tag path must be combined by var name,which must use a-z A-Z 0-9 _ and a-z A-Z first");
+		return false;
+	}
+	if(bpath==null||bpath==undefined)
+		bpath ="" ;
+	var tmpid =new_id();
+	var tmps = "<tr id='ntag_"+tmpid+"' tagp='"+tpath+"' bindp='"+bpath+"' onclick='on_right(this)'>";
+	
+		if(tagp.length>map_show_len)
+			tagp = "..."+tagp.substring(tagp.length-map_show_len) ;
+		if(bpath.length>map_show_len)
+			bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
+
+	 tmps += "<td>"+bpath+"</td>";
+	 tmps += "<td>"+tagp+":"+vt+"</td>";
+	 tmps += "<td onclick=\"ntag_del('"+tmpid+"')\">X</td></tr>";
+	 
+	 $("#tb_bind_map").append(tmps) ;
+	 return true;
 }
 
-function sel_or_not(b)
+function ntag_del(id)
+{
+	$("#ntag_"+id).remove();
+}
+
+var cur_lefts_trs = [] ;
+
+
+function on_left(tr)
+{
+	if(!b_ctrl_down)
+	{
+		cur_lefts_trs.length=0;
+	}
+	
+	//TODO shift support later
+	
+	if(cur_lefts_trs.indexOf(tr)<0)
+			cur_lefts_trs.push(tr) ;
+	
+	refresh_left();
+}
+
+function refresh_left()
+{
+	$("#bind_tb_body tr").each(function(){
+		$(this).removeClass("map_sel") ;
+	});
+	for(var tmptr of cur_lefts_trs)
+		$(tmptr).addClass("map_sel") ;
+}
+
+
+function copy_or_not(b)
 {
 	
 	if(b)
 	{
-		var tns = get_sel_tree_nodes();
-		if(tns.length<=0)
+		if(cur_lefts_trs.length<=0)
 		{
-			dlg.msg("please select nodes left") ;
+			dlg.msg("please select items left") ;
 			return ;
 		}
 		
-		for(var tn of tns)
+		for(var tr of cur_lefts_trs)
 		{
-			if(tn.tp!='tagg' && tn.tp!='tag')
-				continue ;
-			var v = tn.id;
-			if(tn.nc=='tag')
-				v += ":"+tn.vt ;
+			var tn = $(tr) ;
+			//var opctp = tn.attr("opc_tp") ;
+			var v = tn.attr("path") + ":"+tn.attr("vt") ;
 			if(has_selected_val(v))
 				continue ;
 			$("#bind_selected").append("<option value='"+v+"'>"+v+"</option>");
@@ -484,35 +534,43 @@ function sel_or_not(b)
 	})
 }
 
+function copy_map()
+{
+	if(cur_lefts_trs.length<=0)
+	{
+		dlg.msg("please select item left") ;
+		return ;
+	}
+	
+	for(var tr of cur_lefts_trs)
+	{
+		var tn = $(tr) ;
+		var p = tn.attr("path");
+		var v = p + ":"+tn.attr("vt") ;
+		
+		add_bind_item(v,v);
+	}
+	
+}
+
 function map_or_not(b)
 {
 	if(b)
 	{
-		var tns = get_sel_tree_nodes();
-		if(tns.length<=0)
+		if(cur_lefts_trs.length!=1)
 		{
-			dlg.msg("please select a tag node left") ;
-			return ;
-		}
-		if(tns.length>1)
-		{
-			dlg.msg("please select one tag node left") ;
+			dlg.msg("please select one item left") ;
 			return ;
 		}
 		
-		var tn = tns[0] ;
-		if(tn.tp!='tag')
-		{
-			dlg.msg("please select a tag node left") ;
-			return ;
-		}
+		var tn = $(cur_lefts_trs[0]) ;
+		var v = tn.attr("path") + ":"+tn.attr("vt") ;
+		
 		if(cur_bind_map_tr==null)
 		{
 			dlg.msg("please select tag in channel right")
 			return ;
 		}
-		
-		var v = tn.id+":"+tn.vt ;
 		
 		var tmptd = cur_bind_map_tr.children('td').eq(0) ;
 		cur_bind_map_tr.attr("bindp",v) ;
@@ -586,27 +644,225 @@ function get_map_vals()
 	return r ;
 }
 
-
-init_tree();
-
-function refresh_tree()
+function bind_export()
 {
-	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"tree",list:b_list,cpid:cpid,cptp:cptp,connid:connid},function(bsucc,ret){
-		if(!bsucc||ret.indexOf("{")!=0)
+	dlg.open("cpt_bind_port.jsp?op=export&prjid="+prjid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"Export Bind",w:'800px',h:'600px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function bind_import()
+{
+	dlg.open("cpt_bind_port.jsp?op=import&prjid="+prjid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:"Export Bind",w:'500px',h:'400px'},
+			['Import','Close'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.prjid = prjid ;
+						 ret.cptp = cptp ;
+						 ret.connid = connid ;
+						 ret.op='import';
+						 //console.log(ret);
+						 send_ajax('cpt_bind_ajax.jsp',ret,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.close();
+								//refresh_ui() ;
+								ua_panel.redraw(false,false,true) ;
+							},false);
+							
+						 
+						 //document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+var LOAD_ROWS = 40 ;
+var page_last_idx = 0 ;
+var page_has_next = true;
+var search_key = "" ;
+
+function search(bclear)
+{
+	
+	var sk = "";
+	if(bclear)
+		$("#inp_search").val("") ;
+	else
+		sk = $("#inp_search").val() ;
+	search_key = sk ;
+	if(!sk)
+	{
+		refresh_tb_list(false)
+		return ;
+	}
+	
+	$('#bind_tb_body').html("") ;
+	page_last_idx = 0 ;
+	page_has_next = true;
+	show_tb_list();
+	return ;
+}
+
+function do_search_ret(e)
+{
+    var evt = window.event || e;
+    if (evt.keyCode == 13) {
+    	search(false)
+    }
+}
+
+function refresh_tb_list(breload)
+{
+	if(!breload)
+	{
+		$('#bind_tb_body').html("") ;
+		page_last_idx = 0 ;
+		page_has_next = true;
+		show_tb_list();
+		return ;
+	}
+	
+	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"clear_cache",cpid:cpid,cptp:cptp,connid:connid},(bsucc,ret)=>{
+			$('#bind_tb_body').html("") ;
+			page_last_idx = 0 ;
+			page_has_next = true;
+			show_tb_list();
+			return ;
+	}) ;
+}
+
+function show_tb_list()
+{
+	var idx = page_last_idx;
+	var size = LOAD_ROWS ;
+	dlg.loading(true) ;
+	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"list",cpid:cpid,cptp:cptp,connid:connid,idx:idx,size:size,sk:search_key},function(bsucc,ret){
+		dlg.loading(false) ;
+	//	console.log("ret len="+ret.length) ;
+		if(!bsucc||ret.indexOf("[")!=0)
 		{
 			dlg.msg(ret) ;
 			return ;
 		}
-		var tree = $('#bind_tree');
+		var tbb = $('#bind_tb_body');
+		var obs = null;
+		eval("obs="+ret) ;
+		page_has_next = obs.length>=size;
+		page_last_idx += obs.length ;
+		for(var ob of obs)
+		{
+			tbb.append(ob2tr_row(ob));
+		}
+		
+	});
+}
+
+
+var ROW_MAX_LEN = 30 ;
+
+function ob2tr_row(ob)
+{
+	var ret = "<tr path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
+	var txt = ob.path ;
+	var txtlen = txt.length ;
+	if(txtlen>ROW_MAX_LEN)
+	{
+		ret += "<td title='"+txt+"'>..."+txt.substring(txtlen-ROW_MAX_LEN)+"</td>";
+	}
+	else
+	{
+		ret += "<td>"+txt+"</td>";
+	}
+	
+	ret += "<td>"+ob.vt+"</td>";
+	ret += "<td></td>";
+	ret += "</tr>"
+	return ret ;
+}
+
+function read_tmp_paths_vals()
+{
+	if(cur_lefts_trs.length<=0)
+		return ;
+	var pstr = $(cur_lefts_trs[0]).attr("path") ;
+	for(var i = 1 ; i < cur_lefts_trs.length;i++)
+		pstr += ","+$(cur_lefts_trs[i]).attr("path") ;
+	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"tmp_paths_vals",cpid:cpid,cptp:cptp,connid:connid,paths:pstr},function(bsucc,ret){
+		
+	//	console.log("ret len="+ret.length) ;
+		if(!bsucc||ret.indexOf("{")!=0)
+		{
+			console.log(ret) ;
+			return ;
+		}
+		var tbb = $('#bind_tb_body');
 		var ob = null;
 		eval("ob="+ret) ;
-		tree.jstree(true).settings.core.data = ob;
-		tree.jstree(true).refresh();
+		for(var n in ob)
+		{
+			var v = ob[n] ;
+			var tr = tbb.find("tr[path$='"+n+"']") ;
+			tr.children('td').eq(2).html(v);
+		}
+		
 	});
 	
 }
+
+//setInterval(read_tmp_paths_vals,2000) ;
+
+var allshow=false;
+
+var sdiv = $("#list_table")[0] ;
+$("#list_table").scroll(()=>{
+	 var wholeHeight=sdiv.scrollHeight;
+	 var scrollTop=sdiv.scrollTop;
+	 var divHeight=sdiv.clientHeight;
+	 if(divHeight+scrollTop>=wholeHeight)
+	 {//reach btm
+		 if(!page_has_next)
+			{
+				if(!allshow)
+					lj.msg("已经显示全部");
+				allshow=true;
+				return;
+			}
+				
+			//console.log("show more");
+			show_tb_list();
+		    $("list_table").scroll(scrollTop);
+	 }
+	 if(scrollTop==0)
+	 {//reach top
+		
+	}
+});
 	
-refresh_tree();
+show_tb_list();
 
 function set_bind_pm()
 {

@@ -12,14 +12,28 @@
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>	
 <%
-if(!Convert.checkReqEmpty(request, out, "path"))
-	return;
+//String prjid = 
 String path = request.getParameter("path") ;
-UANode n = UAUtil.findNodeByPath(path) ;
-if(n==null)
+
+if(path==null)
+	path = "" ;
+UANode n = null;//
+String path_title = "" ;
+if(Convert.isNotNullEmpty(path))
 {
-	out.print("no node found") ;
-	return ;
+	n = UAUtil.findNodeByPath(path) ;
+	if(n==null)
+	{
+		out.print("no node found") ;
+		return ;
+	}
+
+	if(!(n instanceof UANodeOCTags))
+	{
+		out.print("not node oc tags") ;
+		return ;
+	}
+	path_title = n.getNodePathTitle()+" "+n.getNodePath() ;
 }
 
 String taskid = request.getParameter("taskid") ;
@@ -28,20 +42,20 @@ if(taskid==null)
 String opener_txt_id = request.getParameter("opener_txt_id") ;
 if(opener_txt_id==null)
 	opener_txt_id = "" ;
+
+String sample_txt_id = request.getParameter("sample_txt_id") ;
+if(sample_txt_id==null)
+	sample_txt_id = "" ;
+String func_params  = request.getParameter("func_params") ;
 //UANode n = rep.findNodeById(id) ;
 
-if(!(n instanceof UANodeOCTags))
-{
-	out.print("not node oc tags") ;
-	return ;
-}
 
-UANode topn = n.getTopNode() ;
-UAPrj prj = null ;
-if(topn instanceof UAPrj)
-{
-	prj = (UAPrj)topn ;
-}
+//UANode topn = n.getTopNode() ;
+//UAPrj prj = null ;
+//if(topn instanceof UAPrj)
+//{
+//	prj = (UAPrj)topn ;
+//}
 
 //UANodeOCTags ntags = (UANodeOCTags)n ;
 //List<UATag> tags = ntags.listTagsAll() ;
@@ -61,13 +75,37 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
-<b title="<%=n.getNodePathTitle()%>"> <%=n.getNodePath() %> </b>
+<b><%=path_title %></b>
+<%
+if(Convert.isNotNullEmpty(path))
+{
+%>
 <input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" />
-
+<%
+}
+%>
 <table border='1' style="height:90%;width:100%">
  <tr height="75%">
   <td colspan="2">
-   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:100%"></textarea>
+<%
+String cheight = "100%" ;
+if(Convert.isNotNullEmpty(func_params))
+{
+	cheight="200px" ;
+%>
+&nbsp;&nbsp;(<%=func_params %>)=&gt;{
+<%
+}
+
+if(Convert.isNotNullEmpty(sample_txt_id))
+{
+%>
+<button onclick="insert_sample()">insert sample</button>
+<%
+}
+%>
+   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>"></textarea>
+&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
   </td>
  </tr>
   <tr height="20%">
@@ -84,6 +122,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <script>
 var path="<%=path%>" ;
 var opener_txt_id = "<%=opener_txt_id%>" ;
+var sample_txt_id = "<%=sample_txt_id%>" ;
 var taskid="<%=taskid%>";
 
 function log(s)
@@ -101,6 +140,21 @@ function init()
 		{
 			$("#script_test").val(txtob.value) ;
 		}
+	}
+	
+}
+
+function insert_sample()
+{
+	if(sample_txt_id=='')
+		return ;
+	
+	var ow = dlg.get_opener_w();
+	var txtob = ow.document.getElementById(sample_txt_id) ;
+	if(txtob!=null)
+	{
+		var oldv = $("#script_test").val() ;
+		$("#script_test").val(oldv+"\r\n"+txtob.value) ;
 	}
 	
 }

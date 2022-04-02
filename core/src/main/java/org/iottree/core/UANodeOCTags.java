@@ -430,6 +430,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			save();
 		return d;
 	}
+	
+	
 
 	public boolean delTag(UATag t) throws Exception
 	{
@@ -596,12 +598,12 @@ public abstract class UANodeOCTags extends UANodeOC
 		return null;
 	}
 
-	public UATag getTagByCxtPath(String cxtpath)
-	{
-		// this.fin
-		List<String> pns = Convert.splitStrWith(cxtpath, "/.");
-		return null;
-	}
+//	public UATag getTagByCxtPath(String cxtpath)
+//	{
+//		// this.fin
+//		List<String> pns = Convert.splitStrWith(cxtpath, "/.");
+//		return null;
+//	}
 	// /**
 	// * xxx.xxx.xxx
 	// * @param path

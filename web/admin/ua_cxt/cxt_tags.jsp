@@ -124,6 +124,16 @@ overflow:hidden;
 text-overflow:ellipsis;
 }
 
+.tagsel
+{
+	background-color: #0078d7;
+	color: white;
+}
+
+.tagsel a
+{
+	color: white;
+}
 
 </style>
 <body marginwidth="0" marginheight="0">
@@ -869,9 +879,10 @@ function redraw_tags()
 	$('#tb_cur tr[id*="ctag_"]').each(function(i){
 		 var tid = $(this).attr("tag_id");
 		 if(tag_sels.indexOf(tid)>=0)
-			 $(this).css("background","#0078d7");
+			 //$(this).css("background","#0078d7");
+		 	$(this).addClass("tagsel") ;
 		 else
-			 $(this).css("background","");
+			 $(this).removeClass("tagsel");//.css("background","");
 	});
 }
 

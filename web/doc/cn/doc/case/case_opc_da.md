@@ -45,6 +45,10 @@ IOT-Tree Server专门针对x86 32位windows提供了一个支持OPC DA接入的�
 
 安装过程请参考[快速开始][quick_start]
 
+特别注意，如果您没有使用本例子中的OPC服务，其他OPC服务程序很可能需要使用超级管理员的权限来访问。此时，确保您启动IOT-Tree Server的当前用户为超级管理员，主要有两种方式：
+1）如果你使用命令方式启动IOT-Tree Server，鼠标右键iot-tree.bat，选择"以管理员身份运行"。或者你以管理员身份打开一个命令窗口，然后运行iot-tree.bat。
+2）如果您已经把IOT-Tree Server注册成windows服务，那么请打开服务管理（命令services.msc），找到IOT-Tree Server服务项，双击打开参数配置，在"登录"内容中，选择超级管理员账号和密码,确保服务以管理员的身份启动。
+
 
 
 
@@ -95,35 +99,35 @@ Title=OPC DA Client Demo
 <img src="../img/opc_da05.png">
 
 
-## 2.4 直接绑定复制OPC Server中的部分定义
+## 2.4 绑定或复制OPC Server中的内容到通道下面
 
 通过以上简单的步骤，你已经为接入和通道做好了准备，接下来就可以考虑利用OPC Server中的哪些数据了。
 
-IOT-Tree Server可以直接复制OPC Server中的数据层次，并在关联的通道下面建立对应的层次和Tag定义。
+IOT-Tree Server通过映射（Map）方式使得Opc Server中的内容和通道下面的Tag节点建立关联关系。首先我们看看添加的OPC DA Client链接能给我们带来什么内容。
 
-鼠标右键Connectors下面的kp4，点击"Bind"。在弹出的窗口中，我们可以看到，左边部分列举了所有的OPC Server能够提供的数据节点。你可以点击上方的树形转换按钮，使得左边以层次方式展示。如下图：
+鼠标右键Connectors下面的kp4，点击"Bind"。在弹出的窗口中，我们可以看到，左边部分列举了所有的OPC Server能够提供的数据节点。如下图：
 
 
 <img src="../img/opc_da06.png">
 
 
-在窗口右上方有个"Bind Copy"选择框，您可以选择左边的组织节点，并点击对应的向右按钮进行选择。
+你可以在弹出窗口的左边，看到OPC Server相关的所有数据列表和类型信息。右边就是绑定内容区域。此时，因为在关联的通道ccc下面并没有任何标签Tag，所以显示空白。
 
-按着"Ctrl"键，鼠标点击"Channel_4.Device_6，Channel_1.Device_1.Tag_2,Channel_1.Device_2.Bool_2,Channel_2.Bool_2"进行多选；然后点击"Bind Copy"左边的向右按钮进行复制，如下图：
+此时，你可能希望直接复制左边的数据（含层次信息）到通道ccc下面，那么你可以选中左边需要被复制的数据项，点击中间"copy create tag and bind"按钮。此时，你可以在右边出现一个绑定数据项，被绑定数据项和通道下面的Tag内容相同。
+
+请按着"Ctrl"键，在左边以此多选如下节点"Channel_4.Device_6.*, Channel_1.Device_1.Tag_2, Channel_1.Device_2.Bool_2"；然后点击点击中间"copy create tag and bind"按钮，结果如下图：
 
 
 <img src="../img/opc_da07.png">
 
 
-此时，你已经选择了一部分节点。其中，如果是叶子节点，则直接对应Tag标签，后面会带数值类型。如果是分组节点，则代表此节点下面的所有内容都会被复制。点击此列表框上面"create tag groups and tags"按钮，系统会根据你的当前选择，对关联的通道下面自动复制建立相同的层次结构。
-
-如下图：
+点击弹出窗口"Ok"按钮，IOT-Tree Server会根据上面的映射关系，自动在通道ccc下面建立相关的标签组和对应的标签。请刷新Browser的树型结构，你可以看到如下结果：
 
 
 <img src="../img/opc_da08.png">
 
 
-点击确定保存信息，然后刷新此项目管理主界面，你会发现在通道"ccc"下面已经复制了相关层次内容，并且Tag列表也同样建立。此时，你启动项目就会发现，这些自动创建的内容已经能够获取数据
+此时，你启动项目就会发现，这些自动创建的内容已经能够获取数据
 
 如下图:
 
@@ -132,6 +136,8 @@ IOT-Tree Server可以直接复制OPC Server中的数据层次，并在关联的�
 
 
 非常简单，对吧。不过问题来了，这个结构可能是你对接的老系统定义的，你希望在你的IOT-Tree Server中定义你自己的层次结构和Tag名称，然后把老系统中的数据映射到你自己创建的Tag中。
+
+另外，您可能会发现，IOT-Tree Server中的所有节点名称都必须符合编程变量规范，只能是A-Z a-z 和数字等组合。如果被绑定的路径包含非法字符，那么直接复制层次结构，并且自动建立相关节点变得不可能。此时，你也只能自己创建Tag，并且通过映射方式获取数据值。
 
 
 
@@ -149,9 +155,9 @@ IOT-Tree Server可以直接复制OPC Server中的数据层次，并在关联的�
 
 以上我们准备好了自己的层次和Tag。接下来，我们把OPC Server中的一些内容映射过来。
 
-鼠标右键Connectors下面的kp4，选择Bind重新打开刚才的设置窗口。你会发现，在窗口右下角"Bind Map"区域已经有了一半的内容。这些内容处在"Tags in Channel"下面，左边"Map Binded"是空的，等待我们来绑定。
+鼠标右键Connectors下面的kp4，选择Bind重新打开刚才的设置窗口。你会发现，在窗口右边多了一些数据项，这些内容处在"Tags in Channel"下面，左边"Map Binded"是空的，等待我们来绑定。
 
-我们，选择第一行"aa.b1"，然后在左边选择叶子节点"Channel_4.Device_6.Bool_15",然后点击对应的右箭头按钮，进行绑定，如下图所示：
+我们，选择第一行"aa.b1"，然后在左边选择"Channel_4.Device_6.Bool_15",然后点击对应的右箭头按钮，进行绑定，如下图所示：
 
 
 <img src="../img/opc_da11.png">

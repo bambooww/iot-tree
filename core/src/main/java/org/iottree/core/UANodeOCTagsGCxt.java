@@ -8,6 +8,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.CompressUUID;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -298,6 +299,49 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		return false;
 	}
 
+
+	public UATag addTagWithGroupByPath(List<String> path,UAVal.ValTP vt,boolean bsave) throws Exception
+	{
+		int s = path.size() ;
+		if(s<=0)
+			return null ;
+		String n = path.get(0) ;
+		if(s==1)
+		{
+			return this.addTag(n, n, "", vt, bsave) ;
+		}
+		
+		UATagG tg = this.getSubTagGByName(n) ;
+		if(tg==null)
+			tg = this.addTagG(n, n, "") ;
+		for(int i = 1 ; i < s - 1 ; i ++)
+		{
+			n = path.get(i) ;
+			UATagG tg0 = tg.getSubTagGByName(n) ;
+			if(tg0==null)
+				tg0 = tg.addTagG(n, n, "") ;
+			tg = tg0 ;
+		}
+		n = path.get(s-1) ;//last
+		return tg.addTag(n, n, "", vt, bsave) ;
+	}
+	
+	public UATag addTagWithGroupByPath(String path,String vtstr,boolean bsave) throws Exception
+	{
+		List<String> ps = Convert.splitStrWith(path, ".") ;
+		UAVal.ValTP vt = UAVal.getValTp(vtstr) ;
+		if(vt==null)
+			throw new Exception("no valtp with "+vtstr) ;
+		return addTagWithGroupByPath(ps, vt,bsave) ;
+	}
+	
+	public UATag getTagByPath(String pathstr)
+	{
+		UANode tn = this.getDescendantNodeByPath(pathstr) ;
+		if(tn==null||!(tn instanceof UATag))
+			return null ;
+		return (UATag)tn ;
+	}
 	
 //	protected void listTagsAll(List<UATag> tgs,boolean bmid)
 //	{

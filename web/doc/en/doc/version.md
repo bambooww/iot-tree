@@ -64,4 +64,10 @@ Upgrade the running environment to openjdk-jre17. Modify the implementation of c
 Use Mozilla Public License Version 2.0 (MPL). Add third-party plug-in license support.
 
 
+
+
+### version 0.96.0
+Improve the data access, processing and channel Association supporting message mode. And support mqtt and other specific protocols.
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

@@ -104,6 +104,10 @@ public class UAVal //extends JSObMap
 	
 	public static ValTP getValTp(String tpstr)
 	{
+		if(Convert.isNullOrEmpty(tpstr))
+			return null;
+		if("string".equalsIgnoreCase(tpstr))
+			tpstr= "str" ;
 		if(!tpstr.startsWith("vt_"))
 			tpstr = "vt_"+tpstr ;
 		return ValTP.valueOf(tpstr);

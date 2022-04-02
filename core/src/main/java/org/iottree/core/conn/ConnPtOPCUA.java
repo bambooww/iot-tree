@@ -48,6 +48,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.Node;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.iottree.core.ConnPt;
+import org.iottree.core.conn.ConnPtBinder.BindItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
@@ -318,13 +319,24 @@ public class ConnPtOPCUA extends ConnPtBinder
     	writeUaNodeTreeJson(w,uaClient,nodeid);
     }
     
-    @Override
-	public void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only) throws Exception
-	{
-    	writeUaNodeTreeJson(w,true) ;
+    public void clearBindBeSelectedCache()
+    {
+    	
     }
     
-    public void writeUaNodeTreeJson(Writer w,boolean b_var) throws Exception
+    @Override
+    public List<BindItem> getBindBeSelectedItems() throws Exception
+	{
+    	return null ;
+	}
+    
+    @Override
+    public  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only,boolean force_refresh) throws Exception
+	{
+    	writeUaNodeTreeJson(w,true,force_refresh) ;
+    }
+    
+    public void writeUaNodeTreeJson(Writer w,boolean b_var,boolean force_refresh) throws Exception
     {
     	if(uaClient==null)
     	{

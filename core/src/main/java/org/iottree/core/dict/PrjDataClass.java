@@ -127,7 +127,7 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 			throw new IOException("no DataClass file found!") ;
 		
 		try(FileOutputStream fos = new FileOutputStream(dcf);
-				OutputStreamWriter osw = new OutputStreamWriter(fos) ;)
+				OutputStreamWriter osw = new OutputStreamWriter(fos,"UTF-8") ;)
 		{
 			dc.writeToXml(osw);
 			osw.flush();

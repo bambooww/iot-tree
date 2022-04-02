@@ -117,7 +117,7 @@ public class WSHmiRT extends WSServer
 		removeSessionItem(session);
 		// getAgentServer().onSessionUnset(session.getId());
 		if (getSessionNum() <= 0)
-			stopTimer();
+			stopTimer(false);
 	}
 
 	@OnMessage
@@ -202,6 +202,8 @@ public class WSHmiRT extends WSServer
 	{
 		// getAgentServer().onSessionErr(connid, t);
 		removeSessionItem(session);
+		if(getSessionNum()<=0)
+			stopTimer(false) ;
 	}
 
 	private void onHmiEvent(String cxtpath, String hmipath, String diid, String eventn, String val)

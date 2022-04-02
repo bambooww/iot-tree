@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/json; charset=UTF-8"
     pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.*,
+	org.iottree.core.conn.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
 	java.io.*,
@@ -11,6 +12,7 @@
 if(!Convert.checkReqEmpty(request, "{\"res\":\"no prjid and op input\"}",out, "prjid","op"))
 	return;
 String repid = request.getParameter("prjid") ;
+String cpid = request.getParameter("cpid") ;
 String op = request.getParameter("op") ;
 switch(op)
 {
@@ -77,13 +79,32 @@ case "cp_set":
 case "cp_del":
 	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cpid"))
 		return;
-	String cpid = request.getParameter("cpid") ;
 	try
 	{
 		if(ConnManager.getInstance().delConnProvider(repid, cpid))
 			out.print("{\"res\":true}");
 		else
 			out.print("{\"res\":false,\"err\":\"delete error\"}");
+	}
+	catch(Exception e)
+	{
+		out.print("{\"res\":false,\"err\":\""+e.getMessage()+"\"}");
+		return ;
+	}
+	break ;
+case "cp_init":
+	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cpid"))
+		return;
+	ConnProvider cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+	if(cp==null)
+	{
+		out.print("{\"res\":false,\"err\":\"no ConnProvider found\"}");
+		return ;
+	}
+	try
+	{
+		cp.reInit();
+		out.print("{\"res\":true}");
 	}
 	catch(Exception e)
 	{
@@ -100,7 +121,7 @@ case "conn_set":
 	//System.out.println("json="+json) ;
 	try
 	{
-		ConnProvider cp = ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp) ;
+		cp = ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp) ;
 		if(cp==null)
 		{
 			cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
@@ -123,7 +144,7 @@ case "conn_del":
 	String connid = request.getParameter("connid") ;
 	try
 	{
-		ConnProvider cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+		cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
 		if(cp.delConnPt(connid))
 			out.print("{\"res\":true}");
 		else
@@ -162,6 +183,37 @@ case "join_del":
 		return ;
 	}
 	
+	break ;
+case "conn_dev_new_add":
+	if(!Convert.checkReqEmpty(request, "{\"err\":\"no id input\"}", out,"connid","name"))
+		return;
+	connid = request.getParameter("connid") ;
+	String name = request.getParameter("name") ;
+	ConnPt cpt = ConnManager.getInstance().getConnPtById(repid, connid);
+	if(cpt==null)
+	{
+		out.print("{\"res\":false,\"err\":\"no conn found\"}");
+		return ;
+	}
+	if(!(cpt instanceof ConnDevFindable))
+	{
+		out.print("{\"res\":false,\"err\":\"conn is not findable\"}");
+		return ;
+	}
+	ConnDevFindable cdf = (ConnDevFindable)cpt ;
+	ConnDev cd = cdf.getFoundConnDevs().get(name) ;
+	if(cd==null)
+	{
+		out.print("{\"res\":false,\"err\":\"no conn dev with name="+name+" found\"}");
+		return ;
+	}
+	StringBuilder failedr = new StringBuilder() ;
+	if(!cdf.addFoundConnDevToCh(cd, failedr))
+	{
+		out.print("{\"res\":false,\"err\":\""+failedr+"\"}");
+		return ;
+	}
+	out.print("{\"res\":true}") ;
 	break ;
 }
 

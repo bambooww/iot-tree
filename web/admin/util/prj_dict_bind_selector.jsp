@@ -57,7 +57,7 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
 <blockquote class="layui-elem-quote ">
-<div>Node Path:<%=path %></div>
+<div>Node Path:[<%=path %>] <%=node.getTitle() %></div>
 </blockquote>
 <%
 String dc_names = "" ;

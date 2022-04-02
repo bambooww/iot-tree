@@ -46,6 +46,12 @@ Get the IOT-Tree Server package for "iot-tree-x.xx.x-winjre8x86.zip", which inte
 
 Refer to [Quick Start][quick_start] 
 
+It is important to note that if you are not using the OPC service in this example, other OPC service programs will most likely need to be accessed with super administrator privileges. At this point, there are two main ways to ensure that the current user you start IOT-Tree Server is a super administrator:
+
+1) If you start IOT-Tree Server by command, right mouse button iot-tree.bat, select Run as Administrator. Or you can open a command window as an administrator and run iot-tree.bat.
+
+2) If you have registered IOT-Tree Server as a Windows service, open Service Management (command services.msc), find the IOT-Tree Server service item, double-click Open Parameter Configuration, and in the Login section, select the super administrator account and input password to ensure that the service starts as an administrator.
+
 
 
 
@@ -95,27 +101,29 @@ You will find a small square to the left of the new channel and a small square t
 
 
 
-## 2.4 Direct Binding Copies Partial Definitions in OPC Server 
+## 2.4 Bind or copy content from OPC Server below channel
 
-With these simple steps, you're ready for access and channels, and now you can think about what data is available in OPC Server. 
+With these simple steps, you're ready for access and channels, and now you can think about what data is available in OPC Server.
 
-IOT-Tree Server can directly copy the data hierarchy in OPC Server and establish corresponding hierarchy and Tag definitions under the associated channels. 
+IOT-Tree Server associates the content in Opc Server with the Tag node underneath the channel by mapping (Map). First let's see what the added OPC DA Client link can bring to us.
 
-Right-click "kp4" under Connectors and click "Bind". In the pop-up window, we can see that the left part lists all the data nodes that OPC Server can provide. You can click the tree conversion button above to show the left in a hierarchical way. As follows: 
+Right-click KP4 under Connectors and click Bind. In the pop-up window, we can see that the left part lists all the data nodes that OPC Server can provide. As follows:
 
 <img src="../img/opc_da06.png">
 
 
 
-At the top right of the window, there is a "Bind Copy" selection box. You can select the organization node on the left and click the corresponding right arrow button to select it. 
+You can see all the data lists and type information related to OPC Server on the left side of the pop-up window. On the right is the bound content area. At this point, because there is no tag Tag under the associated channel ccc, it is blank.
 
-Press "Ctrl" key, click "Channel_4.Device_6, Channel_1.Device_1.Tag_2, Channel_1.Device_2.Bool_2, Channel_2.Bool_2" to select more; Then click the right arrow button to the left of "Bind Copy" to copy, as shown below: 
+At this point, you may want to copy the data on the left (with hierarchical information) directly under the channel ccc, then you can select the data item on the left that needs to be copied and click the middle "copy create tag and bind" button. At this point, you can see a bound data item on the right that has the same content as the Tag below the channel.
+
+Press the "Ctrl" key and select the following nodes on the left: "Channel_4.Device_6. *, Channel_1.Device_1.Tag_2, Channel_1.Device_2.Bool_2"; Then click on the middle "copy create tag and bind" button, and the result is as follows:
 
 <img src="../img/opc_da07.png">
 
 
 
-At this point, you have selected some nodes. Where, if it is a leaf node, it corresponds directly to the Tag tag followed by a numeric type. If it is a grouping node, everything below it will be copied. Click the "create tag groups and tags" button above this list box, and the system will automatically create the same hierarchy for replication under the associated channels based on your current selection. 
+By clicking on the "Ok" button of the pop-up window, IOT-Tree Server automatically establishes the relevant Tag groups and corresponding Tags under the channel ccc according to the mapping relationship above. Please refresh the tree structure of Browser and you can see the following results:
 
 As follows: 
 
@@ -123,7 +131,7 @@ As follows:
 
 
 
-Click OK to save the information, and then refresh the project management main interface. You will find that the related hierarchical content has been copied under the channel "ccc", and the Tag list is also created. At this point, when you start the project, you will find that the automatically created content can already get data 
+ when you start the project, you will find that the automatically created content can already get data 
 
 As follows: 
 
@@ -132,6 +140,8 @@ As follows:
 
 
 Very easy, right. The problem is, this structure may be defined by the old system you are docking with. You want to define your own hierarchy and Tag name in your IOT-Tree Server, and then map the data in the old system to the Tag you created. 
+
+In addition, you may find that all node names in IOT-Tree Server must comply with the specification of programming variables, and can only be A-Z, a-z and numbers. If the bound path contains illegal characters, it becomes impossible to directly copy the hierarchy and automatically establish relevant nodes. At this time, you can only create your own tag and obtain the data value through mapping.
 
 
 
@@ -151,9 +161,9 @@ Right mouse button ccc, select "New Tag Group", add this node name as "aa". Clic
 
 Above we have prepared our own hierarchy and Tag. Next, we map something from OPC Server. 
 
-Right-click "kp4" under Connectors and select Bind to reopen the settings window you just opened. You will find that half of the content is already in the "Bind Map" area in the lower right corner of the window. These are under "Tags in Channel" and the "Map Binded" on the left is empty, waiting for us to bind. 
+Right-click "kp4" under Connectors and select Bind to reopen the settings window you just opened. You will find some data items content is already in the "Bind Map" area in the right of the window. These are under "Tags in Channel" and the "Map Binded" on the left is empty, waiting for us to bind. 
 
-Let's select the first line "aa.b1", select the leaf node "Channel_4.Device_6.Bool_15" on the left, then click the corresponding right arrow button to bind it, as shown in the following image: 
+Let's select the first line "aa.b1", select "Channel_4.Device_6.Bool_15" on the left, then click the corresponding right arrow button to bind it, as shown in the following image: 
 
 
 <img src="../img/opc_da11.png">

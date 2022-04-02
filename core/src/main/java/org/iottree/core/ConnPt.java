@@ -358,6 +358,12 @@ public abstract class ConnPt implements IXmlDataValidator
 		return rep.getChById(chid) ;
 	}
 	
+	protected void RT_connInit()
+	{}
+	
+	public void onJoinedChanged(ConnJoin cj)
+	{}
+	
 	public abstract boolean isConnReady() ;
 	
 	public abstract String getConnErrInfo() ;

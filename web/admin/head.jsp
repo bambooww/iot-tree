@@ -16,6 +16,7 @@ String ver = Config.getVersion() ;
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
 <script defer src="/_js/font6/js/all.js"></script>
 <link href="/_js/font6/css/all.css" rel="stylesheet">
+<script src="/admin/js/util.js"></script>
 <%--
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
  --%>

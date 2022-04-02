@@ -15,7 +15,7 @@ import org.iottree.core.cxt.UAContext;
  * @author jason.zhu
  *
  */
-public abstract class ConnPtMSGTopic  extends ConnPtBinder
+public abstract class ConnPtMSGTopic  extends ConnPtMSG //ConnPtBinder
 {
 	public abstract List<String> getMsgTopics() ;
 	

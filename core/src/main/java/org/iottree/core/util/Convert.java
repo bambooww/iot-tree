@@ -972,6 +972,9 @@ public class Convert
 		}
 		return ret ;
 	}
+	
+	
+	
 	/**
 	 * 对输入形如 xx=yy 的字符串进行映射转换
 	 * 
@@ -1023,6 +1026,47 @@ public class Convert
 		return ret.toString();
 	}
 
+	
+	public static String transListToMultiLineStr(List<String> ls)
+	{
+		if(ls==null)
+			return null ;
+		
+		StringBuilder ret = new StringBuilder();
+		for(String l:ls)
+		{
+			ret.append(l).append("\r\n") ;
+		}
+		return ret.toString() ;
+	}
+	
+	public static List<String> transMultiLineStrToList(String mlstr,boolean trim_line,boolean ignore_empty)
+	{
+		if(mlstr==null)
+			return null ;
+		
+		ArrayList<String> rets = new ArrayList<>() ;
+		StringReader sr = new StringReader(mlstr) ;
+		BufferedReader br = new BufferedReader(sr) ;
+		String ln ;
+		try
+		{
+			while((ln=br.readLine())!=null)
+			{
+				if(trim_line)
+					ln = ln.trim();
+				if(ignore_empty)
+				{
+					if("".equals(ln))
+						continue ;
+				}
+				rets.add(ln) ;
+			}
+		}
+		catch(Exception e)
+		{}
+		return rets ;
+	}
 	/**
 	 * 从流中读取字典映射
 	 * 
@@ -2070,7 +2114,7 @@ public class Convert
 
 				int i = ln.indexOf('=');
 				if (i > 0)
-					ret.put(ln.substring(0, i).trim(), ln.substring(i + 1).trim());
+					ret.put(ln.substring(0, i).trim(), transLineToStr(ln.substring(i + 1)).trim());
 				else
 					ret.put(ln, "");
 			}
@@ -2095,7 +2139,7 @@ public class Convert
 			{
 				for (Map.Entry<String, String> n2v : pnv.entrySet())
 				{
-					w.write(n2v.getKey() + "=" + n2v.getValue() + "\r\n");
+					w.write(n2v.getKey() + "=" + transStrToLine(n2v.getValue()) + "\r\n");
 				}
 				w.flush();
 			}

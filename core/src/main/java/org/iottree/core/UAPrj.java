@@ -850,9 +850,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	{
 		rtRun = false;
 		
+//		try
+//		{
+//			Thread.sleep(PRJ_RUN_INTERVAL);
+//		}
+//		catch(Exception e) {}
+		
+		stopPrj();
+		
 		if (rtTh == null)
 			return;
 	}
+	
 
 	public boolean RT_isRunning()
 	{
@@ -908,6 +917,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 			}
 		}
 	}
+	
+	private static long PRJ_RUN_INTERVAL = 5 ;
 
 	Runnable prjRunner = new Runnable() {
 		public void run()
@@ -932,12 +943,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 				{
 					try
 					{
-						Thread.sleep(5);
+						Thread.sleep(PRJ_RUN_INTERVAL);
 					}
 					catch ( Exception e)
 					{
 					}
 
+					if(!rtRun)
+						break ;
 //					long st = System.currentTimeMillis() ;
 //					long et = System.currentTimeMillis() ;
 					RT_runFlush();
@@ -968,21 +981,26 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 			}
 			finally
 			{
-				startStopTask(false);
-				startStopConn(false);
-				startStopCh(false);
-
-				PrjSharer ps = getSharer();
-				if (ps != null)
-					ps.runStop();
-
-				rtRun = false;
-				rtTh = null;
+				stopPrj();
 
 				RT_runFlush();
 			}
 		}
 	};
+	
+	private void stopPrj()
+	{
+		startStopTask(false);
+		startStopConn(false);
+		startStopCh(false);
+
+		PrjSharer ps = getSharer();
+		if (ps != null)
+			ps.runStop();
+
+		rtRun = false;
+		rtTh = null;
+	}
 
 	// private Runnable runner = new Runnable() {
 	//

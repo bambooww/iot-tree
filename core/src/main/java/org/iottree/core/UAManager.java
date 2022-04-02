@@ -583,8 +583,8 @@ public class UAManager implements IResCxt
 	{
 		for(UAPrj prj:UAManager.this.listPrjs())
 		{
-			if(prj.RT_isRunning())
-				prj.RT_stop();
+			//if(prj.RT_isRunning())
+			prj.RT_stop();
 		}
 		
 		uaMonTh=null;
@@ -664,4 +664,16 @@ public class UAManager implements IResCxt
 		return this.getPrjById(subid) ;
 	}
 
+	
+
+	
+	static
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run()
+			{
+				UAManager.getInstance().stop() ;
+			}
+		});
+	}
 }

@@ -4,9 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.jsp.JspWriter;
 
+import org.iottree.core.conn.ConnDev;
+import org.iottree.core.conn.ConnDevFindable;
 import org.iottree.core.conn.ConnProTcpClient;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
@@ -399,31 +402,45 @@ public class ConnManager
 			throw new Exception("join is already existed!") ;
 		}
 		
-		List<ConnJoin> cjs = getConnJoins(repid);
-		ConnJoin cj = new ConnJoin(connid,chid) ;
-		cjs.add(cj) ;
-		
+		ConnPt cp = this.getConnPtById(repid, connid) ;
 		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
+		
+		UACh ch = rep.getChById(chid) ;
+		if(cp==null||ch==null)
+			throw new Exception("no Conn or Ch found") ;
+		
+		List<ConnJoin> cjs = getConnJoins(repid);
+		ConnJoin cj = new ConnJoin(connid,chid) ;
+		cjs.add(cj) ;
 		File cjf = getConnJoinFile(rep) ;
 		saveConnJoins(cjf,cjs) ;
+		
+		cp.onJoinedChanged(cj);
+		
 		return cj ;
 	}
 	
 	public boolean delConnJoin(String repid,String connid) throws Exception
 	{
+		ConnPt cp = this.getConnPtById(repid, connid) ;
+		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
+		if(rep==null)
+			throw new Exception("no rep found") ;
+		UACh ch = cp.getJoinedCh() ;
+		if(cp==null||ch==null)
+			return false;
+		
 		List<ConnJoin> cjs = getConnJoins(repid);
 		ConnJoin cj = this.getConnJoinByConnId(repid, connid) ;
 		if(cj==null)
 			return false;
 		cjs.remove(cj) ;
-		
-		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
-		if(rep==null)
-			throw new Exception("no rep found") ;
 		File cjf = getConnJoinFile(rep) ;
 		saveConnJoins(cjf,cjs) ;
+		
+		cp.onJoinedChanged(null);
 		
 		return true;
 	}
@@ -514,7 +531,13 @@ public class ConnManager
 				String connerr = conn.getConnErrInfo() ;
 				if(connerr==null)
 					connerr = "" ;
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\"}");
+				boolean fnewdev = false;
+				if(conn instanceof ConnDevFindable)
+				{
+					Map<String,ConnDev> n2dev = ((ConnDevFindable)conn).getFoundConnDevs() ;
+					fnewdev = (n2dev!=null&&n2dev.size()>0) ;
+				}
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"new_devs\":"+fnewdev+"}");
 			}
 			
 			out.print("]}");

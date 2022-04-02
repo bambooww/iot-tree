@@ -869,7 +869,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
-	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg)
+	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg,Long chgdt)
 	{
 		boolean bval_chg = true;
 		if(curRawVal==null)
@@ -911,6 +911,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //		}
 		
 		long cdt = System.currentTimeMillis() ;
+		if(chgdt!=null)
+			cdt = chgdt ;
 		
 		if(this.curVal!=null&&!bval_chg)
 		{
@@ -926,6 +928,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
 		RT_setVal(objv);
+	}
+	
+	public void RT_setValRawStr(String strv,boolean ignore_chg,Long chgdt)
+	{
+		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
+		this.RT_setValRaw(objv,ignore_chg,chgdt);
 	}
 //	
 //	
@@ -947,7 +955,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 */
 	public void RT_setValRaw(Object v)
 	{
-		this.RT_setValRaw(v,true);
+		this.RT_setValRaw(v,true,null);
+	}
+	
+	public void RT_setValRaw(Object v,Long chgdt)
+	{
+		this.RT_setValRaw(v,true,chgdt);
 	}
 	
 	private boolean RT_writeValDriver(Object v)

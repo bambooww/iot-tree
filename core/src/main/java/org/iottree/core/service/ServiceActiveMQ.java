@@ -1,6 +1,7 @@
 package org.iottree.core.service;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.ObjectName;
 
@@ -11,9 +12,13 @@ import org.apache.activemq.broker.jmx.ManagementContext;
 import org.apache.activemq.spring.*;
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 
 public class ServiceActiveMQ extends AbstractService
 {
+	static ILogger log = LoggerManager.getLogger(ServiceActiveMQ.class) ;
+	
 	public static final String NAME = "active_mq";
 	BrokerService broker = null;
 	
@@ -25,6 +30,8 @@ public class ServiceActiveMQ extends AbstractService
 	
 	String authUser = null ;
 	String authPsw = null ;
+	
+	String authUsers = null ;
 
 	@Override
 	public String getName()
@@ -65,6 +72,8 @@ public class ServiceActiveMQ extends AbstractService
 		
 		authUser = pms.get("auth_user") ;
 		authPsw = pms.get("auth_psw") ;
+		
+		authUsers = pms.get("auth_users") ;
 	}
 	
 	public boolean isMqttEn()
@@ -97,6 +106,11 @@ public class ServiceActiveMQ extends AbstractService
 		return authPsw ;
 	}
 
+	public String getAuthUsers()
+	{
+		return authUsers;
+	}
+	
 	@Override
 	synchronized public boolean startService()
 	{
@@ -130,8 +144,11 @@ public class ServiceActiveMQ extends AbstractService
 			{
 				authPsw = "" ;
 			}
+
+			Map<String,String> u2p = Convert.transPropStrToMap(authUsers);
+			
 			broker.setPlugins(new BrokerPlugin[] {
-					new ActiveMQAuthPlugin("").asUser(authUser, authPsw)
+					new ActiveMQAuthPlugin().asUser(authUser, authPsw).asUsers(u2p)
 					});
 			//broker.
 			ManagementContext cxt = new ManagementContext();

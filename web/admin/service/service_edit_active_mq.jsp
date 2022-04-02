@@ -28,6 +28,9 @@
 	
 	String user = ser.getAuthUser() ;
 	String psw = ser.getAuthPsw() ;
+	String users = ser.getAuthUsers();
+	if(users==null)
+		users = "" ;
 %>
 <html>
 <head>
@@ -72,10 +75,15 @@ dlg.resize_to(600,400);
 	  </div>
 	  <div class="layui-form-mid">Password:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="password" id="psw" name="psw" value="<%=psw%>"  class="layui-input">
+	    <input type="text" id="psw" name="psw" value="<%=psw%>"  class="layui-input">
 	  </div>
   </div>
-  
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">Users</label>
+    <div class="layui-input-block">
+      <textarea name="users" id="users" class="layui-textarea"><%=users %></textarea>
+    </div>
+  </div>
 </form>
 </body>
 <script type="text/javascript">
@@ -120,9 +128,10 @@ function do_submit(cb)
 	}
 	var auth_user = $('#user').val();
 	var auth_psw = $('#psw').val();
+	var auth_users = $('#users').val();
 	var enable = mqtt_en||tcp_en ;
 	cb(true,{enable:enable,mqtt_en:mqtt_en,mqtt_port:mqtt_port,tcp_en:tcp_en,tcp_port:tcp_port,
-		auth_user:auth_user,auth_psw:auth_psw});
+		auth_user:auth_user,auth_psw:auth_psw,auth_users:auth_users});
 }
 
 </script>

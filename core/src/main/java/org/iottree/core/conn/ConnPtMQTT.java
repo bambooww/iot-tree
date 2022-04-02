@@ -1,44 +1,79 @@
 package org.iottree.core.conn;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import javax.script.ScriptException;
+
+import org.iottree.core.ConnJoin;
+import org.iottree.core.UACh;
+import org.iottree.core.UADev;
+import org.iottree.core.UANode;
 import org.iottree.core.UATag;
+import org.iottree.core.conn.ConnDev.Data;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
+import org.iottree.core.cxt.UAContext;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-public class ConnPtMQTT extends ConnPtMSGTopic
+public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 {
-//	private String mqttHost = null;
-//	private int mqttPort = 1883;
-//	private String mqttUser = null;
-//
-//	private String mqttPsw = null;
-//
-//	private int mqttConnTimeoutSec = 30;
-//	private int mqttConnKeepAliveInterval = 60;
-//
-//	private ArrayList<String> topics = new ArrayList<>();
+	public static enum SorTp
+	{
+		json(1), str(2), xml(3), bytes(4);
 
-	private transient MqttEndPoint mqttEP = null ;
-	
+		private final int val;
+
+		SorTp(int v)
+		{
+			val = v;
+		}
+
+		public int getInt()
+		{
+			return val;
+		}
+
+		public String getTitle()
+		{
+			switch (val)
+			{
+			case 1:
+				return "json";
+			case 2:
+				return "string";
+			case 3:
+				return "xml";
+			case 4:
+				return "bytes";
+			default:
+				return null;
+			}
+		}
+	}
+
+	private List<String> topics = null;
+
+	private SorTp sorTp = SorTp.json;
+
+	public static final int RUN_ST_NOTRUN = 0;
+
+	public static final int RUN_ST_OK = 1;
+
+	public static final int RUN_ST_ERROR = 2;
+
+	private String transJS = null;
+
+	private String encod = "UTF-8";
+
 	public ConnPtMQTT()
 	{
-//		this.topics.add("iottree/node");
-//		this.topics.add("iottree/syn");
+
 	}
 
 	@Override
@@ -47,68 +82,118 @@ public class ConnPtMQTT extends ConnPtMSGTopic
 		return "mqtt";
 	}
 
-	public MqttEndPoint getMqttEP()
+	public SorTp getSorTp()
 	{
-		if(mqttEP!=null)
-			return mqttEP ;
-		mqttEP = new MqttEndPoint("iottree_cpt_" + this.getId())
-				.withCallback(this.mqttCB);;
-		return mqttEP ;
+		return this.sorTp;
+	}
+
+	public String getTransJS()
+	{
+		if (this.transJS == null)
+			return "";
+		return this.transJS;
+	}
+
+	public List<String> getMsgTopics()
+	{
+		return topics;
+	}
+
+	public String getEncod()
+	{
+		if (encod == null)
+			return "UTF-8";
+		return encod;
 	}
 
 	@Override
 	public XmlData toXmlData()
 	{
 		XmlData xd = super.toXmlData();
-		// xd.setParamValue("opc_app_name", this.appName);
-		if(mqttEP!=null)
-			mqttEP.transParamsToXml(xd,false);
-			
-//		xd.setParamValue("mqtt_host", this.mqttHost);
-//		xd.setParamValue("mqtt_port", this.mqttPort);
-//		xd.setParamValue("mqtt_user", this.mqttUser);
-//		xd.setParamValue("mqtt_psw", this.mqttPsw);
-//		xd.setParamValue("mqtt_conn_to", this.mqttConnTimeoutSec);
-//		xd.setParamValue("mqtt_conn_int", this.mqttConnKeepAliveInterval);
 
+		xd.setParamValue("sor_tp", sorTp.toString());
+		if (transJS != null)
+			xd.setParamValue("trans_js", transJS);
+		if (topics != null)
+			xd.setParamValues("topics", topics);
+		if (encod != null)
+			xd.setParamValue("encod", encod);
 		return xd;
 	}
-	
-	
 
 	@Override
 	public boolean fromXmlData(XmlData xd, StringBuilder failedr)
 	{
 		boolean r = super.fromXmlData(xd, failedr);
 
-		MqttEndPoint ep = getMqttEP() ;
-		ep.withParamsXml(xd) ;
-		// this.appName = xd.getParamValueStr("opc_app_name",
-		// "iottree_opc_client_"+this.getName());
-//		this.mqttHost = xd.getParamValueStr("mqtt_host", "");
-//		this.mqttPort = xd.getParamValueInt32("mqtt_port", -1);
-//		this.mqttUser = xd.getParamValueStr("mqtt_user", "");
-//		this.mqttPsw = xd.getParamValueStr("mqtt_psw", "");
-//		this.mqttConnTimeoutSec = xd.getParamValueInt32("mqtt_conn_to", -1);
-//		this.mqttConnKeepAliveInterval = xd.getParamValueInt32("mqtt_conn_int", -1);
+		String stp = xd.getParamValueStr("sor_tp", null);
+		if (Convert.isNotNullEmpty(stp))
+			sorTp = SorTp.valueOf(stp);
+		if (sorTp == null)
+			sorTp = SorTp.json;
+
+		transJS = xd.getParamValueStr("trans_js");
+
+		topics = xd.getParamXmlValStrs("topics");
+		encod = xd.getParamValueStr("encod");
+		clearCache();
 		return r;
 	}
 
-
 	protected void injectByJson(JSONObject jo) throws Exception
 	{
+		JSONArray jotps = jo.optJSONArray("topics");
+		ArrayList<String> tps = new ArrayList<>();
+		if (jotps != null)
+		{
+			for (int i = 0, n = jotps.length(); i < n; i++)
+			{
+				String tp = jotps.getString(i);
+				StringBuilder failedr = new StringBuilder();
+				if (!MqttEndPoint.checkTopicValid(tp, failedr))
+					throw new Exception(failedr.toString());
+				tps.add(tp);
+			}
+		}
+
 		super.injectByJson(jo);
 
-		MqttEndPoint ep = getMqttEP() ;
-		ep.withParamsJSON(jo) ;
-		
-//		this.mqttHost = optJSONString(jo, "mqtt_host", "");
-//		this.mqttPort = optJSONInt(jo, "mqtt_port", -1);
-//		this.mqttUser = optJSONString(jo, "mqtt_user", "");
-//		this.mqttPsw = optJSONString(jo, "mqtt_psw", "");
-//		this.mqttConnTimeoutSec = optJSONInt(jo, "mqtt_conn_to", -1);
-//		this.mqttConnKeepAliveInterval = optJSONInt(jo, "mqtt_conn_int", -1);
+		String stp = jo.optString("sor_tp");
+		if (Convert.isNotNullEmpty(stp))
+			sorTp = SorTp.valueOf(stp);
+		if (sorTp == null)
+			sorTp = SorTp.json;
+		this.topics = tps;
+		this.transJS = jo.optString("trans_js");
+		this.encod = jo.optString("encod");
+		clearCache();
+	}
 
+	protected void onRecvedMsg(String topic, byte[] bs) throws Exception
+	{
+		switch (this.sorTp)
+		{
+		case str:
+			break;
+		case xml:
+			break;
+		case bytes:
+			break;
+		case json:
+		default:
+			String jsonstr = new String(bs, encod);
+			runTransJS(topic, jsonstr);
+			break;
+		}
+
+		// System.out.println("mqtt conn "+this.getName()+" onRecvedMsg=" +
+		// topic + " " + new String(bs,encod));
+
+	}
+
+	public void onJoinedChanged(ConnJoin cj)
+	{
+		clearCache();
 	}
 
 	@Override
@@ -118,112 +203,251 @@ public class ConnPtMQTT extends ConnPtMSGTopic
 		return null;
 	}
 
-	@Override
-	public boolean isConnReady()
-	{
-		if (mqttEP == null)
-			return false;
-		return mqttEP.isConnReady();
-	}
+	/**
+	 * 0 - unknown 1 = ok -1 = err
+	 */
+	transient private int transInitOk = 0;
+	transient private UAContext transCxt = null;
+	// transient private UACodeItem onWriteCI = null ;
+
+	transient private long lastRunMS = -1;
+
+	private int transRunST = RUN_ST_NOTRUN;
+
+	private String transRunErr = null;
 	
-	public String getConnErrInfo()
+	private UACh joinedCh = null ;
+
+	public int getTransRunST()
 	{
-		if(mqttEP==null)
-			return "no connection" ;
-		return mqttEP.getConnErrInfo() ;
-			
-	}
-	
-	public List<String> getMsgTopics()
-	{
-		return getMqttEP().getMQTTTopics() ;
+		return this.transRunST;
 	}
 
-	
-	public boolean sendMsg(String topic,byte[] bs) throws Exception
+	public String getTransRunErr()
 	{
-		this.publish(topic, bs, 0);
+		return this.transRunErr;
+	}
+
+	private void clearCache()
+	{
+		transInitOk = 0;// to known
+	}
+
+	private int initTransJS()// throws ScriptException
+	{
+		if (transInitOk != 0)
+			return transInitOk;
+		transInitOk = -1;
+		if (Convert.isNullOrTrimEmpty(this.transJS))
+			return transInitOk;
+
+		try
+		{
+			UACh ch = this.getJoinedCh();
+			if (ch == null)
+			{
+				return transInitOk;
+			}
+
+			this.joinedCh = ch ;
+			this.lastRunMS = System.currentTimeMillis();
+
+			transCxt = ch.RT_getContext();
+
+			transCxt.scriptEval("function __JsMqttTrans_" + this.getId() + "_sor($topic,$msg){\r\n" +
+
+					this.transJS + "\r\n}\r\n	function __JsMqttTrans_" + this.getId() + "($topic,$msg){\r\n"
+					+ "$msg=JSON.parse($msg);\r\n"
+					+ "var r=__JsMqttTrans_" + this.getId() + "_sor();\r\n"
+					+ "return JSON.stringify(r);" + "\r\n}");
+			// this.bRunScriptReady = true;
+			transInitOk = 1;
+			return transInitOk;
+		}
+		catch ( Exception e)
+		{
+			transInitOk = -1;
+			return transInitOk;
+		}
+	}
+	
+	protected void RT_connInit()
+	{
+		initTransJS();
+	}
+
+	/**
+	 js return format
+	 [
+    	{"dev_name":"dev1","dev_title":"Device1","data":[
+	    	{"n":"g1.v1","vt":"float","v":18.5},
+	    	{"n":"st","vt":"bool","v":true}
+	    	]
+	    },
+	    {"dev_name":"dev2","dev_title":"Device2","data":[
+	    	{"n":"g1.v1","vt":"float","v":13.5},
+	    	{"n":"st","vt":"bool","v":false}
+	    	]
+	    }
+    ]
+    
+	 * @param topic
+	 * @param jsonstr
+	 * @return
+	 * @throws Exception
+	 */
+	synchronized boolean runTransJS(String topic, String jsonstr) throws Exception
+	{
+		//int st = initTransJS();
+		if (transInitOk <= 0)
+		{
+			this.transRunST = RUN_ST_ERROR;
+			this.transRunErr = "init error";
+			return false;
+		}
+		try
+		{
+			String ret = (String) transCxt.scriptInvoke("__JsMqttTrans_" + this.getId(), topic, jsonstr);
+			if(Convert.isNullOrEmpty(ret))
+			{
+				return true ;
+			}
+			
+			JSONArray devs = new JSONArray(ret) ;
+			int s = devs.length() ;
+			ArrayList<ConnDev> mdevs = new ArrayList<>() ;
+			StringBuilder failedr = new StringBuilder() ;
+			for(int i = 0 ; i < s ; i ++)
+			{
+				JSONObject jo = devs.getJSONObject(i);
+				ConnDev mmd = ConnDev.transFromJO(jo,failedr);
+				if(mmd==null)
+				{
+					this.transRunST = RUN_ST_ERROR;
+					this.transRunErr = failedr.toString() ;
+					return false;
+				}
+				mdevs.add(mmd) ;
+			}
+			onMsgDevsFound(mdevs);
+			this.transRunST = RUN_ST_OK;
+			return true;
+		}
+		catch ( Exception e)
+		{
+			this.transRunST = RUN_ST_ERROR;
+			this.transRunErr = e.getMessage();
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	private void onMsgDevsFound(List<ConnDev> devs)
+	{
+		for(ConnDev dev:devs)
+		{
+			if(updateToCh(dev))
+			{
+				foundNewDevs.remove(dev.getName()) ;
+				continue ;
+			}
+			//find new
+			foundNewDevs.put(dev.getName(), dev) ;
+		}
+	}
+	
+	private LinkedHashMap<String,ConnDev> foundNewDevs = new LinkedHashMap<>() ;
+	
+	private boolean updateToCh(ConnDev d)
+	{
+		String devn = d.getName() ;
+		UADev dev = this.joinedCh.getDevByName(devn) ;
+		if(dev==null)
+		{
+			return false;
+		}
+		for(Data md:d.getDatas())
+		{
+			UANode tmpn = dev.getDescendantNodeByPath(md.getPath()) ;
+			if(tmpn==null)
+				continue ;
+			if(!(tmpn instanceof UATag))
+				continue ;
+			
+			UATag tag = (UATag)tmpn ;
+			
+			tag.RT_setValRaw(md.getVal());
+		}
 		return true;
 	}
 
-	@Override
-	protected void onRecvedMsg(String topic,byte[] bs) throws Exception
+	public LinkedHashMap<String,ConnDev> getFoundConnDevs()
 	{
-
-			System.out.println("mqtt onRecvedMsg=" + topic + " " + new String(bs,"utf-8"));
-
-		
+		return foundNewDevs;
 	}
 	
-	public void runOnWrite(UATag tag,Object val) throws Exception
+	public boolean addFoundConnDevToCh(ConnDev cd,StringBuilder failedr) throws Exception
 	{
-		throw new Exception("no impl") ;
-		//it may send some msg
+		UACh ch= this.getJoinedCh() ;
+		if(ch==null)
+		{
+			failedr.append("no joined channel") ;
+			return false;
+		}
+		boolean b = ConnDevFindable.addConnDevToCh(ch,cd, failedr) ;
+		if(b)
+		{
+			foundNewDevs.remove(cd.getName()) ;
+		}
+		return b ;
+	}
+	
+	@Override
+	public boolean isConnReady()
+	{
+		ConnProMQTT cp = (ConnProMQTT) this.getConnProvider();
+		return cp.isMQTTConnected();
+	}
+
+	public String getConnErrInfo()
+	{
+		return "";
+
+	}
+
+	public boolean sendMsg(String topic, byte[] bs) throws Exception
+	{
+		// this.publish(topic, bs, 0);
+		return true;
+	}
+
+//	@Override
+//	public void writeBindBeSelectedTreeJson(Writer w, boolean list_tags_only, boolean force_refresh) throws Exception
+//	{
+//
+//	}
+//
+//	@Override
+//	public int writeBindBeSelectedListRows(Writer w, int idx, int size)
+//	{
+//
+//		return 0;
+//	}
+
+	public void runOnWrite(UATag tag, Object val) throws Exception
+	{
+		throw new Exception("no impl");
+		// it may send some msg
 	}
 
 	synchronized void disconnect() // throws IOException
 	{
-		getMqttEP().disconnect();
+		// getMqttEP().disconnect();
 	}
-	
-	void checkConn()
+
+	public void RT_writeValByBind(String tagpath, String strv)
 	{
-		MqttEndPoint ep = getMqttEP() ;
-		ep.checkConn();
+		// TODO
 	}
-	
-	public void publish(String topic, byte[] data) throws MqttPersistenceException, MqttException
-	{
-		publish(topic, data, 0);
-	}
-
-	public void publish(String topic, byte[] data, int qos) throws MqttPersistenceException, MqttException
-	{
-		getMqttEP().publish(topic, data, qos);
-	}
-
-	public void publish(String topic, String txt) throws Exception
-	{
-		publish(topic, txt.getBytes("utf-8"), 1);
-	}
-	
-	public void RT_writeValByBind(String tagpath,String strv)
-	{
-		//TODO 
-	}
-
-	MqttCallback mqttCB = new MqttCallback() {
-
-		@Override
-		public void connectionLost(Throwable cause)
-		{
-			//MqttConnectionUtils.r();\
-			System.out.println(" * conn lost") ;
-		}
-
-		@Override
-		public void messageArrived(String topic, MqttMessage message) throws Exception
-		{
-			
-			onRecvedMsg(topic,message.getPayload());
-		}
-
-		@Override
-		public void deliveryComplete(IMqttDeliveryToken token)
-		{
-			MqttMessage mm;
-			try
-			{
-				mm = token.getMessage();
-				System.out.println("mqtt msg deliveryComplete=" + mm.getPayload().length);
-			} catch (MqttException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// .getPayload().length
-
-		}
-	};
 
 }

@@ -60,11 +60,71 @@ switch(op)
 case "sub":
 	//cpt.opcBrowseNodeOut(out);
 	break ;
-case "tree":
-	boolean blist = "true".equalsIgnoreCase(request.getParameter("list")) ;
+case "list":
+	if(!Convert.checkReqEmpty(request, out, "idx","size"))
+		return;
+	int idx = Convert.parseToInt32(request.getParameter("idx"), 0) ;
+	int size = Convert.parseToInt32(request.getParameter("size"), -1) ;
+	String sk = request.getParameter("sk") ;
 	try
 	{
-		cpt.writeBindBeSelectedTreeJson(out,blist);
+		cpt.writeBindBeSelectedListRows(out,sk, idx, size);
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage()) ;
+	}
+	break;
+case "clear_cache":
+	cpt.clearBindBeSelectedCache();
+	out.print("succ");
+	break ;
+case "import":
+	if(!Convert.checkReqEmpty(request, out, "txt"))
+		return;
+	String txt = request.getParameter("txt") ;
+	boolean bcreate_tag = true;//"true".equals(request.getParameter(auto_create_tag))
+	boolean bignore_null = true;//"true".equals(request.getParameter(ignore_null))
+	//ignore_null:ignore_null,auto_create_tag
+	StringBuilder ressb = new StringBuilder() ;
+	int cc = cpt.importBindMap(txt,bcreate_tag,ressb);
+	String res = ressb.toString() ;
+	if(Convert.isNullOrEmpty(res))
+	{
+		out.println("succ="+cc) ;
+	}
+	else
+	{
+		out.println("import bind number="+cc+"\r\n"+res) ;
+	}
+	break ;
+case "tmp_paths_vals":
+	if(!Convert.checkReqEmpty(request, out, "paths"))
+		return;
+	String paths = request.getParameter("paths") ;
+	List<String> ps = Convert.splitStrWith(paths, ",|") ;
+	HashMap<String,String> p2vstr = cpt.Tmp_readValStrsByPaths(ps) ;
+	if(p2vstr==null)
+	{
+		out.print("{}") ;
+		break ;
+	}
+	out.print("{");
+	boolean bfirst = true ;
+	for(Map.Entry<String,String> p2v:p2vstr.entrySet())
+	{
+		if(bfirst) bfirst=false;
+		else out.print(",") ;
+		out.print("\""+p2v.getKey()+"\":\""+p2v.getValue()+"\"") ;
+	}
+	out.print("}");
+	break ;
+case "tree":
+	boolean blist = "true".equalsIgnoreCase(request.getParameter("list")) ;
+	boolean brefresh = "true".equalsIgnoreCase(request.getParameter("refresh")) ;
+	try
+	{
+		cpt.writeBindBeSelectedTreeJson(out,blist,brefresh);
 	}
 	catch(Exception e)
 	{
@@ -74,17 +134,18 @@ case "tree":
 case "set_binds":
 	try
 	{
-		String bindidstr = request.getParameter("bindids") ;
+		//String bindidstr = request.getParameter("bindids") ;
 		String mapstr =  request.getParameter("mapstr") ;
-		List<String> bindids = Convert.splitStrWith(bindidstr, "|") ;
+		//List<String> bindids = Convert.splitStrWith(bindidstr, "|") ;
 		Map<String,String> bm = Convert.transPropStrToMap(mapstr,"|","=") ;
-		cpt.setBindList(bindids);
-		cpt.setBindMapTag2Conn(bm) ;
+		//cpt.setBindList(bindids);
+		cpt.setBindMapTag2Conn(bm,true,true) ;
 		cpt.getConnProvider().save();
 		out.print("succ");
 	}
 	catch(Exception e)
 	{
+		e.printStackTrace();
 		out.print(e.getMessage());
 	}
 	break ;
