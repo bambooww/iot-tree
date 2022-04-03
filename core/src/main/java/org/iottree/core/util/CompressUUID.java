@@ -161,8 +161,7 @@ public class CompressUUID
 	}
 
 	/**
-	 * ��62���ƣ���ĸ�����֣�����19λUUID����̵�UUID
-	 * 
+	 * create new id
 	 * @return
 	 */
 	public static String createNewId()

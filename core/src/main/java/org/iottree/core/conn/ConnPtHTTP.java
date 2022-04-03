@@ -2,6 +2,7 @@ package org.iottree.core.conn;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -11,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.iottree.core.ConnDev;
 import org.iottree.core.ConnPt;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
@@ -150,5 +152,12 @@ public class ConnPtHTTP extends ConnPtMSG
 			result = new String(rbs, "UTF-8");
 			return result;
 		}
+	}
+
+	@Override
+	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

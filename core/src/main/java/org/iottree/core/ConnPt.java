@@ -358,6 +358,24 @@ public abstract class ConnPt implements IXmlDataValidator
 		return rep.getChById(chid) ;
 	}
 	
+	public List<ConnMsg> getConnMsgs()
+	{
+		return null ;
+	}
+	
+	public final ConnMsg getConnMsgById(String msgid)
+	{
+		List<ConnMsg> ms = getConnMsgs() ;
+		if(ms==null)
+			return null ;
+		for(ConnMsg cm:ms)
+		{
+			if(cm.getId().equalsIgnoreCase(msgid))
+				return cm ;
+		}
+		return null ;
+	}
+	
 	protected void RT_connInit()
 	{}
 	

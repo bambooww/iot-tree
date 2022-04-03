@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.script.ScriptException;
 
+import org.iottree.core.ConnDev;
 import org.iottree.core.ConnJoin;
+import org.iottree.core.ConnMsg;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UANode;
 import org.iottree.core.UATag;
-import org.iottree.core.conn.ConnDev.Data;
+import org.iottree.core.ConnDev.Data;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.util.Convert;
@@ -21,7 +23,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
+public class ConnPtMQTT extends ConnPtMSGTopic// implements ConnDevFindable
 {
 	public static enum SorTp
 	{
@@ -67,6 +69,12 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 
 	public static final int RUN_ST_ERROR = 2;
 
+	/**
+	 * init js ,can be defined self func
+	 */
+	private String initJS = null; 
+	
+	
 	private String transJS = null;
 
 	private String encod = "UTF-8";
@@ -85,6 +93,13 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 	public SorTp getSorTp()
 	{
 		return this.sorTp;
+	}
+	
+	public String getInitJS()
+	{
+			if (this.initJS == null)
+				return "";
+			return this.initJS;
 	}
 
 	public String getTransJS()
@@ -112,6 +127,8 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 		XmlData xd = super.toXmlData();
 
 		xd.setParamValue("sor_tp", sorTp.toString());
+		if(initJS!=null)
+			xd.setParamValue("init_js", initJS);
 		if (transJS != null)
 			xd.setParamValue("trans_js", transJS);
 		if (topics != null)
@@ -131,7 +148,7 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 			sorTp = SorTp.valueOf(stp);
 		if (sorTp == null)
 			sorTp = SorTp.json;
-
+		initJS = xd.getParamValueStr("init_js");
 		transJS = xd.getParamValueStr("trans_js");
 
 		topics = xd.getParamXmlValStrs("topics");
@@ -164,6 +181,7 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 		if (sorTp == null)
 			sorTp = SorTp.json;
 		this.topics = tps;
+		this.initJS = jo.optString("init_js");
 		this.transJS = jo.optString("trans_js");
 		this.encod = jo.optString("encod");
 		clearCache();
@@ -203,6 +221,7 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 		return null;
 	}
 
+	//transient private int initInitOk = 0 ;
 	/**
 	 * 0 - unknown 1 = ok -1 = err
 	 */
@@ -214,6 +233,8 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 
 	private int transRunST = RUN_ST_NOTRUN;
 
+	private String initErr = null ;
+	
 	private String transRunErr = null;
 	
 	private UACh joinedCh = null ;
@@ -253,12 +274,14 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 			this.lastRunMS = System.currentTimeMillis();
 
 			transCxt = ch.RT_getContext();
-
+			if(Convert.isNotNullEmpty(initJS))
+				transCxt.scriptEval(initJS) ;
+			
 			transCxt.scriptEval("function __JsMqttTrans_" + this.getId() + "_sor($topic,$msg){\r\n" +
 
 					this.transJS + "\r\n}\r\n	function __JsMqttTrans_" + this.getId() + "($topic,$msg){\r\n"
 					+ "$msg=JSON.parse($msg);\r\n"
-					+ "var r=__JsMqttTrans_" + this.getId() + "_sor();\r\n"
+					+ "var r=__JsMqttTrans_" + this.getId() + "_sor($topic,$msg);\r\n"
 					+ "return JSON.stringify(r);" + "\r\n}");
 			// this.bRunScriptReady = true;
 			transInitOk = 1;
@@ -266,6 +289,7 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 		}
 		catch ( Exception e)
 		{
+			initErr = e.getMessage() ;
 			transInitOk = -1;
 			return transInitOk;
 		}
@@ -273,6 +297,7 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 	
 	protected void RT_connInit()
 	{
+		transInitOk = 0 ;
 		initTransJS();
 	}
 
@@ -386,20 +411,26 @@ public class ConnPtMQTT extends ConnPtMSGTopic implements ConnDevFindable
 		return foundNewDevs;
 	}
 	
-	public boolean addFoundConnDevToCh(ConnDev cd,StringBuilder failedr) throws Exception
+	ConnMsg jsInitErrMsg = new ConnMsg().asTitle("JS Init err")
+			.asIcon("fa-regular fa-rectangle-xmark fa-lg fa-beat-fade").asIconColor("red");
+	
+	@Override
+	public List<ConnMsg> getConnMsgs()
 	{
-		UACh ch= this.getJoinedCh() ;
-		if(ch==null)
-		{
-			failedr.append("no joined channel") ;
-			return false;
+		ArrayList<ConnMsg> rets = null ;
+		if(transInitOk<0)
+		{//show err msg
+			 jsInitErrMsg.asDesc(initErr);
+			 rets = new ArrayList<>(3) ;
+			 rets.add(jsInitErrMsg) ;
 		}
-		boolean b = ConnDevFindable.addConnDevToCh(ch,cd, failedr) ;
-		if(b)
-		{
-			foundNewDevs.remove(cd.getName()) ;
-		}
-		return b ;
+		List<ConnMsg> ret = super.getConnMsgs() ;
+		if(ret==null||ret.size()<=0)
+			return rets ;
+		if(rets==null)
+			return ret ;
+		rets.addAll(ret) ;
+		return rets ;
 	}
 	
 	@Override

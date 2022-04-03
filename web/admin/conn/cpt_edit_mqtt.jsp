@@ -51,7 +51,9 @@ String desc = cpt.getDesc();
 //String opc_appn = cpt.getOpcAppName();
 //String opc_epuri  = cpt.getOpcEndPointURI();
 ConnPtMQTT.SorTp sor_tp = cpt.getSorTp();
+String init_js = cpt.getInitJS() ;
 String trans_js = cpt.getTransJS();
+
 List<String> topics = cpt.getMsgTopics();
 String topics_str = Convert.transListToMultiLineStr(topics) ;
 if(topics_str==null)
@@ -69,7 +71,7 @@ if(Convert.isNullOrEmpty(encod))
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(700,400);
 </script>
 </head>
 <body>
@@ -92,7 +94,7 @@ dlg.resize_to(600,400);
   <div class="layui-form-item">
     <label class="layui-form-label">Subscribe Topics</label>
     <div class="layui-input-inline">
-      <textarea  id="topics"  name="topics"  class="layui-textarea" rows="2" cols="30"><%=topics_str%></textarea>
+      <textarea  id="topics"  name="topics"  class0="layui-textarea" style="height:50px;width:150px;border-color: #e6e6e6"><%=topics_str%></textarea>
     </div>
     <label class="layui-form-label">Message Source Type</label>
     <div class="layui-input-inline" style="width:70px">
@@ -121,20 +123,31 @@ for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Transfer JS:</label>
-    <div class="layui-input-inline">
-      <textarea  id="trans_js"  name="trans_js"  required class="layui-textarea" rows="2"><%=trans_js%></textarea>
-      <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
+    <label class="layui-form-label">Initial JS:</label>
+    <div class="layui-input-inline" style="width:600px">
+      <textarea  id="init_js"  name="init_js"  style="height:60px;width:100%;border-color: #e6e6e6"><%=init_js%></textarea>
     </div>
+    <button onclick="edit_js_init()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Transfer JS:</label>
+    <div class="layui-input-inline" style="width:600px">
+    ($topic,$msg)=>{
+      <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:150px"><%=trans_js%></textarea>
+      }
+    </div>
+    <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
+    <%--
     <label class="layui-form-label">Device JS:</label>
     <div class="layui-input-inline">
       <textarea  id="devs_js"  name="devs_js"  required class="layui-textarea" rows="2"><%=""%></textarea>
     </div>
+     --%>
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
-      <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
+    <div class="layui-input-inline" style="width:600px">
+      <textarea  id="desc"  name="desc"  style="height:30px;width:100%;border-color: #e6e6e6"><%=desc%></textarea>
     </div>
   </div>
    
@@ -191,6 +204,10 @@ layui.use('form', function(){
 	  $("#topics").on("input",function(e){
 		  setDirty();
 		  });
+	  $("#init_js").on("input",function(e){
+		  setDirty();
+		  });
+	  
 	  $("#trans_js").on("input",function(e){
 		  setDirty();
 		  });
@@ -248,6 +265,11 @@ function edit_js_trans()
 	edit_js('trans_js','Transfer JS','$topic,$msg','trans_sample') ;
 }
 
+function edit_js_init()
+{
+	edit_js('init_js','Initial JS','','') ;
+}
+
 function edit_js(taid,tt,funcp,sample_id)
 {
 	event.preventDefault();
@@ -260,6 +282,7 @@ function edit_js(taid,tt,funcp,sample_id)
 					 if(jstxt==null)
 						 jstxt='' ;
 					 $("#"+taid).val(jstxt) ;
+					 setDirty();
 					 dlg.close() ;
 				},
 				function(dlgw)
@@ -300,12 +323,13 @@ function do_submit(cb)
 		cb(false,'Please input sor_tp') ;
 		return ;
 	}
+	var init_js = $('#init_js').val();
 	var trans_js = $('#trans_js').val();
 	var topicsstr = $("#topics").val() ;
 	var enc =  $("#encod").val() ;
 	var tps = str2lns(topicsstr)
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,topics:tps,sor_tp:sor_tp,trans_js:trans_js,encod:enc});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,topics:tps,sor_tp:sor_tp,init_js:init_js,trans_js:trans_js,encod:enc});
 }
 
 function str2lns(str)

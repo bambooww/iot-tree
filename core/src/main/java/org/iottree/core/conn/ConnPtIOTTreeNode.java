@@ -1,6 +1,7 @@
 package org.iottree.core.conn;
 
 import java.io.Writer;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -8,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.iottree.core.ConnDev;
 import org.iottree.core.UACh;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsGCxt;
@@ -442,6 +444,12 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 
 		}
 	};
+
+	@Override
+	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
+	{
+		return null;
+	}
 
 
 }

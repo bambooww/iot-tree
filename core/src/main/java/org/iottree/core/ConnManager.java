@@ -8,8 +8,6 @@ import java.util.Map;
 
 import javax.servlet.jsp.JspWriter;
 
-import org.iottree.core.conn.ConnDev;
-import org.iottree.core.conn.ConnDevFindable;
 import org.iottree.core.conn.ConnProTcpClient;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
@@ -516,10 +514,19 @@ public class ConnManager
 			if(bf) bf=false;
 			else out.print(",") ;
 			boolean br = cp.isRunning() ;
-			String pmsg = cp.getPromptMsg();
-			if(pmsg==null)
-				pmsg = "" ;
-			out.print("{\"cp_id\":\""+cp.getId()+"\",\"run\":"+br+",\"pmsg\":\""+pmsg+"\",\"connections\":[");
+			List<ConnMsg> cp_msgs = cp.getConnMsgs();
+			out.print("{\"cp_id\":\""+cp.getId()+"\",\"run\":"+br+",\"msgs\":[") ;
+			if(cp_msgs!=null)
+			{
+				boolean mbf = true ;
+				for(ConnMsg cm:cp_msgs)
+				{
+					if(mbf) mbf = false;
+					else out.print(",");
+					out.print(cm.toListJsonStr());
+				}
+			}
+			out.print("],\"connections\":[");
 			
 			List<ConnPt> conns = cp.listConns() ;
 			boolean bf1=true;
@@ -528,16 +535,30 @@ public class ConnManager
 				if(bf1) bf1=false;
 				else out.print(",") ;
 				
+				
 				String connerr = conn.getConnErrInfo() ;
 				if(connerr==null)
 					connerr = "" ;
-				boolean fnewdev = false;
-				if(conn instanceof ConnDevFindable)
+//				boolean fnewdev = false;
+//				if(conn instanceof ConnPtDevFinder)
+//				{
+//					Map<String,ConnDev> n2dev = ((ConnDevFindable)conn).getFoundConnDevs() ;
+//					fnewdev = (n2dev!=null&&n2dev.size()>0) ;
+//				}
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"msgs\":[");
+				List<ConnMsg> cpt_msgs = conn.getConnMsgs() ;
+				if(cpt_msgs!=null)
 				{
-					Map<String,ConnDev> n2dev = ((ConnDevFindable)conn).getFoundConnDevs() ;
-					fnewdev = (n2dev!=null&&n2dev.size()>0) ;
+					boolean mbf = true ;
+					for(ConnMsg cm:cpt_msgs)
+					{
+						if(mbf) mbf = false;
+						else out.print(",");
+						out.print(cm.toListJsonStr());
+					}
 				}
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"new_devs\":"+fnewdev+"}");
+				
+				out.print("]}");
 			}
 			
 			out.print("]}");

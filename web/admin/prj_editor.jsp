@@ -516,8 +516,10 @@ background-color: #fff ;
 										</td>
 										<i class="fa-solid fa-meteor"></i>
 										 --%>
-										<td width="20px" >
-											<span style="width:20px;height:20px;color:red;display:none" v-bind:cp_id="connector.id"  v-bind:id="'cp_pmsg_'+connector.id" onclick="show_cp_pmsg(this)"><i class="fa-solid fa-bolt fa-beat-fade"></i></span>
+										<td width="20px" v-bind:cp_id="connector.id"  v-bind:id="'cp_msgs_'+connector.id" >
+<%--
+											<span style="width:20px;height:20px;color:red;" onclick="show_cp_pmsg(this)"><i class="fa-solid fa-bolt fa-beat-fade"></i></span>
+ --%>
 										</td>
 									</tr>
 								</table>
@@ -533,8 +535,7 @@ background-color: #fff ;
 										<td width="90%" >
 											{{connection.title}} [{{connection.name}}]
 										</td>
-										<td width0="10px">
-											<span v-bind:id="'conn_new_'+connection.id"></span>
+										<td width0="10px" v-bind:cp_id="connector.id"  v-bind:cpt_id="+connection.id"  v-bind:id="'cpt_msgs_'+connection.id" style="white-space:nowrap;">
 										</td>
 										
 										<%--
@@ -2162,18 +2163,38 @@ function clk_dd()
 	add_tab("___dd","Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
 }
 
-function show_cp_pmsg(ob)
+function show_conn_msg(ob)
 {
 	var cpid = $(ob).attr("cp_id");
-	dlg.open("conn/cp_pmsg_show.jsp?prjid="+prjid+"&cpid="+cpid,
-			{title:"Show Message",w:'450px',h:'500px'},
-			['Close'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
+	var cid =  $(ob).attr("cid");
+	if(!cid)
+		cid = "" ;
+	var msgid = $(ob).attr("id");
+	send_ajax("conn/msg_ajax.jsp",{prjid:prjid,cpid:cpid,cid:cid,msgid:msgid},(bsucc,ret)=>{
+		if(!bsucc||ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		var ob = null;
+		eval("ob="+ret) ;
+		var u = ob.dlgu;
+		var t = ob.dlgt;
+		if(!u)
+		{
+			u = "conn/msg_show.jsp?prjid="+prjid+"&cpid="+cpid+"&cid="+cid+"&msgid="+msgid;
+			t = "Show Message"
+		}
+		dlg.open(u,{title:t,w:'450px',h:'500px'},
+				['Close'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	});
+	
 }
 	
 function prj_rt()
@@ -2224,11 +2245,21 @@ function prj_rt()
 		{
 			var id =cp.cp_id ;
 			var brun = cp.run ;
-			var pmsg = cp.pmsg ;
-			if(pmsg)
-				$("#cp_pmsg_"+id).css("display","");
+			var pmsgs = cp.msgs ;
+			if(pmsgs&&pmsgs.length>0)
+			{
+				var tmps = "" ;
+				for(var m of pmsgs)
+				{
+					tmps += "<span id='"+m.id+"' cp_id='"+id+"' style='width:20px;height:20px;color:"+m.ic+";' onclick='show_conn_msg(this)' title='"+m.t+"'><i class='"+m.i+"'></i></span>";
+				}
+				$("#cp_msgs_"+id).html(tmps) ;
+			}
 			else
-				$("#cp_pmsg_"+id).css("display","none");
+			{
+				$("#cp_msgs_"+id).html("") ;
+			}
+
 			$("#cp_st_"+id).css("background-color",brun?"green":"red");
 			$("#cp_"+id).attr("cp_run",""+brun) ;
 			for(var conn of cp.connections)
@@ -2246,6 +2277,7 @@ function prj_rt()
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link'></i>":"<i class='fa fa-chain-broken'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",color);
 				$("#conn_st_"+cid).attr("title",bready?"connection is ready":connerr);
+				/*
 				if(bnewdev)
 				{
 					$("#conn_new_"+cid).html("<i class='fa-solid fa-calendar-plus fa-lg fa-beat-fade' onclick=\"show_conn_new_dev('"+id+"','"+cid+"')\"></i>") ;
@@ -2253,6 +2285,23 @@ function prj_rt()
 				}
 				else
 					$("#conn_new_"+cid).html("") ;
+				*/
+				var msgs = conn.msgs ;
+				if(msgs&&msgs.length>0)
+				{
+					var tmps = "" ;
+					for(var m of msgs)
+					{
+						tmps += "<span id='"+m.id+"' cp_id='"+id+"' cid='"+cid+"' style='width:20px;height:20px;color:"+m.ic+";' onclick='show_conn_msg(this)' title='"+m.t+"'><i class='"+m.i+"'></i></span>";
+					}
+					//console.log(tmps)
+					$("#cpt_msgs_"+cid).html(tmps) ;
+				}
+				else
+				{
+					$("#cpt_msgs_"+cid).html("") ;
+				}
+				
 				$("#conn_run_"+cid).css("color",bready?"green":"red");
 				$("#conn_"+cid).attr("conn_ready",""+bready) ;
 				

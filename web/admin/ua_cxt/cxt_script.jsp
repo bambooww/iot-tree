@@ -86,14 +86,14 @@ if(Convert.isNotNullEmpty(path))
 %>
 <table border='1' style="height:90%;width:100%">
  <tr height="75%">
-  <td colspan="2">
+  <td colspan="2">&nbsp;&nbsp;
 <%
 String cheight = "100%" ;
 if(Convert.isNotNullEmpty(func_params))
 {
 	cheight="200px" ;
 %>
-&nbsp;&nbsp;(<%=func_params %>)=&gt;{
+(<%=func_params %>)=&gt;{
 <%
 }
 

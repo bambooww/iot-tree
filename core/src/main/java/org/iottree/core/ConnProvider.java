@@ -483,6 +483,24 @@ public abstract class ConnProvider implements IXmlDataValidator
 		connLis.onConnPtConnected(cp);
 	}
 	
+	public List<ConnMsg> getConnMsgs()
+	{
+		return null ;
+	}
+	
+	public final ConnMsg getConnMsgById(String msgid)
+	{
+		List<ConnMsg> ms = getConnMsgs() ;
+		if(ms==null)
+			return null ;
+		for(ConnMsg cm:ms)
+		{
+			if(cm.getId().equalsIgnoreCase(msgid))
+				return cm ;
+		}
+		return null ;
+	}
+	
 	protected abstract long connpRunInterval() ;
 	
 	
@@ -490,6 +508,8 @@ public abstract class ConnProvider implements IXmlDataValidator
 	{
 		
 	}
+	
+	
 	
 	/**
 	 * 
@@ -583,17 +603,17 @@ public abstract class ConnProvider implements IXmlDataValidator
 		return runTh != null ;
 	}
 	
-	/**
-	 * ConnProvider impl may provider some promp msg to user
-	 * 1)new conn or new device found
-	 * 2)may license not support
-	 * 3) some error info ;
-	 * @return
-	 */
-	public String getPromptMsg()
-	{
-		return null;
-	}
+//	/**
+//	 * ConnProvider impl may provider some promp msg to user
+//	 * 1)new conn or new device found
+//	 * 2)may license not support
+//	 * 3) some error info ;
+//	 * @return
+//	 */
+//	public String getPromptMsg()
+//	{
+//		return null;
+//	}
 
 	public void dispose()
 	{

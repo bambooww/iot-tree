@@ -1,9 +1,8 @@
-package org.iottree.core.conn;
+package org.iottree.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;

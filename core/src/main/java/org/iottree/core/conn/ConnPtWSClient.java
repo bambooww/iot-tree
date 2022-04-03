@@ -3,6 +3,7 @@ package org.iottree.core.conn;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.websocket.ClientEndpoint;
@@ -14,6 +15,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import org.iottree.core.ConnDev;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
@@ -212,6 +214,15 @@ public class ConnPtWSClient extends ConnPtMSG
 			lastChk = System.currentTimeMillis() ;
 		}
 	}
+	
+
+	@Override
+	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@ClientEndpoint()
 	class WSClient
 	{

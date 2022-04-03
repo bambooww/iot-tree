@@ -23,15 +23,15 @@ if(cp==null)
 	return ;
 }
 ConnPt cpt = cp.getConnById(cid) ;
-if(cpt==null || !(cpt instanceof ConnDevFindable))
+if(cpt==null || !(cpt instanceof ConnPtDevFinder))
 {
-	out.print("no ConnDevFindable found") ;
+	out.print("no ConnPtDevFinder found") ;
 	return ;
 }
-ConnDevFindable cdf  =(ConnDevFindable)cpt ;
+ConnPtDevFinder cdf  =(ConnPtDevFinder)cpt ;
 LinkedHashMap<String,ConnDev> name2dev = cdf.getFoundConnDevs() ;
 String cptitle = cp.getTitle() ;
-String pmsg = cp.getPromptMsg() ;
+//ConnMsg pmsg = cp.getConnMsgById(msgid)
 %>
 <html>
 <head>
