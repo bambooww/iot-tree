@@ -29,7 +29,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
+public class ConnPtIOTTreeNode  extends ConnPtMSG
 {
 	static ILogger log = LoggerManager.getLogger("ConnPtIOTTreeNode") ; 
 //	private String mqttHost = null;
@@ -390,11 +390,11 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGTopic
 	}
 	
 
-	@Override
-	public List<String> getMsgTopics()
-	{
-		return null;
-	}
+//	@Override
+//	public List<String> getMsgTopics()
+//	{
+//		return null;
+//	}
 	
 //	public void publish(String topic, byte[] data) throws MqttPersistenceException, MqttException
 //	{

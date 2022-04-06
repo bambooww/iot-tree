@@ -168,7 +168,7 @@ public class ConnProMQTT extends ConnProvider
 			try
 			{
 				mm = token.getMessage();
-				System.out.println("mqtt msg deliveryComplete=" + mm.getPayload().length);
+				//System.out.println("mqtt msg deliveryComplete=" + mm.getPayload().length);
 			} catch (MqttException e)
 			{
 				// TODO Auto-generated catch block

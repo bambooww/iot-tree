@@ -7,7 +7,6 @@ import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
 import org.iottree.core.UADev;
 import org.iottree.core.basic.PropGroup;
-import org.iottree.core.conn.ConnPtMSGTopic;
 
 public class JsonJSDrv  extends DevDriver
 {
@@ -42,7 +41,7 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return ConnPtMSGTopic.class;
+		return org.iottree.core.conn.ConnPtMSG.class;
 	}
 
 	@Override

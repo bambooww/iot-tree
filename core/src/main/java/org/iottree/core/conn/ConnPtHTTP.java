@@ -3,17 +3,20 @@ package org.iottree.core.conn;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.iottree.core.ConnDev;
 import org.iottree.core.ConnPt;
+import org.iottree.core.UATag;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
@@ -123,18 +126,41 @@ public class ConnPtHTTP extends ConnPtMSG
 		this.intervalMS = optJSONInt64(jo,"int_ms", 5000) ;
 	}
 
+	private boolean bConnOk = false;
+	
 	@Override
 	public boolean isConnReady()
 	{
-		return false;
+		return bConnOk;
 	}
 	
 	public String getConnErrInfo()
 	{
 		return null ;
 	}
+	
+	private byte[] getData(String url, String token) throws Exception
+	{
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+		HttpGet git = new HttpGet(url);
+		String result = "";
+		try (CloseableHttpClient chc = httpClientBuilder.build())
+		{
+//			HttpEntity entity = new StringEntity(post_txt, "UTF-8");
+//			git.setEntity(entity);
+			git.setHeader("Content-type", "application/json");
+			if(Convert.isNotNullEmpty(token))
+				git.setHeader("token",token);
+			HttpResponse resp = chc.execute(git);
+			InputStream respIs = resp.getEntity().getContent();
+			return IOUtils.toByteArray(respIs);
+			
+//			result = new String(rbs, this.getEncod());
+//			return result;
+		}
+	}
 
-	public static String postData(String url, String post_txt,String token) throws Exception
+	private byte[] postData(String url, String post_txt,String token) throws Exception
 	{
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		HttpPost post = new HttpPost(url);
@@ -148,16 +174,61 @@ public class ConnPtHTTP extends ConnPtMSG
 				post.setHeader("token",token);
 			HttpResponse resp = chc.execute(post);
 			InputStream respIs = resp.getEntity().getContent();
-			byte[] rbs = IOUtils.toByteArray(respIs);
-			result = new String(rbs, "UTF-8");
-			return result;
+			return IOUtils.toByteArray(respIs);
+//			result = new String(rbs, this.getEncod());
+//			return result;
 		}
 	}
 
 	@Override
 	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
 	{
-		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	transient private long lastChkDT = -1 ;
+
+	void checkUrl()
+	{
+		if(System.currentTimeMillis()-lastChkDT<this.intervalMS)
+			return ;
+		
+		try
+		{
+			byte[] res = getData(this.getUrl(), "") ;
+			
+			this.onRecvedMsg("", res);
+			bConnOk = true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			bConnOk = false;
+		}
+		finally
+		{
+			lastChkDT = System.currentTimeMillis() ;
+		}
+	}
+//	@Override
+//	public List<String> getMsgTopics()
+//	{
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	@Override
+	public boolean sendMsg(String topic, byte[] bs) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void runOnWrite(UATag tag, Object val) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

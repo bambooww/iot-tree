@@ -1,13 +1,16 @@
 package org.iottree.core;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.iottree.core.ConnPt.MonItem;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.IXmlDataValidator;
@@ -22,47 +25,200 @@ import org.json.JSONObject;
  */
 public abstract class ConnPt implements IXmlDataValidator
 {
+	private static int cc = 0 ;
+	private static long last_id_dt = -1 ;
+	
+	private synchronized static String createNewId()
+	{
+		long t = System.currentTimeMillis();
+		if(last_id_dt==t)
+		{
+			cc ++ ;
+			return t+"_"+cc ;
+		}
+		
+		last_id_dt = t ;
+		cc = 0 ;
+		return t+"_0" ;
+	}
+	
+	public static enum DataTp
+	{
+		json(1), str(2), xml(3), bytes(4);
+
+		private final int val;
+
+		DataTp(int v)
+		{
+			val = v;
+		}
+
+		public int getInt()
+		{
+			return val;
+		}
+
+		public String getTitle()
+		{
+			switch (val)
+			{
+			case 1:
+				return "json";
+			case 2:
+				return "string";
+			case 3:
+				return "xml";
+			case 4:
+				return "bytes";
+			default:
+				return null;
+			}
+		}
+	}
+	
+	public static class MonData
+	{
+		String name = null ;
+		
+		int dlen = -1 ;
+		
+		String txt = null;
+		
+		DataTp dataTp = DataTp.json ;
+		
+		private transient byte[] dataBS = null ;
+		
+		private transient String dataEncd = "UTF-8";
+		
+		public MonData(String name,DataTp dtp,String txt)
+		{
+			this.name = name ;
+			if(txt==null)
+				txt = "" ;
+			this.dlen = txt.length() ;
+			this.txt = txt ;
+			this.dataTp = dtp ;
+		}
+		
+		public MonData(String name,byte[] bs)
+		{
+			this.name = name ;
+			this.dlen = bs.length ;
+			this.dataBS = bs ;
+			this.dataTp = DataTp.bytes;
+		}
+		
+		public MonData(String name,DataTp dtp,byte[] bs,String encd)
+		{
+			this.name = name ;
+			this.dlen = bs.length ;
+			this.dataBS = bs ;
+			this.dataTp = dtp;
+			this.dataEncd = encd ;
+			if(Convert.isNullOrEmpty(this.dataEncd))
+				this.dataEncd = "UTF-8" ;
+		}
+		
+		public String getName()
+		{
+			return name ;
+		}
+		
+		public int getLen()
+		{
+			return dlen ;
+		}
+		
+		public String getTxt() throws UnsupportedEncodingException
+		{
+			if(txt==null)
+			{
+				if(this.dataBS!=null)
+				{
+					if(this.dataTp==DataTp.bytes)
+						txt = Convert.byteArray2HexStr(this.dataBS) ;
+					else// if(this.dataTp==DataTp.xml)
+						txt= new String(this.dataBS,this.dataEncd) ;
+				}
+				
+				if(txt==null)
+					txt  ="" ;
+			}
+			return txt ;
+		}
+		
+		public DataTp getDataTp()
+		{
+			return dataTp ;
+		}
+		
+		public void writeToJSON(Writer w,boolean bdetail) throws IOException
+		{
+			w.write("{\"n\":\""+name+"\",\"len\":"+dlen+",\"tp\":\""+dataTp.toString()+"\"") ;
+			if(bdetail||this.getLen()<50)
+			{
+				w.write(",\"txt\":\"") ;
+				String mtxt = this.getTxt() ;
+				w.write(Convert.plainToJsStr(mtxt));
+				w.write("\"");
+			}
+			w.write("}");
+		}
+	}
 	/**
 	 * 存放上下行数据
 	 */
 	public static class MonItem
 	{
+		String id = null;
 		/**
 		 * true-input  false=output
 		 */
 		boolean bInput = true; 
 		/**
-		 * 第一个字节时间
+		 * first data dt
 		 */
 		long stDT = -1 ;
 		
 		/**
-		 * 最后一字节时间
+		 * last data dt
 		 */
 		long endDT = -1 ;
 		
-		byte[] monBuf = null;//new byte[MAX_MON_BLOCKLEN] ;
+		String monName = null ;
 		
-		//ByteArrayOutputStream baso = null ;
+		MonData[] monDatas = null;
 		
-		int monLen = 0 ;
-		
-//		MonItem(boolean binput,int b)
-//		{
-//			bInput = binput ;
-//			endDT = stDT = System.currentTimeMillis() ;
-//			monBuf[0] = (byte)b ;
-//			monLen = 1 ;
-//		}
-		
-		MonItem(boolean binput,byte[] bs)
+		public MonItem(boolean binput,String name,MonData[] mds)
 		{
+			this.id = createNewId();
 			bInput = binput ;
 			endDT = stDT = System.currentTimeMillis() ;
-			//monBuf[0] = (byte)b ;
-			monBuf = bs ;
-			monLen = bs.length ;
+			this.monName = name ;
+			this.monDatas = mds ;
 		}
+		
+		public String getMonId()
+		{
+			return this.id ;
+		}
+		
+		/**
+		 * mon name like topic
+		 * @return
+		 */
+		public String getMonName()
+		{
+			if(monName==null)
+				return "" ;
+			return monName ;
+		}
+		
+		public MonData[] getMonDatas()
+		{
+			return monDatas ;
+		}
+		
 		
 		public boolean isInput()
 		{
@@ -84,33 +240,102 @@ public abstract class ConnPt implements IXmlDataValidator
 			return endDT ;
 		}
 		
-		/**
-		 * 获得监视数据长度
-		 * @return
-		 */
-		public int getMonDataLen()
-		{
-			return monLen ;
-		}
 		
-		public byte[] getMonData()
-		{
-			return monBuf ;
-		}
 		
+		public void writeJsonOut(Writer w,boolean bdetail) throws IOException
+		{
+			w.write("{\"id\":\""+this.id+"\",\"dt\":"+stDT+",\"bin\":"+bInput+",\"n\":\""+this.monName+"\"");
+			w.write(",\"datas\":[");
+			boolean bfirst = true ;
+			for(MonData md:this.monDatas)
+			{
+				if(bfirst) bfirst = false;
+				else w.write(",");
+					
+				md.writeToJSON(w,bdetail);
+			}
+			w.write("]} ");
+		}
 	}
+	
+//	public static class MonItemBS extends MonItem
+//	{
+//
+//		byte[] monBuf = null;//new byte[MAX_MON_BLOCKLEN] ;
+//
+//		int monLen = 0 ;
+//
+//		public MonItemBS(boolean binput,String name,byte[] bs)
+//		{
+//			super(binput,name) ;
+//			monBuf = bs ;
+//			monLen = bs.length ;
+//		}
+//		
+//		public MonItemBS(boolean binput,byte[] bs)
+//		{
+//			super(binput,null) ;
+//			monBuf = bs ;
+//			monLen = bs.length ;
+//		}
+//		
+//		/**
+//		 * 
+//		 * @return
+//		 */
+//		public int getMonDataLen()
+//		{
+//			return monLen ;
+//		}
+//		
+//		public byte[] getMonData()
+//		{
+//			return monBuf ;
+//		}
+//		
+//		public String getMonTxt()
+//		{
+//			return Convert.byteArray2HexStr(monBuf,0,monLen," ") ;
+//		}
+//	}
+//	
+//	
+//	public static class MonItemStr extends MonItem
+//	{
+//		//String monName = null ;
+//		String monStr = null;//new byte[MAX_MON_BLOCKLEN] ;
+//
+//		public MonItemStr(boolean binput,String name,String str)
+//		{
+//			super(binput,name) ;
+//			//this.monName = name ;
+//			this.monStr = str ;
+//		}
+//		
+//
+//		public int getMonDataLen()
+//		{
+//			return monStr.length() ;
+//		}
+//		
+//		
+//		public String getMonTxt()
+//		{
+//			return monStr ;
+//		}
+//	}
 	
 	public static final int MAX_MON_BLOCKLEN = 1024 ;
 	
 	
 	
-	private transient int monListMaxLen = 100 ;
+	private transient int monListMaxLen = 50 ;
 	
 	
 	/**
-	 * 监视列表
+	 * Monitor item list
 	 */
-	private transient LinkedList<MonItem> monItemList = new LinkedList<MonItem>() ;
+	private transient LinkedList<MonItem> monItemList = new LinkedList<>() ;
 	
 	
 	/**
@@ -441,16 +666,27 @@ public abstract class ConnPt implements IXmlDataValidator
 		
 	}
 
-	protected  void onMonDataRecv(boolean binputs,byte[] bs)
+	protected  void onMonDataRecv(MonItem mi)
 	{
-		MonItem curmi = new MonItem(binputs,bs) ; ;
+		//MonItemBS curmi = new MonItemBS(binputs,bs) ; ;
 		synchronized(this)
 		{
-			monItemList.add(curmi) ;
+			monItemList.addFirst(mi) ;
 			if(monItemList.size()>=monListMaxLen)
-				monItemList.removeFirst() ;
+				monItemList.removeLast();
 		}
 	}
+	
+//	protected  void onMonDataRecv(boolean binputs,byte[] bs)
+//	{
+//		MonItemBS curmi = new MonItemBS(binputs,bs) ; ;
+//		synchronized(this)
+//		{
+//			monItemList.add(curmi) ;
+//			if(monItemList.size()>=monListMaxLen)
+//				monItemList.removeFirst() ;
+//		}
+//	}
 	
 	public boolean setMonListMaxLen(int len)
 	{
@@ -480,6 +716,38 @@ public abstract class ConnPt implements IXmlDataValidator
 		ArrayList<MonItem> rets = new ArrayList<>(s) ;
 		rets.addAll(monItemList) ;
 		return rets ;
+	}
+	
+	public List<MonItem> getMonitorList(long ldt)
+	{
+		ArrayList<MonItem> rets = new ArrayList<>() ;
+		for(MonItem mi:monItemList)
+		{
+			if(mi.getStartDT()<=ldt)
+				break ;
+			rets.add(mi) ;
+		}
+		return rets ;
+	}
+	
+	public MonItem getMonItemFirst()
+	{
+		return monItemList.peekLast();
+	}
+	
+	public MonItem getMonItemLast()
+	{
+		return monItemList.peekFirst() ;
+	}
+	
+	public MonItem getMonItemById(String id)
+	{
+		for(MonItem mi:monItemList)
+		{
+			if(mi.getMonId().equals(id))
+				return mi ;
+		}
+		return null ;
 	}
 
 	public String toString()

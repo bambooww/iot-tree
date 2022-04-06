@@ -50,7 +50,7 @@ if(cpt.isEnable())
 String desc = cpt.getDesc();
 //String opc_appn = cpt.getOpcAppName();
 //String opc_epuri  = cpt.getOpcEndPointURI();
-ConnPtMQTT.SorTp sor_tp = cpt.getSorTp();
+ConnPt.DataTp sor_tp = cpt.getSorTp();
 String init_js = cpt.getInitJS() ;
 String trans_js = cpt.getTransJS();
 
@@ -100,7 +100,7 @@ dlg.resize_to(700,400);
     <div class="layui-input-inline" style="width:70px">
     	<select id="sor_tp" lay-filter="sor_tp" >
 <%
-for(ConnPtMQTT.SorTp stp:ConnPtMQTT.SorTp.values())
+	for(ConnPt.DataTp stp:ConnPt.DataTp.values())
 {
 %><option value="<%=stp.toString()%>"><%=stp.getTitle() %></option>
 <%

@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.iottree.core.util.Convert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -675,6 +676,101 @@ public class XmlHelper
 			Document doc = docBuilder.parse(is);
 			return doc.getDocumentElement();
 		}
+	}
+	
+	/**
+	 * transfer xml element to json str
+	 * tag will be  ”_":"tagname"
+	 * @param ele
+	 * @return
+	 */
+	public static String transElement2JSONStr(Element ele,boolean bformat,boolean ignore_whitesp,boolean element_only)
+	{
+		StringWriter sw = new StringWriter() ;
+		String indent = null ;
+		if(bformat)
+			indent = "  " ;
+		try
+		{
+			transElement2JSONStr(ele,sw,indent,ignore_whitesp,element_only);
+			return sw.toString() ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	private static void transElement2JSONStr(Element ele,Writer w,String indent,boolean ignore_whitesp,boolean element_only)
+		throws IOException
+	{
+		boolean bformat = Convert.isNotNullEmpty(indent) ;
+		w.write(indent+"{");
+		if(bformat)
+			w.write("\r\n"+indent+"\"$tag\":\""+ele.getTagName()+"\"");
+		else
+			w.write("\"$tag\":\""+ele.getTagName()+"\"");
+		
+		NamedNodeMap nnm = ele.getAttributes() ;
+		int s ;
+		if(nnm!=null&&(s=nnm.getLength())>0)
+		{
+			for(int i = 0 ; i < s; i ++)
+			{
+				Node tmpn = nnm.item(i) ;
+				String tmpv = tmpn.getNodeValue();
+				if (tmpv == null)
+				{
+					tmpv = "";
+				}
+				w.write(" \""+tmpn.getNodeName()+"\":\""+Convert.plainToJsStr(tmpv)+"\"");
+			}
+		}
+		
+		NodeList nls = ele.getChildNodes() ;
+		if(nls!=null&&(s=nls.getLength())>0)
+		{
+			if(bformat)
+				w.write("\r\n"+indent+"\"$sub\":[");
+			else
+				w.write("\"$sub\":[");
+			
+			String subind = "";
+			if(bformat)
+				subind = indent+"  " ;
+			boolean bf = true;
+			for(int i = 0 ; i < s; i ++)
+			{
+				Node tmpn = nls.item(i) ;
+				if(tmpn instanceof Element)
+				{
+					if(bf) bf=false;
+					else w.write(",");
+					transElement2JSONStr((Element)tmpn,w,subind,ignore_whitesp,element_only);
+				}
+				else if(tmpn instanceof org.w3c.dom.Text)
+				{
+					if(element_only)
+						continue ;
+					String str = ((org.w3c.dom.Text)tmpn).getData() ;
+					if(ignore_whitesp)
+					{
+						str = str.trim();
+						if(Convert.isNullOrEmpty(str))
+							continue ;
+					}
+					if(bf) bf=false;
+					else w.write(",");
+					w.write("\""+Convert.plainToJsStr(str)+"\"");
+				}
+			}
+		}
+		
+		if(bformat)
+			w.write("\r\n"+indent+"}");
+		else
+			w.write("}");
 	}
 }
 

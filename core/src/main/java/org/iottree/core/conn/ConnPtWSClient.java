@@ -16,6 +16,7 @@ import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
 import org.iottree.core.ConnDev;
+import org.iottree.core.UATag;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
@@ -243,6 +244,20 @@ public class ConnPtWSClient extends ConnPtMSG
 		{
 			session = null ;
 		}
+	}
+
+	@Override
+	public boolean sendMsg(String topic, byte[] bs) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void runOnWrite(UATag tag, Object val) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }
 

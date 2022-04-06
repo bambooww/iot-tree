@@ -15,7 +15,7 @@ public class ConnProHTTP extends ConnProvider
 	
 	public boolean isSingleProvider()
 	{
-		return true;
+		return false;
 	}
 	
 
@@ -28,15 +28,17 @@ public class ConnProHTTP extends ConnProvider
 	@Override
 	protected long connpRunInterval()
 	{
-		// TODO Auto-generated method stub
 		return 100;
 	}
 
 	@Override
 	protected void connpRunInLoop() throws Exception
 	{
-		// TODO Auto-generated method stub
-		
+		for(ConnPt ci:this.listConns())
+		{
+			ConnPtHTTP citc = (ConnPtHTTP)ci ;
+			citc.checkUrl() ;
+		}
 	}
 
 }

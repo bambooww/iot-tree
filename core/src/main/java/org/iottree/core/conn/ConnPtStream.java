@@ -229,7 +229,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			//onMonRecv(true,v) ;
 			byte[] bs = new byte[1] ;
 			bs[0] = (byte)v ;
-			onMonDataRecv(true,bs);
+			MonItem mibs = new MonItem(true,"",new MonData[] {new MonData("read",bs)}) ;
+			onMonDataRecv(mibs);
 			return v ;
 		}
 		
@@ -260,7 +261,9 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 				return r ;
 			byte[] bs = new byte[r] ;
 			System.arraycopy(b, off, bs, 0, r);
-			onMonDataRecv(true,bs);
+			//MonItemBS mibs = new MonItemBS(true,bs) ;
+			MonItem mibs = new MonItem(true,"",new MonData[] {new MonData("read",bs)}) ;
+			onMonDataRecv(mibs);
 			return r ;
 		}
 		
@@ -326,7 +329,9 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			}
 			byte[] bs = new byte[1] ;
 			bs[0] = (byte)b ;
-			onMonDataRecv(false,bs) ;
+			//MonItemBS mibs = new MonItemBS(false,bs) ;
+			MonItem mibs = new MonItem(false,"",new MonData[] {new MonData("write",bs)}) ;
+			onMonDataRecv(mibs) ;
 		}
 		
 		
@@ -345,7 +350,9 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			}
 			byte[] bs = new byte[len] ;
 			System.arraycopy(b, off, bs, 0, len);
-			onMonDataRecv(false,bs) ;
+			//MonItemBS mibs = new MonItemBS(false,bs) ;
+			MonItem mibs = new MonItem(false,"",new MonData[] {new MonData("write",bs)}) ;
+			onMonDataRecv(mibs) ;
 		}
 		
 		@Override

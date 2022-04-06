@@ -11,18 +11,18 @@
 	java.net.*,
 	java.util.*
 	"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","cpid"))
 	return;
 String repid = request.getParameter("prjid") ;
+String cpid =  request.getParameter("cpid") ;
 String cptp = ConnProHTTP.TP;//request.getParameter("cptp") ;
-ConnProHTTP cp = (ConnProHTTP)ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp);
+ConnProHTTP cp = (ConnProHTTP)ConnManager.getInstance().getConnProviderById(repid, cpid);
 if(cp==null)
 {
 	out.print("no single provider found with "+cptp);
 	return ;
 }
 
-String cpid = cp.getId();//.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
 
 ConnPtHTTP cpt = null ;
@@ -53,6 +53,14 @@ String url = cpt.getUrl();
 String method = cpt.getMethod();
 long int_ms = cpt.getIntervalMS();
 String cp_tp = cp.getProviderType() ;
+
+ConnPt.DataTp sor_tp = cpt.getSorTp();
+String init_js = cpt.getInitJS() ;
+String trans_js = cpt.getTransJS();
+
+String encod = cpt.getEncod() ;
+if(Convert.isNullOrEmpty(encod))
+	encod = "UTF-8";
 %>
 <html>
 <head>
@@ -63,7 +71,7 @@ String cp_tp = cp.getProviderType() ;
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(600,500);
 </script>
 </head>
 <body>
@@ -104,17 +112,68 @@ dlg.resize_to(600,400);
 	  </div>
   </div>
   
-    <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
-      <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
+   
+  <div class="layui-form-item">
+    <label class="layui-form-label">Message Source Type</label>
+    <div class="layui-input-inline" style="width:70px">
+    	<select id="sor_tp" lay-filter="sor_tp" >
+<%
+	for(ConnPt.DataTp stp:ConnPt.DataTp.values())
+{
+%><option value="<%=stp.toString()%>"><%=stp.getTitle() %></option>
+<%
+}
+%>
+    	</select>
+    </div>
+    <label class="layui-form-label">Encoding</label>
+    <div class="layui-input-inline" style="width:100px">
+    <select id="encod" lay-filter="encod" >
+<%
+for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
+{
+%><option value="<%=chartset%>"><%=chartset %></option><%
+}
+%>
+		
+		
+    </select>
     </div>
   </div>
-   
+  <div class="layui-form-item">
+    <label class="layui-form-label">Initial JS:</label>
+    <div class="layui-input-inline" style="width:600px">
+      <textarea  id="init_js"  name="init_js"  style="height:60px;width:100%;border-color: #e6e6e6"><%=init_js%></textarea>
+    </div>
+    <button onclick="edit_js_init()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Transfer JS:</label>
+    <div class="layui-input-inline" style="width:600px">
+    ($topic,$msg)=>{
+      <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:150px"><%=trans_js%></textarea>
+      }
+    </div>
+    <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
+    <%--
+    <label class="layui-form-label">Device JS:</label>
+    <div class="layui-input-inline">
+      <textarea  id="devs_js"  name="devs_js"  required class="layui-textarea" rows="2"><%=""%></textarea>
+    </div>
+     --%>
+  </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">Description:</label>
+    <div class="layui-input-inline" style="width:600px">
+      <textarea  id="desc"  name="desc"  style="height:30px;width:100%;border-color: #e6e6e6"><%=desc%></textarea>
+    </div>
+  </div>
  </form>
 </body>
 <script type="text/javascript">
 var form = null;
+var sor_tp = "<%=sor_tp%>";
+var encod = "<%=encod%>";
 layui.use('form', function(){
 	  form = layui.form;
 	  
@@ -142,7 +201,22 @@ layui.use('form', function(){
 	  form.on('select(method)', function(obj){
 		       setDirty();
 		  });
-		  
+	  $("#init_js").on("input",function(e){
+		  setDirty();
+		  });
+	  
+	  $("#trans_js").on("input",function(e){
+		  setDirty();
+		  });
+	  form.on('select(sor_tp)', function(obj){
+		       setDirty();
+		  });
+	  form.on('select(encod)', function(obj){
+		       setDirty();
+		  });
+
+	  $("#sor_tp").val(sor_tp) ;
+	  $("#encod").val(encod) ;
 	  form.render(); 
 });
 
@@ -168,6 +242,40 @@ function win_close()
 {
 	dlg.close(0);
 }
+
+
+function edit_js_trans()
+{
+	edit_js('trans_js','Transfer JS','$topic,$msg','trans_sample') ;
+}
+
+function edit_js_init()
+{
+	edit_js('init_js','Initial JS','','') ;
+}
+
+function edit_js(taid,tt,funcp,sample_id)
+{
+	event.preventDefault();
+	dlg.open("../ua_cxt/cxt_script.jsp?opener_txt_id="+taid+"&sample_txt_id="+sample_id+"&func_params="+funcp,
+			{title:tt},['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					var jstxt = dlgw.get_edited_js() ;
+					 if(jstxt==null)
+						 jstxt='' ;
+					 $("#"+taid).val(jstxt) ;
+					 setDirty();
+					 dlg.close() ;
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 
 function get_input_val(id,defv,bnum)
 {
@@ -225,8 +333,32 @@ function do_submit(cb)
 		cb(false,'Please input valid Update interval') ;
 	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms});
+	var sor_tp = $('#sor_tp').val();
+	if(sor_tp==null||sor_tp=='')
+	{
+		cb(false,'Please input sor_tp') ;
+		return ;
+	}
+	var init_js = $('#init_js').val();
+	var trans_js = $('#trans_js').val();
+	var enc =  $("#encod").val() ;
+	
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms,sor_tp:sor_tp,init_js:init_js,trans_js:trans_js,encod:enc});
 }
 
+function str2lns(str)
+{
+	var arr = str.split('\n');
+	var res = [];
+	arr.forEach(function (item)
+	{
+		var ln = item.replace(/(^\s*)|(\s*$)/g, "").replace(/\s+/g, " ")
+		if(ln=='')
+			return ;
+	    res.push(ln);
+	})
+
+	return res ;
+}
 </script>
 </html>

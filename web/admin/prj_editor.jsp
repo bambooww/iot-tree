@@ -880,7 +880,7 @@ function on_conn_ui_showed()
 						}});
 					}
 					d.push({ content : '<i class="fa fa-eye"></i> Monitor', callback:()=>{
-						window.open("./conn/cpt_mon.jsp?repid="+repid+"&cpid="+cpid+"&connid="+connid) ;
+						window.open("./conn/cpt_mon.jsp?prjid="+repid+"&cpid="+cpid+"&cid="+connid) ;
 					}});
 					d.push({content:'sm_divider'});
 					d.push({ content : '<i class="fa fa-pencil"></i> Edit', callback:()=>{

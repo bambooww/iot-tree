@@ -215,6 +215,14 @@
 		    <artifactId>commonmark</artifactId>
 		    <version>0.17.0</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
+<dependency>
+    <groupId>com.jayway.jsonpath</groupId>
+    <artifactId>json-path</artifactId>
+    <version>2.7.0</version>
+</dependency>
+		
 	</dependencies>
 	
 </project>
