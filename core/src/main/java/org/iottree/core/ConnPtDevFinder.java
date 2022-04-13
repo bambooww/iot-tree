@@ -6,7 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ConnPtDevFinder extends ConnPt
+import org.iottree.core.conn.ConnPtBinder;
+
+public abstract class ConnPtDevFinder extends ConnPtBinder
 {
 	public abstract LinkedHashMap<String,ConnDev> getFoundConnDevs() ;
 	

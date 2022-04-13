@@ -61,7 +61,7 @@ long run_int = cpt.getRunIntervalMS() ;
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(600,800);
+dlg.resize_to(750,780);
 </script>
 </head>
 <body>

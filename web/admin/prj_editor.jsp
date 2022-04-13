@@ -382,6 +382,9 @@ background-color: #ffffff;
 
 .subitem{
     width:100%;
+    background-color: #f2f2f2;margin-top:3px;margin-bottom: 3px;
+    border-radius:9px;
+    padding-bottom:2px;
 }
 
 .subitem th,.subitem td{
@@ -390,12 +393,12 @@ background-color: #ffffff;
 
 .subitem_toolbar{
         width:100%;
-        height0: 30px;
-        border:solid 1px;
+        height0: 25px;
+        border:solid 0px;
         font-size: small;
         font-weight:bold;
-		line-height: 30px;
-		background-color: #f0f7ff;
+		line-height: 25px;
+		//background-color: #f0f7ff;
  }
  .subitem_content{
         width:100%;
@@ -404,6 +407,8 @@ background-color: #ffffff;
  .subitem_li {
  	margin: 5px;
  	border: solid 1px;
+ 	border-style:dashed;
+ 	//background-color: #c2c2c2;
  }
 
 .line{
@@ -497,11 +502,11 @@ background-color: #fff ;
 				 </div>
 		   </div>
 		   <div class="subwin_content" style="overflow:hidden;">
-		      <div  style="width:75%;height:100%;float:left;overflow:hidden;border:solid 1px;border-color: #cccccc;">
+		      <div  style="width:75%;height:100%;float:left;overflow:hidden;border:solid 0px;border-color: #cccccc;">
 		         <div id="conn" style="width:110%;height:100%;float:left;overflow:auto;">
-		           <div class="subitem"  v-for="connector in connectors" style="width:91%">
+		           <div class="subitem"  v-for="connector in connectors" style="width:91%;">
 		               	 <div class="subitem_toolbar" v-bind:id="'cp_'+connector.id" v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp">
-		               	      <table style="width:100%;border: 1">
+		               	      <table style="width:100%;border:0px">
 			               	 		<tr>
 										<td width="90%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
 <%--
@@ -628,7 +633,7 @@ var connpro_menu = [
 	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
 	{content:'COM',callback : function(){edit_cpt("com","","");}},
 	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
-	{content:'<i class="fa fa-link"></i> OPC',header: true},
+	{content:'<i class="fa fa-link"></i> Binder',header: true},
 //	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
 <%
 	if(ConnProvider.hasConnProvider("opc_da"))
@@ -638,6 +643,7 @@ var connpro_menu = [
 <%
 	}
 %>
+{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
 //	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'<i class="fa fa-link"></i> Message',header: true},
 	{content:'HTTP Url',callback:function(){
@@ -651,12 +657,13 @@ var connpro_menu = [
 		edit_cpt("ws_client","","");
 	}},
 	{content:'sm_divider'},
+	
+	
+	{content:'Others',header: true},
 	{content:'IOTTree Node',callback:function(){
 		edit_cpt("iottree_node","","");
 	}},
 	{content:'sm_divider'},
-	
-	{content:'Others',header: true},
 	{content:'Virtual',callback : function(){edit_cpt("virtual","","");}}
 ];
 
@@ -1343,9 +1350,9 @@ function iottree_node_syn_tree(cptp,cpid,connid)
 
 function edit_cpt(cptp,cpid,connid)
 {
-	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" Connection Editor",w:'800',h:'550'},
-			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+	dlg.open("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:cptp+" Connection Editor",w:'800',h:'600'},
+			['Ok','Apply','Cancel','Help'],//{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
 			[
 				function(dlgw)
 				{

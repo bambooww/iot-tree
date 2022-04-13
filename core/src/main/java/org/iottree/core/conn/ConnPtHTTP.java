@@ -15,14 +15,19 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.iottree.core.ConnDev;
+import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.UATag;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
 public class ConnPtHTTP extends ConnPtMSG
 {
+	static ILogger log = LoggerManager.getLogger(ConnPtHTTP.class) ;
+	
 	String url = null ;
 	
 	String method = "GET" ;
@@ -131,6 +136,11 @@ public class ConnPtHTTP extends ConnPtMSG
 	@Override
 	public boolean isConnReady()
 	{
+		ConnProvider cp = this.getConnProvider() ;
+		if(cp==null)
+				return false;
+		if(!cp.isRunning())
+			return false;
 		return bConnOk;
 	}
 	
@@ -203,7 +213,11 @@ public class ConnPtHTTP extends ConnPtMSG
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			if(log.isDebugEnabled())
+			{
+				log.debug("", e);
+			}
+			//e.printStackTrace();
 			bConnOk = false;
 		}
 		finally
@@ -231,4 +245,5 @@ public class ConnPtHTTP extends ConnPtMSG
 		// TODO Auto-generated method stub
 		
 	}
+
 }

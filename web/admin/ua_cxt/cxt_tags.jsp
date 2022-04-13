@@ -807,7 +807,7 @@ function show_ele_html(n,v,chklen,title)
 		return ;
 	if(chklen&&v!=null&&v.length>20)
 	{
-		ele.innerHTML = "<span title='"+title+"'>"+v.substr(0,chklen)+"...</span>";
+		ele.innerHTML = "<span title='"+title+"'>"+v.substr(0,20)+"...</span>";
 	}
 	else if(title)
 	{

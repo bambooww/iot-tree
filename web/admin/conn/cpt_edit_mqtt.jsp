@@ -25,7 +25,9 @@ if(cp==null)
 }
 
 String connid = request.getParameter("connid") ;
-
+String cid = connid ;
+if(cid==null)
+	cid = "";
 ConnPtMQTT cpt = null ;
 if(Convert.isNullOrEmpty(connid))
 {
@@ -51,8 +53,8 @@ String desc = cpt.getDesc();
 //String opc_appn = cpt.getOpcAppName();
 //String opc_epuri  = cpt.getOpcEndPointURI();
 ConnPt.DataTp sor_tp = cpt.getSorTp();
-String init_js = cpt.getInitJS() ;
-String trans_js = cpt.getTransJS();
+//String init_js = cpt.getInitJS() ;
+//String trans_js = cpt.getTransJS();
 
 List<String> topics = cpt.getMsgTopics();
 String topics_str = Convert.transListToMultiLineStr(topics) ;
@@ -65,13 +67,9 @@ if(Convert.isNullOrEmpty(encod))
 <html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(700,400);
+dlg.resize_to(800,600);
 </script>
 </head>
 <body>
@@ -90,7 +88,13 @@ dlg.resize_to(700,400);
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch" class="layui-input">
 	  </div>
   </div>
-   
+   <div class="layui-form-item">
+    <label class="layui-form-label">Subscribe Topics</label>
+    <div class="layui-input-inline">
+      <textarea  id="topics"  name="topics"  class0="layui-textarea" style="height:50px;width:150px;border-color: #e6e6e6"><%=topics_str%></textarea>
+    </div>
+   </div>
+   <%--
   <div class="layui-form-item">
     <label class="layui-form-label">Subscribe Topics</label>
     <div class="layui-input-inline">
@@ -137,53 +141,18 @@ for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
       }
     </div>
     <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
-    <%--
-    <label class="layui-form-label">Device JS:</label>
-    <div class="layui-input-inline">
-      <textarea  id="devs_js"  name="devs_js"  required class="layui-textarea" rows="2"><%=""%></textarea>
-    </div>
-     --%>
   </div>
-    <div class="layui-form-item">
+  --%>
+    
+   <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:270px;border:0px;overflow: hidden;"></iframe>
+   <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-inline" style="width:600px">
       <textarea  id="desc"  name="desc"  style="height:30px;width:100%;border-color: #e6e6e6"><%=desc%></textarea>
     </div>
   </div>
-   
  </form>
- <textarea style="display:none" id="trans_sample">
  
- // the function must return such json format
- //  vt
- /*
-    return [
-    	{"dev_name":"dev1","dev_title":"Device1","data":[
-	    	{"n":"g1.v1","vt":"float","v":18.5},
-	    	{"n":"st","vt":"bool","v":true}
-	    	]
-	    },
-	    {"dev_name":"dev2","dev_title":"Device2","data":[
-	    	{"n":"g1.v1","vt":"float","v":13.5},
-	    	{"n":"st","vt":"bool","v":false}
-	    	]
-	    }
-    ];
- */
- var retob = [] ;
- 
- var dev1 = {} ;
- dev1.dev_name="dev1";  //name must a-z A-z 1-9
- dev1.dev_title="Device1"; //device title
- dev1.data=[];
- dev1.data.push({n:"g1.v1",vt:"float",v:18.5});
- dev1.data.push({n:"st",vt:"bool",v:true});
- 
- retob.push(dev1);
- //you can add another device and data
- // retob.push(dev2) ;
- return retob ;
- </textarea>
 </body>
 <script type="text/javascript">
 var form = null;
@@ -204,6 +173,10 @@ layui.use('form', function(){
 	  $("#topics").on("input",function(e){
 		  setDirty();
 		  });
+	  form.on('switch(enable)', function(obj){
+		       setDirty();
+		  });
+	  /*
 	  $("#init_js").on("input",function(e){
 		  setDirty();
 		  });
@@ -217,11 +190,11 @@ layui.use('form', function(){
 	  form.on('select(encod)', function(obj){
 		       setDirty();
 		  });
-	  form.on('switch(enable)', function(obj){
-		       setDirty();
-		  });
+	  
+	 
 	  $("#sor_tp").val(sor_tp) ;
 	  $("#encod").val(encod) ;
+	  */
 	  form.render(); 
 });
 
@@ -317,6 +290,10 @@ function do_submit(cb)
 		cb(false,'Please input topics') ;
 		return ;
 	}
+	var topicsstr = $("#topics").val() ;
+	var tps = str2lns(topicsstr)
+	
+	/*
 	var sor_tp = $('#sor_tp').val();
 	if(sor_tp==null||sor_tp=='')
 	{
@@ -325,11 +302,21 @@ function do_submit(cb)
 	}
 	var init_js = $('#init_js').val();
 	var trans_js = $('#trans_js').val();
-	var topicsstr = $("#topics").val() ;
 	var enc =  $("#encod").val() ;
-	var tps = str2lns(topicsstr)
+	*/
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,topics:tps,sor_tp:sor_tp,init_js:init_js,trans_js:trans_js,encod:enc});
+	var msgob = null ;
+	$("#if_msg")[0].contentWindow.do_submit((bok,ret)=>{
+		if(!bok)
+		{
+			cb(false,ret) ;
+			return;
+		}
+		msgob = ret ;
+	})
+
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,topics:tps},msgob);
+	cb(true,oball) ;
 }
 
 function str2lns(str)

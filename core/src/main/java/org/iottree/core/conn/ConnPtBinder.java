@@ -481,9 +481,14 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 			dis = getBindBeSelectedItems() ;
 		else
 			dis = searchItems(searchkey) ;
-		int s = dis.size() ;
-		if(s<idx)
+		int s ;
+		
+		//if(s<idx)
+		if(dis==null||(s = dis.size())<idx)
+		{
+			w.write("[]");
 			return 0 ;
+		}
 		
 		int last = idx+size ;
 		int ret = 0 ;

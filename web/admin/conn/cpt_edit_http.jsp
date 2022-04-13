@@ -24,7 +24,9 @@ if(cp==null)
 }
 
 String connid = request.getParameter("connid") ;
-
+String cid = connid ;
+if(cid==null)
+	cid = "" ;
 ConnPtHTTP cpt = null ;
 if(Convert.isNullOrEmpty(connid))
 {
@@ -55,8 +57,8 @@ long int_ms = cpt.getIntervalMS();
 String cp_tp = cp.getProviderType() ;
 
 ConnPt.DataTp sor_tp = cpt.getSorTp();
-String init_js = cpt.getInitJS() ;
-String trans_js = cpt.getTransJS();
+//String init_js = cpt.getInitJS() ;
+//String trans_js = cpt.getTransJS();
 
 String encod = cpt.getEncod() ;
 if(Convert.isNullOrEmpty(encod))
@@ -65,13 +67,9 @@ if(Convert.isNullOrEmpty(encod))
 <html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(600,500);
+dlg.resize_to(800,600);
 </script>
 </head>
 <body>
@@ -92,7 +90,7 @@ dlg.resize_to(600,500);
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label">Url:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:600px">
       <input type="text" id="url" name="url" value="<%=url %>" class="layui-input">
     </div>
     
@@ -111,58 +109,9 @@ dlg.resize_to(600,500);
 	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
 	  </div>
   </div>
-  
    
-  <div class="layui-form-item">
-    <label class="layui-form-label">Message Source Type</label>
-    <div class="layui-input-inline" style="width:70px">
-    	<select id="sor_tp" lay-filter="sor_tp" >
-<%
-	for(ConnPt.DataTp stp:ConnPt.DataTp.values())
-{
-%><option value="<%=stp.toString()%>"><%=stp.getTitle() %></option>
-<%
-}
-%>
-    	</select>
-    </div>
-    <label class="layui-form-label">Encoding</label>
-    <div class="layui-input-inline" style="width:100px">
-    <select id="encod" lay-filter="encod" >
-<%
-for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
-{
-%><option value="<%=chartset%>"><%=chartset %></option><%
-}
-%>
-		
-		
-    </select>
-    </div>
-  </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label">Initial JS:</label>
-    <div class="layui-input-inline" style="width:600px">
-      <textarea  id="init_js"  name="init_js"  style="height:60px;width:100%;border-color: #e6e6e6"><%=init_js%></textarea>
-    </div>
-    <button onclick="edit_js_init()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
-  </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label">Transfer JS:</label>
-    <div class="layui-input-inline" style="width:600px">
-    ($topic,$msg)=>{
-      <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:150px"><%=trans_js%></textarea>
-      }
-    </div>
-    <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
-    <%--
-    <label class="layui-form-label">Device JS:</label>
-    <div class="layui-input-inline">
-      <textarea  id="devs_js"  name="devs_js"  required class="layui-textarea" rows="2"><%=""%></textarea>
-    </div>
-     --%>
-  </div>
-    <div class="layui-form-item">
+  <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:270px;border:0px"></iframe>
+   <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-inline" style="width:600px">
       <textarea  id="desc"  name="desc"  style="height:30px;width:100%;border-color: #e6e6e6"><%=desc%></textarea>
@@ -331,19 +280,21 @@ function do_submit(cb)
 	if(int_ms==NaN||int_ms<0)
 	{
 		cb(false,'Please input valid Update interval') ;
-	}
-	
-	var sor_tp = $('#sor_tp').val();
-	if(sor_tp==null||sor_tp=='')
-	{
-		cb(false,'Please input sor_tp') ;
 		return ;
 	}
-	var init_js = $('#init_js').val();
-	var trans_js = $('#trans_js').val();
-	var enc =  $("#encod").val() ;
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms,sor_tp:sor_tp,init_js:init_js,trans_js:trans_js,encod:enc});
+	var msgob = null ;
+	$("#if_msg")[0].contentWindow.do_submit((bok,ret)=>{
+		if(!bok)
+		{
+			cb(false,ret) ;
+			return;
+		}
+		msgob = ret ;
+	})
+
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms},msgob);
+	cb(true,oball) ;
 }
 
 function str2lns(str)

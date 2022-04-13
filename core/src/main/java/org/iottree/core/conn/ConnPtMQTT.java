@@ -168,9 +168,4 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		// getMqttEP().disconnect();
 	}
 
-	public void RT_writeValByBind(String tagpath, String strv)
-	{
-		// TODO
-	}
-
 }

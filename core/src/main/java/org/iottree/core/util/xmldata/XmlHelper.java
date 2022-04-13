@@ -629,6 +629,29 @@ public class XmlHelper
 			return null;
 		}
 	}
+	
+	public static Document stringToDoc(String str)
+	{
+		StringReader sr = new StringReader(str);
+
+		try
+		{
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+					.newInstance();
+			docBuilderFactory.setNamespaceAware(false);
+			docBuilderFactory.setValidating(false);
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+
+			InputSource is = new InputSource(sr);
+			// is.setEncoding("gb2312");
+			return docBuilder.parse(is);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public static Element byteArrayToElement(byte[] cont)
 	{
@@ -648,6 +671,31 @@ public class XmlHelper
 			// is.setEncoding("gb2312");
 			Document doc = docBuilder.parse(is);
 			return doc.getDocumentElement();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static Document byteArrayToDoc(byte[] cont)
+	{
+		if (cont == null || cont.length <= 0)
+			return null;
+
+		try
+		{
+			ByteArrayInputStream bais = new ByteArrayInputStream(cont);
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+					.newInstance();
+			docBuilderFactory.setNamespaceAware(false);
+			docBuilderFactory.setValidating(false);
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+
+			InputSource is = new InputSource(bais);
+			// is.setEncoding("gb2312");
+			return docBuilder.parse(is);
 		}
 		catch (Exception e)
 		{
@@ -702,6 +750,42 @@ public class XmlHelper
 		}
 	}
 	
+	public static String trimQJ(String str)
+	{
+		if(str==null)
+			return str ;
+		if("".equals(str))
+			return str ;
+		
+		str = str.trim() ;
+		if("".equals(str))
+			return str ;
+		
+		int len = str.length() ;
+		int i ;
+		for(i = 0 ; i < len ; i ++)
+		{
+			char c = str.charAt(i) ;
+			if(c!='　')
+				break ;
+		}
+		if(i>0)
+			str = str.substring(i) ;
+		
+		len = str.length() ;
+		if(len==0)
+			return str ;
+		for(i = len ; i >=0 ; i --)
+		{
+			char c = str.charAt(i-1) ;
+			if(c!='　')
+				break ;
+		}
+		if(i<len)
+			str = str.substring(0,i) ;
+		return str ;
+	}
+	
 	private static void transElement2JSONStr(Element ele,Writer w,String indent,boolean ignore_whitesp,boolean element_only)
 		throws IOException
 	{
@@ -724,7 +808,7 @@ public class XmlHelper
 				{
 					tmpv = "";
 				}
-				w.write(" \""+tmpn.getNodeName()+"\":\""+Convert.plainToJsStr(tmpv)+"\"");
+				w.write(",\""+tmpn.getNodeName()+"\":\""+Convert.plainToJsStr(tmpv)+"\"");
 			}
 		}
 		
@@ -732,9 +816,9 @@ public class XmlHelper
 		if(nls!=null&&(s=nls.getLength())>0)
 		{
 			if(bformat)
-				w.write("\r\n"+indent+"\"$sub\":[");
+				w.write("\r\n"+indent+",\"$sub\":[");
 			else
-				w.write("\"$sub\":[");
+				w.write(",\"$sub\":[");
 			
 			String subind = "";
 			if(bformat)
@@ -756,7 +840,7 @@ public class XmlHelper
 					String str = ((org.w3c.dom.Text)tmpn).getData() ;
 					if(ignore_whitesp)
 					{
-						str = str.trim();
+						str = trimQJ(str);
 						if(Convert.isNullOrEmpty(str))
 							continue ;
 					}
@@ -765,6 +849,7 @@ public class XmlHelper
 					w.write("\""+Convert.plainToJsStr(str)+"\"");
 				}
 			}
+			w.write("]");
 		}
 		
 		if(bformat)

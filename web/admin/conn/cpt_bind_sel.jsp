@@ -16,11 +16,14 @@
 	static final int map_show_len = 25 ;
 	%><%
 
-if(!Convert.checkReqEmpty(request, out, "prjid","cptp"))
+if(!Convert.checkReqEmpty(request, out, "prjid","cpid"))
 	return;
 String prjid = request.getParameter("prjid") ;
-String cptp = request.getParameter("cptp") ;//ConnProOPCUA.TP;//
-ConnProvider cp = ConnManager.getInstance().getOrCreateConnProviderSingle(prjid, cptp);
+String cpid = request.getParameter("cpid") ;
+//String cptp = request.getParameter("cptp") ;//ConnProOPCUA.TP;//
+ConnProvider cp = ConnManager.getInstance().getConnProviderById(prjid, cpid);
+boolean no_ajax = "true".equalsIgnoreCase(request.getParameter("no_ajax")) ;
+/*
 if(cp==null)
 {
 	String cpid = request.getParameter("cpid") ;
@@ -29,13 +32,15 @@ if(cp==null)
 		cp =  ConnManager.getInstance().getConnProviderById(prjid, cpid);
 	}
 }
+*/
 if(cp==null)
 {
-	out.print("no single provider found with "+cptp);
+	out.print("no ConnProvider found");
 	return ;
 }
 
-String cpid = cp.getId();//.getParameter("cpid") ;
+String cptp =cp.getProviderType() ;
+//String cpid = cp.getId();//.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
 ConnPtBinder cpt = null ;
 
@@ -235,7 +240,7 @@ width:100%;
 
 </style>
 <script>
-dlg.resize_to(600,520);
+dlg.resize_to(800,620);
 </script>
 </head>
 <body>
@@ -359,6 +364,7 @@ dlg.resize_to(600,520);
 </table>
 </body>
 <script type="text/javascript">
+var no_ajax = <%=no_ajax%>;
 var prjid="<%=prjid%>";
 var cpid = "<%=cpid%>";
 var cptp = "<%=cptp%>";
@@ -471,6 +477,19 @@ function add_bind_item(bpath,tpath)
 	 return true;
 }
 
+
+function set_or_add_bind_item(bpath,tpath)
+{
+	//check tpath exist
+	var tr = $("tr[tagp$='"+tpath+"']") ;
+	if(tr.length<=0)
+	{
+		add_bind_item(bpath,tpath);
+		return ;
+	}
+	map_set_to_tr(tr,bpath);
+}
+
 function ntag_del(id)
 {
 	$("#ntag_"+id).remove();
@@ -506,7 +525,6 @@ function refresh_left()
 
 function copy_or_not(b)
 {
-	
 	if(b)
 	{
 		if(cur_lefts_trs.length<=0)
@@ -553,6 +571,16 @@ function copy_map()
 	
 }
 
+function map_set_to_tr(tr,bpath)
+{
+	var tmptd = tr.children('td').eq(0) ;
+	tr.attr("bindp",bpath) ;
+	tmptd.attr("title",bpath) ;
+	if(bpath.length>map_show_len)
+		bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
+	tmptd.html(bpath);
+}
+
 function map_or_not(b)
 {
 	if(b)
@@ -571,14 +599,7 @@ function map_or_not(b)
 			dlg.msg("please select tag in channel right")
 			return ;
 		}
-		
-		var tmptd = cur_bind_map_tr.children('td').eq(0) ;
-		cur_bind_map_tr.attr("bindp",v) ;
-		tmptd.attr("title",v) ;
-		if(v.length>map_show_len)
-			v = "..."+v.substring(v.length-map_show_len) ;
-		tmptd.html(v);
-		
+		map_set_to_tr(cur_bind_map_tr,v)
 		return ;
 	}
 	
@@ -639,6 +660,21 @@ function get_map_vals()
 			if(bfirst) bfirst=false;
 			else r += "|" ;
 			r+= tp+'='+bp ;
+		}
+	});
+	return r ;
+}
+
+function get_map_list()
+{
+	var r = [] ;
+	$("#tb_bind_map tr").each(function(){
+		var bp = $(this).attr("bindp") ;
+		var tp =  $(this).attr("tagp") ;
+		
+		if(bp && tp)
+		{
+			r.push({bindp:bp,tagp:tp}) ;
 		}
 	});
 	return r ;
@@ -757,6 +793,9 @@ function refresh_tb_list(breload)
 
 function show_tb_list()
 {
+	if(no_ajax)
+		return ;
+	
 	var idx = page_last_idx;
 	var size = LOAD_ROWS ;
 	dlg.loading(true) ;
@@ -782,11 +821,40 @@ function show_tb_list()
 }
 
 
+function show_parent_no_ajax()
+{
+	var ow = dlg.get_opener_w() ;
+	if(!ow)
+		return ;
+	if(ow.get_bind_list)
+	{
+		var obs = ow.get_bind_list();
+		var tbb = $('#bind_tb_body');
+		for(var ob of obs)
+		{
+			tbb.append(ob2tr_row(ob)) ;
+		}
+	}
+	
+	if(ow.get_map_list)
+	{
+		var mbs = ow.get_map_list() ;
+		for(var ob of mbs)
+			set_or_add_bind_item(ob.bindp,ob.tagp)
+	}
+	
+	
+}
+
+
 var ROW_MAX_LEN = 30 ;
 
 function ob2tr_row(ob)
 {
-	var ret = "<tr path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
+	var tt = ob.tt ;
+	if(!tt)
+		tt = "" ;
+	var ret = "<tr title='"+tt+"' path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
 	var txt = ob.path ;
 	var txtlen = txt.length ;
 	if(txtlen>ROW_MAX_LEN)
@@ -839,7 +907,10 @@ var allshow=false;
 
 var sdiv = $("#list_table")[0] ;
 $("#list_table").scroll(()=>{
-	 var wholeHeight=sdiv.scrollHeight;
+	if(no_ajax)
+		return ;
+	
+	var wholeHeight=sdiv.scrollHeight;
 	 var scrollTop=sdiv.scrollTop;
 	 var divHeight=sdiv.clientHeight;
 	 if(divHeight+scrollTop>=wholeHeight)
@@ -861,8 +932,11 @@ $("#list_table").scroll(()=>{
 		
 	}
 });
-	
-show_tb_list();
+
+if(no_ajax)
+	show_parent_no_ajax();
+else
+	show_tb_list();
 
 function set_bind_pm()
 {

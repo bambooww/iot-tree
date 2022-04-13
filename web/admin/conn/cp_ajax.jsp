@@ -132,7 +132,7 @@ case "conn_set":
 	}
 	catch(Exception e)
 	{
-		//e.printStackTrace();
+		e.printStackTrace();
 		out.print("{\"res\":false,\"err\":\""+e.getMessage()+"\"}");
 		return ;
 	}
@@ -195,12 +195,12 @@ case "conn_dev_new_add":
 		out.print("{\"res\":false,\"err\":\"no conn found\"}");
 		return ;
 	}
-	if(!(cpt instanceof ConnDevFindable))
+	if(!(cpt instanceof ConnPtMSG))
 	{
-		out.print("{\"res\":false,\"err\":\"conn is not findable\"}");
+		out.print("{\"res\":false,\"err\":\"conn is msg findable\"}");
 		return ;
 	}
-	ConnDevFindable cdf = (ConnDevFindable)cpt ;
+	ConnPtMSG cdf = (ConnPtMSG)cpt ;
 	ConnDev cd = cdf.getFoundConnDevs().get(name) ;
 	if(cd==null)
 	{

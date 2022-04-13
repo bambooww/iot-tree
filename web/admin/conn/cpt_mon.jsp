@@ -44,6 +44,7 @@ if(cpt==null)
 <link  href="/_js/font4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" >
 <script type="text/javascript" src="/_js/bignumber.min.js"></script>
 <script type="text/javascript" src="/_js/jquery.json.js"></script>
+<script type="text/javascript" src="/_js/jquery.xml.js"></script>
 <style type="text/css">
 
 table, th, td
@@ -234,9 +235,29 @@ function dd2html(dd,h)
 	var cont = "" ;
 
 	if("json"==dd.tp&&dd.txt)
-		cont = new JSONFormat(dd.txt, 4).toString();
+	{
+		try
+		{
+			cont = new JSONFormat(dd.txt, 4).toString();
+		}
+		catch(e)
+		{
+			cont = "JSONFormat err"+e+"<br/><xmp>"+dd.txt+"</xmp>" ;
+		}
+	}
+	else if("xml"==dd.tp&&dd.txt)
+	{
+		try
+		{
+				cont = new XMLFormat(dd.txt, 4).toString();
+		}
+		catch(e)
+		{
+			cont = "XMLFormat err"+e+"<br/><pre>"+dd.txt+"</pre>" ;
+		}
+	}	
 	else
-		cont = dd.txt ;
+		cont = "<xmp>"+dd.txt+"</xmp>" ;
 	return "<div class='detail'>"+
 	    	"<div class='detail_head'>"+dd.n+"</div>"+
 	    	"<div  class='detail_cont' style='height:"+h+";overflow: auto;'>"+cont+"</div>"+

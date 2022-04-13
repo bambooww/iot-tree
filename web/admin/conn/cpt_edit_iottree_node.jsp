@@ -71,7 +71,7 @@ int conn_int = mep.getMQTTKeepAliveInterval() ;
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(800,500);
 </script>
 </head>
 <body>

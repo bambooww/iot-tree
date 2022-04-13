@@ -68,5 +68,34 @@ case "mitem":
 	}
 	mi.writeJsonOut(out,true) ;
 	break ;
+case "lastitem":
+	ConnPt.MonItem lastmi = cpt.getMonItemLast() ;
+	if(lastmi==null)
+	{
+		out.print("no Mon Item found") ;
+		return ;
+	}
+	lastmi.writeJsonOut(out,true) ;
+	break ;
+case "last_sor_txt":
+	lastmi = cpt.getMonItemLast() ;
+	if(lastmi==null)
+	{
+		out.print("no Mon Item found") ;
+		return ;
+	}
+	ConnPt.MonData md = lastmi.getMonDataSource();//.writeJsonOut(out,true) ;
+	if(md==null)
+	{
+		out.print("no Mon Data found") ;
+		return ;
+	}
+	//if(md.getDataTp()!=ConnPt.DataTp.json)
+	//{
+	//	out.print("no source is not json text") ;
+	//	return ;
+	//}
+	out.print(md.getTxt());
+	break ;
 }
 %>

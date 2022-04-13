@@ -219,6 +219,12 @@ public abstract class ConnPt implements IXmlDataValidator
 			return monDatas ;
 		}
 		
+		public MonData getMonDataSource()
+		{
+			if(monDatas==null||monDatas.length<=0)
+				return null ;
+			return monDatas[0] ;
+		}
 		
 		public boolean isInput()
 		{
@@ -601,7 +607,7 @@ public abstract class ConnPt implements IXmlDataValidator
 		return null ;
 	}
 	
-	protected void RT_connInit()
+	protected void RT_connInit() throws Exception
 	{}
 	
 	public void onJoinedChanged(ConnJoin cj)
