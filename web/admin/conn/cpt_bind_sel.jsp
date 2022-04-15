@@ -58,6 +58,8 @@ if(cpt==null)
 	return ;
 }
 
+boolean support_tree = cpt.supportBindBeSelectTree() ;
+
 List<String> bindids = cpt.getBindList() ;
 if(bindids==null)
 	bindids =new ArrayList<>(0) ;
@@ -258,8 +260,16 @@ dlg.resize_to(800,620);
          &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="inp_search" size="10" onkeydown="do_search_ret(event)"/>
          <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search()" title="search"><i class="fa-solid fa-magnifying-glass"></i></button>
          <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search(true)" title="clear search"><i class="fa-solid fa-eraser"></i></button>
+<%
+if(support_tree)
+{
+%>
+         <button id="btn_tree_list" class="layui-btn layui-btn-xs layui-btn-primary" title="set tree or list" onclick="set_tree_or_tb()"><i class="fa-solid fa-folder-tree"></i></button>
+<%
+}
+%>
     </div>
-       <div id="list_table" class="prop_edit_cat" style="height:420px">
+       <div id="list_table" class="prop_edit_cat" style="height:420px;width:400px">
     	<table style="width:100%;border:0px" class='besel'>
     		<thead>
     			<tr style="background-color: #f0f0f0">
@@ -273,6 +283,15 @@ dlg.resize_to(800,620);
     		</tbody>
 		</table>
 	</div>
+<%
+if(support_tree)
+{
+%>
+	<div id="list_tree" class="prop_edit_cat" style="height:420px;display:none;width:400px">
+	</div>
+<%
+}
+%>
     </td>
     <td style="width:55%" >
       <table style="border:0px;height:100%">
@@ -302,7 +321,7 @@ dlg.resize_to(800,620);
        <tr style="height:100%;border:solid 0px">
          <td style="width:5%;vertical-align:middle;"  >
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(true)" title="bind to tag"><i class="fa-solid fa-arrow-right"></i></button><br><br>
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="copy_map()" title="copy create tag and bind"><i class="fa fa-angles-right"></i><br><i class="fa fa-tag"></i></button><br><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_copy()" title="copy create tag and bind"><i class="fa fa-angles-right"></i><br><i class="fa fa-tag"></i></button><br><br>
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(false)" title="unbind from tag"><i class="fa-solid fa-arrow-left"></i></button>
 	    </td>
 	    <td style="width:95%;vertical-align: top;height:100%"  >
@@ -369,10 +388,10 @@ var prjid="<%=prjid%>";
 var cpid = "<%=cpid%>";
 var cptp = "<%=cptp%>";
 var connid = "<%=connid%>";
-
+var support_tree = <%=support_tree%>
 var map_show_len = <%=map_show_len%> ;
 
-var cur_bind_map_tr = null ;
+
 
 var b_ctrl_down = false;
 var b_shift_down=false;
@@ -388,54 +407,7 @@ $(document).keyup(function(e){
  else if(e.keyCode==16)
 	 b_shift_down = false ;
  });
-	 
 
-$("#tb_bind_map tr").click(function(){
-	cur_bind_map_tr = $(this) ;
-	//var tagp = $(this).attr("tagp") ;
-	//console.log(tagp) ;
-	refresh_bind_map();
-});
-
-function on_right(ob)
-{
-	cur_bind_map_tr = $(ob) ;
-	refresh_bind_map();
-}
-
-function refresh_bind_map()
-{
-	$("#tb_bind_map tr").each(function(){
-		$(this).removeClass("map_sel") ;
-	});
-	if(cur_bind_map_tr!=null)
-		cur_bind_map_tr.addClass("map_sel") ;
-}
-
-function add_tag()
-{
-	dlg.open("../ua/tag_path_simple.jsp",
-			{title:"Edit Tag Path Under Channel",w:'500px',h:'400px'},
-			['Ok','Close'],
-			[
-				function(dlgw)
-				{
-					dlgw.do_submit(function(bsucc,ret){
-						 if(!bsucc)
-						 {
-							 dlg.msg(ret) ;
-							 return;
-						 }
-						 if(add_bind_item("",ret.path+":"+ret.vt))
-							 dlg.close() ;
-				 	});
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
 
 var uid_cc = 0 ;
 function new_id()
@@ -478,98 +450,61 @@ function add_bind_item(bpath,tpath)
 }
 
 
-function set_or_add_bind_item(bpath,tpath)
+function add_tag()
 {
-	//check tpath exist
-	var tr = $("tr[tagp$='"+tpath+"']") ;
-	if(tr.length<=0)
-	{
-		add_bind_item(bpath,tpath);
-		return ;
-	}
-	map_set_to_tr(tr,bpath);
+	dlg.open("../ua/tag_path_simple.jsp",
+			{title:"Edit Tag Path Under Channel",w:'500px',h:'400px'},
+			['Ok','Close'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 if(add_bind_item("",ret.path+":"+ret.vt))
+							 dlg.close() ;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
+
 
 function ntag_del(id)
 {
 	$("#ntag_"+id).remove();
 }
 
-var cur_lefts_trs = [] ;
+var cur_bind_map_tr = null ;
 
+$("#tb_bind_map tr").click(function(){
+	cur_bind_map_tr = $(this) ;
+	//var tagp = $(this).attr("tagp") ;
+	//console.log(tagp) ;
+	refresh_bind_map();
+});
 
-function on_left(tr)
+function on_right(ob)
 {
-	if(!b_ctrl_down)
-	{
-		cur_lefts_trs.length=0;
-	}
-	
-	//TODO shift support later
-	
-	if(cur_lefts_trs.indexOf(tr)<0)
-			cur_lefts_trs.push(tr) ;
-	
-	refresh_left();
+	cur_bind_map_tr = $(ob) ;
+	refresh_bind_map();
 }
 
-function refresh_left()
+function refresh_bind_map()
 {
-	$("#bind_tb_body tr").each(function(){
+	$("#tb_bind_map tr").each(function(){
 		$(this).removeClass("map_sel") ;
 	});
-	for(var tmptr of cur_lefts_trs)
-		$(tmptr).addClass("map_sel") ;
+	if(cur_bind_map_tr!=null)
+		cur_bind_map_tr.addClass("map_sel") ;
 }
 
-
-function copy_or_not(b)
-{
-	if(b)
-	{
-		if(cur_lefts_trs.length<=0)
-		{
-			dlg.msg("please select items left") ;
-			return ;
-		}
-		
-		for(var tr of cur_lefts_trs)
-		{
-			var tn = $(tr) ;
-			//var opctp = tn.attr("opc_tp") ;
-			var v = tn.attr("path") + ":"+tn.attr("vt") ;
-			if(has_selected_val(v))
-				continue ;
-			$("#bind_selected").append("<option value='"+v+"'>"+v+"</option>");
-		}
-		return;
-	}
-	
-	//un sel
-	$("#bind_selected  option:selected").each(function(){
-	    //var tmpv = $(this).attr("value") ;
-	    $(this).remove() ;
-	})
-}
-
-function copy_map()
-{
-	if(cur_lefts_trs.length<=0)
-	{
-		dlg.msg("please select item left") ;
-		return ;
-	}
-	
-	for(var tr of cur_lefts_trs)
-	{
-		var tn = $(tr) ;
-		var p = tn.attr("path");
-		var v = p + ":"+tn.attr("vt") ;
-		
-		add_bind_item(v,v);
-	}
-	
-}
 
 function map_set_to_tr(tr,bpath)
 {
@@ -579,73 +514,6 @@ function map_set_to_tr(tr,bpath)
 	if(bpath.length>map_show_len)
 		bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
 	tmptd.html(bpath);
-}
-
-function map_or_not(b)
-{
-	if(b)
-	{
-		if(cur_lefts_trs.length!=1)
-		{
-			dlg.msg("please select one item left") ;
-			return ;
-		}
-		
-		var tn = $(cur_lefts_trs[0]) ;
-		var v = tn.attr("path") + ":"+tn.attr("vt") ;
-		
-		if(cur_bind_map_tr==null)
-		{
-			dlg.msg("please select tag in channel right")
-			return ;
-		}
-		map_set_to_tr(cur_bind_map_tr,v)
-		return ;
-	}
-	
-	//un sel
-	if(cur_bind_map_tr==null)
-	{
-		dlg.msg("please select tag in channel right")
-		return ;
-	}
-	var tmptd = cur_bind_map_tr.children('td').eq(0) ;
-	tmptd.html("");
-	tmptd.attr("title","") ;
-	cur_bind_map_tr.attr("bindp","") ;
-}
-
-function get_selected_vals()
-{
-	var ret=[];
-	$("#bind_selected  option").each(function(){
-	    var tmpv = $(this).attr("value") ;
-	    ret.push(tmpv) ;
-	})
-	return ret;
-}
-
-function get_bindlist_valstr()
-{
-	var bindids = get_selected_vals()
-	var bindstr = "" ;
-	if(bindids!=null)
-	{
-		for(var bid of bindids)
-			bindstr += '|'+bid ;
-		bindstr = bindstr.substr(1) ;
-	}
-	return bindstr ;
-}
-
-function has_selected_val(v)
-{
-	var r = false;
-	$("#bind_selected  option").each(function(){
-	    if( $(this).attr("value") ==v)
-	    	r = true ;
-	})
-	return r ;
 }
 
 function get_map_vals()
@@ -679,6 +547,7 @@ function get_map_list()
 	});
 	return r ;
 }
+
 
 function bind_export()
 {
@@ -735,242 +604,90 @@ function bind_import()
 				}
 			]);
 }
+</script>
 
-var LOAD_ROWS = 40 ;
-var page_last_idx = 0 ;
-var page_has_next = true;
-var search_key = "" ;
+<jsp:include page="cpt_bind_left_tb.jsp"></jsp:include>
+<jsp:include page="cpt_bind_left_tree.jsp"></jsp:include>
 
-function search(bclear)
+<script type="text/javascript">
+
+var b_tb = true  ;
+
+function set_tree_or_tb()
 {
-	
-	var sk = "";
-	if(bclear)
-		$("#inp_search").val("") ;
-	else
-		sk = $("#inp_search").val() ;
-	search_key = sk ;
-	if(!sk)
-	{
-		refresh_tb_list(false)
-		return ;
-	}
-	
-	$('#bind_tb_body').html("") ;
-	page_last_idx = 0 ;
-	page_has_next = true;
-	show_tb_list();
-	return ;
-}
-
-function do_search_ret(e)
-{
-    var evt = window.event || e;
-    if (evt.keyCode == 13) {
-    	search(false)
-    }
-}
-
-function refresh_tb_list(breload)
-{
-	if(!breload)
-	{
-		$('#bind_tb_body').html("") ;
-		page_last_idx = 0 ;
-		page_has_next = true;
-		show_tb_list();
-		return ;
-	}
-	
-	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"clear_cache",cpid:cpid,cptp:cptp,connid:connid},(bsucc,ret)=>{
-			$('#bind_tb_body').html("") ;
-			page_last_idx = 0 ;
-			page_has_next = true;
-			show_tb_list();
-			return ;
-	}) ;
-}
-
-function show_tb_list()
-{
-	if(no_ajax)
+	if(!support_tree)
 		return ;
 	
-	var idx = page_last_idx;
-	var size = LOAD_ROWS ;
-	dlg.loading(true) ;
-	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"list",cpid:cpid,cptp:cptp,connid:connid,idx:idx,size:size,sk:search_key},function(bsucc,ret){
-		dlg.loading(false) ;
-	//	console.log("ret len="+ret.length) ;
-		if(!bsucc||ret.indexOf("[")!=0)
-		{
-			dlg.msg(ret) ;
-			return ;
-		}
-		var tbb = $('#bind_tb_body');
-		var obs = null;
-		eval("obs="+ret) ;
-		page_has_next = obs.length>=size;
-		page_last_idx += obs.length ;
-		for(var ob of obs)
-		{
-			tbb.append(ob2tr_row(ob));
-		}
-		
-	});
-}
-
-
-function show_parent_no_ajax()
-{
-	var ow = dlg.get_opener_w() ;
-	if(!ow)
-		return ;
-	if(ow.get_bind_list)
+	var btl = $('#btn_tree_list');
+	b_tb=!b_tb;
+	if(b_tb)
 	{
-		var obs = ow.get_bind_list();
-		var tbb = $('#bind_tb_body');
-		for(var ob of obs)
-		{
-			tbb.append(ob2tr_row(ob)) ;
-		}
-	}
-	
-	if(ow.get_map_list)
-	{
-		var mbs = ow.get_map_list() ;
-		for(var ob of mbs)
-			set_or_add_bind_item(ob.bindp,ob.tagp)
-	}
-	
-	
-}
-
-
-var ROW_MAX_LEN = 30 ;
-
-function ob2tr_row(ob)
-{
-	var tt = ob.tt ;
-	if(!tt)
-		tt = "" ;
-	var ret = "<tr title='"+tt+"' path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
-	var txt = ob.path ;
-	var txtlen = txt.length ;
-	if(txtlen>ROW_MAX_LEN)
-	{
-		ret += "<td title='"+txt+"'>..."+txt.substring(txtlen-ROW_MAX_LEN)+"</td>";
+		btl.html("<i class='fa-solid fa-folder-tree'></i>");
+		$("#list_tree").css("display","none");
+		$("#list_table").css("display","");
 	}
 	else
 	{
-		ret += "<td>"+txt+"</td>";
+		btl.html("<i class='fa fa-list'></i>");
+		$("#list_tree").css("display","");
+		$("#list_table").css("display","none");
+		tree_init();
 	}
 	
-	ret += "<td>"+ob.vt+"</td>";
-	ret += "<td></td>";
-	ret += "</tr>"
-	return ret ;
 }
 
-function read_tmp_paths_vals()
+//set_tree_or_tb();//show tree
+
+function map_or_not(b)
 {
-	if(cur_lefts_trs.length<=0)
+	if(cur_bind_map_tr==null)
+	{
+		dlg.msg("please select tag in channel right")
 		return ;
-	var pstr = $(cur_lefts_trs[0]).attr("path") ;
-	for(var i = 1 ; i < cur_lefts_trs.length;i++)
-		pstr += ","+$(cur_lefts_trs[i]).attr("path") ;
-	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"tmp_paths_vals",cpid:cpid,cptp:cptp,connid:connid,paths:pstr},function(bsucc,ret){
-		
-	//	console.log("ret len="+ret.length) ;
-		if(!bsucc||ret.indexOf("{")!=0)
-		{
-			console.log(ret) ;
-			return ;
-		}
-		var tbb = $('#bind_tb_body');
-		var ob = null;
-		eval("ob="+ret) ;
-		for(var n in ob)
-		{
-			var v = ob[n] ;
-			var tr = tbb.find("tr[path$='"+n+"']") ;
-			tr.children('td').eq(2).html(v);
-		}
-		
-	});
-	
-}
-
-//setInterval(read_tmp_paths_vals,2000) ;
-
-var allshow=false;
-
-var sdiv = $("#list_table")[0] ;
-$("#list_table").scroll(()=>{
-	if(no_ajax)
-		return ;
-	
-	var wholeHeight=sdiv.scrollHeight;
-	 var scrollTop=sdiv.scrollTop;
-	 var divHeight=sdiv.clientHeight;
-	 if(divHeight+scrollTop>=wholeHeight)
-	 {//reach btm
-		 if(!page_has_next)
-			{
-				if(!allshow)
-					lj.msg("已经显示全部");
-				allshow=true;
-				return;
-			}
-				
-			//console.log("show more");
-			show_tb_list();
-		    $("list_table").scroll(scrollTop);
-	 }
-	 if(scrollTop==0)
-	 {//reach top
-		
 	}
-});
-
-if(no_ajax)
-	show_parent_no_ajax();
-else
-	show_tb_list();
-
-function set_bind_pm()
-{
-	dlg.open_win("./ext/cpt_bindparam_"+cptp+".jsp?prjid="+prjid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"Binding Parameters",w:'600',h:'450'},
-			['Ok',{title:'Cancel',style:"primary"}],
-			[
-				function(dlgw)
-				{
-					var bindids = dlgw.get_selected_vals();
-					
-					dlg.close();
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-				
-			]);
-}
-
-function syn_tag_ch()
-{
-	var bindstr = get_bindlist_valstr();
-
-	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"syn_bind_tags",cpid:cpid,cptp:cptp,connid:connid,bindids:bindstr},function(bsucc,ret){
-		if(!bsucc||ret!='succ')
+	
+	if(b)
+	{
+		var vs ;
+		if(b_tb)
+			vs = tb_get_left_vals() ;
+		else
+			vs = tree_get_left_vals() ;
+		if(vs.length<=0)
 		{
-			dlg.msg(ret) ;
+			dlg.msg("please select item left") ;
 			return ;
 		}
-		dlg.msg("syn ok,please refresh tree to check");
-	});
+		if(vs.length!=1)
+		{
+			dlg.msg("please select one item left") ;
+			return ;
+		}
+		map_set_to_tr(cur_bind_map_tr,vs[0])
+		return ;
+	}
+	
+	//un sel
+	var tmptd = cur_bind_map_tr.children('td').eq(0) ;
+	tmptd.html("");
+	tmptd.attr("title","") ;
+	cur_bind_map_tr.attr("bindp","") ;
 }
 
+function map_copy()
+{
+	var vs ;
+	if(b_tb)
+		vs = tb_get_left_vals() ;
+	else
+		vs = tree_get_left_vals() ;
+	if(vs.length<=0)
+	{
+		dlg.msg("please select item left") ;
+		return ;
+	}
+	for(var v of vs)
+		add_bind_item(v,v);
+}
 </script>
 </html>

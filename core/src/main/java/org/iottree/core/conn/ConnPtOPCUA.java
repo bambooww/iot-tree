@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
@@ -34,6 +36,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseResultMask;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
@@ -48,6 +51,9 @@ import org.eclipse.milo.opcua.stack.core.types.structured.Node;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.iottree.core.ConnPt;
+import org.iottree.core.UACh;
+import org.iottree.core.UANode;
+import org.iottree.core.UATag;
 import org.iottree.core.conn.ConnPtBinder.BindItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
@@ -71,6 +77,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 	String idUser = null;
 
 	String idPsw = null;
+	
+	long updateIntMs = 3000 ;
 
 	private transient OpcUaClient uaClient = null;
 
@@ -98,6 +106,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 		xd.setParamValue("opc_req_to", this.reqTimeout);
 		xd.setParamValue("opc_user", this.idUser);
 		xd.setParamValue("opc_psw", this.idPsw);
+		xd.setParamValue("int_ms", this.updateIntMs);
 		return xd;
 	}
 
@@ -115,6 +124,9 @@ public class ConnPtOPCUA extends ConnPtBinder
 		this.reqTimeout = xd.getParamValueInt32("opc_req_to", 5000);
 		this.idUser = xd.getParamValueStr("opc_user", "");
 		this.idPsw = xd.getParamValueStr("opc_psw", "");
+		this.updateIntMs = xd.getParamValueInt64("int_ms", 3000) ;
+		if(this.updateIntMs<=0)
+			updateIntMs = 3000 ;
 		return r;
 	}
 
@@ -134,7 +146,13 @@ public class ConnPtOPCUA extends ConnPtBinder
 		return jo.optInt(name);
 	}
 	
-	
+	private long optJSONInt64(JSONObject jo, String name, long defv)
+	{
+		Object v = jo.opt(name);
+		if (v == null)
+			return defv;
+		return jo.optLong(name);
+	}
 
 	protected void injectByJson(JSONObject jo) throws Exception
 	{
@@ -148,6 +166,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 		this.reqTimeout = optJSONInt(jo, "opc_req_to", 5000);
 		this.idUser = optJSONString(jo, "opc_user", "");
 		this.idPsw = optJSONString(jo, "opc_psw", "");
+		this.updateIntMs = optJSONInt64(jo,"int_ms", 3000) ;
 	}
 	
 	public List<String> transBindIdToPath(String bindid)
@@ -204,6 +223,11 @@ public class ConnPtOPCUA extends ConnPtBinder
 	public int getOpcReqTimeout()
 	{
 		return reqTimeout;
+	}
+	
+	public long getUpdateIntMs()
+	{
+		return this.updateIntMs;
 	}
 
 	public String getOpcIdUser()
@@ -327,8 +351,234 @@ public class ConnPtOPCUA extends ConnPtBinder
     @Override
     public List<BindItem> getBindBeSelectedItems() throws Exception
 	{
-    	return null ;
+    	if(uaClient==null)
+    	{
+    		throw new Exception("no UaClient connected");
+    	}
+    	
+    	//find /Root/Objects nodes
+    	UaNode root =  findUaNodeByPath(uaClient,new String[] {"Objects"}) ;
+    	if(root==null)
+    		throw new Exception("no /Root/Objects/ node found");
+    	
+    	
+		ArrayList<BindItem> rets = new ArrayList<>();
+
+		
+		String rootname = this.getOpcEndPointURI() ;
+    	
+    	
+    	List<? extends UaNode> nodes = uaClient.getAddressSpace().browseNodes(root);
+    	if(nodes!=null&&nodes.size()>0)
+    	{
+	        for (UaNode node : nodes)
+	        {
+	        	String bn = node.getBrowseName().getName();
+	        	if(bn.startsWith("_"))
+	        		continue;
+
+	        	listBindBeSelectedItems(rets,uaClient,"",node);
+	        }
+    	}
+		return rets ;
 	}
+    
+    private void listBindBeSelectedItems(List<BindItem> bis,OpcUaClient client,String ppath,UaNode n)throws Exception
+    {
+    	NodeId nid = n.getNodeId() ;
+    	String bn = n.getBrowseName().getName();
+    	if(n instanceof UaVariableNode)
+    	{
+    		UaVariableNode uvn = (UaVariableNode)n;
+    		
+    		DataValue dataval = uvn.getValue();
+    		Object valob = dataval.getValue().getValue();
+    		if (valob != null && valob.getClass().isArray())
+    		{
+                Object[] objectArray = (Object[])valob;
+                valob = Arrays.deepToString(objectArray);
+    		}
+    		String val_dt = Convert.toFullYMDHMS(dataval.getSourceTime().getJavaDate());
+
+    		NodeId dt = uvn.getDataType();
+    		UaVariableTypeNode vtn = uvn.getTypeDefinition();
+    		UInteger[] arrdim = vtn.getArrayDimensions();
+    		UaDataTypeNode tpnode = (UaDataTypeNode)uaClient.getAddressSpace().getNode(dt);
+    		String datatp = tpnode.getBrowseName().getName() ;
+    		
+    		String arr_dim = "" ;
+    		if(arrdim!=null&&arrdim.length>0)
+    		{
+    			arr_dim = Convert.combineWith(arrdim, ',');
+    		}
+    		
+    		
+			BindItem bi = new BindItem(ppath+"/"+bn,datatp) ;
+			bi.setVal(valob);
+			bis.add(bi) ;
+			return ;
+    	}
+    
+	    	List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(n);
+	    	if(nodes!=null&&nodes.size()>0)
+	    	{
+	    		if(Convert.isNullOrEmpty(ppath))
+	    			ppath = bn ;
+	    		else
+	    			ppath += "/"+bn ;
+		        for (UaNode node : nodes)
+		        {
+		        	String bn0 = node.getBrowseName().getName();
+		        	if(bn0.startsWith("_"))
+		        		continue;
+		        	
+		        	listBindBeSelectedItems(bis,client,ppath,node) ;
+		        }
+		        
+	    	}
+    	
+    }
+    
+    @Override
+    public boolean supportBindBeSelectTree()
+	{
+		return true;
+	}
+    
+    @Override
+    public void writeBindBeSelectTreeRoot(Writer w) throws Exception
+    {
+    	if(uaClient==null)
+    	{
+    		throw new Exception("no UaClient connected");
+    	}
+    	
+    	//find /Root/Objects nodes
+    	UaNode root =  findUaNodeByPath(uaClient,new String[] {"Objects"}) ;
+    	if(root==null)
+    		throw new Exception("no /Root/Objects/ node found");
+    	
+    	w.write("{\"id\":\""+UUID.randomUUID().toString()+"\"");
+    	w.write(",\"nc\":0");
+    	w.write(",\"icon\": \"fa fa-sitemap fa-lg\"");
+    	
+    	w.write(",\"text\":\""+this.getOpcEndPointURI()+"\"");
+    	w.write(",\"state\": {\"opened\": true}");
+    	
+    	List<? extends UaNode> nodes = uaClient.getAddressSpace().browseNodes(root);
+    	if(nodes!=null&&nodes.size()>0)
+    	{
+	        w.write(",\"children\":[");
+	        //
+	        boolean bfirst = true;
+	        for (UaNode node : nodes)
+	        {
+	        	String bn = node.getBrowseName().getName();
+	        	if(bn.startsWith("_"))
+	        		continue;
+	        	
+	        	
+	        	if(bfirst) bfirst=false;
+	        	else w.write(',');
+	        	
+	        	writeBindBeSelectTreeNode(w,node) ;
+	        }
+	        w.write("]");
+    	}
+        w.write("}");
+    }
+    
+    @Override
+    public void writeBindBeSelectTreeSub(Writer w,String pnode_id) throws Exception
+    {
+    	NodeId pnid = null;
+    	if(Convert.isNullOrEmpty(pnode_id))
+    		pnid = Identifiers.RootFolder;
+    	else
+    		pnid = NodeId.parse(pnode_id) ;
+    	if(pnid==null)
+    		return ;
+    	if(uaClient==null)
+    	{
+    		throw new Exception("no UaClient connected");
+    	}
+    	UaNode pn = uaClient.getAddressSpace().getNode(pnid);
+    	if(pn==null)
+    		return ;
+    	List<? extends UaNode> nodes = uaClient.getAddressSpace().browseNodes(pn);
+    	w.write("[");
+    	if(nodes!=null&&nodes.size()>0)
+    	{
+	        
+	        //
+	        boolean bfirst = true;
+	        for (UaNode node : nodes)
+	        {
+	        	String bn = node.getBrowseName().getName();
+	        	if(bn.startsWith("_"))
+	        		continue;
+	        	
+	        	
+	        	if(bfirst) bfirst=false;
+	        	else w.write(',');
+	        	
+	        	writeBindBeSelectTreeNode(w,node) ;
+	        }
+	        
+    	}
+    	
+    	w.write("]");
+    }
+    
+    private void writeBindBeSelectTreeNode(Writer w,UaNode n) throws Exception
+    {
+    	
+        	//boolean bvar = n instanceof UaVariableNode;
+        	NodeId nid = n.getNodeId() ;
+        	w.write("{\"id\":\""+nid.toParseableString()+"\"");
+        	w.write(",\"nc\":"+n.getNodeClass().getValue());
+        	if(n instanceof UaVariableNode)
+        	{
+        		w.write(",\"tp\": \"tag\"");
+        		w.write(",\"icon\": \"fa fa-tag fa-lg\"");
+        		
+//	        		if("BooleanArray".contentEquals(node.getBrowseName().getName()))
+//	        		{
+//	        			System.out.println("1");
+//	        		}
+	        		UaVariableNode uvn = (UaVariableNode)n;
+	        		DataValue dataval = uvn.getValue();
+	        		Object valob = dataval.getValue().getValue();
+	        		if (valob != null && valob.getClass().isArray())
+	        		{
+	                    Object[] objectArray = (Object[])valob;
+	                    valob = Arrays.deepToString(objectArray);
+	        		}
+	        		String serverdt = Convert.toFullYMDHMS(dataval.getSourceTime().getJavaDate());
+	        		w.write(",\"val\":\""+valob+"\"");
+	        		w.write(",\"val_dt\":\""+serverdt+"\"");
+	        		
+	        		NodeId dt = uvn.getDataType();
+	        		UaVariableTypeNode vtn = uvn.getTypeDefinition();
+	        		UInteger[] arrdim = vtn.getArrayDimensions();
+	        		UaDataTypeNode tpnode = (UaDataTypeNode)uaClient.getAddressSpace().getNode(dt);
+	        		String vt = tpnode.getBrowseName().getName();
+	        		w.write(",\"vt\":\""+vt+"\"");
+	        		if(arrdim!=null&&arrdim.length>0)
+	        		{
+	        			w.write(",\"arr_dim\":\""+Convert.combineWith(arrdim, ',')+"\"");
+	        		}
+	        		w.write(",\"text\":\""+n.getDisplayName().getText()+":"+vt+"\"}");
+        	}
+        	else
+        	{
+        		w.write(",\"tp\": \"tagg\"");
+        		w.write(",\"icon\": \"fa fa-folder fa-lg\"");
+        		w.write(",\"children\": true ");
+        		w.write(",\"text\":\""+n.getDisplayName().getText()+"\"}");
+        	}
+        	
+    }
     
     @Override
     public  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only,boolean force_refresh) throws Exception
@@ -548,7 +798,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 	        		UaVariableTypeNode vtn = uvn.getTypeDefinition();
 	        		UInteger[] arrdim = vtn.getArrayDimensions();
 	        		UaDataTypeNode tpnode = (UaDataTypeNode)uaClient.getAddressSpace().getNode(dt);
-	        		w.write(",\"datatp\":\""+tpnode.getBrowseName().getName()+"\"");
+	        		w.write(",\"vt\":\""+tpnode.getBrowseName().getName()+"\"");
 	        		if(arrdim!=null&&arrdim.length>0)
 	        		{
 	        			w.write(",\"arr_dim\":\""+Convert.combineWith(arrdim, ',')+"\"");
@@ -695,6 +945,11 @@ public class ConnPtOPCUA extends ConnPtBinder
 			uaClient.getSubscriptionManager().addSubscriptionListener(subLis);
 			
 			uaClient.connect();
+			
+//			ArrayList<NodeId> nids = new ArrayList<>() ;
+//			nids.addAll(tag2nodeid.values());
+//			uaClient.registerNodes(nids) ;
+			
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -716,10 +971,108 @@ public class ConnPtOPCUA extends ConnPtBinder
 			return;
 		browseNodesOut(w,uaClient);
 	}
+	
+	private transient HashMap<String,NodeId> tag2nodeid = null ;
+
+	@Override
+	protected void RT_connInit() throws Exception
+	{
+		super.RT_connInit();
+		
+		HashMap<String,NodeId> t2n = new HashMap<>() ;
+		
+		Map<String,String> bindm = this.getBindMap();
+		for(Map.Entry<String,String> t2p:bindm.entrySet())
+		{
+			String tagp = t2p.getKey() ;
+			String bindp = t2p.getValue() ;
+			int k = bindp.lastIndexOf(":") ;
+			if(k>0)
+				bindp = bindp.substring(0,k) ;
+			k = tagp.lastIndexOf(":") ;
+			if(k>0)
+				tagp = tagp.substring(0,k) ;
+			NodeId pnid =  NodeId.parse(bindp) ;
+	    	if(pnid==null)
+	    		continue ;
+	    	t2n.put(tagp, pnid) ;
+		}
+		
+		tag2nodeid = t2n ;
+		
+	}
+	
+	transient private long lastReadData = -1 ;
+	
+	private void readDataInLoop()
+	{
+		if (System.currentTimeMillis() - lastReadData < updateIntMs)
+			return;
+
+		try
+		{
+			UACh ch = this.getJoinedCh() ;
+			if(ch==null)
+				return ;
+			
+			if(!isConnReady())
+				return ;
+			
+			//uaClient.connect().get();
+
+			for(Map.Entry<String,NodeId> tag2n:tag2nodeid.entrySet())
+			{
+				NodeId nodeid = tag2n.getValue();
+				UShort us = nodeid.getNamespaceIndex();
+				Object id = nodeid.getIdentifier() ;
+				
+				DataValue v = uaClient.readValue(0.0, TimestampsToReturn.Both, nodeid).get();
+				
+				updateTagVal(ch,tag2n.getKey(),v) ;
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println("read data err="+e.getMessage());
+		}
+		finally
+		{
+			lastReadData = System.currentTimeMillis();
+		}
+	}
+	
+	private void updateTagVal(UACh ch,String tagpath,DataValue v) throws Exception
+	{
+		int k = tagpath.indexOf(':');
+		if(k>0)
+			tagpath = tagpath.substring(0,k) ;
+		UANode tmpn = ch.getDescendantNodeByPath(tagpath) ;
+		if(tmpn==null||!(tmpn instanceof UATag))
+			return ;
+		StatusCode sc = v.getStatusCode() ;
+		//sc.
+		Object objv = v.getValue().getValue() ;
+		if(objv==null)
+			return ;
+		
+		UATag tag = (UATag)tmpn ;
+		//itemval.getValue().
+		if(sc.isGood())
+		{
+			long chgdt = v.getServerTime().getJavaTime();
+			//itemval.
+			//UAVal uav = UAVal.createByStrVal(tag.getValTp(),itemval.getLastValueStr(),chgdt,chgdt);
+			//tag.RT_setUAVal(uav);
+			tag.RT_setValRawStr(objv.toString(),true,chgdt);
+			//tag.RT_setValStr(itemval.getLastValueStr());
+		}
+		else
+			tag.RT_setValErr("", null);
+	}
 
 	private long lastChk = -1;
 
-	void checkConn()
+	void checkConnInLoop()
 	{
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;
@@ -733,6 +1086,11 @@ public class ConnPtOPCUA extends ConnPtBinder
 		}
 	}
 
+	void checkConn()
+	{
+		checkConnInLoop();
+		readDataInLoop();
+	}
 	@Override
 	public boolean isConnReady()
 	{
@@ -766,6 +1124,28 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 	public void RT_writeValByBind(String tagpath,String strv)
 	{
-		//TODO 
+		if (uaClient == null)
+			return;
+		int k = tagpath.indexOf(':') ;
+		if(k>0)
+			tagpath = tagpath.substring(0,k) ;
+		NodeId nid = tag2nodeid.get(tagpath) ;
+		if(nid==null)
+			return ;
+		
+		Variant v = new Variant(Integer.parseInt(strv));
+		DataValue dataValue = new DataValue(v, null, null);
+
+		try
+		{
+		StatusCode statusCode = uaClient.writeValue(nid, dataValue).get();
+		boolean r = statusCode.isGood();
+		System.out.println("w result="+r) ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 }

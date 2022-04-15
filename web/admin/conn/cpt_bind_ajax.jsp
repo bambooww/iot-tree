@@ -55,6 +55,7 @@ if(cpt==null)
 	return ;
 }
 
+
 switch(op)
 {
 case "sub":
@@ -131,6 +132,20 @@ case "tree":
 		out.print(e.getMessage()) ;
 	}
 	break;
+case "treen":
+	String pnid = request.getParameter("pnid") ;
+	try
+	{
+		if(Convert.isNullOrEmpty(pnid))
+			cpt.writeBindBeSelectTreeRoot(out);
+		else
+			cpt.writeBindBeSelectTreeSub(out, pnid) ;
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage()) ;
+	}
+	break;	
 case "set_binds":
 	try
 	{

@@ -35,6 +35,8 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 		
 		String vt ;
 		
+		Object val ;
+		
 		public BindItem(String p,String vt)
 		{
 			this.path = p ;
@@ -49,6 +51,16 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 		public String getValTp()
 		{
 			return vt; 
+		}
+		
+		public Object getVal()
+		{
+			return val ;
+		}
+		
+		public void setVal(Object ov)
+		{
+			this.val = ov ;
 		}
 	}
 	private HashMap<String,String> bindParams = new HashMap<>() ;
@@ -509,4 +521,15 @@ public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
 
 
 	public abstract  void writeBindBeSelectedTreeJson(Writer w,boolean list_tags_only,boolean force_refresh) throws Exception;
+	
+	public boolean supportBindBeSelectTree()
+	{
+		return false;
+	}
+	
+	public void writeBindBeSelectTreeRoot(Writer w) throws Exception
+	{}
+
+	public void writeBindBeSelectTreeSub(Writer w,String pnode_id) throws Exception
+	{}
 }

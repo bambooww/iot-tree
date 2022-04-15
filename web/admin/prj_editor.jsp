@@ -657,8 +657,6 @@ var connpro_menu = [
 		edit_cpt("ws_client","","");
 	}},
 	{content:'sm_divider'},
-	
-	
 	{content:'Others',header: true},
 	{content:'IOTTree Node',callback:function(){
 		edit_cpt("iottree_node","","");
@@ -1292,16 +1290,19 @@ function del_cpt(cpid,connid)
 
 function edit_bind_setup(cptp,cpid,connid,tt)
 {
-	dlg.open_win("./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+	var u = "./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
+	//if(cptp=='opc_ua')
+	//	u = "./conn/cpt_bind_sel_tree.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
+	dlg.open_win(u,
 			{title:"Binding Setting ["+cptp+"] "+tt,w:'800',h:'550'},
 			['Ok',{title:'Cancel',style:"primary"}],
 			[
 				function(dlgw)
 				{
-					var bindstr = dlgw.get_bindlist_valstr();
+					//var bindstr = dlgw.get_bindlist_valstr();
 					var mapstr = dlgw.get_map_vals();
 					
-					send_ajax('./conn/cpt_bind_ajax.jsp',{op:"set_binds",bindids:bindstr,mapstr:mapstr,prjid:repid,cptp:cptp,cpid:cpid,connid:connid},
+					send_ajax('./conn/cpt_bind_ajax.jsp',{op:"set_binds",bindids:'',mapstr:mapstr,prjid:repid,cptp:cptp,cpid:cpid,connid:connid},
 							function(bsucc,ret){
 						if(!bsucc || ret!='succ')
 						{

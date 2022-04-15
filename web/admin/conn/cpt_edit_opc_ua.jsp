@@ -57,6 +57,7 @@ int opc_reqto = cpt.getOpcReqTimeout();
 String opc_user = cpt.getOpcIdUser();
 String opc_psw = cpt.getOpcIdPsw();
 String cp_tp = cp.getProviderType() ;
+long int_ms = cpt.getUpdateIntMs() ;
 %>
 <html>
 <head>
@@ -103,12 +104,16 @@ dlg.resize_to(800,600);
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label">Opc Proto:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width: 70px;">
       <input type="text" id="opc_proto" name="opc_proto" value="<%=opc_proto%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Opc Path:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="opc_path" name="opc_path" value="<%=opc_path%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid">Update Interval</div>
+	  <div class="layui-input-inline" style="width: 100px;">
+	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
 	  </div>
   </div>
   <%--
@@ -312,10 +317,21 @@ function do_submit(cb)
 		opc_path="";
 	}
 	
+	var int_ms = $('#int_ms').val();
+	if(int_ms==null||int_ms=='')
+	{
+		cb(false,'Please input Update interval') ;
+		return ;
+	}
+	int_ms = parseInt(int_ms);
+	if(int_ms==NaN||int_ms<0)
+	{
+		cb(false,'Please input valid Update interval') ;
+	}
 	
 	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:host,opc_port:vp,
 		opc_proto:opc_proto,opc_path:opc_path,
-		opc_req_to:opc_reqto,opc_user:opc_user,opc_psw:opc_psw});
+		opc_req_to:opc_reqto,opc_user:opc_user,opc_psw:opc_psw,int_ms:int_ms});
 }
 
 </script>
