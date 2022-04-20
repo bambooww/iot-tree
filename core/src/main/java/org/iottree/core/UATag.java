@@ -1235,8 +1235,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		else
 		{
-			w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-					+ Convert.plainToJsStr(str_err) + "\"}");
+			w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":"
+					+ JSONObject.quote(str_err) + "}");
+//			w.write(",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
+//					+ Convert.plainToJsStr(str_err) + "\"}");
 		}
 
 	}
@@ -1298,8 +1300,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		else
 		{
-			w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
-					+ Convert.plainToJsStr(str_err)+"\"" );
+			w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":"
+					+JSONObject.quote(str_err) );
+//			w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
+//					+ Convert.plainToJsStr(str_err)+"\"" );
 		}
 
 		JSONObject jo = getExtAttrJO() ;

@@ -27,8 +27,9 @@ public class ServiceManager
 		}
 	}
 	
-	private static Class<?>[] ALL_CNS = new Class<?>[] {
-			ServiceActiveMQ.class
+	private static String[] ALL_CNS = new String[] {
+			"org.iottree.core.service.ServiceActiveMQ",
+			"org.iottree.driver.opc.opcua.server.OpcUAServer"
 	} ;
 	
 	private ArrayList<AbstractService> allServices = new ArrayList<>() ;
@@ -40,10 +41,13 @@ public class ServiceManager
 	
 	private void init()
 	{
-		for(Class<?> c:ALL_CNS)
+		for(String cn:ALL_CNS)
 		{
 			try
 			{
+				Class<?> c = Class.forName(cn) ;
+				if(c==null)
+					continue ;
 				AbstractService as = (AbstractService)c.newInstance() ;
 				HashMap<String,String> conf = this.loadServiceConf(as.getName()) ;
 				as.initService(conf);

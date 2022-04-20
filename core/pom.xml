@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>0.96.2</version>
+		<version>0.96.4</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -44,7 +44,6 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-server</artifactId>
-			
 		</dependency>
 		
 		<dependency>

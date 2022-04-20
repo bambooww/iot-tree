@@ -11,7 +11,9 @@
 	</webapps>
 	
 	<system>
-		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServerComp"/>
+	<!-- 
+		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServer"/>
+		 -->
 	</system>
 	
 	<!-- 

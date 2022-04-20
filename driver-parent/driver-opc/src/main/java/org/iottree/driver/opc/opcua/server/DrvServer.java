@@ -4,6 +4,7 @@ import java.io.File;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,9 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.eclipse.milo.opcua.stack.server.security.DefaultServerCertificateValidator;
 import org.iottree.core.Config;
+import org.iottree.core.UAManager;
+import org.iottree.core.UAPrj;
+import org.iottree.core.service.AbstractService;
 import org.slf4j.LoggerFactory;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -39,7 +43,7 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_X509;
 
-public class DrvServer
+public class DrvServer //extends AbstractService
 {
 
 	private static final int TCP_BIND_PORT = 12686;
@@ -51,21 +55,12 @@ public class DrvServer
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	public static void main(String[] args) throws Exception
-	{
-		DrvServer server = new DrvServer();
-
-		server.startup().get();
-
-		final CompletableFuture<Void> future = new CompletableFuture<>();
-
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> future.complete(null)));
-
-		future.get();
-	}
 
 	private final OpcUaServer server;
-	private final DrvNamespace drvNamespace;
+	private final PrjsNamespace prjNS;
+	private DrvNamespace drvNamespace;
+	
+	//private List<PrjsNamespace> prjNamespaces;
 	
 	static final String PRODUCT_URI = "urn:iottree:server" ;
 
@@ -138,8 +133,12 @@ public class DrvServer
 
 		server = new OpcUaServer(serverConfig);
 
-		drvNamespace = new DrvNamespace(server);
-		drvNamespace.startup();
+		//prjNS = null ;
+		prjNS = new PrjsNamespace(server);
+		prjNS.startup();
+		
+		//drvNamespace= new DrvNamespace(server);
+		//drvNamespace.startup();
 	}
 
 	private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate)
@@ -152,13 +151,18 @@ public class DrvServer
 		Set<String> hostnames = new LinkedHashSet<>();
 		hostnames.add(HostnameUtil.getHostname());
 		hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0"));
+		
+//		for(UAPrj prj:UAManager.getInstance().listPrjs())
+//		{
 
 		for (String bind_addr : bind_addrs)
 		{
 			for (String hostname : hostnames)
 			{
 				EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder().setBindAddress(bind_addr)
-						.setHostname(hostname).setPath("/iottree").setCertificate(certificate).addTokenPolicies(
+						.setHostname(hostname)
+						//.setPath("/"+prj.getName())
+						.setCertificate(certificate).addTokenPolicies(
 								USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509);
 
 				EndpointConfiguration.Builder noSecurityBuilder = builder.copy().setSecurityPolicy(SecurityPolicy.None)
@@ -190,13 +194,14 @@ public class DrvServer
 				 * appending the path "/discovery" to its base address.
 				 */
 
-				EndpointConfiguration.Builder discoveryBuilder = builder.copy().setPath("/iottree/discovery")
+				EndpointConfiguration.Builder discoveryBuilder = builder.copy().setPath("/discovery")
 						.setSecurityPolicy(SecurityPolicy.None).setSecurityMode(MessageSecurityMode.None);
 
 				epconfigs.add(buildTcpEndpoint(discoveryBuilder));
 				epconfigs.add(buildHttpsEndpoint(discoveryBuilder));
 			}
 		}
+//		}//end of loop prj
 
 		return epconfigs;
 	}
@@ -224,7 +229,7 @@ public class DrvServer
 
 	public CompletableFuture<OpcUaServer> shutdown()
 	{
-		drvNamespace.shutdown();
+		prjNS.shutdown();
 
 		return server.shutdown();
 	}
