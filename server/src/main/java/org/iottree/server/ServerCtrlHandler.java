@@ -50,16 +50,16 @@ public class ServerCtrlHandler
 				}
 				else if ("?".equals(cmds[0])||"help".equalsIgnoreCase(cmds[0]))
 				{
-					log.println("exit - stop server and exit!") ;
-					log.println("ver - show ver!") ;
+					System.out.println("exit - stop server and exit!") ;
+					System.out.println("ver - show ver!") ;
 				}
 				else if ("ver".equals(cmds[0]))
 				{
-					log.println("IOT-Tree Server,Version:"+Config.getVersion());
+					System.out.println("IOT-Tree Server,Version:"+Config.getVersion());
 				}
 				else
 				{
-					log.println("unknow cmd , using ? or help !") ;
+					System.out.println("unknow cmd , using ? or help !") ;
 				}
 			}
 			catch (Exception _e)
@@ -68,7 +68,7 @@ public class ServerCtrlHandler
 			}
 			finally
 			{
-				log.print("iottree->");
+				System.out.print("iottree->");
 			}
 		}
 		

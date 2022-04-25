@@ -70,4 +70,25 @@ Use Mozilla Public License Version 2.0 (MPL). Add third-party plug-in license su
 Improve the data access, processing and channel Association supporting message mode. And support mqtt and other specific protocols.
 
 
+
+### version 0.96.1
+Improve access support for message types. It also supports project management connection list, dynamic blinking message support, such as support for new device discovery notifications, link initialization errors, and so on. Prepare to add a new message monitoring window later.
+
+
+
+### version 0.96.2
+ConnPtMSG supports both JS Transfer and Binder. The Binder method is simple and clear, and it supports data location and acquisition quickly through pattern matching (xpath, jsonpath, etc.). JS Transfer supports flexible implementation and device discovery
+
+
+
+### version 0.96.3
+Implement OPC UA client Connector
+
+
+
+### version 0.96.4
+Implement OPC UA Server
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

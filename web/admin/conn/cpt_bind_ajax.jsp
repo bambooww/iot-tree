@@ -73,6 +73,7 @@ case "list":
 	}
 	catch(Exception e)
 	{
+		e.printStackTrace();
 		out.print(e.getMessage()) ;
 	}
 	break;

@@ -16,6 +16,9 @@
 		 -->
 	</system>
 	
+	<log>
+		<ctrl name="xx.xx" default_level="trace" />
+	</log>
 	<!-- 
 	<plug_auth name="auth_demo" 
 			login_url="http://abc.xx.com/login/login.jsp"

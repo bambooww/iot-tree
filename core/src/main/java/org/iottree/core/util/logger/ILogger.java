@@ -7,52 +7,66 @@ package org.iottree.core.util.logger;
 public interface ILogger
 {
 	/**
-	 * ��Ծ����log����ֵ��ȱʡ����¼̳�ȫ��
+	 * no enable
 	 */
 	public static final int CTRL_DEFAULT = 0 ;
 	
 	/**
-	 * ��Ծ����log����ֵ���Զ�������´�
+	 * enable
 	 */
 	public static final int CTRL_ENABLE = 1 ;
 	
 	/**
-	 * ��Ծ����log����ֵ���Զ�������¹ر�
+	 * ctrl disable
 	 */
 	public static final int CTRL_DISABLE = -1 ;
 	
+	static final public int LOG_LEVEL_TRACE = 00;
+    static final public int LOG_LEVEL_DEBUG = 10;
+    static final public int LOG_LEVEL_INFO = 20;
+    static final public int LOG_LEVEL_WARN = 30;
+    static final public int LOG_LEVEL_ERROR = 40;
+    
+    static final public int[] LEVELS = {LOG_LEVEL_TRACE,LOG_LEVEL_DEBUG,LOG_LEVEL_INFO,LOG_LEVEL_WARN,LOG_LEVEL_ERROR};
+    static final public String[] LEVELS_TT = {"trace","debug","info","warn","error"};
+  
 	
 	public String getLoggerId() ;
 	
 	/**
-	 * ��õ�ǰ�Ŀ���
+	 * 
 	 * @return
 	 */
 	public int getCtrl();
 	
+	public String getCtrlTitle();
 	/**
-	 * ���õ�ǰ�Ŀ���
+	 * 
 	 * @param c
 	 */
 	public void setCtrl(int c) ;
 	
-	public boolean isStackTrace();
+	public void setCurrentLogLevel(int loglvl);
+    
+    public int getCurrentLogLevel();
 	
-	public void setStackTrace(boolean b) ;
+//	public boolean isStackTrace();
+//	
+//	public void setStackTrace(boolean b) ;
 	
-	/**
-	 * ����System.out.println���������ܿ�������
-	 * @param msg
-	 */
-	public void print(String msg) ;
-	
-	public void println(String msg) ;
-	
-	public void printException(Exception ex) ;
+//	/**
+//	 * ����System.out.println���������ܿ�������
+//	 * @param msg
+//	 */
+//	public void print(String msg) ;
+//	
+//	public void println(String msg) ;
+//	
+//	public void printException(Exception ex) ;
 
-	public void fatal(String msg);
-	
-	public void fatal(Throwable t);
+//	public void fatal(String msg);
+//	
+//	public void fatal(Throwable t);
 
 	public void error(String msg);
 	
@@ -84,8 +98,6 @@ public interface ILogger
 	
 	public boolean isErrorEnabled();
 	
-	public boolean isFatalEnabled() ;
-	//public boolean is
 	
 	
 //	public void setTraceEnabled(boolean b) ;

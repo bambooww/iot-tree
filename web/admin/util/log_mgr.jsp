@@ -8,6 +8,7 @@
 
 //String txt = Convert.readFileTxt(new File("D:/work/work_dj/nha_node/testdir/r_comp3/filetp_check.json"), "utf-8") ;
 //JSONArray jarr = new JSONArray(txt);
+int deflvl = LoggerManager.getDefaultLogLevel();
 
 ILogger[] logs = LoggerManager.getAllLoggers() ;
 Arrays.sort(logs, new Comparator<ILogger>(){
@@ -16,7 +17,8 @@ Arrays.sort(logs, new Comparator<ILogger>(){
 	{
 		return o1.getLoggerId().compareTo(o2.getLoggerId()) ;
 	}}) ;
-
+if(logs==null)
+	logs = new ILogger[0] ;
 HashSet<String> hs = LoggerManager.getInCtrlEnableIds() ;
 if(hs==null)
 	hs = new HashSet<String>() ;
@@ -28,109 +30,156 @@ if(hs==null)
 <style>
 table{border-collapse:collapse;}
 body,td{font-size:12px;cursor:default;}
+.ctrl
+{
+	width:20px;height:20px;float:left;
+	margin-left:5px;
+}
+
+.ctrl_sel
+{
+	border:solid 2px;border-color: blue;
+}
 </style>
 </head>
+<script type="text/javascript">
+dlg.resize_to(800,600) ;
+</script>
 <body style="background-color: rgb(238, 243, 249)" topmargin="0" leftmargin="0" rightMargin="0" marginwidth="0" marginheight="0">
-<table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size: 10pt;margin-left: 0;margin-top: 0">
-	<tr>
-		<td>
-<button onclick="set_enable_in_ctrl()">log selected item</button>
-<button onclick="set_default()">recover default</button>
-
-		</td>
-	</tr>
-	<tr>
-		<td valign="top">
-			<span id='enable_ids'>
+<form class="layui-form" action="">
+<div class="layui-form-item">
+    <label class="layui-form-label">Default</label>
+    <div class="layui-input-inline">
+      <select id="def_lvl"  lay-filter="def_lvl">
 <%
-if(hs!=null)
+for(int i = 0 ; i < ILogger.LEVELS.length ; i ++)
 {
-	for(Iterator<String> ir=hs.iterator();ir.hasNext();)
-	{
-%><%=ir.next()%>,<%
-	}
+%><option value="<%=ILogger.LEVELS[i] %>"><%=ILogger.LEVELS_TT[i]  %></option><%
 }
 %>
-			</span>
-			<table width="100%">
-				<tr>
-				 	<td>
-						<table width="100%" cellspacing="0" id="l_header" >		
-							<tr style="border-bottom: 1px solid rgb(204, 204, 204);background-image: url(WebRes?r=com/dw/web_ui/res/tool-bkgd.jpg);">
-								<td width="15%">&nbsp;</td>
-								<td width="85%">日志Id</td>		
-							</tr>
+</select>
+    </div>
+    
+  </div>
+  <div style="overflow: auto;height:420px">
+  <table class="layui-table" lay-size="sm" >
+  <colgroup>
+    <col width="60%">
+    
+    <col width="40%">
+    <col>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <!--
+      <th>Controller</th>
+        -->
+      <th>Level</th>
+    </tr> 
+  </thead>
+  <tbody>
 <%
-if(logs!=null)
+for(ILogger u:logs)
 {
-	for(ILogger u:logs)
-	{
-		String chked = "" ;
-		if(hs.contains(u.getLoggerId()))
-			chked = "checked=checked" ;
+	String chked = "" ;
+	if(hs.contains(u.getLoggerId()))
+		chked = "checked=checked" ;
 
+	String logid = u.getLoggerId() ;
+	String tmps = logid ;
+	if(tmps.length()>60)
+		tmps = "..."+tmps.substring(tmps.length()-60) ;
+	
+	int ctrl = u.getCtrl() ;
+	
 %>
-							<tr>
-								<td><input type="checkbox" name="logids" value="<%=u.getLoggerId() %>" <%=chked %>/></td>
-								<td><%=u.getLoggerId() %></td>
-							</tr>	
+  
+    <tr>
+      <td title="<%=logid%>"><%=tmps %></td>
+      <%--
+      <td style="white-space: nowrap;width:170px">
+      
+      <div class="ctrl"  style="background-color: green;" title="set log all" onclick="set_ctrl('<%=logid%>',1)"></div>
+      <div class="ctrl"  style="background-color: red;" title="disable log"  onclick="set_ctrl('<%=logid%>',-1)"></div>
+      <div class="ctrl ctrl_sel"  style="background-color: gray;" title="log by level"  onclick="set_ctrl('<%=logid%>',0)"></div>
+      </td>
+       --%>
+      <td style="white-space: nowrap">
+      <div id="lvl_none" style="display:none">
+      </div>
+      <div id="lvl_<%=logid%>" >
+ 	  <input onclick="set_lvl('<%=logid%>',<%=ILogger.LOG_LEVEL_TRACE %>)" type="checkbox" id="lvl_trace_<%=logid %>" value="trace" title="Trace"  <%=(u.isTraceEnabled()?"checked=\"checked\"":"") %> lay-ignore>Trace
+      <input onclick="set_lvl('<%=logid%>',<%=ILogger.LOG_LEVEL_DEBUG %>)" type="checkbox" id="lvl_debug_<%=logid %>" value="debug" title="Debug"  <%=(u.isDebugEnabled()?"checked=\"checked\"":"") %> lay-ignore >Debug
+      <input onclick="set_lvl('<%=logid%>',<%=ILogger.LOG_LEVEL_INFO %>)" type="checkbox" id="lvl_info_<%=logid %>" value="info" title="Info"  <%=(u.isInfoEnabled()?"checked=\"checked\"":"") %> lay-ignore>Info
+      <input onclick="set_lvl('<%=logid%>',<%=ILogger.LOG_LEVEL_WARN %>)" type="checkbox" id="lvl_warn_<%=logid %>" value="warn" title="Warn" <%=(u.isWarnEnabled()?"checked=\"checked\"":"") %> lay-ignore>Warn
+      <input onclick="set_lvl('<%=logid%>',<%=ILogger.LOG_LEVEL_ERROR %>)" type="checkbox" id="lvl_error_<%=logid %>" value="error" title="Error"  <%=(u.isErrorEnabled()?"checked=\"checked\"":"") %> lay-ignore>Error
+      </div>
+	  </td>
+    </tr>
 <%
-	}
 }
-%>							
-						</table>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
+%>
+
+  </tbody>
 </table>
+</div>
+</form>
 </body>
 <script>
+var form = null ;
 
-function set_enable_in_ctrl(btrace)
+$("#def_lvl").val(<%=deflvl%>) ;
+layui.use('form', function(){
+	  form = layui.form;
+	  
+	  form.on("select(def_lvl)",function(obj){
+		  var v = $("#def_lvl").val() ;
+		  send_ajax('log_ajax.jsp',{op:'def_lvl',v:v},(bsucc,ret)=>{
+				if(!bsucc&&ret.indexOf("{")!=0)
+				{
+					dlg.msg(ret) ;
+					return ;
+				}
+				document.location.href=document.location.href;
+			}) ;
+		  });
+	 form.render();
+	});
+
+function show_lvl(logid,v)
 {
-	var cs = document.getElementsByName('logids') ;
-	if(cs==null||cs.length<=0)
-	{
-		alert('no log found!') ;
-		return ;
-	}
-	var i ;
-	var ids='' ;
-	for(i =0 ; i < cs.length ; i ++)
-	{
-		if(!cs[i].checked)
-			continue ;
-			
-		ids += (cs[i].value+'|') ;
-	}
 	
-	if(ids=='')
-	{
-		alert('no log choice!') ;
-		return ;
-	}
-	
-	if(btrace)
-	{
-		sendWithResCallback('log_mgr_set_ajax.jsp?ctrl=true&trace=true','logids='+ids,set_cb,true) ;
-	}
-	else
-	{
-		sendWithResCallback('log_mgr_set_ajax.jsp?ctrl=true','logids='+ids,set_cb,true) ;
-	}
 }
 
-function set_cb(bsucc,ret)
+function set_ctrl(logid,v)
 {
-	if(!bsucc)
-	{
-		alert(ret) ;
-		return ;
-	}
-	
-	document.getElementById('enable_ids').innerHTML = ret ;
+		send_ajax('log_ajax.jsp',{op:'ctrl',logid:logid,v:v},(bsucc,ret)=>{
+			
+		}) ;
+
+}
+
+function set_lvl(logid,lvl)
+{
+	send_ajax('log_ajax.jsp',{op:'lvl',logid:logid,v:lvl},(bsucc,ret)=>{
+		if(!bsucc&&ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		
+		var ob ;
+		eval("ob="+ret) ;
+		for(var n in ob)
+		{
+			var t = document.getElementById("lvl_"+n+"_"+logid);
+			if(!t)
+				continue ;
+			$(t).prop("checked",ob[n]);
+		}
+		 form.render();
+	}) ;
 }
 
 function set_default()

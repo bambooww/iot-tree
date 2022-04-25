@@ -37,12 +37,14 @@
 
 
 #### <a doc_path="cn/doc/quick/index.md" >4 快速理解</a>
-##### <a doc_path="cn/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;4.1 快速理解IOT-Tree Server的树</a>
-##### <a doc_path="cn/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.2 快速理解 接入(Connector)-通道(Channel)-驱动(Driver)</a>
-##### <a doc_path="cn/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.3 快速理解设备定义Device Definition</a>
-##### <a doc_path="cn/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.4 快速理解TcpServer接入器</a>
-##### <a doc_path="cn/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.5 快速了解交互UI(HMI)</a>
-##### <a doc_path="cn/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.6 快速了解IOT-Tree Server作为你的后台支撑系统</a>
+##### <a doc_path="cn/doc/quick/quick_know_iottree.md" target="main">&nbsp;&nbsp;&nbsp;4.1 快速理解IOT-Tree Server总体</a>
+##### <a doc_path="cn/doc/quick/quick_know_conn.md" target="main">&nbsp;&nbsp;&nbsp;4.2 快速理解IOT-Tree Server的接入</a>
+##### <a doc_path="cn/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;4.3 快速理解IOT-Tree Server的树</a>
+##### <a doc_path="cn/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.4 快速理解 接入(Connector)-通道(Channel)-驱动(Driver)</a>
+##### <a doc_path="cn/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.5 快速理解设备定义Device Definition</a>
+##### <a doc_path="cn/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.6 快速理解TcpServer接入器</a>
+##### <a doc_path="cn/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 快速了解交互UI(HMI)</a>
+##### <a doc_path="cn/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.8 快速了解IOT-Tree Server作为你的后台支撑系统</a>
 
 
 

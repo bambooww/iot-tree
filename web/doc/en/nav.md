@@ -39,12 +39,14 @@
 
 
 #### <a doc_path="en/doc/quick/index.md" >4 Quick Know</a>
-##### <a doc_path="en/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;4.1 Quickly understand the tree of IOT tree server</a>
-##### <a doc_path="en/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Connector-Channel-Driver</a>
-##### <a doc_path="en/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Quickly understand device definition</a>
-##### <a doc_path="en/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Quickly understand tcpserver connector</a>
-##### <a doc_path="en/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.5 Monitoring UI,Human computer interaction(HMI)</a>
-##### <a doc_path="en/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Quickly understand IOT tree server as your background support system</a>
+##### <a doc_path="cn/doc/quick/quick_know_iottree.md" target="main">&nbsp;&nbsp;&nbsp;4.1 The overall IOT-Tree Server</a>
+##### <a doc_path="cn/doc/quick/quick_know_conn.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Quickly understand Connector</a>
+##### <a doc_path="en/doc/quick/quick_know_tree.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Quickly understand the tree of IOT tree server</a>
+##### <a doc_path="en/doc/quick/quick_know_ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Connector-Channel-Driver</a>
+##### <a doc_path="en/doc/quick/quick_know_devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.5 Quickly understand device definition</a>
+##### <a doc_path="en/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Quickly understand tcpserver connector</a>
+##### <a doc_path="en/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 Monitoring UI,Human computer interaction(HMI)</a>
+##### <a doc_path="en/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Quickly understand IOT tree server as your background support system</a>
 
 
 

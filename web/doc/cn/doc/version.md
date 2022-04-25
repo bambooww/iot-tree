@@ -71,4 +71,25 @@ windows环境下面增加自带jdk版本的安装包，同时提供了win_panel�
 
 
 
+### 版本 0.96.1
+改进完善消息类型的接入支持。并支持项目管理Connection列表中，动态闪烁消息支持，如支持新设备发现通知，链接初始化错误等。后续准备新增消息监视窗口。
+
+
+
+### 版本 0.96.2
+ConnPtMSG方式同时支持JS Transfer和Binder。其中Binder方式使用简单明了，通过模式匹配（xpath、jsonpath等方式）快速支持数据的定位和获取；JS Transfer方式可以支持灵活的实现方式，可以支持设备的发现
+
+
+
+### 版本 0.96.3
+实现OPC UA接入支持
+
+
+
+### 版本 0.96.4
+实现OPC UA输出支持
+
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

@@ -145,12 +145,20 @@
 		    <version>1.5.2</version>
 		</dependency>
 
-<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all -->
+<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all
 <dependency>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activemq-all</artifactId>
     <version>5.16.3</version>
 </dependency>
+ -->
+ <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-kahadb-store -->
+<dependency>
+    <groupId>org.apache.activemq</groupId>
+    <artifactId>activemq-kahadb-store</artifactId>
+    <version>5.16.3</version>
+</dependency>
+ 
 <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-jaas -->
 <dependency>
     <groupId>org.apache.activemq</groupId>

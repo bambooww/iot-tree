@@ -3,6 +3,7 @@ package org.iottree.core.util.logger;
 import java.util.*;
 
 import org.iottree.core.util.logger.provider.ConsoleLogDo;
+import org.slf4j.impl.IOTTLogger;
 
 
 /**
@@ -18,6 +19,8 @@ public class LoggerManager
 	static boolean Is_Error=true;
 	static boolean Is_Fatal=true;
 	static boolean Is_Warn=true ;
+	
+	static int Default_LVL = ILogger.LOG_LEVEL_WARN ;
 
 	static
 	{
@@ -44,6 +47,15 @@ public class LoggerManager
 		}
 	}
 	
+	public static int getDefaultLogLevel()
+	{
+		return Default_LVL;
+	}
+	
+	public static void setDefaultLogLevel(int lvl)
+	{
+		Default_LVL = lvl ;
+	}
 
 	static final ThreadLocal<Boolean> thLogOpen = new ThreadLocal<Boolean>()
 	{
@@ -56,9 +68,6 @@ public class LoggerManager
     
     
 	/**
-	 * ���õ�ǰ��־���߳���������ʱ��
-	 * �˷���һ���������Թ����У���log����ʱ�򿪺͹ر�
-	 * ����������������Ϲر�
 	 * @param bopen
 	 */
 	public static void setThreadLogOpen(boolean bopen)
@@ -72,16 +81,7 @@ public class LoggerManager
 	private static boolean bInCtrl = false;
 	
 	private static HashSet<String> ctrlEnableIds = null ;
-	/**
-	 * ���ݵ�ǰLog�ṩ�ߣ���ȡָ��id����־����<br>
-	 * �÷���Ӧ��Ϊ����ģ���ṩΨһ��ȡLogger�������ڡ�<br>
-	 * ����ʹ�õ���־�Ĵ��룬�������Լ�����Logger���󡪡�ÿ��ʹ����־ʱͨ�����´��룺<br>
-	 * <pre>
-	 *     LoggerManager.getLogger(myid).info("xxxx") ;
-	 * </pre>
-	 * @param id ��־����id
-	 * @return ��־����
-	 */
+
 	public static ILogger getLogger(String id)
 	{
 		ILogger logger = id2log.get(id);
@@ -93,7 +93,7 @@ public class LoggerManager
 			if(logger!=null)
 				return logger ;
 			
-			logger = new LoggerObj(id);
+			logger = new IOTTLogger(id);//LoggerObj(id);
 			id2log.put(id, logger);
 			
 			if(bInCtrl&&ctrlEnableIds!=null)
@@ -112,7 +112,6 @@ public class LoggerManager
 	}
 	
 	/**
-	 * ����
 	 * @param c
 	 * @return
 	 */
@@ -123,9 +122,11 @@ public class LoggerManager
 		
 	}
 	
-	
+	public static ILogger getLoggerExisted(String id)
+	{
+		return id2log.get(id);
+	}
 	/**
-	 * �õ��ļ�Log
 	 * @param logn
 	 * @return
 	 */
@@ -144,41 +145,45 @@ public class LoggerManager
 		return rets ;
 	}
 	
-	/**
-	 * ����id���ö�Ӧ��logǿ�ƿ��ƴ򿪣��Ͳ��ֵ�ǿ�ƿ��ƹر�
-	 * �÷����ṩ������ʱʹ�ã������������й����У��ı�log�Ŀ���״̬
-	 * @param logid
-	 */
-	public static void setupLoggerInCtrl(HashSet<String> enableids)
-	{
-		setupLoggerInCtrl(enableids,false);
-	}
 	
-	public static void setupLoggerInCtrl(HashSet<String> enableids,boolean btrace)
+//	public static void setupLoggerInCtrl(HashSet<String> enableids)
+//	{
+//		setupLoggerInCtrl(enableids,false);
+//	}
+//	
+//	public static void setupLoggerInCtrl(HashSet<String> enableids,boolean btrace)
+//	{
+//		bInCtrl = true ;
+//		ctrlEnableIds = enableids ;
+//		
+//		for(ILogger l:getAllLoggers())
+//		{
+//			String id = l.getLoggerId() ;
+//			if(ctrlEnableIds!=null&&ctrlEnableIds.contains(id))
+//			{
+//				l.setCtrl(ILogger.CTRL_ENABLE) ;
+//				l.setStackTrace(btrace) ;
+//			}
+//			else
+//			{
+//				l.setCtrl(ILogger.CTRL_DISABLE) ;
+//				l.setStackTrace(false) ;
+//			}
+//		}
+//	}
+	
+	
+	public static boolean setupLogger(String logid,int ctrl,int log_level)
 	{
-		bInCtrl = true ;
-		ctrlEnableIds = enableids ;
+		ILogger log = getLogger(logid) ;
+		if(log==null)
+			return false;
 		
-		for(ILogger l:getAllLoggers())
-		{
-			String id = l.getLoggerId() ;
-			if(ctrlEnableIds!=null&&ctrlEnableIds.contains(id))
-			{
-				l.setCtrl(ILogger.CTRL_ENABLE) ;
-				l.setStackTrace(btrace) ;
-			}
-			else
-			{
-				l.setCtrl(ILogger.CTRL_DISABLE) ;
-				l.setStackTrace(false) ;
-			}
-		}
+		log.setCtrl(ctrl);
+		log.setCurrentLogLevel(log_level);
+		return true ;
 	}
 	
-	/**
-	 * �������е�log��ȱʡ״̬
-	 * �÷����ṩ�����Խ�����ʹ�ã������������й����У��ָ�log��ȱʡ����״̬
-	 */
 	public static void setupLoggerDefault()
 	{
 		bInCtrl = false ;
@@ -186,7 +191,7 @@ public class LoggerManager
 		for(ILogger l:getAllLoggers())
 		{
 			l.setCtrl(ILogger.CTRL_DEFAULT) ;
-			l.setStackTrace(false) ;
+			//l.setStackTrace(false) ;
 		}
 	}
 	

@@ -478,16 +478,16 @@ public class WaterMeter1Drv //extends DevDriver
 				}
 				else if ("?".equals(cmds[0])||"help".equalsIgnoreCase(cmds[0]))
 				{
-					log.println("exit - stop and exit!") ;
-					log.println("ver - show ver!") ;
+					System.out.println("exit - stop and exit!") ;
+					System.out.println("ver - show ver!") ;
 				}
 				else if ("ver".equals(cmds[0]))
 				{
-					log.println("Version:"+Config.getVersion());
+					System.out.println("Version:"+Config.getVersion());
 				}
 				else
 				{
-					log.println("unknow cmd , using ? or help !") ;
+					System.out.println("unknow cmd , using ? or help !") ;
 				}
 			}
 			catch (Exception _e)
@@ -496,7 +496,7 @@ public class WaterMeter1Drv //extends DevDriver
 			}
 			finally
 			{
-				log.print("wm->");
+				System.out.print("wm->");
 			}
 		}
 		

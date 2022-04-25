@@ -161,7 +161,7 @@ public class DrvServer //extends AbstractService
 			{
 				EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder().setBindAddress(bind_addr)
 						.setHostname(hostname)
-						//.setPath("/"+prj.getName())
+						//.setPath("/iottree")
 						.setCertificate(certificate).addTokenPolicies(
 								USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509);
 

@@ -85,7 +85,7 @@ if(as.isEnable())
 }
 %>
         
-        <a href="javascript:edit_server('<%=as.getName()%>')"><i class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a> 
+        <a href="javascript:edit_server('<%=as.getName()%>','<%=as.getTitle()%>')"><i class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a> 
 	  </td>
     </tr>
     
@@ -116,10 +116,10 @@ function refresh_ui()
 	document.location.href=document.location.href;
 }
 
-function edit_server(n)
+function edit_server(n,t)
 {
 	dlg.open("service_edit_"+n+".jsp",
-			{title:"active mq setup",w:'500px',h:'400px'},
+			{title:t+" setup",w:'500px',h:'400px'},
 			['Ok','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)

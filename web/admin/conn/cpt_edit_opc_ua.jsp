@@ -5,6 +5,7 @@
 	org.iottree.core.conn.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
+				org.eclipse.milo.opcua.stack.core.types.structured.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -48,11 +49,16 @@ if(cpt.isEnable())
 String desc = cpt.getDesc();
 //String opc_appn = cpt.getOpcAppName();
 //String opc_epuri  = cpt.getOpcEndPointURI();
-String host = cpt.getOpcHost() ;
-String port  = cpt.getOpcPortStr() ;
-String opc_proto = cpt.getOpcProtocal();
-String opc_path = cpt.getOpcPath();
-
+//String host = cpt.getOpcHost() ;
+//String port  = cpt.getOpcPortStr() ;
+//String opc_proto = cpt.getOpcProtocal();
+//String opc_path = cpt.getOpcPath();
+String opc_epu =  cpt.getOpcEndPointURI() ;
+String opc_sp = cpt.getOpcSP().name();
+ConnPtOPCUA.MessageMode mm = cpt.getOpcMsgMode() ;
+String opc_mm = "" ;
+if(mm!=null)
+	opc_mm = mm.name() ;
 int opc_reqto = cpt.getOpcReqTimeout();
 String opc_user = cpt.getOpcIdUser();
 String opc_psw = cpt.getOpcIdPsw();
@@ -76,40 +82,58 @@ dlg.resize_to(800,600);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-inline">
-      <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="title" name="title" value="<%=title%>"  autocomplete="off" class="layui-input">
 	  </div>
 	  <div class="layui-form-mid">Enable:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
-   <div class="layui-form-item">
-    <label class="layui-form-label">Opc Host:</label>
-    <div class="layui-input-inline">
-      <input type="text" id="opc_host" name="opc_host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+  <div class="layui-form-item">
+    <label class="layui-form-label">Endpoint URL:</label>
+    <div class="layui-input-inline" style="width:200px">
+      <input type="text" id="opc_epu" name="opc_epu" value="<%=opc_epu%>"  style="width:200px" class="layui-input">
     </div>
-    <div class="layui-form-mid">Opc Host Port:</div>
-	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="opc_port" name="opc_port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
-	  </div>
-	 <div class="layui-form-mid">Opt Request Timeout:</div>
-	  <div class="layui-input-inline" style="width: 70px;">
-	    
-	    <input type="text" id="opc_req_to" name="opc_req_to" value="<%=opc_reqto%>"  lay-verify="required" autocomplete="off" class="layui-input">
+    <div class="layui-input-inline" style="width:50px">
+    <button class="layui-input" onclick="edit_epu()">...</button>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Security Policy:</label>
+    <div class="layui-input-inline" style="width:200px">
+       <select id="opc_sp" lay-filter="opc_sp">
+<%
+for(ConnPtOPCUA.SecurityPolicy sp:ConnPtOPCUA.SecurityPolicy.values())
+{
+%>
+<option value="<%=sp.name()%>" ><%=sp.getTitle() %></option>
+<%
+}
+%>   </select>
+    </div>
+    <div class="layui-form-mid">Message Mode:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	     <select id="opc_mm" lay-filter="opc_mm">
+	     <option value="" >--</option>
+<%
+for(ConnPtOPCUA.MessageMode sp:ConnPtOPCUA.MessageMode.values())
+{
+%>
+<option value="<%=sp.name()%>" ><%=sp.getTitle() %></option>
+<%
+}
+%>   </select>
 	  </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Opc Proto:</label>
-    <div class="layui-input-inline" style="width: 70px;">
-      <input type="text" id="opc_proto" name="opc_proto" value="<%=opc_proto%>"  lay-verify="required"  autocomplete="off" class="layui-input">
-    </div>
-    <div class="layui-form-mid">Opc Path:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="opc_path" name="opc_path" value="<%=opc_path%>"  lay-verify="required" autocomplete="off" class="layui-input">
+    <div class="layui-form-label">Opc Request Timeout:</div>
+	  <div class="layui-input-inline" style="width: 70px;">
+	    
+	    <input type="text" id="opc_req_to" name="opc_req_to" value="<%=opc_reqto%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
 	  <div class="layui-form-mid">Update Interval</div>
 	  <div class="layui-input-inline" style="width: 100px;">
@@ -120,7 +144,7 @@ dlg.resize_to(800,600);
   <div class="layui-form-item">
     <label class="layui-form-label">Opc App Name:</label>
     <div class="layui-input-inline">
-      <input type="text" id="host" name="host" value="<%=opc_appn%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      <input type="text" id="host" name="host" value="<%=opc_appn%>"  class="layui-input">
     </div>
     
   </div>
@@ -139,22 +163,22 @@ dlg.resize_to(800,600);
   </div>
   
    --%>
-  
+
   
   <div class="layui-form-item">
     <label class="layui-form-label">Opc User:</label>
     <div class="layui-input-inline">
-      <input type="text" id="opc_user" name="opc_user" value="<%=opc_user%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      <input type="text" id="opc_user" name="opc_user" value="<%=opc_user%>"  class="layui-input">
     </div>
     <div class="layui-form-mid">Opc Password:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="opc_psw" name="opc_psw" value="<%=opc_psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="opc_psw" name="opc_psw" value="<%=opc_psw%>"  autocomplete="off" class="layui-input">
 	  </div>
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-block">
-      <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
+      <textarea  id="desc"  name="desc"   placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>
    
@@ -162,6 +186,8 @@ dlg.resize_to(800,600);
 </body>
 <script type="text/javascript">
 var form = null;
+var opc_sp = "<%=opc_sp%>" ;
+var opc_mm = "<%=opc_mm%>" ;
 layui.use('form', function(){
 	  form = layui.form;
 	  
@@ -174,10 +200,7 @@ layui.use('form', function(){
 	  $("#desc").on("input",function(e){
 		  setDirty();
 		  });
-	  $("#opc_host").on("input",function(e){
-		  setDirty();
-		  });
-	  $("#opc_port").on("input",function(e){
+	  $("#opc_epu").on("input",function(e){
 		  setDirty();
 		  });
 	  $("#opc_req_to").on("input",function(e){
@@ -195,7 +218,14 @@ layui.use('form', function(){
 	  form.on('switch(enable)', function(obj){
 		       setDirty();
 		  });
-		  
+	  form.on('switch(opc_sp)', function(obj){
+		       setDirty();
+		  });
+	  form.on('switch(opc_mm)', function(obj){
+		       setDirty();
+		  });
+	  $("#opc_sp").val(opc_sp) ;
+	  $("#opc_mm").val(opc_mm) ;
 	  form.render(); 
 });
 
@@ -216,6 +246,32 @@ function setDirty()
 	dlg.btn_set_enable(1,true);
 }
 
+
+function edit_epu()
+{
+	event.preventDefault();
+	dlg.open("opc_ua_endpoints.jsp",
+			{title:"UA Server Browser",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 dlg.close();
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 	
 function win_close()
 {
@@ -253,25 +309,12 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
-	var host = $('#opc_host').val();
-	if(host==null||host=='')
+	var opc_epu = $('#opc_epu').val();
+	if(opc_epu==null||opc_epu=='')
 	{
-		cb(false,'Please input host') ;
+		cb(false,'Please input Endpoint URI') ;
 		return ;
 	}
-	var port = $('#opc_port').val();
-	if(port==null||port=='')
-	{
-		cb(false,'Please input port') ;
-		return ;
-	}
-	var vp = parseInt(port);
-	if(vp==NaN||vp<0)
-	{
-		cb(false,'Please input valid port') ;
-	}
-	
-
 	
 	var opc_reqto = $('#opc_req_to').val();
 	if(opc_reqto==null||opc_reqto=='')
@@ -301,21 +344,6 @@ function do_submit(cb)
 		opc_psw="";
 	}
 	
-	var opc_proto= $('#opc_proto').val();
-	if(opc_proto==null||opc_proto=='')
-	{
-		//cb(false,'Please input Opc Id User') ;
-		opc_proto="";
-		//return ;
-	}
-	
-	var opc_path = $('#opc_path').val();
-	if(opc_path==null||opc_path=='')
-	{
-		//cb(false,'Please input Opc Id password') ;
-		//return ;
-		opc_path="";
-	}
 	
 	var int_ms = $('#int_ms').val();
 	if(int_ms==null||int_ms=='')
@@ -329,8 +357,11 @@ function do_submit(cb)
 		cb(false,'Please input valid Update interval') ;
 	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:host,opc_port:vp,
-		opc_proto:opc_proto,opc_path:opc_path,
+	var opc_sp = $("#opc_sp").val() ;
+	var opc_mm = $("#opc_mm").val() ;
+	
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
+		opc_epu:opc_epu,opc_sp:opc_sp,opc_mm:opc_mm,
 		opc_req_to:opc_reqto,opc_user:opc_user,opc_psw:opc_psw,int_ms:int_ms});
 }
 

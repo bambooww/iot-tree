@@ -1,13 +1,13 @@
 package org.iottree.core.util.logger;
 
 
-public class LoggerObj implements ILogger
+public class LoggerObj extends AbstractLogger
 {
 	String logId = null ;
 	
-	int ctrl = CTRL_DEFAULT ;
 	
 	boolean b_trace = false;
+	
 	
 	//ILogDo logDo = new ConsoleLogDo() ;
 	
@@ -20,25 +20,7 @@ public class LoggerObj implements ILogger
 	{
 		return logId;
 	}
-	
-	
-	/**
-	 * ��õ�ǰ�Ŀ���
-	 * @return
-	 */
-	public int getCtrl()
-	{
-		return ctrl ;
-	}
-	/**
-	 * ���õ�ǰ�Ŀ���
-	 * @param c
-	 */
-	public void setCtrl(int c)
-	{
-		ctrl = c ;
-	}
-	
+
 	public boolean isStackTrace()
 	{
 		return b_trace ;
@@ -221,73 +203,6 @@ public class LoggerObj implements ILogger
 		
 		LoggerManager.getLogDo().trace(msg, t);
 	}
-
-	public boolean isTraceEnabled()
-	{
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-				
-		return LoggerManager.Is_Trace;
-	}
-
-	public boolean isDebugEnabled()
-	{
-		if(LoggerManager.thLogOpen.get())
-			return true ;
-		
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-		
-		return LoggerManager.Is_Debug;
-	}
-
-	public boolean isInfoEnabled()
-	{
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-		
-		return LoggerManager.Is_Info;
-	}
-
-	public boolean isWarnEnabled()
-	{
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-		
-		return LoggerManager.Is_Warn;
-	}
-
-	public boolean isErrorEnabled()
-	{
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-		
-		return LoggerManager.Is_Error;
-	}
-
-	public boolean isFatalEnabled()
-	{
-		if(ctrl<0)
-			return false;
-		
-		if(ctrl>0)
-			return true ;
-		
-		return LoggerManager.Is_Fatal;
-	}
+	
+	
 }

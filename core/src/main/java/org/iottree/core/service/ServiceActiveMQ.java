@@ -9,7 +9,6 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.ManagementContext;
-import org.apache.activemq.spring.*;
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
