@@ -575,7 +575,12 @@ background-color: #fff ;
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
 				   --%>
-				  &nbsp;&nbsp;<span><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span><span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span> <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span><span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
+				  &nbsp;&nbsp;<span><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
+				  <span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+				  <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+				  <span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
+				  <span id='store' onclick='clk_store()'><i class="fa fa-database  fa-lg"></i></span>
+				  
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
@@ -2169,6 +2174,12 @@ function clk_dd()
 {
 	event.stopPropagation();
 	add_tab("___dd","Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
+}
+
+function clk_store()
+{
+	event.stopPropagation();
+	add_tab("___store","Data Store","./util/prj_store.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

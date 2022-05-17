@@ -9,6 +9,8 @@ import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -19,6 +21,8 @@ import org.iottree.core.util.xmldata.XmlData;
  */
 public class DevManager implements IResCxt
 {
+	protected static ILogger log = LoggerManager.getLogger(DevManager.class) ;
+	
 	private static DevManager instance = null ;
 	
 	public static DevManager getInstance()
@@ -77,7 +81,7 @@ public class DevManager implements IResCxt
 			catch(Exception e)
 			{
 				//e.printStackTrace();
-				System.out.println("warn: load driver ["+ln+"] failed!") ;
+				log.warn("load driver ["+ln+"] failed!") ;
 			}
 		}
 	}

@@ -3,8 +3,11 @@ package org.iottree.core.conn;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 import static org.eclipse.milo.opcua.stack.core.util.ConversionUtil.toList;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,11 +54,13 @@ import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
 import org.eclipse.milo.opcua.stack.core.types.structured.Node;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
+import org.iottree.core.Config;
 import org.iottree.core.ConnPt;
 import org.iottree.core.UACh;
 import org.iottree.core.UANode;
 import org.iottree.core.UATag;
 import org.iottree.core.conn.ConnPtBinder.BindItem;
+import org.iottree.core.conn.opcua.KeyStoreLoader;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
@@ -1040,16 +1045,22 @@ public class ConnPtOPCUA extends ConnPtBinder
 			return true;
 		try
 		{
+			String dir = Config.getDataTmpDir()+"/pcua/security/" ;
+			File dirf=  new File(dir) ;
+			if(!dirf.exists())
+				dirf.mkdirs() ;
+			
+			Path sec_p = Paths.get(dir);
 			// EndpointDescription[] endpointDescription =
 			// UaTcpStackClient.getEndpoints(EndPointUrl).get();
-			// KeyStoreLoader loader = new
+			KeyStoreLoader loader = new KeyStoreLoader().load(sec_p);
 			UsernameProvider unp = getIdPro();
-			// KeyStoreLoader().load(securityTempDir);
+			
 			uaClient = OpcUaClient.create(this.getOpcEndPointURI(),
 					endpoints -> endpoints.stream().filter(endpointFilter()).findFirst(), configBuilder -> {
 						configBuilder.setApplicationName(LocalizedText.english(this.getOpcAppNameDef()))
 								.setApplicationUri("urn:iottree:conn:opc_client");
-						// .setCertificate(loader.getClientCertificate()).setKeyPair(loader.getClientKeyPair())
+						//configBuilder.setCertificate(loader.getClientCertificate()).setKeyPair(loader.getClientKeyPair());
 						if (unp != null)
 							configBuilder.setIdentityProvider(unp);
 						configBuilder.setRequestTimeout(uint(reqTimeout));

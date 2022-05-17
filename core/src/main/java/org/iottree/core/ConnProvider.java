@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.IXmlDataValidator;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
@@ -22,6 +24,8 @@ import org.json.JSONObject;
  */
 public abstract class ConnProvider implements IXmlDataValidator
 {
+	protected static ILogger log = LoggerManager.getLogger(ConnProvider.class) ;
+	
 	private static HashMap<String,Class<?>> tp2class = new HashMap<>() ;
 	private static HashMap<String,ConnProvider> tp2cp = new HashMap<>() ;
 	private static HashMap<String,JSONObject> tp2json_config = new HashMap<>() ;
@@ -548,7 +552,8 @@ public abstract class ConnProvider implements IXmlDataValidator
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				log.error(e);
+				//e.printStackTrace();
 			}
 			finally
 			{

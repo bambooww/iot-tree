@@ -10,6 +10,8 @@ import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.conn.ConnProTcpClient;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
@@ -22,6 +24,8 @@ import org.json.JSONObject;
  */
 public class ConnManager
 {
+	protected static ILogger log = LoggerManager.getLogger(ConnManager.class) ;
+	
 	private static ConnManager instance = null ;
 	
 	public static ConnManager getInstance()
@@ -162,7 +166,7 @@ public class ConnManager
 			ConnProvider cp = ConnProvider.parseFromXmlData(cpxd, failedr) ;
 			if(cp==null)
 			{
-				System.out.println(" warning: load ConnProvider failedr") ;
+				log.warn(" warning: load ConnProvider failedr") ;
 				continue ;
 			}
 			cp.belongTo = rep ;

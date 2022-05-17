@@ -1,18 +1,11 @@
 package org.iottree.core.util.xmldata;
 
-import java.io.Writer;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.sql.Connection;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.iottree.core.util.Convert;
-import org.json.*;
 
 /**
  * inject or extract from object ,which has data_class data_obj data_val annotions
@@ -49,7 +42,7 @@ public class DataTranserXml
 
 	public static boolean injectXmDataToObj(Object o, XmlData xd) throws Exception
 	{
-		Class c = o.getClass();
+		Class<?> c = o.getClass();
 		boolean b = false;
 		do
 		{
@@ -108,10 +101,10 @@ public class DataTranserXml
 		return b;
 	}
 
-	@SuppressWarnings("unchecked")
+	//@SuppressWarnings("unchecked")
 	private static boolean extractXmlDataFromObj(Object o, XmlData xd) throws Exception
 	{
-		Class c = o.getClass();
+		Class<?> c = o.getClass();
 		boolean b = false;
 		do
 		{
@@ -174,10 +167,10 @@ public class DataTranserXml
 		String n = f.getName();
 		if (!"".contentEquals(xmlv.param_name()))
 			n = xmlv.param_name();
-		Class dc = f.getDeclaringClass();
+		//Class<?> dc = f.getDeclaringClass();
 		// if(List.class.isAssignableFrom(dc))
 		if (pv instanceof List)
-			tarxd.setParamValues(n, (List) pv);
+			tarxd.setParamValues(n, (List<?>) pv);
 		// else if(dc.isArray())
 		// tarxd.setParamValues(n, v);
 		else
@@ -199,10 +192,10 @@ public class DataTranserXml
 		if(Convert.isNullOrEmpty(n))
 			return false;
 		
-		Class dc = m.getReturnType();
+		//Class<?> dc = m.getReturnType();
 		// if(List.class.isAssignableFrom(dc))
 		if (pv instanceof List)
-			tarxd.setParamValues(n, (List) pv);
+			tarxd.setParamValues(n, (List<?>) pv);
 		// else if(dc.isArray())
 		// tarxd.setParamValues(n, v);
 		else
@@ -244,7 +237,7 @@ public class DataTranserXml
 		String n = f.getName();
 		if (!"".contentEquals(xmlv.param_name()))
 			n = xmlv.param_name();
-		Class dc = f.getType();
+		Class<?> dc = f.getType();
 		if (List.class.isAssignableFrom(dc))
 		{
 			List<Object> vs = tarxd.getParamValues(n);
@@ -275,7 +268,7 @@ public class DataTranserXml
 		Parameter[] ps = m.getParameters();
 		if(ps==null||ps.length!=1)
 			return false;
-		Class dc = ps[0].getType();
+		Class<?> dc = ps[0].getType();
 		if (List.class.isAssignableFrom(dc))
 		{
 			List<Object> vs = tarxd.getParamValues(n);
@@ -307,7 +300,7 @@ public class DataTranserXml
 		if (pv instanceof List)
 		{
 			List<XmlData> subxds = tarxd.getOrCreateSubDataArray(n);
-			for (Object subo : (List) pv)
+			for (Object subo : (List<?>) pv)
 			{
 				XmlData subxd = new XmlData();
 				if (extractXmlDataFromObj(subo, subxd))
@@ -347,7 +340,7 @@ public class DataTranserXml
 		if (pv instanceof List)
 		{
 			List<XmlData> subxds = tarxd.getOrCreateSubDataArray(n);
-			for (Object subo : (List) pv)
+			for (Object subo : (List<?>) pv)
 			{
 				XmlData subxd = new XmlData();
 				if (extractXmlDataFromObj(subo, subxd))
@@ -384,7 +377,7 @@ public class DataTranserXml
 			List<XmlData> subxds = tarxd.getSubDataArray(n);
 			if (subxds == null)
 				return false;
-			ArrayList vs = new ArrayList();
+			ArrayList<Object> vs = new ArrayList<>();
 			for (XmlData subxd : subxds)
 			{
 				Class<?> objc = xmld.obj_c() ;
@@ -456,14 +449,14 @@ public class DataTranserXml
 		Parameter[] ps = m.getParameters();
 		if(ps==null||ps.length!=1)
 			return false;
-		Class dc = ps[0].getType();
+		Class<?> dc = ps[0].getType();
 		
 		if (List.class.isAssignableFrom(dc))
 		{
 			List<XmlData> subxds = tarxd.getOrCreateSubDataArray(n);
 			if (subxds == null)
 				return false;
-			ArrayList vs = new ArrayList();
+			ArrayList<Object> vs = new ArrayList<>();
 			for (XmlData subxd : subxds)
 			{
 				Class<?> objc = xmld.obj_c() ;

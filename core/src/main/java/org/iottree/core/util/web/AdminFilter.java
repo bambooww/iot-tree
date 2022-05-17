@@ -31,10 +31,7 @@ public class AdminFilter implements Filter
 	static ILogger log = LoggerManager.getLogger(AdminFilter.class);
 	
 	public static final String KEY_AUTH_SESSION_NAME = "access_auth_timelimit" ;
-	
-	
-	
-	
+
 	public AdminFilter()
 	{
 

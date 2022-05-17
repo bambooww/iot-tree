@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,11 +24,8 @@ import org.w3c.dom.NodeList;
 
 public class Config
 {
-	/**
-	 * ��������Ŀ֧��
-	 * @author zzj
-	 *
-	 */
+	protected static ILogger log = LoggerManager.getLogger(Config.class) ;
+	
 	public static class LangItem
 	{
 		String lang = null ;
@@ -346,6 +345,11 @@ public class Config
 	{
 		return getDataDirBase()+"tmp/" ;
 	}
+	
+	public static String getDataOthersDir()
+	{
+		return getDataDirBase()+"others/" ;
+	}
 	/**
 	 * ����ҳ��������,���ĳһ��·������ʵ�ļ�·��
 	 * @param pc
@@ -550,7 +554,7 @@ public class Config
 				if(!tmpdir.exists())
 					tmpdir.mkdirs() ;
 				System.setProperty("iottree.tmp_dir",getDataDirBase()+"/tmp/");
-				//System.out.println("Data File Base="+dataFileBase) ;
+				log.info("Data File Base="+dataFileBase) ;
 				
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));
 				appTitle = confRootEle.getAttribute("title");

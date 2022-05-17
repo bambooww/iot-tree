@@ -20,9 +20,10 @@ if(node==null)
 {
 	out.print("node not found"); 
 	return ;
-} 
-UAPrj prj = (UAPrj)node.getTopNode() ;
-String prj_name = prj.getName() ;
+}
+//DevDef devdef = null ;
+//UAPrj prj = (UAPrj)node.getTopNode() ;
+String prj_name = node.getName();//.getName() ;
 String node_id = node.getId() ;
 UAHmi hmi = null ;
 boolean bhmi = false;

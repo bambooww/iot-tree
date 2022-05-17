@@ -11,9 +11,12 @@ public abstract class AbstractLogger implements ILogger
     public final void setCurrentLogLevel(int loglvl)
     {
     	if(loglvl==LoggerManager.getDefaultLogLevel())
+    	{
     		currentLogLevel = -1 ;
-    	else
-    		currentLogLevel = loglvl ;
+    		return ;
+    	}
+    	
+    	currentLogLevel = loglvl ;
     }
     
     public final int getCurrentLogLevel()

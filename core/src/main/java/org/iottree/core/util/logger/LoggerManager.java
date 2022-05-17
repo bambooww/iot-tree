@@ -1,7 +1,16 @@
 package org.iottree.core.util.logger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
+import org.iottree.core.Config;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.provider.ConsoleLogDo;
 import org.slf4j.impl.IOTTLogger;
 
@@ -20,30 +29,84 @@ public class LoggerManager
 	static boolean Is_Fatal=true;
 	static boolean Is_Warn=true ;
 	
+
+
+	private static HashMap<String,ILogger> id2log = new HashMap<String,ILogger>() ;
+	
+	private static boolean bInCtrl = false;
+	
+	private static HashSet<String> ctrlEnableIds = null ;
+	
 	static int Default_LVL = ILogger.LOG_LEVEL_WARN ;
 
+	static HashMap<String,Integer> configLog2Lvl = null ;
+	
 	static
 	{
-//		providerMap.put("console",
-//						"org.iottree.core.wfengine.log.provider.ConsoleLogProvider");
-//		providerMap.put("null",
-//						"org.iottree.core.wfengine.log.provider.NullLogProvider");
-//		providerMap.put("null",
-//			"org.iottree.core.wfengine.log.provider.Log4jProvider");
+
+	}
+	
+	public static void saveLogConfig() throws FileNotFoundException, IOException
+	{
+		String odir = Config.getDataOthersDir() ;
+		File dirf = new File(odir);
+		if(!dirf.exists())
+			dirf.mkdirs();
 		
-		
-		
-		//
-		if(false)//if(AppConfig.isDebug())
+		File logf = new File(dirf,"log.txt") ;
+		try(FileOutputStream fos = new FileOutputStream(logf);)
 		{
+			int deflvl = getDefaultLogLevel() ;
+			fos.write((deflvl+"\r\n").getBytes());
 			
+			for(ILogger log:getAllLoggers())
+			{
+				int lvl = log.getCurrentLogLevel() ;
+				if(lvl==deflvl)
+					continue ;
+				fos.write((log.getLoggerId()+"="+lvl+"\r\n").getBytes());
+			}
 		}
-		else
+	}
+	
+	public static void loadLogConfig() throws FileNotFoundException, IOException
+	{
+		String odir = Config.getDataOthersDir() ;
+		File dirf = new File(odir);
+		if(!dirf.exists())
+			return ;
+		
+		File logf = new File(dirf,"log.txt") ;
+		if(!logf.exists())
+			return ;
+		
+		try(FileInputStream fis = new FileInputStream(logf);)
 		{
-			Is_Debug = false;
-			Is_Info = false;
-			Is_Trace = false;
-			Is_Warn = false;
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis)) ;
+			//load default
+			String ln = br.readLine() ;
+			if(Convert.isNullOrEmpty(ln))
+				return ;
+		
+			int defv = Integer.parseInt(ln) ;
+			setDefaultLogLevel(defv) ;
+			HashMap<String,Integer> log2lvl = new HashMap<>() ; 
+			while((ln=br.readLine())!=null)
+			{
+				ln=  ln.trim() ;
+				if(Convert.isNullOrEmpty(ln)||ln.startsWith("#"))
+					continue ;
+				int k = ln.indexOf("=") ;
+				if(k<=0)
+					continue ;
+				String logid = ln.substring(0,k).trim() ;
+				String strlvl = ln.substring(k+1).trim() ;
+				if(Convert.isNullOrEmpty(strlvl))
+					continue ;
+				int lvl = Integer.parseInt(strlvl) ;
+				log2lvl.put(logid, lvl) ;
+			}
+			configLog2Lvl = log2lvl ;
 		}
 	}
 	
@@ -52,9 +115,51 @@ public class LoggerManager
 		return Default_LVL;
 	}
 	
-	public static void setDefaultLogLevel(int lvl)
+	public static boolean setDefaultLogLevel(int lvl)
 	{
+		switch(lvl)
+		{
+		case ILogger.LOG_LEVEL_TRACE:
+		case ILogger.LOG_LEVEL_DEBUG:
+		case ILogger.LOG_LEVEL_INFO:
+		case ILogger.LOG_LEVEL_WARN:
+		case ILogger.LOG_LEVEL_ERROR:
+			break ;
+		default:
+			return false;
+		}
 		Default_LVL = lvl ;
+		return true;
+	}
+	
+	static
+	{
+		try
+		{
+			loadLogConfig() ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		if(configLog2Lvl!=null)
+		{
+			for(Map.Entry<String, Integer> log2lvl:configLog2Lvl.entrySet())
+			{
+				getLogger(log2lvl.getKey()).setCurrentLogLevel(log2lvl.getValue());
+			}
+		}
+	}
+	
+	
+	public static void setLogToDefaultAll()
+	{
+		int deflvl = getDefaultLogLevel() ;
+		for(ILogger log:getAllLoggers())
+		{
+			log.setCurrentLogLevel(deflvl);
+		}
 	}
 
 	static final ThreadLocal<Boolean> thLogOpen = new ThreadLocal<Boolean>()
@@ -75,12 +180,6 @@ public class LoggerManager
 		thLogOpen.set(bopen) ;
 	}
 
-
-	private static HashMap<String,ILogger> id2log = new HashMap<String,ILogger>() ;
-	
-	private static boolean bInCtrl = false;
-	
-	private static HashSet<String> ctrlEnableIds = null ;
 
 	public static ILogger getLogger(String id)
 	{

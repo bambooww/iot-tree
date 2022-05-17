@@ -4,7 +4,7 @@
   <parent>
     <artifactId>driver-parent</artifactId>
     <groupId>org.iottree.driver</groupId>
-    <version>0.96.4</version>
+    <version>0.96.5</version>
 
   </parent>
 
@@ -64,7 +64,7 @@
 	<dependency>
 	    <groupId>org.bouncycastle</groupId>
 	    <artifactId>bcprov-jdk15on</artifactId>
-	    <version>1.59</version>
+	    <version>1.61</version>
 	</dependency>
 
   </dependencies>

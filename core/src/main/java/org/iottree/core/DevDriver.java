@@ -7,6 +7,8 @@ import java.util.*;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -19,6 +21,8 @@ import org.iottree.core.util.xmldata.XmlData;
  */
 public abstract class DevDriver implements IPropChecker
 {
+	protected static ILogger log = LoggerManager.getLogger(DevDriver.class) ;
+	
 	public static enum State
 	{
 		not_run(0), running(2), run_stopping(1);
@@ -199,14 +203,14 @@ public abstract class DevDriver implements IPropChecker
 				DevCat dc = loadCat(catid);
 				if (dc == null)
 				{
-					System.out.println("Warning,load DevCat failed [" + catid + "]");
+					log.warn("load DevCat failed [" + catid + "]");
 					continue;
 				}
 				rets.add(dc);
 			}
 			catch ( Exception e)
 			{
-				System.out.println("Warning,load DevCat error [" + catid + "]");
+				log.warn("load DevCat error [" + catid + "]");
 				e.printStackTrace();
 			}
 		}
@@ -440,7 +444,7 @@ public abstract class DevDriver implements IPropChecker
 					drv_int = 0 ;
 				
 				StringBuilder failedr = new StringBuilder();
-				System.out.println(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] started");
+				log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] started");
 
 				// bind
 				bindConnPt();
@@ -497,7 +501,9 @@ public abstract class DevDriver implements IPropChecker
 			ee.printStackTrace();
 		}
 		
-		System.out.println(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] stopped");
+		if(log.isInfoEnabled())
+			log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] stopped");
+		
 		rtTh = null;
 	}
 

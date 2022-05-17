@@ -91,5 +91,9 @@ ConnPtMSG方式同时支持JS Transfer和Binder。其中Binder方式使用简单
 
 
 
+### 版本 0.96.5
+service 模型下的一些bug处理
+
+
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

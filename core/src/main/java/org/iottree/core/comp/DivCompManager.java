@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.dict.DataClass;
 import org.iottree.core.dict.DataNode;
 import org.iottree.core.dict.DictManager;
@@ -29,6 +31,8 @@ import org.iottree.core.dict.DictManager;
  */
 public class DivCompManager
 {
+	private static ILogger log = LoggerManager.getLogger(DivCompManager.class);
+	
 	static DivCompManager ins = null ;
 	
 	public static DivCompManager getInstance()
@@ -80,7 +84,7 @@ public class DivCompManager
 			}
 			catch(Exception e)
 			{
-				System.out.println("load div comp cat error:"+itemdir.getName()) ;
+				log.error("load div comp cat error:"+itemdir.getName()) ;
 			}
 		}
 	}

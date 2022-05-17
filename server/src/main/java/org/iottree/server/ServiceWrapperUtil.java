@@ -58,7 +58,7 @@ public class ServiceWrapperUtil
 		File libdir = new File("./lib/") ;
 		File tlibdir = new File("./tomcat/lib/") ;
 		String ret = getJarCPInDir("./lib/",libdir) ;
-		ret += getJarCPInDir("./tomcat/lib/",tlibdir) ;
+		ret += ";"+getJarCPInDir("./tomcat/lib/",tlibdir) ;
 		ret +=";./tomcat/bin/bootstrap.jar;./tomcat/bin/tomcat-juli.jar" ;
 		return ret ;
 	}

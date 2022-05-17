@@ -91,4 +91,8 @@ Implement OPC UA Server
 
 
 
+### version 0.96.5
+Some bug fixed under service model
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

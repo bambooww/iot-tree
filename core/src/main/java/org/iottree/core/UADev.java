@@ -38,6 +38,13 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	@data_val(param_name = "ref_id")
 	String devRefId = null ;
 
+	/**
+	 * is device set or not
+	 * dev set may use this device struct,and has multi device instance.
+	 * every instance is stored in a list
+	 */
+	@data_val(param_name = "is_set")
+	boolean bSet = false;
 	
 	public UADev()
 	{}
@@ -64,6 +71,10 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return NODE_TP;
 	}
 	
+	public boolean isDevSet()
+	{
+		return this.bSet ;
+	}
 	@Override
 	protected void copyTreeWithNewSelf(IRoot root,UANode new_self,String ownerid,
 			boolean copy_id,boolean root_subnode_id,HashMap<IRelatedFile,IRelatedFile> rf2new)
@@ -364,5 +375,28 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	public boolean RT_runOk()
 	{
 		return true;
+	}
+	
+	
+	// dev set related
+	
+	public List<UADevSetItem> SET_listItems(String filtern,int pageidx,int pagesize)
+	{
+		return null ;
+	}
+	
+	public UADevSetItem SET_getItemById(String itemid)
+	{
+		return null ;
+	}
+	
+//	public UADevSetItem SET_getItemByName(String name)
+//	{
+//		return null ;
+//	}
+	
+	public UADevSetItem SET_addItem(String id,String title)
+	{
+		return null ;
 	}
 }

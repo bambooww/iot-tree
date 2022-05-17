@@ -9,6 +9,8 @@ import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
@@ -22,6 +24,8 @@ import org.iottree.core.util.xmldata.data_val;
 @data_class
 public class DevCat implements IResNode
 {
+	protected static ILogger log = LoggerManager.getLogger(DevCat.class) ;
+	
 	@data_val
 	String id = "" ;
 	
@@ -194,14 +198,14 @@ public class DevCat implements IResNode
 				DevDef dd =  loadDevDef(id) ;
 				if(dd==null)
 				{
-					System.out.println("Warning,load DevDef failed ["+id+"]");
+					log.warn("load DevDef failed ["+id+"]");
 					continue ;
 				}
 				rets.add(dd);
 			}
 			catch(Exception e)
 			{
-				System.out.println("Warning,load DevCat error ["+id+"]");
+				log.warn("load DevCat error ["+id+"]");
 				e.printStackTrace();
 			}
 		}

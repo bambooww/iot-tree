@@ -52,5 +52,21 @@ case "def_lvl":
 	cv = Integer.parseInt(v) ;
 	LoggerManager.setDefaultLogLevel(cv) ;
 	out.print("{v:"+cv+"}") ;
+case "save":
+	try
+	{
+		LoggerManager.saveLogConfig() ;
+		out.print("ok") ;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		out.print(e.getMessage()) ;
+	}
+	return ;
+case "set_def_all":
+	LoggerManager.setLogToDefaultAll() ;
+	out.print("ok") ;
+	return ;
 }
 %>

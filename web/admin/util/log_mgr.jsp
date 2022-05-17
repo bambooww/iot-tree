@@ -59,13 +59,17 @@ for(int i = 0 ; i < ILogger.LEVELS.length ; i ++)
 %>
 </select>
     </div>
-    
+    <label class="layui-form-label"></label>
+    <div class="layui-input-mid">
+    	<button onclick="save_log()" class="layui-btn" title="Save the current configuration and continue to use it at the next startup">Save Config</button>
+    	<button onclick="set_all_def()" class="layui-btn layui-btn-primary" title="">Set All to Default</button>
+    </div>
+   
   </div>
   <div style="overflow: auto;height:420px">
   <table class="layui-table" lay-size="sm" >
   <colgroup>
     <col width="60%">
-    
     <col width="40%">
     <col>
   </colgroup>
@@ -147,9 +151,30 @@ layui.use('form', function(){
 	 form.render();
 	});
 
-function show_lvl(logid,v)
+function save_log()
 {
-	
+	event.preventDefault();
+	send_ajax('log_ajax.jsp',{op:'save'},(bsucc,ret)=>{
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret);
+			return ;
+		}
+		dlg.msg("save ok") ;
+	}) ;
+}
+
+function set_all_def()
+{
+	event.preventDefault();
+	send_ajax('log_ajax.jsp',{op:'set_def_all'},(bsucc,ret)=>{
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret);
+			return ;
+		}
+		document.location.href=document.location.href;
+	}) ;
 }
 
 function set_ctrl(logid,v)
@@ -182,10 +207,6 @@ function set_lvl(logid,lvl)
 	}) ;
 }
 
-function set_default()
-{
-	sendWithResCallback('log_mgr_set_ajax.jsp?ctrl=false','',set_cb,true) ;
-}
 
 </script>
 </html>
