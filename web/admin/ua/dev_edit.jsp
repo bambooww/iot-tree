@@ -40,23 +40,29 @@
 		return ;
 	}
 	
-	if(!ch.hasDriver())
-	{
-		out.print("Channel has no Device Driver") ;
-		return ;
-	}
+//	if(!ch.hasDriver())
+//	{
+//		out.print("Channel has no Device Driver") ;
+//		return ;
+//	}
+
+	String drv_name = "";
 	DevDriver drv = ch.getDriver() ;
-	if(!ch.isDriverFit())
+	if(drv!=null)
 	{
-		out.print("Channel Driver is not fit") ;
-		return ;
+		if(!ch.isDriverFit())
+			out.print("Channel Driver is not fit") ;
+		drv_name = drv.getName() ;
+		//return ;
 	}
-	String drv_name = drv.getName() ;
+	
 	String name = "" ;
 	String title = "" ;
 	String desc = "" ;
 	DevDef dd = null ;
-	String ddid = "" ;
+	String libid = "" ;
+	String catid = "" ;
+	String devid = "" ;
 	String ddtt = "" ;
 	if(dev!=null)
 	{
@@ -68,7 +74,7 @@
 		dd = dev.getDevDef() ;
 		if(dd!=null)
 		{
-			ddid = dd.getId() ;
+			devid = dd.getId() ;
 			ddtt = dd.getTitle()+"["+dd.getName()+"]" ;
 		}
 	}
@@ -100,7 +106,9 @@ dlg.resize_to(600,400);
      <div class="layui-form-item">
     <label class="layui-form-label">Device:</label>
     <div class="layui-input-inline">
-      <input type="hidden" id="devdef_id" name="devdef_id"  value="<%=ddid%>"/>
+      <input type="hidden" id="libid" name="libid"  value="<%=libid%>"/>
+      <input type="hidden" id="catid" name="catid"  value="<%=catid%>"/>
+      <input type="hidden" id="devid" name="devid"  value="<%=devid%>"/>
       <input type="text" id="devdef_tt" name="devdef_tt" value="<%=ddtt %>" readonly="readonly"  value=""   lay-verify="required" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid"><button type="button" onclick="sel_devdef()">...</button></div>
@@ -125,26 +133,40 @@ function win_close()
 
 function sel_devdef()
 {
-	dlg.open_win("../dev/dev_lib_lister.jsp?drv="+drv_name,
+	var libid = $("#libid").val() ;
+	var catid = $("#catid").val() ;
+	var devid = $("#devid").val() ;
+	dlg.open_win("../dev/dev_main.jsp?dlg=true&drv="+drv_name+"&sel_libcat=true&sel_dev=true"+
+			"&sel_libid="+libid+"&sel_catid="+catid+"&sel_devid="+devid,
 			{title:"Select Device in Library",w:'1000',h:'560'},
 			['<wbt:lang>ok</wbt:lang>','No choice','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
+					if(!dlgw.check_selected_ok())
+					{
+						dlg.msg("")
+						return ;
+					}
 					var sel = dlgw.get_selected() ;
 					if(sel==null)
 					{
 						dlg.msg("please select device") ;
 						return ;
 					}//sel.cat_title+"-"+
-					$("#devdef_tt").val(sel.title+"["+sel.name+"]") ;
-					$("#devdef_id").val(sel.id) ;
+					$("#devdef_tt").val(sel.dev_tt+"["+sel.dev_n+"]") ;
+					$("#libid").val(sel.libid) ;
+					$("#catid").val(sel.catid) ;
+					$("#devid").val(sel.devid) ;
 					dlg.close();
 				},
 				function(dlgw)
 				{
 					$("#devdef_tt").val("") ;
 					$("#devdef_id").val("") ;
+					$("#libid").val("") ;
+					$("#catid").val("") ;
+					$("#devid").val("") ;
 					dlg.close();
 				},
 				function(dlgw)
@@ -170,16 +192,13 @@ function do_submit(cb)
 		//return ;
 		tt = n ;
 	}
-	var devdef_id = $("#devdef_id").val() ;
-	if(devdef_id==null||devdef_id=="")
-	{
-		//cb(false,'<wbt:lang>pls_select_dev</wbt:lang>') ;
-		//return ;
-	}
+	var libid = $("#libid").val() ;
+	var catid = $("#catid").val() ;
+	var devid = $("#devid").val() ;
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
-	cb(true,{name:n,title:tt,devdef_id:devdef_id,desc:desc});
+	cb(true,{name:n,title:tt,libid:libid,catid:catid,devid:devid,desc:desc});
 }
 
 </script>

@@ -39,6 +39,10 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	@data_val(param_name = "max_id")
 	int maxIdVal = 0 ;
 	
+	@data_val(param_name = "drv")
+	String relatedDrv = null;
+	
+	
 	public DevDef(DevCat dc)
 	{
 		belongToCat = dc ;
@@ -71,21 +75,32 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		return this.belongToCat ;
 	}
 	
-	public DevDriver getBelongToDrv()
+	public DevDriver getRelatedDrv()
 	{
-		return belongToCat.getDriver();
+		if(Convert.isNullOrEmpty(relatedDrv))
+				return null ;
+		//return belongToCat.getDriver();
+		return DevManager.getInstance().getDriver(relatedDrv) ;
+	}
+	
+	public DevDef asDriver(String drv)
+	{
+		this.relatedDrv = drv ;
+		return this ;
 	}
 
 	public String getNodePath()
 	{
-		return "/"+getBelongToDrv().getName()+"-"+this.belongToCat.getName()+"-"+this.getName() ;
+		DevLib devlib = this.belongToCat.getDevLib() ;
+		return "/"+devlib.getId()+"-"+this.belongToCat.getName()+"-"+this.getName() ;
 	}
 	
 	
-	public void setDefNameTitle(String name,String title,String desc) throws Exception
+	public void setDefNameTitle(String name,String title,String desc,boolean bsave) throws Exception
 	{
 		this.setNameTitle(name, title, desc);
-		this.save();
+		if(bsave)
+			this.save();
 	}
 //	
 //	/**
@@ -270,7 +285,10 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	@Override
 	public List<PropGroup> listPropGroups()
 	{
-		return this.getBelongToDrv().getPropGroupsForDevDef();
+		DevDriver dd = this.getRelatedDrv() ;
+		if(dd==null)
+			return null ;
+		return dd.getPropGroupsForDevDef();
 	}
 
 	@Override

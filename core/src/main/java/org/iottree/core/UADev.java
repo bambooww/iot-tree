@@ -35,6 +35,9 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	
 	//private transient DevModel model = null ;
 	
+	@data_val(param_name = "lib_id")
+	String devRefLibId = null;
+	
 	@data_val(param_name = "ref_id")
 	String devRefId = null ;
 
@@ -142,12 +145,12 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	
 	public DevDef getDevDef()
 	{
-		if(Convert.isNullOrEmpty(this.devRefId))
+		if(Convert.isNullOrEmpty(this.devRefLibId) || Convert.isNullOrEmpty(this.devRefId))
 			return null ;
-		DevDriver drv = this.getBelongTo().getDriver() ;
-		if(drv==null)
-			return null ;
-		DevDef dd = drv.getDevDefById(this.devRefId) ;
+//		DevDriver drv = this.getBelongTo().getDriver() ;
+//		if(drv==null)
+//			return null ;
+		DevDef dd = DevManager.getInstance().getDevDefById(devRefLibId, devRefId);// drv.getDevDefById(this.devRefId) ;
 		if(dd==null)
 			return null ;
 		if(dd.memUpDT!=defMemUpDT)

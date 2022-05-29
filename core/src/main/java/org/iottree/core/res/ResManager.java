@@ -65,8 +65,9 @@ public class ResManager
 		}
 		else if(resnodeid.startsWith(IResCxt.PRE_DEVDEF))
 		{
-			id = resnodeid.substring(IResCxt.PRE_DEVDEF.length()+1) ;
-			rc = DevManager.getInstance();
+			//id = resnodeid.substring(IResCxt.PRE_DEVDEF.length()+1) ;
+			//rc = DevManager.getInstance();
+			return null ;
 		}
 		else if(resnodeid.startsWith(IResCxt.PRE_COMP))
 		{

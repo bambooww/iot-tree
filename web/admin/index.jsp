@@ -42,6 +42,17 @@ visibility: visible;
 {
 background:#aaaaaa; 
 }
+
+.lib_item
+{
+	height:40px;
+	border:1px solid;
+	border-color: #499ef3;
+	margin:5px;
+	white-space: nowrap;
+	display:inline-block;
+	padding:5px;
+}
  </style>
 </head>
 <body aria-hidden="false">
@@ -289,6 +300,7 @@ if(rep.isAutoStart())
 							</span>&nbsp;&nbsp; Import
 							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
+<%--
 					        	&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_export()">
 							<span class="fa-stack">
@@ -296,7 +308,7 @@ if(rep.isAutoStart())
 							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span>&nbsp;&nbsp;Export
 							</a>
-							
+ --%>							
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a  title="device library help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_devlib.md" target="_blank">
 							<span class="fa-stack">
@@ -306,16 +318,60 @@ if(rep.isAutoStart())
 							</a>
 							
 					        </div>
-					        
-					        <div style="float:right;top:0px;position: absolute;right:10px" onclick="show_hide('cont_devlib')"><i class="fa fa-bars fa-lg"></i></div>
-					    </div>
-					    <div class="mod-body" style="display:none" id="cont_devlib">
 <%--
-					        <a href="javascript:open_devlib()">Open</a>
- --%>
-							<iframe id="devdef_lister" src="/admin/dev/dev_lib_lister.jsp?mgr=true" style="width:100%;height:500px;"></iframe>
-					        
+					        <div style="float:right;top:0px;position: absolute;right:10px" onclick="show_hide('cont_devlib')"><i class="fa fa-bars fa-lg"></i></div>
+					         --%>
 					    </div>
+					   <div class="mod-body">
+							
+							<%
+	
+	for(DevLib lib:DevManager.getInstance().getDevLibs())
+{
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		
+			tmpid = "div_lib_"+lib.getId() ;
+		
+%>
+<%--
+<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(lib.getCreateDT())) %></span>
+ --%>
+	<span class="lib_item btn_sh_c" >
+		<img src="./inc/sm_icon_dev.png"/> &nbsp;<a class="text title" href="javascript:open_devlib('<%=lib.getId()%>')" data-id="8"><%=lib.getTitle() %></a>
+		
+		
+		<span class="btn_sh">
+
+           <a class0="btn btn-success download-btn white" href="javascript:devlib_add_or_edit('<%=lib.getId()%>')" title="show detail">
+              <span class="fa-stack fa-1x">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+
+           <a href="javascript:devlib_export('<%=lib.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:devlib_del('<%=lib.getId()%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="devlib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+				
+						</div>
 					</div>
 					
 					<div class="iot-mod iot-question-detail iot-item">
@@ -630,9 +686,11 @@ function del_rep(id)
      });
 }
 
-function open_devlib()
+function open_devlib(id)
 {
-	dlg.open_win("dev/dev_lib_lister.jsp?mgr=true",
+	if(!id)
+		id = "" ;
+	dlg.open_win("dev/dev_main.jsp?edit=true&libid="+id,
 			{title:"Device Library",w:'1000',h:'560'},
 			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
 			[
@@ -846,24 +904,9 @@ function imp_simins_demo()
 			]);
 }
 
-function devdef_cat_export()
+function devlib_export(libid)
 {
-	var w = document.getElementById("devdef_lister").contentWindow ;
-	
-	var drvnt = w.get_cur_drv_name_title();
-	if(drvnt==null)
-	{
-		dlg.msg("no Driver selected") ;
-		return;
-	}
-	var catid = w.get_cur_cat_id() ;
-	if(catid==null||catid=="")
-	{
-		dlg.msg("please select Device Definition Category catetory");
-		return ;
-	}
-		
-	window.open("./dev/cat_export.jsp?drvn="+drvnt[0]+"&catid="+catid) ;
+	window.open("./dev/lib_export.jsp?libid="+libid) ;
 }
 
 
@@ -877,8 +920,8 @@ function devdef_cat_import()
 function devlib_before_imp(tmpfn)
 {
 
-	dlg.open("dev/cat_import.jsp?tmpfn="+tmpfn,
-			{title:"Import Device Definition",w:'500px',h:'400px'},
+	dlg.open("dev/lib_import.jsp?tmpfn="+tmpfn,
+			{title:"Import Device Library",w:'500px',h:'400px'},
 			['Do Import','Cancel'],
 			[
 				function(dlgw)
@@ -893,10 +936,10 @@ function devlib_before_imp(tmpfn)
 						 //console.log(ret);
 						 dlg.msg(ret) ;
 						 
-						 var w = document.getElementById("devdef_lister").contentWindow ;
-						 w.drv_sel_chg();
+						 //var w = document.getElementById("devdef_lister").contentWindow ;
+						// w.drv_sel_chg();
 						 dlg.close();
-						 
+						 document.location.href=document.location.href;
 				 	});
 				},
 				function(dlgw)
@@ -920,7 +963,7 @@ function devlib_add_file_onchg()
 	var fd = new FormData();
     //fd.append("cxtid",cur_cxtid) ;
     fd.append("file",f);
-     $.ajax({"url": "dev/cat_imp_upload.jsp",type: "post","processData": false,"contentType": false,
+     $.ajax({"url": "dev/lib_imp_upload.jsp",type: "post","processData": false,"contentType": false,
 		"data": fd,
 		success: function(data)
        	{
@@ -936,6 +979,69 @@ function devlib_add_file_onchg()
   				dlg.msg("upload failed");
 　　　}
   　　});
+}
+
+function devlib_del(libid)
+{
+	dlg.confirm('delete this library?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+		    {
+					send_ajax("./dev/lib_ajax.jsp","op=del&libid="+libid,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("del err:"+ret) ;
+			    			return ;
+			    		}
+			    		document.location.href=document.location.href;
+			    	}) ;
+				});
+}
+
+function devlib_add_or_edit(libid)
+{
+	var tt = "Edit Lib" ;
+	if(!libid)
+	{
+		libid ="" ;
+		tt = "Add Lib" ;
+	}
+		
+	dlg.open("./dev/lib_edit.jsp?libid="+libid,
+			{title:tt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit" ;
+						 var pm = {
+									type : 'post',
+									url : "./dev/lib_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if(ret.indexOf("succ=")!=0)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								document.location.href=document.location.href;
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 

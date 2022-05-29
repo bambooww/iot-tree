@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>0.96.5</version>
+		<version>0.97.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -228,6 +228,12 @@
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
     <version>2.7.0</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+<dependency>
+    <groupId>org.jsoup</groupId>
+    <artifactId>jsoup</artifactId>
+    <version>1.15.1</version>
 </dependency>
 		
 	</dependencies>

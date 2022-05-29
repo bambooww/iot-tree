@@ -7,30 +7,22 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "drv","op"))
+if(!Convert.checkReqEmpty(request, out, "libid","catid","op"))
 	return ;
 boolean bmgr=  "true".equals(request.getParameter("mgr")) ;
 String op = request.getParameter("op");
-String drvname = request.getParameter("drv");
+String libid = request.getParameter("libid") ;
+//String drvname = request.getParameter("drv");
 String catname = request.getParameter("cat") ;
 String catid = request.getParameter("catid") ;
-DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
-if(dd==null)
-{
-	out.print("no driver found") ;
-	return ;
-}
 
-DevCat cat = null;
-if(Convert.isNotNullEmpty(catname))
-	cat = dd.getDevCatByName(catname) ;
-else if(Convert.isNotNullEmpty(catid))
-	cat = dd.getDevCatById(catid) ;
+DevCat cat = DevManager.getInstance().getDevCatById(libid,catid) ;
 if(cat==null)
 {
 	out.print("no cat found") ;
 	return ;
 }
+
 String name = request.getParameter("name") ;
 String title = request.getParameter("title") ;
 String desc = request.getParameter("desc") ;
@@ -38,7 +30,7 @@ switch(op)
 {
 case "add":
 case "edit":
-	
+	/*
 	try
 	{
 		if("add".equals(op))
@@ -66,6 +58,7 @@ case "edit":
 		e.printStackTrace();
 		out.print(e.getMessage()) ;
 	}
+	*/
 	break;
 case "chg":
 	break;
@@ -83,20 +76,14 @@ case "del":
 	out.print("succ") ;
 	break;
 case "chk_name":
-	if(!Convert.checkReqEmpty(request, out, "catid","name"))
+	if(!Convert.checkReqEmpty(request, out, "name"))
 		return ;
 	
-	DevCat dcat = DevManager.getInstance().getDevCatWithCatId(drvname, catid);//(drvname, catname);
-	if(dcat==null)
-	{
-		out.print("no category found") ;
-		return ;
-	}
-	DevDef tmpdd = dcat.getDevDefByName(name) ;
+	DevDef tmpdd = cat.getDevDefByName(name) ;
 	out.print((tmpdd==null)?"no":"ok");
 	break ;
 case "add_by_prj":
-	if(!Convert.checkReqEmpty(request, out, "devpath","catid","name"))
+	if(!Convert.checkReqEmpty(request, out, "devpath","name"))
 		return ;
 	String devpath = request.getParameter("devpath") ;
 	UADev dev = (UADev)UAUtil.findNodeByPath(devpath);
@@ -105,13 +92,8 @@ case "add_by_prj":
 		out.print("no device found");
 		return ;
 	}
-	dcat = DevManager.getInstance().getDevCatWithCatId(drvname, catid);//(drvname, catname);
-	if(dcat==null)
-	{
-		out.print("no category found") ;
-		return ;
-	}
-	DevDef newdd = dcat.setDevDefFromPrj(dev, name, title);
+	
+	DevDef newdd = cat.setDevDefFromPrj(dev, name, title);
 	out.print("succ="+newdd.getId()) ;
 	break ;
 case "list":

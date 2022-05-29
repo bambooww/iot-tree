@@ -60,31 +60,22 @@ background-color: #eeeeee
  if(null==limit_drv || !hide_drv)
  {
  %>
-  <td valign="top" width="25%">
- Drivers
-   <select id='var_drv' multiple="multiple" style="width: 100%;height: 100%" onchange="drv_sel_chg()">
+ 
 <%
-	if(limit_drv==null)
-	{
-
-	for(DevDriver dd:dds)
-	{
-%><option value="<%=dd.getName() %>"><%=dd.getTitle() %></option><%
-	}
+ }
 %>
-
+ <td valign="top" width="25%">
+ Library:
+ <select>
  <%
-	 }
- else
+ for(DevLib dl:DevManager.getInstance().getDevLibs())
  {
-%><option value="<%=limit_drv.getName() %>" selected="selected"><%=limit_drv.getTitle() %></option><%
- }
- %>   </select>
-  </td>
+%><option value="<%=dl.getId()%>"><%=dl.getTitle() %></option>
 <%
  }
 %>
- <td valign="top" width="25%">Category
+ </select>
+ Category
  <%
  if(bmgr)
  {

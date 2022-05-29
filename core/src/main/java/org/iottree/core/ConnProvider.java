@@ -60,7 +60,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 	
 	private static boolean loadFromConfig() throws IOException
 	{
-		File df = DevManager.getDevFileBase() ;
+		File df = DevManager.getDevDrvBase() ;
 		File f = new File(df,"conn_providers.txt") ;
 		if(!f.exists())
 			return false;

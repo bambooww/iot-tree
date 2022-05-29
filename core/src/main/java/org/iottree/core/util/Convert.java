@@ -35,6 +35,14 @@ public class Convert
 		// return YM.format(d);
 		return new SimpleDateFormat("yyyy-MM").format(d);
 	}
+	
+	public static String toYMD(Date d)
+	{
+		if (d == null)
+			return "";
+		// return YM.format(d);
+		return new SimpleDateFormat("yyyy-MM-dd").format(d);
+	}
 
 	static SimpleDateFormat FfulYMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

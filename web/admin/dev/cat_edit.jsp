@@ -8,16 +8,41 @@
 	java.net.*,
 	java.util.*"%>
 <%
-	String name = request.getParameter("name") ;
-	String title = request.getParameter("title") ;
-	if(name==null)
-		name = "" ;
-	if(title==null)
-		title = "" ;
+if(!Convert.checkReqEmpty(request, out, "libid"))
+	return ;
+	String libid = request.getParameter("libid") ;
+	String catid = request.getParameter("catid") ;
+	if(catid==null)
+		catid = "" ;
+	
+	DevLib lib = DevManager.getInstance().getDevLibById(libid) ;
+	if(lib==null)
+	{
+		out.print("no lib found") ;
+		return ;
+	}
+	
+	String name = "" ;
+	String title = "" ;
+	
+	DevCat cat = null ;
+	if(Convert.isNotNullEmpty(catid))
+	{
+		cat = lib.getDevCatById(catid) ;
+		if(cat==null)
+		{
+			out.print("no cat found") ;
+			return ;
+		}
+		
+		name = cat.getName() ;
+		title = cat.getTitle() ;
+	}
+	
 %>
 <html>
 <head>
-<title>Add</title>
+<title></title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -47,6 +72,8 @@ dlg.resize_to(400,220);
 </body>
 <script type="text/javascript">
 
+var libid = "<%=libid%>" ;
+var catid = "<%=catid%>" ;
 layui.use('form', function(){
 	  var form = layui.form;
 });
@@ -82,7 +109,7 @@ function do_submit(cb)
 		cb(false,'please input title') ;
 		return ;
 	}
-	cb(true,{name:n,title:tt});
+	cb(true,{libid:libid,catid:catid,name:n,title:tt});
 }
 
 </script>

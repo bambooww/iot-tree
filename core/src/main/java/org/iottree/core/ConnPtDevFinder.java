@@ -67,7 +67,7 @@ public abstract class ConnPtDevFinder extends ConnPtBinder
 			return false;
 		}
 		
-		UADev ndev = ch.addDev(cd.getName(), cd.getTitle(), "", null) ;
+		UADev ndev = ch.addDev(cd.getName(), cd.getTitle(), "", null,null) ;
 		
 		for(ConnDev.Data d:cd.getDatas())
 		{

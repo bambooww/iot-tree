@@ -306,7 +306,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		DevDef dd = dev.getDevDef() ;
 		DevDriver devdrv = null;
 		if(dd!=null)
-			devdrv = dd.getBelongToDrv();
+			devdrv = dd.getRelatedDrv();//.getBelongToDrv();
 		if(chdrv!=null&&devdrv!=null)
 		{
 			if(!chdrv.getName().equals(devdrv.getName()))
@@ -365,7 +365,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return null ;
 	}
 	
-	public UADev addDev(String name,String title,String desc,String devdef_id) throws Exception
+	public UADev addDev(String name,String title,String desc,String libid,String devdef_id) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		
@@ -378,9 +378,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		DevDriver drv = this.getDriver() ;
 		DevDef dd = null;
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
-		if(Convert.isNotNullEmpty(devdef_id))
+		if(Convert.isNotNullEmpty(libid) && Convert.isNotNullEmpty(devdef_id))
 		{
-			dd = drv.getDevDefById(devdef_id) ;
+			dd = DevManager.getInstance().getDevDefById(libid, devdef_id);//drv.getDevDefById(devdef_id) ;
 			if(dd==null)
 				throw new Exception("no device definition found") ;
 			//d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
@@ -406,14 +406,14 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return d ;
 	}
 	
-	public UADev updateDev(UADev dev,String name,String title,String desc,String devdef_id) throws Exception
+	public UADev updateDev(UADev dev,String name,String title,String desc,String libid,String devdef_id) throws Exception
 	{
 		UAUtil.assertUAName(name);
 
 		if(Convert.isNotNullEmpty(devdef_id) && !devdef_id.equals(dev.getDevRefId()))
 		{
-			DevDriver drv = this.getDriver() ;
-			DevDef dd = drv.getDevDefById(devdef_id) ;
+			//DevDriver drv = this.getDriver() ;
+			DevDef dd = DevManager.getInstance().getDevDefById(libid, devdef_id);// drv.getDevDefById(devdef_id) ;
 			if(dd==null)
 				throw new Exception("no device definition found") ;
 			

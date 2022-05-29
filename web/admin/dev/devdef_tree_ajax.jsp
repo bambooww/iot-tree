@@ -70,38 +70,19 @@
 					}
 				}
 %><%
-if(!Convert.checkReqEmpty(request, out, "drv","id"))
+if(!Convert.checkReqEmpty(request, out, "libid","catid","devid"))
 	return ;
-String catname = request.getParameter("cat");
-if(catname==null)
-	catname="" ;
+String libid = request.getParameter("libid");
 String catid = request.getParameter("catid");
-if(catid==null)
-	catid="" ;
-String drvname = request.getParameter("drv");
-String id = request.getParameter("id");
-DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
-if(dd==null)
-{
-	out.print("no driver found") ;
-	return ;
-}
-DevCat cat = null;
-if(Convert.isNotNullEmpty(catname))
-	cat = dd.getDevCatByName(catname) ;
-else if(Convert.isNotNullEmpty(catid))
-	cat = dd.getDevCatById(catid);
-if(cat==null)
-{
-	out.print("no cat found") ;
-	return ;
-}
-DevDef dev = cat.getDevDefById(id);
+String devid = request.getParameter("devid");
+
+DevDef dev = DevManager.getInstance().getDevDefById(libid,catid,devid);
 if(dev==null)
 {
 	out.print("no dev found") ;
 	return ;
 }
+
 %>[
 	{
 			"text":"<%=dev.getName() %>"

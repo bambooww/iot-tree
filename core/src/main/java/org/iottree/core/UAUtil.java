@@ -134,23 +134,23 @@ public class UAUtil
 	 * @param hmiid
 	 * @return
 	 */
-	public static UAHmi findHmi(String ownerid,String hmiid)
-	{
-		if(ownerid.startsWith("rep_"))
-		{
-			UAPrj rep = UAManager.getInstance().getPrjById(ownerid.substring(4)) ;
-			if(rep==null)
-				return null ;
-			return rep.findHmiById(hmiid) ;
-		}
-		else if(ownerid.startsWith("devdef_"))
-		{
-			//String defid = ownerid.substring(7) ;
-			return (UAHmi)DevManager.getInstance().findNodeById(hmiid) ;
-		}
-		else
-		{
-			return null ;
-		}
-	}
+//	public static UAHmi findHmi(String ownerid,String hmiid)
+//	{
+//		if(ownerid.startsWith("rep_"))
+//		{
+//			UAPrj rep = UAManager.getInstance().getPrjById(ownerid.substring(4)) ;
+//			if(rep==null)
+//				return null ;
+//			return rep.findHmiById(hmiid) ;
+//		}
+//		else if(ownerid.startsWith("devdef_"))
+//		{
+//			//String defid = ownerid.substring(7) ;
+//			return (UAHmi)DevManager.getInstance().findNodeById(hmiid) ;
+//		}
+//		else
+//		{
+//			return null ;
+//		}
+//	}
 }

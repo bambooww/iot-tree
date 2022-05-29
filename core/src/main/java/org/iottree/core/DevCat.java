@@ -40,27 +40,27 @@ public class DevCat implements IResNode
 	
 	//ArrayList<DevModel> devModels = new ArrayList<>() ;
 	
-	transient DevDriver driver = null ;
+	transient DevLib devLib = null ;
 	
 	transient List<DevDef> devDefs = null ;
 	
-	public DevCat(DevDriver dd)
+	public DevCat(DevLib dd)
 	{
 		id = CompressUUID.createNewId();
-		this.driver = dd ;
+		this.devLib = dd ;
 	}
 	
-	public DevCat(DevDriver dd,String name,String title)
+	public DevCat(DevLib dd,String name,String title)
 	{
 		id = CompressUUID.createNewId();
-		this.driver = dd ;
+		this.devLib = dd ;
 		this.name = name ;
 		this.title = title ;
 	}
 	
-	public DevDriver getDriver()
+	public DevLib getDevLib()
 	{
-		return driver ;
+		return devLib ;
 	}
 	
 	public String getId()
@@ -128,7 +128,7 @@ public class DevCat implements IResNode
 	
 	File getDevCatDir()
 	{
-		return driver.getDevCatDir(this.getId()) ;
+		return devLib.getDevCatDir(this.getId()) ;
 	}
 	
 	void saveDevDef(DevDef dd) throws Exception
@@ -156,6 +156,15 @@ public class DevCat implements IResNode
 		this.getDevDefs().remove(dd);
 	}
 	
+	public boolean delDevDef(String devid)
+	{
+		DevDef dd = this.getDevDefById(devid) ;
+		if(dd==null)
+			return false;
+		delDevDef(dd);
+		return true ;
+	}
+	
 	private DevDef loadDevDef(String id) throws Exception
 	{
 		File catdir=  getDevCatDir();
@@ -174,7 +183,7 @@ public class DevCat implements IResNode
 	{
 		ArrayList<DevDef> rets = new ArrayList<>() ;
 		
-		File catdir=  driver.getDevCatDir(this.getId()) ;
+		File catdir=  devLib.getDevCatDir(this.getId()) ;
 		if(!catdir.exists())
 			return rets;
 		File[] fs = catdir.listFiles(new FileFilter() {
@@ -212,7 +221,7 @@ public class DevCat implements IResNode
 		return rets;
 	}
 	
-	public DevDef addDevDef(String name,String title,String desc) throws Exception
+	public DevDef addDevDef(String name,String title,String desc,String drv) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,true,sb))
@@ -224,12 +233,29 @@ public class DevCat implements IResNode
 			throw new Exception("name="+name+" is existed!") ;
 		}
 		r = new DevDef(this,name,title,desc) ;
+		r.asDriver(drv);
 		saveDevDef(r);
 		this.getDevDefs().add(r) ;
 		r.constructNodeTree();
 		return r ;
 	}
 	
+	
+	public DevDef updateDevDef(String devid,String name,String title,String desc,String drv) throws Exception
+	{
+		DevDef dev = this.getDevDefById(devid) ;
+		if(dev==null)
+			throw new Exception("no devdef found") ;
+		
+		DevDef dev0 = this.getDevDefByName(name) ;
+		if(dev0!=null&&dev0!=dev)
+			throw new Exception("devdef with name="+name+" is already existed") ;
+		
+		dev.setDefNameTitle(name, title, desc,false);
+		dev.asDriver(drv) ;
+		saveDevDef(dev);
+		return dev ;
+	}
 	
 	public DevDef setDevDefFromPrj(UADev dev,String name,String title) throws Exception
 	{
@@ -297,30 +323,8 @@ public class DevCat implements IResNode
 	public IResNode getResNodeParent()
 	{
 		
-		return DevManager.getInstance();
+		return null;//DevManager.getInstance();
 	}
 
 	
-//	public List<DevModel> getDevModels()
-//	{
-//		return devModels ;
-//	}
-//	
-//	public DevModel getDevModelByName(String n)
-//	{
-//		for(DevModel m:devModels)
-//		{
-//			if(n.contentEquals(m.getName()))
-//				return m ;
-//		}
-//		return null ;
-//	}
-//	
-//	public DevModel createDevModelByName(String n)
-//	{
-//		DevModel m = getDevModelByName(n);
-//		if(m==null)
-//			return null ;
-//		return m.copyMe() ;
-//	}
 }

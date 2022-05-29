@@ -38,6 +38,11 @@ public class IOTTLogger extends MarkerIgnoringBase implements ILogger
 		config.init();
     }
 	
+    
+    static
+    {
+    	lazyInit();
+    }
 
 	
 	public IOTTLogger(String name)

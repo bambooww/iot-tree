@@ -40,7 +40,10 @@
 			return ;
 		}
 		//String chid = request.getParameter("chid");
-		String devdef_id = request.getParameter("devdef_id") ;
+		String libid = request.getParameter("libid") ;
+		String catid = request.getParameter("catid") ;
+		String devid = request.getParameter("devid") ;
+		
 		String name=request.getParameter("name");
 		String title = request.getParameter("title");
 		String desc = request.getParameter("desc");
@@ -54,11 +57,11 @@
 		try
 		{
 			if(dev==null)
-				dev = ch.addDev(name, title, desc,devdef_id) ;
+				dev = ch.addDev(name, title, desc,libid,devid) ;
 			else
 			{
 				UACh ch0 = dev.getBelongTo() ;
-				ch0.updateDev(dev,name, title, desc, devdef_id) ;
+				ch0.updateDev(dev,name, title, desc, libid,devid) ;
 			}
 			out.print("succ="+dev.getId()) ;
 			return ;

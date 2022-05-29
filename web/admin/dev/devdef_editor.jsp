@@ -7,33 +7,13 @@
 				org.iottree.core.util.*
 				"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "drv","id"))
+	if(!Convert.checkReqEmpty(request, out, "libid","catid","devid"))
 		return ;
-	String catname = request.getParameter("cat");
-	if(catname==null)
-		catname="" ;
+	String libid = request.getParameter("libid");
 	String catid = request.getParameter("catid");
-	if(catid==null)
-		catid="" ;
-	String drvname = request.getParameter("drv");
-	String id = request.getParameter("id");
-	DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
-	if(dd==null)
-	{
-		out.print("no driver found") ;
-		return ;
-	}
-	DevCat cat = null;
-	if(Convert.isNotNullEmpty(catname))
-		cat = dd.getDevCatByName(catname) ;
-	else if(Convert.isNotNullEmpty(catid))
-		cat = dd.getDevCatById(catid);
-	if(cat==null)
-	{
-		out.print("no cat found") ;
-		return ;
-	}
-	DevDef dev = cat.getDevDefById(id);
+	String devid = request.getParameter("devid");
+	
+	DevDef dev = DevManager.getInstance().getDevDefById(libid,catid,devid);
 	if(dev==null)
 	{
 		out.print("no dev found") ;
@@ -461,10 +441,9 @@ background-color: #ffffff;
     </div>
     
 <script>
-var drv_name="<%=drvname%>";
-var cat_name="<%=catname%>";
-var cat_id="<%=catid%>";
-var id="<%=id%>";
+var libid="<%=libid%>";
+var catid="<%=catid%>";
+var devid="<%=devid%>";
 
 var layuiEle ;
 
@@ -528,7 +507,7 @@ function on_tree_node_selected(tn)
 
 var ua_tree = new UATree({
 		eleid:"tree",
-		data_url:"devdef_tree_ajax.jsp?drv="+drv_name+"&cat="+cat_name+"&catid="+cat_id+"&id="+id,
+		data_url:"devdef_tree_ajax.jsp?libid="+libid+"&catid="+catid+"&catid="+catid+"&devid="+devid,
 		cxt_menu:cxt_menu,
 		on_selected:on_tree_node_selected
 		}) ;
@@ -554,6 +533,7 @@ $("#right_tabs_btn").click(function(){
 
 function act_edit_devdef(n,op)
 {
+	/*
 	console.log(n) ;
 	var id = n.id ;
 	var name = n.name ;
@@ -598,6 +578,7 @@ function act_edit_devdef(n,op)
 					dlg.close();
 				}
 			]);
+	*/
 }
 
 function act_prop(n,op)

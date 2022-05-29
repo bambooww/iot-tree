@@ -6,24 +6,45 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "drv","op"))
+if(!Convert.checkReqEmpty(request, out, "libid","catid","op"))
 	return ;
 String op = request.getParameter("op");
-String drvname = request.getParameter("drv");
-DevDriver dd = DevManager.getInstance().getDriver(drvname) ;
-if(dd==null)
+String libid = request.getParameter("libid");
+String catid = request.getParameter("catid");
+
+DevCat cat = DevManager.getInstance().getDevCatById(libid, catid);
+if(cat==null)
 {
-	out.print("no driver found") ;
+	out.print("no cat found") ;
 	return ;
 }
+
+DevDef dev=  null ;
+String devid = request.getParameter("devid") ;
+if(Convert.isNotNullEmpty(devid))
+{
+	dev = cat.getDevDefById(devid) ;
+	if(dev==null)
+	{
+		out.print("no dev found") ;
+		return ;
+	}
+	
+}
+
 switch(op)
 {
-case "add":
+case "dev_add":
+case "dev_edit":
 	String name = request.getParameter("name") ;
 	String title = request.getParameter("title") ;
+	String drv = request.getParameter("drv") ;
 	try
 	{
-		DevCat dc = dd.addDevCat(name, title) ;
+		if(dev!=null)
+			cat.updateDevDef(devid, name, title, "", drv);
+		else
+			dev = cat.addDevDef(name, title, "",drv) ;
 		out.print("succ") ;
 	}
 	catch(Exception e)
@@ -33,14 +54,15 @@ case "add":
 	break;
 case "chg":
 	break;
-case "del":
-	if(!Convert.checkReqEmpty(request, out, "catid"))
+case "dev_del":
+	if(!Convert.checkReqEmpty(request, out, "devid"))
 		return ;
-	String catid = request.getParameter("catid") ;
-	dd.delDevCat(catid) ;
+	
+	cat.delDevDef(devid);
 	out.print("succ") ;
 	break;
 case "list":
+	/*
 	List<DevCat> cats = dd.getDevCats() ;
 	out.print("[") ;
 	boolean bfirst = true; 
@@ -53,6 +75,7 @@ case "list":
 		out.print("{\"id\":\""+dc.getId()+"\",\"n\":\""+dc.getName() +"\",\"t\":\""+dc.getTitle() +"\"}");
 	}
 	out.print("]") ;
+	*/
 	break ;
 }
 %>
