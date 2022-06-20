@@ -273,7 +273,8 @@ if(support_tree)
     	<table style="width:100%;border:0px" class='besel'>
     		<thead>
     			<tr style="background-color: #f0f0f0">
-    				<td width="70%">Path</td>
+    				<td width="50%">Path</td>
+    				<td width="30%">Title</td>
     				<td width="10%">Type</td>
     				<td width="20%">Value</td>
     			</tr>

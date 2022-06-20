@@ -29,6 +29,7 @@ import org.iottree.core.ConnPt.DataTp;
 import org.iottree.core.ConnPt.MonData;
 import org.iottree.core.ConnPt.MonItem;
 import org.iottree.core.conn.ConnPtBinder.BindItem;
+import org.iottree.core.conn.html.BindHandlerHtml;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.util.Convert;
@@ -259,7 +260,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	}
 	
 	
-	private class PathItem<T>
+	public static class PathItem<T>
 	{
 		String path = null ;
 		
@@ -290,20 +291,23 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		}
 	}
 	
-	public class BindHandler
+	public static abstract class BindHandler
 	{
-		private String bindProbeStr = null ;
+		protected String bindProbeStr = null ;
 		
-		private String bindMapStr = null ;
+		protected String bindMapStr = null ;
 		
-		private transient HashMap<String,PathItem<JsonPath>> tag2JsonPathItem = null ;
+			
+		transient protected String bindRunErr = null;
 		
-		private transient HashMap<String,PathItem<XPathExpression>> tag2XmlPathItem = null ;
+		transient protected String bindRunRes = null ;
 		
-				
-		transient private String bindRunErr = null;
+		transient protected ConnPtMSG connPtMsg = null ;
 		
-		transient private String bindRunRes = null ;
+		public BindHandler(ConnPtMSG cpm)
+		{
+			connPtMsg = cpm ;
+		}
 
 		public String getBindProbeStr()
 		{
@@ -326,7 +330,26 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			return bindRunRes;
 		}
 
-		private boolean initBind()
+		protected abstract boolean initBind();
+		
+		protected abstract boolean runBind(String topic,String txt) throws Exception;
+		
+		
+		
+		
+		
+	}
+	
+	public class BindHandlerJson extends BindHandler
+	{
+		private transient HashMap<String,PathItem<JsonPath>> tag2JsonPathItem = null ;
+		
+		public BindHandlerJson(ConnPtMSG cpm)
+		{
+			super(cpm) ;
+		}
+				
+		protected boolean initBind()
 		{
 			if(Convert.isNullOrEmpty(bindProbeStr))
 			{
@@ -347,12 +370,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 					if(Convert.isNotNullEmpty(path)&&Convert.isNotNullEmpty(vt))
 						prob_map.put(path, vt);
 				}
-				if(ConnPtMSG.this.getSorTp()==DataTp.json)
-					initBindJson(bps);
-				else if(ConnPtMSG.this.getSorTp()==DataTp.xml)
-					initBindXml(bps) ;
-				else
-					return false;
+				initBindJson(bps);
 				
 				return true;
 			}
@@ -392,6 +410,107 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			}
 		}
 		
+		protected boolean runBind(String topic,String json_xml_str)
+		{
+			if(ConnPtMSG.this.getSorTp()!=DataTp.json)
+				return false;
+				
+			try
+			{
+				//run probe
+				
+					if(this.tag2JsonPathItem==null||this.tag2JsonPathItem.size()<=0)
+						return false;
+					
+					 
+					ObjectMapper mapper = new ObjectMapper ( );
+			        HashMap respjson = mapper.readValue(json_xml_str, HashMap.class );
+			        
+			        StringBuilder ressb = new StringBuilder() ;
+					for(Map.Entry<String, PathItem<JsonPath>> tag2jp:this.tag2JsonPathItem.entrySet())
+					{
+						String tagp = tag2jp.getKey() ;
+						PathItem<JsonPath> pi = tag2jp.getValue() ;
+						
+						try
+						{
+						Object v = pi.getProbeObj().read(respjson);
+						
+						ressb.append(pi.getPath()+" → "+tagp+"="+v+"\r\n") ;
+						if(v==null)
+							continue ;
+
+						
+							if(joinedCh!=null)
+							{
+								UATag t = joinedCh.getTagByPath(tagp) ;
+								if(t==null)
+								{
+									continue ;
+								}
+								t.RT_setValRaw(v);
+							}
+						}
+						catch(Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+					
+					bindRunRes = ressb.toString() ;
+					return true ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+				return false;
+			}
+				
+		}
+		
+	}
+	
+	public static class BindHandlerXml extends BindHandler
+	{
+
+		private transient HashMap<String,PathItem<XPathExpression>> tag2XmlPathItem = null ;
+		
+		public BindHandlerXml(ConnPtMSG cpm)
+		{
+			super(cpm) ;
+		}
+		
+		protected boolean initBind()
+		{
+			if(Convert.isNullOrEmpty(bindProbeStr))
+			{
+				bindRunErr = "no bind setup" ;
+				return false;
+			}
+			
+			try
+			{
+				JSONArray bps = new JSONArray(bindProbeStr) ;
+				int len = bps.length() ;
+				HashMap<String,String> prob_map = new HashMap<>() ;
+				for(int i = 0 ; i < len ; i ++)
+				{
+					JSONObject ob = bps.getJSONObject(i);
+					String path = ob.optString("path") ;
+					String vt = ob.optString("vt") ;
+					if(Convert.isNotNullEmpty(path)&&Convert.isNotNullEmpty(vt))
+						prob_map.put(path, vt);
+				}
+				initBindXml(bps) ;
+				
+				return true;
+			}
+			catch(Exception e)
+			{
+				bindRunErr = "bind init err:"+e.getMessage() ;
+				return false;
+			}
+		}
 		
 		private void initBindXml(JSONArray bps)
 		{
@@ -436,85 +555,17 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			}
 		}
 		
-		
-		private boolean runBindJson(String topic,String json_xml_str)
+		protected boolean runBind(String topic,String txt)
 		{
-			if(ConnPtMSG.this.getSorTp()!=DataTp.json)
-				return false;
-				
-			try
-			{
-				//run probe
-				
-					if(this.tag2JsonPathItem==null||this.tag2JsonPathItem.size()<=0)
-						return false;
-					
-					 
-					ObjectMapper mapper = new ObjectMapper ( );
-			        HashMap respjson = mapper.readValue ( json_xml_str, HashMap.class );
-			        
-			        StringBuilder ressb = new StringBuilder() ;
-					for(Map.Entry<String, PathItem<JsonPath>> tag2jp:this.tag2JsonPathItem.entrySet())
-					{
-						String tagp = tag2jp.getKey() ;
-						PathItem<JsonPath> pi = tag2jp.getValue() ;
-						
-						try
-						{
-						Object v = pi.getProbeObj().read(respjson);
-						
-						ressb.append(pi.getPath()+" → "+tagp+"="+v+"\r\n") ;
-						if(v==null)
-							continue ;
-//						if(v instanceof Number)
-//						{
-//							double dv = ((Number)v).doubleValue() ;
-//						}
-//						else if(v instanceof String)
-//						{
-//							String sv = (String)v ;
-//						}
-//						else if(v instanceof Boolean)
-//						{
-//							boolean bv = (Boolean)v ;
-//						}
-						
-							if(joinedCh!=null)
-							{
-								UATag t = joinedCh.getTagByPath(tagp) ;
-								if(t==null)
-								{
-									continue ;
-								}
-								t.RT_setValRaw(v);
-							}
-						}
-						catch(Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
-					
-					bindRunRes = ressb.toString() ;
-					return true ;
-			}
-			catch(Exception ee)
-			{
-				ee.printStackTrace();
-				return false;
-			}
-				
-		}
-		
-		
-		private boolean runBindXml(String topic,Document doc)
-		{
-			if(ConnPtMSG.this.getSorTp()!=DataTp.xml)
-				return false;
+			//if(ConnPtMSG.this.getSorTp()!=DataTp.xml)
+			//	return false;
+			Document doc = XmlHelper.stringToDoc(txt) ;
 			try
 			{
 					if(this.tag2XmlPathItem==null||this.tag2XmlPathItem.size()<=0)
 						return false;
+					
+					UACh joinedch = this.connPtMsg.getJoinedCh() ;
 					
 			        StringBuilder ressb = new StringBuilder() ;
 					for(Map.Entry<String, PathItem<XPathExpression>> tag2jp:this.tag2XmlPathItem.entrySet())
@@ -530,9 +581,9 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 							if(strv==null)
 								continue ;
 							
-							if(joinedCh!=null)
+							if(joinedch!=null)
 							{
-								UATag t = joinedCh.getTagByPath(tagp) ;
+								UATag t = joinedch.getTagByPath(tagp) ;
 								if(t==null)
 								{
 									continue ;
@@ -555,13 +606,12 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			}
 		}
 	}
-	
-	
+
 	
 	
 	private UACh joinedCh = null ;
 
-	private BindHandler bindH = new BindHandler() ;
+	private BindHandler bindH = null;//new BindHandler() ;
 	
 	private TransHandler transH = new TransHandler() ;
 
@@ -602,10 +652,13 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			xd.setParamValue("init_js", transH.initJS);
 		if (transH.transJS != null)
 			xd.setParamValue("trans_js", transH.transJS);
-		if(bindH.bindProbeStr!=null)
-			xd.setParamValue("bind_probe", bindH.bindProbeStr);
-		if(bindH.bindMapStr!=null)
-			xd.setParamValue("bind_map", bindH.bindMapStr);
+		if(bindH!=null)
+		{
+			if(bindH.bindProbeStr!=null)
+				xd.setParamValue("bind_probe", bindH.bindProbeStr);
+			if(bindH.bindMapStr!=null)
+				xd.setParamValue("bind_map", bindH.bindMapStr);
+		}
 		return xd;
 	}
 
@@ -621,17 +674,36 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		if(handleSty==null)	
 			handleSty = HandleSty.js_trans;
 			
-		
 		if (Convert.isNotNullEmpty(stp))
 			sorTp = DataTp.valueOf(stp);
 		if (sorTp == null)
 			sorTp = DataTp.json;
+		
+		
 		transH.initJS = xd.getParamValueStr("init_js");
 		transH.transJS = xd.getParamValueStr("trans_js");
 		
-		bindH.bindProbeStr = xd.getParamValueStr("bind_probe") ;
-		bindH.bindMapStr = xd.getParamValueStr("bind_map") ;
-
+		switch(this.sorTp)
+		{
+		case json:
+			bindH = new BindHandlerJson(this) ;
+			break ;
+		case xml:
+			bindH = new BindHandlerXml(this) ;
+			break ;
+		case html:
+			bindH=  new BindHandlerHtml(this) ;
+			break ;
+		default:
+			break ;
+		}
+		
+		if(bindH!=null)
+		{
+			bindH.bindProbeStr = xd.getParamValueStr("bind_probe") ;
+			bindH.bindMapStr = xd.getParamValueStr("bind_map") ;
+		}
+		
 		clearCache();
 		return r;
 	}
@@ -681,7 +753,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		if(this.handleSty!=HandleSty.bind)
 			return false;
 		
-		return this.sorTp == DataTp.json || this.sorTp == DataTp.xml ;
+		return this.sorTp == DataTp.json || this.sorTp == DataTp.xml||this.sorTp==DataTp.html ;
 	}
 
 	private void clearCache()
@@ -811,10 +883,11 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			
 			if(handleSty==HandleSty.bind)
 			{
-				Document doc = XmlHelper.byteArrayToDoc(bs) ;
+				str=  new String(bs,encod) ;
+				//Document doc = XmlHelper.byteArrayToDoc(bs) ;
 				
 				mds = new MonData[] {new MonData("sor",DataTp.xml,bs,this.encod),null} ;
-				if(bindH.runBindXml(topic, doc))
+				if(bindH.runBind(topic, str))
 				{
 					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
 				}
@@ -838,6 +911,23 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 				}
 			}
 			break;
+		case html:
+			if(handleSty==HandleSty.bind)
+			{
+				str=  new String(bs,encod) ;
+				//Document doc = XmlHelper.byteArrayToDoc(bs) ;
+				
+				mds = new MonData[] {new MonData("sor",DataTp.xml,bs,this.encod),null} ;
+				if(bindH.runBind(topic, str))
+				{
+					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
+				}
+				else
+				{
+					mds[mds.length-1] = new MonData("result",DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
+				}
+			}
+			break ;
 		case json:
 		default:
 			canbind = true ;
@@ -846,7 +936,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			
 			if(handleSty==HandleSty.bind)
 			{
-				if(bindH.runBindJson(topic, str))
+				if(bindH.runBind(topic, str))
 				{
 					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
 				}

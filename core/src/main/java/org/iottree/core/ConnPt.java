@@ -44,7 +44,7 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	public static enum DataTp
 	{
-		json(1), str(2), xml(3), bytes(4);
+		json(1), str(2), xml(3), bytes(4),html(5);
 
 		private final int val;
 
@@ -70,6 +70,8 @@ public abstract class ConnPt implements IXmlDataValidator
 				return "xml";
 			case 4:
 				return "bytes";
+			case 5:
+				return "html";
 			default:
 				return null;
 			}

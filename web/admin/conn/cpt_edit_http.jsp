@@ -186,10 +186,20 @@ function setDirty()
 	dlg.btn_set_enable(1,true);
 }
 
+function get_url()
+{
+	return $("#url").val();
+}
+
 	
 function win_close()
 {
 	dlg.close(0);
+}
+
+function on_find_url_encod(enc)
+{
+	alert(enc) ;
 }
 
 

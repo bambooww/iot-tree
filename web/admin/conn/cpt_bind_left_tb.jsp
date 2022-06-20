@@ -272,7 +272,7 @@ function ob2tr_row(ob)
 	{
 		ret += "<td>"+txt+"</td>";
 	}
-	
+	ret += "<td>"+tt+"</td>";
 	ret += "<td>"+ob.vt+"</td>";
 	ret += "<td></td>";
 	ret += "</tr>"

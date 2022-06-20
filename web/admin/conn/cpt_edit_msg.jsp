@@ -187,6 +187,8 @@ for(ConnPtMSG.HandleSty st:ConnPtMSG.HandleSty.values())
 <script type="text/javascript">
 var form = null;
 var prjid=  "<%=repid%>";
+var cpid=  "<%=cpid%>";
+var connid = "<%=connid%>";
 var sor_tp = "<%=sor_tp%>";
 var handle = "<%=handle%>" ;
 var encod = "<%=encod%>";
@@ -220,10 +222,15 @@ layui.use('form', function(){
 	  form.render(); 
 });
 
+function get_probe_url()
+{
+	return parent.get_url();
+}
+
 function is_sor_can_bind()
 {
 	var stp = $("#sor_tp").val();
-	return stp=='json'||stp=='xml' ;
+	return stp=='json'||stp=='xml'||stp=='html' ;
 }
 
 function update_ui()
@@ -310,6 +317,29 @@ var map_list = <%=bind_map_str%> ;
 
 function get_bind_list()
 {
+	console.log(probe_ob,sor_tp);
+	if(sor_tp=='html')
+	{
+		
+		var ret = [] ;
+		for(var blk of probe_ob)
+		{
+			var n = blk.n ;
+			if(blk.extract_pts)
+			{
+				for(var ept of blk.extract_pts)
+				{
+					var p = "/"+n+"/"+ept.n ;
+					var vt = "str" ;
+					ret.push({path:p,vt:vt,tt:ept.t}) ;
+				}
+				
+			}
+			
+		}
+		return ret;
+	}
+	
 	return probe_ob ;
 }
 
@@ -342,20 +372,34 @@ function probe_setup()
 		else
 			sor_txt = ret;
 		
-		dlg.open("./cpt_probe.jsp?sor_tp="+sor_tp,
-				{title:"Probe Setting ",w:'900',h:'600'},
+		var tmpu = "./cpt_probe.jsp?sor_tp="+sor_tp;
+		if(sor_tp=='html')
+			tmpu = "./cpt_probe_html.jsp?sor_tp="+sor_tp;
+		dlg.open(tmpu,{title:"Probe Setting ",w:'900',h:'600'},
 				['Ok','Cancel'],
 				[
 					function(dlgw)
 					{
-						dlgw.do_ok((bsucc,res)=>{
+						dlgw.do_ok((bsucc,res,enc)=>{
 							if(!bsucc)
 							{
 								dlg.msg(res) ;
 								return ;
 							}
-								
+							//console.log(res) ;
 							probe_ob = res ;
+							if(enc)
+							{
+								//if(parent.on_find_url_encod)
+								//	parent.on_find_url_encod(enc);
+								var oldenc = $("#encod").val() ;
+								if(enc!=oldenc)
+								{
+									dlg.msg("find url encoding :"+enc) ;
+									$("#encod").val(enc) ;
+									form.render();
+								}
+							}
 							dlg.close();
 						});
 					},
