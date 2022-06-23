@@ -95,4 +95,11 @@ Implement OPC UA Server
 Some bug fixed under service model
 
 
+
+### version 0.97.0
+The HTTP URL connector supports HTML format data acquisition, page internal data positioning and extraction, and realizes page crawling and data aggregation based on Web pages.
+
+The Device Library has been greatly improved. It can be managed by Library (import and export are supported). Each library has two levels of management: category and device.
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

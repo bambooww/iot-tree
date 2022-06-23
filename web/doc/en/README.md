@@ -86,7 +86,7 @@ If you have an embedded device with sufficient performance to run Java virtual m
 
 
 
-## 1.3 As a IOT server
+## 1.3 As a IOT Server
 
 If you are an Internet company, you have just come into contact with the Internet of things project. Limited by the lack of experience in professional device access and data management, or you research and develop relevant device access protocols and data collection management from scratch. This process will take up a lot of your development resources and time at the same time.
 
