@@ -12,7 +12,7 @@ Connector-Channel-Driver
 ```
                Project
                  |
-Connector --> Channel <-- Driver
+Connector --> Channel (Driver)
                  |
             Device/Tag Group
                  |
@@ -23,9 +23,11 @@ Connector --> Channel <-- Driver
 
 
 
-In the hierarchical relationship, the channel can be regarded as the deivces classification under the project in a sense. It is an abstract concept that unifies the protocols and drivers required for the same access and device operation that may be used by the device.
+In a hierarchical relationship, Channel is an abstract concept that can be seen in a sense as a classification of devices under a project. Each available channel may corresponds to a Connector.
 
-That is, all devices under one channel use the same device driver, and if necessary, use unified communication access.
+If the Connector is Link mode, the channel may also need to set up corresponding drivers to unify the protocols and drivers required for the same access and device operation that the device may use.
+
+Of course, if the channel's corresponding connector is a Bind or Message, then there may be no need for driver settings.
 
 
 

@@ -1,5 +1,7 @@
 package org.iottree.core.conn.html;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -19,17 +21,63 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 public class HtmlParser
 {
+	public static String getRunJsPageXml(String url,long run_js_to) throws Exception
+	{
+		WebClient webc = null;
+
+		try
+		{
+			webc = new WebClient(BrowserVersion.CHROME); // sim Chrome client
+
+			webc.getOptions().setThrowExceptionOnScriptError(false);//
+			webc.getOptions().setThrowExceptionOnFailingStatusCode(false);//
+			webc.getOptions().setActiveXNative(false);// no ActiveX
+			webc.getOptions().setCssEnabled(false);
+			webc.getOptions().setJavaScriptEnabled(true); // enable JS
+			webc.getOptions().setDownloadImages(false);// do not download img
+			// enable AJAX
+			webc.setAjaxController(new NicelyResynchronizingAjaxController());
+			HtmlPage page = webc.getPage(url);//
+			webc.waitForBackgroundJavaScript(run_js_to);//
+			String pxml = page.asXml();
+			return pxml;
+		}
+		finally
+		{
+			webc.close();
+		}
+
+	}
+	
 	String url = null ;
+	
+	boolean runJsPage = false;
+	
+	long runJsTo = 10000 ;
 	
 	Document doc = null ;
 	
 	private HashMap<String,Node> uid2node = null;
 	
-	public HtmlParser(String url)
+	public HtmlParser(String url,boolean run_js_page,long run_js_to)
 	{
 		this.url = url ;
+		this.runJsPage = run_js_page ;
+		this.runJsTo = run_js_to ;
+	}
+	
+
+	public HtmlParser(File f) throws IOException
+	{
+		Document doc = Jsoup.parse(f) ;
+		setDoc(doc);
 	}
 	
 	public HtmlParser(Document doc)
@@ -52,15 +100,22 @@ public class HtmlParser
 		return url ;
 	}
 	
-	public Document navigate() throws IOException
+	public Document navigate() throws Exception
 	{
-		doc = Jsoup.connect(url)
-				  .userAgent("Mozilla")
-				  //.data("query", "Java")
-				 // .cookie("auth", "token")
-				  .timeout(10000)
-				  .get(); //post();
-		
+		if(runJsPage)
+		{
+			String txt = getRunJsPageXml(url,runJsTo) ;
+			doc = Jsoup.parse(txt) ;
+		}
+		else
+		{
+			doc = Jsoup.connect(url)
+					  .userAgent("Mozilla")
+					  //.data("query", "Java")
+					 // .cookie("auth", "token")
+					  .timeout(10000)
+					  .get(); //post();
+		}
 		uid2node = new HashMap<>() ;
 		clearHtml();
 		return doc ;
@@ -420,7 +475,7 @@ public class HtmlParser
 	private EleDis findParentElementByNodes(List<Node> ns)
 	{
 		int s = ns.size() ;
-		if(s<=1)
+		if(s<=0)
 			return null ;
 		
 		Node n1 = ns.get(0) ;
@@ -437,6 +492,11 @@ public class HtmlParser
 			ret.distance += eledis.distance ;
 		}
 		
+		if(ret.distance==0)
+		{
+			ret.distance = 1 ;
+			ret.ele = ret.ele.parent() ;
+		}
 		return ret ;
 	}
 	/**
@@ -464,7 +524,7 @@ public class HtmlParser
 			}
 		}
 		
-		if(tp2ns.size()<=1)
+		if(tp2ns.size()<=0)
 		{
 			return null ;//must 2 tracepoint which has node found 
 		}
@@ -515,20 +575,20 @@ public class HtmlParser
 		return  r;
 	}
 	
-	public static void readUrl() throws IOException
-	{
-		Document doc = Jsoup.connect("http://www.weather.com.cn/")
-				  .data("query", "Java")
-				  .userAgent("Mozilla")
-				  .cookie("auth", "token")
-				  .timeout(3000)
-				  .get();
-		
-		Elements eles = doc.getElementsContainingText("我的天气") ;
-		List<String> txts = eles.eachText() ;
-		
-		
-	}
+//	public static void readUrl() throws IOException
+//	{
+//		Document doc = Jsoup.connect("http://www.weather.com.cn/")
+//				  .data("query", "Java")
+//				  .userAgent("Mozilla")
+//				  .cookie("auth", "token")
+//				  .timeout(3000)
+//				  .get();
+//		
+//		Elements eles = doc.getElementsContainingText("我的天气") ;
+//		List<String> txts = eles.eachText() ;
+//		
+//		
+//	}
 	
 	/**
 	 * 
@@ -665,6 +725,8 @@ public class HtmlParser
 		{
 			TextNode tn = (TextNode)n;
 			ret = tn.getWholeText() ;
+			if(ret!=null)
+				ret = ret.trim();
 		}
 		
 		List<XPathExt> pes = xpath.getPathExts();
@@ -704,4 +766,15 @@ public class HtmlParser
 		}
 		return ret ;
 	}
+	
+	
+//	public static void main(String[] args) throws Exception
+//	{
+//		String u = "https://weathernew.pae.baidu.com/weathernew/pc?query=%E5%8C%97%E4%BA%AC%E5%A4%A9%E6%B0%94&srcid=4982" ;
+//		String tmps = HtmlParser.getRunJsPageXml(u, 30000);
+//		try(FileOutputStream fis = new FileOutputStream("1.html"))
+//		{
+//			fis.write(tmps.getBytes());
+//		}
+//	}
 }

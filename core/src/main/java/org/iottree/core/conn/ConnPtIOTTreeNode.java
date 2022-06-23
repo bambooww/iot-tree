@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -362,6 +363,11 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		
 		//prjCaller.sendMsg(tarprjid, mt, msg);
 		return false;//not support in it
+	}
+	
+	protected boolean readMsgToFile(File f) throws Exception
+	{
+		return false;
 	}
 
 	@Override

@@ -140,8 +140,7 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'Please input title') ;
-		return ;
+		tt=n;//
 	}
 	var ben = $("#enable").prop("checked") ;
 	var desc = document.getElementById('desc').value;

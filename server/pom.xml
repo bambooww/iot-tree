@@ -244,6 +244,8 @@
 			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
 			                    <delete file="../_output/lib/servlet-api-2.5.jar" />
 			                    <delete file="../_output/lib/javax.servlet-api-3.1.0.jar" />
+			                    <delete file="../_output/lib/commons-io-2.2.jar" />
+			                    <delete file="../_output/lib/commons-io-2.4.jar" />
 			                    <delete file="../_output/lib/tomcat-catalina-2.2.jar" />
 			                     <delete>
 				                    <fileset dir="../_output/web/admin/target/" includes="*.*" />

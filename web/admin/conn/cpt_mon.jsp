@@ -86,15 +86,15 @@ text-overflow:ellipsis;
 </div>
 <table style="width:100%">
 	<tr>
-	  <td style="width:60%;">
+	  <td style="width:40%;">
 	  	<div id="mon_mtb_c" style="overflow: auto;height:500px">
 	    <table id="mon_mtb" style="width:99%" border="1">
 
         </table>
         </div>
 	  </td>
-	  <td >
-	  	<div id="r_detail" style="height:700">
+	  <td style="width:60%;">
+	  	<div id="r_detail" style="height:700;width:100%">
 
 	  	</div>
 	  </td>
@@ -219,18 +219,20 @@ function show_detail(tr)
 			tmps += "write out<br>" ;
 		var dds = ob.datas ;
 		var dds_n = dds.length ;
+		var w = $(window).width()*6/10;
 		var tth = $(window).height()-100;
 		var h = tth/dds_n ;
+		
 		for(var dd of dds)
 		{
-			tmps += dd2html(dd,h+'px') ;
+			tmps += dd2html(dd,w+'px',h+'px') ;
 		}
 		
 		$("#r_detail").html(tmps);
 	});
 }
 	
-function dd2html(dd,h)
+function dd2html(dd,w,h)
 {
 	var cont = "" ;
 
@@ -258,9 +260,11 @@ function dd2html(dd,h)
 	}	
 	else
 		cont = "<xmp>"+dd.txt+"</xmp>" ;
+	
+	
 	return "<div class='detail'>"+
 	    	"<div class='detail_head'>"+dd.n+"</div>"+
-	    	"<div  class='detail_cont' style='height:"+h+";overflow: auto;'>"+cont+"</div>"+
+	    	"<div  class='detail_cont' style='height:"+h+";width:"+w+";overflow: auto;'>"+cont+"</div>"+
 	  		"</div>";
 	
 }

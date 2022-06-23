@@ -1,8 +1,11 @@
 package org.iottree.core.conn;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +18,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.iottree.core.Config;
 import org.iottree.core.ConnDev;
 import org.iottree.core.ConnJoin;
 import org.iottree.core.ConnMsg;
@@ -742,6 +746,21 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		transH.transJS = jo.optString("trans_js");
 		this.encod = jo.optString("encod");
 		
+		switch(this.sorTp)
+		{
+		case json:
+			bindH = new BindHandlerJson(this) ;
+			break ;
+		case xml:
+			bindH = new BindHandlerXml(this) ;
+			break ;
+		case html:
+			bindH=  new BindHandlerHtml(this) ;
+			break ;
+		default:
+			break ;
+		}
+		
 		bindH.bindProbeStr =  jo.optString("bind_probe") ;
 		bindH.bindMapStr =  jo.optString("bind_map") ;
 		
@@ -859,6 +878,28 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		return rets ;
 	}
 	
+	protected void onRecvedUrlHtml(String htmlstr) throws Exception
+	{
+		MonData[] mds = null ;
+		if(handleSty==HandleSty.bind)
+		{
+			mds = new MonData[] {new MonData("sor",DataTp.html,htmlstr),null} ;
+			if(bindH.runBind("", htmlstr))
+			{
+				mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
+			}
+			else
+			{
+				mds[mds.length-1] = new MonData("result",DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
+			}
+		}
+		
+		if(mds!=null)
+		{
+			MonItem mis = new MonItem(true,"",mds) ;
+			this.onMonDataRecv(mis);
+		}
+	}
 
 	protected void onRecvedMsg(String topic, byte[] bs) throws Exception
 	{
@@ -970,6 +1011,49 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	
 	public abstract void runOnWrite(UATag tag,Object val) throws Exception;
 	
+	
+	protected abstract boolean readMsgToFile(File f) throws Exception ;
+	
+	
+	public File getTmpBufFile()
+	{
+		return new File(Config.getDataTmpDir()+"connpt_msg/"+this.getId()+"."+this.getSorTp()) ;
+	}
+	
+	public File readMsgToTmpBuf() throws Exception
+	{
+		File f = getTmpBufFile() ;
+		if(!readMsgToFile(f))
+			return null ;
+		return f ;
+	}
+	
+	public String getMsgTxtFromTmpBuf() throws IOException
+	{
+		byte[] bs = getMsgBSFromTmpBuf();
+		if(bs==null)
+			return null ;
+		
+		return new String(bs,"UTF-8") ;
+	}
+	
+	public Date getMsgTmpBufLastDT()
+	{
+		File f = getTmpBufFile() ;
+		if(!f.exists())
+			return null ;
+		
+		return new Date(f.lastModified()) ;
+	}
+	
+	public byte[] getMsgBSFromTmpBuf() throws IOException
+	{
+		File f = getTmpBufFile();
+		if(!f.exists())
+			return null ;
+		
+		return Convert.readFileBuf(f) ;
+	}
 
 	@Override
 	public void clearBindBeSelectedCache()

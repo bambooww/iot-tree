@@ -652,7 +652,7 @@ var connpro_menu = [
 //	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'<i class="fa fa-link"></i> Message',header: true},
 	{content:'HTTP Url',callback:function(){
-		edit_cpt("http","","");
+		edit_cp("http","");
 		//dlg.msg("support later")
 	}},
 	{content:'MQTT',callback:function(){
@@ -2189,7 +2189,7 @@ function show_conn_msg(ob)
 	if(!cid)
 		cid = "" ;
 	var msgid = $(ob).attr("id");
-	send_ajax("conn/msg_ajax.jsp",{prjid:prjid,cpid:cpid,cid:cid,msgid:msgid},(bsucc,ret)=>{
+	send_ajax("conn/msg_ajax.jsp",{op:"full_json",prjid:prjid,cpid:cpid,cid:cid,msgid:msgid},(bsucc,ret)=>{
 		if(!bsucc||ret.indexOf("{")!=0)
 		{
 			dlg.msg(ret) ;

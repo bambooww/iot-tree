@@ -90,27 +90,23 @@ dlg.resize_to(800,600);
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label">Url:</label>
-    <div class="layui-input-inline" style="width:600px">
+    <div class="layui-input-inline" style="width:250px">
       <input type="text" id="url" name="url" value="<%=url %>" class="layui-input">
     </div>
-    
-  </div>
-
-<div class="layui-form-item">
     <label class="layui-form-label">Method</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width: 70px;">
      <select id="method" lay-filter="method">
 			<option value="GET" <%=("GET".equals(method)?"selected=selected":"") %>>GET</option>
 			<option value="POST" <%=("POST".equals(method)?"selected=selected":"") %> >POST</option>
 		 </select>
     </div>
 	 <div class="layui-form-mid">Update Interval</div>
-	  <div class="layui-input-inline" style="width: 150px;">
+	  <div class="layui-input-inline" style="width: 100px;">
 	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
 	  </div>
   </div>
    
-  <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:270px;border:0px"></iframe>
+  <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:310px;border:0px"></iframe>
    <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-inline" style="width:600px">

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,java.io.*,org.json.*,
   org.iottree.core.util.*,
+  org.iottree.core.*,
   org.iottree.core.conn.html.*,
   org.jsoup.nodes.*,
 	org.iottree.core.util.logger.*
@@ -11,8 +12,10 @@
 	String pnid = request.getParameter("pnid") ;
 	String rootid = request.getParameter("rootid") ;
 	HtmlBlockLocator hbl = null;
+	HtmlParser hp =null;
 	switch(op)
 	{
+	/*
 	case "nav":
 		if(!Convert.checkReqEmpty(request, "no nav input", out, "url"))
 			return ;
@@ -30,6 +33,7 @@
 			out.print(e.getMessage()) ;
 		}
 		break ;
+		*/
 	case "treen":
 		
 		//hp = (HtmlParser)session.getAttribute("html_parser") ;
@@ -86,17 +90,20 @@
 		out.print(txt) ;
 		break ;
 	case "trace":
-		if(!Convert.checkReqEmpty(request, "no nav input", out, "url"))
+		if(!Convert.checkReqEmpty(request, "no bfp input", out, "bfp"))
 			return ;
 		if(!Convert.checkReqEmpty(request, "no jstr input", out, "jstr"))
 			return ;
+		String bfp = request.getParameter("bfp") ;
+		boolean run_js_page = "true".equals(request.getParameter("run_js_page")) ;
+		long run_js_to = Convert.parseToInt64(request.getParameter("run_js_to"),10000) ;
 		String jstr = request.getParameter("jstr") ;
 		JSONObject tmpjo = new JSONObject(jstr) ;
 		int uplvl = tmpjo.optInt("trace_up_lvl", 0) ;
 		JSONArray jarr = tmpjo.getJSONArray("trace_pts") ;
 		List<HtmlBlockLocator.TracePoint> tps = HtmlBlockLocator.transJArr2TracePts(jarr) ;
-		
-		hbl = HtmlBlockLocator.locateToBlock(url, tps,uplvl);
+		File bf = new File(Config.getDataTmpDir()+bfp);
+		hbl = HtmlBlockLocator.locateToBlock(bf, tps,uplvl);
 		if(hbl==null)
 		{
 			out.print("no block located") ;

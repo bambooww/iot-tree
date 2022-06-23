@@ -47,7 +47,7 @@
 ##### <a doc_path="en/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Quickly understand tcpserver connector</a>
 ##### <a doc_path="en/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 Monitoring UI,Human computer interaction(HMI)</a>
 ##### <a doc_path="en/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Quickly understand IOT tree server as your background support system</a>
-
+##### <a doc_path="en/doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;4.9 HTTP Url HTML format(Reptile aggregation)Connector</a>
 
 
 

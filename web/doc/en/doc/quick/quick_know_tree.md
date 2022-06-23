@@ -103,6 +103,10 @@ A function node within a tree node can access all resources of the same level or
 
 
 
+### 2.2 agreement - Examples
+
+The above agreement may make you feel less excited. Let's take an example:
+
 <img src="../img/tree_r1.png">
 
 

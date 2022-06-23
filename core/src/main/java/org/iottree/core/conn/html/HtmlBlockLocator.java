@@ -1,5 +1,6 @@
 package org.iottree.core.conn.html;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -338,10 +339,18 @@ public class HtmlBlockLocator
 		return locateToBlock(hp,this.tracePts,this.traceUpLvl) ;
 	}
 	
-	public static HtmlBlockLocator locateToBlock(String url,List<TracePoint> tps,int uplvl) throws Exception
+	public static HtmlBlockLocator locateToBlock(String url,boolean runjspage,long runjsto,List<TracePoint> tps,int uplvl) throws Exception
 	{
-		HtmlParser hp = new HtmlParser(url) ;
+		HtmlParser hp = new HtmlParser(url,runjspage,runjsto) ;
 		hp.navigate();
+		return  locateToBlock(hp, tps,uplvl);
+	}
+	
+	public static HtmlBlockLocator locateToBlock(File f,List<TracePoint> tps,int uplvl) throws Exception
+	{
+		if(!f.exists())
+			return null ;
+		HtmlParser hp = new HtmlParser(f) ;
 		return  locateToBlock(hp, tps,uplvl);
 	}
 	

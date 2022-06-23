@@ -7,7 +7,7 @@
 ```
                Project
                  |
-Connector --> Channel <-- Driver
+Connector --> Channel (Driver)
                  |
             Device/Tag Group
                  |

@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,6 +145,11 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		return true;
 	}
 
+	protected boolean readMsgToFile(File f) throws Exception
+	{
+		return false;
+	}
+	
 //	@Override
 //	public void writeBindBeSelectedTreeJson(Writer w, boolean list_tags_only, boolean force_refresh) throws Exception
 //	{

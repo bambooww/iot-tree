@@ -45,7 +45,7 @@
 ##### <a doc_path="cn/doc/quick/quick_know_tcpserver_connector.md" target="main">&nbsp;&nbsp;&nbsp;4.6 快速理解TcpServer接入器</a>
 ##### <a doc_path="cn/doc/quick/quick_know_hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 快速了解交互UI(HMI)</a>
 ##### <a doc_path="cn/doc/quick/quick_know_server.md" target="main">&nbsp;&nbsp;&nbsp;4.8 快速了解IOT-Tree Server作为你的后台支撑系统</a>
-
+##### <a doc_path="cn/doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;4.9 HTTP Url HTML格式(爬虫聚合)接入</a>
 
 
 

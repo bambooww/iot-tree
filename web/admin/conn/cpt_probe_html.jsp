@@ -186,7 +186,7 @@ width:100%;
 	border:1px solid;
 	border-color: #499ef3;
 	margin-bottom:5px;
-	white-space: nowrap;
+	white-space0: nowrap;
 	display:inline-block;
 	width:99%;
 	padding:5px;
@@ -197,22 +197,21 @@ width:100%;
 	
 	border:1px solid;
 	border-color: #2f2f2f;
-	
-	white-space: nowrap;
+	white-space0: nowrap;
 	display:inline-block;
 	margin-left:3px;
 }
 
 </style>
 <script>
-dlg.resize_to(500,580);
+dlg.resize_to(510,580);
 </script>
 </head>
-<body>
-<table class="prop_table" style="border:solid 1px" >
+<body  >
+<table class="prop_table" >
   <tr>
     <td style0="width:55%" >
-    <div id="prop_edit_path" class="prop_edit_path">HTML Trace and Extract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div id="prop_edit_path" class="prop_edit_path" >HTML Trace and Extract&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     
 	
 	<button class="layui-btn layui-btn-xs layui-btn-primary" title="Add Block Locator" onclick="edit_block()"><i class="fa-solid fa-plus"></i>Add Block Locator</button>
@@ -241,6 +240,8 @@ var cpid = ow.cpid ;
 var connid = ow.connid ;
 var probe_url = ow.get_probe_url() ;
 var probe_enc = null ; //
+var run_js = ow.get_run_js();
+var tmpbuf_fp = ow.get_tmpbuf_fp();
 
 function get_prjid()
 {
@@ -260,6 +261,16 @@ function get_connid()
 function get_probe_url()
 {
 	return probe_url;
+}
+
+function get_run_js()
+{
+	return run_js ;
+}
+
+function get_tmpbuf_fp()
+{
+	return tmpbuf_fp;
 }
 
 var probe_ob = ow.probe_ob;
@@ -318,7 +329,7 @@ function refresh_block_list()
 	 	{
 	 		for(var ept of bk.extract_pts)
 	 		{
-	 			tmps += "<span>"+ept.t+"&nbsp;"+ept.n+"</span>";
+	 			tmps += "<span title='"+ept.t+"'>"+ept.n+"</span>";
 	 		}
 	 	}
 	 	

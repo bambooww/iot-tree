@@ -162,9 +162,11 @@ public class BindHandlerHtml extends BindHandler
 				if(blkroot==null)
 					continue ;
 				
+				StringBuilder ressb = new StringBuilder() ;
 				LinkedHashMap<String,ExtractPoint> epts = hbl.getExtractPts();
 				if(epts!=null)
 				{
+					
 					for(HtmlBlockLocator.ExtractPoint ei:epts.values())
 					{
 						List<String> tagps = ep2tags.get(ei) ;
@@ -188,12 +190,16 @@ public class BindHandlerHtml extends BindHandler
 								{
 									continue ;
 								}
+								
+								ressb.append(ei.getTitle()+"/"+hbl.getName()+"/"+ei.getName()+"]"+ei.getPath()+" → "+tagp+"="+strv+"\r\n") ;
 								t.RT_setValRawStr(strv, true, System.currentTimeMillis());
+								
 							}
 						}
 					}
 					
 				}
+				bindRunRes = ressb.toString() ;
 			}
 			catch(Exception e)
 			{
@@ -202,7 +208,7 @@ public class BindHandlerHtml extends BindHandler
 					log.error(e);
 			}
 		}
-		return false;
+		return true;
 	}
 	
 }

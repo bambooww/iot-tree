@@ -8,7 +8,7 @@ IOT-Tree Server接入是每个项目实现的数据来源起点。不管你的�
 
 # 1 接入支持
 
-IOT-Tree Server数据来源接入支持很多种内容，并且随着后续的不断完善，可以提供更多的支持。当前支持的接入主要有串口(COM)、Tcp Client、Tcp Server、OPC DA、MQTT、HTTP URL
+IOT-Tree Server数据来源接入支持很多种内容，并且随着后续的不断完善，可以提供更多的支持。当前支持的接入主要有串口(COM)、Tcp Client、Tcp Server、OPC DA、OPC UA、MQTT、HTTP URL等
 
 # 2 接入的三种主要分类
 
@@ -45,5 +45,7 @@ IOT-Tree Server对各种接入做了抽象，并形成三个基本的分类，�
 
 
 # 3 接入数据之后处理
+
+接入部分在IOT-Tree Server作为入口而存在，不建议做太多数据处理。其中，消息通过三种
 
 [conn_ch_drv]: ./quick_know_ch_conn_drv.md

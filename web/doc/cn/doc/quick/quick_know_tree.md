@@ -92,6 +92,7 @@ Project->Channel->Tag Group*->TagGroup*->TagGroup*
 IOT-Tree Server所有节点的名称都必须符合以下规定
 
 （1）必须以a-z A-Z开头，后续字母必须在a-z A-Z 0-9 _ 范围内。不允许出现任何其他字母。（因为以'_'开始名称是系统内部命名）
+
 （2）同一个树节点下的子节点，名称不能重复。
 
 之所以对命名如此规定，是因为IOT-Tree Server对外提供的接口，基本以命名为基础，严格规定是为了方便外部系统的调用，同时减少出错的可能性。
@@ -105,12 +106,8 @@ IOT-Tree Server所有节点的名称都必须符合以下规定
 
 ### 2.2 约定-例子说明
 
-上面约定可能让你没啥激动的感觉，还是举个例子吧：
+上面约定可能让你没啥感觉，还是举个例子吧：
 
-
-### 2.2 约定-例子说明
-
-The above agreement may make you feel less excited. Let's take an example:
 
 <img src="../img/tree_r1.png">
 

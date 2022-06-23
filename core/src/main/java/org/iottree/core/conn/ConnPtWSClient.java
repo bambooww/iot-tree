@@ -1,5 +1,6 @@
 package org.iottree.core.conn;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -258,6 +259,11 @@ public class ConnPtWSClient extends ConnPtMSG
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	protected boolean readMsgToFile(File f) throws Exception
+	{
+		return false;
 	}
 }
 

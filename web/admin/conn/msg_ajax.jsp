@@ -11,8 +11,9 @@
 	java.net.*,
 	java.util.*
 	"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid","cpid","msgid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","cpid","msgid","op"))
 	return;
+	String op = request.getParameter("op") ;
 	String prjid = request.getParameter("prjid") ;
 String cpid = request.getParameter("cpid") ;
 String cid = request.getParameter("cid") ;
@@ -47,5 +48,13 @@ if(msg==null)
 	return;
 }
 
-
-%><%=msg.toFullJsonStr()%>
+switch(op)
+{
+case "full_json":
+	out.print(msg.toFullJsonStr()) ;
+	break ;
+default:
+	out.print("unknown op") ;
+	break ;
+}
+%>

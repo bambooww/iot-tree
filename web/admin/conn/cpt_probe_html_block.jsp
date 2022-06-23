@@ -258,7 +258,7 @@ dlg.resize_to(1024,760);
 	<tr>
 	 <td colspan="5">
 	 <div id="prop_edit_path" class="prop_edit_path" style="height:50px">&nbsp;
-	 URL:<input type="text" id="input_url" name="input_url" style="width:70%" value=""/><br>
+	 URL:<input type="text" id="input_url" name="input_url" style="width:70%" value="" readonly="readonly"/><br>
 	 Name:<input type="text" id="input_name" name="input_name"  value=""/>&nbsp;&nbsp;&nbsp;
 	 Title:<input type="text" id="input_title" name="input_title" value=""/>
 	
@@ -353,6 +353,10 @@ var url = ow.get_probe_url() ;
 
 var curbk = ow.cur_block ; 
 
+var run_js = ow.get_run_js() ;
+
+var tmpbuf_fp = ow.get_tmpbuf_fp();
+
 function init_from_parent()
 {
 	$("#input_url").val(url) ;
@@ -444,7 +448,6 @@ function set_trace_pt_clk()
 {
 	var txt = $("#tpt_txt").val() ;
 	var mh = $("#tpt_mh").is(':checked');
-	dlg.msg(""+mh) ;
 	txt=  trim(txt) ;
 	if(!txt)
 	{
@@ -490,6 +493,11 @@ send_ajax("./html/html_ajax.jsp",{op:op},function(bsucc,ret){
 
 function do_trace()
 {
+	if(!tmpbuf_fp)
+	{
+		dlg.msg("no buffered content found!") ;
+		return ;
+	}
 	var u = $("#input_url").val();
 	u = trim(u) ;
 	if(!u)
@@ -502,9 +510,9 @@ function do_trace()
 		dlg.msg("no trace point set") ;
 		return ;
 	}
-
 	
-	send_ajax("./html/html_ajax.jsp",{op:"trace",url:u,jstr:JSON.stringify(curbk)},function(bsucc,ret){
+	send_ajax("./html/html_ajax.jsp",{op:"trace",bfp:tmpbuf_fp,run_js_page:run_js.run_js_page,run_js_to:run_js.run_js_to,
+		jstr:JSON.stringify(curbk)},function(bsucc,ret){
 		
 		if(!bsucc || ret.indexOf("{")!=0)
 		{
@@ -583,9 +591,18 @@ function tree_init(rootid)
 				}
 		)
 		
+		
 		this.jsTree.on('activate_node.jstree',(e,data)=>{
 			on_tree_node_sel(data.node.original)
 		})
+		
+		this.jsTree.on('loaded.jstree', function(e, data){  
+		    var inst = data.instance;  
+		    var obj = inst.get_node(e.target.firstChild.firstChild.lastChild);  
+		    inst.select_node(obj);  
+		});
+		
+		
 }
 
 //tree_init()
