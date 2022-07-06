@@ -35,9 +35,9 @@
 <head>
 <meta charset="utf-8">
 <title>IOTTree Project Editor</title>
-<jsp:include page="head.jsp"></jsp:include>
-<link rel="stylesheet" href="/_js/jstree/themes/default/style.min.css" />
-<script src="/_js/jstree/jstree.min.js"></script>
+<jsp:include page="head.jsp">
+<jsp:param value="true" name="tree"/>
+</jsp:include>
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 <script src="/_js/selectmenu/selectmenu.min.js"></script>
 <script src="./js/ua_tree.js"></script>
@@ -1649,7 +1649,7 @@ function add_or_edit_ch(rep_path,ch_path)
 function act_ch_sel_drv(n,op)
 {
 	dlg.open("dev/drv_ch_selector.jsp?repid="+repid+"&chid="+n.id,
-			{title:"<wbt:lang>add_dev</wbt:lang>",w:'500px',h:'400px'},
+			{title:"Driver Selector",w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)

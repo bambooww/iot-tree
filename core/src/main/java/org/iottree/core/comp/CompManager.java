@@ -4,21 +4,32 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.Config;
+import org.iottree.core.UANode;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -32,8 +43,10 @@ import org.xml.sax.InputSource;
  * 
  * @author zzj
  */
-public class CompManager implements IResCxt
+public class CompManager //implements IResCxt //
 {
+	protected static ILogger log = LoggerManager.getLogger(CompManager.class) ;
+	
 	static Object locker = new Object() ;
 	static CompManager ins = null ;
 	
@@ -54,8 +67,8 @@ public class CompManager implements IResCxt
 	
 	transient File fileDirBase = null ; 
 	
-	ArrayList<CompCat> giCats = null;//new ArrayList<GICat>() ;
-	HashMap<String,CompItem> id2item = null ;
+
+	private ArrayList<CompLib> libs = null ;
 	
 	private CompManager()
 	{
@@ -64,261 +77,438 @@ public class CompManager implements IResCxt
 			fileDirBase.mkdirs() ;
 	}
 	
-	synchronized public List<CompCat> getAllCats()
+	public File getCompLibBase()
 	{
-		if(giCats!=null)
-			return giCats ;
-		synchronized(this)
-		{
-			if(giCats!=null)
-				return giCats ;
-			
-			load();
-			return giCats ;
-		}
+		return fileDirBase;//new File(Config.getDataDirBase()+"/comp_lib/") ;
 	}
 	
-	synchronized private HashMap<String,CompItem> getId2ItemMap()
+	
+	private File getCompLibDir(String libid)
 	{
-		if(id2item!=null)
-			return id2item ;
-		synchronized(this)
-		{
-			if(id2item!=null)
-				return id2item ;
-			
-			load();
-			return id2item ;
-		}
+		return new File(getCompLibBase(),"lib_"+libid+"/") ;
 	}
-
-	private ArrayList<CompCat> load()
+	
+	private CompLib loadLib(String libid) throws Exception
 	{
-		ArrayList<CompCat> gics = new ArrayList<CompCat>() ;
-		HashMap<String,CompItem> id2i = new HashMap<>() ;
-		
-		File[] fs = fileDirBase.listFiles(new FileFilter(){
+		File libdir = getCompLibDir(libid);
+		if (!libdir.exists())
+			return null;
+		File catf = new File(libdir, "lib.xml");
+		if (!catf.exists())
+			return null;
+		CompLib r = new CompLib();
+		if(catf.length()>0)
+		{
+			XmlData tmpxd = XmlData.readFromFile(catf);
+			DataTranserXml.injectXmDataToObj(r, tmpxd);
+		}
+		r.id = libid ;
+		return r;
+	}
+	
+	void saveLib(CompLib dc) throws Exception
+	{
+		File libdir = getCompLibDir(dc.getId());
+		if (!libdir.exists())
+			libdir.mkdirs();
+		XmlData xd = DataTranserXml.extractXmlDataFromObj(dc);
+		// XmlData xd = rep.toUAXmlData();
+		XmlData.writeToFile(xd, new File(libdir, "lib.xml"));
+	}
+	
+	CompLib reloadLib(String libid) throws Exception
+	{
+		CompLib c = this.loadLib(libid);
+		if (c == null)
+			return null;
 
+		List<CompLib> libs = getCompLibs();
+
+		for (int i = 0, n = libs.size(); i < n; i++)
+		{
+			CompLib cat = libs.get(i);
+			if (cat.getId().equals(libid))
+			{
+				libs.set(i, c);
+				return c;
+			}
+		}
+		libs.add(c);
+		return c;
+	}
+	
+	private ArrayList<CompLib> loadLibs()
+	{
+		ArrayList<CompLib> rets = new ArrayList<>() ;
+		File lbf = getCompLibBase() ;
+		if(!lbf.exists())
+			return rets ;
+		
+		File[] fs = lbf.listFiles(new FileFilter() {
+
+			@Override
 			public boolean accept(File f)
 			{
-				return f.isDirectory() ;
-			}}) ;
-		
-		for(File df:fs)
-		{
-			boolean breadonly = false;
-			
-			File grf = new File(df,"cr.xd.xml") ;
-			if(!grf.exists())
-			{
-				grf = new File(df,"cr.xml") ;
-				breadonly = true ;
+				if (!f.isDirectory())
+					return false;
+				String n = f.getName();
+				return n.startsWith("lib_");
 			}
-			
-			if(!grf.exists())
-				continue ;
-			
+		});
+		
+		for (File tmpf : fs)
+		{
+			String libid = tmpf.getName().substring(4);
 			try
 			{
-				CompCat gic = null;
-				if(breadonly)
-					gic = loadCatXml(grf) ;
-				else
-					gic = loadCatXd(grf) ;
-				if(gic==null)
-					continue ;
-				gic.dirName = df.getName() ;
-				gics.add(gic) ;
-				for(CompItem ci:gic.getItems())
+				CompLib dc = loadLib(libid);
+				if (dc == null)
 				{
-					id2i.put(ci.getId(), ci) ;
-					
-					ci.onLoaded();
+					log.warn("load CompLib failed [" + libid + "]");
+					continue;
 				}
-				gic.bReadonly = breadonly;
+				rets.add(dc);
 			}
-			catch(Exception ee)
+			catch ( Exception e)
 			{
-				ee.printStackTrace() ;
+				log.warn("load CompLib error [" + libid + "]");
+				e.printStackTrace();
 			}
 		}
-		giCats = gics ;
-		id2item = id2i ;
-		return gics;
+		return rets;
 	}
 	
-	
-	
-	private CompCat loadCatXml(File crf) throws Exception
+	public List<CompLib> getCompLibs()
 	{
-		Element rootele = null ;
-		try(FileInputStream fis = new FileInputStream(crf);)
-		{
-			DocumentBuilderFactory docBuilderFactory= DocumentBuilderFactory.newInstance();
-			docBuilderFactory.setNamespaceAware(false);
-			docBuilderFactory.setValidating(false);
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		if(libs!=null)
+			return libs ;
 		
-			InputSource is = new InputSource(fis);
-			//is.setEncoding("gb2312");
-			Document doc = docBuilder.parse(is);
-			rootele = doc.getDocumentElement();
+		synchronized(this)
+		{
+			if(libs!=null)
+				return libs ;
+			
+			libs = loadLibs() ;
+			Collections.sort(libs);
 		}
-		
-		
-		if(rootele==null)
-			return null ;
-		
-		return CompCat.createByEle(rootele) ;
+		return libs ;
 	}
 	
-	/**
-	 * load from xmldata file
-	 * @param cf
-	 * @return
-	 * @throws Exception
-	 */
-	private CompCat loadCatXd(File cf) throws Exception
+	public CompLib getCompLibById(String libid)
 	{
-		XmlData xd = XmlData.readFromFile(cf) ;
-		if(xd==null)
-			return null ;
-		CompCat cc = new CompCat() ;
-		cc.fromXmlData(xd);
-		return cc ;
-	}
-	
-
-	public void saveCatXd(CompCat cc) throws Exception
-	{
-		File xdf = new File(this.fileDirBase,cc.dirName+"/cr.xd.xml") ;
-		if(!xdf.getParentFile().exists())
-			xdf.getParentFile().mkdirs() ;
-		XmlData.writeToFile(cc.toXmlData(), xdf);
-	}
-	/**
-	 * 
-	 *
-	 */
-	public void clearCache()
-	{
-		id2item = null ;
-		giCats = null ;
-	}
-	
-	/**
-	 * @param jscn
-	 * @return
-	 */
-	public CompItem getItemById(String id)
-	{
-		HashMap<String,CompItem> n2g = getId2ItemMap();
-		return n2g.get(id) ;
-	}
-	
-	public CompCat getCatById(String id)
-	{
-		for(CompCat gic:getAllCats())
+		for(CompLib lib: getCompLibs())
 		{
-			if(id.equals(gic.getId()))
-				return gic ;
+			if(lib.getId().equals(libid))
+				return lib ;
 		}
 		return null ;
 	}
+//	
+//	public DevDef getDevDefById(String libid,String defid)
+//	{
+//		CompLib lib = getCompLibById(libid);
+//		if(lib==null)
+//			return null ;
+//		return lib.getDevDefById(defid);
+//	}
+//	
 	
-	public List<CompCat> getCatAll()
+	public CompLib addCompLib(String title) throws Exception
 	{
-		return getAllCats() ;
+		StringBuilder failedr = new StringBuilder();
+		CompLib lib = new CompLib(title);
+		this.saveLib(lib);
+		this.getCompLibs().add(lib);
+		return lib;
+	}
+
+	public void delCompLib(String libid)
+	{
+		CompLib dc = this.getCompLibById(libid);
+		if (dc == null)
+			return;
+		File dir = getCompLibDir(libid);
+		if (!dir.exists())
+			return;
+		Convert.deleteDir(dir);
+		this.getCompLibs().remove(dc);
 	}
 	
-	public CompCat addCat(String title) throws Exception
+	public CompCat getCompCatById(String libid,String catid)
 	{
-		CompCat cc = new CompCat(title) ;
-		cc.dirName = cc.id ;
-		saveCatXd(cc);
-		giCats.add(cc);
-		return cc ;
+		CompLib lib = this.getCompLibById(libid) ;
+		if(lib==null)
+			return null ;
+		return lib.getCatById(catid);
 	}
 	
-	
-	public CompItem addComp(CompCat cc,String title) throws Exception
+	public CompItem getCompItemById(String libid,String catid,String compid)
 	{
-		if(cc.isReadOnly())
-			throw new Exception("cat is readonly") ;
-		
-		CompItem ci = new CompItem(cc,title) ;
-		cc.items.add(ci) ;
-		saveCatXd(cc) ;
-		this.id2item.put(ci.getId(), ci) ;
-		return ci ;
-	}
-	
-	public boolean exportCompCat(String catid,File fout) throws IOException
-	{
-		CompCat cc = this.getCatById(catid) ;
+		CompCat cc = getCompCatById(libid,catid);
 		if(cc==null)
-			return false;
-		File catdir = cc.getCatDirFile() ;
-		if(!catdir.exists())
-			return false;
+			return null ;
+		return cc.getItemById(compid) ;
+	}
+//	public DevDef getDevDefById(String libid,String catid,String devid)
+//	{
+//		DevCat dc = getDevCatById(libid,catid);
+//		if(dc==null)
+//			return null;
+//		return dc.getDevDefById(devid) ;
+//	}
+	
+//	public UANode findNodeByPath(String path)
+//	{
+//		if(Convert.isNullOrTrimEmpty(path))
+//			return null ;
+//		LinkedList<String> ss = Convert.splitStrWithLinkedList(path, "/\\.") ;
+//		String n = ss.removeFirst() ;
+//		List<String> devps = Convert.splitStrWith(n, "-") ;
+//		if(devps.size()!=3)
+//			return null ;
+//		CompLib dl = this.getCompLibById(devps.get(0));
+//		// DevDriver drv = this.getDriver() ;
+//		if(dl==null)
+//			return null ;
+//		CompCat cat = dl.getCatByName(devps.get(1)) ;
+//		if(cat==null)
+//			return null ;
+//		CompItem dd = cat.getItemById(devps.get(2)) ;
+//		if(dd==null)
+//			return null ;
+//		
+//		return dd ;
+//		//return dd.getDescendantNodeByPath(ss) ;
+//	}
+	
+//	public UANode findNodeById(String id)
+//	{
+//		for(DevDriver drv:this.getDrivers())
+//		{
+//			DevDef dd = drv.getDevDefById(id) ;
+//			if(dd==null)
+//				continue ;
+//			UANode n = dd.findNodeById(id) ;
+//			if(n!=null)
+//				return n ;
+//		}
+//		return null;
+//	}
+//	
+//	public DevDef getDevDefById(String id)
+//	{
+//		for(DevDriver drv:this.getDrivers())
+//		{
+//			DevDef dd = drv.getDevDefById(id) ;
+//			if(dd!=null)
+//				return dd ;
+//		}
+//		return null;
+//	}
+//	
+//	public DevCat getDevCatById(String catid)
+//	{
+//		for(DevDriver drv:this.getDrivers())
+//		{
+//			DevCat dc = drv.getDevCatById(catid) ;
+//			if(dc!=null)
+//				return dc ;
+//		}
+//		return null ;
+//	}
+	
+	
+	public File exportCompLibTo(String libid,File fout) throws IOException
+	{
+		CompLib lib = this.getCompLibById(libid) ;
+		if(lib==null)
+			return null ;
+		
+		
+		File dir = lib.getLibDir();
+		List<File> fs = Arrays.asList(dir) ;
 		HashMap<String,String> metam = new HashMap<>() ;
-		metam.put("tp", "comp") ;
-		metam.put("cat", catid) ;
+		metam.put("tp", "complib") ;
+		metam.put("libid", libid) ;
+		metam.put("libtitle", lib.getTitle()) ;
+		
 		String metatxt=  Convert.transMapToPropStr(metam) ;
-		ZipUtil.zipFileOut(metatxt,Arrays.asList(catdir), fout);
-		return true;
+		
+		ZipUtil.zipFileOut(metatxt,fs,fout) ;
+		return fout;
 	}
 	
-	public boolean importCompCat(File zipf) throws IOException
+	public File exportCompLibToTmp(String libid) throws IOException
 	{
-		String txt = ZipUtil.readZipMeta(zipf) ;
-		if(txt==null)
-			return false;//
-		HashMap<String,String> mmap = Convert.transPropStrToMap(txt) ;
-		if(!"comp".contentEquals(mmap.get("tp")))
+		String fn ="lib_"+ libid+".zip";
+		File fout = new File(Config.getDataDirBase()+"/tmp/"+fn) ;
+		exportCompLibTo(libid,fout);
+		return fout;
+	}
+	
+	
+	public File backupDevCatToZip(String libid) throws IOException
+	{
+		String fn = "lib_"+ libid+"_"+System.currentTimeMillis()+".zip";
+		File fout = new File(Config.getDataBackupDir(),"comp_lib/"+fn) ;
+		exportCompLibTo(libid,fout);
+		return fout;
+	}
+	
+	public HashMap<String,String> parseCompLibZipFileMeta(File zipf) throws Exception
+	{
+		//ArrayList<IdName> rets =new ArrayList<>() ;
+		
+		String metatxt = ZipUtil.readZipMeta(zipf);
+		if(metatxt==null||metatxt.equals(""))
+			return null ;
+		HashMap<String,String> pms = Convert.transPropStrToMap(metatxt) ;
+		if(!"complib".equals(pms.get("tp")))
+			return null ;
+		String libid = pms.get("libid") ;
+		if(Convert.isNullOrEmpty(libid))
+			return null ;
+		return pms ;
+	}
+	
+
+	public boolean importCompLibZipFile(File zipf,String libid,String title) throws Exception
+	{
+		HashMap<String,String> pms = parseCompLibZipFileMeta(zipf) ;
+		if(pms==null)
 			return false;
 		
+		String oldlibid = pms.get("libid") ;
+		if(Convert.isNullOrEmpty(oldlibid))
+			return false;
+		
+		if(Convert.isNullOrEmpty(libid))
+			libid = CompressUUID.createNewId();
+
+//		if( !catid.contentEquals(pms.get("catid")) 
+//			||  !catname.contentEquals(pms.get("catname"))
+//			||  !drvname.contentEquals(pms.get("drvname")))
+//			return false;
+
+		
+		
+		String libdirname = "lib_"+oldlibid+"/" ;
+		String libdirname1 = "lib_"+oldlibid+"\\" ;
+		int prefixlen = libdirname.length() ;
+		List<String> ens = ZipUtil.readZipEntrys(zipf) ;
+		HashMap<String,String> outens = new HashMap<>() ;
+		for(String en:ens)
+		{
+			if(en.startsWith(libdirname)||en.startsWith(libdirname1))
+			{
+				String taren = "lib_"+libid+"/" + en.substring(prefixlen) ;
+				outens.put(en,taren) ;
+			}
+		}
+		
+		File libbf = getCompLibBase();
+		File oldcatdir = new File(libbf,libdirname) ;
+		if(oldlibid.equals(libid) && oldcatdir.exists())
+		{//back up
+			backupDevCatToZip(libid) ;
+			Convert.deleteDir(oldcatdir) ;
+		}
+		
+		ZipUtil.readZipOut(zipf, outens, libbf);
+		
+		//
+		CompLib lib = reloadLib(libid);
+		if(lib==null)
+			return false;
+		
+		if(Convert.isNotNullEmpty(title) && !title.equals(lib.getTitle()))
+		{
+			lib.asTitle(title);
+			lib.save();
+		}
 		return true;
 	}
 
-	@Override
-	public ResDir getResDir()
+	
+	
+	
+	// runtime support
+	
+	public CompItem findCompItemById(String libid,String id)
 	{
-		return null;
-	}
-
-	@Override
-	public String getResNodeId()
-	{
+		int k = libid.indexOf('_') ;
+		if(k>0)
+			libid = libid.substring(k+1) ;
+		CompLib lib = this.getCompLibById(libid) ;
+		if(lib==null)
+			return null ;
+		
+//		return lib.getItemById(id) ;
+		for(CompCat cat:lib.getAllCats())
+		{
+			CompItem r = cat.getItemById(id) ;
+			if(r!=null)
+				return r ;
+		}
+		
 		return null ;
 	}
 	
-	@Override
-	public String getResNodeTitle()
+	public void renderLibAndCatsTree(Writer w) throws Exception
 	{
-		return null ;
-	}
+		
+		w.write("{\"id\":\"lib_and_cats\"");
+		w.write(",\"nc\":0");
+		w.write(",\"icon\": \"fa-solid fa-puzzle-piece fa-lg\"");
+		w.write(",\"text\":\"HMI Lib and Category\"");
+		w.write(",\"state\": {\"opened\": true}");
 
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return this.getCatById(subid) ;
+		
+		w.write(",\"children\":[");
+		//
+		boolean bfirst = true;
+		for(CompLib lib:this.getCompLibs())
+		{
+			if (bfirst)
+				bfirst = false;
+			else
+				w.write(',');
+
+			writeTreeCat(w, lib);
+		}
+		w.write("]");
+		
+		w.write("}");
 	}
 	
-	public IResNode getResNodeParent()
+	public void writeTreeCat(Writer w, CompLib lib) throws Exception
 	{
-		return null ;
+		w.write("{\"id\":\"" + lib.getId() + "\"");
+		
+		w.write(",\"tp\": \"tag\"");
+		w.write(",\"icon\": \"fa-solid fa-folder fa-lg\"");
+		w.write(",\"text\":\""+lib.getTitle()+"\"");
+		w.write(",\"state\": {\"opened\": true}");
+		w.write(",\"children\":[");
+		//
+		boolean bfirst = true;
+		for(CompCat cc:lib.getAllCats())
+		{
+			if (bfirst)
+				bfirst = false;
+			else
+				w.write(',');
+
+			w.write("{\"id\":\"" + lib.getId()+"-"+ cc.getId() + "\"");
+			
+			w.write(",\"tp\": \"tag\"");
+			w.write(",\"icon\": \"fa-regular fa-folder fa-lg\"");
+
+			w.write(",\"text\":\""+cc.getTitle()+"\"}");
+		}
+		w.write("]");
+		
+		w.write("}");
 	}
 
-	@Override
-	public String getResPrefix()
-	{
-		return IResCxt.PRE_COMP;
-	}
-
-	@Override
-	public boolean isResReadOnly()
-	{
-		return false;
-	}
 }

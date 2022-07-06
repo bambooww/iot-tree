@@ -7,23 +7,27 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "res_node_id"))
+if(!Convert.checkReqEmpty(request, out, "res_lib_id"))
 	return ;
-	String resnodeid = request.getParameter("res_node_id") ;
-	//String compid = request.getParameter("compid") ;
-	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
-	
-	if(dr==null)
+	String res_lib_id = request.getParameter("res_lib_id") ;
+	String res_id = request.getParameter("res_id") ;
+	IResNode resnode = ResManager.getInstance().getResNode(res_lib_id,res_id);
+	if(resnode==null)
 	{
-		out.print("no ResDir input") ;
-		return ;
+		out.print("no res node found") ;
 	}
-
-	IResNode prn = dr.getResNode().getResNodeParent() ;
+	ResDir rdir = resnode.getResDir();//.getInstance().getResDir(res_lib_id, res_id); //
 	
-	ResDir prd = null;
-	if(prn!=null)
-		prd = prn.getResDir() ;
+	String nodetitle = "";
+	if(resnode instanceof UANode)
+	{
+		UANode uan = (UANode)resnode ;
+		nodetitle = uan.getNodePathTitle();
+	}
+	else
+	{
+		nodetitle = resnode.getResNodeTitle() ;
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -206,11 +210,12 @@ border-width:2px; border-style:solid; background-color0: #515658;
 <body>
 <table class="prop_table">
   <tr>
-    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path">Component Resources</div></td>
+    <td colspan="2"><div id="prop_edit_path" class="prop_edit_path">Resources : <%=nodetitle %></div></td>
   </tr>
   <tr>
     <td style="width:20%;height:90%" valign="top" >
      <div id="rescxt_list" class="prop_edit_cat" style="overflow: hidden;">
+     <%--
        <ul type="square">
 <%
 if(prd!=null)
@@ -225,11 +230,12 @@ String nid = dr.getResNodeUID() ;
 %>
     	<li node_id="<%=nid%>"  class="res_node res_sel"  onclick="show_res_node_id('<%=nid%>')"><%=dr.getTitle() %></li>
        </ul>
+       --%>
     	</div>
     </td>
     <td style="width:80%;vertical-align: top;"  >
     <div id="editpanel"  class="prop_edit_panel oc-toolbar" >
-       <div id="res_list" class="btns" style="width:100%">
+       <div id="res_list" class="btns" style="width:100%;height:100%;overflow: auto;">
 			  
     </div>
 	 </div>
@@ -249,25 +255,15 @@ var cur_cxtid=null ;
 var cur_resitems = null;
 var cur_resitem = null ;
 
-var cur_resnodeid="<%=resnodeid%>" ;
+var res_lib_id="<%=res_lib_id%>" ;
+var res_id = "<%=res_id%>" ;
 
-function set_res_node_sel(resnodeid)
+function refresh_items()
 {
-	cur_resnodeid = resnodeid;
-	$("li.res_node").each(function(){
-		if($(this).attr("node_id")==resnodeid)
-			$(this).addClass("res_sel") ;
-		else
-			$(this).removeClass("res_sel") ;
-	}) ;
+	show_res_items(false) ;
 }
 
-function refresh_cur_node()
-{
-	show_res_node_id(cur_resnodeid,false) ;
-}
-
-function show_res_node_id(resnodeid,binit)
+function show_res_items(binit)
 {
 	var ow = dlg.get_opener_w() ;
 	var plugpm = null;
@@ -279,8 +275,9 @@ function show_res_node_id(resnodeid,binit)
 	var pm={}; 
 	pm.editor=plugpm.editor;
 	pm.editor_id=plugpm.editor_id;
-	pm.res_node_id=resnodeid;
-	set_res_node_sel(resnodeid);
+	pm.res_lib_id=res_lib_id;
+	pm.res_id = res_id ;
+	//set_res_node_sel(resnodeid);
 	$.ajax( {
 		type : 'post',
 		url : "rescxt_items_ajax.jsp",
@@ -300,7 +297,7 @@ function show_res_node_id(resnodeid,binit)
 			var resid = item.id ;
 			var n = item.name ;
 			tmps+=`<div id="resdiv_`+resid+`" class="toolbarbtn resitem" style="border-width:2px; border-style:solid;" onclick="on_res_clk('`+n+`')">
-			     <img id="panel_`+resid+`" src="/res.jsp?res_node_id=`+resnodeid+`&name=`+n+`" width="100%" height="100%"/>
+			     <img id="panel_`+resid+`" src="/res.jsp?res_lib_id=`+res_lib_id+`&res_id=`+res_id+`&name=`+n+`" width="100%" height="100%"/>
 				  <div style="height:20px;margin:12px;color:#8dcef7;bottom:0px">`+n+`</div>
 			   </div>`;
 		}
@@ -409,11 +406,6 @@ function on_name_chged()
 
 function add_file_onchg()
 {
-	if(cur_resnodeid==null||cur_resnodeid=="")
-	{
-		dlg.msg("no resnodeid") ;
-		return ;
-	}
 	//$("#"+id).
 	var fs = $("#add_file")[0].files ;
 	if(fs==undefined||fs==null||fs.length<=0)
@@ -428,7 +420,8 @@ function add_file_onchg()
 	//upload
 	var fd = new FormData();
 	var n= $("#add_name").val() ;
-    fd.append("res_node_id",cur_resnodeid) ;
+    fd.append("res_lib_id",res_lib_id) ;
+    fd.append("res_id",res_id) ;
     fd.append("name",n) ;
     fd.append("file",f);
      $.ajax({"url": "rescxt_item_fileup.jsp",type: "post","processData": false,"contentType": false,
@@ -439,7 +432,7 @@ function add_file_onchg()
  	  		if(data=="succ")
  	  		{
  	  			dlg.msg("add ok");
- 	  		 refresh_cur_node();
+ 	  		 refresh_items();
  	  		}
  	  		else
  	  		{
@@ -460,7 +453,7 @@ function init_val()
 {
 	var ow = dlg.get_opener_w() ;
 	var plugpm = ow.editor_plugcb_pm;
-	console.log(plugpm);
+	//console.log(plugpm);
 	if(plugpm==null)
 		return ;
 	var v = plugpm.val ;
@@ -475,7 +468,7 @@ function init_val()
 	}
 }
 
-show_res_node_id(cur_resnodeid,true);
+show_res_items(true);
 
 
 function win_close()

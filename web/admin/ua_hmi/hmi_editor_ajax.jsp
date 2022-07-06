@@ -34,13 +34,15 @@
 		String txt = h.loadHmiUITxt() ;
 		
 		UANode topn = h.getTopNode() ;
-		String resnodeid = "" ;
+		String reslibid = "" ;
+		String resid = "" ;
 		if(topn instanceof IResNode)
 		{
-			resnodeid = ((IResNode)topn).getResNodeUID() ;
+			reslibid = ((IResNode)topn).getResLibId();
+			//resid = 
 		}
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
-		out.print("{\"path\":\""+""+"\",\"rb_path\":\""+""+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
+		out.print("{\"path\":\""+""+"\",\"rb_path\":\""+""+"\",\"res_lib_id\":\""+reslibid+"\",\"res_id\":\""+resid+"\"}\r\n") ;
 		out.print(txt);
 	}
 	else if("save".equals(op))

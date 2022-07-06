@@ -1,9 +1,12 @@
 package org.iottree.core.comp;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
@@ -12,8 +15,10 @@ import org.iottree.core.util.CompressUUID;
 import org.w3c.dom.Element;
 
 
-public class CompCat implements IResNode
+public class CompCat  //implements IResNode
 {
+	static ILogger log = LoggerManager.getLogger(CompCat.class) ;
+	
 	public static final String TAG = "cat" ;
 	
 	/**
@@ -25,9 +30,9 @@ public class CompCat implements IResNode
 	
 	transient boolean bReadonly = false;
 	
-	transient String dirName= null ;
+	transient CompLib belongToLib = null ;
 	
-	transient ArrayList<CompItem> items = new ArrayList<>() ;
+	private transient ArrayList<CompItem> items = null;//new ArrayList<>() ;
 	
 	public CompCat()
 	{}
@@ -39,10 +44,20 @@ public class CompCat implements IResNode
 	public CompCat(String title)
 	{
 		this.id = CompressUUID.createNewId();//.randomUUID().toString() ;
-		this.dirName = this.id ;
+		//this.dirName = this.id ;
 		this.title = title ;
 	}
 	
+	public CompLib getBelongTo()
+	{
+		return this.belongToLib ;
+	}
+	
+	
+	public void save() throws Exception
+	{
+		this.belongToLib.saveCatXd(this);
+	}
 //	public CompCat(Element gisele)
 //	{
 //		this.id = id ;
@@ -51,28 +66,28 @@ public class CompCat implements IResNode
 //		
 //	}
 	
-	public static CompCat createByEle(Element catele)
-	{
-		if(catele==null)
-			return null ;
-		CompCat ret = new CompCat() ;
-		ret.id = catele.getAttribute("id") ;
-		if(Convert.isNullOrEmpty(ret.id))
-			return null ;
-		ret.title = catele.getAttribute("title") ;
-		if(Convert.isNullOrEmpty(ret.title))
-			ret.title = "noname" ;
-		for(Element ele:Convert.getSubChildElement(catele,CompItem.TAG))
-		{
-			CompItem ci = CompItem.createByEle(ele) ;
-			if(ci==null)
-				continue ;
-			ci.belongTo = ret ;
-			ret.items.add(ci) ;
-			
-		}
-		return ret ;
-	}
+//	public static CompCat createByEle(Element catele)
+//	{
+//		if(catele==null)
+//			return null ;
+//		CompCat ret = new CompCat() ;
+//		ret.id = catele.getAttribute("id") ;
+//		if(Convert.isNullOrEmpty(ret.id))
+//			return null ;
+//		ret.title = catele.getAttribute("title") ;
+//		if(Convert.isNullOrEmpty(ret.title))
+//			ret.title = "noname" ;
+//		for(Element ele:Convert.getSubChildElement(catele,CompItem.TAG))
+//		{
+//			CompItem ci = CompItem.createByEle(ele) ;
+//			if(ci==null)
+//				continue ;
+//			ci.belongTo = ret ;
+//			ret.items.add(ci) ;
+//			
+//		}
+//		return ret ;
+//	}
 	
 	public static CompCat createByXD(XmlData xd)
 	{
@@ -107,20 +122,104 @@ public class CompCat implements IResNode
 	 * get cat dir
 	 * @return
 	 */
-	public File getCatDirFile()
+	public File getCatDir()
 	{
-		File fb = CompManager.getInstance().fileDirBase ;
-		return new File(fb,dirName+"/");
+		File fb = belongToLib.getLibDir() ;
+		return new File(fb,this.id+"/");
 	}
 	
 	public List<CompItem> getItems()
 	{
-		return items ;
+		if(items!=null)
+			return items ;
+		
+		synchronized(this)
+		{
+			if(items!=null)
+				return items ;
+			
+			items = loadItems() ;
+			return items ;
+		}
+	}
+	
+	
+	private ArrayList<CompItem> loadItems()
+	{
+		ArrayList<CompItem> rets =new ArrayList<>() ;
+		File catdir = getCatDir() ;
+		File[] itemdirs = catdir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
+			{
+				return f.isDirectory() ;
+			}}) ;
+		
+		for(File itemdir:itemdirs)
+		{
+			try
+			{
+				String id = itemdir.getName() ;
+				
+				CompItem ci = CompItem.loadFromDir(belongToLib.getResLibId(),id,itemdir);
+				if(ci==null)
+					continue ;
+				rets.add(ci) ;
+			}
+			catch(Exception e)
+			{
+				if(log.isWarnEnabled())
+					log.warn("load CompItem failed:"+itemdir.getAbsolutePath());
+				return null ;
+			}
+		}
+		return rets ;
+	}
+	
+//	private CompItem loadItem(File itemdir)
+//	{
+//		File cif = new File(itemdir,"ci.xml") ;
+//		if(!cif.exists())
+//			return null ;
+//		String id = itemdir.getName() ;
+//		try
+//		{
+//			XmlData xd = XmlData.readFromFile(cif) ;
+//			CompItem ci = new CompItem() ;
+//			ci.fromXmlData(xd);
+//			ci.id = id ;
+//			ci.belongTo = this ;
+//			//rets.add(ci) ;
+//			return ci ;
+//		}
+//		catch(Exception e)
+//		{
+//			if(log.isWarnEnabled())
+//				log.warn("load CompCat failed:"+cif.getAbsolutePath());
+//			return null ;
+//		}
+//	}
+	
+	File getCompItemDir(String id)
+	{
+		File catdir = getCatDir() ;
+		return new File(catdir,id+"/");
+	}
+	
+	
+	private void saveItem(CompItem ci) throws Exception
+	{
+		File cidir = getCompItemDir(ci.getId()) ;
+		if(!cidir.exists())
+			cidir.mkdirs() ;
+		XmlData xd= ci.toXmlData();
+		XmlData.writeToFile(xd, new File(cidir,"ci.xml"));
 	}
 	
 	public CompItem getItemById(String id)
 	{
-		for(CompItem ci:items)
+		for(CompItem ci:getItems())
 		{
 			if(id.contentEquals(ci.getId()))
 				return ci ;
@@ -128,19 +227,62 @@ public class CompCat implements IResNode
 		return null ;
 	}
 	
+
+	public CompItem addComp(String title) throws Exception
+	{
+		if(isReadOnly())
+			throw new Exception("cat is readonly") ;
+		
+		File catdir = this.getCatDir();
+		CompItem ci = new CompItem(catdir,title) ;
+		saveItem(ci);
+		getItems().add(ci) ;
+		return ci ;
+	}
+	
+	public CompItem updateComp(String compid,String title) throws Exception
+	{
+		if(isReadOnly())
+			throw new Exception("cat is readonly") ;
+		
+		CompItem ci = getItemById(compid) ;
+		if(ci==null)
+			return null ;
+		if(ci.title.equals(title))
+			return ci ;
+		ci.title = title ;
+		saveItem(ci);
+		return ci ;
+	}
+	
+	public CompItem delComp(String compid) throws Exception
+	{
+		if(isReadOnly())
+			throw new Exception("cat is readonly") ;
+		
+		CompItem ci = getItemById(compid) ;
+		if(ci==null)
+			return null ;
+		getItems().remove(ci) ;
+		File cdir = getCompItemDir(compid);
+		Convert.deleteDir(cdir) ;
+		return ci ;
+	}
+	
+	
 	public XmlData toXmlData()
 	{
 		XmlData xd = new XmlData() ;
 		xd.setParamValue("id", id);
 		xd.setParamValue("title", title);
-		List<XmlData> xds = xd.getOrCreateSubDataArray("items") ;
-		if(items!=null)
-		{
-			for(CompItem ci:items)
-			{
-				xds.add(ci.toXmlData()) ;
-			}
-		}
+//		List<XmlData> xds = xd.getOrCreateSubDataArray("items") ;
+//		if(items!=null)
+//		{
+//			for(CompItem ci:items)
+//			{
+//				xds.add(ci.toXmlData()) ;
+//			}
+//		}
 		return xd ;
 	}
 	
@@ -148,54 +290,28 @@ public class CompCat implements IResNode
 	{
 		this.id = xd.getParamValueStr("id") ;
 		this.title = xd.getParamValueStr("title") ;
-		List<XmlData> xds = xd.getSubDataArray("items") ;
-		if(xds!=null)
-		{
-			for(XmlData tmpxd :xds)
-			{
-				CompItem ci = new CompItem() ;
-				ci.fromXmlData(tmpxd);
-				ci.belongTo = this ;
-				this.items.add(ci) ;
-			}
-		}
 	}
 
-	ResDir resCxt = null ;
-	
-	@Override
-	public ResDir getResDir()
-	{
-		if(resCxt!=null)
-			return resCxt ;
-		File catdir = getCatDirFile() ;
-		File dir = new File(catdir,"_res/") ;
-		if(!dir.exists())
-			dir.mkdirs();
-		resCxt=new ResDir(this,this.getId(),this.getTitle(),dir);
-		return resCxt;
-	}
-
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return this.getItemById(subid) ;
-	}
-
-	public IResNode getResNodeParent()
-	{
-		return CompManager.getInstance() ;
-	}
-
-	@Override
-	public String getResNodeId()
-	{
-		return this.getId();
-	}
-	
-	@Override
-	public String getResNodeTitle()
-	{
-		return this.getTitle() ;
-	}
+//	@Override
+//	public IResNode getResNodeSub(String subid)
+//	{
+//		return this.getItemById(subid) ;
+//	}
+//
+//	public IResNode getResNodeParent()
+//	{
+//		return this.belongToLib;
+//	}
+//
+//	@Override
+//	public String getResNodeId()
+//	{
+//		return this.getId();
+//	}
+//	
+//	@Override
+//	public String getResNodeTitle()
+//	{
+//		return this.getTitle() ;
+//	}
 }

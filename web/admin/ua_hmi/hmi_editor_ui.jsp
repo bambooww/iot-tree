@@ -35,12 +35,45 @@
 	UANodeOCTagsCxt node = uahmi.getBelongTo() ;
 	String cxtnodeid = node.getId() ;
 	UANode topn = node.getTopNode() ;
-	String resnodeid = "" ;
+	String res_ref_id="" ;
+	String reslibid = "" ;
+	String resid = "" ;
+	if(topn instanceof DevDef)
+	{
+		resid = topn.getId();
+	}
 	if(topn instanceof IResNode)
 	{
-		resnodeid = ((IResNode)topn).getResNodeUID() ;
+		res_ref_id = reslibid = ((IResNode)topn).getResLibId();
+		//.getResNodeUID() ;
 	}
+	
+	
 	boolean bprj = topn instanceof UAPrj ;
+	UAPrj prj = null;
+	UADev owner_dev = null;
+	DevDef owner_def = null ;
+	if(bprj)
+	{
+		prj = (UAPrj)topn;
+		owner_dev = uahmi.getOwnerUADev() ;
+		if(owner_dev!=null)
+			owner_def = owner_dev.getDevDef() ; 
+	}
+	
+	if(owner_def!=null)
+	{// use UADev as top res_ref_id
+		res_ref_id = prj.getResLibId() ;
+		reslibid = owner_def.getResLibId() ;
+		resid = owner_def.getId();
+	}
+	
+	if(owner_dev!=null)
+	{
+		res_ref_id =reslibid= prj.getResLibId() ;
+		//reslibid = owner_dev.getId();
+		resid = owner_dev.getId();
+	}
 %><!DOCTYPE html>
 <html>
 <head>
@@ -340,7 +373,7 @@ if(bprj)
 			<div id="main_panel" style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
 				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增数据库"  onclick="store_add_db()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="Add New Store"  onclick="store_add_db()">
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -354,7 +387,7 @@ if(bprj)
 				
 				<div id="win_act_conn" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group" style="width:40px">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增接入"  onclick="conn_add()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="Add New Conn"  onclick="conn_add()">
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -418,7 +451,9 @@ var tab_id = "<%=tabid%>" ;
 
 var layuiEle ;
 var path="<%=path%>";
-var res_node_id="<%=resnodeid%>";
+var res_ref_id ="<%=res_ref_id%>";
+var res_lib_id="<%=reslibid%>";
+var res_id="<%=resid%>";
 
 var cxtnodeid = "<%=cxtnodeid%>" ;
 var editorname = "<%=uahmi.getTitle()%>" ;
@@ -480,13 +515,15 @@ function on_panel_mousemv(p,d)
 
 function init_iottpanel()
 {
+	oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
+	
 	hmiModel = new oc.hmi.HMIModel({
 		temp_url:"hmi_editor_ajax.jsp?op=load&path="+path,
 		comp_url:"comp_ajax.jsp?op=comp_load",
 		hmi_path:path
 	});
 	
-	panel = new oc.hmi.HMIPanel("main_panel",{
+	panel = new oc.hmi.HMIPanel("main_panel",res_lib_id,res_id,{
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
@@ -544,7 +581,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 		var tt = "Edit Properties" ;
 		if(tp=="prop_bind")
 			tt = "Bind Properties" ;
-		dlg.open("../util/di_editplug_"+tp+".jsp?res_node_id="+res_node_id,
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id,
 				{title:tt,w:'500px',h:'420px',shade: 0.01,
 					on_val_chg:(v)=>{
 						jq_ele.val(v) ;

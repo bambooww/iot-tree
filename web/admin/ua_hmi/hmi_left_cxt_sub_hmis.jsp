@@ -217,10 +217,10 @@ function load_preview()
             var fl = oc.util.splitFirstLnAndLeft(ret) ;
             var refpath = fl.first_ob["rb_path"];
             var np = fl.first_ob["path"] ;
-            var resnodeid = fl.first_ob["res_node_id"] ;
-           
+            var resnodeid = fl.first_ob["res_lib_id"] ;
+            var resid = fl.first_ob["res_id"] ;
 			lay.inject(fl.left_txt) ;
-			var panel = new oc.hmi.HMICompPanel(ids[loadidx],resnodeid,"panel_"+ids[loadidx],{});
+			var panel = new oc.hmi.HMICompPanel(ids[loadidx],resnodeid,resid,"panel_"+ids[loadidx],{});
 			var p1 = new oc.hmi.HMISubDiv("",{layer:lay,panel:panel,hmi_path:path}) ;
 			p1["hmi_path"] = paths[loadidx];
 			p1["hmi_id"] = ids[loadidx];

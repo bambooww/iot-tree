@@ -41,13 +41,15 @@ import org.iottree.core.task.Task;
 import org.iottree.core.task.TaskManager;
 import org.json.JSONObject;
 
+import kotlin.NotImplementedError;
+
 /**
  * UA Project
  * 
  * @author zzj
  */
 @data_class
-public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IResNode, ISaver, IJSOb
+public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IJSOb,IResCxt
 {
 	public static final String NODE_TP = "prj" ;
 	
@@ -173,7 +175,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 
 	void onLoaded()
 	{
-		this.getResDir();
+		//this.getResDir();
 
 		this.RT_init(true, true);
 	}
@@ -1284,7 +1286,65 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 		return jsOb;
 	}
 
-	private transient ResDir resDir = null;
+	@Override
+	public String getResCxtId()
+	{
+		return this.getId();
+	}
+
+//	@Override
+//	public String getResCxtName()
+//	{
+//		return "prj";
+//	}
+
+	@Override
+	public String getResPrefix()
+	{
+		return IResCxt.PRE_PRJ;
+	}
+
+	
+	private File resRootD = null ;
+	private File refRootD = null ;
+	
+	@Override
+	public File getResRootDir()
+	{
+		if(resRootD!=null)
+			return resRootD;
+		resRootD =  new File(this.getPrjSubDir(),"_res/");
+		return resRootD;
+	}
+	
+	@Override
+	public File getRefRootDir()
+	{
+		if(refRootD!=null)
+			return refRootD;
+		refRootD =  new File(this.getPrjSubDir(),"_ref/");
+		return refRootD;
+	}
+	
+	static private List<String> refferNames = Arrays.asList(IResCxt.PRE_DEVDEF,IResCxt.PRE_COMP);
+
+	@Override
+	public List<String> getResRefferNames()
+	{
+		return refferNames;
+	}
+	
+	@Override
+	public IResNode getResNodeById(String res_id)
+	{//get UADev
+		for(UACh ch:this.getChs())
+		{
+			UADev d = ch.getDevById(res_id);
+			if(d!=null)
+				return d ;
+		}
+		return null ;
+	}
 
 	@Override
 	public String getResNodeId()
@@ -1299,33 +1359,53 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IR
 	}
 
 	@Override
-	public IResNode getResNodeParent()
+	public File getResNodeDir()
 	{
-		return UAManager.getInstance();
+		return this.getPrjSubDir() ;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Override
-	public ResDir getResDir()
-	{
-		if (resDir != null)
-			return resDir;
-		File fsb = UAManager.getPrjFileSubDir(this.getId());
-		File dir = new File(fsb, "_res/");
-		if (!dir.exists())
-			dir.mkdirs();
-		resDir = new ResDir(this, this.getId(), this.getTitle(), dir);
-		return resDir;
-	}
-
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return null;
-	}
+//	private transient ResDir resDir = null;
+//
+//	@Override
+//	public String getResNodeId()
+//	{
+//		return this.getId();
+//	}
+//
+//	@Override
+//	public String getResNodeTitle()
+//	{
+//		return this.getTitle();
+//	}
+//
+//	@Override
+//	public IResNode getResNodeParent()
+//	{
+//		return UAManager.getInstance();
+//	}
+//
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	@Override
+//	public ResDir getResDir()
+//	{
+//		if (resDir != null)
+//			return resDir;
+//		File fsb = UAManager.getPrjFileSubDir(this.getId());
+//		File dir = new File(fsb, "_res/");
+//		if (!dir.exists())
+//			dir.mkdirs();
+//		resDir = new ResDir(this, this.getId(), this.getTitle(), dir);
+//		return resDir;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeSub(String subid)
+//	{
+//		return null;
+//	}
 
 	
 

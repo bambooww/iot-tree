@@ -15,6 +15,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
+import org.iottree.core.res.ResDir;
 import org.json.JSONObject;
 
 @data_class
@@ -389,19 +390,34 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			
 			
 			d = dd.deepCopyUADev(this.getBelongTo(),dev,name, title, desc,rf2new) ;
-			
+			d.setDevRef(libid,devdef_id);
 		}
 		else
 		{
 			d = new UADev();
 			d.id = this.getNextIdByRoot() ;
 			d.setNameTitle(name, title, desc);
+			d.setDevRef(null,null);
 		}
 		
 		devs.add(d);
 		constructNodeTree();
 		this.getBelongTo().save();
 		Convert.copyRelatedFile(rf2new);
+		//copy res file
+		if(dd!=null)
+		{
+			ResDir sor_resdir = dd.getResDir() ;
+			if(sor_resdir.hasResItems())
+			{
+				File sorf = sor_resdir.getResDir() ;
+				File tarf = d.getResDir().getResDir();
+				if(!tarf.exists())
+					tarf.mkdirs() ;
+				FileUtils.copyDirectory(sorf, tarf);
+			}
+			
+		}
 		d.RT_init(true, false);
 		return d ;
 	}
@@ -410,29 +426,50 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	{
 		UAUtil.assertUAName(name);
 
+		DevDef dd = null ;
+		UADev d = null;
 		if(Convert.isNotNullEmpty(devdef_id) && !devdef_id.equals(dev.getDevRefId()))
 		{
 			//DevDriver drv = this.getDriver() ;
-			DevDef dd = DevManager.getInstance().getDevDefById(libid, devdef_id);// drv.getDevDefById(devdef_id) ;
+			dd = DevManager.getInstance().getDevDefById(libid, devdef_id);// drv.getDevDefById(devdef_id) ;
 			if(dd==null)
 				throw new Exception("no device definition found") ;
 			
-			UADev d = getDevByName(name);
+			d = getDevByName(name);
 			if(d!=null && d!=dev)
 			{
 				throw new IllegalArgumentException("dev with name="+name+" existed") ;
 			}
 			d = dd.updateUADev(dev,name, title, desc) ;
+			d.setDevRef(libid,devdef_id);
 		}
 		else
 		{
 			dev.setNameTitle(name, title, desc);
-			dev.setDevRefId(null);
+			dev.setDevRef(null,null);
 		}
 		
 		this.RT_init(false, true);
 		constructNodeTree();
 		this.getBelongTo().save();
+		//Convert.copyRelatedFile(rf2new);
+		//copy res file
+		if(dd!=null)
+		{
+			ResDir sor_resdir = dd.getResDir() ;
+			if(sor_resdir.hasResItems())
+			{
+				File sorf = sor_resdir.getResDir() ;
+				File tarf = d.getResDir().getResDir();
+				if(!tarf.exists())
+					tarf.mkdirs() ;
+				else
+					FileUtils.cleanDirectory(tarf);
+				FileUtils.copyDirectory(sorf, tarf);
+			}
+			
+		}
+		
 		return dev ;
 	}
 	
@@ -468,7 +505,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		for(File tmpf:fs)
 		{
 			if(tmpf.exists())
-				tmpf.delete();
+			{
+				if(tmpf.isDirectory())
+					Convert.deleteDir(tmpf) ;
+				else
+					tmpf.delete();
+			}
 		}
 	}
 	

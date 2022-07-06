@@ -2285,6 +2285,15 @@ public class Convert
 		return getElementSubChild(ele, tagname);
 	}
 
+	public static void writeFileTxt(File f,String txt,String encod) throws IOException
+	{
+		if(!f.getParentFile().exists())
+			f.getParentFile().mkdirs() ;
+		try(FileOutputStream fos = new FileOutputStream(f);)
+		{
+			fos.write(txt.getBytes(encod));
+		}
+	}
 	/**
 	 * 读取文件到字符串
 	 * 

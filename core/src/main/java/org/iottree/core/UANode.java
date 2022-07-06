@@ -14,6 +14,7 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
+import org.iottree.core.res.IResNode;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.xmldata.*;
 import org.json.JSONObject;
@@ -161,6 +162,12 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		//ArrayList<File> rets = new ArrayList<>() ;
 		if(this instanceof IRelatedFile)
 			fs.add(((IRelatedFile)this).getRelatedFile()) ;
+		if(this instanceof IResNode)
+		{
+			File fdir = ((IResNode)this).getResNodeDir();
+			if(fdir!=null)
+				fs.add(fdir) ;
+		}
 		List<UANode> subns = this.getSubNodes() ;
 		if(subns==null)
 			return fs.size() ;
@@ -506,6 +513,19 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return pn.getTopNode() ;
 	}
 	
+	public final UADev getOwnerUADev()
+	{
+		UANode pn = this;
+		while(pn!=null)
+		{
+			pn = pn.getParentNode() ;
+			if(pn==null)
+				return null ;
+			if(pn instanceof UADev)
+				return (UADev)pn;
+		}
+		return null ;
+	}
 	/**
 	 * no include self
 	 * @param path

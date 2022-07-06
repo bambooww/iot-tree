@@ -7,19 +7,19 @@
 	java.util.*,
 	java.net.*,
 	java.util.*"%><%
-if(!Convert.checkReqEmpty(request, out, "catid"))
+if(!Convert.checkReqEmpty(request, out, "libid"))
 	return;
-String catid = request.getParameter("catid") ;
+String libid = request.getParameter("libid") ;
 CompManager compmgr = CompManager.getInstance() ;
-CompCat cc = compmgr.getCatById(catid) ;
+CompLib cc = compmgr.getCompLibById(libid);
 if(cc==null)
 {
 	out.print("no cat found") ;
 	return;
 }
-String fn = catid+".zip";
+String fn = libid+".zip";
 File fout = new File(Config.getDataDirBase()+"/tmp/"+fn) ;
-compmgr.exportCompCat(catid, fout);
+compmgr.exportCompLibTo(libid, fout);
 
 try(FileInputStream fis = new FileInputStream(fout);)
 {

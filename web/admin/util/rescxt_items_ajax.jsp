@@ -7,19 +7,23 @@
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
 %><%
-if(!Convert.checkReqEmpty(request, out, "res_node_id"))
+if(!Convert.checkReqEmpty(request, out, "res_lib_id"))
 	return ;
-	String resnodeid = request.getParameter("res_node_id") ;
-	//String compid = request.getParameter("compid") ;
-	ResDir dr = ResManager.getInstance().getResDir(resnodeid) ;
-	
-	if(dr==null)
-	{
-		out.print("no ResDir input") ;
-		return ;
-	}
+String res_lib_id = request.getParameter("res_lib_id") ;
+String res_id = request.getParameter("res_id") ;
 
-	List<ResItem> ris = dr.listResItems() ;
+ResDir rdir = ResManager.getInstance().getResDir(res_lib_id, res_id); //
+
+//ResLib reslib = ResManager.getInstance().getResLibByLibId(res_lib_id) ;
+if(rdir==null)
+{
+	out.print("no ResDir found") ;
+	return ;
+}
+
+
+
+	List<ResItem> ris = rdir.listResItems() ;
 	
 	out.print("[");
 	boolean bfirst = true;

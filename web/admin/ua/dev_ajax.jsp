@@ -3,6 +3,7 @@
 <%@ page import="
 	org.iottree.core.*,
 				org.iottree.core.util.*,
+				org.iottree.core.res.*,
 				org.iottree.core.basic.*,
 	java.io.*,
 	java.util.*,
@@ -62,6 +63,14 @@
 			{
 				UACh ch0 = dev.getBelongTo() ;
 				ch0.updateDev(dev,name, title, desc, libid,devid) ;
+			}
+			
+			if(Convert.isNotNullEmpty(libid) && Convert.isNotNullEmpty(devid))
+			{
+				UAPrj prj = ch.getBelongTo();
+				String ref_lib_id = prj.getResLibId() ;
+				DevDef dd = DevManager.getInstance().getDevDefById(libid,devid);
+				ResManager.getInstance().getDevDef(ref_lib_id, dd.getResLibId(), devid,true);
 			}
 			out.print("succ="+dev.getId()) ;
 			return ;

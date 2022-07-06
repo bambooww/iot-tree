@@ -8,8 +8,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%	
-	String tp = request.getParameter("tp");
+	java.util.*"%><%String tp = request.getParameter("tp");
 	if(tp==null)
 		tp= "" ;
 	UAPrj prj = null ;
@@ -60,13 +59,18 @@
 		
 		String txt = sub_hmi.loadHmiUITxt() ;
 		UANode topn = sub_hmi.getTopNode() ;
-		String resnodeid = "" ;
+		String reslibid = "" ;
 		if(topn instanceof IResNode)
 		{
-			resnodeid = ((IResNode)topn).getResNodeUID() ;
+			reslibid = ((IResNode)topn).getResLibId();
 		}
+		else if(topn instanceof IResCxt)
+		{
+			reslibid = ((IResCxt)topn).getResLibId();
+		}
+		String resid = "" ;
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
-		out.print("{\"path\":\""+fp+"\",\"rb_path\":\""+rb_path+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
+		out.print("{\"path\":\""+fp+"\",\"rb_path\":\""+rb_path+"\",\"res_lib_id\":\""+reslibid+"\",\"res_id\":\""+resid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	case "sub":
@@ -118,14 +122,18 @@
 		String np = hmi.getNodePath() ;
 		txt = hmi.loadHmiUITxt() ;
 		topn = hmi.getTopNode() ;
-		resnodeid = "" ;
+		reslibid = "" ;
 		if(topn instanceof IResNode)
 		{
-			resnodeid = ((IResNode)topn).getResNodeUID() ;
+			reslibid = ((IResNode)topn).getResLibId();
+		}
+		else if(topn instanceof IResCxt)
+		{
+			reslibid = ((IResCxt)topn).getResLibId();
 		}
 		
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
-		out.print("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
+		out.print("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\",\"res_lib_id\":\""+reslibid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
 	case "rt":
@@ -201,18 +209,14 @@
 			hmi = (UAHmi)branchn ;
 		}
 		topn = hmi.getTopNode() ;
-		resnodeid = "" ;
-		if(topn instanceof IResNode)
+		reslibid = "" ;
+		resid="";
+		if(topn instanceof IResCxt)
 		{
-			resnodeid = ((IResNode)topn).getResNodeUID() ;
+			reslibid = ((IResCxt)topn).getResLibId();
 		}
-		
 		txt = hmi.loadHmiUITxt() ;
-		out.print("{\"path\":\""+path+"\",\"rb_path\":\""+rb_path+"\",\"res_node_id\":\""+resnodeid+"\"}\r\n") ;
+		out.print("{\"path\":\""+path+"\",\"rb_path\":\""+rb_path+"\",\"res_lib_id\":\""+reslibid+"\",\"res_id\":\""+resid+"\"}\r\n") ;
 		out.print(txt);
 		break ;
-	}
-	
-
-	
-%>
+	}%>

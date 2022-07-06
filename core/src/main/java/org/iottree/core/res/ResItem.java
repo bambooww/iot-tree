@@ -36,7 +36,7 @@ public class ResItem
 
 		String extn = n.substring(k+1).toLowerCase() ;
 		bPic = PIC_EXTS.contains(extn);
-		name = n.substring(0,k) ;
+		name = n;//n.substring(0,k) ;
 	}
 	
 	public String getResId()

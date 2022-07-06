@@ -1,11 +1,14 @@
 package org.iottree.core;
 
+import java.io.File;
 import java.util.*;
 
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
@@ -22,7 +25,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
-public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner // extends UANodeOC
+public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode // extends UANodeOC
 {
 	public static final String NODE_TP = "dev" ;
 	/**
@@ -35,7 +38,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	
 	//private transient DevModel model = null ;
 	
-	@data_val(param_name = "lib_id")
+	@data_val(param_name = "ref_lib_id")
 	String devRefLibId = null;
 	
 	@data_val(param_name = "ref_id")
@@ -127,8 +130,9 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return Convert.isNotNullEmpty(this.devRefId) ;
 	}
 	
-	void setDevRefId(String defid)
+	void setDevRef(String def_lib_id,String defid)
 	{
+		this.devRefLibId = def_lib_id ;
 		this.devRefId = defid ;
 	}
 	
@@ -402,4 +406,31 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	{
 		return null ;
 	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId();
+	}
+
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle();
+	}
+
+	@Override
+	public File getResNodeDir()
+	{
+		File f = new File(this.getPrj().getResNodeDir(),"dev_"+this.getId()+"/") ;
+		return f;
+	}
+
+	@Override
+	public String getResLibId()
+	{
+		return null;
+	}
+
+
 }

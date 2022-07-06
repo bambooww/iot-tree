@@ -3,9 +3,13 @@ package org.iottree.core;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.iottree.core.res.IResCxt;
+import org.iottree.core.res.IResNode;
+import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -14,7 +18,9 @@ import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_val;
 
-public class DevLib implements Comparable<DevLib>
+import kotlin.NotImplementedError;
+
+public class DevLib implements Comparable<DevLib>,IResCxt
 {
 	protected static ILogger log = LoggerManager.getLogger(DevLib.class) ;
 	
@@ -296,5 +302,108 @@ public class DevLib implements Comparable<DevLib>
 			return -1;
 		else
 			return 0 ;
+	}
+
+//	@Override
+//	public String getResNodeId()
+//	{
+//		return this.getId();
+//	}
+//
+//	@Override
+//	public String getResNodeTitle()
+//	{
+//		return this.title;
+//	}
+//
+//	@Override
+//	public ResDir getResDir()
+//	{
+//		return null;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeSub(String subid)
+//	{
+//		return this.getDevCatById(subid) ;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeParent()
+//	{
+//		return DevManager.getInstance();
+//	}
+
+
+
+//	@Override
+//	public String getResCxtName()
+//	{
+//		return "devdef";
+//	}
+
+	private File resRootD = null ;
+	private File refRootD = null ;
+
+	@Override
+	public File getResRootDir()
+	{
+		if(resRootD!=null)
+			return resRootD;
+		resRootD =  new File(this.getLibDir(),"_res/");
+		return resRootD;
+	}
+	
+	public File getRefRootDir()
+	{
+		if(refRootD!=null)
+			return refRootD;
+		refRootD =  new File(this.getLibDir(),"_ref/");
+		return refRootD;
+	}
+
+	static private List<String> resRefNames = Arrays.asList(IResCxt.PRE_COMP) ;
+
+	@Override
+	public List<String> getResRefferNames()
+	{
+		return resRefNames;
+	}
+
+	@Override
+	public String getResCxtId()
+	{
+		return this.getId();
+	}
+
+	@Override
+	public String getResPrefix()
+	{
+		return IResCxt.PRE_DEVDEF;
+	}
+
+	@Override
+	public IResNode getResNodeById(String res_id)
+	{
+		return this.getDevDefById(res_id) ;
+	}
+
+	@Override
+	public String getResNodeId()
+	{
+		return this.getId();
+	}
+
+	@Override
+	public String getResNodeTitle()
+	{
+		return this.getTitle();
+	}
+
+	@Override
+	public File getResNodeDir()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

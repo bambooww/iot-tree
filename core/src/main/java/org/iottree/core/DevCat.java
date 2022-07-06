@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
+import org.apache.commons.io.FileUtils;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
@@ -22,7 +23,7 @@ import org.iottree.core.util.xmldata.data_val;
  * @author jason.zhu
  */
 @data_class
-public class DevCat implements IResNode
+public class DevCat //implements IResNode
 {
 	protected static ILogger log = LoggerManager.getLogger(DevCat.class) ;
 	
@@ -143,11 +144,11 @@ public class DevCat implements IResNode
 	
 	public void delDevDef(DevDef dd)
 	{
-		File f = dd.getDevDefFile();
-		if(f.exists())
-		{
-			f.delete();
-		}
+//		File f = dd.getDevDefFile();
+//		if(f.exists())
+//		{
+//			f.delete();
+//		}
 		File df = dd.getDevDefDir() ;
 		if(df.exists())
 		{
@@ -170,13 +171,9 @@ public class DevCat implements IResNode
 		File catdir=  getDevCatDir();
 		if(!catdir.exists())
 			return null;
-		File ddf = new File(catdir,"dd_"+id+".xml");
-		if(!ddf.exists())
-			return null ;
-		XmlData tmpxd = XmlData.readFromFile(ddf);
-		DevDef r = new DevDef(this) ;
-		DataTranserXml.injectXmDataToObj(r, tmpxd);
-		return r ;
+		File ddd =calDevDefDir(id);
+		
+		return DevDef.loadFromDir(ddd,this) ;
 	}
 
 	private List<DevDef> loadDevDefs()
@@ -191,17 +188,15 @@ public class DevCat implements IResNode
 			@Override
 			public boolean accept(File f)
 			{
-				if(f.isDirectory())
-					return false;
-				String n = f.getName() ;
-				return n.startsWith("dd_")&&n.endsWith(".xml");
+				return f.isDirectory() ;
 			}
 		});
 		//ArrayList<DevCat> rets = new ArrayList<>() ;
 		for(File tmpf:fs)
 		{
-			String n = tmpf.getName() ;
-			String id = n.substring(3,n.length()-4) ;
+			if(!new File(tmpf,"_dd.xml").exists())
+				continue ;
+			String id =tmpf.getName() ;;
 			try
 			{
 				DevDef dd =  loadDevDef(id) ;
@@ -221,6 +216,11 @@ public class DevCat implements IResNode
 		return rets;
 	}
 	
+	File calDevDefDir(String id)
+	{
+		return new File(getDevCatDir(),id+"/") ;
+	}
+	
 	public DevDef addDevDef(String name,String title,String desc,String drv) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
@@ -232,6 +232,7 @@ public class DevCat implements IResNode
 		{
 			throw new Exception("name="+name+" is existed!") ;
 		}
+		
 		r = new DevDef(this,name,title,desc) ;
 		r.asDriver(drv);
 		saveDevDef(r);
@@ -286,45 +287,42 @@ public class DevCat implements IResNode
 		return dd ;
 	}
 
-	ResDir resCxt = null ;
-	
-	@Override
-	public String getResNodeId()
-	{
-		return this.getId() ;
-	}
-	
-	@Override
-	public String getResNodeTitle()
-	{
-		return this.getTitle() ;
-	}
-	
-	@Override
-	public ResDir getResDir()
-	{
-		if(resCxt!=null)
-			return resCxt ;
-		File catdir = this.getDevCatDir();
-		File dir = new File(catdir,"_res/") ;
-		if(!dir.exists())
-			dir.mkdirs();
-		resCxt=new ResDir(this,this.getName(),this.getTitle(),dir);
-		return resCxt;
-	}
-
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return this.getDevDefById(subid) ;
-	}
-
-	@Override
-	public IResNode getResNodeParent()
-	{
-		
-		return null;//DevManager.getInstance();
-	}
-
-	
+//	ResDir resCxt = null ;
+//	
+//	@Override
+//	public String getResNodeId()
+//	{
+//		return this.getId() ;
+//	}
+//	
+//	@Override
+//	public String getResNodeTitle()
+//	{
+//		return this.getTitle() ;
+//	}
+//	
+//	@Override
+//	public ResDir getResDir()
+//	{
+//		if(resCxt!=null)
+//			return resCxt ;
+//		File catdir = this.getDevCatDir();
+//		File dir = new File(catdir,"_res/") ;
+//		if(!dir.exists())
+//			dir.mkdirs();
+//		resCxt=new ResDir(this,this.getName(),this.getTitle(),dir);
+//		return resCxt;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeSub(String subid)
+//	{
+//		return this.getDevDefById(subid) ;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeParent()
+//	{
+//		return this.devLib;//DevManager.getInstance();
+//	}
 }

@@ -2,17 +2,27 @@
     pageEncoding="UTF-8"%>
 <%@ page import="
 	org.iottree.core.*,
+	org.iottree.core.comp.*,
 	org.iottree.core.util.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
 	java.util.*"%>
 <%
-
+String libid =request.getParameter("libid") ;
+String catid =request.getParameter("catid") ;
+String compid =request.getParameter("compid") ;
+String title = "" ;
+if(Convert.isNotNullEmpty(libid) && Convert.isNotNullEmpty(catid) && Convert.isNotNullEmpty(compid))
+{
+	CompItem ci = CompManager.getInstance().getCompItemById(libid, catid,compid) ;
+	if(ci!=null)
+		title = ci.getTitle() ;
+}
 %>
 <html>
 <head>
-<title>Category Add</title>
+<title>Item Editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -29,7 +39,7 @@ dlg.resize_to(400,200);
   <div class="layui-form-item">
     <label class="layui-form-label">Title:</label>
     <div class="layui-input-block">
-      <input type="text" id="title" name="title" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
+      <input type="text" id="title" name="title" value="<%=title %>" class="layui-input">
     </div>
   </div>
  </form>

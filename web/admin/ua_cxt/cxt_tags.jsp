@@ -22,8 +22,8 @@ if(node==null)
 	return ;
 }
 //DevDef devdef = null ;
-//UAPrj prj = (UAPrj)node.getTopNode() ;
-String prj_name = node.getName();//.getName() ;
+UANode prj = node.getTopNode() ;
+String prj_name = prj.getName();//.getName() ;
 String node_id = node.getId() ;
 UAHmi hmi = null ;
 boolean bhmi = false;
@@ -720,6 +720,7 @@ var ws_opened = false;
 function ws_conn()
 {
     var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id;
+    console.log(url) ;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

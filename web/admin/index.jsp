@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.util.*,
 	org.iottree.core.*,
+	org.iottree.core.comp.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -45,13 +46,13 @@ background:#aaaaaa;
 
 .lib_item
 {
-	height:40px;
+	height:30px;
 	border:1px solid;
 	border-color: #499ef3;
-	margin:5px;
+	margin:2px;
 	white-space: nowrap;
 	display:inline-block;
-	padding:5px;
+	padding:2px;
 }
  </style>
 </head>
@@ -293,7 +294,7 @@ if(rep.isAutoStart())
 					        <h1>Device Library </h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
-					        	<a href="javascript:devdef_cat_import()">
+					        	<a href="javascript:dev_lib_import()">
 					        	<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
@@ -379,16 +380,19 @@ if(rep.isAutoStart())
 					        <h1 style="width:200px">HMI Library</h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
-					        	<a href="javascript:comp_cat_import()"><span class="fa-stack">
+					        	<a href="javascript:comp_lib_import()"><span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp; Import</a>
+							</span>&nbsp;&nbsp; Import
+							<input type="file" id='complib_add_file' onchange="complib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
+							</a>
+							<%--
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a href="javascript:comp_cat_export()"><span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span> Export</a>
-							
+							 --%>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a  title="git help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_hmilib.md" target="_blank">
 							<span class="fa-stack">
@@ -398,12 +402,61 @@ if(rep.isAutoStart())
 							</a>
 							
 					        </div>
-					        
+					        <%--
 					        <div style="float:right;top:5px;position: absolute;right:10px" onclick="show_hide('cont_hmilib')"><i class="fa fa-bars fa-lg"></i></div>
+					         --%>
 					    </div>
-					    <div class="mod-body"  id="cont_hmilib" style="display:none">
+					    <div class="mod-body"  id="cont_hmilib" style0="display:none">
+					    <%-- 
 					        <iframe id="comp_lister" src="/admin/ua_hmi/hmi_left_comp.jsp" style="width:100%;height:500px;"></iframe>
-					        
+					        --%>
+					        <%
+	
+	for(CompLib lib:CompManager.getInstance().getCompLibs())
+{
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		
+			tmpid = "div_lib_"+lib.getId() ;
+		
+%>
+<%--
+<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(lib.getCreateDT())) %></span>
+ --%>
+	<span class="lib_item btn_sh_c" >
+		<i class="fa-solid fa-puzzle-piece"></i> &nbsp;<a class="text title" href="javascript:open_complib('<%=lib.getId()%>')" data-id="8"><%=lib.getTitle() %></a>
+		
+		
+		<span class="btn_sh">
+
+           <a class0="btn btn-success download-btn white" href="javascript:complib_add_or_edit('<%=lib.getId()%>')" title="show detail">
+              <span class="fa-stack fa-1x">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+
+           <a href="javascript:complib_export('<%=lib.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:complib_del('<%=lib.getId()%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="complib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+				
 					    </div>
 					</div>
 					
@@ -909,9 +962,7 @@ function devlib_export(libid)
 	window.open("./dev/lib_export.jsp?libid="+libid) ;
 }
 
-
-
-function devdef_cat_import()
+function dev_lib_import()
 {
 	devlib_add_file.click();
 }
@@ -1022,6 +1073,165 @@ function devlib_add_or_edit(libid)
 						 var pm = {
 									type : 'post',
 									url : "./dev/lib_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if(ret.indexOf("succ=")!=0)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								document.location.href=document.location.href;
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+function complib_export(libid)
+{
+	window.open("./ua_hmi/comp_lib_export.jsp?libid="+libid) ;
+}
+
+
+
+function comp_lib_import()
+{
+	complib_add_file.click();
+}
+
+function complib_before_imp(tmpfn)
+{
+
+	dlg.open("ua_hmi/comp_lib_import.jsp?tmpfn="+tmpfn,
+			{title:"Import HMI Library",w:'500px',h:'400px'},
+			['Do Import','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 //enable_btn(true);
+							 return;
+						 }
+						 //console.log(ret);
+						 dlg.msg(ret) ;
+						 
+						 //var w = document.getElementById("devdef_lister").contentWindow ;
+						// w.drv_sel_chg();
+						 dlg.close();
+						 document.location.href=document.location.href;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function complib_add_file_onchg()
+{
+	//$("#"+id).
+	var fs = $("#complib_add_file")[0].files ;
+	if(fs==undefined||fs==null||fs.length<=0)
+	{
+		return ;
+	}
+	var f = fs[0];
+
+	//upload
+	var fd = new FormData();
+    //fd.append("cxtid",cur_cxtid) ;
+    fd.append("file",f);
+     $.ajax({"url": "ua_hmi/comp_lib_imp_upload.jsp",type: "post","processData": false,"contentType": false,
+		"data": fd,
+		success: function(data)
+       	{
+ 	  		//dlg.msg(data);
+ 	  		//document.location.href=document.location.href;
+ 	  		if(data.indexOf("succ=")==0)
+ 	  			complib_before_imp(data.substring(5)) ;
+ 	  		else
+ 	  			dlg.msg(data) ;
+   　  },
+      　error: function(data)
+         {
+  				dlg.msg("upload failed");
+　　　}
+  　　});
+}
+
+function open_complib(id)
+{
+	if(!id)
+		id = "" ;
+	dlg.open_win("ua_hmi/comp_lib_main.jsp?edit=true&libid="+id,
+			{title:"HMI Comp Library",w:'1000',h:'560'},
+			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.msg("help is under dev");
+				}
+			]);
+}
+
+function complib_del(libid)
+{
+	dlg.confirm('delete this HMI library?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+		    {
+					send_ajax("./ua_hmi/comp_ajax.jsp","op=del&libid="+libid,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("del err:"+ret) ;
+			    			return ;
+			    		}
+			    		document.location.href=document.location.href;
+			    	}) ;
+				});
+}
+
+function complib_add_or_edit(libid)
+{
+	var tt = "Edit HMI Lib" ;
+	if(!libid)
+	{
+		libid ="" ;
+		tt = "Add HMI Lib" ;
+	}
+		
+	dlg.open("./ua_hmi/comp_lib_edit.jsp?libid="+libid,
+			{title:tt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit" ;
+						 var pm = {
+									type : 'post',
+									url : "./ua_hmi/comp_lib_ajax.jsp",
 									data :ret
 								};
 							$.ajax(pm).done((ret)=>{

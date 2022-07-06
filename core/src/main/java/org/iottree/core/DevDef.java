@@ -14,6 +14,8 @@ import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.DataTranserXml;
+import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -29,7 +31,7 @@ import org.json.JSONObject;
  *
  */
 @data_class
-public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,IResNode
+public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch ,IResNode
 {
 	transient DevCat belongToCat = null;
 	
@@ -42,16 +44,33 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	@data_val(param_name = "drv")
 	String relatedDrv = null;
 	
+	private transient File devDefDir = null ;
 	
-	public DevDef(DevCat dc)
+	private DevDef(File defdir,DevCat dc)
 	{
+		this.devDefDir = defdir ;
 		belongToCat = dc ;
 	}
 	
 	public DevDef(DevCat dc,String name,String title,String desc)
 	{
 		super(name,title,desc);
+		
+		if(dc==null)
+			throw new IllegalArgumentException("add new DevDef must in cat") ;
 		belongToCat = dc ;
+		this.devDefDir =  dc.calDevDefDir(this.getId());
+	}
+	
+	public static DevDef loadFromDir(File ddd,DevCat dc) throws Exception
+	{
+		File ddf = new File(ddd,"_dd.xml");
+		if(!ddf.exists())
+			return null ;
+		XmlData tmpxd = XmlData.readFromFile(ddf);
+		DevDef r = new DevDef(ddd,dc) ;
+		DataTranserXml.injectXmDataToObj(r, tmpxd);
+		return r;
 	}
 	
 	public String getNodeTp()
@@ -91,6 +110,8 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 
 	public String getNodePath()
 	{
+		if(this.belongToCat==null)
+			return null ;
 		DevLib devlib = this.belongToCat.getDevLib() ;
 		return "/"+devlib.getId()+"-"+this.belongToCat.getName()+"-"+this.getName() ;
 	}
@@ -122,7 +143,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 
 	File getDevDefFile()
 	{
-		return new File(this.getBelongToCat().getDevCatDir(),"dd_"+getId()+".xml");
+		return new File(getDevDefDir(),"_dd.xml");
 	}
 	public void save() throws Exception
 	{
@@ -132,7 +153,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 	
 	public File getDevDefDir()
 	{
-		return new File(this.getBelongToCat().getDevCatDir(),"dd_"+getId()+"/");
+		return devDefDir ;
 	}
 	
 	public File getSaverDir()
@@ -176,7 +197,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		super.copyTreeWithNewSelf(null,dev,id,true,false,null); //recreate tree
 		dev.id = id ;
 		dev.setNameTitle(name, title, desc);
-		dev.setDevRefId(this.getId());
+		dev.setDevRef(this.getResLibId(),this.getId());
 		
 		//recover renamed info
 		for(Map.Entry<String, UATag> p2t:path2tag_rename.entrySet())
@@ -213,7 +234,7 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		super.copyTreeWithNewSelf(root,dev,"",false,true,rf2new); //recreate tree
 		dev.id = id ;
 		dev.setNameTitle(name, title, desc);
-		dev.setDevRefId(this.getId());
+		dev.setDevRef(this.getResLibId(),this.getId());
 		
 		return dev;
 	}
@@ -363,43 +384,76 @@ public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch,
 		
 	}
 
-	private ResDir resDir = null ;
-	
-	@Override
-	public ResDir getResDir()
-	{
-		if(resDir!=null)
-			return resDir ;
-		
-		File dir = new File(getDevDefDir(),"_res/") ;
-		if(!dir.exists())
-			dir.mkdirs();
-		resDir=new ResDir(this,this.getId(),this.getTitle(),dir);
-		return resDir;
-	}
-
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return null;
-	}
-
 	@Override
 	public String getResNodeId()
 	{
-		return getId();
-	}
-	
-	@Override
-	public String getResNodeTitle()
-	{
-		return this.getTitle() ;
+		return this.getId();
 	}
 
 	@Override
-	public IResNode getResNodeParent()
+	public String getResNodeTitle()
 	{
-		return this.getBelongToCat();
+		return this.getTitle();
 	}
+
+	@Override
+	public File getResNodeDir()
+	{
+		return this.getDevDefDir();
+	}
+
+	@Override
+	public String getResLibId()
+	{
+		return this.getBelongToCat().getDevLib().getResLibId();
+	}
+
+//	@Override
+//	public IResCxt getResCxt()
+//	{
+//		DevCat dc = this.getBelongToCat();
+//		if(dc==null)
+//			return null ;
+//		return dc.getDevLib();
+//	}
+
+//	private ResDir resDir = null ;
+//	
+//	@Override
+//	public ResDir getResDir()
+//	{
+//		if(resDir!=null)
+//			return resDir ;
+//		
+//		File dir = new File(getDevDefDir(),"_res/") ;
+//		if(!dir.exists())
+//			dir.mkdirs();
+//		resDir=new ResDir(this,this.getId(),this.getTitle(),dir);
+//		return resDir;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeSub(String subid)
+//	{
+//		return null;
+//	}
+//
+//	@Override
+//	public String getResNodeId()
+//	{
+//		return getId();
+//	}
+//	
+//	@Override
+//	public String getResNodeTitle()
+//	{
+//		return this.getTitle() ;
+//	}
+//
+//	@Override
+//	public IResNode getResNodeParent()
+//	{
+//		return this.getBelongToCat();
+//	}
 
 }

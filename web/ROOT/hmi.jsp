@@ -4,6 +4,7 @@
 				java.io.*,
 				java.util.*,
 				org.iottree.core.*,
+				org.iottree.core.res.*,
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
@@ -31,6 +32,41 @@
 		prj = (UAPrj)topn ;
 		prjid = prj.getId() ;
 		prjname = prj.getName() ;
+	}
+	
+	String res_ref_id="" ;
+	String reslibid = "" ;
+	String resid = "" ;
+
+	if(topn instanceof IResNode)
+	{
+		res_ref_id = reslibid = ((IResNode)topn).getResLibId();
+		//.getResNodeUID() ;
+	}
+	
+	
+	boolean bprj = topn instanceof UAPrj ;
+	UADev owner_dev = null;
+	DevDef owner_def = null ;
+	if(bprj)
+	{
+		prj = (UAPrj)topn;
+		owner_dev = uahmi.getOwnerUADev() ;
+		if(owner_dev!=null)
+			owner_def = owner_dev.getDevDef() ; 
+	}
+	
+	if(owner_def!=null)
+	{// use UADev as top res_ref_id
+		res_ref_id = prj.getResLibId() ;
+		reslibid = owner_def.getResLibId() ;
+		resid = owner_def.getId();
+	}
+	if(owner_dev!=null)
+	{
+		res_ref_id =reslibid= prj.getResLibId() ;
+		//reslibid = owner_dev.getId();
+		resid = owner_dev.getId();
 	}
 	
 	PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
@@ -394,6 +430,13 @@ $util.hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;
+
+
+
+var res_ref_id ="<%=res_ref_id%>";
+var res_lib_id="<%=reslibid%>";
+var res_id="<%=resid%>";
+
 var can_write=<%=can_write%>;
 var no_write_p = "<%=n_w_p%>" ;
 $util.hmi_can_write = can_write;
@@ -453,6 +496,7 @@ function zoom(v)
 
 function init_iottpanel()
 {
+	oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
 	hmiModel = new oc.hmi.HMIModel({
 		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
 		comp_url:"/comp_ajax.jsp?op=comp_load",
@@ -462,8 +506,8 @@ function init_iottpanel()
 	hmiModel.setCanWrite(can_write,()=>{
 		dlg.msg(no_write_p) ;
 	})
-	
-	panel = new oc.hmi.HMIPanel("main_panel",{
+
+	panel = new oc.hmi.HMIPanel("main_panel",res_lib_id,res_id,{
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});

@@ -4,7 +4,6 @@
 				 org.iottree.core.util.*,
 				 org.iottree.core.util.web.*,
 				 org.iottree.core.*,
-				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*,
 				 org.apache.commons.fileupload.*,
 org.apache.commons.fileupload.servlet.*,
@@ -29,17 +28,14 @@ org.apache.commons.fileupload.disk.*"%><%!
 		 	}
 		 	return ret;
 		 }
-%><%
-
-if (!ServletFileUpload.isMultipartContent(request))
-{
+%><%if (!ServletFileUpload.isMultipartContent(request)) {
+    // 如果不是则停止
     PrintWriter writer = response.getWriter();
     writer.println("Error: form must has enctype=multipart/form-data");
     writer.flush();
     return;
 }
 
-// 配置上传参数
 DiskFileItemFactory factory = new DiskFileItemFactory();
 
 factory.setSizeThreshold(MEMORY_THRESHOLD);
@@ -48,26 +44,25 @@ factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
 
 ServletFileUpload upload = new ServletFileUpload(factory);
  
-// 设置最大文件上传值
+
 upload.setFileSizeMax(MAX_FILE_SIZE);
  
-// 设置最大请求值 (包含文件和表单数据)
+
 upload.setSizeMax(MAX_REQUEST_SIZE);
 
-// 中文处理
+
 upload.setHeaderEncoding("UTF-8"); 
 
 File dirb = null ;
 
     List<FileItem> formItems = upload.parseRequest(request);
     HashMap<String,String> pms = getReqParams(formItems);
-    String reslibid = pms.get("res_lib_id") ;
-    String res_id = pms.get("res_id") ;
+    String cxtid = pms.get("cxtid") ;
     String name = pms.get("name") ;
     
-    if(Convert.isNullOrEmpty(reslibid))
+    if(Convert.isNullOrEmpty(cxtid))
     {
-    	out.print("no res_lib_id input");
+    	out.print("no cxtid input");
     	return;
     }
     if(Convert.isNullOrEmpty(name))
@@ -75,16 +70,13 @@ File dirb = null ;
     	out.print("no name input");
     	return;
     }
-  
-    ResDir rdir = ResManager.getInstance().getResDir(reslibid, res_id); //
-
-    //ResLib reslib = ResManager.getInstance().getResLibByLibId(res_lib_id) ;
-    if(rdir==null)
-    {
-    	out.print("no ResDir found") ;
-    	return ;
-    }
-
+    
+    ResDir rc = ResManager.getInstance().getResCxt(cxtid) ;
+	if(rc==null)
+	{
+		out.print("no ResCxt found") ;
+		return ;
+	}
     
     FileItem fi = null ;
     
@@ -108,4 +100,4 @@ File dirb = null ;
         }
     }
     
-    rdir.setResItem(name, fi) ;%>succ
+    rc.setResItem(name, fi) ;%>succ

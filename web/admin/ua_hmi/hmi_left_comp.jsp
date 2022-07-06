@@ -8,13 +8,12 @@
 
 %><%
 
-List<CompCat> ccs = CompManager.getInstance().getCatAll() ;
-boolean bedit ="true".equals(request.getParameter("edit")) ;
 %><html>
 <head>
 <title></title>
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="oc"/>
+	<jsp:param value="true" name="tree"/>
 </jsp:include>
 </head>
 <style>
@@ -42,7 +41,7 @@ background-color: #2f2f2f;width:100px;height:100px;float:left;
 {
 position:absolute;
 bottom:10px;
-left:10px;
+left:0px;
 }
 
 
@@ -50,68 +49,114 @@ left:10px;
 	background-color: #373737;
 }
 
-
+.item_title
+{
+	position:relative;
+	top:80px;
+	margin:0px;
+	left:0px;
+	opacity: 0.7;
+	padding-top:8px;
+	width:100%;
+	height:20px;
+	background-color: #a7d3f5;
+}
 
 </style>
 <body marginwidth="0" marginheight="0">
 <table width='100%' height='99%'>
  <tr>
- <td valign="top" width="25%">Category <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_cat()">+Add</button>
-   <select id='var_cat' multiple="multiple" style="width: 100%;height: 100%" onchange="cat_sel_chg()">
-<%
-	for(CompCat cc:ccs)
-	{
-
-%><option value="<%=cc.getId() %>"><%=cc.getTitle() %></option><%
-	}
-%>
-   </select>
+ <td valign="top" width="25%">
+ 	<div id="lib_cat_tree" style="height:100%;overflow: auto;">
+ 		
+ 	</div> 
  </td>
  <td id="td_add_comp" valign="top" width="75%" class="oc-toolbar">
- 	Components <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_comp()">+Add</button>
- 	<div  id="var_items" class="btns" >
- 		<div class="toolbarbtn" onclick="" title=""><img src="" /></div>
+ 	Components 
+ 	<div  id="var_items" class="btns"  style="height:98%;overflow: auto;">
  	</div>
  </td>
  
  </tr>
- <tr height="30">
-  <td colspan='2'></td>
- </tr>
 </table>
- <div  class="oc_menu"  style=" display: none;position: absolute;background: #6E6C79;z-index: 60000">
-        <div data-type="edit" class="menu"  data-cat="" data-id=""  style="cursor:pointer;" ><span>Edit</span></div>
- </div>
-
 <script>
 
+var libid = "" ;
 var cur_catid = null ;
+var cur_cattt = null ;
 var cur_cat_itemids=[] ;
 var loadidx= 0 ;
-var bedit=<%=bedit%>;
 
-function get_cur_cat_id_title()
+
+function tree_init()
 {
-	var catid = $("#var_cat").val() ;
-	var cattt =  $("#var_cat option:selected").text() ;
-	if(catid==null||catid==undefined||catid==""||catid.length==0)
-	{
-		dlg.msg("please select a category!");
-		return;
-	}
-	catid = catid[0];
-	return [catid,cattt] ;
+	$.jstree.destroy();
+	this.jsTree = $('#lib_cat_tree').jstree(
+				{
+					'core' : {
+						'data' : {
+							'url' :"comp_ajax.jsp?op=lib_cat_tree",
+							"dataType" : "json",
+							"data":function(node){
+		                        return {"id" : node.id};
+		                    }
+						},
+						'check_callback' : function(o, n, p, i, m) {
+							if(m && m.dnd && m.pos !== 'i') { return false; }
+							if(o === "move_node" || o === "copy_node") {
+								if(this.get_node(n).parent === this.get_node(p).id) { return false; }
+							}
+							return true;
+						},
+						'themes' : {
+							'responsive' : false,
+							'variant' : 'small',
+							'stripes' : true
+						}
+					},
+					'contextmenu' : { //
+						
+						'items' :(node)=>{
+							//this.get_type(node)==='ch''
+							//console.log(node)
+							var tp = node.original.type
+							//console.log(tp) ;
+							return this.get_cxt_menu(tp,node.original) ;
+		                }
+					},
+					'types' : {
+						'default' : { 'icon' : 'folder' },
+						'file' : { 'valid_children' : [], 'icon' : 'file' }
+					},
+					'unique' : {
+						'duplicate' : function (name, counter) {
+							return name + ' ' + counter;
+						}
+					},
+					'plugins' : ['state','dnd','types','contextmenu','unique']
+				}
+		)
+		
+		
+		this.jsTree.on('activate_node.jstree',(e,data)=>{
+			on_tree_node_sel(data.node.original)
+		})
+		
 }
 
-function get_cur_catid()
+function on_tree_node_sel(n)
 {
-	return get_cur_cat_id_title()[0];
+	var id = n.id;
+	var k = id.indexOf("-") ;
+	if(k<=0)
+		return ;
+	libid = id.substring(0,k) ;
+	cur_catid = id.substring(k+1) ;
+	cur_cattt = n.text ;
+	cat_sel_chg();
 }
 
-function get_sel_cat_ids()
-{
-	return $("#var_cat").val() ;
-}
+tree_init();
 
 function drag(ev)
 {
@@ -120,20 +165,21 @@ function drag(ev)
 	var p = tar[oc.DrawPanelDiv.DRAW_PANEL_DIV];
 	if(p==null||p==undefined)
 		return;
+	var res_lib_id = p["res_lib_id"]; 
 	var compid = p["compid"] ;
 	if(compid==null||compid==undefined)
 		return ;
-	var r = {_val:compid,_tp:"comp"};
-	console.log(r) ;
+	var r = {_val:res_lib_id+"-"+compid,_tp:"comp"};
+	//console.log(r) ;
 	oc.util.setDragEventData(ev,r);
 }
 
 function cat_sel_chg()
 {
 	var pm ={} ;
+	pm.libid = libid ;
+	pm.catid = cur_catid ;
 	pm.op = "comp_list";
-	var catidtt = get_cur_cat_id_title();
-	cur_catid = pm.catid = catidtt[0] ;
 	
 	send_ajax('comp_ajax.jsp',pm,(bsucc,ret)=>
 	{
@@ -150,20 +196,9 @@ function cat_sel_chg()
 		var ids=[];
 		for(var ci of ob)
 		{
-			//$("#var_item").append("<option value='"+ci.id+"'>"+ci.title+"</option>");
-			//tmps += "<option value='"+ci.id+"'>"+ci.title+"</option>";
-			if(bedit)
-			{
-				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+catidtt[1]+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" >"
-				+"<div id='panel_"+ci.id+"'  ></div><span>"
-				+ci.title+"</span><button onclick='open_comp_editor(\""+pm.catid+"\",\""+ci.id+"\",\""+catidtt[1]+"-"+ci.title+"\")'>edit</button></div>";
-			}
-			else
-			{
-				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+catidtt[1]+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" >"
-				+"<div id='panel_"+ci.id+"' draggable='true' ondragstart='drag(event)'></div><span>"
-				+ci.title+"</span></div>";
-			}
+			tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+cur_cattt+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" >"
+			+"<div id='panel_"+ci.id+"' draggable='true' ondragstart='drag(event)'></div><span class='item_title'>"
+			+ci.title+"</span></div>";
 			
 			ids.push(ci.id);
 		}
@@ -180,7 +215,7 @@ function load_preview()
 {
 	if(loadidx>=cur_cat_itemids.length)
 		return;//end
-	send_ajax("comp_ajax.jsp","op=comp_txt&catid="+cur_catid+"&id="+cur_cat_itemids[loadidx],function(bsucc,ret){
+	send_ajax("comp_ajax.jsp",{libid:libid,op:"comp_txt",catid:cur_catid,id:cur_cat_itemids[loadidx]},function(bsucc,ret){
 		if(!bsucc||ret.indexOf("{")!=0)
 		{
 			if(ret!="")
@@ -190,10 +225,12 @@ function load_preview()
 		{
 			var lay = new oc.DrawLayer();
 			var fl = oc.util.splitFirstLnAndLeft(ret) ;
-			var resnid = fl.first_ob["res_node_id"];
+			var resnid = fl.first_ob["res_lib_id"];
+			var resid =  fl.first_ob["res_id"];
 			lay.inject(fl.left_ob) ;
-			var panel = new oc.hmi.HMICompPanel(cur_cat_itemids[loadidx],resnid,"panel_"+cur_cat_itemids[loadidx],{});
+			var panel = new oc.hmi.HMICompPanel(cur_cat_itemids[loadidx],resnid,resid,"panel_"+cur_cat_itemids[loadidx],{});
 			var p1 = new oc.DrawPanelDiv("",{layer:lay,panel:panel}) ;
+			p1["res_lib_id"] = resnid ;
 			p1["compid"] = cur_cat_itemids[loadidx];
 			//all_panels.push(p1);
 			loadidx ++ ;

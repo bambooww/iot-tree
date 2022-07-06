@@ -151,9 +151,10 @@ public class DevManager // implements IResCxt
 	
 	private ArrayList<DevLib> loadLibs()
 	{
+		ArrayList<DevLib> rets = new ArrayList<>() ;
 		File lbf = getDevLibBase() ;
 		if(!lbf.exists())
-			return null ;
+			return rets ;
 		
 		File[] fs = lbf.listFiles(new FileFilter() {
 
@@ -166,7 +167,7 @@ public class DevManager // implements IResCxt
 				return n.startsWith("lib_");
 			}
 		});
-		ArrayList<DevLib> rets = new ArrayList<>() ;
+		
 		for (File tmpf : fs)
 		{
 			String libid = tmpf.getName().substring(4);
@@ -483,51 +484,5 @@ public class DevManager // implements IResCxt
 		return rets;
 	}
 
-//	@Override
-//	public String getResNodeId()
-//	{
-//		return null ;
-//	}
-//	
-//	@Override
-//	public String getResNodeTitle()
-//	{
-//		return null;
-//	}
-//
-//	@Override
-//	public IResNode getResNodeParent()
-//	{
-//		return null;
-//	}
-//	
-//	
-//	@Override
-//	public ResDir getResDir()
-//	{
-//		return null;
-//	}
-//
-//
-//	@Override
-//	public IResNode getResNodeSub(String subid)
-//	{
-//		return this.getDevCatById(subid) ;
-//	}
-//
-//
-//	@Override
-//	public String getResPrefix()
-//	{
-//		return IResCxt.PRE_DEVDEF;
-//	}
-//
-//	@Override
-//	public boolean isResReadOnly()
-//	{
-//		return false;
-//	}
 
-
-	
 }

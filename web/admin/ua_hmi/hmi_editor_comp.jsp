@@ -8,14 +8,16 @@
 	org.iottree.core.comp.*,
 				java.net.*"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "tabid","catid","id"))
+	if(!Convert.checkReqEmpty(request, out, "tabid","libid","catid","id"))
 		return ;
 	//String op = request.getParameter("op");
+	String libid = request.getParameter("libid") ;
 	String tabid = request.getParameter("tabid");
 	String catid = request.getParameter("catid");
 	String id = request.getParameter("id");
 	CompManager cm = CompManager.getInstance() ;
-	CompCat cc = cm.getCatById(catid) ;
+	CompLib lib = cm.getCompLibById(libid) ;
+	CompCat cc = lib.getCatById(catid) ;
 	if(cc==null)
 	{
 		out.print("cat not found") ;
@@ -27,7 +29,7 @@
 		out.print("no item found") ;
 		return ;
 	}
-	String resnodeid = ci.getResNodeUID();
+	String res_lib_id = lib.getResLibId();//.getResNodeUID();
 %><!DOCTYPE html>
 <html>
 <head>
@@ -290,7 +292,7 @@ height:50px;background-color: grey;
 <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
  <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree HMI Component Editor </div>
  <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
-		<%=cc.getTitle()%>-<%=ci.getTitle()%>
+		<%=lib.getTitle() %>-<%=cc.getTitle()%>-<%=ci.getTitle()%>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#ffffff">
 			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" ></i>
@@ -419,11 +421,13 @@ height:50px;background-color: grey;
 toolbox_init("#inter_editor");
 toolbox_init("#toolbar_basic");
 
+var libid = "<%=libid%>";
 var tab_id = "<%=tabid%>" ;
 var catid="<%=catid%>";
 var itemid = "<%=id%>"
 var editname = "<%=ci.getEditorName()%>" ;
-var res_node_id = "<%=resnodeid%>" ;
+var res_lib_id = "<%=res_lib_id%>" ;
+var res_id="<%=id%>";
 
 var ctrl_items=[] ;
 
@@ -456,10 +460,10 @@ function on_panel_mousemv(p,d)
 function init_iottpanel()
 {
 	hmiModel = new oc.hmi.HMICompModel({
-		comp_url:"comp_ajax.jsp?op=comp_txt&catid="+catid+"&id="+itemid,
+		comp_url:"comp_ajax.jsp?op=comp_txt&libid="+libid+"&catid="+catid+"&id="+itemid,
 	});
 	
-	panel = new oc.hmi.HMICompPanel(itemid,res_node_id,"main_panel",{
+	panel = new oc.hmi.HMICompPanel(itemid,res_lib_id,res_id,"main_panel",{
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
@@ -511,7 +515,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 	}
 	else
 	{
-		dlg.open("../util/di_editplug_"+tp+".jsp?res_node_id="+res_node_id,
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+itemid,
 				{title:"Edit Properties",w:'500px',h:'400px'},
 				['Ok','Cancel'],
 				[
@@ -552,7 +556,7 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 
 function inter_prop_test()
 {
-	dlg.open("comp_inter_prop_tester.jsp?catid="+catid+"&id="+itemid,
+	dlg.open("comp_inter_prop_tester.jsp?libid="+libid+"&catid="+catid+"&id="+itemid,
 			{title:"Component Tester",w:'500px',h:'400px'},
 			['Close'],
 			[
@@ -599,7 +603,7 @@ function inter_prop_edit(n)
 		n = "" ;
 	else
 		tt = "Edit Interface Property" ;
-	dlg.open("comp_inter_prop_edit.jsp?n="+n+"&catid="+catid+"&id="+itemid,
+	dlg.open("comp_inter_prop_edit.jsp?n="+n+"&libid="+libid+"&catid="+catid+"&id="+itemid,
 			{title:tt,w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[
@@ -638,7 +642,7 @@ function inter_event_edit(n)
 		n = "" ;
 	else
 		tt = "Edit Interface Event" ;
-	dlg.open("comp_inter_event_edit.jsp?n="+n+"&catid="+catid+"&id="+itemid,
+	dlg.open("comp_inter_event_edit.jsp?n="+n+"&libid="+libid+"&catid="+catid+"&id="+itemid,
 			{title:tt,w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[
@@ -723,6 +727,7 @@ function tab_save()
 {
 	var pm = {} ;
 	pm.op="comp_txt_save" ;
+	pm.libid=libid;
 	pm.catid=catid;
 	pm.id=itemid;
 	pm.txt = JSON.stringify(loadLayer.extract(null)) ;

@@ -16,74 +16,61 @@ import org.apache.commons.fileupload.*;
  */
 public class ResDir //Comparable<ResDir>
 {
-	IResNode belongToNode = null ;
+	File resDir = null ;
 	
-	String id = "" ;
-	
-	String title = "" ;
-	
-	File dirF = null ;
-	
-	//ResDir parent = null ;
-	
-	public ResDir(IResNode n,String id,String title,File dirf)
+	public ResDir(File dir)
 	{
-		this.belongToNode = n ;
-		
-		this.id = id ;
-		this.title = title ;
-		this.dirF = dirf ;
+		this.resDir = dir ;
 	}
-	
-//	public ResDir(ResDir parent,String id,String title,File dirf)
+//	IResNode belongToNode = null ;
+//	
+//	String id = "" ;
+//	
+//	String title = "" ;
+//	
+//	File dirF = null ;
+//	
+//	public ResDir(IResNode n,String id,String title,File dirf)
 //	{
-//		this.parent = parent ;
-//		this.belongToCxt = parent.getResCxt() ;
+//		this.belongToNode = n ;
 //		
 //		this.id = id ;
 //		this.title = title ;
 //		this.dirF = dirf ;
 //	}
-	
-	public IResNode getResNode()
-	{
-		return belongToNode ;
-	}
-	
-//	public ResDir getParent()
+//
+//	public IResNode getResNode()
 //	{
-//		return this.parent ;
+//		return belongToNode ;
 //	}
-	
-//	public void setParent(ResDir p)
+//
+//	public String getResNodeUID()
 //	{
-//		this.parent = p ;
+//		return this.belongToNode.getResNodeUID() ;
 //	}
-	
-	public String getResNodeUID()
-	{
-		return this.belongToNode.getResNodeUID() ;
-	}
-	
-//	public ResDir getResDirParent()
-//	{
-//		return this.parent ;
-//	}
-	
+
 	public File getResDir()
 	{
-		return dirF ;
+		return resDir ;
 	}
 	
-	public String getId()
-	{
-		return id ;
-	}
 	
-	public String getTitle()
+	public boolean hasResItems()
 	{
-		return this.title ;
+		if(!resDir.exists())
+			return false;
+		List<ResItem> ris = this.listResItems() ;
+		return ris.size()>0 ;
 	}
+//	public String getId()
+//	{
+//		return id ;
+//	}
+//	
+//	public String getTitle()
+//	{
+//		return this.title ;
+//	}
 	
 	public List<ResItem> listResItems()
 	{

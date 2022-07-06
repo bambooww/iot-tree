@@ -9,10 +9,11 @@
 	java.net.*,
 	java.util.*"%>
 <%
+String libid =  request.getParameter("libid");
 String catid = request.getParameter("catid");
 String id = request.getParameter("id");
 CompManager cm = CompManager.getInstance() ;
-CompCat cc = cm.getCatById(catid) ;
+CompCat cc = cm.getCompCatById(libid,catid) ;
 if(cc==null)
 {
 	out.print("cat not found") ;

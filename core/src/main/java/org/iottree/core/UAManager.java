@@ -32,7 +32,7 @@ import org.iottree.core.util.xmldata.*;
 import com.google.common.eventbus.EventBus;
 import static com.google.common.base.Preconditions.*;
 
-public class UAManager implements IResCxt
+public class UAManager //implements IResCxt
 {
 	private static UAManager instance = null ;
 	
@@ -621,49 +621,6 @@ public class UAManager implements IResCxt
 		out.print("]");
 	}
 	
-	//--res
-	@Override
-	public String getResNodeId()
-	{
-		return null ;
-	}
-	
-	@Override
-	public String getResNodeTitle()
-	{
-		return null;
-	}
-
-	@Override
-	public IResNode getResNodeParent()
-	{
-		return null;
-	}
-
-	@Override
-	public String getResPrefix()
-	{
-		return IResCxt.PRE_PRJ;
-	}
-
-	@Override
-	public boolean isResReadOnly()
-	{
-		return false;
-	}
-
-	@Override
-	public ResDir getResDir()
-	{
-		return null;
-	}
-
-	@Override
-	public IResNode getResNodeSub(String subid)
-	{
-		return this.getPrjById(subid) ;
-	}
-
 	
 
 	

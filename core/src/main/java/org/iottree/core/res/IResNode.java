@@ -9,30 +9,54 @@ import org.iottree.core.util.Convert;
 
 public interface IResNode
 {
+	public String getResLibId();
+	
 	public String getResNodeId() ;
 	
 	public String getResNodeTitle() ;
 	
-	public ResDir getResDir() ;
+//	public IResNode getResNodeParent() ;
+//	
+//	public IResNode getResSubNode(String nid) ;
 	
-	public IResNode getResNodeSub(String subid) ;
+//	public IResCxt getResCxt() ;
 	
-	public IResNode getResNodeParent() ;
+	public File getResNodeDir() ;
 	
+	default ResDir getResDir()
+	{
+		File d = getResNodeDir() ;
+		if(d==null)
+			return null ;
+		return new ResDir(new File(d,"_res/")) ;
+	}
+	
+	default ResDir getNodeDir()
+	{
+		File d = getResNodeDir() ;
+		if(d==null)
+			return null ;
+		return new ResDir(d) ;
+	}
+	
+//	
+//	public ResDir getResDir() ;
+//	
+//	public IResNode getResNodeSub(String subid) ;
+//	
+//	public IResNode getResNodeParent() ;
+//	
+//	
+//	public default String getResLibId()
+//	{
+//		IResCxt cxt=this.getResCxt();
+//		if(cxt==null)
+//			return null ;
+//		return cxt.getResLibId() ;
+//	}
 	
 	public default String getResNodeUID()
 	{
-		IResNode pn=this.getResNodeParent() ;
-		if(pn==null)
-		{
-			String p = ((IResCxt)this).getResPrefix() ;
-			String nid = this.getResNodeId() ;
-			if(Convert.isNotNullEmpty(nid))
-				return p+nid ;
-			else
-				return p ;
-		}
-		
-		return  pn.getResNodeUID()+"-"+this.getResNodeId();
+		return getResLibId()+"-"+this.getResNodeId() ;
 	}
 }
