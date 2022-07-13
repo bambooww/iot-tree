@@ -511,6 +511,7 @@ function init_iottpanel()
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
+
 	//editor = new oc.DrawEditor("edit_props","edit_events",panel,{
 	//	plug_cb:editor_plugcb
 	//}) ;

@@ -21,6 +21,7 @@ if(Convert.isNotNullEmpty(libid))
 		return ;
 	}
 }
+String compid = request.getParameter("compid") ;
 String catid =request.getParameter("catid") ;
 String op = request.getParameter("op") ;
 CompManager compmgr = CompManager.getInstance() ;
@@ -48,7 +49,7 @@ case "comp_add":
 case "comp_edit":
 	if(!Convert.checkReqEmpty(request, out, "catid","libid"))
 		return;
-	String compid = request.getParameter("compid") ;
+	compid = request.getParameter("compid") ;
 	title = request.getParameter("title") ;
 	if(Convert.isNullOrEmpty(title))
 		title = "noname" ;
@@ -191,6 +192,68 @@ case "comp_txt_save":
 	break;
 case "lib_cat_tree":
 	CompManager.getInstance().renderLibAndCatsTree(out) ;
+	break ;
+case "lib_del":
+	if(!Convert.checkReqEmpty(request, out, "libid"))
+		return;
+	CompManager.getInstance().delCompLib(libid) ;
+	out.print("succ") ;
+	break ;
+case "comp_copy":
+	if(!Convert.checkReqEmpty(request, out, "libid","compid"))
+		return;
+	CompItem tmpci = CompManager.copyComp(session, libid, compid);
+	if(tmpci!=null)
+		out.print("succ") ;
+	else
+		out.print("copy failed") ;
+	break ;
+case "comp_paste":
+	if(!Convert.checkReqEmpty(request, out, "libid","catid"))
+		return;
+	
+	tmpci = CompManager.pasteComp(session, libid, catid);
+	if(tmpci!=null)
+		out.print("succ") ;
+	else
+		out.print("paste failed") ;
+	break ;
+case "up_to_ref":
+	if(!Convert.checkReqEmpty(request, out, "libid","compid"))
+		return;
+	String idstr = request.getParameter("ids") ;
+	String idpre = request.getParameter("pre") ;
+	if(Convert.isNullOrEmpty(idstr))
+	{
+		out.print("no ids input") ;
+		return ;
+	}
+	List<String> ids = Convert.splitStrWith(idstr, ",") ;
+	tmpci = CompManager.getInstance().getCompItemById(libid, compid);
+	if(tmpci==null)
+	{
+		out.print("no compitem found") ;
+		return ;
+	}
+	int succc = 0 ;
+	for(String tmpid:ids)
+	{
+		switch(idpre)
+		{
+		case IResCxt.PRE_PRJ:
+			CompItem newci = ResManager.getInstance().getCompItem(IResCxt.PRE_PRJ+"_"+tmpid, tmpci.getResLibId(), compid, true);
+			if(newci!=null)
+				succc ++ ;
+		case IResCxt.PRE_DEVDEF:
+			DevDef newdd = ResManager.getInstance().getDevDef(IResCxt.PRE_DEVDEF+"_"+tmpid, tmpci.getResLibId(), compid, true);
+			if(newdd!=null)
+				succc ++ ;
+		}
+	}
+	out.print("succ="+succc) ;
+	break ;
+default:
+	out.print("unkown op") ;
 	break ;
 }
 

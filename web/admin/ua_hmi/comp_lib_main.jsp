@@ -70,6 +70,8 @@ if(bdlg)
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="oc"/>
 </jsp:include>
+<link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
+<script src="/_js/selectmenu/selectmenu.min.js"></script>
 </head>
 <style>
 table{border:0px solid skyblue;}
@@ -132,13 +134,15 @@ visibility: visible;
 {
 	position:relative;
 	top:80px;
+	font-size:15px;
+	font-weight:bold;
 	margin:0px;
 	left:0px;
-	opacity: 0.7;
+	opacity: 0.9;
 	padding-top:8px;
 	width:100%;
 	height:20px;
-	background-color: #a7d3f5;
+	background-color: #b8dbfe;
 }
 
 </style>
@@ -292,24 +296,23 @@ function cat_sel_chg()
 		for(var ci of ob)
 		{
 			//$("#var_item").append("<option value='"+ci.id+"'>"+ci.title+"</option>");
-			//tmps += "<option value='"+ci.id+"'>"+ci.title+"</option>";
+			//tmps += "<option value='"+ci.id+"'>"+ci.title+"</option>";   <span class='item_title'>"+ci.title+"</span>
+				
 			if(bedit)
 			{
-				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+sel_libcat_tt+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" >"
-				+"<div id='panel_"+ci.id+"'  ></div><span class='item_title'>"
-				+ci.title+"</span><span class='item_edit'>"
+				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+sel_libcat_tt+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" title=\""+ci.title+"\">"
+				+"<div id='panel_"+ci.id+"'  ></div><span class='item_edit'>"
 				
 				+"<button type='button' class='layui-btn layui-btn-xs layui-btn-primary' item_id='"+ci.id+"' onclick=\"edit_comp_item(this)\"><i class='fa fa-pencil'></i></button>"
 				+"<button type='button' class='layui-btn layui-btn-xs layui-btn-normal' item_id='"+ci.id+"' onclick=\"open_comp_editor(this)\"><i class='fa fa-pencil'></i></button>"
-				+"<button type='button' class='layui-btn layui-btn-xs layui-btn-danger' item_id='"+ci.id+"' onclick=\"del_comp_item(this)\"><i class='fa-regular fa-rectangle-xmark'></i></button>"
+				+"<button type='button' class='layui-btn layui-btn-xs layui-btn-danger' item_id='"+ci.id+"' onclick=\"del_comp_item(this)\"><i class='fa-solid fa-x'></i></button>"
 
 				+"</span></div>";
 			}
 			else
 			{
-				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+sel_libcat_tt+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" >"
-				+"<div id='panel_"+ci.id+"' draggable='true' ondragstart='drag(event)'></div><span class='item_title'>"
-				+ci.title+"</span></div>";
+				tmps += "<div id='"+ci.id+"' data-cat='"+pm.catid+"' data-id='"+ci.id+"' data-tt='"+sel_libcat_tt+"-"+ci.title+"' class=\"toolbarbtn\" onclick=\"item_clk('"+ci.id+"')\" title=\""+ci.title+"\">"
+				+"<div id='panel_"+ci.id+"' draggable='true' ondragstart='drag(event)'></div></div>";
 			}
 			
 			ids.push(ci.id);
@@ -320,6 +323,8 @@ function cat_sel_chg()
 		$("#var_items").html(tmps) ;
 		//reg_right_menu();
 		load_preview();
+		
+		init_comp_menu();
 	},false);
 }
 
@@ -378,6 +383,11 @@ function del_comp_item(ob)
 	event.preventDefault();
 	event.stopPropagation();
 	var id = $(ob).attr('item_id') ;
+	del_comp(id);
+}
+
+function del_comp(id)
+{
 	dlg.confirm('delete this item?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
 		    {
 					send_ajax("comp_ajax.jsp",{op:"comp_del",libid:sel_libid,catid:sel_catid,compid:id},function(bsucc,ret){
@@ -446,6 +456,159 @@ function edit_comp(id)
 				}
 			]);
 }
+				
+document.oncontextmenu = function() {
+    return false;
+}
 
+
+var b_ctrl_down = false;
+var b_shift_down=false;
+var b_menu_show=false;
+
+function init_right_menu()
+{
+	 $(document).keydown(function(e){
+		 if(e.keyCode==17)
+			 b_ctrl_down=true;
+		 else if(e.keyCode==16)
+			 b_shift_down = true ;
+		// console.log(e.keyCode);
+		 });
+	 $(document).keyup(function(e){
+		 if(e.keyCode==17)
+			 b_ctrl_down=false;
+		 else if(e.keyCode==16)
+			 b_shift_down = false ;
+		 });
+	$(document.body).mouseup(function(e) {
+		if(1==e.which)
+		{
+			b_menu_show=false;
+			return ;
+		}
+		
+	    if (3 == e.which)
+	    {
+	    	$('.sm_container').css("display","none") ;
+	    	
+	        $(this).selectMenu({
+	        	regular : true,
+	        	rightClick : true,
+	        	data : ()=>{
+					var d = [
+						{ content : 'Paste', callback:()=>{
+							paste_item();
+						}}
+					];
+			
+					return d;
+				}
+	        });
+	    	
+	    }
+	})
+	
+	
+}
+
+
+init_right_menu();
+
+function init_comp_menu()
+{
+	$('.toolbarbtn').mouseenter(function(e) {
+		var compid = $(this).attr("data-id");
+		//on_item_mouseenter(compid);
+	});
+	
+	$('.toolbarbtn').mouseout(function(e) {
+		var compid = $(this).attr("data-id");
+		//on_item_mouseout(compid);
+	});
+	
+	$('.toolbarbtn').mousedown(function(e) {
+		var compid = $(this).attr("data-id");
+		if(1==e.which)
+		{
+			//on_item_mousedown(compid);
+		}
+	});
+	
+	$('.toolbarbtn').mouseup(function(e) {
+		var compid = $(this).attr("data-id");
+		if(1==e.which)
+		{
+			on_item_mouseup(compid);
+		}
+		
+	    if (3 == e.which)
+	    {
+	    	e.stopPropagation();
+	    	
+	    	$('.sm_container').css("display","none") ;
+	    	b_menu_show=true;
+	        $(this).selectMenu({
+	        	regular : true,
+	        	rightClick : true,
+	        	data : ()=>{
+
+	        			var r=[] ;
+	        			r.push({ content : 'Modify Item', callback:()=>{
+	        				edit_comp(compid);
+							}});
+	        			
+	        			r.push({ content : 'Copy', callback:()=>{
+	        				copy_item(sel_libid,compid);
+							}});
+
+	        			
+	        			r.push({ content : 'Delete', callback:()=>{
+	        				del_comp(compid);
+							}});
+						
+	        			return r;
+	        		}
+	        });
+
+	    }
+	})
+
+}
+
+function copy_item(libid,compid)
+{
+	var pm={};
+	pm.op="comp_copy";
+	pm.libid=libid;
+	pm.compid=compid;
+	 send_ajax('./comp_ajax.jsp',pm,function(bsucc,ret)
+				{
+					if(!bsucc || ret.indexOf('succ')<0)
+					{
+						dlg.msg(ret);
+						return ;
+					}
+					dlg.msg("copy item ok") ;
+				},false);
+	
+}
+
+function paste_item()
+{
+	var pm={};
+	pm.op="comp_paste";
+	pm.libid=sel_libid;
+	pm.catid=sel_catid;
+	 send_ajax('./comp_ajax.jsp',pm,function(bsucc,ret)
+				{
+					if(!bsucc || ret.indexOf('succ')<0)
+					{
+						dlg.msg(ret);
+						return ;
+					}
+					cat_sel_chg();
+				},false);
+}
 </script>
 </html>

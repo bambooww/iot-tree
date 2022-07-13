@@ -12,13 +12,9 @@
 <html>
 <head>
 <title>Edit</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="oc"/>
+</jsp:include>
 <style>
 body {
 	margin: 0px;
@@ -34,6 +30,11 @@ body {
 margin-top:15px;margin-left:30px;width:40px;height:20px;border:2px solid;
 }
 
+.citem a
+{
+	color:red;
+}
+
 .contitem
 {
 border:0px solid;height:120px;
@@ -46,17 +47,17 @@ dlg.resize_to(500,450);
 <body>
 <div style="float:left; display:block;width:100%;border0:1px solid">
    <div style="float:left;width:19%">
-     <form class="layui-form" action="">
+
 	  <div class="layui-form-item">
 	    <label >Color</label><br/>
 	    <div style="">
-	      <div id="fcolor_0" class="citem" onclick="sel_color(0)">&nbsp;</div>
-	      <div id="fcolor_1" class="citem" onclick="sel_color(1)" style="display:none">&nbsp;</div>
-	      <div id="fcolor_2" class="citem" onclick="sel_color(2)" style="display:none">&nbsp;</div>
-	      <div id="fcolor_3" class="citem" onclick="sel_color(3)" style="display:none">&nbsp;</div>
+	      <div id="fcolor_0" class="citem" onclick="sel_color(0)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="sel_color_txt(0)"><i class="fa fa-pencil"></i></a></div>
+	      <div id="fcolor_1" class="citem" onclick="sel_color(1)" style="display:none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="sel_color_txt(1)"><i class="fa fa-pencil"></i></a></div>
+	      <div id="fcolor_2" class="citem" onclick="sel_color(2)" style="display:none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="sel_color_txt(2)"><i class="fa fa-pencil"></i></a></div>
+	      <div id="fcolor_3" class="citem" onclick="sel_color(3)" style="display:none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick="sel_color_txt(3)"><i class="fa fa-pencil"></i></a></div>
 	    </div>
 	  </div>
-	 </form>
+
    </div>
    <div style="float:left;width:79%;">
      <div class="layui-tab layui-tab-brief" lay-filter="fill_tp_tab">
@@ -230,15 +231,39 @@ function sel_color(n)
 {
 	
 	var c = fill.colors[n] ;
-	console.log(fill.colors,n,c);
+	//console.log(fill.colors,n,c);
 	dlg.open("./di_editplug_prop_color.jsp?color="+escape(c),
-			{title:"Edit Event",w:'500px',h:'400px'},
+			{title:"Edit Color",w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[
 				function(dlgw)
 				{
 					var ret = dlgw.editplug_get() ;
 					 fill.colors[n]=ret.v;
+					 dlg.close();
+					 update_preview();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function sel_color_txt(n)
+{
+	event.preventDefault();
+	event.stopPropagation();
+	var c = fill.colors[n] ;
+	//console.log(fill.colors,n,c);
+	dlg.open("./dlg_input_txt.jsp?v="+escape(c),
+			{title:"Edit Color",w:'500px',h:'400px'},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					var ret = dlgw.get_input() ;
+					 fill.colors[n]=ret;
 					 dlg.close();
 					 update_preview();
 				},

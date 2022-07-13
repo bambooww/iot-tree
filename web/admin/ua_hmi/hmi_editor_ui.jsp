@@ -82,9 +82,7 @@
 <jsp:include page="../head.jsp">
  <jsp:param value="true" name="oc"/>
 </jsp:include>
-	
 <style>
-
 .top {
 	position: fixed;
 	left: 0;
@@ -527,6 +525,7 @@ function init_iottpanel()
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
+	panel.setInEdit(true);
 	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
 		plug_cb:editor_plugcb
 	}) ;

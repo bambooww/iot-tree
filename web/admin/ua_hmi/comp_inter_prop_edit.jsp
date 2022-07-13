@@ -58,12 +58,20 @@ dlg.resize_to(600,650);
 
     <div class="layui-form-item">
     <label class="layui-form-label">Value Type:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width:100px">
       <select id="val_tp" name="val_tp" class="layui-input">
       	  <option value="number">number</option>
       	  <option value="bool">bool</option>
       	  <option value="str">string</option>
       	  <option value="color">color</option>
+      </select>
+    </div>
+    <label class="layui-form-label">Editor assist:</label>
+    <div class="layui-input-inline" style="width:100px">
+      <select id="edit_plug" name="edit_plug" class="layui-input" title="with string input">
+      	  <option value=""> --- </option>
+      	  <option value="color">color</option>
+      	  <option value="fill">fill</option>
       </select>
     </div>
   </div>
@@ -95,6 +103,7 @@ if(ctrl_n!="")
 		$("#name").val(ctrlitem.n) ;
 		$("#title").val(ctrlitem.t) ;
 		$("#val_tp").val(ctrlitem.tp);
+		$("#edit_plug").val(ctrlitem.editplug) ;
 		$("#onGetJS").val(ctrlitem.onGetJS) ;
 		$("#onSetJS").val(ctrlitem.onSetJS) ;
 	}
@@ -116,6 +125,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	var tt = $('#title').val();
 	var tp = $("#val_tp").val() ;
+	var editplug = $("#edit_plug").val();
 	var gjs = $('#onGetJS').val();
 	var sjs = $('#onSetJS').val();
 	if(n==null||n=='')
@@ -123,7 +133,7 @@ function do_submit(cb)
 		cb(false,'please input name') ;
 		return ;
 	}
-	cb(true,{n:n,t:tt,tp:tp,onGetJS:gjs,onSetJS:sjs});
+	cb(true,{n:n,t:tt,tp:tp,editplug:editplug,onGetJS:gjs,onSetJS:sjs});
 }
 
 </script>

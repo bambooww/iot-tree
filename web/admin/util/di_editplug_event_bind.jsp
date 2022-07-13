@@ -36,7 +36,7 @@ dlg.resize_to(500,620);
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
     <div class="layui-input-block">
-    ($event,$view,$panel,$container,$util,$this)=&gt;{
+    ($event,$view,$panel,$parent,$util,$this)=&gt;{
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="8"></textarea>
       }
       <%--

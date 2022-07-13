@@ -104,4 +104,12 @@ HTTP Url Connector支持HTML格式的数据获取和页面内部数据定位和�
 
 
 
+### 版本 0.98.0
+HMI Lib、Dev Lib做了比较大的改善和优化，使得项目可以脱离库的支持而独立运行。并且优化了资源相关内容，使得资源可以被复制到引用(ref)对象中。
+目前HMILib - DevLib - Prj 三个不同的层次关系已经基本稳定，后续可以开始对相关的库内容进行规划。
+
+
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

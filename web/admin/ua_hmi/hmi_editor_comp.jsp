@@ -5,6 +5,7 @@
 				java.util.*,
 				org.iottree.core.*,
 	org.iottree.core.util.*,
+	org.iottree.core.res.*,
 	org.iottree.core.comp.*,
 				java.net.*"%>
 <%
@@ -295,6 +296,9 @@ height:50px;background-color: grey;
 		<%=lib.getTitle() %>-<%=cc.getTitle()%>-<%=ci.getTitle()%>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#ffffff">
+ 			
+ 			<button class="layui-btn layui-btn-warm"  onclick="up_to_prj()">Update To Project</button>
+ 			&nbsp;
 			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" ></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()"></i>
 </div>
@@ -467,6 +471,7 @@ function init_iottpanel()
 		on_mouse_mv:on_panel_mousemv,
 		on_model_chg:on_model_chg
 	});
+	panel.setInEdit(true);
 	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
 		plug_cb:editor_plugcb
 	}) ;
@@ -882,6 +887,82 @@ $(window).resize(function(){
 	if(resize_cc<=1)
 		draw_fit();
 	});
+
+var ref_list = null ;
+
+var pre_prj = "<%=IResCxt.PRE_PRJ%>"
+var pre_devdef = "<%=IResCxt.PRE_DEVDEF%>"
+
+function up_to_refs(ids,pre)
+{
+	if(!ids||ids.length<=0)
+		return ;
+	send_ajax("comp_ajax.jsp",{op:"up_to_ref",ids:combine_to_str(ids,','),pre:pre,libid:libid,compid:res_id},function(bsucc,ret){
+		if(!bsucc||ret.indexOf("succ=")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		var scc = ret.substring(5) ;
+		dlg.msg("Successfully updated "+scc+" reference targets");
+	});
+}
+
+function up_to_prj()
+{
+	send_ajax("../ua/prj_ajax.jsp",{op:"list_json"},function(bsucc,ret){
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		eval("ref_list="+ret) ;
+		dlg.open("../util/dlg_sel_in_list.jsp?opener_list_id=ref_list",
+				{title:"Select Project",w:'500px',h:'400px'},
+				['Ok','Cancel'],
+				[
+					function(dlgw)
+					{
+						var ids = dlgw.get_select();
+						up_to_refs(ids,pre_prj)
+						dlg.close();
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	});
+	
+}
+
+function up_to_devdef()
+{
+	send_ajax("../ua/prj_ajax.jsp",{op:"list_json"},function(bsucc,ret){
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		eval("prj_list="+ret) ;
+		dlg.open("../util/dlg_sel_in_list.jsp?opener_list_id=prj_list",
+				{title:"Select Project",w:'500px',h:'400px'},
+				['Ok','Cancel'],
+				[
+					function(dlgw)
+					{
+						var ret = dlgw.get_select();
+						up_to_prjs(ret);
+						dlg.close();
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	});
+	
+}
 </script>
 </body>
 </html>

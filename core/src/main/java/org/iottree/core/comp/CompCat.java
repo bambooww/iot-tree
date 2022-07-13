@@ -8,6 +8,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
+import org.apache.commons.io.FileUtils;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
@@ -238,6 +239,31 @@ public class CompCat  //implements IResNode
 		saveItem(ci);
 		getItems().add(ci) ;
 		return ci ;
+	}
+	
+	CompItem pasteComp(CompItem ci) throws Exception
+	{
+		File sordir = ci.getResNodeDir() ;
+		if(!sordir.exists())
+			return null ;
+
+		String sorid= ci.getId();
+		CompItem oldci = this.getBelongTo().getItemById(sorid) ;
+		
+		String tarid = sorid ;
+		if(oldci!=null)
+		{//create new id
+			tarid = CompressUUID.createNewId();
+		}
+		
+		File tardir= new File(getCatDir(),tarid+"/") ;
+		if(!tardir.exists())
+			tardir.mkdirs() ;
+		FileUtils.copyDirectory(sordir, tardir);
+		
+		CompItem newci = CompItem.loadFromDir(this.getBelongTo().getResLibId(),tarid,tardir) ;
+		this.getItems().add(newci) ;
+		return newci ;
 	}
 	
 	public CompItem updateComp(String compid,String title) throws Exception

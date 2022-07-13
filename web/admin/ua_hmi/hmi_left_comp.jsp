@@ -12,7 +12,7 @@
 <head>
 <title></title>
 <jsp:include page="../head.jsp">
-	<jsp:param value="true" name="oc"/>
+	<jsp:param value="true" name="oc_min"/>
 	<jsp:param value="true" name="tree"/>
 </jsp:include>
 </head>

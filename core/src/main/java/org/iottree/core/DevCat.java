@@ -284,6 +284,19 @@ public class DevCat //implements IResNode
 		dd.constructNodeTree();
 		
 		Convert.copyRelatedFile(rf2new);
+		// copy res files
+		ResDir sor_resdir = dev.getResDir();
+		
+		if(sor_resdir!=null && sor_resdir.hasResItems())
+		{
+			File sorf = sor_resdir.getResDir() ;
+			ResDir tar_resdir = dd.getResDir() ;
+			File tarf = tar_resdir.getResDir();
+			if(!tarf.exists())
+				tarf.mkdirs() ;
+			FileUtils.copyDirectory(sorf, tarf);
+		}
+		
 		return dd ;
 	}
 

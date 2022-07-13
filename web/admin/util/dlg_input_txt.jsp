@@ -29,7 +29,7 @@
 <jsp:include page="../head.jsp"></jsp:include>
 </head>
 <script type="text/javascript">
-dlg.resize_to(600,400);
+dlg.resize_to(600,200);
 </script>
 <body>
 <form class="layui-form" action="">

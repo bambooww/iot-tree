@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.98.0</version>
+    <version>0.98.1</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -202,7 +202,8 @@
 			                        <includes>
 			                            <include>data/dev_drv/</include>
 			                            <include>data/dev_lib/lib_demo/</include>
-			                            <include>data/comp_lib/</include>
+			                            <include>data/comp_lib/lib_basic/</include>
+			                            <include>data/comp_lib/lib_basiccn/</include>
 			                            <include>data/demo/</include>
 			                            <include>data/simulator/demo/</include>
 			                            <include>data/plugins/mail/</include>

@@ -294,7 +294,13 @@ public class ResManager
 	}
 	
 	
-	private HashMap<String,CompItem> refKey2ci = new HashMap<>() ; 
+	private HashMap<String,CompItem> refKey2ci = new HashMap<>() ;
+	
+	public CompItem getCompItem(String ref_lib_id,String res_lib_id,String compid) throws Exception
+	{
+		return getCompItem(ref_lib_id,res_lib_id,compid,false);
+	}
+	
 	/**
 	 * get or copy
 	 * @param ref_lib_id
@@ -303,7 +309,7 @@ public class ResManager
 	 * @return
 	 * @throws IOException 
 	 */
-	public CompItem getCompItem(String ref_lib_id,String res_lib_id,String compid) throws Exception
+	public CompItem getCompItem(String ref_lib_id,String res_lib_id,String compid,boolean chk_eq) throws Exception
 	{
 		if(Convert.isNullOrEmpty(ref_lib_id) ||ref_lib_id.equals(res_lib_id))
 		{
@@ -311,26 +317,38 @@ public class ResManager
 		}
 		
 		String k = ref_lib_id+"-"+res_lib_id+"-"+compid ;
-		CompItem ci = null;// refKey2ci.get(k) ;
-		if(ci!=null)
-			return ci;
+		CompItem ci = null;
+		if(!chk_eq)
+		{
+			ci = refKey2ci.get(k) ;
+			if(ci!=null)
+				return ci;
+		}
 		
 		if(log.isTraceEnabled())
 		{
 			log.trace("getCompItem in ref="+ref_lib_id+" res_lib_id="+res_lib_id+" res/compid="+compid);
 		}
-		//File ref_f = null ;
-		
+
 		IResCxt ref_rc = ResManager.getInstance().getResCxtByLibId(ref_lib_id) ;
 		if(ref_rc==null)
 		{
 			return null ;
 		}
 		
-			//String txt = ref_rc.readRefFileTxt(res_lib_id,compid+".data.txt",true,true) ;
 		File refdir = new File(ref_rc.getRefRootDir(),res_lib_id+"/") ;
 		File ref_compdir=  new File(refdir,compid+"/") ;
-		if(ref_compdir.exists())
+		
+		boolean b_need_copy = false;
+		if(chk_eq)
+		{
+			CompItem sorci = CompManager.getInstance().getCompItemById(res_lib_id, compid) ;
+			if(sorci==null)
+				return null ;
+			b_need_copy = !compareDirEq(sorci.getCompItemDir(),ref_compdir);
+		}
+
+		if(ref_compdir.exists() && !b_need_copy)
 		{
 			ci = CompItem.loadFromDir(res_lib_id,compid, ref_compdir) ;
 			if(ci!=null)
@@ -341,7 +359,6 @@ public class ResManager
 				{
 					log.trace("getCompItem in ref="+ref_lib_id+" res_lib_id="+res_lib_id+" res/compid="+compid +" get ok from ref lib");
 				}
-				
 				return ci ;
 			}
 		}
@@ -350,6 +367,8 @@ public class ResManager
 		if(ci==null)
 			return null;
 		
+		if(ref_compdir.exists())
+			FileUtils.cleanDirectory(ref_compdir);
 		FileUtils.copyDirectory(ci.getCompItemDir(), ref_compdir);
 		ci = CompItem.loadFromDir(res_lib_id,compid, ref_compdir) ;
 		if(ci!=null)
@@ -385,7 +404,7 @@ public class ResManager
 		DevDef dd = null;
 		if(!chk_eq)
 		{
-			//dd = refKey2dd.get(k) ;
+			dd = refKey2dd.get(k) ;
 			if(dd!=null)
 				return dd;
 		}
@@ -450,7 +469,6 @@ public class ResManager
 			}
 			
 			refKey2dd.put(k,dd) ;
-			
 		}
 		
 		return dd ;

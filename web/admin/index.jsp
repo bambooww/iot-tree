@@ -1195,7 +1195,7 @@ function complib_del(libid)
 {
 	dlg.confirm('delete this HMI library?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
 		    {
-					send_ajax("./ua_hmi/comp_ajax.jsp","op=del&libid="+libid,function(bsucc,ret){
+					send_ajax("./ua_hmi/comp_ajax.jsp","op=lib_del&libid="+libid,function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
 			    			dlg.msg("del err:"+ret) ;

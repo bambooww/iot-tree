@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -249,6 +250,19 @@ public class CompManager //implements IResCxt //
 			return null ;
 		return cc.getItemById(compid) ;
 	}
+	
+	public CompItem getCompItemById(String libid,String compid)
+	{
+		int k = libid.indexOf('_') ;
+		if(k>0)
+			libid = libid.substring(k+1);
+		CompLib lib = this.getCompLibById(libid) ;
+		if(lib==null)
+			return null ;
+		
+		return lib.getItemById(compid) ;
+	}
+	
 //	public DevDef getDevDefById(String libid,String catid,String devid)
 //	{
 //		DevCat dc = getDevCatById(libid,catid);
@@ -510,5 +524,51 @@ public class CompManager //implements IResCxt //
 		
 		w.write("}");
 	}
+	
+	//private static transient CompItem copiedCompItem = null ;
 
+	private static final String COMP_ITEM =  "__comp_item";
+	// copy paste support
+	
+	public static CompItem getCopiedCompItem(HttpSession hs)
+	{
+		return (CompItem)hs.getAttribute(COMP_ITEM) ;
+	}
+	
+	public static CompItem copyComp(HttpSession hs,String libid,String compid)
+	{
+		CompLib lib = CompManager.getInstance().getCompLibById(libid) ;
+		if(lib==null)
+			return null;
+		
+		CompItem ci = lib.getItemById(compid);
+		if(ci==null)
+			return null;
+		hs.setAttribute(COMP_ITEM, ci) ;
+		return ci;
+	}
+	
+	/**
+	 * if compid is not existed in lib,then id is not changed
+	 * @param sor_libid
+	 * @param sor_compid
+	 * @param tar_libid
+	 * @param tar_catid
+	 * @throws Exception 
+	 */
+	public static CompItem pasteComp(HttpSession hs,String tar_libid,String tar_catid) throws Exception
+	{
+		CompItem ci = (CompItem)hs.getAttribute(COMP_ITEM) ;
+		if(ci==null)
+			return null ;
+		
+		CompLib tarlib = CompManager.getInstance().getCompLibById(tar_libid) ;
+		if(tarlib==null)
+			return null;
+		CompCat tarcat = tarlib.getCatById(tar_catid) ;
+		if(tarcat==null)
+			return null;
+		
+		return tarcat.pasteComp(ci);
+	}
 }

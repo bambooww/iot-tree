@@ -98,5 +98,18 @@ case "share":
 	PrjShareManager.getInstance().setSharer(id,benable,bw,pushint,tmpxd) ;
 	out.print("ok");
 	break ;
+case "list_json":
+	out.print("[");
+	List<UAPrj> prjs = UAManager.getInstance().listPrjs();
+	boolean bfirst = true;
+	for(UAPrj p:prjs)
+	{
+		if(bfirst) bfirst=false;
+		else out.print(",") ;
+		
+		out.print("{\"id\":\""+p.getId()+"\",\"title\":\""+p.getTitle()+"\"}");
+	}
+	out.print("]");
+	break ;
 }
 %>

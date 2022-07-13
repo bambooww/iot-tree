@@ -102,4 +102,13 @@ The HTTP URL connector supports HTML format data acquisition, page internal data
 The Device Library has been greatly improved. It can be managed by Library (import and export are supported). Each library has two levels of management: category and device.
 
 
+
+### version 0.98.0
+HMI Lib and Dev Lib have been greatly improved and optimized to allow projects to run independently of Library support. The resource-related content is optimized so that the resource can be copied into a reference (ref) object.
+
+At present, the three different hierarchical relationships of HMILib - DevLib - Prj are basically stable, and the related library content can be planned later.
+
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

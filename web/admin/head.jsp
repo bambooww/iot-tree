@@ -7,6 +7,7 @@
 				"%><%
 String ver = Config.getVersion() ;
 				boolean oc = "true".equals(request.getParameter("oc"));
+				boolean oc_min= "true".equals(request.getParameter("oc_min"));
 				boolean tree  ="true".equals(request.getParameter("tree"));
 %><script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
@@ -30,7 +31,14 @@ if(oc)
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
 <%
 }
-
+if(oc_min)
+{
+%>
+<script src="/_js/oc/oc.min.js?v=<%=ver%>"></script>
+<script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
+<link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
+<%
+}
 if(tree)
 {
 %>

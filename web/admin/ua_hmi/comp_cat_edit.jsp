@@ -56,7 +56,7 @@ dlg.resize_to(400,220);
 </script>
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" onkeydown="if(event.keyCode==13){return false;}">
 <%--
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
@@ -68,7 +68,7 @@ dlg.resize_to(400,220);
   <div class="layui-form-item">
     <label class="layui-form-label">Title:</label>
     <div class="layui-input-block">
-      <input type="text" id="title" name="title" value="<%=title %>"  autocomplete="off" class="layui-input">
+      <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
     </div>
   </div>
  </form>
@@ -100,14 +100,6 @@ function get_input_val(id,defv,bnum)
 
 function do_submit(cb)
 {
-	/*
-	var n = $('#name').val();
-	if(n==null||n=='')
-	{
-		cb(false,'please input name') ;
-		return ;
-	}
-	*/
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
