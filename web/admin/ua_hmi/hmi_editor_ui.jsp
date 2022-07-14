@@ -408,7 +408,7 @@ if(bprj)
 				<span id="edit_toolbar" class="edit_toolbar"></span>
 				</div>
   
-	<div id="p_info" style="height: 20" class0="props_panel_pos">&nbsp;</div>
+	<div id="p_info" style="height: 20;display:none" class0="props_panel_pos">&nbsp;</div>
 		<div class="layui-tab">
 	  <ul class="layui-tab-title">
 	    <li class="layui-this">Properties</li>
@@ -533,6 +533,8 @@ function init_iottpanel()
 		copy_paste_url:"../util/copy_paste_ajax.jsp",
 		on_model_loaded:()=>{
 			//console.log("loaded") ;
+			
+			panel.updatePixelSize();
 			draw_fit()
 		}
 	});

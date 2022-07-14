@@ -53,7 +53,9 @@ public abstract class ConnProvider implements IXmlDataValidator
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
+			if(log.isWarnEnabled())
+				log.warn("", e);
 			return false;
 		}
 	}

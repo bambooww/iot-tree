@@ -1,3 +1,6 @@
 /.vs/
 /win_panel/bin/
 /win_panel/obj/
+/packages/
+/win_client/bin/
+/win_client/obj/

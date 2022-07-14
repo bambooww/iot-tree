@@ -3,6 +3,7 @@
 				java.util.*,
 				org.json.*,
 				org.iottree.core.*,
+				org.iottree.core.res.*,
 				org.iottree.core.util.*,
 				java.net.*"%><%!
 	static void listSubHmis(UANode node,ArrayList<UAHmi> hmis,UANode ignorehmi)
@@ -52,6 +53,7 @@ if(n==null)
 	out.print("no node found") ;
 	return ;
 }
+UANode topn = n.getTopNode();
 UANode pnode = n.getParentNode() ;
 String p_path = pnode.getNodePath() ;
 int p_path_len = p_path.length() ;
@@ -74,6 +76,16 @@ if(s>0)
 		subpaths_str+= ",'"+hmis.get(i).getNodePath().substring(p_path_len)  +"'";
 		titles_str+= ",'"+hmis.get(i).getTitle() +"'";
 	}
+}
+
+String res_ref_id="" ;
+String reslibid = "" ;
+//String resid = "" ;
+
+if(topn instanceof IResNode)
+{
+	res_ref_id = reslibid = ((IResNode)topn).getResLibId();
+	//.getResNodeUID() ;
 }
 %><!DOCTYPE html>
 <html>
@@ -155,6 +167,8 @@ var titles= [<%=titles_str%>] ;
 var sub_paths=[<%=subpaths_str%>] ;
 var loadidx= 0 ;
 
+var res_ref_id ="<%=res_ref_id%>";
+var res_lib_id="<%=reslibid%>";
 
 function get_cur_catid()
 {
@@ -165,19 +179,24 @@ function drag(ev)
 {
 	var tar = ev.target;
 	//var dxy = panel.transPixelPt2DrawPt(ev.x, ev.y);
-	var p = tar[oc.DrawPanelDiv.DRAW_PANEL_DIV];
+	var p = tar[oc.hmi.HMISubDiv.DRAW_PANEL_DIV];
+	console.log(p);
 	if(p==null||p==undefined)
 		return;
 	var hmipath = p["hmi_path"] ;
 	var hmiid = p["hmi_id"] ;
 	if(hmipath==null||hmipath==undefined)
 		return ;
-	var w = p["w"] ;
-	var h = p["h"] ;
-	
+	var sz = p.getPreferSize();
+	var w = sz.w;
+	var h = sz.h;
+	if(!w)
+		w = 100 ;
+	if(!h)
+		h = 100;
 	var pm= {hmi_path:hmipath,hmi_id:hmiid,w:w,h:h} ;
 	var r = {_val:JSON.stringify(pm),_tp:"hmi_sub"};
-	//console.log(r) ;
+	console.log(r) ;
 	oc.util.setDragEventData(ev,r);
 }
 
@@ -204,7 +223,57 @@ function load_preview()
 {
 	if(loadidx>=ids.length)
 		return;//end
+		
+		oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
 	var path = paths[loadidx];
+	var id = ids[loadidx] ;
+	//console.log("path="+path) ;
+		var loadLayer=null;
+			oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
+			var hmiModel = new oc.hmi.HMIModel({
+				temp_url:"/hmi_ajax.jsp?op=load&path="+path,
+				comp_url:"/comp_ajax.jsp?op=comp_load",
+				hmi_path:path
+			});
+			
+			var panel = new oc.hmi.HMIPanel("panel_"+ids[loadidx],res_lib_id,"",{});
+			hmiView = new oc.hmi.HMIView(hmiModel,panel,null,{
+				copy_paste_url:"util/copy_paste_ajax.jsp",
+				show_only:true,
+				on_model_loaded:()=>{
+					if(loadLayer==null)
+						return ;
+					loadLayer.ajustDrawFit();
+					
+				}});
+			
+			hmiView.init();
+			loadLayer = hmiView.getLayer();
+			
+			var p1 = new oc.hmi.HMISubDiv(panel,loadLayer) ;
+			p1["hmi_path"] = path;
+			p1["hmi_id"] = id;
+			var r = loadLayer.getShowItemsRect() ;
+			if(r)
+				{
+				p1["w"] = r.w;
+				p1["h"] = r.h;
+				}
+			
+			
+		loadidx ++ ;
+		load_preview();
+
+}
+
+function load_preview0()
+{
+	if(loadidx>=ids.length)
+		return;//end
+		
+		oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
+	var path = paths[loadidx];
+	console.log("path="+path) ;
 	send_ajax("hmi_editor_ajax.jsp","op=load&path="+paths[loadidx],function(bsucc,ret){
 		if(!bsucc||ret.indexOf("{")!=0)
 		{
