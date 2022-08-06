@@ -146,6 +146,7 @@ public class MemTable<T extends MemSeg>
 		{
 		case vt_byte:
 		case vt_char:
+		case vt_uint8:
 			break ;
 		case vt_int16:
 		case vt_uint16:
@@ -159,6 +160,7 @@ public class MemTable<T extends MemSeg>
 			if(len==0)
 				len = 1 ;
 			break ;
+		
 		case vt_int64:
 		case vt_uint64:
 		case vt_double:

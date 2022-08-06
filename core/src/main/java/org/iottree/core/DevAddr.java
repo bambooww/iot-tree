@@ -17,7 +17,7 @@ import org.iottree.core.UAVal.ValTP;
 public abstract class DevAddr
 {
 	String addr = null ;
-	ValTP valTP = null ;
+	protected ValTP valTP = null ;
 	
 	
 	UATag belongTo = null ;

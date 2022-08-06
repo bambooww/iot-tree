@@ -309,7 +309,9 @@ height:50px;background-color: grey;
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
 			 --%>
 			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')"><i class="fa-regular fa-image fa-3x lr_btn"></i><br>Icon</div>
+<%--
 			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)"><i class="fa fa-cubes fa-3x lr_btn"></i><br>Pic Lib</div>
+			 --%>
 		</div>
 		<div id="left_panel" class="left_panel_win" pop_width="300px" >
 			<div class="left_panel_bar" >

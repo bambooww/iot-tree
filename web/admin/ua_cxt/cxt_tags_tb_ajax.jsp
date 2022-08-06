@@ -199,7 +199,7 @@ if(bloc&&!tag.isSysTag())
 	if(tag.isCanWrite())
 	{
 %>
-        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" size="8"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" size="8" style="color:#999999"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
 <%
 	}
 %>

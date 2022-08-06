@@ -975,6 +975,19 @@ function cxt_rt()
 	},false) ;
 }
 
+async function  f()
+{
+	const iottc = chrome?.webview?.hostObjects?.iottree_client;
+	
+	if(!iottc)
+		return;
+	
+	let vv = await iottc.get_loc_lic("123");
+		
+}
+
+f();
+
 //setInterval("cxt_rt()",5000);
 </script>
 </body>

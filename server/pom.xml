@@ -213,6 +213,28 @@
 			                </resources>
 			            </configuration>
 			        </execution>
+			        
+			        <execution>
+			            <id>copy-client</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>copy-resources</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>../_output/client/</outputDirectory>
+			                <resources>
+			                    <resource>
+			                        <directory>../win_panel/win_client/bin/Release/</directory>
+			                        <includes>
+			                            <include>*.*</include>
+			                            <include>runtimes/</include>
+			                        </includes>
+			                    </resource>
+			                    
+			                </resources>
+			            </configuration>
+			        </execution>
+			        
 			    </executions>
 			</plugin>
 			<!-- copy rename -->

@@ -1118,6 +1118,11 @@ public class Convert
 	{
 		return byteArray2HexStr(bs, 0, bs.length);
 	}
+	
+	public static String byteArray2HexStr(byte[] bs,String delim)
+	{
+		return byteArray2HexStr(bs, 0, bs.length,delim);
+	}
 
 	public static String byteArray2HexStr(byte[] bs, int offset, int len)
 	{
@@ -1135,14 +1140,14 @@ public class Convert
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < len; i++)
 		{
+			if(i>0 && delim != null)
+				sb.append(delim);
 			int tmpi = 255;
 			tmpi = tmpi & bs[i + offset];
 			String s = Integer.toHexString(tmpi);
 			if (s.length() == 1)
 				s = "0" + s;
 			sb.append(s);
-			if (delim != null)
-				sb.append(delim);
 		}
 		return sb.toString().toUpperCase();
 	}

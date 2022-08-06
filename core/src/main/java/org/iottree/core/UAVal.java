@@ -26,7 +26,7 @@ public class UAVal //extends JSObMap
 		vt_none(0,-1,null),
 		vt_bool(1,1,Boolean.class),
 		vt_byte(2,1,Byte.class),
-		vt_char(3,1,Character.class),//u8
+		vt_char(3,1,Character.class),//u8 vt_uint8
 		vt_int16(4,2,Short.class),
 		vt_int32(5,4,Integer.class),
 		vt_int64(6,8,Long.class),
@@ -34,9 +34,10 @@ public class UAVal //extends JSObMap
 		vt_double(8,8,Double.class),
 		vt_str(9,-1,String.class),
 		vt_date(10,8,java.util.Date.class),
-		vt_uint16(11,2,Integer.class),
-		vt_uint32(12,4,UnsignedInteger.class),
-		vt_uint64(13,8,UnsignedLong.class);
+		vt_uint8(11,1,Short.class),
+		vt_uint16(12,2,Integer.class),
+		vt_uint32(13,4,UnsignedInteger.class),
+		vt_uint64(14,8,UnsignedLong.class);
 		
 		private final int val ;
 		private final int byteLen;
@@ -83,6 +84,7 @@ public class UAVal //extends JSObMap
 			case 11:
 			case 12:
 			case 13:
+			case 14:
 				return true;
 			default:
 				return false;
@@ -128,9 +130,10 @@ public class UAVal //extends JSObMap
 		case 8: return ValTP.vt_double;
 		case 9: return ValTP.vt_str;
 		case 10:return ValTP.vt_date;
-		case 11:return ValTP.vt_uint16;
-		case 12:return ValTP.vt_uint32;
-		case 13:return ValTP.vt_uint64;
+		case 11:return ValTP.vt_uint8;
+		case 12:return ValTP.vt_uint16;
+		case 13:return ValTP.vt_uint32;
+		case 14:return ValTP.vt_uint64;
 		default:
 			throw new RuntimeException("unknow valtp="+iv) ;
 		}
@@ -174,6 +177,9 @@ public class UAVal //extends JSObMap
 			return Double.parseDouble(strv) ;
 		case  vt_date:
 			return Convert.toCalendar(strv).getTime() ;
+		case vt_uint8:
+			short u08 = Short.parseShort(strv) ;
+			return u08 & 0xFF ;
 		case  vt_uint16:
 			int u16 = Integer.parseInt(strv) ;
 			return u16&0xFFFF ;

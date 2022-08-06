@@ -116,6 +116,8 @@ public class MemSeg8 extends MemSeg
 		case vt_byte:
 		case vt_char:
 			return buf[sidx];
+		case vt_uint8:
+			return UnsignedByte.fromByteBits(buf[sidx]);
 		case vt_int16:
 		case vt_uint16:
 			if(len<2)
