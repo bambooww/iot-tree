@@ -1,5 +1,7 @@
 package org.iottree.driver.s7.ppi;
 
+import org.iottree.core.UAVal.ValTP;
+
 /**
  * 
  *                        0   1   2   3   4  5   6   7   8   9  10 11 12 13 14 15 16 17 18 19 20 21    22 23  24  25  26    27  28 29 30   31    32 33 34 35  --          FCS ED
@@ -17,6 +19,10 @@ package org.iottree.driver.s7.ppi;
 public class PPIMsgReqW extends PPIMsgReq
 {
 	PPIMemValTp memValTp = null ;
+	
+	int offsetBytes = 0 ;
+	
+	int inBit = -1 ;//-1 is null
 	/**
 	 * write val
 	 * bit  true=wVal>0
@@ -49,6 +55,50 @@ public class PPIMsgReqW extends PPIMsgReq
 	public short getFC()
 	{
 		return 0x7C ;
+	}
+	
+
+	public int getInBits()
+	{
+		return this.inBit ;
+	}
+
+	public int getOffsetBits()
+	{
+		return this.offsetBytes*8 + (this.inBit>=0?this.inBit:0) ;
+	}
+	
+	public boolean isBitReq()
+	{
+		return this.inBit>=0;
+	}
+	
+	public int getRetOffsetBytes()
+	{
+		return -1 ;
+	}
+	
+	public PPIMsgReqW withAddr(String addr,ValTP vtp)
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		PPIAddr paddr = PPIAddr.parsePPIAddr(addr,vtp,failedr) ;
+		if(paddr!=null)
+		{
+			this.memTp = paddr.getMemTp() ;
+			this.offsetBytes = paddr.getOffsetBytes() ;
+			this.inBit = paddr.getInBits() ;
+			//this.readNum = paddr.getBytesNum() ;
+		}
+		return this;
+	}
+	
+	public PPIMsgReq withAddrByte(PPIMemTp mtp, int byteoffsets,int inbit)
+	{
+		this.memTp = mtp ;
+		this.offsetBytes = byteoffsets;
+		this.inBit = inbit ;
+		//this.readNum = bytesnum ;
+		return this;
 	}
 	
 	private short calLen()

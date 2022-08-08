@@ -30,14 +30,15 @@ public class UAVal //extends JSObMap
 		vt_int16(4,2,Short.class),
 		vt_int32(5,4,Integer.class),
 		vt_int64(6,8,Long.class),
-		vt_float(7,4,Float.class),
-		vt_double(8,8,Double.class),
-		vt_str(9,-1,String.class),
-		vt_date(10,8,java.util.Date.class),
 		vt_uint8(11,1,Short.class),
 		vt_uint16(12,2,Integer.class),
 		vt_uint32(13,4,UnsignedInteger.class),
-		vt_uint64(14,8,UnsignedLong.class);
+		vt_uint64(14,8,UnsignedLong.class),
+		vt_float(7,4,Float.class),
+		vt_double(8,8,Double.class),
+		vt_str(9,-1,String.class),
+		vt_date(10,8,java.util.Date.class);
+		
 		
 		private final int val ;
 		private final int byteLen;

@@ -269,8 +269,6 @@ public class PPIBlock
 	
 	private void transMem2Addrs(List<PPIAddr> addrs)
 	{
-		//System.out.println("transMem2Addrs "+this.recvTO+" fix=");
-		//mem to addrs
 		for(PPIAddr ma:addrs)
 		{
 			Object ov = getValByAddr(ma) ;
@@ -363,7 +361,14 @@ public class PPIBlock
 			
 			List<PPIAddr> addrs = cmd2addr.get(mc) ;
 			cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
-			byte[] retbs = cmdr.getRetData() ;
+			PPIMsgResp resp = cmdr.getResp();
+			PPIMsgReq req = cmdr.getReq() ;
+			byte[] retbs = null;
+			if(resp==null)
+				continue ;
+			
+			retbs = resp.getRetData() ;
+			int offsetbs = req.getRetOffsetBytes() ;
 			if(retbs==null)
 			{
 				if(chkSuccessiveFailed(true))
@@ -374,7 +379,7 @@ public class PPIBlock
 				continue ;
 			}
 			
-			int offsetbs = cmdr.getOffsetBytes() ;
+			//int offsetbs = cmdr.getOffsetBytes() ;
 			memTb.setValBlock(offsetbs, retbs.length, retbs, 0);
 			transMem2Addrs(addrs);
 			chkSuccessiveFailed(false) ;

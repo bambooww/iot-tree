@@ -19,26 +19,26 @@ public class PPIMsgTest
     public void testR() throws IOException
     {
 		PPIMsgReqR mreq = new PPIMsgReqR();
-		mreq.withSorAddr((short)0)
+		mreq.withAddr("Q0",ValTP.vt_byte).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0",ValTP.vt_byte);
+			;
 		byte[] bs = mreq.toBytes() ;
 		String tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println("read Q0="+tmps) ;
     	assertTrue("68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10 02 00 01 00 00 82 00 00 00 65 16".equals(tmps));
     	
     	mreq = new PPIMsgReqR();
-		mreq.withSorAddr((short)0)
+		mreq.withAddr("Q0.1",ValTP.vt_bool).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0.1",ValTP.vt_bool);
+			;
 		bs = mreq.toBytes() ;
 		tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println("read Q0.1="+tmps) ;
 		
     	mreq = new PPIMsgReqR();
 		mreq.withAddrByte(PPIMemTp.V, 100,-1,3).withSorAddr((short)0)
-			.withDestAddr((short)2)
-			.withAddr("VB100",ValTP.vt_uint16);
+			.withDestAddr((short)2);
+			//.withAddr("VB100",ValTP.vt_uint16);
 		bs = mreq.toBytes() ;
 		tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println(tmps) ;
@@ -59,9 +59,9 @@ public class PPIMsgTest
 	public void testW() throws IOException
     {
 		PPIMsgReqW mreq = new PPIMsgReqW();
-		mreq.withWriteVal(PPIMemValTp.B,0xFF).withSorAddr((short)0)
+		mreq.withAddr("Q0",ValTP.vt_byte).withWriteVal(PPIMemValTp.B,0xFF).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0",ValTP.vt_byte);
+			;
 			
 		
 		byte[] bs = mreq.toBytes() ;
@@ -70,33 +70,33 @@ public class PPIMsgTest
     	assertTrue("68 20 20 68 02 00 7C 32 01 00 00 00 00 00 0E 00 05 05 01 12 0A 10 02 00 01 00 00 82 00 00 00 00 04 00 08 FF 86 16".equals(tmps));
     	
     	mreq = new PPIMsgReqW();
-		mreq.withWriteVal(PPIMemValTp.B,0x00).withSorAddr((short)0)
+		mreq.withAddr("Q0",ValTP.vt_byte).withWriteVal(PPIMemValTp.B,0x00).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0",ValTP.vt_byte);
+			;
 		bs = mreq.toBytes() ;
 		tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println("Q0=0x00 "+tmps) ;
 		
 		mreq = new PPIMsgReqW();
-		mreq.withWriteVal(PPIMemValTp.BIT,0x01).withSorAddr((short)0)
+		mreq.withAddr("Q0.1",ValTP.vt_bool).withWriteVal(PPIMemValTp.BIT,0x01).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0.1",ValTP.vt_bool);
+			;
 		bs = mreq.toBytes() ;
 		tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println("Q0.1=0x01 "+tmps) ;
 		
 		mreq = new PPIMsgReqW();
-		mreq.withWriteVal(PPIMemValTp.B,0x00).withSorAddr((short)0)
+		mreq.withAddr("Q0.1",ValTP.vt_bool).withWriteVal(PPIMemValTp.B,0x00).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("Q0.1",ValTP.vt_bool);
+			;
 		bs = mreq.toBytes() ;
 		tmps = Convert.byteArray2HexStr(bs," ") ;
 		System.out.println("Q0.1=0x00 "+tmps) ;
 		
     	mreq = new PPIMsgReqW();
-		mreq.withWriteVal(PPIMemValTp.B,0x12).withSorAddr((short)0)
+		mreq.withAddr("VB100",ValTP.vt_byte).withWriteVal(PPIMemValTp.B,0x12).withSorAddr((short)0)
 			.withDestAddr((short)2)
-			.withAddr("VB100",ValTP.vt_byte);
+			;
 			
 		
 		bs = mreq.toBytes() ;

@@ -126,8 +126,8 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		if(apt==null)
 			return null ;
 		
-		//if(!checkFit(addr,apt,vtp,failedr))
-		//	return null ;
+		if(!checkFit(addr,apt,vtp,failedr))
+			return null ;
 		
 		return new PPIAddr(addr,apt,vtp) ;
 	}
@@ -139,6 +139,24 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 			if(vtp!=ValTP.vt_bool)
 			{
 				failedr.append("PPI Addr ["+addr+"] must use bool value type");
+				return false;
+			}
+		}
+		
+		if(apt.memTp==PPIMemTp.T)
+		{
+			if(vtp!=ValTP.vt_uint32)
+			{
+				failedr.append("PPI Addr ["+addr+"] must use uint32");
+				return false;
+			}
+		}
+		
+		if(apt.memTp==PPIMemTp.C)
+		{
+			if(vtp!=ValTP.vt_uint16)
+			{
+				failedr.append("PPI Addr ["+addr+"] must use uint16");
 				return false;
 			}
 		}
@@ -337,6 +355,10 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 			else
 			{
 				ret.offsetBytes = Integer.parseInt(sstr) ;
+				if(mtp==PPIMemTp.T)
+					ret.offsetBytes *= 4 ;
+				else if(mtp==PPIMemTp.C)
+					ret.offsetBytes *= 2 ;
 			}
 		}
 		catch(Exception e)

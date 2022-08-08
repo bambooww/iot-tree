@@ -16,14 +16,18 @@ import org.iottree.core.util.Convert;
  * 68 17  17 68 00 02 08 32 03 00 00 00 00 00 02 00 06 00 00 04 01 FF    04 00  10  3F 03                     A1 16
  * 68 16 16 68 00 02 08 32 03 00 00 00 00 00 02 00 05 00 00 04 01  FF    03 00   01 00 4E 16   read q0.1
  * 68 16 16 68 00 02 08 32 03 00 00 00 00 00 02 00 05 00 00 04 01 FF     03 00   01 01 4F 16
- * sd  le      sd DA SA FC          CC                           L                            VT bitnum  d------------------  FCS  ED
+ * 68 15 15 68 00 02 08 32 03 00 00 00 00 00 02 00 04 00 00 04 01 03     00 00 00 4D 16    read T40
+ * 68 1A 1A 68 00 02 08 32 03 00 00 00 00 00 02 00 09 00 00 04 01 FF    09 00 05 00 00 00 00 B9 15 16
+ * 68 24 24 68 00 02 08 32 03 00 00 00 00 00 02 00 13 00 00 04 01 FF     09 00 0F 02 00 00 7F FF 00 00 00 00 00 00 00 00 00 00 F0 16
+ * 68 29 29 68 00 02 08 32 03 00 00 00 00 00 02 00 18 00 00 04 01 FF     09 00 14 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 7A 16
+ * sd  le      sd DA SA FC          CC                           L                            VT bitnum   d------------------  FCS  ED
 
  * L data len [21-(FCS-1)]
- * VT (value type)  Bit=01  B=02 W=04 D=06
+ * VT (value type)  Bit=01  B=02 W=04 D=06 09=T/C
  * 
  * @author jason.zhu
  */
-public class PPIMsgRespR extends PPIMsg
+public class PPIMsgRespR extends PPIMsgResp
 {
 	short da; //destination address  1byte
 	
@@ -54,18 +58,36 @@ public class PPIMsgRespR extends PPIMsg
 			return null ;
 		}
 		
+		int byte_num = (bs[16] & 0xFF) - 4 ;
+		if(byte_num<0)
+		{
+			failedr.append("read bytes number is <=0") ;
+			return null ;
+		}
+		
+		
+		if(byte_num==0 && bs[21]!=0xFF)
+		{
+			ret.byteNum = 0 ;
+			ret.bitNum = -1 ;
+			byte_num = bs[21] & 0xFF ;
+			ret.respBS = new byte[byte_num] ;
+			System.arraycopy(bs, 22, ret.respBS, 0, byte_num);
+			return ret;
+		}
+		
+		if(byte_num<=0)
+		{
+			failedr.append("read bytes number is <=0") ;
+			return null ;
+		}
+		
 		if(bs[22]!=0x04)
 		{
 			failedr.append("not read bytes") ;
 			return null ;
 		}
 		
-		int byte_num = (bs[16] & 0xFF) - 4 ;
-		if(byte_num<=0)
-		{
-			failedr.append("read bytes number is <=0") ;
-			return null ;
-		}
 		
 		int bit_num = (bs[23] & 0xFF)<<8 ;
 		bit_num +=  (bs[24] & 0xFF) ;
@@ -88,9 +110,11 @@ public class PPIMsgRespR extends PPIMsg
 		
 		if(bs.length==1)
 			return null ;// may be 0xE5 ;
-		
-		//String tmps = Convert.byteArray2HexStr(bs, " ") ;
-		//System.out.println("<-"+tmps);
+		if(log.isTraceEnabled())
+		{
+			String tmps = Convert.byteArray2HexStr(bs, " ") ;
+			log.trace("resp <-"+tmps);
+		}
 		return parseFromBS(bs,failedr) ;
 	}
 
@@ -121,10 +145,11 @@ public class PPIMsgRespR extends PPIMsg
 		return this.bitNum ;
 	}
 	
-	public byte[] getRespData()
+	public byte[] getRetData()
 	{
 		return respBS;
 	}
+	
 	
 	@Override
 	public byte[] toBytes()

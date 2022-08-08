@@ -5,6 +5,8 @@ import java.io.InputStream;
 
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 
 /**
  * 
@@ -12,6 +14,9 @@ import org.iottree.core.util.Convert;
  */
 public abstract class PPIMsg
 {
+	public static ILogger log = LoggerManager.getLogger(PPIMsg.class) ;
+	
+	public static ILogger log_w = LoggerManager.getLogger(PPIMsg.class.getCanonicalName()+"_w") ;
 	/**
 	 * one byte acknowledgement
 	 */
@@ -94,7 +99,7 @@ public abstract class PPIMsg
 			return inputs.read() ;
 		}
 		
-		throw new IOException("time out") ;
+		throw new IOException("time out "+timeout+"ms") ;
 	}
 	
 	/**
@@ -194,5 +199,31 @@ public abstract class PPIMsg
 		ret.offsetBytes = ppiaddr.getOffsetBytes();
 		ret.inBit = ppiaddr.getInBits();
 		return ret ;
+	}
+	
+	public static void clearInputStream(InputStream inputs,long timeout) throws IOException
+	{
+		int lastav = inputs.available() ;
+		long lastt = System.currentTimeMillis() ;
+		long curt = lastt; 
+		while((curt=System.currentTimeMillis())-lastt<timeout)
+		{
+			try
+			{
+			Thread.sleep(1);
+			}
+			catch(Exception e) {}
+			
+			int curav = inputs.available() ;
+			if(curav!=lastav)
+			{
+				lastt = curt ;
+				lastav = curav ;
+				continue ;
+			}
+		}
+		
+		if(lastav>0)
+			inputs.skip(lastav) ;
 	}
 }

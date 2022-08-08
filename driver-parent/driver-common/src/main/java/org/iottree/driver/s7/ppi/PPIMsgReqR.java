@@ -13,9 +13,13 @@ import org.iottree.core.util.Convert;
  * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    20 00  01  00  00   20   00 00 01   22    16 
  * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    02 00  01  00  00   82   00 00 00   65    16
  * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    01 00  01  00  00   82   00 00 00   64 16
- * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    82 00 01 00 00 82 00 00 00 E5 16
+ * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    82 00 01 00 00      82 00 00 00 E5 16
+ * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    02 00 04 00 00      1F 00 01 40 46 16
  * 
- * sd  le      sd DA SA FC          CC              GU                                       VT      RC     MT  MC   OFFSET     FCS  ED
+ * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10    1F 00 03 00 00      1F 00 00 20 41 16
+ * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10     02 00 04 00 00     1F 00 01 40 46 16
+ * 68 1B 1B 68 02 00 6C 32 01 00 00 00 00 00 0E 00 00 04 01 12 0A 10     1F 00 04 00 00     1F 00 00 28 4A 16
+ * sd  le      sd DA SA FC          CC              GU                                       VT     RC     MT  MC  OFFSET     FCS  ED
  *                                                                                        DU ---------------------------------------------
  * VT (value type)  Bit=01  B=02 W=04 D=06
  * RC (read count)    max=208 0xDE
@@ -26,25 +30,13 @@ import org.iottree.core.util.Convert;
  */
 public class PPIMsgReqR extends PPIMsgReq
 {
-	//short le ; // length
+int offsetBytes = 0 ;
 	
-	//short ler; // repeated length
+	int inBit = -1 ;//-1 is null
 	
+	//PPIMemValTp memValTp = null ;
 	
-	// read=6C write=7C  
-	//short fc = 0x6C; //function code  3byte    7C(6c) 32 01
-	
-	
-	
-	//long gu; // group data unit  6bytes,  
-	
-	//short num = 1; // count code  4byte
-	
-	
-	//int offset = 0 ;
-	
-	//short fcs; // frame check sequence    sum(DA+SA+FC+CC+GU+DU) & 0xFF
-	
+	int readNum = 1 ; //bytes num or TC numbre
 	
 	
 	@Override
@@ -92,6 +84,61 @@ public class PPIMsgReqR extends PPIMsgReq
 //		return this.num ;
 //	}
 
+	public int getOffsetBytes()
+	{
+		return this.offsetBytes ;
+	}
+	
+	public int getRetOffsetBytes()
+	{
+		return this.offsetBytes ;
+	}
+	
+	public int getInBits()
+	{
+		return this.inBit ;
+	}
+
+	public int getOffsetBits()
+	{
+		return this.offsetBytes*8 + (this.inBit>=0?this.inBit:0) ;
+	}
+	
+	public boolean isBitReq()
+	{
+		return this.inBit>=0;
+	}
+	
+	public int getReadNum()
+	{
+		return this.readNum ;
+	}
+
+	public PPIMsgReq withAddr(String addr,ValTP vtp)
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		PPIAddr paddr = PPIAddr.parsePPIAddr(addr,vtp,failedr) ;
+		if(paddr!=null)
+		{
+			this.memTp = paddr.getMemTp() ;
+			this.offsetBytes = paddr.getOffsetBytes() ;
+			this.inBit = paddr.getInBits() ;
+			this.readNum = paddr.getBytesNum() ;
+		}
+		return this;
+	}
+	
+	
+	
+	
+	public PPIMsgReq withAddrByte(PPIMemTp mtp, int byteoffsets,int inbit,int bytesnum)
+	{
+		this.memTp = mtp ;
+		this.offsetBytes = byteoffsets;
+		this.inBit = inbit ;
+		this.readNum = bytesnum ;
+		return this;
+	}
 	
 	private short calLen()
 	{
@@ -122,8 +169,10 @@ public class PPIMsgReqR extends PPIMsgReq
 		rets[21] = 0x10;
 		//
 		rets[22] = (byte)PPIMemValTp.B.getVal();//memTp.getVal() ;
+		if(memTp==PPIMemTp.T || memTp==PPIMemTp.C)
+			rets[22] = (byte)PPIMemTp.T.getVal() ;
 		rets[23] = 0x0;
-		rets[24] = (byte)this.getBytesNum();
+		rets[24] = (byte)this.getReadNum();
 		rets[25] = 0x0;
 		
 		//PPIMemTp mtp = ppiAddr.getMemTp();
@@ -134,6 +183,8 @@ public class PPIMsgReqR extends PPIMsgReq
 		rets[27] = (byte)memTp.getVal();
 		
 		int offaddr = this.getOffsetBits();
+		//if(memTp==PPIMemTp.T)
+		//	offaddr = this.getOffsetBytes();
 		rets[28] = (byte)((offaddr >> 16) & 0xFF) ;
 		rets[29] = (byte)((offaddr >> 8) & 0xFF) ;
 		rets[30] = (byte)(offaddr & 0xFF) ;
@@ -143,4 +194,5 @@ public class PPIMsgReqR extends PPIMsgReq
 		
 		return rets ;
 	}
+	
 }

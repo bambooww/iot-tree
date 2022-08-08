@@ -131,7 +131,7 @@ public class MemSeg8 extends MemSeg
 		case vt_uint32:
 			if(len<4)
 				throw new IllegalArgumentException("int32 must 4 bytes len") ;
-			int intv = DataUtil.bytesToInt(buf,sidx,true) ;
+			int intv = DataUtil.bytesToInt(buf,sidx,false) ;
 			if(tp==ValTP.vt_int32)
 				return intv ;
 			else
