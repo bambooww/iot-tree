@@ -478,8 +478,10 @@ background-color: #fff ;
 		 <i id="prj_btn_stop"  class="fa fa-stop fa-lg top_btn" style="color:grey" title="stop project" onclick="prj_run(false)"></i>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
+ <%--
 			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
 			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
+			 --%>
 			<%--
 			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>

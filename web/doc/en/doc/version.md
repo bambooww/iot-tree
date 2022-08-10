@@ -110,5 +110,14 @@ At present, the three different hierarchical relationships of HMILib - DevLib - 
 
 
 
+### version 0.98.1
+Improve HMI UI editing function; Added HMI Comp base library element. Some bugs have been fixed.
+
+
+
+Improve HMISub related functionality and resolve associated bugs. New win_client based on WebView2 added. Add PPI protocol supports Siemens PLC S7-200.
+
+
+
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

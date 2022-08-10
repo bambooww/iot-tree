@@ -5,6 +5,7 @@
 				org.iottree.core.basic.*,
 	java.io.*,
 	java.util.*,
+	org.json.*,
 	java.net.*,
 	java.util.*"%><%!
 	private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
@@ -60,6 +61,26 @@
 
 		UATag ret = nt.renameRefedTag(id,name, title, desc) ;
 		return ret ;
+	}
+	
+	private static DevAddr.ChkRes chkAddr(UANode n,HttpServletRequest request)
+	{
+		String addr = request.getParameter("addr");
+		if(Convert.isNullOrEmpty(addr))
+			return null ;
+		if(!(n instanceof UANodeOCTags))
+			return null ;
+		UANodeOCTags nt = (UANodeOCTags)n;
+		IDevDriverable ddable = nt.getDevDriverable() ;
+		if(ddable==null)
+			return null ;
+		DevDriver dd = ddable.getRelatedDrv() ;
+		if(dd==null)
+			return null;
+		
+		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
+		UAVal.ValTP vtp = UAVal.getValTp(vt) ;
+		return dd.checkAddr(addr, vtp) ;
 	}
 %><%
 if(!Convert.checkReqEmpty(request, out, "op","path"))
@@ -220,6 +241,18 @@ case "rt":
 	}
 	out.print("]");
 	break ;
+case "chk_addr":
+	DevAddr.ChkRes chkres = chkAddr(n,request) ;
+	if(chkres==null)
+	{
+		out.print("{}");
+		return ;
+	}
+	else
+	{
+		out.print(chkres.toJsonStr()) ;
+	}
+	break;
 }
 
 %>

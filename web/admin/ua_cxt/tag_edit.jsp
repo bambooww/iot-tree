@@ -79,11 +79,10 @@
 <html>
 <head>
 <title>Tag Editor </title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
+
 <style type="text/css">
 .btn-group button {
     left:10px;
@@ -118,8 +117,8 @@ dlg.resize_to(800,500);
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
-    <div class="layui-input-inline" style="width: 80px;">
-      <select  id="vt"  name="vt"  class="layui-input" placeholder="">
+    <div class="layui-input-inline" style="width: 100px;">
+      <select  id="vt"  name="vt"  class="layui-input" >
         <option value="">-</option>
 <%
 for(UAVal.ValTP vt:UAVal.ValTP.values())
@@ -173,14 +172,13 @@ String loc_set="display:none" ;
 
     <div class="layui-form-item" id="addr_setting">
     <label class="layui-form-label"><%=(bmid?"Express":"Address") %>:</label>
-    <div class="layui-input-block">
-      <input type="text"  id="addr"  name="addr"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+    <div class="layui-input-inline" style="width:300px">
+      <input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-input-inline" >
+    	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()"><i class="fa-solid fa-check"></i></button>
     </div>
   </div>
-
-  
-  
-    
   <%--
    <div class="layui-form-item">
     <label class="layui-form-label">Scan rate:</label>
@@ -193,7 +191,7 @@ String loc_set="display:none" ;
 
   <div class="layui-form-item" id="transfer_setting">
     <label class="layui-form-label">Transfer</label>
-    <div class="layui-input-block">
+    <div class="layui-input-block" style="width:370px">
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
     </div>
   </div>
@@ -253,9 +251,10 @@ function update_form()
 	}
 }
 
+var form ;
 
 layui.use('form', function(){
-	  var form = layui.form;
+	  form = layui.form;
 	  $("#name").val(name) ;
 	  $("#title").val(title) ;
 	  $("#addr").val(addr) ;
@@ -387,6 +386,46 @@ function on_copy_tag()
 	//console.log(dlg.get_opener_w())
 	dlg.get_opener_w().copy_paste_tag(node_path,tag_id,(newid)=>{
 		document.location.href="./tag_edit.jsp?path="+node_path+"&id="+newid;
+	});
+}
+
+function chk_addr()
+{
+	event.preventDefault() || (event.returnValue = false);
+	var addr = $("#addr").val() ;
+	addr = trim(addr) 
+	if(!addr)
+		return ;
+	
+	send_ajax("./tag_ajax.jsp",{op:"chk_addr",
+		vt:get_input_val("vt",""),
+		addr:get_input_val("addr",""),
+		path:node_path
+		},(bsucc,ret)=>{
+			if(ret=="{}")
+				return ;
+			var r ;
+			eval("r="+ret) ;
+			if(r.res>0)
+			{
+				dlg.msg("check ok");
+				return ;//
+			}
+				
+			if(r.res<0)
+			{
+				dlg.msg(r.prompt) ;
+				return ;
+			}
+			if(r.addr)
+				$("#addr").val(r.addr) ;
+			var vt = r.vt+"" ;
+			if(vt)
+			{
+				$("#vt").val(vt) ;
+				form.render();
+			}
+			dlg.msg(r.prompt) ;
 	});
 }
 

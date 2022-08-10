@@ -31,7 +31,7 @@ import org.json.JSONObject;
  *
  */
 @data_class
-public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch ,IResNode
+public class DevDef extends UANodeOCTagsGCxt implements IRoot,ISaver,IRefBranch ,IResNode,IDevDriverable
 {
 	transient DevCat belongToCat = null;
 	

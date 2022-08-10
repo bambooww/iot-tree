@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
+import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
 import org.iottree.core.util.Convert;
@@ -214,7 +215,24 @@ public abstract class DevDriver implements IPropChecker
 		rtBindedConnPt.onDriverUnbinded();
 		rtBindedConnPt = null;
 	}
-
+	
+	
+	/**
+	 * check addr invalid before tag added
+	 * @param addr
+	 * @param vtp
+	 * @return
+	 */
+	public ChkRes checkAddr(String addr,ValTP vtp)
+	{
+		DevAddr daddr = this.getSupportAddr();
+		if(daddr==null)
+			return null ;
+		
+		//StringBuilder failedr = new StringBuilder() ;
+		return daddr.checkAddr(addr, vtp) ;
+	}
+	
 	/**
 	 * after bind before driver run in thread loop override to do something.
 	 * 
@@ -313,9 +331,7 @@ public abstract class DevDriver implements IPropChecker
 		{
 			bRun = false;
 			unbindConnPt();
-
 			afterDriverRun();
-
 		}
 		catch ( Exception ee)
 		{

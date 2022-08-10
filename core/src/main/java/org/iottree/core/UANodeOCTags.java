@@ -146,6 +146,25 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 	}
 	
+	/**
+	 * get related DevDriverable
+	 * @return
+	 */
+	public IDevDriverable getDevDriverable()
+	{
+		UANode curn = this ;
+		while(curn!=null)
+		{
+			if(curn instanceof IDevDriverable)
+			{
+				return (IDevDriverable)curn ;
+			}
+			
+			curn = curn.getParentNode();
+		}
+		return null;
+	}
+	
 	public UATag addOrUpdateTagInMem(String tagid, boolean bmid, String name, String title, String desc, String addr,
 			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, String trans) throws Exception
 	{
@@ -157,6 +176,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			if (d == null)
 				throw new Exception("no tag with id=" + tagid + " found!");
 		}
+		
+		//this.get
 
 		UANode tmpn = getSubNodeByName(name);
 		if (d == null && tmpn != null)
@@ -164,6 +185,27 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d != null && tmpn != null && d != tmpn)
 			throw new IllegalArgumentException("tag with name=" + name + " existed");
 
+		if(Convert.isNotNullEmpty(addr))
+		{
+			IDevDriverable ddable = getDevDriverable() ;
+			if(ddable!=null)
+			{
+				DevDriver dd = ddable.getRelatedDrv() ;
+				if(dd!=null)
+				{
+					DevAddr.ChkRes chkres = dd.checkAddr(addr, vt) ;
+					if(chkres!=null)
+					{
+						if(chkres.getChkVal()<=0)
+						{
+							throw new IllegalArgumentException(chkres.getChkPrompt()) ;
+						}
+						
+					}
+				}
+			}
+		}
+		
 		if (d == null)
 		{
 			if (bmid)

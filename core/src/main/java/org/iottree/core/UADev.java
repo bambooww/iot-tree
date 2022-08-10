@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
-public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode // extends UANodeOC
+public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode,IDevDriverable // extends UANodeOC
 {
 	public static final String NODE_TP = "dev" ;
 	/**
@@ -207,6 +207,14 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 ////		return dd.getSubNodes();
 //		return null ;
 //	}
+	
+	public DevDriver getRelatedDrv()
+	{
+		UACh ch = this.getBelongTo() ;
+		if(ch==null)
+			return null ;
+		return ch.getDriver() ;
+	}
 	
 	public boolean chkValid()
 	{

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.*;
+import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 
 /**
@@ -52,6 +53,18 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	public DevAddr parseAddr(String str, ValTP vtp,StringBuilder failedr)
 	{
 		return parseModbusAddr(str, vtp,failedr) ;
+	}
+	
+	@Override
+	public ChkRes checkAddr(String addr,ValTP vtp)
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		ModbusAddr ma = parseModbusAddr(addr, vtp,failedr) ;
+		if(ma==null)
+		{
+			return new ChkRes(-1,null,null,failedr.toString()) ;
+		}
+		return CHK_RES_OK ;
 	}
 	
 	static public ModbusAddr parseModbusAddr(String str, ValTP vtp,StringBuilder failedr)

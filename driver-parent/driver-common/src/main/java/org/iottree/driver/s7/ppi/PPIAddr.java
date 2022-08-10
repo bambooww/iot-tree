@@ -3,6 +3,7 @@ package org.iottree.driver.s7.ppi;
 import java.util.List;
 
 import org.iottree.core.DevAddr;
+import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 
 public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
@@ -132,14 +133,40 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		return new PPIAddr(addr,apt,vtp) ;
 	}
 	
+	@Override
+	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
+	{
+		return parsePPIAddr(str,vtp,failedr) ;
+	}
+	
+	@Override
+	public ChkRes checkAddr(String addr,ValTP vtp)
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		AddrPt apt = parseAddrPt(addr,failedr) ;
+		if(apt==null)
+			return new ChkRes(-1,null,null,failedr.toString()) ;
+		
+		return checkFit(addr,apt,vtp) ;
+	}
+	
+	
 	private static boolean checkFit(String addr,AddrPt apt,ValTP vtp,StringBuilder failedr)
+	{
+		ChkRes cr = checkFit(addr,apt,vtp);
+		if(cr==null||cr.isChkOk())
+			return true ;
+		failedr.append(cr.getChkPrompt()) ;
+		return false;
+	}
+	
+	private static ChkRes checkFit(String addr,AddrPt apt,ValTP vtp)
 	{
 		if(apt.isBitAddr())
 		{
 			if(vtp!=ValTP.vt_bool)
 			{
-				failedr.append("PPI Addr ["+addr+"] must use bool value type");
-				return false;
+				return new ChkRes(0,addr,ValTP.vt_bool,"PPI Addr ["+addr+"] must use bool value type");
 			}
 		}
 		
@@ -147,8 +174,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		{
 			if(vtp!=ValTP.vt_uint32)
 			{
-				failedr.append("PPI Addr ["+addr+"] must use uint32");
-				return false;
+				return new ChkRes(0,addr,ValTP.vt_uint32,"PPI Addr ["+addr+"] must use uint32");
 			}
 		}
 		
@@ -156,8 +182,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		{
 			if(vtp!=ValTP.vt_uint16)
 			{
-				failedr.append("PPI Addr ["+addr+"] must use uint16");
-				return false;
+				return new ChkRes(0,addr,ValTP.vt_uint32,"PPI Addr ["+addr+"] must use uint16");
 			}
 		}
 		
@@ -166,7 +191,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 			
 		}
 		
-		return true;
+		return CHK_RES_OK;
 	}
 
 	@Override
@@ -175,11 +200,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		return this.addrPt.offsetBytes-o.addrPt.offsetBytes ;
 	}
 
-	@Override
-	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
-	{
-		return parsePPIAddr(str,vtp,failedr) ;
-	}
+	
 
 	@Override
 	public boolean isSupportGuessAddr()

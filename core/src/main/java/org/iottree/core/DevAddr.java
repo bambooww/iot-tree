@@ -42,12 +42,104 @@ public abstract class DevAddr
 	{
 		return belongTo ;
 	}
+	
+	/**
+	 * check addr result
+	 * @author jason.zhu
+	 *
+	 */
+	public static class ChkRes
+	{
+		String addr = null ;
+		
+		ValTP valTp = null ;
+		
+		int chkVal ; //-1 invalid addr  0-need modify 1-is ok,do not chg
+		
+		/**
+		 * chk prompt
+		 */
+		String chkPrompt ;
+		
+		public ChkRes(int chkv,String addr,ValTP vtp,String prompt)
+		{
+			this.addr = addr ;
+			this.valTp = vtp ;
+			this.chkVal = chkv ;
+			this.chkPrompt = prompt ;
+		}
+		
+		public String getAddr()
+		{
+			return addr ;
+		}
+		
+		public ValTP getValTP()
+		{
+			return this.valTp ;
+		}
+		
+		public int getChkVal()
+		{
+			return this.chkVal ;
+		}
+		
+		public boolean isChkOk()
+		{
+			return this.chkVal>0;
+		}
+		
+		public String getChkPrompt()
+		{
+			return chkPrompt ;
+		}
+		
+		public String toJsonStr()
+		{
+			String r = "{\"res\":"+this.chkVal;
+			if(addr!=null)
+			{
+				r += ",\"addr\":\""+addr+"\"";
+			}
+			
+			if(valTp!=null)
+			{
+				r += ",\"vt\":"+valTp.getInt();
+			}
+			
+			if(chkPrompt!=null)
+				r += ",\"prompt\":\""+chkPrompt+"\"";
+			
+			r += "}" ;
+//			if(chkres.getChkVal()<0)
+//			{
+//				throw new IllegalArgumentException(chkres.getChkFailedReson()) ;
+//			}
+//			else if(chkres.getChkVal()==0)
+//			{
+//				DevAddr mayda = chkres.getDevAddr() ;
+//				throw new IllegalArgumentException("may be addr="+mayda.getAddr()+" valtp="+mayda.getValTP()) ;
+//			}
+
+			return r ;
+		}
+	}
+
+	public static final ChkRes CHK_RES_OK = new ChkRes(1,null,null,null) ;
+	
 	/**
 	 * 
 	 * @param str
 	 * @return failed return null,and may fill failedr reson desc
 	 */
 	public abstract DevAddr parseAddr(String str,ValTP vtp, StringBuilder failedr) ;
+	
+	
+	public ChkRes checkAddr(String addr,ValTP vtp)
+	{
+		return null ;
+	}
+	
 	
 	public abstract boolean isSupportGuessAddr() ;
 	

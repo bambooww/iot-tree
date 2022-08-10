@@ -73,7 +73,6 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public DevAddr getSupportAddr()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

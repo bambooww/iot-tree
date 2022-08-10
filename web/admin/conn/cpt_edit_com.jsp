@@ -65,7 +65,7 @@ String cp_tp = cp.getProviderType() ;
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(800,600);
+dlg.resize_to(800,430);
 </script>
 </head>
 <body>
@@ -163,14 +163,8 @@ for(int i = 0 ; i < ConnPtCOM.FLOWCTL.length;i++)
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-block" style="width:650px">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
-    </div>
-  </div>
-   <div class="layui-form-item">
-    <label class="layui-form-label">Properties:</label>
-    <div class="layui-input-block">
-        
     </div>
   </div>
  </form>
