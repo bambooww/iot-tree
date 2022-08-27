@@ -15,7 +15,35 @@ package org.iottree.driver.s7.ppi;
  * @author jason.zhu
  *
  */
-public class PPIMsgReqRunStop
+public class PPIMsgReqRunStop extends PPIMsgReq
 {
+
+	@Override
+	public short getFC()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getRetOffsetBytes()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected short getStartD()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public byte[] toBytes()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

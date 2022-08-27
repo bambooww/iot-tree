@@ -1,5 +1,6 @@
 package org.iottree.core;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -12,16 +13,41 @@ public class ConnJoin implements IXmlDataable
 {
 	String connId = null ;
 	
-	String chId = null ;
+	/**
+	 * chid
+	 * or chid-devid
+	 */
+	String nodeId = null ;
 	
-	
+	private transient String chId,devId ;
+
 	public ConnJoin()
 	{}
 	
-	public ConnJoin(String connid,String chid)
+	public ConnJoin(String connid,String nodeid)
 	{
 		this.connId = connid ;
-		this.chId = chid ;
+		this.nodeId = nodeid ;
+		//this.devId = devid ; //
+		onNodeIdSet();
+	}
+	
+	private void onNodeIdSet()
+	{
+		if(Convert.isNullOrEmpty(this.nodeId))
+			return ;
+	
+		int k = nodeId.indexOf('-') ;
+		if(k>0)
+		{
+			this.chId = nodeId.substring(0,k) ;
+			this.devId = nodeId.substring(k+1) ;
+		}
+		else
+		{
+			this.chId = nodeId ;
+			this.devId = null;
+		}
 	}
 	
 	public String getConnId()
@@ -29,9 +55,29 @@ public class ConnJoin implements IXmlDataable
 		return connId ;
 	}
 	
-	public String getChId()
+	public String getNodeId()
+	{
+		return this.nodeId ;
+	}
+	
+	
+	public String getNodeIdFull()
+	{
+		if(Convert.isNotNullEmpty(this.devId))
+			return "dev_"+this.nodeId ;
+		else
+			return "ch_"+this.nodeId ;
+	}
+	
+	
+	public String getRelatedChId()
 	{
 		return chId ;
+	}
+	
+	public String getRelatedDevId()
+	{
+		return this.devId ;
 	}
 
 	@Override
@@ -39,7 +85,9 @@ public class ConnJoin implements IXmlDataable
 	{
 		XmlData xd = new XmlData() ;
 		xd.setParamValue("conn_id", connId);
-		xd.setParamValue("ch_id", this.chId);
+		xd.setParamValue("node_id", this.nodeId);
+		//if(this.devId!=null)
+		//	xd.setParamValue("dev_id", this.devId);
 		return xd;
 	}
 
@@ -47,6 +95,11 @@ public class ConnJoin implements IXmlDataable
 	public void fromXmlData(XmlData xd)
 	{
 		this.connId = xd.getParamValueStr("conn_id") ;
-		this.chId = xd.getParamValueStr("ch_id") ;
+		this.nodeId = xd.getParamValueStr("node_id") ;
+		if(Convert.isNullOrEmpty(this.nodeId))
+			this.nodeId = xd.getParamValueStr("ch_id") ;
+		
+		onNodeIdSet();
+		//this.devId = xd.getParamValueStr("dev_id") ;
 	}
 }

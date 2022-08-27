@@ -67,7 +67,7 @@ public class MemSeg16  extends MemSeg
 		return (((int)buf[offset]) & (1<<bitpos)) > 0 ;
 	}
 	
-	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
+	public void setValNumber(UAVal.ValTP tp,long idx,Number v,ByteOrder bo)
 	{
 		int offset = (int)(idx-this.idx) ;
 		switch(tp)
@@ -133,7 +133,7 @@ public class MemSeg16  extends MemSeg
 	}
 	
 	
-	public Number getValNumber(UAVal.ValTP tp,long idx)
+	public Number getValNumber(UAVal.ValTP tp,long idx,ByteOrder bo)
 	{
 		int offset = (int)(idx-this.idx) ;
 		switch(tp)

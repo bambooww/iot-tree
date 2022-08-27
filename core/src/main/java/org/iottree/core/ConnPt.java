@@ -576,19 +576,58 @@ public abstract class ConnPt implements IXmlDataValidator
 		return createDT ;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 * @throws Exception 
-	 */
-	public UACh getJoinedCh() throws Exception
+//	/**
+//	 * 
+//	 * @return
+//	 * @throws Exception 
+//	 */
+//	public UACh getJoinedCh() throws Exception
+//	{
+//		UAPrj rep = this.belongTo.getBelongTo();
+//		ConnJoin cj = ConnManager.getInstance().getConnJoinByConnId(rep.getId(),this.id) ;
+//		if(cj==null)
+//			return null ;
+//		String chid = cj.getRelatedChId() ;
+//		return rep.getChById(chid) ;
+//	}
+	
+	public IJoinedNode getJoinedNode() throws Exception
 	{
 		UAPrj rep = this.belongTo.getBelongTo();
 		ConnJoin cj = ConnManager.getInstance().getConnJoinByConnId(rep.getId(),this.id) ;
 		if(cj==null)
 			return null ;
-		String chid = cj.getChId() ;
-		return rep.getChById(chid) ;
+		String chid = cj.getRelatedChId() ;
+		UACh ch = rep.getChById(chid) ;
+		String devid = cj.getRelatedDevId() ;
+		if(Convert.isNullOrEmpty(devid))
+			return ch ;
+		return ch.getDevById(devid) ;
+	}
+	
+	
+	public UACh getJoinedCh() throws Exception
+	{
+		IJoinedNode jn = getJoinedNode() ;
+		if(jn==null)
+			return null;
+		
+		if(!(jn instanceof UACh))
+			return null ;
+		
+		return (UACh)jn ;
+	}
+	
+	public UADev getJoinedDev() throws Exception
+	{
+		IJoinedNode jn = getJoinedNode() ;
+		if(jn==null)
+			return null;
+		
+		if(!(jn instanceof UADev))
+			return null ;
+		
+		return (UADev)jn ;
 	}
 	
 	public List<ConnMsg> getConnMsgs()
@@ -619,11 +658,23 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	public abstract String getConnErrInfo() ;
 	
-	public boolean hasJoinedCh() throws Exception
+	public boolean hasJoinedNode() throws Exception
 	{
-		return getJoinedCh()!=null ;
+		return getJoinedNode()!=null ;
 	}
 	
+	
+	public boolean hasJoinedCh() throws Exception
+	{
+		IJoinedNode jn = this.getJoinedNode() ;
+		return jn!=null && (jn instanceof UACh) ;
+	}
+	
+	public boolean hasJoinedDev() throws Exception
+	{
+		IJoinedNode jn = this.getJoinedNode() ;
+		return jn!=null && (jn instanceof UADev) ;
+	}
 	/**
 	 * ConnPt is binded by Driver
 	 * @param drv
@@ -654,7 +705,30 @@ public abstract class ConnPt implements IXmlDataValidator
 		
 		if(this.bindedDrv==null)
 			return ;
-		this.bindedDrv.RT_onConnReady(this);
+
+		
+		IJoinedNode jn = null;
+		try
+		{
+			jn = getJoinedNode() ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		if(jn==null)
+			return ;
+		
+		if(jn instanceof UADev)
+		{
+			UADev d = (UADev)jn;
+			this.bindedDrv.RT_onConnReady(this,d.getBelongTo(),d);
+		}
+		else if(jn instanceof UACh)
+		{
+			this.bindedDrv.RT_onConnReady(this,(UACh)jn,null);
+		}
 	}
 	
 	protected void fireConnInvalid()

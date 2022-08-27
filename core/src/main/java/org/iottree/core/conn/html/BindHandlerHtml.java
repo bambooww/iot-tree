@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.iottree.core.IJoinedNode;
 import org.iottree.core.UACh;
 import org.iottree.core.UATag;
 import org.iottree.core.conn.ConnPtMSG;
@@ -148,7 +149,10 @@ public class BindHandlerHtml extends BindHandler
 		if(hbLocs==null||hbLocs.size()<=0)
 			return false;
 		
-		UACh joinedch = this.connPtMsg.getJoinedCh() ;
+		IJoinedNode jn = this.connPtMsg.getJoinedNode() ;
+		if(jn==null || !(jn instanceof UACh))
+			return false;
+		UACh joinedch = (UACh)jn;
 		HtmlParser hp = new HtmlParser() ;
 		for(HtmlBlockLocator hbl:this.hbLocs)
 		{

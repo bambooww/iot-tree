@@ -55,13 +55,11 @@ String cp_tp = cp.getProviderType() ;
 <html>
 <head>
 <title>tcp client conn editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <script>
-dlg.resize_to(800,600);
+dlg.resize_to(800,500);
 </script>
 </head>
 <body>
@@ -69,11 +67,11 @@ dlg.resize_to(800,600);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-inline">
-      <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="name" value="<%=name%>"  class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="title" name="title" value="<%=title%>"   class="layui-input">
 	  </div>
 	  <div class="layui-form-mid">Enable:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
@@ -83,27 +81,25 @@ dlg.resize_to(800,600);
   <div class="layui-form-item">
     <label class="layui-form-label">Host:</label>
     <div class="layui-input-inline">
-      <input type="text" id="host" name="host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      <input type="text" id="host" name="host" value="<%=host%>"  class="layui-input">
     </div>
     <div class="layui-form-mid">Port:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="port" name="port" value="<%=port%>"  class="layui-input">
 	  </div>
-	 <div class="layui-form-mid">Connect timeout</div>
-	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  lay-verify="required" autocomplete="off" class="layui-input">
-	  </div>
+	 <div class="layui-form-mid"><button><i class="fa-regular fa-circle-question "></i></button></div>
+	  
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Connect timeout:</label>
+    <div class="layui-input-inline">
+      <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  class="layui-input">
+    </div>
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
-      <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
-    </div>
-  </div>
-   <div class="layui-form-item">
-    <label class="layui-form-label">Properties:</label>
-    <div class="layui-input-block">
-        
+    <div class="layui-input-inline" style="width:80%">
+      <textarea  id="desc"  name="desc"  class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>
  </form>

@@ -25,7 +25,7 @@ public class UAVal //extends JSObMap
 	{
 		vt_none(0,-1,null),
 		vt_bool(1,1,Boolean.class),
-		vt_byte(2,1,Byte.class),
+		vt_byte(2,1,Byte.class),// int8
 		vt_char(3,1,Character.class),//u8 vt_uint8
 		vt_int16(4,2,Short.class),
 		vt_int32(5,4,Integer.class),

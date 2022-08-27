@@ -48,6 +48,7 @@
 
 	String drv_name = "";
 	DevDriver drv = ch.getDriver() ;
+	String dev_model = "" ;
 	if(drv!=null)
 	{
 		if(!ch.isDriverFit())
@@ -77,18 +78,19 @@
 			devid = dd.getId() ;
 			ddtt = dd.getTitle()+"["+dd.getName()+"]" ;
 		}
+		dev_model = dev.getDevModel() ;
+		if(dev_model==null)
+			dev_model = "" ;
 	}
 %>
 <html>
 <head>
 <title>add dev</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/dlg.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(650,400);
 </script>
 </head>
 <body>
@@ -103,19 +105,46 @@ dlg.resize_to(600,400);
 	    <input type="text" id="title" name="title" value="<%=title %>"   autocomplete="off" class="layui-input">
 	  </div>
   </div>
-     <div class="layui-form-item">
+
+  <div class="layui-form-item">
     <label class="layui-form-label">Device:</label>
     <div class="layui-input-inline">
       <input type="hidden" id="libid" name="libid"  value="<%=libid%>"/>
       <input type="hidden" id="catid" name="catid"  value="<%=catid%>"/>
       <input type="hidden" id="devid" name="devid"  value="<%=devid%>"/>
       <input type="text" id="devdef_tt" name="devdef_tt" value="<%=ddtt %>" readonly="readonly"  value=""   lay-verify="required" autocomplete="off" class="layui-input">
+      
     </div>
     <div class="layui-form-mid"><button type="button" onclick="sel_devdef()">...</button></div>
+        
+  <%
+List<DevDriver.Model> ms = null;
+if(drv!=null)
+	ms = drv.getDevModels() ;
+if(ms!=null && ms.size()>0)
+{
+%>
+    <label class="layui-form-label">Model:</label>
+    <div class="layui-input-inline" style="width:150px">
+    	<select id="dev_model"  lay-filter="dev_model">
+    		<option value="" >---</option>
+<%
+
+		for(DevDriver.Model m:ms)
+		{
+%><option value="<%=m.getName() %>" ><%=m.getTitle() %></option><%
+		}
+%>
+    	</select>
+    </div>
+<%
+}
+%>
+    
   </div>
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
-    <div class="layui-input-block">
+    <div class="layui-input-block" style="width:500px">
       <textarea name="desc" id="desc"  class="layui-textarea"><%=desc %></textarea>
     </div>
   </div>
@@ -124,6 +153,14 @@ dlg.resize_to(600,400);
 <script type="text/javascript">
 
 var drv_name = "<%=drv_name%>" ;
+var dev_model = "<%=dev_model%>" ;
+
+$("#dev_model").val(dev_model) ;
+var form = null;
+layui.use('form', function(){
+	  form = layui.form;
+	  form.render();
+});
 
 function win_close()
 {
@@ -195,10 +232,20 @@ function do_submit(cb)
 	var libid = $("#libid").val() ;
 	var catid = $("#catid").val() ;
 	var devid = $("#devid").val() ;
+	
+	var dev_model = $("#dev_model").val();
+	if($("#dev_model").length>0)
+	{
+		if(!dev_model)
+		{
+			cb(false,'please select Model') ;
+			return ;
+		}
+	}
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
-	cb(true,{name:n,title:tt,libid:libid,catid:catid,devid:devid,desc:desc});
+	cb(true,{name:n,title:tt,libid:libid,catid:catid,devid:devid,dev_model:dev_model,desc:desc});
 }
 
 </script>

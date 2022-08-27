@@ -109,9 +109,25 @@
 			else
 				drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
 		}
+		
+		boolean b_connpt_to_dev = false;
+		if(drv!=null)
+		{
+			b_connpt_to_dev = drv.isConnPtToDev();
+		}
+		
+		String sub_devids = "" ;
+		boolean bsubf = true;
+		for(UADev dev:ch.getDevs())
+		{
+			if(bsubf) bsubf=false;
+			else
+				sub_devids+= ",";
+			sub_devids+=dev.getId() ;
+		}
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'/><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
 		  ,"id":"<%=ch.getId() %>"
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
@@ -128,6 +144,16 @@
 				out.print(",") ;
 			String devok = "" ;
 			DevDef devdef = dev.getDevDef() ;
+			
+			String model_n = "" ;
+			String model_t = "" ;
+			DevDriver.Model dm = dev.getDrvDevModel();
+			if(dm!=null)
+			{
+				model_n = "("+dm.getName()+")" ;
+				model_t =  "("+dm.getTitle()+")" ;
+			}
+			
 			String deft = "" ;
 			if(devdef==null)
 			{
@@ -137,10 +163,12 @@
 			{
 				deft = devdef.getTitle() ;
 			}
+			if(Convert.isNotNullEmpty(deft))
+				deft = "["+deft+"]" ;
 			boolean ref_locked = dev.isRefLocked();
 %>
 			{
-				"text":"<span title='<%=dev.getTitle()%>'><%=dev.getName() %></span>[<%=deft%>] <%=devok%>"
+				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title='<%=dev.getTitle()%><%=model_t%>'><%=dev.getName() %><%=model_n%></span><%=deft%> <%=devok%>"
 			  ,"id":"<%=dev.getId() %>"
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"

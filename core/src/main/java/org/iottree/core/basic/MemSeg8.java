@@ -19,6 +19,8 @@ public class MemSeg8 extends MemSeg
 {
 	byte[] buf = null;
 	
+	
+	
 	public MemSeg8(long idx,int len)
 	{
 		super(idx,len) ;
@@ -61,7 +63,7 @@ public class MemSeg8 extends MemSeg
 		return (((int)buf[offset]) & (1<<bitpos)) > 0 ;
 	}
 	
-	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
+	public void setValNumber(UAVal.ValTP tp,long idx,Number v,ByteOrder bo)
 	{
 		int sidx = (int)(idx-this.idx) ;
 		switch(tp)
@@ -80,14 +82,14 @@ public class MemSeg8 extends MemSeg
 		case vt_uint32:
 			if(len<4)
 				throw new IllegalArgumentException("int32 must 4 bytes len") ;
-			DataUtil.intToBytes(v.intValue(),buf,sidx,true) ;
+			DataUtil.intToBytes(v.intValue(),buf,sidx,bo) ;
 			break ;
 		case vt_int64:
 		case vt_uint64:
 		case vt_date://millis second
 			if(len<8)
 				throw new IllegalArgumentException("int64 must 8 bytes len") ;
-			DataUtil.longToBytes(v.longValue(),buf,sidx,true) ;
+			DataUtil.longToBytes(v.longValue(),buf,sidx,bo) ;
 			break ;
 		case vt_float:
 			if(len<4)
@@ -107,8 +109,8 @@ public class MemSeg8 extends MemSeg
 		}
 	}
 	
-	
-	public Number getValNumber(ValTP tp,long idx)
+	@Override
+	public Number getValNumber(ValTP tp,long idx,ByteOrder bo)
 	{
 		int sidx = (int)(idx-this.idx) ;
 		switch(tp)
@@ -131,7 +133,7 @@ public class MemSeg8 extends MemSeg
 		case vt_uint32:
 			if(len<4)
 				throw new IllegalArgumentException("int32 must 4 bytes len") ;
-			int intv = DataUtil.bytesToInt(buf,sidx,false) ;
+			int intv = DataUtil.bytesToInt(buf,sidx,bo) ;
 			if(tp==ValTP.vt_int32)
 				return intv ;
 			else
@@ -141,7 +143,7 @@ public class MemSeg8 extends MemSeg
 		case vt_date:
 			if(len<8)
 				throw new IllegalArgumentException("int64 must 8 bytes len") ;
-			long longv = DataUtil.bytesToLong(buf,sidx,true) ;
+			long longv = DataUtil.bytesToLong(buf,sidx,bo) ;
 			if(tp==ValTP.vt_int64||tp==ValTP.vt_date)
 				return longv ;
 			else

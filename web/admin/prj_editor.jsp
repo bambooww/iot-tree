@@ -454,7 +454,7 @@ background-color: #fff ;
 }
 
 #tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
-#tree .icon_dev {background:url('./inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px; }
+#tree .icon_dev {background:url('./inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px;display:none;}
 #tree .icon_prj {background:url('./inc/sm_icon_tree.png') 0 0 no-repeat; width:24px;height:24px;}
 #tree .icon_ch {background:url('./inc/sm_icon_ch.png') 0 0 no-repeat; width:24px;height:24px;display:none;}
 #tree .icon_tagg {background:url('./inc/sm_icon_tagg.png') 0 0 no-repeat; width:24px;height:24px;}
@@ -1841,7 +1841,7 @@ function add_or_edit_dev(ch_path,dev_path)
 								dlg.msg(ret);
 								return ;
 							}
-							dlg.msg(ret);
+							dlg.msg("Add device ok");
 							dlg.close();
 							refresh_ui() ;
 						},false);

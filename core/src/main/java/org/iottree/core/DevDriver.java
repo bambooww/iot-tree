@@ -22,8 +22,8 @@ import org.iottree.core.util.xmldata.XmlData;
  */
 public abstract class DevDriver implements IPropChecker
 {
-	protected static ILogger log = LoggerManager.getLogger(DevDriver.class) ;
-	
+	protected static ILogger log = LoggerManager.getLogger(DevDriver.class);
+
 	public static enum State
 	{
 		not_run(0), running(2), run_stopping(1);
@@ -46,8 +46,98 @@ public abstract class DevDriver implements IPropChecker
 		}
 	}
 
-	// ---------------------dev cat and device
+	private final class SubDevThread extends Thread
+	{
+		UADev subDev = null;
 
+		ConnPt connPt = null;
+
+		public SubDevThread(UADev subdev, ConnPt cpt)
+		{
+			subDev = subdev;
+			this.connPt = cpt;
+		}
+
+		public ConnPt getConnPt()
+		{
+			return this.connPt;
+		}
+
+		public UADev getDev()
+		{
+			return subDev;
+		}
+
+		@Override
+		public void run()
+		{
+			
+			long drv_int = subDev.getOrDefaultPropValueLong("dev", "dev_intv", 100);
+			if (drv_int < 0)
+				drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
+			if (drv_int < 0)
+				drv_int = 1000;
+			
+			//subDev.getOrDefaultPropValueLong("", itemn, defv)
+			try
+			{
+				StringBuilder failedr = new StringBuilder();
+				while (bRun)
+				{
+					
+					try
+					{
+						Thread.sleep(drv_int);
+
+						// System.out.println("-----1-------");
+						if (!RT_runInLoop(belongToCh, subDev, failedr))
+							break;
+					}
+					catch ( InterruptedException ie)
+					{
+
+					}
+					catch ( ConnException e)
+					{// ConnException will not stop driver
+
+					}
+				}
+			}
+			catch ( Exception e)
+			{
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+			finally
+			{
+				stopDriver();
+			}
+		}
+	}
+
+	public static class Model
+	{
+		String name = null ;
+		
+		String title = null ;
+		
+		public Model(String name,String t)
+		{
+			this.name = name ;
+			this.title = t ;
+		}
+		
+		public String getName()
+		{
+			return name ;
+		}
+		
+		public String getTitle()
+		{
+			return title ;
+		}
+	}
+	// ---------------------dev cat and device
 
 	// -------driver self
 	UACh belongToCh = null;
@@ -78,6 +168,25 @@ public abstract class DevDriver implements IPropChecker
 		return belongToCh;
 	}
 
+	
+	public List<Model> getDevModels()
+	{
+		return null ;
+	}
+	
+	final public Model getDevModel(String name)
+	{
+		List<Model> ms = this.getDevModels();
+		if(ms==null)
+			return null ;
+		
+		for(Model m:ms)
+		{
+			if(m.name.equals(name))
+				return m ;
+		}
+		return null ;
+	}
 	/**
 	 * driver implements support ConnPt
 	 * 
@@ -85,6 +194,16 @@ public abstract class DevDriver implements IPropChecker
 	 *         joined
 	 */
 	public abstract Class<? extends ConnPt> supportConnPtClass();
+
+	/**
+	 * connpt is connector to dev e.g Device based on IP addr will use this
+	 * 
+	 * @return
+	 */
+	public boolean isConnPtToDev()
+	{
+		return false;
+	}
 
 	/**
 	 * check support device find or not
@@ -113,14 +232,14 @@ public abstract class DevDriver implements IPropChecker
 	 * 
 	 * @return
 	 */
-	public abstract List<PropGroup> getPropGroupsForCh();
+	public abstract List<PropGroup> getPropGroupsForCh(UACh ch);
 
 	/**
 	 * Device in channel may has some special prop need to be set e.g devid
 	 * 
 	 * @return
 	 */
-	public abstract List<PropGroup> getPropGroupsForDevInCh();
+	public abstract List<PropGroup> getPropGroupsForDevInCh(UADev d);
 
 	/**
 	 * a template address
@@ -171,7 +290,12 @@ public abstract class DevDriver implements IPropChecker
 	private boolean bRun = false;
 	private Thread rtTh = null;
 
-	transient private ConnPt rtBindedConnPt = null;
+	transient private ConnPt rtBindedChConnPt = null;
+
+	/**
+	 * if driver isConnPtToDev=true,then every devices is run indivil
+	 */
+	transient private HashMap<UADev, SubDevThread> rtBindedDev2SubTh = null;
 
 	/**
 	 * init driver before run. 1) implements may read ch device list and
@@ -194,45 +318,84 @@ public abstract class DevDriver implements IPropChecker
 			return;// need not bind
 
 		UACh ch = this.getBelongToCh();
-		ConnPt cpt = ConnManager.getInstance().getConnPtByCh(ch.getBelongTo().getId(), ch.getId());
-		if (cpt == null)
-			return;// no conn
-		if (!c.isAssignableFrom(cpt.getClass()))
-		{
-			throw new Exception("bind conn is not match driver");
-		}
-		rtBindedConnPt = cpt;
+		if (ch == null)
+			return;
 
-		// callback
-		cpt.onDriverBinded(this);
-		return;
+		UAPrj prj = ch.getBelongTo();
+		if (this.isConnPtToDev())
+		{
+			this.rtBindedDev2SubTh = new HashMap<>();
+			for (UADev dev : ch.getDevs())
+			{
+				ConnPt cpt = ConnManager.getInstance().getConnPtByNode(prj.getId(), ch.getId(), dev.getId());
+				if (cpt == null)
+					continue;
+				if (!c.isAssignableFrom(cpt.getClass()))
+				{
+					// throw new Exception("bind conn is not match driver");
+					if (log.isErrorEnabled())
+						log.error("bind conn is not match driver");
+					continue;
+				}
+				SubDevThread sth = new SubDevThread(dev, cpt);
+				rtBindedDev2SubTh.put(dev, sth);
+				// callback
+				cpt.onDriverBinded(this);
+			}
+		}
+		else
+		{
+			ConnPt cpt = ConnManager.getInstance().getConnPtByNode(prj.getId(), ch.getId(), null);
+			if (cpt == null)
+				return;// no conn
+			if (!c.isAssignableFrom(cpt.getClass()))
+			{
+				throw new Exception("bind conn is not match driver");
+			}
+			rtBindedChConnPt = cpt;
+
+			// callback
+			cpt.onDriverBinded(this);
+		}
+
 	}
 
 	private void unbindConnPt()
 	{
-		if (rtBindedConnPt == null)
-			return;
-		rtBindedConnPt.onDriverUnbinded();
-		rtBindedConnPt = null;
+		if (rtBindedChConnPt != null)
+		{
+			rtBindedChConnPt.onDriverUnbinded();
+			rtBindedChConnPt = null;
+		}
+
+		if (this.rtBindedDev2SubTh != null)
+		{
+			for (SubDevThread th : this.rtBindedDev2SubTh.values())
+			{
+				th.getConnPt().onDriverUnbinded();
+			}
+
+			this.rtBindedDev2SubTh = null;
+		}
 	}
-	
-	
+
 	/**
 	 * check addr invalid before tag added
+	 * 
 	 * @param addr
 	 * @param vtp
 	 * @return
 	 */
-	public ChkRes checkAddr(String addr,ValTP vtp)
+	public ChkRes checkAddr(String addr, ValTP vtp)
 	{
 		DevAddr daddr = this.getSupportAddr();
-		if(daddr==null)
-			return null ;
-		
-		//StringBuilder failedr = new StringBuilder() ;
-		return daddr.checkAddr(addr, vtp) ;
+		if (daddr == null)
+			return null;
+
+		// StringBuilder failedr = new StringBuilder() ;
+		return daddr.checkAddr(addr, vtp);
 	}
-	
+
 	/**
 	 * after bind before driver run in thread loop override to do something.
 	 * 
@@ -252,23 +415,45 @@ public abstract class DevDriver implements IPropChecker
 		if (rtTh != null)
 			return true;
 
+		// bind,or not
+		bindConnPt();
+
+		beforeDriverRun();
+
 		// init
 		if (!initDriver(failedr))
 			return false;
 
 		bRun = true;
-		rtTh = new Thread(runner, "iottree-devdriver-" +this.getBelongToCh().getName()+" "+ this.getName());
-		rtTh.start();
+		if(this.isConnPtToDev())
+		{
+			if( this.rtBindedDev2SubTh!=null)
+			{
+				for (SubDevThread dst : this.rtBindedDev2SubTh.values())
+				{
+					dst.start();
+				}
+			}
+		}
+		else
+		{
+			rtTh = new Thread(runner, "iottree-devdriver-" + this.getBelongToCh().getName() + " " + this.getName());
+			rtTh.start();
+		}
+
+		
+
 		return true;
 	}
-	
+
 	/**
 	 * when >= 0,it will override DriverIntMS in channel
+	 * 
 	 * @return
 	 */
 	protected long getRunInterval()
 	{
-		return -1 ;
+		return -1;
 	}
 
 	Runnable runner = new Runnable() {
@@ -277,18 +462,17 @@ public abstract class DevDriver implements IPropChecker
 			try
 			{
 				long drv_int = getRunInterval();
-				if(drv_int<0)
-					drv_int = DevDriver.this.getBelongToCh().getDriverIntMS() ;
-				if(drv_int<0)
-					drv_int = 0 ;
-				
+				if (drv_int < 0)
+					drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
+				if (drv_int < 0)
+					drv_int = 0;
+
 				StringBuilder failedr = new StringBuilder();
-				log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] started");
+				log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName()
+						+ "] started");
 
-				// bind
-				bindConnPt();
-
-				beforeDriverRun();
+				
+				UACh ch = getBelongToCh();
 
 				while (bRun)
 				{
@@ -296,13 +480,13 @@ public abstract class DevDriver implements IPropChecker
 					{
 						Thread.sleep(drv_int);
 
-						//System.out.println("-----1-------");
-						if (!RT_runInLoop(failedr))
+						// System.out.println("-----1-------");
+						if (!RT_runInLoop(ch, null, failedr))
 							break;
 					}
-					catch(InterruptedException ie)
+					catch ( InterruptedException ie)
 					{
-						
+
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
@@ -313,7 +497,7 @@ public abstract class DevDriver implements IPropChecker
 			catch ( Exception e)
 			{
 				System.err.println(e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			finally
 			{
@@ -324,9 +508,9 @@ public abstract class DevDriver implements IPropChecker
 
 	private void stopDriver()
 	{
-		if(!bRun)
-			return ;
-		
+		if (!bRun)
+			return;
+
 		try
 		{
 			bRun = false;
@@ -337,10 +521,11 @@ public abstract class DevDriver implements IPropChecker
 		{
 			ee.printStackTrace();
 		}
-		
-		if(log.isInfoEnabled())
-			log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName() + "] stopped");
-		
+
+		if (log.isInfoEnabled())
+			log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName()
+					+ "] stopped");
+
 		rtTh = null;
 	}
 
@@ -348,12 +533,23 @@ public abstract class DevDriver implements IPropChecker
 	{
 		if (!bRun)
 			return;
-		Thread t = rtTh;
-		if (t == null)
-			return;
+
 		if (bforce)
 		{
-			t.interrupt();
+			Thread t = rtTh;
+			if (t != null)
+			{
+				t.interrupt();
+			}
+
+			if (rtBindedDev2SubTh != null)
+			{
+				for (SubDevThread sdt : this.rtBindedDev2SubTh.values())
+				{
+					sdt.interrupt();
+				}
+			}
+
 			stopDriver();
 		}
 		else
@@ -378,7 +574,17 @@ public abstract class DevDriver implements IPropChecker
 
 	protected final ConnPt getBindedConnPt()
 	{
-		return this.rtBindedConnPt;
+		return this.rtBindedChConnPt;
+	}
+
+	protected final UADev getBindedDevByConnPt(ConnPt cp)
+	{
+		for (Map.Entry<UADev, SubDevThread> d2th : this.rtBindedDev2SubTh.entrySet())
+		{
+			if (d2th.getValue().getConnPt() == cp)
+				return d2th.getKey();
+		}
+		return null;
 	}
 
 	/**
@@ -387,7 +593,23 @@ public abstract class DevDriver implements IPropChecker
 	 * 
 	 * @param cp
 	 */
-	protected abstract void RT_onConnReady(ConnPt cp);
+	protected abstract void RT_onConnReady(ConnPt cp, UACh ch, UADev dev);
+
+	final void RT_onConnInvalid(ConnPt cp)
+	{
+		UACh ch = this.getBelongToCh();
+		if (this.isConnPtToDev())
+		{
+			UADev d = getBindedDevByConnPt(cp);
+			if (d == null)
+				return;
+			RT_onConnInvalid(cp, ch, d);
+		}
+		else
+		{
+			RT_onConnInvalid(cp, ch, null);
+		}
+	}
 
 	/**
 	 * connpt related to this driver is broken or invalid. driver then can do
@@ -395,15 +617,17 @@ public abstract class DevDriver implements IPropChecker
 	 * 
 	 * @param cp
 	 */
-	protected abstract void RT_onConnInvalid(ConnPt cp);
+	protected abstract void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev);
 
 	/**
 	 * implementor will use this interface method to check self state and may
 	 * reconnect or other thing. it may make driver running more robust.
 	 * 
+	 * this method may run in multi thread when connector is bind to device.
+	 * 
 	 * @throws Exception
 	 */
-	protected abstract boolean RT_runInLoop(StringBuilder failedr) throws Exception;
+	protected abstract boolean RT_runInLoop(UACh ch, UADev dev, StringBuilder failedr) throws Exception;
 
 	/**
 	 * if driver RT_initDriver or RT_runInLoop failed,or to be stopped this

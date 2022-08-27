@@ -19,7 +19,7 @@ import org.iottree.core.res.ResDir;
 import org.json.JSONObject;
 
 @data_class
-public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
+public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 {
 	public static final String NODE_TP = "ch" ;
 	
@@ -27,7 +27,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	String drvName = null ;
 	
 	@data_val(param_name = "drv_int")
-	long devIntMS = 1000 ;
+	long drvIntMS = 1000 ;
 //	/**
 //	 * javascript run with interval
 //	 */
@@ -152,7 +152,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	
 	public long getDriverIntMS()
 	{
-		return this.devIntMS;
+		return this.drvIntMS;
 	}
 	
 	public DevDriver getDriver()
@@ -232,7 +232,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 	public ConnPt getConnPt() throws Exception
 	{
 		UAPrj rep = this.getBelongTo() ;
-		return ConnManager.getInstance().getConnPtByCh(rep.getId(), this.getId()) ;
+		return ConnManager.getInstance().getConnPtByNode(rep.getId(), this.getId(),null) ;
 	}
 	
 	/**
@@ -366,7 +366,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return null ;
 	}
 	
-	public UADev addDev(String name,String title,String desc,String libid,String devdef_id) throws Exception
+	public UADev addDev(String name,String title,String desc,String libid,String devdef_id,String dev_model) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		
@@ -391,6 +391,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			
 			d = dd.deepCopyUADev(this.getBelongTo(),dev,name, title, desc,rf2new) ;
 			d.setDevRef(libid,devdef_id);
+			d.setDevModel(dev_model);
 		}
 		else
 		{
@@ -398,6 +399,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			d.id = this.getNextIdByRoot() ;
 			d.setNameTitle(name, title, desc);
 			d.setDevRef(null,null);
+			d.setDevModel(dev_model);
 		}
 		
 		devs.add(d);
@@ -422,7 +424,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		return d ;
 	}
 	
-	public UADev updateDev(UADev dev,String name,String title,String desc,String libid,String devdef_id) throws Exception
+	public UADev updateDev(UADev dev,String name,String title,String desc,String libid,String devdef_id,String dev_model) throws Exception
 	{
 		UAUtil.assertUAName(name);
 
@@ -442,11 +444,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			}
 			d = dd.updateUADev(dev,name, title, desc) ;
 			d.setDevRef(libid,devdef_id);
+			d.setDevModel(dev_model);
 		}
 		else
 		{
 			dev.setNameTitle(name, title, desc);
 			dev.setDevRef(null,null);
+			dev.setDevModel(dev_model);
 		}
 		
 		this.RT_init(false, true);
@@ -565,7 +569,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 		DevDriver uad = this.getDriver() ;
 		if(uad!=null)
 		{//add driver prop used in this channel
-			List<PropGroup> drvpgs = uad.getPropGroupsForCh() ;
+			List<PropGroup> drvpgs = uad.getPropGroupsForCh(this) ;
 			if(drvpgs!=null)
 				pgs.addAll(drvpgs);
 		}
@@ -612,7 +616,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 			case "drv":
 				return this.drvName;
 			case "drv_intv":
-				return devIntMS;
+				return drvIntMS;
 //			case "script":
 //				return this.script ;
 //			case "script_int":
@@ -640,7 +644,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn
 				}
 				return true;//do nothing
 			case "drv_intv":
-				devIntMS = Convert.parseToInt64(strv, 1000);
+				drvIntMS = Convert.parseToInt64(strv, 1000);
 				return true;
 //			case "script":
 //				this.script = strv ;

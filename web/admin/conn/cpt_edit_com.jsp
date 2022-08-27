@@ -88,6 +88,7 @@ dlg.resize_to(800,430);
     <label class="layui-form-label">ID:</label>
     <div class="layui-input-inline">
       	    <select id="comid" lay-filter="comid">
+      	    <option value="">---</option>
 <%
 for(String cid:ConnProCOM.listSysComs())
 {
@@ -139,6 +140,7 @@ for(int i = 0 ; i < ConnPtCOM.PARITY.length ; i ++)
     <label class="layui-form-label">Stop bits:</label>
     <div class="layui-input-inline">
       	    <select id="stopbits" lay-filter="stopbits">
+      	    	
 <%
 for(int dbit:ConnPtCOM.STOPBITS)
 {

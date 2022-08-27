@@ -337,12 +337,12 @@ public class ConnManager
 		return null ;
 	}
 	
-	public ConnJoin getConnJoinByChId(String repid,String chid) throws Exception
+	public ConnJoin getConnJoinByNodeId(String repid,String chid) throws Exception
 	{
 		List<ConnJoin> cjs = getConnJoins(repid) ;
 		for(ConnJoin cj:cjs)
 		{
-			if(chid.equals(cj.getChId()))
+			if(chid.equals(cj.getNodeId()))
 				return cj ;
 		}
 		return null ;
@@ -361,8 +361,17 @@ public class ConnManager
 			return false;
 		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
-			throw new Exception("no rep ") ;
-		UACh ch = rep.getChById(cj.getChId()) ;
+			throw new Exception("no prj ") ;
+		UACh ch = rep.getChById(cj.getRelatedChId()) ;
+		if(ch==null)
+			return false;
+		String devid = cj.getRelatedDevId();
+		if(Convert.isNotNullEmpty(devid))
+		{
+			UADev dev = ch.getDevById(devid) ;
+			if(dev==null)
+				return false;
+		}
 		return ch!=null ;
 	}
 	
@@ -373,9 +382,9 @@ public class ConnManager
 	 * @return
 	 * @throws Exception
 	 */
-	public ConnProvider getConnJoinedProvider(String repid,String chid) throws Exception
+	public ConnProvider getConnJoinedProvider(String repid,String nodeId) throws Exception
 	{
-		ConnJoin cj = getConnJoinByChId(repid,chid) ;
+		ConnJoin cj = getConnJoinByNodeId(repid,nodeId) ;
 		if(cj==null)
 			return null ;
 		List<ConnProvider> cps = getConnProviders(repid) ;
@@ -395,10 +404,36 @@ public class ConnManager
 		return null ;
 	}
 	
-	public ConnJoin setConnJoin(String repid,String connid,String chid) throws Exception
+	/**
+	 * 
+	 * @param repid
+	 * @param connid
+	 * @param nodeid  ch_chid  or dev_chid-devid
+	 * @return
+	 * @throws Exception
+	 */
+	public ConnJoin setConnJoin(String repid,String connid,String nodeid) throws Exception
 	{
+		String chid,devid ;
+		if(nodeid.startsWith("ch_"))
+		{
+			nodeid = chid = nodeid.substring(3) ;
+			devid = null ;
+		}
+		else if(nodeid.startsWith("dev_"))
+		{
+			nodeid = chid = nodeid.substring(4) ;
+			int k = chid.indexOf('-') ;
+			if(k<=0)
+				throw new Exception("invalid nodeid="+nodeid) ;
+			devid = chid.substring(k+1) ;
+			chid = chid.substring(0,k) ;
+		}
+		else
+			throw new Exception("invalid nodeid="+nodeid) ;
+		
 		ConnJoin oldcj = this.getConnJoinByConnId(repid, connid) ;
-		ConnJoin oldch = this.getConnJoinByConnId(repid, chid) ;
+		ConnJoin oldch = this.getConnJoinByNodeId(repid, nodeid) ;
 		if(oldcj!=null||oldch!=null)
 		{
 			throw new Exception("join is already existed!") ;
@@ -407,14 +442,21 @@ public class ConnManager
 		ConnPt cp = this.getConnPtById(repid, connid) ;
 		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
-			throw new Exception("no rep found") ;
+			throw new Exception("no project found") ;
 		
 		UACh ch = rep.getChById(chid) ;
 		if(cp==null||ch==null)
 			throw new Exception("no Conn or Ch found") ;
 		
+		if(Convert.isNotNullEmpty(devid))
+		{
+			UADev dev = ch.getDevById(devid) ;
+			if(dev==null)
+				throw new Exception("no Device found") ;
+		}
+		
 		List<ConnJoin> cjs = getConnJoins(repid);
-		ConnJoin cj = new ConnJoin(connid,chid) ;
+		ConnJoin cj = new ConnJoin(connid,nodeid) ;
 		cjs.add(cj) ;
 		File cjf = getConnJoinFile(rep) ;
 		saveConnJoins(cjf,cjs) ;
@@ -430,8 +472,8 @@ public class ConnManager
 		UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 		if(rep==null)
 			throw new Exception("no rep found") ;
-		UACh ch = cp.getJoinedCh() ;
-		if(cp==null||ch==null)
+		IJoinedNode jnode = cp.getJoinedNode() ;
+		if(cp==null||jnode==null)
 			return false;
 		
 		List<ConnJoin> cjs = getConnJoins(repid);
@@ -489,10 +531,17 @@ public class ConnManager
 		XmlData.writeToFile(xd, cjf);
 	}
 	
-
-	public ConnPt getConnPtByCh(String repid,String chid) throws Exception
+	public static String getCJNodeId(String chid,String devid)
 	{
-		ConnJoin cj = getConnJoinByChId(repid,chid) ;
+		if(Convert.isNullOrEmpty(devid))
+			return chid ;
+		return chid+"-"+devid ;
+	}
+
+	public ConnPt getConnPtByNode(String repid,String chid,String devid) throws Exception
+	{
+		String nid = getCJNodeId(chid,devid);
+		ConnJoin cj = getConnJoinByNodeId(repid,nid) ;
 		if(cj==null)
 			return null ;
 		List<ConnProvider> cps = getConnProviders(repid) ;

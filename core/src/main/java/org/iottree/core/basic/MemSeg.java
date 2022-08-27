@@ -8,10 +8,22 @@ public abstract class MemSeg
 	
 	int len = 1 ;
 	
+	ByteOrder byteOrd = ByteOrder.LittleEndian;
+	
 	public MemSeg(long idx,int len)
 	{
 		this.idx = idx ;
 		this.len = len ;
+	}
+	
+	public ByteOrder getByteOrder()
+	{
+		return byteOrd ;
+	}
+	
+	public void setByteOrder(ByteOrder bo)
+	{
+		this.byteOrd = bo ;
 	}
 	
 	public abstract int getBitLen();
@@ -35,9 +47,9 @@ public abstract class MemSeg
 	
 	public abstract boolean getValBool(long idx,int bitpos);
 	
-	public abstract void setValNumber(UAVal.ValTP tp,long idx,Number v);
+	public abstract void setValNumber(UAVal.ValTP tp,long idx,Number v,ByteOrder bo);
 	
-	public abstract Number getValNumber(UAVal.ValTP tp,long idx);
+	public abstract Number getValNumber(UAVal.ValTP tp,long idx,ByteOrder bo);
 	
 	public static MemSeg createInstance(long idx,int len,int bitlen)
 	{

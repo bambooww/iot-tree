@@ -200,13 +200,13 @@ public class MemTable<T extends MemSeg>
 	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
 	{
 		T ms = acquireMemSeg(tp,idx) ;
-		ms.setValNumber(tp,idx, v);
+		ms.setValNumber(tp,idx, v,ByteOrder.LittleEndian);
 	}
 	
 	public Number getValNumber(UAVal.ValTP tp,long idx)
 	{
 		T ms = acquireMemSeg(tp,idx) ;
-		return ms.getValNumber(tp,idx);
+		return ms.getValNumber(tp,idx,ByteOrder.LittleEndian);
 	}
 	
 	public int getValInt32(UAVal.ValTP tp,long idx)

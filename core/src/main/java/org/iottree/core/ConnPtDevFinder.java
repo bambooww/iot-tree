@@ -14,12 +14,14 @@ public abstract class ConnPtDevFinder extends ConnPtBinder
 	
 	public final boolean addFoundConnDevToCh(ConnDev cd,StringBuilder failedr) throws Exception
 	{
-		UACh ch= this.getJoinedCh() ;
-		if(ch==null)
+		IJoinedNode jn = this.getJoinedNode();
+		if(jn==null || !(jn instanceof UACh))
 		{
 			failedr.append("no joined channel") ;
 			return false;
 		}
+			
+		UACh ch=  (UACh)jn ;//.getJoinedCh() ;
 		boolean b = addConnDevToCh(ch,cd, failedr) ;
 		if(b)
 		{
@@ -67,7 +69,7 @@ public abstract class ConnPtDevFinder extends ConnPtBinder
 			return false;
 		}
 		
-		UADev ndev = ch.addDev(cd.getName(), cd.getTitle(), "", null,null) ;
+		UADev ndev = ch.addDev(cd.getName(), cd.getTitle(), "", null,null,null) ;
 		
 		for(ConnDev.Data d:cd.getDatas())
 		{

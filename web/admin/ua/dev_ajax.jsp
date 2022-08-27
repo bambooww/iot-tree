@@ -44,6 +44,7 @@
 		String libid = request.getParameter("libid") ;
 		String catid = request.getParameter("catid") ;
 		String devid = request.getParameter("devid") ;
+		String devmodel = request.getParameter("dev_model") ;
 		
 		String name=request.getParameter("name");
 		String title = request.getParameter("title");
@@ -58,11 +59,11 @@
 		try
 		{
 			if(dev==null)
-				dev = ch.addDev(name, title, desc,libid,devid) ;
+				dev = ch.addDev(name, title, desc,libid,devid,devmodel) ;
 			else
 			{
 				UACh ch0 = dev.getBelongTo() ;
-				ch0.updateDev(dev,name, title, desc, libid,devid) ;
+				ch0.updateDev(dev,name, title, desc, libid,devid,devmodel) ;
 			}
 			
 			if(Convert.isNotNullEmpty(libid) && Convert.isNotNullEmpty(devid))
@@ -77,6 +78,7 @@
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			out.print(e.getMessage());
 			return ;
 		}

@@ -53,9 +53,13 @@ case "list":
 		if(bf2)bf2=false;
 		else out.print(",") ;
 		String connid =cj.getConnId() ;
-		String chid = cj.getChId() ;		
+		String chid = cj.getRelatedChId() ;
+		String devid = cj.getRelatedDevId() ;
+		//String nodeid = cj.getNodeId() ;
+		if(devid==null)
+			devid = "" ;
 %>
-		{"connid":"<%=connid%>","chid":"<%=chid%>"}
+		{"connid":"<%=connid%>","chid":"<%=chid%>","devid":"<%=devid%>","nodeid":"<%=cj.getNodeIdFull()%>"}
 <%
 	}
 %>
@@ -158,21 +162,22 @@ case "conn_del":
 	break ;
 case "join_add":
 case "join_del":
-	if(!Convert.checkReqEmpty(request, "{\"err\":\"no id input\"}", out,"connid","chid"))
+	if(!Convert.checkReqEmpty(request, "{\"err\":\"no id input\"}", out,"connid","nodeid"))
 		return;
 	connid = request.getParameter("connid") ;
-	String chid = request.getParameter("chid") ;
-	if(!connid.startsWith("conn_") || !chid.startsWith("ch_"))
+	String nodeid = request.getParameter("nodeid") ;
+	//String devid = request.getParameter("devid") ;
+	if(!connid.startsWith("conn_"))
 	{
-		out.print("not conn_ or ch_ id") ;
+		out.print("not conn_ or node id") ;
 		return ;
 	}
 	connid = connid.substring(5) ;
-	chid = chid.substring(3) ;
+	//chid = chid.substring(3) ;
 	try
 	{
 		if("join_add".equals(op))
-			ConnManager.getInstance().setConnJoin(repid, connid, chid) ;
+			ConnManager.getInstance().setConnJoin(repid, connid, nodeid) ;
 		else if("join_del".equals(op))
 			ConnManager.getInstance().delConnJoin(repid, connid) ;
 		out.print("{\"res\":true}") ;

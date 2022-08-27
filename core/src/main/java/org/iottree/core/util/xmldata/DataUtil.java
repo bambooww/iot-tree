@@ -3,28 +3,30 @@ package org.iottree.core.util.xmldata;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.iottree.core.basic.ByteOrder;
+
 public class DataUtil
 {
 	public final static byte[] intToBytes(int i)
 	{
-		return intToBytes(i,false);
+		return intToBytes(i,ByteOrder.LittleEndian);
 	}
 	
-	public final static byte[] intToBytes(int i,boolean bmodbus)
+	public final static byte[] intToBytes(int i,ByteOrder bo)
 	{
 		// int is 32bits, 4Bytes
 		byte[] bytes = new byte[4];
 
-		intToBytes(i, bytes,0,bmodbus);
+		intToBytes(i, bytes,0,bo);
 
 		return bytes;
 	}
 	
-	public final static void intToBytes(int i,byte[] bytes,int offset,boolean bmodbus)
+	public final static void intToBytes(int i,byte[] bytes,int offset,ByteOrder bo)
 	{
 		// int is 32bits, 4Bytes
 		//byte[] bytes = new byte[4];
-		if(bmodbus)
+		if(bo==ByteOrder.ModbusWord)
 		{// b3 b2 b1 b0 - b1 b0 b3 b2
 			bytes[offset+1] = (byte) (i & 0xFF);
 			i = i >>> 8;
@@ -34,8 +36,18 @@ public class DataUtil
 			i = i >>> 8;
 			bytes[offset+2] = (byte) (i & 0xFF);
 		}
-		else
+		else if(bo==ByteOrder.BigEndian)
 		{
+			bytes[offset] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+3] = (byte) (i & 0xFF);
+		}
+		else
+		{//little
 			bytes[offset+3] = (byte) (i & 0xFF);
 			i = i >>> 8;
 			bytes[offset+2] = (byte) (i & 0xFF);
@@ -81,25 +93,31 @@ public class DataUtil
 		bytes[offset] = (byte) (i & 0xFF);
 	}
 	
-	public final static int bytesToInt(byte[] bytes,boolean bmodbus)
+	public final static int bytesToInt(byte[] bytes,ByteOrder bo)
 	{
-		return bytesToInt(bytes,0,bmodbus);
+		return bytesToInt(bytes,0,bo);
 	}
 
-	public final static int bytesToInt(byte[] bytes,int offset,boolean bmodbus)
+	public final static int bytesToInt(byte[] bytes,int offset,ByteOrder bo)
 	{
 		if (bytes == null || bytes.length < 4+offset)
 			throw new IllegalArgumentException("byte array size must be "+(4+offset));
 
 		int i = 0;
-		if(bmodbus)
+		if(bo==ByteOrder.ModbusWord)
 		{ // b0 b1 b2 b3  - b2 b3 b0 b1 (based word)
 			i = ((bytes[offset+2] & 0xFF) << 8) | (bytes[offset+3] & 0xFF);
 			i = (i << 8) | (bytes[offset+0] & 0xFF);
 			i = (i << 8) | (bytes[offset+1] & 0xFF);
 		}
-		else
+		else if(bo==ByteOrder.BigEndian)
 		{
+			i = ((bytes[offset+3] & 0xFF) << 8) | (bytes[offset+2] & 0xFF);
+			i = (i << 8) | (bytes[offset+1] & 0xFF);
+			i = (i << 8) | (bytes[offset] & 0xFF);
+		}
+		else
+		{//little endian
 			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
 			i = (i << 8) | (bytes[offset+2] & 0xFF);
 			i = (i << 8) | (bytes[offset+3] & 0xFF);
@@ -110,20 +128,20 @@ public class DataUtil
 	
 	public final static byte[] longToBytes(long i)
 	{
-		return longToBytes( i,false);
+		return longToBytes( i,ByteOrder.LittleEndian);
 	}
 	
-	public final static byte[] longToBytes(long i,boolean bmodbus)
+	public final static byte[] longToBytes(long i,ByteOrder bo)
 	{
 		byte[] bytes = new byte[8];
-		longToBytes(i,bytes,0,bmodbus);
+		longToBytes(i,bytes,0,bo);
 		return bytes;
 	}
 
-	public final static void longToBytes(long i,byte[] bytes,int offset,boolean bmodbus)
+	public final static void longToBytes(long i,byte[] bytes,int offset,ByteOrder bo)
 	{
 		// long is 64bits, 8Bytes
-		if(bmodbus)
+		if(bo==ByteOrder.ModbusWord)
 		{// b7 b6 b5 b4 b3 b2 b1 b0 - b1 b0 b3 b2 b5 b4 b7 b6
 			bytes[offset+1] = (byte) (i & 0xFF);
 			i = i >>> 8;
@@ -141,8 +159,26 @@ public class DataUtil
 			i = i >>> 8;
 			bytes[offset+6] = (byte) (i & 0xFF);
 		}
-		else
+		else if(bo==ByteOrder.BigEndian)
 		{
+			bytes[offset] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+2] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+3] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+4] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+5] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+6] = (byte) (i & 0xFF);
+			i = i >>> 8;
+			bytes[offset+7] = (byte) (i & 0xFF);
+		}
+		else
+		{//litter
 			bytes[offset+7] = (byte) (i & 0xFF);
 			i = i >>> 8;
 			bytes[offset+6] = (byte) (i & 0xFF);
@@ -162,19 +198,19 @@ public class DataUtil
 		
 	}
 
-	public final static long bytesToLong(byte[] bytes,boolean bmodbus)
+	public final static long bytesToLong(byte[] bytes,ByteOrder bo)
 	{
-		return bytesToLong(bytes,0,bmodbus);
+		return bytesToLong(bytes,0,bo);
 	}
 	
-	public final static long bytesToLong(byte[] bytes,int offset,boolean bmodbus)
+	public final static long bytesToLong(byte[] bytes,int offset,ByteOrder bo)
 	{
 		if (bytes == null || bytes.length < 8+offset)
 			throw new IllegalArgumentException("byte array size must be "+(8+offset));
 
 		long i = 0;
 
-		if(bmodbus)
+		if(bo==ByteOrder.ModbusWord)
 		{// b0 b1 b2 b3 b4 b5 b6 b7  - b6 b7 b4 b5 b2 b3 b0 b1
 			i = ((bytes[offset+6] & 0xFF) << 8) | (bytes[offset+7] & 0xFF);
 			i = (i << 8) | (bytes[offset+4] & 0xFF);
@@ -184,8 +220,18 @@ public class DataUtil
 			i = (i << 8) | (bytes[offset+0] & 0xFF);
 			i = (i << 8) | (bytes[offset+1] & 0xFF);
 		}
-		else
+		else if(bo==ByteOrder.BigEndian)
 		{
+			i = ((bytes[offset] & 0xFF+7) << 8) | (bytes[offset+6] & 0xFF);
+			i = (i << 8) | (bytes[offset+5] & 0xFF);
+			i = (i << 8) | (bytes[offset+4] & 0xFF);
+			i = (i << 8) | (bytes[offset+3] & 0xFF);
+			i = (i << 8) | (bytes[offset+2] & 0xFF);
+			i = (i << 8) | (bytes[offset+1] & 0xFF);
+			i = (i << 8) | (bytes[offset] & 0xFF);
+		}
+		else
+		{//litte
 			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
 			i = (i << 8) | (bytes[offset+2] & 0xFF);
 			i = (i << 8) | (bytes[offset+3] & 0xFF);
@@ -200,42 +246,63 @@ public class DataUtil
 
 	public final static byte[] floatToBytes(float f)
 	{
-		return intToBytes(Float.floatToIntBits(f),false);
+		return intToBytes(Float.floatToIntBits(f),ByteOrder.LittleEndian);
 	}
 	
 	public final static void floatToBytes(float f,byte[] bs,int offset)
 	{
-		intToBytes(Float.floatToIntBits(f),bs,offset,false);
+		intToBytes(Float.floatToIntBits(f),bs,offset,ByteOrder.LittleEndian);
 	}
 
 	public final static float bytesToFloat(byte[] bytes)
 	{
-		return Float.intBitsToFloat(bytesToInt(bytes,false));
+		return bytesToFloat(bytes,ByteOrder.LittleEndian);
+	}
+	
+	public final static float bytesToFloat(byte[] bytes,ByteOrder bo)
+	{
+		return Float.intBitsToFloat(bytesToInt(bytes,bo));
 	}
 	
 	public final static float bytesToFloat(byte[] bytes,int offset)
 	{
-		return Float.intBitsToFloat(bytesToInt(bytes,offset,false));
+		return bytesToFloat(bytes,offset,ByteOrder.LittleEndian) ;
+	}
+	
+	public final static float bytesToFloat(byte[] bytes,int offset,ByteOrder bo)
+	{
+		return Float.intBitsToFloat(bytesToInt(bytes,offset,bo));
 	}
 
 	public final static byte[] doubleToBytes(double f)
 	{
-		return longToBytes(Double.doubleToLongBits(f),false);
+		return longToBytes(Double.doubleToLongBits(f),ByteOrder.LittleEndian);
 	}
 	
 	public final static void doubleToBytes(double f,byte[] bs,int offset)
 	{
-		longToBytes(Double.doubleToLongBits(f),bs,offset,false);
+		doubleToBytes(f,bs,offset,ByteOrder.LittleEndian);
+		
+	}
+	
+	public final static void doubleToBytes(double f,byte[] bs,int offset,ByteOrder bo)
+	{
+		longToBytes(Double.doubleToLongBits(f),bs,offset,bo);
 	}
 
 	public final static double bytesToDouble(byte[] bytes)
 	{
-		return Double.longBitsToDouble(bytesToLong(bytes,false));
+		return Double.longBitsToDouble(bytesToLong(bytes,ByteOrder.LittleEndian));
 	}
 	
 	public final static double bytesToDouble(byte[] bytes,int offset)
 	{
-		return Double.longBitsToDouble(bytesToLong(bytes,offset,false));
+		return bytesToDouble( bytes,offset,ByteOrder.LittleEndian);
+	}
+	
+	public final static double bytesToDouble(byte[] bytes,int offset,ByteOrder bo)
+	{
+		return Double.longBitsToDouble(bytesToLong(bytes,offset,bo));
 	}
 
 	public final static byte booleanToByte(boolean b)
@@ -292,7 +359,7 @@ public class DataUtil
 	public static long readLong(InputStream in) throws IOException
 	{
 
-		return bytesToLong(readBytes(in, 8),false);
+		return bytesToLong(readBytes(in, 8),ByteOrder.LittleEndian);
 	}
 
 	/**
@@ -320,8 +387,7 @@ public class DataUtil
 	 */
 	public static int readInt(InputStream in) throws IOException
 	{
-
-		return bytesToInt(readBytes(in, 4),false);
+		return bytesToInt(readBytes(in, 4),ByteOrder.LittleEndian);
 	}
 
 	/**

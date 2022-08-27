@@ -2,6 +2,7 @@ package org.iottree.driver.common.modbus.sniffer;
 
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.util.xmldata.DataUtil;
 import org.iottree.driver.common.ModbusAddr;
 import org.iottree.driver.common.modbus.ModbusCmd;
@@ -142,7 +143,7 @@ public class SnifferCmd
 		case vt_uint32:
 			if(regp+2>regPos+regNum)
 				return null ;
-			int intv = DataUtil.bytesToInt(findedData, idx,true);
+			int intv = DataUtil.bytesToInt(findedData, idx,ByteOrder.ModbusWord);
 			if(vt==ValTP.vt_uint32)
 				return ((long)intv)&0xffffffff ;
 			else
@@ -150,7 +151,7 @@ public class SnifferCmd
 		case vt_int64:
 			if(regp+4>regPos+regNum)
 				return null ;
-			return DataUtil.bytesToLong(findedData, idx, true) ;
+			return DataUtil.bytesToLong(findedData, idx, ByteOrder.ModbusWord) ;
 		case vt_float:
 			if(regp+2>regPos+regNum)
 				return null ;
@@ -159,9 +160,9 @@ public class SnifferCmd
 			if(regp+4>regPos+regNum)
 				return null ;
 			return DataUtil.bytesToDouble(findedData,idx);
+		default:
+			return null ;
 		}
-		
-		return null;
 	}
 	
 	public String toString()

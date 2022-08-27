@@ -7,6 +7,7 @@ import org.iottree.core.ConnPt;
 import org.iottree.core.DevAddr;
 import org.iottree.core.DevAddrFix;
 import org.iottree.core.DevDriver;
+import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UAUtil;
 import org.iottree.core.basic.PropGroup;
@@ -35,13 +36,13 @@ public class PingDrv extends DevDriver
 	}
 
 	@Override
-	public List<PropGroup> getPropGroupsForCh()
+	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
 		return null;
 	}
 
 	@Override
-	public List<PropGroup> getPropGroupsForDevInCh()
+	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> rets = new ArrayList<>() ;
 		PropGroup pg = new PropGroup("ping","Ping");
@@ -104,21 +105,21 @@ public class PingDrv extends DevDriver
 	}
 
 	@Override
-	protected void RT_onConnReady(ConnPt cp)
+	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected void RT_onConnInvalid(ConnPt cp)
+	protected void RT_onConnInvalid(ConnPt cp,UACh ch,UADev dev)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
+	protected boolean RT_runInLoop(UACh ch,UADev dev,StringBuilder failedr) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return false;

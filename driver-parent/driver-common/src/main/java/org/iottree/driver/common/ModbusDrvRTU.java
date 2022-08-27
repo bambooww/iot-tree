@@ -56,7 +56,7 @@ public class ModbusDrvRTU extends DevDriver
 	private static final int SNIFFER_MODEL = 1 ;
 	
 	@Override
-	public List<PropGroup> getPropGroupsForCh()
+	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
 		PropGroup gp = new PropGroup("modbus_ch","Modbus in Channel");
@@ -71,7 +71,7 @@ public class ModbusDrvRTU extends DevDriver
 
 
 	@Override
-	public List<PropGroup> getPropGroupsForDevInCh()
+	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
 		PropGroup gp = new PropGroup("modbus_spk","Modbus Device");
@@ -230,13 +230,13 @@ public class ModbusDrvRTU extends DevDriver
 
 
 	@Override
-	protected void RT_onConnReady(ConnPt cp)
+	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
 		
 	}
 
 	@Override
-	protected void RT_onConnInvalid(ConnPt cp)
+	protected void RT_onConnInvalid(ConnPt cp,UACh ch,UADev dev)
 	{
 		
 	}
@@ -250,7 +250,7 @@ public class ModbusDrvRTU extends DevDriver
 	}
 
 	@Override
-	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
+	protected boolean RT_runInLoop(UACh ch,UADev dev,StringBuilder failedr) throws Exception
 	{
 		ConnPtStream cpt = (ConnPtStream)this.getBindedConnPt() ;
 		if(cpt==null)

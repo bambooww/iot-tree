@@ -1,23 +1,39 @@
-function UAJoinPt(id,title,x,y,d)
+function UAJoinPt(id,title,x,y,d,b_parent_ignore)
 {
 	this.id = id ;
 	this.title = title ;
 	this.x = x ;
 	this.y = y ;
 	this.d = d ;
+	
+	this.parent_ignore=b_parent_ignore;
 
 	this.check_in=function(x,y)
 	{
+		if(this.parent_ignore)
+			return false;
 		return x>=this.x && x <=this.x+this.d && y>=this.y && y<=this.y+this.d ;
 	}
-
+	
+	
 	this.is_conn_pt=function()
 	{
 		return this.id.indexOf('conn_')==0;
 	}
+	
 	this.is_tree_pt=function()
 	{
-		return this.id.indexOf('ch_')==0;
+		return this.id.indexOf('ch_')==0 || this.id.indexOf("dev_")==0;
+	}
+	
+	this.is_tree_pt_dev=function()
+	{
+		return this.id.indexOf("dev_")==0;
+	}
+
+	this.is_parent_ignore=function()
+	{
+		return this.parent_ignore;
 	}
 
 	this.get_center_x=function()
@@ -34,10 +50,8 @@ function UATree_CXTMENU_ACT(data)
 {
 	var inst = $.jstree.reference(data.reference);
     var node = inst.get_node(data.reference).original;
-	//console.log(data.item) ;
-    //console.log(obj) ;
-    
-	console.log(data.item.op_name,node) ;
+	
+	//console.log(data.item.op_name,node) ;
 	var act = data.item.op_action
 	if(act!=undefined&&act!=null&&act!="")
 		act(node,data.item.op_name) ;
@@ -214,13 +228,43 @@ function UATree(tree_opt)
 			var id = $(element).attr("id");
 			if(id==null)
 				return ;
-			if(id.indexOf("ch_")!=0)
+			
+			if(id.indexOf("ch_")!=0 && id.indexOf("dev_")!=0)
 				return ;
+			
+			if(id.indexOf("ch_")==0)
+			{//ch
+				var dev_ids = $(element).attr("dev_ids");
+				var devids = dev_ids.split(",") ;
+				var chid = id.substring(3) ;
+				var treen = this.get_node_by_id(chid) ;
+				var tnode = this.jsTree.jstree("get_node", id);
+				//console.log("tn open "+treen.text+" is "+tnode.state.opened);
+				if(tnode.state.opened==false)
+				{
+					if($(element).attr("can_connpt_bind")!='true')
+					{//
+						var yp = this.get_ypos($(element));
+						for(var subdevid of devids)
+						{
+							r.push(new UAJoinPt("dev_"+chid+"-"+subdevid,"",x+6,yp+3,10,true)) ;
+						}
+						return;
+					}
+				}
+				//
+				//console.log(devids,treen) ;
+			}
+			
+			if($(element).attr("can_connpt_bind")!='true')
+			{
+				return ;
+			}
+			
 			var yp = this.get_ypos($(element));
 			r.push(new UAJoinPt(id,"",x,yp,10)) ;
 		}) ;
-		//console.log(idstr) ;
-		//
+		//console.log(r) ;
 		return r ;
 	}
 
@@ -292,7 +336,7 @@ function UAConn(conn_opt)
 			var yp = this.get_ypos($(element));
 			r.push(new UAJoinPt(id,"",0,yp,10)) ;
 		}) ;
-		//console.log(idstr) ;
+		
 		//
 		return r ;
 	}
@@ -318,15 +362,12 @@ function UAConn(conn_opt)
 					return jo ;
 			}
 		}
-		if(id.indexOf("ch_")==0)
+		for(var jo of this.joins)
 		{
-			var chid = id.substring(3) ;
-			for(var jo of this.joins)
-			{
-				if(jo.chid==chid)
-					return jo;
-			}
+			if(jo.nodeid==id)
+				return jo;
 		}
+		
 
 		return null;
 	}
@@ -459,7 +500,8 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 	this.get_join_pts=function(jo)
 	{
 		var cpt = this.get_conn_pt("conn_"+jo.connid) ;
-		var tpt = this.get_tree_pt("ch_"+jo.chid) ;
+		//var tpt = this.get_tree_pt("ch_"+jo.chid) ;
+		var tpt = this.get_tree_pt(jo.nodeid) ;
 		return {from:cpt,to:tpt} ;
 	}
 
@@ -634,14 +676,14 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		}
 		
 		this.canvas[0].width = this.canvas[0].width
-		this.draw_conn_ch();
+		this.draw_conns();
 	}
 
 	this.draw_join=function(cxt,jo)
 	{
 		var st = this.get_conn_pt('conn_'+jo.connid) ;
-		var et = this.get_tree_pt('ch_'+jo.chid);
-		if(st==null||et==null)
+		var et = this.get_tree_pt(jo.nodeid);
+		if(!st||!et)
 			return ;
 		cxt.beginPath() ;
 		cxt.moveTo(st.get_center_x(),st.get_center_y());
@@ -649,7 +691,7 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		cxt.stroke() ;
 	}
 	
-	this.draw_conn_ch=function()
+	this.draw_conns=function()
 	{
 		var cxt = this.conn_cxt ;
 		if(cxt==null)
@@ -666,11 +708,36 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 
 		for(var pt of this.tree_pts)
 		{
+			if(pt.is_parent_ignore())
+				continue;
+			cxt.beginPath();
 			if(pt==this.join_pt_on || this.ua_conn.check_has_join(pt))
-				cxt.fillRect(pt.x,pt.y,pt.d,pt.d);
+			{
+				if(pt.is_tree_pt_dev())
+				{
+					cxt.arc(pt.get_center_x(),pt.get_center_y(),pt.d/2,0,Math.PI*2,true);
+					cxt.closePath() ;
+					cxt.fillStyle="#0000ff";
+					cxt.fill() ;
+				}
+				else
+				{
+					cxt.fillRect(pt.x,pt.y,pt.d,pt.d);
+				}
+			}
 			else
-				cxt.rect(pt.x,pt.y,pt.d,pt.d);
-			cxt.stroke();
+			{
+				if(pt.is_tree_pt_dev())
+				{
+					cxt.arc(pt.get_center_x(),pt.get_center_y(),pt.d/2,0,Math.PI*2);
+				}
+				else
+				{
+					cxt.rect(pt.x,pt.y,pt.d,pt.d);
+				}
+				cxt.stroke();
+			}
+			
 		}
 
 		for(var jo of this.ua_conn.joins)
@@ -702,12 +769,12 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 	}
 
 	
-	this.set_join=function(op,connid,chid)
+	this.set_join=function(op,connid,nodeid)
 	{
 		var pm = {
 				type : 'post',
 				url :this.join_url,
-				data :{op:op,connid:connid,chid:chid}
+				data :{op:op,connid:connid,nodeid:nodeid}
 			};
 		$.ajax(pm).done((ret)=>{
 			if(typeof(ret)=='string')

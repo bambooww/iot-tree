@@ -9,6 +9,7 @@ import org.iottree.core.ConnException;
 import org.iottree.core.ConnPt;
 import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
+import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
@@ -125,13 +126,13 @@ public class PPIDriver extends DevDriver
 	}
 
 	@Override
-	public List<PropGroup> getPropGroupsForCh()
+	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
 		return null;
 	}
 
 	@Override
-	public List<PropGroup> getPropGroupsForDevInCh()
+	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
 		PropGroup gp = new PropGroup("ppi_spk","PPI Device");
@@ -196,20 +197,20 @@ public class PPIDriver extends DevDriver
 	}
 
 	@Override
-	protected void RT_onConnReady(ConnPt cp)
+	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	protected void RT_onConnInvalid(ConnPt cp)
+	protected void RT_onConnInvalid(ConnPt cp,UACh ch,UADev dev)
 	{
 		
 	}
 
 	@Override
-	protected boolean RT_runInLoop(StringBuilder failedr) throws Exception
+	protected boolean RT_runInLoop(UACh ch,UADev dev,StringBuilder failedr) throws Exception
 	{
 		if(ppiDevItems==null)
 			return true;
@@ -232,7 +233,7 @@ public class PPIDriver extends DevDriver
 		catch(ConnException se)
 		{
 			//System.out.println("errdt==="+Convert.toFullYMDHMS(new Date()));
-			se.printStackTrace();
+			//se.printStackTrace();
 			if(log.isDebugEnabled())
 				log.debug("RT_runInLoop err", se);
 			cpt.close();
@@ -242,7 +243,7 @@ public class PPIDriver extends DevDriver
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			if(log.isErrorEnabled())
 				log.debug("RT_runInLoop err", e);
 		}

@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
-public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode,IDevDriverable // extends UANodeOC
+public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode,IDevDriverable,IJoinedNode // extends UANodeOC
 {
 	public static final String NODE_TP = "dev" ;
 	/**
@@ -44,6 +44,9 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	@data_val(param_name = "ref_id")
 	String devRefId = null ;
 
+	@data_val(param_name = "dev_model")
+	String devModel = null ;
+	
 	/**
 	 * is device set or not
 	 * dev set may use this device struct,and has multi device instance.
@@ -51,6 +54,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	 */
 	@data_val(param_name = "is_set")
 	boolean bSet = false;
+	
 	
 	public UADev()
 	{}
@@ -75,6 +79,35 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	public String getNodeTp()
 	{
 		return NODE_TP;
+	}
+	
+	public String getDevModel()
+	{
+		if(devModel==null)
+			return "" ;
+		return devModel ;
+	}
+	
+	public DevDriver.Model getDrvDevModel()
+	{
+		if(Convert.isNullOrEmpty(devModel))
+			return null ;
+		DevDriver drv = this.getBelongTo().getDriver() ;
+		if(drv==null)
+			return null ;
+		return drv.getDevModel(this.devModel) ;
+	}
+	
+	public void setDevModel(String m)
+	{
+		this.devModel = m ;
+	}
+	
+	public ConnPt getConnPt() throws Exception
+	{
+		UACh ch = this.getBelongTo() ;
+		UAPrj prj = ch.getBelongTo() ;
+		return ConnManager.getInstance().getConnPtByNode(prj.getId(), ch.getId(),this.getId()) ;
 	}
 	
 	public boolean isDevSet()
@@ -251,7 +284,15 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		DevDriver uad = this.getBelongTo().getDriver() ;
 		if(uad!=null)
 		{//add driver prop used in this channel
-			List<PropGroup> drvpgs = uad.getPropGroupsForDevInCh();//.getPropGroupsForDev() ;
+			if(uad.isConnPtToDev())
+			{
+				PropGroup pg = new PropGroup("dev","Device run parameters") ;
+				pg.addPropItem(new PropItem("dev_intv","Read Interval MS","",PValTP.vt_int,false,
+						null,null,100));
+				pgs.add(pg) ;
+			}
+			
+			List<PropGroup> drvpgs = uad.getPropGroupsForDevInCh(this);//.getPropGroupsForDev() ;
 			if(drvpgs!=null)
 				pgs.addAll(drvpgs);
 			
