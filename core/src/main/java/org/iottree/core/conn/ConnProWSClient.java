@@ -76,7 +76,7 @@ public class ConnProWSClient extends ConnProvider
 				continue ;
 			
 			ConnPtWSClient citc = (ConnPtWSClient)ci ;
-			citc.checkConn() ;
+			citc.RT_checkConn() ;
 		}
 	}
 }

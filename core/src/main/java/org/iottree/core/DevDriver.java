@@ -88,6 +88,9 @@ public abstract class DevDriver implements IPropChecker
 					try
 					{
 						Thread.sleep(drv_int);
+						
+						if(!this.connPt.isConnReady())
+							this.connPt.RT_checkConn();
 
 						// System.out.println("-----1-------");
 						if (!RT_runInLoop(belongToCh, subDev, failedr))
@@ -479,6 +482,13 @@ public abstract class DevDriver implements IPropChecker
 					try
 					{
 						Thread.sleep(drv_int);
+						
+						if(!DevDriver.this.isConnPtToDev())
+						{
+							ConnPt cpt = belongToCh.getConnPt();
+							if(cpt!=null&&!cpt.isConnReady())
+								cpt.RT_checkConn();
+						}
 
 						// System.out.println("-----1-------");
 						if (!RT_runInLoop(ch, null, failedr))

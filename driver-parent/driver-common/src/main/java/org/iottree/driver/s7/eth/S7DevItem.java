@@ -149,7 +149,7 @@ public class S7DevItem
 	public boolean RT_writeVal(DevAddr da, Object v)
 	{
 		S7Addr ma = (S7Addr)da ;
-		S7Block blk = tp2block.get(ma.getMemTp());
+		S7Block blk = tp2block.get(ma.getAreaKey());
 		if(blk==null)
 			return false;
 //		int intv ;

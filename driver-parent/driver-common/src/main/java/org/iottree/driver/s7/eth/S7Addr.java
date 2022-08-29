@@ -100,6 +100,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 			return null ;
 		
 		apt.valTP = vtp ;
+		apt.bytesNum = vtp.getValByteLen();
 		return apt;//new S7Addr(addr,apt,vtp) ;
 	}
 	
@@ -112,6 +113,11 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	public S7MemTp getMemTp()
 	{
 		return memTp;
+	}
+	
+	public S7ValTp getMemValTp()
+	{
+		return this.memValTp ;
 	}
 	
 	public boolean isDBMem()

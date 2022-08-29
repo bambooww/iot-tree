@@ -240,7 +240,7 @@ public class ConnPtCOM extends ConnPtStream
 
 	private long lastChk = -1;
 
-	void checkConn()
+	public void RT_checkConn() // throws Exception
 	{
 		if(System.currentTimeMillis()-lastChk<5000)
 			return ;

@@ -194,7 +194,7 @@ public class ConnPtWSClient extends ConnPtMSG
 		session.getBasicRemote().sendText("xxx");
 	}
 	
-	void checkConn()
+	public void RT_checkConn()
 	{
 		if(session!=null)
 			return ;

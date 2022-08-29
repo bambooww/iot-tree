@@ -60,6 +60,9 @@ public class ConnPtVirtual extends ConnPt
 		//return false;
 	}
 	
+	public void RT_checkConn()
+	{}
+	
 	public String getConnErrInfo()
 	{
 		ConnProvider cp = this.getConnProvider();

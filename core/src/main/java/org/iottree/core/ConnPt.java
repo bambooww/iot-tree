@@ -654,6 +654,9 @@ public abstract class ConnPt implements IXmlDataValidator
 	public void onJoinedChanged(ConnJoin cj)
 	{}
 	
+	public abstract void RT_checkConn() ;//throws Exception;
+	
+	
 	public abstract boolean isConnReady() ;
 	
 	public abstract String getConnErrInfo() ;

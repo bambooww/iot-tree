@@ -70,7 +70,7 @@ public class ConnProIOTTreeNode extends ConnProvider
 		for (ConnPt ci : this.listConns())
 		{
 			ConnPtIOTTreeNode citc = (ConnPtIOTTreeNode) ci;
-			citc.checkConn();
+			citc.RT_checkConn();
 		}
 	}
 }

@@ -389,7 +389,7 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		prjCaller.disconnect();
 	}
 	
-	void checkConn()
+	public void RT_checkConn()
 	{
 		PrjCaller pc = getCaller() ;
 		pc.checkConn();

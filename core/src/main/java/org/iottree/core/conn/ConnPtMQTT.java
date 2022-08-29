@@ -48,7 +48,9 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		return topics;
 	}
 
-
+	public void RT_checkConn() 
+	{}
+	
 	@Override
 	public XmlData toXmlData()
 	{

@@ -58,7 +58,7 @@ public class S7MsgRead extends S7Msg
 			req_bytes = ele_num * ele_byte_n;
 
 			// Setup the telegram
-			System.arraycopy(S7_RW, 0, conn.PDU, 0, Size_RD);
+			System.arraycopy(RW35, 0, conn.PDU, 0, Size_RD);
 			// Set DB Number
 			conn.PDU[27] = (byte) area_memtp.getVal();
 			// Set Area
@@ -70,9 +70,9 @@ public class S7MsgRead extends S7Msg
 			{
 				addr = pos;
 				if (area_memtp == S7MemTp.C)
-					conn.PDU[22] = S7WLCounter;
+					conn.PDU[22] = WL_COUNTER;
 				else
-					conn.PDU[22] = S7WLTimer;
+					conn.PDU[22] = WL_TIMER;
 			}
 			else
 				addr = pos << 3;

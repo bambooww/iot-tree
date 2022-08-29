@@ -98,32 +98,41 @@ public final class S7TcpConn
 		inputS.read(buf, Start, Size);
 	}
 
-	protected void clearInputStream(long timeout) throws IOException
+	void clearInputStream(long timeout) //throws IOException
 	{
-		int lastav = inputS.available();
-		long lastt = System.currentTimeMillis();
-		long curt = lastt;
-		while ((curt = System.currentTimeMillis()) - lastt < timeout)
+		try
 		{
-			try
+			int lastav = inputS.available();
+			long lastt = System.currentTimeMillis();
+			long curt = lastt;
+			while ((curt = System.currentTimeMillis()) - lastt < timeout)
 			{
-				Thread.sleep(1);
+				try
+				{
+					Thread.sleep(1);
+				}
+				catch ( Exception e)
+				{
+				}
+	
+				int curav = inputS.available();
+				if (curav != lastav)
+				{
+					lastt = curt;
+					lastav = curav;
+					continue;
+				}
 			}
-			catch ( Exception e)
-			{
-			}
-
-			int curav = inputS.available();
-			if (curav != lastav)
-			{
-				lastt = curt;
-				lastav = curav;
-				continue;
-			}
+	
+			if (lastav > 0)
+				inputS.skip(lastav);
 		}
-
-		if (lastav > 0)
-			inputS.skip(lastav);
+		catch(IOException e)
+		{
+			if(S7Msg.log.isDebugEnabled())
+				S7Msg.log.error(e);
+			//e.printStackTrace();
+		}
 	}
 
 	private void checkStreamLenTimeout(int len, long timeout) throws IOException

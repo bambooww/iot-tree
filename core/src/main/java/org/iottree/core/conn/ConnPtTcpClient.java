@@ -221,7 +221,7 @@ public class ConnPtTcpClient extends ConnPtStream
 
 	private long lastChk = -1;
 
-	void checkConn()
+	public void RT_checkConn()
 	{
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;

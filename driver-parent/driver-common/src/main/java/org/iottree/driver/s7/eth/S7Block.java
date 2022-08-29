@@ -316,12 +316,23 @@ public class S7Block
 			Thread.sleep(this.interReqMs);
 			
 			List<S7Addr> addrs = cmd2addr.get(mc) ;
-			cmdr.processByConn(conn);
-			//cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
 			
-			byte[] retbs = cmdr.getReadRes() ;
+			conn.clearInputStream(50);
+			byte[] retbs = null;
+			
+			try
+			{
+				cmdr.processByConn(conn);
+				//cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
+				retbs = cmdr.getReadRes() ;
+			}
+			catch(Exception e)
+			{
+				if(S7Msg.log.isDebugEnabled())
+					S7Msg.log.error(e);
+			}
 			//retbs = resp.getRetData() ;
-			int offsetbs = cmdr.getPos();
+			
 			if(retbs==null)
 			{
 				if(chkSuccessiveFailed(true))
@@ -332,6 +343,7 @@ public class S7Block
 				continue ;
 			}
 			
+			int offsetbs = cmdr.getPos();
 			//int offsetbs = cmdr.getOffsetBytes() ;
 			memTb.setValBlock(offsetbs, retbs.length, retbs, 0);
 			transMem2Addrs(addrs);
@@ -377,6 +389,7 @@ public class S7Block
 			Thread.sleep(this.interReqMs);
 			
 			//mc.doCmd(ep.getInputStream(),ep.getOutputStream());
+			conn.clearInputStream(50);
 			mc.processByConn(conn);
 		}
 	}

@@ -48,6 +48,9 @@ public class ConnPtUDP extends ConnPtMSG
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public void RT_checkConn()
+	{}
 
 	@Override
 	public String getConnErrInfo()

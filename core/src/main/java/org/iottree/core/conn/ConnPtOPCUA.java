@@ -1199,7 +1199,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 	private long lastChk = -1;
 
-	void checkConnInLoop()
+	public void RT_checkConn() 
 	{
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;
@@ -1216,7 +1216,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 	void checkConn()
 	{
-		checkConnInLoop();
+		RT_checkConn();
 		readDataInLoop();
 	}
 

@@ -136,8 +136,10 @@ public class ConnProTcpClient extends ConnProvider
 			if(!ci.isEnable())
 				continue ;
 			
-			ConnPtTcpClient citc = (ConnPtTcpClient)ci ;
-			citc.checkConn() ;
+			if(ci.hasJoinedCh() || ci.hasJoinedDev())
+				continue ;
+			//ConnPtTcpClient citc = (ConnPtTcpClient)ci ;
+			ci.RT_checkConn() ;
 		}
 	}
 

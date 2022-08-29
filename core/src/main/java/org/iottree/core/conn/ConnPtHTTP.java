@@ -171,6 +171,8 @@ public class ConnPtHTTP extends ConnPtMSG
 			return false;
 		return bConnOk;
 	}
+	
+	
 
 	public String getConnErrInfo()
 	{
@@ -251,6 +253,11 @@ public class ConnPtHTTP extends ConnPtMSG
 			fos.write(bs);
 		}
 		return true ;
+	}
+	
+	public void RT_checkConn() 
+	{
+		
 	}
 
 	transient private long lastChkDT = -1;

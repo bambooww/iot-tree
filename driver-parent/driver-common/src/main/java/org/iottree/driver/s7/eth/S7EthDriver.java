@@ -18,7 +18,6 @@ import org.iottree.core.basic.ValChker;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtTcpClient;
 import org.iottree.core.util.Convert;
-import org.iottree.driver.s7.ppi.PPIDevItem;
 
 
 public class S7EthDriver extends DevDriver
@@ -181,6 +180,11 @@ public class S7EthDriver extends DevDriver
 
 		return true ;
 	}
+	
+	S7DevItem getDevItem(UADev d)
+	{
+		return this.dev2item.get(d);
+	}
 
 	@Override
 	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
@@ -263,7 +267,11 @@ public class S7EthDriver extends DevDriver
 	@Override
 	public boolean RT_writeVal(UADev dev, DevAddr da, Object v)
 	{
-		return false;
+		S7DevItem mdi = getDevItem(dev) ;
+		if(mdi==null)
+			return false;
+		return mdi.RT_writeVal(da, v) ;
+		
 	}
 
 	@Override

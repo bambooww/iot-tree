@@ -158,6 +158,9 @@ public class ConnPtTcpAccepted extends ConnPtStream
 			sock = null;
 		}
 	}
+	
+	public void RT_checkConn()
+	{}
 
 	private long lastChk = -1;
 

@@ -3,8 +3,13 @@ package org.iottree.driver.s7.eth;
 
 import java.io.IOException;
 
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
+
 public abstract class S7Msg
 {
+	static final ILogger log = LoggerManager.getLogger(S7Msg.class) ;
+	
 	public final static int RESULT_ADDRESS_OUT_OF_RANGE = 5;
 	/* means the write data size doesn't fit item size */
 	public final static int RESULT_CANNOT_EVALUATE_PDU = -123;
@@ -130,17 +135,13 @@ public abstract class S7Msg
 	protected static final int PDU_MAX_LEN = PDU_DEFAULT_LEN + ISO_HEAD_LEN;
 
 
-	protected static final byte S7WLByte = 0x02;
-	
-	protected static final byte S7WLCounter = 0x1C;
-	protected static final byte S7WLTimer = 0x1D;
+	protected static final byte WL_BYTE = 0x02;
+	protected static final byte WL_COUNTER = 0x1C;
+	protected static final byte WL_TIMER = 0x1D;
 
 	// S7 Read/Write Request Header (contains also ISO Header and COTP Header)
-	protected static final byte S7_RW[] = { // 31-35 bytes
-				(byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x1f, // Telegram
-																	// Length (Data
-																	// Size + 31 or
-																	// 35)
+	protected static final byte RW35[] = { // 31-35 bytes
+				(byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x1f, // Telegram Length (Data  Size + 31 or  35)
 				(byte) 0x02, (byte) 0xf0, (byte) 0x80, // COTP (see above for info)
 				(byte) 0x32, // S7 Protocol ID
 				(byte) 0x01, // Job Type
@@ -153,17 +154,18 @@ public abstract class S7Msg
 				(byte) 0x12, // Var spec.
 				(byte) 0x0a, // Length of remaining bytes
 				(byte) 0x10, // Syntax ID
-				S7WLByte, // Transport Size
+				WL_BYTE, // Transport Size
 				(byte) 0x00, (byte) 0x00, // Num Elements
 				(byte) 0x00, (byte) 0x00, // DB Number (if any, else 0)
 				(byte) 0x84, // Area Type
 				(byte) 0x00, (byte) 0x00, (byte) 0x00, // Area Offset
 				// WR area
 				(byte) 0x00, // Reserved
-				(byte) 0x04, // Transport size
-				(byte) 0x00, (byte) 0x00, // Data Length * 8 (if not timer or
-											// counter)
+				(byte) 0x04, // Transport size  
+				(byte) 0x00, (byte) 0x00, // Data Length * 8 (if not timer or counter)
 		};
+
+	protected static final int RW_LEN = 35;
 
 
 	protected static int recvIsoPacket(S7TcpConn conn) throws IOException, S7Exception
@@ -227,4 +229,6 @@ public abstract class S7Msg
 		}
 		return false;
 	}
+	
+	
 }
