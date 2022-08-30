@@ -59,13 +59,18 @@ public class S7EthDriver extends DevDriver
 		return ConnPtTcpClient.class;
 	}
 	
+	private final static String M_S7_200 = "s7-200";
+	private final static String M_S7_300 = "s7-300";
+	private final static String M_S7_400 = "s7-400";
+	private final static String M_S7_1200 = "s7-1200";
+	private final static String M_S7_1500 = "s7-1500";
 	
 	final private static List<Model> devms = Arrays.asList(
-			new Model("s7-200","S7-200") ,
-			new Model("s7-300","S7-300") ,
-			new Model("s7-400","S7-400") ,
-			new Model("s7-1200","S7-1200") ,
-			new Model("s7-1500","S7-1500")
+			new Model(M_S7_200,"S7-200") ,
+			new Model(M_S7_300,"S7-300") ,
+			new Model(M_S7_400,"S7-400") ,
+			new Model(M_S7_1200,"S7-1200") ,
+			new Model(M_S7_1500,"S7-1500")
 			);
 	
 	@Override
@@ -97,16 +102,43 @@ public class S7EthDriver extends DevDriver
 	{
 		return null;
 	}
+	
+	
+	private static int transStr2TSAP(String v,StringBuilder failedr)
+	{
+		if(Convert.isNullOrEmpty(v))
+		{
+			failedr.append("TSAP cannot be null") ;
+			return -1;
+		}
+		int len = v.length() ;
+		if(len!=4)
+		{
+			failedr.append("TSAP must be hex string with length 4 like 4D57") ;
+			return -1;
+		}
+		
+		try
+		{
+			return Integer.parseInt(v,16) & 0xFFFF ;
+		}
+		catch(Exception e)
+		{
+			failedr.append("TSAP must be hex string with length 4 like 4D57") ;
+			return -1 ;
+		}
+		
+	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
-		PropGroup gp = new PropGroup("s7_comm_pm","S7 Communication Parameters");
+		PropGroup gp_nor = new PropGroup("s7_comm_pm","S7 Communication Parameters");
 		//PropItem pi = new PropItem("link_tp","Link Type","",PValTP.vt_int,false,new String[] {"PC","OP","PG"},new Object[] {false,true},false));
 		
-		PropItem pi = new PropItem("rack","CPU Rack","",PValTP.vt_int,false,null,null,0) ;
-		pi.setValChker(new ValChker<Number>() {
+		PropItem pi_rack = new PropItem("rack","CPU Rack","",PValTP.vt_int,false,null,null,0) ;
+		pi_rack.setValChker(new ValChker<Number>() {
 			@Override
 			public boolean checkVal(Number v, StringBuilder failedr)
 			{
@@ -116,9 +148,9 @@ public class S7EthDriver extends DevDriver
 				failedr.append("CPU Rack must between 0-7") ;
 				return false;
 			}});
-		gp.addPropItem(pi);
-		pi = new PropItem("slot","CPU Slot","",PValTP.vt_int,false,null,null,1) ;
-		pi.setValChker(new ValChker<Number>() {
+		gp_nor.addPropItem(pi_rack);
+		PropItem pi_slot = new PropItem("slot","CPU Slot","",PValTP.vt_int,false,null,null,1) ;
+		pi_slot.setValChker(new ValChker<Number>() {
 
 			@Override
 			public boolean checkVal(Number v, StringBuilder failedr)
@@ -129,18 +161,38 @@ public class S7EthDriver extends DevDriver
 				failedr.append("CPU Slot must between 1-31") ;
 				return false;
 			}});
-		gp.addPropItem(pi);
-		pgs.add(gp) ;
+		gp_nor.addPropItem(pi_slot);
 		
-//		gp = new PropGroup("timing","Timing");
-//		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
-//		//
-//		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
-//		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
-//		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
-//		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
-//		pgs.add(gp) ;
 		
+		ValChker<String> tsapchk = new ValChker<String>() {
+			@Override
+			public boolean checkVal(String v, StringBuilder failedr)
+			{
+				int r = transStr2TSAP(v,failedr);
+				return r>0;
+			}};
+		
+		PropGroup gp_tsap = new PropGroup("s7_comm_pm","S7 Communication Parameters");
+		PropItem pi_local_tsap = new PropItem("tsap_local","Local TSAP (hex)","",PValTP.vt_str,false,null,null,"4D57") ;
+		pi_local_tsap.setValChker(tsapchk);
+		gp_tsap.addPropItem(pi_local_tsap);
+		PropItem pi_remote_tsap = new PropItem("tsap_remote","Remote TSAP (hex)","",PValTP.vt_str,false,null,null,"4D57") ;
+		pi_remote_tsap.setValChker(tsapchk);
+		gp_tsap.addPropItem(pi_remote_tsap);
+		
+		switch(d.getDevModel())
+		{
+		case M_S7_200:
+			pgs.add(gp_tsap) ;
+			break;
+		case M_S7_300:
+			pi_slot.setDefaultVal(2);
+		case M_S7_400:
+		case M_S7_1200:
+		case M_S7_1500:
+			pgs.add(gp_nor) ;
+			break;
+		}
 		return pgs ;
 	}
 	
@@ -190,9 +242,22 @@ public class S7EthDriver extends DevDriver
 	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
 		ConnPtTcpClient tcpc = (ConnPtTcpClient)cp ;
-		int rack = dev.getOrDefaultPropValueInt("s7_comm_pm", "rack",0) ;
-		int slot = dev.getOrDefaultPropValueInt("s7_comm_pm", "slot",1) ;
-		S7TcpConn conn = new S7TcpConn(tcpc).withRackSlot(rack, slot) ;
+		S7TcpConn conn = new S7TcpConn(tcpc);
+		if(M_S7_200.equals(dev.getDevModel()))
+		{
+			String tsap_l = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_local","4D57") ;
+			String tsap_r = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_remote","4D57") ;
+			StringBuilder failedr = new StringBuilder() ;
+			int tsap_loc = transStr2TSAP(tsap_l,failedr) ;
+			int tsap_rrr = transStr2TSAP(tsap_r,failedr) ;
+			conn.withTSAP(tsap_loc, tsap_rrr);
+		}
+		else
+		{
+			int rack = dev.getOrDefaultPropValueInt("s7_comm_pm", "rack",0) ;
+			int slot = dev.getOrDefaultPropValueInt("s7_comm_pm", "slot",1) ;
+			conn.withRackSlot(rack, slot) ;
+		}
 		try
 		{//do iso connection
 			msgISOCR.processByConn(conn);

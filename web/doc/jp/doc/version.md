@@ -49,7 +49,7 @@
 
 
 
-Improve HMISub related functionality and resolve associated bugs. New win_client based on WebView2 added. Add PPI protocol supports Siemens PLC S7-200.
+
 
 
 

@@ -157,6 +157,15 @@ public abstract class PropNode extends JSObMap
 		if(pi==null)
 			return false;
 		Object v = PropItem.transStrToVal(pi.getVT(), strval) ;
+		ValChker vchk = pi.getValChker();
+		if(vchk!=null)
+		{
+			StringBuilder failedr = new StringBuilder() ;
+			if(!vchk.checkVal(v, failedr))
+			{
+				throw new IllegalArgumentException(failedr.toString()) ;
+			}
+		}
 		propn2Val.put(k, v);
 		return true;
 	}

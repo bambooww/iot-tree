@@ -592,7 +592,7 @@ background-color: #fff ;
             <label class="hj-transverse-split-label"></label>
         </div>
          
-        <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3">
+        <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3;border:1px solid;border-color: #ebeef3">
            <div style="padding-left:10px;padding-right:0px;marign0:10px;width:100%;height:100%;position:inherit;background-color: #ebeef3;z-index:60000" id="right_tabs">
              
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
@@ -2152,7 +2152,6 @@ function leftcat_close()
 var resize_cc = 0 ;
 $(window).resize(function(){
 	resize_iframe_h();
-	
 	resize_tree();
 	//panel.updatePixelSize() ;
 	resize_cc ++ ;

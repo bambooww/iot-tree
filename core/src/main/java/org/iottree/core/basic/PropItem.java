@@ -359,6 +359,11 @@ public class PropItem
 		return this.defaultVal;
 	}
 	
+	public void setDefaultVal(Object v)
+	{
+		this.defaultVal = v ;
+	}
+	
 	public Number getDefaultValNum()
 	{
 		if(this.defaultVal==null)

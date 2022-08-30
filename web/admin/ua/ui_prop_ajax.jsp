@@ -52,12 +52,20 @@
 	
 	if("save".equalsIgnoreCase(op))
 	{
-		String txt = request.getParameter("txt") ;
-		JSONObject jobj = new JSONObject(txt);
-		n.fromPropNodeValJSON(jobj);
-		((ISaver)n.getTopNode()).save();
-		out.print("save ok");
-		return ;
+		try
+		{
+			String txt = request.getParameter("txt") ;
+			JSONObject jobj = new JSONObject(txt);
+			n.fromPropNodeValJSON(jobj);
+			((ISaver)n.getTopNode()).save();
+			out.print("succ");
+			return ;
+		}
+		catch(Exception e)
+		{
+			out.print(e.getMessage()) ;
+			return ;
+		}
 	}
 %>
 err:unknow op

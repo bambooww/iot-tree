@@ -445,7 +445,7 @@ function do_apply(succcb)
 		pm.op="save";
 		pm.txt=get_prop_vals(); ;
 		send_ajax("./ui_prop_ajax.jsp",pm,function(bsucc,ret){
-			if(!bsucc)
+			if(!bsucc || ret!="succ")
 			{
 				dlg.msg(ret) ;
 				return ;

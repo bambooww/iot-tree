@@ -122,14 +122,12 @@ HMI Lib、Dev Lib做了比较大的改善和优化，使得项目可以脱离库
 ### version 0.98.2
 改进HMISub相关功能，并解决关联bug。基于WebView2新增win_client。新增PPI协议支持西门子PLC S7-200。
 
-Improve HMISub related functionality and resolve associated bugs. New win_client based on WebView2 added. Add PPI protocol supports Siemens PLC S7-200.
-
-### 版本 0.99.0 (计划)
-
-完成整个基本组件库的开发
-设计1-2个 Demo场景（选择两个行业）
 
 
+### 版本 0.99.0
+Connector支持与Device直接建立关联，以支持更灵活的以太网设备组态；
+新增西门子S7系列（S7-300/1200/1500）PLC驱动和支持。
+改进了一些连接性能。
 
 
 
@@ -137,7 +135,8 @@ Improve HMISub related functionality and resolve associated bugs. New win_client
 
 完整的组态软件功能
 基本完善的文档
-
+完成整个基本组件库的开发
+设计1-2个 Demo场景（选择两个行业）
 
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

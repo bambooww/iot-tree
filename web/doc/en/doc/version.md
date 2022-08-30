@@ -115,8 +115,15 @@ Improve HMI UI editing function; Added HMI Comp base library element. Some bugs 
 
 
 
+
 Improve HMISub related functionality and resolve associated bugs. New win_client based on WebView2 added. Add PPI protocol supports Siemens PLC S7-200.
 
+
+
+### version 0.99.0
+Connector supports direct device associations to support more flexible Ethernet device configurations;
+New Siemens S7 Series (S7-300/1200/1500) PLC driver and support.
+Some connection performance improvements were made.
 
 
 
