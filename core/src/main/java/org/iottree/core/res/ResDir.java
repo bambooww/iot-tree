@@ -115,11 +115,13 @@ public class ResDir //Comparable<ResDir>
 	{
 		for(ResItem ri: listResItems())
 		{
-			if(ri.getName().contentEquals(name))
+			if(ri.getName().equals(name))
 				return ri ;
 		}
 		return null;
 	}
+	
+	
 	
 	public boolean containsResItem(String name)
 	{
@@ -150,6 +152,22 @@ public class ResDir //Comparable<ResDir>
 	}
 
 
+	public boolean delResItem(String name)
+	{
+		ResItem ri = this.getResItem(name) ;
+		if(ri==null)
+			return false;
+		
+		File resf = ri.getResFile() ;
+		if(resf==null)
+			return false;
+		boolean r = resf.delete();
+		if(r)
+		{//del cache
+			
+		}
+		return r ;
+	}
 //	@Override
 //	public int compareTo(ResDir o)
 //	{

@@ -299,6 +299,7 @@ height:50px;background-color: grey;
  			
  			<button class="layui-btn layui-btn-warm"  onclick="up_to_prj()">Update To Project</button>
  			&nbsp;
+ 			<i class="fa-brands fa-squarespace fa-lg top_btn" onclick="open_res()" ></i>
 			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" ></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()"></i>
 </div>
@@ -457,6 +458,20 @@ var intedit =null;
 
 var hmiModel=null;
 var hmiView=null;
+
+function open_res()
+{
+	dlg.open("../util/di_editplug_prop_imgres.jsp?res_lib_id="+res_lib_id+"&res_id="+res_id,
+			{title:"Edit Resourse",w:'500px',h:'400px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	
+}
 
 function on_panel_mousemv(p,d)
 {

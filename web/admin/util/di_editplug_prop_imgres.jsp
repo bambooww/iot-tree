@@ -192,6 +192,9 @@ border-width:2px; border-style:solid; background-color0: #515658;
 {
 	background-color: #1173ec;
 	color: #eeeeee;
+	margin:2px;
+	border-color: red;
+	border: 3px solid;
 }
 
 .res_node
@@ -243,6 +246,7 @@ String nid = dr.getResNodeUID() ;
 	  	<input type="text" id="add_name" placeholder="input name" onkeyup="on_name_chged()" />
 	  	<input type="file" id='add_file' onchange="add_file_onchg()" name="file" style="left:-9999px;position:absolute;"/>
 			<button id="btn_add_file" onclick="add_res()">Add</button>
+			<button id="btn_del_file" onclick="del_res()" style="display:none">Delete</button>
 	  </div>
     </td>
   </tr>
@@ -332,6 +336,33 @@ function add_res()
 	return false;
 }
 
+function del_res()
+{
+	if(cur_resitem==null)
+	{
+		dlg.msg("no item selected") ;
+		return ;
+	}
+	
+	dlg.confirm('delete this resourse item ['+cur_resitem.name+']?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+		    {
+					var pm={} ;
+					pm.res_lib_id=res_lib_id;
+					pm.res_id = res_id ;
+					pm.op="del" ;
+					pm.n = cur_resitem.name ;
+					send_ajax("rescxt_item_ajax.jsp",pm,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg(ret) ;
+			    			return ;
+			    		}
+			    		//
+						document.location.href=document.location.href;
+			    	}) ;
+				});
+}
+
 function get_cur_resitem_byid(id)
 {
 	if(cur_resitems==null)
@@ -362,13 +393,15 @@ function refresh_list()
 		return ;
 	for(var ri of cur_resitems)
 	{
-		var rdiv = $("#resdiv_"+ri.id);
-		rdiv.removeClass("res_sel");
+		var rdiv = document.getElementById("resdiv_"+ri.id);
+		//rdiv.removeClass("res_sel");
+		$(rdiv).css("border-color","grey");
 	}
 	if(cur_resitem!=null)
 	{
-		var rdiv = $("#resdiv_"+cur_resitem.id);
-		rdiv.addClass("res_sel");
+		var rdiv =  document.getElementById("resdiv_"+cur_resitem.id);
+		//rdiv.addClass("res_sel");
+		$(rdiv).css("border-color","red") ;
 	}
 }
 
@@ -379,6 +412,7 @@ function on_res_clk(n)
 		return ;
 	$("#add_name").val(ri.name) ;
 	$("#btn_add_file").html("Change") ;
+	$("#btn_del_file").css("display","") ;
 	cur_resitem = ri ;
 	refresh_list();
 }
@@ -400,6 +434,7 @@ function on_name_chged()
 	}
 	
 	$("#btn_add_file").html("Add") ;
+	$("#btn_del_file").css("display","none")
 	cur_resitem = null ;
 	refresh_list();
 }

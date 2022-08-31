@@ -223,7 +223,7 @@ public abstract class WSServer// extends ConnServer
 
 	// private static Timer timer = null;
 
-	private static final long TICK_DELAY = 1000;
+	private static final long TICK_DELAY = 100;
 
 	private static Thread th = null;
 

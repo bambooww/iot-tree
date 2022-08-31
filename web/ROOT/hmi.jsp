@@ -894,6 +894,7 @@ function ws_conn()
     	//console.log(event.data) ;
     	//hmiModel.fireModelPropBindData(event.data) ;
     	var d = null ;
+    	//console.log(event.data);
     	eval("d="+event.data) ;
     	if(d.cxt_rt)
     	{

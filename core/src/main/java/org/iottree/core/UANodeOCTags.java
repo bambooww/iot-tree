@@ -733,6 +733,8 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		else
 			t.setTagSys(name, title, desc, "", vt, dec_digits, false, 200);
+		
+		t.belongToNode = this ;
 	}
 
 	/**

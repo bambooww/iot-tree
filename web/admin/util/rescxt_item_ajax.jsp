@@ -6,22 +6,35 @@
 				 org.iottree.core.*,
 				 org.iottree.core.res.*,
 				 org.iottree.core.util.xmldata.*"%><%!
-%><%if(!Convert.checkReqEmpty(request, out,"op","cxtid"))
-		return ;
-	String cxtid = request.getParameter("cxtid") ;
-	String op = request.getParameter("op") ;
+%><%
+if(!Convert.checkReqEmpty(request, out, "res_lib_id","op"))
+	return ;
+String res_lib_id = request.getParameter("res_lib_id") ;
+String res_id = request.getParameter("res_id") ;
+String op = request.getParameter("op") ;
+String n = request.getParameter("n") ;
+ResDir rdir = ResManager.getInstance().getResDir(res_lib_id, res_id); //
 
-	ResDir rc = ResManager.getInstance().getResCxt(cxtid) ;
-	if(rc==null)
-	{
-		out.print("no ResCxt found") ;
-		return ;
-	}
+//ResLib reslib = ResManager.getInstance().getResLibByLibId(res_lib_id) ;
+if(rdir==null)
+{
+	out.print("no ResDir found") ;
+	return ;
+}
+
 	
 	switch(op)
 	{
 	case "add":
-		
+		break;
 	case "del":
+		if(!Convert.checkReqEmpty(request, out, "n"))
+			return ; 
+		if(rdir.delResItem(n))
+			out.print("succ") ;
+		else
+			out.print("delete failed") ;
+		break ;
+	}
 	
-	}%>
+%>
