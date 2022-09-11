@@ -31,11 +31,13 @@
 			new BtnItem("pic/pentagon.png","Pentagon","parent.do_add_di('oc.di.DIBasic',{tp:'pentagon'})"),
 			new BtnItem("pic/circle.png","Circle","parent.do_add_di('oc.di.DIBasic',{tp:'circle'})"),
 			new BtnItem("pic/iso_triangle.png","Triangle","parent.do_add_di('oc.di.DIBasic',{tp:'iso_triangle'})"),
+			new BtnItem("pic/arrow1.png","Arrow","parent.do_add_di('oc.di.DIBasic',{tp:'arrow1'})"),
 			new BtnItem("pic/eclipse.png","Ellipse","parent.do_add_di('oc.di.DIBasic',{tp:'eclipse'})"),
 			new BtnItem("pic/py.png","Polygon","parent.do_add_pts('py',{})"),
 			new BtnItem("pic/ln.png","Line","parent.do_add_pts('ln',{})"),
 			new BtnItem("pic/pipe.png","Pipe","parent.do_add_pts('pipe',{})"),
 			new BtnItem("pic/dial.png","Dial","parent.do_add_di('oc.di.DIDial')"),
+			new BtnItem("pic/wave.png","Wave","parent.do_add_di('oc.di.DIWave')"),
 			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
 			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
 	} ;
@@ -44,17 +46,8 @@
 <html>
 <head>
 <title>IOT Tree</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.js"></script>
+<jsp:include page="../head.jsp"></jsp:include>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 </head>
 <style>
 .oc-toolbar .toolbarbtn

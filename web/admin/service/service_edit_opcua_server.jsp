@@ -17,9 +17,8 @@ OpcUAServer ser = (OpcUAServer)ServiceManager.getInstance().getService(OpcUAServ
 	boolean enable = ser.isEnable();//ser.isMqttEn();
 	//boolean tcp_en = false;//ser.isTcpEn();
 	
-	String mqtt_port =  "";// ser.getMqttPortStr();
-	String tcp_port =  "";// ser.getTcpPortStr() ;
-
+	String port =  "4840";// ser.getMqttPortStr();
+	
 	String chked_en = "" ;
 	if(enable)
 		chked_en = "checked=checked";
@@ -29,8 +28,7 @@ OpcUAServer ser = (OpcUAServer)ServiceManager.getInstance().getService(OpcUAServ
 	String user = "";// ser.getAuthUser() ;
 	String psw =  "";// ser.getAuthPsw() ;
 	String users =  "";// ser.getAuthUsers();
-	if(users==null)
-		users = "" ;
+	
 %>
 <html>
 <head>
@@ -55,7 +53,7 @@ dlg.resize_to(600,400);
 	  </div>
 	  <div class="layui-form-mid">Port:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="mqtt_port" name="mqtt_port" value="<%=mqtt_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="port" name="port" value="<%=port%>"  class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">

@@ -8,7 +8,9 @@
 				 org.iottree.core.*,
 				 org.iottree.core.res.*,
 				 org.iottree.core.basic.*,
-				 org.iottree.core.util.xmldata.*"%>
+				 org.iottree.core.util.xmldata.*"%><%
+		boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
+%>
 <html>
 <head>
 <title>Edit</title>
@@ -32,8 +34,16 @@ dlg.resize_to(500,500);
     <label class="layui-form-label"></label>
     <div class="layui-input-block">
       <input id="exp_false" type="radio" lay-filter="bexp" name="bexp" value="false" title="context tag"  checked >
+<%
+if(!bind_tag_only)
+{
+%>
       <input id="exp_true" type="radio" lay-filter="bexp" name="bexp" value="true" title="js express" >
+<%
+}
+%>
       <input id="exp_unbind" type="radio" lay-filter="bexp" name="bexp" value="unbind" title="unbind" >
+
     </div>
   </div>
    <div class="layui-form-item" id="divtag">
@@ -60,6 +70,7 @@ dlg.resize_to(500,500);
 var form = null ;
 
 var bind_val = "false";
+var bind_tag_only = <%=bind_tag_only%>;
 
 layui.use('form', function(){
 	  form = layui.form;
@@ -102,7 +113,7 @@ function sel_tag()
 		return ;
 	//var cxtnodeid = plugpm.cxtnodeid ;
 	var tmpv = $("#tag").val() ;
-	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?path="+plugpm.path+"&val="+tmpv,
+	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?path="+plugpm.path+"&val="+tmpv+"&bind_tag_only="+bind_tag_only,
 			{title:"Select Tag in Context",w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[

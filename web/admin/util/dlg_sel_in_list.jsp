@@ -18,6 +18,10 @@
 	if(Convert.isNullOrEmpty(opener_list_id))
 		opener_list_id ="" ;
 	
+	//String opener_seled_id = request.getParameter("opener_seled_id") ;
+	//if(Convert.isNullOrEmpty(opener_seled_id))
+	//	opener_seled_id ="" ;
+	
 	String v = request.getParameter("v") ;
 	if(Convert.isNullOrEmpty(v))
 		v = "" ;
@@ -35,18 +39,18 @@ dlg.resize_to(400,500);
 <table id="item_list" border="0"  class="list_table" cellspacing="0" cellpadding="0" border="0">
 
 </table>
- 
 </body>
 <script type="text/javascript">
 var form = null;
 var opener_list_id = "<%=opener_list_id%>" ;
 
+var ow = dlg.get_opener_w();
+
 var list_ob = null ;
+var seled_ids = []
 if(opener_list_id)
 {
-	var ow = dlg.get_opener_w();
 	list_ob = ow[opener_list_id] ;
-	
 }
 
 
@@ -70,9 +74,10 @@ function show_list()
 		{
 			var id = list_ob[i].id ;
 			var tt = list_ob[i].title ;
+			var seled =  list_ob[i].sel;
 		
 			htmlstr+= "<tr class=\"list_tr\" id=\""+id+"\" >"
-					  + "<td nowrap=\"nowrap\">&nbsp;<input id=\"sel_mid_"+id+"\" type=\"checkbox\" value=\""+id+"\"/></td>"
+					  + "<td nowrap=\"nowrap\">&nbsp;<input id=\"sel_mid_"+id+"\" type=\"checkbox\" "+(seled?"checked=\"checked\"":"")+" value=\""+id+"\"/></td>"
 					  + "<td width=\"10\">&nbsp;</td>"
 					  + "<td width=\"95%\"  onclick=\"sel_item(\'"+id+"\')\">"+tt+"</td>"
 					  + "</tr>"

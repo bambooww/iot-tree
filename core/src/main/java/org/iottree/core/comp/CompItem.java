@@ -47,9 +47,10 @@ public class CompItem implements IXmlDataable ,IResNode
 	 * add and create new comp
 	 * @param title
 	 */
-	CompItem(File parentdir,String title)
+	CompItem(String reslibid,File parentdir,String title)
 	{
 		//belongTo = cc ;
+		this.resLibId = reslibid ;
 		id = CompressUUID.createNewId();//.randomUUID().toString() ;
 		this.title = title ;
 		compDir = new File(parentdir,id+"/") ;

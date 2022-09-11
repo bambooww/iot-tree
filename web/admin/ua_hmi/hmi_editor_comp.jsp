@@ -318,7 +318,7 @@ height:50px;background-color: grey;
 			<div class="left_panel_bar" >
 				<span id="left_panel_title" style="font-size: 20px;">Basic Shape</span><div onclick="leftcat_close()" class="top_menu_close"  style="position:absolute;top:1px;right:10px;top:2px;">X</div>
 			</div>
-			<iframe id="left_pan_iframe" src="" style="width:100%;height:90%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
+			<iframe id="left_pan_iframe" src="" style="width:100%;height:99%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
 		</div>
 		<div class="mid">
 			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
@@ -338,7 +338,7 @@ height:50px;background-color: grey;
 				
 				<div id="win_act_conn" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group" style="width:40px">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="新增接入"  onclick="conn_add()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="add new connector"  onclick="conn_add()">
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -384,30 +384,34 @@ height:50px;background-color: grey;
 		
 		
 		<div id="toolbar_basic" class="toolbox" style="left:50px">
-				<div class="title"></div>
-				<div class="content" style="height:250px"> 
+				
+				<div class="content" style="height:200px"> 
 				<div style="height:50px;background-color: grey" class="edit_toolbar">
 				<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
 				<span id="edit_toolbar" class="edit_toolbar"></span>
 				</div>
-					<iframe src="hmi_left_basic_di.jsp" height="200px" width="100%"></iframe>
+					<iframe src="hmi_left_basic_di.jsp" height="150px" width="100%"></iframe>
 				</div>
 		</div>
 		
 		<div id="inter_editor" class="toolbox" style="left:50px;top:385px;">
 				<div class="title"><h3>Interface</h3></div>
-				<div class="content" style="height:300px"> 
-							<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
-						<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
-						Interface Properties<button onclick="inter_prop_edit()">+Add</button><button onclick="inter_prop_test()">Test</button></div>
-						<div id="inter_prop_list" style="position0:absolute;top:20px;height:120px;width:100%">
-							
+				<div class="content" style="height:180px"> 
+					<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: #f9f9f9; z-index: 60000; ;float:left">
+						<div style="position0:relative;top:0px;height:20px;background-color: grey;width:100%;float:left">
+						Properties<button onclick="inter_prop_edit()">+Add</button>
+						<button onclick="inter_prop_test()">Test</button>
+						<button onclick="inter_prop_paste()">Paste</button>
+						<button onclick="inter_prop_map()">Map</button>
 						</div>
-						
 					</div>
+					<div id="inter_prop_list" style="position0:absolute;top:20px;height:160px;width:100%;background-color: #f9f9f9;overflow: auto;">
+							
+					</div>
+				  </div>
 					<div id='inter_event_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
 						<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
-						Interface Events<button onclick="inter_event_edit()">+add</button></div>
+						Events<button onclick="inter_event_edit()">+add</button></div>
 						<div id="inter_event_list" style="position0:absolute;top:20px;height:120px;width:100%">
 							
 						</div>
@@ -490,12 +494,14 @@ function init_iottpanel()
 	});
 	panel.setInEdit(true);
 	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
-		plug_cb:editor_plugcb
+		plug_cb:editor_plugcb,
+		on_prompt_msg:on_editor_prompt
 	}) ;
 	hmiView = new oc.hmi.HMICompView(hmiModel,panel,editor,{
 		copy_paste_url:"../util/copy_paste_ajax.jsp",
 		loaded_cb:()=>{
 			inter_refresh();
+			setTimeout("draw_fit()",1000);
 		}
 	});
 
@@ -504,11 +510,17 @@ function init_iottpanel()
 	hmiView.init();
 }
 
+
+function on_editor_prompt(m)
+{
+	dlg.msg(m);
+}
+
 var editor_plugcb_pm=null ;
 
-function editor_plugcb(jq_ele,tp,di,name,val)
+function editor_plugcb(jq_ele,tp,di,pn_defname,val)
 {
-	editor_plugcb_pm = {editor:editname,editor_id:itemid,catid:catid,compid:itemid,di:di,name:name,val:val} ;
+	editor_plugcb_pm = {layer:loadLayer,editor:editname,editor_id:itemid,catid:catid,compid:itemid,di:di,name:name,val:val} ;
 
 	if(tp.indexOf("event_")==0)
 	{
@@ -528,6 +540,23 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 						 di.setEventBinder(name,cjs,sjs) ;
 						 editor.refreshEventEditor();
 						 dlg.close();
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	}
+	else if(tp=="prop_bind")
+	{
+		dlg.open("./hmi_editor_comp_prop_interface.jsp?res_lib_id="+res_lib_id+"&res_id="+itemid,
+				{title:"To Interface Map",w:'500px',h:'400px'},
+  				['Ok','Cancel'],
+				[
+					function(dlgw)
+					{
+						
+						dlg.close();
 					},
 					function(dlgw)
 					{
@@ -595,7 +624,10 @@ function inter_refresh()
 	var tmps = "" ;
 	for(var ci of compinter.getInterProps())
 	{
-		tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_edit(\""+ci.n+"\")'>edit</a> <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a></div>";
+		if(ci.isInnerItemMap())
+			tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a></div>";
+		else
+			tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_edit(\""+ci.n+"\")'>edit</a> <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a> <a href='javascript:inter_prop_copy(\""+ci.n+"\")'>copy</a></div>";
 	}
 	$("#inter_prop_list").html(tmps);
 	
@@ -612,6 +644,101 @@ function inter_prop_del(n)
 	loadLayer.getCompInter().setInterProp(n,null);
 	inter_refresh();
 }
+
+function inter_prop_copy(n)
+{
+	var ci = loadLayer.getCompInter().getInterPropByName(n);
+	if(ci==null)
+		return ;
+	send_ajax("../util/copy_paste_ajax.jsp",{op:"common_copy",n:"_hmicomp_inter_prop",t:JSON.stringify(ci)},(bsucc,ret)=>{
+		if(!bsucc || ret!='succ')
+		{
+			dlg.msg(ret) ;
+			return;
+		}
+		dlg.msg("copy ok") ;
+	});
+}
+
+function inter_prop_paste()
+{
+	send_ajax("../util/copy_paste_ajax.jsp",{op:"common_paste",n:"_hmicomp_inter_prop"},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf('succ=')!=0)
+		{
+			dlg.msg(ret) ;
+			return;
+		}
+		var txt = ret.substring(5) ;
+		var ci = null ;
+		eval("ci="+txt) ;
+		var n = ci.n ;
+		 if(n==undefined||n==null||n=="")
+		 {
+			 dlg.msg("invalid property item") ;
+			 return ;
+		 }
+		 //var tp = ret.tp ;
+		 loadLayer.getCompInter().setInterProp(n,ci);
+		 inter_refresh();
+		 
+		dlg.msg("paste ok") ;
+	});
+}
+
+var map_li_items=[];
+var map_sel_items=[];
+function inter_prop_map()
+{
+	let sdi = editor.getSingleSelectedItem();
+	if(sdi==null)
+	{
+		dlg.msg("please select one Item")
+		return ;
+	}
+	
+	let n = sdi.getName();
+	if(!n)
+	{
+		dlg.msg("select item has no Name ,please set Name first") ;
+		return;
+	}
+	var compinter = loadLayer.getCompInter() ;
+	let bps = sdi.listAllBindPropDef()
+	let mitems = [];
+	for(let bp of bps)
+	{
+		let newn = n+"_"+bp.id;
+		let cip = compinter.getInterPropByName(newn);
+		mitems.push({id:newn,title:bp.title,sel:cip!=null,itemid:sdi.getId(),propn:bp.id,prop_vt:bp.tp});
+	}
+	map_li_items = mitems;
+	
+	dlg.open("../util/dlg_sel_in_list.jsp?opener_list_id=map_li_items",
+				{title:"Map To Interface Properties",w:'500px',h:'400px'},
+				['Ok','Cancel'],
+				[
+					function(dlgw)
+					{
+						var ids = dlgw.get_select();
+						for(let tmpitem of map_li_items)
+						{
+							let tmpid = tmpitem.id ;
+							tmpitem.sel = (ids.indexOf(tmpid)>=0) ;
+						}
+						loadLayer.getCompInter().setInterPropMap(map_li_items);
+						inter_refresh();
+						 
+						dlg.msg("interface properties map ok") ;
+						
+						dlg.close();
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+}
+
 function inter_event_del(n)
 {
 	loadLayer.getCompInter().setInterEvent(n,null);
@@ -896,6 +1023,15 @@ function leftcat_close()
 	left_cur=null ;
 	slide_toggle($('#left_panel'));
 }
+
+function fit_right_height()
+{
+	var hpx =($(window).height()-100)+"px";
+	$("#edit_props").css("height",hpx)
+	$("#edit_events").css("height",hpx)
+}
+
+fit_right_height();
 
 var resize_cc = 0 ;
 $(window).resize(function(){

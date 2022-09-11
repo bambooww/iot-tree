@@ -684,8 +684,8 @@ function show_cxt_dyn(p,cxt)
 			
 		if(chgdt>0)
 		{
-			strchgdt = new Date(dt).format("hh:mm:ss");//
-			strchgdtt = new Date(dt).format("yyyy-MM-dd hh:mm:ss");//
+			strchgdt = new Date(chgdt).format("hh:mm:ss");//
+			strchgdtt = new Date(chgdt).format("yyyy-MM-dd hh:mm:ss");//
 		}
 			
 		show_ele_html("ctag_v_"+tagp,strv,true) ;
@@ -737,10 +737,14 @@ function ws_conn()
     };
     ws.onmessage = function (event) {
 
-    	//console.log(event.data) ;
-    	//hmiModel.fireModelPropBindData(event.data) ;
+    	var str = event.data ;
+    	var k = str.indexOf("\r\n") ;
+    	if(k<=0)
+    		return ;
+    	var firstln = str.substring(0,k);
+    	str = str.substring(k+2) ;
     	var d = null ;
-    	eval("d="+event.data) ;
+    	eval("d="+str) ;
     	//console.log(d) ;
     	show_cxt_dyn("",d);
     };

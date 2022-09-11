@@ -95,7 +95,7 @@
 <link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 <script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
-  <!-- 
+ <!-- 
 
 -->
 <style>
@@ -521,6 +521,7 @@ function init_iottpanel()
 		on_model_loaded:()=>{
 			//console.log("loaded") ;
 			draw_fit()
+			setTimeout("draw_fit();",1000);
 		},
 		on_new_dlg:(p,title,w,h)=>{
 			var fp = p ;
@@ -546,7 +547,6 @@ function init_iottpanel()
 	loadLayer = hmiView.getLayer();
 	intedit = hmiView.getInteract();
 }
-
 
 var editor_plugcb_pm=null ;
 
@@ -658,6 +658,14 @@ function draw_fit()
 	if(loadLayer==null)
 		return ;
 	loadLayer.ajustDrawFit();
+}
+
+function print_cache()
+{
+	if(loadLayer==null)
+		return ;
+	var sts = loadLayer.getRunCacheST();
+	console.log(sts) ;
 }
 
 var bInRefresh=false;
@@ -792,8 +800,8 @@ var resize_cc = 0 ;
 $(window).resize(function(){
 	panel.updatePixelSize() ;
 	resize_cc ++ ;
-	if(resize_cc<=1)
-		draw_fit();
+	//if(resize_cc<=1)
+	draw_fit();
 	});
 	
 
@@ -864,9 +872,11 @@ function show_overlay(bshow,title)
 		overlay_msg_div.css("display","none");
 		overlay_div.style.display = 'none';
 	}
+	//
 }
 
 
+var b_conn_first=true;
 
 
 
@@ -893,9 +903,18 @@ function ws_conn()
 
     	//console.log(event.data) ;
     	//hmiModel.fireModelPropBindData(event.data) ;
-    	var d = null ;
+    	var str = event.data ;
+    	var k = str.indexOf("\r\n") ;
+    	if(k<=0)
+    		return ;
+    	var firstln = str.substring(0,k);
+    	str = str.substring(k+2) ;
+    	
+    	var d = null,s=null ;
     	//console.log(event.data);
-    	eval("d="+event.data) ;
+    	eval("s="+firstln) ;
+    	hmiModel.updateServerInfo(s);
+    	eval("d="+str) ;
     	if(d.cxt_rt)
     	{
     		hmiModel.updateRtNodes(d.cxt_rt);
@@ -905,6 +924,12 @@ function ws_conn()
     		show_overlay(false);
     	else
     		show_overlay(true,"project is not running.");
+    	
+    	if(b_conn_first)
+		{
+			b_conn_first=false;
+			
+		}
     };
     
     ws.onclose = function (event) {

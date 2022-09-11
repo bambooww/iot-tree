@@ -235,7 +235,7 @@ public class CompCat  //implements IResNode
 			throw new Exception("cat is readonly") ;
 		
 		File catdir = this.getCatDir();
-		CompItem ci = new CompItem(catdir,title) ;
+		CompItem ci = new CompItem(this.getBelongTo().getResLibId(),catdir,title) ;
 		saveItem(ci);
 		getItems().add(ci) ;
 		return ci ;

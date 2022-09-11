@@ -3,6 +3,7 @@ package org.iottree.core.util.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANode;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.plugin.PlugAuth;
@@ -169,6 +171,22 @@ public class PrjFilter implements Filter
 			case "list":
 				req.getRequestDispatcher("/node_list.jsp?path="+uri+"&tp="+tp).forward(req, resp);
 				break ;
+			case "ui":
+				if(node instanceof UAPrj)
+				{
+					UAPrj prj = (UAPrj)node ;
+					UAHmi tmphmi = prj.getHmiMain() ;
+					if(tmphmi==null)
+					{
+						List<UAHmi> hmis = prj.getHmis() ;
+						if(hmis==null||hmis.size()<=0)
+							return ;
+						tmphmi = hmis.get(0) ;
+					}
+					req.getRequestDispatcher("/hmi.jsp?path="+tmphmi.getNodePath()).forward(req, resp);
+					return ;
+				}
+				break;
 			default:
 				req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
 				break ;

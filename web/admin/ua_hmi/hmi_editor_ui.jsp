@@ -406,9 +406,10 @@ if(bprj)
 <div style="height:100px;background-color: grey" class="edit_toolbar">
 				<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
 				<span id="edit_toolbar" class="edit_toolbar"></span>
+				<div id="p_info" style="height: 20;display0:none" class0="props_panel_pos">&nbsp;</div>
 				</div>
   
-	<div id="p_info" style="height: 20;display:none" class0="props_panel_pos">&nbsp;</div>
+	
 		<div class="layui-tab">
 	  <ul class="layui-tab-title">
 	    <li class="layui-this">Properties</li>
@@ -425,18 +426,15 @@ if(bprj)
 	  </div>
 	</div>
 </div>
-
- 
 		</div>
-
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
 	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa-regular fa-square-plus fa-3x"></i></div>
 	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa-regular fa-square-minus fa-3x"></i></div>
 
 	<div id="toolbar_basic" class="toolbox">
 				<div class="title" style="float:left;width:100%"><i class="fa fa-wrench fa-2x" aria-hidden="true" onclick="show_hide_toolbar()"></i></div>
-		<div id="toolbar_list" class="content" style="height:200px"> 
-			<iframe src="hmi_left_basic_di.jsp" height="200px" width="100%"></iframe>
+		<div id="toolbar_list" class="content" style="height:230px"> 
+			<iframe src="hmi_left_basic_di.jsp" height="230px" width="100%"></iframe>
 		</div>
 	</div>
 
@@ -527,7 +525,8 @@ function init_iottpanel()
 	});
 	panel.setInEdit(true);
 	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
-		plug_cb:editor_plugcb
+		plug_cb:editor_plugcb,
+		on_prompt_msg:on_editor_prompt
 	}) ;
 	hmiView = new oc.hmi.HMIView(hmiModel,panel,editor,{
 		copy_paste_url:"../util/copy_paste_ajax.jsp",
@@ -536,6 +535,7 @@ function init_iottpanel()
 			
 			panel.updatePixelSize();
 			draw_fit()
+			setTimeout("draw_fit()",1000)
 		}
 	});
 	
@@ -545,11 +545,16 @@ function init_iottpanel()
 	intedit = hmiView.getInteract();
 }
 
+function on_editor_prompt(m)
+{
+	dlg.msg(m) ;
+}
 
 var editor_plugcb_pm=null ;
 
-function editor_plugcb(jq_ele,tp,di,name,val)
+function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 {
+	
 	editor_plugcb_pm = {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
 
 	if(tp.indexOf("event_")==0)
@@ -580,9 +585,14 @@ function editor_plugcb(jq_ele,tp,di,name,val)
 	else
 	{
 		var tt = "Edit Properties" ;
+		var bind_tag_only=false;
 		if(tp=="prop_bind")
+		{
 			tt = "Bind Properties" ;
-		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id,
+			bind_tag_only = pn_def.bind_tag_only ;
+		}
+			
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id+"&bind_tag_only="+bind_tag_only,
 				{title:tt,w:'500px',h:'420px',shade: 0.01,
 					on_val_chg:(v)=>{
 						jq_ele.val(v) ;

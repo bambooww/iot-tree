@@ -161,16 +161,16 @@ tree_init();
 function drag(ev)
 {
 	var tar = ev.target;
-	//var dxy = panel.transPixelPt2DrawPt(ev.x, ev.y);
 	var p = tar[oc.DrawPanelDiv.DRAW_PANEL_DIV];
 	if(p==null||p==undefined)
 		return;
 	var res_lib_id = p["res_lib_id"]; 
 	var compid = p["compid"] ;
+	var w = p["w"] ;
+	var h = p["h"] ;
 	if(compid==null||compid==undefined)
 		return ;
-	var r = {_val:res_lib_id+"-"+compid,_tp:"comp"};
-	//console.log(r) ;
+	var r = {_val:{compid:res_lib_id+"-"+compid,w:w,h:h},_tp:"comp"};
 	oc.util.setDragEventData(ev,r);
 }
 
@@ -232,6 +232,9 @@ function load_preview()
 			var p1 = new oc.DrawPanelDiv("",{layer:lay,panel:panel}) ;
 			p1["res_lib_id"] = resnid ;
 			p1["compid"] = cur_cat_itemids[loadidx];
+			var rect = lay.getShowItemsRect();
+			p1["w"] = rect.w;
+			p1["h"] = rect.h;
 			//all_panels.push(p1);
 			loadidx ++ ;
 			lay.ajustDrawFit();

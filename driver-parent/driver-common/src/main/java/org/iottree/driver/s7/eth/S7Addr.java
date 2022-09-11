@@ -190,6 +190,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 			{
 				return new ChkRes(0,addr,ValTP.vt_bool,"S7 Addr ["+addr+"] must use bool value type");
 			}
+			return CHK_RES_OK;
 		}
 		
 		if(apt.memTp==S7MemTp.T)
@@ -204,13 +205,31 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		{
 			if(vtp!=ValTP.vt_uint16)
 			{
-				return new ChkRes(0,addr,ValTP.vt_uint32,"S7 Addr ["+addr+"] must use uint16");
+				return new ChkRes(0,addr,ValTP.vt_uint16,"S7 Addr ["+addr+"] must use uint16");
 			}
 		}
-		
-		if(apt.memValTp==null)
+
+		S7ValTp s7vt = apt.getMemValTp();
+		switch(s7vt)
 		{
-			
+		case X:
+			if(vtp!=ValTP.vt_bool)
+				return new ChkRes(0,addr,ValTP.vt_bool,"S7 Addr ["+addr+"] must use bool value type");
+			break;
+		case B:
+			if(vtp!=ValTP.vt_byte && vtp!= ValTP.vt_uint8)
+				return new ChkRes(0,addr,ValTP.vt_uint8,"S7 Addr ["+addr+"] may use vt_uint8 value type");
+			break;
+		case W:
+			if(vtp!=ValTP.vt_int16 && vtp!= ValTP.vt_uint16)
+				return new ChkRes(0,addr,ValTP.vt_uint16,"S7 Addr ["+addr+"] may use vt_uint16 value type");
+			break;
+		case D:
+			if(vtp!=ValTP.vt_int32 && vtp!= ValTP.vt_uint32)
+				return new ChkRes(0,addr,ValTP.vt_uint32,"S7 Addr ["+addr+"] may use vt_uint32 value type");
+			break;
+		default:
+			break;
 		}
 		
 		return CHK_RES_OK;

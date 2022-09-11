@@ -181,6 +181,16 @@ if(pros.size()>0)
 
           
           <span class="btn_sh">
+          
+          <span>
+           <a class=" " href="javascript:window.open('/<%=rep.getName()%>?op=ui')" title="Access">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-paper-plane  fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
 <%
 if(!rep.isMainPrj())
 {

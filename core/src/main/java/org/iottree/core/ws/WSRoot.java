@@ -32,7 +32,7 @@ public abstract class WSRoot
 	protected static class SessionItem
 	{
 		private final Session session;
-		private final UAPrj rep;
+		private final UAPrj prj;
 		private final UANodeOCTagsCxt nodecxt;
 		EndpointConfig config = null;
 		private long lastDT = -1;
@@ -40,7 +40,7 @@ public abstract class WSRoot
 		public SessionItem(Session s, UAPrj rep, UANodeOCTagsCxt nodecxt, EndpointConfig config)
 		{
 			this.session = s;
-			this.rep = rep;
+			this.prj = rep;
 			this.nodecxt = nodecxt;
 			this.config = config;
 		}
@@ -56,9 +56,9 @@ public abstract class WSRoot
 			return LoginUtil.checkAdminLogin(hs);
 		}
 
-		public UAPrj getRep()
+		public UAPrj getPrj()
 		{
-			return rep;
+			return prj;
 		}
 
 		/**
@@ -69,7 +69,7 @@ public abstract class WSRoot
 		public String getRepDynJsonStr()
 		{
 			long curt = System.currentTimeMillis();
-			JSONObject jobj = rep.toOCDynJSON(lastDT);
+			JSONObject jobj = prj.toOCDynJSON(lastDT);
 			lastDT = curt;
 			return jobj.toString(2);
 		}
@@ -181,11 +181,18 @@ public abstract class WSRoot
 
 	private static void on_tick(SessionItem si)
 	{
+		UAPrj prj = si.getPrj() ;
+		if(!prj.RT_isRunning())
+			return ;
+		
 		UANodeOCTagsCxt ntags = si.getNodeTagCxt();
 		StringWriter sw = new StringWriter();
 		String txt = null;
 		try
 		{
+			//first line is server global inf
+			sw.append("{\"dt\":"+System.currentTimeMillis()+"}\r\n");
+			
 			ntags.CXT_renderJson(sw);
 			txt = sw.toString();
 		}

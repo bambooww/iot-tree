@@ -14,7 +14,8 @@
 <%
 if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
-	
+boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
+
 String val = request.getParameter("val") ;
 if(val==null)
 	val = "" ;
@@ -108,6 +109,10 @@ Tags
 %>
 </table>
 </div>
+<%
+if(!bind_tag_only)
+{
+%>
 <div style="float:right;height: 90%;width:30%">
 Properties
  <select id="prop" multiple="multiple" style="width:99%;height:90%">
@@ -131,11 +136,16 @@ Properties
 %> 	
  </select>
 </div>
+<%
+}
+%>
 </body>
 <script>
 var path="<%=path%>" ;
 var rowbgcolor = '#ffffff';
 var selVal = "<%=val%>" ;
+var bind_tag_only = <%=bind_tag_only%>;
+
 function mouseover(sel)
 {
  rowbgcolor = sel.style.backgroundColor;
@@ -167,6 +177,10 @@ function get_val()
 		dlg.msg("please select tag")
 		return null ;
 	}
+	
+	if(bind_tag_only)
+			return selVal ;
+	
 	var p = $("#prop").val() ;
 	if(p==null||p=="")
 	{

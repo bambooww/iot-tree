@@ -134,6 +134,7 @@ public abstract class WSServer// extends ConnServer
 			UANodeOCTagsCxt ntags = hmi.getBelongTo();
 
 			StringWriter sw = new StringWriter();
+			sw.append("{\"dt\":"+System.currentTimeMillis()+"}\r\n");
 			sw.write("{\"prj_id\":\"" + prj.getId() + "\",\"cxt_path\":\"" + ntags.getNodePathCxt() + "\",\"prj_run\":"
 					+ prj.RT_isRunning());
 			if (prj.RT_isRunning())
