@@ -8,6 +8,7 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.DevModel;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
 
@@ -57,7 +58,7 @@ public class SimulatorModel8 extends DevModel
 		}
 		else if(vt.isNumberVT())
 		{
-			return mt.getValNumber(vt,maddr.getRegPos()) ;
+			return mt.getValNumber(vt,maddr.getRegPos(),ByteOrder.LittleEndian) ;
 		}
 		return null;
 	}
@@ -84,7 +85,7 @@ public class SimulatorModel8 extends DevModel
 		{
 			if(!(v instanceof Number))
 				return false;
-			mt.setValNumber(vt,maddr.getRegPos(),(Number)v) ;
+			mt.setValNumber(vt,maddr.getRegPos(),(Number)v);//,ByteOrder.LittleEndian) ;
 			return true;
 		}
 		return false;

@@ -8,6 +8,7 @@ import org.iottree.core.util.xmldata.DataUtil;
 import org.iottree.core.DevAddr;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
@@ -216,12 +217,12 @@ public class PPIBlock
 		{
 			int regp = da.getOffsetBytes() ;
 			int inbit = da.getInBits() ;
-			int vv = memTb.getValNumber(UAVal.ValTP.vt_byte,regp).intValue() ;
+			int vv = memTb.getValNumber(UAVal.ValTP.vt_byte,regp,ByteOrder.LittleEndian).intValue() ;
 			return (vv & (1<<inbit))>0 ;
 		}
 		else if(vt.isNumberVT())
 		{
-			return memTb.getValNumber(vt,da.getOffsetBytes()) ;
+			return memTb.getValNumber(vt,da.getOffsetBytes(),ByteOrder.LittleEndian) ;
 		}
 		return null;
 	}

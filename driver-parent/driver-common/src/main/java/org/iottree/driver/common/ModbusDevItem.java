@@ -107,18 +107,22 @@ public class ModbusDevItem //extends DevModel
 			if(mb.initReadCmds())
 				mbCoilOut = mb;
 		}
+		
 		if(reg_input_addrs.size()>0)
 		{
+			boolean fwlow32 = uaDev.getOrDefaultPropValueBool("data_encod", "fw_low32", true);
+			
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_INPUT,reg_input_addrs,
-					blocksize,100,failAfterSuccessive);
+					blocksize,100,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegIn = mb;
 		}
 		if(reg_hold_addrs.size()>0)
 		{
+			boolean fwlow32 = uaDev.getOrDefaultPropValueBool("data_encod", "fw_low32", true);
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_HOLD,reg_hold_addrs,
-					blocksize,100,failAfterSuccessive);
+					blocksize,100,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegHold = mb;

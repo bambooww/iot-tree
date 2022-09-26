@@ -11,6 +11,7 @@ import org.iottree.driver.common.modbus.*;
 import org.iottree.core.DevAddr;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
@@ -45,6 +46,8 @@ public class ModbusBlock
 	
 	transient int failedCount = 0 ;
 	
+	private boolean fw_low32 = true;
+	
 	transient ModbusCmd.Protocol modbusProtocal = ModbusCmd.Protocol.rtu;
 	
 	
@@ -78,6 +81,12 @@ public class ModbusBlock
 		this.reqTO = req_to ;
 		this.recvTO = recv_to ;
 		this.interReqMs = inter_reqms ;
+	}
+	
+	public ModbusBlock asFirstWordLowIn32Bit(boolean b)
+	{
+		this.fw_low32 = b ;
+		return this;
 	}
 		
 	public short getAddrTp()
@@ -282,7 +291,7 @@ public class ModbusBlock
 			else
 			{
 				for(int k = 0 ; k < n; k ++)
-					memTb.setValNumber(ValTP.vt_int16, (regpos+k)*2, 0);
+					memTb.setValNumber(ValTP.vt_int16, (regpos+k)*2, 0);//,ByteOrder.ModbusWord);
 			}
 		}
 	}
@@ -318,7 +327,12 @@ public class ModbusBlock
 		}
 		else if(vt.isNumberVT())
 		{
-			return memTb.getValNumber(vt,da.getRegPos()*2) ;
+			// TODO may using Data Encoding param
+			// for set with word, can do nothing,so get value must use Data Encoding
+			if(this.fw_low32)
+				return memTb.getValNumber(vt,da.getRegPos()*2,ByteOrder.ModbusWord) ;
+			else
+				return memTb.getValNumber(vt,da.getRegPos()*2,ByteOrder.LittleEndian) ;
 		}
 		return null;
 	}
@@ -344,7 +358,7 @@ public class ModbusBlock
 		{
 			if(!(v instanceof Number))
 				return false;
-			memTb.setValNumber(vt,da.getRegPos(),(Number)v) ;
+			memTb.setValNumber(vt,da.getRegPos(),(Number)v);//,ByteOrder.ModbusWord) ;
 			return true;
 		}
 		return false;
@@ -499,7 +513,7 @@ public class ModbusBlock
 				for(int i = 0 ; i < rvs.length ; i ++)
 				{
 					int rv = rvs[i] ;
-					memTb.setValNumber(ValTP.vt_int16, (regpos+i)*2, rv);
+					memTb.setValNumber(ValTP.vt_int16, (regpos+i)*2, rv);//,ByteOrder.ModbusWord);
 				}
 				transMem2Addrs(addrs);
 				chkSuccessiveFailed(false) ;
