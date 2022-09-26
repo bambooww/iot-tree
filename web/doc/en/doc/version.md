@@ -127,4 +127,15 @@ Some connection performance improvements were made.
 
 
 
+### version 0.99.1
+DrawItem supports left-right and up-down mirror conversion, which greatly reduces the drawing effort of the hmi library.
+
+Modify dynamic properties of component primitives without updating bugs
+
+Implement some optimizations
+
+Components support mapping internal DrawItem properties directly to component properties
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

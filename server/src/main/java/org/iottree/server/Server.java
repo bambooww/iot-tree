@@ -94,15 +94,15 @@ public class Server
 		if (Config.isDebug())
 			System.out.println("java.home=" + jdkhome);
 
-		System.getProperties().setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
-		System.getProperties().setProperty("java.util.logging.config.file", "./tomcat/conf/logging.properties");
-		System.getProperties().setProperty("java.endorsed.dirs", "./tomcat/common/endorsed");
-		System.getProperties().setProperty("catalina.base", "./tomcat");
-		System.getProperties().setProperty("catalina.home", "./tomcat");
-		System.getProperties().setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip", "*");
-		System.getProperties().setProperty("java.io.tmpdir", "./tomcat/temp");
-
-		System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+//		System.getProperties().setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
+//		System.getProperties().setProperty("java.util.logging.config.file", "./tomcat/conf/logging.properties");
+//		System.getProperties().setProperty("java.endorsed.dirs", "./tomcat/common/endorsed");
+//		System.getProperties().setProperty("catalina.base", "./tomcat");
+//		System.getProperties().setProperty("catalina.home", "./tomcat");
+//		System.getProperties().setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip", "*");
+//		System.getProperties().setProperty("java.io.tmpdir", "./tomcat/temp");
+//
+//		System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
 
 		Element sysele = Config.getConfElement("system");
 		if (sysele != null)

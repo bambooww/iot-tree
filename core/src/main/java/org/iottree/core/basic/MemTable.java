@@ -197,10 +197,21 @@ public class MemTable<T extends MemSeg>
 		return ms.getValBool(idx,bitpos);
 	}
 	
-	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
+	public void setValNumber(UAVal.ValTP tp,long idx,Number v) //,ByteOrder bo)
 	{
 		T ms = acquireMemSeg(tp,idx) ;
 		ms.setValNumber(tp,idx, v,ByteOrder.LittleEndian);
+	}
+	
+//	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
+//	{
+//		setValNumber(tp,idx,v,ByteOrder.LittleEndian);
+//	}
+	
+	public Number getValNumber(UAVal.ValTP tp,long idx,ByteOrder bo)
+	{
+		T ms = acquireMemSeg(tp,idx) ;
+		return ms.getValNumber(tp,idx,bo);//ByteOrder.LittleEndian);
 	}
 	
 	public Number getValNumber(UAVal.ValTP tp,long idx)
@@ -209,9 +220,15 @@ public class MemTable<T extends MemSeg>
 		return ms.getValNumber(tp,idx,ByteOrder.LittleEndian);
 	}
 	
+	public int getValInt32(UAVal.ValTP tp,long idx,ByteOrder bo)
+	{
+		Number n = getValNumber(tp,idx,bo);
+		return n.intValue() ;
+	}
+	
 	public int getValInt32(UAVal.ValTP tp,long idx)
 	{
-		Number n = getValNumber(tp,idx);
+		Number n = getValNumber(tp,idx,ByteOrder.LittleEndian);
 		return n.intValue() ;
 	}
 	

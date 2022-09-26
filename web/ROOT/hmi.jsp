@@ -467,7 +467,7 @@ function add_tab()
 	
 }
 var panel = null;
-var editor = null ;
+//var editor = null ;
 
 var loadLayer = null ;
 var intedit =null;
@@ -548,103 +548,6 @@ function init_iottpanel()
 	intedit = hmiView.getInteract();
 }
 
-var editor_plugcb_pm=null ;
-
-function editor_plugcb(jq_ele,tp,di,name,val)
-{
-	editor_plugcb_pm = {editor:editorname,editor_id:repid,repid:repid,hmiid:hmiid,di:di,name:name,val:val} ;
-
-	if(tp.indexOf("event_")==0)
-	{
-		dlg.open("../util/di_editplug_"+tp+".jsp",
-				{title:"Edit Event",w:'500px',h:'400px'},
-				['Ok','Cancel'],
-				[
-					function(dlgw)
-					{
-						var ret = dlgw.editplug_get() ;
-						 var js = ret.js ;
-						 if(js==null)
-							 js = "" ;
-						 di.setEventBinder(name,js) ;
-						 editor.refreshEventEditor();
-						 dlg.close();
-					},
-					function(dlgw)
-					{
-						dlg.close();
-					}
-				]);
-	}
-	else
-	{
-		dlg.open("../util/di_editplug_"+tp+".jsp",
-				{title:"Edit Properties",w:'500px',h:'400px'},
-				['Ok','Cancel'],
-				[
-					function(dlgw)
-					{
-						var ret = dlgw.editplug_get() ;
-						var v = ret.v ;
-						jq_ele.val(v) ;
-						editor.applyUI2SelectedItem();
-						dlg.close();
-					},
-					function(dlgw)
-					{
-						dlg.close();
-					}
-				]);
-	}
-	
-}
-
-
-function do_apply()
-{
-	if(!editor.applyUI2SelectedItem())
-	{
-		dlg.msg("apply failed");
-		return ;
-	}
-	//panel.on_draw();
-}
-
-function do_add_di(dicn,opts)
-{
-	if(intedit==null)
-		return;
-	if(!intedit.setOperAddItem(dicn,opts))
-	{
-		dlg.msg("set oper error");
-		return;
-	}
-	
-}
-
-function do_add_pts(tp,opts)
-{
-	if(intedit==null)
-		return;
-	if(!intedit.setOperAddPts(tp,opts))
-	{
-		dlg.msg("set oper error");
-		return;
-	}
-	
-}
-
-function do_add_unit_ins(unitid)
-{
-	if(intedit==null)
-		return;
-	if(!intedit.setOperAddUnitIns(unitid))
-	{
-		dlg.msg("set oper add unit ins error");
-		return;
-	}
-	
-}
 
 function on_model_chg()
 {

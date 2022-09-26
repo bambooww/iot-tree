@@ -3,6 +3,7 @@ package org.iottree.core.conn;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
@@ -114,7 +116,7 @@ public class ConnPtWSClient extends ConnPtMSG
 		// this.intervalMS = optJSONInt64(jo,"int_ms", 5000) ;
 	}
 
-	static class WebSockClient extends WebSocketClient
+	class WebSockClient extends WebSocketClient
 	{
 
 		public WebSockClient(URI serveruri)
@@ -148,16 +150,50 @@ public class ConnPtWSClient extends ConnPtMSG
 
 		}
 
+		private void checkAndConn() throws Exception
+		{
+			switch(this.getReadyState())
+			{
+			case NOT_YET_CONNECTED:
+				if(isClosed())
+					reconnectBlocking();
+				else
+					connectBlocking();
+				//Thread.sleep(5000);
+				break;
+			case OPEN:
+//				if(wsLis.hasSendData())
+//				{
+//					byte[] bs = wsLis.getNextSendData();
+//					WSClient.this.sendByRandomKey(bs) ;
+//				}
+				//send("hello from pro");
+				//Thread.sleep(checkSendIntv);
+				break;
+			
+			case CLOSED:
+				reconnectBlocking() ;
+				//Thread.sleep(5000);
+				break;
+			default:
+				//Thread.sleep(5000);
+				break;
+			}
+		}
 	}
 
-	private transient Session session = null ; 
+	//private transient Session session = null ; 
 	
 	private transient long lastChk = -1 ;
+	
+	WebSockClient wsClient =null;
 	
 	@Override
 	public boolean isConnReady()
 	{
-		return session!=null;
+		if(this.wsClient==null)
+			return false;
+		return wsClient.getReadyState()==ReadyState.OPEN ;
 	}
 
 	public String getConnErrInfo()
@@ -167,7 +203,7 @@ public class ConnPtWSClient extends ConnPtMSG
 	
 	void disconnect() // throws IOException
 	{
-		Session ss = session;
+		WebSockClient ss = wsClient;
 		if(ss==null)
 			return ;
 		
@@ -178,27 +214,33 @@ public class ConnPtWSClient extends ConnPtMSG
 		catch(Exception e) {}
 		finally
 		{
-			session = null ;
+			wsClient = null ;
 		}
 	}
 
-	private void connectToWS() throws DeploymentException, IOException
+	private void connectToWS() throws Exception
 	{
-		WebSocketContainer container = null;
-
-		container = ContainerProvider.getWebSocketContainer();
-
-		URI r = URI.create(url);
-		Session session = container.connectToServer(WSClient.class, r);
+		if(this.wsClient==null)
+		{
+			this.wsClient = new WebSockClient(new URI(url)) ;
+			
+		}
 		
-		session.getBasicRemote().sendText("xxx");
+		this.wsClient.checkAndConn() ;
+//		WebSocketContainer container = null;
+//
+//		container = ContainerProvider.getWebSocketContainer();
+//
+//		URI r = URI.create(url);
+//		Session session = container.connectToServer(WSClient.class, r);
+//		
+//		session.getBasicRemote().sendText("xxx");
 	}
+	
+	
 	
 	public void RT_checkConn()
 	{
-		if(session!=null)
-			return ;
-		
 		if(System.currentTimeMillis()-lastChk<5000)
 			return ;
 		
@@ -225,39 +267,40 @@ public class ConnPtWSClient extends ConnPtMSG
 		return null;
 	}
 	
-	@ClientEndpoint()
-	class WSClient
-	{
-		@OnOpen
-		public void onOpen(Session session)
-		{
-			System.out.println("on open ") ;
-		}
-
-		@OnMessage
-		public void onMessage(String message)
-		{
-			System.out.println("Client onMessage: " + message);
-		}
-
-		@OnClose
-		public void onClose()
-		{
-			session = null ;
-		}
-	}
+//	@ClientEndpoint()
+//	class WSClient
+//	{
+//		@OnOpen
+//		public void onOpen(Session session)
+//		{
+//			System.out.println("on open ") ;
+//		}
+//
+//		@OnMessage
+//		public void onMessage(String message)
+//		{
+//			System.out.println("Client onMessage: " + message);
+//		}
+//
+//		@OnClose
+//		public void onClose()
+//		{
+//			session = null ;
+//		}
+//	}
 
 	@Override
 	public boolean sendMsg(String topic, byte[] bs) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(this.wsClient==null)
+			return false;
+		this.wsClient.send(ByteBuffer.wrap(bs));
+		return true;
 	}
 
 	@Override
 	public void runOnWrite(UATag tag, Object val) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 	

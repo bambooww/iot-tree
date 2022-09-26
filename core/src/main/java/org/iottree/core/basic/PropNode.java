@@ -40,7 +40,7 @@ public abstract class PropNode extends JSObMap
 		return p.getDefaultVal() ;
 	}
 	
-	public String getOrDefaultPropValueStr(String groupn,String itemn,String defv)
+	public final String getOrDefaultPropValueStr(String groupn,String itemn,String defv)
 	{
 		Object v = getPropValue(groupn,itemn);
 		if(v==null)
@@ -52,7 +52,7 @@ public abstract class PropNode extends JSObMap
 		return v.toString();
 	}
 	
-	public boolean getOrDefaultPropValueBool(String groupn,String itemn,boolean defv)
+	public final boolean getOrDefaultPropValueBool(String groupn,String itemn,boolean defv)
 	{
 		Object v = getPropValue(groupn,itemn);
 		if(v==null)
@@ -64,7 +64,7 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public long getOrDefaultPropValueLong(String groupn,String itemn,long defv)
+	public final long getOrDefaultPropValueLong(String groupn,String itemn,long defv)
 	{
 		Object v = getPropValue(groupn,itemn);
 		if(v==null)
@@ -76,7 +76,7 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public int getOrDefaultPropValueInt(String groupn,String itemn,int defv)
+	public final int getOrDefaultPropValueInt(String groupn,String itemn,int defv)
 	{
 		Object v = getPropValue(groupn,itemn);
 		if(v==null)
@@ -88,7 +88,7 @@ public abstract class PropNode extends JSObMap
 		return defv ;
 	}
 	
-	public double getOrDefaultPropValueDouble(String groupn,String itemn,double defv)
+	public final double getOrDefaultPropValueDouble(String groupn,String itemn,double defv)
 	{
 		Object v = getPropValue(groupn,itemn);
 		if(v==null)

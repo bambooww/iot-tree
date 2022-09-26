@@ -863,7 +863,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	public List<ConnMsg> getConnMsgs()
 	{
 		ArrayList<ConnMsg> rets = null ;
-		if(transH.transInitOk<0)
+		if(transH.transInitOk<0 && Convert.isNotNullEmpty(transH.transJS))
 		{//show err msg
 			 jsInitErrMsg.asDesc(transH.initErr);
 			 rets = new ArrayList<>(3) ;
