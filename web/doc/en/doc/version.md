@@ -138,4 +138,10 @@ Components support mapping internal DrawItem properties directly to component pr
 
 
 
+### version 0.99.2
+some bug has be fixed
+WebSocket connector added
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md
