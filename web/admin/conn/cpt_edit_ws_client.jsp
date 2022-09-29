@@ -63,14 +63,14 @@ String cp_tp = cp.getProviderType() ;
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(650,400);
 </script>
 </head>
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width: 150px;">
       <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid">Title:</div>
@@ -78,13 +78,13 @@ dlg.resize_to(600,400);
 	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
 	  <div class="layui-form-mid">Enable:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
+	  <div class="layui-input-inline" style="width: 100px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label">Url:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width: 500px;">
       <input type="text" id="url" name="url" value="<%=url %>" class="layui-input">
     </div>
     
@@ -94,7 +94,7 @@ dlg.resize_to(600,400);
   
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-block" style="width: 500px;">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>

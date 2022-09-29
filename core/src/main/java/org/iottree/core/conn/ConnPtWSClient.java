@@ -135,7 +135,19 @@ public class ConnPtWSClient extends ConnPtMSG
 		@Override
 		public void onMessage(String message)
 		{
-
+			
+		}
+		
+		public void onMessage(ByteBuffer bytes)
+		{
+			try
+			{
+				ConnPtWSClient.this.onRecvedMsg("", bytes.array());
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		@Override
