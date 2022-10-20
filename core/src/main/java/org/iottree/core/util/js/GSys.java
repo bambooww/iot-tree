@@ -118,8 +118,9 @@ public class GSys
 	 * @return
 	 */
 	@HostAccess.Export
-	public boolean bit_bool(int v, int pos)
+	public boolean bit_bool(Number vnum, int pos)
 	{
+		int v = vnum.intValue();
 		return (v & (1 << pos)) > 0;
 	}
 
@@ -130,8 +131,9 @@ public class GSys
 	 * @return
 	 */
 	@HostAccess.Export
-	public int word_to_int(int v)
+	public int word_to_int(Number vnum)
 	{
+		int v = vnum.intValue();
 		return 0xFFFF & v;
 	}
 
@@ -157,8 +159,9 @@ public class GSys
 	}
 
 	@HostAccess.Export
-	public float int2float(int intv)
+	public float int2float(Number intn)
 	{
+		int intv = intn.intValue();
 		 return Float.intBitsToFloat(intv);  
 	}
 	
@@ -181,8 +184,10 @@ public class GSys
 	 * @return
 	 */
 	@HostAccess.Export
-	public float modbus_float(int hw, int lw)
+	public float modbus_float(Number hnum, Number lnum)
 	{
+		int hw = hnum.intValue() ;
+		int lw = lnum.intValue() ;
 		hw &= 0xffff;
 		lw &= 0xffff;
 		byte[] fbs = new byte[4];
@@ -194,8 +199,10 @@ public class GSys
 	}
 
 	@HostAccess.Export
-	public double modbus_double(int hw, int lw)
+	public double modbus_double(Number hnum, Number lnum)
 	{
+		int hw = hnum.intValue() ;
+		int lw = lnum.intValue() ;
 		hw &= 0xffff;
 		lw &= 0xffff;
 		byte[] fbs = new byte[4];
@@ -212,16 +219,20 @@ public class GSys
 	}
 
 	@HostAccess.Export
-	public long modbus_int64(int hw, int lw)
+	public long modbus_int64(Number hnum, Number lnum)
 	{
+		int hw = hnum.intValue() ;
+		int lw = lnum.intValue() ;
 		hw &= 0xffff;
 		lw &= 0xffff;
 		return ((long) hw) * 65536 + lw;
 	}
 
 	@HostAccess.Export
-	public int modbus_int32(int hw, int lw)
+	public int modbus_int32(Number hnum, Number lnum)
 	{
+		int hw = hnum.intValue() ;
+		int lw = lnum.intValue() ;
 		return (hw & 0xFFFF) * 65536 + (lw & 0xFFFF);
 	}
 

@@ -138,6 +138,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="val_cache_len")
 	int valChgedCacheLen = 100 ;
 	
+	@data_val(param_name="b_val_filter")
+	boolean bValFilter = false;
+	
+	@data_val(param_name="val_filter")
+	String valFilter = null;
+	
 	/**
 	 * save val his, to support 
 	 */
@@ -558,6 +564,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return bCanWrite;
 	}
 	
+	public boolean isValFilter()
+	{
+		return bValFilter;
+	}
+	
 	public boolean delFromParent() throws Exception
 	{
 		if( this.belongToNode==null)
@@ -944,8 +955,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public void RT_setUAVal(UAVal uav)
 	{
-		this.curVal = uav ;
 		HIS_setVal(uav) ;
+		if(bValFilter) //Convert.isNotNullEmpty(this.valFilter))
+		{
+			UAVal tmpv = this.valsCacheList.filterValByAntiInterference(this) ;
+			if(tmpv!=null)
+				uav = tmpv ;
+		}
+		this.curVal = uav ;
 	}
 	
 	/**
