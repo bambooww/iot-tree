@@ -36,6 +36,7 @@
 	boolean canw = false;
 	String desc = "" ;
 	String trans = null ;
+	boolean b_val_filter=false;
 	
 	if(id==null)
 		id = "" ;
@@ -74,6 +75,7 @@
  		trans = tag.getValTranser() ;
  		if(Convert.isNullOrEmpty(trans))
  			trans = null ;
+ 		b_val_filter = tag.isValFilter() ;
 	}
 %>
 <html>
@@ -145,6 +147,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 String loc_set="display:none" ;
 	String loc_autosave_chk="" ;
 	String loc_chked = "" ;
+	String b_val_filter_chked="" ;
 	if(blocal)
 	{
 		loc_chked= "checked=checked" ;
@@ -152,6 +155,9 @@ String loc_set="display:none" ;
 	}
 	if(local_autosave)
 		loc_autosave_chk = "checked=checked" ;
+	if(b_val_filter)
+		b_val_filter_chked= "checked=checked" ;
+		
 %>
     <div class="layui-form-item">
     <div class="layui-form-label">Local</div>
@@ -193,6 +199,14 @@ String loc_set="display:none" ;
     <label class="layui-form-label">Transfer</label>
     <div class="layui-input-block" style="width:370px">
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
+    </div>
+  </div>
+  
+  <div class="layui-form-item" id="val_filter_setting">
+    <label class="layui-form-label">Filter</label>
+    <div class="layui-input-block" style="width:370px">
+      <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=b_val_filter_chked%> lay-skin="switch"  lay-filter="b_val_filter" class="layui-input">
+      Enable anti-interference
     </div>
   </div>
 
@@ -242,12 +256,15 @@ function update_form()
 		$("#local_setting").css("display","") ;
 		$("#addr_setting").css("display","none") ;
 		$("#transfer_setting").css("display","none") ;
+		$("#val_filter_setting").css("display","none") ;
+		
 	}
 	else
 	{
 		$("#local_setting").css("display","none") ;
 		$("#addr_setting").css("display","") ;
 		$("#transfer_setting").css("display","") ;
+		$("#val_filter_setting").css("display","") ;
 	}
 }
 
@@ -354,6 +371,7 @@ function do_submit(cb)
 		desc ='' ;
 	
 	var bloc = $("#local").prop("checked") ;
+	var b_val_filter = $("#b_val_filter").prop("checked") ;
 	var loc_defv = get_input_val("local_defval") ;
 	var bloc_autosave = $("#local_autosave").prop("checked") ;
 	
@@ -365,6 +383,7 @@ function do_submit(cb)
 		srate:get_input_val("srate",100,true),
 		canw:canw,
 		trans:JSON.stringify(trans_dd),
+		b_val_filter:b_val_filter,
 		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave
 		});
 	//var dbname=document.getElementById('db_name').value;

@@ -411,6 +411,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this ;
 	}
 	
+	public UATag asFilter(boolean b_val_filter)
+	{
+		this.bValFilter = b_val_filter; 
+		return this ;
+	}
+	
 	@Override
 	public List<UANode> getSubNodes()
 	{

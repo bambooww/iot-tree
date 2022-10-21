@@ -185,7 +185,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d != null && tmpn != null && d != tmpn)
 			throw new IllegalArgumentException("tag with name=" + name + " existed");
 
-		if(Convert.isNotNullEmpty(addr))
+		if(Convert.isNotNullEmpty(addr) &&!bmid)
 		{
 			IDevDriverable ddable = getDevDriverable() ;
 			if(ddable!=null)

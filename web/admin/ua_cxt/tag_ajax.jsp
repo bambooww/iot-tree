@@ -32,6 +32,7 @@
 		String strcanw = request.getParameter("canw") ;
 		boolean canw = "true".equalsIgnoreCase(strcanw);
 
+		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
 		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
@@ -39,6 +40,7 @@
 
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
+		ret.asFilter(b_val_filter) ;
 		nt.save();
 		return ret ;
 	}
@@ -106,6 +108,7 @@ case "edit_tag":
 	}
 	catch(Exception e)
 	{
+		e.printStackTrace();
 		out.print(e.getMessage());
 		return ;
 	}
