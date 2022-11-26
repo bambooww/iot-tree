@@ -1,25 +1,37 @@
 package org.iottree.core.store;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import org.iottree.core.util.xmldata.data_class;
+import org.iottree.core.util.xmldata.data_val;
+
+@data_class
 public class StoreJDBC extends Store
 {
-	static class Drv
+	public static class Drv
 	{
 		String name = null ;
+		String title = null ;
 		
 		String driverClassName = null ;
 		
 		String jdbcUrl = null ;
 		
-		public Drv(String n)
+		public Drv(String n,String t)
 		{
 			this.name = n ;
+			this.title = t ;
 		}
 		
 		public String getName()
 		{
 			return name ;
+		}
+		
+		public String getTitle()
+		{
+			return title ;
 		}
 		
 		public String getDriverClassName()
@@ -59,39 +71,65 @@ public class StoreJDBC extends Store
 	
 	static
 	{
-		regDrv(new Drv("mysql").asDriverClassName("com.mysql.jdbc.Driver")
+		regDrv(new Drv("mysql","MySql").asDriverClassName("com.mysql.jdbc.Driver")
 				.asJdbcUrl("jdbc:mysql://{$host}:{$port}/{$db_name}?useUnicode=true&characterEncoding=UTF-8")
 				);
 		
-		regDrv(new Drv("sqlserver").asDriverClassName("com.microsoft.jdbc.sqlserver.SQLServerDriver")
+		regDrv(new Drv("sqlserver","SQL Server").asDriverClassName("com.microsoft.jdbc.sqlserver.SQLServerDriver")
 				.asJdbcUrl("jdbc:microsoft:sqlserver://{$host}:{$port};DatabaseName={$db_name};SelectMethod=cursor")
 				);
 	}
 	
+	public static Collection<Drv> listDrvs()
+	{
+		return name2driver.values();
+	}
 	
+	@data_val(param_name = "drv_name")
 	String drvName = null ;
 	
+	@data_val(param_name = "db_host")
 	String dbHost = null ;
 	
+	@data_val(param_name = "db_port")
 	int dbPort = -1 ;
 	
+	@data_val(param_name = "db_name")
 	String dbName = null ;
 	
+	@data_val(param_name = "db_user")
 	String dbUser = null ;
 	
+	@data_val(param_name = "db_psw")
 	String dbPsw = null ;
 	
 	public StoreJDBC()
 	{}
 	
-	public StoreJDBC(String n)
+//	public StoreJDBC(String n,String t)
+//	{
+//		super(n,t) ;
+//	}
+	
+	public StoreJDBC setJDBCInfo(String drv_name,String db_host,int db_port,String db_name,String db_user,String db_psw)
 	{
-		super(n) ;
+		this.drvName = drv_name ;
+		this.dbHost = db_host ;
+		this.dbPort = db_port ;
+		this.dbName = db_name ;
+		this.dbUser = db_user;
+		this.dbPsw = db_psw ;
+		return this ;
 	}
 
 	public String getStoreTp()
 	{
 		return "jdbc";
+	}
+	
+	public String getStoreTpTitle()
+	{
+		return "DB:"+this.drvName ;
 	}
 	
 	public String getDrvName()
@@ -101,6 +139,8 @@ public class StoreJDBC extends Store
 	
 	public String getDBHost()
 	{
+		if(this.dbHost==null)
+			return "" ;
 		return this.dbHost ;
 	}
 	
@@ -109,13 +149,24 @@ public class StoreJDBC extends Store
 		return this.dbPort ;
 	}
 	
+	public String getDBName()
+	{
+		if(this.dbName==null)
+			return "" ;
+		return this.dbName ;
+	}
+	
 	public String getDBUser()
 	{
+		if(this.dbUser==null)
+			return "" ;
 		return this.dbUser ;
 	}
 	
 	public String getDBPsw()
 	{
+		if(this.dbPsw==null)
+			return "" ;
 		return this.dbPsw ;
 	}
 }

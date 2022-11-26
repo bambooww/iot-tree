@@ -176,10 +176,12 @@ if(b_tags)
 <table class="oc_div_list" style="margin-top:10px;width:99%" id="tb_cur" >
   <thead>
      <tr>
-     <th>
+
+     <th style="width:20px;text-align: center;">
         <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
 </th>
-        <th style="width:15px;">T</th>
+
+        <th style="width:15px;text-align: center;">T</th>
     	<th sort_by="name">Tag</th>
     	<th sort_by="title">Title</th>
         <th sort_by="addr">Address</th>
@@ -191,6 +193,7 @@ if(b_tags)
         <th>Quality</th>
         <th>Write</th>
         <th>Oper</th>
+        <th>Store</th>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -847,6 +850,7 @@ function refresh_tags()
 		
 		var tn = $('#tb_cur tr[id*="ctag_"]:last-child').attr("tag_num");
 		$("#tags_num").html(tn);
+		 form.render();
 	},false);
 }
 

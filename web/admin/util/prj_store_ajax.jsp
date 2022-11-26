@@ -5,6 +5,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
+	org.json.*,
 	org.iottree.core.store.*,
 	org.iottree.core.util.xmldata.*,
 	org.iottree.core.util.web.*,
@@ -32,15 +33,19 @@ if(prj==null)
 	out.print("no prj found") ;
 	return ;
 }
+
 switch(op)
 {
 case "set_store":
-	String bind_for = request.getParameter("bind_for") ;
-	boolean bind_m = "multi".equals(request.getParameter("bind_style")) ;
-	boolean benable = !"false".equals(request.getParameter("enable")) ;
+	String jstr = request.getParameter("jstr") ;
 	try
 	{
-		stmgr.setStore(st, bsave)
+		JSONObject jo = new JSONObject(jstr) ;
+		String tmpid = jo.optString("id") ;
+		boolean badd = Convert.isNullOrEmpty(tmpid) ;
+		StoreJDBC st = new StoreJDBC();
+		DataTranserJSON.injectJSONToObj(st, jo) ;
+		stmgr.setStore(st, true,badd);
 		out.print("succ") ;
 	}
 	catch(Exception e)
@@ -52,20 +57,12 @@ case "set_store":
 case "del_dc":
 	if(!Convert.checkReqEmpty(request, out, "cid"))
 		return ;
-	if(pdc.delDataClass(classid))
-		out.print("succ") ;
-	else
-		out.print("del error") ;	
+	
 	break;
 case "dc_imp_txt":
 	if(!Convert.checkReqEmpty(request, out, "txt"))
 		return ;
-	String txt = request.getParameter("txt") ;
-	List<DataNode> newdns = pdc.impDataNodeByTxt(classid,txt) ;
-	if(newdns.size()>0)
-		out.print("succ") ;
-	else
-		out.print("no DataNode imported") ;
+	
 	return ;
 case "export":
 	if(!Convert.checkReqEmpty(request, out, "taskid"))
@@ -75,38 +72,6 @@ case "export":
 case "edit_dn":
 	if(!Convert.checkReqEmpty(request, out,"name"))
 		return ;
-case "add_dn":
-	try
-	{
-		DataNode newdn = pdc.addOrUpdateDataNode(classid,name,title) ; 
-		out.print("succ") ;
-	}
-	catch(Exception e)
-	{
-		e.printStackTrace();
-		out.print(e.getMessage()) ;
-	}
-	break;
-case "act_del":
-	if(!Convert.checkReqEmpty(request, out, "taskid","actid"))
-		return ;
-	if(true)
-		out.print("succ") ;
-	else
-		out.print("del error") ;	
-	break;
-case "list_html":
-	for(DataNode tmpdn:dc.getRootNodes())
-	{
-%>
-<tr id="<%=tmpdn.getName()%>">
-	<td></td>
-	<td><%=tmpdn.getName() %></td>
-	<td><%=tmpdn.getTitle() %></td>
-	<td><a href="javascript:add_or_edit_dn('<%=prjid %>','<%=dc.getClassId()%>','<%=tmpdn.getName()%>')"><i title="Edit Data Node" class="fa fa-pencil " aria-hidden="true"></i></a></td>
-</tr>
-<%
-	}
 	break ;
 }
 %>

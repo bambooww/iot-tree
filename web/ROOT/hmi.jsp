@@ -785,7 +785,9 @@ var b_conn_first=true;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
+	var url = 'ws://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
+	if('https:' == document.location.protocol)
+		url = 'wss://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

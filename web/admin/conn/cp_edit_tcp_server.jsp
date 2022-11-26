@@ -94,6 +94,7 @@ dlg.resize_to(600,400);
     <label class="layui-form-label">Conn Identity:</label>
     <div class="layui-input-inline">
     	<select id="ash" onchange="sel_ash()"  lay-filter="ash" >
+    	   <option value="">--</option>
 <%
 for(ConnProTcpServer.AcceptedSockHandler ash:ashs)
 {

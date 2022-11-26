@@ -159,7 +159,7 @@ if(bloc&&!tag.isSysTag())
 }
 %>
    	 >
-   <td style="text-align: center;">
+   <td >
    <%
 	if(bloc)
 	{
@@ -225,7 +225,9 @@ if(Convert.isNotNullEmpty(ext_str))
 %>&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
 &nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
-        
+        <td>
+        	<input type="checkbox"   lay-skin="primary" /> <input type="checkbox"  lay-skin="primary" />
+        </td>
       </tr>
 <%
 	}

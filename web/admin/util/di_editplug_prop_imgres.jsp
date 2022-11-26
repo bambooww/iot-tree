@@ -471,13 +471,12 @@ function add_file_onchg()
  	  		}
  	  		else
  	  		{
- 	  			lj.msg(data);
+ 	  			dlg.msg(data);
  	  		}
    　  },
       　error: function(data)
          {
-    	  	//lj.show_loading(false) ;
-	  				lj.msg("add failed "+data);
+	  				dlg.msg("add failed "+data);
   　　　　}
   　　});
 }

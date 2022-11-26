@@ -79,30 +79,21 @@ public class Server
 
 		ClassLoader tbs_loader = Thread.currentThread().getContextClassLoader();
 
-		String jdkhome = System.getProperties().getProperty("java.home");
+		//String jdkhome = System.getProperties().getProperty("java.home");
 
-		if (jdkhome == null || jdkhome.equals(""))
-		{
-			System.out.println("Error:No java.home found.....");
-			System.out.println("    You can start with -D option,like: -Djdk.home=c:/jdk ");
-			System.out.println("    or you can config it in [tomato.conf]");
-			System.out.println("    and try start server again!");
-			System.exit(0);
-			return;
-		}
-
-		if (Config.isDebug())
-			System.out.println("java.home=" + jdkhome);
-
-//		System.getProperties().setProperty("java.util.logging.manager", "org.apache.juli.ClassLoaderLogManager");
-//		System.getProperties().setProperty("java.util.logging.config.file", "./tomcat/conf/logging.properties");
-//		System.getProperties().setProperty("java.endorsed.dirs", "./tomcat/common/endorsed");
-//		System.getProperties().setProperty("catalina.base", "./tomcat");
-//		System.getProperties().setProperty("catalina.home", "./tomcat");
-//		System.getProperties().setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip", "*");
-//		System.getProperties().setProperty("java.io.tmpdir", "./tomcat/temp");
+//		if (jdkhome == null || jdkhome.equals(""))
+//		{
+//			System.out.println("Error:No java.home found.....");
+//			System.out.println("    You can start with -D option,like: -Djdk.home=c:/jdk ");
+//			System.out.println("    or you can config it in [tomato.conf]");
+//			System.out.println("    and try start server again!");
+//			System.exit(0);
+//			return;
+//		}
 //
-//		System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+//		if (Config.isDebug())
+//			System.out.println("java.home=" + jdkhome);
+
 
 		Element sysele = Config.getConfElement("system");
 		if (sysele != null)

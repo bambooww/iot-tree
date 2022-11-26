@@ -60,13 +60,19 @@ public class ServerTomcat implements IServerBootComp
 
 		if(w.getSslPort()>0)
 		{
-//			Connector sslc = getSslConnector(w.getSslPort());
-//			tomcat.getService().addConnector(sslc);
+			Connector sslc = getSslConnector(w.getSslPort());
+			tomcat.getService().addConnector(sslc);
 		}
 		
-		tomcat.setPort(w.getPort());
-		//Connector norc = getNorConnector(w.getPort());
-		//tomcat.getService().addConnector(norc);
+//		Connector getNorConnector(int port)
+//		tomcat.getService().addConnector(sslc);
+		
+		//tomcat.setPort(w.getPort());
+		if(w.getPort()>0)
+		{
+			Connector norc = getNorConnector(w.getPort());
+			tomcat.getService().addConnector(norc);
+		}
 		
 		tomcat.setBaseDir(CATALINA_HOME);
 		
@@ -98,7 +104,7 @@ public class ServerTomcat implements IServerBootComp
 		}
 		
 		tomcat.getConnector() ;//call it to list port
-		System.out.println("web port: "+w.getPort()) ;
+		System.out.println("web port "+((w.getPort()>0)?" http port"+w.getPort():"")+(w.getSslPort()>0?("  https port:"+w.getSslPort()):"")) ;
 		tomcat.start();
 	}
 	
@@ -141,12 +147,15 @@ public class ServerTomcat implements IServerBootComp
 		return "tomcat";
 	}
 
+	
+	private transient boolean bRunning = false;
 
 
 	@Override
 	public void startComp() throws Exception
 	{
 		startTomcat(Thread.currentThread().getContextClassLoader());
+		bRunning = true;
 	}
 
 
@@ -155,9 +164,13 @@ public class ServerTomcat implements IServerBootComp
 	public void stopComp() throws Exception
 	{
 		if(tomcat==null)
+		{
+			bRunning = false;
 			return ;
+		}
 		tomcat.stop();
 		tomcat.destroy();
+		bRunning = false;
 	}
 
 
@@ -165,8 +178,7 @@ public class ServerTomcat implements IServerBootComp
 	@Override
 	public boolean isRunning() throws Exception
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return bRunning;
 	}
 
 }

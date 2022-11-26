@@ -5,6 +5,7 @@
 	org.iottree.core.task.*,
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
+	org.iottree.core.store.*,
 	org.iottree.core.comp.*
 	"%><%!
 
@@ -56,41 +57,41 @@ background-color: #eeeeee
 <body marginwidth="0" marginheight="0">
  <blockquote class="layui-elem-quote ">Data Store List
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_dc('<%=prjid %>',null)">+Add Database</button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_store('<%=prjid %>',null)">+Add Database</button>
  </div>
 </blockquote>
 <%
-Collection<DataClass> dcs = pdc.getDataClassAll();
-for(DataClass dc:dcs)
+List<Store> sts = StoreManager.getInstance(prjid).listStores() ;
+
+for(Store st:sts)
 {
-	String cid = dc.getClassId() ;
-	String dc_name = dc.getClassName() ;
-	String dc_title = dc.getClassTitle() ;
+	String storeid = st.getId() ;
+	String name = st.getName() ;
+	String title = st.getTitle() ;
 %>
-<table class0="layui-table" style="width:100%" id="tb_<%=cid%>">
+<table class="layui-table" style="width:100%" id="tb_<%=storeid%>">
   <colgroup>
     <col width="20">
     <col width="200">
     <col>
   </colgroup>
   <thead>
-    <tr onclick="show_or_hide('<%=cid%>')" >
+    <tr onclick="show_or_hide('<%=storeid%>')" >
       <th >+</th>
-      <th><%=dc_name %></th>
-      <th><%=dc_title %></th>
-      <th></th>
+      <th><%=name %></th>
+      <th><%=title %></th>
+      <th><%=st.getStoreTpTitle() %></th>
 	  <th>
-	  <a onclick="add_or_edit_dc('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Edit Data Class" class="fa fa-pencil fa-lg " aria-hidden="true"></i></a>
-	  <a onclick="add_or_edit_dn('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Add Data Node" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
-	  <a onclick="del_dc('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Delete Data Node" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
-      
-      <a href="javascript:import_dc_txt('<%=prjid %>','<%=dc.getClassId()%>')" title="Import by Txt">
+	  <a onclick="add_or_edit_dc('<%=prjid %>','<%=""%>')"><i title="Add Data Node" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
+	  <a onclick="del_dc('<%=prjid %>','<%=""%>')"><i title="Delete Data Node" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
+                                         
+      <a href="javascript:import_dc_txt('<%=prjid %>','<%=""%>')" title="Import by Txt">
           <i class="fa-solid fa-file-import"></i>
        </a>
 	  </th>
     </tr> 
   </thead>
-  <tbody id="bd_<%=cid%>"  b_show="false" b_load="false">
+  <tbody id="bd_<%=storeid%>"  b_show="false" b_load="false">
    
   </tbody>
 </table>
@@ -107,7 +108,7 @@ function show_or_hide(cid,bshow)
 	var bdo = $("#bd_"+cid) ;
 	if(bdo.attr("b_load")!='true')
 	{
-		send_ajax("prj_dict_ajax.jsp","prjid="+prjid+"&op=list_html&prjid="+prjid+"&cid="+cid,function(bsucc,ret){
+		send_ajax("prj_store_ajax.jsp","prjid="+prjid+"&op=list_datamap&prjid="+prjid+"&cid="+cid,function(bsucc,ret){
 			bdo.html(ret) ;
 			bdo.attr("b_load","true");
 			bdo.attr("b_show","true") ;
@@ -153,17 +154,17 @@ function export_task(prjid,taskid)
 	window.open("prj_task_ajax.jsp?op=export&prjid="+prjid+"&taskid="+taskid) ;
 }
 
-function add_or_edit_dc(prjid,id)
+function add_or_edit_store(prjid,id)
 {
 	event.stopPropagation();
-	var tt = "Add Data Class";
+	var tt = "Add Database connection";
 	if(id)
 	{
-		tt = "Edit Data Class";
+		tt = "Edit Database connection";
 	}
 	if(id==null)
 		id = "" ;
-	dlg.open("prj_dict_dc_edit.jsp?prjid="+prjid+"&id="+id,
+	dlg.open("prj_store_edit_jdbc.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
 			['Ok','Cancel'],
 			[
@@ -176,14 +177,13 @@ function add_or_edit_dc(prjid,id)
 							 return;
 						 }
 						 
-						 ret.op="add_dc" ;
-						 if(id)
-							 ret.op = "edit_dc";
+						 ret.op="set_store" ;
 						 ret.prjid=prjid;
 						 ret.cid = id ;
+						 ret.jstr = JSON.stringify(ret) ;
 						 var pm = {
 									type : 'post',
-									url : "./prj_dict_ajax.jsp",
+									url : "./prj_store_ajax.jsp",
 									data :ret
 								};
 							$.ajax(pm).done((ret)=>{

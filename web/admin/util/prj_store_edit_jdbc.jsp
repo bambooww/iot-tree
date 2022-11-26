@@ -7,6 +7,7 @@
 				org.iottree.core.store.*,
 				org.iottree.core.basic.*,
 				org.iottree.core.util.web.*,
+				org.iottree.core.store.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -24,15 +25,41 @@ if(rep==null)
 }
 
 StoreManager stmgr = StoreManager.getInstance(prjid) ;
-Store st = stmgr.getStoreById(storeid) ;
-if(st==null)
-{
-	out.print("no store found") ;
-	return ;
-}
 
-if(Convert.isNotNullEmpty(id))
+String name = "";
+String title="" ;
+String chked = "checked" ;
+String desc="" ;
+String drv_name = "" ;
+String db_host="" ;
+String db_port_str = "" ;
+String db_name = "" ;
+String db_user = "" ;
+String db_psw="" ;
+if(Convert.isNotNullEmpty(storeid))
 {
+	StoreJDBC st = (StoreJDBC)stmgr.getStoreById(storeid) ;
+	if(st==null)
+	{
+		out.print("no store found") ;
+		return ;
+	}
+	name = st.getName() ;
+	title = st.getTitle() ;
+	if(!st.isEnable())
+		chked = "" ;
+	drv_name = st.getDrvName() ;
+	db_host = st.getDBHost();
+	if(st.getDBPort()>0)
+		db_port_str = ""+st.getDBPort() ;
+	db_name = st.getDBName() ;
+	db_user = st.getDBUser() ;
+	db_psw = st.getDBPsw() ;
+	desc = st.getDesc() ;
+}
+else
+{
+	storeid = "" ;
 }
 %>
 <html>
@@ -44,37 +71,84 @@ if(Convert.isNotNullEmpty(id))
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(700,450);
 </script>
 <style>
 </style>
 </head>
 <body>
 <form class="layui-form" action="">
- <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
-    <div class="layui-input-block" class="layui-input-inline">
-      <input type="text" name="name" id="name" value="" class="layui-input"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Name:</label>
+    <div class="layui-input-inline" style="width: 150px;">
+      <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Enable</div>
+    <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="checkbox" id="enable" name="enable"  lay-skin="switch"  lay-filter="enable" class="layui-input">
+	    <input type="text" id="title" name="title" value="<%=title%>"  autocomplete="off" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+ </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Driver:</label>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <select id="drv_name"  lay-filter="drv_name" >
+	    	<option value="">--</option>
+<%
+for(StoreJDBC.Drv drv:StoreJDBC.listDrvs())
+{
+%><option value="<%=drv.getName() %>"><%=drv.getTitle() %></option>
+<%
+}
+%>
+	    </select>
+	  </div>
+	  <div class="layui-form-mid">DB Host:</div>
+		<div class="layui-input-inline">
+      <input type="text" id="db_host" name="db_host" value="<%=db_host%>"  autocomplete="off"  class="layui-input">
+    </div>
+    <div class="layui-form-mid">Port:</div>
+	  <div class="layui-input-inline" style="width: 100px;">
+	    <input type="text" id="db_port" name="db_port" value="<%=db_port_str%>"  autocomplete="off" class="layui-input">
 	  </div>
   </div>
- <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
-    <div class="layui-input-inline">
-      <input type="text" name="title" id="title" value="" class="layui-input"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">DB Name:</label>
+    
+	  
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="db_name" name="db_name" value="<%=db_name%>"  autocomplete="off" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid">User:</div>
+    <div class="layui-input-inline" style="width: 130px;">
+      <input type="text" id="db_user" name="db_user" value="<%=db_user%>"  autocomplete="off"  class="layui-input">
+    </div>
+    <div class="layui-form-mid">Password:</div>
+	  <div class="layui-input-inline" style="width: 130px;">
+	    <input type="text" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
+	  </div>
+ </div>
+
+      <div class="layui-form-item">
+    <label class="layui-form-label">Description:</label>
+    <div class="layui-input-block" style="width: 450px;">
+      <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>
-  
-
-</form>
+ </form>
 </body>
 <script type="text/javascript">
 
+var storeid = "<%=storeid%>" ;
+
 layui.use('form', function(){
 	  var form = layui.form;
+	  
+	  $("#drv_name").val("<%=drv_name%>") ;
+	  
 	  form.render();
 	  
 	  
@@ -102,21 +176,43 @@ function do_submit(cb)
 	var desc = "";//document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
-	
-	var bind_for='' ;
-	$('input[type=checkbox]:checked').each(function() {
-		var bf = $(this).val() ;
-	      if(bf)
-	    	  bind_for+=','+bf;
-	    });
-	
-	if(bind_for!='')
-		bind_for = bind_for.substr(1) ;
-	var bind_style=$("input[name='bind_style']:checked").val();
-	if(!bind_style)
-		bind_style="" ;
+
 	var ben = $("#enable").prop("checked") ;
-	cb(true,{name:n,title:tt,enable:ben,desc:desc,bind_for:bind_for,bind_style:bind_style});
+	
+	var drv_name = $('#drv_name').val();
+	if(!drv_name)
+	{
+		cb(false,"driver cannot be null") ;
+		return ;
+	}
+	var db_host = $('#db_host').val();
+	if(!db_host)
+	{
+		cb(false,"db_host cannot be null") ;
+		return ;
+	}
+	var db_port = parseInt($('#db_port').val());
+	if(db_port==NaN)
+	{
+		cb(false,"db port must > 0 ") ;
+		return ;
+	}
+	var db_name = $('#db_name').val();
+	if(!db_name)
+	{
+		cb(false,"db_name cannot be null") ;
+		return ;
+	}
+	var db_user = $('#db_user').val();
+	if(!db_user)
+	{
+		cb(false,"db_user cannot be null") ;
+		return ;
+	}
+	var db_psw = $('#db_psw').val();
+	
+	cb(true,{id:storeid,name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
+		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;
