@@ -84,6 +84,7 @@ public class DataClass extends JSObMap
 	 */
 	LinkedHashMap<String,DataNode> rootDataNodes = new LinkedHashMap<>();
 
+	List<DataNode> validRootNodeList= null ;
 	/**
 	 * when dd is impl by db,it can be used to ext attr definition,
 	 * so,when add node ,it can show some input
@@ -501,7 +502,16 @@ public class DataClass extends JSObMap
 		return rets;
 	}
 
-	
+	public List<DataNode> listValidRootNodes()
+	{
+		if (validRootNodeList != null)
+			return validRootNodeList;
+
+		ArrayList<DataNode> tmpal = new ArrayList<DataNode>();
+		tmpal.addAll(rootDataNodes.values());
+		validRootNodeList = tmpal ;
+		return tmpal;
+	}
 
 	ArrayList<DataNode> getAllExpandedNodes()
 	{
