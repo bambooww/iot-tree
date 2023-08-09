@@ -70,6 +70,7 @@ public class ModbusDevItem //extends DevModel
 		maddrs= tmpads ;
 		
 		int devid = (int)uaDev.getOrDefaultPropValueLong("modbus_spk", "mdev_addr", 1);
+		// System.out.println("Modbus DevItem devid="+devid) ;
 		//int devid = Integer.parseInt(uaDev.getId());
 		
 		failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);

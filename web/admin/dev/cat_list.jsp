@@ -201,9 +201,11 @@ function add_devdef()
 
 function edit_devdef(id)
 {
-	
+	let tt = "Add Device";
+	if(id)
+		tt = "Edit Device" ;
 	dlg.open("devdef_edit.jsp?libid="+libid+"&catid="+catid+"&devid="+id,
-			{title:"Add Device"},
+			{title:tt},
 			['Ok','Cancel'],
 			[
 				function(dlgw)

@@ -176,7 +176,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return fs.size() ;
 	}
 	
-	private IRoot getRoot()
+	public IRoot getRoot()
 	{
 		UANode tn = this ;
 		do

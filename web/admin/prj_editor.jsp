@@ -930,7 +930,7 @@ var cxt_menu = {
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
-		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+		{op_name:"paste_dev",op_title:"Paste Device",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
 			return true;//copiedItem!=null&&copiedItem.type=="dev";
 		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},

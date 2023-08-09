@@ -47,8 +47,8 @@ if(!Convert.checkReqEmpty(request, out, "libid","catid"))
 			return ;
 		}
 		
-		name = cat.getName() ;
-		title = cat.getTitle() ;
+		name = dev.getName() ;
+		title = dev.getTitle() ;
 		DevDriver dd = dev.getRelatedDrv() ;
 		if(dd!=null)
 		{
@@ -56,11 +56,6 @@ if(!Convert.checkReqEmpty(request, out, "libid","catid"))
 			drv_tt = dd.getTitle() ;
 		}
 	}
-	
-	
-		
-	
-	
 %>
 <html>
 <head>

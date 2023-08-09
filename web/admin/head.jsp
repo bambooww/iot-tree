@@ -16,7 +16,6 @@ String ver = Config.getVersion() ;
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script defer src="/_js/font6/js/all.js"></script>

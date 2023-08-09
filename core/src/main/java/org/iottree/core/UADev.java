@@ -126,12 +126,33 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		}
 	}
 	
-	UADev deepCopyMe() throws Exception
+	/**
+	 * 
+	 * @param root
+	 * @param b_newid
+	 * @return
+	 * @throws Exception
+	 */
+	UADev deepCopyMe(IRoot root,boolean b_newid) throws Exception
 	{
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(this) ;
 		UADev newd = new UADev() ;
 		DataTranserXml.injectXmDataToObj(newd, xd);
+		if(b_newid)
+			deepNewId(newd, root) ;
 		return newd;
+	}
+	
+	private void deepNewId(UANode n,IRoot root)
+	{
+		n.id = root.getRootNextId() ;
+		List<UANode> subns = n.getSubNodes() ;
+		if(subns==null)
+			return ;
+		for(UANode subn:subns)
+		{
+			deepNewId(subn,root) ;
+		}
 	}
 	
 	public UAPrj getPrj()

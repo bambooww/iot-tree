@@ -325,6 +325,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		String name = cp_tag.getName();
 		NameNum n_name = getNameEndNum(name);
 		NameNum n_title = getNameEndNum(cp_tag.getTitle());
+		String old_addr = cp_tag.getAddress();
 		NameNum n_addr = getNameEndNum(cp_tag.getAddress());
 		int step = 1 ;
 		if(n_addr.num>0)
@@ -353,8 +354,11 @@ public abstract class UANodeOCTags extends UANodeOC
 		} while (oldtag != null);
 
 		n_title.num++ ;
-		n_addr.num += step ;
-		UATag newtag = new UATag(cp_tag, name,n_title.toString(name),n_addr.toString(""));
+		//n_addr.num += step ;
+		// may has bug
+		//UATag newtag = new UATag(cp_tag, name,n_title.toString(name),n_addr.toString(""));
+		
+		UATag newtag = new UATag(cp_tag, name,n_title.toString(name),old_addr);
 		newtag.id = this.getNextIdByRoot();
 		tags.add(newtag);
 		constructNodeTree();

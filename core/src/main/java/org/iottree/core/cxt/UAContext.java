@@ -67,7 +67,7 @@ public class UAContext
 	//private transient ScriptEngineManager seMgr = null;
 	private transient ScriptEngine scriptEng = null;
 	
-	private Debug debug = new Debug() ;
+	private  Debug debug = new Debug() ;
 	
 	private GSys sys = new GSys() ;
 	

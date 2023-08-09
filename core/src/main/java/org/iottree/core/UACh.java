@@ -325,8 +325,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		{
 			throw new Exception("device name ["+newname+"] already existed");
 		}
-		UADev newdev = dev.deepCopyMe();
-		newdev.id=this.getNextIdByRoot();
+		UADev newdev = dev.deepCopyMe(this.getRoot(),true);
+		//newdev.id=this.getNextIdByRoot();
 //		newdev.name=newname;
 //		newdev.title=newtitle;
 		newdev.setNameTitle(newname, newtitle,null) ;

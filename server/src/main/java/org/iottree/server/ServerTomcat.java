@@ -104,7 +104,7 @@ public class ServerTomcat implements IServerBootComp
 		}
 		
 		tomcat.getConnector() ;//call it to list port
-		System.out.println("web port "+((w.getPort()>0)?" http port"+w.getPort():"")+(w.getSslPort()>0?("  https port:"+w.getSslPort()):"")) ;
+		System.out.println("web port "+((w.getPort()>0)?" http:"+w.getPort():"")+(w.getSslPort()>0?("  https:"+w.getSslPort()):"")) ;
 		tomcat.start();
 	}
 	
