@@ -32,7 +32,7 @@ if(cp==null)
 
 String cpid = cp.getId();//.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
-ConnPtMSGTopic cpt = null ;
+ConnPtMSG cpt = null ;
 
 
 if(Convert.isNullOrEmpty(connid))
@@ -41,7 +41,7 @@ if(Convert.isNullOrEmpty(connid))
 	return;
 }
 
-cpt = (ConnPtMSGTopic)cp.getConnById(connid) ;
+cpt = (ConnPtMSG)cp.getConnById(connid) ;
 if(cpt==null)
 {
 	out.print("no connection found") ;
@@ -49,6 +49,8 @@ if(cpt==null)
 }
 
 List<String> topics = cpt.getMsgTopics() ;
+if(topics==null)
+	topics = new ArrayList<>(0);
 %>
 <html>
 <head>

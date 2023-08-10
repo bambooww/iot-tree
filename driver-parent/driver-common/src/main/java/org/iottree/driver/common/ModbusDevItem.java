@@ -84,7 +84,7 @@ public class ModbusDevItem //extends DevModel
 		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;;//devDef.getPropValueLong("timing", "req_to", 1000) ;
 		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;
 		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 100) ;
-		
+		long scan_intv = uaDev.getOrDefaultPropValueLong("timing", "scan_intv", ModbusCmd.SCAN_INTERVER_DEFAULT) ;
 		
 		//create modbus cmd and address mapping
 		List<ModbusAddr> coil_in_addrs = filterAndSortAddrs(ModbusAddr.COIL_INPUT) ;
@@ -95,7 +95,7 @@ public class ModbusDevItem //extends DevModel
 		if(coil_in_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_INPUT,coil_in_addrs,
-					blocksize,100,failAfterSuccessive);
+					blocksize,scan_intv,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilIn = mb;
@@ -103,7 +103,7 @@ public class ModbusDevItem //extends DevModel
 		if(coil_out_addrs.size()>0)
 		{
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.COIL_OUTPUT,coil_out_addrs,
-					blocksize,100,failAfterSuccessive);
+					blocksize,scan_intv,failAfterSuccessive);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbCoilOut = mb;
@@ -114,7 +114,7 @@ public class ModbusDevItem //extends DevModel
 			boolean fwlow32 = uaDev.getOrDefaultPropValueBool("data_encod", "fw_low32", true);
 			
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_INPUT,reg_input_addrs,
-					blocksize,100,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
+					blocksize,scan_intv,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegIn = mb;
@@ -123,7 +123,7 @@ public class ModbusDevItem //extends DevModel
 		{
 			boolean fwlow32 = uaDev.getOrDefaultPropValueBool("data_encod", "fw_low32", true);
 			ModbusBlock mb = new ModbusBlock(devid,ModbusAddr.REG_HOLD,reg_hold_addrs,
-					blocksize,100,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
+					blocksize,scan_intv,failAfterSuccessive).asFirstWordLowIn32Bit(fwlow32);
 			mb.setTimingParam(reqto, recvto, inter_ms);
 			if(mb.initReadCmds())
 				mbRegHold = mb;
@@ -162,7 +162,7 @@ public class ModbusDevItem //extends DevModel
 	private transient int errCount = 0 ;
 	
 	/**
-	 * called by driver
+	 * called by driver, run in loop
 	 * @param ep
 	 */
 	boolean doModbusCmd(ConnPtStream ep)  throws Exception

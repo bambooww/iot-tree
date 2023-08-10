@@ -658,7 +658,7 @@ var connpro_menu = [
 		//dlg.msg("support later")
 	}},
 	{content:'MQTT',callback:function(){
-		edit_cpt("mqtt","","");
+		edit_cp("mqtt","","");
 	}},
 	{content:'WebSocket Client',callback:function(){
 		edit_cpt("ws_client","","");

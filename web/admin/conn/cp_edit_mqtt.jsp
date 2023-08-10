@@ -26,7 +26,7 @@ else
 	cp = (ConnProMQTT)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
 	if(cp==null)
 	{
-		out.print("no ConnProvider found") ;
+		out.print("no ConnProMQTT found") ;
 		return ;
 	}
 }
@@ -53,7 +53,7 @@ if(topics_str==null)
 %>
 <html>
 <head>
-<title>tcp client cp editor</title>
+<title>mqtt cp editor</title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);

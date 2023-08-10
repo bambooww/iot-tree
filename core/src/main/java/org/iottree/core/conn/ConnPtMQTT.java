@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.script.ScriptException;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.iottree.core.ConnDev;
 import org.iottree.core.ConnJoin;
 import org.iottree.core.ConnMsg;
@@ -176,4 +179,25 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		// getMqttEP().disconnect();
 	}
 
+	MqttCallback mqttCB = new MqttCallback() {
+
+		@Override
+		public void connectionLost(Throwable cause)
+		{
+			
+		}
+
+		@Override
+		public void messageArrived(String topic, MqttMessage message) throws Exception
+		{
+			
+		}
+
+		@Override
+		public void deliveryComplete(IMqttDeliveryToken token)
+		{
+			
+		}
+		
+	};
 }

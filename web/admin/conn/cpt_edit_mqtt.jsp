@@ -16,13 +16,26 @@
 	return;
 String repid = request.getParameter("prjid") ;
 String cpid = request.getParameter("cpid") ;
-String cptp = ConnProMQTT.TP;//request.getParameter("cptp") ;
-ConnProMQTT cp = (ConnProMQTT)ConnManager.getInstance().getConnProviderById(repid, cpid);
-if(cp==null)
+ConnProMQTT cp = null ;
+if(Convert.isNullOrEmpty(cpid))
 {
-	out.print("no single provider found with "+cptp);
-	return ;
+	cp = new ConnProMQTT() ;
+	cpid = cp.getId() ;
+	ConnManager.getInstance().setConnProvider(repid, cp);
 }
+else
+{
+	cp = (ConnProMQTT)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+	if(cp==null)
+	{
+		out.print("no ConnProMQTT found") ;
+		return ;
+	}
+	cpid = cp.getId();
+}
+
+String cptp = ConnProMQTT.TP;//request.getParameter("cptp") ;
+
 
 String connid = request.getParameter("connid") ;
 String cid = connid ;

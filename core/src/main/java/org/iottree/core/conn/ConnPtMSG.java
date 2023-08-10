@@ -624,6 +624,11 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		return this.sorTp;
 	}
 	
+	public List<String> getMsgTopics()
+	{
+		return null ;
+	}
+	
 	public HandleSty getHandleSty()
 	{
 		return this.handleSty ;

@@ -356,6 +356,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 		if(cpt==null)
 		{
 			cpt = this.createEmptyConnPt() ;
+			cpt.belongTo = this ;
 			badd = true ;
 		}
 		//check name

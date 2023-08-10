@@ -189,8 +189,10 @@ public abstract class ModbusCmd
 	final static int RECV_TIMEOUT_DEFAULT = 1000;
 
 	final static int RECV_END_TIMEOUT_DEFAULT = 20;
+	
+	public final static long SCAN_INTERVER_DEFAULT = 100 ;
 
-	protected long scanIntervalMS = 100;
+	protected long scanIntervalMS = SCAN_INTERVER_DEFAULT;
 
 	
 	protected long maxRecvTOMS = 60000;

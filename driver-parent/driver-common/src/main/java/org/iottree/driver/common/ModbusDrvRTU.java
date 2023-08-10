@@ -25,6 +25,7 @@ import org.iottree.core.util.NetUtil;
 import org.iottree.core.util.NetUtil.Adapter;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.driver.common.modbus.ModbusCmd;
 import org.iottree.driver.common.modbus.sniffer.SnifferRTUCh;
 
 
@@ -113,10 +114,12 @@ public class ModbusDrvRTU extends DevDriver
 		gp = new PropGroup("timing","Timing");
 		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
 		//
+		gp.addPropItem(new PropItem("scan_intv","Scan Interval(millisecond)","",PValTP.vt_int,false,null,null,ModbusCmd.SCAN_INTERVER_DEFAULT));
 		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
 		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
 		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
 		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
+		
 		pgs.add(gp) ;
 		
 		gp = new PropGroup("auto_demotion","Auto-Demotion");
