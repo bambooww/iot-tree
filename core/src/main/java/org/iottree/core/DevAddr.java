@@ -212,33 +212,43 @@ public abstract class DevAddr
 	
 	public void RT_setVal(Object v,boolean chk_chg)
 	{
-		if(chk_chg)
-		{
-			if(v==null)
-			{//
-				if(!uaVal.isValid())
-					return ;
-			}
-			else if(uaVal.isValid() && v.equals(uaVal.getObjVal()))
-			{
-				return ;
-			}
-		}
-		
-//		uaVal.objVal = v ;
-//		uaVal.valDT=System.currentTimeMillis() ;
-//		uaVal.bValid=true;
 		UATag tag = this.getBelongTo() ;
-		if(v==null)
-		{
-			uaVal.setVal(false, null, System.currentTimeMillis());
-			tag.RT_setUAVal(uaVal);
-		}
-		else
-		{
-			uaVal.setVal(true, v, System.currentTimeMillis());
-			tag.RT_setValRaw(v);
-		}
-		
+//		if(chk_chg)
+//		{
+//			if(v==null)
+//			{//
+//				if(!uaVal.isValid())
+//					return ;
+//			}
+//			else // if(uaVal.isValid() && v.equals(uaVal.getObjVal()))
+//			{
+//				tag.RT_setVal(v);
+//				//uaVal.setValUpDT(System.currentTimeMillis());
+//				return ;
+//			}
+//		}
+//
+//		if(v==null)
+//		{
+//			uaVal.setVal(false, null, System.currentTimeMillis());
+//			tag.RT_setUAVal(uaVal);
+//		}
+//		else
+//		{
+//			uaVal.setVal(true, v, System.currentTimeMillis());
+//			tag.RT_setValRaw(v);
+//		}
+		//tag.RT_setVal(v);
+		//设置值，如果v=null表示错误，但可能会被内部抗干扰过滤
+		tag.RT_setValRaw(v);
+	}
+	
+	/**
+	 * 强制设置错误
+	 */
+	public void RT_setValErr()
+	{
+		UATag tag = this.getBelongTo() ;
+		tag.RT_setValErr("", null) ;
 	}
 }

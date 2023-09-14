@@ -782,28 +782,30 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(!this.isMidExpress())
 			return null;
-		UAVal v = new UAVal() ;
+		//UAVal v = new UAVal() ;
 		try
 		{
 			UACodeItem ci =  CXT_getMidCodeItem();
 			if(ci==null)
 			{
-				v.setValErr("no express code item");
+				//v.setValErr("no express code item");
+				//this.RT_set
 				return null;
 			}
 			Object ob = ci.runCode() ;
-			v.setVal(true, ob, System.currentTimeMillis());
+			return this.RT_setValRaw(ob);
+			//v.setVal(true, ob, System.currentTimeMillis());
 			
 		}
 		catch(Exception e)
 		{
-			v.setValException(e.getMessage(), e);
+			//v.setValException(e.getMessage(), e);
 			//e.printStackTrace();
-			
+			return RT_setValErr(e.getMessage(),e) ;
 		}
 		
-		this.RT_setUAVal(v);
-		return v;
+		//this.RT_setUAVal(v);
+		//return v;
 	}
 	
 	UAVal RT_readValFromDriver()
@@ -871,7 +873,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			//	return ;
 			if(this.curVal.isValid()&&v.equals(this.curVal.getObjVal()))
 			{
-				this.curVal.setVal(true, v, cdt);
+				this.curVal.setValUpDT(cdt);//.setVal(true, v, cdt);
 				return ;
 			}
 		}
@@ -880,28 +882,25 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
-	public void RT_setValErr(String err,Exception e)
+	public UAVal RT_setValErr(String err,Exception e)
 	{
+		if(this.curVal!=null)
+		{
+			if(!this.curVal.isValid() && err.equals(this.curVal.getErr()))
+				return this.curVal ;
+		}
 		UAVal uav = new UAVal(err,e) ;
-		RT_setUAVal(uav);
+		//RT_setUAVal(uav);
+		this.curVal = uav ; //强制替换
+		return uav ;
 	}
 	
-	public synchronized void RT_setValRaw(Object v,boolean ignore_nochg,Long chgdt)
+	public synchronized UAVal RT_setValRaw(Object v,boolean ignore_nochg,Long updt,Long chgdt)
 	{
-		boolean bval_chg = true;
-		if(curRawVal==null)
-		{
-			if(v==null)
-				bval_chg= false ;
-		}
-		else if(curRawVal.equals(v))
-		{
-			bval_chg = false ;
-		}
-		
 		curRawVal = v ;
 		
 		//if(bval_chg || this.curVal==null)
+		if(v!=null)
 		{
 			ValTranser vt = this.getValTranserObj() ;
 			if(vt!=null)
@@ -914,10 +913,22 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				}
 				catch(Exception ee)
 				{
-					this.RT_setValErr(ee.getMessage(),ee);
-					return ;
+					return this.RT_setValErr(ee.getMessage(),ee);
+					//return ;
 				}
 			}
+		}
+		
+		boolean bval_chg = true;
+		if(v==null)
+		{
+			if(this.curVal!=null&&!this.curVal.isValid())
+				bval_chg= false ;
+		}
+		else
+		{
+			if(this.curVal!=null && this.curVal.isValid() && v.equals(this.curVal.getObjVal()))
+				bval_chg = false ;
 		}
 		
 //		UAVal uav = this.curVal;//RT_getVal();
@@ -928,17 +939,29 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //		}
 		
 		long cdt = System.currentTimeMillis() ;
-		if(chgdt!=null)
-			cdt = chgdt ;
+		if(updt==null)
+			updt = cdt ;
+		
+		if(curVal!=null && !bval_chg)
+			chgdt = curVal.getValChgDT() ;
+		else
+			chgdt = cdt ;
+//		if(chgdt!=null)
+//			cdt = chgdt ;
 		
 		if(this.curVal!=null&&!bval_chg)
 		{
-			this.curVal.setVal(true,v,cdt);
-			return ;
+			this.curVal.setValUpDT(updt);//.setVal(true,v,cdt);
+			return curVal;
 		}
-		
-		UAVal uav = new UAVal(true,v,cdt,cdt) ;
+		//uaVal.setVal(false, null, System.currentTimeMillis());
+		UAVal uav = null;
+		if(v!=null)
+			uav = new UAVal(true,v,updt,chgdt) ;
+		else
+			uav = new UAVal(false,null,updt,chgdt) ;
 		RT_setUAVal(uav);
+		return uav ;
 	}
 	
 	public void RT_setValStr(String strv)
@@ -950,7 +973,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public void RT_setValRawStr(String strv,boolean ignore_chg,Long chgdt)
 	{
 		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
-		this.RT_setValRaw(objv,ignore_chg,chgdt);
+		this.RT_setValRaw(objv,ignore_chg,null,chgdt);
 	}
 //	
 //	
@@ -976,14 +999,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * @param v
 	 * @throws Exception 
 	 */
-	public void RT_setValRaw(Object v)
+	public UAVal RT_setValRaw(Object v)
 	{
-		this.RT_setValRaw(v,true,null);
+		return this.RT_setValRaw(v,true,null,null);
 	}
 	
-	public void RT_setValRaw(Object v,Long chgdt)
+	public UAVal RT_setValRaw(Object v,Long updt,Long chgdt)
 	{
-		this.RT_setValRaw(v,true,chgdt);
+		return this.RT_setValRaw(v,true,updt,chgdt);
 	}
 	
 	private boolean RT_writeValDriver(Object v)

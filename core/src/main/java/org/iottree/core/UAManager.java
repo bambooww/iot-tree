@@ -620,10 +620,7 @@ public class UAManager //implements IResCxt
 		}
 		out.print("]");
 	}
-	
-	
 
-	
 	static
 	{
 		Runtime.getRuntime().addShutdownHook(new Thread() {

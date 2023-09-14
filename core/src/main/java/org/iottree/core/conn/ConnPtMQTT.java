@@ -105,6 +105,7 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 				tps.add(tp);
 			}
 		}
+		topics= tps;
 
 		super.injectByJson(jo);
 

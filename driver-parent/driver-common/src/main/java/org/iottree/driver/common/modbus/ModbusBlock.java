@@ -311,7 +311,9 @@ public class ModbusBlock
 		if(addrs==null)
 			return ;
 		for(ModbusAddr ma:addrs)
-			ma.RT_setVal(null); 
+		{
+			ma.RT_setValErr();
+		}
 	}
 	
 

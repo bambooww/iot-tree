@@ -305,9 +305,14 @@ public class UAVal //extends JSObMap
 		this.valDT = valdt;
 	}
 	
-	void setValDT(long valdt)
+	void setValUpDT(long val_updt)
 	{
-		this.valDT = valdt ;
+		this.valDT = val_updt ;
+	}
+	
+	void setValChgDT(long val_chg_dt)
+	{
+		this.valChgDT = val_chg_dt;
 	}
 	
 	synchronized public void setValErr(String err)

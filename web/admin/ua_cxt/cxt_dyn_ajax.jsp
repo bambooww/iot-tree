@@ -50,7 +50,6 @@ case "w":
 		out.print(failedr.toString()) ;
 	break ;
 default:
-	
 	ntags.CXT_renderJson(out);
 break ;
 }
