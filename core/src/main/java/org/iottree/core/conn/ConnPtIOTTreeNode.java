@@ -335,6 +335,12 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public boolean isPassiveRecv() 
+	{
+		return true;
+	}
 
 	@Override
 	public boolean isConnReady()

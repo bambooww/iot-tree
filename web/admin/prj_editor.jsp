@@ -823,6 +823,10 @@ function on_conn_ui_showed()
 						edit_cp(cptp,cpid) ;
 					}});
 					
+					d.push({ content : '<i class="fa fa-file"></i> Import Xml Connector', callback:()=>{
+						import_xml_cpt(cptp,cpid) ;
+					}});
+					
 					
 					d.push({content:'sm_divider'});
 					d.push({ content : '<i class="fa fa-arrow-rotate-right"></i> Reset', callback:()=>{
@@ -898,6 +902,10 @@ function on_conn_ui_showed()
 					d.push({ content : '<i class="fa fa-pencil"></i> Edit', callback:()=>{
 						edit_cpt(cptp,cpid,connid) ;
 					}});
+					d.push({ content : '<i class="fa fa-file"></i> Export Xml', callback:()=>{
+						export_xml_cpt(cptp,cpid,connid) ;
+					}});
+					d.push({content:'sm_divider'});
 					d.push({ content : '<i class="fa fa-times"></i> Delete', callback:()=>{
 						del_cpt(cpid,connid);
 					}}) ;
@@ -1164,6 +1172,7 @@ function edit_cp(cptp,cpid)
 							dlg.msg(ret) ;
 							return ;
 						}
+						ret.tp = cptp;
 						set_connprovider(ret,(bok,msg)=>{
 							if(!bok)
 							{
@@ -1260,6 +1269,22 @@ function set_connprovider(jo,cb)
 				url : "./conn/cp_ajax.jsp",
 				data :{prjid:repid,op:'cp_set',json:JSON.stringify(jo)}
 			};
+		/*
+		send_ajax("./conn/cp_ajax.jsp",{prjid:repid,op:'cp_set',json:JSON.stringify(jo)},(bsucc,ret)=>{
+			if(!bsucc||ret.indexOf("{")!=null)
+			{
+				cb(false,ret) ;
+				return ;
+			}
+			if(typeof(ret)=='string')
+				eval("ret="+ret);
+			if(ret.res)
+				cb(true,"") ;
+			else
+				cb(false,ret.err) ;
+		});
+		*/
+		
 		$.ajax(pm).done((ret)=>{
 			if(typeof(ret)=='string')
 				eval("ret="+ret);
@@ -1358,9 +1383,11 @@ function iottree_node_syn_tree(cptp,cpid,connid)
 
 function edit_cpt(cptp,cpid,connid)
 {
-	dlg.open("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
 			{title:cptp+" Connection Editor",w:'800',h:'600'},
-			['Ok','Apply','Cancel','Help'],//{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			//['Ok','Apply','Cancel','Help'],//
+			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			
 			[
 				function(dlgw)
 				{
@@ -1412,6 +1439,60 @@ function edit_cpt(cptp,cpid,connid)
 			]);
 }
 
+function export_xml_cpt(cptp,cpid,connid)
+{
+	dlg.open_win("conn/cpt_xml_export.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
+			{title:" Connection Xml Exporter",w:'800',h:'600'},
+			//['Ok','Apply','Cancel','Help'],//
+			['Copy',{title:'Close',style:"primary"}],
+			
+			[
+				function(dlgw)
+				{
+					navigator.clipboard.writeText(dlgw.get_xml_str());
+					dlg.msg("Successfully copied to clipboard, you can import and create this node in another project.")
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function import_xml_cpt(cptp,cpid)
+{
+	dlg.open_win("conn/cpt_xml_import.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid,
+			{title:" Connection Xml Importer",w:'800',h:'600'},
+			//['Ok','Apply','Cancel','Help'],//
+			['Import',{title:'Close',style:"primary"}],
+			
+			[
+				function(dlgw)
+				{
+					let xmlstr = dlgw.get_xml_str();
+					xmlstr = trim(xmlstr) ;
+					if(!xmlstr)
+					{
+						dlg.msg("no xml string input") ;
+						return;
+					}
+					send_ajax("./conn/cp_ajax.jsp",{op:"conn_xml_imp",prjid:repid,cpid:cpid,xml_str:xmlstr},(bsucc,ret)=>{
+						if(!bsucc || !ret.res)
+						{
+							dlg.msg(ret.err);
+							return ;
+						}
+						refresh_ui();
+						dlg.close();
+					}) ;
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	
+}
 
 function act_new_tagg(n,op)
 {

@@ -192,28 +192,28 @@ layui.use('form', function(){
 	  
 	  
 	  form.on("select(comid)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on("select(baud)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on("select(databits)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on("select(parity)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on("select(stopbits)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on("select(flowctl)",function(obj){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#desc").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on('switch(enable)', function(obj){
-		       setDirty();
+		  setDirty(true);
 		  });
 		  
 	  form.render(); 
@@ -230,10 +230,12 @@ function isDirty()
 {
 	return bdirty;
 }
-function setDirty()
+function setDirty(b)
 {
-	bdirty= true;
-	dlg.btn_set_enable(1,true);
+	if(!(b===false))
+		b = true ;
+	bdirty= b;
+	dlg.btn_set_enable(1,b);
 }
 
 	

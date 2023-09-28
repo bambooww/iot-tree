@@ -162,6 +162,28 @@ if(cpt!=null)
 <%
 if(cpt!=null)
 {
+	if(cpt.isPassiveRecv())
+	{
+		ConnPt.MonData md = cpt.getLastMsgFromMon() ;
+		String dtstr = "<span style='color:red'>no received data</span>";
+		if(md!=null)
+		{
+			long dt = md.getDT() ;
+			dtstr = Convert.toFullYMDHMS(new Date(dt)) ;
+		}
+%>
+	    <div id="run_page_cont" class="layui-form-item" >
+	    <label class="layui-form-label" style="width:150px">Recved data</label>
+	    	<div class="layui-input-inline" style="width: 150px;" id="read_to_buf_inf">
+		     &nbsp;<%=dtstr %>
+	    	</div>
+	   
+	    
+	  </div>
+<%
+	}
+	else
+	{
 %>
     <div id="run_page_cont" class="layui-form-item" >
     <label class="layui-form-label" style="width:150px">Read to Buffer</label>
@@ -175,6 +197,7 @@ if(cpt!=null)
 
   </div>
 <%
+	}
 }
 %>
   <div id="edit_trans_js">
@@ -405,7 +428,7 @@ var map_list = <%=bind_map_str%> ;
 
 function get_bind_list()
 {
-	console.log(probe_ob,sor_tp);
+	//console.log(probe_ob,sor_tp);
 	if(sor_tp=='html')
 	{
 		
@@ -444,12 +467,12 @@ function get_probe_sor_txt()
 function probe_setup()
 {
 	event.preventDefault();
-	var u = get_probe_url();
-	if(!u)
-	{
-		dlg.msg("please input Url first") ;
-		return ;
-	}
+	//var u = get_probe_url();
+	//if(!u)
+	//{
+	//	dlg.msg("please input Url first") ;
+	//	return ;
+	//}
 	var sor_tp = $('#sor_tp').val();
 	if(sor_tp==null||sor_tp=='')
 	{
@@ -470,7 +493,7 @@ function probe_setup()
 		if(sor_tp=='html')
 			tmpu = "./cpt_probe_html.jsp?sor_tp="+sor_tp;
 		dlg.open(tmpu,{title:"Probe Setting ",w:'900',h:'600'},
-				['Ok','Cancel'],
+				['Ok','Cancel',"Help"],
 				[
 					function(dlgw)
 					{
@@ -494,12 +517,17 @@ function probe_setup()
 									form.render();
 								}
 							}
+							setDirty();
 							dlg.close();
 						});
 					},
 					function(dlgw)
 					{
 						dlg.close();
+					},
+					function(dlgw)
+					{
+						alert("help");
 					}
 				]);
 	});
@@ -517,6 +545,7 @@ function bind_to_ch()
 				{
 					//r bindstr = dlgw.get_bindlist_valstr();
 					map_list = dlgw.get_map_list();
+					setDirty();
 					dlg.close();
 				},
 				function(dlgw)

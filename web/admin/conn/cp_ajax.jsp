@@ -2,8 +2,9 @@
     pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.*,
 	org.iottree.core.conn.*,
-				org.iottree.core.util.*,
+				org.iottree.core.util.*,org.iottree.core.util.xmldata.*,
 				org.iottree.core.basic.*,
+				
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -76,7 +77,8 @@ case "cp_set":
 	}
 	catch(Exception e)
 	{
-		out.print("{\"res\":false,\"err\":\""+e.getMessage()+"\"}");
+		e.printStackTrace();
+		out.print("{\"res\":false,\"err\":\""+Convert.plainToJsStr(e.getMessage())+"\"}");
 		return ;
 	}
 	break ;
@@ -157,6 +159,28 @@ case "conn_del":
 	catch(Exception e)
 	{
 		out.print("{\"res\":false,\"err\":\""+e.getMessage()+"\"}");
+		return ;
+	}
+	break ;
+case "conn_xml_imp":
+	if(!Convert.checkReqEmpty(request, "{\"res\":\"no fit input params\"}",out, "cpid","xml_str"))
+		return;
+	cpid = request.getParameter("cpid") ;
+	try
+	{
+		cp = ConnManager.getInstance().getConnProviderById(repid, cpid) ;
+		String xmlstr = request.getParameter("xml_str") ;
+		XmlData xd = XmlData.parseFromXmlStr(xmlstr) ;
+		StringBuilder failedr = new StringBuilder() ;
+		if(cp.importConnPtByXml(xd, failedr))
+			out.print("{\"res\":true}");
+		else
+			out.print("{\"res\":false,\"err\":\""+failedr.toString()+"\"}");
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		out.print("{\"res\":false,\"err\":\""+Convert.plainToJsStr(e.getMessage())+"\"}");
 		return ;
 	}
 	break ;

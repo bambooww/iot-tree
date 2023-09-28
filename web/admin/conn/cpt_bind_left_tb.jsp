@@ -99,6 +99,7 @@ function tb_get_left_vals()
 	{
 		var tn = $(tr) ;
 		var p = tn.attr("path");
+		var t = tn.attr("title") ;
 		var v = p + ":"+tn.attr("vt") ;
 		
 		ret.push(v) ;

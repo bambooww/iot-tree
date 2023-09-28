@@ -59,6 +59,8 @@ else
 var form = null;
 var opener_txt_id = "<%=opener_txt_id%>" ;
 
+$("#txt").focus();
+
 if(opener_txt_id)
 {
 	var ow = dlg.get_opener_w();

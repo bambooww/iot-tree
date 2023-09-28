@@ -81,13 +81,13 @@ layui.use('form', function(){
 	  form = layui.form;
 	  
 	  $("#name,#title,#desc,#local_ip,#local_port").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on('select(local_ip)', function(data){   
-		    setDirty();
+		  setDirty(true);
 	 });
 	  form.on('switch(enable)', function(obj){
-		       setDirty();
+		  setDirty(true);
 		  });
 	  
 	  form.render(); 
@@ -104,10 +104,12 @@ function isDirty()
 {
 	return bdirty;
 }
-function setDirty()
+function setDirty(b)
 {
-	bdirty= true;
-	dlg.btn_set_enable(1,true);
+	if(!(b===false))
+		b = true ;
+	bdirty= b;
+	dlg.btn_set_enable(1,b);
 }
 
 

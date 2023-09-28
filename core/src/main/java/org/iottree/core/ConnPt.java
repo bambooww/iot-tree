@@ -88,6 +88,8 @@ public abstract class ConnPt implements IXmlDataValidator
 		
 		DataTp dataTp = DataTp.json ;
 		
+		long dt = -1 ;
+		
 		private transient byte[] dataBS = null ;
 		
 		private transient String dataEncd = "UTF-8";
@@ -100,6 +102,7 @@ public abstract class ConnPt implements IXmlDataValidator
 			this.dlen = txt.length() ;
 			this.txt = txt ;
 			this.dataTp = dtp ;
+			this.dt = System.currentTimeMillis() ;
 		}
 		
 		public MonData(String name,byte[] bs)
@@ -108,6 +111,7 @@ public abstract class ConnPt implements IXmlDataValidator
 			this.dlen = bs.length ;
 			this.dataBS = bs ;
 			this.dataTp = DataTp.bytes;
+			this.dt = System.currentTimeMillis() ;
 		}
 		
 		public MonData(String name,DataTp dtp,byte[] bs,String encd)
@@ -119,6 +123,7 @@ public abstract class ConnPt implements IXmlDataValidator
 			this.dataEncd = encd ;
 			if(Convert.isNullOrEmpty(this.dataEncd))
 				this.dataEncd = "UTF-8" ;
+			this.dt = System.currentTimeMillis() ;
 		}
 		
 		public String getName()
@@ -129,6 +134,11 @@ public abstract class ConnPt implements IXmlDataValidator
 		public int getLen()
 		{
 			return dlen ;
+		}
+		
+		public long getDT()
+		{
+			return this.dt ;
 		}
 		
 		public String getTxt() throws UnsupportedEncodingException
@@ -402,6 +412,7 @@ public abstract class ConnPt implements IXmlDataValidator
 	public XmlData toXmlData()
 	{
 		XmlData xd = new XmlData() ;
+		xd.setParamValue("_cpt_tp",this.getConnType());
 		xd.setParamValue("id",id);
 		xd.setParamValue("name", name);
 		xd.setParamValue("title", title);

@@ -130,6 +130,11 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 
 	//transient private int initInitOk = 0 ;
 	
+	@Override
+	public boolean isPassiveRecv() 
+	{
+		return true;
+	}
 	
 	
 	@Override
@@ -156,18 +161,6 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		return false;
 	}
 	
-//	@Override
-//	public void writeBindBeSelectedTreeJson(Writer w, boolean list_tags_only, boolean force_refresh) throws Exception
-//	{
-//
-//	}
-//
-//	@Override
-//	public int writeBindBeSelectedListRows(Writer w, int idx, int size)
-//	{
-//
-//		return 0;
-//	}
 
 	public void runOnWrite(UATag tag, Object val) throws Exception
 	{
@@ -175,10 +168,10 @@ public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
 		// it may send some msg
 	}
 
-	synchronized void disconnect() // throws IOException
-	{
-		// getMqttEP().disconnect();
-	}
+//	synchronized void disconnect() // throws IOException
+//	{
+//		// getMqttEP().disconnect();
+//	}
 
 	MqttCallback mqttCB = new MqttCallback() {
 

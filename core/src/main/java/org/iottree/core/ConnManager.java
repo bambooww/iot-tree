@@ -182,8 +182,8 @@ public class ConnManager
 	
 	void saveConnProvidersByPrjId(String prjid) throws Exception
 	{
-		UAPrj rep = UAManager.getInstance().getPrjById(prjid) ;
-		if(rep==null)
+		UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+		if(prj==null)
 			throw new Exception("no rep found with id="+prjid) ;
 		
 		List<ConnProvider> cps = this.getConnProviders(prjid) ;
@@ -193,22 +193,22 @@ public class ConnManager
 		{
 			xds.add(cp.toXmlData()) ;
 		}
-		File f = this.getConnFile(rep) ;
+		File f = this.getConnFile(prj) ;
 		XmlData.writeToFile(xd, f);
 	}
 	
-	public ConnProvider setConnProvider(String repid,ConnProvider cp) throws Exception
+	public ConnProvider setConnProvider(String prjid,ConnProvider cp) throws Exception
 	{
-		List<ConnProvider> cps = this.getConnProviders(repid) ;
+		List<ConnProvider> cps = this.getConnProviders(prjid) ;
 		if(!cps.contains(cp))
 		{
 			cps.add(cp) ;
-			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
+			UAPrj rep = UAManager.getInstance().getPrjById(prjid) ;
 			if(rep==null)
-				throw new Exception("no rep found with id="+repid) ;
+				throw new Exception("no rep found with id="+prjid) ;
 			cp.belongTo = rep;
 		}
-		saveConnProvidersByPrjId(repid) ;
+		saveConnProvidersByPrjId(prjid) ;
 		return cp ;
 	}
 	

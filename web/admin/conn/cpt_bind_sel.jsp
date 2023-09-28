@@ -682,13 +682,20 @@ function map_copy()
 		vs = tb_get_left_vals() ;
 	else
 		vs = tree_get_left_vals() ;
+	
 	if(vs.length<=0)
 	{
 		dlg.msg("please select item left") ;
 		return ;
 	}
 	for(var v of vs)
-		add_bind_item(v,v);
+	{
+		let t = v ;
+		if(t.startsWith('$.'))
+			t = t.substring(2) ;
+		add_bind_item(v,t);
+	}
+		
 }
 </script>
 </html>

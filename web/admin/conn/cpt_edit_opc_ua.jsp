@@ -240,10 +240,12 @@ function isDirty()
 {
 	return bdirty;
 }
-function setDirty()
+function setDirty(b)
 {
-	bdirty= true;
-	dlg.btn_set_enable(1,true);
+	if(!(b===false))
+		b = true ;
+	bdirty= b;
+	dlg.btn_set_enable(1,b);
 }
 
 

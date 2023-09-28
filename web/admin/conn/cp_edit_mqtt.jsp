@@ -101,12 +101,14 @@ dlg.resize_to(600,400);
 	    <input type="text" id="mqtt_psw" name="mqtt_psw" value="<%=psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
+  <%--
   <div class="layui-form-item">
     <label class="layui-form-label">Subscribe Topics</label>
     <div class="layui-input-block">
       <textarea  id="topics"  name="topics"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=topics_str%></textarea>
     </div>
   </div>
+   --%>
     <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-block">
@@ -122,29 +124,29 @@ layui.use('form', function(){
 	  form = layui.form;
 	  
 	  $("#name,#title,#desc,#local_ip,#local_port").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on('select(local_ip)', function(data){   
-		    setDirty();
+		    setDirty(true);
 	 });
 	  form.on('switch(enable)', function(obj){
-		       setDirty();
+		       setDirty(true);
 		  });
 	  
 	  $("#mqtt_host").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#mqtt_port").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#mqtt_conn_to").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#mqtt_user").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#mqtt_psw").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  
 	  form.render(); 
@@ -161,10 +163,12 @@ function isDirty()
 {
 	return bdirty;
 }
-function setDirty()
+function setDirty(b)
 {
-	bdirty= true;
-	dlg.btn_set_enable(1,true);
+	if(!(b===false))
+		b = true ;
+	bdirty= b;
+	dlg.btn_set_enable(1,b);
 }
 
 
@@ -248,8 +252,8 @@ function do_submit(cb)
 		mqtt_psw="";
 	}
 	
-	var topicsstr = $("#topics").val() ;
-	var tps = str2lns(topicsstr)
+	//var topicsstr = $("#topics").val() ;
+	var tps = [];//str2lns(topicsstr)
 	
 	cb(true,{id:cp_id,name:n,title:tt,desc:desc,enable:ben,mqtt_host:host,mqtt_port:vp,
 		mqtt_conn_to:conn_to,mqtt_user:mqtt_user,mqtt_psw:mqtt_psw,mqtt_topics:tps});

@@ -49,6 +49,12 @@ public class ConnPtUDP extends ConnPtMSG
 		return false;
 	}
 	
+	@Override
+	public boolean isPassiveRecv() 
+	{
+		return true;
+	}
+	
 	public void RT_checkConn()
 	{}
 

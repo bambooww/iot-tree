@@ -2,6 +2,7 @@ package org.iottree.core.conn;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -611,7 +612,38 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		}
 	}
 
-	
+	public static class MsgItem
+	{
+		String topic = null ;
+		
+		byte[] data = null ;
+		
+		private MsgItem(String topic,byte[] data)
+		{
+			this.topic = topic ;
+			this.data = data ;
+		}
+		
+		public String getTopic()
+		{
+			return this.topic ;
+		}
+		
+		public byte[] getDataRaw()
+		{
+			return data ;
+		}
+		
+		public String getDataTxt(String enc) throws UnsupportedEncodingException
+		{
+			return new String(data,enc) ;
+		}
+		
+		public String getDataTxt() throws UnsupportedEncodingException
+		{
+			return getDataTxt("utf-8") ;
+		}
+	}
 	
 	private UACh joinedCh = null ;
 
@@ -905,6 +937,8 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			this.onMonDataRecv(mis);
 		}
 	}
+	
+	//transient private MsgItem lastMsgItem = null ;
 
 	protected void onRecvedMsg(String topic, byte[] bs) throws Exception
 	{
@@ -1017,8 +1051,28 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	public abstract void runOnWrite(UATag tag,Object val) throws Exception;
 	
 	
+	/**
+	 * judge msg is received in passive mode,if true {@see readMsgToFile}will not to be used
+	 * {@see getMsgTxtFromTmpBuf}will not to be used.
+	 * 
+	 *  instead,{@see getLastMsgFromMon} will be used.
+	 * 
+	 * @return
+	 */
+	public abstract boolean isPassiveRecv() ; 
+	
 	protected abstract boolean readMsgToFile(File f) throws Exception ;
 	
+	public MonData getLastMsgFromMon()
+	{
+		MonItem mi = getMonItemLast();
+		if(mi==null)
+			return null ;
+		MonData[] mds = mi.getMonDatas() ;
+		if(mds==null || mds.length<=0)
+			return null ;
+		 return mds[mds.length-1] ;
+	}
 	
 	public File getTmpBufFile()
 	{

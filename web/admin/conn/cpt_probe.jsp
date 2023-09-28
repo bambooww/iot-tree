@@ -209,7 +209,9 @@ dlg.resize_to(900,580);
 
        <tr style="height:100%;border:solid 0px">
          <td style="width:5%;vertical-align:middle;"  >
-	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="probe_or_not(true)" title="extract data"><i class="fa-solid fa-arrow-right"></i></button><br><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="probe_or_not(true)" title="extract data"><i class="fa-solid fa-arrow-right"></i></button><br>
+	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="probe_or_not_all(true)" title="extract all data"><i class="fa-solid fa-arrow-right"></i><br><i class="fa-solid fa-arrow-right"></i></button>
+	     	<br><br>
 	     	<%--
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="copy_map()" title="copy create tag and bind"><i class="fa fa-angles-right"></i><br><i class="fa fa-tag"></i></button><br><br>
 	     	 --%>
@@ -287,7 +289,12 @@ function set_left_str(txt)
 		$("#left_cont").html(cont) ;
 	}
 	
-	$("span[jp]").click(function(){
+	let spobs = $("span[jp]");
+	spobs.css("min-width","50px");
+	spobs.css("border","1px solid");
+	spobs.css("display","inline-block");
+	spobs.css("cursor","pointer");
+	spobs.click(function(){
 		if(left_ob!=null)
 			left_ob.removeClass("left_sel")
 		left_ob = $(this);
@@ -364,6 +371,23 @@ function probe_or_not(b)
 			return ;
 		}
 		add_item({path:left_ob.attr("jp"),vt:left_ob.attr("tp")});
+	}
+	else
+	{
+		//$("#tb_extracts").append(tmps) ;
+	}
+}
+
+function probe_or_not_all(b)
+{
+	if(b)
+	{
+		let spobs = $("span[jp]");
+		spobs.each(function(){
+			let ob = $(this) ;
+			add_item({path:ob.attr("jp"),vt:ob.attr("tp")});
+		});
+		
 	}
 	else
 	{

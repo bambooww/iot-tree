@@ -256,6 +256,44 @@ public abstract class ConnProvider implements IXmlDataValidator
 		return true ;
 	}
 	
+	
+	/**
+	 * XmlData is from export xml string with connpt
+	 * import it and create same node
+	 * @param xd
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean importConnPtByXml(XmlData xd,StringBuilder failedr) throws Exception
+	{
+		ConnPt cpt = createEmptyConnPt() ;
+		String cpttp = xd.getParamValueStr("_cpt_tp") ;
+		if(!cpt.getConnType().equals(cpttp))
+		{
+			failedr.append("connection type is not match") ;
+			return false;
+		}
+		if(!cpt.fromXmlData(xd, failedr))
+			return false;
+		String id= cpt.getId() ;
+		ConnPt oldcpt = this.getConnById(id) ;
+		if(oldcpt!=null)
+		{
+			failedr.append("connection id is alread existed") ;
+			return false;
+		}
+		oldcpt = this.getConnByName(cpt.getName()) ;
+		if(oldcpt!=null)
+		{
+			failedr.append("connection name ["+cpt.getName()+"] is alread existed") ;
+			return false;
+		}
+		
+		cpt.belongTo = this ;
+		this.connPts.add(cpt) ;
+		this.save();
+		return true ;
+	}
 	/**
 	 * call by web admin page edit
 	 * if

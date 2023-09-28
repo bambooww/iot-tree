@@ -105,7 +105,7 @@ public class ConnProMQTT extends ConnProvider
 		super.injectByJson(jo);
 
 		MqttEndPoint ep = getMqttEP() ;
-		ep.withParamsJSON(jo) ;
+		ep.withParamsJSON(jo,true) ; //no topics
 		
 //		this.mqttHost = optJSONString(jo, "mqtt_host", "");
 //		this.mqttPort = optJSONInt(jo, "mqtt_port", -1);
@@ -171,7 +171,6 @@ public class ConnProMQTT extends ConnProvider
 				//System.out.println("mqtt msg deliveryComplete=" + mm.getPayload().length);
 			} catch (MqttException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			// .getPayload().length
@@ -222,6 +221,7 @@ public class ConnProMQTT extends ConnProvider
 		{
 			ConnPtMQTT citc = (ConnPtMQTT)ci ;
 			//citc.checkConn() ;
+			//citc.
 		}
 	}
 	

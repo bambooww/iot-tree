@@ -89,6 +89,12 @@ public class ConnPtHTTP extends ConnPtMSG
 	{
 		return null;
 	}
+	
+	@Override
+	public boolean isPassiveRecv() 
+	{
+		return false;
+	}
 
 	@Override
 	public XmlData toXmlData()

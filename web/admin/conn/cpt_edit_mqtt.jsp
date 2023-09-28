@@ -104,7 +104,7 @@ dlg.resize_to(800,600);
    <div class="layui-form-item">
     <label class="layui-form-label">Subscribe Topics</label>
     <div class="layui-input-inline">
-      <textarea  id="topics"  name="topics"  class0="layui-textarea" style="height:50px;width:150px;border-color: #e6e6e6"><%=topics_str%></textarea>
+      <textarea  id="topics"  name="topics"  class0="layui-textarea" style="height:70px;width:350px;border-color: #e6e6e6"><%=topics_str%></textarea>
     </div>
    </div>
    <%--
@@ -175,33 +175,33 @@ layui.use('form', function(){
 	  form = layui.form;
 	  
 	  $("#name").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#title").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#desc").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  $("#topics").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on('switch(enable)', function(obj){
-		       setDirty();
+		       setDirty(true);
 		  });
 	  /*
 	  $("#init_js").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  
 	  $("#trans_js").on("input",function(e){
-		  setDirty();
+		  setDirty(true);
 		  });
 	  form.on('select(sor_tp)', function(obj){
-		       setDirty();
+		       setDirty(true);
 		  });
 	  form.on('select(encod)', function(obj){
-		       setDirty();
+		       setDirty(true);
 		  });
 	  
 	 
@@ -222,10 +222,12 @@ function isDirty()
 {
 	return bdirty;
 }
-function setDirty()
+function setDirty(b)
 {
-	bdirty= true;
-	dlg.btn_set_enable(1,true);
+	if(!(b===false))
+		b = true ;
+	bdirty= b;
+	dlg.btn_set_enable(1,b);
 }
 
 	

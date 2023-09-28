@@ -52,6 +52,12 @@ public class ConnPtWSClient extends ConnPtMSG
 		// javax.websocket.Session ss =
 		return null;
 	}
+	
+	@Override
+	public boolean isPassiveRecv() 
+	{
+		return true;
+	}
 
 	@Override
 	public XmlData toXmlData()
