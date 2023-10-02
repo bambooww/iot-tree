@@ -217,6 +217,7 @@ public class DocUtil
 		String subn = getFileSubName(f) ;
 		System.out.println(" split - "+subn) ;
 		LangItem cur_li = null ;
+		boolean cur_lang_ignore = false;
 		
 		try(FileInputStream fis = new FileInputStream(f);
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis,"utf-8")) ;
@@ -248,7 +249,19 @@ public class DocUtil
 						//add empty ln
 						ln = "" ;
 					}
+					else
+					{
+						if(bend)
+							cur_lang_ignore = false ;
+						else
+							cur_lang_ignore = true ;
+						
+						continue ;
+					}
 				}
+				
+				if(cur_lang_ignore)
+					continue ;
 				
 				byte[] bs = ln.getBytes("utf-8");
 				if(cur_li!=null)

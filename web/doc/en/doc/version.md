@@ -144,4 +144,9 @@ WebSocket connector added
 
 
 
+### version 0.99.3
+Tag adds anti-interference filtering support, and uses the average filtering method of anti pulse interference
+
+
+
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

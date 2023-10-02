@@ -119,33 +119,3 @@ IOT-Tree考虑到这种情况了，专门在TcpServer Provider上面增加了一
 
 本部分请参考 
 
-[人机交互(HMI)][qn_hmi]
-
-[人机交互UI(HMI UI)编辑操作说明][qn_hmi_w]
-
-
-
-
-
-
-### 2.5 使用存储机制，自动存储你的设备数据
-
-本部分内容预期在1.2版本实现，敬请期待。
-
-你可以通过Restful接口，定时读取项目所有的标签实时数据，然后根据自己的需要进行数据库的存储和数据使用。
-
-
-
-
-### 2.6 使用IOT-Tree Server RestFUL接口给你的应用提供api
-
-你可以通过项目主内容区，Accessibility标签查看项目中所有的http restful api和对应的数据格式。
-
-
-
-[qn_devdef]:./quick_know_device_definition.md
-[qn_hmi]:./quick_know_hmi.md
-[qn_hmi_w]:./quick_know_hmi_edit.md
-
-[quick_start]:../quick_start.md
-[qn_tcpserver_wizard]: ./quick_know_tcpserver_wizard.md

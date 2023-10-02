@@ -144,17 +144,3 @@ IOT-Tree Server看似复杂，其实整体思路还是很简洁的。只要牢�
 IOT-Tree基于本文所说的树形结构的基础之上，还有两个概念比较重要。那就是围绕通道(Channel)关联的接入和设备驱动。
  
 详细内容请点击查看
-[接入(Connector)-通道(Channel)-驱动(Driver)之间的关系][cn_conn_drv]
-
-
-
-### 4.2 设备定义
-
-在通道下面新增设备时，可以指定对应的设备定义。IOT-Tree Server为此专门实现了设备库功能。
-
-您可以查看相关文档 [设备定义][dev_def]
-
-
-
-[cn_conn_drv]: ./quick_know_ch_conn_drv.md
-[dev_def]: ./quick_know_devdef.md

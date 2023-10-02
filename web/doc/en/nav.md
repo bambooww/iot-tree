@@ -53,16 +53,15 @@
 
 
 
-#### <a doc_path="en/doc/advanced/adv_plugin.md" >5 Develop plugins </a>
+
+
+
+
+
+
+#### <a doc_path="en/doc/advanced/adv_plugin.md" >8 Extends Functions</a>
 ##### <a doc_path="en/doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;5.1 JsApi Plugin</a>
 ##### <a doc_path="en/doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;5.2 Authority plugin</a>
-
-
-
-
-
-
-#### <a doc_path="en/doc/advanced/index.md" >6 Advanced</a>
 ##### <a doc_path="en/doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Customize UI Components</a>
 ##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Custom JS script plug-in</a>
 ##### <a doc_path="en/doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Define project tasks</a>
@@ -73,10 +72,12 @@
 
 
 
-#### <a doc_path="en/doc/version.md" >7 Version </a>
+#### <a doc_path="en/doc/version.md" >9 Version </a>
 
 
 <script>
+
+$("a").css("cursor","pointer") ;
 $("a").each(function(){
     var docp = $(this).attr("doc_path") ;
     if(docp)

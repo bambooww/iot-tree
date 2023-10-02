@@ -22,6 +22,9 @@
 	if(Convert.isNullOrEmpty(v))
 		v = "" ;
 	boolean multi = "true".equalsIgnoreCase(request.getParameter("multi")) ;
+	int height = 200 ;
+	if(multi)
+		height=400 ;
 %>
 <html>
 <head>
@@ -29,7 +32,7 @@
 <jsp:include page="../head.jsp"></jsp:include>
 </head>
 <script type="text/javascript">
-dlg.resize_to(600,200);
+dlg.resize_to(650,<%=height%>);
 </script>
 <body>
 <form class="layui-form" action="">

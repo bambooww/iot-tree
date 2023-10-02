@@ -115,36 +115,3 @@ IOT tree considers this situation and adds a wizard to the tcpserver provider. Y
 So far, you can start the project. If your field devices, connector and configuration parameters are normal, you can see the real-time data after successfully connected under the tags tab.
 
 
-
-
-
-### 2.4 Use the online editor to create your project monitoring UI
-Please refer to this section
-
-[human computer interaction (HMI)][qn_hmi]
-
-[human computer interaction UI (HMI UI) editing instructions][qn_hmi_w]
-
-
-
-
-### 2.5 Use the storage mechanism to automatically store your device data
-
-This part is expected to be implemented in version 1.2. Please look forward to it.
-
-Through restful interface, you can regularly read all label real-time data of the project, and then store and use the database according to your own needs.
-
-
-
-
-### 2.6 Use IOT-Tree server restful interface to provide API for your application
-
-You can view all HTTP restful APIs and corresponding data formats in the project through the accessibility tab in the main content area of the project.
-
-
-[qn_devdef]:./quick_know_device_definition.md
-[qn_hmi]:./quick_know_hmi.md
-[qn_hmi_w]:./quick_know_hmi_edit.md
-
-[quick_start]:../quick_start.md
-[qn_tcpserver_wizard]: ./quick_know_tcpserver_wizard.md

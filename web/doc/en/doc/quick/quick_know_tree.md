@@ -139,26 +139,3 @@ If you understand this section. Then your subsequent understanding of other part
 IOT-Tree Server seems complex, but the overall idea is still very simple. As long as you firmly grasp this "tree", you will find how simple it is and can meet your complex business needs at the same time.
 
 
-
-
-## 4 supplement
-
-### 4.1 relationship between access channel drive
-
-IOT tree is based on the tree structure mentioned in this paper. There are two important concepts. That is, the access and device drivers associated around the channel.
-
-Please click to view the details
-
-[relationship between connector channel driver] [cn_conn_drv]
-
-
-
-### 4.2 Device definition
-
-When adding a device under a channel, you can specify the corresponding device definition. IOT tree server specifically implements the device library function for this purpose.
-
-You can view the relevant documents [device definition][dev_def]
-
-
-[cn_conn_drv]: ./quick_know_ch_conn_drv.md
-[dev_def]: ./quick_know_devdef.md

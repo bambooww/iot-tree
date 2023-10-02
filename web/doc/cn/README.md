@@ -8,7 +8,6 @@ IOT-Tree Server 是什么
 
 
 
-
 IOT-Tree Server是一个物联网接入、数据规整、人机交互展示的一个服务软件系统。
 
 她使用一套清晰明了的架构，内部包含通信接入、通道、设备驱动、数据标签等多个层次进行构建。使得物联网系统在各个方面统一以树状方式进行管理和组织。
@@ -23,23 +22,8 @@ IOT-Tree Server是使用Java开发的开源软件。其管理界面完全基于W
 
 
 
-[快速开始][quick_start]
-
-[快速入门][quick_link]
-
-[案例演示][demo_link]
-
-<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">下载<a>
-
-
-
-
-
-
-
 
 # 1 IOT-Tree Server能干什么
-
 
 
 
@@ -60,19 +44,16 @@ IOT-Tree Server是使用Java开发的开源软件。其管理界面完全基于W
 
 
 
-
 <img src="./doc/img/prj3.png">
+
+running...
+
+<img src="./doc/img/hmi.gif">
 
 
 ### 参考案例
 
 <div style="display:none">[灯光控制][lamp_demo] </div>
-
-[一个工业控制现场][case_auto_demo]
-
-
-
-
 
 
 
@@ -86,16 +67,6 @@ IOT-Tree Server支持接入来自不同数据源（不同标准）的数据：
 IOT-Tree Server提供了工业OPC统一标准接口的支持。通过对接入的设备和数据来源进行简单明了的管理，屏蔽了底层复杂的设备和数据源的差异性，以极大的易操作性实现工业、自动化系统、物联网系统和互联网的互联。
 
 IOT-Tree Server特别针对互网络资源的接入提供强大的支持，如HTTP接入的网页精准爬虫功能，在网页中精确提取数据，整合到统一数据管理中。
-
-
-
-
-
-## 1.3 系统能够嵌入设备成为一个控制器
-
-如果您有个嵌入式设备，性能足以运行Java虚拟机，那么IOT-Tree Server可以方便的使得您的设备成为一个控制器。并且这个控制器能够支持在线配置和UI的设计，同时提供在线实时运行服务。
-
-[嵌入式控制器例子][embed_ctrl_demo]  
 
 
 
@@ -119,13 +90,11 @@ IOT-Tree Server特别针对互网络资源的接入提供强大的支持，如HT
 
 
 
-
 ## 1.6 系统可以成为分布式应用的一个节点
 
 IOT-Tree Server可以以项目为单位，基于多种通信方式部署成一个共享节点。节点本地是一个可以独立运行的完整自动化监控现场。而网络中的其他IOT-Tree Server，在项目中可以引用此节点成为自身的一部分，成为此节点的上一级节点。
 
 此分布式功能可以极大的方便跨区域监控现场的联动。如每个监控现场只需要有宽带，对接云端消息队列服务器进行安全的通信，就可以方便的形成上下级关系，顶端IOT-Tree Server节点系统可以对通信链路进行监视，并可以利用此通信状态作为系统通信异常来多相关应对的功能。
-
 
 
 
@@ -161,17 +130,6 @@ IOT-Tree Server提供了独立的人机交互图元库功能，通过不同的�
 ## 其他
 
 如果您想深入了解，请参考相关资料。
-
-[快速开始][quick_start]
-
-[快速入门][quick_link]
-
-[案例演示][demo_link]
-
-如果你使用系统碰到问题或者有好的建议，可以给我们发邮件反馈：iottree@hotmail.com
-
-
-
 
 
 [quick_start]: ./doc/quick_start.md
