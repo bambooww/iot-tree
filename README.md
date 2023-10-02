@@ -43,7 +43,7 @@ Of course, according to our open source strategy, most of your projects can be u
 
 running...
 
-<img src="./web/doc/en/img/hmi.gif">
+<img src="./web/doc/en/doc/img/hmi.gif">
 
 
 ### Use Case
