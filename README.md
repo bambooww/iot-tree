@@ -41,7 +41,9 @@ Of course, according to our open source strategy, most of your projects can be u
 
 <img src="./web/doc/en/doc/img/prj3.png">
 
+running...
 
+<img src="./web/doc/en/img/hmi.gif">
 
 
 ### Use Case
