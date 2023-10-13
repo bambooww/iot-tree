@@ -190,7 +190,7 @@ dlg.resize_to(900,580);
 <body>
 <table class="prop_table" style="border:solid 1px" >
   <tr>
-    <td style="width:55%" >
+    <td style="width:50%" >
     <div id="prop_edit_path" class="prop_edit_path">Source Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <button class="layui-btn layui-btn-xs layui-btn-primary" title="input <%=sor_tp %> text" onclick="input_txt()"><i class="fa-solid fa-eye-dropper"></i><%=sor_tp %> </button>
 <%--
@@ -200,11 +200,11 @@ dlg.resize_to(900,580);
          <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search(true)" title="clear search"><i class="fa-solid fa-eraser"></i></button>
  --%>
     </div>
-       <div id="left_cont" class="prop_edit_cat" style="height:420px;width:500px;">
+       <div id="left_cont" class="prop_edit_cat" style="height:420px;width:450px;overflow: auto">
     	
 	</div>
     </td>
-    <td style="width:45%" >
+    <td style="width:50%" >
       <table style="border:0px;height:100%">
 
        <tr style="height:100%;border:solid 0px">
@@ -223,7 +223,7 @@ dlg.resize_to(900,580);
       <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="import" onclick="bind_import()"><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
       <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="add tag in channel" onclick="add_tag()"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
     </div>
-	    <div id=""  class="prop_edit_panel" style="height:420px;width:350px">
+	    <div id=""  class="prop_edit_panel" style="height:420px;width:400px">
 	       <table style="width:100%;overflow: auto;left_ob.attr("jp")" >
 	       	 <thead>
 	       	   <tr>
@@ -398,8 +398,8 @@ function probe_or_not_all(b)
 function add_item(ob)
 {
 	var p = ob.path ;
-	if(p.length>30)
-		p = "..."+p.substring(p.length-30);
+	if(p.length>25)
+		p = "..."+p.substring(p.length-25);
 	var tmps = "<tr><td title='"+ob.path+"'>"+p+"</td><td onclick='set_tt(this)'>"+(ob.tt||"")+"<i class='fa fa-pencil'></i></td><td onclick='set_vt(this)'>"+ob.vt+"<i class='fa fa-pencil'></i></td><td onclick='del_item(this)'><i class='fa-solid fa-xmark'></i></td></tr>";
 	$("#tb_extracts").append(tmps) ;
 }

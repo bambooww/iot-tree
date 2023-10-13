@@ -157,9 +157,11 @@ String loc_set="display:none" ;
 		loc_autosave_chk = "checked=checked" ;
 	if(b_val_filter)
 		b_val_filter_chked= "checked=checked" ;
-		
+
+if(!bmid)
+{
 %>
-    <div class="layui-form-item">
+    <div class="layui-form-item" id="fi_local">
     <div class="layui-form-label">Local</div>
 	  <div class="layui-input-inline" style="width: 100px;">
 	   <input type="checkbox" id="local" name="local" <%=loc_chked%> lay-skin="switch"  lay-filter="local" class="layui-input">
@@ -175,11 +177,25 @@ String loc_set="display:none" ;
 	  </div>
 	</div>
   </div>
-
+<%
+}
+%>
     <div class="layui-form-item" id="addr_setting">
-    <label class="layui-form-label"><%=(bmid?"Express":"Address") %>:</label>
+    <label class="layui-form-label"><%=(bmid?"Express JS":"Address") %>:</label>
     <div class="layui-input-inline" style="width:300px">
-      <input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input">
+<%
+if(bmid)
+{
+%><textarea style="width:100%;height:100px;"  id="addr"  name="addr"   class="layui-input"></textarea>
+<%
+}
+else
+{
+%>
+<input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input">
+<%
+}
+%>      
     </div>
     <div class="layui-input-inline" >
     	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()"><i class="fa-solid fa-check"></i></button>
@@ -194,7 +210,10 @@ String loc_set="display:none" ;
   </div>
    --%>
     
-
+<%
+if(!bmid)
+{
+%>
   <div class="layui-form-item" id="transfer_setting">
     <label class="layui-form-label">Transfer</label>
     <div class="layui-input-block" style="width:370px">
@@ -209,7 +228,9 @@ String loc_set="display:none" ;
       Enable anti-interference
     </div>
   </div>
-
+<%
+}
+%>
   <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-block">

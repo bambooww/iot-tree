@@ -88,10 +88,33 @@ if(Convert.isNullOrEmpty(bind_map_str))
 <title></title>
 <jsp:include page="../head.jsp"></jsp:include>
 </head>
+<style>
+.layui-form-item
+{
+	margin-bottom:5px;
+}
+
+.layui-input, .layui-select, .layui-textarea {
+    height: 28px;
+}
+.layui-form-label {
+
+    padding: 9px 15px;
+    line-height: 15px;
+}
+.layui-form-mid {
+    padding: 9px 0!important;
+    line-height: 10px;
+}
+.layui-form-switch {
+
+    margin-top: 2px;
+}
+</style>
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label" style="width:150px">Source Type</label>
+    <label class="layui-form-label" >Format</label>
     <div class="layui-input-inline" style="width:90px">
     	<select id="sor_tp" lay-filter="sor_tp" >
 <%
@@ -186,7 +209,7 @@ if(cpt!=null)
 	{
 %>
     <div id="run_page_cont" class="layui-form-item" >
-    <label class="layui-form-label" style="width:150px">Read to Buffer</label>
+    <label class="layui-form-label" style="width:130px">Read to Buffer</label>
     	<div class="layui-input-inline" style="width: 150px;" id="read_to_buf_inf">
 	     &nbsp;<%=last_rtf_str %>
     	</div>
@@ -203,14 +226,14 @@ if(cpt!=null)
   <div id="edit_trans_js">
   <div class="layui-form-item">
     <label class="layui-form-label">Initial JS:</label>
-    <div class="layui-input-inline" style="width:600px">
+    <div class="layui-input-inline" style="width:500px">
       <textarea  id="init_js"  name="init_js"  style="height:30px;width:100%;border-color: #e6e6e6"><%=init_js%></textarea>
     </div>
     <button onclick="edit_js_init()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Transfer JS:</label>
-    <div class="layui-input-inline" style="width:600px">
+    <div class="layui-input-inline" style="width:500px">
     ($topic,$msg)=>{
       <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:50px"><%=trans_js%></textarea>
       }
@@ -221,7 +244,7 @@ if(cpt!=null)
    
    <div id="edit_bind" style="display:none">
   <div class="layui-form-item">
-    <label class="layui-form-label" style="width:150px">Bind Style:</label>
+    <label class="layui-form-label" style="width:130px">Bind Style:</label>
     <div class="layui-input-inline" style="width:100px">
       	<button onclick="probe_setup()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">Data Probe</button>
     </div>

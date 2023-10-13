@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -35,10 +37,16 @@ public class DocUtil
 			this.outDir = outdir ;
 		}
 		
+		public boolean hasOutDir()
+		{
+			return Convert.isNotNullEmpty(outDir) ;
+		}
+		
 		public void copyFile(File f,String subpath) throws IOException
 		{
 			File outf = new File(this.outDir,subpath);
-			System.out.println("         "+this.lang+"  --> "+outf.getCanonicalPath()) ;
+			if(show_prompt)
+				System.out.println("         "+this.lang+"  --> "+outf.getCanonicalPath()) ;
 			FileUtils.copyFile(f, outf);
 		}
 		
@@ -51,7 +59,8 @@ public class DocUtil
 			File outf = new File(this.outDir,subpath);
 			if(!outf.getParentFile().exists())
 				outf.getParentFile().mkdirs();
-			System.out.println("          "+this.lang+" --> "+outf.getCanonicalPath()) ;
+			if(show_prompt)
+				System.out.println("          "+this.lang+" --> "+outf.getCanonicalPath()) ;
 			fos = new FileOutputStream(outf) ;
 			subpath2fos.put(subpath, fos) ;
 			return fos ;
@@ -73,7 +82,11 @@ public class DocUtil
 		}
 	}
 	
+	static boolean show_prompt = true;
+	
 	private static List<LangItem> langItems = null ;
+	
+	private static List<String> langs = null ;
 	
 	//private static LangItem langDef = null ;
 	
@@ -83,8 +96,9 @@ public class DocUtil
 	
 	private static String docRoot = null ;
 	
-	private static boolean init() throws Exception
+	private static boolean init(boolean no_prompt ) throws Exception
 	{
+		show_prompt = !no_prompt ;
 		docRoot = new File(".").getCanonicalPath() ;
 		
 		File conff = new File("./conf.txt") ;
@@ -115,12 +129,13 @@ public class DocUtil
 		
 		ArrayList<LangItem> lnitems = new ArrayList<>() ;
 		List<String> ss = Convert.splitStrWith(langall, ",|") ;
+		langs = ss ;
 		
 		for(String s:ss)
 		{
 			String dir = cfg.get("lang_"+s) ;
-			if(Convert.isNullOrEmpty(dir))
-				continue ;
+			//boolean b_split = Convert.isNotNullEmpty(dir) ;
+			
 			LangItem lni = new LangItem(s,dir) ;
 			lnitems.add(lni) ;
 //			if(lndef.equals(s))
@@ -192,9 +207,15 @@ public class DocUtil
 	private static void copyFile(File f) throws IOException
 	{
 		String subn = getFileSubName(f) ;
-		System.out.println(" copy - "+subn) ;
+		if(show_prompt)
+			System.out.println(" copy - "+subn) ;
 		for(LangItem li:langItems)
+		{
+			if(!li.hasOutDir())
+				continue ;
+			
 			li.copyFile(f,subn);
+		}
 	}
 	
 	private static boolean splitFile(File f) throws IOException
@@ -215,7 +236,8 @@ public class DocUtil
 //			throw new IOException("invalid split file path="+fp) ;
 //		}
 		String subn = getFileSubName(f) ;
-		System.out.println(" split - "+subn) ;
+		if(show_prompt)
+			System.out.println(" split - "+subn) ;
 		LangItem cur_li = null ;
 		boolean cur_lang_ignore = false;
 		
@@ -227,6 +249,8 @@ public class DocUtil
 			while((ln=br.readLine())!=null)
 			{
 				String tmpln = ln.trim() ;
+				LangItem find_ln_tag = null;
+				boolean find_ln_tag_end=false;
 				if(tmpln.startsWith("[")&&tmpln.endsWith("]"))
 				{
 					tmpln = tmpln.substring(1,tmpln.length()-1).trim() ;
@@ -237,35 +261,45 @@ public class DocUtil
 						tmpln = tmpln.substring(1).trim() ;
 					}
 					//chk ln
-					LangItem litem = getLangItem(tmpln) ;
-					if(litem!=null)
+					find_ln_tag = getLangItem(tmpln) ;
+					if(find_ln_tag!=null)
 					{
-						if(bend)
-							cur_li = null ;
-						else
-							cur_li = litem ;
-						
-						//break;
-						//add empty ln
-						ln = "" ;
-					}
-					else
-					{
-						if(bend)
-							cur_lang_ignore = false ;
-						else
-							cur_lang_ignore = true ;
-						
-						continue ;
+						find_ln_tag_end = bend ;
 					}
 				}
+				
+
+				if(find_ln_tag!=null)
+				{
+					if(find_ln_tag_end)
+						cur_li = null ;
+					else
+						cur_li = find_ln_tag ;
+					
+					//break;
+					//add empty ln
+					ln = "" ;
+				}
+//				else
+//				{
+//					if(bend)
+//						cur_lang_ignore = false ;
+//					else
+//						cur_lang_ignore = true ;
+//					
+//					//continue ;
+//				}
 				
 				if(cur_lang_ignore)
 					continue ;
 				
-				byte[] bs = ln.getBytes("utf-8");
+				
+				
+				
 				if(cur_li!=null)
 				{
+					String ln0 = transLangInLn(ln,cur_li.lang) ;
+					byte[] bs = ln0.getBytes("utf-8");
 					FileOutputStream fos = cur_li.getOrCreateFileOut(subn);
 					fos.write(bs);
 					fos.write(next_ln);
@@ -274,12 +308,17 @@ public class DocUtil
 				{
 					for(LangItem li:langItems)
 					{
+						if(!li.hasOutDir())
+							continue ;
+						
+						String ln0 = transLangInLn(ln,li.lang) ;
+						byte[] bs = ln0.getBytes("utf-8");
 						FileOutputStream fos = li.getOrCreateFileOut(subn);
 						fos.write(bs);
 						fos.write(next_ln);
 					}
 				}
-			}
+			} // end of while
 		}
 		
 		//close files
@@ -287,6 +326,137 @@ public class DocUtil
 			li.closeFiles();
 		
 		return true;
+	}
+	
+	
+	static class LnSeg
+	{
+		String lang = null ;
+		
+		String str = null ;
+		
+		public LnSeg(String str)
+		{
+			this.str = str ;
+		}
+		
+		
+		public LnSeg(String str,String lang)
+		{
+			this.str = str ;
+			this.lang = lang ;
+		}
+		
+		public String toString()
+		{
+			if(lang==null)
+				return "["+str+"]";
+			return "["+lang+" - "+str+"]";
+		}
+	}
+	
+	static class SegTag
+	{
+		String lang = null ;
+		
+		int idx = -1 ;
+		
+		public SegTag(int idx,String lan)
+		{
+			this.idx = idx ;
+			this.lang = lan ;
+		}
+	}
+	
+	private static List<LnSeg> splitToLnSeg(String in_ln)
+	{
+		String ln = in_ln ;
+		ArrayList<LnSeg> segs = new ArrayList<>() ;
+		do
+		{
+			SegTag st = findSegTag(ln) ;
+			if(st==null)
+			{}
+			if(st==null)
+			{
+				if(ln!=null&&ln.length()>0)
+				{
+					if(segs.size()<=0)
+						return null ;
+					
+					LnSeg lnseg = new LnSeg(ln) ;
+					segs.add(lnseg) ;
+					ln = null ;
+				}
+				return segs ;
+			}
+			
+			if(st.idx>0)
+			{
+				LnSeg lnseg = new LnSeg(ln.substring(0,st.idx)) ;
+				segs.add(lnseg) ;
+			}
+			ln = ln.substring(st.idx+st.lang.length()+2) ;
+			int k = ln.indexOf("</"+st.lang+">") ;
+			if(k<0)
+				throw new IllegalArgumentException("<"+st.lang+"> has no end </"+st.lang+"> @ "+in_ln) ;
+			if(k>0)
+			{
+				LnSeg lnseg = new LnSeg(ln.substring(0,k),st.lang) ;
+				segs.add(lnseg) ;
+			}
+			ln = ln.substring(k+st.lang.length()+3) ;
+			if(ln.length()<=0)
+				return segs ;
+		}while(ln!=null) ;
+		return segs ;
+	}
+	
+	//asdfasdf<cn>sdfasdf</cn><en>enen</en>
+	/**
+	 *   
+	 * @param ln
+	 * @return
+	 */
+	private static String transLangInLn(String ln,String lang)
+	{
+		List<LnSeg> lnsegs = splitToLnSeg(ln) ;
+		if(lnsegs==null||lnsegs.size()<=0)
+			return ln ;
+		if(lnsegs.size()==1 && lnsegs.get(0).lang==null)
+			return ln ;
+		
+		//System.out.print(ln+"\r\n"+lnsegs.size()+">>");
+		StringBuilder sb = new StringBuilder() ;
+		for(LnSeg lnseg:lnsegs)
+		{
+			//System.out.print(lnseg);
+			if(lnseg.lang==null||lang.equals(lnseg.lang))
+				sb.append(lnseg.str) ;
+		}
+		//System.out.println("\r\n  "+lang+">>"+sb.toString());
+		return sb.toString();
+	}
+	
+	private static SegTag findSegTag(String str)
+	{
+		SegTag ret = null ;
+		for(String lan:langs)
+		{
+			int i = str.indexOf("<"+lan+">") ;
+			if(i<0)
+				continue ;
+			if(ret==null)
+			{
+				ret = new SegTag(i, lan);
+			}
+			else
+			{
+				if(i<ret.idx)
+					ret = new SegTag(i, lan);
+			}
+		}
+		return ret ;
 	}
 	
 	private static void splitDir(File dir) throws IOException
@@ -304,13 +474,26 @@ public class DocUtil
 		}
 	}
 	
+	
+	
 	public static void main(String[] args) throws Exception
 	{
-		if(!init())
+//		String tmps = "#### <a href=\"README.md\">1 <cn>概述</cn><en>Summary</en></a>";
+//		langs = Arrays.asList("cn","en","jp") ;
+//		String ss = transLangInLn(tmps,"cn") ;
+//		ss = transLangInLn(tmps,"en") ;
+//		if(true)
+//			return ;
+		
+		boolean no_prompt = args.length>0 && "no_prompt".equals(args[0]) ;
+		
+		if(!init(no_prompt ))
 		{
 			System.out.println("init failed,please check conf.txt") ;
 			return ;
 		}
+		
+		System.out.println(" langs="+langs) ;
 		
 		for(File rf:rootFiles)
 		{

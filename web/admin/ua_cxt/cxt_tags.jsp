@@ -521,9 +521,9 @@ function get_selected_ids_in_table()
 
 function add_or_modify_tag(id,bmid)
 {
-	var tt = "Modify Tag";
+	var tt = "Modify "+(bmid?"Middle":"")+" Tag";
 	if(id==null||id=='')
-		tt = "Add Tag" ;
+		tt = "Add "+(bmid?"Middle":"")+" Tag" ;
 	var u = "./tag_edit.jsp?path="+path+"&id="+id
 	if(bmid)
 		u+="&mid=true";

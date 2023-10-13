@@ -3,7 +3,33 @@ IOTTree的接入（Connector）
 ==
 
 
-# 项目起点：IOTTree的数据接入和整合能力
+
+
+IOT-Tree的接入作为一个重要的组成部分而存在，如果你总体上已经比较了解，可以快速通过如下内容，查看不同接入的详细说明。
+
+<a href="./link_tcpclient.md" target="main">&nbsp;&nbsp;&nbsp;链路-Tcp Client</a>
+
+<a href="./link_tcpserver.md" target="main">&nbsp;&nbsp;&nbsp;链路-Tcp Server</a>
+
+<a href="./link_com.md" target="main">&nbsp;&nbsp;&nbsp;链路-串口(COM)</a>
+
+<a href="./bind_opcda.md" target="main">&nbsp;&nbsp;&nbsp;绑定 - OPC DA</a>
+
+<a href="./bind_opcua.md" target="main">&nbsp;&nbsp;&nbsp;绑定 - OPC UA</a>
+
+<a href="./msg_mqtt.md" target="main">&nbsp;&nbsp;&nbsp;消息 - MQTT</a>
+
+<a href="./msg_http_url.md" target="main">&nbsp;&nbsp;&nbsp;消息 - HTTP URL</a>
+
+<a href="./msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;消息 - HTTP URL HTML</a>
+
+<a href="./msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;消息 - WebSocket Client</a>
+
+<a href="./other_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;其他 - IOTTree Node</a>
+
+<a href="./other_virtual.md" target="main">&nbsp;&nbsp;&nbsp;其他 - Virtual</a>
+
+## 0 IOTTree的数据接入和整合能力
 
 在大多数现有的OPC软件，对于各种设备的接入以驱动为基础，不同驱动内部提供各自的配置支持。其中，设备通信所需要的相关参数和其他参数一样，也由各自的驱动决定。
 

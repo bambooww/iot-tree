@@ -110,16 +110,17 @@ public class MDServlet extends HttpServlet
 			String txt = getMdHtml(req,uri) ;
 			if(txt==null)
 				return ;
+			
 			PrintWriter w = resp.getWriter() ;
 			if(boutline)
 			{
 				w.write("<html><head><script src=\"/_js/jquery-1.12.0.min.js\"></script>"
 						+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_js/layui/css/layui.css\" />\r\n" + 
-					"<script src=\"/_js/layui/layui.all.js\"></script>"+
-					"<script src=\"/_js/layui/layui.all.js\"></script>"+
-					"<link  href=\"/_js/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" >"+
-					"</head><body>"
-					+ "<div style='position:absolute;left:10px;right:200px'>") ;
+					"<script src=\"/_js/layui/layui.all.js\"></script>\r\n"+
+					"<link  href=\"/_js/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" >\r\n"+
+					"<link  href=\"/doc/doc.css\" rel=\"stylesheet\" type=\"text/css\" >\r\n"+
+					"</head><body\r\n>"+
+					"<div style='position:absolute;left:10px;right:200px'>\r\n") ;
 			}
 			
 			w.write(txt);

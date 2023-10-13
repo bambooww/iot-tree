@@ -51,15 +51,15 @@ public class UAManager //implements IResCxt
 	
 
 	
-	private ArrayList<UAPrj> reps = null;
+	private ArrayList<UAPrj> prjs = null;
 	
 	private EventBus eventBus = new EventBus("ua");
 	
 	private UAManager()
 	{
-		reps = loadPrjs();
-		if(reps==null)
-			reps = new ArrayList<>() ;
+		prjs = loadPrjs();
+		if(prjs==null)
+			prjs = new ArrayList<>() ;
 		updatePrjList();
 		
 		constrcuctTree();
@@ -68,7 +68,7 @@ public class UAManager //implements IResCxt
 	
 	private void constrcuctTree()
 	{
-		for(UAPrj r:reps)
+		for(UAPrj r:prjs)
 			r.constructNodeTree();
 	}
 	
@@ -122,7 +122,7 @@ public class UAManager //implements IResCxt
 	
 	private void updatePrjList()
 	{
-		Collections.sort(reps, new Comparator<UAPrj>() {
+		Collections.sort(prjs, new Comparator<UAPrj>() {
 
 		    @Override
 		    public int compare(UAPrj o1, UAPrj o2) {
@@ -138,7 +138,7 @@ public class UAManager //implements IResCxt
 	
 	public List<UAPrj> listPrjs()
 	{
-		return reps;
+		return prjs;
 	}
 	
 	
@@ -206,7 +206,7 @@ public class UAManager //implements IResCxt
 //			}
 //		}
 		
-		for(UAPrj r:reps)
+		for(UAPrj r:prjs)
 		{
 			if(r.getId().contentEquals(id))
 				return r ;
@@ -216,7 +216,7 @@ public class UAManager //implements IResCxt
 	
 	public UAPrj getPrjByName(String name)
 	{
-		for(UAPrj r:reps)
+		for(UAPrj r:prjs)
 		{
 			if(name.contentEquals(r.getName()))
 				return r ;
@@ -267,6 +267,8 @@ public class UAManager //implements IResCxt
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(prj) ;
 		//XmlData xd = rep.toUAXmlData();
 		XmlData.writeToFile(xd, getPrjFile(prj.getId()));
+		
+		updatePrjList();
 	}
 	
 	public void delPrj(String id)
@@ -286,7 +288,7 @@ public class UAManager //implements IResCxt
 			Convert.deleteDir(df) ;
 		}
 		
-		this.reps.remove(prj) ;
+		this.prjs.remove(prj) ;
 	}
 	
 	
@@ -307,7 +309,7 @@ public class UAManager //implements IResCxt
 		r = new UAPrj(name,title,desc) ;
 		savePrj(r);
 		r.RT_init(true, false);
-		reps.add(r);
+		prjs.add(r);
 		
 		this.updatePrjList();
 		return r ;
@@ -504,7 +506,7 @@ public class UAManager //implements IResCxt
 		if(Convert.isNotNullEmpty(newid))
 		{
 			p.RT_init(true, true);
-			this.reps.add(p) ;
+			this.prjs.add(p) ;
 		}
 		this.updatePrjList();	
 		p.constructNodeTree();

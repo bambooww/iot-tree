@@ -43,12 +43,12 @@ for(ValTranser vt: ValTranser.listValTransers())
    </div>
    
   <div class="layui-card" id="card_none" style="display:none">
-  <div class="layui-card-header">None</div>
+  
   <div class="layui-card-body">
   	No transfer
   </div>
   </div>
-       <div class="layui-form-item">
+ <div class="layui-form-item" style="display:none" id="dt_tp">
     <label class="layui-form-label">Data type</label>
     <div class="layui-input-inline" style="width: 120px;">
       <select  id="_vt"  name="_vt"  class="layui-input" placeholder="">
@@ -65,11 +65,13 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
       </select>
     </div>
     
-    </div>
-    
+</div>
+
   <div class="layui-card" id="card_scaling" style="display:none">
+<!--   
   <div class="layui-card-header">Scaling</div>
   <div class="layui-card-body">
+ -->
     <div class="layui-form-item">
     <label class="layui-form-label">Scaling Type</label>
     <div class="layui-input-block">
@@ -124,12 +126,15 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 	  
     </div>
   </div>
-
+<!-- 
   </div>
+  \ -->
 </div>
   <div class="layui-card" id="card_js" style="display:none">
+<!-- 
   <div class="layui-card-header">JS</div>
   <div class="layui-card-body">
+ -->
     <div class="layui-form-item">
     <label class="layui-form-label">transfer</label>
     <div class="layui-input-block">
@@ -146,7 +151,9 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     }
     </div>
   </div>
+<!-- 
   </div>
+   -->
   </div>
  </form>
 </body>
@@ -182,6 +189,7 @@ function get_val(n,defv)
 
 function show_card()
 {
+	$("#dt_tp").css("display","none") ;
 	$("#card_none").css("display","none") ;
 	$("#card_scaling").css("display","none") ;
 	$("#card_js").css("display","none") ;
@@ -198,6 +206,7 @@ function show_card()
 	{
 	case "scaling":
 		//console.log(transdd) ;
+		$("#dt_tp").css("display","") ;
 		$("input[type=radio][name=tp][value="+transdd.tp+"]").attr("checked",true);
 		$("#raw_high").val(get_val("raw_high",1000)) ;
 		$("#raw_low").val(get_val("raw_low",0)) ;
@@ -212,6 +221,7 @@ function show_card()
 		
 		break;
 	case "js":
+		$("#dt_tp").css("display","") ;
 		$("#js_txt").val(get_val("js",""));
 		$("#inverse_js_txt").val(get_val("inverse_js",""));
 		
@@ -249,7 +259,6 @@ function do_submit(cb)
 		cb(false,"please select Data type") ;
 		return false;
 	}
-	
 	
 	switch(n)
 	{

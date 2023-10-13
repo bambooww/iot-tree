@@ -35,7 +35,7 @@ public class HtmlParser
 		try
 		{
 			webc = new WebClient(BrowserVersion.CHROME); // sim Chrome client
-
+			
 			webc.getOptions().setThrowExceptionOnScriptError(false);//
 			webc.getOptions().setThrowExceptionOnFailingStatusCode(false);//
 			webc.getOptions().setActiveXNative(false);// no ActiveX

@@ -88,13 +88,14 @@ RS485 bus is connected to the upper controller and corresponds to the serial por
 
 
 
-### 1.2.4 Use analog devices 
+### 1.2.4 Use simulator devices 
 
-If your test environment does not have these devices, you can use the device emulation capabilities built into IOT-Tree Server, and for this case, the Simulator Instance, an emulated instance of the above devices, is built into the system. 
+If your test environment does not have these devices, you can use the modbus device simulators in IOT-Tree Server.For this case, an simulator instance of the above devices, is prepared for you. 
 
-In the main management interface http://localhost:9090/admin/ Below, there is a Simulator Manage List Block. Click Import Demo and select "Simulator for case auto demo" to import the instance. 
+In the main management ui http://localhost:9090/admin/ . Below, there is a Simulator Manage list area. Click Import Demo and select "Simulator for case auto demo" to import the instance. 
 
 Click on this instance, and in the pop-up window, click the Start button. As long as it is working properly, you can access the above RTU devices via tcp. As follows: 
+
 
 
 <img src="../img/case_auto_simimp.png"/>

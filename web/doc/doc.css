@@ -1,0 +1,45 @@
+
+body
+{
+	font-size:16px;
+}
+
+p
+{
+	font-size:16px;
+}
+
+h1
+{
+	margin-left:3px;
+	font-size: 32px;
+}
+
+h2
+{
+	margin-left:10px;
+	font-size: 28px;
+}
+
+h3
+{
+	margin-left:20px;
+	font-size: 24px;
+}
+
+h4
+{
+	margin-left:30px;
+	font-size: 21px;
+}
+
+h5
+{
+	margin-left:40px;
+	font-size: 19px;
+}
+h6
+{
+	margin-left:50px;
+	font-size: 17px;
+}

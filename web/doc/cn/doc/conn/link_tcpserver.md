@@ -55,6 +55,6 @@ Client端每个接入都会对应一个ConnPt。我们在上面新建的S1接入
 
 
 
-[qn_tcpserver]:../quick/quick_know_tcpserver_connector.md
+[qn_tcpserver]:../main/quick_know_tcpserver_connector.md
 
 

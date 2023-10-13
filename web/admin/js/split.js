@@ -298,8 +298,10 @@ $(function() {
     };
 
     $(doc).mouseup(function(e) {
-        setHeight("setHeight");
-        setWidth("setWidth");
+    	
+        //setHeight("setHeight");
+        //setWidth("setWidth"); //bug
+    	
         // 鼠标弹起时设置不能拖动
         if (thisTransverseObject != null) {
             thisTransverseObject.transverseDragging = false;

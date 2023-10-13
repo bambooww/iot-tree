@@ -43,6 +43,8 @@ else
 	}
 }
 
+String req_heads = cpt.getRequestHeads();
+String post_txt = cpt.getPostTxt() ; 
 String name = cpt.getName() ;
 String title= cpt.getTitle() ;
 String chked = "" ;
@@ -69,8 +71,32 @@ if(Convert.isNullOrEmpty(encod))
 <title></title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(800,600);
+dlg.resize_to(800,750);
 </script>
+<style type="text/css">
+.layui-form-item
+{
+	margin-bottom:5px;
+}
+
+.layui-input, .layui-select, .layui-textarea {
+    height: 28px;
+}
+.layui-form-label {
+
+    padding: 9px 15px;
+    line-height: 15px;
+}
+.layui-form-mid {
+    padding: 9px 0!important;
+    line-height: 10px;
+}
+.layui-form-switch {
+
+    margin-top: 2px;
+}
+
+</style>
 </head>
 <body>
 <form class="layui-form" action="">
@@ -105,8 +131,22 @@ dlg.resize_to(800,600);
 	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
 	  </div>
   </div>
-   
-  <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:310px;border:0px"></iframe>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Request Heads:</label>
+    <div class="layui-input-inline" style="width:250px">
+      <textarea id="req_heads" name="req_heads"  style="height:50px;width:100%;border-color: #e6e6e6"><%=req_heads %></textarea>
+    </div>
+    <label class="layui-form-label">Post Txt:</label>
+    <div class="layui-input-inline" style="width:300px">
+      <textarea id="post_txt" name="post_txt"  style="height:50px;width:100%;border-color: #e6e6e6"><%=post_txt %></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Response Probe Bind</label>
+    <div class="layui-input-inline" style="width:650px;">
+  <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:310px;border:1px solid;border-color:#e6e6e6"></iframe>
+  </div>
+  </div>
    <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-inline" style="width:600px">
@@ -138,7 +178,12 @@ layui.use('form', function(){
 	  $("#int_ms").on("input",function(e){
 		  setDirty(true);
 		  });
-	  
+	  $("#req_heads").on("input",function(e){
+		  setDirty(true);
+	  });
+	  $("#post_txt").on("input",function(e){
+		  setDirty(true);
+	  });
 	  
 	  form.on('switch(enable)', function(obj){
 		  setDirty(true);
@@ -291,6 +336,9 @@ function do_submit(cb)
 		return ;
 	}
 	
+	let req_heads = $("#req_heads").val();
+	let post_txt = $("#post_txt").val();
+	
 	var msgob = null ;
 	$("#if_msg")[0].contentWindow.do_submit((bok,ret)=>{
 		if(!bok)
@@ -301,7 +349,7 @@ function do_submit(cb)
 		msgob = ret ;
 	})
 
-	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms},msgob);
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,url:url,method:method,int_ms:int_ms,req_heads:req_heads,post_txt:post_txt},msgob);
 	cb(true,oball) ;
 }
 

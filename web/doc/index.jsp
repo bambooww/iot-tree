@@ -73,13 +73,14 @@ visibility: visible;
 			</div>
 			<div style="position: absolute;right:30px;">Version:<%=Config.getVersion() %></div>
 	</div>
-	<table style="width:100%;height:90%;">
+	<div style="position: absolute;width:100%;bottom:0px;top:50px;overflow:hidden;">
+	<table style="height:100%;width:100%">
 		<tr>
 			<td style="width:20%"><iframe id="nav" src="en/nav.md?outline=false" style="width:100%;height:100%;overflow: auto"></iframe></td>
 			<td style="width:80%"><iframe id="main" src="en/README.md" style="width:100%;height:100%;"></iframe></td>
 		</tr>
 	</table>
-
+</div>
 </body>
 <script type="text/javascript">
 function set_lang(lang)

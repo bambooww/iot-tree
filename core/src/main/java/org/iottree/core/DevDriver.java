@@ -199,6 +199,14 @@ public abstract class DevDriver implements IPropChecker
 	public abstract Class<? extends ConnPt> supportConnPtClass();
 
 	/**
+	 * 实现类中可能会对特定的ConnPt不支持，此时需要重载此函数
+	 * @return
+	 */
+	public List<Class<? extends ConnPt>> notsupportConnPtClass()
+	{
+		return null ;
+	}
+	/**
 	 * connpt is connector to dev e.g Device based on IP addr will use this
 	 * 
 	 * @return

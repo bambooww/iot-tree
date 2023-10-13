@@ -475,7 +475,12 @@ public abstract class ConnProvider implements IXmlDataValidator
 			if(c==null)
 				continue ;
 			if(c.isAssignableFrom(supc))
+			{
+				List<Class<? extends ConnPt>> cs = drv.notsupportConnPtClass() ;
+				if(cs!=null&&cs.contains(supc))
+					continue ;
 				rets.add(drv);
+			}
 		}
 		return rets ;
 	}
