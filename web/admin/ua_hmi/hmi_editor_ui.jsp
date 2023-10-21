@@ -561,7 +561,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 	{
 		dlg.open("../util/di_editplug_"+tp+".jsp?p="+path,
 				{title:"Edit Event",w:'500px',h:'400px',shade: false},
-				['Ok','Cancel'],
+				['Ok','Cancel','Help'],
 				[
 					function(dlgw)
 					{
@@ -579,6 +579,10 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 					function(dlgw)
 					{
 						dlg.close();
+					},
+					function(dlgw)
+					{
+						alert("help") ;
 					}
 				]);
 	}

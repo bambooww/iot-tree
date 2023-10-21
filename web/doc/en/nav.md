@@ -22,19 +22,18 @@
 -->
 
 
-
 #### <a href="doc/main/index.md" >4 Overall and Project Composition</a>
 ##### <a href="doc/main/prjs.md" target="main">&nbsp;&nbsp;&nbsp;4.1 Projects</a>
 ##### <a href="doc/main/conn.md" target="main">&nbsp;&nbsp;&nbsp;4.2 Connectors</a>
 ##### <a href="doc/main/ch_dev_tagg.md" target="main">&nbsp;&nbsp;&nbsp;4.3 Container:Channel-Device-Tag Group</a>
 ##### <a href="doc/main/tags.md" target="main">&nbsp;&nbsp;&nbsp;4.4 Tags</a>
 ##### <a href="doc/main/ch_conn_drv.md" target="main">&nbsp;&nbsp;&nbsp;4.5 Connector-Channel-Device Driver</a>
-##### <a href="doc/main/properties.md" target="main">&nbsp;&nbsp;&nbsp;4.6 属性Properties</a>
+##### <a href="doc/main/properties.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Properties</a>
 ##### <a href="doc/main/hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 Node:(HMI)</a>
-
-
-
-
+##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Tasks</a>
+##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
+##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 Data Dictionary</a>
+##### <a href="doc/main/outer_ref.md" target="main">&nbsp;&nbsp;&nbsp;4.11 OUTER REF RESTful</a>
 
 
 #### <a href="doc/conn/index.md" >5 Connectors</a>
@@ -50,40 +49,39 @@
 ##### <a href="doc/conn/other_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.10 Others - IOTTree Node</a>
 ##### <a href="doc/conn/other_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.11 Others - Virtual</a>
 
-
-
 #### <a href="doc/device/index.md" >6 Device,Device Library and Drivers</a>
-##### <a href="doc/hmi/ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.1 </a>
-
-##### <a href="doc/main/devdef.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Device definition</a>
-##### <a href="doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.2 </a>
-
-##### <a href="doc/hmi/ui_hmi.md" target="main">&nbsp;&nbsp;&nbsp;6.3 </a>
-##### <a href="doc/hmi/ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Modbus RTU</a>
-##### <a href="doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;6.2 PPI (Simens S7-200)</a>
-##### <a href="doc/hmi/ui_hmi.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Simens S7-300</a>
-
-
+##### <a href="doc/device/dev_lib.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Device Library</a>
+##### <a href="doc/device/dev_def.md" target="main">&nbsp;&nbsp;&nbsp;6.2 Device definition</a>
+##### <a href="doc/device/drv_modbus.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Modbus RTU</a>
+##### <a href="doc/device/drv_ppi.md" target="main">&nbsp;&nbsp;&nbsp;6.4 PPI (Simens S7-200)</a>
+##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 Simens Ethernet</a>
 
 #### <a href="doc/hmi/index.md" >7 HMI</a>
-##### <a href="doc/hmi/ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.1 UI Components</a>
-##### <a href="doc/advanced/adv_ui_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.1 Customize UI Components</a>
-##### <a href="doc/hmi/ui_hmi.md" target="main">&nbsp;&nbsp;&nbsp;7.2 UI Page</a>
-
-
-#### <a href="doc/advanced/adv_plugin.md" >8 Extends Functions</a>
-##### <a href="doc/advanced/adv_js.md" target="main">&nbsp;&nbsp;&nbsp;8.1 JS Imbed</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;8.2 JS API</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;8.3 Authority plugin</a>
-##### <a href="doc/advanced/adv_js_plugin.md" target="main">&nbsp;&nbsp;&nbsp;8.4 Custom JS script plug-in</a>
-##### <a href="doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;8.5 Define project tasks</a>
-##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;8.6 Implementing control scripts using project tasks</a>
-##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;8.7 Outer OPC UA Support</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;8.8 Device simulators</a>
+##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;7.1 HMI Editing
+##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;7.2 Common properties
+##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;7.3 Properties binding and event handling
+##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.4 HMI Components</a>
 
 
 
-#### <a href="doc/version.md" >9 Version</a>
+#### <a href="doc/js/index.md"> 8 JS Script Usage</a>
+##### <a href="doc/js/index.md"> 8.1 JS Context</a>
+
+
+#### <a href="doc/advanced/index.md" >9 Extends Functions</a>
+##### <a href="doc/advanced/adv_plugin.md" >9.1 Plugins Development</a>
+##### <a href="doc/advanced/adv_js.md" target="main">&nbsp;&nbsp;&nbsp;9.2 JS Imbed</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.3 JS API</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Authority plugin</a>
+##### <a href="doc/advanced/adv_js_plugin.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Custom JS script plug-in</a>
+##### <a href="doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Define project tasks</a>
+##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Implementing control scripts using project tasks</a>
+##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.8 Outer OPC UA Support</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.9 Device simulators</a>
+
+
+
+#### <a href="doc/version.md" >10 Version</a>
 
 
 <script>

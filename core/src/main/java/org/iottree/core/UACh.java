@@ -7,6 +7,7 @@ import java.util.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
 import org.apache.commons.io.FileUtils;
+import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
@@ -15,6 +16,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
+import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.res.ResDir;
 import org.json.JSONObject;
 
@@ -145,6 +147,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return true;
 	}
 	
+	@HostAccess.Export
 	public String getDriverName()
 	{
 		return drvName ;
@@ -257,11 +260,19 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		ConnPt cpt = this.getConnPt()  ;
 		return cpt!=null&&cpt instanceof ConnPtBinder ;
 	}
+	
+	@HostAccess.Export
+	public boolean hasConn()  throws Exception
+	{
+		ConnPt cpt = this.getConnPt()  ;
+		return cpt!=null;
+	}
 	/**
 	 * check driver is fit for this ch or not
 	 * @return
 	 * @throws Exception
 	 */
+	@HostAccess.Export
 	public boolean chkDriverFit(String drvname) throws Exception
 	{
 		if(isConnVirtual())
@@ -287,6 +298,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return chkDriverFit(drvName) ;
 	}
 	
+	@HostAccess.Export
 	public boolean hasDriver()
 	{
 		return Convert.isNotNullEmpty(drvName);
@@ -341,6 +353,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return newdev;
 	}
 	
+	@HostAccess.Export
 	public List<UADev> getDevs()
 	{
 		return devs ;
@@ -356,6 +369,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return null ;
 	}
 	
+	@HostAccess.Export
 	public UADev getDevByName(String n)
 	{
 		for(UADev d:devs)
@@ -966,4 +980,26 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		}
 		return bdirty ;
 	}
+	
+	
+//	public Object JS_get(String  key)
+//	{
+//		switch(key)
+//		{
+//		case "_driver":
+//			if(drvName==null)
+//				return "" ;
+//			return this.drvName ;
+//		
+//		}
+//		return super.JS_get(key);
+//	}
+//	
+//	public List<String> JS_names()
+//	{
+//		List<String> rets = super.JS_names() ;
+//		rets.add("_driver") ;
+//		return rets ;
+//	}
+	
 }

@@ -72,9 +72,9 @@ public class SlaveTag extends SimTag
 		}
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names() ;
+		List<String> rets = super.JS_names() ;
 		rets.add("_regidx");
 		return rets ;
 	}

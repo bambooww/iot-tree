@@ -692,6 +692,10 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	
 	public Object JS_get(String  key)
 	{
+		Object ob = super.JS_get(key) ;
+		if(ob!=null)
+			return ob ;
+		
 		switch(key)
 		{
 		case "_id":
@@ -706,9 +710,9 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return this.getSubNodeByName(key) ;
 	}
 	
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		ArrayList<Object> ss = new ArrayList<>() ;
+		List<String> ss = super.JS_names() ;
 		ss.add("_id") ;
 		ss.add("_name") ;
 		ss.add("_title") ;

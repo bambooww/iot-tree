@@ -190,20 +190,6 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	}
 	
 	
-	
-	UADev getBelongToDev()
-	{
-		if(this instanceof UADev)
-			return (UADev)this ;
-		UANode curn = this ;
-		while((curn=curn.getParentNode())!=null)
-		{
-			if(this instanceof UADev)
-				return (UADev)curn ;
-		}
-		return null ;
-	}
-
 	public List<UATagG> getSubTagGs()
 	{
 		return taggs ;

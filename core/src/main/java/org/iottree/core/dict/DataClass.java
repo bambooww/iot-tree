@@ -625,9 +625,9 @@ public class DataClass extends JSObMap
 	}
 	
 	@Override
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		ArrayList<Object> ss = new ArrayList<>() ;
+		List<String> ss = super.JS_names();
 		ss.add("_id") ;
 		ss.add("_name") ;
 		ss.add("_names") ;

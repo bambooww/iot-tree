@@ -56,7 +56,7 @@ body {
 
 .prop_table
 {
-width:99%;
+width:99%; 
 border: 0px;
 margin: 0 auto;
 }
@@ -238,7 +238,7 @@ String nid = dr.getResNodeUID() ;
     </td>
     <td style="width:80%;vertical-align: top;"  >
     <div id="editpanel"  class="prop_edit_panel oc-toolbar" >
-       <div id="res_list" class="btns" style="width:100%;height:100%;overflow: auto;">
+       <div id="res_list" class="btns" style="width:100%;height:100%;overflow: auto;" onclick="on_res_clk()">
 			  
     </div>
 	 </div>
@@ -295,7 +295,6 @@ function show_res_items(binit)
 		var rcs = null ;
 		eval("rcs="+ret) ;
 		var tmps="" ;
-		//console.log(rcs);
 		for(var item of rcs)
 		{
 			var resid = item.id ;
@@ -407,6 +406,17 @@ function refresh_list()
 
 function on_res_clk(n)
 {
+	event.stopPropagation() ;
+	//console.log(n);
+	if(!n)
+	{
+		cur_resitem = null ;
+		$("#add_name").val("") ;
+		$("#btn_add_file").html("Add") ;
+		$("#btn_del_file").css("display","none") ;
+		refresh_list();
+		return ;
+	}
 	var ri = get_cur_resitem_byname(n) ;
 	if(ri==null)
 		return ;

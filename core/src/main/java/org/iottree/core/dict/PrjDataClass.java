@@ -257,9 +257,9 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 	}
 	
 	@Override
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		ArrayList<Object> ss = new ArrayList<>() ;
+		List<String> ss = super.JS_names();
 		
 		Collection<DataClass> dcs = getDataClassAll() ;
 		//List<UANode> subns = this.getSubNodes() ;

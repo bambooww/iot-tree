@@ -299,9 +299,9 @@ height:50px;background-color: grey;
  			
  			<button class="layui-btn layui-btn-warm"  onclick="up_to_prj()">Update To Project</button>
  			&nbsp;
- 			<i class="fa-brands fa-squarespace fa-lg top_btn" onclick="open_res()" ></i>
-			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" ></i>
-		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()"></i>
+ 			<i class="fa-brands fa-squarespace fa-lg top_btn" onclick="open_res()" title="resources"></i>
+			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" title="save this component"></i>
+		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()" title="show fit"></i>
 </div>
 </div>
 
@@ -516,9 +516,9 @@ function on_editor_prompt(m)
 	dlg.msg(m);
 }
 
-var editor_plugcb_pm=null ;
+var editor_plugcb_pm={layer:loadLayer,editor:editname,editor_id:itemid,catid:catid,compid:itemid} ;
 
-function editor_plugcb(jq_ele,tp,di,pn_defname,val)
+function editor_plugcb(jq_ele,tp,di,pn_defname,name,val)
 {
 	editor_plugcb_pm = {layer:loadLayer,editor:editname,editor_id:itemid,catid:catid,compid:itemid,di:di,name:name,val:val} ;
 
@@ -526,7 +526,7 @@ function editor_plugcb(jq_ele,tp,di,pn_defname,val)
 	{
 		dlg.open("../util/di_editplug_"+tp+".jsp?sjs=false&compid="+itemid,
 				{title:"Edit Event",w:'500px',h:'400px'},
-				['Ok','Cancel'],
+				['Ok','Cancel','Help'],
 				[
 					function(dlgw)
 					{
@@ -544,6 +544,10 @@ function editor_plugcb(jq_ele,tp,di,pn_defname,val)
 					function(dlgw)
 					{
 						dlg.close();
+					},
+					function(dlgw)
+					{
+						doc_help("")
 					}
 				]);
 	}

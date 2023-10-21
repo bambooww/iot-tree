@@ -14,7 +14,7 @@ import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UACh;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
-import org.iottree.core.UAPrj.JSOb;
+//import org.iottree.core.UAPrj.JSOb;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.util.CompressUUID;

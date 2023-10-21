@@ -10,6 +10,7 @@ import org.iottree.core.util.Convert;
 
 import com.ibm.icu.util.Calendar;
 
+@HostAccess.Implementable
 public class GSys
 {
 	boolean bPrintOn = true;
@@ -98,6 +99,33 @@ public class GSys
 		return Calendar.getInstance().get(Calendar.MINUTE) ;
 	}
 
+	
+
+	@HostAccess.Export
+	public void sleep(long ms) throws Exception
+	{
+		Thread.sleep(ms);
+	}
+	
+	public long tick_ms()
+	{
+		return System.currentTimeMillis();
+	}
+	
+	public long tick_second()
+	{
+		return System.currentTimeMillis()/1000;
+	}
+	
+	public void alert(String title,boolean bvoice)
+	{
+		//this.prj.t
+		System.out.println("out alert="+title+" voice="+bvoice) ;
+	}
+	
+	
+	// depertted
+	
 	/**
 	 * 取小数位字符串
 	 * 
@@ -272,27 +300,5 @@ public class GSys
 	public float simul_float(float base_val, float down_chg, float up_chg)
 	{
 		return (float) simul_double(base_val, down_chg, up_chg);
-	}
-
-	@HostAccess.Export
-	public void sleep(long ms) throws Exception
-	{
-		Thread.sleep(ms);
-	}
-	
-	public long tick_ms()
-	{
-		return System.currentTimeMillis();
-	}
-	
-	public long tick_second()
-	{
-		return System.currentTimeMillis()/1000;
-	}
-	
-	public void alert(String title,boolean bvoice)
-	{
-		//this.prj.t
-		System.out.println("out alert="+title+" voice="+bvoice) ;
 	}
 }

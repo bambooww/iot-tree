@@ -363,9 +363,9 @@ public class SimInstance extends SimNode
 		return this.getChannelByName(key) ;
 	}
 	
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> ss = super.JS_names() ;
+		List<String> ss = super.JS_names() ;
 		for(SimChannel ch:this.getChannels())
 		{
 			ss.add(ch.getName()) ;

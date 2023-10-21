@@ -49,7 +49,7 @@ public class SimContext
 			scriptEng.put("$this", ((IJSOb)si).getJSOb());
 		}
 		
-		List<Object> jsnames = si.JS_names() ;
+		List<String> jsnames = si.JS_names() ;
 		for(Object o:jsnames)
 		{
 			String n = o.toString() ;

@@ -1164,9 +1164,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt","_value") ;
 	
 	
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names() ;
+		List<String> rets = super.JS_names() ;
 		rets.addAll(js_names);
 		return rets ;
 	}

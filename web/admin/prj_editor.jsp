@@ -2032,13 +2032,17 @@ function act_hmi_edit_ui(n,op)
 function act_open_cxt_script(n,op)
 {
 	
-	dlg.open("ua_cxt/cxt_script.jsp?path="+n.path,
-			{title:"Context Script Tester",w:'450px',h:'500px'},
-			['Close'],
+	dlg.open_win("ua_cxt/cxt_script.jsp?path="+n.path,
+			{title:"Context Script Tester",w:'650',h:'600'},
+			['Close',"Help"],
 			[
 				function(dlgw)
 				{
 					dlg.close();
+				},
+				function(dlgw)
+				{
+					alert("help");
 				}
 			]);
 	

@@ -33,6 +33,7 @@ import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
+import org.iottree.core.util.js.GUtil;
 
 public class UAContext
 {
@@ -71,6 +72,8 @@ public class UAContext
 	
 	private GSys sys = new GSys() ;
 	
+	private GUtil util = new GUtil() ;
+	
 	//public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
 
 	public UAContext(UANodeOCTagsCxt nodecxt)// throws ScriptException
@@ -88,7 +91,18 @@ public class UAContext
 		  // and function must has HostAccess.Export annotation
 		
 		scriptEng.put("$this", nodecxt);
-		scriptEng.put("$prj", prj);
+		scriptEng.put("$prj", prj);//prj.getJSOb());
+		
+		UACh ch = nodecxt.getBelongToCh() ;
+		UADev dev = nodecxt.getBelongToDev() ;
+		if(ch!=null)
+			scriptEng.put("$ch", ch);
+		if(dev!=null)
+			scriptEng.put("$dev", dev);
+		
+		UANode pnode = nodecxt.getParentNode() ;
+		if(pnode!=null)
+			scriptEng.put("$parent", pnode);
 		
 		PrjDataClass pdc = DictManager.getInstance().getPrjDataClassByPrjId(prj.getId()) ;
 		if(pdc!=null)
@@ -99,8 +113,8 @@ public class UAContext
 			scriptEng.put("$this", ((IJSOb)nodecxt).getJSOb());
 		}
 		
-		List<Object> jsnames = nodecxt.JS_names() ;
-		for(Object o:jsnames)
+		List<String> jsnames = nodecxt.JS_names() ;
+		for(String o:jsnames)
 		{
 			String n = o.toString() ;
 			if(n==null||n.equals(""))
@@ -121,13 +135,21 @@ public class UAContext
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName(JS_NAME);
 		engine.put("polyglot.js.allowHostAccess", true);
-		engine.put("polyglot.js.allowAllAccess",true);
+		engine.put("polyglot.js.allowAllAccess",false);
 		engine.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
+		
+		//添加配置，支持本地java对接（找了很多资料才找到）
+		Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
+
+		//可以考虑这个，开启一切可开启的..
+		bindings.put("polyglot.js.allowHostAccess", true);
+		bindings.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
 
 		engine.put("$debug",debug);
 		engine.put("$system",sys);
 		engine.put("$sys",sys);
 		engine.put("$dict",sys);
+		engine.put("$util",util);
 		
 		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)

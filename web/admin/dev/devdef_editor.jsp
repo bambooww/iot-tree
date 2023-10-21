@@ -418,8 +418,9 @@ background-color: #ffffff;
 			  <ul class="layui-tab-title">
 			    <li class="layui-this">[Tags]</li>
 			    <li >Properties</li>
+<%--
 			    <li>Device</li>
-			    
+ --%>
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			    <div class="layui-tab-item layui-show"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
@@ -428,9 +429,11 @@ background-color: #ffffff;
 			    <div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_prop" src="../ua/ui_prop.jsp?dlg=false&&tabid=drv&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
+<%--
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_device" src="../dev_device.jsp?tabid=dev&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
+ --%>
 			  </div>
 			</div>
 			 

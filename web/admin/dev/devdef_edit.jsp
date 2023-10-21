@@ -86,7 +86,7 @@ dlg.resize_to(400,320);
     </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:lang>driver</wbt:lang></label>
+    <label class="layui-form-label">Driver</label>
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />

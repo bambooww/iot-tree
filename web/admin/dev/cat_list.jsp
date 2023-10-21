@@ -121,9 +121,9 @@ Devices in [<%=lib.getTitle() %>/<%=cat.getTitle() %>]<br>
 	if(bedit)
 	{
 %>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit basic" onclick="edit_devdef('<%=ddid%>')"><i class="fa fa-pencil"></i></button>
+<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit basic" onclick="edit_devdef('<%=ddid%>')" title="Edit Basic"><i class="fa fa-pencil"></i></button>
 
-<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit detail" onclick="edit_devdef_detail('<%=ddid%>')"><i class="fa-regular fa-pen-to-square"></i></button>
+<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit detail" onclick="edit_devdef_detail('<%=ddid%>')"  title="Edit Detail"><i class="fa-regular fa-pen-to-square"></i></button>
 
   <button type="button" class="layui-btn layui-btn-xs layui-btn-danger"  lay-event="del" title="delete" onclick="del_devdef('<%=ddid%>')"><i class="fa-regular fa-rectangle-xmark"></i></button><%
 	}

@@ -111,9 +111,9 @@ public abstract class SimDev extends SimNode
 		return super.JS_type(key);
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names();
+		List<String> rets = super.JS_names();
 
 		List<SimTag> tags = getSimTags() ;
 		if(tags!=null)

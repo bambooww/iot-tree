@@ -33,7 +33,8 @@ if(Convert.isNotNullEmpty(path))
 		out.print("not node oc tags") ;
 		return ;
 	}
-	path_title = n.getNodePathTitle()+" "+n.getNodePath() ;
+	//path_title = n.getNodePathTitle()+" "+n.getNodePath() ;
+	path_title = n.getNodePath() ;
 }
 
 String taskid = request.getParameter("taskid") ;
@@ -69,13 +70,15 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		table{border-collapse:collapse;}
 		body,td{font-size:12px;cursor:default;}
 </style>
-<jsp:include page="../head.jsp"></jsp:include>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <script>
-	dlg.resize_to(600,500) ;
+	dlg.resize_to(700,600) ;
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
-<b><%=path_title %></b>
+<b>Context @ <%=path_title %></b>
 <%
 if(Convert.isNotNullEmpty(path))
 {

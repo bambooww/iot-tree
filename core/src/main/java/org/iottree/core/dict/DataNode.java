@@ -387,9 +387,9 @@ public class DataNode extends JSObMap implements Comparable<DataNode>
 		return this.getChildNodeByName(key) ;
 	}
 	
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		ArrayList<Object> ss = new ArrayList<>() ;
+		List<String> ss = super.JS_names();
 		ss.add("_name") ;
 		ss.add("_title") ;
 		for(String tmps:this.getAttrNames())

@@ -508,9 +508,9 @@ public class SlaveChannel extends SimChannel  implements Runnable
 		return null ;
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names();
+		List<String> rets = super.JS_names();
 		rets.add("_tp") ;
 		return rets;
 	}

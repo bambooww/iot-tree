@@ -23,6 +23,7 @@ import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.JSObMap;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -49,7 +50,7 @@ import kotlin.NotImplementedError;
  * @author zzj
  */
 @data_class
-public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IJSOb,IResCxt
+public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt //IJSOb
 {
 	public static final String NODE_TP = "prj" ;
 	
@@ -209,6 +210,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		this.save();
 	}
 
+	
 	public List<UACh> getChs()
 	{
 		return chs;
@@ -1237,54 +1239,32 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return r;
 	}
 
-	public class JSOb
-	{
-		@HostAccess.Export
-		public boolean set_tag_val(String ch_name, String dev_name, String tagn, Object v)
-		{
-			UACh ch = UAPrj.this.getChByName(ch_name);
-			if (ch == null)
-				return false;
-			UADev dev = ch.getDevByName(dev_name);
-			if (dev == null)
-				return false;
-			UATag t = dev.getTagByName(tagn);
-			if (t == null)
-				return false;
-			t.RT_writeVal(v);
-			UAPrj.this.CXT_calMidTagsValLocal();
-			return true;
-		}
-
-		@HostAccess.Export
-		public String get_rt_json(Long lastdt) throws IOException
-		{
-			StringWriter sw = new StringWriter();
-			UAPrj.this.CXT_renderJson(sw, lastdt);
-			return sw.toString();
-		}
-		
-		@HostAccess.Export
-		public String get_rt_json() throws IOException
-		{
-			return get_rt_json(-1L) ;
-		}
-		
-		public String filter_rt_by_extname(String mid_ext,String tag_ext) throws IOException
-		{
-			StringWriter sw = new StringWriter();
-			UANodeFilter.JSON_renderMidNodesWithTagsByExtName(sw, UAPrj.this, mid_ext,tag_ext);
-			return sw.toString();
-			
-		}
-	}
-
-	private transient JSOb jsOb = new JSOb();
-
-	public JSOb getJSOb()
-	{
-		return jsOb;
-	}
+//	public class JSOb extends JSObMap //this will limit by JSObMap
+//	{
+//		
+//
+//		public Object JS_get(String key)
+//		{
+//			return UAPrj.this.JS_get(key) ;
+//		}
+//
+//		public List<Object> JS_names()
+//		{
+//			return UAPrj.this.JS_names() ;
+//		}
+//		
+//		public String toString()
+//		{
+//			return UAPrj.this.toString() ;
+//		}
+//	}
+//
+//	private transient JSOb jsOb = new JSOb();
+//
+//	public JSOb getJSOb()
+//	{
+//		return jsOb;
+//	}
 
 	@Override
 	public String getResCxtId()
@@ -1409,5 +1389,42 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	
 
+	@HostAccess.Export
+	public boolean JS_set_tag_val(String ch_name, String dev_name, String tagn, Object v)
+	{
+		UACh ch = UAPrj.this.getChByName(ch_name);
+		if (ch == null)
+			return false;
+		UADev dev = ch.getDevByName(dev_name);
+		if (dev == null)
+			return false;
+		UATag t = dev.getTagByName(tagn);
+		if (t == null)
+			return false;
+		t.RT_writeVal(v);
+		UAPrj.this.CXT_calMidTagsValLocal();
+		return true;
+	}
+
+	@HostAccess.Export
+	public String JS_get_rt_json_lastdt(Long lastdt) throws IOException
+	{
+		StringWriter sw = new StringWriter();
+		this.CXT_renderJson(sw, lastdt);
+		return sw.toString();
+	}
 	
+	@HostAccess.Export
+	public String JS_get_rt_json() throws IOException
+	{
+		return JS_get_rt_json_lastdt(-1L) ;
+	}
+	
+	@HostAccess.Export
+	public String JS_filter_rt_by_extname(String mid_ext,String tag_ext) throws IOException
+	{
+		StringWriter sw = new StringWriter();
+		UANodeFilter.JSON_renderMidNodesWithTagsByExtName(sw, UAPrj.this, mid_ext,tag_ext);
+		return sw.toString();
+	}
 }

@@ -364,9 +364,9 @@ public abstract class SimChannel extends SimNode implements Runnable
 		return this.getDevByName(key);
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names();
+		List<String> rets = super.JS_names();
 
 		for (SimDev dev : this.listDevItems())
 		{

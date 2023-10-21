@@ -64,9 +64,9 @@ public abstract class SimTag  extends JSObMap
 		}
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		ArrayList<Object> rets = new ArrayList<>() ;
+		List<String> rets = super.JS_names() ;
 		rets.add("_value");
 		rets.add("_v");
 		rets.add("_pv");

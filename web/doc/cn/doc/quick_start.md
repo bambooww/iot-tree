@@ -28,7 +28,7 @@ Java运行环境版本在1.8及以上，并且确保你的运行环境针对Java
 如果你还没有安装Java运行环境，请到<a href="https://www.oracle.com/java/technologies/" target="_blank">Oracle Java</a>或其他相关网站下载并根据提示安装，选择Java SE版本即可。
 
 例如：
-那么windows环境下，您的Java安装目录为 c:\jdk1.8，请设置
+在windows环境下，您的Java安装目录为 c:\jdk1.8，请设置
 
 
 ```

@@ -1,5 +1,7 @@
 package org.iottree.core;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -7,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -32,6 +35,34 @@ public abstract class UANodeOCTags extends UANodeOC
 	public UANodeOCTags(String name, String title, String desc)
 	{
 		super(name, title, desc);
+	}
+
+
+	
+	public UADev getBelongToDev()
+	{
+		if(this instanceof UADev)
+			return (UADev)this ;
+		UANode curn = this ;
+		while((curn=curn.getParentNode())!=null)
+		{
+			if(this instanceof UADev)
+				return (UADev)curn ;
+		}
+		return null ;
+	}
+	
+	public UACh getBelongToCh()
+	{
+		if(this instanceof UACh)
+			return (UACh)this ;
+		UANode curn = this ;
+		while((curn=curn.getParentNode())!=null)
+		{
+			if(this instanceof UACh)
+				return (UACh)curn ;
+		}
+		return null ;
 	}
 
 	/**
@@ -814,9 +845,9 @@ public abstract class UANodeOCTags extends UANodeOC
 		return this.getTagByName(key);
 	}
 
-	public List<Object> JS_names()
+	public List<String> JS_names()
 	{
-		List<Object> rets = super.JS_names();
+		List<String> rets = super.JS_names();
 
 		List<UATag> tags = listTags();
 		for (UATag tag : tags)
@@ -825,5 +856,4 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		return rets;
 	}
-	
 }
