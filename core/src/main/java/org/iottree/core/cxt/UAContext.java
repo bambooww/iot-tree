@@ -113,10 +113,10 @@ public class UAContext
 			scriptEng.put("$this", ((IJSOb)nodecxt).getJSOb());
 		}
 		
-		List<String> jsnames = nodecxt.JS_names() ;
-		for(String o:jsnames)
+		List<JsProp> jsnames = nodecxt.JS_props() ;
+		for(JsProp o:jsnames)
 		{
-			String n = o.toString() ;
+			String n = o.getName() ;
 			if(n==null||n.equals(""))
 				continue ;
 			Object v = nodecxt.JS_get(n) ;

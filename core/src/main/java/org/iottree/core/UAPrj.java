@@ -30,6 +30,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
+import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.node.PrjShareManager;
@@ -1415,6 +1416,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	}
 	
 	@HostAccess.Export
+	@JsMethod.Def(name="get_rt_json",title="get rt data",desc="get runtime data with json format")
 	public String JS_get_rt_json() throws IOException
 	{
 		return JS_get_rt_json_lastdt(-1L) ;

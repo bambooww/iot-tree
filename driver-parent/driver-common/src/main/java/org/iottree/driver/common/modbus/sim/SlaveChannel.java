@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.UATag;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.sim.SimChannel;
 import org.iottree.core.sim.SimConn;
 import org.iottree.core.sim.SimCP;
@@ -508,10 +509,10 @@ public class SlaveChannel extends SimChannel  implements Runnable
 		return null ;
 	}
 
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names();
-		rets.add("_tp") ;
+		List<JsProp> rets = super.JS_props() ;
+		rets.add(new JsProp("_tp",String.class,this.getTpTitle(),""));
 		return rets;
 	}
 }

@@ -22,6 +22,7 @@ import org.iottree.core.basic.ValTranser;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.json.JSONObject;
@@ -1156,18 +1157,30 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			return uav.isValid() ;
 		case "_updt":
 			return uav.getValDT() ;
+		case "_chgdt":
+			return uav.getValChgDT() ;
 		}
 		return null ;
 	}
 	
 	
-	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt","_value") ;
+	public final static List<String> js_names = Arrays.asList("_pv","_valid","_updt","_chgdt","_value") ;
 	
 	
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names() ;
-		rets.addAll(js_names);
+		List<JsProp> rets = super.JS_props() ;
+		
+		UAVal.ValTP vtp = this.getValTp();
+		Class<?> vt = Integer.class ;
+		if(vtp!=null)
+			vt = vtp.getValClass() ;
+		
+		rets.add(new JsProp("_pv",vt,"Tag Value","Tag Value,you can get or set by using '='"));
+		rets.add(new JsProp("_valid",Boolean.class,"Valid","Tag Value is valid or not in running"));
+		rets.add(new JsProp("_updt",Long.class,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));
+		rets.add(new JsProp("_chgdt",Long.class,"Change Date","Tag Value last changed date with millisseconds"));
+		rets.add(new JsProp("_value",vt,"Tag Value","Tag Value,get value is same as _pv,bug set this prop will not trigger device write(only set in memory)"));
 		return rets ;
 	}
 	

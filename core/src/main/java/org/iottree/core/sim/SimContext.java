@@ -15,6 +15,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.iottree.core.cxt.IJSOb;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.dict.DictManager;
 import org.iottree.core.dict.PrjDataClass;
 import org.iottree.core.plugin.PlugManager;
@@ -49,10 +50,10 @@ public class SimContext
 			scriptEng.put("$this", ((IJSOb)si).getJSOb());
 		}
 		
-		List<String> jsnames = si.JS_names() ;
-		for(Object o:jsnames)
+		List<JsProp> jsnames = si.JS_props() ;
+		for(JsProp o:jsnames)
 		{
-			String n = o.toString() ;
+			String n = o.getName();
 			if(n==null||n.equals(""))
 				continue ;
 			Object v = si.JS_get(n) ;

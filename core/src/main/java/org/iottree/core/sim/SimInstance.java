@@ -9,6 +9,7 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
@@ -363,12 +364,12 @@ public class SimInstance extends SimNode
 		return this.getChannelByName(key) ;
 	}
 	
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names() ;
+		List<JsProp> ss = super.JS_props() ;
 		for(SimChannel ch:this.getChannels())
 		{
-			ss.add(ch.getName()) ;
+			ss.add(new JsProp(ch.getName(),SimChannel.class,ch.getTitle(),"")) ;
 		}
 		return ss ;
 	}

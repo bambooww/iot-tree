@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iottree.core.UANode;
 import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
@@ -42,12 +43,12 @@ public class SimNode extends JSObMap
 		return null ;
 	}
 	
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names() ;
-		ss.add("_id") ;
-		ss.add("_name") ;
-		ss.add("_title") ;
+		List<JsProp> ss = super.JS_props() ;
+		ss.add(new JsProp("_id",String.class,"Id","Sim Node Unique Id")) ;
+		ss.add(new JsProp("_name",String.class,"Id","Sim Node Name")) ;
+		ss.add(new JsProp("_title",String.class,"Id","Sim Node Title")) ;
 //		List<UANode> subns = this.getSubNodes() ;
 //		if(subns!=null)
 //		{

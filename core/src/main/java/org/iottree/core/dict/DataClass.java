@@ -28,6 +28,7 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UATagG;
 import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Document;
@@ -625,19 +626,26 @@ public class DataClass extends JSObMap
 	}
 	
 	@Override
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names();
-		ss.add("_id") ;
-		ss.add("_name") ;
-		ss.add("_names") ;
-		ss.add("_title") ;
-		ss.addAll(getExtAttrNames()) ;
+		List<JsProp> ss = super.JS_props();
+		ss.add(new JsProp("_id",String.class,"DataClass Id","")) ;
+		ss.add(new JsProp("_name",String.class,"DataClass Name","")) ;
+		ss.add(new JsProp("_names",Set.class,"DataClass Names","")) ;
+		ss.add(new JsProp("_title",String.class,"DataClass Title","")) ;
+
+
+		for(String pn:getExtAttrNames())
+		{
+			ss.add(new JsProp(pn,String.class,pn,"")) ;
+		}
 		List<DataNode> dns = this.getRootNodes() ;
 		if(dns!=null)
 		{
 			for(DataNode dn:dns)
-				ss.add(dn.getName()) ;
+			{
+				ss.add(new JsProp(dn.getName(),DataNode.class,dn.getTitle(),"Root Node "+dn.getTitle())) ;
+			}
 		}
 		return ss ;
 	}

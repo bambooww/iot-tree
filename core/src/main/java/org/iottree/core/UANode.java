@@ -14,6 +14,7 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.xmldata.*;
@@ -710,18 +711,18 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return this.getSubNodeByName(key) ;
 	}
 	
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names() ;
-		ss.add("_id") ;
-		ss.add("_name") ;
-		ss.add("_title") ;
-		ss.add("_desc") ;
+		List<JsProp> ss = super.JS_props() ;
+		ss.add(new JsProp("_id",String.class,"Id","Node Unique Id")) ;
+		ss.add(new JsProp("_name",String.class,"Id","Node Name")) ;
+		ss.add(new JsProp("_title",String.class,"Id","Node Title")) ;
+		ss.add(new JsProp("_desc",String.class,"Id","Node Description")) ;
 		List<UANode> subns = this.getSubNodes() ;
 		if(subns!=null)
 		{
 			for(UANode n:subns)
-				ss.add(n.getName()) ;
+				ss.add(new JsProp(n.getName(),UANode.class,n.getTitle(),n.getDesc()));//
 		}
 		return ss ;
 	}

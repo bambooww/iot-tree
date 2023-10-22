@@ -12,6 +12,7 @@ import javax.servlet.jsp.PageContext;
 import org.iottree.core.Config;
 import org.iottree.core.UANode;
 import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 
@@ -387,19 +388,25 @@ public class DataNode extends JSObMap implements Comparable<DataNode>
 		return this.getChildNodeByName(key) ;
 	}
 	
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names();
-		ss.add("_name") ;
-		ss.add("_title") ;
+		List<JsProp> ss = super.JS_props();
+		ss.add(new JsProp("_name",String.class,"DataNode Name","")) ;
+		ss.add(new JsProp("_title",String.class,"DataNode Title","")) ;
 		for(String tmps:this.getAttrNames())
-			ss.add(tmps) ;
+		{
+			//ss.add(tmps) ;
+			ss.add(new JsProp(tmps,String.class,tmps,"")) ;
+		}
 		
 		List<DataNode> subns = this.getChildNodes() ;
 		if(subns!=null)
 		{
 			for(DataNode n:subns)
-				ss.add(n.getName()) ;
+			{
+				ss.add(new JsProp(n.getName(),DataNode.class,n.getTitle(),"Sub Node "+n.getTitle())) ;
+				//ss.add(n.getName()) ;
+			}
 		}
 		return ss ;
 	}

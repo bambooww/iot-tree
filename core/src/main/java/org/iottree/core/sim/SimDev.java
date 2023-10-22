@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iottree.core.UATag;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -111,9 +112,9 @@ public abstract class SimDev extends SimNode
 		return super.JS_type(key);
 	}
 
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names();
+		List<JsProp> rets = super.JS_props();
 
 		List<SimTag> tags = getSimTags() ;
 		if(tags!=null)
@@ -121,7 +122,8 @@ public abstract class SimDev extends SimNode
 			for(SimTag tag:tags)
 			{
 				String n = tag.getName() ;
-				rets.add(n);
+				//rets.add(n);
+				rets.add(new JsProp(n,SimTag.class,n,"")) ;
 			}
 		}
 		

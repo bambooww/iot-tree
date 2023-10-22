@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.UATag;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.task.TaskAction;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
@@ -364,13 +365,13 @@ public abstract class SimChannel extends SimNode implements Runnable
 		return this.getDevByName(key);
 	}
 
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names();
+		List<JsProp> rets = super.JS_props();
 
 		for (SimDev dev : this.listDevItems())
 		{
-			rets.add(dev.getName());
+			rets.add(new JsProp(dev.getName(),SimDev.class,dev.getTitle(),""));
 		}
 		return rets;
 	}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,9 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 import org.iottree.core.UACh;
 import org.iottree.core.UANode;
 import org.iottree.core.cxt.JsMethod;
+import org.iottree.core.cxt.JsProp;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
@@ -53,6 +57,12 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		return null ;
 	}
 	
+
+	public void JS_set(String key,Object v)
+	{
+		
+	}
+	
 	
 	/**
 	 * extender will override to check value type of key
@@ -65,22 +75,14 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		return null ;
 	}
 	/**
-	 * sub class override it to support js properties(or members)
+	 * sub class override it to support js properties
 	 * @return
 	 */
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		ArrayList<String> rets = new ArrayList<>() ;
-		rets.add(SYS_HELP) ;
-		List<JsMethod> jms = JS_methods() ;
-		if(jms!=null)
-		{
-			for(JsMethod jm:jms)
-			{
-				String mn = jm.getName();
-				rets.add(mn) ;
-			}
-		}
+		ArrayList<JsProp> rets = new ArrayList<>() ;
+		//rets.add(SYS_HELP) ;
+		
 		return rets ;
 	}
 	
@@ -123,17 +125,47 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 	
 	@SuppressWarnings("unused")
 	@HostAccess.Export
+	@JsMethod.Def(name="_help",title="list help",desc="list help info")
 	private String SYS_help()
 	{
-		List<String> ss = JS_names() ;
+		List<JsProp> ss = JS_props() ;
 		StringBuilder sb = new StringBuilder() ;
-		for(String s:ss)
+		for(JsProp s:ss)
 		{
-			sb.append(s).append("\r\n") ;
+			sb.append(s.getName()).append("\r\n") ;
 		}
 		return sb.toString() ;
 	}
 	
+	/**
+	 * support js doc output
+	 * @return
+	 */
+	public final JSONObject JS_help_json()
+	{
+		JSONObject jo = new JSONObject() ;
+		List<JsProp> ss = JS_props() ;
+		
+		JSONArray jarr_p = new JSONArray() ;
+		for(JsProp s:ss)
+		{
+			jarr_p.put(s.toJO()) ;
+		}
+		jo.put("props", jarr_p) ;
+		
+		List<JsMethod> jms = JS_methods() ;
+		JSONArray jarr_m = new JSONArray() ;
+		if(jms!=null)
+		{
+			for(JsMethod jm:jms)
+			{
+				jarr_m.put(jm.toJO()) ;
+			}
+		}
+		jo.put("methods", jarr_m) ;
+		
+		return jo;
+	}
 	
 	private List<JsMethod> jsMethods = null ; 
 	
@@ -146,12 +178,8 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		if(jsMethods!=null)
 			return jsMethods;
 		jsMethods = JsMethod.extractJsMethods(this) ;
+		jsMethods.add(getSysMethod(SYS_HELP)) ;
 		return jsMethods ;
-	}
-	
-	public void JS_set(String key,Object v)
-	{
-		
 	}
 	
 	//--- for graalvm js engine, implements ProxyObject to support $this.xx.xx.xx expressions
@@ -190,6 +218,8 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		return null ;
 	}
 	
+	
+	
 	@Override
 	public final Object getMember(String key)
 	{
@@ -204,6 +234,8 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 	}
 	
 	private ProxyArray memKeys = null ;
+	
+	private HashSet<String> memNames = null ;
 
 	@Override
 	public final Object getMemberKeys()
@@ -214,23 +246,58 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 				return memKeys;
 		}
 		
-		List<String> ss = JS_names() ;
+		ArrayList<Object> obss = new ArrayList<>() ;
+		HashSet<String> nameset = new HashSet<>() ;
+		
+		List<JsProp> ss = JS_props() ;
 		if(ss==null)
 			ss = Arrays.asList() ;
-
-		ArrayList<Object> obss = new ArrayList<>() ;
-		obss.addAll(ss) ;
+		for(JsProp s:ss)
+		{
+			String n = s.getName() ;
+			obss.add(n) ;
+			nameset.add(n);
+		}
+		
+		List<JsMethod> jms = JS_methods() ;
+		if(jms!=null)
+		{
+			for(JsMethod jm:jms)
+			{
+				String mn = jm.getName();
+				obss.add(mn) ;
+				nameset.add(mn);
+			}
+		}
+		
+		memNames = nameset ;
 		memKeys = ProxyArray.fromList(obss) ;
 		return memKeys;
+	}
+	
+	public final Set<String> getMemberNames()
+	{
+		if(memKeys==null)
+		{
+			getMemberKeys();
+		}
+		
+		return memNames ;
 	}
 
 	@Override
 	public final boolean hasMember(String key)
 	{
-		List<String> jns = this.JS_names() ;
-		if(jns==null)
-			return false;
-		return jns.contains(key) ;
+		if(memKeys==null)
+		{
+			getMemberKeys();
+		}
+		
+		return memNames.contains(key) ;
+//		List<String> jns = this.JS_props() ;
+//		if(jns==null)
+//			return false;
+//		return jns.contains(key) ;
 		
 //		return true;
 	}

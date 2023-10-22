@@ -15,6 +15,7 @@ import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.basic.JSObMap;
 import org.iottree.core.cxt.IJSOb;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 
 public class PrjDataClass extends JSObMap// implements IJSOb
@@ -257,16 +258,18 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 	}
 	
 	@Override
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> ss = super.JS_names();
+		List<JsProp> ss = super.JS_props();
 		
 		Collection<DataClass> dcs = getDataClassAll() ;
 		//List<UANode> subns = this.getSubNodes() ;
 		if(dcs!=null)
 		{
 			for(DataClass dc:dcs)
-				ss.add(dc.getClassName()) ;
+			{
+				ss.add(new JsProp(dc.getClassName(),DataClass.class,dc.getClassTitle(),"Data Class "+dc.getClassTitle())) ;
+			}
 		}
 		return ss ;
 	}

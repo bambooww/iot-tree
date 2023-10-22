@@ -3,6 +3,7 @@ package org.iottree.driver.common.modbus.sim;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.sim.SimTag;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -72,10 +73,10 @@ public class SlaveTag extends SimTag
 		}
 	}
 
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names() ;
-		rets.add("_regidx");
+		List<JsProp> rets = super.JS_props() ;
+		rets.add(new JsProp("_regidx",Integer.class,"RegIdx",""));
 		return rets ;
 	}
 	

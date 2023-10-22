@@ -1,5 +1,9 @@
 package org.iottree.core.cxt;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,23 +11,53 @@ import java.util.List;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyExecutable;
+import org.iottree.core.util.Convert;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class JsMethod implements ProxyExecutable
 {
+	@Target({ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Def {
+		String name() default "" ;
+		String title() default "" ;
+		String desc() default "";
+    }
+	
 	Object ob = null ;
 	
 	Method method = null ;
 	
 	String name = null ;
 	
+	String title = null ;
+	
+	String desc = null ;
+	
 	public JsMethod(Object ob,Method method)
 	{
 		this.ob = ob ;
 		this.method = method ;
 		this.method.setAccessible(true);
+		
 		this.name = method.getName() ;
 		if(this.name.startsWith("JS_"))
 			this.name = this.name.substring(3) ;
+		
+		Def def = method.getAnnotation(Def.class) ;
+		if(def!=null)
+		{
+			String n = def.name();
+			if(Convert.isNotNullEmpty(n))
+				this.name = n ;
+			String t = def.title() ;
+			if(Convert.isNotNullEmpty(t))
+				this.title = t ;
+			String d = def.desc();
+			if(Convert.isNotNullEmpty(d))
+				this.desc = d ;
+		}
 	}
 	
 	public JsMethod(Object ob,Method method,String name)
@@ -34,6 +68,33 @@ public class JsMethod implements ProxyExecutable
 		this.name = name ;
 	}
 	
+
+	public String getName()
+	{
+		return this.name ;
+	}
+	
+	public String getTitle()
+	{
+		if(title==null)
+			return "" ;
+		return this.title ;
+	}
+	
+	public String getDesc()
+	{
+		return desc ;
+	}
+	
+	public Class<?> getReturnValTp()
+	{
+		return this.method.getReturnType();
+	}
+	
+	public Class<?>[] getParamsValTp()
+	{
+		return this.method.getParameterTypes();
+	}
 	/**
 	 * 
 	 * @param ob
@@ -79,8 +140,23 @@ public class JsMethod implements ProxyExecutable
 		}
 	}
 
-	public String getName()
+	
+	public JSONObject toJO()
 	{
-		return this.name ;
+		JSONObject jo = new JSONObject() ;
+		jo.put("n", this.name) ;
+		jo.putOpt("t", this.title) ;
+		jo.putOpt("d", this.desc) ;
+		jo.put("ret_tp", this.getReturnValTp().getCanonicalName()) ;
+		JSONArray pm_tps = new JSONArray() ;
+		Class<?>[] pmcs = this.getParamsValTp() ;
+		if(pmcs!=null&&pmcs.length>0)
+		{
+			for(Class<?> c:pmcs)
+				pm_tps.put(c.getCanonicalName()) ;
+		}
+		jo.put("param_tps", pm_tps) ;
+		
+		return jo ;
 	}
 }

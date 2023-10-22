@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -845,14 +846,14 @@ public abstract class UANodeOCTags extends UANodeOC
 		return this.getTagByName(key);
 	}
 
-	public List<String> JS_names()
+	public List<JsProp> JS_props()
 	{
-		List<String> rets = super.JS_names();
+		List<JsProp> rets = super.JS_props();
 
 		List<UATag> tags = listTags();
 		for (UATag tag : tags)
 		{
-			rets.add(tag.getName());
+			rets.add(new JsProp(tag.getName(),UATag.class,tag.getTitle(),tag.getDesc()));//
 		}
 		return rets;
 	}

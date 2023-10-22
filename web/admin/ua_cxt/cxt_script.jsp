@@ -74,7 +74,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <script>
-	dlg.resize_to(700,600) ;
+	dlg.resize_to(900,600) ;
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
@@ -88,37 +88,45 @@ if(Convert.isNotNullEmpty(path))
 }
 %>
 <table border='1' style="height:90%;width:100%">
- <tr height="75%">
-  <td colspan="2">&nbsp;&nbsp;
-<%
-String cheight = "100%" ;
-if(Convert.isNotNullEmpty(func_params))
-{
-	cheight="200px" ;
-%>
-(<%=func_params %>)=&gt;{
-<%
-}
-
-if(Convert.isNotNullEmpty(sample_txt_id))
-{
-%>
-<button onclick="insert_sample()">insert sample</button>
-<%
-}
-%>
-   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>"></textarea>
-&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
-  </td>
- </tr>
-  <tr height="20%">
-
-  <td  colspan="2">
-  script test result
-   <textarea id='script_res' rows="6" style="overflow: scroll;width:100%;height:100%"></textarea>
+ <tr>
+  <td style="width:30%"></td>
+  <td>
+	  <table style="width:100%;height:100%">
+	 <tr height="75%">
+	  <td colspan="2">&nbsp;&nbsp;
+	<%
+	String cheight = "100%" ;
+	if(Convert.isNotNullEmpty(func_params))
+	{
+		cheight="200px" ;
+	%>
+	(<%=func_params %>)=&gt;{
+	<%
+	}
+	
+	if(Convert.isNotNullEmpty(sample_txt_id))
+	{
+	%>
+	<button onclick="insert_sample()">insert sample</button>
+	<%
+	}
+	%>
+	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>" placeholder="Input JS Script Here"></textarea>
+	&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
+	  </td>
+	 </tr>
+	  <tr height="20%">
+	
+	  <td  colspan="2">
+	  script test result
+	   <textarea id='script_res' rows="6" style="overflow: scroll;width:100%;height:100%"></textarea>
+	  </td>
+	 </tr>
+	</table>
   </td>
  </tr>
 </table>
+
 <div id='opc_info'>
 </div>
 </body>
