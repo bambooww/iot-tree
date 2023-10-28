@@ -857,4 +857,35 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		return rets;
 	}
+	
+	private transient List<JsProp> globalPropsCxt = null ;
+	
+	/**
+	 * get global props in this node as context
+	 * @return
+	 */
+	protected List<JsProp> JS_getGlobalPropsCxt()
+	{
+		if(globalPropsCxt!=null)
+			return globalPropsCxt ;
+		
+		ArrayList<JsProp> jps = new ArrayList<>() ;
+		jps.add(new JsProp("$prj",UAPrj.class,"project","Project obj in context")) ;
+		globalPropsCxt = jps;
+		return jps ;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public final List<JsProp> JS_get_props_cxt()
+	{
+		ArrayList<JsProp> rets = new ArrayList<>() ;
+		List<JsProp> jps = JS_getGlobalPropsCxt();
+		rets.addAll(jps) ;
+		jps = this.JS_props() ;
+		rets.addAll(jps);
+		return rets ;
+	}
 }

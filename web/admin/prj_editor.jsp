@@ -168,6 +168,17 @@ color: #fdd000;
 color: #ffffff;
 }
 
+.pop_menu
+{
+cursor: pointer;
+font-size:small;
+vertical-align:middle;
+}
+.pop_menu:hover
+{
+color:#03a6ea;
+}
+
 .props_panel_edit
 {
 	position0: absolute;

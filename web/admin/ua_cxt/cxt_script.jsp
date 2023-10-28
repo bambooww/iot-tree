@@ -72,6 +72,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 </style>
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
+	<jsp:param value="true" name="tree"/>
 </jsp:include>
 <script>
 	dlg.resize_to(900,600) ;
@@ -89,7 +90,11 @@ if(Convert.isNotNullEmpty(path))
 %>
 <table border='1' style="height:90%;width:100%">
  <tr>
-  <td style="width:30%"></td>
+  <td style="width:30%" >
+  <div id="lib_cat_tree" style="height:100%;overflow: auto;">
+ 		
+ 	</div>
+  </td>
   <td>
 	  <table style="width:100%;height:100%">
 	 <tr height="75%">
@@ -141,6 +146,88 @@ function log(s)
 	document.getElementById('log_inf').innerHTML = s ;
 }
 
+function tree_init()
+{
+	$.jstree.destroy();
+	this.jsTree = $('#lib_cat_tree').jstree(
+				{
+					'core' : {
+						'data' : {
+							'url' :"cxt_script_help_ajax.jsp?path="+path,
+							"dataType" : "json",
+							"data":function(node){
+		                        return {"id" : node.id};
+		                    }
+						},
+						callback : {
+							onopen : function (node, tree_obj) {
+								if (tree_obj.children(node).length == 0) {
+									$.getJSON('getChildren.do, {'id' : node.id}, function(data) {
+										$.each(data, function(entryIndex, entry) {
+											tree_obj.create(entry, node, entryIndex + 1);
+										});
+									});
+								}
+								return true;
+							}
+						},
+						'check_callback' : function(o, n, p, i, m) {
+							if(m && m.dnd && m.pos !== 'i') { return false; }
+							if(o === "move_node" || o === "copy_node") {
+								if(this.get_node(n).parent === this.get_node(p).id) { return false; }
+							}
+							return true;
+						},
+						'themes' : {
+							'responsive' : false,
+							'variant' : 'small',
+							'stripes' : true
+						}
+					},
+					'contextmenu' : { //
+						
+						'items' :(node)=>{
+							//this.get_type(node)==='ch''
+							//console.log(node)
+							var tp = node.original.type
+							//console.log(tp) ;
+							return this.get_cxt_menu(tp,node.original) ;
+		                }
+					},
+					'types' : {
+						'default' : { 'icon' : 'folder' },
+						'file' : { 'valid_children' : [], 'icon' : 'file' }
+					},
+					'unique' : {
+						'duplicate' : function (name, counter) {
+							return name + ' ' + counter;
+						}
+					},
+					'plugins' : ['state','dnd','types','contextmenu','unique']
+				}
+		)
+		
+		
+		this.jsTree.on('activate_node.jstree',(e,data)=>{
+			on_tree_node_sel(data.node.original)
+		})
+		
+}
+
+function on_tree_node_sel(n)
+{
+	var id = n.id;
+	var k = id.indexOf("-") ;
+	if(k<=0)
+		return ;
+	libid = id.substring(0,k) ;
+	cur_catid = id.substring(k+1) ;
+	cur_cattt = n.text ;
+	cat_sel_chg();
+}
+
+
+
 function init()
 {
 	if(opener_txt_id!='')
@@ -153,6 +240,7 @@ function init()
 		}
 	}
 	
+	tree_init();
 }
 
 function insert_sample()

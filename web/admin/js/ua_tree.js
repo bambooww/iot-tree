@@ -374,9 +374,18 @@ function UAConn(conn_opt)
 
 }
 
+var ua_cur_panel = null ;
+
+function ua_del_join()
+{
+	if(!ua_cur_pop_jo) return ;
+	
+}
+
 //ua connections web control
 function UAPanel(conn_opt,connch_opt,tree_opt)
 {
+	ua_cur_panel = this ;
 	this.connch_eleid = connch_opt.eleid ;
 	this.join_url = connch_opt.join_url ;
 	//this.url_data = opt.url_data ;
@@ -427,7 +436,7 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 			this.redraw(false,true,false) ;
 		})
 		.on("redraw.jstree",(e,data)=>{
-			console.log("redraw tree");
+			//console.log("redraw tree");
 		})
 		.on("after_open.jstree",(e,data)=>{
 			//console.log("after_open.jstree");
@@ -504,12 +513,16 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		var tpt = this.get_tree_pt(jo.nodeid) ;
 		return {from:cpt,to:tpt} ;
 	}
-
+	
 	this.st = 0 ;//0-normal 1-adding 2-conn del 3-tn del
 
 	this.init_mouse_evt=function()
 	{
 		this.canvas.mousedown((e)=>{
+			e.stopPropagation();
+			this.show_pop_menu(null);
+			if(e.button != 0)
+				return ;
 			var x = e.offsetX ;
 			var y = e.offsetY ;
 			var pt = this.find_move_on(x,y) ;
@@ -560,6 +573,13 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		});
 
 		this.canvas.mouseup((e)=>{
+			e.stopPropagation();
+			if(e.button==2)
+			{//right
+				this.show_pop_menu(e) ;
+				return ;
+			}
+			
 			var x = e.offsetX ;
 			var y = e.offsetY ;
 			switch(this.st)
@@ -590,6 +610,7 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		});
 
 		this.canvas.mousemove((e)=>{
+			e.stopPropagation();
 			var x = e.offsetX ;
 			var y = e.offsetY ;
 
@@ -629,6 +650,53 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 			
 		});
 	}
+	
+	this.pop_menu = null ;
+	this.pop_jo = null ;
+	
+	this.ua_del_join=function()
+	{
+		if(this.pop_jo==null)
+			return ;
+		this.set_join("join_del","conn_"+this.pop_jo.connid,"ch_"+this.pop_jo.chid);
+		let pop = $("#ua_panel_pop");
+		pop.css("display","none") ;
+	}
+
+	this.show_pop_menu=function(e)
+	{
+		if(!e)
+		{
+			let pop = $("#ua_panel_pop");
+			pop.css("display","none") ;
+			return ;
+		}
+		e.stopPropagation();
+		if(!this.pop_menu)
+		{
+			this.pop_menu=`<div id="ua_panel_pop" style="position:absolute;display:none;" class="sm_container">
+				
+				</div>	`;
+			$("#"+this.connch_eleid).append(this.pop_menu) ;
+		}
+		let pop = $("#ua_panel_pop");
+		pop.css("display","none") ;
+		var tar = $(e.target) ;
+		let x = e.offsetX ;
+		let y = e.offsetY ;
+		let pt = this.find_move_on(x,y) ;
+		if(!pt) return ;
+		
+		let jo = this.ua_conn.check_has_join(pt) ;
+		if(!jo) return;
+		this.pop_jo = jo ;
+		pop.html('<div style="height:25px;" class="pop_menu" onclick="ua_cur_panel.ua_del_join()"><i class="fa fa-times"></i> Delete<div>') ;
+		pop.css("left",x+"px") ;
+		pop.css("top",y+"px") ;
+		pop.css("z-index",64001) ;
+		pop.css("display","") ;
+	}
+
 
 	this.find_move_on=function(x,y)
 	{
