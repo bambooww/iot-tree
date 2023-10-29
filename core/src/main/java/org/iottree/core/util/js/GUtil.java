@@ -5,9 +5,12 @@ import java.nio.FloatBuffer;
 import java.util.Calendar;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
 
-public class GUtil
+@JsDef(name="util",title="Util",desc="System Util",icon="icon_util")
+public class GUtil  extends JSObMap
 {
 	/**
 	 * 取小数位字符串

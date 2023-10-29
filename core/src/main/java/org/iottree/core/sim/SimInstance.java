@@ -369,7 +369,7 @@ public class SimInstance extends SimNode
 		List<JsProp> ss = super.JS_props() ;
 		for(SimChannel ch:this.getChannels())
 		{
-			ss.add(new JsProp(ch.getName(),SimChannel.class,ch.getTitle(),"")) ;
+			ss.add(new JsProp(ch.getName(),ch,SimChannel.class,true,ch.getTitle(),"")) ;
 		}
 		return ss ;
 	}

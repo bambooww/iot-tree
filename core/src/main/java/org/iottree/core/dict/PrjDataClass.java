@@ -13,8 +13,8 @@ import java.util.*;
 
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
-import org.iottree.core.basic.JSObMap;
 import org.iottree.core.cxt.IJSOb;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 
@@ -268,7 +268,7 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 		{
 			for(DataClass dc:dcs)
 			{
-				ss.add(new JsProp(dc.getClassName(),DataClass.class,dc.getClassTitle(),"Data Class "+dc.getClassTitle())) ;
+				ss.add(new JsProp(dc.getClassName(),dc,DataClass.class,true,dc.getClassTitle(),"Data Class "+dc.getClassTitle())) ;
 			}
 		}
 		return ss ;

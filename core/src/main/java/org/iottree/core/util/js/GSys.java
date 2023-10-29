@@ -6,12 +6,14 @@ import java.util.Date;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAPrj;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
 
 import com.ibm.icu.util.Calendar;
 
-@HostAccess.Implementable
-public class GSys
+@JsDef(name="sys",title="System",desc="System",icon="icon_sys")
+public class GSys  extends JSObMap
 {
 	boolean bPrintOn = true;
 	

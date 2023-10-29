@@ -468,7 +468,7 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 		cch.resize(()=>{
 			var w = cch[0].offsetWidth;
 			var h = cch[0].offsetHeight;
-			console.log(w,h)
+			//console.log(w,h)
 			can.attr('width', w) ;
 			can.attr('height', h-5) ;
 			this.redraw(false,true,false);

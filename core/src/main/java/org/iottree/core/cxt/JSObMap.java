@@ -1,4 +1,4 @@
-package org.iottree.core.basic;
+package org.iottree.core.cxt;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -21,8 +21,7 @@ import org.graalvm.polyglot.proxy.ProxyExecutable;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.iottree.core.UACh;
 import org.iottree.core.UANode;
-import org.iottree.core.cxt.JsMethod;
-import org.iottree.core.cxt.JsProp;
+import org.iottree.core.UANodeOCTagsCxt;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -86,31 +85,68 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		return rets ;
 	}
 	
-
-	private JsMethod sys_help = null ;
-	
-	private JsMethod getSysMethod(String name)
+	public final List<JsSub> JS_get_subs()
 	{
-		try
-		{
-			switch(name)
-			{
-			case SYS_HELP:
-				if(sys_help!=null)
-					return sys_help ;
-				Method m = getInnerMethod("SYS_help") ;
-				sys_help = new JsMethod(this,m,"_help") ;
-				return sys_help ;
-			}
-			
-			return null ;
-		}
-		catch(Exception ee)
-		{
-			ee.printStackTrace();
-			return null ;
-		}
+		ArrayList<JsSub> rets = new ArrayList<>() ;
+		List<JsProp> ss = JS_props() ;
+		if(ss!=null)
+			rets.addAll(ss) ;
+		
+		List<JsMethod> jms = JS_methods() ;
+		if(jms!=null)
+			rets.addAll(jms) ;
+		
+		return rets ;
 	}
+	
+	public final JsSub JS_get_sub(String subname)
+	{
+		List<JsProp> ss = JS_props() ;
+		if(ss!=null)
+		{
+			for(JsProp jp:ss)
+			{
+				if(jp.name.equals(subname))
+					return jp ;
+			}
+		}
+		
+		List<JsMethod> jms = JS_methods() ;
+		if(jms!=null)
+		{
+			for(JsMethod jm:jms)
+			{
+				if(jm.name.equals(subname))
+					return jm ;
+			}
+		}
+		return null ;
+	}
+
+//	private JsMethod sys_help = null ;
+//	
+//	private JsMethod getSysMethod(String name)
+//	{
+//		try
+//		{
+//			switch(name)
+//			{
+//			case SYS_HELP:
+//				if(sys_help!=null)
+//					return sys_help ;
+//				Method m = getInnerMethod("SYS_help") ;
+//				sys_help = new JsMethod(this,m,"_help") ;
+//				return sys_help ;
+//			}
+//			
+//			return null ;
+//		}
+//		catch(Exception ee)
+//		{
+//			ee.printStackTrace();
+//			return null ;
+//		}
+//	}
 	
 	private Method getInnerMethod(String name)
 	{
@@ -125,7 +161,7 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 	
 	@SuppressWarnings("unused")
 	@HostAccess.Export
-	@JsMethod.Def(name="_help",title="list help",desc="list help info")
+	@JsDef(name="_help",title="list help",desc="list help info")
 	private String SYS_help()
 	{
 		List<JsProp> ss = JS_props() ;
@@ -178,7 +214,7 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		if(jsMethods!=null)
 			return jsMethods;
 		jsMethods = JsMethod.extractJsMethods(this) ;
-		jsMethods.add(getSysMethod(SYS_HELP)) ;
+		//jsMethods.add(getSysMethod(SYS_HELP)) ;
 		return jsMethods ;
 	}
 	
@@ -230,7 +266,8 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		if(jm!=null)
 			return jm;
 		
-		return getSysMethod(key);
+		//return getSysMethod(key);
+		return null ;
 	}
 	
 	private ProxyArray memKeys = null ;
@@ -274,6 +311,8 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		memKeys = ProxyArray.fromList(obss) ;
 		return memKeys;
 	}
+	
+	
 	
 	public final Set<String> getMemberNames()
 	{

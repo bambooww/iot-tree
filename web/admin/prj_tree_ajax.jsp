@@ -132,7 +132,7 @@
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
 		  ,"state": {"opened": true}
-		  ,"icon":"icon_ch"
+		  ,"icon":"icon_ch_hidden"
 		 ,"children": [
 <%
 	boolean bf2=true;
@@ -173,7 +173,7 @@
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"
 			  ,"state": {"opened": false}
-			   ,"icon":"icon_dev"
+			   ,"icon":"icon_dev_hidden"
 			  ,"children": [
 <%
 renderTagGroupInCxt(true,out,dev) ;

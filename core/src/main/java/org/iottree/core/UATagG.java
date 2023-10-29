@@ -5,6 +5,7 @@ import java.util.*;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.basic.PropGroup;
+import org.iottree.core.cxt.JsDef;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -16,6 +17,7 @@ import com.google.common.base.Splitter;
  *
  */
 @data_class
+@JsDef(name="tagg",title="TagG",desc="Tag Group Node",icon="icon_tagg")
 public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 {
 	public static final String NODE_TP = "tagg" ;

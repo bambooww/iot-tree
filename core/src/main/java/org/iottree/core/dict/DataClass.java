@@ -27,7 +27,7 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UATagG;
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
@@ -629,22 +629,22 @@ public class DataClass extends JSObMap
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> ss = super.JS_props();
-		ss.add(new JsProp("_id",String.class,"DataClass Id","")) ;
-		ss.add(new JsProp("_name",String.class,"DataClass Name","")) ;
-		ss.add(new JsProp("_names",Set.class,"DataClass Names","")) ;
-		ss.add(new JsProp("_title",String.class,"DataClass Title","")) ;
+		ss.add(new JsProp("_id",null,String.class,false,"DataClass Id","")) ;
+		ss.add(new JsProp("_name",null,String.class,false,"DataClass Name","")) ;
+		ss.add(new JsProp("_names",null,Set.class,false,"DataClass Names","")) ;
+		ss.add(new JsProp("_title",null,String.class,false,"DataClass Title","")) ;
 
 
 		for(String pn:getExtAttrNames())
 		{
-			ss.add(new JsProp(pn,String.class,pn,"")) ;
+			ss.add(new JsProp(pn,null,String.class,false,pn,"")) ;
 		}
 		List<DataNode> dns = this.getRootNodes() ;
 		if(dns!=null)
 		{
 			for(DataNode dn:dns)
 			{
-				ss.add(new JsProp(dn.getName(),DataNode.class,dn.getTitle(),"Root Node "+dn.getTitle())) ;
+				ss.add(new JsProp(dn.getName(),dn,DataNode.class,true,dn.getTitle(),"Root Node "+dn.getTitle())) ;
 			}
 		}
 		return ss ;

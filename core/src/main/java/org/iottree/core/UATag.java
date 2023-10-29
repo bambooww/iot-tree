@@ -22,6 +22,7 @@ import org.iottree.core.basic.ValTranser;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
  *
  */
 @data_class
+@JsDef(name="tag",title="Tag",desc="Tag Node",icon="icon_tag")
 public class UATag extends UANode implements IOCDyn //UANode UABox
 {
 	public static final String NODE_TP  ="tag" ;
@@ -1175,12 +1177,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		Class<?> vt = Integer.class ;
 		if(vtp!=null)
 			vt = vtp.getValClass() ;
-		
-		rets.add(new JsProp("_pv",vt,"Tag Value","Tag Value,you can get or set by using '='"));
-		rets.add(new JsProp("_valid",Boolean.class,"Valid","Tag Value is valid or not in running"));
-		rets.add(new JsProp("_updt",Long.class,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));
-		rets.add(new JsProp("_chgdt",Long.class,"Change Date","Tag Value last changed date with millisseconds"));
-		rets.add(new JsProp("_value",vt,"Tag Value","Tag Value,get value is same as _pv,bug set this prop will not trigger device write(only set in memory)"));
+		//UAVal uav = this.RT_getVal() ;
+		rets.add(new JsProp("_pv",null,vt,false,"Tag Value","Tag Value,you can get or set by using '='"));
+		rets.add(new JsProp("_valid",null,Boolean.class,false,"Valid","Tag Value is valid or not in running"));
+		rets.add(new JsProp("_updt",null,Long.class,false,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));
+		rets.add(new JsProp("_chgdt",null,Long.class,false,"Change Date","Tag Value last changed date with millisseconds"));
+		rets.add(new JsProp("_value",null,vt,false,"Tag Value","Tag Value,get value is same as _pv,bug set this prop will not trigger device write(only set in memory)"));
 		return rets ;
 	}
 	

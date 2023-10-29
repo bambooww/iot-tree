@@ -512,7 +512,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> rets = super.JS_props() ;
-		rets.add(new JsProp("_tp",String.class,this.getTpTitle(),""));
+		rets.add(new JsProp("_tp",null,String.class,false,this.getTpTitle(),""));
 		return rets;
 	}
 }

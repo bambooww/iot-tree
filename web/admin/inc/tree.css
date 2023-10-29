@@ -1,0 +1,16 @@
+
+.tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
+.tree .icon_dev_hidden {background:url('/admin/inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px;display:none;}
+.tree .icon_dev {background:url('/admin/inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px;}
+.tree .icon_prj {background:url('/admin/inc/sm_icon_tree.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_ch_hidden {background:url('/admin/inc/sm_icon_ch.png') 0 0 no-repeat; width:24px;height:24px;display:none;}
+.tree .icon_ch {background:url('/admin/inc/sm_icon_ch.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_tagg {background:url('/admin/inc/sm_icon_tagg.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_tag {background:url('/admin/inc/sm_icon_tag.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_hmi {background:url('/admin/inc/sm_icon_hmi.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_prop {background:url('/admin/inc/sm_icon_prop.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_method {background:url('/admin/inc/sm_icon_method.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_sys {background:url('/admin/inc/sm_icon_sys.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_debug {background:url('/admin/inc/sm_icon_debug.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_util {background:url('/admin/inc/sm_icon_util.png') 0 0 no-repeat; width:24px;height:24px;}
+

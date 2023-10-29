@@ -371,7 +371,7 @@ public abstract class SimChannel extends SimNode implements Runnable
 
 		for (SimDev dev : this.listDevItems())
 		{
-			rets.add(new JsProp(dev.getName(),SimDev.class,dev.getTitle(),""));
+			rets.add(new JsProp(dev.getName(),dev,SimDev.class,true,dev.getTitle(),""));
 		}
 		return rets;
 	}

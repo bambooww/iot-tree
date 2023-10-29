@@ -7,6 +7,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.util.Convert;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
+@JsDef(name="dev",title="Dev",desc="Device Node",icon="icon_dev")
 public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner,IResNode,IDevDriverable,IJoinedNode // extends UANodeOC
 {
 	public static final String NODE_TP = "dev" ;
@@ -434,13 +436,6 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		super.RT_init(breset, b_sub);
 		this.setSysTag("_name", "device name", "", ValTP.vt_str);
 		this.setSysTag("_title", "device title", "", ValTP.vt_str);
-		
-//		this.setSysTag("_tick_ms", "Milliseconds from 1970-1-1", "", ValTP.vt_int64);
-//		this.setSysTag("_date", "yyyy-MM-dd", "", ValTP.vt_str);
-//		this.setSysTag("_date_year", "current year int16 value", "", ValTP.vt_int16);
-//		this.setSysTag("_date_month", "current month int16 value", "", ValTP.vt_int64);
-//		this.setSysTag("_date_day", "current day int16 value", "", ValTP.vt_int64);
-		
 		this.RT_setSysTagVal("_name", this.getName()) ;
 		this.RT_setSysTagVal("_title", this.getTitle()) ;
 	}

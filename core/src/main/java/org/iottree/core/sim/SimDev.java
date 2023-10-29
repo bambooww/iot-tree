@@ -123,7 +123,7 @@ public abstract class SimDev extends SimNode
 			{
 				String n = tag.getName() ;
 				//rets.add(n);
-				rets.add(new JsProp(n,SimTag.class,n,"")) ;
+				rets.add(new JsProp(n,tag,SimTag.class,true,n,"")) ;
 			}
 		}
 		

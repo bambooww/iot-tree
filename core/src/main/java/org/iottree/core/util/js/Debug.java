@@ -4,8 +4,11 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 
-public class Debug
+@JsDef(name="debug",title="Debug",desc="System Debug",icon="icon_debug")
+public class Debug extends JSObMap
 {
 	PrintWriter pw = null;
 	

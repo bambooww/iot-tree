@@ -76,7 +76,7 @@ public class SlaveTag extends SimTag
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> rets = super.JS_props() ;
-		rets.add(new JsProp("_regidx",Integer.class,"RegIdx",""));
+		rets.add(new JsProp("_regidx",null,Integer.class,false,"RegIdx",""));
 		return rets ;
 	}
 	

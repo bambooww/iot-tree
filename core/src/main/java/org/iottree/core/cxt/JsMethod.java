@@ -15,28 +15,20 @@ import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class JsMethod implements ProxyExecutable
+public class JsMethod extends JsSub implements ProxyExecutable
 {
-	@Target({ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Def {
-		String name() default "" ;
-		String title() default "" ;
-		String desc() default "";
-    }
+	
 	
 	Object ob = null ;
 	
 	Method method = null ;
 	
-	String name = null ;
 	
-	String title = null ;
-	
-	String desc = null ;
 	
 	public JsMethod(Object ob,Method method)
 	{
+		super(null,null,null) ;
+		
 		this.ob = ob ;
 		this.method = method ;
 		this.method.setAccessible(true);
@@ -45,7 +37,7 @@ public class JsMethod implements ProxyExecutable
 		if(this.name.startsWith("JS_"))
 			this.name = this.name.substring(3) ;
 		
-		Def def = method.getAnnotation(Def.class) ;
+		JsDef def = method.getAnnotation(JsDef.class) ;
 		if(def!=null)
 		{
 			String n = def.name();
@@ -62,29 +54,40 @@ public class JsMethod implements ProxyExecutable
 	
 	public JsMethod(Object ob,Method method,String name)
 	{
+		super(null,null,null) ;
+		
 		this.ob = ob ;
 		this.method = method ;
 		this.method.setAccessible(true);
 		this.name = name ;
 	}
 	
-
-	public String getName()
+	@Override
+	public boolean hasSub()
 	{
-		return this.name ;
+		return false;
 	}
 	
-	public String getTitle()
+	public String getSubTitle()
 	{
-		if(title==null)
-			return "" ;
-		return this.title ;
+		String ret = getClassJsTitle(getReturnValTp())+" "+this.name+"(" ;
+		Class<?>[] pvts = this.getParamsValTp() ;
+		if(pvts!=null&&pvts.length>0)
+		{
+			ret += getClassJsTitle(pvts[0]) ;
+			for(int i = 1 ; i < pvts.length ; i ++)
+				ret+= ","+getClassJsTitle(pvts[i]) ;
+		}
+		ret += ")" ;
+		return ret ;
 	}
 	
-	public String getDesc()
+	@Override
+	public String getSubIcon()
 	{
-		return desc ;
+		return "icon_method" ;
 	}
+	
 	
 	public Class<?> getReturnValTp()
 	{

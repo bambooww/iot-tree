@@ -2,27 +2,35 @@ package org.iottree.core.cxt;
 
 import java.io.Writer;
 
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.UANodeOCTagsCxt;
+import org.iottree.core.UATag;
 import org.json.JSONObject;
 
-public class JsProp
+public class JsProp extends JsSub
 {
-	String name = null ;
+	
 	
 	Object val = null ;
-	//Class<?> valTp = null ;
 	
-	String title = null ;
+	Class<?> valTp = null ;
 	
-	String desc = null ;
 	
-	public JsProp(String name,Object val,String title,String desc)
+	boolean hSub = false;
+	
+	//UANodeOCTagsCxt cxtNode = null ; 
+	
+	public JsProp(String name,Object val,Class<?> valtp,boolean has_sub,String title,String desc)
 	{
-		this.name = name ;
-		//this.valTp = valtp;
+		super(name,title,desc) ;
+		//this.cxtNode = cxtn;
+		//this.name = name ;
+		this.valTp = valtp;
 		this.val = val;
-		this.title = title ;
-		this.desc = desc ;
+		if(valtp==null && val!=null)
+			this.valTp = val.getClass() ;
+		//this.title = title ;
+		//this.desc = desc ;
+		hSub = has_sub ;
 	}
 	
 //	public JsProp(String name,Class<?> valtp,String title,String desc)
@@ -33,11 +41,6 @@ public class JsProp
 //		this.desc = desc ;
 //	}
 
-	public String getName()
-	{
-		return name;
-	}
-	
 	public Object getVal()
 	{
 		return val;
@@ -45,57 +48,42 @@ public class JsProp
 
 	public Class<?> getValTp()
 	{
-		return val.getClass();//.valTp ;
+		return valTp ;
 	}
-
-	public String getTitle()
+	
+	public boolean hasSub()
 	{
-		return title;
+//		if(val instanceof Number)
+//			return true ;
+//		if(val instanceof Boolean)
+//			return true ;
+//		if(val instanceof String)
+//			return true ;
+//		
+//		return false;
+		return this.hSub ;
 	}
-
-
-	public String getDesc()
+	
+	public boolean isTag()
 	{
-		return desc;
+		return UATag.class.isAssignableFrom(this.valTp) ;
 	}
-
-	public void writeTree(String pid,Writer w) throws Exception
+	
+	@Override
+	public String getSubTitle()
 	{
-		w.write("{\"id\":\"" + pid+this.name + "\"");
-		
-		w.write(",\"tp\": \"tag\"");
-		w.write(",\"icon\": \"fa-solid fa-file fa-lg\"");
-		w.write(",\"text\":\""+this.title+"\"");
-		w.write(",\"state\": {\"opened\": false}");
-		
-		Class<?> c = getValTp() ;
-		if(JSObMap.class.isAssignableFrom(c))
-		{
-			w.write(",\"children\":[");
-			w.write("]");
-		}
-		
-		
-//		//
-//		boolean bfirst = true;
-//		for(CompCat cc:lib.getAllCats())
-//		{
-//			if (bfirst)
-//				bfirst = false;
-//			else
-//				w.write(',');
-//
-//			w.write("{\"id\":\"" + lib.getId()+"-"+ cc.getId() + "\"");
-//			
-//			w.write(",\"tp\": \"tag\"");
-//			w.write(",\"icon\": \"fa-regular fa-folder fa-lg\"");
-//
-//			w.write(",\"text\":\""+cc.getTitle()+"\"}");
-//		}
-		
-		
-		w.write("}");
+		return this.name+":"+getClassJsTitle(valTp) ;
 	}
+	
+	@Override
+	public String getSubIcon()
+	{
+		JsDef jsd = valTp.getAnnotation(JsDef.class) ;
+		if(jsd!=null)
+			return jsd.icon() ;
+		return "icon_prop" ;
+	}
+	
 	
 	public JSONObject toJO()
 	{

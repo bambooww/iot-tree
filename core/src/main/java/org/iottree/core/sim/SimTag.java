@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iottree.core.UAVal;
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -71,9 +71,9 @@ public abstract class SimTag  extends JSObMap
 		
 		Class<?> vt = this.getValueTp();
 
-		rets.add(new JsProp("_pv",vt,"SimTag Value","Tag Value,you can get or set by using '='"));
-		rets.add(new JsProp("_value",vt,"SimTag Value","same as _pv"));
-		rets.add(new JsProp("_v",vt,"SimTag Value","same as _pv"));
+		rets.add(new JsProp("_pv",null,vt,false,"SimTag Value","Tag Value,you can get or set by using '='"));
+		//rets.add(new JsProp("_value",null,vt,false,"SimTag Value","same as _pv"));
+		//rets.add(new JsProp("_v",null,vt,false,"SimTag Value","same as _pv"));
 		
 //		rets.add(new JsProp("_valid",Boolean.class,"Valid","Tag Value is valid or not in running"));
 //		rets.add(new JsProp("_updt",Long.class,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));

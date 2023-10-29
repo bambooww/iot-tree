@@ -16,11 +16,13 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.res.ResDir;
 import org.json.JSONObject;
 
 @data_class
+@JsDef(name="ch",title="Ch",desc="Channel Node",icon="icon_ch")
 public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 {
 	public static final String NODE_TP = "ch" ;

@@ -11,7 +11,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.iottree.core.Config;
 import org.iottree.core.UANode;
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
@@ -391,12 +391,12 @@ public class DataNode extends JSObMap implements Comparable<DataNode>
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> ss = super.JS_props();
-		ss.add(new JsProp("_name",String.class,"DataNode Name","")) ;
-		ss.add(new JsProp("_title",String.class,"DataNode Title","")) ;
+		ss.add(new JsProp("_name",null,String.class,false,"DataNode Name","")) ;
+		ss.add(new JsProp("_title",null,String.class,false,"DataNode Title","")) ;
 		for(String tmps:this.getAttrNames())
 		{
 			//ss.add(tmps) ;
-			ss.add(new JsProp(tmps,String.class,tmps,"")) ;
+			ss.add(new JsProp(tmps,null,String.class,false,tmps,"")) ;
 		}
 		
 		List<DataNode> subns = this.getChildNodes() ;
@@ -404,7 +404,7 @@ public class DataNode extends JSObMap implements Comparable<DataNode>
 		{
 			for(DataNode n:subns)
 			{
-				ss.add(new JsProp(n.getName(),DataNode.class,n.getTitle(),"Sub Node "+n.getTitle())) ;
+				ss.add(new JsProp(n.getName(),n,DataNode.class,true,n.getTitle(),"Sub Node "+n.getTitle())) ;
 				//ss.add(n.getName()) ;
 			}
 		}

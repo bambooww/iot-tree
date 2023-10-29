@@ -699,13 +699,13 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		
 		switch(key)
 		{
-		case "_id":
+		case "__id":
 			return this.id ;
-		case "_name":
+		case "__n":
 			return this.name ;
-		case "_title":
+		case "__t":
 			return this.title ;
-		case "_desc":
+		case "__d":
 			return this.desc ;
 		}
 		return this.getSubNodeByName(key) ;
@@ -714,15 +714,15 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> ss = super.JS_props() ;
-		ss.add(new JsProp("_id",String.class,"Id","Node Unique Id")) ;
-		ss.add(new JsProp("_name",String.class,"Id","Node Name")) ;
-		ss.add(new JsProp("_title",String.class,"Id","Node Title")) ;
-		ss.add(new JsProp("_desc",String.class,"Id","Node Description")) ;
+		ss.add(new JsProp("__id",this.id,null,false,"Id","Node Unique Id")) ;
+		ss.add(new JsProp("__n",this.name,null,false,"Id","Node Name")) ;
+		ss.add(new JsProp("__t",this.title,String.class,false,"Id","Node Title")) ;
+		ss.add(new JsProp("__d",this.desc,String.class,false,"Id","Node Description")) ;
 		List<UANode> subns = this.getSubNodes() ;
 		if(subns!=null)
 		{
 			for(UANode n:subns)
-				ss.add(new JsProp(n.getName(),UANode.class,n.getTitle(),n.getDesc()));//
+				ss.add(new JsProp(n.getName(),n,null,true,n.getTitle(),n.getDesc()));//
 		}
 		return ss ;
 	}

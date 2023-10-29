@@ -47,7 +47,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		UANode curn = this ;
 		while((curn=curn.getParentNode())!=null)
 		{
-			if(this instanceof UADev)
+			if(curn instanceof UADev)
 				return (UADev)curn ;
 		}
 		return null ;
@@ -60,12 +60,24 @@ public abstract class UANodeOCTags extends UANodeOC
 		UANode curn = this ;
 		while((curn=curn.getParentNode())!=null)
 		{
-			if(this instanceof UACh)
+			if(curn instanceof UACh)
 				return (UACh)curn ;
 		}
 		return null ;
 	}
 
+	public UAPrj getBelongToPrj()
+	{
+		if(this instanceof UAPrj)
+			return (UAPrj)this ;
+		UANode curn = this ;
+		while((curn=curn.getParentNode())!=null)
+		{
+			if(curn instanceof UAPrj)
+				return (UAPrj)curn ;
+		}
+		return null ;
+	}
 	/**
 	 * 
 	 * @param new_self
@@ -846,46 +858,16 @@ public abstract class UANodeOCTags extends UANodeOC
 		return this.getTagByName(key);
 	}
 
-	public List<JsProp> JS_props()
-	{
-		List<JsProp> rets = super.JS_props();
-
-		List<UATag> tags = listTags();
-		for (UATag tag : tags)
-		{
-			rets.add(new JsProp(tag.getName(),UATag.class,tag.getTitle(),tag.getDesc()));//
-		}
-		return rets;
-	}
+//	public List<JsProp> JS_props()
+//	{
+//		List<JsProp> rets = super.JS_props();
+//
+//		List<UATag> tags = listTags();
+//		for (UATag tag : tags)
+//		{
+//			rets.add(new JsProp(tag.getName(),tag,UATag.class,true,tag.getTitle(),tag.getDesc()));//
+//		}
+//		return rets;
+//	}
 	
-	private transient List<JsProp> globalPropsCxt = null ;
-	
-	/**
-	 * get global props in this node as context
-	 * @return
-	 */
-	protected List<JsProp> JS_getGlobalPropsCxt()
-	{
-		if(globalPropsCxt!=null)
-			return globalPropsCxt ;
-		
-		ArrayList<JsProp> jps = new ArrayList<>() ;
-		jps.add(new JsProp("$prj",UAPrj.class,"project","Project obj in context")) ;
-		globalPropsCxt = jps;
-		return jps ;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public final List<JsProp> JS_get_props_cxt()
-	{
-		ArrayList<JsProp> rets = new ArrayList<>() ;
-		List<JsProp> jps = JS_getGlobalPropsCxt();
-		rets.addAll(jps) ;
-		jps = this.JS_props() ;
-		rets.addAll(jps);
-		return rets ;
-	}
 }

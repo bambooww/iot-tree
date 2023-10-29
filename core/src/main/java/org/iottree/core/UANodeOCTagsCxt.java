@@ -13,7 +13,11 @@ import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
 import org.iottree.core.UAVal.ValTP;
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsMethod;
+import org.iottree.core.cxt.JsProp;
+import org.iottree.core.cxt.JsSub;
+import org.iottree.core.cxt.JsSubOb;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.util.Convert;
@@ -468,6 +472,136 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 		w.write("]");
 		return true;
+	}
+	
+	
+
+	private transient List<JsProp> globalPropsCxt = null ;
+	
+	/**
+	 * get global props in this node as context
+	 * @return
+	 */
+	protected List<JsProp> JS_getGlobalPropsCxt()
+	{
+		if(globalPropsCxt!=null)
+			return globalPropsCxt ;
+		
+		UANode topn = this.getTopNode() ;
+		ArrayList<JsProp> jps = new ArrayList<>() ;
+		jps.add(new JsProp("$sys",UAContext.sys,null,true,"system","System support func")) ;
+		jps.add(new JsProp("$util",UAContext.util,null,true,"util","System util func")) ;
+		jps.add(new JsProp("$debug",UAContext.debug,null,true,"system","System debug func")) ;
+		if(topn instanceof UAPrj)
+			jps.add(new JsProp("$prj",(UAPrj)topn,UAPrj.class,true,"project","Project obj in context")) ;
+		UACh ch  = this.getBelongToCh() ;
+		if(ch!=null)
+			jps.add(new JsProp("$ch",ch,null,true,"Channel","Channel obj in context")) ;
+		UADev dev = this.getBelongToDev() ;
+		if(dev!=null)
+			jps.add(new JsProp("$dev",dev,null,true,"Device","Device obj in context")) ;
+		jps.add(new JsProp("$this",this,null,true,this.getTitle(),this.getDesc())) ;
+		globalPropsCxt = jps;
+		return jps ;
+	}
+	
+	public Object JS_get(String key)
+	{
+		Object r = super.JS_get(key);
+		if (r != null)
+			return r;
+		switch(key)
+		{
+		case "$prj":
+			return this.getBelongToPrj() ;
+		case "$ch":
+			return this.getBelongToCh() ;
+		case "$dev":
+			return this.getBelongToDev() ;
+		case "$this":
+			return this ;
+		case "$sys":
+			return UAContext.sys;
+		case "$debug":
+			return UAContext.debug;
+		case "$util":
+			return UAContext.util;
+		}
+		return null ;
+	}
+	
+	private transient List<JsSub> js_cxt_root_subs = null ;
+	/**
+	 * this node will be a context, and get root props
+	 * @return
+	 */
+	public final List<JsSub> JS_CXT_get_root_subs()
+	{
+		if(js_cxt_root_subs!=null)
+			return js_cxt_root_subs;
+		
+		List<JsSub> rets = new ArrayList<>() ;
+		List<JsProp> jps = JS_getGlobalPropsCxt();
+		rets.addAll(jps) ;
+		List<JsSub> subs = this.JS_get_subs() ;
+		if(subs!=null)
+		{
+			for(JsSub sub:subs)
+			{
+				if(sub instanceof JsMethod || !sub.hasSub() || (sub instanceof JsProp && ((JsProp)sub).isTag()))
+					continue ;// root has no method
+				rets.add(sub);
+			}
+		}
+		js_cxt_root_subs = rets ;
+		return rets ;
+	}
+	
+	public final JsSub JS_CXT_get_root_sub(String name)
+	{
+		for(JsSub jp: JS_CXT_get_root_subs())
+		{
+			if(jp.getName().equals(name))
+				return jp ;
+		}
+		return null ;
+	}
+	
+	/**
+	 * this node will be a context, and get sub prop by unique id
+	 * @param sub_prop_id  like xxx.xx
+	 * @return
+	 */
+	public final JsSubOb JS_CXT_get_sub_by_id(String sub_id)
+	{
+		if(Convert.isNullOrEmpty(sub_id))
+			return null ;
+		
+		List<String> ss = Convert.splitStrWith(sub_id, ".") ;
+		String rootn = ss.get(0) ;
+		int n = ss.size() ;
+		JsSub jp1 = JS_CXT_get_root_sub(rootn) ;
+		if(jp1==null)
+			return null ;
+		Object pv = this.JS_get(rootn) ;
+		if(n==1)
+			return new JsSubOb(jp1,pv) ;
+
+		JsSub jss = null ;
+		for(int i = 1 ; i < n ; i ++)
+		{
+			if(pv==null || !(pv instanceof JSObMap))
+				return null ;
+			
+			JSObMap pv_ob = (JSObMap)pv ; 
+			
+			String name = ss.get(i) ;
+			jss = pv_ob.JS_get_sub(name) ;
+			if(jss==null)
+				return null ;
+			pv = pv_ob.JS_get(name) ;
+		}
+		return new JsSubOb(jss,pv) ;
 	}
 	
 	

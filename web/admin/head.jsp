@@ -60,6 +60,7 @@ if(tree)
 %>
 <script src="/_js/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/_js/jstree/themes/default/style.min.css" />
+<link type="text/css" href="/admin/inc/tree.css" rel="stylesheet" />
 <%
 }
 %>

@@ -23,13 +23,14 @@ import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
-import org.iottree.core.basic.JSObMap;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.IJSOb;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JSProxyOb;
 import org.iottree.core.cxt.JSProxyObGetter;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
@@ -51,6 +52,7 @@ import kotlin.NotImplementedError;
  * @author zzj
  */
 @data_class
+@JsDef(name="prj",title="Prj",desc="Project Node",icon="icon_prj")
 public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt //IJSOb
 {
 	public static final String NODE_TP = "prj" ;
@@ -1416,7 +1418,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	}
 	
 	@HostAccess.Export
-	@JsMethod.Def(name="get_rt_json",title="get rt data",desc="get runtime data with json format")
+	@JsDef(name="get_rt_json",title="get rt data",desc="get runtime data with json format")
 	public String JS_get_rt_json() throws IOException
 	{
 		return JS_get_rt_json_lastdt(-1L) ;

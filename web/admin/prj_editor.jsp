@@ -464,13 +464,6 @@ background-color: #fff ;
 	border-radius:10px;
 }
 
-#tree { float:left; min-width:319px; border-right:1px solid silver; overflow:auto; padding:0px 0; }
-#tree .icon_dev {background:url('./inc/sm_icon_dev.png') 0 0 no-repeat;width:24px;height:24px;display:none;}
-#tree .icon_prj {background:url('./inc/sm_icon_tree.png') 0 0 no-repeat; width:24px;height:24px;}
-#tree .icon_ch {background:url('./inc/sm_icon_ch.png') 0 0 no-repeat; width:24px;height:24px;display:none;}
-#tree .icon_tagg {background:url('./inc/sm_icon_tagg.png') 0 0 no-repeat; width:24px;height:24px;}
-#tree .icon_hmi {background:url('./inc/sm_icon_hmi.png') 0 0 no-repeat; width:24px;height:24px;}
-
 </style>
 
 </head>
@@ -597,7 +590,7 @@ background-color: #fff ;
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:auto">
-           		<div id="tree"  style="width:100%;overflow:auto;left:-30px;position:absolute;height:700px"></div>
+           		<div id="tree"  class="tree" style="width:100%;overflow:auto;left:-30px;position:absolute;height:700px"></div>
            		<div style="width:80%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>

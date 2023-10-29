@@ -1,5 +1,6 @@
 package org.iottree.core.basic;
 
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
 import org.json.JSONObject;

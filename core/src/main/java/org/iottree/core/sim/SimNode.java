@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iottree.core.UANode;
-import org.iottree.core.basic.JSObMap;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
@@ -46,9 +46,9 @@ public class SimNode extends JSObMap
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> ss = super.JS_props() ;
-		ss.add(new JsProp("_id",String.class,"Id","Sim Node Unique Id")) ;
-		ss.add(new JsProp("_name",String.class,"Id","Sim Node Name")) ;
-		ss.add(new JsProp("_title",String.class,"Id","Sim Node Title")) ;
+		ss.add(new JsProp("_id",null,String.class,false,"Id","Sim Node Unique Id")) ;
+		ss.add(new JsProp("_name",null,String.class,false,"Id","Sim Node Name")) ;
+		ss.add(new JsProp("_title",null,String.class,false,"Id","Sim Node Title")) ;
 //		List<UANode> subns = this.getSubNodes() ;
 //		if(subns!=null)
 //		{

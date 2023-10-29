@@ -68,11 +68,11 @@ public class UAContext
 	//private transient ScriptEngineManager seMgr = null;
 	private transient ScriptEngine scriptEng = null;
 	
-	private  Debug debug = new Debug() ;
+	public static  Debug debug = new Debug() ;
 	
-	private GSys sys = new GSys() ;
+	public static GSys sys = new GSys() ;
 	
-	private GUtil util = new GUtil() ;
+	public static GUtil util = new GUtil() ;
 	
 	//public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
 

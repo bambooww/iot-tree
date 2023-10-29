@@ -11,6 +11,7 @@ import java.util.List;
 import org.iottree.core.bind.BindDI;
 import org.iottree.core.bind.EventBindItem;
 import org.iottree.core.bind.PropBindItem;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
+@JsDef(name="hmi",title="Hmi",desc="Hmi Node",icon="icon_hmi")
 public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 {
 	public static final String NODE_TP = "hmi" ;
