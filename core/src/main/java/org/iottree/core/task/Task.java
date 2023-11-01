@@ -255,7 +255,7 @@ public class Task
 
 	private UAContext cxt = null;
 
-	private boolean taskRunInit()
+	private boolean taskRunInit() throws ScriptException
 	{
 		getContext() ;
 		
@@ -274,7 +274,7 @@ public class Task
 		return bret ;
 	}
 
-	public ScriptEngine getScriptEngine()
+	public ScriptEngine getScriptEngine() throws ScriptException
 	{
 		if(scriptEng!=null)
 			return scriptEng;
@@ -283,7 +283,7 @@ public class Task
 		return scriptEng;
 	}
 	
-	public UAContext getContext()
+	public UAContext getContext() throws ScriptException
 	{
 		if(cxt!=null)
 			return cxt ;
@@ -324,18 +324,18 @@ public class Task
 	private Runnable taskRunner = new Runnable() {
 		public void run()
 		{
-			if(!taskRunInit())
-			{
-				System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init failed,it cannot run") ;
-				return ;
-			}
-			else
-			{
-				System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init ok to run") ;
-			}
-			
 			try
 			{
+				if(!taskRunInit())
+				{
+					System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init failed,it cannot run") ;
+					return ;
+				}
+				else
+				{
+					System.out.println("project ["+getPrj().getName()+"] task ["+Task.this.getName()+"] init ok to run") ;
+				}
+
 				while (rtRun)
 				{
 					Thread.sleep(intervalMS);

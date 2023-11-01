@@ -1056,6 +1056,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return true;
 	}
 	
+	@JsDef
 	public boolean RT_writeVal(Object v) //throws Exception
 	{
 		return RT_writeVal(v,null) ;

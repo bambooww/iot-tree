@@ -41,11 +41,7 @@ if(!Convert.checkReqEmpty(request, out, "tmpfn"))
 <html>
 <head>
 <title>project importer</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<jsp:include page="../head.jsp"></jsp:include>
 <style type="text/css">
 .imp_item
 {
@@ -88,17 +84,22 @@ for(IdName idn:idnames)
 		prompt = "Project with this name already existed " ;
 	}
 %>
-<div class="imp_item" style="background-color: <%=bgcolor%>">
+<div class="imp_item" style="background-color: <%=bgcolor%>;border:1px solid;min-height:160px;">
   <table style="height:100%;width:100%">
     <tr>
-      <td colspan="3" align="center"><h3><%=prompt %></h3></td>
+      <td colspan="3" align="center"><h4><%=prompt %></h4></td>
     </tr>
     <tr>
-      <td valign="middle" >
-
+      <td valign="middle"  align="right">Name:</td>
+      <td><input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" style="width:90%"/>
+     
       </td>
-      <td>Name:<input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" /><br>
-      Title:<input type="text" id="inputt_<%=id %>" value="<%=idn.getTitle() %>  " />
+      <td></td>
+    </tr>
+    <tr>
+      <td valign="middle" align="right">Title:</td>
+      <td>
+      <input type="text" id="inputt_<%=id %>" value="<%=idn.getTitle() %>  "  style="width:90%"/>
       </td>
       <td></td>
     </tr>

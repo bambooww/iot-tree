@@ -581,7 +581,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@Override
 	protected void onPropNodeValueChged()
 	{
-		setupJsScript();
+		try
+		{
+			setupJsScript();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -842,6 +849,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	private volatile boolean rtRun = false;
 
+	@JsDef
 	synchronized public boolean RT_start()
 	{
 		if (rtTh != null)
@@ -853,6 +861,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return true;
 	}
 
+	@JsDef
 	public void RT_stop()
 	{
 		rtRun = false;
@@ -869,7 +878,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			return;
 	}
 	
-
+	@JsDef
 	public boolean RT_isRunning()
 	{
 		return rtTh != null;
@@ -1070,7 +1079,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 //		return engine;
 //	}
 	
-	private ScriptEngine getJSEngine()
+	private ScriptEngine getJSEngine() throws ScriptException
 	{
 		if(this.context!=null)
 			return this.context.getScriptEngine() ;
@@ -1094,8 +1103,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	/**
 	 * 被外界调度的脚本运行过程
+	 * @throws ScriptException 
 	 */
-	private boolean setupJsScript()
+	private boolean setupJsScript() throws ScriptException
 	{
 		if (script == null)
 		{

@@ -1,10 +1,13 @@
 package org.iottree.core.cxt;
 
 import java.io.Writer;
+import java.lang.reflect.Field;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UATag;
 import org.json.JSONObject;
+
+import com.sun.xml.bind.v2.schemagen.xmlschema.List;
 
 public class JsProp extends JsSub
 {
@@ -18,6 +21,7 @@ public class JsProp extends JsSub
 	boolean hSub = false;
 	
 	//UANodeOCTagsCxt cxtNode = null ; 
+	boolean bList = false;
 	
 	public JsProp(String name,Object val,Class<?> valtp,boolean has_sub,String title,String desc)
 	{
@@ -33,6 +37,11 @@ public class JsProp extends JsSub
 		hSub = has_sub ;
 	}
 	
+	public JsProp asList(boolean b)
+	{
+		this.bList = b ;
+		return this ;
+	}
 //	public JsProp(String name,Class<?> valtp,String title,String desc)
 //	{
 //		this.name = name ;
@@ -67,6 +76,12 @@ public class JsProp extends JsSub
 	public boolean isTag()
 	{
 		return UATag.class.isAssignableFrom(this.valTp) ;
+	}
+	
+	public boolean isSysTag()
+	{
+		if(!isTag()) return false;
+		return this.name.startsWith("_") ;
 	}
 	
 	@Override

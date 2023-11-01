@@ -131,7 +131,7 @@
 		  ,"id":"<%=ch.getId() %>"
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
-		  ,"state": {"opened": true}
+		  ,"state": {"opened": false}
 		  ,"icon":"icon_ch_hidden"
 		 ,"children": [
 <%

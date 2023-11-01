@@ -80,15 +80,9 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
 <b>Context @ <%=path_title %></b>
-<%
-if(Convert.isNotNullEmpty(path))
-{
-%>
-<input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" />
-<%
-}
-%>
-<table border='1' style="height:90%;width:100%">
+
+<div style="position: absolute;width:100%;top:20px;bottom:10px;overflow: hidden;">
+<table border='1' style="width:100%;height:100%;">
  <tr>
   <td style="width:30%;vertical-align: top;" >
    <div style="top:0px;height:60%;width:100%;overflow: auto;">
@@ -119,22 +113,36 @@ if(Convert.isNotNullEmpty(path))
 	<%
 	}
 	%>
-	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>" placeholder="Input JS Script Here"></textarea>
+	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" placeholder="Input JS Script Here"></textarea>
 	&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
 	  </td>
 	 </tr>
-	  <tr height="20%">
+	  <tr height0="20%">
 	
 	  <td  colspan="2">
-	  script test result
-	   <textarea id='script_res' rows="6" style="overflow: scroll;width:100%;height:100%"></textarea>
+	  <div style="position: relative;height:20px;">
+	  script test result <span id="run_st"></span>
+	  <%
+if(Convert.isNotNullEmpty(path))
+{
+%>
+<div style="right:10px;top:0px;position:absolute;"><input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" /></div>
+<%
+}
+%>
+</div>	  
+	  </td>
+	 </tr>
+	 <tr height="20%">
+	  <td  colspan="2">
+	   <div id='script_res' rows="6" style="overflow: scroll;width:100%;height:100%;border:1px solid;"></div>
 	  </td>
 	 </tr>
 	</table>
   </td>
  </tr>
 </table>
-
+</div>
 <div id='opc_info'>
 </div>
 </body>
@@ -143,6 +151,7 @@ var path="<%=path%>" ;
 var opener_txt_id = "<%=opener_txt_id%>" ;
 var sample_txt_id = "<%=sample_txt_id%>" ;
 var taskid="<%=taskid%>";
+var bdlg = <%=bdlg%>;
 
 function log(s)
 {
@@ -188,7 +197,7 @@ function tree_init()
 							return name + ' ' + counter;
 						}
 					},
-					'plugins' : ['state','dnd','types','contextmenu','unique']
+					'plugins' : ['types','unique'] //'state',','contextmenu' 'dnd',
 				}
 		);
 	
@@ -255,7 +264,16 @@ function run_script_test(fn)
 	}
 	send_ajax('cxt_script_test.jsp',pm,function(bsucc,ret)
 		{
-			document.getElementById('script_res').value = ret ;
+			if(!bsucc || ret.indexOf("{")!=0)
+			{
+				$('#run_st').html("<code style='color:red'>error</code>") ;
+				$('#script_res').html("<code style='color:red'>"+ret+"</code>") ;
+				return ;
+			}
+			let ob = null ;
+			eval("ob="+ret) ;
+			$('#script_res').html("<code style='color:blue'>"+ob.res+"</code>") ;
+			$('#run_st').html("<code style='color:blue'>cost "+ob.cost_ms+"ms</code>") ;
 		},false) ;
 }
 

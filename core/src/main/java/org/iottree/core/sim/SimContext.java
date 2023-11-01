@@ -21,6 +21,7 @@ import org.iottree.core.dict.PrjDataClass;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
+import org.iottree.core.util.js.GUtil;
 
 public class SimContext
 {
@@ -30,6 +31,7 @@ public class SimContext
 	
 	private GSys sys = new GSys() ;
 
+	private GUtil util = new GUtil() ;
 
 	private SimInstance simIns = null ;
 
@@ -78,7 +80,8 @@ public class SimContext
 		engine.put("$debug",debug);
 		engine.put("$system",sys);
 		engine.put("$sys",sys);
-		engine.put("$dict",sys);
+		engine.put("$util",util);
+		//engine.put("$dict",sys);
 		
 		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)

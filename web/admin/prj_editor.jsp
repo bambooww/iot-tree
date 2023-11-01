@@ -1096,7 +1096,6 @@ function act_node_copy(n,op)
 function act_node_paste(n,op)
 {
 	/*
-}
 	if(copiedItem==null)
 		return ;
 	let ppath=n.path ;
@@ -2037,7 +2036,7 @@ function act_open_cxt_script(n,op)
 {
 	
 	dlg.open_win("ua_cxt/cxt_script.jsp?path="+n.path,
-			{title:"Context Script Tester",w:'950',h:'600'},
+			{title:"JS Context Test",w:'950',h:'600'},
 			['Close',"Help"],
 			[
 				function(dlgw)

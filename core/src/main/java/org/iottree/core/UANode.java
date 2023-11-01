@@ -14,6 +14,7 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -339,6 +340,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return parentNode ;
 	}
 	
+	@JsDef(desc="Get node path like /xxx/xx/xxxx")
 	public String getNodePath()
 	{
 		UANode p = this.getParentNode() ;
@@ -350,6 +352,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return ppn+"/"+this.name;
 	}
 	
+	@JsDef(desc="Get node path like xxx.xx.xxxx")
 	public String getNodePathCxt()
 	{
 		return getNodePathCxt(".");

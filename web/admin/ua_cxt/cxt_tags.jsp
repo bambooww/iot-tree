@@ -145,7 +145,7 @@ text-overflow:ellipsis;
  <a href="javascript:node_access('<%=node.getNodePath() %>')" id="node_access_<%=node.getId() %>"  title="Access" ><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
  
  </div>
-  <div style="left:20px;top:25px;position:absolute;">tags number is:<span id="tags_num"></span></div>
+  <div style="left:20px;top:25px;position:absolute;font-size: 15px;">tags number is:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%

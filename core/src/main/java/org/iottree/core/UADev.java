@@ -3,6 +3,7 @@ package org.iottree.core;
 import java.io.File;
 import java.util.*;
 
+import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
@@ -83,6 +84,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		return NODE_TP;
 	}
 	
+	@HostAccess.Export
 	public String getDevModel()
 	{
 		if(devModel==null)

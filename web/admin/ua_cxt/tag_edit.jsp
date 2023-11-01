@@ -43,7 +43,10 @@
 	
 	UANode tmpn = UAUtil.findNodeByPath(path);
 	if(tmpn instanceof UAHmi)
+	{
 		tmpn = tmpn.getParentNode();
+		path = tmpn.getNodePath() ;
+	}
 	UANodeOCTags n = (UANodeOCTags)tmpn;
 	if(n==null)
 	{
@@ -182,23 +185,30 @@ if(!bmid)
 %>
     <div class="layui-form-item" id="addr_setting">
     <label class="layui-form-label"><%=(bmid?"Express JS":"Address") %>:</label>
-    <div class="layui-input-inline" style="width:300px">
+    <div class="layui-input-inline" style="width:400px">
 <%
 if(bmid)
 {
-%><textarea style="width:100%;height:100px;"  id="addr"  name="addr"   class="layui-input"></textarea>
+%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" onclick="on_js_edit()"></textarea>
 <%
 }
 else
 {
 %>
-<input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input">
+<input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input" value="<%=addr%>"/>
 <%
 }
 %>      
     </div>
     <div class="layui-input-inline" >
+<%
+if(!bmid)
+{
+%>
     	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()"><i class="fa-solid fa-check"></i></button>
+<%
+}
+%>
     </div>
   </div>
   <%--
@@ -259,7 +269,7 @@ var bmid = <%=bmid%>;
 var name= "<%=html_str(name) %>" ;
 var title = "<%=html_str(title)%>" ;
 var desc = "<%=html_str(desc)%>";
-var addr = "<%=html_str(addr)%>" ;
+var addr = `<%=html_str(addr)%>`;
 var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
@@ -467,6 +477,27 @@ function chk_addr()
 			}
 			dlg.msg(r.prompt) ;
 	});
+}
+
+function on_js_edit()
+{
+	let txt = $("#addr").val() ;
+	dlg.open("./cxt_script.jsp?dlg=true&opener_txt_id=addr&path="+node_path,
+			{title:"Edit Middle Tag JS Express",w:'600px',h:'400px',},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#addr").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 </script>

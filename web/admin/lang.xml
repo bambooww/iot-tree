@@ -3,7 +3,7 @@
   <dd_node id="1001" name="add_ch" name_cn="新增通道" name_en="Add Channel" />
   <dd_node id="1001" name="new_ch" name_cn="新增通道" name_en="New Channel" />
   <dd_node id="1001" name="data_cxt" name_cn="数据上下文" name_en="Data Context" />
-  <dd_node id="1001" name="cxt_script_test" name_cn="上下文脚本测试" name_en="Context Script Test" />
+  <dd_node id="1001" name="cxt_script_test" name_cn="JS上下文测试" name_en="JS Context Test" />
   <dd_node id="1001" name="properties" name_cn="属性" name_en="Properties" />
   <dd_node id="1001" name="new_hmi" name_cn="新人机交互HMI" name_en="New HMI" />
   <dd_node id="1001" name="new_tag_mid" name_cn="新标签（中间）" name_en="New Tag Middle" />

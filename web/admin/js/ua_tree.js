@@ -150,7 +150,7 @@ function UATree(tree_opt)
 							return name + ' ' + counter;
 						}
 					},
-					'plugins' : ['state','dnd','types','contextmenu','unique']
+					'plugins' : ['state','types','contextmenu','unique'] //,'dnd',
 				}
 		);
 

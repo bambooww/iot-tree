@@ -76,7 +76,7 @@ public class UAContext
 	
 	//public static final String FN_TEMP_VAR = "_ua_cxt_tmp_var_";
 
-	public UAContext(UANodeOCTagsCxt nodecxt)// throws ScriptException
+	public UAContext(UANodeOCTagsCxt nodecxt) throws ScriptException
 	{
 
 		nodeCxt = nodecxt;
@@ -90,28 +90,44 @@ public class UAContext
 		//for graal - object must be public and not inner class,
 		  // and function must has HostAccess.Export annotation
 		
-		scriptEng.put("$this", nodecxt);
-		scriptEng.put("$prj", prj);//prj.getJSOb());
+		scriptEng.put("$_this_", nodecxt);
+		scriptEng.put("$_prj_", prj);//prj.getJSOb());
+		
+		String init_eval = "const $prj=$_prj_;Object.freeze($prj);";
 		
 		UACh ch = nodecxt.getBelongToCh() ;
 		UADev dev = nodecxt.getBelongToDev() ;
 		if(ch!=null)
-			scriptEng.put("$ch", ch);
+		{
+			scriptEng.put("$_ch_", ch);
+			init_eval += "const $ch=$_ch_;Object.freeze($ch);";
+		}
 		if(dev!=null)
-			scriptEng.put("$dev", dev);
+		{
+			scriptEng.put("$_dev_", dev);
+			init_eval += "const $dev=$_dev_;Object.freeze($dev);";
+		}
 		
 		UANode pnode = nodecxt.getParentNode() ;
 		if(pnode!=null)
-			scriptEng.put("$parent", pnode);
+		{
+			scriptEng.put("$_parent_", pnode);
+			init_eval += "const $parent=$_parent_;Object.freeze($parent);";
+		}
 		
 		PrjDataClass pdc = DictManager.getInstance().getPrjDataClassByPrjId(prj.getId()) ;
 		if(pdc!=null)
-			scriptEng.put("$dict", pdc);
+		{
+			scriptEng.put("$_dict_", pdc);
+			init_eval += "const $dict=$_dict_;Object.freeze($dict);" ;
+		}
 		
 		if(nodecxt instanceof IJSOb)
 		{
 			scriptEng.put("$this", ((IJSOb)nodecxt).getJSOb());
 		}
+		
+		init_eval += "const $this=$_this_;Object.freeze($this);" ;
 		
 		List<JsProp> jsnames = nodecxt.JS_props() ;
 		for(JsProp o:jsnames)
@@ -123,14 +139,17 @@ public class UAContext
 			if(v!=null)
 				scriptEng.put(n, v);
 		}
-		//scriptEng.eval("var " + FN_TEMP_VAR + "={};");
+		
+		
+		scriptEng.eval(init_eval);
+		
 	}
 	
 	
 
 	public static final String JS_NAME="graal.js";//"nashorn"; //
 
-	private ScriptEngine createJSEngine()
+	private ScriptEngine createJSEngine() throws ScriptException
 	{
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName(JS_NAME);
@@ -145,20 +164,29 @@ public class UAContext
 		bindings.put("polyglot.js.allowHostAccess", true);
 		bindings.put("polyglot.js.allowHostClassLookup", (Predicate<String>) s -> true);
 
-		engine.put("$debug",debug);
-		engine.put("$system",sys);
-		engine.put("$sys",sys);
-		engine.put("$dict",sys);
-		engine.put("$util",util);
+		engine.put("$_debug_",debug);
+		//engine.put("$system",sys);
+		engine.put("$_sys_",sys);
+		//engine.put("$_dict_",sys);
+		engine.put("$_util_",util);
+		
+		String init_eval = "const $debug=$_debug_;Object.freeze($debug);"
+				+ "const $sys=$_sys_;Object.freeze($sys);"
+				//+ "const $dict=$_dict_;Object.freeze($dict);"
+				+ "const $util=$_util_;Object.freeze($util);";
 		
 		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)
 		{
 			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
 			{
-				engine.put("$$"+n2o.getKey(), n2o.getValue());
+				String k = n2o.getKey();
+				engine.put("$$_"+k+"_", n2o.getValue());
+				init_eval += "const $$"+k+"=$$_"+k+"_;Object.freeze($$"+k+");";
 			}
 		}
+		
+		engine.eval(init_eval);
 		
 		return engine ;
 	}

@@ -3,7 +3,6 @@ package org.iottree.core.util.js;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 
@@ -18,7 +17,7 @@ public class Debug extends JSObMap
 		this.pw = pw ;
 	}
 	
-	@HostAccess.Export
+	@JsDef
 	public void print(String txt)
 	{
 		if(pw!=null)
@@ -29,7 +28,7 @@ public class Debug extends JSObMap
 		System.out.print(txt);
 	}
 	
-	@HostAccess.Export
+	@JsDef
 	public void println(String txt)
 	{
 		if(pw!=null)

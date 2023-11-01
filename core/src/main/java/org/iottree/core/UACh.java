@@ -263,7 +263,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return cpt!=null&&cpt instanceof ConnPtBinder ;
 	}
 	
-	@HostAccess.Export
+	@JsDef
 	public boolean hasConn()  throws Exception
 	{
 		ConnPt cpt = this.getConnPt()  ;
@@ -274,7 +274,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	 * @return
 	 * @throws Exception
 	 */
-	@HostAccess.Export
+	@JsDef
 	public boolean chkDriverFit(String drvname) throws Exception
 	{
 		if(isConnVirtual())
@@ -300,7 +300,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return chkDriverFit(drvName) ;
 	}
 	
-	@HostAccess.Export
+	@JsDef
 	public boolean hasDriver()
 	{
 		return Convert.isNotNullEmpty(drvName);

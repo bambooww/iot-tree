@@ -81,13 +81,14 @@ default:
 	}
 	catch(Exception e)
 	{
-		obj = "err:"+e.getMessage();
-		e.printStackTrace();
+		out.print( "err:"+e.getMessage());
+		//e.printStackTrace();
+		return ;
 	}
 
+	String res_str = Convert.plainToJsStr(""+obj);
 //System.out.println(sb.toString()) ;
-%>res=[<%=""+obj%>]
-cost ms=<%=(et-st)%>
+%>{res:"<%=res_str %>",cost_ms:<%=(et-st)%>}
 <%
 	break ;
 }

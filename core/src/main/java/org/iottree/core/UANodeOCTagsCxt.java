@@ -20,6 +20,7 @@ import org.iottree.core.cxt.JsSub;
 import org.iottree.core.cxt.JsSubOb;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -492,6 +493,16 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		jps.add(new JsProp("$sys",UAContext.sys,null,true,"system","System support func")) ;
 		jps.add(new JsProp("$util",UAContext.util,null,true,"util","System util func")) ;
 		jps.add(new JsProp("$debug",UAContext.debug,null,true,"system","System debug func")) ;
+		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		if(gvar2obj!=null)
+		{
+			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
+			{
+				String k = n2o.getKey();
+				jps.add(new JsProp("$$"+k,n2o.getValue(),null,true,"plugin_"+k,"JsApi Plugin")) ;
+			}
+			
+		}
 		if(topn instanceof UAPrj)
 			jps.add(new JsProp("$prj",(UAPrj)topn,UAPrj.class,true,"project","Project obj in context")) ;
 		UACh ch  = this.getBelongToCh() ;
@@ -527,6 +538,15 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		case "$util":
 			return UAContext.util;
 		}
+		
+		if(key.startsWith("$$"))
+		{//JsApi
+			String plug_n = key.substring(2) ;
+			HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+			if(gvar2obj==null)
+				return null ;
+			return gvar2obj.get(plug_n) ;
+		}
 		return null ;
 	}
 	
@@ -548,8 +568,10 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		{
 			for(JsSub sub:subs)
 			{
-				if(sub instanceof JsMethod || !sub.hasSub() || (sub instanceof JsProp && ((JsProp)sub).isTag()))
+				if(sub instanceof JsMethod || !sub.hasSub())
 					continue ;// root has no method
+				if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
+					continue ;
 				rets.add(sub);
 			}
 		}

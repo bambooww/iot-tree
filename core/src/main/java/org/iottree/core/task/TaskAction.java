@@ -185,7 +185,7 @@ public class TaskAction
 		return bInitScriptOk;
 	}
 
-	boolean initTaskAction()
+	boolean initTaskAction() throws ScriptException
 	{
 		if(!this.isEnable())
 			return false;

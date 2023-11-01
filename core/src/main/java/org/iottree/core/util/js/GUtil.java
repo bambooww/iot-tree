@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Calendar;
 
-import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
@@ -18,7 +17,7 @@ public class GUtil  extends JSObMap
 	 * @param d
 	 * @param plnum
 	 */
-	@HostAccess.Export
+	@JsDef
 	public String to_dec_str(double d, int plnum)
 	{
 		return Convert.toDecimalDigitsStr(d, plnum);
@@ -31,7 +30,7 @@ public class GUtil  extends JSObMap
 	 * @param pos
 	 * @return
 	 */
-	@HostAccess.Export
+	@JsDef
 	public boolean bit_bool(Number vnum, int pos)
 	{
 		int v = vnum.intValue();
@@ -44,7 +43,7 @@ public class GUtil  extends JSObMap
 	 * @param v
 	 * @return
 	 */
-	@HostAccess.Export
+	@JsDef
 	public int word_to_int(Number vnum)
 	{
 		int v = vnum.intValue();
@@ -64,7 +63,7 @@ public class GUtil  extends JSObMap
 	
 
 	// byte[]转float
-	@HostAccess.Export
+	@JsDef
 	float byteToFloat(byte[] v)
 	{
 		ByteBuffer bb = ByteBuffer.wrap(v);
@@ -72,18 +71,20 @@ public class GUtil  extends JSObMap
 		return fb.get();
 	}
 
-	@HostAccess.Export
+	@JsDef
 	public float int2float(Number intn)
 	{
 		int intv = intn.intValue();
 		 return Float.intBitsToFloat(intv);  
 	}
 	
+	@JsDef
 	public int float2int(float v)
 	{
 		return Float.floatToIntBits(v) ;
 	}
 	
+	@JsDef
 	public short[] float2short(float v)
 	{
 		int iv = Float.floatToIntBits(v) ;
@@ -97,7 +98,7 @@ public class GUtil  extends JSObMap
 	 * @param lw
 	 * @return
 	 */
-	@HostAccess.Export
+	@JsDef
 	public float modbus_float(Number hnum, Number lnum)
 	{
 		int hw = hnum.intValue() ;
@@ -112,7 +113,7 @@ public class GUtil  extends JSObMap
 		return byteToFloat(fbs);
 	}
 
-	@HostAccess.Export
+	@JsDef
 	public double modbus_double(Number hnum, Number lnum)
 	{
 		int hw = hnum.intValue() ;
@@ -132,7 +133,7 @@ public class GUtil  extends JSObMap
 		return byteToFloat(fbs);
 	}
 
-	@HostAccess.Export
+	@JsDef
 	public long modbus_int64(Number hnum, Number lnum)
 	{
 		int hw = hnum.intValue() ;
@@ -142,7 +143,7 @@ public class GUtil  extends JSObMap
 		return ((long) hw) * 65536 + lw;
 	}
 
-	@HostAccess.Export
+	@JsDef
 	public int modbus_int32(Number hnum, Number lnum)
 	{
 		int hw = hnum.intValue() ;
@@ -161,7 +162,7 @@ public class GUtil  extends JSObMap
 	 *            大于基准值的幅度，大于0
 	 * @return
 	 */
-	@HostAccess.Export
+	@JsDef
 	public double simul_double(double base_val, double down_chg, double up_chg)
 	{
 		double rd = Math.random();
@@ -182,13 +183,13 @@ public class GUtil  extends JSObMap
 	 *            大于基准值的幅度，大于0
 	 * @return
 	 */
-	@HostAccess.Export
+	@JsDef
 	public float simul_float(float base_val, float down_chg, float up_chg)
 	{
 		return (float) simul_double(base_val, down_chg, up_chg);
 	}
 	
-	@HostAccess.Export
+	@JsDef
 	public long str2tick_ms(String str)
 	{
 		Calendar cal = Convert.toCalendar(str) ;

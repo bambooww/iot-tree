@@ -442,6 +442,7 @@ public class SimInstance extends SimNode
 		catch ( ScriptException se)
 		{
 			this.lastRunErr = se.getMessage();
+			System.err.println(se.getMessage()) ;
 		}
 		catch ( Exception e)
 		{

@@ -72,8 +72,8 @@ public abstract class SimTag  extends JSObMap
 		Class<?> vt = this.getValueTp();
 
 		rets.add(new JsProp("_pv",null,vt,false,"SimTag Value","Tag Value,you can get or set by using '='"));
-		//rets.add(new JsProp("_value",null,vt,false,"SimTag Value","same as _pv"));
-		//rets.add(new JsProp("_v",null,vt,false,"SimTag Value","same as _pv"));
+		rets.add(new JsProp("_value",null,vt,false,"SimTag Value","same as _pv"));
+		rets.add(new JsProp("_v",null,vt,false,"SimTag Value","same as _pv"));
 		
 //		rets.add(new JsProp("_valid",Boolean.class,"Valid","Tag Value is valid or not in running"));
 //		rets.add(new JsProp("_updt",Long.class,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));

@@ -65,11 +65,14 @@
 
 
 #### <a href="doc/js/index.md"> 8 JS脚本支持</a>
-##### <a href="doc/js/index.md"> 8.1 JS运行上下文</a>
+##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.1 Client端JS</a>
+##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.2 JS在中间标签(Middle Tag)的使用</a>
+##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.3 JS在任务(Task)中的使用</a>
+##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.4 JS在UI事件处理中的使用</a>
 
 
 #### <a href="doc/advanced/index.md" >9 高级特性</a>
-##### <a href="doc/advanced/adv_plugin.md" >9.1 插件开发</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 插件开发</a>
 ##### <a href="doc/advanced/adv_js.md" target="main">&nbsp;&nbsp;&nbsp;9.2 JS脚本支持</a>
 ##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.3 JsApi</a>
 ##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.4 权限插件</a>

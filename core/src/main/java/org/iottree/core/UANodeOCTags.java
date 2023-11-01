@@ -576,6 +576,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return rets;
 	}
 
+	@HostAccess.Export
 	public final List<UATag> listTagsAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
@@ -583,6 +584,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return rets;
 	}
 
+	@HostAccess.Export
 	public final List<UATag> listTagsNorAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
@@ -590,6 +592,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return rets;
 	}
 	
+	@HostAccess.Export
 	public final List<UATag> listTagsLocalAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
@@ -597,6 +600,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return rets;
 	}
 
+	@HostAccess.Export
 	public final List<UATag> listTagsMidAll()
 	{
 		ArrayList<UATag> rets = new ArrayList<>();
@@ -652,6 +656,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	// return rets ;
 	// }
 
+	@HostAccess.Export
 	public UATag getTagByName(String n)
 	{
 		List<UATag> sss = null;
@@ -672,6 +677,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return null;
 	}
 
+	@HostAccess.Export
 	public UATag getTagById(String id)
 	{
 		for (UATag t : tags)
@@ -743,11 +749,13 @@ public abstract class UANodeOCTags extends UANodeOC
 		this.RT_init(true, false);
 	}
 
+	@HostAccess.Export
 	public List<UATag> getSysTags()
 	{
 		return sysTags;
 	}
 
+	@HostAccess.Export
 	public UATag getSysTagByName(String n)
 	{
 		List<UATag> ts = getSysTags();
