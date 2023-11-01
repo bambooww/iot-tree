@@ -115,6 +115,7 @@ Improve HMI UI editing function; Added HMI Comp base library element. Some bugs 
 
 
 
+### version 0.98.2
 
 Improve HMISub related functionality and resolve associated bugs. New win_client based on WebView2 added. Add PPI protocol supports Siemens PLC S7-200.
 
@@ -145,8 +146,64 @@ WebSocket connector added
 
 
 ### version 0.99.3
-Tag adds anti-interference filtering support, and uses the average filtering method of anti pulse interference
+Tag adds anti-interference filtering support, and uses the average filtering method of anti pulse interference。Improved some documents.
 
+
+### version 0.99.4
+
+
+The basic implementation of JS context is complete, and the editing interface has added support for context member tree directories.
+
+
+### version 0.99.5
+
+
+Reorganized the entire document directory structure.Added some documents.
+
+
+### version 0.99.6
+
+
+Connectors has added the import and export function in Xml format, which facilitates the sharing of related configurations between projects.
+
+Optimization and adjustment have been made to open Api for JS context, and annotation can be completed using JsDef.
+
+Added and organized a document for the overall project description.
+
+
+### version 0.99.7
+
+
+Adapt and adjust the demo project based on the improvement and standardization of JS.
+Added and organized documents for connector and device management instructions.
+
+
+### version 0.99.8 (Plan)
+
+
+Improve plugin related functions.
+Added and organized documentation for HMI instructions.
+
+
+### version 0.99.9 (Plan)
+
+
+Add support for real-time data writing to the database.
+Add and organize documents.
+
+
+### version 1.0.0 (Plan)
+
+
+Complete configuration software functionality
+
+Basic and complete documentation
+
+Complete the development of the entire basic component library
+
+Design 1-2 demo scenarios (select two industries)
+
+Collect more practical use cases
 
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md
