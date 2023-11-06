@@ -11,8 +11,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iottree.core.Config;
+import org.iottree.core.cxt.JSObPk;
 import org.iottree.core.util.Convert;
 import org.w3c.dom.Element;
 
@@ -82,14 +84,20 @@ public class PlugManager
 	}
 	
 	
-	public HashMap<String,Object> getJsApiAll()
+	private HashMap<String,PlugJsApi> name2jsapi = null ;
+	
+	
+	public HashMap<String,PlugJsApi> getJsApiAll()
 	{
-		HashMap<String,Object> ret = new HashMap<>() ;
+		if(name2jsapi!=null)
+			return name2jsapi;
+		
+		HashMap<String,PlugJsApi> ret = new HashMap<>() ;
 		for(PlugDir pd:this.name2plug.values())
 		{
 			try
 			{
-				HashMap<String,Object> n2o = pd.getOrLoadJsApiObjs() ;
+				HashMap<String,PlugJsApi> n2o = pd.getOrLoadJsApiObjs() ;
 				if(n2o==null)
 					continue ;
 				ret.putAll(n2o);
@@ -99,8 +107,33 @@ public class PlugManager
 				e.printStackTrace();
 			}
 		}
+		name2jsapi = ret ;
 		return ret ;
 	}
+	
+//	public HashMap<String,JSObPk> getJsApiPkAll()
+//	{
+//		HashMap<String,JSObPk> ret = new HashMap<>() ;
+//		for(PlugDir pd:this.name2plug.values())
+//		{
+//			try
+//			{
+//				HashMap<String,PlugJsApi> n2o = pd.getOrLoadJsApiObjs() ;
+//				if(n2o==null)
+//					continue ;
+//				for(Map.Entry<String, Object> n2v:n2o.entrySet())
+//				{
+//					JSObPk obpk = new JSObPk(n2v.getValue()) ;
+//					ret.put(n2v.getKey(), obpk);
+//				}
+//			}
+//			catch(Exception e)
+//			{
+//				e.printStackTrace();
+//			}
+//		}
+//		return ret ;
+//	}
 	
 	
 //	public HashMap<String,Object> getAuthAll()

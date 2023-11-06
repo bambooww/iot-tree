@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -20,7 +21,8 @@ import org.json.JSONObject;
 
 public class JsMethod extends JsSub implements ProxyExecutable
 {
-
+	public static final String JS_PREFIX = "JS_" ;
+	
 	Object ob = null;
 
 	Method method = null;
@@ -34,7 +36,7 @@ public class JsMethod extends JsSub implements ProxyExecutable
 		this.method.setAccessible(true);
 
 		this.name = method.getName();
-		if (this.name.startsWith("JS_"))
+		if (this.name.startsWith(JS_PREFIX))
 			this.name = this.name.substring(3);
 
 		JsDef def = method.getAnnotation(JsDef.class);
@@ -163,7 +165,7 @@ public class JsMethod extends JsSub implements ProxyExecutable
 	 * @param ob
 	 * @return
 	 */
-	public static List<JsMethod> extractJsMethods(Object ob)
+	public static List<JsMethod> extractJsMethods(Object ob,boolean chk_prefix)
 	{
 		ArrayList<JsMethod> rets = new ArrayList<>();
 		Class<?> c = ob.getClass();
@@ -174,7 +176,10 @@ public class JsMethod extends JsSub implements ProxyExecutable
 			{
 				JsDef jsdef = m.getAnnotation(JsDef.class) ;
 				if(jsdef==null)
-					continue ;
+				{
+					if(!chk_prefix || !m.getName().startsWith(JS_PREFIX))
+						continue ;
+				}
 			}
 
 			JsMethod jm = new JsMethod(ob, m);
@@ -182,6 +187,29 @@ public class JsMethod extends JsSub implements ProxyExecutable
 		}
 		return rets;
 	}
+	
+	public static List<JsMethod> extractJsMethods(Object ob)
+	{
+		return extractJsMethods(ob,false) ;
+	}
+	
+	public static List<JsMethod> extractJsMethodsPub(Object ob)
+	{
+		ArrayList<JsMethod> rets = new ArrayList<>();
+		Class<?> c = ob.getClass();
+		for (Method m : c.getDeclaredMethods()) //.getMethods())
+		{
+			int mdf = m.getModifiers() ;
+			if(!Modifier.isPublic(mdf))
+				continue ;
+			
+			JsMethod jm = new JsMethod(ob, m);
+			rets.add(jm);
+		}
+		return rets;
+	}
+	
+	
 
 	@Override
 	public Object execute(Value... arguments)

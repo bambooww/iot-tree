@@ -29,7 +29,9 @@ import org.iottree.core.*;
 import org.iottree.core.dict.DictManager;
 import org.iottree.core.dict.PrjDataClass;
 import org.iottree.core.plugin.AbstractPlugin;
+import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
+import org.iottree.core.task.Task;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
@@ -145,7 +147,12 @@ public class UAContext
 		
 	}
 	
-	
+	public UAContext asTask(Task task) throws ScriptException
+	{
+		scriptEng.put("$_task_", this);
+		scriptEng.eval("const $task=$_task_;Object.freeze($task);") ;
+		return this ;
+	}
 
 	public static final String JS_NAME="graal.js";//"nashorn"; //
 
@@ -175,10 +182,10 @@ public class UAContext
 				//+ "const $dict=$_dict_;Object.freeze($dict);"
 				+ "const $util=$_util_;Object.freeze($util);";
 		
-		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		HashMap<String,PlugJsApi> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)
 		{
-			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
+			for(Map.Entry<String, PlugJsApi> n2o:gvar2obj.entrySet())
 			{
 				String k = n2o.getKey();
 				engine.put("$$_"+k+"_", n2o.getValue());

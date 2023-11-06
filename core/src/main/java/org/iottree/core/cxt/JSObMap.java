@@ -203,13 +203,13 @@ public class JSObMap implements ProxyObject //extends HashMap<String,Object>
 		return jo;
 	}
 	
-	private List<JsMethod> jsMethods = null ; 
+	protected List<JsMethod> jsMethods = null ; 
 	
 	/**
 	 * extract methods that js can invoke
 	 * @return
 	 */
-	private List<JsMethod> JS_methods()
+	protected List<JsMethod> JS_methods()
 	{
 		if(jsMethods!=null)
 			return jsMethods;

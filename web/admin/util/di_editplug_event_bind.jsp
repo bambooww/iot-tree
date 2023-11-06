@@ -21,7 +21,7 @@
 <script src="/_js/oc/oc.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(500,620);
+dlg.resize_to(500,580);
 </script>
 </head>
 <body>
@@ -36,8 +36,8 @@ dlg.resize_to(500,620);
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
     <div class="layui-input-block" style="text-align: left;color:green;">
-    ($event,$view,$panel,$parent,$util,$this)=&gt;{
-      <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="8"></textarea>
+    ($server,$util,$this)=&gt;{
+      <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="6" onclick="on_client_js_edit()"></textarea>
       }
       <%--
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('clientjs')">insert tag</div>
@@ -54,7 +54,7 @@ if(bsjs)
     <div class="layui-input-block" style="text-align: left;color:green;">
       $event.fire_to_server() must be called in client js to be triggered.
       ($input)=&gt;{
-      <textarea id="serverjs" name="serverjs" placeholder="" class="layui-textarea" rows="8"></textarea>
+      <textarea id="serverjs" name="serverjs" placeholder="" class="layui-textarea" rows="6" onclick="on_js_edit()"></textarea>
       }
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('serverjs')">insert tag</div>
     </div>
@@ -68,16 +68,19 @@ if(bsjs)
 
 var ow = dlg.get_opener_w() ;
 var plugpm = ow.editor_plugcb_pm;
+var path = null ;
+var eventb = null ;
 if(plugpm!=null)
 {
+	console.log(plugpm);
 	$("#name").val(plugpm.name) ;
-	var eventb = plugpm.val ;
+	path = plugpm.path ;
+	eventb = plugpm.val ;
 	if(eventb!=null)
 	{
 		$("#clientjs").val(eventb.getClientJS()) ;
 		$("#serverjs").val(eventb.getServerJS()) ;
 	}
-		
 }
 
 layui.use('form', function(){
@@ -159,5 +162,50 @@ function insertAtCursor(txtarea_id, txt)
 	}
 }
 
+function on_client_js_edit()
+{
+	if(!path)
+		return ;
+	let js_cxt = eventb.JS_getCxt();
+	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=clientjs&path="+path,
+			{title:"Edit Client JS",w:'600px',h:'400px',js_cxt:js_cxt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#clientjs").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function on_js_edit()
+{
+	if(!path)
+		return ;
+	let txt = $("#serverjs").val() ;
+	dlg.open("../ua_cxt/cxt_script.jsp?dlg=true&opener_txt_id=serverjs&path="+path,
+			{title:"Edit JS",w:'600px',h:'400px',},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#serverjs").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 </script>
 </html>

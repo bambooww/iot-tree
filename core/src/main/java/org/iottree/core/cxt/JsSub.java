@@ -98,6 +98,7 @@ public abstract class JsSub
 		if(c==Boolean.class)
 			return "bool";
 		
-		return c.getTypeName() ;
+		return c.getSimpleName();//.getName()
+		//return c.getTypeName() ;
 	}
 }

@@ -178,7 +178,7 @@ Adapt and adjust the demo project based on the improvement and standardization o
 Added and organized documents for connector and device management instructions.
 
 
-### version 0.99.8 (Plan)
+### version 0.99.8
 
 
 Improve plugin related functions.

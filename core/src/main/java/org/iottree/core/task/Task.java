@@ -14,6 +14,7 @@ import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UACh;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.cxt.JsDef;
 //import org.iottree.core.UAPrj.JSOb;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.node.PrjSharer;
@@ -96,6 +97,7 @@ public class Task
 		return this;
 	}
 	
+	@JsDef
 	public boolean isEnable()
 	{
 		return this.bEnable ;
@@ -107,7 +109,7 @@ public class Task
 		return this ;
 	}
 
-	@HostAccess.Export
+	@JsDef
 	public String getName()
 	{
 		return name;
@@ -122,6 +124,7 @@ public class Task
 		return this;
 	}
 	
+	@JsDef
 	public String getTitle()
 	{
 		if(this.title==null)
@@ -135,6 +138,7 @@ public class Task
 		return this ;
 	}
 
+	@JsDef
 	public String getDesc()
 	{
 		return desc;
@@ -146,6 +150,7 @@ public class Task
 		return this;
 	}
 
+	@JsDef
 	public long getIntervalMS()
 	{
 		return this.intervalMS;
@@ -294,9 +299,8 @@ public class Task
 				return cxt ;
 			
 			cxt = new UAContext(this.getPrj());
-			scriptEng = cxt.getScriptEngine();// .getClass();UAManager.createJSEngine(this.prj)
-			// ;
-			scriptEng.put("$task", this);
+			cxt.asTask(this) ;
+			this.scriptEng = cxt.getScriptEngine() ;
 			return cxt ;
 		}
 	}
@@ -393,10 +397,4 @@ public class Task
 	{
 		return rtTh != null;
 	}
-
-	public class JSOb
-	{
-
-	}
-	
 }

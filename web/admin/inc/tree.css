@@ -13,4 +13,7 @@
 .tree .icon_sys {background:url('/admin/inc/sm_icon_sys.png') 0 0 no-repeat; width:24px;height:24px;}
 .tree .icon_debug {background:url('/admin/inc/sm_icon_debug.png') 0 0 no-repeat; width:24px;height:24px;}
 .tree .icon_util {background:url('/admin/inc/sm_icon_util.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_evt {background:url('/admin/inc/sm_icon_evt.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_ser {background:url('/admin/inc/sm_icon_ser.png') 0 0 no-repeat; width:24px;height:24px;}
+.tree .icon_cir {background:url('/admin/inc/sm_icon_cir.png') 0 0 no-repeat; width:24px;height:24px;}
 

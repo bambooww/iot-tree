@@ -18,6 +18,7 @@ import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.dict.DictManager;
 import org.iottree.core.dict.PrjDataClass;
+import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
@@ -83,10 +84,10 @@ public class SimContext
 		engine.put("$util",util);
 		//engine.put("$dict",sys);
 		
-		HashMap<String,Object> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		HashMap<String,PlugJsApi> gvar2obj = PlugManager.getInstance().getJsApiAll();
 		if(gvar2obj!=null)
 		{
-			for(Map.Entry<String, Object> n2o:gvar2obj.entrySet())
+			for(Map.Entry<String, PlugJsApi> n2o:gvar2obj.entrySet())
 			{
 				engine.put("$$"+n2o.getKey(), n2o.getValue());
 			}

@@ -34,7 +34,7 @@ public class PlugDir
 
 	JSONArray js_api_arr = null;
 
-	private HashMap<String, Object> jsapi_name2ob = null;// new HashMap<>();
+	private HashMap<String, PlugJsApi> jsapi_name2ob = null;// new HashMap<>();
 	
 	JSONArray js_auth_arr = null ;
 	
@@ -157,11 +157,11 @@ public class PlugDir
 		}
 		catch ( NoSuchMethodException nse)
 		{
-
+			//nse.printStackTrace();
 		}
 		catch ( SecurityException se)
 		{
-
+			se.printStackTrace();
 		}
 		catch ( Exception e)
 		{
@@ -169,11 +169,13 @@ public class PlugDir
 		}
 	}
 
-	private Object loadJsOb(JSONObject job) throws Exception
+	private PlugJsApi loadJsApi(JSONObject job) throws Exception
 	{
 
 		String name = job.optString("name");
 		String classn = job.optString("class");
+		String mode = job.optString("mode") ;
+		String desc = job.optString("desc") ;
 		if (Convert.isNullOrEmpty(name) || Convert.isNullOrEmpty(classn))
 			return null;
 		JSONObject paramjo = job.optJSONObject("params");
@@ -199,11 +201,46 @@ public class PlugDir
 		}
 		// System.out.println("1");
 		initPlugObj(ob, params);
-		return ob;
+		return new PlugJsApi(name,ob,desc);//,mode);
 
 	}
+	
+	private Object loadJsOb(JSONObject job) throws Exception
+	{
 
-	public HashMap<String, Object> getOrLoadJsApiObjs() throws MalformedURLException, IOException
+		String name = job.optString("name");
+		String classn = job.optString("class");
+		String mode = job.optString("mode") ;
+		if (Convert.isNullOrEmpty(name) || Convert.isNullOrEmpty(classn))
+			return null;
+		JSONObject paramjo = job.optJSONObject("params");
+		HashMap<String, String> params = new HashMap<>();
+		if (paramjo != null)
+		{
+			for (String pn : paramjo.keySet())
+			{
+				String pv = paramjo.get(pn).toString();
+				params.put(pn, pv);
+			}
+		}
+
+		URLClassLoader cl = this.getOrLoadCL();
+		Class<?> cc = cl.loadClass(classn);
+		if (cc == null)
+			return null;
+		Object ob = cc.newInstance();
+		if (ob instanceof AbstractPlugin)
+		{
+			AbstractPlugin ap = (AbstractPlugin) ob;
+			ap.initPlugin(this);
+		}
+		// System.out.println("1");
+		initPlugObj(ob, params);
+		//return new PlugJsApi(name,ob,mode);
+		return ob ;
+	}
+
+	public HashMap<String, PlugJsApi> getOrLoadJsApiObjs() throws MalformedURLException, IOException
 	{
 		if (this.jsapi_name2ob != null)
 			return jsapi_name2ob;
@@ -224,7 +261,7 @@ public class PlugDir
 					String nn = job.getString("name") ;
 					try
 					{
-						Object ob = loadJsOb(job);
+						PlugJsApi ob = loadJsApi(job);
 						jsapi_name2ob.put(nn, ob);
 						
 						System.out.println(" plug ["+name+"] load js api object [$$"+nn+"]") ;

@@ -27,6 +27,12 @@ if(Convert.isNotNullEmpty(path))
 		out.print("no node found") ;
 		return ;
 	}
+	
+	if(n instanceof UAHmi)
+	{
+		n = ((UAHmi)n).getParentNode() ;
+		path = n.getNodePath() ;
+	}
 
 	if(!(n instanceof UANodeOCTags))
 	{

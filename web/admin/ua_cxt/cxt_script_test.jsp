@@ -54,7 +54,7 @@ if(Convert.isNullOrEmpty(txt))
 long st = System.currentTimeMillis() ;
 //Object obj = dnd.runCodeForTest(txt);
 UAContext cxtr = null;
-long et = System.currentTimeMillis() ;
+
 switch(op)
 {
 case "task":
@@ -67,10 +67,22 @@ case "task":
 		out.print("no task found") ;
 		return ;
 	}
-	cxtr = task.getContext() ;
-	String ret = cxtr.testScript(txt) ;
-	out.print(ret) ;
-	break ;
+	
+	try
+	{
+		cxtr = task.getContext() ;
+		String ret = cxtr.testScript(txt) ;
+		//out.print(ret) ;
+		ret = Convert.plainToJsStr(ret) ;
+		long et = System.currentTimeMillis() ;
+%>{res:"<%=ret %>",cost_ms:<%=(et-st)%>}
+<%
+	}
+	catch(Exception e)
+	{
+		out.print( "err:"+e.getMessage());
+	}
+	return ;
 default:
 	cxtr = cxt.RT_getContext() ;
 	Object obj = null;
@@ -87,6 +99,7 @@ default:
 	}
 
 	String res_str = Convert.plainToJsStr(""+obj);
+	long et = System.currentTimeMillis() ;
 //System.out.println(sb.toString()) ;
 %>{res:"<%=res_str %>",cost_ms:<%=(et-st)%>}
 <%
