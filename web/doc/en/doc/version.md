@@ -174,13 +174,14 @@ Added and organized a document for the overall project description.
 ### version 0.99.7
 
 
-Adapt and adjust the demo project based on the improvement and standardization of JS.
+Adapt and adjust the demo project based on the improvement and standardization of Server JS.
 Added and organized documents for connector and device management instructions.
 
 
 ### version 0.99.8
 
 
+Adapt and adjust the demo project based on the improvement and standardization of Client JS.
 Improve plugin related functions.
 Added and organized documentation for HMI instructions.
 
@@ -190,6 +191,12 @@ Added and organized documentation for HMI instructions.
 
 Add support for real-time data writing to the database.
 Add and organize documents.
+
+
+### version 1.0.0.alpha (Plan)
+
+
+
 
 
 ### version 1.0.0 (Plan)

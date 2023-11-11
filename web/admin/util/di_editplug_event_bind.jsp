@@ -82,6 +82,7 @@ if(plugpm!=null)
 		$("#serverjs").val(eventb.getServerJS()) ;
 	}
 }
+if(!path) path="" ;
 
 layui.use('form', function(){
 	  var form = layui.form;
@@ -164,8 +165,8 @@ function insertAtCursor(txtarea_id, txt)
 
 function on_client_js_edit()
 {
-	if(!path)
-		return ;
+	//if(!path)
+	//	return ;
 	let js_cxt = eventb.JS_getCxt();
 	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=clientjs&path="+path,
 			{title:"Edit Client JS",w:'600px',h:'400px',js_cxt:js_cxt},

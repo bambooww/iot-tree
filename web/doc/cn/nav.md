@@ -65,9 +65,10 @@
 
 
 #### <a href="doc/js/index.md"> 8 JS脚本支持</a>
-##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.1 Client端JS</a>
-##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.2 JS在中间标签(Middle Tag)的使用</a>
-##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.3 JS在任务(Task)中的使用</a>
+
+##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS在中间标签(Middle Tag)的使用</a>
+##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS在任务(Task)中的使用</a>
+##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.3 Client端JS</a>
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.4 JS在UI事件处理中的使用</a>
 
 
@@ -81,8 +82,7 @@
 ##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.7 使用项目任务实现控制脚本</a>
 ##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.8 对外提供OPC UA接口</a>
 ##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.9 设备模拟器</a>
-
-
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.10 主站-子站远程控制</a>
 
 #### <a href="doc/version.md" >10 版本说明</a>
 

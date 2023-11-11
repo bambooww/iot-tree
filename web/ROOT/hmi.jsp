@@ -91,10 +91,11 @@
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.min.js?v=<%=Config.getVersion()%>"></script>
+<script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
+<script src="/_js/oc/oc.js?v=<%=Config.getVersion()%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
-<script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
+
  <!-- 
 
 -->
@@ -425,8 +426,8 @@ window.event.returnValue = false;
 
 var layuiEle ;
 var path="<%=path%>";
-$util.hmi_user="<%=user%>";
-$util.hmi_path = path;
+var hmi_user="<%=user%>";
+var hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;
@@ -439,7 +440,7 @@ var res_id="<%=resid%>";
 
 var can_write=<%=can_write%>;
 var no_write_p = "<%=n_w_p%>" ;
-$util.hmi_can_write = can_write;
+//$util.hmi_can_write = can_write;
 
 layui.use('element', function(){
 	layuiEle = layui.element;
@@ -500,7 +501,7 @@ function init_iottpanel()
 	hmiModel = new oc.hmi.HMIModel({
 		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
 		comp_url:"/comp_ajax.jsp?op=comp_load",
-		hmi_path:path
+		hmi_path:path,hmi_user:hmi_user
 	});
 	
 	hmiModel.setCanWrite(can_write,()=>{

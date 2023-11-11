@@ -65,9 +65,10 @@
 
 
 #### <a href="doc/js/index.md"> 8 JS Script Usage</a>
-##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.1 JS At Client</a>
-##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.2 JS In Middel Tag</a>
-##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.3 JS In Task</a>
+
+##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS In Middel Tag</a>
+##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS In Task</a>
+##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.3 JS At Client</a>
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.4 JS In UI Event Handling</a>
 
 
@@ -81,8 +82,7 @@
 ##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Implementing control scripts using project tasks</a>
 ##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.8 Outer OPC UA Support</a>
 ##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.9 Device simulators</a>
-
-
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.10 Remote control from master station to sub station</a>
 
 #### <a href="doc/version.md" >10 Version</a>
 

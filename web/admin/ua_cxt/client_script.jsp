@@ -12,6 +12,7 @@
 	"%>
 <%@ taglib uri="wb_tag" prefix="wbt"%>	
 <%
+
 //String prjid = 
 String path = request.getParameter("path") ;
 
@@ -79,6 +80,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
 	<jsp:param value="true" name="tree"/>
+	<jsp:param value="true" name="oc"/>
 </jsp:include>
 <script>
 	dlg.resize_to(900,600) ;
@@ -90,12 +92,13 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <div style="position: absolute;width:100%;top:20px;bottom:10px;overflow: hidden;">
 <table border='1' style="width:100%;height:100%;">
  <tr>
-  <td style="width:30%;vertical-align: top;" >
-   <div style="top:0px;height:60%;width:100%;overflow: auto;">
-  	<div id="tree" class="tree" style="height:100%;overflow: auto;"></div>
+  <td style="width:300px;vertical-align: top;" >
+   <div style="top:0px;height:60%;width:300px;overflow: auto;">
+  	<div id="tree" class="tree" style="height:100%;"></div>
    </div>
-   <div id="node_detail" style="top:60%;height:40%;width:100%;overflow: auto;border:1px solid;">
-   Node Detail
+   <div style="top:60%;height:40%;width:300px;overflow: auto;border:1px solid;">
+   <div id="node_detail" style="height:100%;width:100%;user-select:auto;">Node Detail</div>
+   
    </div>
   </td>
   <td>
@@ -128,14 +131,9 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	  <td  colspan="2">
 	  <div style="position: relative;height:20px;">
 	  script test result <span id="run_st"></span>
-	  <%
-if(Convert.isNotNullEmpty(path))
-{
-%>
+
 <div style="right:10px;top:0px;position:absolute;"><input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" /></div>
-<%
-}
-%>
+
 </div>	  
 	  </td>
 	 </tr>
@@ -153,7 +151,7 @@ if(Convert.isNotNullEmpty(path))
 </div>
 </body>
 <script>
-var path="<%=path%>" ;
+var path='<%=path%>'
 var opener_txt_id = "<%=opener_txt_id%>" ;
 var sample_txt_id = "<%=sample_txt_id%>" ;
 var taskid="<%=taskid%>";
@@ -215,7 +213,8 @@ function tree_init()
 function on_tree_node_sel(n)
 {
 	//console.log("select",n) ;
-	let tmps = `\${n.text}<br>` ;
+	let tmps = `\${n.text}<br><br>Example:<br><br><pre>  \${n.example}</pre>` ;
+
 	$("#node_detail").html(tmps) ;
 }
 
@@ -258,12 +257,12 @@ function run_script_test(fn)
 	var scode = document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
-	var pm = {path:path,txt:scode} ;
-	if(taskid!='')
-	{
-		pm.taskid = taskid;
-		pm.op='task';
-	}
+	//var pm = {path:path,txt:scode} ;
+	//if(taskid!='')
+	//{
+	//	pm.taskid = taskid;
+	//	pm.op='task';
+	//}
 	
 	let res = js_cxt.JS_run(scode) ;
 

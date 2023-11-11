@@ -10,6 +10,7 @@
 				 org.iottree.core.basic.*,
 				 org.iottree.core.util.xmldata.*"%><%
 		boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
+				// bind_tag_only = true;
 %>
 <html>
 <head>
@@ -18,6 +19,7 @@
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
+<script src="/_js/oc/oc.js"></script>
 <script>
 dlg.resize_to(500,500);
 </script>
@@ -56,7 +58,7 @@ if(!bind_tag_only)
     <label class="layui-form-label">Client Script:</label>
     <div class="layui-input-block">
     ()=>{
-      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10"></textarea>
+      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10" onclick="on_client_js_edit()"></textarea>
       }
       <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
@@ -86,11 +88,15 @@ layui.use('form', function(){
 
 var ow = dlg.get_opener_w() ;
 var plugpm = ow.editor_plugcb_pm;
+var js_cxt = null ;
 if(plugpm!=null)
 {
 	// {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
 	//console.log(plugpm) ;
 	var di = plugpm.di ;
+	let pb = plugpm.val;
+	
+	js_cxt = pb.JS_getCxt();
 	var pdf = di.findProDefItemByName(plugpm.name) ;
 	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
 	$("#name").val(plugpm.name) ;
@@ -248,6 +254,29 @@ function editplug_get(cb)
 	}
 	
 	return {bexp:bexp,jstxt:jstxt,unbind:bunbind};
+}
+
+function on_client_js_edit()
+{
+	//if(!path)
+	//	return ;
+	
+	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=js&path=",
+			{title:"Edit Client JS",w:'600px',h:'400px',js_cxt:js_cxt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#clientjs").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 </script>
 </html>

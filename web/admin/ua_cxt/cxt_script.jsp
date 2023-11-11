@@ -91,7 +91,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <table border='1' style="width:100%;height:100%;">
  <tr>
   <td style="width:30%;vertical-align: top;" >
-   <div style="top:0px;height:60%;width:100%;overflow: auto;">
+   <div style="top:0px;height:60%;width:300px;overflow: auto;">
   	<div id="tree" class="tree" style="height:100%;overflow: auto;"></div>
    </div>
    <div id="node_detail" style="top:60%;height:40%;width:100%;overflow: auto;border:1px solid;">

@@ -42,9 +42,11 @@ String ver = Config.getVersion() ;
 if(oc)
 {
 %>
+<script src="/_js/oc/hmi_util.js?v=<%=ver%>"></script>
 <script src="/_js/oc/oc.js?v=<%=ver%>"></script>
 <script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
+
 <%
 }
 if(oc_min)
