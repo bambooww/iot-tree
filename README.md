@@ -16,7 +16,7 @@ IOT-Tree Server is an open source software developed using Java. It's admin ui i
 
 [Quick Start][quick_start]
 
-[Quick Links][quick_link]
+[Document Menu][nav]
 
 [Demo][demo_link]
 
@@ -147,14 +147,14 @@ IOT-Tree Server provides an independent UI element primitive library function, w
 
 [Quick Start][quick_start]
 
-[Quick Learn][quick_link]
+[Document Menu][nav]
 
 [Demo][demo_link]
 
 If you encounter problems with the system or have suggestions, you can send us email feedback: iottree@hotmail.com
 
 [quick_start]: ./web/doc/en/doc/quick_start.md
-[quick_link]: ./web/doc/en/doc/quick/index.md
+[nav]: ./web/doc/en/nav.md
 [demo_link]: ./web/doc/en/doc/case/index.md
 [dl_link]: https://github.com/bambooww/iot-tree/releases
 [case_auto_demo]: ./web/doc/en/doc/case/case_auto.md

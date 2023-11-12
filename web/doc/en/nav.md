@@ -68,21 +68,16 @@
 
 ##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS In Middel Tag</a>
 ##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS In Task</a>
-##### <a href="doc/js/js_client.md">&nbsp;&nbsp;&nbsp;8.3 JS At Client</a>
-##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.4 JS In UI Event Handling</a>
+##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS In UI Event Handling</a>
 
 
 #### <a href="doc/advanced/index.md" >9 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_js.md" target="main">&nbsp;&nbsp;&nbsp;9.2 JS Imbed</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.3 JS API</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Authority plugin</a>
-##### <a href="doc/advanced/adv_js_plugin.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Custom JS script plug-in</a>
-##### <a href="doc/advanced/adv_prj_task.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Define project tasks</a>
-##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Implementing control scripts using project tasks</a>
-##### <a href="doc/advanced/adv_prj_task_ctrl.md" target="main">&nbsp;&nbsp;&nbsp;9.8 Outer OPC UA Support</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.9 Device simulators</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.10 Remote control from master station to sub station</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 JS API</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Authority plugin</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Outer OPC UA Support</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Device simulators</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Remote control from master station to sub station</a>
 
 #### <a href="doc/version.md" >10 Version</a>
 
@@ -100,7 +95,6 @@ $("a").each(function(){
     $(this).attr("doc_path",lang+"/"+docp);
     if(docp)
     {
-        
         $(this).click(function(){
             parent.nav_to($(this).attr("doc_path"));
         });

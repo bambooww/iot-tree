@@ -1,8 +1,11 @@
 
-
-快速入门
+快速开始
 ====
 
+ <a href="../../cn/doc/quick_start.md" target="_blank">中文</a>
+<!--
+ <a href="../../jp/doc/quick_start.md" target="_blank">日本语</a>
+ -->
 
 
 

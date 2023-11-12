@@ -1,8 +1,6 @@
 
-
-
- Quick Start
- ==
+Quick Start
+====
 
  <a href="../../cn/doc/quick_start.md" target="_blank">中文</a>
 <!--
