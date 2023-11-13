@@ -477,20 +477,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return true;
 	}
 	
-	
-
-	private transient List<JsProp> globalPropsCxt = null ;
-	
-	/**
-	 * get global props in this node as context
-	 * @return
-	 */
-	protected List<JsProp> JS_getGlobalPropsCxt()
+	public static List<JsProp> JS_getSysPropsCxt()
 	{
-		if(globalPropsCxt!=null)
-			return globalPropsCxt ;
-		
-		UANode topn = this.getTopNode() ;
 		ArrayList<JsProp> jps = new ArrayList<>() ;
 		jps.add(new JsProp("$sys",UAContext.sys,null,true,"system","System support func")) ;
 		jps.add(new JsProp("$util",UAContext.util,null,true,"util","System util func")) ;
@@ -504,8 +492,26 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				PlugJsApi jsapi= n2o.getValue() ;
 				jps.add(new JsProp("$$"+k,jsapi,null,true,"plugin_"+k,jsapi.getDesc())) ;
 			}
-			
 		}
+		return jps;
+	}
+	
+
+	private List<JsProp> globalPropsCxt = null ;
+	
+	/**
+	 * get global props in this node as context
+	 * @return
+	 */
+	protected List<JsProp> JS_getGlobalPropsCxt()
+	{
+		if(globalPropsCxt!=null)
+			return globalPropsCxt ;
+		
+		ArrayList<JsProp> jps = new ArrayList<>() ;
+		jps.addAll(JS_getSysPropsCxt()) ;
+		
+		UANode topn = this.getTopNode() ;
 		if(topn instanceof UAPrj)
 			jps.add(new JsProp("$prj",(UAPrj)topn,UAPrj.class,true,"project","Project obj in context")) ;
 		UACh ch  = this.getBelongToCh() ;
@@ -566,6 +572,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		List<JsSub> rets = new ArrayList<>() ;
 		List<JsProp> jps = JS_getGlobalPropsCxt();
 		rets.addAll(jps) ;
+		
 		List<JsSub> subs = this.JS_get_subs() ;
 		if(subs!=null)
 		{
@@ -579,6 +586,32 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			}
 		}
 		js_cxt_root_subs = rets ;
+		return rets ;
+	}
+	
+	public final List<JsSub> JS_CXT_get_root_subs(boolean no_parent,boolean no_this)
+	{
+		if(!no_parent)
+			return JS_CXT_get_root_subs() ;
+		
+		List<JsSub> rets = new ArrayList<>() ;
+		List<JsProp> jps = JS_getSysPropsCxt();
+		rets.addAll(jps) ;
+		if(!no_this)
+			rets.add(new JsProp("$this",this,null,true,this.getTitle(),this.getDesc())) ;
+		
+		List<JsSub> subs = this.JS_get_subs() ;
+		if(subs!=null)
+		{
+			for(JsSub sub:subs)
+			{
+				if(sub instanceof JsMethod || !sub.hasSub())
+					continue ;// root has no method
+				if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
+					continue ;
+				rets.add(sub);
+			}
+		}
 		return rets ;
 	}
 	

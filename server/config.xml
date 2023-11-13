@@ -19,7 +19,7 @@
 	<log>
 		<ctrl name="xx.xx" default_level="trace" />
 	</log>
-	
+	<!-- 
 	<plug_auth name="auth_demo" 
 			login_url="http://abc.xx.com/login/login.jsp"
 			token_cookie_name="token"
@@ -27,6 +27,6 @@
 			no_write_right_prompt="No write permission"
 			>
 	</plug_auth>
-	
+	 -->
 	
 </iottree>

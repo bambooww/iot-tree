@@ -1,7 +1,7 @@
 
 
 
-Sniffe RS485 MODBUS bus data
+Sniff RS485 MODBUS bus data
 ==
 
 

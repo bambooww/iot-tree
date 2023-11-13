@@ -15,11 +15,7 @@
 ##### <a href="doc/case/example_tcpserver_conn.md" target="main">&nbsp;&nbsp;&nbsp;3.3 TcpServer接入案例</a>
 ##### <a href="doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.4 监听RS485 Modbus 总线数据</a>
 ##### <a href="doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 整合HMI画面到你的系统中（含权限插件开发）</a>
-##### <a href="doc/case/back_sys.md" target="main">&nbsp;&nbsp;&nbsp;3.6 作为你的后台支撑系统</a>
-<!--
-##### <a href="doc/case/case_opc_da.md" target="main">&nbsp;&nbsp;&nbsp;3.6 通过OPC DA Client接入数据</a>
-##### <a href="doc/case/case_jsplugin_db.md" target="main">&nbsp;&nbsp;&nbsp;3.5 自动记录到关系数据库（含JS插件开发）</a>
--->
+##### <a href="doc/case/case_s7200_smart.md" target="main">&nbsp;&nbsp;&nbsp;3.6 连接西门子PLC S7-200 Smart</a>
 
 
 #### <a href="doc/main/index.md" >4 总体说明和项目组成</a>

@@ -195,11 +195,11 @@ function do_submit(cb)
 		return ;
 	}
 	var tt = $('#title').val();
-	if(tt==null||tt=='')
-	{
-		cb(false,'Please input title') ;
-		return ;
-	}
+	//if(tt==null||tt=='')
+	//{
+	//	cb(false,'Please input title') ;
+	//	return ;
+	//}
 	var ben = $("#enable").prop("checked") ;
 	var desc = document.getElementById('desc').value;
 	if(desc==null)

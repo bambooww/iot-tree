@@ -10,16 +10,12 @@
 #### <a href="doc/quick_start.md">2 Quick Start</a>
 
 #### <a href="doc/case/index.md" doc_path="doc/case/index.md" >3 Cases and best practices</a>
-##### <a href="doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;3.1 3.1 Lamp Demo</a>
+##### <a href="doc/case/example_lamp_demo.md" target="main">&nbsp;&nbsp;&nbsp;3.1 Lamp Demo</a>
 ##### <a href="doc/case/case_auto.md" target="main">&nbsp;&nbsp;&nbsp;3.2 Automation</a>
 ##### <a href="doc/case/example_tcpserver_conn.md" target="main">&nbsp;&nbsp;&nbsp;3.3 TcpServer connector case</a>
-##### <a href="doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.4 Sniffe RS485 MODBUS bus data</a>
+##### <a href="doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.4 Sniff RS485 MODBUS bus data</a>
 ##### <a href="doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Integrate HMI into your system (including permission plug-in development)</a>
-##### <a href="doc/case/back_sys.md" target="main">&nbsp;&nbsp;&nbsp;3.6 As your background support system</a>
-<!--
-##### <a href="doc/case/case_opc_da.md" target="main">&nbsp;&nbsp;&nbsp;3.6 Access data through OPC DA Client</a>
-##### <a href="doc/case/case_jsplugin_db.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Automatically record to relational database (including JS plug-in development)</a>
--->
+##### <a href="doc/case/case_s7200_smart.md" target="main">&nbsp;&nbsp;&nbsp;3.6 Connecting Siemens PLC S7-200 Smart</a>
 
 
 #### <a href="doc/main/index.md" >4 Overall and Project Composition</a>

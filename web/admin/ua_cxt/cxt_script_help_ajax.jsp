@@ -16,6 +16,10 @@ String op = request.getParameter("op");
 String path = request.getParameter("path") ;
 //String sub_nid = request.getParameter("sub_nid");
 String sub_nid = request.getParameter("id");
+
+boolean no_parent = "true".equals(request.getParameter("no_parent")) ;
+boolean no_this = "true".equals(request.getParameter("no_this")) ;
+
 //System.out.println("path="+path+" id="+sub_nid) ;
 if("#".equals(sub_nid))
 	sub_nid = null ;
@@ -54,7 +58,12 @@ case "sub_json":
 		//out.write(",\"state\": {\"opened\": true}");
 		//out.write(",\"children\":[");
 		out.write("[");
-		List<JsSub> jps = cxt_n.JS_CXT_get_root_subs();
+		List<JsSub> jps = null;
+		if(no_parent)
+			jps = cxt_n.JS_CXT_get_root_subs(no_parent,no_this) ;
+		else
+			jps = cxt_n.JS_CXT_get_root_subs();
+		
 		boolean bfirst = true;
 		for(JsSub jp:jps)
 		{

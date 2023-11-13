@@ -14,7 +14,8 @@
 <%
 //String prjid = 
 String path = request.getParameter("path") ;
-
+boolean no_parent = "true".equals(request.getParameter("no_parent")) ;
+boolean no_this = "true".equals(request.getParameter("no_this")) ;
 if(path==null)
 	path = "" ;
 UANode n = null;//
@@ -154,6 +155,8 @@ if(Convert.isNotNullEmpty(path))
 </body>
 <script>
 var path="<%=path%>" ;
+var no_parent = <%=no_parent%>;
+var no_this= <%=no_this%>;
 var opener_txt_id = "<%=opener_txt_id%>" ;
 var sample_txt_id = "<%=sample_txt_id%>" ;
 var taskid="<%=taskid%>";
@@ -171,7 +174,7 @@ function tree_init()
 				{
 					'core' : {
 						'data' : {
-							'url' :"cxt_script_help_ajax.jsp?op=sub_json&path="+path,
+							'url' :"cxt_script_help_ajax.jsp?op=sub_json&no_this="+no_this+"&no_parent="+no_parent+"&path="+path,
 							"dataType" : "json",
 							"data":function(node){
 		                        return {"id" : node.id};

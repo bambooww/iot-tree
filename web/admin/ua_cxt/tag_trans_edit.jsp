@@ -139,7 +139,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     <label class="layui-form-label">transfer</label>
     <div class="layui-input-block">
     ($tag,$input)=>{
-      <textarea rows="10" cols="60" id="js_txt"></textarea>
+      <textarea rows="10" cols="60" id="js_txt" ondblclick="on_js_edit()" title="double click to open edit JS dialog"></textarea>
     }
     </div>
   </div>
@@ -147,7 +147,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     <label class="layui-form-label">inverser</label>
     <div class="layui-input-block">
      ($tag,$input)=>{
-      <textarea rows="10" cols="60" id="inverse_js_txt"></textarea>
+      <textarea rows="10" cols="60" id="inverse_js_txt" ondblclick="on_js_edit_inv()" title="double click to open edit JS dialog"></textarea>
     }
     </div>
   </div>
@@ -159,10 +159,12 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 </body>
 <script type="text/javascript">
 var form ;
-var transdd = dlg.get_opener_w().trans_dd ;
+var ow =dlg.get_opener_w();
+var node_path=ow.node_path;
+var transdd = ow.trans_dd ;
 if(transdd==null)
 	transdd={} ;
-
+var path=node_path ;
 console.log(transdd);
 	
 layui.use('form', function(){
@@ -348,5 +350,46 @@ function get_js(n,vt,cb)
 	return true;
 }
 
+function on_js_edit()
+{
+	let txt = $("#js_txt").val() ;
+	dlg.open("../ua_cxt/cxt_script.jsp?dlg=true&no_parent=true&no_this=true&opener_txt_id=js_txt&path="+path,
+			{title:"Edit JS - transfer",w:'600px',h:'400px',},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#js_txt").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function on_js_edit_inv()
+{
+	let txt = $("#inverse_js_txt").val() ;
+	dlg.open("../ua_cxt/cxt_script.jsp?dlg=true&no_parent=true&no_this=true&opener_txt_id=inverse_js_txt&path="+path,
+			{title:"Edit JS - inverser",w:'600px',h:'400px',},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#inverse_js_txt").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 </script>
 </html>

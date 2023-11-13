@@ -1,11 +1,10 @@
-
-
-
-IOTTree Connectors
+IOT-Tree Connectors
 ==
 
 
-IOT-Tree的接入作为一个重要的组成部分而存在，如果你总体上已经比较了解，可以快速通过如下内容，查看不同接入的详细说明。
+
+Connectors is an important component in IOT-Tree. If you have a general understanding, you can quickly view detailed descriptions of different access through the following content.
+
 
 <a href="./link_tcpclient.md" target="main">&nbsp;&nbsp;&nbsp;Link-Tcp Client</a>
 
@@ -29,105 +28,147 @@ IOT-Tree的接入作为一个重要的组成部分而存在，如果你总体上
 
 <a href="./other_virtual.md" target="main">&nbsp;&nbsp;&nbsp;Others - Virtual</a>
 
-## 0 IOTTree的数据接入和整合能力
+## 0 IOTTree's data connection and integration capabilities
 
-在大多数现有的OPC软件，对于各种设备的接入以驱动为基础，不同驱动内部提供各自的配置支持。其中，设备通信所需要的相关参数和其他参数一样，也由各自的驱动决定。
 
-我们研究了大量设备和物联网应用，发现设备通信如果能够从驱动独立出来，则不仅可以简化驱动的实现，同时还可以带来更灵活的组合配置支持。
 
-也即是，在IOTTree架构中，接入（Connector）也由专门的驱动提供，这样可以根据需要独断扩展。当然，当今的系统最多的接入是基于TCP/IP协议，以及在此之上的http等内容。我们已经能够支持Tcp Client、Tcp Server、HTTP Url接入。
+In most existing OPC software, the access of various devices is based on the driver, and different drivers provide their own configuration support internally. Among them, the relevant parameters required for device communication, like other parameters, are also determined by their respective drivers.
 
-又如：mqtt协议虽然也可以基于tcp，但此协议比较特殊，我们也专门做了接入驱动支持。
+We have studied a large number of devices and IoT applications and found that if device communication can be independent of the driver, it can not only simplify the implementation of the driver, but also bring more flexible combination configuration support.
 
-在一些本地系统中，系统可能通过RS232或RS485接口和现场设备通信，在计算机内容则体现为COM接口，IOTTree也为此专门做一些支持。
+That is to say, in the IOTTree architecture, the connector is also provided by specialized drivers, which can be arbitrarily extended as needed. Of course, the most common connector in today's systems is based on TCP/IP protocol, as well as HTTP and other content above it. We are already able to support Tcp Client, Tcp Server, and HTTP Url access.
 
-## 1 接入管理
+Further more, although the mqtt protocol can also be based on TCP, it is quite special and we have also specifically provided connector driver support.
 
-在IOTTree的每个project中，如果进入管理界面，则可以直接看到最左边的内容就是接入区块。点击左上角Connectors菜单，可以看到系统能够支持的所有接入内容，如下图：
+In some local systems, the system may communicate with on-site devices through RS232 or RS485 interfaces, while in computer content, it is reflected as a COM interface, and IOT-Tree also provides special support for this.
+
+
+## 1 Connector Management
+
+
+In each project of IOT-Tree, if you enter the management ui, you can directly see that the leftmost content is the "Connectors" block. Click on the Connectors menu in the upper left corner to see all the connection content that the system can support, as shown in the following figure:
 
 <img src="../img/conn/c001.png">
 
-可以看到当前支持的接入已经比较丰富，并且可以随着后续不断添加更多驱动支持。
 
-## 2 单个接入驱动的层次关系
 
-在项目中，接入从组织上分为两个层次：ConnProvider（接入提供者）和ConnPt（接入点Connection Point）。 ConnProvider代表了某个驱动下面的具体接入提供者，可以有多个或单个。ConnProvider下面则可以有多个ConnPt，代表了多个具体接入。
+It can be seen that the current support for connector is already quite rich, and more driver support can be added continuously in the future.
 
-例如1，如下图：
+
+## 2 The hierarchical relationship of a single connector driver
+
+
+In the project, connector is divided into two levels from an organizational perspective: ConnProvider and ConnPt (Connection Point). ConnProvider represents the specific connection providers under a certain driver, which can have multiple or single providers. Under ConnProvider, there can be multiple ConnPts, representing multiple specific connections.
+
+For example 1, as shown in the following figure:
+
 <img src="../img/conn/c002.png">
 
-Tcp Client是个ConnProvider，下面可以有多个ConnPt，每个ConnPt对应具体的Tcp Connection。
-同理可以想象：如果某个ConnProvider是一个Tcp Server（内部监听某个端口），那么下面也可能会有多个ConnPt代表着每个远端Client和我们本机建立的Tcp连接。
 
-每个ConnProvider内部都会有个独立的管理线程，对此下面的所有ConnPt进行统一管理。这样，IOTTree的接入管理和内部运行机制就会变的很清晰，此部分内容我们会在后续进行详细说明。
 
-## 3 从ConnPt到通道Channel建立关联
+Tcp Client is a ConnProvider, and there can be multiple ConnPts below, each corresponding to a specific Tcp Connection.
 
-IOTTree规定，接入到项目具体组织的关联只能通过ConnPt和Channel之间进行，这样的限制不仅能够满足实际项目需要，同时也保证了每个项目数据流的简洁。如下图：
+Similarly, it can be imagined that if a ConnProvider is a Tcp Server (internally listening to a certain port), there may also be multiple ConnPts below representing the Tcp connections established between each remote client.
+
+Each ConnProvider will have an independent management thread internally, which will uniformly manage all ConnPts below. In this way, the connections management and internal operation mechanism of IOTTree will become very clear, and we will provide detailed explanations for this section in the future.
+
+
+## 3 Establishing Association from ConnPt to Channel
+
+
+IOT-Tree stipulates that connections to specific project organizations can only be made through ConnPt and Channel, which not only meets the actual project needs but also ensures the simplicity of each project data flow. As shown in the following figure:
+
 <img src="../img/conn/c003.png">
 
-你可以看着上面的图想象一下，如果没有这个限制，左边接入两个层次树和右边项目组织更复杂的树形直接任意建立关联（建立数据流通道），那会是一个什么样的情景——这肯定会乱成一锅粥。不仅实现复杂，而且会让使用者摸不着头脑。
 
-很明显，适当合理的限制，会给一个复杂系统带来很大的益处。
 
-事实上，IOTTree也规定了设备驱动也必须和Channel关联，而驱动和通信（接入的ConnPt）息息相关。因此，此限定还是很有依据的。
+You can look at the figure above and imagine what a situation would be if there were no such restriction. Two hierarchical trees were connected on the left and the more complex tree of the project organization on the right to directly and arbitrarily establish associations (establish data flow) - it would certainly be a mess. Not only is the implementation complex, but it can also leave users confused.
 
-## 4 根据接入特点进行分类：链路(link),绑定(bind)和消息(Message)
+It is obvious that appropriate and reasonable restrictions can bring great benefits to a complex system.
 
-既然我们已经把接入进行单独管理。那么我们有必要对具体的数据来源方式和特征（模式）进行抽象，并针对不同的情况做不同的接入配置和处理支持。很明显，目前我们发现接入的数据至少有三种模式：链路(link),绑定(bind)和消息(Message)。下面我们分别进行简单说明。
+In fact, IOT-Tree also stipulates that device drivers must also be associated with Channels, and device drivers and communication (connected ConnPt) are closely related. Therefore, this limitation is still well founded.
 
-### 4.1 链路(link)
 
-接入设备或程序到IOTTree直接会建立一个链路通道进行数据交互。如Tcp链路、RS485串行链路等。一般情况下，设备和IOTTree建立此链路之后会被一直保持，双方通过双向或半双工方式进行数据收发。目前此方式下面的驱动有：Tcp Client、Tcp Server和COM。
 
-对于此类接入来说，链路之上的数据传输还有着更多的协议限定，这些协议限定和具体设备支持有关。如基于RS485的Modbus协议、基于Tcp链接的Modbus TCP协议。此时，一般情况下都需要在关联通道中设定对应的设备驱动，这些设备驱动会共用这些接入链路资源，进行更高级的协议数据传输。
+## 4 Classification based on connector characteristics: link, bind, and message
 
-接入设备或程序到IOTTree直接会建立一个链路通道进行数据交互。如Tcp链路、RS485串行链路等。一般情况下，设备和IOTTree建立此链路之后会被一直保持，双方通过双向或半双工方式进行数据收发。目前此方式下面的驱动有：Tcp Client、Tcp Server和COM。
 
-在工业现场，有很大一部分设备支持现场总线，如基于简单的RS485总线（只需要两芯电缆就可以支持）和以此基础的Modbus RTU协议，总线上面有多个设备。其中一个是主设备，其他设备是从设备。主设备对每个从设备定时发起轮询请求，从设备根据收到的请求进行判断和应答。同一时刻，总线上只有一个设备发送数据。对于主设备来说，这个总线就是一个链路。
 
-还有很多物联网应用场合，有很多个监测采集点分散在一个区域内，每个监测采集点都会有若干传感器从设备和一个主设备，他们之间通过RS485总线Modbus RTU协议进行通信；主设备内部有个RS485-GPRS/4G透明传输模块与云端进行通信，从云端看来，每个现场监测点会与此建立一个Tcp链路，通过现场主模块的透明传输，可以直接和现场RS485总线进行数据交互。
+Since we have managed the connections separately. So it is necessary for us to abstract the specific data source methods and features (patterns), and provide different connector configurations and processing support for different situations. It is obvious that currently we have found at least three modes of data connector: link, bind, and message. Below, we will provide a brief explanation.
 
-以上仅仅举例了链路方式接入的最常用的手段，事实上基于链路方式的接入还有很多，并且相对通用。基于此通信方式的顶层协议也很多（包含大量的设备使用的是厂家私有协议）。因此，一般情况下都需要在关联通道中设定对应的设备驱动，这些设备驱动会利用这些链路资源，进行更高级的协议数据解析和传输。这些设备驱动如Modbus RTU、西门子PLC的s7-200 ppi、西门子Tcp/IP Ethernet等协议。
 
-目前，IOTTree链路接入支持Tcp Client、Tcp Server、COM三种方式，下面对此分别进行详细说明。
+### 4.1 Link
 
-如果要看详细内容，请访问<a doc_path="links.md" target="main">&nbsp;&nbsp;&nbsp;链路(link)详细说明</a>
 
-### 4.2 绑定(bind)
 
-接入设备或程序如果能够提供OPC接口，则IOTTree接入驱动会根据OPC的数据特点直接提供树形组织的节点数据。很明显这些数据从组织上是固定的，如果我们要简单直观明了的使用这些数据，最简单的方式就是通过绑定（bind）方式进行——把接入数据映射到我们项目某个通道下面定义的Tag中。目前此方式下面的驱动有：OPC DA Client、OPC UA Client。
+Connecting devices or programs to IOTTree directly establishes a link channel for data exchange. For example, Tcp link, RS485 serial link, etc. In general, after establishing this link between the device and IOTTree, it will be maintained continuously, and both parties will transmit and receive data through bidirectional or half duplex methods. At present, the following drivers for this method include: Tcp Client, Tcp Server, and COM.
 
-如果你对OPC不了解，可以到网络上搜索相关资料进行学习研究。
+For such connector, there are more protocol limitations for data transmission over the link, which are related to specific device support. For example, Modbus protocol based on RS485 and Modbus TCP protocol based on Tcp link. At this point, it is generally necessary to set corresponding device drivers in the associated channel, which will share these connector link resources for higher-level protocol data transmission.
 
-如果要看详细内容，请访问<a doc_path="binds.md" target="main">&nbsp;&nbsp;&nbsp;绑定(bind)详细说明</a>
+Connecting devices or programs to IOTTree directly establishes a link channel for data exchange. For example, Tcp link, RS485 serial link, etc. In general, after establishing this link between the device and IOTTree, it will be maintained continuously, and both parties will transmit and receive data through bidirectional or half duplex methods. At present, the following drivers for this method include: Tcp Client, Tcp Server, and COM.
 
-### 4.3 消息(Message)
+In industrial sites, a large number of devices support fieldbus, such as the simple RS485 bus (which only requires two core cables to support) and the Modbus RTU protocol based on this, with multiple devices on the bus. One of them is the master device, while the other devices are slave devices. The master device initiates a timed polling request for each slave device, and the slave device judges and responds based on the received request. At the same time, only one device on the bus sends data. For the main device, this bus is just a link.
 
-有一些接入设备或程序可能以数据包的方式进行传输，如mqtt通过发布订阅模式对数据包进行发送和接收、WebSocket的数据监听回调获取。这些接入的数据都是以被动方式获取，并且每次获取的是一个完整的数据内容。
+There are also many IoT applications where there are many monitoring and collection points scattered in a single area. Each monitoring and collection point will have several sensor slave devices and a master device, and they communicate with each other through the RS485 bus Modbus RTU protocol; There is an RS485 GPRS/4G transparent transmission module inside the main device that communicates with the cloud. From the cloud perspective, each on-site monitoring point will establish a Tcp link with it. Through the transparent transmission of the on-site main module, data can be directly exchanged with the on-site RS485 bus.
 
-还有一些特殊情况，如http的接入，通过给定一个具体的url地址，内部程序可以定时访问读取数据内容，每次读取的内容也是个完成的数据内容，这些内容可以是html、xml格式的字符串，也可能是一个完整的json数据字符串。因此，从数据模式也可以认为是个消息报，差别是主动获取的。
+The above only provides examples of the most commonly used methods of link based connection. In fact, there are many other methods of link based connector that are relatively universal. There are also many top-level protocols based on this communication method (including a large number of devices using factory owned protocols). Therefore, in general, it is necessary to set corresponding device drivers in the associated channels, which will utilize these link resources for more advanced protocol data parsing and transmission. These device drivers include protocols such as Modbus RTU, Siemens PLC's s7-200 ppi, and Siemens Tcp/IP Ethernet.
 
-由于消息数据很大一部分都是特定格式的数据，可以根据具体格式做相关的数据提取，那么此时关联的通道也就不需要使用专门的设备驱动对消息数据做专门处理。当然，对于一些支持Message的特殊设备，也可以实现专门的驱动程序进行有针对性地支持。
+At present, IOTTree link access supports three methods: Tcp Client, Tcp Server, and COM. The following will provide detailed explanations for each method.
 
-如果要看详细内容，请访问<a doc_path="msgs.md" target="main">&nbsp;&nbsp;&nbsp;消息(Message)详细说明</a>
 
-## 5 接入的其他支持
+If you want to more detailed content, please visit <a doc_path="links.md" target="main">&nbsp;&nbsp;&nbsp;Link Detail</a>
 
-IOTTree把设备接入和通信相关功能独立出来之后，不仅可以简化整体架构和每个设备协议的驱动复杂度。同时，还可以专门针对通信做更多支持。如通信监视(Monitor)功能，通信状态支持等。
+### 4.2 Bind
 
-### 5.1 通信监视(Monitor)
 
-IOTTree在接入通信实现时，专门对通信数据做了一定长度的缓存支持，并且可以在项目管理界面中对缓存的数据进行查看。很大的方便了跟踪设备通信异常情况。
+If the connected device or program can provide an OPC interface, the IOTTree connector driver will directly provide node data in a tree structure based on the characteristics of OPC data. It is obvious that these data are fixed from an organizational perspective. If we want to use this data in a simple and intuitive manner, the simplest way is to bind it - mapping the connected data to a Tag defined under a certain channel in our project. At present, the following drivers for this method include OPC DA Client and OPC UA Client.
 
-你只需要在对应的链接Connection节点上鼠标右键，选择菜单项Monitor，在弹出新的监视窗口中查看即可。
+If you are not familiar with OPC, you can search for relevant information on the internet for learning and research.
+
+
+If you want to more detailed content, please visit <a doc_path="binds.md" target="main">&nbsp;&nbsp;&nbsp;Bind Detail</a>
+
+### 4.3 Message
+
+
+Some connected devices or programs may transmit data packets in the form of data packets, such as mqtt sending and receiving data packets through publish subscribe mode, and WebSocket data listening and callback acquisition. These accessed data are obtained passively, and each time a complete data content is obtained.
+
+There are also some special cases, such as HTTP access. By giving a specific URL address, internal programs can access and read data content on a regular basis. Each read content is also a completed data content, which can be strings in HTML or XML format, or a complete JSON data string. Therefore, from the data pattern, it can also be considered as a message, and the difference is actively obtained.
+
+Due to the fact that a large portion of the message data is in a specific format, relevant data extraction can be done based on the specific format. Therefore, the associated channels do not need to use specialized device drivers to process the message data at this time. 
+
+Of course, for some special devices that support Message, specialized drivers can also be implemented.
+
+
+If you want to more detailed content, please visit <a doc_path="msgs.md" target="main">&nbsp;&nbsp;&nbsp;Message Detail</a>
+
+## 5 Other support for connector
+
+
+
+After IOTTree separates device connector, it can not only simplify the overall architecture and drive complexity of each device protocol. At the same time, more support can also be provided specifically for connection. Such as communication monitoring function, communication status support, etc.
+
+
+### 5.1 Communication Monitor
+
+
+
+IOTTree provides a certain length of cache support for communication data when accessing connection implementation, and can view the cached data in the project management ui. It greatly facilitates the tracking of abnormal communication situations on devices.
+
+You only need to right-click on the corresponding link ConnPt node, select the menu item Monitor, and view it in a new monitoring window that pops up.
+
 
 <img src="../img/conn/c012.png">
 
-### 5.2 通信状态
+### 5.2 Communication Status
 
-当一个接入内部的链接和项目中的某个通道关联之后，对应通道自带的系统标签Tags也就包含了链接状态信息。
+
+When an internal link is associated with a channel in the project, the corresponding system tag Tags of the channel also contain link status information.
+
 
 <img src="../img/conn/c013.png">
 
-如图所示，在项目中选中通道ch1，并且在右边主内容区选择\[Tags\]标签,同时在右上角打开Show System Tags开关，你就可以在标签列表中看到隐藏的系统级标签，这些系统级标签都已'_'开头。你可以看到_conn开头的和通信链接有关的内容。这些系统标签和你自定义的设备标签一样，可以在其他使用。
+
+
+As shown in the figure, select channel "ch1" in the project and select the \[Tags] in the main content area on the right. At the same time, open the "Show System Tags" switch in the upper right corner. You can see hidden system tags in the list, all of which have been '\_' beginning. You can see the contents related to communication links starting with "_conn". These system tags are the same as your customized device tags and can be used else where.
+

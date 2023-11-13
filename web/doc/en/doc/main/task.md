@@ -1,66 +1,81 @@
 Task
 ==
 
-在IOT-Tree中的一个项目中，除了通过Connector接入设备或数据、然后你建立了一个项目树，并且对节点下面的数据进行了组织。接下来你可能会需要项目为你做一些持续运行的工作。这些工作可能如下：
-
-> 你需要项目后台连续运行一个逻辑，根据一部分输入的数据进行判断，然后对另外一些标签(Tag)做写入数据而输出，形成特定的控制，这个和一个PLC控制器很相似——你的IOT-Tree设备如果运行在嵌入式设备中，并且控制着一台特定的机器。
-
-> 有一个云端网站，需要你在IOT-Tree中定时的推送规定格式的数据（如IOT-Tree作为物联网一个边缘计算设备而存在，你需要使用安全可靠的通信方式对接云端）。
 
 
-一般来说，如果你需要某个项目持续的进行一些内部工作，那么就应该考虑使用IOT-Tree的任务(Task)机制来解决。
+In a IOT-Tree project, in addition to accessing devices or data through a Connector, you establish a project tree and organize the data below the nodes. Next, you may need the project to do some ongoing work for you. These tasks may include:
 
-## 1 IOT-Tree中的任务Task和动作Action
+>You need the project backend to continuously run a logic, make judgments based on a portion of the input data, and then write data to other tags to form specific controls, which is similar to a PLC controller - if your IOT-Tree device is running in an embedded device and controlling a specific machine.
 
-在IOT-Tree一个项目中，你可以定义多个任务Task，每个任务运行时会占用一个线程。
+>There is a cloud website that requires you to regularly push data in the specified format in IOT-Tree (for example, IOT-Tree exists as a edge computing device of the Internet of Things, and you need to use a secure and reliable communication method to connect to the cloud).
 
-在每个任务里面，可以定义多个活动Action，这些活动Action共享所属任务的线程。
+Generally, if you need a project to continuously carry out some internal work, you should consider using the IOT-Tree task mechanism to solve it.
 
-任务Task和动作Action两级管理可以你可以灵活的进行任务和动作的分配。
 
-### 1.1 任务和活动的添加
+## 1 Task and Action
 
-在项目管理主界面中，点击项目树上方的任务运行状态图标，你可以看到右边选项卡新增了Tasks，里面就是本项目的任务列表管理界面。点击右上角的"+Add Task"按钮，在弹出的新增任务窗口中填写如下内容：
+
+
+In an IOT-Tree project, you can define multiple tasks, each of which takes up one thread when running.
+
+Within each task, multiple actions can be defined, which share the threads of the task they belong to.
+
+Task and action two-level management allows you to flexibly arrange you needs.
+
+
+### 1.1 Adding tasks and actions
+
+
+
+In the main UI of project management, click the task running status icon above the project tree, and you can see that the right tab has added Tasks, which is the task list management UI for this project. Click on the "+Add Task" button in the upper right corner and fill in the following information in the pop-up dialog for adding tasks:
+
 
 <img src="../img/main/m021.png" />
 
-除了任务名称标题，你必须设置Enable，这样任务才会在项目启动时也跟着启动运行。另外，你可以设定任务的运行时间间隔（单位毫秒ms）。
 
-点击"Ok"按钮之后，任务列表中就出现了你新增的任务。
+In addition to the task name and title, you must set Enable so that the task will also start and run when the project starts. Additionally, you can set the running time interval of the task in milliseconds.
 
-每个任务必须至少包含一个活动Action，否则这个任务也毫无意义，在t1这个任务项右边，点击"+"这个新增Action图标，在弹出的活动Action编辑界面填写如下内容：
+After clicking the "OK" button, the newly added task will appear in the task list.
+
+Each task must contain at least one Action, otherwise the task is meaningless. To the right of the task item t1, click the "+" icon to add an Action, and fill in the following content in the pop-up action editing dialog:
 
 <img src="../img/main/m022.png" />
 
-点击"Ok"，你就可以看到在任务t1下面出现了这个a1项。
 
-很明显，我们新增的这个活动还没完成，因为我们还需要告诉这个Action应该如何干活。在每个Action中，具体的动作全部由JS脚本支持。但为了能够使得我们实现某个活动Action有章可循，我们也对每个活动Action做了一些JS脚本功能划分。
+Click "OK" and you will see that item a1 appears under task t1.
 
-### 1.2 活动Action中的JS脚本划分
+It is obvious that the new Action we added has not been completed yet, as we still need to tell this Action how to work. In each Action, the running logic are all supported by JS scripts. But in order to ensure that we can implement a Action with rules to follow, we have also made some JS script functional divisions for each Action. 
 
-我们看上面新增的活动a1，如图所示：
+### 1.2 JS script partitioning in Action
+
+Let's take a look at the newly added Action a1 above, as shown in the figure:
 
 <img src="../img/main/m023.png" />
 
-可以看到，每个活动内部会有三个脚本划分:"init script","run in loop script","end script"。他们分别对应"初始化脚本","在循环中重复运行脚本","运行结束脚本"。
 
->初始化脚本init script:在任务启动时，只运行一次，你可以在里面定义初始化变量，一些后续需要的JS函数声明。
 
->在循环中重复运行脚本run in loop script:这个JS脚本，在任务运行期间，根据任务设定的运行时间间隔，会被重复运行。
+As you can see, there are three script divisions within each Action: "init script", "run in loop script", and "end script". They correspond to "initialization script", "repeatedly running script in the loop" and "running end script" respectively.
 
->运行结束脚本end script:在任务正常停止时，会被运行一次的脚步，你可以对此进行善后工作。
+>init script: When the task is started, it is only run once. You can define initialization variables and some function declarations.
 
-每个活动的这三个部分JS脚本，你可以根据需要点击编辑即可，当然如果某个部分你没有设定任何脚本，那么等于不起作用。
+>run in loop script: This JS script will be run repeatedly during the task run according to the running time interval set by the task.
 
-任务活动中的脚本编写说明，请参考[JS In Task][js_in_task]
+>end script: When the task stops normally, it will be run once. You can deal with the aftermath.
 
-### 1.3 辅助支持
+You can click to edit the JS script of the three parts of each Action as needed. Of course, if you do not set any script for a part, it will not work.
 
-任务的导出导入支持
 
-## 2 IOT-Tree任务JS脚本
+JS in task, please refer to [JS In Task][js_in_task]
 
-任务活动中的脚本编写说明，请参考[JS In Task][js_in_task]
+### 1.3 Auxiliary support
+
+
+Support for exporting and importing tasks
+
+
+## 2 IOT-Tree Task JS Script
+
+JS in task, please refer to [JS In Task][js_in_task]
 
 
 [js_in_task]:../js/js_in_task.md

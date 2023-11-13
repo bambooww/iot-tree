@@ -1,10 +1,13 @@
 
+if(typeof(layui)=='object')
+{
+	layui.use('element', function(){
+		  var element = layui.element;
+		  
+		  //…
+		});
+}
 
-layui.use('element', function(){
-  var element = layui.element;
-  
-  //…
-});
 
 var hcount = 0 ;
 

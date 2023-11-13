@@ -1,42 +1,50 @@
 JS In Task
 ==
 
-如果你对IOT-Tree的任务机制还不了解，请参考[Task][task]。
+If you are not familiar with the task of IOT-Tree, please refer to [Task][task]。
 
-IOT-Tree在任务活动Action中，对JS脚本进行了划分，如下图：
+
+
+IOT-Tree has divided the JS script in the task's Action, as shown in the following figure:
+
 
 <img src="../img/main/m023.png" />
 
-可以看到，每个活动内部会有三个脚本划分:"init script","run in loop script","end script"。他们分别对应"初始化脚本","在循环中重复运行脚本","运行结束脚本"。
 
->初始化脚本init script:在任务启动时，只运行一次，你可以在里面定义初始化变量，一些后续需要的JS函数声明。
+As you can see, there are three script divisions within each Action: "init script", "run in loop script", and "end script". They correspond to "initialization script", "repeatedly running script in the loop" and "running end script" respectively.
 
->在循环中重复运行脚本run in loop script:这个JS脚本，在任务运行期间，根据任务设定的运行时间间隔，会被重复运行。
+>init script: When the task is started, it is only run once. You can define initialization variables and some function declarations.
 
->运行结束脚本end script:在任务正常停止时，会被运行一次的脚步，你可以对此进行善后工作。
+>run in loop script: This JS script will be run repeatedly during the task run according to the running time interval set by the task.
 
-每个活动的这三个部分JS脚本，你可以根据需要点击编辑即可，当然如果某个部分你没有设定任何脚本，那么等于不起作用。
+>end script: When the task stops normally, it will be run once. You can deal with the aftermath.
 
-本文接下来对这三个JS脚本划分做详细说明。
+You can click to edit the JS script of the three parts of each Action as needed. Of course, if you do not set any script for a part, it will not work.
+
 
 [task]:../main/task.md
 
-## 1 任务脚本运行上下文$prj
+## 1 Task Script Context $prj
 
-IOT-Tree当前规定，一个项目中的所有任务JS脚本，运行上下文(Context)都是项目根部。也就是说，JS可以调用整个项目下的所有对JS开放的内容。
 
-_注：不排除以后会在项目树中，增加和任务类似的控制逻辑。如：针对某个设备节点，专门定义内部控制逻辑，这样一些通用控制逻辑也会随着节点的重用而重用_
+IOT-Tree currently stipulates that all task JS scripts in a project have a running context at the root of the project. That is to say, JS can call all content open to JS under the entire project.
 
-我们以IOT-Tree内部自带的Demo项目"Water tank and Medicament dosing"作为例子说明。在项目主界面中，点击项目树上方的任务运行状态图标，主内容区会出现"Tasks"选项卡，里面有一个任务t1以及这个任务下面的活动act1。点击这个活动的"init script"按钮，在弹出的脚本编辑界面左边，是以本项目根部为基础的JS运行上下文。我们可以看到里面的$this对象和$prj是等效的。
+_Note: It is not ruled out that in the future, control logic similar to tasks will be added to the project tree. For example, for a specific device node, internal control logic is specifically defined, so that some common control logic will also be reused as the node is reused_
+
+We use the demo project "Water tank and Medical Dosing" that comes with IOT-Tree as an example to illustrate. In the main management ui of the project, click the task running status icon above the project tree. The "Tasks" tab will appear in the main content area, which includes a task "t1" and the activity "act1" below it. Click on the "init script" button of this activity, and on the left side of the pop-up script editing dialog, there is a JS runtime context based on the root of this project. We can see that the $this object and $prj inside are equivalent.
+
 
 <img src="../img/js/j007.png" />
 
-## 2 init script编写说明
+## 2 init script
 
-初始化脚本代码在任务启动时会被运行一次，你可以在里面定义后续重复运行代码所需要的初始内容。如，在此Demo项目中，代码看似不少，其实就做了两件事:
 
-1) 初始化一些全局变量
-2) 定义后续可能使用到的函数
+
+The init script code will be run once when the task starts, and you can define the initial content required for subsequent repeated code runs. For example, in this demo project, there may seem to be a lot of code, but in fact, two things were done:
+
+1) Initialize some global variables
+2) Define functions that may be used in the future
+
 
 ```
 //def support func or var
@@ -83,27 +91,38 @@ function valve_ctrl()
 
 ```
 
-IOT-Tree强烈建议你也使用以下模式编写初始化代码：
 
-> 定义全局变量赋值后续函数可能用到的项目中的标签，因为项目中的标签路径格式 xxx.xx.xx。这个以项目为根部的层次引用可能会随着你项目结构的调整而改变。通过命名相对固定的全局变量进行赋值，可以使得在后续的函数中调用简化，同时更容易维护修改。
+IOT-Tree strongly recommends that you also use the following mode to write initialization code:
+
+>Define the tags in the project that may be used for subsequent functions of global variable assignment, as the tag path format in the project is xxx.xx.xx. This hierarchical reference based on the project may change when you adjust the project structure. Assigning a value by naming a relatively fixed global variable can simplify the call in subsequent functions and make it easier to maintain and modify.
+
 ```
-//后续函数都使用ob_pump_running来代替对应的项目中标签。
+//Subsequent functions use ob_pump_running to replace the corresponding tags in the project.
 var ob_pump_running = ch1.dio.p_running ;
 ```
-> 在初始化代码中，定义后续全部需要的函数。
 
-## 3 run in loop script编写说明
+>In the initialization code, define all subsequent required functions.
 
-重复在循环中调用的代码，以init script编写的变量和函数为基础，直接调用相关函数即可。如本Demo例子中，你点击活动act1中的"run in loop script"按钮，弹出的编辑窗口中，只有两行代码：
+
+## 3 run in loop script
+
+
+Repeat the code called in the loop, and directly call the relevant functions based on the variables and functions written by init script. In this demo example, when you click on the "run in loop script" button in Action "act1", there are only two lines of code in the pop-up editing dialog:
+
 
 ```
 pump_ctrl();
 valve_ctrl();
 ```
-请注意，这两行代码在任务运行中，会被以一定的时间间隔重复调用运行。
 
-## 4 end script编写说明
 
-结束脚本指的是任务在正常结束时，会被调用的代码，大部分情况你是不需要对此编写代码的。但在一些特殊场合，你需要在任务停止时释放一些特定资源，那么就需要实现对应代码。
+Please note that these two lines of code will be repeatedly called and run at certain time intervals during task execution.
+
+
+## 4 end script
+
+
+End script refers to the code that will be called when a task ends normally, and in most cases, you do not need to write code for it. But in some special situations, you need to release specific resources when the task stops, so you need to implement corresponding code.
+
 
 

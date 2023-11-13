@@ -1,56 +1,86 @@
 Tag List
 ==
 
-在IOT-Tree项目主界面中，点击某个容器节点，主内容区的Tags选项卡就会展示此节点下的所有数据标签。如果选择项目根节点，则会显示整个项目定义的所有数据标签列表。如图所示：
+
+In the main UI of IOT-Tree project, click a container node, and the Tags tab in the main content area will display all data tags under this node. If you select the project root node, a list of all data tags defined for the entire project is displayed. As shown in the figure:
+
 
 <img src="../img/main/m007.png" />
 
-## 1 标签类型
+## 1 Tag Types
 
-IOT-Tree在容器节点下面，标签有三种类型：普通标签、中间标签和系统标签。
 
->普通标签是内部最基础的标签，可以从接入和驱动获取更新数据，如果驱动支持写入操作，那么也可以写入输出数据到设备或其他系统中。普通标签内部也可以带有转换器，可以根据输入的原始数据做必要的转换（如把通用信号量数据转换成某种监测指标的具体数据）。
 
->中间标签是在普通标签基础之上建立，是只读的。通过内置的表达式或JS脚本生成自己的数值（表达式和JS脚本基于普通标签作为变量数据输入），因此可以支持一些复杂的数据转换。很明显，一个中间标签可以输入多个其他标签数据，然后做相关转换。例如，某个监测指标数据在设备驱动获取原始数据时，跨越了多个普通标签，需要对这些标签数据做组合或其他转换才能计算得出，此时使用中间标签是个很好的解决方法。
+Under the container node. There are three types of tags: normal tag, middle tag and system tag.
 
->系统标签是IOT-Tree内部自带的标签。如节点名称、驱动名称、通信状态等等。这些标签的名称都以"\_"开头。这也同样规定了，我们在定义普通或中间标签时，名称不能以"\_"开头。通常情况系统标签不显示，你可以在标签列表右上角点击"Show System Tags"，打开显示系统标签开关。
+>The normal tag is the most basic tag, which can obtain updated data from the connector and driver. If the drive supports write operation, it can also write output data to the device or other systems through the tag. The normal tag can also have a converter inside, which can make necessary conversion according to the input original data (such as converting the general semaphore data into specific data of some monitoring indicators).
 
-## 2 标签上下文
+>middle tags are built on the basis of normal tags and are read-only. Generate your own values through built-in expressions or JS scripts (expressions and JS scripts are input as variable data based on normal tags), so it can support some complex data conversion. Obviously, an middle tag can input multiple other tag data, and then perform relevant conversion. For example, when a certain monitoring indicator data gets the original data from the device driver, it spans multiple normal tags. These tag data need to be combined or converted to calculate. At this time, using middle tags is a good solution.
 
-在前面的文档已经说明，容器节点的层次关系决定了内在资源的可访问性，容器节点可以访问自身内部和子孙节点的所有资源。因此，在某个容器节点下，标签列表对每个标准展示的唯一标识是以当前容器节点为根的相对路径。每个路径以符号"."划分层级。路径前面是父容器名称，最后一级就是标签名称。
+>The system tag is the internal tag of IOT-Tree. Such as node name, driver name, communication status, etc. The names of these tags start with "_". This also stipulates that when we define normal or name tags, the name cannot start with "_". Generally, system tags are not displayed. You can click "Show System Tags" in the upper right corner of the tag list to show them.
 
->IOT-Tree还规定，标签列表中，只有当前容器节点下面的直接标签允许编辑，并且在某个容器节点下面，新增的标签都是直接属于当前标签。
 
-## 3 标签的新增和编辑
+## 2 Tag Context
 
-鼠标选中个容器节点，在标签列表中，可以看到"+Add Tag"和"+Add Middle Tag"两个按钮，点击"+Add Tag"按钮，弹出一个当前容器节点下的新增标签编辑窗口，如下图：
+
+
+As explained in the previous document, the hierarchical relationship of container nodes determines the accessibility of internal resources, and container nodes can access all resources within themselves and in their descendants. Therefore, under a container node, the unique ID of each tag is the relative path with the current container node as the root. Each path is hierarchical with the symbol ".". The path is preceded by the name of the parent container, and the last level is the tag name.
+
+>IOT-Tree also stipulates that only the direct tags under the current container node can be edited in the list, and the new tags under a container node are directly belong to the current container.
+
+
+## 3 Adding and editing tags
+
+
+
+Select a container node with the mouse. In the tag list, you can see the "+Add Tag" and "+Add Middle Tag" buttons. Click the "+Add Tag" button to open a new tag editing dialog under the current container node, as shown below:
+
 
 <img src="../img/main/m008.png" />
 
-从图中，我们可以看到当前节点是/psa_demo/ch2/p1,分别是/项目/通道/设备。并且，你可以发现标签列表里面的直接子标签都是可编辑的。
-
->我们可以输入标签的名称和标题，其中名称必须符合IOT-Tree的名称限定要求(A-Z a-z起始，后续可以是A-Z a-z 0-9 _)。接着我们可以指定数据值类型，如果是浮点数还可以限定小数位数。R/W表示标签是否是只读，还是可以读写。
-
->标签"Local"参数比较特殊，如果为true，则代表此标签为“本地化”标签，打开此开关，你可以看到界面可以允许你输入缺省值，并且是否要Auto Save的开关选项。如果Auto Save=true，那么此标签的数值被修改之后，系统会自动保存。如果IOT-Tree Server重启之后，此标签值会自动装载上次更新的值，这样的标签很适合作为参数化的数值而存在。如，你的项目需要在运行时调整一些控制参数，这些参数可以有初始值，那么可以用这个标签定义。当设定Auto Save=true时，标签值每次变化都会触发保存动作，所以尽量避免高频度更新。
 
 
->标签地址（Address）,标签的地址和标签所属的通道、设备驱动相关。如果所属的通道没有限定设备驱动，那么标签地址没有意义（不需要填写）。如果有相关的设备驱动，那么地址就和这个驱动规定有关。例如：如果此标签所属的通道限定设备驱动是Modbus RTU，那么此标签地址可能是 400001；又如：如果驱动是西门子PLC S7-200 PPI，那么此地址可能是I1.0、Q0.2、T40等。此部分内容请参考[Device,Device Library and Drivers][device]
+From the figure, we can see that the current node is "/psa_demo/ch2/p1", respectively, is "/project/channel/equipment". In addition, you can find that the direct sub tags in the tag list are editable.
 
->标签值转换(Transfer)，当接入或驱动获取数据推送到此标签时，有可能原始的数据和我们具体的监测指标单位不一致，此时我们可以在标签内部设定自动转换器。此部门内容请参考本文中"数值读取、写入和转换(Transfer)"相关内容。
+>We can enter the name and title of the tag. The name must meet the name qualification requirements of IOT-Tree (A-Z a-z starts, and A-Z a-z 0-9 _ can follow). Then we can specify the data value type. If it is a floating point number, we can also limit the number of decimal places. R/W indicates whether the tag is read-only or read-write.
 
->标签过滤器(Filter)，在一些实际工程中，一些设备的监测数据由于受到不确定因素，偶尔可能会出现一些干扰数据。如数据的突变或为获取异常。这些干扰数据不仅无效，而且还可能造成系统的误判。此时，我们可以设定此参数，使能抗干扰。IOT-Tree内部会用一些滤波算法对新获取的数据进行滤波处理，使得数据能够一定程度的抗干扰。
+
+
+
+>The tag "Local" parameter is special. If it is true, it means that this tag is a "Localization" label. Turn on this switch, you can see that the dialog allows you to enter default values, and whether you want to auto save the switch option. If "Auto Save=true", the system will automatically save the value of this tag after it is modified. If the IOT-Tree Server is restarted, this tag value will automatically load the last updated value. This tag is suitable for existence as a parameterized value. For example, your project needs to adjust some control parameters at runtime. These parameters can have initial values, which can be defined with this tag. When Auto Save=true is set, the tag value will trigger the save action every time it changes, so try to avoid frequent updates.
+
+
+
+
+>Tag address, which is related to the channel and device driver to which the tag belongs. If the channel does not define the device driver, the label address is meaningless (no need to fill in). If there is a related device driver, the address is related to the driver specification. For example, if the channel limiting device driver to which this tag belongs is Modbus RTU, then the tag address may be 400001; Another example: if the driver is Siemens PLC S7-200 PPI, the address may be I1.0, Q0.2, T40, etc. Please refer to:
+
+
+[Device,Device Library and Drivers][device]
+
+
+
+>Tag value transfer: when connector or driver obtain data and push it to this tag, the original data may not be consistent with our specific monitoring indicator unit. In this case, we can set an autochanger inside the tag. For this part, please refer to the relevant contents of "Numerical Reading, Writing and Conversion (Transfer)" in this article.
+
+>In some practical projects, the monitoring data of some device may occasionally appear some interference data due to uncertain factors. Such as data mutation or acquisition anomaly. These interference data are not only invalid, but also may cause system misjudgment. At this time, we can set this parameter to enable anti-interference. IOT-Tree will use some filtering algorithms to filter the newly acquired data, so that the data can be anti-jamming to a certain extent.
+
 
 [device]:../device/index.md
 
-## 4 数值读取、写入和转换(Transfer)
+## 4 Numerical Reading, Writing and Conversion (Transfer)
 
-普通标签通过接入或驱动获取数据时是个数据读取过程。而通过列表手工输入数据时或通过UI提交数据到标签则是标签的数据写入过程。
 
-如果有内部有转换（Transfer）参与其中，在Tag对外提供读取的数值则是转换之后的内容。同样的，如果这个标签是可写的，那么除了对于的正向转换之外，还需要一个反向转换(Inverser)，否则就会造成数据不一致。
+
+It is a data reading process for normal tags by connector or driver. The tag value can be written manually (manually in the list or through the UI interface) or automatically by the internal JS program.
+
+If there is an internal transfer involved, the value read from the tag is the content after the conversion. Similarly, if the tag is writable, a reverse conversion is required in addition to the forward conversion, otherwise data inconsistency will result.
+
 
 <img src="../img/main/m010.png" />
 
-在普通标签编辑界面中，点击Transfer输入框，可以看到里面支持两种转换,Scaling和JS：
+
+
+In the normal tag editing dialog, click on the Transfer input box, and you can see that it supports two types of transformations: Scaling and JS:
+
 
 <table>
     <tr>
@@ -59,22 +89,38 @@ IOT-Tree在容器节点下面，标签有三种类型：普通标签、中间标
     </tr>
 </table>
 
-其中，scanling支持通过线性或平方根的方式输入的原始数据做转换，当然内在的方向转换也就自动支持了。而通过JS转换，则要区分正向和方向两种情况，他们分别要实现对应的JS脚本。
 
-从JS转换界面中，我们可以看出，一个转换在IOT-Tree内部其实是个匿名JS函数，输入参数有$tag和$input，分别是代表标签的JS对象和输入值。你只需要填入函数内部代码，通过"return"语句返回结果即可。
 
-其中$tag代表的JS对象现象信息，请参考：[IOT-Tree JS Script][js]
+Among them, "Scaling" supports the conversion of raw data input through linear or square root methods, and of course, the inherent reverse conversion is also automatically supported. Through JS conversion, it is necessary to distinguish between forward and reverse situations, and they need to implement corresponding JS scripts separately.
+
+From the JS conversion textarea, we can see that a transformation is actually an anonymous JS function inside IOT-Tree, with input parameters of $tag and $input, representing the JS object and input value of the tag, respectively. You only need to fill in the internal code of the function and return the result through the "return" statement.
+
+For JS script support, please refer to:
+
+
+[IOT-Tree JS Script][js]
 
 [js]:../advanced/adv_js.md
 
-## 5 中间标签的编辑
+## 5 Middle Tag Editing
 
-在某个容器节点对应的标签列表中，点击按钮"+Add Middle Tag"按钮，弹出新增编辑中间标签窗口。
+
+
+In the tag list corresponding to a container node, click the "+Add Middle Tag" button to open the Add Edit Middle Tag dialog.
+
 
 <img src="../img/main/m012.png" />
 
-可以看出，除了名称、标题、数据类型相关属性之外，还有一个Express JS内容。此内容以当前容器节点作为上下文，可以运行输出数值的JS代码。相关JS支持请参考：[IOT-Tree JS Script][js]
 
-## 6 标签列表其他辅助功能
 
-在可编辑的标签列表中，你可以用鼠标多选标签，并进行复制和粘贴功能。这些辅助操作支持，可以很大的方便你的项目数据设置。
+It can be seen that in addition to the items related to name, title, and data type, there is also an Express JS content. This content takes the current container node as the context and can run JS code that outputs values.
+
+
+For JS script support:[IOT-Tree JS Script][js]
+
+## 6 Tag List Other Auxiliary Functions
+
+
+
+In the editable tag list, you can use the mouse to select multiple tags and perform copy and paste functions. These auxiliary operations support can greatly facilitate your project data settings.
+

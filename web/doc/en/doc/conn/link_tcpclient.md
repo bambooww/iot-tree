@@ -1,31 +1,44 @@
+IOTTree Link Connector - Tcp Client
+==
 
 
 
+Premise: The connected device or program provides an external interface in Tcp Server mode, and these devices generally have an IP address and listening port.
 
-前提：被接入设备或程序提供了Tcp Server方式的对外接口，这些设备一般会有一个IP地址和监听端口。
+In an IOT-Tree project, there may be multiple such devices, so it is necessary to support the establishment of any number of Tcp Client links. Due to the relative independence of each link in data processing (provided by the drivers below the channel). Therefore, there is only one overall ConnProvider for Tcp Client, and it only serves as an organizational role. The subsequent data interaction of each link is generally handled separately by the driver thread.
 
-在一个IOTTree的项目中，可能会有多个这样的设备，因此必须支持任意多个Tcp Client链路的建立。由于每个链路在数据处理上相对独立（具体由通道下面的驱动提供）。因此，Tcp Client的ConnProvider总体只有一个，而且也仅仅是起来一个组织作用。每个链路后续的数据交互一般都由驱动的线程进行单独处理。
+At this point, if we want to use IOT-Tree to connect to this device, we must establish a Tcp Client and establish a communication link through the IP address and port provided by the device. This section is based on the Tcp/IP protocol, which is the cornerstone of our current internet communication. If you are not familiar with this, please search for relevant information.
 
-此时，如果我们要使用IOTTree对接此设备，就必须建立一个Tcp Client，通过设备提供的IP地址和端口建立通信链路。此部分内容基于Tcp/IP协议，也即是我们当前互联网通信的基石，如果你对此不了解，请查找相关资料。
+Assuming that our device and IOTTree are both on the same factory internal network and within the same network segment (i.e. accessible communication can be achieved through IP addresses). The address of the device is 192.168.10.10, and the listening port is 3000.
 
-假设我们的设备和IOTTree都处在一个工厂内部网络，并且都在同一个网段之内（也即是通过IP地址可以进行无障碍通信）。设备的地址为：192.168.10.10，监听端口为3000。
 
 <img src="../img/conn/c004.png">
 
-如上图：通过左上角Connectors菜单，选择Tcp Client，就会弹出对应的编辑窗口。我们填写的Name=cdev1和Title=Device1之外，我们还必须填写对于设备的Host=192.168.10.10和Port=3000两个参数，分别对应设备的IP地址和端口。确定保存之后，我们就建立了一个Tcp Client的接入。你可以在项目中看到，新建的Tcp Client和之前建立的链路都在一个组内。
+
+
+As shown in the figure above, select Tcp Client from the Connectors menu in the upper left corner, and the corresponding editing dialog will pop up. In addition to the Name=cdev1 and Title=Device1 we filled in, we must also fill in the Host=192.168.10.10 and Port=3000 parameters for the device, which correspond to the IP address and port of the device. After confirming the save, we established an connector to Tcp Client. You can see in the project that the newly created Tcp Client and the previously established link are both in the same group.
+
 
 <img src="../img/conn/c005.png">
 
-为了查看我们建立的Tcp Client后续会被如何使用，我们在中间项目组织树上新建一个通道ch_dev1,并且把之前新建立cdev1与之关联（具体建立通道请参考其他文档内容）。如下图：
+
+
+In order to see how the Tcp Client we have established will be used in the future, we will create a new channel "ch_dev1" on the middle project organization tree and associate the previously established "cdev1" with it (please refer to other documents for specific channel establishment). As shown in the following figure:
+
 
 <img src="../img/conn/c006.png">
 
-此时，通道ch_dev1能够使用的设备驱动就会被Tcp Client限定。鼠标右键ch_dev1,选择 Select Driver项，在弹出的设备驱动选择窗口中，你就可以看到限定驱动列表。如下图：
+
+
+At this point, the device drivers that can be used by channel "ch_dev1" will be limited by the Tcp Client. Right click on "ch_dev1" and select the "Select Driver" option. In the pop-up device driver selection dialog, you can see the list of restricted drivers. As shown in the following figure:
+
 
 <img src="../img/conn/c007.png">
 
-后续设备数据组织配置具体内容，和选择的设备驱动有关，此文档不做展开讨论，此部分内容请参考其他文档。
 
-我们可以明确的是，这种通信接入和设备驱动的分离，可以使得IOTTree在处理通信和具体设备协议时，可以有着更灵活的支持。
+
+The specific content of the subsequent device data organization configuration is related to the selected device driver. This document will not be discussed further. Please refer to other documents for this part of the content.
+
+We can clearly state that the separation of communication connector and device drivers allows IOT-Tree to have more flexible support when dealing with communication and device protocols.
 
 
