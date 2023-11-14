@@ -468,7 +468,10 @@ background-color: #fff ;
 
 </head>
 <script type="text/javascript">
-
+function open_doc()
+{
+	window.open("/doc/");
+}
 </script>
 <body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
@@ -481,7 +484,7 @@ background-color: #fff ;
 		 <i id="prj_btn_start"  class="fa fa-play fa-lg top_btn" style="color:grey" title="start project" onclick="prj_run(true)"></i>
 		 <i id="prj_btn_stop"  class="fa fa-stop fa-lg top_btn" style="color:grey" title="stop project" onclick="prj_run(false)"></i>
 		</div>
- <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
+     <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
  <%--
 			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
 			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
@@ -490,7 +493,8 @@ background-color: #fff ;
 			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
 		     --%>
-		    </div>
+		     <span style="font: 20px solid;cursor:hand;"  onclick="open_doc()"><i class="fa fa-question-circle fa-lg  top_btn" ></i>Help Document</span>
+		 </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">
         <div id="div_conn" class="hj-transverse-split-div subwin" style="width:20%">

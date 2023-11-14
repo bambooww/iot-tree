@@ -297,9 +297,9 @@ public class UAManager //implements IResCxt
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,sb))
 			throw new IllegalArgumentException(sb.toString()) ;
-		if("admin".equals(name))
+		if("admin".equals(name)||"doc".equals(name))
 		{
-			throw new IllegalArgumentException("admin is reserved word.Please use another name") ;
+			throw new IllegalArgumentException(name+" is reserved word.Please use another name") ;
 		}
 		UAPrj r = this.getPrjByName(name) ;
 		if(r!=null)

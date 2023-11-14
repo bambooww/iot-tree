@@ -35,15 +35,15 @@
 #### <a href="doc/conn/index.md" >5 接入(Connector)</a>
 ##### <a href="doc/conn/link_tcpclient.md" target="main">&nbsp;&nbsp;&nbsp;5.1 链路-Tcp Client</a>
 ##### <a href="doc/conn/link_tcpserver.md" target="main">&nbsp;&nbsp;&nbsp;5.2 链路-Tcp Server</a>
-##### <a href="doc/conn/link_com.md" target="main">&nbsp;&nbsp;&nbsp;5.3 链路-串口(COM)</a>
+##### <a href="doc/conn/link_com.md" target="main">&nbsp;&nbsp;&nbsp;5.3 链路-串行通信(串口COM)</a>
 ##### <a href="doc/conn/bind_opcda.md" target="main">&nbsp;&nbsp;&nbsp;5.4 绑定 - OPC DA</a>
 ##### <a href="doc/conn/bind_opcua.md" target="main">&nbsp;&nbsp;&nbsp;5.5 绑定 - OPC UA</a>
 ##### <a href="doc/conn/msg_mqtt.md" target="main">&nbsp;&nbsp;&nbsp;5.6 消息 - MQTT</a>
 ##### <a href="doc/conn/msg_http_url.md" target="main">&nbsp;&nbsp;&nbsp;5.7 消息 - HTTP URL</a>
 ##### <a href="doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;5.8 消息 - HTTP URL HTML</a>
 ##### <a href="doc/conn/msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;5.9 消息 - WebSocket Client</a>
-##### <a href="doc/conn/other_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.10 其他 - IOTTree Node</a>
-##### <a href="doc/conn/other_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.11 其他 - Virtual</a>
+##### <a href="doc/conn/oth_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.10 其他 - IOTTree Node</a>
+##### <a href="doc/conn/oth_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.11 其他 - Virtual</a>
 
 #### <a href="doc/device/index.md" >6 设备、设备库和驱动</a>
 ##### <a href="doc/device/dev_lib.md" target="main">&nbsp;&nbsp;&nbsp;6.1 设备库</a>

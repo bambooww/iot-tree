@@ -1,69 +1,100 @@
+IOTTree Link - Serial Communication(COM)
+==
+
+## 1 Understanding Serial Communication - COM、UART、TTL、RS232、RS485
 
 
-## 1 理解串行通信COM、UART、TTL、RS232、RS485
 
-在介绍IOTTree接入对串口（COM）支持前，我们先捋捋你可以在网络上看到的很多相关的术语COM、UART、TTL、RS232和RS485等等。
+Before introducing the support of IOTTree connector for serial port (COM), let's first review many related terms you can see on the network, such as COM, UART, TTL, RS232, RS485, and so on.
+
 
 <img src="../img/conn/com01.png">
 
->UART:指的是通用异步收发器(Universal Asynchronous Receiver/Transmitter)，是一种逻辑电路，可以独立成芯片，也可以成为其他芯片内部的某种模块。我们的计算机主板、各种嵌入式单片机（MCU）内部都会有这个芯片或模块。有了这个芯片或模块，对上可以支持软件的调用，对下可以提供具体的物理通信接口。
 
->串口(COM):在Windows和Linux等操作系统中，基于UART提供的串行通信支持，从软件层面提供了COM Api，所以这是个操作系统对上面的应用程序提供的软件接口。
 
->TTL：是两个UART之间（使用的信号电压相同情况下），通过3根线路（TX、RX和GND）直连通信，由于电压很低，抗干扰能力差，距离很近，适用于板级芯片之间通信。
+>UART: Refers to the Universal Asynchronous Receiver/Transmitter, which is a type of logic circuit that can be independently integrated into a chip or become a module within other chips. Our computer motherboard and various embedded microcontrollers (MCUs) all have this chip or module inside. With this chip or module, the upper level can support software calls, and the lower level can provide specific physical communication interfaces.
 
->RS232：对TTL信号使用转换芯片，使得线路电压高很多（达15V），提升了抗干扰能力，能够使通信距离加长，适用于短距离的设备间通信。
+>Serial Port (COM): In operating systems such as Windows and Linux, based on the serial communication support provided by UART, COM Api is provided at the software level, so this is a software interface provided by the operating system for the above application programs.
 
->RS485：对TTL信号使用转换芯片，使得信号以两根电缆差分的方式进行，进一步提升抗干扰能力，通信距离可以达到1200米，能够适用于工业通信场合。
+>TTL: It is a direct communication between two UARTs (using the same signal voltage) through three lines (TX, RX, and GND). Due to the low voltage, poor anti-interference ability, and close distance, it is suitable for communication between board level chips.
 
-### 1.1 串行通信
+>RS232: Using a conversion chip for TTL signals, the line voltage is much higher (up to 15V), improving anti-interference ability and extending communication distance, making it suitable for short distance communication between devices.
 
-由于通信线路很少，数据只能一个字符一个字符的传输，每一个字符一位一位的传输，并且传输一个字符时，总是以“起始位”开始，以“终止位结束”，字符之间没有固定的时间间隔要求。
+>RS485: Using a conversion chip for TTL signals, the signal is processed in a differential manner using two cables, further improving anti-interference ability. The communication distance can reach 1200 meters, making it suitable for industrial communication occasions.
 
-在通信方式上有三种：
->单工模式：数据传输是单向的，发送端和接收端是固定的。信息只是一个单向传输;
 
->半双工：设备间可以接收数据也可以发送数据，但是不能同时进行，每一方都在一个时间点只接收或者只发送，RS485就是这种情况；
+### 1.1 Serial Communication
 
->全双工：通信允许数据同时在两个方向上传输。这要求发送端和接收端都有独立的接收和发送能力。
 
-在数据校验上也有三种情况：无校验；奇校验：正确的代码中一个字节中1的个数必须是奇数, 如果不是奇数，则在最高位b7添1；偶校验：正确的代码中一个字节中1的个数为偶数，非偶数则在最高位b7添1。
 
-### 1.2 波特率
+Due to the limited number of communication lines, data can only be transmitted one character at a time, with each character being transmitted bit by bit. When transmitting a character, it always starts with the "start bit" and ends with the "end bit", and there is no fixed time interval requirement between characters.
 
-指的是每秒传输的数据位数。串行通信要求互相通信的设备波特率必须相同，这样只需要通过简单的时钟同步支持就可以达到数据正常收发而不会错乱。常用的波特率：600/1200/4800/9600/19200/38400等等。
+There are three types of communication methods:
 
-## 2 IOTTree对COM口的支持
+>Simplex mode: Data transmission is unidirectional, and the sending and receiving ends are fixed. Information is only a one-way transmission;
 
-IOTTree使用Java环境开发，运行在Java虚拟机上，所以针对操作系统的COM口，也需要配置底层支持。IOTTree内部使用RXTXcomm作为串口支持。
+>Half duplex: The equipment can receive and send data, but it cannot be done simultaneously. Each party only receives or sends data at a certain point in time, as is the case with RS485;
 
-在我们的发布版本中，内部jre环境我们已经放置好了windows环境下的对应dll文件，你直接启动IOTTree就能正常使用了。如果你要部署Linux环境或嵌入Linux环境，请在你的java环境里面复制拷贝对应的so文件即可。
+>Full duplex: Communication allows data to be transmitted simultaneously in both directions. This requires both the sending and receiving ends to have independent receiving and sending capabilities.
 
-后续我们可能会根据windows和Linux环境，根据不同的位数做自动动态库的装载支持，以方便大家使用，敬请期待。
+There are also three situations in data verification: 
+1) No verification;
+2) Odd parity: In correct code, the number of 1 in a byte must be odd. If it is not odd, add 1 to the highest bit b7;
+3) Even parity: In the correct code, the number of 1 in a byte is even, while non even numbers add 1 to the highest bit b7.
 
-很明显，如果我们需要使用COM接口，现场设备使用最多的是RS485、RS232与IOTTree运行所在的设备对接（PC或嵌入式专门设备）。当前、很大一部分支持RS485的工业设备都支持Modbus RTU协议。
 
-## 3 COM接入创建
+### 1.2 BAUD
+
+
+
+Refers to the number of data bits transmitted per second. Serial communication requires that the baud rate of devices communicating with each other must be the same, so that data can be sent and received normally without confusion through simple clock synchronization support. Commonly used baud rates: 600/1200/4800/9600/19200/38400, etc.
+
+
+## 2 IOT-Tree's support for COM ports
+
+
+
+IOT-Tree is developed using a Java environment and runs on a Java virtual machine, so it is also necessary to configure underlying support for the COM port of the operating system. IOTTree internally uses RXTXComm as serial port support.
+
+In our released version, we have already placed the corresponding DLL files for the Windows environment in the internal jre environment. You can start IOT-Tree directly to use it normally. If you want to deploy or embed a Linux environment, please copy the corresponding "xx.so" file in your Java environment.
+
+In the future, we may provide automatic dynamic library loading support based on different bits in Windows and Linux environments for everyone's convenience. Stay tuned.
+
+Currently, a large portion of industrial devices supports the RS485 interface. Therefore, if we need to use IOT-Tree to connect with these devices on site, we need to utilize the support of this COM port.
+
+
+## 3 Creating COM connector
 
 <img src="../img/conn/com02.png">
 
-如上图：通过左上角Connectors菜单，选择COM，就会弹出对应的编辑窗口。其中，ID选择项会枚举本地设备操作系统支持的所有COM口，请注意现场设备和IOTTree对接时占用的是哪一个。本文档填写的内容如下
+
+
+As shown in the figure above, select COM from the Connectors menu in the upper left corner, and the corresponding editing dialog will pop up. Among them, the ID option will enumerate all the COM ports supported by the local device operating system. Please note which one is used when connecting the on-site device and IOTTree. The content filled in this document is as follows
 
 `
 Name=fdev1 Title=FDevice1 ID=COM2 Baud rate=9600
 Data bits=8 Parity=None Stop bits=1 Flow Control=None
 `
 
-点击"OK"之后，你会看到系统会自动建立一个COM Provider，我们刚才编辑新建的ConnPt在此下面。每个COM接入基本都是独立的。
 
-为了查看我们建立的COM接入后续会被如何使用，我们在中间项目组织树上新建一个通道ch_fdev1,并且把之前新建立fdev1与之关联（具体建立通道请参考其他文档内容）。如下图：
+
+After clicking "OK", you will see that the system will automatically create a "COM Provider". The newly created ConnPt we just edited is located below this. Each COM access is basically independent.
+
+In order to see how the COM connector we have established will be used in the future, we will create a new channel "ch_fdev1" on the middle project organization tree and associate the previously connector "fdev1" with it (please refer to other documents for specific channel creation). As shown in the following figure:
+
 
 <img src="../img/conn/com03.png">
 
-此时，通道ch_fdev1能够使用的设备驱动就会被COM限定。鼠标右键ch_fdev1,选择 Select Driver项，在弹出的设备驱动选择窗口中，你就可以看到限定驱动列表。如下图：
+
+
+At this point, the device drivers that can be used by channel "ch_fdev1" will be limited by COM. Right click on "ch_fdev1" and select the "Select Driver" option. In the pop-up device driver selection dialog, you can see the list of restricted drivers. As shown in the following figure:
+
 
 <img src="../img/conn/com04.png">
 
-后续设备数据组织配置具体内容，和选择的设备驱动有关，此文档不做展开讨论，此部分内容请参考其他文档。
 
-我们可以明确的是，这种通信接入和设备驱动的分离，可以使得IOTTree在处理通信和具体设备协议时，可以有着更灵活的支持。
+
+The specific content of the subsequent device data organization configuration is related to the selected device driver. This document will not be discussed further. Please refer to other documents for this part of the content.
+
+We can clearly state that the separation of communication connector and device drivers allows IOT-Tree to have more flexible support when dealing with communication and device protocols.
+

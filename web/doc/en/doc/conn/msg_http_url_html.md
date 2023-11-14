@@ -1,9 +1,5 @@
-
-
-
 HTTP Url HTML format connector
 ==
-
 
 
 

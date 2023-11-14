@@ -1,9 +1,5 @@
-
 HTTP Url HTML格式接入
 ==
-
-
-
 
 
 对于Http Url方式的接入，IOT-Tree Server可以支持xml、json、txt和html等多种数据格式。其中，对于html格式来说，内部实现本质就是一个网页数据聚合功能。

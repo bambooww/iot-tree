@@ -1,36 +1,49 @@
 Device,Device Library and Drivers
 ==
 
-从前面的文档已经告诉我们，IOT-Tree的通道、设备相关规定。其中，设备驱动由通道设定，而通道下面的多个设备也由这个通道统一管理。这种结构符合自动化系统、物联网系统的实际部署拓扑结构。如通道可以对应一个线程总线，下面的设备也可以对应现场总线下面挂接的设备。
 
-仔细分析我们可以发现，一个通道下面的设备，本质就是内在的相关属性和它包含的子孙节点和标签等资源。现实中，我们使用了某个厂家的同一种型号的多个设备，在IOT-Tree内部配置完成之后，大部分内容都是相同的（一些差异仅仅是设备地址属性和更新时间之类的）。而设备下面的标签（Tags）数据也可以保持一致。实时上，如果某个设备内部比较复杂，我们也可以在此设备下面定义单个设备UI，这个UI也是可以共用的。
+We have already been informed from the previous documents about the channel and device related regulations of IOT-Tree. Among them, the device driver is set by the channel, and multiple devices below the channel are also managed uniformly by this channel. This structure is in line with the actual deployment topology of automation systems and IoT systems. For example, a channel can correspond to a fieldbus, and the devices below can also correspond to the devices attached to the fieldbus.
 
-因此，IOT-Tree对设备管理单独引入了一个设备库。这个设备库和具体项目无关，并且做了"设备库-分类-设备"三级管理机制，满足这个丰富多彩的设备世界。
+Upon careful analysis, we can find that the devices beneath a channel are essentially inherent related properties and the resources it contains, such as descendant nodes and tags. In reality, we have used multiple devices of the same model from a certain manufacturer. After the configuration of IOT-Tree is completed, most of the content is the same (some differences are only related to device address properties and update times).  And the tag data below the device is also the same. If a device is relatively complex internally, we can also define device UI under this device, which can also be shared.
 
-## 1 设备定义 Device Definition
+Therefore, IOT-Tree has introduced a separate "Device Library" for device management. This device library is independent of specific projects and has a three-level management mechanism of "Library-Category-Device" to meet the diverse device world.
 
-为了区分设备库中的设备和项目中使用的具体设备，我们把设备库中的设备称为设备定义。整个设备定义从本质上和具体项目中的设备节点基本相似，可以看成是项目树中的一颗枝条。这个设备枝条有自己的标签、子节点，甚至也可以有自己的UI（单个设备UI）。
 
-在IOT-Tree中，设备定义有自己的编辑管理界面，具体请参考[设备定义(Device Definition)][defdev]。
+## 1 Device Definition
 
-[defdev]:./devdef.md
 
-## 2 设备库
 
-在IOT-Tree登录之后管理主界面中，设备库"Device Library"可以管理本部署实例的所有设备库及内部的设备定义。由于支持导入导出功能，你可以很方便的新的部署环境中，导入你在其他项目中积累的设备定义。
+To distinguish between the devices in the "Device Library" and the specific devices used in the project, we refer to the devices in the "Device Library" as "device definitions". The device definition is essentially similar to the device nodes in a project, and can be seen as a branch in the project tree. This device definition branch has its own tags, sub nodes, and even its own UI (device UI).
 
-点击某个设备库内，你可以管理分类——新增、修改删除等。在分类下面，你可以新增设备、修改设备名称或删除设备。详细内容请参考[设备库][dev_lib]。
 
-其中，点击设备编辑按钮，就会弹出一个新的浏览器窗口，进入了这个设备定义的编辑界面。此编辑界面也是一颗设备树的组织方式，和项目中的设备配置类似。具体请参考[设备定义(Device Definition)][defdev]。
+In IOT-Tree, device definitions have their own editing and management UI, please refer to[Device definition][defdev]。
+
+[defdev]:./dev_def.md
+
+## 2 Device Library
+
+
+
+After login to IOT-Tree main management UI, the "Device Library" can manage all device libraries and internal device definitions of this deployment instance. Due to the support for import and export functions, you can easily import the device definitions accumulated in other projects in a new deployment environment.
+
+Click on a "library item" and you can manage categories - add, modify, delete, etc. Under the category, you can add new devices, modify device names, or delete devices. For detailed information, please refer to [Device Library][dev_lib].
+
+Among them, clicking the device editing button will pop up a new browser window, entering the editing UI of the device definition. This editing interface is also organized in a device tree, similar to the device configuration in the project.
+
+
+Please refer to[Device definition][defdev]。
 
 [dev_lib]:./dev_lib.md
 
-## 3 设备驱动Device Driver
+## 3 Device Driver
 
-当前，工业现场用到的RS485总线、以太网总线等，支持的各种设备。存在着大量的通信协议，设备驱动基本上是这些协议的实现，同时还考虑到工业现场的各种异常情况而做相关的应对措施。可以说，设备驱动是协议的实现，同时也是设备运行实际情况反馈的不断完善和打磨。
 
-IOT-Tree中为了能够支持工业和物联网现场丰富多彩的设备，以接入链路、消息等模式为基础，设立设备驱动管理。这些设备驱动设置在和接入点(ConnPt)关联的通道(Channel)中。设备驱动以插件的方式定义，可以很方便的根据需要进行实现和添加。本章有专门针对不同设备驱动进行详细说明的内容。
 
-由于项目中的设备在通道下面，而驱动在通道内部，从本质上设备定义可以和设备驱动分离。由此，IOT-Tree中的设备定义主要内部即是对应设备的数据组织和管理。每个数据项通过数据地址Address和驱动建立关系，从软件角度已经达到了最轻的耦合，保持了最大的简洁性。
+Currently, various communications such as RS485 bus and Ethernet bus are supported in industrial sites. There are a large number of communication protocols, and device drivers are basically the implementation of these protocols, while also taking into account various abnormal situations in industrial sites and taking relevant countermeasures. It can be said that device drivers are the implementation of protocols and also the continuous improvement and polishing of feedback on the actual operation of devices.
+
+In IOT-Tree, device driver is created based on connector links, messaging, and other modes to support diverse devices in industrial and IoT sites. These device drivers are set in the channels associated with the ConnPt. Device drivers are defined in the form of plugins, which can be easily implemented and added as needed. This chapter provides detailed explanations specifically for different device drivers.
+
+Due to the fact that the devices in the project are located below the channel and the drivers are located inside the channel, the device definition can essentially be separated from the device drivers. Therefore, the device definition in IOT-Tree mainly refers to the data organization and management. Each data item(tag) establishes a relationship through its address and driver. We have achieved the lightest coupling and maintained maximum simplicity.
+
 
 
