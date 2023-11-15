@@ -1,88 +1,118 @@
-IOT-Tree设备驱动-PPI协议支持
+IOT-Tree Device Driver -PPI
 ==
 
-PPI通信协议是西门子PLC S7-200 CPU内置协议。物理上基于RS-485通信联络，通过屏蔽双绞线就可以实现PPI通讯。PPI协议是一种主-从协议。主站设备发送要求到从站设备，从站设备响应，从站不能主动发出信息。主站靠PPI协议管理的共享连接来与从站通讯。PPI协议并不限制与任意一个从站的通讯的主站的数量，但在一个网络中，主站不能超过32个。
 
-IOT-Tree内置了PPI协议的支持，可以直接通过RS-485对应的COM口，直接和PLC进行通信。本部分内容以网上的一个使用例子来说明。
 
-## 1 设备和环境准备
-### 1.1 对接PLC方法
+The PPI communication protocol is a built-in protocol of Siemens 'PLC S7-200 CPU'. Physically based on RS-485 communication, PPI communication can be achieved through shielded twisted pair. The PPI protocol is a master-slave protocol. The master station device sends a request to the slave station device, and the slave station device responds, but the slave station cannot actively send out information. The master station communicates with the slave station through a shared connection managed by the PPI protocol. The PPI protocol does not limit the number of master stations that can communicate with any slave station, but in a network, there cannot be more than 32 master stations.
 
-现场使用的PLC型号为S7-200 CPU 224XP CN，这个PLC有两个RS485接口（对应两个9针接口的3、8）。
+IOT-Tree has built-in support for the PPI protocol and can communicate directly with the PLC through the COM port corresponding to RS-485. This section is illustrated by an online usage example.
+
+
+## 1 Preparation
+
+### 1.1 Connecting PLC method
+
+
+
+The PLC model used on site is "S7-200 CPU 224XP CN", which has two RS485 interfaces (corresponding to 3 and 8 of the two 9-pin interfaces).
+
 
 <img src="../img/dev/d001.png">
 
-S7-200的9针接口定义如下图：
+
+The 9-pin interface definition of S7-200 is shown in the following figure:
+
 
 <img src="../img/dev/d002.png">
 
-只需要使用两芯屏蔽电缆，对接8脚A、3脚B，屏蔽层接9针接头的屏蔽外壳即可。有了RS485接口，你可以有如下方式与PLC进行通信物理连接
 
-1）如果你运行IOT-Tree Server的设备直接有RS485接口，那么连上即可。
+Just use a two core shielded cable, connect 8-pin A and 3-pin B, and connect the shielding layer to the shielding shell of the 9-pin connector. With the RS485 interface, you can communicate and physically connect with the PLC in the following ways
 
-2）如果你运行IOT-Tree Server是PC，则可以使用PC的串口RS232转RS485或USB-RS485进行连接。
+1) If the device you are running IOT-Tree Server has its own RS485 interface, you can connect it.
+2) If you are running IOT-Tree Server as a PC, you can use the serial port RS232-RS485 or USB-RS485 of the PC to connect.
 
-注：以上两种，在系统中都会使用串口对接。
+Note: Both of the above will use COM port in the system.
 
-3）你可以使用一个支持RS485接口的串口服务器模块进行对接，然后转换成以太网，使用TCP方式进行对接。
+3) You can use a RS485-Eth module, then convert it to Ethernet and use TCP for connecting.
 
-本例使用第二种方式，使用系统中的COM3与PLC进行连接
+This example uses the second method, which uses COM3 in the system to connect to the PLC
 
-### 1.2 PLC端准备
 
-通过STEP 7 MicroWIN 对PLC进行本地控制编程，如果程序使用自己的协议占用了其中一个接口，那么就不要用这个接口对接了，这部分就看你自己怎么玩了。
+### 1.2 PLC connection and programming
 
-S7-200 RS485口如果不被占用，就直接支持PPI协议了。其中，PLC地址为2
 
-给PLC通电，下载程序启动。
 
-## 2 IOT-Tree端配置过程
+Use "STEP 7 MicroWIN" for local control programming of PLC. If the program uses its own protocol to occupy one of the interfaces, then do not use this interface for connection. This depends on how you needs.
 
-IOT-Tree已经在PC上部署，并且准备使用COM3接口与上面准备好的PLC进行RS485通信。
+If the "S7-200 RS485" port is not occupied, it directly supports the PPI protocol. Among them, the PLC address is 2
 
-点击进入项目配置界面，如下图：
+Power up the PLC, download the program through the programming cable, and start it.
+
+
+## 2 IOT-Tree configuration
+
+
+
+IOT-Tree has been deployed on PC and is ready to use COM3 for RS485 communication with the PLC prepared above.
+
+Click to enter the project configuration UI, as shown in the following figure:
+
 
 <img src="../img/dev/d003.png">
 
-### 2.1 新增COM Connector和通道
+### 2.1 Add COM Connector and Channel
 
-点击左上角Connectors，在菜单中选择COM，然后在弹出的窗口中，填写如下内容：
+
+Click on Connectors in the upper left corner, select COM from the menu, and then fill in the following information in the pop-up dialog:
+
 
 <img src="../img/dev/d004.png">
 
-点击Ok按钮，就可以看到左边接入区域新增了一个COM接入。
 
-接着我们在项目根节点鼠标右键，选择New Channel，在弹出窗口中，填写如下内容：
+Click the "OK" button to see that a COM connector has been added to the left Connectors area.
+
+Next, right-click on the project root node and select "New Channel". In the pop-up dialog, fill in the following information:
+
 
 <img src="../img/dev/d005.png">
 
- 其中，Driver点击选择Siemens S7-200。这个驱动对应与PPI协议。点击OK完成通道的添加。
 
-接着，鼠标点击接入s7_2的右边的小正方形不松开，拖拉线段到通道s7ch左边的小正方形上方松开，系统就会建立接入到通道之间的关联，如下图：
+
+Among them, Driver clicks to select "Siemens S7-200". This driver corresponds to the PPI protocol. Click OK to complete the addition of the channel.
+
+Next, click the mouse on the small square on the right side of the connector "s7_2" and do not release it. Drag the line segment over the small square on the left side of the channel "s7ch" and release it. The system will establish an association between the connector channels, as shown in the following figure:
 
 <img src="../img/dev/d006.png">
 
-从中我们可以看出，如果左边接入使用串口转以太网方式，那么只需要使用不同的接入即可，并不影响通道相关配置（接入和数据组织的分离，使得IOT-Tree能够更加优雅的应对各种设备和数据的接入）。
 
-### 2.2 新增PLC设备
 
-在通道s7ch节点上鼠标右键，选择New Device，在弹出窗口中填写设备信息：
+From it, we can see that if the RS485-Ethernet method is used for the left connector, only different associations need to be used, which does not affect the channel configuration (the separation of connector and data organization allows IOT-Tree to more elegantly handle the access of various devices and data).
+
+
+### 2.2 Add PLC device
+
+
+Right click on the channel s7ch node, select "New Device", and fill in the device information in the pop-up dialog:
+
 
 ```
 Name=plc2
 ```
 
-其他都不需要填写了，点击OK之后，通道下面就会出现对应设备节点。点击此节点，在右边主内容区域点击Properties标签，在属性Device Address行修改值为2(这个就是我们前面配置PLC的地址).然后点击右上角的Apply按钮保存。如下图：
+
+There is no need to fill in anything else. After clicking OK, the corresponding device node will appear under the channel. Click on this node, select "Properties" tab in the main content area on the right, modify the value to 2 in the property "Device Address" line (this is the address we configured for the PLC earlier), and then click on the "Apply" button in the upper right corner to save. As shown in the following figure:
+
 
 <img src="../img/dev/d007.png">
 
-### 2.3 新增设备数据标签(Tag)
+### 2.3 Add device data tags
 
-S7-200内部数据通过不同的存储区方式进行，如输出映像寄存器区Q、输入映像寄存器I、变量存储区V等等。IOT-Tree Server对应的PPI驱动也兼容此PLC数据寻址方式。
 
-在主内容区域点击[Tags]标签,下面的内容就是plc2设备对应的数据项列表界面。我们可以点击上方的+Add Tag按钮进行添加。
 
-在弹出窗口中，我们填写如下内容：
+The internal data of S7-200 is stored in different storage areas, such as output image register area Q, input image register I, variable storage area V, and so on. The PPI driver corresponding to IOT-Tree Server is also compatible with this PLC data addressing method.
+
+Click on the [Tags] tab in the main content area, and it will show tags list corresponding to the PLC2 device. We can click the "+Add Tag" button above,in the pop-up dialog, we fill in the following information:
+
 
 ```
 Name=q0_1
@@ -91,13 +121,13 @@ Date type=bool
 R/W=Read/Write
 Address=Q0.1
 ```
-编辑窗口如图所示：
-
 <img src="../img/dev/d008.png">
 
-点击OK之后，就可以看到列表中新增了这一项。
 
-用同样方法，我们新增如下内容：
+After clicking OK, you can see that this item has been added to the list.
+
+Using the same method, we have added the following content:
+
 
 ```
 Name=qb
@@ -125,31 +155,47 @@ R/W=Read/Write
 Address=vb100
 ```
 
-最终，我们在设备plc2下面，完成了如下数据项列表：
+
+Finally, we completed the following tags list under device PLC2:
+
 
 <img src="../img/dev/d009.png">
 
-其中，关键内容是每个Tag的Address内容，这个写法兼容西门子的PLC编程软件。另外一个对应的是值类型（Value type），可以看出输入的Address可能会限定Value type。在编写时，可以点击Address右边的“Check Address"按钮，就会自动帮你修改。
 
-我们配置的这些Tag会在IOT-Tree Server的这个项目中被使用，很明显，如果你想让上位系统和PLC内部的程序协调配合做控制，那么通过一些公共的变量定义成Tag进行互相写入读取即可。
+The key is the "Address" of each Tag, which is compatible with Siemens PLC programming software. Another content is the "Value type", which indicates that the input Address may be limited to a 'Value type'. When writing, you can click the "Check Address" button on the right side of the Address, and it will automatically help you modify it.
 
-接下来，我们就可以运行查看效果了。
+The tags we have configured will be used in this project of IOT-Tree Server. Obviously, if you want IOT-Tree and PLC internal programs to coordinate and control, you can define them as tags through some common variables for mutual writing and reading.
 
-## 3 运行效果
+Next, we can run to see the effect.
 
-在确保PLC已经通电运行，并且COM3不被占用的情况下，点击项目配置上方的绿色启动项目按钮。
+
+## 3 Running effect
+
+
+
+After ensuring that the PLC has been powered on and COM3 is not occupied, click on the green start project button above the project configuration.
 
 <img src="../img/dev/d010.png">
 
-可以看到，所有的数据点都正常运行了，并且可以看到一些值的变化，如我的PLC程序使用了定时器T40，一直在改变值。
 
-对于q0_1这个点，你可以在Write列输入1，点击右边写入按钮，可以发现PLC的Q0.1端口有输出（指示灯也同时变亮，前提是此输出没有受到你的PLC程序控制）。
 
-## 4 更进一步
-你可以在此项目中，新增人机交互节点（HMI），并且通过在线编辑功能进行操作界面的设计。这部分内容请参考HMI相关内容。在本项目中，实现了如下监控画面：
+You can see that all data points are running normally and you can see some changes in values, such as my PLC program using timer T40, which keeps changing values.
+
+For the point "q0_1", you can enter 1 in the Write column and click the write button on the right. You can find that the "Q0.1" port of the PLC has an output (the indicator light also lights up, provided that this output is not controlled by your PLC program).
+
+
+## 4 Further more
+
+
+
+You can add a human-machine interaction node (HMI) in this project and design the operation UI through online editing function. Please refer to HMI related content for this section. In this project, the following monitoring UI were implemented:
+
 
 <img src="../img/dev/d011.png">
 
-或者，你也可以把项目中的组织节点直接输出http json格式的数据，方便其他系统调用实时数据。如你在plc2节点上鼠标右键，点击Access，在弹出窗口中可以查看输出的json格式数据，非常方便其他系统调用：
+
+
+Alternatively, you can directly output data in the "HTTP JSON" format from the organizational nodes in the project, making it convenient for other systems to call real-time data. If you right-click on the PLC2 node and click "Access", you can view the output JSON format data in the pop-up window, which is very convenient for other systems to obtain:
+
 
 <img src="../img/dev/d012.png">

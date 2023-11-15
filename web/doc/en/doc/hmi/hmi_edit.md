@@ -2,65 +2,94 @@ HMI Editing instructions
 ==
 
 
-当我们在某个HMI节点鼠标右键，选择"Edit",就可以在主内容区新增一个界面编辑选项卡。如下图：
+
+When we right-click on an HMI node and select "Edit", we can add an HMI(UI) editing tab in the main content area. As shown in the following figure:
+
 
 <img src="../img/hmi/h001.png" />
 
-编辑界面看似比较复杂，其主要部分也就左中右三部分，左边竖条是图元库（含树中之节点、图元库、背景元素等）中间带标尺的是编辑区域(含基本图元飘窗)，右边是操作属性/事件区域。其中，右边操作属性区可以隐藏，尽可能给编辑区域使用。如果感觉整个编辑区域不够，还可以点击选项卡右上角最大化图标，可以使得选项卡充满整个窗口。
+
+
+The editing UI appears to be quite complex, with only three parts on the left, middle, and right. The vertical bar on the left is the UI Components library (including nodes in the tree, components library, background elements, etc.), with a ruler in the middle being the editing area (including basic draw item toolbox), and the right is the properties/events area. Among them, the properties area on the right can be hidden and used as much as possible for the editing area. If you feel that the entire editing area is not enough, you can also click on the maximize icon in the upper right corner of the tab to make it fill the entire window.
+
 
 <img src="../img/hmi/h002.png" />
 
-## 1 编辑界面基本操作
+## 1 Basic operations of the editing UI
 
 ### 1.1 Stepless zoom
 
-编辑区域使用无极缩放方式，并且配合鼠标可以快速查看整体和局部。在编辑区域左上方有竖排列三个按钮，它们分别为"自适应展示"、"放大"和"缩小"。
+
+
+The editing area uses infinite scaling, and can be quickly viewed as a whole and as a part with the mouse. There are three buttons arranged vertically in the upper left corner of the editing area, namely "Adaptive Display", "Zoom In", and "Zoom Out".
+
 
 <img src="../img/hmi/h003.png" />
 
-你可以尝试点击可以发现，点击"自适应展示"按钮，编辑区内的所有内容以充满整个区域，这个中心点和放大倍数是整体展示最理想的状态。而点击"放大"和"缩小",则图像以编辑区中心点为中心进行放大缩小。
 
-移动鼠标到编辑区的某个位置，然后转动滚轮，你会发现图像会根据你的滚轮不同方向进行放大缩小，并且放大缩小动作以当前鼠标的位置为中心点。
+
+Click on the "Adaptive Display" button to fill the entire area with all the content in the editing area. This center point and zoom are the ideal state for the overall display. Clicking on "Zoom In" and "Zoom Out" will cause the image to be zoomed in and out centered around the center point of the editing area.
+
+Move the mouse to a certain position in the editing area, and then rotate the scroll wheel. You will find that the image will be zoomed in and out according to the different directions of your scroll wheel, and the zooming in and out action will be centered around the current mouse position.
+
 
 ### 1.2 Right mouse button(Overall roaming)
 
 Right click the picture without releasing it. When moving, you can roam the picture as a whole.
 
-### 1.3 鼠标左键(选择和移动)
+### 1.3 Left mouse button (select and move)
 
-鼠标左键功能主要是选择图元和移动图元，IOT-Tree规定，图元的移动必须是选择之后的图元——也即是，如果要移动一个或多个图元，必须先选中，然后在选中的图元之上再次移动操作才会起作用。
 
-#### 1.3.1 选择图元
 
-_单选图元_
+The left mouse button function mainly involves selecting and moving elements. IOT-Tree stipulates that the movement of elements must be based on the selected elements - that is, if one or more elements are to be moved, they must be selected first.
 
-鼠标移动到某个图元上方，在没有任何移动的情况下点击左键并释放左键，释放之后就会发现图元被选中。
 
-如果某个位置有多个图元叠加，则不要移动鼠标，再次鼠标左键并释放，你会发现被选择的图元会在重叠的图元中切换。
+#### 1.3.1 Select DrawItem
 
-_多选图元_
 
-如果你要在一个小区域内选择多个图元，那么只需要按下鼠标左键不松开，然后移动鼠标。此时你会发现有个虚线构成的矩形选择区域出现，并随着你的鼠标位置不断变化尺寸。你只需要使这个虚线选择框覆盖到对应的多个图元，然后松开左键，就可以把多个图元同时选中了。
 
->注：被选中的图元都会有个红色的矩形边框出现
+_Single selection of Draw Item_
 
-如果你要取消选中的图元，只需要鼠标在没有图元的区域左键点击一下即可。
+Move the mouse over a certain element, click and release the left button without any movement, and after releasing, you will find that the element is selected.
 
-#### 1.3.2 移动选中图元
+If multiple elements overlap at a certain location, do not move the mouse. Press the left mouse button again and release, and you will find that the selected element will switch between the overlapping elements.
 
-未选中的图元是不可移动的，所以在通过单选或多选之后，你就可以移动选中的这些图元了。此时，鼠标一定要在被选中的图元上方，按下左键不要松开，然后移动鼠标，你会发现图元会跟随鼠标移动。当图元到达你需要的位置之后，松开鼠标左键就完成了移动操作。
+_Multiple Selection Draw Items_
 
-#### 1.3.3 修改选中图元尺寸
+If you want to select multiple elements within a area, simply press the left mouse button without releasing it, and then move the mouse. At this point, you will notice a rectangular selection area composed of dashed lines, which continuously changes in size with your mouse position. You just need to cover the dashed selection box with multiple corresponding elements, and then release the left button to select multiple draw items at the same time.
 
-一些图元是支持尺寸大小通过鼠标调整的，前提是单独选中此图元——选中的图元会显示出矩形边界框。此时，如果此图元可以被改变大小尺寸，把鼠标移到边界线上，你就会发现鼠标标记会变成可调整的上下或左右的箭头。如果鼠标移到编辑框的角上，就会变成移动此点（含两个方向）的箭头。
+>Note: All selected elements will have a red rectangular border appearing
+
+If you want to cancel the selected items, just left click on the empty area.
+
+
+#### 1.3.2 Move Selected Items
+
+
+
+Unselected draw items are not movable, so after single or multiple selection, you can move the selected items. At this point, the mouse must be above the selected items, press the left button without releasing it, and then move the mouse. You will find that the selected items will follow the mouse movement. After the items reaches the desired position, release the left mouse button to complete the move operation.
+
+
+#### 1.3.3 Modify the size of the selected item
+
+
+
+Some draw items support resizing with the mouse, provided that they are individually selected - the selected item will display a rectangular bounding box. At this point, if the item can be resized, move the mouse over the boundary line, and you will notice that the mouse marker will become adjustable up, down, or left, right arrows. If the mouse is moved over the corner of the edit box, it will become an arrow to move this point (including both directions).
+
 
 <img src="../img/hmi/h009.png" />
 
-此时，你按下鼠标左键不松开，移动就可以改变图元的尺寸。
 
-#### 1.3.4 旋转选中图元
 
-一些图元支持旋转，前提是单独选中此图元——选中的图元会显示出矩形边界框，并且在边框上方会出现一个支持旋转的锚点。鼠标移动到这个位置，会变成十字形状。此时，你按下鼠标左键不松开，移动就可以调整图元的旋转角度。
+At this point, you can change the size of the draw item by pressing the left mouse button without releasing and moving it.
+
+
+#### 1.3.4 Rotate Selected Items
+
+
+
+Some draw items support rotation, provided that they are individually selected - the selected item will display a rectangular bounding box and an anchor point that supports rotation will appear above the border. Moving the mouse to this position will change to a cross shaped shape. At this point, you can adjust the rotation angle of the item by pressing the left mouse button without releasing it.
+
 
 <img src="../img/hmi/h010.png" />
 
@@ -183,46 +212,72 @@ For project resources, please refer to [quick understanding of associated resour
 
 
 
-## 3 子图图元、控件图元
+## 3 Sub-HMI,UI Components
 
-IOT-Tree项目树中，顶层的UI可以引用底层的子图UI(子图图元)，也可以引用图元库中的控件。对于图元库中的控件管理相关内容，请参考[图元库][hmi_comp]
 
-### 3.1 子图图元
 
-为了能够直观说明子图图元在高层UI节点的引用，我们打开IOT-Tree内部自带的演示项目[Water tank and Medicament dosing][case_auto]，在 ch1/flow这个设备节点上，鼠标右键新增一个UI节点（鼠标右键选择New HMI，填写名称"fui")。然后，鼠标右键此节点，选择"Edit UI",并简单编辑内部内容，如下图：
+In the IOT-Tree project tree, the top-level HMI(UI) can refer to the underlying Sub-HMI UI, as well as "HMI(UI) Components" in the "HMI library".
+
+
+For HMI(UI) Components(Controllers), please refer to[HMI(UI) Components(Controllers)][hmi_comp]
+
+### 3.1 Sub-HMI
+
+
+
+In order to illustrate the reference of Sub-HMI in high-level UI nodes, we open the built-in demonstration project [Water tank and Medical Dosing][case_auto] in IOT-Tree. On the device node "ch1/flow:, right-click to add a UI node (right-click to select "New HMI" and fill in the name "fui"). Then, right-click on this node, select "Edit UI", and simply edit the internal content, as shown in the following figure:
+
 
 <img src="../img/hmi/h004.png">
 
-此时，在根节点下面的u1节点，就可以引用此子图图元了。鼠标右键u1节点，选择"Edit UI"打开UI编辑选项卡。在左上角点击按钮"Context Sub-HMI"时，会发现滑出一个选择窗口，可以看到里面包含了"/ch1/flow/fui"这个子画面。
+
+
+Now, the "u1" node below the root node can reference this Sub-HMI item. Right click on the "u1" node and select "Edit UI" to open the UI editing tab. When clicking on the button "Context Sub HMI" in the upper left corner, you will find that a selection panel will slide out, which includes the sub item "/ch1/flow/fui".
+
 
 <img src="../img/hmi/h005.png">
 
-鼠标点中此项，拖拽到中间的编辑区域，松开鼠标之后，你就可以看到子图元被添加到画面中。
 
-可以看出，如果设备定义以及包含了设备自身的一些UI，在项目中被引用时，能够很大的方便项目顶层界面的编辑配置。
+Click on this item with the mouse, drag it to the middle editing area, release the mouse, and you can see that the Sub-HMI item have been added to the UI.
 
-### 3.2 控件库引用
+It can be seen that if the device definition and some UI of the device itself are referenced in the project, it can greatly facilitate the editing and configuration of the top-level HMI(UI) of the project.
 
-同理，我们接着前面这个演示项目u1编辑，点击左边"Components"按钮，就会滑出一个选择窗口，里面包含了本系统实例图元库(HMI Components)的内容：
+
+### 3.2 Using UI Components
+
+
+
+Similarly, we will continue with the previous demonstration project u1 editing, click on the "Components" button on the left, and a selection panel will slide out, which contains the content of the "HMI (UI) Components" belong to "HMI library" of our system:
+
 
 <img src="../img/hmi/h006.png">
 
-此窗口左边是一颗二级树——库/分类，点击选择某个库下面的分类，右边就会列出所有的组件（控件）。鼠标选中需要的控件，拖拽到编辑区并释放，你就会看到控件图元出现在编辑区。
 
-### 3.3 背景引用
 
-接着前面这个演示项目u1编辑，点击左边"Background"按钮，就会滑出一个选择窗口，里面包含了一些画面背景图片：
+On the left side of this panel is a secondary tree - Library/Category. Select a Category under a library, and all components (controls) will be listed on the right. Select the desired item with the mouse, drag it to the editing area, and release it. You will see the UI Component item appear in the editing area.
+
+
+### 3.3 Using background
+
+
+
+Continuing with the previous demonstration project u1 editing, clicking on the "Background" button on the left will bring up a selection panel that includes some background images of the screen:
+
 
 <img src="../img/hmi/h007.png">
 
-点击选择某个背景，拖拽到编辑区并释放，你就会看到背景出现在编辑区。这种背景图片一般用来设置一定比例尺寸的画面场景，以满足不同分辨率的显示设备。
 
-><font color=red>注意：请及时保存你在画面编辑的工作，保存的时候点击右边属性区域上方的保存按钮</font>
+
+Click to select a background, drag it to the editing area, and release it. You will see the background appear in the editing area. This type of background image is generally used to set a certain scale of the image scene to meet the needs of display devices with different resolutions.
+
+
+><font color=red>Attention: Please save your editing work in a timely manner. When saving, click the save button above the attribute area on the right</font>
 ><img src="../img/hmi/h008.png">
 
-以上就是基本的UI节点编辑操作功能。
+The above is the basic UI node editing operation.
 
-你如愿要继续了解UI画面如何使用上下文中的数据进行动态展示，请继续查看[Properties binding and event handling][bind_evt]
+
+If you want to understand how UI draw items are dynamically displayed using contextual data, please continue to review [Properties binding and event handling][bind_evt]
 
 [bind_evt]:./hmi_bind_evt.md
 [case_auto]:../case/case_auto.md

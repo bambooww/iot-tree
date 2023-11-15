@@ -96,7 +96,7 @@ In fact, MQTT message subscription does not have too many restrictions, and an M
 
 We recommend using structured message formats such as JSON, XML, etc. Because IOTTree specifically supports data extraction for these formats, you can complete the data extraction work without writing any scripts.
 
-Assuming that the on-site device (MQTT Client) we are connecting to at this ConnPt publishes a theme of "air/dev1", and the message format is JSON, which contains temperature and humidity data internally.
+Assuming that the on-site device (MQTT Client) we are connecting to at this ConnPt publishes a topic of "air/dev1", and the message format is JSON, which contains temperature and humidity data internally.
 
 `
 {

@@ -1,60 +1,88 @@
 IOT-Tree Device Driver - Simens Ethernet
 ==
-IOT-Tree内置西门子以太网驱动，可以通过以太网Tcp方式，直接访问S7-300/1200/1500等多种PLC型号。本部分内容以网上的一个使用例子来说明。
+
+
+
+IOT-Tree has a built-in Siemens Ethernet driver, which can directly connect various PLC models such as S7-300/1200/1500 through Ethernet Tcp. This section is illustrated by an online usage example.
 
 ​
-## 1 设备和环境准备
-本例子以S7-1500作为测试PLC，你如果没有相关设备，可以安装西门子的仿真环境，配合NetToPLCsim软件模拟。
+## 1 Preparation
 
-STEP 7 Basic/Professional 和 WinCC Basic/Comfort/Advanced
 
-NetToPLCsim
 
-具体请参考西门子官网相关内容。
+This example uses S7-1500 as the test PLC. If you do not have relevant device, you can install Siemens simulation environment cooperated with NetToPLCsim.
 
-### 1.1 PLC端和比对测试软件准备
 
-通过TIA Portal对PLC进行本地控制编程，其中PLC IP地址为：192.168.18.8，端口：102
+Please refer to the relevant content on Siemens' official website for details. :STEP 7 Basic/Professional , WinCC Basic/Comfort/Advanced, NetToPLCsim
 
-给PLC通电，下载程序启动。
+### 1.1 Preparation of PLC and comparison testing software
 
-使用KEPServerEx6进行连接测试，确保PLC外部连接正常，我配置的点位信息如下：
+
+
+Use TIA Portal to program local control of the PLC, where the PLC IP address is 192.168.18.8 and port is 102
+
+Power up the PLC and download the program to start.
+
+Use KEPServerEx6 for connection testing to ensure that the external connection of the PLC is working. The point information I have configured is as follows:
+
 
 <img src="../img/dev/d013.png">
 
-​点击Quick Client按钮，弹出窗口查看对应节点下的数据项，确保全部都是"Good"
+
+
+Click the "Quick Client" button and a pop-up window will view the data items under the corresponding node, ensuring that all are "Good"
+
 
 <img src="../img/dev/d014.png">
 
-### 1.2 IOT-Tree Server安装配置
+### 1.2 IOT-Tree Server Installation and configuration
 
-你的设备可以运行在PC端或嵌入式系统中，相关的安装配置文档可以参考[Quick Start][qk_start]
+Your device can run on a PC or embedded system, and relevant installation and configuration documents can be referenced[Quick Start][qk_start]
 
 [qk_start]:../quick_start.md
 
- 以上所有准备完成之后，接下来我们就可以使用IOT-Tree通过相关驱动对接了。
 
-## 2 IOT-Tree 端配置过程
 
-在IOT-Tree中，点击进入项目配置界面，项目内容如下：
+After all the above preparations are completed, we can now use IOT-Tree to connect with relevant drivers.
+
+
+## 2 IOT-Tree Configuration
+
+
+
+In IOT-Tree, click to enter the project configuration UI. The project content is as follows:
+
 
 <img src="../img/dev/d015.png">
 
-### 2.1 新增TcpClient Connector和通道
-点击左上角Connectors，在菜单中选择Tcp Client，然后在弹出的窗口中，填写如下内容
+### 2.1 Add TcpClient Connector and Channel
+
+
+Click on Connectors in the upper left corner, select "Tcp Client" from the menu, and then fill in the following information in the pop-up dialog
+
 
 <img src="../img/dev/d016.png">
 
-其中，主要内容就是PLC的IP地址和端口，点击Ok按钮，就可以看到左边新增了一个TcpClient接入。
 
-接着我们在项目根节点鼠标右键，选择New Channel，在弹出窗口中，填写如下内容：
+
+The main content is the "IP address" and "port" of the PLC. Click the OK button, and you will see a TcpClient connection added on the left.
+
+Next, right-click on the project root node and select "New Channel". In the pop-up dialog, fill in the following information:
+
 
 <img src="../img/dev/d017.png">
 
-其中，Driver点击选择Siemens TCP/IP Ethernet。点击OK完成通道的添加。此时，你可以看到s7eth通道左边和其他通道不一样，左边并没有连接正方形框。这是因为基于TCP/IP的PLC每个设备都会需要自己的Tcp连接，所以和以总线方式的通道不同，此驱动下面的接入关联必须通过设备进行。因此，我们在通道下面先增加PLC设备。
 
-### 2.2 新增PLC设备并关联TcpClient
-在通道s7eth节点上鼠标右键，选择New Device，在弹出窗口中填写设备信息：
+
+Among them, Driver clicks to select "Siemens TCP/IP Ethernet". Click OK to complete the addition of the channel. At this point, you can see that the left side of the s7eth channel is different from the other channels, and there is no square box. This is because each TCP/IP based PLC device requires its own Tcp connection, so unlike bus based channels, the connection association under this driver must be carried out through the device. Therefore, we will first add PLC device below the channel.
+
+
+### 2.2 Add a PLC device and associate it with TcpClient
+
+
+
+Right click on the channel "s7eth" node, select "New Device", and fill in the device information in the pop-up dialog:
+
 
 ```
 Name=plc3
@@ -62,24 +90,34 @@ Model=S7-1500
 ```
 <img src="../img/dev/d018.png">
 
-其他都不需要填写了，点击OK之后，通道下面就会出现对应设备节点。此时，你会发现设备左边有个圆形连接框。
 
-接着，鼠标点击接入c18_8的右边的小正方形不松开，拖拉线段到设备plc3左边的小圆形上方松开，系统就会建立接入到设备之间的关联，如下图：
+
+There is no need to fill in anything else. After clicking OK, the corresponding device node will appear under the channel. At this point, you will notice a circular connection box on the left side of the device.
+
+Next, click the mouse on the small square on the right side of the connected "c18_8" and do not release it. Drag the line segment to the top of the small circle on the left side of device PLC3 and release it. The system will establish an association between connected devices, as shown in the following figure:
+
 
 <img src="../img/dev/d019.png">
 
-从中我们可以看出，如果左边接入使用不同的以太网接入方式，也可以和相关设备进行对接。一般情况下，plc端实现的是Tcp Server，只能等待Tcp Client的接入。我们可以使用中间代理节点，代理节点可以是个client主动连接IOT-Tree Server，并在另一端使用client方式连接PLC，这样我们就可以更灵活的支持复杂的网络环境；可以看出接入和数据组织的分离，使得IOT-Tree能够更加优雅的应对各种设备和数据的接入。
 
-点击plc3节点，在右边主内容区域点击Properties标签，我们可以修改S7 Communication Parameters相关机架和槽位参数。如下图：
+
+From it, we can see that if different Ethernet connection methods are used for the left, it can also be connected to related devices. In general, the PLC implements "Tcp Server" and can only wait for the Tcp Client to connect. We can use an intermediate proxy node, which can be a client actively connecting to the IOT-Tree Server and using the client method to connect to the PLC on the other end, so that we can more flexibly support complex network environments; It can be seen that the separation of connector and data organization enables IOT-Tree to more elegantly handle the access of various devices and data.
+
+Click on the PLC3 node and select Properties tab in the main content area on the right. We can modify the relevant rack and slot parameters of the "S7 Communication Parameters". As shown in the following figure:
+
 
 <img src="../img/dev/d020.png">
 
-### 2.3 新增设备数据标签(Tag)
-S7-1500内部数据通过不同的存储区方式进行，如输出映像寄存器区Q、输入映像寄存器I、DB存储区等等。IOT-Tree Server对应的驱动也兼容此PLC数据寻址方式。
+### 2.3 Add device data tags
 
-在主内容区域点击\[Tags]标签,下面的内容就是plc3设备对应的数据项列表界面。我们可以点击上方的+Add Tag按钮进行添加。
 
-在弹出窗口中，我们填写如下内容：
+
+The internal data of S7-1500 is processed through different storage areas, such as output image register area Q, input image register I, DB storage area, and so on. The driver corresponding to IOT-Tree Server is also compatible with this PLC data addressing method.
+
+Click on the \[Tags] tab in the main content area, and it will show tags list corresponding to the PLC3 device. We can click the "+Add Tag" button above to add.
+
+In the pop-up dialog, we fill in the following information:
+
 ```
 Name=d1
 Title=d1
@@ -87,12 +125,12 @@ Date type=uint32
 R/W=Read/Write
 Address=DB200,DBD0
 ```
-
-编辑窗口如图所示：
-
 <img src="../img/dev/d021.png">
 
-点击OK之后，就可以看到列表中新增了这一项。用同样方法，我们新增如下内容：
+
+
+After clicking OK, you can see that this item has been added to the list. Using the same method, we have added the following content:
+
 
 ```
 Name=d2
@@ -144,34 +182,53 @@ R/W=Read/Write
 Address=DB200.X2.6
 ```
 
-最终，我们在设备plc3下面，完成了如下数据项列表:
+
+Finally, we completed the following tags list under device PLC3:
+
 
 <img src="../img/dev/d022.png">
 
-其中，关键内容是每个Tag的Address内容，这个写法兼容西门子的PLC编程软件。另外一个对应的是值类型（Value type），可以看出输入的Address可能会限定Value type。在编写时，可以点击Address右边的“Check Address"按钮，就会自动帮你修改。
 
-我们配置的这些Tag会在IOT-Tree Server的这个项目中被使用，很明显，如果你想让上位系统和PLC内部的程序协调配合做控制，那么通过一些公共的变量定义成Tag进行互相写入读取即可。
 
-仔细看这些数据项的定义，可以发现与OPC软件KEPServerEx很相似。实时上，IOT-Tree Server确实可以作为一个OPC软件，其不同之处就是多了更多的功能，如在线UI绘制、脚本任务运行、基于HTTP的JSON格式输出，以更方便与物联网应用。
+The key is the Address content of each Tag, which is compatible with Siemens' PLC programming software. Another is the Value type, which indicates that the input Address may limit the Value type. When editing, you can click the "Check Address" button on the right side of the Address, and it will automatically help you modify it.
 
-接下来，我们就可以运行查看效果了。
+The tags we have configured will be used in this project of IOT-Tree Server. Obviously, if you want IOT-Tree and PLC internal programs to coordinate and control, you can define them as tags through some common variables for mutual writing and reading.
 
-## 3 运行效果
-在确保PLC已经通电运行，点击项目配置上方的绿色启动项目按钮。
+Upon closer examination of the definitions of these data tags, it can be observed that they are very similar to the OPC software KEPServerEx. In real-time, IOT-Tree Server can indeed serve as an OPC software, with more features added, such as online UI rendering, script task running, and HTTP based JSON format output, to facilitate IoT applications.
+
+Next, we can run to see the effect.
+
+
+## 3 Running effect
+
+
+
+To ensure that the PLC has been powered on and running, click on the green start project button above the project configuration.
+
 
 <img src="../img/dev/d023.png">
 
-可以看到，所有的数据点都正常运行了。此时，我们可以配合KEPServerEx软件，进行写入数据并交叉查看数据变化。
 
-如对于q0_1这个点，你可以在Write列输入1，点击右边写入按钮，可以发现PLC的Q0.1端口有输出（指示灯也同时变亮，前提是此输出没有受到你的PLC程序控制）；同时查看Quick Client，可以发现q0_1的值也跟着变化了，反过来也一样。如下图：
+
+You can see that all tags are running valid. Now, we can cooperate with KEPServerEx software to write data and cross check data changes.
+
+For the point "q0_1", you can enter 1 in the Write column and click the write button on the right. You can find that the "Q0.1" port of the PLC has an output (the indicator light also lights up, provided that this output is not controlled by your PLC program); Looking at the "Quick Client" of KEPServerEx at the same time, it can be observed that the value of "q0_1" has also changed, and vice versa. As shown in the following figure:
+
 
 <img src="../img/dev/d024.png">
 
-## 4 更进一步
-你可以在此项目中，新增人机交互节点（HMI），并且通过在线编辑功能进行操作界面的设计。这部分内容请参考上面推荐的连接。如，在我的项目中，在，我实现了如下监控画面：
+## 4 Further more
+
+
+
+You can add a human-machine interaction node (HMI) in this project and design the operation UI through online editing function. Please refer to HMI related content for this section. In this project, the following monitoring UI were implemented:
+
 
 <img src="../img/dev/d025.png">
 
-或者，你也可以把项目中的组织节点直接输出http json格式的数据，方便其他系统调用实时数据。如你在plc3节点上鼠标右键，点击Access，在弹出窗口中可以查看输出的json格式数据，非常方便其他系统调用：
+
+
+Alternatively, you can directly output data in the "HTTP JSON" format from the organizational nodes in the project, making it convenient for other systems to call real-time data. If you right-click on the PLC2 node and click "Access", you can view the output JSON format data in the pop-up window, which is very convenient for other systems to obtain:
+
 
 <img src="../img/dev/d026.png">

@@ -443,6 +443,11 @@ public class UAManager //implements IResCxt
 			UAPrj np = this.getPrjByName(newname) ;
 			if(np!=null)
 				return false;
+			
+			if("admin".equals(newname)||"doc".equals(newname))
+			{
+				throw new IllegalArgumentException(newname+" is reserved word.Please use another name") ;
+			}
 		}
 		
 		List<IdName> tmpidns = parsePrjZipFile(zipf,id) ;
