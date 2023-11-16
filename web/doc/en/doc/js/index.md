@@ -1,111 +1,144 @@
 JS Script Usage
 ==
 
-## 1 IOT-Tree内在JS支持
+## 1 IOT-Tree built-in JS support
 
-IOT-Tree在内部支持JS脚本用来对一些数据转换、事件处理、控制任务的工作做支持。JS脚本分两种，一种是运行在Client端（一般是浏览器端）。一种是运行在Server端，由Java提供JS运行环境。Client主要是支持HMI(UI)图元相关的事件处理。而Java Server端主要以项目的树形容器节点形成的上下文中做很多需要复杂逻辑的功能。
 
-由于IOT-Tree内部的精细划分，我们使用JS一般都限定在局部实现（大多场合仅仅类似实现一个JS函数），这样可以大大简化JS的实现，尽可能减少项目的复杂度，同时又能满足业务需要。可以说，IOT-Tree的强大需要JS的支持，但又限定不滥用它。
 
-本文档要求你已经掌握JS的基础语法，如果你对JS语法不了解，网络上的教程很多，估计只需要几天时间你就可以掌握了。
+IOT-Tree internally supports JS scripts to support some data conversion, event handling, and control tasks. There are two types of JS scripts, one is running on the client side (usually the browser side). One is to run on the server side, with Java providing the JS runtime environment. The client mainly supports event handling related to HMI (UI) items. The Server mainly implements logical functions in the context formed by the tree container nodes of the project.
 
-## 2 Server端JS运行上下文
+Due to the fine division within IOT-Tree, our use of JS is generally limited to local implementations (mostly similar to implementing a JS function), which can greatly simplify JS code, reduce errors, reduce complexity, and meet business needs. It can be said that the power of IOT-Tree requires JS support, but it is also limited to not abusing it.
 
-IOT-Tree以项目为基础，内部建立了一颗树,层次为：项目-通道-设备-标签组。这些容器节点可以包含具体的标签列表（数据项）和HMI UI节点。由于IOT-Tree规定高层的容器节点可以访问它所包含的子孙节点所有内容，那么在此节点下面的JS运行上下文(Context)就包含了下面节点的所有内容。在某个容器节点下，每个子孙标签(Tags)都可以通过唯一的路径进行定位，而在JS代码内，这些标签(Tags)数据项则可以使用xxx.xx.xxx的方式进行使用。
+This document requires that you have already mastered the basic syntax of JS. If you are not familiar with JS syntax and there are many tutorials available online, it is estimated that you will only need a few days to master it.
 
-事实上，在某个容器节点下，JS运行上下文(Context)中，除了子节点还有一些特殊成员。这些成员如果是某个对象，则内部也有自身的内容。由此形成了一个完整的上下文内容。
 
-### 2.1 节点上下文成员总体说明
+## 2 Server JS Context
 
-我们在项目中选择某个容器节点，则可以看到选项卡标签列表下面所有的标签，这些标签和JS访问方式一致。如图：在根节点"watertank"下面，JS访问ch1节点、设备ch1.dio和ch1.dio.p_running标签。
+
+
+IOT-Tree is based on the project which has an internal tree with a hierarchy:project - channel - device - tag groups. These container nodes can contain tags (data items) and HMI(UI) nodes. Since IOT-Tree specifies that high-level container nodes can access all the content of their descendants, the JS context below this node contains all the content of the following nodes. Under a container node, each descendant tag (Tag) can be located through a unique path, while in JS code, these tag data items can be used using the method of "xxx.xx.xxx".
+
+In fact, under a container node, there are some special members in the JS context, in addition to the child nodes. If these members are an object, they also have their own members. This forms a complete contextual content.
+
+
+### 2.1 </en>Overall Description of Node JS Context Members</en>
+
+
+
+When we select a container node in the project, we can see all the tags under the tab \[Tags], which are consistent with the JS access method. As shown in the figure: Under the root node "watertank", JS accesses the "ch1" node, device "ch1.dio", and "ch1.dio.p_running" tags.
+
 
 <img src="../img/js/j001.png" />
 
-虽然标签列表同时也代表了JS代码在上下文中的引用层次关系，但IOT-Tree中节点上下文中的内容远不止这些。下面我们使用JS上下文测试专门的界面进行讲解。
 
-对于项目根节点、通道节点、设备节点、标签组节点，这些容器节点下都有自己的JS运行上下文。在项目管理界面中，鼠标右键某个节点，就可以看到有个选项"JS Context Test"，点击就可以打开这个节点对应的JS脚本运行上下文的测试界面。其中包含了此节点下的所有JS对象成员以及某个对象成员下的子成员。
 
-还是在IOT-Tree自带的Demo项目"Water tank and Medicament dosing"中,我们鼠标右键选择通道ch1下的设备flow，然后点击弹出菜单中的"JS Context Test",就可以看到设备节点flow下面的JS支持的所有内容（当然，标准JS支持的公共成员和函数不在此列举）。如下图：
+Although the tag list also represents the hierarchical referencing relationships of JS code in the context, the content in the node context in IOT-Tree goes far beyond these. Below, we will use a dialog for JS context testing to explain.
+
+For project root nodes, channel nodes, device nodes, and tags group nodes, each container node has its own JS Context. In the project management page, right-click a node to see the option "JS Context Test". Click to open the test dialog for the corresponding JS script running context of this node. It includes all JS object members under this node.
+
+In the demo project "Water tank and Medication Dosing", we right-click on the device "flow" under channel "ch1", and then click "JS Context Test" in the pop-up menu to see all the content supported by JS under the device node "flow" (of course, the public members and functions supported by standard JS are not listed here). As shown in the following figure:
+
 
 <img src="../img/js/j002.png" />
 
-在弹出窗口的左边，有个JS上下文成员列表，每个成员都是一颗树的根部。每个成员的显示名称格式为name:Type，':'的左边是JS成员名称，右边是此成员的数据类型。
 
->$sys、$util、$debug是系统自带的一些支持，在每个上下文中都会有。
 
->$prj、$ch、$dev表示此上下文中包含的唯一对应的项目对象、通道对象和设备对象。我们此次的容器节点是flow设备，那么自然也就在项目和通道之下。如果你的当前上下文节点是项目根，那么$ch $dev则两个唯一对象就不存在了。
+On the left side of the pop-up dialog, there is a list of JS contextual members, each member being the root of a tree. The display name format for each member is "name:Type", with the left side of ':' indicating the JS member name and the right side indicating the data type of this member.
 
->$this 这个对象代表了当前容器节点，本例子flow节点是个Dev，那么$this 和 $dev是同一个对象，你可以看到他们':'右边的数据类型都是"Dev"。
+>$sys, $util, and $debug are some of the system's built-in support, which are available in every context.
 
->其他对象，在例子中 flow_h、flow_l、flow_val、fui这些对象都是flow节点下面定义的普通对象，他们可以表示标签Tag对象或其他对象。
+>$prj, $ch, $dev represent the unique corresponding project objects, channel objects, and device objects contained in this context. Our container node this time is a flow device, so naturally it is also under the project and channel. If your current context node is the project root, then $ch $dev will no longer existed.
 
-IOT-Tree对上下文根成员做了一些限定，必须是当前容器下的容器成员。这样可以避免一些冲突。如果要访问当前节点下面全部内容。可以使用 $this.xxxx 方式进行。还是看实际的例子来说明，我们展开$this成员，如下图：
+>$this object represents the current container node. In this example, the flow node is a Dev, so $this and $dev are the same object. You can see that the data type to the right of ':' is' Dev '.
+
+>Other objects, in the example "flow_h、flow_l、flow_val、fui" are ordinary objects defined under the flow node, which can represent tag objects or other objects.
+
+IOT-Tree has some restrictions on the context root members, which must be container members. This can avoid some conflicts. If you want to access all the content below the current node. It can be done using the $this.xxxx method. Let's expand the $this member, as shown in the following figure:
+
 
 <img src="../img/js/j003.png" />
 
-可以看到在展开的成员中，内容会多一些，除了flow_h、flow_l、flow_val、fui这些已经有的对象，我们可以看到内部还有如下内容:
 
->__id:str __n:str  __t:str  __d:str 这几个成员是基本类型，每个节点对象都会有，他们分别对应这个节点的唯一id，名称，标题和描述。请注意：这几个成员都是以两个下划线'_'符号开头，你可以直接使用。
 
->函数，在$this节点下，我们可以看到一些函数定义，这些函数也就可以通过$this.fff()方式进行调用。
+It can be seen that among the expanded members, there will be more content. In addition to the existing objects such as "flow_h, flow_l, flow_val, fui", we can also see the following members:
 
-我们再次展开flow_val:Tag这个根成员,可以看到这个Tag类型的对象除了包含__id:str __n:str  __t:str  __d:str这个节点都有的成员之外，还有它自身特殊的成员，如下图：
+>__id:str __n:str  __t:str  __d:str ,these members are basic types, and each node object will have a unique ID, name, title, and description corresponding to that node. Please note that these members are all marked with two underscores '_' at the beginning. You can directly use the symbol.
+
+>Functions, under the $this node, we can see some function definitions that can be called through the $this.fff() method.
+
+Let's expand the root member 'flow_val: Tag', and we can see that objects of this Tag not only contain "__id:str __n:str  __t:str  __d:str",but also has own special members, as shown in the following figure:
+
 
 <img src="../img/js/j003.png" />
 
->_pv:number 这是此标签运行时的值，':'右边的类型会根据不同的标签定义而不同，此标签是个number类型。如果对此进行赋值，则会触发标签对应的设备驱动对设备的写入操作。
 
->_valid:bool 代表运行时此标签值是否有效；_updt代表运行时标签值的最后读取时间; _chgdt代表运行时标签值的最后变化时间，这些时间都是系统时间的毫秒数.
+>\_pv:number This is the runtime value of this tag, and the type on the right side of ':' will vary depending on different tag definitions. This tag is a number type. If a value is assigned to this, it will trigger the device driver corresponding to the tag to write to the device.
 
->_value读取时和_pv相同，但赋值时只是在IOT-Tree内存中进行，不会触发设备驱动的动作。
-> RT_setVal这个函数可以对标签进行赋值，但赋值时只是在IOT-Tree内存中进行，不会触发设备驱动的动作。这个函数等效于对_value这个成员的赋值。
+>\_valid:bool represents whether this tag value is valid at runtime; \_updt represents the last read time of the runtime tag value; \_chgdt represents the last change time of the runtime tag value, which is the number of milliseconds of system time
 
+>When reading '_value', it is the same as '_pv', but when assigning a value, it is only done in the IOT-Tree memory and does not trigger device driver actions.
 
-<font color="red">可以看出，左边的这颗树本质也是在flow这个节点下，我们可以写JS代码的成员参考，也即是最准确的调用文档，下面的这些代码都是有效的。</font>
+>The "RT_setVal" function can assign values to tags, but the assignment is only done in the IOT-Tree memory and does not trigger device driven actions. This function is equivalent to assigning a value to the member '_value'.
+
+<font color="red">It can be seen that the tree on the left is essentially a member reference where we can write JS code under the flow node, which is the most accurate calling document. The following code is all valid.</font>
+
 
 ```
 var n1 = $this.__n ;
 var s1 = $this.getDevModel() ;
 
-//上下文中可以直接使用根成员
+//Root members can be directly used in the context
 var v1 = flow_val._pv ;
-flow_val._pv = 100; //赋值并触发设备驱动写数据指令
-flow_val._value = 100 ; //只在内存中设置此Tag的值
-flow_val.RT_setVal(100) ; //等效于 flow_val._value = 100 ;
+flow_val._pv = 100; //Assign values and trigger device driver write data
+flow_val._value = 100 ; //set the value of this Tag in memory
+flow_val.RT_setVal(100) ; //Same as flow_val._value = 100 ;
 
-//$this对象代表了当前上下文，下面三行代码和上面三行是等效的
-$this.flow_val._pv = 100; //赋值并触发设备驱动写数据指令
-$this.flow_val._value = 100 ; //只在内存中设置此Tag的值
-$this.flow_val.RT_setVal(100) ; //等效于 flow_val._value = 100 ;
+//$this represents the current object, and the following three lines of code are equivalent to the above three lines
+$this.flow_val._pv = 100; //Assign values and trigger device driver write data
+$this.flow_val._value = 100 ; //set the value of this Tag in memory
+$this.flow_val.RT_setVal(100) ; //Same as flow_val._value = 100 ;
 ```
 
-### 2.2 成员变量名称约定
+### 2.2 Member Variable Name Stipulation
 
 #### 2.2.1 $xxx
 
-$xxx格式命名的成员都代表着系统提供的变量成员，如$prj $this等。这些成员直接定义在上下文的根部。
+
+The members named in the "$xxx" format represent the environment variable members provided by the system, such as "$prj $this". These members are directly defined at the root of the context.
+
 
 #### 2.2.2 _xxx
 
-_xxx格式命名成员一般是系统自带标签对象。我们可以在上面的图例中，看到每个容器节点都有_name _title等系统标签。
+
+
+The "\_xxx" format for naming members is generally a variable member provided by the system.
+
 
 #### 2.2.3 __xxx
 
-__xxx格式命名成员（以两个下划线开头）代表的是某个对象下系统提供基本类型的属性成员，如每个节点下都有 __id __n这样的属性成员，这些成员数据时基本类型(str number等)。_name的标签是个对象，要通过_name._pv这样才能获取这个标签的具体名称。而我们可以直接通过 __n获取值。
+
+
+The named members in the format of "__xxx" (starting with two underscores) represent members of a basic type provided by the system under a certain object, such as "__id __n" members under each node, whose data is the basic type (str number, etc.).
+
 
 ### 2.3 JS Code Block and Test UI
 
-在IOT-Tree中，JS代码的使用大部分情况是以代码块的形式出现，这是因为IOT-Tree已经通过精密的架构使得需要使用JS的地方能够灵活强大，又同时尽可能简单。具体可能有如下使用情景：
 
-1）定义某个中间标签(Middle Tag),其值可以通过标签所在的容器节点上下文中的其他标签作为变量，组合而成的js代码;
-2）定义某个定时运行的任务；
-3）某个虚拟接入，直接驱动通道下面的一些数据；
 
-这些代码块可以抽象为：简单的表达式和一段函数实现。
+In IOT-Tree, the use of JS code mostly occurs in the form of code blocks, because IOT-Tree has made the use of JS flexible, powerful, and as simple as possible through its precise architecture. There may be specific usage scenarios as follows:
 
-#### 2.3.1 表达式
+1) Define a Middle Tag whose value can be combined into JS code by using other tags in the context of the container node where the tag is located as variables;
+2) Define a scheduled task to run;
+3) A certain virtual connector directly drives some data below the channel;
 
-表达式一般只有一行，通过简单的一行代码，就可以利用一些输入变量组合计算返回我们需要的结果。下面是几个例子：
+These code blocks can be abstracted as simple expressions or a function implementation.
+
+#### 2.3.1 Expressions
+
+
+
+Expressions usually only have one line, and with a simple line of code, we can use some combination of input variables to calculate and return the desired result. Here are a few examples:
+
 
 ```
  flow_val._pv+12
@@ -115,9 +148,11 @@ __xxx格式命名成员（以两个下划线开头）代表的是某个对象下
  $util.modbus_float(flow_h._pv,flow_l._pv)
 ```
 
-#### 2.3.2 函数
+#### 2.3.2 Functions
 
-函数情景下，可以把代码看成一个匿名函数，通过上下文输入的变量，实现多行代码逻辑。返回值通过return进行。在IOT-Tree代码块中，你只需要把代码放在{  }中，那么就认为这是一个函数代码块实现。你内部必须有return语句，否则就会认为此代码块返回null
+
+
+As a function, the code can be viewed as an anonymous function, implementing multi line code logic through contextual input variables. The return value is processed through a return code. In the IOT-Tree code block, you only need to place the code in "{}", then it is considered a function implementation. You must have a return statement internally, otherwise this code block will be considered to return null
 
 ```
   {
@@ -139,26 +174,37 @@ __xxx格式命名成员（以两个下划线开头）代表的是某个对象下
   }
 ```
 
-#### 2.3.3 测试窗口
+#### 2.3.3 Test Dialog
 
-在上面的例子中，我们鼠标右键项目中的某个容器节点，就可以看到"JS Context Test"这个选项，点击打开的窗口就是我们提供的测试窗口。除了左边提供的上下文成员树的文档支持外，右边我们可以写入测试代码块。
 
-写入测试代码之后，点击"Test Run"按钮，就可以在结果区域看到运行结果，如下图：
+
+In the above example, by right-clicking on a container node in the project, we can see the "JS Context Test" option. Clicking on it opens the test dialog box we provided. In addition to the document support for the context member tree provided on the left, we can write test code blocks on the right.
+
+After writing the test code, click the "Test Run" button to see the running results in the results area, as shown in the following figure:
+
 
 <img src="../img/js/j005.png" />
 
-请注意，上面的例子里面用到flow_h和flow_l这些标签(Tag)，他们的属性值_pv必须在项目运行正常，并且此标签值有效的情况下才能正常计算结果。
+
+
+Please note that in the above example, tags such as "flow_h" and "flow_l" are used, and their value "_pv" must be valid for the project to run normally in order to calculate the results properly.
 
 ## 3 JS At Client
 
-IOT-Tree对客户端JS支持，主要是HMI(UI)相关的内容。如图元的事件响应，这些脚本都运行在浏览器端。和Server端的上下文没什么直接的关系。本部分内容请参考[HMI相关文档][hmi] 和 。
+
+
+IOT-Tree supports client-side JS, mainly applied to HMI (UI). These scripts run on the browser side, such as the event handling of draw items. It has no direct relationship with the context on the server side. Please refer to [HMI related documents][hmi].
+
 
 [hmi]:../hmi/index.md
 
-## 4 开发你自己的JS底层支持
+## 4 Develop your own Server JS underlying support
 
-在上下文根成员中，你可以看到\$$xxx格式的成员，这些成员都代表着系统提供的自定义变量成员，如\$$mail。你可以通过Java代码的实现并且注册为IOT-Tree的插件。
 
-本部分内容请参考[Plugin-JsApi][plugin_jsapi]
+
+In the context root members, you can see members in the \$$xxx format, which represent custom variable members provided by the system, such as \$$mail. You can implement it through Java code and register it as a plugin for IOT-Tree.
+
+
+Please refer to:[Plugin-JsApi][plugin_jsapi]
 
 [plugin_jsapi]:../advanced/adv_plugin_jsapi.md

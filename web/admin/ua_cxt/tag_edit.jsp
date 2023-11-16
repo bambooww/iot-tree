@@ -189,7 +189,7 @@ if(!bmid)
 <%
 if(bmid)
 {
-%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" onclick="on_js_edit()"></textarea>
+%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" ondblclick="on_js_edit()" title="double click to open JS editor"></textarea>
 <%
 }
 else

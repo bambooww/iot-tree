@@ -1,24 +1,30 @@
 JS In Middel Tag
 ==
 
-## 1 中间标签JS使用的上下文
+## 1 The JS context used by the middle tag
 
-某个容器节点下的中间标签(Middle Tag),在定义时需要编辑对应的JS代码块，用来生产需要的标签数值。
 
-例如，在IOT-Tree中的Demo项目"Water tank and Medicament dosing"中。点击项目树中通道"ch1"-设备"flow",可以在右边主内容区看到\[Tags]选项卡中看到此设备下面有个中间标签"flow_val"。双击此标签，就可以打开对应的编辑界面，如下图：
+
+The Middle Tag under a certain container node needs to be defined by editing the corresponding JS code block to generate the required tag value.
+
+For example, in the Demo project "Water tank and Medication Dosing" in IOT-Tree. Click on channel "ch1" - device "flow" in the project tree, and you can see a middle tag "flow_val" below this device in the \[Tags] tab in the main content area on the right. Double click on this tag to open the corresponding editing dialog, as shown in the following figure:
+
 
 <img src="../img/js/j006.png" />
 
-从图中可以看到，flow_val这个标签，使用$util提供的函数，输入flow_h和flow_l两个标签的_pv值进行计算，得到浮点数值。
 
-<font color="green">IOT-Tree规定，中间标签使用标签所属的容器节点上下文进行计算，也即是说可以直接使用容器节点和子节点的所有其他标签。</font>
 
-我们点击JS编辑框，弹出具体的编辑窗口。可以看到左边列举了全部的上下文内容。里面可以看到"flow"这个节点下的所有上下文成员。
+From the figure, it can be seen that the tag "flow_val" is calculated using the function provided by $util by inputting the "_pv" values of the tags "flow_h" and "flow_l" to obtain the floating-point value.
 
-注意：我们可以看到中间节点上下文有$prj $ch等顶层节点内容，也就是说JS代码也可以通过这些对象访问高层节点下的内容。<font color="red">我们强烈建议，除非迫不得已，请不要使用不在当前节点($this)下的其他内容，因为这样的定义会使得你的定义失去重用性。比如，你如果把这个设备收入到设备库中，在其他项目中使用就会出问题——因为这样就会造成你这个中间节点找不到输入对象。</font>
+<font color="green">IOT-Tree stipulates that the middle tag is calculated using the context of the container node to which the tag belongs, which means that all other tags of the container node and child nodes can be directly used</font>
 
-## 2 JS使用代码块
+We double click on the JS editing box with the mouse to pop up a JS editing dialog. You can see that the JS context content is listed on the left. 
 
-中间标签JS可以使用表达式或有返回值的代码块即可，此部分内容请参考[JS Script Usage - JS Code Block and Test UI][ind]
+Note: We can see that the context includes top-level node members such as "$prj $ch", which means that JS code can also access the content under high-level nodes through these objects. <font color="red">We strongly recommend that you do not use other content that is not under the current node ($this) unless absolutely necessary, as such a definition can make your definition lose its reusability. For example, if you add this device into "Device Library" and use it in other projects, it will cause problems - because this will cause your middle tag to not find the input object</font>
+
+
+## 2 JS Code Block
+
+The middle tag JS can use an expression or a code block with a return value. Please refer to:[JS Script Usage - JS Code Block and Test UI][ind]
 
 [ind]:./index.md

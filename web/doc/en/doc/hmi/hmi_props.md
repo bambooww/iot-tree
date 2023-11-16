@@ -90,6 +90,65 @@ You can choose to flip draw item left to right or up and down.
 By default, the rotation takes the center point of the bounding rectangle as the rotation center. If you want to change the rotation center point, adjust the following two attributes: "Rotate Center Ratio X, Rotate Center Ratio Y". These two attributes are the ratio of the position of the center point within the rectangle relative to the X and Y directions, with default values (0.5,0.5) representing the center position. If you change this to (0.5,1.0), it means that the center point is located below the boundary of the draw item. For example, if you want to implement a gauge pointer, you should set the rotation center point this way.
 
 
+### 4 Color Property
+
+
+
+Some draw item properties contain color content, which can be set by opening the color selection dialog in addition to filling in the input box. As shown in the following figure:
+
+
+<img src="../img/hmi/h027.png">
+
+### 5 Fill Property
+
+
+Some draw item display blocks can support filling properties. In addition to filling in the input box, you can also open the filling selection dialog for setting. There are multiple modes for filling properties:
+
+
+<img src="../img/hmi/h028.png">
+
+#### 5.1 Single Color Fill
+
+
+
+Single color filling is similar to color selection, where you only need to enter a color string value. In the pop-up editing dialog, the Normal tab corresponds to a single color fill.
+
+The color editing button in the upper left corner. If you click on the color area, a color selection dialog box will pop up. If you click on the edit icon, a color string input box will pop up.
+
+
+<img src="../img/hmi/h029.png">
+
+#### 5.2 Linear Color Gradient Fill
+
+
+
+Linear color gradient filling can be used to support stereoscopic display of content. As shown in the following figure:
+
+
+<img src="../img/hmi/h030.png">
+
+
+
+Among them, the Color Number can have 1-4, which represents a maximum of 4 colors participating in the color change gradient; Rotation, on the other hand, represents the direction of gradient, with a value of more than 0 indicating the horizontal direction. The above image shows a color gradient change of 0 degrees.
+
+The following image shows 2 colors with gradient filling in the 45 degree direction
+
+
+<img src="../img/hmi/h031.png">
+
+The following image shows 4 colors with gradient filling in the 90 degree direction
+
+<img src="../img/hmi/h032.png">
+
+#### 5.3 Radial Color Gradient Fill
+
+
+
+Radial fill is an outward expansion fill with a center point, and supports up to 4 colors. As shown in the following figure:
+
+
+<img src="../img/hmi/h033.png">
+
 ### Others
 
 

@@ -1,99 +1,157 @@
 HMI(UI) Components(Controllers)
 ==
 
-前面的资料已经说明了，IOT-Tree针对UI编辑，专门提供了图库(HMI Library)功能，并且你可以很方便的从中选择图元组件(控件)，拖拽到UI编辑区中。并且，这些图库中的图元，有自己特殊的属性，你只需要轻松的填写几个参数，就可以让一个定制图元为你提供内在复杂功能。例如，下面的仪表盘图元，你点击选择之后，只需要提供简单的表盘参数，就可以给你一个功能丰富的仪表支持。
+
+As previous documents mentioned, IOT-Tree provides HMI Library functionality for UI editing, and you can easily select UI components (controls) from it and drag them into the UI editing area. Moreover, the items in these libraries have their own special properties, and you only need to easily fill in a few parameters to allow a custom item to provide you with inherently complex functions. For example, after clicking on the Dial item below, you only need to provide simple Dial parameters to provide you with a rich Dial support.
+
 
 <img src="../img/hmi/h013.png"/>
 
-理论上，我们完全可以不依赖图元库，直接用基本绘图支持，画出我们想要的画面，然后通过属性绑定上下文标签实现动画效果，通过图元事件实现图元交互。但这样不仅效率低下，而且也更容易出错。从实际出发，建议不同的厂商或用户，可以建立自己的图元库，不仅方便自己也方便他人。
 
-IOT-Tree提供的图库(HMI Library)管理和编辑，完全基于在线方式，每个图元目前只允许使用基本绘图功能实现。基础图元、图元库、子节点UI和UI相互依赖关系如下图：
+
+In theory, we can directly use basic drawing toolbox without relying on the UI library to draw the desired HMI, and then use properties binding context tags to achieve animation effects, and use primitive events to achieve interaction. 
+
+But this is not only inefficient, but also more prone to errors. From a practical perspective, it is recommended that different manufacturers or users can establish their own UI Components, which is not only convenient for themselves but also for others.
+
+The UI Library management and editing provided by IOT-Tree is entirely based on online mode, and each item is currently only allowed to be implemented using basic drawing functions. The interdependence between the basic element, UI library, sub node UI, and UI is shown in the following figure:
+
 
 <img src="../img/hmi/h014.png"/>
 
-从上面依赖关系可以看出，基础图元非常重要，如果基础图元功能越强，上面的图元库和UI就会使用起来越方便。如：当前的仪表盘如果没有基础图元的刻度(Dial)的支持，实现起来会很困难。而有了这个基础图元，定义仪表组件的时候，只需要三个基础图元就可以完成。IOT-Tree的基础图元会根据未来需要不断添加，敬请期待。
 
-### 1 新增或修改某个图元库组件
 
-在IOT-Tree登录管理主界面中，我们打开某个库的管理窗口，选择某个分类，在右边就可以看到这个分类下的所有图元组件。当你想新增一个组件时，点击上方"Add Component Item"按钮，在弹出的输入框输入一个标题即可；如果要编辑一个现有图元，只需要移动鼠标到这个组件上方，内部就会出现编辑操作按钮，点击即可进入编辑界面。
+From the dependency relationship above, it can be seen that basic elements are very important. The stronger the functionality of basic elements, the more convenient it will be to use the UI library and UI above. For example, the current instrument would be difficult to implement without the support of the basic element's scale (Dial). With this basic element, when defining instrument components, only three basic elements are needed. The basic elements of IOT-Tree will be continuously added according to future needs.
 
-事实上，你有很大一部分工作是发现某个组件功能有点不够使用，想在原来的基础之上再添加一些功能，那么你可以鼠标右键这个组件，选择"Copy"复制，然后在列表空白出鼠标右键，选择"Paste"，你就复制了一个组件，然后进入编辑即可。这样既可以保留原有组件，又可以在现有组件基础上快速新增一个新的。
 
-不管以上哪种添加方式，我们最终都要进入具体的编辑界面。为了方便介绍，我们打开一个现有的图元进行编辑。如下图：
+### 1 Add or modify a UI Component
+
+
+
+In the IOT-Tree login management main page, we open window of a HMI library, select a category, and on the right, you can see all the components under that category. When you want to add a component, click the "Add Component Item" button above and enter a title in the pop-up input box; If you want to edit an existing element, simply move the mouse over this component and an editing button will appear inside. Click to enter the editing page.
+
+In fact, a large part of your work is to find that a certain UI component's functionality is not sufficient and you want to add some functions based on the original one. You can right-click on the component, select "Copy" to copy, and then right-click in the blank list, select "Paste" to copy a component and enter editing. This not only preserves the original components, but also allows for the rapid addition of a new one based on the existing components.
+
+Regardless of the above addition method, we ultimately need to enter the specific editing UI. For the convenience of introduction, we open an existing element for editing. As shown in the following figure:
+
 
 <img src="../img/hmi/h016.png"/>
 
-这个编辑界面和普通的UI节点类似，左边有基础图元工具箱，右边是选中图元的属性和事件管理区。左下角有个接口Interface区，我们会在后续展开讨论。
 
-### 2 图元组件制作过程
 
-我们就以例子作为说明图元组件制作过程。
+This editing UI is similar to a regular UI editing in project, with a basic element toolbox on the left and a property and event management area for the selected item on the right. There is an interface area in the bottom left corner, which we will discuss later.
 
-#### 2.1 使用基础图元绘制组件
 
-当前图元组件编辑区内部的图元只能是基础图元(IOT-Tree后续可能会新增其他支持)。具体的基础图元在编辑区的绘制操作请参考:[HMI Editing instructions][hmi_edit]。
+### 2 Making process of UI components
 
-我们还是以上面的仪表盘图元为例，使用鼠标选中里面的图元，并移动分解，你会发现这个仪表盘只有三个基础图元，如下图。
+
+
+We will use an example to illustrate the process of making UI components.
+
+
+#### 2.1 Drawing Components Using Basic Primitives
+
+
+
+The items within the current UI component editing area can only be basic items (IOT-Tree may add other support in the future). For specific drawing operations of basic items in the editing area.
+
+please refer to: :[HMI Editing instructions][hmi_edit]。
+
+
+
+Let's take the UI component above as an example. Use the mouse to select the draw item inside and move the decomposition. You will find that this component only has three basic draw items, as shown in the following figure.
+
 
 <img src="../img/hmi/h017.png"/>
 
-他们分别是三角形(Triangle)、圆形(Circle)和刻度盘(Dial)。其中，三角形制作的指针，旋转相关属性
+
+
+They are a triangle, a circle, and a dial. Among them, the pointer made of triangles has the following rotation related properties:
 
 ```
 Rotate center Ratio X=0.5
 Rotate center Ratio Y=1.0
 ```
-这代表了指针以底部中心作为旋转中心。
 
-整体绘制非常简单。
 
-#### 2.2 组件内部资源
+This represents that the pointer is centered at the bottom as the center of rotation.
 
-我们在制作一些图元组件时，有时候为了方便，使用图片（可能含多个）作为基础，并且此图片会根据你的操作进行切换，这样就能很轻易的做出很好的动画效果。那么，这个图片如何进入组件呢？
+The overall drawing is very simple.
 
-IOT-Tree引入了一个资源(Res)的概念，每个组件可以有自己的资源。我们还是以另一个“急停开关”组件作为例子。在HMI Library下面的Basic库中，选择分类Switch,你好发现有个红色的急停开开关，打开此组件的编辑画面。在新打开的编辑窗口中，右上角点击按钮图标"resources",弹出此组件的资源窗口。如下图：
+
+#### 2.2 Resources in UI Components
+
+
+
+When making some UI components, sometimes for convenience, we use images (which may include multiple) as the basis, and the image will be switched according to your operation, so that we can easily create good animation effects. So, how does this image enter the component?
+
+IOT-Tree introduces the concept of resources (Res), where each component can have its own resources. Let's take another 'emergency stop switch' component as an example. In the Basic library under the HMI Library, select Category "Switch" and you will find a red emergency stop switch. Open the editing UI for this component. In the newly opened editing window, click the button icon "resources" in the upper right corner to open the resource window for this component. As shown in the following figure:
+
 
 <img src="../img/hmi/h018.png"/>
 
-里面已经包含了此组件需要的两张图片，你可以在里面上传组件需要的图片文件。在一个资源列表中，名称定义很重要，不仅需要符合IOT-Tree命名限定（a-z A-Z起始），同时不能重复。在上传一个新的资源文件时必须先指定名称，然后点击按钮选择文件上传添加。添加的文件就可以在图元中使用了。
 
-本组件内部只有一个Img基础图元，选择之后，属性里面有个DI Image分类，里面的属性Image Res=stopu.png使用的值就是我们已经上传的图片文件名称。你也可以点击输入框右边的"..."按钮，弹出资源窗口进行选择。
+
+It already contains the two images required for this component. You can upload the image files required for the component inside. In a resource list, name is important, as it not only needs to comply with the IOT-Tree naming qualification (starting from a-z A-Z), but also cannot be duplicated. When uploading a new resource file, you must first specify a name and then click the button to select File Upload Add. The added files can be used in the elements.
+
+There is only one Img basic item inside this component. After selection, there is a DI Image classification in the properties, and the value used in the property "Image Res=stopu.png" is the name of the image file we have uploaded. You can also click the "..." button on the right side of the input box to pop up a resource dialog for selection.
+
 
 <img src="../img/hmi/h019.png"/>
 
-本例子我们要模拟出鼠标点击此图元产生按压动作——本质就是就是在这个Img图元上，通过改变Image Res属性对资源图片进行切换。这个就需要使用鼠标点击事件处理。因为点击事件处理必须使用JS脚本，并且脚本需要对图元进行操作，那么就需要一些条件。请往下看。
 
-#### 2.2 图元名称在JS脚本中的作用
 
-为了能够支持在JS脚本中操作图元，我们必须对需要被操作的图元设定Name属性(缺省情况下编辑区新增的图元是没有Name属性的)。一旦设定了名称，那么在JS脚本中就可以直接使用了。
+In this example, we want to simulate a mouse click on this item to generate a press action - essentially, switching resource images on this Img item by changing the "Image Res" property. This requires the use of mouse click event handling. Because the click event processing must use JS scripts, and the scripts need to operate on the draw items, then some conditions are required. Please look down.
 
-**请注意:由于组件自身的编辑只在显示端，内部的图元操作就是Client端的JS脚本**
 
-还是接着这个急停按钮组件的例子，我们选中这个Img图元，在Name属性填写"sw"。然后打开"Events选项卡，在"on_mouse_down"这个事件右边点击打开JS编辑窗口，内部填写的JS脚本如下图：
+#### 2.2 The name of draw items in JS
+
+
+
+n order to support manipulating draw item in JS scripts, we must set the Name property on the draw item that need to be manipulated (by default, newly added item's Name is empty). Once the name is set, it can be directly used in JS scripts.
+
+
+
+
+
+
+Continuing with the example of the "emergency stop button" component, we select the Img draw item and fill in "sw" in the Name property. Then open the "Events" tab and click on the right side of the "on_mouse_down" event to open the JS editing dialog. The JS script filled in internally is shown in the following figure:
+
 
 <img src="../img/hmi/h020.png"/>
 
-我们可以看到一个很简单的逻辑，每次点击sw图元的imgRes属性在两个图片之间切换，就这么简单。其中，sw就是当前组件内部这个Img图元的名称，在JS脚本中直接就会成为此图元的对象——可以直接使用。
 
-<font color=green>不过，sw是个Img图元对象，内部"sw.imgRes"这个成员是怎么知道的呢？</font>
 
-这个很重要，sw是个图元对象，而图元的属性我们可以随时查看，但在右边的属性列表中，左边只展示了属性的标题(Title),我们JS脚本必须使用属性的内在名称。这个名称可以在属性列表中查看——<font color=red>你只需要鼠标移动到属性名称上方不动，就会显示出属性的内在变量名称</font>，如下图：
+We can see a very simple logic. Every time we click on the sw item, the imgRes property of the this switches between two images, which is so simple. Among them, sw is the name of the Img item within the current component, which becomes the object of this element - it can be used directly.
+
+
+<font color=green>However, sw is an Img object, how does the internal member 'sw.imgRes' know?</font>
+
+
+
+This is important, "sw" is a JS object, and the properties of the draw item can be viewed at any time. However, in the properties list on the right, only the title of the property is displayed on the left. Our JS script must use the intrinsic name of the property. This name can be viewed in the property list -<font color=red>You just need to move the mouse over the property name without moving it, and the intrinsic variable name of the property will be tipped</font>, as shown in the following figure:
+
 
 <img src="../img/hmi/h021.png"/>
 
-有了这个鼠标事件和处理脚本，你会发现，每次你点击这个Img图元，内部显示的图片就会变化，看着像是你按动了这个急停开关。
+
+
+In running time,with this mouse event and handling JS script, you will find that every time you click on this Img item, the internal displayed image will change, looking like you pressed the "emergency stop switch".
+
 
 对于JS脚本的详细信息，请参考[JS Script Usage][js_u]
 
-#### 2.3 组件属性接口
+#### 2.3 Component Property Interface
 
-##### 2.3.1 属性接口总体说明
+##### 2.3.1 Overall Description
 
-我们的组件最终会被项目中某个UI节点引用，并且每个实例就成为了这个UI的内部一个图元。为了提升组件的能力，我们可以使某个组件对外暴露出自己特殊的属性，这些属性可以在UI节点中被编辑调整，以产生更灵活的适应能力——这个被IOT-Tree成为属性接口（在编辑区左下方Interface子窗口中）。
 
-在上面的急停按钮组件中，没有任何定义，在项目某个UI中引用时，和组件相关的特殊属性就是空的。而在上面的仪表盘组件中，我们定义了很多属性接口，在被引用时这些属性接口都成为了组件的特殊属性：
 
-以下就是两个组件在项目UI中被引用的差别：
+Our UI component will eventually be referenced by a UI node in the project, and each instance will become an internal element of the UI. In order to enhance the capabilities of a component, we can expose its special properties to the outside world. These properties can be edited and adjusted in the outter UI node to generate more flexible adaptability - this is called the property interface by IOT-Tree (in the Interface toolbox at the bottom left of the editing area).
+
+In the "emergency stop button" component above, there is no definition, and when referenced in a UI of a project, the special properties related to the component are empty. In the dashboard component above, we have defined many property interfaces, which become special properties of the component when referenced:
+
+The following are the differences between the two components being referenced in the project UI:
+
 
 <table>
   <tr>
@@ -115,40 +173,57 @@ IOT-Tree引入了一个资源(Res)的概念，每个组件可以有自己的资�
 </table>
 
 
-很明显，仪表盘通过对外提供了属性接口，可以使得外界使用者能够根据自己的需要设定仪表盘的各种参数，如量程、刻度划分、颜色等等。这样的仪表盘组件才能够真正实用（如果没有这些参数调整支持，这个组件也就没有重复使用的意义了）。
 
-##### 2.3.2 属性接口定义
+It is obvious that the dashboard provides property interfaces to external users, allowing them to set various parameters of the dashboard according to their needs, such as range, scale division, color, and so on. Only such dashboard components can truly be practical (without these parameter adjustment support, this component would have no meaning for reuse).
 
-我们可以在接口管理子窗口中新增或编辑组件对外的属性接口，只需要点击Interface窗口中的"Add"按钮或在某个接口中，点击"edit"。弹出如下窗口：
+
+##### 2.3.2 Property interface definition
+
+
+
+We can add or edit external property interfaces of components in the Interface toolbox, simply click the "Add" button in the interface toolbox or click "edit" in a certain interface. The following dialog pops up:
+
 
 <img src="../img/hmi/h026.png"/>
 
-其中，Name就是此属性接口名称，必须符合IOT-Tree命名限定(a-z A-Z起始),Value Type代表属性值类型。Editor assist用来告诉引用的属性列表，此值可以选择填写(如颜色等)。
 
-接下来是最重要的两个输入： OnGetJS ,OnSetJS。他们分别代表此组件被某个UI节点引用时，产生的具体实例，在此属性被读取或设置数据时，要运行的JS函数。
 
-从上图我们看到，两个函数都是匿名JS函数，有个$this参数代表在UI节点引用具体的实例对象，对于OnSetJS还有一个$value代表属性被设置的时候输入的值。
+Among them, Name is the name of this property interface, which must comply with the IOT-Tree naming qualification (starting from a-z A-Z), and Value Type represents the property value type. The 'Editor assist' is used to indicate special support for referenced property values, such as color.
 
-上图的这个Value属性接口很典型，我们分析一下里面的JS代码，在后续你的自定义组件就可以自己参考了：
+Next are the two most important inputs: OnGetJS and OnSetJS. They respectively represent the JS functions to be run when the specific instance generated by this component is referenced by a UI node, and the relevant properties are read or write.
+
+From the above figure, we can see that both functions are anonymous JS functions, with a $this parameter representing the specific instance object referenced in the UI node. For OnSetJS, there is also a $value representing the value entered when the property is set.
+
+The "Value" property interface shown in the above figure is very typical. Let's analyze the JS code inside and refer to it for your own custom components in the future:
+
 
 **OnGetJS**
 ```
 var pv = $this["-pin_val-"];
 
-//此代码在这个实例中查找指针当前值，我们使用了一个很奇怪的属性名称"-pin_val-",这是为了防止和$this这个JS对象已经存在的成员冲突。
+
+//This code looks up the current value of the pointer in this instance, and we use a very strange property name "-pin_val-" to prevent conflicts with members that already exist in the JS object $this.
+
 ```
 
 ```
  if(pv==null||pv==undefined)
     return dial.dialValMin ;
  return pv;
-这个pv值如果不存在，这时候我们就返回刻度盘的最小值，其中dial是组件内部刻度盘图元的Name属性。如果存在，则返回此值即可。
+
+
+//If this "pv" value does not exist, we will return the minimum value of the scale, where "dial" is the Name property of the internal "Dial" item of the component. If present, return this value.
+
 ```
 **OnSetJS**
 ```
-var pv = $this["-pin_val-"]=$value; //对当前组件图元实例进行输入值的设置，并赋值给pv这个变量
 
-//后续根据这个变量调整内部指针的旋转角度，其中pin是内部指针图元的Name属性，rotate可以用鼠标在属性标题上方不动，就可以显示出来的内部名称。
+//Set the input value for the current instance object and assign it to the variable "pv"
+var pv = $this["-pin_val-"]=$value; 
+
+
+//Subsequently, adjust the rotation angle of the internal pointer based on this variable, where "pin" is the Name property of the internal pointer draw item, and rotate can be displayed by hovering the mouse over the property title to display the internal name.
+
   if(pv==null||pv==undefined||pv==""||pv<dial.dialValMin)
     pv = dial.dialValMin;
   if(pv>dial.dialValMax)
@@ -158,27 +233,63 @@ var pv = $this["-pin_val-"]=$value; //对当前组件图元实例进行输入值
   var ang = (pv-dial.dialValMin)/hv*ha+dial.dialAngMin;
   pin.rotate = (ang-180)*Math.PI/180;
 ```
+**JS Context**
 
-很明显，当在UI节点编辑界面中，我们选中这个组件图元，展示属性的时候就会触发OnGetJS函数。而在属性输入框输入内容时，就会触发OnSetJS这个函数。你会看到指针会根据你的输入做旋转动作。
 
-请注意：以上的JS代码都是Client端运行的。
 
-对于JS脚本的详细信息，请参考[JS Script Usage][js_u]
+If you are unsure of the context members that can be directly referenced within JS, you can double-click on the JS editing area with the mouse. On the left side of the pop-up JS editing dialog, you can see that the current Client JS can support content. As shown in the following figure:
 
-#### 2.4 组件事件接口定义
 
-IOT-Tree也规划了组件事件接口。当一个组件内部很复杂，包含更多交互事件时，才需要提供组件事件。大多数情况UI是不需要的。
+<img src="../img/hmi/h034.png">
 
-本内容孩子规划中，敬请期待...
+
+
+It is obvious that when we select this component item in the UI node editing UI and display its properties, the OnGetJS function will be triggered. When entering content in the property input box, the OnSetJS function will be triggered. You will see that the pointer will rotate based on your input.
+
+Please note that the above JS code is run on the client side.
+
+
+For detailed about JS scripts, please refer to[JS Script Usage][js_u]
+
+##### 2.3.3 Property Interface Mapping
+
+
+
+In the above property interface definition, we can define the external property support of UI components when they are used by implementing OnGetJS and OnSetJS. This implementation function is very flexible and powerful, but it is relatively complex. In many cases, we only need the external environment to directly modify a certain property of an internal Draw Item, without the need to use JS scripts for transformation - that is, we want to directly open a sub draw item property inside the UI component as an property interface.
+
+This is achieved through "Property interface mapping".
+
+In the editing area, select a certain draw item that requires open properties, and then click the "Map" button in the interface toolbox in the bottom left corner. In the pop-up dialog, you can see a list of all properties of the current draw item. You only need to check the properties you want to open to the public. As shown in the following figure:
+
+
+<img src="../img/hmi/h035.png">
+
+
+
+After clicking "OK", the interface in the bottom left corner will display the open property content you checked. You can see that the name of each interface is automatically prefixed with a unique combination.
+
+
+
+#### 2.4 Component Event Interface Definition
+
+
+
+IOT-Tree also plans UI component event interfaces. When a component is complex internally and contains more interaction events, component events need to be provided. In most cases, it is not necessary.
+
+This content is still under planning, please look forward to
+
 
 TODO
 
 
-### 3 总结
+### 3 Summary
 
-以上基本完整的讲述了IOT-Tree自定义HMI组件的整体过程，可以发现你只需要很少的JS知识，就可以很容易地制作你自己的组件。
 
-IOT-Tree内部自带了一些组件，你可以参考研究，并且建议你新建自己类似的组件时，直接复制到你的库中，然后修改调整。
+
+The above provides a complete explanation of the overall process of customizing HMI(UI) components for IOT-Tree. It can be found that you only need a little knowledge of JS to easily create your own components.
+
+IOT-Tree comes with some built-in components, which you can refer to for research. It is recommended that when creating your own similar components, you directly copy them to your library, and then make modifications and adjustments.
+
 
 [js_u]:../js/index.md
 [hmi_edit]:./hmi_edit.md

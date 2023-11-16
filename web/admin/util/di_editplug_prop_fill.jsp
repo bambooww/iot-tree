@@ -42,7 +42,7 @@ border:0px solid;height:120px;
 </style>
 </head>
 <script>
-dlg.resize_to(500,450);
+dlg.resize_to(500,500);
 </script>
 <body>
 <div style="float:left; display:block;width:100%;border0:1px solid">

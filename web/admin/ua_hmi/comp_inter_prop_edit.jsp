@@ -79,14 +79,14 @@ dlg.resize_to(600,650);
     <label class="layui-form-label">OnGetJS:</label>
     <div class="layui-input-block" style="text-align: left;color:green;">
     ($this)=>
-      <textarea id="onGetJS" name="onGetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
+      <textarea id="onGetJS" name="onGetJS" placeholder="" class="layui-textarea" rows="8" ondblclick="on_client_get_js_edit()" title="double click to open js editor"></textarea>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">OnSetJS:</label>
     <div class="layui-input-block" style="text-align: left;color:green;">
     ($this,$value)=>
-      <textarea id="onSetJS" name="onSetJS" placeholder="" class="layui-textarea" rows="10"></textarea>
+      <textarea id="onSetJS" name="onSetJS" placeholder="" class="layui-textarea" rows="10"  ondblclick="on_client_set_js_edit()" title="double click to open js editor"></textarea>
     </div>
   </div>
  </form>
@@ -94,9 +94,12 @@ dlg.resize_to(600,650);
 <script type="text/javascript">
 
 var ctrl_n = "<%=n%>" ;
+var hmiView = null ;
+var path="" ;
 if(ctrl_n!="")
 {
 	var ow = dlg.get_opener_w() ;
+	hmiView = ow.hmiView;
 	var ctrlitem = ow.loadLayer.getCompInter().getInterPropByName(ctrl_n) ;
 	if(ctrlitem!=null)
 	{
@@ -136,5 +139,51 @@ function do_submit(cb)
 	cb(true,{n:n,t:tt,tp:tp,editplug:editplug,onGetJS:gjs,onSetJS:sjs});
 }
 
+function on_client_get_js_edit()
+{
+	//if(!path)
+	//	return ;
+	let js_cxt = hmiView.JS_getCxt();
+	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=onGetJS&path="+path,
+			{title:"Edit Property Interface OnGetJS",w:'600px',h:'400px',js_cxt:js_cxt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#onGetJS").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+function on_client_set_js_edit()
+{
+	//if(!path)
+	//	return ;
+	let js_cxt = hmiView.JS_getCxt();
+	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=onSetJS&path="+path,
+			{title:"Edit Property Interface OnSetJS",w:'600px',h:'400px',js_cxt:js_cxt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#onSetJS").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 </script>
 </html>
