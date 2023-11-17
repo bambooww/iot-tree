@@ -1,33 +1,44 @@
-Authority plugins
+Plugin - Authority
 ==
 
-IOT-Tree内部自带了一个很简单的权限管理。如果你要访问IOT-Tree的管理界面"http://host:port/admin"，则系统会自动让你提供管理员和密码。除此之外，系统对于运行中，项目监控画面和数据读取没有任何限定。如果要在监控画面中下达指令，则还可以根据需要配置数据写权限，你只需要填写配置好的用户密码即可。
 
-很明显，这个简单的权限限定很可能不满足你的需要。你可能需要在你的业务系统中，直接引用IOT-Tree的监控画面、实时JSON数据或写数据。而且，你的业务系统已经有了自己的一套用户验证和权限子系统，那么你肯定也希望IOT-Tree能够共用这套用户和权限控制。
 
-这个就需要用到IOT-Tree支持的权限Authority插件了。Authority插件可以使得IOT-Tree Server在对外提供服务的前，使用您已经有的用户和权限机制进行验证。
+IOT-Tree comes with a very simple permission management internally. If you want to access the management page of IOT-Tree "http://host:port/admin", The system will automatically ask you to provide an administrator and password. In addition, the system has no restrictions on project monitoring HMI(UI) and data reading during operation. If you want to issue instructions in the monitoring UI, you can also configure data write permissions as needed. You only need to fill in the configured user password.
 
-如果你对IOT-Tree Server的插件机制不了解，请先查看 [插件开发][plug]。
+Obviously, this simple permission restriction may not meet your needs. You may need to directly reference the monitoring page, real-time JSON data, or write data of IOT-Tree in your business system. Moreover, your business system already has its own set of user authentication and permission subsystems, so you certainly hope that IOT-Tree can share this set of users and permission control.
 
-## 0 IOT-Tree共享业务系统cookie中的令牌token
+This requires the Authority plugin supported by IOT-Tree. The Authority plugin allows the IOT-Tree Server to authenticate using the user and permission mechanisms you already have before providing services externally.
 
-你的业务系统如果要整合IOT-Tree相关URL监控画面，或通过ajax方式访问某些URL的实时数据，并且使用权限插件统一用户限定。
+If you are not familiar with the plugin mechanism of IOT-Tree Server, please check [Plugin Development][plug] first.
 
-那么你需要把你的业务系统URL访问和IOT-Tree部署之后的Web访问统一到一个域名空间下，这样在你的业务系统用户登录之后，就可以共享http请求头部资源。
 
-典型的方法是使用nginx作为前端统一入口，在业务系统登录之后，在当前会话http请求中cookie中，写入一个令牌cookie_name=token代表当前用户临时标识。那么，IOT-Tree也可以通过这个token调用权限插件进行用户权限验证。
+## 0 Token in the shared system cookie
 
-基于共享cookie中的token内容，IOT-Tree权限插件验证就有了一个基础，接下来就可以具体实现了。
 
-## 1 Java类开发
 
-你可以使用任何工具进行这个Java类的开发，IOT-Tree对权限插件的Java类仅有一些命名上的限定。并没有提供java接口(interface)或抽象类给你实现或继承。这样你开发这个类的时候不需要依赖IOT-Tree提供的任何东西。当然，你实现的这个类有自己的特殊依赖，那就参考[插件开发][plug]里面规定的lib/或classes/目录中存放即可。
+If your business system needs to integrate IOT Tree related URL monitoring pages, or access real-time data of some URLs through ajax, and use "Authority plugin" to unify user restrictions.
 
-### 1.1 Java插件类的实现规定
+You need to unify the URL access of your business system and the Web access of IOT Tree into one domain name space, so that after your business system users log in, they can share the http request header resources.
 
-#### 1.1.1 用户类User定义
+The typical method is to use nginx as the front-end unified portal. After the business system login, a token "cookie_name=token" is written in the cookie of the current session http request to represent the temporary identity of the current user. Then, IOT Tree can also use this token to call the "Authority plugin" for user permission verification.
 
-由于权限和用户登录信息有个，IOT-Tree插件必须有个用户对象作为验证之后的用户对象返回值。你实现这个用户类时，类的名称不限定。你可以使用User，XxUser等。IOT-Tree规定这个类内部必须包含以下几个函数。
+Based on the token content in the shared cookie, the IOT Tree "Authority plugin" verification has a foundation. Next, it can be implemented concretely.
+
+
+## 1 Java Class Development
+
+
+You can use any tool to develop this Java class. IOT-Tree only has some naming restrictions on Java classes of "Authority plugin". There is no java interface or abstract class for you to implement or inherit. In this way, you do not need to rely on anything provided by IOT-Tree when coding this class. Of course, the class you implement may has its own special dependencies. Please refer to the lib/ or classes/directory specified in [Plug in Development][plug].
+
+
+### 1.1 Implementation regulations for Java plugin classes
+
+#### 1.1.1 User class definition
+
+
+
+Due to the need of permissions and user login information, the IOT-Tree "Authority plugin" must have a user object as the return value after authentication. When you implement this user class, the class name is not qualified. You can use User, XxUser, etc. IOT Tree specifies that this class must contain the following methods.
+
 
 ```
 public String getId()
@@ -37,7 +48,9 @@ public String getRegName()
 public String getFullName()
 ```
 
-这几个函数分别对应用户唯一Id，用户注册名(登录名)，用户全称。典型的实现如下：
+
+These methods correspond to the unique user ID, user registration name (login name), and user full name respectively. Typical implementations are as follows:
+
 
 ```
 package com.xxx.plug;
@@ -85,62 +98,81 @@ public class User
 
 ```
 
-有了这个基础的用户类之后，你就可以编写插件类了。我们假设插件类名为AuthDemo，那么在其内部必须包含以下函数。
 
-#### 1.1.2 插件类初始化函数init_plug
+With this basic user class, you can write plug-in classes. Let's assume that the plug-in class is named AuthDemo, and the following methods must be included in it.
 
-在插件类内部必须有个初始化插件函数，定义如下：
+
+#### 1.1.2 Initialization Method - init_plug
+
+
+There must be an initialization plug-in method inside the plug-in class, which is defined as follows:
 
 ```
 void init_plug(File plugdir, HashMap<String, String> params)
 ```
 
-这个函数名称必须为init_plug，并且有两个参数一个是本插件部署之后所在的目录，另一个是输入参数。在插件被装载使用前，这个函数会被自动调用。你可以在里面根据插件目录和输入的参数进行一些初始化工作。大致可以有如下内容:
 
->你可以通过plugdir提供的插件根目录，定位到插件部署绝对位置，装载插件运行需要的特定文件。这些文件由插件实现自己决定，比如你可以通过这个目录定位到一个特殊的配置文件。
+This method name must be 'init_plug' and have two parameters. One is the directory where this plugin will be deployed, and the other is the input parameter. This method will be automatically called before the plugin is loaded and used. You can perform some initialization work inside based on the plugin directory and input parameters. It can roughly include the following content:
 
->你可以通过params参数（这些参数来自于插件配置config.json中的内容），初始化后续运行需要的内容。如，对于邮件发送，你可以配置邮件服务器地址端口、用户和验证信息。
+>You can use the plugin root directory provided by "plugdir" to locate the absolute location for plugin deployment and load specific files required for plugin operation. These files are determined by the plugin implementation itself, for example, you can locate a special configuration file through this directory.
 
-#### 1.1.3 插件类checkAdminUser函数
+>You can initialize the required content for subsequent runs through the parameters (which come from the plugin configuration "config.json"). For example, for email sending, you can configure the email server address, port, user, and authentication information.
+
+
+#### 1.1.3 Plugin class method - checkAdminUser
 
 ```
 public User checkAdminUser(String reg_name,String password)
 ```
-此函数用来支持IOT-Tree自身的项目管理界面管理员用户验证，所以只需要用户注册名和密码作为参数，如果验证成功，则返回对应的User对象。
 
-#### 1.1.4 插件类checkUserByToken函数
+
+This method is used to support IOT-Tree's own project management page administrator user authentication, so only the user registration name and password are required as parameters. If the authentication is successful, the corresponding User object will be returned.
+
+
+#### 1.1.4 Plugin class method - checkUserByToken
 
 ```
 public User checkUserByToken(String token)
 ```
-此函数用来支持IOT-Tree自身的当前普通用户访问验证，通过共享cookie中的token进行用户验证。IOT-Tree在页面被访问时会获取当前用户的token，然后调用此函数判断相关权限，如果验证成功，则返回对应的User对象。
 
-很明显，插件实现此函数时会和你的业务系统权限进行沟通，典型的方式是你使用redis做当前登录用户的token信息存储。然后在此函数中访问redis接口，获取用户信息即可。
 
-#### 1.1.5 插件类checkReadRight函数
+This method is used to support the authentication of current users accessing IOT-Tree. IOT-Tree will obtain the token of the current user when the page is accessed, and then call this method to determine the relevant permissions. If the verification is successful, the corresponding User object will be returned.
+
+Obviously, this method will communicate with your business system permissions. The typical way is that you use Redis to store the token information of the current login user. Then access the Redis interface in this method to obtain user information.
+
+
+#### 1.1.5 Plugin class method - checkReadRight
 
 ```
 public boolean checkReadRight(String node_path,String reg_name)
 ```
-此函数用来判断某个节点是否允许某个注册用户访问，IOT-Tree的资源都以树形路径方式对我提供URL服务，如hmi和json。
 
-你只需要在IOT-Tree项目树中的节点上鼠标右键，选择"Access"就可以打开新的流量器窗口，对相关资源进行访问——请仔细观察新打开浏览器的url路径，你会发现里面包含对应节点的路径。这个路径也即是我们实现这个函数的第一个参数node_path。
 
-第二个参数就是当前注册用户名。
+This method is used to determine whether a registered user is allowed to access a node. IOT Tree resources provide URL services to me in the form of tree paths, such as hmi and json.
 
-#### 1.1.6 插件类checkWriteRight函数
+You only need to right-click the node in the IOT Tree project tree and select "Access" to open a new browser window and access related resources - please carefully observe the URL path of the newly opened browser, and you will find that it contains the path of the corresponding node. This path is also the first parameter "node_path" that we implement this method.
+
+The second parameter is the current registered user name.
+
+
+#### 1.1.6 Plugin class method - checkWriteRight
 
 ```
 public boolean checkWriteRight(String node_path,String reg_name)
 ```
-此函数用来判断某个节点是否允许某个注册用户写操作，IOT-Tree的资源都以树形路径方式对我提供URL服务，如hmi和json。第二个参数就是当前注册用户名。
-
-在HMI界面中，如果要下达指令，那么此函数会被调用，用来验证当前用户对节点（对应node_path）是否有写入权限。
 
 
-### 1.2 具体的实现例子
+This method is used to determine whether a node allows a registered user to write. IOT Tree resources provide URL services to me in the form of tree paths, such as hmi and json. The second parameter is the current registered user name.
 
-可以看到，权限的插件实现也很简单，只需要按照规定实现init_plug和以上规定的函数即可。下面就是这个验证插件的全部代码。
+In the HMI UI, if an instruction is to be issued, this method will be called to verify whether the current user has write permission to the node (corresponding to "node_path").
+
+
+### 1.2 Implementation examples
+
+
+
+As you can see, the "Authority plugin" implementation is also very simple. You only need to implement "init_plug" and the methods specified above according to the regulations. The following is the complete code of this verification plug-in.
+
 ```
 package com.xxx.plug;
 
@@ -252,17 +284,20 @@ public class AuthDemo
 
 ```
 
-以上代码仅仅为了演示使用，实现非常简单。在你的业务中，可以调用redis或数据库相关接口。
 
-## 2 插件部署
+The above code is only for demonstration, and the implementation is very simple. In your business, you may obtain the Redis interface parameters in the "init_plug" method to initialize Redis related objects,  and then use this object in other methods to achieve the corresponding functions.
 
-### 2.1 插件部署目录
 
-对Java类进行编译，生成 User.class 和 AuthDemo.class这两个文件。如果你实现的类依赖一些库文件，则这些jar文件放到lib目录中。
+## 2 Plugin deployment
 
-前提，你可以按照配置好了IOT-Tree运行环境，然后在IOT-Tree安装目录下找到 data/plugins/这个目录。在里面新建一个目录auth_demo。
+### 2.1 </en>Plugin deployment Directory</en>
 
-整体部署目录和文件结构如下：
+
+Compile Java classes to generate User.class and AuthDemo.class files. If your implemented class depends on some library files, these jar files will be placed in the lib directory.
+
+On the premise that you have installed and configured the IOT Tree running environment, find the data/plugins/directory under the IOT Tree installation directory. Create a new directory "auth_demo" in it.
+
+The overall deployment directory and file structure are as follows:
 
 ```
 │  config.json
@@ -284,15 +319,19 @@ public class AuthDemo
                     User.java
 ```
 
-文件和目录部署之后，我们还需要编辑配置文件config.json，这样才能最终完成插件的部署
 
-### 2.2 验证插件配置
+After deploying the files and directories, we also need to edit the configuration file "config.json" in order to finally complete the deployment of the plugin.
 
-因为config.json不仅支持Auto插件，同时也支持其他插件类型，所以Auto仅仅是这个配置文件中的一部分。
 
-同理，我们完全可以在一个插件目录中，发布多个JsApi内容。在插件目录下的config.json文件中，和权限验证相关的配置都在"auth"属性下面，"auth"对应一个JSON数组，数组每个成员都是一个JSON对象，每个对象对应一个auth的对象。（本例只有一个）
+### 2.2 Authority plugin configuration
 
-如下:
+
+Because config.json not only supports Authority plugins, but also other plugin types, Authority is only a part of this configuration file.
+
+Similarly, we can publish multiple Authority content in a single plugin directory. In the config.json file in the plugin directory, the configurations related to Authority are all under the "auth" attribute, and "auth" corresponds to a JSON array. Each member of the array is a JSON object, and each object corresponds to a object of the API. (This example only has one)
+
+As follows:
+
 ```
 {
 	"name":"auth_demo","title":"Auth Plug,a demo for auth",
@@ -310,18 +349,24 @@ public class AuthDemo
 	]
 }
 ```
-每个js_api对应的对象，有如下属性"name","class"和"params"。其中，"name"和"class"是必不可少的。并且，"name"属性的值是个符合js变量命名的字符串，"class"这是配套提供的java对象全名称。这个类必须在插件目录下的"classes/"或"lib/"中的某个jar文件中存在。
-"params"是对应插件init_plug初始化函数需要用到的参数，可以根据插件具体实现的提供格式定义和支持。
 
-本例子这个验证插件名称为auth_demo。
 
-对于IOT-Tree的一般插件，到此配置已经完成了。但权限验证插件很特殊，一个IOT-Tree部署实例只允许一个权限验证插件起作用。然后，我们在plugins这个目录下面，很可能有多个验证插件，那么应该选用哪个呢？
+The object corresponding to each 'auth' has the following attributes: 'name', 'class', and' params'. Among them, "name" and "class" are essential. Moreover, the value of the "name" attribute is a string that matches the naming of the JavaScript variable, and "class" is the full name of the Java object provided with it. This class must exist in the plugin directory 'classes/' or in a jar file of 'lib/'.
 
-很明显，我们需要明确指定当前IOT-Tree运行实例使用哪个。这个就必须编辑IOT-Tree Server安装目录下面的总配置文件 config.xml。在里面指定具体使用验证插件内容，同时还包含一些其他参数。
+"params" are the parameters required for the initialization function "init_plug", and the it is determined by the plugin class.
+
+In this example, the name of the authentication plug-in is "auth_demo".
+
+For general IOT Tree plug-ins, this configuration has been completed. However, the Authority plugin is very special. One IOT-Tree deployment instance only allows one "Authority plugin" to work. Then, we may have multiple "Authority plugin" under the plugins directory. Which one should we choose?
+
+Obviously, we need to specify which "Authority plugin" IOT-Tree running instance uses. To do this, you must edit the main configuration file "config.xml" under the IOT Tree Server installation directory. In this file,we specify "Authority plugin" to be used, and set some other parameters.
 
 <img src="../img/adv/003.png">
 
-如上图所示，我们在总配置文件config.xml中，新增一个plug_auth xml元素，内部有如下参数：
+
+
+As shown in the figure above, we add a "plug_auth" xml element in the main configuration file "config.xml", with the following parameters:
+
 
 ```
 name="auth_demo" 
@@ -331,16 +376,21 @@ no_read_right_prompt="No read permission"
 no_write_right_prompt="No write permission"
 ```
 
-其中，name指定了使用已经部署的插件名称，login_url用来跳转登录页面，token_cookie_name用来指定cookie中存放共享token的cookie名称。剩下两个参数分别对应当前用户没有读权限和没有写权限的提示信息。
 
-从以上配置要求我们可以看出，如果总配置文件config.xml内部没有指定使用哪个权限插件，则就不会有任何权限插件起作用。
+Among them, name specifies the name of the deployed "Authority plugin", "login_url" specifies the page after the login jump, and "token_cookie_name" specifies the name of the cookie in which the shared token is stored. The remaining two parameters correspond to the prompt message that the current user has no read permission and no write permission.
 
-通过这样配置之后，我们需要重新启动IOT-Tree Server程序，才会起作用。
+From the above configuration requirements, we can see that if the main configuration file "config.xml" does not specify which "Authority plugin" to use, no "Authority plugin" will work.
 
-## 3 插件使用和测试
+After this configuration, we need to restart the IOT-Tree Server to work.
 
-在我们的发布版本中，auth_demo已经配套存在，你只需要修改config.xml文件，去掉对应注释信息，然后重启IOT-Tree Server即可。
 
-你会发现，如果启用了权限插件，管理员登录验证就和缺省情况不相同了。你也可以打印出几个权限验证输入参数，查看我们访问某个资源内容时，输入的节点路径信息是什么。由此反过来，你就可以把这个节点路径作为资源，放入你的业务权限系统中进行管理。
+## 3 Plugin usage and testing
+
+
+
+In our release version, "auth_demo" already exists. You just need to modify the config.xml file, remove the corresponding comments, and restart the IOT-Tree Server.
+
+You will find that if the "Authority plugin" is enabled, the administrator login verification is different from the default. You can also print out several permission verification input parameters to view the node path information entered when we access a resource content. In turn, you can take this node path as a resource and put it into your business permission system for management.
+
 
 [plug]: ./adv_plugin.md

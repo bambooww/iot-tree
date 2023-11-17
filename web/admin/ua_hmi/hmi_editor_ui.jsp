@@ -707,6 +707,14 @@ function tab_save()
     });
 }
 
+window.addEventListener("keydown", function(e) {
+    if((e.key=='s'||e.key=='S')&&(navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey))
+    {//ctrl + s
+        e.preventDefault();
+        tab_save();
+    }
+}, false);
+
 function tab_notify()
 {
 	if(parent==window || !(parent.tab_notify))

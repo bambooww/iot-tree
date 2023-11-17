@@ -21,7 +21,7 @@
 <script src="/_js/oc/oc.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(500,580);
+dlg.resize_to(600,580);
 </script>
 </head>
 <body>
@@ -35,15 +35,14 @@ dlg.resize_to(500,580);
   
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
-    <div class="layui-input-block" style="text-align: left;color:green;">
+    <div class="layui-input-inline" style="text-align: left;color:green;width:400px;">
     ($server,$util,$this)=&gt;{
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="6" ondblclick="on_client_js_edit()" title="double click to open js editor"></textarea>
-      }
-      <%--
-      <div class="layui-form-mid layui-word-aux" onclick="insert_tag('clientjs')">insert tag</div>
-       --%>
+     }
+     </div>
+      <div class="layui-form-mid" style="padding: 0!important;top:15px;"> 
+        <button type="button" class="layui-btn layui-btn-primary" onclick="on_client_js_edit()" title="open js editor">...</button>
     </div>
-    
   </div>
 <%
 if(bsjs)
@@ -51,16 +50,18 @@ if(bsjs)
 %>
   <div class="layui-form-item">
     <label class="layui-form-label">Server JS:</label>
-    <div class="layui-input-block" style="text-align: left;color:green;">
-      $event.fire_to_server() must be called in client js to be triggered.
+    <div class="layui-input-inline" style="text-align: left;color:green;width:400px;">
       ($input)=&gt;{
       <textarea id="serverjs" name="serverjs" placeholder="" class="layui-textarea" rows="6" ondblclick="on_js_edit()" title="double click to open js editor"></textarea>
-      }
+      } // $event.fire_to_server() must be called in client js to be triggered.
       <div class="layui-form-mid layui-word-aux" onclick="insert_tag('serverjs')">insert tag</div>
+    </div>
+    <div class="layui-form-mid" style="padding: 0!important;top:15px;"> 
+        <button type="button" class="layui-btn layui-btn-primary" onclick="on_js_edit()" title="open js editor">...</button>
     </div>
   </div>
 <%
-}
+} 
 %>
  </form>
 </body>

@@ -69,8 +69,8 @@
 
 #### <a href="doc/advanced/index.md" >9 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 JS API</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Authority plugin</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Plugin - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Plugin - Authority</a>
 ##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Outer OPC UA Support</a>
 ##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Device simulators</a>
 ##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Remote control from master station to sub station</a>

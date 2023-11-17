@@ -183,6 +183,7 @@ Added and organized documents for connector and device management instructions.
 
 Adapt and adjust the demo project based on the improvement and standardization of Client JS.
 Improve plugin related functions.
+Add Alert Support
 Added and organized documentation for HMI instructions.
 
 

@@ -1,44 +1,54 @@
-Plugin-JsApi
+Plugin - JsApi
 ==
 
-JsApi插件可以使得IOT-Tree Server服务器端JS脚本支持更多的特殊对象($$xxx)，并且这些对象提供特殊的函数支持，这样可以使得系统更加贴近您的业务需求。比如，你的应用需要使用IOT-Tree作为某个物联网现场的边缘计算节点，需要通过私有协议的安全通道与云端通信（推送数据），那么你就可以针对此通信专门实现对应的JsApi插件，然后在IOT-Tree中的任务Task中，使用JS脚本组织数据，并通过这个插件对象调用相关函数发送数据。
 
-如果你对IOT-Tree Server的插件机制不了解，请先查看 [插件开发][plug]。
 
-为了更直观的详细描述JsApi的开发、部署和使用。我们使用一个例子来说明。
+The JsApi plugin can enable IOT-Tree Server server-side JS scripts to support more special objects ($$xxx), and these objects provide special function support, which can make the system more tailored to your business needs. For example, if your application needs to use IOT Tree as the edge computing node of an IoT site, and needs to communicate with the cloud (push data) through the secure channel of a private protocol, then you can specifically implement the corresponding JsApi plug-in for this communication, and then use JS script to organize data in the task in IOT Tree, and send data by calling related functions through this plug-in object.
 
-为了使IOT-Tree服务端JS脚本支持邮件的推送，专门实现一个$$mail的插件，这个对象里面包含邮件发送等相关函数支持。
+If you are not familiar with the plugin mechanism of IOT-Tree Server, please check [Plugin Development][plug] first.
 
-## 1 Java类开发
+To provide a more intuitive and detailed description of the development, deployment, and use of JsApi. Let's use an example to illustrate.
 
-你可以使用任何工具进行这个Java类的开发，IOT-Tree对JsApi插件的Java类仅有一些命名上的限定。并没有提供java接口(interface)或抽象类给你实现或继承。这样你开发这个类的时候不需要依赖IOT-Tree提供的任何东西。当然，你实现的这个类有自己的特殊依赖，那就参考[插件开发][plug]里面规定的lib/或classes/目录中存放即可。
+In order to enable the IOT-Tree server JS script to support email push, a $$mail plugin is specifically implemented, which includes support for email sending and other related functions.
 
-### 1.1 Java插件类的实现规定
 
-#### 1.1.1 初始化函数
+## 1 Java Class Development
 
-在类内部必须有个初始化插件函数，定义如下：
+
+You can use any tool to develop this Java class, and IOT-Tree only has some naming restrictions on the Java classes of the JsApi plugin. There is no Java interface or abstract class provided for you to implement or inherit. This way, you don't need to rely on anything provided by IOT-Tree. Of course, the class you implement has its own special dependencies, so you can refer to the "lib/" or "classes/" directory specified in [plugin development][plug] to store it.
+
+
+### 1.1 Implementation regulations for Java plugin classes
+
+#### 1.1.1 Initialization Method
+
+
+There must be an initialization method inside the plugin class, defined as follows:
 
 ```
 void init_plug(File plugdir, HashMap<String, String> params)
 ```
 
-这个函数名称必须为init_plug，并且有两个参数一个是本插件部署之后所在的目录，另一个是输入参数。在插件被装载使用前，这个函数会被自动调用。你可以在里面根据插件目录和输入的参数进行一些初始化工作。大致可以有如下内容:
 
->你可以通过plugdir提供的插件根目录，定位到插件部署绝对位置，装载插件运行需要的特定文件。这些文件由插件实现自己决定，比如你可以通过这个目录定位到一个特殊的配置文件。
+This method name must be 'init_plug' and have two parameters. One is the directory where this plugin will be deployed, and the other is the input parameter. This method will be automatically called before the plugin is loaded and used. You can perform some initialization work inside based on the plugin directory and input parameters. It can roughly include the following content:
 
->你可以通过params参数（这些参数来自于插件配置config.json中的内容），初始化后续运行需要的内容。如，对于邮件发送，你可以配置邮件服务器地址端口、用户和验证信息。
+>You can use the plugin root directory provided by "plugdir" to locate the absolute location for plugin deployment and load specific files required for plugin operation. These files are determined by the plugin implementation itself, for example, you can locate a special configuration file through this directory.
 
-#### 1.1.2 JS支持的函数
+>You can initialize the required content for subsequent runs through the parameters (which come from the plugin configuration "config.json"). For example, for email sending, you can configure the email server address, port, user, and authentication information.
 
-在你实现的插件类中，如果想开放某个函数给JS使用，那么这个函数名必须使用"JS_"作为开头，如
+#### 1.1.2 Methods open to JS
+
+
+In the plugin class you implement, if you want to open a method for JS to use, the method name must start with "JS_", such as
 
 ```
 public String JS_get_host()
 
 public void JS_send_mail(String to_mail, String mail_title, String mail_content) 
 ```
-IOT-Tree在装载这个插件类之后，会查找以"JS_"开头的函数,并设定为JS可以调用的成员函数。其中，在JS调用是，是不需要写"JS_"内容的。如以上两个函数在JS调用时，使用如下方式：
+
+
+After loading this plugin class, IOT-Tree will search for methods starting with "JS_" and set them as member functions that JS can call. Among them, there is no need to write "JS_" content when calling JS. When calling the above two functions in JS, use the following method:
 
 ```
 String host = $$mail.get_host();
@@ -46,11 +56,14 @@ String host = $$mail.get_host();
 $$mail.send_mail("xx@xxx.com","mail title","hello send mail") ;
 ```
 
-<font color="red">请注意，为了方便JS调用，IOT-Tree规定，你在定义开放函数的时候，函数参数和返回值都只能使用基本类型。因为如果要实现更复杂的对象作为参数，虽然IOT-Tree可以开放更多的依赖和接口，但同时也会使得插件的开发复杂很多，并且调试困难。事实上，绝大多数的插件应用使用的基本类型就可以满足要求。</font>
 
-### 1.2 具体的实现例子
+<font color="red">Please note that for the convenience of JS calls, IOT-Tree stipulates that when defining open methods, their parameters and return values can only use basic types. Because if we want to implement more complex objects as parameters, it will also make the development of plugins much more complex and debugging difficult. Although IOT-Tree can open more dependencies and interfaces to support it. In fact, the basic types used by the vast majority of plugin applications can meet the requirements</font>
 
-可以看到，JsApi的插件实现非常简单，只需要按照规定实现init_plug和JS_开头的函数即可。下面就是这个邮件发送实现的全部代码。
+
+### 1.2 Implementation examples
+
+
+As can be seen, the implementation of JsApi's plugin is very simple, just follow the regulations to implement "init_plug" and starting with "JS_" methods. The following is the complete code for this email sending implementation.
 
 ```
 package com.xxx.plug;
@@ -133,17 +146,20 @@ public class JsApiMail
 
 ```
 
-从以上代码可以看到，你完全可以在你熟悉的Java开发环境中进行实现并测试，生成类文件 JsApiMail.class。完成之后你就可以在IOT-Tree环境中进行部署和使用。
 
-## 2 插件部署
+From the above code, it can be seen that you can fully implement and test it in your familiar Java development environment, generating the class file JsApiMail.class. After completion, you can deploy and use it in the IOT-Tree environment.
 
-### 2.1 插件部署目录
 
-前提，你可以按照配置好了IOT-Tree运行环境，然后在IOT-Tree安装目录下找到 data/plugins/这个目录。在里面新建一个目录mail。
+## 2 Plugin deployment
 
-另外，在此邮件插件还需要两个依赖的java库文件 activation-1.1.jar,mail-1.4.jar。这个也需要对此进行部署。
+### 2.1 </en>Plugin deployment Directory</en>
 
-整体部署目录和文件结构如下：
+
+Assuming that you have installed and configured the IOT-Tree runtime environment, then find the "data/plugins/" directory in the IOT-Tree installation directory. Create a new directory called 'mail' inside.
+
+In addition, the email plugin requires two dependent Java library files, activation-1.1.jar and mail-1.4.jar. This also requires deployment.
+
+The overall deployment directory and file structure are as follows:
 
 ```
 │  config.json
@@ -166,15 +182,19 @@ public class JsApiMail
                     JsApiMail.java
 ```
 
-文件和目录部署之后，我们还需要编辑配置文件config.json，这样才能最终完成插件的部署
 
-### 2.2 JsApi插件配置
+After deploying the files and directories, we also need to edit the configuration file "config.json" in order to finally complete the deployment of the plugin.
 
-因为config.json不仅支持JsApi插件，同时也支持其他插件类型，所以JsApi仅仅是这个配置文件中的一部分。
 
-同理，我们完全可以在一个插件目录中，发布多个JsApi内容。在插件目录下的config.json文件中，和JsApi相关的配置都在"js_api"属性下面，"js_api"对应一个JSON数组，数组每个成员都是一个JSON对象，每个对象对应一个js_api的对象。（本例只有一个）
+### 2.2 JsApi plugin configuration
 
-如下:
+
+Because config.json not only supports JsApi plugins, but also other plugin types, JsApi is only a part of this configuration file.
+
+Similarly, we can publish multiple JsApi content in a single plugin directory. In the config.json file in the plugin directory, the configurations related to JsApi are all under the "js_api" attribute, and "js_api" corresponds to a JSON array. Each member of the array is a JSON object, and each object corresponds to a object of the API. (This example only has one)
+
+As follows:
+
 ```
 {
 	"name":"mails",
@@ -197,18 +217,28 @@ public class JsApiMail
 	]
 }
 ```
-每个js_api对应的对象，有如下属性"name","class"和"params"。其中，"name"和"class"是必不可少的。并且，"name"属性的值是个符合js变量命名的字符串，"class"这是配套提供的java对象全名称。这个类必须在插件目录下的"classes/"或"lib/"中的某个jar文件中存在。
-"params"是对应插件init_plug初始化函数需要用到的参数，可以根据插件具体实现的提供格式定义和支持。
 
-本例子这个JsApi插件名称为mail，对应JS上下文成员为$$mail。
 
-## 3 插件使用和测试
+The object corresponding to each 'js_api' has the following attributes: 'name', 'class', and' params'. Among them, "name" and "class" are essential. Moreover, the value of the "name" attribute is a string that matches the naming of the JavaScript variable, and "class" is the full name of the Java object provided with it. This class must exist in the plugin directory 'classes/' or in a jar file of 'lib/'.
 
-通过以上开发、部署和配置，我们就可以对此插件在IOT-Tree的内部脚本中进行测试了。
+"params" are the parameters required for the initialization function "init_plug", and the it is determined by the plugin class.
 
-### 3.1 部署前测试建议
+In this example, the JsApi plugin name is mail, and the corresponding JS context member is $$mail.
 
-<font color=red>在此有个很重要的建议：建议你你开发此插件调试过程中，就对此插件进行测试。可以使用如下代码：</font>
+
+## 3 Plugin usage and testing
+
+
+
+Through the above development, deployment, and configuration, we can test this plugin in the internal JS script of IOT-Tree.
+
+
+### 3.1 Pre deployment testing recommendations
+
+
+
+<font color=red>Strongly recommend that you test this plugin during its development and debugging process. The following code can be used:</font>
+
 
 ```
 	public void test1() throws Exception
@@ -225,25 +255,34 @@ public class JsApiMail
 	}
 
 ```
-<font color=green>只要在你的测试环境中通过测试，那么就可以认为你开发的插件基本没问题，并且配合的测试环境也正常，这样部署到IOT-Tree运行环境中，可以大大减少出错的概率。毕竟在IOT-Tree内部JS调用出现问题的时候，由于环境复杂了很多，找问题的难度也大了一些。</font>
 
-### 3.2 部署启用插件
 
-如果IOT-Tree Server已经运行，那么在部署新的插件之后，必须对此Server重启启动，这样才能装载新的插件内容。
+<font color=green>As long as you pass the testing in your testing environment, you can assume that the plugin you developed is basically fine and the testing environment you are working with is also normal. Then,deploying it to the IOT-Tree runtime environment can greatly reduce the probability of errors. After all, when there are problems with JS calls within IOT-Tree, the complexity of the environment makes it more difficult to find the bugs.</font>
 
-我们在IOT-Tree Server启动打印的提示符中，可以看到这个插件装载成功的内容：
+
+### 3.2 Deploy and Enable Plugins
+
+
+
+If the IOT-Tree Server is already running, it must be restarted after deploying a new plugin in order to load the new plugin content.
+
+We can see the successful loading of this plugin at the prompt for starting printing on the IOT-Tree Server:
 
 <img src="../img/adv/001.png">
 
-<font color=green>这个插件对象 $$mail装载成功之后，可以在整个IOT-Tree部署实例的所有项目中共享使用。</font>
 
-我们也可以在Server端JS编辑界面中查看和测试此插件。
 
-我们打开Demo项目"Water tank and Medicament dosing"，在主目树的任意某个容器节点鼠标右键，选择"JS Context Test"，就可以打开对应的JS运行上下文编辑测试窗口，如下图：
+<font color=green>After successfully loading the plugin object $$mail, it can be shared and used across all projects of the entire IOT-Tree deployment instance</font>
+
+We can also view and test this plugin in the server-side JS editing dialog.
+
+We open the demo project "Water tank and Medical Dosing", right-click on any container node in the main tree, and select "JS Context Test" to open the corresponding JS runtime context editing test dialog, as shown in the following figure:
 
 <img src="../img/adv/002.png">
 
-我们可以看到在左边的JS上下文成员中，有个$$mail节点，并且下面有两个函数 send_mail、get_host。右边JS编辑区域，我们可以编写测试代码，并点击测试按钮运行测试。
+
+
+We can see that in the JS context member on the left, there is a $$mail node, and below it are two functions "send_mail" and "get_host". In the JS editing area on the right, we can write test code and click the test button to run the test.
 
 
 [plug]: ./adv_plugin.md

@@ -1,9 +1,5 @@
-
-
-
 Case of industrial automation system
 ==
-
 
 
 This case is a complete application process in the industrial field. If you have relevant working experience, you can quickly master IOT-Tree Server as a tool for your work in the industrial field. 
