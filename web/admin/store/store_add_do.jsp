@@ -30,7 +30,7 @@ if(dc==null)
 HashMap<String,Object> uips = new HashMap<>() ;
 uips.put("x",x);
 uips.put("y",y);
-Store ch = null;
+Source ch = null;
 try
 {
 	ch = dc.addStore(tp,name, title, desc,uips) ;

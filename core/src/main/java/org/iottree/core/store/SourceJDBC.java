@@ -1,13 +1,18 @@
 package org.iottree.core.store;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import org.iottree.core.store.gdb.ConnPoolMgr;
+import org.iottree.core.store.gdb.connpool.DBConnPool;
+import org.iottree.core.store.gdb.connpool.DBType;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 
 @data_class
-public class StoreJDBC extends Store
+public class SourceJDBC extends Source
 {
 	public static class Drv
 	{
@@ -58,7 +63,11 @@ public class StoreJDBC extends Store
 		
 		public String calJdbcUrl(String host,int port,String dbname)
 		{
-			return "" ;
+			String tmps = this.jdbcUrl ;
+			tmps = tmps.replace("{$host}", host) ;
+			tmps = tmps.replace("{$port}", ""+port) ;
+			tmps = tmps.replace("{$db_name}", dbname) ;
+			return tmps ;
 		}
 	}
 	
@@ -69,13 +78,17 @@ public class StoreJDBC extends Store
 		name2driver.put(d.getName(), d) ;
 	}
 	
+	public static final String DRV_MYSQL = "mysql" ;
+	
+	public static final String DRV_SQLSERVER = "sqlserver" ;
+	
 	static
 	{
-		regDrv(new Drv("mysql","MySql").asDriverClassName("com.mysql.jdbc.Driver")
+		regDrv(new Drv(DRV_MYSQL,"MySql").asDriverClassName("com.mysql.jdbc.Driver")
 				.asJdbcUrl("jdbc:mysql://{$host}:{$port}/{$db_name}?useUnicode=true&characterEncoding=UTF-8")
 				);
 		
-		regDrv(new Drv("sqlserver","SQL Server").asDriverClassName("com.microsoft.jdbc.sqlserver.SQLServerDriver")
+		regDrv(new Drv(DRV_SQLSERVER,"SQL Server").asDriverClassName("com.microsoft.jdbc.sqlserver.SQLServerDriver")
 				.asJdbcUrl("jdbc:microsoft:sqlserver://{$host}:{$port};DatabaseName={$db_name};SelectMethod=cursor")
 				);
 	}
@@ -103,15 +116,17 @@ public class StoreJDBC extends Store
 	@data_val(param_name = "db_psw")
 	String dbPsw = null ;
 	
-	public StoreJDBC()
-	{}
+	public SourceJDBC()
+	{
+		super();
+	}
 	
 //	public StoreJDBC(String n,String t)
 //	{
 //		super(n,t) ;
 //	}
 	
-	public StoreJDBC setJDBCInfo(String drv_name,String db_host,int db_port,String db_name,String db_user,String db_psw)
+	public SourceJDBC setJDBCInfo(String drv_name,String db_host,int db_port,String db_name,String db_user,String db_psw)
 	{
 		this.drvName = drv_name ;
 		this.dbHost = db_host ;
@@ -122,12 +137,12 @@ public class StoreJDBC extends Store
 		return this ;
 	}
 
-	public String getStoreTp()
+	public String getSorTp()
 	{
 		return "jdbc";
 	}
 	
-	public String getStoreTpTitle()
+	public String getSorTpTitle()
 	{
 		return "DB:"+this.drvName ;
 	}
@@ -167,6 +182,38 @@ public class StoreJDBC extends Store
 	{
 		if(this.dbPsw==null)
 			return "" ;
+		
 		return this.dbPsw ;
 	}
+	
+	private transient DBConnPool connPool = null ;
+	
+	private DBType getDBType()
+	{
+		switch(this.drvName)
+		{
+		case DRV_MYSQL:
+			return DBType.mysql;
+		case DRV_SQLSERVER:
+			return DBType.sqlserver;
+		default:
+			return null ;
+		}
+	}
+	
+	public DBConnPool getConnPool()
+	{
+		if(connPool!=null)
+			return connPool ;
+		Drv drv = name2driver.get(this.drvName) ;
+		String url = drv.calJdbcUrl(this.dbHost, this.dbPort, this.dbName) ;
+		connPool = new DBConnPool(getDBType(), this.getName(), drv.getDriverClassName(), url,this.dbName, this.dbUser,
+				this.dbPsw, "0", "10");
+		return connPool ;
+	}
+	
+//	public Connection DB_getConn()
+//	{
+//		getConnPool().
+//	}
 }

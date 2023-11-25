@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.iottree.core.basic.PropGroup;
+import org.iottree.core.basic.PropItem;
+import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.bind.BindDI;
 import org.iottree.core.bind.EventBindItem;
 import org.iottree.core.bind.PropBindItem;
@@ -34,6 +37,11 @@ public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 	@data_val(param_name = "tp")
 	String hmiTp = "" ;
 	
+	@data_val(param_name = "conn_brk_ppt")
+	String connBrkPrompt = "" ;
+	
+	@data_val(param_name = "not_run_ppt")
+	String notRunPrompt = "" ;
 	
 	public UAHmi()
 	{}
@@ -62,6 +70,7 @@ public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 		super.copyTreeWithNewSelf(root,new_self,ownerid,copy_id,root_subnode_id,rf2new);
 		UAHmi self = (UAHmi)new_self ;
 		self.hmiTp = this.hmiTp ;
+		self.connBrkPrompt = this.connBrkPrompt ;
 		if(rf2new!=null)
 			rf2new.put(this, self);
 	}
@@ -69,6 +78,83 @@ public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 	public String getHmiTp()
 	{
 		return hmiTp ;
+	}
+	
+	public String getConnBrokenPrompt()
+	{
+		return this.connBrkPrompt ;
+	}
+	
+	public String getNotRunPrompt()
+	{
+		return notRunPrompt ;
+	}
+	
+	private List<PropGroup> hmiPGS = null ;
+	
+	@Override
+	protected void onPropNodeValueChged()
+	{
+		hmiPGS = null ;
+	}
+	
+	@Override
+	public List<PropGroup> listPropGroups()
+	{
+		if(hmiPGS!=null)
+			return hmiPGS;
+		ArrayList<PropGroup> pgs = new ArrayList<>() ;
+		List<PropGroup> lpgs = super.listPropGroups() ;
+		if(lpgs!=null)
+			pgs.addAll(lpgs) ;
+		pgs.add(getHmiPropGroup());
+		hmiPGS = pgs;
+		return pgs;
+	}
+	
+	private PropGroup getHmiPropGroup()
+	{
+		PropGroup r = new PropGroup("hmi","HMI(UI)");
+		r.addPropItem(new PropItem("conn_borken_prompt","Conn Broken Prompt","Conn Broken Prompt Show in UI",PValTP.vt_str,false,null,null,""));
+		r.addPropItem(new PropItem("not_run_prompt","Not Run Prompt","Project is not run prompt Show in UI",PValTP.vt_str,false,null,null,""));
+		
+		//r.addPropItem(new PropItem("devid","Dev Id","Device ID",PValTP.vt_str,false,null,null,""));
+		return r ;
+	}
+	
+	public Object getPropValue(String groupn,String itemn)
+	{
+		if("hmi".contentEquals(groupn))
+		{
+			switch(itemn)
+			{
+			case "conn_borken_prompt":
+				return this.connBrkPrompt ;
+			case "not_run_prompt":
+				return notRunPrompt ;
+			}
+		}
+		Object locv = super.getPropValue(groupn, itemn);
+		
+		return locv;
+	}
+	
+	
+	public boolean setPropValue(String groupn,String itemn,String strv)
+	{
+		if("hmi".contentEquals(groupn))
+		{
+			switch(itemn)
+			{
+			case "conn_borken_prompt":
+				this.connBrkPrompt = strv ;
+				return true;//do nothing
+			case "not_run_prompt": 
+					notRunPrompt =strv;
+					return true;
+			}
+		}
+		return super.setPropValue(groupn, itemn,strv);
 	}
 
 	@Override
@@ -82,12 +168,6 @@ public class UAHmi extends UANodeOC implements IOCUnit,IRelatedFile
 	protected boolean chkValid()
 	{
 		return true;
-	}
-
-	@Override
-	protected void onPropNodeValueChged()
-	{
-		
 	}
 
 	File getHmiUIFile()

@@ -3080,6 +3080,21 @@ public class XmlData implements IXmlStringable// ,IExpPropProvider
 			throw new RuntimeException(ee);
 		}
 	}
+	
+	public static final String ATTRN_IN_XMLDATA = "_xml_data";
+	
+	public static XmlData getXmlDataFromRequest(HttpServletRequest req) throws Exception
+	{
+		XmlData xd = (XmlData) req.getAttribute(ATTRN_IN_XMLDATA);
+
+		if (xd == null)
+		{
+			xd = new XmlData();
+			XmlData.updateXmlDataFromHttpRequest(xd, req, "dx_");
+			req.setAttribute(ATTRN_IN_XMLDATA, xd);
+		}
+		return xd;
+	}
 
 	public static void main(String[] args) throws Exception
 	{

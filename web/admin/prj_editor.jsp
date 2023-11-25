@@ -464,6 +464,10 @@ background-color: #fff ;
 	border-radius:10px;
 }
 
+#btn_menu_tree span
+{
+cursor: pointer;
+}
 </style>
 
 </head>
@@ -588,6 +592,7 @@ function open_doc()
 				  &nbsp;&nbsp;<span><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
 				  <span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 				  <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+				  <span id='alert' onclick='clk_alert()'><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
 				  <span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
 				  <span id='store' onclick='clk_store()'><i class="fa fa-database  fa-lg"></i></span>
 				  
@@ -606,8 +611,8 @@ function open_doc()
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
-			    <li class="layui-this">[Tags]</li>
-			    <li >Properties</li>
+			    <li class="layui-this"><i class="fa fa-tags" ></i>[Tags]</li>
+			    <li ><i class="fa fa-list-alt" ></i>Properties</li>
 			    
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
@@ -721,7 +726,7 @@ function share_as_node()
 
 function task_setup()
 {
-	add_tab("___task","Tasks","./ua/prj_task.jsp?prjid="+prjid) ;
+	add_tab("___task","<i class='fa fa-circle-notch'></i>Tasks","./ua/prj_task.jsp?prjid="+prjid) ;
 	/*
 	dlg.open("./ua/prj_task.jsp?prjid="+prjid,{title:"setup project task",w:'800px',h:'400px'},
 			['Close'],
@@ -1984,8 +1989,7 @@ function act_main_hmi(n,op)
 
 function act_hmi_edit_ui(n,op)
 {
-	//window.open("ua_hmi/hmi_editor.jsp?repid="+repid+"&id="+u.getId()) ;
-	add_tab(n.id,n.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
+	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
 /*
@@ -2263,16 +2267,21 @@ function clk_task_run()
 	task_setup();
 }
 
+function clk_alert()
+{
+	add_tab("___alert","<i class='fa fa-bell'></i>Alert","./util/prj_alert.jsp?prjid="+prjid) ;
+}
+
 function clk_dd()
 {
 	event.stopPropagation();
-	add_tab("___dd","Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
+	add_tab("___dd","<i class='fa fa-book'></i>Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
 }
 
 function clk_store()
 {
 	event.stopPropagation();
-	add_tab("___store","Data Store","./util/prj_store.jsp?prjid="+prjid) ;
+	add_tab("___store","<i class='fa fa-database'></i>Data Store","./util/store.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

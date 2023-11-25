@@ -14,7 +14,7 @@ import org.influxdb.dto.Point.Builder;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
-public class StoreInfluxDB extends Store implements Closeable
+public class SourceInfluxDB extends Source implements Closeable
 {
 	private String dbUser =null ;
 	
@@ -31,7 +31,7 @@ public class StoreInfluxDB extends Store implements Closeable
 	
 	private InfluxDB influxDB = null ;
 	
-	public StoreInfluxDB asParams(String user,String psw,String dburl,String dbname,String retention_policy)
+	public SourceInfluxDB asParams(String user,String psw,String dburl,String dbname,String retention_policy)
 	{
 		this.dbUser = user ;
 		this.dbPsw = psw ;
@@ -48,13 +48,13 @@ public class StoreInfluxDB extends Store implements Closeable
 	}
 	
 	@Override
-	public String getStoreTp()
+	public String getSorTp()
 	{
 		return "influxdb";
 	}
 
 	@Override
-	public String getStoreTpTitle()
+	public String getSorTpTitle()
 	{
 		return "InfluxDB";
 	}

@@ -120,13 +120,13 @@ public class MDServlet extends HttpServlet
 					"<link  href=\"/_js/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" >\r\n"+
 					"<link  href=\"/doc/doc.css\" rel=\"stylesheet\" type=\"text/css\" >\r\n"+
 					"</head><body\r\n>"+
-					"<div style='position:absolute;left:10px;right:200px'>\r\n") ;
+					"<div style='position:absolute;left:10px;right:200px;'>\r\n") ;
 			}
 			
 			w.write(txt);
 			if(boutline)
 			{
-				w.write("</div>"
+				w.write("<br><br><br><br><br><br></div>"
 						+ "<div id='outline_div' class=\"layui-layer layui-layer-page layui-layer-dir\" type=\"page\" times=\"1\" showtime=\"0\" contype=\"object\" style=\"z-index: 19891015; position: fixed; top: 33px; left: 994px; margin-left: -15px;\">"
 						+ "<div id='outline_head' class=\"layui-layer-title\" style=\"cursor: move;\">Outline</div><div id=\"\" class=\"layui-layer-content\">"
 						+ "<ul id=\"outline_list\" class=\"site-dir layui-layer-wrap\" style=\"display: block;\">\r\n" + 

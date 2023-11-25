@@ -8,11 +8,13 @@ import java.util.List;
 
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONObject;
 
 public class StoreManager
 {
@@ -42,7 +44,7 @@ public class StoreManager
 
 	File prjDir = null;
 
-	LinkedHashMap<String, Store> name2store = null;// 
+	LinkedHashMap<String, Source> name2store = null;// 
 
 	private StoreManager(String prjid)
 	{
@@ -66,29 +68,29 @@ public class StoreManager
 		}
 	}
 
-	public List<Store> listStores()
+	public List<Source> listSources()
 	{
-		ArrayList<Store> rets = new ArrayList<>();
+		ArrayList<Source> rets = new ArrayList<>();
 		rets.addAll(name2store.values());
 		return rets;
 	}
 
-	public Store getStoreById(String id)
-	{
-		for (Store st : name2store.values())
-		{
-			if (st.getId().equals(id))
-				return st;
-		}
-		return null;
-	}
+//	public Source getSourceById(String id)
+//	{
+//		for (Source st : name2store.values())
+//		{
+//			if (st.getId().equals(id))
+//				return st;
+//		}
+//		return null;
+//	}
 
-	public Store getStore(String name)
+	public Source getSource(String name)
 	{
 		return name2store.get(name);
 	}
 
-	public void setStore(Store st, boolean bsave,boolean b_add) throws Exception
+	public void setSource(Source st, boolean bsave,boolean b_add) throws Exception
 	{
 		String stname = st.getName() ;
 		StringBuilder failedr = new StringBuilder() ;
@@ -98,36 +100,50 @@ public class StoreManager
 		}
 		if(b_add)
 		{
-			Store oldst = this.getStore(st.getName()) ;
+			Source oldst = this.getSource(st.getName()) ;
 			if(oldst!=null)
 				throw new Exception("store with name="+st.getName()+" is existed") ;
 		}
+		
 		name2store.put(st.getName(), st);
 		if (bsave)
 			save();
 	}
+	
+	public boolean delSource(String name) throws Exception
+	{
+		Source sor = this.getSource(name) ;
+		if(sor==null)
+		{
+			return false;
+		}
+		name2store.remove(name) ;
+		save() ;
+		return true ;
+	}
+	
 
 	public void save() throws Exception
 	{
 		XmlData xd = new XmlData();
 		List<XmlData> xds = xd.getOrCreateSubDataArray("stores");
-		for (Store st : name2store.values())
+		for (Source st : name2store.values())
 		{
 			XmlData xd0 = DataTranserXml.extractXmlDataFromObj(st);
-			xd0.setParamValue("_store_cn_", st.getClass().getCanonicalName());
+			xd0.setParamValue("_tp", st.getSorTp());
 			xds.add(xd0);
 		}
 		File f = new File(prjDir, "stores.xml");
 		XmlData.writeToFile(xd, f);
 	}
 
-	private LinkedHashMap<String, Store> load() throws Exception
+	private LinkedHashMap<String, Source> load() throws Exception
 	{
 		File f = new File(prjDir, "stores.xml");
 		if (!f.exists())
 			return null;
 
-		LinkedHashMap<String, Store> n2st = new LinkedHashMap<>();
+		LinkedHashMap<String, Source> n2st = new LinkedHashMap<>();
 
 		XmlData xd = XmlData.readFromFile(f);
 		List<XmlData> xds = xd.getSubDataArray("stores");
@@ -135,15 +151,16 @@ public class StoreManager
 			return n2st;
 		for (XmlData tmpxd : xds)
 		{
-			String cn = tmpxd.getParamValueStr("_store_cn_");
-			if (Convert.isNullOrEmpty(cn))
+			String tp = tmpxd.getParamValueStr("_tp");
+			if (Convert.isNullOrEmpty(tp))
 				continue;
-			Class<?> c = Class.forName(cn);
-			Store o = (Store) c.newInstance();
+			
+			Source o = Source.newInsByTp(tp) ;
 			if (!DataTranserXml.injectXmDataToObj(o, tmpxd))
 				continue;
 			n2st.put(o.getName(), o);
 		}
 		return n2st;
 	}
+	
 }

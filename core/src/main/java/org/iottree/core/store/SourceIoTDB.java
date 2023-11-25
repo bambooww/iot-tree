@@ -1,16 +1,16 @@
 package org.iottree.core.store;
 
-public class StoreIoTDB extends Store
+public class SourceIoTDB extends Source
 {
 
 	@Override
-	public String getStoreTp()
+	public String getSorTp()
 	{
 		return "iotdb";
 	}
 
 	@Override
-	public String getStoreTpTitle()
+	public String getSorTpTitle()
 	{
 		return "IoTDB";
 	}

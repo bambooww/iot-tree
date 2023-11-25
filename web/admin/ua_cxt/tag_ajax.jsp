@@ -33,6 +33,10 @@
 		boolean canw = "true".equalsIgnoreCase(strcanw);
 
 		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
+		String min_val_str = request.getParameter("min_val_str") ;
+		String max_val_str = request.getParameter("max_val_str") ;
+		String alert_low = request.getParameter("alert_low") ;
+		String alert_high = request.getParameter("alert_high") ;
 		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
@@ -41,6 +45,8 @@
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
 		ret.asFilter(b_val_filter) ;
+		ret.asMinMax(min_val_str, max_val_str);
+		ret.asAlertLowHigh(alert_low, alert_high) ;
 		nt.save();
 		return ret ;
 	}

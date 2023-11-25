@@ -12,8 +12,7 @@
 	org.iottree.core.comp.*
 	"%><%!
 
-%><%
-if(!Convert.checkReqEmpty(request, out, "prjid","op"))
+%><%if(!Convert.checkReqEmpty(request, out, "prjid","op"))
 	return ;
 
 String op = request.getParameter("op");
@@ -24,6 +23,7 @@ if(stmgr==null)
 	out.print("no store manager found") ;
 	return ;
 }
+String n = request.getParameter("n") ;
 String classid = request.getParameter("cid") ;
 String nname = request.getParameter("name") ;
 
@@ -41,11 +41,11 @@ case "set_store":
 	try
 	{
 		JSONObject jo = new JSONObject(jstr) ;
-		String tmpid = jo.optString("id") ;
-		boolean badd = Convert.isNullOrEmpty(tmpid) ;
-		StoreJDBC st = new StoreJDBC();
+		//String tmpid = jo.optString("id") ;
+		//boolean badd = Convert.isNullOrEmpty(tmpid) ;
+		SourceJDBC st = new SourceJDBC();
 		DataTranserJSON.injectJSONToObj(st, jo) ;
-		stmgr.setStore(st, true,badd);
+		stmgr.setSource(st, true,false);
 		out.print("succ") ;
 	}
 	catch(Exception e)
@@ -54,10 +54,25 @@ case "set_store":
 		out.print(e.getMessage()) ;
 	}
 	break;
-case "del_dc":
-	if(!Convert.checkReqEmpty(request, out, "cid"))
+case "list_stores":
+	List<Source> sors = stmgr.listSources() ;
+	JSONArray jarr = new JSONArray() ;
+	for(Source sor:sors)
+	{
+		JSONObject jo = sor.toListJO() ;
+		jarr.put(jo) ;
+	}
+	jarr.write(out) ;
+	break ;
+case "del_sor":
+	if(!Convert.checkReqEmpty(request, out, "n"))
 		return ;
-	
+	if(stmgr.delSource(n))
+	{
+		out.print("succ") ;
+		return ;
+	}
+	out.print("delete source failed") ;
 	break;
 case "dc_imp_txt":
 	if(!Convert.checkReqEmpty(request, out, "txt"))
@@ -73,5 +88,4 @@ case "edit_dn":
 	if(!Convert.checkReqEmpty(request, out,"name"))
 		return ;
 	break ;
-}
-%>
+}%>

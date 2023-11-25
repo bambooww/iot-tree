@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Gdb xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://jasonzhu/db_xml_conf.xsd">
+
+	<XORM name="#GdbTest" class="com.dw.system.gdb.GDBTest" />
+
+	<Module name="Gdb_Test" desc="">
+
+		<Func name="xxx" desc="">
+			<Content_For_DB>
+				<Sql exe_type="select">
+					select #GdbTest.pk_nor_cols from
+					GdbTest.table_name
+				</Sql>
+			</Content_For_DB>
+		</Func>
+
+	</Module>
+</Gdb>

@@ -13,10 +13,10 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return ;
 	String prjid = request.getParameter("prjid") ;
-	String storeid = request.getParameter("id") ;
+	String name = request.getParameter("n") ;
 UAPrj rep  = UAManager.getInstance().getPrjById(prjid) ;
 if(rep==null)
 {
@@ -26,7 +26,7 @@ if(rep==null)
 
 StoreManager stmgr = StoreManager.getInstance(prjid) ;
 
-String name = "";
+
 String title="" ;
 String chked = "checked" ;
 String desc="" ;
@@ -36,9 +36,9 @@ String db_port_str = "" ;
 String db_name = "" ;
 String db_user = "" ;
 String db_psw="" ;
-if(Convert.isNotNullEmpty(storeid))
+if(Convert.isNotNullEmpty(name))
 {
-	StoreJDBC st = (StoreJDBC)stmgr.getStoreById(storeid) ;
+	SourceJDBC st = (SourceJDBC)stmgr.getSource(name);//.getSourceById(storeid) ;
 	if(st==null)
 	{
 		out.print("no store found") ;
@@ -57,10 +57,7 @@ if(Convert.isNotNullEmpty(storeid))
 	db_psw = st.getDBPsw() ;
 	desc = st.getDesc() ;
 }
-else
-{
-	storeid = "" ;
-}
+
 %>
 <html>
 <head>
@@ -81,7 +78,7 @@ dlg.resize_to(700,450);
   <div class="layui-form-item">
     <label class="layui-form-label">Name:</label>
     <div class="layui-input-inline" style="width: 150px;">
-      <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input">
+      <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input" <%=Convert.isNotNullEmpty(name)?"readonly":"" %>>
     </div>
     <div class="layui-form-mid">Title:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
@@ -98,7 +95,7 @@ dlg.resize_to(700,450);
 	    <select id="drv_name"  lay-filter="drv_name" >
 	    	<option value="">--</option>
 <%
-for(StoreJDBC.Drv drv:StoreJDBC.listDrvs())
+	for(SourceJDBC.Drv drv:SourceJDBC.listDrvs())
 {
 %><option value="<%=drv.getName() %>"><%=drv.getTitle() %></option>
 <%
@@ -141,8 +138,8 @@ for(StoreJDBC.Drv drv:StoreJDBC.listDrvs())
  </form>
 </body>
 <script type="text/javascript">
-
-var storeid = "<%=storeid%>" ;
+var prjid = "<%=prjid%>" ;
+var name = "<%=name%>" ;
 
 layui.use('form', function(){
 	  var form = layui.form;
@@ -211,7 +208,7 @@ function do_submit(cb)
 	}
 	var db_psw = $('#db_psw').val();
 	
-	cb(true,{id:storeid,name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
+	cb(true,{name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
 		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw});
 	//var dbname=document.getElementById('db_name').value;
 	

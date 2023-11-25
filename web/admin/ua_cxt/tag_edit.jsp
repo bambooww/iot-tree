@@ -37,6 +37,10 @@
 	String desc = "" ;
 	String trans = null ;
 	boolean b_val_filter=false;
+	String min_val_str="" ;
+	String max_val_str="" ;
+	String alert_low="" ;
+	String alert_high="" ;
 	
 	if(id==null)
 		id = "" ;
@@ -79,6 +83,10 @@
  		if(Convert.isNullOrEmpty(trans))
  			trans = null ;
  		b_val_filter = tag.isValFilter() ;
+ 		min_val_str = tag.getMinValStr() ;
+ 		max_val_str = tag.getMaxValStr() ;
+ 		alert_low = tag.getAlertLowValStr() ;
+ 		alert_high = tag.getAlertHighValStr() ;
 	}
 %>
 <html>
@@ -99,7 +107,7 @@
 
 </style>
 <script>
-dlg.resize_to(800,500);
+dlg.resize_to(850,550);
 </script>
 
 </head>
@@ -123,12 +131,13 @@ dlg.resize_to(800,500);
   <div class="layui-form-item">
     <label class="layui-form-label">Data type</label>
     <div class="layui-input-inline" style="width: 100px;">
-      <select  id="vt"  name="vt"  class="layui-input" >
+      <select  id="vt"  name="vt"  class="layui-input" lay-filter="vt" >
         <option value="">-</option>
 <%
 for(UAVal.ValTP vt:UAVal.ValTP.values())
 {
-	 %><option value="<%=vt.getInt()%>"><%=vt.getStr() %></option><%
+	boolean bnum = vt.isNumberVT() ;
+	 %><option value="<%=vt.getInt()%>" b_num="<%=bnum%>"><%=vt.getStr() %></option><%
 }
 %>
       </select>
@@ -241,6 +250,24 @@ if(!bmid)
 <%
 }
 %>
+  <div class="layui-form-item" id="max_min_val" style="display:none;">
+    <label class="layui-form-label">Min Value</label>
+    <div class="layui-input-inline" style="width: 80px;">
+     <input type="number" id="min_val_str" name="min_val_str" class="layui-input">
+    </div>
+     <div class="layui-form-mid">Alert Low</div>
+    <div class="layui-input-inline" style="width: 80px;">
+      <input type="number" id="alert_low" name="alert_low" class="layui-input">
+    </div>
+     <div class="layui-form-mid">Alert High</div>
+    <div class="layui-input-inline" style="width: 80px;">
+      <input type="number" id="alert_high" name="alert_high" class="layui-input">
+    </div>
+    <div class="layui-form-mid">Max Value</div>
+    <div class="layui-input-inline" style="width: 80px;">
+      <input type="number" id="max_val_str" name="max_val_str" class="layui-input">
+    </div>
+  </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-block">
@@ -278,6 +305,10 @@ var trans_dd = <%=trans%>;
 var bloc=<%=blocal%>
 var loc_devf="<%=html_str(local_defval)%>" ;
 var bloc_autosave = <%=local_autosave%> ;
+var min_val_str = "<%=min_val_str%>";
+var max_val_str = "<%=max_val_str%>";
+var alert_low = "<%=alert_low%>";
+var alert_high = "<%=alert_high%>";
 
 function update_form()
 {
@@ -297,6 +328,12 @@ function update_form()
 		$("#transfer_setting").css("display","") ;
 		$("#val_filter_setting").css("display","") ;
 	}
+	
+	if($("#vt").find("option:selected").attr("b_num")=="true")
+		$("#max_min_val").css("display","") ;
+	else
+		$("#max_min_val").css("display","none") ;
+	
 }
 
 var form ;
@@ -315,12 +352,19 @@ layui.use('form', function(){
 	  $("#srate").val(srate) ;
 	  $("#canw").val(canw) ;
 	  $("#local_defval").val(loc_devf) ;
+	  $("#min_val_str").val(min_val_str) ;
+	  $("#max_val_str").val(max_val_str) ;
+	  $("#alert_low").val(alert_low) ;
+	  $("#alert_high").val(alert_high) ;
 	  
 	  form.on('switch(local)', function(obj){
 		        var b = obj.elem.checked ;
 		  update_form();
 		  });
-	  
+	  form.on("select(vt)",function(obj){
+		  //      var b = obj.elem.checked ;
+		  update_form();
+		  });
 	  update_form();
 	  form.render();
 });
@@ -405,6 +449,10 @@ function do_submit(cb)
 	var b_val_filter = $("#b_val_filter").prop("checked") ;
 	var loc_defv = get_input_val("local_defval") ;
 	var bloc_autosave = $("#local_autosave").prop("checked") ;
+	let max_val_str = $("#max_val_str").val() ;
+	let min_val_str = $("#min_val_str").val() ;
+	let alert_low = $("#alert_low").val();
+	let alert_high = $("#alert_high").val();
 	
 	var canw = get_input_val("canw",null)=="true";
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
@@ -415,7 +463,8 @@ function do_submit(cb)
 		canw:canw,
 		trans:JSON.stringify(trans_dd),
 		b_val_filter:b_val_filter,
-		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave
+		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,
+		min_val_str:min_val_str,max_val_str:max_val_str,alert_low:alert_low,alert_high:alert_high
 		});
 	//var dbname=document.getElementById('db_name').value;
 	

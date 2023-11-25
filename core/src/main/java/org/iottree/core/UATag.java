@@ -147,6 +147,18 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="val_filter")
 	String valFilter = null;
 	
+	@data_val(param_name="min_val_str")
+	String minValStr = null;
+	
+	@data_val(param_name="max_val_str")
+	String maxValStr = null;
+	
+	@data_val(param_name="alert_low")
+	String alertLowVal = null ;
+	
+	@data_val(param_name="alert_high")
+	String alertHighVal = null ;
+	
 	/**
 	 * save val his, to support 
 	 */
@@ -379,6 +391,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		nt.valTranser=this.valTranser;
 		
 		nt.valChgedCacheLen = this.valChgedCacheLen ;
+		nt.minValStr = this.minValStr ;
+		nt.maxValStr = this.maxValStr ;
+		
+		nt.alertLowVal = this.alertLowVal ;
+		nt.alertHighVal = this.alertHighVal ;
 	}
 	
 	public UANodeOCTags getBelongToNode()
@@ -417,6 +434,22 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public UATag asFilter(boolean b_val_filter)
 	{
 		this.bValFilter = b_val_filter; 
+		return this ;
+	}
+	
+	public UATag asMinMax(String min_str,String max_str)
+	{
+		this.minValStr = min_str ;
+		this.maxValStr = max_str ;
+		this.minVal = null ;
+		this.maxVal = null ;
+		return this ;
+	}
+	
+	public UATag asAlertLowHigh(String low,String high)
+	{
+		this.alertLowVal = low ;
+		this.alertHighVal = high ;
 		return this ;
 	}
 	
@@ -578,6 +611,71 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return bValFilter;
 	}
 	
+	public String getMinValStr()
+	{
+		return this.minValStr ;
+	}
+	
+	public String getMaxValStr()
+	{
+		return this.maxValStr ;
+	}
+	
+	Number minVal = null ;
+	Number maxVal = null ;
+	
+	public Number getMinValNum()
+	{
+		if(minVal!=null)
+			return minVal ;
+		
+		if(Convert.isNullOrEmpty(minValStr))
+			return null ;
+		UAVal.ValTP vtp = this.getValTp();
+		if(!vtp.isNumberVT())
+			return null ;
+		if(vtp.isNumberFloat())
+		{
+			minVal = Double.parseDouble(minValStr) ;
+		}
+		else
+		{
+			minVal = Long.parseLong(minValStr) ;
+		}
+		return minVal ;
+	}
+	
+	public Number getMaxValNum()
+	{
+		if(maxVal!=null)
+			return maxVal ;
+		
+		if(Convert.isNullOrEmpty(maxValStr))
+			return null ;
+		UAVal.ValTP vtp = this.getValTp();
+		if(!vtp.isNumberVT())
+			return null ;
+		if(vtp.isNumberFloat())
+		{
+			maxVal = Double.parseDouble(maxValStr) ;
+		}
+		else
+		{
+			maxVal = Long.parseLong(maxValStr) ;
+		}
+		return maxVal ;
+	}
+	
+	public String getAlertLowValStr()
+	{
+		return this.alertLowVal ;
+	}
+	
+	public String getAlertHighValStr()
+	{
+		return this.alertHighVal ;
+	}
+	
 	public boolean delFromParent() throws Exception
 	{
 		if( this.belongToNode==null)
@@ -607,6 +705,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		pg.addPropItem(new PropItem("vt","Data type","",PValTP.vt_int,false,UAVal.ValTPTitles,UAVal.ValTPVals,1));
 		pg.addPropItem(new PropItem("w","Client Access","",PValTP.vt_bool,false,new String[] {"Read Only","Read/Write"},new Object[] {false,true},false));
 		pg.addPropItem(new PropItem("sc","ScanRate","",PValTP.vt_int,false,null,null,100));
+		pg.addPropItem(new PropItem("minv","Min Value","",PValTP.vt_str,false,null,null,""));
+		pg.addPropItem(new PropItem("maxv","Max Value","",PValTP.vt_str,false,null,null,""));
 		pgs.add(pg) ;
 		
 		tagPGS = pgs;
@@ -631,6 +731,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				return this.bCanWrite ;
 			case "sc":
 				return this.scanRate ;
+			case "minv":
+				return this.minValStr;
+			case "maxv":
+				return this.maxValStr;
 			}
 		}
 		return super.getPropValue(groupn, itemn);
@@ -669,6 +773,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			case "sc":
 				this.scanRate = Long.parseLong(strv) ;
 				return true ;
+			case "minv":
+				this.minValStr = strv;
+				this.minVal=null;
+				return true;
+			case "maxv":
+				this.maxValStr = strv ;
+				this.maxVal = null ;
+				return true;
 			}
 		}
 		return super.setPropValue(groupn, itemn,strv);

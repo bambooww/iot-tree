@@ -107,7 +107,7 @@ public class PlugDir
 		return this.title;
 	}
 
-	private synchronized URLClassLoader getOrLoadCL() throws MalformedURLException, IOException
+	public synchronized URLClassLoader getOrLoadCL() throws MalformedURLException, IOException
 	{
 		if (plugCL != null)
 			return plugCL;

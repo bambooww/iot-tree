@@ -7,7 +7,7 @@ import org.influxdb.InfluxDB.ConsistencyLevel;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
-import org.iottree.core.store.StoreInfluxDB;
+import org.iottree.core.store.SourceInfluxDB;
 
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ public class StoreTest extends TestCase
 	public void testBatchInsert() throws Exception
 	{
 		
-		try(StoreInfluxDB db = new StoreInfluxDB())
+		try(SourceInfluxDB db = new SourceInfluxDB())
 		{
 			db.asParams("admin","admin","localhost",DB_NAME,"hour") ;
 			//QueryResult res = db.query("select * from measurement where name='' order by teim desc limit 1000") ;
@@ -35,8 +35,8 @@ public class StoreTest extends TestCase
 			fields1.put("field1", "St是abc");
 			fields1.put("field2", 3.1415926);
 			
-			Point p1 = StoreInfluxDB.buildPoint("table1", System.currentTimeMillis(), tags1, fields1);
-			Point p2 = StoreInfluxDB.buildPoint("table1", System.currentTimeMillis(), tags2, fields2);
+			Point p1 = SourceInfluxDB.buildPoint("table1", System.currentTimeMillis(), tags1, fields1);
+			Point p2 = SourceInfluxDB.buildPoint("table1", System.currentTimeMillis(), tags2, fields2);
 			BatchPoints batch_pts = BatchPoints.database(DB_NAME).tag("tag1", "标签值1")
 					.retentionPolicy("hour").consistency(ConsistencyLevel.ALL).build();
 		}
