@@ -186,7 +186,7 @@ if(b_tags)
     	<th sort_by="title">Title</th>
         <th sort_by="addr">Address</th>
         <th sort_by="valtp">Value Type</th>
-        
+        <th >Alert</th>
         <th>Value</th>
         <th>Update DT</th>
         <th>Change DT</th>
@@ -672,6 +672,7 @@ function show_cxt_dyn(p,cxt)
 		var bvalid = tg.valid ;
 		var dt = tg.dt ;
 		var chgdt = tg.chgdt;
+		let b_alert = tg.alert||false;
 		
 		var strv ="";
 		if(tg.v!=null)
@@ -697,7 +698,13 @@ function show_cxt_dyn(p,cxt)
 		var qstr = bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>";
 		if(!bvalid&&strerr!=null&&strerr!=""&&strerr!=undefined)
 			qstr += "<span title='"+strerr+"'>err</span>";
+		
 		show_ele_html("ctag_q_"+tagp,qstr) ;
+		let alert_ele = document.getElementById("ctag_alert_"+tagp) ;
+		if(b_alert)
+			$(alert_ele).css("color","red");
+		else
+			$(alert_ele).css("color","gray");
 	}
 	if(cxt.subs)
 	{

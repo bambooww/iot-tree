@@ -145,6 +145,11 @@ for(UANodeOCTags tn:tns)
 		String valtp_str = tag.getValTp().getStr();
 		if(tag.getValTranserObj()!=null)
 			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
+		
+		String alert_str = "" ;
+		List<ValAlert> alerts = tag.getValAlerts() ;
+		if(alerts!=null&&alerts.size()>0)
+			alert_str = "<i class='fa-solid fa-bell'></i>" ;
 %>
    <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
    	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
@@ -190,6 +195,7 @@ if(bloc&&!tag.isSysTag())
 		<td><%=tag.getTitle() %></td>
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
+        <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td style="width:80px" id="ctag_v_<%=cxtpath%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_chgdt_<%=cxtpath%>"></td>

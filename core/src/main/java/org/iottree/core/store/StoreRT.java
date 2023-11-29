@@ -17,7 +17,6 @@ public class StoreRT
 	
 	String title = null ;
 	
-	
 	long scanIntervalMS = 10000 ;
 	
 	LinkedHashMap<String,StoreTB> name2tb = null ;

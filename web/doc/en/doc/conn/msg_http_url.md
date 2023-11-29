@@ -23,7 +23,9 @@ Name=u1
 Title=U1
 ```
 
-可以看出，HTTP Connection Provider只需要个名称标题，它为包含的HTTP ConnPt提供了一个线程和组织。如下图：
+
+It can be seen that the HTTP Connection Provider only requires a name and title, which provides a thread and organization for the included HTTP ConnPt. As shown in the following figure:
+
 
 <img src="../img/conn/http01.png">
 

@@ -18,6 +18,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.basic.ValAlert;
 import org.iottree.core.basic.ValTranser;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
@@ -26,7 +27,9 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 /**
  * 
@@ -111,8 +114,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		valTp = UAVal.getValTp(v) ;
 	}
 	
-	
-	
 	@data_val(param_name = "vtt",extract_only = true)
 	private String getValTpTitle()
 	{
@@ -153,12 +154,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="max_val_str")
 	String maxValStr = null;
 	
-	@data_val(param_name="alert_low")
-	String alertLowVal = null ;
+//	@data_val(param_name="alert_low")
+//	String alertLowVal = null ;
+//	
+//	@data_val(param_name="alert_high")
+//	String alertHighVal = null ;
 	
-	@data_val(param_name="alert_high")
-	String alertHighVal = null ;
-	
+	@data_obj(param_name = "alert")
+	List<ValAlert> valAlerts = null ;
 	/**
 	 * save val his, to support 
 	 */
@@ -210,6 +213,19 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		this.valTranser=t.valTranser;
 		this.valChgedCacheLen = t.valChgedCacheLen ;
+	}
+	
+	void constructNodeTree()
+	{
+		if(this.valAlerts!=null)
+		{
+		for(ValAlert va:this.valAlerts)
+		{
+			va.setBelongTo(this);
+			//tg.belongToNode = this ;
+		}
+		}
+		//super.constructNodeTree();
 	}
 	
 	public String getNodeTp()
@@ -394,8 +410,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		nt.minValStr = this.minValStr ;
 		nt.maxValStr = this.maxValStr ;
 		
-		nt.alertLowVal = this.alertLowVal ;
-		nt.alertHighVal = this.alertHighVal ;
+		if(this.valAlerts!=null&&this.valAlerts.size()>0)
+		{
+			nt.valAlerts = new ArrayList<>();
+			for(ValAlert va : this.valAlerts)
+				nt.valAlerts.add(va.copyMe(nt,false)) ;
+		}
 	}
 	
 	public UANodeOCTags getBelongToNode()
@@ -446,12 +466,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this ;
 	}
 	
-	public UATag asAlertLowHigh(String low,String high)
-	{
-		this.alertLowVal = low ;
-		this.alertHighVal = high ;
-		return this ;
-	}
+	
+//	public UATag asAlertLowHigh(String low,String high)
+//	{
+//		this.alertLowVal = low ;
+//		this.alertHighVal = high ;
+//		return this ;
+//	}
 	
 	@Override
 	public List<UANode> getSubNodes()
@@ -601,6 +622,93 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			this.valTranser = vt.toString() ;
 	}
 	
+	public boolean setValAlerts(String jstr) throws Exception
+	{
+		if(Convert.isNullOrEmpty(jstr))
+		{
+			this.valAlerts = null;
+			return true;
+		}
+		JSONArray jarr = new JSONArray(jstr) ;
+		int len = jarr.length() ;
+		if(len<=0)
+		{
+			this.valAlerts = null;
+			return true;
+		}
+		ArrayList<ValAlert> vas = new ArrayList<>(len) ;
+		for(int i = 0 ; i < len ; i ++)
+		{
+			JSONObject jo = jarr.getJSONObject(i) ;
+			ValAlert va = ValAlert.parseValAlert(this, jo) ;
+			if(va==null)
+				return false;
+			String n = va.getName() ;
+			if(Convert.isNotNullEmpty(n))
+			{
+				StringBuilder invr = new StringBuilder() ;
+				if(!Convert.checkVarName(n, true, invr))
+					throw new Exception(invr.toString()) ;
+				
+				for(ValAlert tmpva:vas)
+				{
+					if(n.equals(tmpva.getName()))
+						throw new Exception("alert name="+n+" is repleated") ;
+				}
+			}
+			vas.add(va);
+		}
+		this.valAlerts = vas ;
+		return true;
+	}
+	
+	public List<ValAlert> getValAlerts()
+	{
+		return this.valAlerts ;
+	}
+
+	public JSONArray getValAlertsJArr() throws Exception
+	{
+		JSONArray rets = new JSONArray() ;
+		if(this.valAlerts!=null)
+		{
+			for(ValAlert va : this.valAlerts)
+			{
+				rets.put(va.toJO());
+			}
+		}
+		return rets ;
+	}
+	
+	public boolean hasAlerts()
+	{
+		return this.valAlerts!=null && this.valAlerts.size()>0 ;
+	}
+	
+	public ValAlert getValAlertByName(String name)
+	{
+		if(this.valAlerts==null)
+			return null ;
+		for(ValAlert va:this.valAlerts)
+		{
+			if(name.equals(va.getName()))
+				return va ;
+		}
+		return null ;
+	}
+	
+	public ValAlert getValAlertById(String id)
+	{
+		if(this.valAlerts==null)
+			return null ;
+		for(ValAlert va:this.valAlerts)
+		{
+			if(id.equals(va.getId()))
+				return va ;
+		}
+		return null ;
+	}
+	
 	public boolean isCanWrite()
 	{
 		return bCanWrite;
@@ -664,16 +772,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			maxVal = Long.parseLong(maxValStr) ;
 		}
 		return maxVal ;
-	}
-	
-	public String getAlertLowValStr()
-	{
-		return this.alertLowVal ;
-	}
-	
-	public String getAlertHighValStr()
-	{
-		return this.alertHighVal ;
 	}
 	
 	public boolean delFromParent() throws Exception
@@ -1076,7 +1174,25 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		else
 			uav = new UAVal(false,null,updt,chgdt) ;
 		RT_setUAVal(uav);
+		if(uav.isValid() && bval_chg)
+		{
+			RT_chkAlerts() ;
+		}
 		return uav ;
+	}
+	
+	private void RT_chkAlerts()
+	{
+		if(this.valAlerts==null)
+			return ;
+		Object objv = this.curVal.getObjVal() ;
+		if(!(objv instanceof Number))
+			return ;
+		
+		for(ValAlert va:this.valAlerts)
+		{
+			va.RT_fireValChged((Number)objv);
+		}
 	}
 	
 	public void RT_setValStr(String strv)
@@ -1246,6 +1362,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this.curVal ;
 	}
 	
+	public boolean RT_hasAlertTriggered()
+	{
+		if(this.valAlerts==null)
+			return false;
+		for(ValAlert va:this.valAlerts)
+		{
+			if(va.RT_is_triggered())
+				return true ;
+		}
+		return false;
+	}
 	
 	public Object JS_get(String  key)
 	{
@@ -1275,6 +1402,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		case "_chgdt":
 			return uav.getValChgDT() ;
 		}
+		
+		if(key.startsWith("_alert_"))
+		{
+			String an = key.substring(7) ;
+			return this.getValAlertByName(an) ;
+		}
 		return null ;
 	}
 	
@@ -1296,6 +1429,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		rets.add(new JsProp("_updt",null,Long.class,false,"Update Date","Tag Value last update date with millisseconds,value may not be changed"));
 		rets.add(new JsProp("_chgdt",null,Long.class,false,"Change Date","Tag Value last changed date with millisseconds"));
 		rets.add(new JsProp("_value",null,vt,false,"Tag Value","Tag Value,get value is same as _pv,bug set this prop will not trigger device write(only set in memory)"));
+		if(this.valAlerts!=null)
+		{
+			for(ValAlert va:this.valAlerts)
+			{
+				String n = va.getName() ;
+				if(Convert.isNullOrEmpty(n))
+					continue ;
+				rets.add(new JsProp("_alert_"+n,null,ValAlert.class,true,"Val Alert",""));
+			}
+		}
 		return rets ;
 	}
 	
@@ -1479,6 +1622,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //			w.write("\",\"valid\":" + bvalid + ",\"v\":null,\"dt\":" + dt + ",\"chgdt\":" + dt_chg + ",\"err\":\""
 //					+ Convert.plainToJsStr(str_err)+"\"" );
 		}
+		
+		if(this.RT_hasAlertTriggered())
+			w.write(",\"alert\":true");
 
 		JSONObject jo = getExtAttrJO() ;
 		if(jo!=null)

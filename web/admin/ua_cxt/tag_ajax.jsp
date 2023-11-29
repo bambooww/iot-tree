@@ -35,8 +35,10 @@
 		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
 		String min_val_str = request.getParameter("min_val_str") ;
 		String max_val_str = request.getParameter("max_val_str") ;
-		String alert_low = request.getParameter("alert_low") ;
-		String alert_high = request.getParameter("alert_high") ;
+		//String alert_low = request.getParameter("alert_low") ;
+		//String alert_high = request.getParameter("alert_high") ;
+		String alert_jstr = request.getParameter("alerts") ;
+		
 		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
@@ -46,7 +48,8 @@
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
-		ret.asAlertLowHigh(alert_low, alert_high) ;
+		//ret.asAlertLowHigh(alert_low, alert_high) ;
+		ret.setValAlerts(alert_jstr);
 		nt.save();
 		return ret ;
 	}
@@ -119,7 +122,19 @@ case "edit_tag":
 		return ;
 	}
 	break ;
-
+case "chk_alert":
+	try
+	{
+		String alert_jstr = request.getParameter("alert") ;
+		out.print("succ="+tag.getId()) ;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		out.print(e.getMessage());
+		return ;
+	}
+	break;
 case "del_tag":
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
@@ -245,8 +260,8 @@ case "rt":
 		//Object obv = val.getObjVal() ;
 		
 		String strv = val.getStrVal(tg.getDecDigits()) ;
-		
-		out.print("{\"tag_id\":\""+tg.getId()+"\",\"dt\":"+dt+",\"valid\":"+valid+",\"strv\":\""+strv+"\"}") ;
+		boolean b_alert_triggered = tg.RT_hasAlertTriggered();
+		out.print("{\"tag_id\":\""+tg.getId()+"\",\"dt\":"+dt+",\"valid\":"+valid+",\"strv\":\""+strv+"\",\"alert_trigger\":"+b_alert_triggered+"}") ;
 	}
 	out.print("]");
 	break ;

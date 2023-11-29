@@ -241,10 +241,10 @@ if(!brefed)
     <th>Title</th>
         <th>Address</th>
         <th>Value Type</th>
-        
         <th>Value</th>
         <th>Timestamp</th>
         <th>Quality</th>
+        
         <th>Write</th>
         <th></th>
      </tr>
@@ -281,6 +281,8 @@ int tags_num = 0 ;
 		String valtp_str = tag.getValTp().getStr();
 		if(tag.getValTranserObj()!=null)
 			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
+		
+		
 %>
    <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
     tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"

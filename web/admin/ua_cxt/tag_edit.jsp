@@ -4,6 +4,7 @@
 	org.iottree.core.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
+				org.json.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -39,8 +40,9 @@
 	boolean b_val_filter=false;
 	String min_val_str="" ;
 	String max_val_str="" ;
-	String alert_low="" ;
-	String alert_high="" ;
+	//String alert_low="" ;
+	//String alert_high="" ;
+	String alerts = null ;
 	
 	if(id==null)
 		id = "" ;
@@ -85,8 +87,13 @@
  		b_val_filter = tag.isValFilter() ;
  		min_val_str = tag.getMinValStr() ;
  		max_val_str = tag.getMaxValStr() ;
- 		alert_low = tag.getAlertLowValStr() ;
- 		alert_high = tag.getAlertHighValStr() ;
+ 		//alert_low = tag.getAlertLowValStr() ;
+ 		//alert_high = tag.getAlertHighValStr() ;
+ 		JSONArray jarr = tag.getValAlertsJArr() ;
+ 		if(jarr!=null)
+ 		{
+ 			alerts = jarr.toString();
+ 		}
 	}
 %>
 <html>
@@ -104,10 +111,31 @@
     width: 90%; 
     display: block; 
 }
+.alert_item
+{
+	position: relative;
+	border:1px solid;
+	height:30px;
+	min-width:70px;
+	margin-left:5px;
+	width:fit-content;
+	float: left;
+}
 
+.alert_item .oper
+{
+left:5px;
+	color: red;
+}
+
+.alert_item .tt
+{
+top:5px;
+	cursor:pointer;
+}
 </style>
 <script>
-dlg.resize_to(850,550);
+dlg.resize_to(850,600);
 </script>
 
 </head>
@@ -255,17 +283,19 @@ if(!bmid)
     <div class="layui-input-inline" style="width: 80px;">
      <input type="number" id="min_val_str" name="min_val_str" class="layui-input">
     </div>
-     <div class="layui-form-mid">Alert Low</div>
-    <div class="layui-input-inline" style="width: 80px;">
-      <input type="number" id="alert_low" name="alert_low" class="layui-input">
-    </div>
-     <div class="layui-form-mid">Alert High</div>
-    <div class="layui-input-inline" style="width: 80px;">
-      <input type="number" id="alert_high" name="alert_high" class="layui-input">
-    </div>
+     
     <div class="layui-form-mid">Max Value</div>
     <div class="layui-input-inline" style="width: 80px;">
       <input type="number" id="max_val_str" name="max_val_str" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Alert<i class="fa-solid fa-bell"></i></label>
+    <div class="layui-input-inline"  style="width:500px;">
+      <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
+    </div>
+    <div class="layui-input-inline"  style="width:50px;">
+    <button class="layui-btn layui-btn-primary" title="Add Alert" onclick="edit_alert()"><i class="fa-solid fa-plus"></i></button>
     </div>
   </div>
   <div class="layui-form-item">
@@ -307,8 +337,9 @@ var loc_devf="<%=html_str(local_defval)%>" ;
 var bloc_autosave = <%=local_autosave%> ;
 var min_val_str = "<%=min_val_str%>";
 var max_val_str = "<%=max_val_str%>";
-var alert_low = "<%=alert_low%>";
-var alert_high = "<%=alert_high%>";
+var alerts_dd = <%=alerts%>;
+if(!alerts_dd)
+	alerts_dd=[];
 
 function update_form()
 {
@@ -354,8 +385,8 @@ layui.use('form', function(){
 	  $("#local_defval").val(loc_devf) ;
 	  $("#min_val_str").val(min_val_str) ;
 	  $("#max_val_str").val(max_val_str) ;
-	  $("#alert_low").val(alert_low) ;
-	  $("#alert_high").val(alert_high) ;
+	  //$("#alert_low").val(alert_low) ;
+	 // $("#alert_high").val(alert_high) ;
 	  
 	  form.on('switch(local)', function(obj){
 		        var b = obj.elem.checked ;
@@ -385,11 +416,25 @@ function update_transfer_s()
 	$("#transfer_s").val(trans_dd._t) ;
 }
 
+function update_alert_s()
+{
+	let tmps = "" ;
+	for(let i=0 ; i<alerts_dd.length ; i ++)
+	{
+		let d = alerts_dd[i];
+		tmps += `<div id="alert_\${i}" class="alert_item" >
+			<span onclick="edit_alert(\${i})" class="tt">\${d.tpt} \${d.param1}(\${d.prompt})</span><span class="oper">&nbsp;&nbsp;<i class="fa fa-times fa-lg" onclick="del_alert(\${i})"></i></span>
+			</div>`;
+	}
+	
+	$("#alert_list").html(tmps) ;
+}
+
 update_transfer_s();
+update_alert_s();
 
 function edit_trans()
 {
-	
 	dlg.open("./tag_trans_edit.jsp",
 			{title:"value transfer",w:'600px',h:'400px'},
 			['Ok','Cancel'],
@@ -404,6 +449,72 @@ function edit_trans()
 						 }
 						 trans_dd = ret ;
 						 update_transfer_s();
+						 dlg.close();
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function del_alert(idx)
+{
+	if(event)
+		event.preventDefault() || (event.returnValue = false);
+	if(idx<0||idx>=alerts_dd.length)
+		return;
+	alerts_dd.splice(idx,1) ;
+	update_alert_s();
+}
+
+function get_alert_idx_name(n)
+{
+	for(let i = 0 ; i < alerts_dd.length ; i ++)
+	{
+		let a = alerts_dd[i] ;
+		if(n==a.name)
+			return i ;
+	}
+	return -1 ;
+}
+
+function edit_alert(idx)
+{
+	if(event)
+		event.preventDefault() || (event.returnValue = false);
+	let tt = "Tag Alert Edit"
+	if(idx==undefined||idx==null)
+		tt = "Tag Alert Add"
+	let dd = null;
+	if(idx>=0)
+		dd = alerts_dd[idx] ;
+	dlg.open("./tag_alert_edit.jsp",	{title:tt,w:'600px',h:'400px',dd:dd},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 if(ret.name)
+						 {
+							 let oldidx = get_alert_idx_name(ret.name) ;
+							 if(oldidx>=0 && oldidx!=idx)
+							 {
+								 dlg.msg("name ["+ret.name+"] is already exists");
+								 return ;
+							 }
+						 }
+						 if(idx>=0)
+						 	alerts_dd[idx] = ret ;
+						 else
+							 alerts_dd.push(ret) ;
+						 update_alert_s();
 						 dlg.close();
 				 	});
 				},
@@ -451,8 +562,8 @@ function do_submit(cb)
 	var bloc_autosave = $("#local_autosave").prop("checked") ;
 	let max_val_str = $("#max_val_str").val() ;
 	let min_val_str = $("#min_val_str").val() ;
-	let alert_low = $("#alert_low").val();
-	let alert_high = $("#alert_high").val();
+	//let alert_low = $("#alert_low").val();
+	//let alert_high = $("#alert_high").val();
 	
 	var canw = get_input_val("canw",null)=="true";
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
@@ -464,7 +575,7 @@ function do_submit(cb)
 		trans:JSON.stringify(trans_dd),
 		b_val_filter:b_val_filter,
 		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,
-		min_val_str:min_val_str,max_val_str:max_val_str,alert_low:alert_low,alert_high:alert_high
+		min_val_str:min_val_str,max_val_str:max_val_str,alerts:JSON.stringify(alerts_dd),
 		});
 	//var dbname=document.getElementById('db_name').value;
 	

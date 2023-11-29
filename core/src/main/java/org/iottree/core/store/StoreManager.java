@@ -55,7 +55,7 @@ public class StoreManager
 
 		try
 		{
-			name2store = load();
+			name2store = loadSors();
 		}
 		catch ( Exception e)
 		{
@@ -107,7 +107,7 @@ public class StoreManager
 		
 		name2store.put(st.getName(), st);
 		if (bsave)
-			save();
+			saveSors();
 	}
 	
 	public boolean delSource(String name) throws Exception
@@ -118,35 +118,35 @@ public class StoreManager
 			return false;
 		}
 		name2store.remove(name) ;
-		save() ;
+		saveSors() ;
 		return true ;
 	}
 	
 
-	public void save() throws Exception
+	public void saveSors() throws Exception
 	{
 		XmlData xd = new XmlData();
-		List<XmlData> xds = xd.getOrCreateSubDataArray("stores");
+		List<XmlData> xds = xd.getOrCreateSubDataArray("sources");
 		for (Source st : name2store.values())
 		{
 			XmlData xd0 = DataTranserXml.extractXmlDataFromObj(st);
 			xd0.setParamValue("_tp", st.getSorTp());
 			xds.add(xd0);
 		}
-		File f = new File(prjDir, "stores.xml");
+		File f = new File(prjDir, "store_sors.xml");
 		XmlData.writeToFile(xd, f);
 	}
 
-	private LinkedHashMap<String, Source> load() throws Exception
+	private LinkedHashMap<String, Source> loadSors() throws Exception
 	{
-		File f = new File(prjDir, "stores.xml");
+		File f = new File(prjDir, "store_sors.xml");
 		if (!f.exists())
 			return null;
 
 		LinkedHashMap<String, Source> n2st = new LinkedHashMap<>();
 
 		XmlData xd = XmlData.readFromFile(f);
-		List<XmlData> xds = xd.getSubDataArray("stores");
+		List<XmlData> xds = xd.getSubDataArray("sources");
 		if (xds == null)
 			return n2st;
 		for (XmlData tmpxd : xds)

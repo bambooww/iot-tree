@@ -2,6 +2,7 @@
 <%@ page import="java.util.*,
 	java.io.*,
 	org.iottree.core.*,
+	org.iottree.core.basic.*,
 	org.iottree.core.task.*,
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
@@ -46,63 +47,87 @@ font-size: 13px;
 background-color: #eeeeee
 }
 
-.rmenu_item:hover {
-	background-color: #373737;
+.left
+{
+	position: absolute;
+	top:0px;
+	left:0px;
+	border:1px solid;
+	width:200px;
+	bottom:0px;
 }
 
+.mid
+{
+	position: absolute;
+	top:0px;
+	left:200px;
+	border:1px solid;
+	right:300px;
+	bottom:0px;
+}
 
+.right
+{
+	position: absolute;
+	top:0px;
+	right:0px;
+	border:1px solid;
+	width:300px;
+	bottom:0px;
+}
+.alert_item
+{
+	margin-left:30px;
+}
 
 </style>
 <body marginwidth="0" marginheight="0">
- <blockquote class="layui-elem-quote ">Alert List
+<div class="left">
+ <blockquote class="layui-elem-quote ">Alert Tags</blockquote>
+ <div id="tag_list">
+<%
+	for(UATag tag:prj.listTagsAll())
+	{
+		List<ValAlert> vas = tag.getValAlerts() ;
+		if(vas==null||vas.size()<=0)
+			continue ;
+		String np = tag.getNodePath() ;
+		
+%>
+<div class="tag_item" id="np"><%=np %>
+<%
+		for(ValAlert va:vas)
+		{
+			String id = va.getUid() ;
+			String tt = Convert.plainToHtml(va.toTitleStr()) ;
+%><div class="alert_item"><input type="checkbox" id="<%=id %>" /><%=tt %></div>
+
+<%
+		}
+%>
+</div>
+<%
+	}
+%>
+ </div>
+</div>
+<div class="mid">
+ <blockquote class="layui-elem-quote ">Alert Handlers
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_dc('<%=prjid %>',null)">+Add </button>
- 	
- 	 <button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()">
-							 <i class="fa-solid fa-file-import"></i>&nbsp;Import
-							</button>
-							
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
+ 	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
  </div>
 </blockquote>
-<%
-Collection<DataClass> dcs = pdc.getDataClassAll();
-for(DataClass dc:dcs)
-{
-	String cid = dc.getClassId() ;
-	String dc_name = dc.getClassName() ;
-	String dc_title = dc.getClassTitle() ;
-%>
-<table class0="layui-table" style="width:100%" id="tb_<%=cid%>">
-  <colgroup>
-    <col width="20">
-    <col width="200">
-    <col>
-  </colgroup>
-  <thead>
-    <tr onclick="show_or_hide('<%=cid%>')" >
-      <th >+</th>
-      <th><%=dc_name %></th>
-      <th><%=dc_title %></th>
-      <th></th>
-	  <th>
-	  <a onclick="add_or_edit_dc('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Edit Data Class" class="fa fa-pencil fa-lg " aria-hidden="true"></i></a>
-	  <a onclick="add_or_edit_dn('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Add Data Node" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
-	  <a onclick="del_dc('<%=prjid %>','<%=dc.getClassId()%>')"><i title="Delete Data Node" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
-      
-      <a href="javascript:import_dc_txt('<%=prjid %>','<%=dc.getClassId()%>')" title="Import by Txt">
-             <i class="fa-solid fa-file-import"></i>
-           </a>
-	  </th>
-    </tr> 
-  </thead>
-  <tbody id="bd_<%=cid%>"  b_show="false" b_load="false">
-   
-  </tbody>
-</table>
-<%
-}
-%>
-
+</div>
+<div class="right">
+ <blockquote class="layui-elem-quote ">Alert Outputs
+ <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_dc('<%=prjid %>',null)">+Add </button>
+ 	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
+ </div>
+</blockquote>
+</div>
  	
 <script>
 var prjid = "<%=prjid%>" ;
@@ -159,17 +184,17 @@ function export_task(prjid,taskid)
 	window.open("prj_task_ajax.jsp?op=export&prjid="+prjid+"&taskid="+taskid) ;
 }
 
-function add_or_edit_dc(prjid,id)
+function add_or_edit_h(prjid,id)
 {
 	event.stopPropagation();
-	var tt = "Add Data Class";
+	var tt = "Add Alert Handler";
 	if(id)
 	{
-		tt = "Edit Data Class";
+		tt = "Edit Alert Handler";
 	}
 	if(id==null)
 		id = "" ;
-	dlg.open("prj_dict_dc_edit.jsp?prjid="+prjid+"&id="+id,
+	dlg.open("prj_alert_h_edit.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
 			['Ok','Cancel'],
 			[
@@ -182,14 +207,14 @@ function add_or_edit_dc(prjid,id)
 							 return;
 						 }
 						 
-						 ret.op="add_dc" ;
+						 ret.op="add_h" ;
 						 if(id)
-							 ret.op = "edit_dc";
+							 ret.op = "edit_h";
 						 ret.prjid=prjid;
-						 ret.cid = id ;
+						 ret.id = id ;
 						 var pm = {
 									type : 'post',
-									url : "./prj_dict_ajax.jsp",
+									url : "./prj_alert_ajax.jsp",
 									data :ret
 								};
 							$.ajax(pm).done((ret)=>{

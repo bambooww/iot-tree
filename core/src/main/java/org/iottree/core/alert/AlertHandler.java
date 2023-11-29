@@ -1,12 +1,19 @@
 package org.iottree.core.alert;
 
+import java.util.HashSet;
+
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
 
 @data_class
-public class AlertItem
+public class AlertHandler
 {
+	public enum Level
+	{
+		
+	}
+	
 	@data_val
 	String id = null ;
 	
@@ -19,8 +26,16 @@ public class AlertItem
 	@data_val
 	private String desc="" ;
 	
+	/**
+	 * tag paths in this handler
+	 */
+	HashSet<String> alertUids = new HashSet<>() ;
+	
+	int alertLevel = 0 ;
+	
 	@data_val(param_name = "js_code")
 	String jsCode = null ;
+	
 
 	public String getId()
 	{
@@ -60,6 +75,11 @@ public class AlertItem
 	public void setDesc(String desc)
 	{
 		this.desc = desc;
+	}
+	
+	public HashSet<String> getAlertUidSet()
+	{
+		return this.alertUids ;
 	}
 
 	public String getJsCode()

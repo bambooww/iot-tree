@@ -41,7 +41,7 @@ public class AlertManager
 	
 	File prjDir = null ;
 	
-	private LinkedHashMap<String,AlertItem> name2alert = null ;
+	private LinkedHashMap<String,AlertHandler> name2alert = null ;
 	
 	private AlertManager(String prjid)
 	{
@@ -52,7 +52,7 @@ public class AlertManager
 		
 		try
 		{
-			name2alert =  loadItems();
+			name2alert =  loadHandlers();
 		}
 		catch(Exception ee)
 		{
@@ -65,30 +65,26 @@ public class AlertManager
 		return prj ;
 	}
 	
-	public LinkedHashMap<String,AlertItem> getItemsAll()
+	public LinkedHashMap<String,AlertHandler> getHandlersAll()
 	{
 		return name2alert ;
 	}
 	
-	private LinkedHashMap<String, AlertItem> loadItems() throws Exception
+	private LinkedHashMap<String, AlertHandler> loadHandlers() throws Exception
 	{
-		File f = new File(prjDir, "alerts.xml");
+		File f = new File(prjDir, "alert_handlers.xml");
 		if (!f.exists())
 			return null;
 
-		LinkedHashMap<String, AlertItem> n2st = new LinkedHashMap<>();
+		LinkedHashMap<String, AlertHandler> n2st = new LinkedHashMap<>();
 
 		XmlData xd = XmlData.readFromFile(f);
-		List<XmlData> xds = xd.getSubDataArray("alerts");
+		List<XmlData> xds = xd.getSubDataArray("handlers");
 		if (xds == null)
 			return n2st;
 		for (XmlData tmpxd : xds)
 		{
-			String cn = tmpxd.getParamValueStr("_alert_cn_");
-			if (Convert.isNullOrEmpty(cn))
-				continue;
-			Class<?> c = Class.forName(cn);
-			AlertItem o = (AlertItem) c.newInstance();
+			AlertHandler o = new AlertHandler();
 			if (!DataTranserXml.injectXmDataToObj(o, tmpxd))
 				continue;
 			n2st.put(o.getName(), o);
@@ -99,14 +95,14 @@ public class AlertManager
 	public void save() throws Exception
 	{
 		XmlData xd = new XmlData();
-		List<XmlData> xds = xd.getOrCreateSubDataArray("alerts");
-		for (AlertItem st : getItemsAll().values())
+		List<XmlData> xds = xd.getOrCreateSubDataArray("handlers");
+		for (AlertHandler st : getHandlersAll().values())
 		{
 			XmlData xd0 = DataTranserXml.extractXmlDataFromObj(st);
 			xd0.setParamValue("_alert_cn_", st.getClass().getCanonicalName());
 			xds.add(xd0);
 		}
-		File f = new File(prjDir, "alerts.xml");
+		File f = new File(prjDir, "alert_handlers.xml");
 		XmlData.writeToFile(xd, f);
 	}
 }
