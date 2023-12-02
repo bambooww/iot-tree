@@ -307,6 +307,9 @@ public abstract class ValAlertTp
 	public abstract boolean checkTrigger(Number lastv, Number val);
 
 	public abstract boolean checkRelease(Number lastv, Number val);
+	
+	public abstract String calValAlertTitle(ValAlert va) ;
+	
 }
 
 class VAT_OnOff extends ValAlertTp
@@ -335,6 +338,12 @@ class VAT_OnOff extends ValAlertTp
 	public String getName()
 	{
 		return "on_off";
+	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "On=="+va.getParamStr1() ;
 	}
 
 	@Override
@@ -398,6 +407,12 @@ class VAT_NegT extends ValAlertTp
 	{
 		return true;
 	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "non-0 to 0";
+	}
 
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
@@ -448,6 +463,12 @@ class VAT_PosT extends ValAlertTp
 	{
 		return true;
 	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "0 to non-0";
+	}
 
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
@@ -496,6 +517,12 @@ class VAT_BitEqu extends ValAlertTp
 	public String getName()
 	{
 		return "bit_equ";
+	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Bit("+va.getParamStr1()+")=="+va.getParamStr2();
 	}
 
 	@Override
@@ -567,6 +594,12 @@ class VAT_BitOffToOn extends ValAlertTp
 	{
 		return "bit_off_to_on";
 	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Bit("+va.getParamStr1()+") 0 to 1";
+	}
 
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
@@ -632,6 +665,12 @@ class VAT_BitOnToOff extends ValAlertTp
 		return "bit_on_to_off";
 	}
 
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Bit("+va.getParamStr1()+") 1 to 0";
+	}
+	
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
 	{
@@ -700,6 +739,12 @@ class VAT_ValEqu extends ValAlertTp
 	public String getName()
 	{
 		return "val_equ";
+	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val>="+va.getParamStr1()+"-"+va.getParamStr2() +"&& Val<="+va.getParamStr1()+"+"+va.getParamStr2();
 	}
 
 	@Override
@@ -786,6 +831,12 @@ class VAT_ValNotEqu extends ValAlertTp
 	{
 		return "val_not_equ";
 	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val<"+va.getParamStr1()+"-"+va.getParamStr2() +"||Val>"+va.getParamStr1()+"+"+va.getParamStr2();
+	}
 
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
@@ -871,6 +922,12 @@ class VAT_ValGt extends ValAlertTp
 	{
 		return true;
 	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val>"+va.getParamStr1()+"+"+va.getParamStr2() ;
+	}
 
 	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
@@ -950,6 +1007,12 @@ class VAT_ValGtEqu extends ValAlertTp
 	public boolean isFloatVal()
 	{
 		return true;
+	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val>="+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 
 	@Override
@@ -1033,6 +1096,12 @@ class VAT_ValLt extends ValAlertTp
 	}
 	
 	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val<"+va.getParamStr1()+"+"+va.getParamStr2() ;
+	}
+	
+	@Override
 	boolean initVA(ValAlert va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
@@ -1110,6 +1179,12 @@ class VAT_ValLtEqu extends ValAlertTp
 	public boolean isFloatVal()
 	{
 		return true;
+	}
+	
+	@Override
+	public String calValAlertTitle(ValAlert va)
+	{
+		return "Val<="+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 	
 	@Override

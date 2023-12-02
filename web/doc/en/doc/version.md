@@ -186,17 +186,17 @@ Improve plugin related functions.
 Add and organize documents.
 
 
-### version 0.99.9 (Plan)
+### version 0.99.9
 
 
-Add support for real-time data writing to the database.
+Add Alert Management
 Add and organize documents.
 
 
 ### version 1.0.0.alpha (Plan)
 
 
-
+Add support for real-time data writing to the database.
 
 
 ### version 1.0.0 (Plan)

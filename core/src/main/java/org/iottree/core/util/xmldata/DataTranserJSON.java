@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class DataTranserJSON
 {
-	public static JSONObject extractJSONFromObj(Object o) throws Exception
+	public static JSONObject extractJSONFromObj(Object o)// throws Exception
 	{
 		JSONObject xd = new JSONObject();
 		extractJSONFromObj(o, xd);
@@ -21,7 +21,7 @@ public class DataTranserJSON
 
 	public static boolean injectJSONToObj(Object o, JSONObject xd) throws Exception
 	{
-		Class c = o.getClass();
+		Class<?> c = o.getClass();
 		boolean b = false;
 		do
 		{
@@ -73,7 +73,7 @@ public class DataTranserJSON
 	}
 	
 
-	private static boolean extractJSONFromObj(Object o, JSONObject xd) throws Exception
+	private static boolean extractJSONFromObj(Object o, JSONObject xd) //throws Exception
 	{
 		Class c = o.getClass();
 		boolean b = false;
@@ -127,12 +127,22 @@ public class DataTranserJSON
 	}
 	
 
-	private static boolean objField2JSONProp(Object o, Field f, data_val xmlv, JSONObject jobj) throws Exception
+	private static boolean objField2JSONProp(Object o, Field f, data_val xmlv, JSONObject jobj) //throws Exception
 	{
 		f.setAccessible(true);
-		Object pv = f.get(o);
-		if (pv == null)
+		Object pv = null;
+		try
+		{
+			pv = f.get(o);
+			if (pv == null)
+				return false;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
 			return false;
+		}
+		
 		String n = f.getName();
 		if (!"".contentEquals(xmlv.param_name()))
 			n = xmlv.param_name();
@@ -153,20 +163,30 @@ public class DataTranserJSON
 		return true;
 	}
 	
-	private static boolean objMethod2JSONProp(Object o, Method m, data_val xmlv, JSONObject jobj) throws Exception
+	private static boolean objMethod2JSONProp(Object o, Method m, data_val xmlv, JSONObject jobj) //throws Exception
 	{
 		m.setAccessible(true);
 		String mn = m.getName() ;
 		if(!mn.startsWith("get"))
 			return false;
-		Object pv = m.invoke(o, new Object[] {});
-		if (pv == null)
+		Object pv = null;
+		try
+		{
+			pv = m.invoke(o, new Object[] {});
+			if (pv == null)
+				return false;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 			return false;
+		}
+		
 		String n =xmlv.param_name();
 		if(Convert.isNullOrEmpty(n))
 			return false;
 		
-		Class dc = m.getReturnType();
+		//Class<?> dc = m.getReturnType();
 		
 		// if(List.class.isAssignableFrom(dc))
 		if (pv instanceof List)
@@ -241,13 +261,22 @@ public class DataTranserJSON
 	
 	
 
-	private static boolean objField2JSONObj(Object o, Field f, data_obj xmld, JSONObject tarxd) throws Exception
+	private static boolean objField2JSONObj(Object o, Field f, data_obj xmld, JSONObject tarxd) //throws Exception
 	{
 		f.setAccessible(true);
 
-		Object pv = f.get(o);
+		Object pv = null;
+		try
+		{
+		pv = f.get(o);
 		if (pv == null)
 			return false;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
 		String n = f.getName();
 		if (!"".contentEquals(xmld.param_name()))
 			n = xmld.param_name();
@@ -284,15 +313,24 @@ public class DataTranserJSON
 	
 	
 	
-	private static boolean objMethod2JSONObj(Object o, Method m, data_obj xmld, JSONObject tarxd) throws Exception
+	private static boolean objMethod2JSONObj(Object o, Method m, data_obj xmld, JSONObject tarxd) //throws Exception
 	{
 		m.setAccessible(true);
 		String mn = m.getName() ;
 		if(!mn.startsWith("get"))
 			return false;
-		Object pv = m.invoke(o, new Object[] {});
-		if (pv == null)
+		Object pv = null;
+		try
+		{
+			pv = m.invoke(o, new Object[] {});
+			if (pv == null)
+				return false;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
 			return false;
+		}
 		String n =xmld.param_name();
 		if(Convert.isNullOrEmpty(n))
 			return false;

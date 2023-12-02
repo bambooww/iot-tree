@@ -87,18 +87,12 @@
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
 <script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
 <script src="/_js/oc/oc.min.js?v=<%=Config.getVersion()%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
-
- <!-- 
-
--->
+<link href="/_js/font6/css/all.css" rel="stylesheet">
 <style>
 body {
 	margin: 0px;
@@ -107,6 +101,11 @@ body {
 	text-align: center;
 -moz-user-select : none;
 -webkit-user-select: none;
+}
+
+th
+{
+	border:1px solid;
 }
 .top {
 	position: fixed;
@@ -320,13 +319,15 @@ height:30px;
 
 .oper
 {
-position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000
+position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000;cursor: pointer;
 }
 
 .oper i
 {
 margin-top:5px;
 }
+
+
 
 .overlay_msg
 {
@@ -342,6 +343,28 @@ margin-top:5px;
 	width:300px;
 	height:130px;
 	zIndex:65535;
+}
+
+.alert
+{
+	position: absolute;
+	right:60px;top:160px;width:500px;height:300px;
+	background-color: #555555;
+	z-index: 60002;
+	opacity: 0.5;color: #bbbbbb;
+}
+
+.alert:hover
+{
+	opacity: 1.0;
+}
+
+.alert .op
+{
+	position: absolute;
+	right:0px;
+	top:0px;
+	background-color: #aaaaaa;
 }
 </style>
 
@@ -397,23 +420,56 @@ dlg.dlg_top=true;
 					  </button>
 					</div>
 				</div>
-
-					
-				
 		</div>
 		
 		</div>
 
 
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
-	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus-square-o fa-3x"></i></div>
-	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus-square-o fa-3x"></i></div>
+	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x"></i></div>
+	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x"></i></div>
+	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
 	<!-- 
 <script src="/_iottree/di_div_comps/echarts.min.js"></script>
 <script src="/_iottree/di_div_comps/switchs/comp_button.js"></script>
 <script src="/_iottree/di_div_comps/meters/comp_gauge2.js"></script>
 
  -->
+ 	<div id="alert_list_c" style="display:none" class="alert">
+ 		<span class="op">
+<%--
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
+ --%>
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" title="delete"><i class="fa fa-times"></i></button>
+		</span>
+		<h3>Alerts List</h3>
+ 		<div class="" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
+ 			<table cellpadding="0" cellspacing="0" style="width:100%;">
+            <thead>
+                <tr>
+                	<th>Time</th>
+                	<th>Handler</th>
+                    <th>Tag</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Level</th>
+                    <th>Prompt</th>
+                </tr>
+            </thead>
+ 
+            <tbody id="alert_list" >
+                
+            </tbody>
+ <%--
+            <tfoot>
+                <tr>
+                    <td colspan="5">【table，thead，tbody，tfoot】 colspan：合并行， rowspan：合并列 </td>
+                </tr>
+            </tfoot>
+             --%>
+        </table>
+ 		</div>
+ 	</div>
  
 <script>
 
@@ -461,6 +517,11 @@ $('#oper_zoomup').click(function()
 $('#oper_zoomdown').click(function()
 {
 	zoom(1)
+});
+
+$("#oper_alert").click(function()
+{
+	show_or_hide_alerts() ;
 });
 
 function add_tab()
@@ -782,7 +843,7 @@ function show_overlay(bshow,title)
 
 var b_conn_first=true;
 
-
+var last_blink=-1 ;
 
 function ws_conn()
 {
@@ -826,6 +887,33 @@ function ws_conn()
     		hmiModel.updateRtNodes(d.cxt_rt);
     	}
     	
+    	let iob =$("#oper_alert_i") ; 
+    	if(d.has_alert)
+    	{
+    		
+    		iob.css("color","red") ;
+    		let ms = new Date().getTime();
+    		if(ms-last_blink>500)
+    		{
+        		if("none"==iob.css("display"))
+        			iob.css("display","");
+        		else
+        			iob.css("display","none");
+    			last_blink = ms ;
+    		}
+    		
+    		if(d.alerts)
+    		{
+    			update_alert_list(d.alerts);
+    		}
+    	}
+    	else
+    	{
+    		iob.css("color","#494949").css("display","") ;
+    		update_alert_list(null);
+    	}
+    		
+    	
     	if(d.prj_run)
     		show_overlay(false);
     	else
@@ -845,7 +933,38 @@ function ws_conn()
     };
     
     return true;
-}	
+}
+
+function update_alert_list(alerts)
+{
+	if(!alerts)
+	{
+		$("#alert_list").html("") ;
+		return ;
+	}
+	let tmps = "" ;
+	for(let alert of alerts)
+	{
+		let trigger_c = alert.trigger_c?("color:"+alert.trigger_c):"" ;
+		
+		for(let item of alert.items)
+		{
+			let dt = new Date(item.dt).toShortGapNow();
+			tmps += `<tr style="\${trigger_c};">
+	            <td>\${dt}</td>
+	            <td>\${alert.t}</td>
+	            <td>\${item.tt}</td>
+	            <td>\${item.tp}</td>
+	            <td>\${item.val}</td>
+	            <td>\${alert.lvl}</td>
+	            <td>\${item.prompt}</td>
+	        </tr>
+			` ;
+		}
+	}
+	
+	$("#alert_list").html(tmps) ;
+}
 
 function ws_disconn() {
 	
@@ -905,6 +1024,22 @@ function cxt_rt()
 		//var rtn = hmiModel.getCxtRtNode();
 		//alert(JSON.stringify(rtn)) ;
 	},false) ;
+}
+
+function show_or_hide_alerts()
+{
+	let dis= $("#alert_list_c").css("display");
+	console.log(dis) ;
+	if("none"==dis)
+		$("#alert_list_c").css("display","");
+	else
+		$("#alert_list_c").css("display","none");
+	//$("#alert_list").html(tmps) ;
+}
+
+function hide_alerts()
+{
+	$("#alert_list_c").css("display","none");
 }
 
 async function  f()

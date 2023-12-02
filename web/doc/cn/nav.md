@@ -27,6 +27,7 @@
 ##### <a href="doc/main/properties.md" target="main">&nbsp;&nbsp;&nbsp;4.6 属性Properties</a>
 ##### <a href="doc/main/hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 特殊节点：UI(HMI)</a>
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 项目任务</a>
+##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 报警支持</a>
 ##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 数据储存</a>
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 数据字典</a>
 ##### <a href="doc/main/outer_ref.md" target="main">&nbsp;&nbsp;&nbsp;4.11 对外接口RESTful</a>

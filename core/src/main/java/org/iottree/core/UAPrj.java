@@ -23,6 +23,7 @@ import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -698,9 +699,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			Object v = uav.getObjVal() ;
 			if(v==null)
 				continue ;
-			String defv = tag.getLocalDefaultVal() ;
-			if(defv!=null&&defv.equals(v.toString()))
-				continue ;
+			//String defv = tag.getLocalDefaultVal() ;
+			//if(defv!=null&&defv.equals(v.toString()))
+			//	continue ;
 			String pn = tag.getNodePathCxt() ;
 			if(!bchged)
 			{
@@ -954,6 +955,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				startStopCh(true);
 				
 				startStopTask(true) ;
+				
+				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 
 				while (rtRun)
 				{
@@ -1000,6 +1003,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				stopPrj();
 
 				RT_runFlush();
+				
+				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
 			}
 		}
 	};

@@ -509,6 +509,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return null ;
 	}
 	
+	public UAPrj getBelongToPrj()
+	{
+		UANode uan = this.getTopNode() ;
+		if(uan instanceof UAPrj)
+			return (UAPrj)uan ;
+		return null ;
+	}
+	
 	
 	DevDriver getRelatedDriver()
 	{
@@ -1186,12 +1194,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.valAlerts==null)
 			return ;
 		Object objv = this.curVal.getObjVal() ;
-		if(!(objv instanceof Number))
-			return ;
-		
+
 		for(ValAlert va:this.valAlerts)
 		{
-			va.RT_fireValChged((Number)objv);
+			va.RT_fireValChged(objv);
 		}
 	}
 	

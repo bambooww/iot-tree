@@ -340,6 +340,21 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return parentNode ;
 	}
 	
+	public boolean isUnderNode(UANode o)
+	{
+		UANode p = this ;
+		do
+		{
+			p = p.getParentNode() ;
+			if(p==null)
+				return false;
+			if(p==o)
+				return true ;
+		}
+		while(p!=null);
+		return false;
+	}
+	
 	@JsDef(desc="Get node path like /xxx/xx/xxxx")
 	public String getNodePath()
 	{

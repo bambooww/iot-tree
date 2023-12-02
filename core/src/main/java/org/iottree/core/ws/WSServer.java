@@ -21,8 +21,10 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
+import org.iottree.core.basic.ValAlert;
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WSRoot.SessionItem;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public abstract class WSServer// extends ConnServer
@@ -152,6 +154,20 @@ public abstract class WSServer// extends ConnServer
 					sw.write(sw_rt.toString());
 					// lastDT = tmp_maxdt ;
 				}
+				
+				//render alerts
+				JSONArray jarr = ntags.CXT_getAlertsJArr() ;
+				if(jarr!=null && jarr.length()>0)
+				{// alert_handlers/alert_items
+					sw.write(",\"has_alert\":true,\"alerts\":");
+					jarr.write(sw) ;
+				}
+
+//				List<ValAlert> vas = ntags.CXT_listAlerts();
+//				if(vas!=null&&vas.size()>0)
+//				{
+//					sw.write("");
+//				}
 			}
 			sw.write("}");
 

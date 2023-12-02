@@ -2,8 +2,11 @@ package org.iottree.core.basic;
 
 import java.util.List;
 
+import org.iottree.core.UANode;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.alert.AlertManager;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
@@ -45,7 +48,9 @@ public class ValAlert extends JSObMap
 		return vt ;
 	}
 	
-	UATag tag = null ;
+	private UAPrj prj = null ;
+	
+	private UATag tag = null ;
 	
 	@data_val
 	private String id = null ;
@@ -110,7 +115,7 @@ public class ValAlert extends JSObMap
 	
 	private transient long lastTriggedDT = -1 ;
 	
-	private transient Number lastTriggedVal = null ;
+	private transient Object lastTriggedVal = null ;
 	
 	private transient long lastReleasedDT = -1 ;
 	
@@ -124,7 +129,8 @@ public class ValAlert extends JSObMap
 	public ValAlert copyMe(UATag tag,boolean b_cp_id)
 	{
 		ValAlert r = new ValAlert() ;
-		r.tag = tag ;
+		r.setBelongTo(tag);
+		
 		if(b_cp_id)
 			r.id = this.id ;
 		r.name = this.name ;
@@ -146,6 +152,7 @@ public class ValAlert extends JSObMap
 	public void setBelongTo(UATag t)
 	{
 		this.tag = t ;
+		this.prj = t.getBelongToPrj() ;
 	}
 	
 	public String getId()
@@ -156,8 +163,28 @@ public class ValAlert extends JSObMap
 	@JsDef
 	public String getUid()
 	{
-		return this.tag.getNodePath()+"-"+this.id ;
+		UAPrj prj = this.tag.getBelongToPrj() ;
+		if(prj==null)
+			throw new RuntimeException("tag is not belong to project") ;
+		
+		return this.tag.getNodeCxtPathIn(prj)+"-"+this.id ;
 	}
+	
+
+	public static ValAlert getAlertByUID(UAPrj prj,String alert_uid)
+	{
+		int k = alert_uid.indexOf('-') ;
+		if(k<=0)
+			throw new IllegalArgumentException("invalid alert UID "+alert_uid) ;
+		String tagpath = alert_uid.substring(0,k) ;
+		String va_id = alert_uid.substring(k+1) ;
+		UANode uan = prj.getDescendantNodeByPath(tagpath) ;
+		if(!(uan instanceof UATag))
+			return null ;
+		UATag tag = (UATag)uan ;
+		return tag.getValAlertById(va_id) ;
+	}
+	
 	
 	public String getName()
 	{
@@ -167,6 +194,11 @@ public class ValAlert extends JSObMap
 	public ValAlertTp getAlertTp()
 	{
 		return alertTp;
+	}
+	
+	public String getAlertTitle()
+	{
+		return alertTp.calValAlertTitle(this) ;
 	}
 
 	public void setAlertTp(ValAlertTp tp)
@@ -279,23 +311,45 @@ public class ValAlert extends JSObMap
 	}
 	
 	
-	private void RT_trigger(Number val)
+	
+	private void RT_trigger(Object cur_val)
 	{
 		this.bTrigged = true ;
 		this.lastTriggedDT = System.currentTimeMillis() ;
-		this.lastTriggedVal = val ;
+		this.lastTriggedVal = cur_val ;
+		
+		//check handler
+		AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
 	}
 	
-	private void RT_release()
+	private void RT_release(Object cur_val)
 	{
 		 this.bTrigged =false;
 		 this.lastReleasedDT = System.currentTimeMillis() ;
+		 //
+		 AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
 	}
 	
 	private transient Number lastV = null ;
 	
-	public void RT_fireValChged(Number curv)
+	public void RT_fireValChged(Object inputv)
 	{
+		if(!this.alertEnable)
+			return ;
+		Number curv = null ;
+		if(inputv instanceof Number)
+		{
+			curv = (Number)inputv ;
+		}
+		else if(inputv instanceof Boolean)
+		{
+			curv = ((Boolean)inputv).booleanValue()?1:0;
+		}
+		else
+		{
+			return ;//do nothing
+		}
+		
 		if(alertTp.isNeedLastVal())
 		{
 			if(lastV==null)
@@ -310,12 +364,12 @@ public class ValAlert extends JSObMap
 			if(this.bTrigged)
 			{
 				if(alertTp.checkRelease(lastV, curv))
-					RT_release();
+					RT_release(inputv);
 			}
 			else
 			{
 				if(alertTp.checkTrigger(lastV, curv))
-					RT_trigger(curv) ;
+					RT_trigger(inputv) ;
 			}
 		}
 		finally
@@ -337,7 +391,7 @@ public class ValAlert extends JSObMap
 	}
 	
 	@JsDef
-	public Number RT_last_trigged_val()
+	public Object RT_last_trigged_val()
 	{
 		return this.lastTriggedVal ;
 	}

@@ -13,6 +13,9 @@ import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
 
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.alert.AlertItem;
+import org.iottree.core.alert.AlertManager;
+import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JSObPk;
 import org.iottree.core.cxt.JsMethod;
@@ -26,6 +29,7 @@ import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -348,12 +352,14 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		{
 			w.write(",\"ext\":" + jo.toString() );
 		}
-
+		
+		
 		if(renderJsonTags(w, tag2lastdt, g_lastdt))
 			bchg = true;
 		
 		if(renderJsonSubs(w, tag2lastdt))
 			bchg = true ;
+		
 		
 		w.write("}");
 		return bchg;
@@ -475,6 +481,56 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 		w.write("]");
 		return true;
+	}
+	
+	public List<ValAlert> CXT_listAlerts()
+	{
+		ArrayList<ValAlert> rets = new ArrayList<>() ;
+		this.iteratorAllTags((tg)->{
+			List<ValAlert> vas = tg.getValAlerts() ;
+			if(vas==null)
+				return ;
+			for(ValAlert va:vas)
+			{
+				if(va.RT_is_triggered())
+					rets.add(va) ;
+			}
+		});
+		return rets ;
+	}
+	
+	public JSONArray CXT_getAlertsJArr()
+	{
+		UAPrj prj= this.getBelongToPrj() ;
+		
+		JSONArray jarr = new JSONArray() ;
+		AlertManager.getInstance(prj.getId()).getHandlers().forEach((id,ah)->{
+			List<AlertItem> items = ah.RT_getAlertItems() ;
+			if(items==null||items.size()<=0)
+				return ;
+			JSONObject ah_jo = null ;
+			JSONArray ai_jarr = null ;
+			for(AlertItem ai:items)
+			{
+				UATag tag = ai.getTag() ;
+				if(!tag.isUnderNode(this))
+					continue ;
+				//
+				if(ah_jo==null)
+				{
+					ah_jo = ah.RT_toJO() ;
+					ai_jarr = new JSONArray() ;
+				}
+				
+				ai_jarr.put(ai.toJO()) ;
+			}
+			if(ah_jo==null)
+				return ;
+			ah_jo.put("items", ai_jarr) ;
+			jarr.put(ah_jo) ;
+		});
+		
+		return jarr ;
 	}
 	
 	public static List<JsProp> JS_getSysPropsCxt()

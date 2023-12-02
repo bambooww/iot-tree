@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.cxt.JsProp;
@@ -549,6 +550,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		rets.addAll(this.sysTags);
 		return rets;
 	}
+	
 
 	public List<UATag> getNorTags()
 	{
@@ -649,7 +651,29 @@ public abstract class UANodeOCTags extends UANodeOC
 			}
 		}
 	}
-
+	
+	/**
+	 * for RT using
+	 * @param action
+	 */
+	public void iteratorAllTags(Consumer<? super UATag> action)
+	{
+		this.tags.forEach(action);
+		if(this.sysTags!=null)
+			this.sysTags.forEach(action);
+		
+		List<UANode> ns = this.getSubNodes();
+		if (ns == null)
+			return;
+		for (UANode n : ns)
+		{
+			if (n instanceof UANodeOCTags)
+			{
+				((UANodeOCTags) n).iteratorAllTags(action);
+			}
+		}
+	}
+	
 	// {
 	// ArrayList<UATag> rets = new ArrayList<>() ;
 	// this.getTagList();

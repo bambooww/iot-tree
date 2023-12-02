@@ -6,6 +6,7 @@
 				org.iottree.core.dict.*,
 				org.iottree.core.basic.*,
 				org.iottree.core.util.web.*,
+				org.iottree.core.alert.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -20,44 +21,50 @@ if(rep==null)
 	out.print("no prj found");
 	return ;
 }
-String id = request.getParameter("id") ;
 
-String name = "" ;
-boolean benable = true;
+AlertManager amgr = AlertManager.getInstance(prjid) ;
+String prj_path = rep.getNodePath() ;
+String id = request.getParameter("id") ;
 String title = "" ;
 String desc = "" ;
-List<String> bind_for = null ;
-boolean bind_m = false;
-DataClass dc = null ;
+boolean benable = true ;
+boolean b_trigger_en = true ;
+boolean b_release_en = true ;
+String release_color="" ;
+String trigger_color="";
+
 if(Convert.isNotNullEmpty(id))
 {
-	dc = pdc.getDataClassById(id) ;
-	if(dc==null)
+	AlertHandler ah = amgr.getHandlerById(id);
+	if(ah==null)
 	{
-		out.println("no PrjDataClass found");
+		out.println("no AlertHandler found");
 		return ;
 	}
 	
-	name = dc.getClassName() ;
-	title = dc.getClassTitle() ;
-	bind_for = dc.getBindForList() ;
-	bind_m = dc.isBindMulti() ;
-	benable = dc.isClassEnable() ;
+	title = ah.getTitle() ;
+	benable = ah.isEnable() ;
+	b_trigger_en = ah.isTriggerEn() ;
+	b_release_en = ah.isReleaseEn() ;
+	trigger_color = ah.getTriggerColor() ;
+	release_color = ah.getReleaseColor() ;
 }
-String chked = "" ;
-if(benable)
-	chked = "checked='checked'" ;
+else
+{
+	id = "" ;
+}
+String chked = benable?"checked='checked'":"" ;
+String trigger_chked = b_trigger_en?"checked='checked'":"" ;
+String release_chked = b_release_en?"checked='checked'":"" ;
 %>
 <html>
 <head>
-<title>DataClass editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<title>Alert Out editor</title>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(600,500);
 </script>
 <style>
 </style>
@@ -65,83 +72,50 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
-    <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="name" id="name" value="<%=name %>" class="layui-input"/>
+    <label class="layui-form-label">Title</label>
+    <div class="layui-input-inline" style="width:250px;">
+      <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
     </div>
     <div class="layui-form-mid">Enable</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
- <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
-    <div class="layui-input-inline">
-      <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
+  
+  <div class="layui-form-item" >
+    <label class="layui-form-label">Triggered:</label>
+     <div class="layui-input-inline" style="width:50px;">
+      <input type="checkbox" id="trigger_en" name="trigger_en" <%=trigger_chked%> lay-skin="switch"  lay-filter="trigger_en" class="layui-input">
     </div>
-  </div>
-   <div class="layui-form-item">
-    <label class="layui-form-label">Bind For</label>
-    <div class="layui-input-inline">
-    <span style="border:1;white-space: nowrap;">
-<%
-	for(int k = 0 ; k < DataClass.BIND_FOR.length ; k ++)
-	{
-		String tmpn = DataClass.BIND_FOR[k] ;
-		String tmpt=  DataClass.BIND_FOR_TITLE[k] ;
-		chked = "" ;
-		if(dc!=null&&dc.hasBindFor(tmpn))
-			chked="checked=checked" ;
-%>
-<input type="checkbox"  id="bind_for_<%=tmpn %>" bind_for="<%=tmpn %>"
-	 name="bind_for" title="<%=tmpt %>"  value="<%=tmpn %>"  <%=chked %>/>
-<%
-		if((k+1)%3==0)
-		{
-%><br><%
-		}
-	}
-%>
-	</span>
-        
+    <div class="layui-form-mid">Color:</div>
+    <div class="layui-input-inline" style="width:150px;">
+      <input type="text" name="trigger_color" id="trigger_color" value="<%=trigger_color %>" class="layui-input"/>
     </div>
   </div>
   
-     <div class="layui-form-item">
-    <label class="layui-form-label">Bind Style</label>
-    <div class="layui-input-inline">
-        <span style="border:1;white-space: nowrap;">
-<%
-if(bind_m)
-{
-%>
-	<input type="radio"  id="bind_style_s" name="bind_style" title="Single"  value="single" />
-	<input type="radio"  id="bind_style_m" name="bind_style" title="MultiSelect"  value="multi"  checked="checked"/>
-<%
-}
-else
-{
-%>
-	<input type="radio"  id="bind_style_s" name="bind_style" title="Single"  value="single"  checked="checked"/>
-	<input type="radio"  id="bind_style_m" name="bind_style" title="MultiSelect"  value="multi" />
-<%
-}
-%>
-		</span>
+  <div class="layui-form-item" >
+    <label class="layui-form-label">Released:</label>
+    <div class="layui-input-inline" style="width:50px;">
+      <input type="checkbox" id="release_en" name="release_en" <%=release_chked%> lay-skin="switch"  lay-filter="release_en" class="layui-input">
+    </div>
+    <div class="layui-form-mid">Color:</div>
+    <div class="layui-input-inline" style="width:150px;">
+      <input type="text" name="release_color" id="release_color" value="<%=release_color %>" class="layui-input"/>
     </div>
   </div>
-
 
 </form>
 </body>
 <script type="text/javascript">
+var path="<%=prj_path%>";
+var id = "<%=id%>" ;
 
 layui.use('form', function(){
-	  var form = layui.form;
-	  form.render();
-	  
-	  
-	});
+	var form = layui.form;
+	form.render();
+});
+	
+
 	
 function win_close()
 {
@@ -150,40 +124,27 @@ function win_close()
 
 function do_submit(cb)
 {
-	var n = $('#name').val();
-	if(n==null||n=='')
-	{
-		cb(false,'请输入名称') ;
-		return ;
-	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		tt = n;
+		tt = "";
 	}
 	
 	var desc = "";//document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
 	
-	var bind_for='' ;
-	$('input[type=checkbox]:checked').each(function() {
-		var bf = $(this).val() ;
-	      if(bf)
-	    	  bind_for+=','+bf;
-	    });
-	
-	if(bind_for!='')
-		bind_for = bind_for.substr(1) ;
-	var bind_style=$("input[name='bind_style']:checked").val();
-	if(!bind_style)
-		bind_style="" ;
 	var ben = $("#enable").prop("checked") ;
-	cb(true,{name:n,title:tt,enable:ben,desc:desc,bind_for:bind_for,bind_style:bind_style});
+	var b_trigger_en = $("#trigger_en").prop("checked") ;
+	var b_release_en = $("#release_en").prop("checked") ;
+	let trigger_c = $("#trigger_color").val() ;
+	let release_c = $("#release_color").val() ;
+	cb(true,{id:id,trigger_en:b_trigger_en,release_en:b_release_en,t:tt,en:ben,trigger_c:trigger_c,release_c:release_c});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;
 }
+
 
 </script>
 </html>

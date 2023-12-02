@@ -27,6 +27,7 @@
 ##### <a href="doc/main/properties.md" target="main">&nbsp;&nbsp;&nbsp;4.6 Properties</a>
 ##### <a href="doc/main/hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 Node:(HMI)</a>
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Tasks</a>
+##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Alert Handler</a>
 ##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 Data Dictionary</a>
 ##### <a href="doc/main/outer_ref.md" target="main">&nbsp;&nbsp;&nbsp;4.11 OUTER REF RESTful</a>
