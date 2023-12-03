@@ -162,6 +162,13 @@ var sample_txt_id = "<%=sample_txt_id%>" ;
 var taskid="<%=taskid%>";
 var bdlg = <%=bdlg%>;
 
+var pm_objs = dlg.get_opener_opt("pm_objs");
+
+if(pm_objs)
+	pm_objs = JSON.stringify(pm_objs);
+else
+	pm_objs="";
+
 function log(s)
 {
 	document.getElementById('log_inf').innerHTML = s ;
@@ -174,7 +181,7 @@ function tree_init()
 				{
 					'core' : {
 						'data' : {
-							'url' :"cxt_script_help_ajax.jsp?op=sub_json&no_this="+no_this+"&no_parent="+no_parent+"&path="+path,
+							'url' :"cxt_script_help_ajax.jsp?op=sub_json&no_this="+no_this+"&no_parent="+no_parent+"&path="+path+"&pm_objs="+utf8UrlEncode(pm_objs),
 							"dataType" : "json",
 							"data":function(node){
 		                        return {"id" : node.id};
@@ -221,7 +228,7 @@ function on_tree_node_sel(n)
 {
 	//console.log("select",n) ;
 	var id = n.id;
-	send_ajax("cxt_script_help_ajax.jsp",{op:"sub_detail",path:path,id:id},(bsucc,ret)=>{
+	send_ajax("cxt_script_help_ajax.jsp",{op:"sub_detail",path:path,id:id,pm_objs:pm_objs},(bsucc,ret)=>{
 		$("#node_detail").html(ret) ;
 	}) ;
 }

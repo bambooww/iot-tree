@@ -17,7 +17,7 @@ She uses a clear architecture, including communication connection, channel, devi
 
 Based on this tree management, IOT-Tree Server provides the design, configuration and online application of online configuration interface (Human-Computer Interaction Interface) based on Web.
 
-IOT-Tree Server is an open source software developed using Java. It's admin ui is completely web-based.
+IOT-Tree Server is mainly developed using Java. It's admin ui is completely web-based.
 
 
 
@@ -45,7 +45,7 @@ IOT-Tree Server is an open source software developed using Java. It's admin ui i
 
 
 
-## 1.1 It can be used as an industrial field configuration software(SCADA)
+## 1.1 It can be used as an industrial field(SCADA)
 
 You can use IOT-Tree server as the PC side configuration software in the industrial field.
 

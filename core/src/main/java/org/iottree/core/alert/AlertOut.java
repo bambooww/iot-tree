@@ -1,7 +1,6 @@
 package org.iottree.core.alert;
 
 import org.iottree.core.UAPrj;
-import org.iottree.core.basic.ValAlert;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
@@ -11,8 +10,8 @@ import org.json.JSONObject;
 @data_class
 public abstract class AlertOut
 {
-	public static final String[] TPS = new String[] {"ui","js"} ;
-	public static final String[] TP_TITLES = new String[] {"UI","JS"} ;
+	public static final String[] TPS = new String[] {"js"};//{"ui","js"} ;
+	public static final String[] TP_TITLES = new String[] {"JS"}; // {"UI","JS"} ;
 	
 	static AlertOut newInsByTp(String tp)
 	{
@@ -22,9 +21,9 @@ public abstract class AlertOut
 		case AlertOutJS.TP:
 			ao = new AlertOutJS() ;
 			break ;
-		case AlertOutUI.TP:
-			ao = new AlertOutUI() ;
-			break ;
+//		case AlertOutUI.TP:
+//			ao = new AlertOutUI() ;
+//			break ;
 		}
 		return ao ;
 	}
@@ -73,7 +72,7 @@ public abstract class AlertOut
 	public abstract String getOutTpTitle() ;
 	
 	
-	public abstract void sendAlert(ValAlert alert,long alert_time_ms,String alert_title,String alert_msg,int alert_level,String alert_color) ;
+	public abstract void sendAlert(String uid,AlertItem ai) throws Exception;
 	
 	public JSONObject toJO() // throws Exception
 	{

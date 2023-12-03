@@ -40,7 +40,8 @@ public class ValAlert extends JSObMap
 			return null ;
 		
 		ValAlert vt = new ValAlert() ;
-		vt.tag = tag ;
+		//vt.tag = tag ;
+		vt.setBelongTo(tag) ;
 		DataTranserJSON.injectJSONToObj(vt, jo) ;
 		String id = jo.optString("id") ;
 		if(Convert.isNullOrEmpty(id))
@@ -113,6 +114,12 @@ public class ValAlert extends JSObMap
 	
 	private transient boolean bTrigged = false;
 	
+	/**
+	 * every time this alert is trigger,new UID
+	 * will created
+	 */
+	private transient String triggerUID = null ;
+	
 	private transient long lastTriggedDT = -1 ;
 	
 	private transient Object lastTriggedVal = null ;
@@ -149,6 +156,15 @@ public class ValAlert extends JSObMap
 		return this.tag ;
 	}
 	
+	public UAPrj getPrj()
+	{
+		if(this.prj!=null)
+			return this.prj ;
+		
+		this.prj = this.tag.getBelongToPrj() ;
+		return this.prj ;
+	}
+	
 	public void setBelongTo(UATag t)
 	{
 		this.tag = t ;
@@ -163,7 +179,7 @@ public class ValAlert extends JSObMap
 	@JsDef
 	public String getUid()
 	{
-		UAPrj prj = this.tag.getBelongToPrj() ;
+		UAPrj prj = this.getPrj() ;
 		if(prj==null)
 			throw new RuntimeException("tag is not belong to project") ;
 		
@@ -287,7 +303,7 @@ public class ValAlert extends JSObMap
 	
 	public String toTitleStr()
 	{
-		return this.alertTp.getTitleEn()+this.paramStr1+"("+this.alertPrompt+")" ;
+		return this.getAlertTitle()+"("+this.alertPrompt+")" ;
 	}
 	
 	public JSONObject toJO() throws Exception
@@ -315,11 +331,12 @@ public class ValAlert extends JSObMap
 	private void RT_trigger(Object cur_val)
 	{
 		this.bTrigged = true ;
+		this.triggerUID = CompressUUID.createNewId() ;
 		this.lastTriggedDT = System.currentTimeMillis() ;
 		this.lastTriggedVal = cur_val ;
 		
 		//check handler
-		AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
+		AlertManager.getInstance(getPrj().getId()).RT_fireAlert(this,cur_val) ;
 	}
 	
 	private void RT_release(Object cur_val)
@@ -327,7 +344,7 @@ public class ValAlert extends JSObMap
 		 this.bTrigged =false;
 		 this.lastReleasedDT = System.currentTimeMillis() ;
 		 //
-		 AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
+		 AlertManager.getInstance(getPrj().getId()).RT_fireAlert(this,cur_val) ;
 	}
 	
 	private transient Number lastV = null ;
@@ -384,14 +401,19 @@ public class ValAlert extends JSObMap
 		return this.bTrigged ;
 	}
 	
+	public String RT_get_trigger_uid()
+	{
+		return this.triggerUID;
+	}
+	
 	@JsDef
-	public long RT_last_trigged_dt()
+	public long RT_last_trigger_dt()
 	{
 		return this.lastTriggedDT ;
 	}
 	
 	@JsDef
-	public Object RT_last_trigged_val()
+	public Object RT_last_trigger_val()
 	{
 		return this.lastTriggedVal ;
 	}

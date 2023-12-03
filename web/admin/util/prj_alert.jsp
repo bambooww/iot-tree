@@ -52,8 +52,8 @@ background-color: #eeeeee
 	position: absolute;
 	top:0px;
 	left:0px;
-	border:1px solid;
-	width:200px;
+	border:0px solid;
+	width:20%;
 	bottom:0px;
 }
 
@@ -61,9 +61,9 @@ background-color: #eeeeee
 {
 	position: absolute;
 	top:0px;
-	left:200px;
-	border:1px solid;
-	right:200px;
+	left:20%;
+	border:0px solid;
+	right:20%;
 	bottom:0px;
 }
 
@@ -72,13 +72,44 @@ background-color: #eeeeee
 	position: absolute;
 	top:0px;
 	right:0px;
-	border:1px solid;
-	width:200px;
+	border:0px solid;
+	width:20%;
 	bottom:0px;
 }
 .alert_item
 {
-	margin-left:30px;
+	position:relative;
+	margin-bottom:3px;
+	height:25px;
+	font-size:15px;
+	margin-left:10px;
+	border:1px solid;
+	right:0px;
+	
+}
+
+.alert_item .tt
+{
+	position:absolute;
+	left:20px;right:20px;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.alert_item .en
+{
+position:absolute;
+	top:3px;
+	left:2px;
+}
+
+.chk_alert_c
+{
+	position:absolute;
+	right:0px;
+	margin-top:0px;
+	visibility: hidden;
 }
 
 .h_item
@@ -90,12 +121,7 @@ background-color: #eeeeee
 	border:1px solid;
 	margin-bottom: 10px;
 }
-.h_item .n
-{
-	position:absolute;
-	font-size: 18px;
-	left:5px;
-}
+
 .h_item .t
 {
 	position:absolute;
@@ -103,20 +129,24 @@ background-color: #eeeeee
 	top:5px;
 	left:10px;
 }
-.h_item .tp
+.h_item .trigger_c
 {
 	position:absolute;
-	font-size: 25px;
-	top:10px;
-	right:10px;
+	font-size: 20px;
+	border:1px solid;
+	top:5px;
+	right:170px;
 }
-.h_item .tpt
+
+.h_item .release_c
 {
 	position:absolute;
-	font-size: 15px;
-	top:1px;
-	right:5px;
+	font-size: 20px;
+	top:5px;
+	border:1px solid;
+	right:80px;
 }
+
 .h_item .oper
 {
 	position:absolute;
@@ -129,7 +159,7 @@ background-color: #eeeeee
 .out_item
 {
 	position:relative;
-	left:10%;
+	left:0%;
 	width:80%;
 	height:60px;
 	border:1px solid;
@@ -176,13 +206,26 @@ background-color: #eeeeee
 	border-color: blue;
 }
 
-.chk_alert_c
-{
-visibility: hidden;
-}
 .chk_out_c
 {
 visibility: hidden;
+}
+
+.in_conn_panel
+{
+	position: absolute;
+	left:0px;width:10%;top:0px;bottom:0px;
+	border:0px solid;
+	border-color: red;
+	
+}
+
+.out_conn_panel
+{
+	position: absolute;
+	right:0px;width:10%;top:0px;bottom:0px;
+	border:0px solid;
+	border-color: red;
 }
 </style>
 <body marginwidth="0" marginheight="0">
@@ -204,7 +247,11 @@ visibility: hidden;
 		{
 			String id = va.getUid() ;
 			String tt = Convert.plainToHtml(va.toTitleStr()) ;
-%><div class="alert_item"><span class="chk_alert_c"><input type="checkbox" id="<%=id %>"  class="chk_alert" onclick="on_chk_alert('<%=id%>')"/></span><%=tt %></div>
+			String en_c = va.isEnable()?"green":"gray" ;
+			String en_t = va.isEnable()?"Enabled":"Disabled" ;
+%><div class="alert_item" title="<%=tt%>"><i class="fa fa-square en" style="color:<%=en_c%>" title="<%=en_t%>"></i>
+	<span class="tt"><%=tt %></span><span class="chk_alert_c"><input type="checkbox" id="<%=id %>"  class="chk_alert" onclick="on_chk_alert('<%=id%>')"/></span>
+	</div>
 
 <%
 		}
@@ -215,16 +262,19 @@ visibility: hidden;
 %>
  </div>
 </div>
-<div class="mid">
+<div class="mid" onclick="on_handler_clk()">
  <blockquote class="layui-elem-quote ">Alert Handlers
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- <button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
+ <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
  	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
  </div>
 </blockquote>
- <div id="handler_list" style="height:100%;" onclick="on_handler_clk()">
+ <div id="handler_list" style0="height:100%;width:100%;" >
+ 	
  </div>
+ <div id="in_conn_panel" class="in_conn_panel"></div>
+ <div id="out_conn_panel" class="out_conn_panel"></div>
 </div>
 <div class="right">
  <blockquote class="layui-elem-quote ">Outputs
@@ -243,6 +293,7 @@ var cur_out = null ;
 
 var cur_handler = null ;
 
+
 function on_out_clk(item)
 {
 	this.cur_out = item ;
@@ -259,6 +310,7 @@ function on_handler_clk(item)
 		$(item).addClass("sel") ;
 	
 	update_chks();
+	redraw_conn();
 }
 
 function update_chks()
@@ -292,6 +344,22 @@ function update_chks()
 	});
 }
 
+function set_dirty(b)
+{
+	if(b)
+	{
+		$("#btn_save").removeClass("layui-btn-primary");
+		$("#btn_save").addClass("layui-btn-warm");
+	}
+	else
+	{
+		$("#btn_save").removeClass("layui-btn-warm");
+		$("#btn_save").addClass("layui-btn-primary");
+	}
+	
+	redraw_conn();
+}
+
 function on_chk_alert(alert_uid)
 {
 	if(!cur_handler)
@@ -320,6 +388,8 @@ function on_chk_alert(alert_uid)
 		alert_uids_str = alert_uids.join(',') ;
 		$(cur_handler).attr("alert_uids",alert_uids_str) ;
 	}
+	
+	set_dirty(true)
 }
 
 function on_chk_out(out_id)
@@ -350,6 +420,8 @@ function on_chk_out(out_id)
 		out_ids_str = out_ids.join(',') ;
 		$(cur_handler).attr("out_ids",out_ids_str) ;
 	}
+	
+	set_dirty(true);
 }
 
 function update_outs(end_cb)
@@ -399,10 +471,15 @@ function update_handlers()
 		for(let ob of os)
 		{
 			//console.log(ob) ;
+			let trigger_c = ob.trigger_c?'background-color:'+ob.trigger_c:'' ;
+			let trigger_dis = ob.trigger_en?'':'display:none' ;
+			let release_c = ob.release_c?'background-color:'+ob.release_c:'' ;
+			let release_dis = ob.release_en?'':'display:none' ;
+			
 			tmps += `<div id="h_\${ob.id}" class="h_item" h_id="\${ob.id}" t="\${ob.t}" onclick="on_handler_clk(this)" out_ids="\${ob.out_ids}" alert_uids="\${ob.alert_uids}">
 				<span class="t">\${ob.t}</span>
-				<span class="trigger_en \${ob.trigger_en?'en':''}"></span>
-				<span class="release_en \${ob.release_en?'en':''}"></span>
+				<span class="trigger_c" style="\${trigger_c};\${trigger_dis}">Trigger [\${ob.lvl}]&nbsp;</span>
+				<span class="release_c" style="\${release_c};\${release_dis}">Release</span>
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_h('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_handler('\${prjid}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
@@ -410,6 +487,8 @@ function update_handlers()
 				</div>` ;
 		}
 		$("#handler_list").html(tmps) ;
+		
+		redraw_conn();
 	}) ;
 }
 
@@ -428,6 +507,7 @@ function save_h_inout_ids(prjid)
 	});
 	send_ajax("prj_alert_ajax.jsp",{op:"save_h_ids",prjid:prjid,jstr:JSON.stringify(ss)},(bsucc,ret)=>{
 		dlg.msg(ret) ;
+		set_dirty(false) ;
 	});
 }
 	
@@ -726,6 +806,136 @@ function start_stop(b,taskid)
         }
     });
 }
+
+var in_panel = null ;
+var in_can = null ;
+var in_cxt = null ;
+var in_w = null ;
+
+var out_panel = null ;
+var out_can = null ;
+var out_cxt = null ;
+var out_w = null ;
+
+function conn_init_in()
+{
+	in_cxt = document.createElement('canvas').getContext('2d');
+	let can = $(in_cxt.canvas);
+	in_can = can ;
+	can.css("position", "relative");
+	can.css("left", "0px");
+	can.css("top", "0px");
+	can.css("display","");
+	in_panel= $("#in_conn_panel");
+	can.attr('width', in_panel[0].offsetWidth) ;
+	can.attr('height', in_panel[0].offsetHeight-5) ;
+	in_panel.append(can);
+	in_w = in_panel[0].offsetWidth;
+	in_panel.resize(()=>{
+		in_w = in_panel[0].offsetWidth;
+		var h = in_panel[0].offsetHeight;
+		//console.log(w,h)
+		can.attr('width',in_w) ;
+		can.attr('height', h) ;
+		redraw_conn();
+	});
+}
+
+function conn_init_out()
+{
+	out_cxt = document.createElement('canvas').getContext('2d');
+	let can = $(out_cxt.canvas);
+	out_can = can ;
+	can.css("position", "relative");
+	can.css("left", "0px");
+	can.css("top", "0px");
+	can.css("display","");
+	out_panel= $("#out_conn_panel");
+	can.attr('width', out_panel[0].offsetWidth) ;
+	can.attr('height', out_panel[0].offsetHeight-5) ;
+	out_panel.append(can);
+	out_w = out_panel[0].offsetWidth;
+	out_panel.resize(()=>{
+		in_w = out_panel[0].offsetWidth;
+		var h = out_panel[0].offsetHeight;
+		//console.log(w,h)
+		can.attr('width',in_w) ;
+		can.attr('height', h) ;
+		redraw_conn();
+	});
+}
+
+function conn_init()
+{
+	conn_init_in();
+	conn_init_out();
+}
+
+
+function redraw_conn()
+{
+	in_can[0].width = in_can[0].width;
+	out_can[0].width = out_can[0].width;
+	$(".h_item").each(function(){
+		redraw_conns_h(this) ;
+	}) ;
+}
+
+function redraw_conns_h(handler)
+{
+	let h_y = $(handler).offset().top + $(handler).height()/2;
+	//let h_x = $(handler).offset().left ;
+	let out_ids_str = $(handler).attr("out_ids") ;
+	let alert_uids_str = $(handler).attr("alert_uids") ;
+	
+	let out_ids = out_ids_str.split(',');
+	let alert_uids = alert_uids_str.split(',');
+	in_cxt.save();
+	out_cxt.save();
+	//in_cxt.
+	if(handler==cur_handler)
+	{
+		in_cxt.lineWidth = 2;
+		in_cxt.strokeStyle = "blue";
+		out_cxt.lineWidth = 2;
+		out_cxt.strokeStyle = "blue";
+	}
+			
+	$(".chk_alert").each(function(){
+		let me = $(this);
+		let id = me.attr("id") ;
+		let k = alert_uids.indexOf(id);
+		if(k<0) return ;
+		
+		let y = me.offset().top+me.height()/2;
+		
+		in_cxt.beginPath() ;
+		in_cxt.moveTo(0,y);
+		in_cxt.lineTo(in_w,h_y);
+		in_cxt.stroke() ;
+		
+	});
+	
+	$(".chk_out").each(function(){
+		let me = $(this);
+		let id = me.attr("id") ;
+		let k = out_ids.indexOf(id);
+		if(k<0) return ;
+		
+		let y = me.offset().top+me.height()/2;
+		out_cxt.beginPath() ;
+		out_cxt.moveTo(out_w,y);
+		out_cxt.lineTo(0,h_y);
+		out_cxt.stroke() ;
+	});
+	
+	in_cxt.restore();
+	out_cxt.restore();
+}
+
+conn_init();
+
+
 
 </script>
 

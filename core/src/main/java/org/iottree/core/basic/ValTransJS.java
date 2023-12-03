@@ -75,7 +75,7 @@ public class ValTransJS extends ValTranser
 		if(cxt== null)
 			return null;
 		
-		codeItem = new UACodeItem("","{"+this.jsStr+"}")  ;
+		codeItem = new UACodeItem("","{"+this.jsStr+"\r\n}")  ;
 		synchronized(cxt)
 		{
 			codeItem.initItem(cxt, "$tag","$input") ;
@@ -94,7 +94,7 @@ public class ValTransJS extends ValTranser
 		if(cxt== null)
 			return null;
 		
-		codeItemInverse = new UACodeItem("","{"+this.inverseJsStr+"}")  ;
+		codeItemInverse = new UACodeItem("","{"+this.inverseJsStr+"\r\n}")  ;
 		synchronized(cxt)
 		{
 			codeItemInverse.initItem(cxt, "$tag","$input") ;

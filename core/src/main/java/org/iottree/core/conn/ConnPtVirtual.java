@@ -176,7 +176,7 @@ public class ConnPtVirtual extends ConnPt
 			return onWriteCI ;
 		if(Convert.isNullOrTrimEmpty(this.onWriteScript))
 			return null ;
-		UACodeItem ci = new UACodeItem("cpt_virtual_o_w_"+this.getName(), "{"+this.onWriteScript+"}") ;
+		UACodeItem ci = new UACodeItem("cpt_virtual_o_w_"+this.getName(), "{"+this.onWriteScript+"\r\n}") ;
 		ci.initItem(cxt,"$tag","$value");
 		this.onWriteCI = ci ;
 		return onWriteCI ;

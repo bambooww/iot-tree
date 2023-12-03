@@ -180,12 +180,24 @@ public class AlertManager
 		return this.alertOuts.get(id) ;
 	}
 	
+	
+	private void clearCache()
+	{
+		for(AlertHandler ah:this.alertHandlers.values())
+			ah.clearCache();
+	}
+	
 	public void setOut(AlertOut ao) throws Exception
 	{
 		ao.prj = this.prj ;
 		this.alertOuts.put(ao.getId(), ao) ;
 		this.saveOuts();
+		
+		//clear
+		clearCache();
 	}
+	
+	
 	
 	public void setOutByJSON(JSONObject jo) throws Exception
 	{
@@ -318,8 +330,8 @@ public class AlertManager
 		
 		if(!queTh.isRunning())
 			return ; //discard
-		
 		AlertItem ai = new AlertItem(va,cur_val) ;
+		
 		if(this.alertHandlers!=null)
 		{
 			this.alertHandlers.forEach((id,ah)->{
@@ -327,6 +339,7 @@ public class AlertManager
 					return ;
 				if(!ah.checkValAlertRelated(va))
 					return ;
+				
 				ah.RT_processSelfSyn(ai) ;
 			});
 		}

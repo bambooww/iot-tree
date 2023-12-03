@@ -32,6 +32,7 @@ boolean b_trigger_en = true ;
 boolean b_release_en = true ;
 String release_color="" ;
 String trigger_color="";
+int lvl = 0 ;
 
 if(Convert.isNotNullEmpty(id))
 {
@@ -48,6 +49,7 @@ if(Convert.isNotNullEmpty(id))
 	b_release_en = ah.isReleaseEn() ;
 	trigger_color = ah.getTriggerColor() ;
 	release_color = ah.getReleaseColor() ;
+	lvl = ah.getLevel() ;
 }
 else
 {
@@ -81,12 +83,21 @@ dlg.resize_to(600,500);
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
+  <div class="layui-form-item" >
+    <label class="layui-form-label">Level</label>
+     <div class="layui-input-inline" style="width:100px;">
+      <input type="number" id="lvl" name="lvl"  lay-filter="lvl" class="layui-input"  value="<%=lvl%>"/>
+    </div>
+    
+  </div>
   
   <div class="layui-form-item" >
-    <label class="layui-form-label">Triggered:</label>
+    <label class="layui-form-label">Trigger</label>
+<%--
      <div class="layui-input-inline" style="width:50px;">
       <input type="checkbox" id="trigger_en" name="trigger_en" <%=trigger_chked%> lay-skin="switch"  lay-filter="trigger_en" class="layui-input">
     </div>
+     --%>
     <div class="layui-form-mid">Color:</div>
     <div class="layui-input-inline" style="width:150px;">
       <input type="text" name="trigger_color" id="trigger_color" value="<%=trigger_color %>" class="layui-input"/>
@@ -94,10 +105,12 @@ dlg.resize_to(600,500);
   </div>
   
   <div class="layui-form-item" >
-    <label class="layui-form-label">Released:</label>
+    <label class="layui-form-label">Release</label>
+<%--
     <div class="layui-input-inline" style="width:50px;">
       <input type="checkbox" id="release_en" name="release_en" <%=release_chked%> lay-skin="switch"  lay-filter="release_en" class="layui-input">
     </div>
+     --%>
     <div class="layui-form-mid">Color:</div>
     <div class="layui-input-inline" style="width:150px;">
       <input type="text" name="release_color" id="release_color" value="<%=release_color %>" class="layui-input"/>
@@ -135,11 +148,12 @@ function do_submit(cb)
 		desc ='' ;
 	
 	var ben = $("#enable").prop("checked") ;
-	var b_trigger_en = $("#trigger_en").prop("checked") ;
-	var b_release_en = $("#release_en").prop("checked") ;
+	var b_trigger_en = true;//$("#trigger_en").prop("checked") ;
+	var b_release_en = true;//$("#release_en").prop("checked") ;
 	let trigger_c = $("#trigger_color").val() ;
 	let release_c = $("#release_color").val() ;
-	cb(true,{id:id,trigger_en:b_trigger_en,release_en:b_release_en,t:tt,en:ben,trigger_c:trigger_c,release_c:release_c});
+	let lvl = parseInt($("#lvl").val()) ;
+	cb(true,{id:id,trigger_en:b_trigger_en,release_en:b_release_en,t:tt,en:ben,trigger_c:trigger_c,release_c:release_c,lvl:lvl});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

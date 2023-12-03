@@ -21,7 +21,7 @@ IOT-Tree以项目为基础，内部建立了一颗树,层次为：项目-通道-
 
 
 
-### 2.1 节点上下文成员总体说明</en>Overall Description of Node JS Context Members</en>
+### 2.1 节点上下文成员总体说明
 
 
 我们在项目中选择某个容器节点，则可以看到\[Tags]选项卡下面所有的标签，这些标签和JS访问方式一致。如图：在根节点"watertank"下面，JS访问ch1节点、设备"ch1.dio"和"ch1.dio.p_running"标签。

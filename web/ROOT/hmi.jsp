@@ -949,7 +949,7 @@ function update_alert_list(alerts)
 		
 		for(let item of alert.items)
 		{
-			let dt = new Date(item.dt).toShortGapNow();
+			let dt = new Date(item.t_dt).toShortGapNow();
 			tmps += `<tr style="\${trigger_c};">
 	            <td>\${dt}</td>
 	            <td>\${alert.t}</td>

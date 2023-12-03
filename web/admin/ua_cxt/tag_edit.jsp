@@ -295,7 +295,7 @@ if(!bmid)
       <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
     </div>
     <div class="layui-input-inline"  style="width:50px;">
-    <button class="layui-btn layui-btn-primary" title="Add Alert" onclick="edit_alert()"><i class="fa-solid fa-plus"></i></button>
+    <button class="layui-btn layui-btn-primary" title="Add Alert Source" onclick="edit_alert()"><i class="fa-solid fa-plus"></i></button>
     </div>
   </div>
   <div class="layui-form-item">
@@ -484,9 +484,9 @@ function edit_alert(idx)
 {
 	if(event)
 		event.preventDefault() || (event.returnValue = false);
-	let tt = "Tag Alert Edit"
+	let tt = "Edit Tag Alert Source"
 	if(idx==undefined||idx==null)
-		tt = "Tag Alert Add"
+		tt = "Add Tag Alert Source"
 	let dd = null;
 	if(idx>=0)
 		dd = alerts_dd[idx] ;

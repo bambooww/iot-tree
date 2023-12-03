@@ -20,7 +20,7 @@ public class AlertOutUI  extends AlertOut
 		return "UI";
 	}
 	
-	public void sendAlert(ValAlert alert,long alert_time_ms,String alert_title,String alert_msg,int alert_level,String alert_color)
+	public void sendAlert(String uid,AlertItem ai)
 	{
 		
 	}

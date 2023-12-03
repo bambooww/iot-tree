@@ -219,11 +219,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(this.valAlerts!=null)
 		{
-		for(ValAlert va:this.valAlerts)
-		{
-			va.setBelongTo(this);
-			//tg.belongToNode = this ;
-		}
+			for(ValAlert va:this.valAlerts)
+			{
+				va.setBelongTo(this);
+			}
 		}
 		//super.constructNodeTree();
 	}

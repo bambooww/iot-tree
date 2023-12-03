@@ -126,6 +126,8 @@ case "del_o":
 		out.print("delete out failedr") ;
 	}
 	break ;
+case "out_mon": //monitor alert output
+	break ;
 case "export":
 	if(!Convert.checkReqEmpty(request, out, "taskid"))
 		return ;

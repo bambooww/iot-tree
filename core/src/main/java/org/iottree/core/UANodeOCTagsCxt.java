@@ -18,6 +18,7 @@ import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JSObPk;
+import org.iottree.core.cxt.JsEnv;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.JsSub;
@@ -586,23 +587,6 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		Object r = super.JS_get(key);
 		if (r != null)
 			return r;
-		switch(key)
-		{
-		case "$prj":
-			return this.getBelongToPrj() ;
-		case "$ch":
-			return this.getBelongToCh() ;
-		case "$dev":
-			return this.getBelongToDev() ;
-		case "$this":
-			return this ;
-		case "$sys":
-			return UAContext.sys;
-		case "$debug":
-			return UAContext.debug;
-		case "$util":
-			return UAContext.util;
-		}
 		
 		if(key.startsWith("$$"))
 		{//JsApi
@@ -612,6 +596,35 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				return null ;
 			return gvar2obj.get(plug_n) ;
 		}
+		
+		if(key.startsWith("$"))
+		{
+			switch(key)
+			{
+			case "$prj":
+				return this.getBelongToPrj() ;
+			case "$ch":
+				return this.getBelongToCh() ;
+			case "$dev":
+				return this.getBelongToDev() ;
+			case "$this":
+				return this ;
+			case "$sys":
+				return UAContext.sys;
+			case "$debug":
+				return UAContext.debug;
+			case "$util":
+				return UAContext.util;
+			}
+			
+			//env
+			JsEnv env = JsEnv.getInThLoc();
+			if(env!=null)
+			{
+				return env.JS_get(key) ;
+			}
+		}
+		
 		return null ;
 	}
 	
@@ -622,26 +635,35 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	 */
 	public final List<JsSub> JS_CXT_get_root_subs()
 	{
-		if(js_cxt_root_subs!=null)
-			return js_cxt_root_subs;
-		
-		List<JsSub> rets = new ArrayList<>() ;
-		List<JsProp> jps = JS_getGlobalPropsCxt();
-		rets.addAll(jps) ;
-		
-		List<JsSub> subs = this.JS_get_subs() ;
-		if(subs!=null)
+		if(js_cxt_root_subs==null)
 		{
-			for(JsSub sub:subs)
+			List<JsSub> rets = new ArrayList<>() ;
+			List<JsProp> jps = JS_getGlobalPropsCxt();
+			rets.addAll(jps) ;
+			
+			List<JsSub> subs = this.JS_get_subs() ;
+			if(subs!=null)
 			{
-				if(sub instanceof JsMethod || !sub.hasSub())
-					continue ;// root has no method
-				if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
-					continue ;
-				rets.add(sub);
+				for(JsSub sub:subs)
+				{
+					if(sub instanceof JsMethod || !sub.hasSub())
+						continue ;// root has no method
+					if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
+						continue ;
+					rets.add(sub);
+				}
 			}
+			js_cxt_root_subs = rets ;
 		}
-		js_cxt_root_subs = rets ;
+		
+		JsEnv env = JsEnv.getInThLoc() ;
+		if(env==null)
+			return js_cxt_root_subs ;
+		
+		ArrayList<JsSub> rets = new ArrayList<>(js_cxt_root_subs);
+		List<JsProp> jps = env.JS_get_props() ;
+		if(jps!=null)
+			rets.addAll(jps) ;
 		return rets ;
 	}
 	
@@ -668,6 +690,15 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				rets.add(sub);
 			}
 		}
+		
+		JsEnv env = JsEnv.getInThLoc() ;
+		if(env!=null)
+		{
+			jps = env.JS_get_props() ;
+			if(jps!=null)
+				rets.addAll(jps) ;
+		}
+		
 		return rets ;
 	}
 	

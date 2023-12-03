@@ -4,6 +4,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*,
+	org.json.*,
 	org.iottree.*,
 	org.iottree.core.*,
 	org.iottree.core.cxt.*,
@@ -19,6 +20,13 @@ String sub_nid = request.getParameter("id");
 
 boolean no_parent = "true".equals(request.getParameter("no_parent")) ;
 boolean no_this = "true".equals(request.getParameter("no_this")) ;
+String pm_objs = request.getParameter("pm_objs") ;
+JSONObject pm_jo = null ;
+if(Convert.isNotNullEmpty(pm_objs))
+{
+	pm_objs = URLDecoder.decode(pm_objs, "UTF-8") ;
+	pm_jo = new JSONObject(pm_objs) ;
+}
 
 //System.out.println("path="+path+" id="+sub_nid) ;
 if("#".equals(sub_nid))
@@ -40,71 +48,88 @@ if(!(n instanceof UANodeOCTagsCxt))
 
 UANodeOCTagsCxt cxt_n = (UANodeOCTagsCxt)n;
 
-if(Convert.isNotNullEmpty(sub_nid))
+JsEnv jsenv = null;
+if(pm_jo!=null)
 {
-	sub_ob = cxt_n.JS_CXT_get_sub_by_id(sub_nid) ;
-	if(sub_ob==null)
-	{
-		out.print("no js sub found");
-		return ;
-	}
+	jsenv = new JsEnv() ;
+	jsenv.asPmJO(pm_jo) ;
 }
 
-switch(op)
+try
 {
-case "sub_json":
-	if(sub_ob==null)
+	if(jsenv!=null)
+		JsEnv.setInThLoc(jsenv) ;
+
+	if(Convert.isNotNullEmpty(sub_nid))
 	{
-		//out.write(",\"state\": {\"opened\": true}");
-		//out.write(",\"children\":[");
-		out.write("[");
-		List<JsSub> jps = null;
-		if(no_parent)
-			jps = cxt_n.JS_CXT_get_root_subs(no_parent,no_this) ;
+		sub_ob = cxt_n.JS_CXT_get_sub_by_id(sub_nid) ;
+		if(sub_ob==null)
+		{
+			out.print("no js sub found");
+			return ;
+		}
+	}
+	
+	switch(op)
+	{
+	case "sub_json":
+		if(sub_ob==null)
+		{
+			//out.write(",\"state\": {\"opened\": true}");
+			//out.write(",\"children\":[");
+			out.write("[");
+			List<JsSub> jps = null;
+			if(no_parent)
+				jps = cxt_n.JS_CXT_get_root_subs(no_parent,no_this) ;
+			else
+				jps = cxt_n.JS_CXT_get_root_subs();
+			
+			boolean bfirst = true;
+			for(JsSub jp:jps)
+			{
+				if (bfirst)
+					bfirst = false;
+				else
+					out.write(',');
+				jp.writeTree(null, out) ;
+			}
+			out.write("]");
+		}
 		else
-			jps = cxt_n.JS_CXT_get_root_subs();
-		
-		boolean bfirst = true;
-		for(JsSub jp:jps)
 		{
-			if (bfirst)
-				bfirst = false;
-			else
-				out.write(',');
-			jp.writeTree(null, out) ;
+			out.write("[");
+			JSObMap subv = (JSObMap)sub_ob.getSubVal() ;
+			List<JsSub> jps = subv.JS_get_subs();//.JS_props();//.JS_get_props_cxt();
+			boolean bfirst = true;
+			for(JsSub jp:jps)
+			{
+				if (bfirst)
+					bfirst = false;
+				else
+					out.write(',');
+				jp.writeTree(sub_nid, out) ;
+			}
+			out.write("]");
 		}
-		out.write("]");
-	}
-	else
-	{
-		out.write("[");
-		JSObMap subv = (JSObMap)sub_ob.getSubVal() ;
-		List<JsSub> jps = subv.JS_get_subs();//.JS_props();//.JS_get_props_cxt();
-		boolean bfirst = true;
-		for(JsSub jp:jps)
-		{
-			if (bfirst)
-				bfirst = false;
-			else
-				out.write(',');
-			jp.writeTree(sub_nid, out) ;
-		}
-		out.write("]");
-	}
-	return ;
-case "sub_detail":
-	if(!Convert.checkReqEmpty(request, out, "id"))
 		return ;
-	JsSub jssub = sub_ob.getJsSub() ;
-	Object subv = sub_ob.getSubVal() ;
-%>
-	<div><%=jssub.getSubTitle()%> - <%=jssub.getDesc() %><br> <%=jssub.getTitle() %></div>
-<%
-	return ;
-default:
-	break ;
+	case "sub_detail":
+		if(!Convert.checkReqEmpty(request, out, "id"))
+			return ;
+		JsSub jssub = sub_ob.getJsSub() ;
+		Object subv = sub_ob.getSubVal() ;
+	%>
+		<div><%=jssub.getSubTitle()%> - <%=jssub.getDesc() %><br> <%=jssub.getTitle() %></div>
+	<%
+		return ;
+	default:
+		break ;
+	}
 }
-
+finally
+{
+	if(jsenv!=null)
+		JsEnv.delInThLoc() ;
+}
 //out.write("}");
 
 %>

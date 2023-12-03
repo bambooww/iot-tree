@@ -1,6 +1,10 @@
 package org.iottree.core.alert;
 
-import org.iottree.core.basic.ValAlert;
+import javax.script.ScriptException;
+
+import org.iottree.core.cxt.UACodeItem;
+import org.iottree.core.cxt.UAContext;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 
@@ -11,6 +15,8 @@ public class AlertOutJS extends AlertOut
 	
 	@data_val(param_name = "js")
 	String jsCode = null ;
+	
+	
 	
 	@Override
 	public String getOutTp()
@@ -33,9 +39,40 @@ public class AlertOutJS extends AlertOut
 		return jsCode;
 	}
 	
-	@Override
-	public void sendAlert(ValAlert alert,long alert_time_ms,String alert_title,String alert_msg,int alert_level,String alert_color)
+	private transient UACodeItem codeItem = null ;
+	
+	//private transient UAVal midVal = null ;
+	
+	
+	
+	UACodeItem getCodeItem() throws ScriptException
 	{
+		if(codeItem!=null)
+			return codeItem;
 		
+		if(Convert.isNullOrEmpty(jsCode))
+			return null ;
+		
+		UAContext cxt = this.prj.RT_getContext();
+		if(cxt== null)
+			return null;
+		
+		codeItem = new UACodeItem("","{"+this.jsCode+"\r\n}")  ;
+		synchronized(cxt)
+		{
+			codeItem.initItem(cxt, "$uid","$alert") ;
+		}
+		return codeItem;
+	}
+	
+	
+	@Override
+	public void sendAlert(String uid,AlertItem ai) throws Exception
+	{
+		UACodeItem ci = getCodeItem() ;
+		if(ci==null)
+			return ;
+		
+		ci.runCodeFunc(uid,ai) ;
 	}
 }

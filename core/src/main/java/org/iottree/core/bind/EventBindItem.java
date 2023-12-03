@@ -41,7 +41,7 @@ public class EventBindItem
 		
 		if(this.code==null)
 		{
-			this.code = new UACodeItem("", "{"+this.serverJS+"}") ;
+			this.code = new UACodeItem("", "{"+this.serverJS+"\r\n}") ;
 			this.code.initItem(cxt) ;
 		}
 		

@@ -2,17 +2,13 @@ package org.iottree.core.alert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-
 import org.iottree.core.UAPrj;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
-import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,10 +16,6 @@ import org.json.JSONObject;
 @data_class
 public class AlertHandler
 {
-	public enum Level
-	{
-		
-	}
 	
 	@data_val
 	String id = null ;
@@ -196,7 +188,6 @@ public class AlertHandler
 	public synchronized void clearCache()
 	{
 		alertOuts = null ;
-		
 	}
 	
 	public synchronized void setInOutIds(String alert_uids,String out_ids)
@@ -256,19 +247,17 @@ public class AlertHandler
 	
 	void RT_processOutAsyn(AlertItem ai)
 	{
-		ValAlert va = ai.getValAlert() ;
+		//ValAlert va = ai.getValAlert() ;
 		
 		List<AlertOut> aos = getAlertOuts() ;
 		if(aos==null||aos.size()<=0)
 			return ;
-		
-		String title = va.getAlertPrompt() ;
-		String msg = "";
+		ai.setHandler(this);
 		for(AlertOut ao:aos)
 		{
 			try
 			{
-				//ao.sendAlert(va, ai.dt, alert_title, alert_msg, alert_level, alert_color);
+				ao.sendAlert(ai.getUID(),ai);
 			}
 			catch(Exception e)
 			{
