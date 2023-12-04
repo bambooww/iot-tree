@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import org.iottree.core.UAPrj;
 import org.iottree.core.basic.ValAlert;
+import org.iottree.core.cxt.IJsProp;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserJSON;
@@ -14,7 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @data_class
-public class AlertHandler
+public class AlertHandler extends JSObMap //implements IJsProp
 {
 	
 	@data_val
@@ -23,8 +26,8 @@ public class AlertHandler
 	@data_val(param_name = "en")
 	boolean bEnable = true ;
 	
-//	@data_val
-//	private String name = "" ;
+	@data_val(param_name = "n")
+	private String name = "" ;
 	
 	@data_val(param_name = "t")
 	private String title = "" ;
@@ -97,6 +100,10 @@ public class AlertHandler
 		return id;
 	}
 
+	public String getName()
+	{
+		return this.name ;
+	}
 
 	public boolean isEnable()
 	{
@@ -214,6 +221,7 @@ public class AlertHandler
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id);
+		jo.putOpt("n", this.name) ;
 		jo.putOpt("t", this.title) ;
 		jo.put("lvl", this.alertLevel);
 		jo.put("trigger_en", this.bTriggerEn);
@@ -266,5 +274,52 @@ public class AlertHandler
 		}
 	}
 	
+//	private JsProp jsP = null;
+//
+//	@Override
+//	public JsProp toJsProp()
+//	{
+//		if(jsP!=null)
+//			return jsP ;
+//		jsP = new JsProp("$alert",this,null,true,"AlertItem","Alert item in input env") ;
+//		return jsP;
+//	}
 	
+	@Override
+	public Object JS_get(String  key)
+	{
+		Object ob = super.JS_get(key) ;
+		if(ob!=null)
+			return ob ;
+		
+		switch(key)
+		{
+		case "id":
+			return this.id ;
+		case "name":
+			return this.name ;
+		case "title":
+			return this.title ;
+		case "trigger_color":
+			return this.triggerColor ;
+		case "release_color":
+			return this.releaseColor ;
+		case "level":
+			return this.alertLevel ;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<JsProp> JS_props()
+	{
+		List<JsProp> ss = super.JS_props() ;
+		ss.add(new JsProp("id",null,String.class,false,"Handler ID","")) ;
+		ss.add(new JsProp("name",null,String.class,false,"Handler Name","Handler unique name in project")) ;
+		ss.add(new JsProp("title",null,String.class,false,"Handler Title","")) ;
+		ss.add(new JsProp("trigger_color",null,String.class,false,"Trigger Color","")) ;
+		ss.add(new JsProp("release_color",null,String.class,false,"Release Color","")) ;
+		ss.add(new JsProp("level",null,Integer.class,false,"Alert Level","")) ;
+		return ss ;
+	}
 }

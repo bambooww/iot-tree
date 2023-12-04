@@ -5,6 +5,7 @@ import java.util.List;
 import org.iottree.core.UANode;
 import org.iottree.core.UATag;
 import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValAlertTp;
 import org.iottree.core.cxt.IJsProp;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
@@ -144,6 +145,15 @@ public class AlertItem extends JSObMap implements IJsProp
 	}
 	
 	@Override
+	public void constructSubForCxtHelper()
+	{
+		//make shure  handler and alert_tp propwill show in Context tree;
+		this.vA = new ValAlert() ;
+		this.vA.setAlertTp(ValAlertTp.ALL[0]);
+		this.ah = new AlertHandler() ;
+	}
+	
+	@Override
 	public Object JS_get(String  key)
 	{
 		Object ob = super.JS_get(key) ;
@@ -155,25 +165,27 @@ public class AlertItem extends JSObMap implements IJsProp
 		case "uid":
 			return this.getUID() ;
 		case "alert_tp":
+			return this.vA.getAlertTp() ;
+		case "alert_title":
 			return this.vA.getAlertTitle() ;
 		case "prompt":
 			return this.vA.getAlertPrompt() ;
 		case "handler":
-			return this.ah.getTitle() ;
-		case "level":
-			return this.ah.getLevel() ;
+			return this.ah ;
+//		case "level":
+//			return this.ah.getLevel() ;
 		case "triggered":
 			return this.bTriggerd ;
 		case "trigger_dt":
 			return this.triggerDT ;
-		case "trigger_color":
-			return this.ah.getTriggerColor() ;
+//		case "trigger_color":
+//			return this.ah.getTriggerColor() ;
 		case "released":
 			return this.bReleased ;
 		case "release_dt":
 			return this.releaseDT ;
-		case "release_color":
-			return this.ah.getReleaseColor() ;
+//		case "release_color":
+//			return this.ah.getReleaseColor() ;
 		case "str_val":
 			if(curV==null)
 				return null ;
@@ -191,16 +203,17 @@ public class AlertItem extends JSObMap implements IJsProp
 	{
 		List<JsProp> ss = super.JS_props() ;
 		ss.add(new JsProp("uid",null,String.class,false,"UID","Alert Item Triggered UID")) ;
-		ss.add(new JsProp("alert_tp",null,String.class,false,"Alert Type","Alert Type Title")) ;
+		ss.add(new JsProp("alert_tp",null,ValAlertTp.class,true,"Alert Type","Alert Type")) ;
+		ss.add(new JsProp("alert_title",null,String.class,false,"Alert Title","Alert Type with Parameters")) ;
 		ss.add(new JsProp("prompt",null,String.class,false,"Alert Prompt","")) ;
-		ss.add(new JsProp("handler",null,String.class,false,"Alert Handler","")) ;
-		ss.add(new JsProp("level",null,Integer.class,false,"Alert Level","")) ;
+		ss.add(new JsProp("handler",null,AlertHandler.class,true,"Alert Handler","")) ;
+		//ss.add(new JsProp("level",null,Integer.class,false,"Alert Level","")) ;
 		ss.add(new JsProp("triggered",null,Boolean.class,false,"Is Triggered","Is Triggered Alert Item")) ;
 		ss.add(new JsProp("trigger_dt",null,Long.class,false,"Trigger Time MS","Trigger Time in milliseconds,-1 will return when not triggered")) ;
-		ss.add(new JsProp("trigger_color",null,String.class,false,"Trigger Color","")) ;
+		//ss.add(new JsProp("trigger_color",null,String.class,false,"Trigger Color","")) ;
 		ss.add(new JsProp("released",null,Boolean.class,false,"Is Released","Is Released Alert Item")) ;
 		ss.add(new JsProp("release_dt",null,Long.class,false,"Release Time MS","Release Time in milliseconds,-1 will return when not triggered")) ;
-		ss.add(new JsProp("release_color",null,String.class,false,"Release Color","")) ;
+		//ss.add(new JsProp("release_color",null,String.class,false,"Release Color","")) ;
 		ss.add(new JsProp("str_val",null,String.class,false,"Val","Value as string")) ;
 		ss.add(new JsProp("tag_title",null,String.class,false,"Tag Title","")) ;
 		ss.add(new JsProp("tag_path",null,String.class,false,"Tag Path","")) ;

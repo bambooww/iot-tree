@@ -40,6 +40,9 @@ public class JsEnv
 	public JsEnv asKeyClass(String key,Class<?> c) throws InstantiationException, IllegalAccessException 
 	{
 		Object ob = c.newInstance() ;
+		if(ob instanceof IJsProp)
+			((IJsProp)ob).constructSubForCxtHelper();
+		
 		return asKeyOb(key, ob) ;
 	}
 	

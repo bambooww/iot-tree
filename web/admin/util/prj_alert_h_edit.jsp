@@ -25,6 +25,7 @@ if(rep==null)
 AlertManager amgr = AlertManager.getInstance(prjid) ;
 String prj_path = rep.getNodePath() ;
 String id = request.getParameter("id") ;
+String name="" ;
 String title = "" ;
 String desc = "" ;
 boolean benable = true ;
@@ -43,6 +44,7 @@ if(Convert.isNotNullEmpty(id))
 		return ;
 	}
 	
+	name = ah.getName() ;
 	title = ah.getTitle() ;
 	benable = ah.isEnable() ;
 	b_trigger_en = ah.isTriggerEn() ;
@@ -74,9 +76,9 @@ dlg.resize_to(600,500);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
+    <label class="layui-form-label">Name</label>
     <div class="layui-input-inline" style="width:250px;">
-      <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
+      <input type="text" name="name" id="name" value="<%=name %>" class="layui-input"/>
     </div>
     <div class="layui-form-mid">Enable</div>
 	  <div class="layui-input-inline" style="width: 150px;">
@@ -84,7 +86,11 @@ dlg.resize_to(600,500);
 	  </div>
   </div>
   <div class="layui-form-item" >
-    <label class="layui-form-label">Level</label>
+  <label class="layui-form-label">Title</label>
+    <div class="layui-input-inline" style="width:250px;">
+      <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
+    </div>
+    <label class="layui-form-mid">Level</label>
      <div class="layui-input-inline" style="width:100px;">
       <input type="number" id="lvl" name="lvl"  lay-filter="lvl" class="layui-input"  value="<%=lvl%>"/>
     </div>
@@ -137,6 +143,12 @@ function win_close()
 
 function do_submit(cb)
 {
+	let n =  $('#name').val();
+	if(!n)
+	{
+		cb(false,"No name input") ;
+		return ;
+	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
@@ -153,7 +165,7 @@ function do_submit(cb)
 	let trigger_c = $("#trigger_color").val() ;
 	let release_c = $("#release_color").val() ;
 	let lvl = parseInt($("#lvl").val()) ;
-	cb(true,{id:id,trigger_en:b_trigger_en,release_en:b_release_en,t:tt,en:ben,trigger_c:trigger_c,release_c:release_c,lvl:lvl});
+	cb(true,{id:id,n:n,trigger_en:b_trigger_en,release_en:b_release_en,t:tt,en:ben,trigger_c:trigger_c,release_c:release_c,lvl:lvl});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

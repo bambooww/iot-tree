@@ -230,7 +230,7 @@ visibility: hidden;
 </style>
 <body marginwidth="0" marginheight="0">
 <div class="left">
- <blockquote class="layui-elem-quote ">Alert Tags</blockquote>
+ <blockquote class="layui-elem-quote ">Alert Sources</blockquote>
  <div id="tag_list">
 <%
 	for(UATag tag:prj.listTagsAll())
@@ -267,7 +267,9 @@ visibility: hidden;
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
  <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
+ 	<%--
  	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
+ 	 --%>
  </div>
 </blockquote>
  <div id="handler_list" style0="height:100%;width:100%;" >

@@ -85,8 +85,31 @@ public class AlertManager
 		return this.alertHandlers.get(id) ;
 	}
 	
+	public AlertHandler getHandlerByName(String name)
+	{
+		for(AlertHandler ah:this.alertHandlers.values())
+		{
+			if(name.equals(ah.getName()))
+				return ah ;
+		}
+		return null ;
+	}
+	
 	public void setHandler(AlertHandler ah) throws Exception
 	{
+		String n = ah.getName() ;
+		if(Convert.isNullOrEmpty(n))
+			throw new IllegalArgumentException("Alert Handler name cannot be null or empty") ;
+		StringBuilder sb = new StringBuilder() ;
+		if(!Convert.checkVarName(n, true, sb))
+			throw new IllegalArgumentException(sb.toString()) ;
+		
+		AlertHandler old_ah = this.getHandlerByName(n) ;
+		if(old_ah!=null)
+		{
+			if(!old_ah.getId().equals(ah.getId()))
+				throw new IllegalArgumentException("Alert Handler with name="+n+" is already existed!") ;
+		}
 		ah.prj = this.prj ;
 		this.alertHandlers.put(ah.getId(), ah) ;
 		this.saveHandlers();

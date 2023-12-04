@@ -189,7 +189,8 @@ Add and organize documents.
 ### version 0.99.9
 
 
-Add Alert Management
+Alert function added, achieving flexible and intuitive alarm configuration support through a three-layer structure of alarm source, alarm handling, and alarm output.
+
 Add and organize documents.
 
 

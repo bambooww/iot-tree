@@ -1,8 +1,12 @@
 package org.iottree.core.basic;
 
+import java.util.List;
+
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 
-public abstract class ValAlertTp
+public abstract class ValAlertTp extends JSObMap
 {
 	public static final ValAlertTp[] ALL = new ValAlertTp[] { new VAT_OnOff(), new VAT_NegT(), new VAT_PosT(),
 			new VAT_BitEqu(), new VAT_BitOffToOn(), new VAT_BitOnToOff(), new VAT_ValEqu(), new VAT_ValNotEqu(),
@@ -310,6 +314,32 @@ public abstract class ValAlertTp
 	
 	public abstract String calValAlertTitle(ValAlert va) ;
 	
+	@Override
+	public Object JS_get(String  key)
+	{
+		Object ob = super.JS_get(key) ;
+		if(ob!=null)
+			return ob ;
+		
+		switch(key)
+		{
+		case "name":
+			return this.getName() ;
+		case "title":
+			return this.getTitleEn() ;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<JsProp> JS_props()
+	{
+		List<JsProp> ss = super.JS_props() ;
+		ss.add(new JsProp("name",null,String.class,false,"Alert Type Name","unique name as Alert Type")) ;
+		ss.add(new JsProp("title",null,String.class,false,"Alert Type Title","")) ;
+		return ss ;
+	}
+	
 }
 
 class VAT_OnOff extends ValAlertTp
@@ -499,8 +529,8 @@ class VAT_BitEqu extends ValAlertTp
 		// super(va);
 
 		this.asTitle("Bit==", "Bit==")
-				.asTrigger("Current value of specified bit==specified value(0/1)", "指定位当前值==指定值(0/1)")
-				.asRelease("Current value of specified bit<>specified value(0/1)", "指定位当前值<>指定值(0/1)")
+				.asTrigger("Current value of specified bit==specified value(0/1)", "当前数值指定位==指定值(0/1)")
+				.asRelease("Current value of specified bit<>specified value(0/1)", "当前数值指定位<>指定值(0/1)")
 				.asParam1Title("Bit Position", "指定位").asParam2Title("Alarm Value(0/1)", "指定值(0/1)");
 	}
 
@@ -575,8 +605,8 @@ class VAT_BitOffToOn extends ValAlertTp
 		// super(va);
 
 		this.asTitle("Bit Off->On", "位0->1")
-				.asTrigger("The current value of the specified bit changes from 0 to 1", "指定位当前值由0变1")
-				.asRelease("The current value of the specified bit changes from 1 to 0", "指定位当前值由1变0")
+				.asTrigger("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
+				.asRelease("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
 				.asParam1Title("Bit Position", "指定位");
 	}
 
@@ -645,8 +675,8 @@ class VAT_BitOnToOff extends ValAlertTp
 		// super(va);
 
 		this.asTitle("Bit On->Off", "位1->0")
-				.asTrigger("The current value of the specified bit changes from 1 to 0", "指定位当前值由1变0")
-				.asRelease("The current value of the specified bit changes from 0 to 1", "指定位当前值由0变1")
+				.asTrigger("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
+				.asRelease("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
 				.asParam1Title("Bit Position", "指定位");
 	}
 
