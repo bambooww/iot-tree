@@ -233,6 +233,12 @@ function on_tree_node_sel(n)
 	}) ;
 }
 
+function open_help_ob(cn)
+{
+	dlg.open_win("./cxt_script_help_ob.jsp?cn="+cn,
+			{title:"JS Object Helper",w:'400px',h:'300px'},
+			[],[]);
+}
 
 
 function init()

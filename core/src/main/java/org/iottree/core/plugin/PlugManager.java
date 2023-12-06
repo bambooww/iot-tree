@@ -44,6 +44,8 @@ public class PlugManager
 	
 	LinkedHashMap<String,PlugDir> name2plug = new LinkedHashMap<>() ;
 	
+	HashMap<String,LinkedHashMap<String,PlugDir>> lib2plugs = new HashMap<>() ;
+	
 	private PlugManager()
 	{
 		findPlugs();
@@ -65,6 +67,8 @@ public class PlugManager
 		
 		for(File dirf:dirfs)
 		{
+			if(dirf.getName().startsWith("_"))
+				continue ;
 			PlugDir pd = PlugDir.parseDir(dirf);
 			if(pd==null)
 				continue ;
@@ -72,6 +76,8 @@ public class PlugManager
 		}
 		//return plugname2cl ;
 	}
+	
+	
 	
 	public Collection<PlugDir> listPlugs()
 	{
@@ -221,5 +227,40 @@ public class PlugManager
 		{
 			plugAuthGit = true ;
 		}
+	}
+	
+	
+	public LinkedHashMap<String,PlugDir> LIB_getPlugs(String lib_name)
+	{
+		LinkedHashMap<String,PlugDir> pds = lib2plugs.get(lib_name) ;
+		if(pds!=null)
+			return pds ;
+		
+		File plugdir = new File(Config.getDataDirBase()+"/plugins/_libs/"+lib_name+"/");
+		if(!plugdir.exists())
+			return null ;//new ArrayList<>(0) ;
+		
+		pds = new LinkedHashMap<String,PlugDir>();
+		
+		File[] dirfs = plugdir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
+			{
+				return f.isDirectory() ;
+			}}) ;
+		
+		for(File dirf:dirfs)
+		{
+			if(dirf.getName().startsWith("_"))
+				continue ;
+			PlugDir pd = PlugDir.parseDir(dirf);
+			if(pd==null)
+				continue ;
+			pds.put(pd.getName(), pd) ;
+		}
+		lib2plugs.put(lib_name,pds) ;
+		
+		return pds ;
 	}
 }

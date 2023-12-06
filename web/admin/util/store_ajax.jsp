@@ -12,31 +12,38 @@
 	org.iottree.core.comp.*
 	"%><%!
 
-%><%if(!Convert.checkReqEmpty(request, out, "prjid","op"))
+%><%if(!Convert.checkReqEmpty(request, out,"op"))
 	return ;
 
 String op = request.getParameter("op");
 String prjid = request.getParameter("prjid");
-StoreManager stmgr= StoreManager.getInstance(prjid) ;
-if(stmgr==null)
-{
-	out.print("no store manager found") ;
-	return ;
-}
 String n = request.getParameter("n") ;
 String classid = request.getParameter("cid") ;
 String nname = request.getParameter("name") ;
 
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
+StoreManager stmgr= null;
+
+UAPrj prj = null;
+if(Convert.isNotNullEmpty(prjid))
 {
-	out.print("no prj found") ;
-	return ;
+	prj = UAManager.getInstance().getPrjById(prjid) ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
+	stmgr = StoreManager.getInstance(prjid) ;
+	if(stmgr==null)
+	{
+		out.print("no store manager found") ;
+		return ;
+	}
+
 }
 
 switch(op)
 {
-case "set_store":
+case "set_sor":
 	String jstr = request.getParameter("jstr") ;
 	try
 	{
@@ -45,7 +52,7 @@ case "set_store":
 		//boolean badd = Convert.isNullOrEmpty(tmpid) ;
 		SourceJDBC st = new SourceJDBC();
 		DataTranserJSON.injectJSONToObj(st, jo) ;
-		stmgr.setSource(st, true,false);
+		StoreManager.setSource(st, true,false);
 		out.print("succ") ;
 	}
 	catch(Exception e)
@@ -54,8 +61,8 @@ case "set_store":
 		out.print(e.getMessage()) ;
 	}
 	break;
-case "list_stores":
-	List<Source> sors = stmgr.listSources() ;
+case "list_sors":
+	List<Source> sors = StoreManager.listSources() ;
 	JSONArray jarr = new JSONArray() ;
 	for(Source sor:sors)
 	{
@@ -67,12 +74,32 @@ case "list_stores":
 case "del_sor":
 	if(!Convert.checkReqEmpty(request, out, "n"))
 		return ;
-	if(stmgr.delSource(n))
+	if(StoreManager.delSource(n))
 	{
 		out.print("succ") ;
 		return ;
 	}
 	out.print("delete source failed") ;
+	break;
+case "test_sor":
+	if(!Convert.checkReqEmpty(request, out, "n"))
+		return ;
+	Source sor = StoreManager.getSource(n) ;
+	if(sor==null)
+	{
+		out.print("no source found with name="+n) ;
+		return;
+	}
+	StringBuilder failedr = new StringBuilder() ;
+	if(sor.checkConn(failedr))
+	{
+		out.print("Source connected successfully!") ;
+		return ;
+	}
+	else
+	{
+		out.print(failedr.toString()) ;
+	}
 	break;
 case "dc_imp_txt":
 	if(!Convert.checkReqEmpty(request, out, "txt"))

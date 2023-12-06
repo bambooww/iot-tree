@@ -160,9 +160,10 @@ position:absolute;
 {
 	position:relative;
 	left:0%;
-	width:80%;
-	height:60px;
+	width:90%;
+	min-height:60px;
 	border:1px solid;
+	display: flex;
 	margin-bottom: 10px;
 }
 .out_item .n
@@ -173,24 +174,27 @@ position:absolute;
 }
 .out_item .t
 {
-	position:absolute;
 	font-size: 20px;
 	top:18px;
-	left:10px;
+	margin-left:0px;
+	left:0px;
+	border:0px solid;
+	word-break:break-all;
+	margin-bottom: 30px;
 }
 .out_item .tp
 {
 	position:absolute;
 	font-size: 25px;
-	top:10px;
-	right:10px;
+	bottom:10px;
+	left:10px;
 }
 .out_item .tpt
 {
 	position:absolute;
 	font-size: 15px;
-	top:1px;
-	right:5px;
+	bottom:1px;
+	left:5px;
 }
 .out_item .oper
 {

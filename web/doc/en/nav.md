@@ -66,12 +66,13 @@
 ##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS In Middel Tag</a>
 ##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS In Task</a>
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS In UI Event Handling</a>
+##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api Inner Plugin - \$$http
 
 
 #### <a href="doc/advanced/index.md" >9 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Plugin - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Plugin - Authority</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Plugin Development - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Plugin Development - Authority</a>
 ##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Outer OPC UA Support</a>
 ##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Device simulators</a>
 ##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Remote control from master station to sub station</a>

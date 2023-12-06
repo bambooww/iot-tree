@@ -126,7 +126,7 @@ background-color: #eeeeee
  </div>
 </blockquote>
 <%
-	List<Source> sts = StoreManager.getInstance(prjid).listSources() ;
+	List<Source> sts = StoreManager.listSources() ;
 	for(Source st:sts)
 	{
 		//String storeid = st.getId() ;

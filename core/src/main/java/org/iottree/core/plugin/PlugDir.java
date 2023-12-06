@@ -24,10 +24,12 @@ public class PlugDir
 	private String title = null;
 
 	private File plugDirF = null;
+	
+	private JSONObject plugConfigJO = null ;
 
 	// private HashMap<String,String> params = new HashMap<>() ;
 
-	private URLClassLoader plugCL = null;
+	private ClassLoader plugCL = null;
 
 	// private HashMap<String,JSONObject> jsapi_name2json = new HashMap<String,
 	// JSONObject>();
@@ -37,6 +39,8 @@ public class PlugDir
 	private HashMap<String, PlugJsApi> jsapi_name2ob = null;// new HashMap<>();
 	
 	JSONArray js_auth_arr = null ;
+	
+	
 	
 	//private HashMap<String, Object> auth_name2ob = null;
 
@@ -64,6 +68,7 @@ public class PlugDir
 			return false;
 		}
 		JSONObject jo = new JSONObject(txt);
+		this.plugConfigJO = jo ;
 		this.name = jo.getString("name");
 		this.title = jo.optString("title");
 		if (Convert.isNullOrEmpty(this.title))
@@ -73,16 +78,21 @@ public class PlugDir
 		js_auth_arr = jo.optJSONArray("auth") ;
 		return true;
 	}
+	
+	public JSONObject getConfigJO()
+	{
+		return this.plugConfigJO ;
+	}
 
 	static boolean checkDirValid(File plugdirf)
 	{
 		File conf = new File(plugdirf, "config.json");
 		if (!conf.exists())
 			return false;
-		File classesf = new File(plugdirf, "classes/");
-		File libf = new File(plugdirf, "lib/");
-		if (!classesf.exists() && !libf.exists())
-			return false;
+//		File classesf = new File(plugdirf, "classes/");
+//		File libf = new File(plugdirf, "lib/");
+//		if (!classesf.exists() && !libf.exists())
+//			return false;
 		return true;
 	}
 
@@ -107,42 +117,56 @@ public class PlugDir
 		return this.title;
 	}
 
-	public synchronized URLClassLoader getOrLoadCL() throws MalformedURLException, IOException
+	public synchronized ClassLoader getOrLoadCL() //throws MalformedURLException, IOException
 	{
 		if (plugCL != null)
 			return plugCL;
 
 		// list js_api dir.
 		File classesf = new File(plugDirF, "classes/");
-
-		ArrayList<URL> urllist = new ArrayList<>();
-		String ss = "file:" + classesf.getCanonicalPath().replace('\\', '/') + "/";
-		urllist.add(new URL(ss));
-
 		File libsf = new File(plugDirF, "lib/");
-		File[] jarfs = libsf.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File f)
-			{
-				if (f.isDirectory())
-					return false;
-
-				return f.getName().toLowerCase().endsWith(".jar");
-			}
-		});
-		if (jarfs != null && jarfs.length > 0)
+		if(!classesf.exists() && !libsf.exists())
 		{
-			for (File jarf : jarfs)
-			{
-				urllist.add(new URL("file:" + jarf.getCanonicalPath()));
-			}
+			plugCL = Thread.currentThread().getContextClassLoader() ;
+			return plugCL ;
 		}
 
-		URL[] urls = new URL[urllist.size()];
-		urllist.toArray(urls);
-		plugCL = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
-		return plugCL;
+		try
+		{
+			ArrayList<URL> urllist = new ArrayList<>();
+			String ss = "file:" + classesf.getCanonicalPath().replace('\\', '/') + "/";
+			urllist.add(new URL(ss));
+	
+			
+			File[] jarfs = libsf.listFiles(new FileFilter() {
+	
+				@Override
+				public boolean accept(File f)
+				{
+					if (f.isDirectory())
+						return false;
+	
+					return f.getName().toLowerCase().endsWith(".jar");
+				}
+			});
+			if (jarfs != null && jarfs.length > 0)
+			{
+				for (File jarf : jarfs)
+				{
+					urllist.add(new URL("file:" + jarf.getCanonicalPath()));
+				}
+			}
+	
+			URL[] urls = new URL[urllist.size()];
+			urllist.toArray(urls);
+			plugCL = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
+			return plugCL;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			return null ;
+		}
 	}
 
 	private void initPlugObj(Object ob, HashMap<String, String> params) // throws
@@ -189,7 +213,7 @@ public class PlugDir
 			}
 		}
 
-		URLClassLoader cl = this.getOrLoadCL();
+		ClassLoader cl = this.getOrLoadCL();
 		Class<?> cc = cl.loadClass(classn);
 		if (cc == null)
 			return null;
@@ -224,7 +248,7 @@ public class PlugDir
 			}
 		}
 
-		URLClassLoader cl = this.getOrLoadCL();
+		ClassLoader cl = this.getOrLoadCL();
 		Class<?> cc = cl.loadClass(classn);
 		if (cc == null)
 			return null;

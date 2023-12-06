@@ -730,7 +730,7 @@ var ws_opened = false;
 function ws_conn()
 {
     var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id;
-    console.log(url) ;
+    //console.log(url) ;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

@@ -1,4 +1,4 @@
-Plugin - Authority
+Plugin Development - Authority
 ==
 
 

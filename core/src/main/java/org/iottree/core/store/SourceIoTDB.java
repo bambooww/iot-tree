@@ -1,5 +1,7 @@
 package org.iottree.core.store;
 
+import kotlin.NotImplementedError;
+
 public class SourceIoTDB extends Source
 {
 
@@ -15,4 +17,8 @@ public class SourceIoTDB extends Source
 		return "IoTDB";
 	}
 
+	public boolean checkConn(StringBuilder failedr)
+	{
+		throw new NotImplementedError();
+	}
 }

@@ -205,6 +205,15 @@ IOT-Tree supports client-side JS, mainly applied to HMI (UI). These scripts run 
 In the context root members, you can see members in the \$$xxx format, which represent custom variable members provided by the system, such as \$$mail. You can implement it through Java code and register it as a plugin for IOT-Tree.
 
 
+## 5 IOT-Tree Inner JS Api Plugins
+
+
+
+IOT Tree has specifically defined some inner plugins to facilitate your business needs. These inner plugins can bring great value and convenience to your JS scripts. For example, \$$http
+
+Of course, you can also give us suggestions to implement more common inner plugins for everyone's convenience.
+
+
 Please refer to:[Plugin-JsApi][plugin_jsapi]
 
 [plugin_jsapi]:../advanced/adv_plugin_jsapi.md

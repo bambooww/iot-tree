@@ -54,6 +54,58 @@ background:#aaaaaa;
 	display:inline-block;
 	padding:2px;
 }
+
+.mod-head .tt
+{
+	position: relative;
+}
+.mod-head .op
+{
+	position:absolute;
+	right:10px;
+	height:25px;
+	width:25px;
+	cursor:pointer;
+	border:1px solid;
+	border-color: #499ef3;
+}
+
+
+.sor_item
+{
+	position:relative;
+	left:2%;
+	width:95%;
+	height:50px;
+	border:1px solid;
+	border-color: #499ef3;
+	color:#0061aa;
+	margin-bottom: 10px;
+}
+.sor_item .n
+{
+	position:absolute;
+	font-size: 16px;
+	left:5px;
+}
+.sor_item .tp
+{
+	position:absolute;
+	font-size: 15px;
+	bottom:3px;
+	left:10px;
+}
+.sor_item .oper
+{
+	position:absolute;
+	font-size: 15px;
+	right:3px;
+	visibility:hidden;
+	bottom:5px;
+}
+.sor_item:hover .oper{
+	visibility:visible;
+}
  </style>
 </head>
 <body aria-hidden="false">
@@ -616,13 +668,13 @@ if(ins.isAutoStart())
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Store Adapters</h3>
+					        <span class="tt">Data Source</span>
+					        <span class="op" onclick="add_sor_sel()"><i class="fa-solid fa-plus fa-lg"></i></span>
 					    </div>
-					    <div class="mod-body fz">
-					       
-					       TODO 1.2v
+					    <div class="mod-body fz" id="data_sor_list">
 					        
 					    </div>
+					    
 					</div>
 
 					<div class="iot-mod iot-text-align-justify">
@@ -1431,6 +1483,144 @@ function pro_mgr()
 			{title:"Pro Manager",w:'700px',h:'600px'},
 			['Close'],
 			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function show_sors(objs)
+{
+	//console.log(objs);
+	let tmps="" ;
+	for(let ob of objs)
+	{
+		tmps += `<div id="sor_\${ob.n}" class="sor_item" tp="\${ob.tp}" t="\${ob.t}" n="\${ob.n}">
+					<span class="n">[\${ob.n}] - \${ob.t}</span>
+					<span class="tp">\${ob.tp} - \${ob.tpt}</span>
+					<span class="oper">
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs" onclick="test_sor('\${ob.n}')" title="Test Source"><i class="fa-solid fa-link"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="edit_sor('\${ob.n}')"><i class="fa fa-pencil"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_sor('\${ob.n}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+					</span>
+					</div>` ;
+	}
+	$("#data_sor_list").html(tmps) ;
+}
+
+function update_sors()
+{
+	send_ajax("./util/store_ajax.jsp",{op:"list_sors"},(bsucc,ret)=>{
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			dlg.msg(ret);
+			return;
+		}
+		let objs =null;
+		eval("objs="+ret) ;
+		show_sors(objs)
+	});
+}
+
+update_sors();
+
+function del_sor(n)
+{
+	event.stopPropagation();
+	dlg.confirm('Delete this Source ['+n+']?', {btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	{
+		send_ajax("./util/store_ajax.jsp",{op:"del_sor",n:n},(bsucc,ret)=>{
+    		if(!bsucc||ret!="succ")
+    		{
+    			dlg.msg(ret);
+    			return ;
+    		}
+    		update_sors();
+    	}) ;
+	});
+}
+
+function test_sor(n)
+{
+	event.stopPropagation();
+		send_ajax("./util/store_ajax.jsp",{op:"test_sor",n:n},(bsucc,ret)=>{
+    		dlg.msg(ret);
+    	}) ;
+}
+
+function add_sor_sel()
+{
+	dlg.open("./util/store_sor_sel.jsp",
+			{title:"Select Source Type"},
+			['Cancel'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			],(ret)=>{
+				if(!ret)
+					return ;
+				add_or_edit_source(ret.tp,ret.tt,null) ;
+			});
+}
+
+function edit_sor(n)
+{
+	let ob = $("#sor_"+n);
+	let tp = ob.attr("tp");
+	let t = ob.attr("t");
+	add_or_edit_source(tp,t,n)
+}
+
+function add_or_edit_source(tp,t,n)
+{
+	if(event)
+		event.stopPropagation();
+	tt = "Add Data Source - "+t;
+	if(n)
+	{
+		tt = "Edit Data Source - "+t;
+	}
+	if(!n)
+		n = "" ;
+	dlg.open("./util/store_sor_edit_"+tp+".jsp?n="+n,
+			{title:tt},
+			['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="set_sor" ;
+						 if(n)
+						 	ret.name = n ;
+						 ret.jstr = JSON.stringify(ret) ;
+						 var pm = {
+									type : 'post',
+									url : "./util/store_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if("succ"!=ret)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								
+								dlg.close();
+								update_sors();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
 				function(dlgw)
 				{
 					dlg.close();

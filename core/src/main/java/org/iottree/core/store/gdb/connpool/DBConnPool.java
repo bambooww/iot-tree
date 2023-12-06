@@ -20,7 +20,7 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 	static ILogger log = LoggerManager.getLogger(DBConnPool.class) ;
 	
 	
-	public static DBConnPool createFromEle(Element db_ele,String url)
+	public static DBConnPool createFromEle(Element db_ele,String url,ClassLoader cl)
 		throws SQLException
 	{
 		String name = db_ele.getAttribute("name");
@@ -44,7 +44,7 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		
 		
 		DBConnPool db_cp = new DBConnPool(dbt, name, driver, url,database, usern,
-				psw, init_num, max_num);
+				psw, init_num, max_num,cl);
 		
 		db_cp.relatedEle = db_ele ;
 		String domain_scope = db_ele.getAttribute("domain_scope") ;
@@ -245,9 +245,11 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 	
 	
 	transient Element relatedEle = null ;
+	
+	transient ClassLoader classLD = null ;
 
 	public DBConnPool(DBType dbt, String dbname, String driver, String url,String database,
-			String user, String psw, String init_num, String max_num)
+			String user, String psw, String init_num, String max_num,ClassLoader cl)
 			//throws SQLException
 	{
 		Properties tmpp = new Properties();
@@ -267,14 +269,14 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		if (max_num != null)
 			tmpp.setProperty("db.maxnumber", max_num);
 
-		createMe(dbt, tmpp);
+		createMe(dbt, tmpp,cl);
 	}
 	
 	//Properties 
 
-	public DBConnPool(DBType dbt, Properties p) throws SQLException
+	public DBConnPool(DBType dbt, Properties p,ClassLoader cl) throws SQLException
 	{
-		createMe(dbt, p);
+		createMe(dbt, p,cl);
 	}
 	
 	public Element getRelatedEle()
@@ -282,8 +284,13 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		return relatedEle ;
 	}
 
-	private void createMe(DBType dbt, Properties p) //throws SQLException
+	private void createMe(DBType dbt, Properties p,ClassLoader cl) //throws SQLException
 	{
+		if(cl==null)
+			throw new IllegalArgumentException("no ClassLoad input") ;
+		
+		this.classLD = cl ;
+		
 		connProp = p;
 
 		dbType = dbt;
@@ -319,14 +326,11 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		{
 			throw new IllegalArgumentException("Configure file format error.");
 		}
-		else
-		{
+
 			// init(driver, url, username, password, initnum, maxnum, true);
 
-			setPool(this);
+		setPool(this);
 
-			return;
-		}
 	}
 
 	public String getDBName()
@@ -607,11 +611,26 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		}
 		return;
 	}
+	
+	private Driver jdbcDrv = null ;
+	
+	private Driver getJdbcDrv() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+	{
+		if(jdbcDrv!=null)
+			return jdbcDrv ;
+		
+		synchronized(this)
+		{
+			jdbcDrv = (Driver) Class.forName(driver,true,this.classLD).newInstance() ;
+		}
+		
+		return jdbcDrv ;
+	}
 
 	private GDBConn makeNewConnection() throws SQLException
 	{
 		if (System.currentTimeMillis() < failedRetryLater)
-		{// �����ǰʱ�仹������ʱ�䷶Χ֮��,��ֱ���״���
+		{//
 			if(failedRetryLaterEx!=null)
 				throw new SQLException("server is in retry later["+dbName+"]!",failedRetryLaterEx);
 			else
@@ -620,14 +639,17 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 
 		try
 		{
-			DriverManager.registerDriver((Driver) Class.forName(driver)
-					.newInstance());
-			Connection conn = null;
+			Properties info = new Properties() ;
 			if(Convert.isNotNullEmpty(username))
-				conn = DriverManager.getConnection(url, username,password);
-			else
-				conn = DriverManager.getConnection(url);
-
+			{
+				info.put("user", username);
+				
+			    if (password != null) {
+			        info.put("password", password);
+			    }
+			}
+			
+			Connection conn = getJdbcDrv().connect(url,info) ;
 			return new GDBConn(this,conn);
 		}
 		catch (ClassNotFoundException cnfe)
@@ -636,8 +658,6 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 		}
 		catch (SQLException sqle)
 		{
-			// һ���������Ӵ���,˵�����ݿ������һ��ʱ��֮�ڲ�������,�������ʱ��֮��,
-			// û�б�Ҫ������
 			failedRetryLaterEx = sqle ;
 			failedRetryLater = System.currentTimeMillis() + 5000;
 			throw sqle;

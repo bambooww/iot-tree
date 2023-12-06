@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>0.99.9</version>
+    <version>1.0.0</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -58,12 +58,13 @@
 	</dependency>
 	
 	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+	<!-- 
 	<dependency>
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>8.0.22</version>
 	</dependency>
-	
+	 -->
 	<dependency>
 			<groupId>tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
@@ -208,6 +209,7 @@
 			                            <include>data/simulator/demo/</include>
 			                            <include>data/plugins/mail/</include>
 			                            <include>data/plugins/auth_demo/</include>
+			                            <include>data/plugins/inner/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>

@@ -204,6 +204,15 @@ IOT-Tree对客户端JS支持，主要应用于HMI(UI)相关的内容。如图元
 
 
 
+## 5 系统自带内部JS插件
+
+
+IOT-Tree为了方便你的业务需求，专门定义了一些内部插件。这些内部插件可以为你的JS脚本带来极大的价值和方便。如\$$http
+
+当然，你也可以给我们提建议，让我们实现更多的通用内部插件，以方便大家。
+
+
+
 本部分内容请参考[插件开发-JsApi][plugin_jsapi]
 
 [plugin_jsapi]:../advanced/adv_plugin_jsapi.md

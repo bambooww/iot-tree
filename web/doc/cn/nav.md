@@ -66,6 +66,7 @@
 ##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS在中间标签(Middle Tag)的使用</a>
 ##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS在任务(Task)中的使用</a>
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS在UI事件处理中的使用</a>
+##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api内部插件 - \$$http
 
 
 #### <a href="doc/advanced/index.md" >9 高级特性</a>

@@ -194,24 +194,15 @@ Alert function added, achieving flexible and intuitive alarm configuration suppo
 Add and organize documents.
 
 
-### version 1.0.0.alpha (Plan)
+### version 1.0.0
 
 
 Add support for real-time data writing to the database.
 
 
-### version 1.0.0 (Plan)
+### version 1.1.0 (Plan)
 
 
-Complete configuration software functionality
-
-Basic and complete documentation
-
-Complete the development of the entire basic component library
-
-Design 1-2 demo scenarios (select two industries)
-
-Collect more practical use cases
 
 
 [ref_hmi_auth]:./case/case_ref_hmi_auth.md

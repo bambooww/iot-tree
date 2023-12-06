@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.CompressUUID;
@@ -39,39 +40,31 @@ public class StoreManager
 			return ins;
 		}
 	}
-
-	UAPrj prj = null;
-
-	File prjDir = null;
-
-	LinkedHashMap<String, Source> name2store = null;// 
-
-	private StoreManager(String prjid)
+	
+	static LinkedHashMap<String, Source> name2sor = null;//
+	
+	private static LinkedHashMap<String, Source> getName2Source()
 	{
-		prj = UAManager.getInstance().getPrjById(prjid);
-		if (prj == null)
-			throw new IllegalArgumentException("no prj found");
-		prjDir = prj.getPrjSubDir();
-
+		if(name2sor!=null)
+			return name2sor ;
+		
 		try
 		{
-			name2store = loadSors();
+			name2sor = loadSors();
+			return name2sor;
 		}
-		catch ( Exception e)
+		catch (Exception e)
 		{
+			//e.printStackTrace();
 			log.error(e);
-		}
-		finally
-		{
-			if(name2store==null)
-				name2store = new LinkedHashMap<>();
+			return null ;
 		}
 	}
-
-	public List<Source> listSources()
+	
+	public static List<Source> listSources()
 	{
 		ArrayList<Source> rets = new ArrayList<>();
-		rets.addAll(name2store.values());
+		rets.addAll(getName2Source().values());
 		return rets;
 	}
 
@@ -85,12 +78,12 @@ public class StoreManager
 //		return null;
 //	}
 
-	public Source getSource(String name)
+	public static Source getSource(String name)
 	{
-		return name2store.get(name);
+		return getName2Source().get(name);
 	}
 
-	public void setSource(Source st, boolean bsave,boolean b_add) throws Exception
+	public static void setSource(Source st, boolean bsave,boolean b_add) throws Exception
 	{
 		String stname = st.getName() ;
 		StringBuilder failedr = new StringBuilder() ;
@@ -100,51 +93,60 @@ public class StoreManager
 		}
 		if(b_add)
 		{
-			Source oldst = this.getSource(st.getName()) ;
+			Source oldst = getSource(st.getName()) ;
 			if(oldst!=null)
 				throw new Exception("store with name="+st.getName()+" is existed") ;
 		}
 		
-		name2store.put(st.getName(), st);
+		name2sor.put(st.getName(), st);
 		if (bsave)
 			saveSors();
 	}
 	
-	public boolean delSource(String name) throws Exception
+	public static boolean delSource(String name) throws Exception
 	{
-		Source sor = this.getSource(name) ;
+		Source sor = getSource(name) ;
 		if(sor==null)
 		{
 			return false;
 		}
-		name2store.remove(name) ;
+		name2sor.remove(name) ;
 		saveSors() ;
 		return true ;
 	}
 	
+	private static File getSorDir()
+	{
+		return new File(Config.getDataDirBase(),"store/") ; 
+	}
 
-	public void saveSors() throws Exception
+	public static void saveSors() throws Exception
 	{
 		XmlData xd = new XmlData();
 		List<XmlData> xds = xd.getOrCreateSubDataArray("sources");
-		for (Source st : name2store.values())
+		for (Source st : getName2Source().values())
 		{
 			XmlData xd0 = DataTranserXml.extractXmlDataFromObj(st);
 			xd0.setParamValue("_tp", st.getSorTp());
 			xds.add(xd0);
 		}
-		File f = new File(prjDir, "store_sors.xml");
+		
+		File storedir = getSorDir() ;
+		if(!storedir.exists())
+			storedir.mkdirs() ;
+		
+		File f = new File(getSorDir(), "store_sors.xml");
 		XmlData.writeToFile(xd, f);
 	}
 
-	private LinkedHashMap<String, Source> loadSors() throws Exception
+	private static LinkedHashMap<String, Source> loadSors() throws Exception
 	{
-		File f = new File(prjDir, "store_sors.xml");
-		if (!f.exists())
-			return null;
-
 		LinkedHashMap<String, Source> n2st = new LinkedHashMap<>();
-
+		
+		File f = new File(getSorDir(), "store_sors.xml");
+		if (!f.exists())
+			return n2st ;
+		
 		XmlData xd = XmlData.readFromFile(f);
 		List<XmlData> xds = xd.getSubDataArray("sources");
 		if (xds == null)
@@ -163,4 +165,23 @@ public class StoreManager
 		return n2st;
 	}
 	
+	
+
+
+	UAPrj prj = null;
+
+	File prjDir = null;
+
+	
+
+	private StoreManager(String prjid)
+	{
+		prj = UAManager.getInstance().getPrjById(prjid);
+		if (prj == null)
+			throw new IllegalArgumentException("no prj found");
+		prjDir = prj.getPrjSubDir();
+
+		
+	}
+
 }

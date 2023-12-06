@@ -14,6 +14,8 @@ import org.influxdb.dto.Point.Builder;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
+import kotlin.NotImplementedError;
+
 public class SourceInfluxDB extends Source implements Closeable
 {
 	private String dbUser =null ;
@@ -75,6 +77,11 @@ public class SourceInfluxDB extends Source implements Closeable
 		
 		influxDB.setLogLevel(InfluxDB.LogLevel.NONE) ;
 		return influxDB;
+	}
+	
+	public boolean checkConn(StringBuilder failedr)
+	{
+		throw new NotImplementedError();
 	}
 	
 	public void createDefaultRetentionPolicy()

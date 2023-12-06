@@ -8,9 +8,20 @@
 	org.iottree.*,
 	org.iottree.core.*,
 	org.iottree.core.cxt.*,
+	org.iottree.core.plugin.*,
 	org.iottree.core.util.*,
 	org.iottree.core.util.xmldata.*
-	"%><%
+	"%><%!
+	public boolean checkJsObj(Class<?> c)
+	{
+		if(c.isPrimitive()) return false;
+		if(c == String.class) return false;
+		if(PlugJsApi.class.isAssignableFrom(c))
+			return false;
+		
+		return true ;
+	}
+	%><%
 if(!Convert.checkReqEmpty(request, out, "path","op"))
 	return ;
 String op = request.getParameter("op");
@@ -116,10 +127,46 @@ try
 		if(!Convert.checkReqEmpty(request, out, "id"))
 			return ;
 		JsSub jssub = sub_ob.getJsSub() ;
-		Object subv = sub_ob.getSubVal() ;
+		//Object subv = sub_ob.getSubVal() ;
+		
 	%>
 		<div><%=jssub.getSubTitle()%> - <%=jssub.getDesc() %><br> <%=jssub.getTitle() %></div>
+		
+		<br><br>Help For:
 	<%
+		if(jssub instanceof JsProp)
+		{
+			JsProp jsp = (JsProp)jssub ;
+			Class<?> vt_c = jsp.getValTp() ;
+			if(checkJsObj(vt_c))
+			{
+				String cn = vt_c.getSimpleName() ;
+				String fcn = vt_c.getCanonicalName() ;
+%><button onclick="javascript:open_help_ob('<%=fcn%>')"><%=cn %></button><%
+			}
+		}
+		else if(jssub instanceof JsMethod)
+		{
+			JsMethod jsm = (JsMethod)jssub ;
+			Class<?> ret_vt_c = jsm.getReturnValTp() ;
+			if(checkJsObj(ret_vt_c))
+			{
+				String cn = ret_vt_c.getSimpleName();
+				String fcn = ret_vt_c.getCanonicalName() ;
+%><button onclick="open_help_ob('<%=fcn%>')"><%=cn %></button><%
+			}
+			Class<?>[] pmcs = jsm.getParamsValTp() ;
+			if(pmcs!=null)
+			{
+				for(Class<?> c : pmcs)
+				{
+					if(!checkJsObj(c)) continue ;
+					String cn = c.getSimpleName();
+					String fcn = c.getCanonicalName() ;
+%><button onclick="open_help_ob('<%=fcn%>')"><%=cn %></button><%
+				}
+			}
+		}
 		return ;
 	default:
 		break ;

@@ -69,6 +69,8 @@ public abstract class Source
 	
 	public abstract String getSorTpTitle() ;
 	
+	public abstract boolean checkConn(StringBuilder failedr) ;
+	
 	public JSONObject toListJO()
 	{
 		JSONObject jo = new JSONObject() ;

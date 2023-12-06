@@ -13,32 +13,25 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
-	return ;
-	String prjid = request.getParameter("prjid") ;
+
 	String name = request.getParameter("n") ;
-UAPrj rep  = UAManager.getInstance().getPrjById(prjid) ;
-if(rep==null)
-{
-	out.print("no prj found");
-	return ;
-}
 
-StoreManager stmgr = StoreManager.getInstance(prjid) ;
-
-
+if(name==null)
+	name="" ;
 String title="" ;
 String chked = "checked" ;
 String desc="" ;
 String drv_name = "" ;
 String db_host="" ;
+//def
+
 String db_port_str = "" ;
 String db_name = "" ;
 String db_user = "" ;
 String db_psw="" ;
 if(Convert.isNotNullEmpty(name))
 {
-	SourceJDBC st = (SourceJDBC)stmgr.getSource(name);//.getSourceById(storeid) ;
+	SourceJDBC st = (SourceJDBC)StoreManager.getSource(name);//.getSourceById(storeid) ;
 	if(st==null)
 	{
 		out.print("no store found") ;
@@ -95,9 +88,10 @@ dlg.resize_to(700,450);
 	    <select id="drv_name"  lay-filter="drv_name" >
 	    	<option value="">--</option>
 <%
-	for(SourceJDBC.Drv drv:SourceJDBC.listDrvs())
+	for(SourceJDBC.Drv drv:SourceJDBC.listJDBCDrivers())
 {
-%><option value="<%=drv.getName() %>"><%=drv.getTitle() %></option>
+		String defpstr = drv.getDefaultPortStr() ;
+%><option value="<%=drv.getName() %>" jdbc_port_def="<%=defpstr %>"><%=drv.getTitle() %></option>
 <%
 }
 %>
@@ -109,7 +103,7 @@ dlg.resize_to(700,450);
     </div>
     <div class="layui-form-mid">Port:</div>
 	  <div class="layui-input-inline" style="width: 100px;">
-	    <input type="text" id="db_port" name="db_port" value="<%=db_port_str%>"  autocomplete="off" class="layui-input">
+	    <input type="number" id="db_port" name="db_port" value="<%=db_port_str%>"  autocomplete="off" class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">
@@ -125,7 +119,7 @@ dlg.resize_to(700,450);
     </div>
     <div class="layui-form-mid">Password:</div>
 	  <div class="layui-input-inline" style="width: 130px;">
-	    <input type="text" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
+	    <input type="password" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
 	  </div>
  </div>
 
@@ -138,11 +132,19 @@ dlg.resize_to(700,450);
  </form>
 </body>
 <script type="text/javascript">
-var prjid = "<%=prjid%>" ;
 var name = "<%=name%>" ;
 
 layui.use('form', function(){
 	  var form = layui.form;
+	  form.on("select(drv_name)",function(obj){
+		  //let dbport = $("#db_port").val() ;
+		  if(!name)
+		  {
+			  let pdef = $("#drv_name").find("option:selected").attr("jdbc_port_def");
+			  $("#db_port").val(pdef) ;
+			  form.render();
+		  }
+	  });
 	  
 	  $("#drv_name").val("<%=drv_name%>") ;
 	  
