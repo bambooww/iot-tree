@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 
@@ -214,7 +213,7 @@ public class DBInfo implements IXmlDataable
 		
 		if(connProp!=null)
 		{
-			for(Enumeration en = connProp.propertyNames() ; en.hasMoreElements();)
+			for(Enumeration<?> en = connProp.propertyNames() ; en.hasMoreElements();)
 			{
 				String pn = (String)en.nextElement() ;
 				String pv = connProp.getProperty(pn);

@@ -13,11 +13,11 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
+	String id = request.getParameter("id") ;
 
-	String name = request.getParameter("n") ;
-
-if(name==null)
-	name="" ;
+if(id==null)
+	id="" ;
+String name="" ;
 String title="" ;
 String chked = "checked" ;
 String desc="" ;
@@ -29,9 +29,9 @@ String db_port_str = "" ;
 String db_name = "" ;
 String db_user = "" ;
 String db_psw="" ;
-if(Convert.isNotNullEmpty(name))
+if(Convert.isNotNullEmpty(id))
 {
-	SourceJDBC st = (SourceJDBC)StoreManager.getSource(name);//.getSourceById(storeid) ;
+	SourceJDBC st = (SourceJDBC)StoreManager.getSourceById(id);//.getSourceById(storeid) ;
 	if(st==null)
 	{
 		out.print("no store found") ;
@@ -50,7 +50,6 @@ if(Convert.isNotNullEmpty(name))
 	db_psw = st.getDBPsw() ;
 	desc = st.getDesc() ;
 }
-
 %>
 <html>
 <head>
@@ -132,13 +131,13 @@ dlg.resize_to(700,450);
  </form>
 </body>
 <script type="text/javascript">
-var name = "<%=name%>" ;
+var id = "<%=id%>" ;
 
 layui.use('form', function(){
 	  var form = layui.form;
 	  form.on("select(drv_name)",function(obj){
 		  //let dbport = $("#db_port").val() ;
-		  if(!name)
+		  if(!id)
 		  {
 			  let pdef = $("#drv_name").find("option:selected").attr("jdbc_port_def");
 			  $("#db_port").val(pdef) ;
@@ -147,11 +146,8 @@ layui.use('form', function(){
 	  });
 	  
 	  $("#drv_name").val("<%=drv_name%>") ;
-	  
 	  form.render();
-	  
-	  
-	});
+});
 	
 function win_close()
 {
@@ -210,7 +206,7 @@ function do_submit(cb)
 	}
 	var db_psw = $('#db_psw').val();
 	
-	cb(true,{name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
+	cb(true,{id:id,_tp:"jdbc",name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
 		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw});
 	//var dbname=document.getElementById('db_name').value;
 	

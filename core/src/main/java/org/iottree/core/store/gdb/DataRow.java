@@ -390,6 +390,8 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 					if(t1!=t2)
 						return false;
 				}
+				
+				return false;
 			}
 		}
 		

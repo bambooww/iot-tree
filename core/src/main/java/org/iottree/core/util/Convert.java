@@ -529,13 +529,21 @@ public class Convert
 
 		return;
 	}
-
+	
 	public static boolean checkVarName(String n, boolean letterfirst, StringBuilder invalidreson)
 	{
+		return checkVarName(n,null, letterfirst, invalidreson) ;
+	}
+
+	public static boolean checkVarName(String n,String t, boolean letterfirst, StringBuilder invalidreson)
+	{
+		if(Convert.isNullOrEmpty(t))
+			t = "name" ;
+		
 		if (n == null || n.equals(""))
 		{
 			if(invalidreson!=null)
-				invalidreson.append("name cannot be null or empty!");
+				invalidreson.append(t+" cannot be null or empty!");
 			return false;
 		}
 
@@ -546,7 +554,7 @@ public class Convert
 			if (!bc1)
 			{
 				if(invalidreson!=null)
-					invalidreson.append("name first char must be a-z A-Z");
+					invalidreson.append(t+" first char must be a-z A-Z");
 				return false;
 			}
 		}
@@ -556,7 +564,7 @@ public class Convert
 			if (!bc1)
 			{
 				if(invalidreson!=null)
-					invalidreson.append("name first char must be a-z A-Z _");
+					invalidreson.append(t+" first char must be a-z A-Z _");
 				return false;
 			}
 		}
@@ -1765,7 +1773,23 @@ public class Convert
 		return rets;
 	}
 
-	public static String combineStrWith(List<String> ss, char delimi)
+	public static String combineStrWith(Collection<String> ss, char delimi)
+	{
+		if (ss == null)
+			return null;
+
+		StringBuilder sb = new StringBuilder();
+		for (String s : ss)
+		{
+			sb.append(delimi).append(s);
+		}
+		if (ss.size() > 0)
+			return sb.substring(1);
+		else
+			return "";
+	}
+	
+	public static String combineStrWith(Collection<String> ss, String delimi)
 	{
 		if (ss == null)
 			return null;

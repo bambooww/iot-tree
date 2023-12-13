@@ -8,7 +8,7 @@ public class DataColumn implements IXmlDataable
 {
 	private String name = null ;
 	private String title = null ;
-	private Class dataType = null ;
+	private Class<?> dataType = null ;
 	
 	
 	/**
@@ -22,14 +22,14 @@ public class DataColumn implements IXmlDataable
 	DataColumn()
 	{}
 	
-	public DataColumn(String name,Class datatype)
+	public DataColumn(String name,Class<?> datatype)
 	{
 		//this.srcName = name ;
 		this.name = name.toUpperCase() ;
 		this.dataType = datatype ;
 	}
 	
-	public DataColumn(String name,Class datatype,int jdbctype,
+	public DataColumn(String name,Class<?> datatype,int jdbctype,
 			int precision,int scale)
 	{
 		//this.srcName = name ;
@@ -40,7 +40,7 @@ public class DataColumn implements IXmlDataable
 		this.scale = scale ;
 	}
 	
-	public DataColumn(String name,String title,Class datatype)
+	public DataColumn(String name,String title,Class<?> datatype)
 	{
 		//this.srcName = name ;
 		this.name = name.toUpperCase() ;
@@ -60,7 +60,7 @@ public class DataColumn implements IXmlDataable
 		return name ;
 	}
 	
-	public Class getDataType()
+	public Class<?> getDataType()
 	{
 		return dataType ;
 	}

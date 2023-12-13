@@ -2281,7 +2281,7 @@ function clk_dd()
 function clk_store()
 {
 	event.stopPropagation();
-	add_tab("___store","<i class='fa fa-database'></i>Data Store","./util/store.jsp?prjid="+prjid) ;
+	add_tab("___store","<i class='fa fa-database'></i>Data Store","./store/store.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

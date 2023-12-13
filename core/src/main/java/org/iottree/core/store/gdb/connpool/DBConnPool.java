@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.*;
 
 import org.w3c.dom.Element;
-
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -192,7 +191,7 @@ public class DBConnPool extends IConnPool implements Runnable,IXmlDataable
 
 	private String dbName;
 
-	private DBType dbType = DBType.derby;
+	private DBType dbType = DBType.mysql;
 	
 	/**
 	 * ���ӳض�Ӧ�ķ�Χ��Сֵ

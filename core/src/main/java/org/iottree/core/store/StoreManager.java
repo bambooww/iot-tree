@@ -1,6 +1,9 @@
 package org.iottree.core.store;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -13,8 +16,10 @@ import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class StoreManager
@@ -68,49 +73,67 @@ public class StoreManager
 		return rets;
 	}
 
-//	public Source getSourceById(String id)
-//	{
-//		for (Source st : name2store.values())
-//		{
-//			if (st.getId().equals(id))
-//				return st;
-//		}
-//		return null;
-//	}
+	public static Source getSourceById(String id)
+	{
+		for (Source st : getName2Source().values())
+		{
+			if (st.getId().equals(id))
+				return st;
+		}
+		return null;
+	}
 
-	public static Source getSource(String name)
+	public static Source getSourceByName(String name)
 	{
 		return getName2Source().get(name);
 	}
 
-	public static void setSource(Source st, boolean bsave,boolean b_add) throws Exception
+	public static void setSource(Source st, boolean bsave) throws Exception
 	{
 		String stname = st.getName() ;
 		StringBuilder failedr = new StringBuilder() ;
+		if(Convert.isNullOrEmpty(st.getId()))
+		{
+			st.id = CompressUUID.createNewId() ;
+		}
+		
 		if(!Convert.checkVarName(stname, true, failedr))
 		{
 			throw new Exception(failedr.toString());
 		}
-		if(b_add)
-		{
-			Source oldst = getSource(st.getName()) ;
-			if(oldst!=null)
-				throw new Exception("store with name="+st.getName()+" is existed") ;
-		}
 		
-		name2sor.put(st.getName(), st);
+		Source oldst = getSourceByName(st.getName()) ;
+		if(oldst!=null && !oldst.getId().equals(st.getId()))
+		{
+			throw new Exception("store with name="+st.getName()+" is existed") ;
+		}
+		getName2Source().put(st.getName(), st);
 		if (bsave)
 			saveSors();
 	}
 	
-	public static boolean delSource(String name) throws Exception
+	public static void setSourceByJO(JSONObject jo) throws Exception
 	{
-		Source sor = getSource(name) ;
+		//JSONObject jo = new JSONObject(jstr) ;
+		String tp = jo.getString("_tp") ;
+		Source nsor = Source.newInsByTp(tp) ;
+		if(nsor==null)
+		{
+			throw new IllegalArgumentException("no source type found with "+tp) ;
+		}
+		//SourceJDBC st = new SourceJDBC();
+		DataTranserJSON.injectJSONToObj(nsor, jo) ;
+		StoreManager.setSource(nsor, true);
+	}
+	
+	public static boolean delSourceById(String id) throws Exception
+	{
+		Source sor = getSourceById(id) ;
 		if(sor==null)
 		{
 			return false;
 		}
-		name2sor.remove(name) ;
+		name2sor.remove(sor.getName()) ;
 		saveSors() ;
 		return true ;
 	}
@@ -160,6 +183,8 @@ public class StoreManager
 			Source o = Source.newInsByTp(tp) ;
 			if (!DataTranserXml.injectXmDataToObj(o, tmpxd))
 				continue;
+			if(Convert.isNullOrEmpty(o.getId()))
+				o.id = CompressUUID.createNewId() ;
 			n2st.put(o.getName(), o);
 		}
 		return n2st;
@@ -172,7 +197,7 @@ public class StoreManager
 
 	File prjDir = null;
 
-	
+	private LinkedHashMap<String,StoreHandler> name2handlers = null ;
 
 	private StoreManager(String prjid)
 	{
@@ -183,5 +208,222 @@ public class StoreManager
 
 		
 	}
+	
+	private LinkedHashMap<String, StoreHandler> getName2Handler()
+	{
+		if(name2handlers!=null)
+			return name2handlers ;
+		
+		try
+		{
+			name2handlers = loadHandlers();
+			return name2handlers;
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+			log.error(e);
+			return null ;
+		}
+	}
 
+	public List<StoreHandler> listHandlers()
+	{
+		ArrayList<StoreHandler> rets = new ArrayList<>();
+		rets.addAll(getName2Handler().values());
+		return rets;
+	}
+	
+
+	public StoreHandler getHandlerById(String id)
+	{
+		for(StoreHandler sh: getName2Handler().values())
+		{
+			if(id.equals(sh.getId()))
+				return sh ;
+		}
+		return null ;
+	}
+	
+	public StoreHandler getHandlerByName(String name)
+	{
+		return getName2Handler().get(name) ;
+	}
+	
+	public void setHandler(StoreHandler ah) throws Exception
+	{
+		String n = ah.getName() ;
+		if(Convert.isNullOrEmpty(n))
+			throw new IllegalArgumentException("Handler name cannot be null or empty") ;
+		
+		if(Convert.isNullOrEmpty(ah.getId()))
+		{
+			ah.id = CompressUUID.createNewId() ;
+		}
+		
+		StringBuilder sb = new StringBuilder() ;
+		if(!Convert.checkVarName(n, true, sb))
+			throw new IllegalArgumentException(sb.toString()) ;
+		
+		StoreHandler old_ah = this.getHandlerByName(n) ;
+		if(old_ah!=null && !old_ah.getId().equals(ah.getId()))
+		{
+			throw new IllegalArgumentException("Handler with name="+n+" is already existed!") ;
+		}
+		ah.prj = this.prj ;
+		this.getName2Handler().put(ah.getName(), ah) ;
+		this.saveHandlers();
+	}
+	
+	public void setHandlerByJSON(JSONObject jo) throws Exception
+	{
+		String id = jo.optString("id") ;
+		//ah.ou
+		
+		StoreHandler ah = null;
+		if(Convert.isNotNullEmpty(id))
+		{
+			ah = this.getHandlerById(id) ;
+			if(ah==null)
+				throw new Exception("no handler with id="+id) ;
+		}
+		else
+		{
+			String tp = jo.getString("_tp");
+			ah = StoreHandler.newInsByTp(tp);
+		}
+		ah.fromJO(jo,false,false);
+		//DataTranserJSON.injectJSONToObj(ah, jo) ;
+		this.setHandler(ah);
+	}
+	
+	public void setHandlerSelTagIds(String hid,List<String> tag_nps) throws Exception
+	{
+		StoreHandler ah = this.getHandlerById(hid) ;
+		if(ah==null)
+			throw new Exception("no handler with id="+hid) ;
+		ah.setSelectTags(tag_nps);
+		this.saveHandlers();
+	}
+//	public void setHandlerInOutIds(JSONArray jarr) throws Exception
+//	{
+//		int len = jarr.length() ;
+//		boolean bdirty=false;
+//		for(int i = 0 ; i < len ; i ++)
+//		{
+//			JSONObject jo = jarr.getJSONObject(i) ;
+//			String id = jo.getString("id") ;
+//			String alert_uids = jo.getString("alert_uids") ;
+//			String out_ids = jo.getString("out_ids") ;
+//			StoreHandler ah = this.getHandlerById(id) ;
+//			if(ah==null)
+//				continue ;
+//			//ah.setInOutIds(alert_uids, out_ids);
+//			bdirty=true;
+//		}
+//		
+//		if(bdirty)
+//			this.saveHandlers();
+//	}
+	
+	public boolean delHandlerById(String id) throws Exception
+	{	
+		StoreHandler ao = this.getHandlerById(id) ;
+		if(ao==null)
+			return false;
+		this.getName2Handler().remove(ao.getName()) ;
+		this.saveHandlers();
+		return true ;
+	}
+	
+	
+	public void setHandlerOutByJSON(JSONObject jo) throws Exception
+	{
+		String hid = jo.getString("hid") ;
+		StoreHandler h = this.getHandlerById(hid) ;
+		if(h==null)
+			throw new Exception("no handler found with id="+hid) ;
+		String tp = jo.getString("tp");
+		StoreOut so = StoreOut.newInsByTp(tp) ;
+		if(so==null)
+			throw new Exception("unknown StoreOut type="+tp) ;
+		DataTranserJSON.injectJSONToObj(so, jo) ;
+		h.setOut(so);
+		
+		this.saveHandlers();
+	}
+	
+	public StoreOut delHandlerOutById(String hid,String id) throws Exception
+	{
+		StoreHandler h = this.getHandlerById(hid) ;
+		if(h==null)
+			throw new Exception("no handler found with id="+hid) ;
+		StoreOut so = h.delOutById(id) ;
+		if(so!=null)
+			this.saveHandlers();
+		return so ;
+	}
+	
+	private LinkedHashMap<String, StoreHandler> loadHandlers() throws Exception
+	{
+		LinkedHashMap<String, StoreHandler> n2st = new LinkedHashMap<>();
+		
+		File f = new File(prjDir, "store_handlers.json");
+		if (!f.exists())
+			return n2st;
+		
+		String txt = Convert.readFileTxt(f,"utf-8") ;
+		JSONObject jo =new JSONObject(txt) ;
+
+		JSONArray jarr = jo.getJSONArray("handlers") ;
+		int n = jarr.length() ;
+		for (int i = 0 ; i < n ; i ++)
+		{
+			JSONObject tmpjo = jarr.getJSONObject(i) ;
+			
+			String tp = tmpjo.getString("_tp");//tmpxd.getParamValueStr("_tp") ;
+			StoreHandler o = StoreHandler.newInsByTp(tp) ;
+			if(o==null)
+				continue ;
+			o.fromJO(tmpjo,true,true);
+			o.prj = this.prj ;
+			n2st.put(o.getName(), o);
+		}
+		return n2st;
+	}
+	
+	public void saveHandlers() throws Exception
+	{
+		JSONObject jo = new JSONObject() ;
+		JSONArray jarr = new JSONArray();
+		jo.put("handlers",jarr) ;
+		for (StoreHandler st : getName2Handler().values())
+		{
+			JSONObject tmpjo = st.toJO() ;
+			jarr.put(tmpjo);
+		}
+		File f = new File(prjDir, "store_handlers.json");
+		
+		try(FileOutputStream fos= new FileOutputStream(f);OutputStreamWriter osw = new OutputStreamWriter(fos,"utf-8") ;)
+		{
+			jo.write(osw) ;
+		}
+	}
+	
+	
+	public void RT_start()
+	{
+		for(StoreHandler h:this.listHandlers())
+		{
+			h.RT_start();
+		}
+	}
+	
+	public void RT_stop()
+	{
+		for(StoreHandler h:this.listHandlers())
+		{
+			h.RT_stop();
+		}
+	}
 }

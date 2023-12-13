@@ -1496,13 +1496,13 @@ function show_sors(objs)
 	let tmps="" ;
 	for(let ob of objs)
 	{
-		tmps += `<div id="sor_\${ob.n}" class="sor_item" tp="\${ob.tp}" t="\${ob.t}" n="\${ob.n}">
+		tmps += `<div id="sor_\${ob.id}" class="sor_item" tp="\${ob.tp}" t="\${ob.t}" n="\${ob.n}">
 					<span class="n">[\${ob.n}] - \${ob.t}</span>
 					<span class="tp">\${ob.tp} - \${ob.tpt}</span>
 					<span class="oper">
-						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs" onclick="test_sor('\${ob.n}')" title="Test Source"><i class="fa-solid fa-link"></i></button>
-						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="edit_sor('\${ob.n}')"><i class="fa fa-pencil"></i></button>
-						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_sor('\${ob.n}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs" onclick="test_sor('\${ob.id}')" title="Test Source"><i class="fa-solid fa-link"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="edit_sor('\${ob.id}')"><i class="fa fa-pencil"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_sor('\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
 					</span>
 					</div>` ;
 	}
@@ -1511,7 +1511,7 @@ function show_sors(objs)
 
 function update_sors()
 {
-	send_ajax("./util/store_ajax.jsp",{op:"list_sors"},(bsucc,ret)=>{
+	send_ajax("./store/store_ajax.jsp",{op:"list_sors"},(bsucc,ret)=>{
 		if(!bsucc||ret.indexOf("[")!=0)
 		{
 			dlg.msg(ret);
@@ -1525,12 +1525,13 @@ function update_sors()
 
 update_sors();
 
-function del_sor(n)
+function del_sor(id)
 {
+	let ob = $("#sor_"+id);
 	event.stopPropagation();
-	dlg.confirm('Delete this Source ['+n+']?', {btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('Delete this Source ['+ob.attr('n')+'] ?', {btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
 	{
-		send_ajax("./util/store_ajax.jsp",{op:"del_sor",n:n},(bsucc,ret)=>{
+		send_ajax("./store/store_ajax.jsp",{op:"del_sor",id:id},(bsucc,ret)=>{
     		if(!bsucc||ret!="succ")
     		{
     			dlg.msg(ret);
@@ -1541,17 +1542,17 @@ function del_sor(n)
 	});
 }
 
-function test_sor(n)
+function test_sor(id)
 {
 	event.stopPropagation();
-		send_ajax("./util/store_ajax.jsp",{op:"test_sor",n:n},(bsucc,ret)=>{
+		send_ajax("./store/store_ajax.jsp",{op:"test_sor",id:id},(bsucc,ret)=>{
     		dlg.msg(ret);
     	}) ;
 }
 
 function add_sor_sel()
 {
-	dlg.open("./util/store_sor_sel.jsp",
+	dlg.open("./store/store_sor_sel.jsp",
 			{title:"Select Source Type"},
 			['Cancel'],
 			[
@@ -1566,26 +1567,26 @@ function add_sor_sel()
 			});
 }
 
-function edit_sor(n)
+function edit_sor(id)
 {
-	let ob = $("#sor_"+n);
+	let ob = $("#sor_"+id);
 	let tp = ob.attr("tp");
 	let t = ob.attr("t");
-	add_or_edit_source(tp,t,n)
+	add_or_edit_source(tp,t,id)
 }
 
-function add_or_edit_source(tp,t,n)
+function add_or_edit_source(tp,t,id)
 {
 	if(event)
 		event.stopPropagation();
 	tt = "Add Data Source - "+t;
-	if(n)
+	if(id)
 	{
 		tt = "Edit Data Source - "+t;
 	}
-	if(!n)
-		n = "" ;
-	dlg.open("./util/store_sor_edit_"+tp+".jsp?n="+n,
+	if(!id)
+		id = "" ;
+	dlg.open("./store/store_sor_edit_"+tp+".jsp?id="+id,
 			{title:tt},
 			['Ok','Cancel'],
 			[
@@ -1599,12 +1600,12 @@ function add_or_edit_source(tp,t,n)
 						 }
 						 
 						 ret.op="set_sor" ;
-						 if(n)
-						 	ret.name = n ;
+						 if(id)
+						 	ret.id = id ;
 						 ret.jstr = JSON.stringify(ret) ;
 						 var pm = {
 									type : 'post',
-									url : "./util/store_ajax.jsp",
+									url : "./store/store_ajax.jsp",
 									data :ret
 								};
 							$.ajax(pm).done((ret)=>{

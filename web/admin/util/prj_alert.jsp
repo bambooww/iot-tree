@@ -76,6 +76,25 @@ background-color: #eeeeee
 	width:20%;
 	bottom:0px;
 }
+
+.list
+{
+	position: absolute;
+	top:50px;
+	bottom:0px;
+	width:100%;
+	border:0px solid;
+	border-color:red;
+	scrollbar-width: none; /* firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.list::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
 .alert_item
 {
 	position:relative;
@@ -119,7 +138,8 @@ position:absolute;
 	width:80%;
 	height:40px;
 	border:1px solid;
-	margin-bottom: 10px;
+	margin-top: 7px;
+	margin-bottom: 20px;
 }
 
 .h_item .t
@@ -164,6 +184,7 @@ position:absolute;
 	min-height:60px;
 	border:1px solid;
 	display: flex;
+	margin-top: 7px;
 	margin-bottom: 10px;
 }
 .out_item .n
@@ -235,7 +256,7 @@ visibility: hidden;
 <body marginwidth="0" marginheight="0">
 <div class="left">
  <blockquote class="layui-elem-quote ">Alert Sources</blockquote>
- <div id="tag_list">
+ <div class="list">
 <%
 	for(UATag tag:prj.listTagsAll())
 	{
@@ -276,7 +297,7 @@ visibility: hidden;
  	 --%>
  </div>
 </blockquote>
- <div id="handler_list" style0="height:100%;width:100%;" >
+ <div id="handler_list" class="list">
  	
  </div>
  <div id="in_conn_panel" class="in_conn_panel"></div>
@@ -288,7 +309,7 @@ visibility: hidden;
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_o('<%=prjid %>',null)">+Add </button>
  </div>
 </blockquote>
- <div id="out_list">
+ <div id="out_list" class="list">
  </div>
 </div>
  	

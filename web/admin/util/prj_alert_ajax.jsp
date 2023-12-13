@@ -128,14 +128,5 @@ case "del_o":
 	break ;
 case "out_mon": //monitor alert output
 	break ;
-case "export":
-	if(!Convert.checkReqEmpty(request, out, "taskid"))
-		return ;
-	
-	break;
-case "edit_dn":
-	if(!Convert.checkReqEmpty(request, out,"name"))
-		return ;
-
 }
 %>

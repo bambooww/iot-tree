@@ -2,7 +2,7 @@ package org.iottree.core.store.gdb.connpool;
 
 public enum DBType
 {
-	all,//ȱʡ
+	all,
 	
 	hsql,
 	

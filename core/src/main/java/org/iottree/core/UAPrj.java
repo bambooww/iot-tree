@@ -41,6 +41,7 @@ import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.res.ResManager;
+import org.iottree.core.store.StoreManager;
 import org.iottree.core.task.Task;
 import org.iottree.core.task.TaskManager;
 import org.json.JSONObject;
@@ -957,6 +958,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				startStopTask(true) ;
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
+				
+				StoreManager.getInstance(UAPrj.this.getId()).RT_start();
 
 				while (rtRun)
 				{
@@ -1005,6 +1008,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				RT_runFlush();
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
+				
+				StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
 			}
 		}
 	};

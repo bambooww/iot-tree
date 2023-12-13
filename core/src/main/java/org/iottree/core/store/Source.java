@@ -13,8 +13,8 @@ import org.json.JSONObject;
 @data_class
 public abstract class Source
 {
-//	@data_val(param_name = "id")
-//	String id = null ;
+	@data_val(param_name = "id")
+	String id = null ;
 	
 	@data_val(param_name = "name")
 	String name = null ;
@@ -30,7 +30,7 @@ public abstract class Source
 	
 	public Source()
 	{
-		
+		this.id = CompressUUID.createNewId();
 	}
 	
 //	public Store(String n,String t)
@@ -40,10 +40,10 @@ public abstract class Source
 //		this.title = t ;
 //	}
 	
-//	public String getId()
-//	{
-//		return id ;
-//	}
+	public String getId()
+	{
+		return id ;
+	}
 	
 	public String getName()
 	{
@@ -74,7 +74,7 @@ public abstract class Source
 	public JSONObject toListJO()
 	{
 		JSONObject jo = new JSONObject() ;
-//		jo.put("id", this.id);
+		jo.put("id", this.id);
 		jo.put("n", this.name);
 		jo.putOpt("t", this.title);
 		jo.putOpt("d", this.desc);

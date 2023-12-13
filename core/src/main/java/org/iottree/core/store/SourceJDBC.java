@@ -13,6 +13,8 @@ import org.iottree.core.store.gdb.ConnPoolMgr;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.store.gdb.connpool.DBType;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
@@ -20,6 +22,8 @@ import org.json.JSONObject;
 @data_class
 public class SourceJDBC extends Source
 {
+	static ILogger log = LoggerManager.getLogger(SourceJDBC.class) ;
+	
 	public static class Drv
 	{
 		PlugDir plugDir = null ;
@@ -32,6 +36,8 @@ public class SourceJDBC extends Source
 		String jdbcUrl = null ;
 		
 		String defaultPortStr = "" ;
+		
+		DBType dbTp = null ;
 		
 		public PlugDir getPlugDir()
 		{
@@ -104,6 +110,9 @@ public class SourceJDBC extends Source
 			return null ;
 		
 		d.defaultPortStr = jo.optString("jdbc_port_default","") ;
+		String dbt = jo.optString("jdbc_dbtype") ;
+		if(Convert.isNotNullEmpty(dbt))
+			d.dbTp = DBType.valueOf(dbt) ;
 		return d ;
 	}
 	
@@ -280,7 +289,7 @@ public class SourceJDBC extends Source
 		
 		Drv drv = getName2Driver().get(this.drvName) ;
 		String url = drv.calJdbcUrl(this.dbHost, this.dbPort, this.dbName) ;
-		connPool = new DBConnPool(null, this.getName(), drv.getDriverClassName(), url,this.dbName, this.dbUser,
+		connPool = new DBConnPool(drv.dbTp, this.getName(), drv.getDriverClassName(), url,this.dbName, this.dbUser,
 				this.dbPsw, "0", "10",drv.plugDir.getOrLoadCL());
 		return connPool ;
 	}
@@ -303,7 +312,10 @@ public class SourceJDBC extends Source
 		catch(Exception ee)
 		{
 			failedr.append(ee.getMessage()) ;
-			ee.printStackTrace();
+			//ee.printStackTrace();
+			if(log.isWarnEnabled())
+				log.warn("Data Source ["+this.name+"] check Error.\r\n"+ee.getMessage());
+			
 			return false;
 		}
 		finally
