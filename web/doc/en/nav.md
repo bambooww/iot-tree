@@ -30,7 +30,7 @@
 ##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Alert Support</a>
 ##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 Data Dictionary</a>
-##### <a href="doc/main/outer_ref.md" target="main">&nbsp;&nbsp;&nbsp;4.11 OUTER REF RESTful</a>
+##### <a href="doc/main/hmi_client.md" target="main">&nbsp;&nbsp;&nbsp;4.11 HMI Client</a>
 
 
 #### <a href="doc/conn/index.md" >5 Connectors</a>

@@ -7,6 +7,7 @@ import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
+import org.iottree.core.UATag;
 import org.iottree.core.basic.PropGroup;
 
 public class OpcUAClientDrv extends DevDriver
@@ -102,14 +103,14 @@ public class OpcUAClientDrv extends DevDriver
 	}
 
 	@Override
-	public boolean RT_writeVal(UADev dev, DevAddr da, Object v)
+	public boolean RT_writeVal(UACh ch,UADev dev,UATag tag, DevAddr da, Object v)
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean RT_writeVals(UADev dev, DevAddr[] da, Object[] v)
+	public boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags, DevAddr[] da, Object[] v)
 	{
 		// TODO Auto-generated method stub
 		return false;

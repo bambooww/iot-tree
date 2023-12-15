@@ -28,6 +28,8 @@ public abstract class UANodeOCTags extends UANodeOC
 	// - for system tags
 	@data_obj(param_name = "sys_tags", obj_c = UATag.class)
 	ArrayList<UATag> sysTags = new ArrayList<>();
+	
+	private transient boolean bDirty = false;
 
 	public UANodeOCTags()
 	{
@@ -148,6 +150,18 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (!(tn instanceof ISaver))
 			throw new Exception("top node is not saver");
 		((ISaver) tn).save();
+		
+		bDirty = false;
+	}
+	
+	public boolean isDirty()
+	{
+		return this.bDirty ;
+	}
+	
+	public void setDirty(boolean b)
+	{
+		this.bDirty = b ;
 	}
 
 	void constructNodeTree()
@@ -269,6 +283,7 @@ public abstract class UANodeOCTags extends UANodeOC
 				d.setTagNor(name, title, desc, addr, vt, dec_digits, canw, srate);
 		}
 		d.setValTranser(trans);
+		this.bDirty = true ;
 		//save();
 		return d;
 	}
@@ -497,6 +512,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		d.id = this.getNextIdByRoot();
 		tags.add(d);
 		constructNodeTree();
+		this.bDirty = true ;
 		save();
 		return d;
 	}
@@ -517,11 +533,25 @@ public abstract class UANodeOCTags extends UANodeOC
 		d.id = this.getNextIdByRoot();
 		tags.add(d);
 		constructNodeTree();
+		this.bDirty = true ;
 		if(bsave)
 			save();
 		return d;
 	}
 	
+	public UATag getOrAddTag(String name,String title,String desc,UAVal.ValTP vt,boolean bsave) throws Exception
+	{
+		UANode tmpn = this.getSubNodeByName(name) ;
+		if(tmpn!=null)
+		{
+			 if(!(tmpn instanceof UATag))
+				 throw new IllegalArgumentException("node with name=" + name + " existed");
+			 else
+				 return (UATag)tmpn ;
+		}
+		
+		return addTag(name,title,desc,vt,bsave) ;
+	}
 	
 
 	public boolean delTag(UATag t) throws Exception

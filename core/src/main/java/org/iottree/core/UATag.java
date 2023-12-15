@@ -1102,6 +1102,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
+	public UAVal RT_setValErr(String err)
+	{
+		return RT_setValErr(err,null) ;
+	}
+	
 	public UAVal RT_setValErr(String err,Exception e)
 	{
 		if(this.curVal!=null)
@@ -1254,11 +1259,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		DevAddr da = this.getDevAddr(sb);
 		if(da==null)
 			return false;
+		UACh ch = this.getBelongToCh() ;
+		if(ch==null)
+			return false; //must has channel
 		UADev dev = this.getBelongToDev();
-		if(dev==null)
-			return false;
+		//if(dev==null)
+		//	return false;
 		
-		DevDriver dd = dev.getBelongTo().getDriver() ;
+		DevDriver dd = ch.getDriver() ;
 		if(dd==null)
 			return false;
 
@@ -1280,7 +1288,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 		}
 		
-		return dd.RT_writeVal(dev, da, v);
+		return dd.RT_writeVal(ch,dev,this, da, v);
 	}
 	
 	private boolean RT_writeValLocal(Object v)
@@ -1381,11 +1389,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public Object JS_get(String  key)
 	{
-//		if("kwh_di".equals(this.getName()))
-//		{
-//			System.out.println("kwh_val");
-//		}
-		
 		Object obj  = super.JS_get(key) ;
 		if(obj!=null)
 			return obj ;

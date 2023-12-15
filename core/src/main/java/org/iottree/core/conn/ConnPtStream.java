@@ -174,7 +174,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		
 
 		@Override
-		public int available() throws IOException
+		public synchronized int available() throws IOException
 		{
 			try
 			{

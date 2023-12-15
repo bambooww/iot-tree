@@ -14,6 +14,8 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * manager Driver,Device Cat and DevDef
@@ -72,19 +74,29 @@ public class DevManager // implements IResCxt
 	
 	private void loadDrivers() throws Exception
 	{
-		File f = new File(getDevDrvBase(),"drivers.txt");
+		File f = new File(getDevDrvBase(),"drivers.json");
 		if(!f.exists())
 			return ;
-		List<String> lns = Convert.readFileTxtLines(f,"utf-8");
-		for(String ln:lns)
+		String txt = Convert.readFileTxt(f, "UTF-8") ;
+		JSONArray jarr = new JSONArray(txt) ;
+		int len = jarr.length() ;
+		for(int i = 0 ; i < len ; i ++)
 		{
+			JSONObject jo = jarr.getJSONObject(i) ;
+			String ln = jo.optString("class") ;
+			if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
+				continue ;
 			try
 			{
 				Class<?> c = Class.forName(ln);
 				DevDriver dd = (DevDriver)c.getConstructor().newInstance() ;
 				if(dd==null)
 					continue ;
-				drivers.add(dd) ;
+				List<DevDriver> multi_dds = dd.supportMultiDrivers() ;
+				if(multi_dds==null||multi_dds.size()<=0)
+					drivers.add(dd) ;
+				else
+					drivers.addAll(multi_dds) ;
 			}
 			catch(Exception e)
 			{

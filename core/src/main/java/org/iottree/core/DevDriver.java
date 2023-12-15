@@ -1,5 +1,6 @@
 package org.iottree.core;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
@@ -92,7 +93,10 @@ public abstract class DevDriver implements IPropChecker
 						if(!this.connPt.isConnReady())
 							this.connPt.RT_checkConn();
 
-						// System.out.println("-----1-------");
+						if(!this.connPt.isConnReady())
+							continue ;
+						
+						//System.out.println("-----1-------");
 						if (!RT_runInLoop(belongToCh, subDev, failedr))
 							break;
 					}
@@ -102,7 +106,18 @@ public abstract class DevDriver implements IPropChecker
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
-
+						if(this.connPt instanceof Closeable)
+						{
+							try
+							{
+								((Closeable)this.connPt).close();
+							}
+							catch(Exception eee) {}
+						}
+					}
+					finally
+					{
+						//System.out.println("-----2-------");
 					}
 				}
 			}
@@ -214,6 +229,11 @@ public abstract class DevDriver implements IPropChecker
 	public boolean isConnPtToDev()
 	{
 		return false;
+	}
+	
+	protected List<DevDriver> supportMultiDrivers()
+	{
+		return null ;
 	}
 
 	/**
@@ -484,7 +504,7 @@ public abstract class DevDriver implements IPropChecker
 
 				
 				UACh ch = getBelongToCh();
-
+				ConnPt cpt = null;
 				while (bRun)
 				{
 					try
@@ -493,7 +513,7 @@ public abstract class DevDriver implements IPropChecker
 						
 						if(!DevDriver.this.isConnPtToDev())
 						{
-							ConnPt cpt = belongToCh.getConnPt();
+							cpt = belongToCh.getConnPt();
 							if(cpt!=null&&!cpt.isConnReady())
 								cpt.RT_checkConn();
 						}
@@ -508,7 +528,14 @@ public abstract class DevDriver implements IPropChecker
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
-
+						if(cpt instanceof Closeable)
+						{
+							try
+							{
+								((Closeable)cpt).close();
+							}
+							catch(Exception eee) {}
+						}
 					}
 				}
 			}
@@ -658,21 +685,21 @@ public abstract class DevDriver implements IPropChecker
 
 	}
 
-	public abstract boolean RT_writeVal(UADev dev, DevAddr da, Object v);
+	public abstract boolean RT_writeVal(UACh ch,UADev dev,UATag tag, DevAddr da, Object v);
 
-	public abstract boolean RT_writeVals(UADev dev, DevAddr[] da, Object[] v);
+	public abstract boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags, DevAddr[] da, Object[] v);
 
-	public boolean RT_writeValStr(UADev dev, DevAddr da, String strv)
+	public boolean RT_writeValStr(UACh ch,UADev dev,UATag tag, DevAddr da, String strv)
 	{
 		ValTP tp = da.getValTP();
 		Object v = UAVal.transStr2ObjVal(tp, strv);
 		if (v == null)
 			return false;
-		RT_writeVal(dev, da, v);
+		RT_writeVal(ch,dev,tag, da, v);
 		return true;
 	}
 
-	public boolean RT_writeValsStr(UADev dev, DevAddr[] da, String[] strv)
+	public boolean RT_writeValsStr(UACh ch,UADev dev,UATag[] tags,  DevAddr[] da, String[] strv)
 	{
 		Object[] objvs = new Object[strv.length];
 		for (int i = 0; i < strv.length; i++)
@@ -682,7 +709,31 @@ public abstract class DevDriver implements IPropChecker
 			objvs[i] = v;
 		}
 
-		RT_writeVals(dev, da, objvs);
+		RT_writeVals(ch,dev,tags, da, objvs);
 		return true;
+	}
+	
+	private long warnDT = -1 ;
+	
+	private String warnInf = null ;
+	
+	public void RT_fireDrvWarn(String msg)
+	{
+		this.warnDT = System.currentTimeMillis() ;
+		this.warnInf = msg ;
+	}
+	
+	public long RT_getWarnDT()
+	{
+		return this.warnDT ;
+	}
+	
+	/**
+	 * may be show in admin UI
+	 * @return
+	 */
+	public String RT_getWarnInf()
+	{
+		return this.warnInf ;
 	}
 }

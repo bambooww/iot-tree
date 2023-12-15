@@ -150,7 +150,10 @@ public class ConnPtTcpClient extends ConnPtStream
 		{
 
 			sock = new Socket(host, port);
-			sock.setSoTimeout(connTimeoutMS);
+			
+			//set recv timeout,it will make read waiting throw timeout
+			//sock.setSoTimeout(connTimeoutMS);
+			
 			sock.setTcpNoDelay(true);
 			sock.setKeepAlive(true);
 			inputS = sock.getInputStream();
@@ -221,11 +224,10 @@ public class ConnPtTcpClient extends ConnPtStream
 
 	private long lastChk = -1;
 
-	public void RT_checkConn()
+	public synchronized void RT_checkConn()
 	{
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;
-
 		try
 		{
 			connect();
@@ -251,7 +253,9 @@ public class ConnPtTcpClient extends ConnPtStream
 	@Override
 	public boolean isConnReady()
 	{
-		return sock != null;
+		if(sock==null)
+			return false;
+		return !sock.isClosed();
 	}
 
 	public String getConnErrInfo()

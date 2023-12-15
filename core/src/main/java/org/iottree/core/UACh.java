@@ -169,13 +169,20 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			return devDrv;
 		if(Convert.isNullOrEmpty(this.drvName))
 			return null ;
-		devDrv = DevManager.getInstance().createDriverIns(this.drvName);
-		if(devDrv==null)
-			return null ;
-		devDrv.belongToCh = this ;
-		// init connpt if existed
 		
-		return devDrv;
+		synchronized(this)
+		{
+			if(devDrv!=null)
+				return devDrv;
+			
+			devDrv = DevManager.getInstance().createDriverIns(this.drvName);
+			if(devDrv==null)
+				return null ;
+			devDrv.belongToCh = this ;
+			// init connpt if existed
+			
+			return devDrv;
+		}
 	}
 	
 	public boolean setDriverName(String drvname) throws Exception

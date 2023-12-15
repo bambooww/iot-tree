@@ -198,9 +198,20 @@ Add and organize documents.
 
 
 Add support for real-time data writing to the database.
+Improve JS Editor,Add inner plug $$http.
 
 
-### version 1.1.0 (Plan)
+### version 1.1.1 (Plan)
+
+
+
+
+### version 1.1.2 (Plan)
+
+
+
+
+### version 1.1.3 (Plan)
 
 
 

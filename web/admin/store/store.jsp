@@ -146,9 +146,9 @@ position:absolute;
 .h_item .t
 {
 	position:absolute;
-	font-size: 15px;
+	font-size: 18px;
 	top:2px;
-	left:10px;
+	left:16px;
 }
 
 .h_item .f
@@ -275,9 +275,9 @@ position:absolute;
 	border-color: blue;
 }
 
-.chk_out_c
+.enable_c
 {
-
+	font-size: 15px;
 }
 
 .in_conn_panel
@@ -323,10 +323,10 @@ int tags_num = tags.size() ;
 <div class="mid" onclick="on_handler_clk()">
  <blockquote class="layui-elem-quote ">Handlers
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Add</button>
+ 	<%--
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Runtime Data</button>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','ind',null)">+Indicator Data</button>
- 	<%--
- 	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
  	 --%>
  </div>
 </blockquote>
@@ -504,7 +504,7 @@ function update_outs()
 			let en_c = ob.en?"green":"gray" ;
 			let en_t = ob.en?"Enabled":"Disabled" ;
 			tmps += `<div id="out_\${ob.id}" class="out_item" tp="\${ob.tp}" hid="\${h.id}" t="\${ob.t}" >
-				<span class="chk_out_c"><i class="fa fa-square en chk_out" id="\${ob.id}" hid="\${h.id}"  style="color:\${en_c}" title="\${en_t}"></i></span>
+				<span class="enable_c"><i class="fa fa-square en chk_out" id="\${ob.id}" hid="\${h.id}"  style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="t">\${ob.t}</span>
 				<span class="tpt">\${ob.tpt}</span>
 				<span class="oper">
@@ -576,8 +576,11 @@ function update_handlers()
 				s_tt="Select all" ;
 			else
 				s_tt ="Check the box" ;
+			let en_c = ob.en?"green":"gray" ;
+			let en_t = ob.en?"Enabled":"Disabled" ;
 			tmps += `<div id="h_\${ob.id}" style="top:\${y}px" class="h_item" hid="\${ob.id}" n="\${ob.n}" t="\${ob.t}" tp="\${ob.tp}" onclick="on_handler_clk(this)" alert_uids="\${ob.alert_uids}">
 				<span class="t">\${ob.t}</span>
+				<span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="f" ><i class="fa fa-filter" style="font-size:18px;"></i>\${f_tt}</span>
 				<span class="s" ><i class="fa-regular fa-square-check" style="font-size:18px;"></i>\${s_tt}</span>
 				<span class="trigger_c" style="\${trigger_c};\${trigger_dis}">Trigger [\${ob.lvl}]&nbsp;</span>

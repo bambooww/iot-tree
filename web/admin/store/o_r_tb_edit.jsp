@@ -51,6 +51,8 @@ String col_chgdt = "chg_dt" ;
 String col_valid = "valid" ;
 String col_valtp = "val_tp" ;
 String col_valstr = "val_str" ;
+String col_alertnum = "alert_num" ;
+String col_alertinf = "alert_inf" ;
 
 
 if(Convert.isNotNullEmpty(id))
@@ -74,6 +76,8 @@ if(Convert.isNotNullEmpty(id))
 	col_valid = ao.getColValid();
 	col_valtp = ao.getColValTp() ;
 	col_valstr = ao.getColValStr();
+	col_alertnum = ao.getColAlertNum() ;
+	col_alertinf = ao.getColAlertInf() ;
 }
 else
 {
@@ -90,7 +94,7 @@ if(benable)
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <script>
-dlg.resize_to(600,500);
+dlg.resize_to(650,600);
 </script>
 <style>
 </style>
@@ -171,6 +175,18 @@ for(Source sor:StoreManager.listSources())
       <input type="text" name="col_valstr" id="col_valstr" value="<%=col_valstr %>" class="layui-input"/>
     </div>
   </div>
+  <div class="layui-form-item" >
+    <label class="layui-form-label"></label>
+     <div class="layui-form-mid" style="width:70px">Alert Num</div>
+    <div class="layui-input-inline" style="width:100px">
+        <input type="text" name="col_alertnum" id="col_alertnum" value="<%=col_alertnum %>" class="layui-input"/>
+    </div>
+    <div class="layui-form-mid"  style="width:70px">Alert Inf</div>
+    <div class="layui-input-inline" style="text-align: left;color:green;width:100px;">
+      <input type="text" name="col_alertinf" id="col_alertinf" value="<%=col_alertinf %>" class="layui-input"/>
+    </div>
+  </div>
+  
   
 </form>
 </body>
@@ -253,8 +269,10 @@ function do_submit(cb)
 	let b3 = get_inp_str("col_valid","Coloumn of Valid",true,cb,ret) ;
 	let b4 = get_inp_str("col_valtp","Coloumn of Value Type",true,cb,ret) ;
 	let b5 = get_inp_str("col_valstr","Coloumn of Value Str",true,cb,ret) ;
+	let b6 = get_inp_str("col_alertnum","Coloumn of Alert Num",true,cb,ret) ;
+	let b7 = get_inp_str("col_alertinf","Coloumn of Alert Inf",true,cb,ret) ;
 	
-	if(!b1 || !b2 || !b21 || !b3 || !b4 || !b5)
+	if(!b1 || !b2 || !b21 || !b3 || !b4 || !b5 || !b6 || !b7)
 		return ;
 	let r = {id:id,tp:tp,n:n,t:tt,en:ben,sor_n:sor_n,table:table} ;
 	Object.assign(r, ret);
