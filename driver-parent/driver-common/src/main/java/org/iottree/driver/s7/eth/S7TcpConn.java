@@ -130,7 +130,7 @@ public final class S7TcpConn
 		catch(IOException e)
 		{
 			if(S7Msg.log.isDebugEnabled())
-				S7Msg.log.error(e);
+				S7Msg.log.error("",e);
 			//e.printStackTrace();
 		}
 	}

@@ -589,12 +589,12 @@ function open_doc()
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
 				   --%>
-				  &nbsp;&nbsp;<span><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
-				  <span id='share_run' onclick='clk_share_run()'><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
-				  <span id='task_run' onclick='clk_task_run()'><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-				  <span id='alert' onclick='clk_alert()'><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-				  <span id='data_dict' onclick='clk_dd()'><i class='fa fa-book fa-lg'></i></span>
-				  <span id='store' onclick='clk_store()'><i class="fa fa-database  fa-lg"></i></span>
+				  &nbsp;&nbsp;<span title="Refresh browser tree"><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
+				  <span id='share_run' onclick='clk_share_run()' title="Share Project"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+				  <span id='task_run' onclick='clk_task_run()' title="Task Manager"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+				  <span id='alert' onclick='clk_alert()' title="Alert Manager"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+				  <span id='data_dict' onclick='clk_dd()' title="Dictionary Manager"><i class='fa fa-book fa-lg'></i></span>
+				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database  fa-lg"></i></span>
 				  
 				 </div>
            </div>

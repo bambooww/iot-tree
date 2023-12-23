@@ -36,10 +36,10 @@
 		<button class="layui-btn " style="width:80%" onclick="go_to('jdbc','JDBC')">JDBC(MySql,Sql Server..)</button>
 	</div>
 	<div class="sel_item">
-		<button class="layui-btn " style="width:80%" onclick="go_to('influxdb','InfluxDB')">Influx DB</button>
+		<button class="layui-btn layui-btn-disabled" style="width:80%" onclick0="go_to('influxdb','InfluxDB')">Influx DB</button>
 	</div>
 	<div class="sel_item">
-		<button class="layui-btn " style="width:80%" onclick="go_to('iotdb','IoT DB')">IOT DB</button>
+		<button class="layui-btn layui-btn-disabled" style="width:80%" onclick0="go_to('iotdb','IoT DB')">IOT DB</button>
 	</div>
 <script>
 function go_to(tp,tt)

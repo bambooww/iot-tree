@@ -2,9 +2,11 @@ package org.iottree.core.store;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.CompressUUID;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @data_class
@@ -123,5 +125,14 @@ public abstract class StoreOut
 		return jo ;
 	}
 	
-	
+	JSONObject RT_toJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("id", this.id);
+		jo.putOpt("n", this.name) ;
+		jo.put("init_ok",this.RT_isInitOk()) ;
+		jo.put("run_ok",this.RT_isRunOk()) ;
+		jo.putOpt("err", Convert.plainToHtml(this.RT_getErrorInfo(),true,false));
+		return jo ;
+	}
 }

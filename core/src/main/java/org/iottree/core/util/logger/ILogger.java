@@ -70,7 +70,7 @@ public interface ILogger
 
 	public void error(String msg);
 	
-	public void error(Throwable t);
+	public void error(String msg,Throwable t);
 
 	public void warn(String msg);
 	

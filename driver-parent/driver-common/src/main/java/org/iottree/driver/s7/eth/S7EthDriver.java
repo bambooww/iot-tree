@@ -11,6 +11,7 @@ import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
+import org.iottree.core.UATag;
 import org.iottree.core.DevDriver.Model;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
@@ -330,7 +331,7 @@ public class S7EthDriver extends DevDriver
 	}
 
 	@Override
-	public boolean RT_writeVal(UADev dev, DevAddr da, Object v)
+	public boolean RT_writeVal(UACh ch,UADev dev,UATag tag, DevAddr da, Object v)
 	{
 		S7DevItem mdi = getDevItem(dev) ;
 		if(mdi==null)
@@ -340,7 +341,7 @@ public class S7EthDriver extends DevDriver
 	}
 
 	@Override
-	public boolean RT_writeVals(UADev dev, DevAddr[] da, Object[] v)
+	public boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags, DevAddr[] da, Object[] v)
 	{
 		return false;
 	}

@@ -285,7 +285,7 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 	/**
 	 *
 	 */
-	LinkedHashMap<String,StoreOut> name2out = new LinkedHashMap<>() ;
+	LinkedHashMap<String,StoreOut> id2out = new LinkedHashMap<>() ;
 	
 	transient UAPrj prj = null ;
 	
@@ -353,31 +353,31 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		this.selectedTags =ss;
 	}
 	
-	public LinkedHashMap<String,StoreOut> getName2Out()
+	public LinkedHashMap<String,StoreOut> getId2Out()
 	{
-		return this.name2out ;
+		return this.id2out ;
 	}
 	
 	public List<StoreOut> listOuts()
 	{
-		ArrayList<StoreOut> rets =new ArrayList<>(this.name2out.size()) ;
-		rets.addAll(this.name2out.values()) ;
+		ArrayList<StoreOut> rets =new ArrayList<>(this.id2out.size()) ;
+		rets.addAll(this.id2out.values()) ;
 		return rets ;
 	}
 	
 	public StoreOut getOutById(String id)
 	{
-		for(StoreOut so:this.name2out.values())
-		{
-			if(so.getId().equals(id))
-				return so ;
-		}
-		return null ;
+		return this.id2out.get(id) ;
 	}
 	
 	public StoreOut getOutByName(String n)
 	{
-		return this.name2out.get(n) ;
+		for(StoreOut so:this.id2out.values())
+		{
+			if(so.getName().equals(n))
+				return so ;
+		}
+		return null ;
 	}
 	
 	public void setOut(StoreOut so)
@@ -394,7 +394,7 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		if(old!=null && !old.getId().equals(so.getId()))
 			 throw new IllegalArgumentException("Out with name="+n+" in handler is already existed!") ;
 		so.belongTo = this ;
-		this.name2out.put(n, so) ;
+		this.id2out.put(so.id, so) ;
 	}
 	
 	public StoreOut delOutById(String id)
@@ -402,7 +402,7 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		StoreOut so = this.getOutById(id) ;
 		if(so==null)
 			return so ;
-		return this.name2out.remove(so.getName()) ;
+		return this.id2out.remove(id);//so.getName()) ;
 	}
 	
 //	public JSONObject toListJO()
@@ -425,7 +425,7 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		jo.put("tp", this.getTp()) ;
 		jo.put("tpt", this.getTpTitle()) ;
 		JSONArray jarr = new JSONArray() ;
-		for(StoreOut ao:this.name2out.values())
+		for(StoreOut ao:this.id2out.values())
 		{
 			jarr.put(ao.toJO()) ;
 		}
@@ -458,7 +458,7 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 					StringBuilder failedr = new StringBuilder() ;
 					if(!so.checkValid(failedr))
 						throw new Exception(failedr.toString()) ;
-					this.name2out.put(so.getName(), so) ;
+					this.id2out.put(so.getId(), so) ;
 				}
 			}
 		}
@@ -478,21 +478,30 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 			}
 			this.selectedTags = hs ;
 			
-			clearCache();
+			
 		}
 		
-//		String tagf = jo.optString("tags_f") ;
-//		StringBuilder failedr = new StringBuilder() ;
-//		this.tagsFilter = parseFilter(tagf,failedr) ;
+		clearCache();
 	}
 	
-	public JSONObject RT_toJO()
+	JSONObject RT_toJO()
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id);
 		jo.putOpt("n", this.name) ;
-		jo.putOpt("t", this.title) ;
+		jo.putOpt("en", this.bEnable) ;
+		jo.put("last_scan", rt_last_scan);
+		jo.put("run", this.RT_isRunning()) ;
 		
+		JSONArray jarr = new JSONArray() ;
+		jo.put("outs", jarr) ;
+		for(StoreOut so:this.listOuts())
+		{
+			JSONObject tmpjo = so.RT_toJO() ;
+			if(tmpjo==null)
+				continue ;
+			jarr.put(tmpjo) ;
+		}
 		return jo ;
 	}
 	
@@ -581,6 +590,9 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 	
 	public synchronized void RT_start()
 	{
+		if(!this.bEnable)
+			return ;
+		
 		if(th!=null)
 			return;
 		
@@ -598,6 +610,13 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		th = null ;
 	}
 	
+	public boolean RT_isRunning()
+	{
+		return th!=null ;
+	}
+	
+	private transient long rt_last_scan = -1;
+	
 	protected void RT_init()
 	{
 		for(StoreOut so:this.listOuts())
@@ -607,14 +626,21 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 			{
 				so.rtInitOk = so.RT_init(failedr) ;
 				if(!so.rtInitOk)
+				{
 					so.rtErrorInfo = failedr.toString() ;
+					System.out.println("StoreHandler ["+this.getName()+"] out["+so.getName()+"] init failed:"+so.rtErrorInfo);
+				}
+				else
+				{
+					System.out.println("StoreHandler ["+this.getName()+"] out["+so.getName()+"] init ok");
+				}
 			}
 			catch(Exception ee)
 			{
 				so.rtInitOk= false;
 				so.rtErrorInfo = ee.getMessage();
-				if(log.isDebugEnabled())
-					log.debug("StoreHandler ["+this.name+"] RT_init error", ee);
+				if(log.isErrorEnabled())
+					log.error("StoreHandler ["+this.name+"] RT_init error", ee);
 			}
 		}
 	}
@@ -623,6 +649,9 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 	{
 		for(StoreOut so:this.listOuts())
 		{
+			if(!so.bEnable)
+				continue ;
+			
 			if(!so.rtInitOk)
 				continue ;
 			
@@ -659,6 +688,8 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 					catch(Exception e) {}
 					
 					RT_runInLoop();
+					
+					rt_last_scan = System.currentTimeMillis() ;
 				}
 			}
 			finally

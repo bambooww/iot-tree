@@ -350,7 +350,7 @@ public abstract class ModbusRunner implements Runnable
 						catch(Throwable ee)
 						{
 							if(log.isErrorEnabled())
-								log.error(ee) ;
+								log.error("",ee) ;
 						}
 					}
 				}
@@ -371,7 +371,7 @@ public abstract class ModbusRunner implements Runnable
 					catch(Exception iee)
 					{
 						if(log.isErrorEnabled())
-							log.error(iee) ;
+							log.error("",iee) ;
 					}
 				}
 			}
@@ -454,7 +454,7 @@ public abstract class ModbusRunner implements Runnable
 					catch(Exception iee)
 					{
 						if(log.isErrorEnabled())
-							log.error(iee) ;
+							log.error("",iee) ;
 					}
 					
 //							��һЩ��Ҫ�������Ӳ����п����жϵ�ͨ������£����ִ˴���ʱ
@@ -489,7 +489,7 @@ public abstract class ModbusRunner implements Runnable
 				catch(Throwable ee)
 				{
 					if(log.isErrorEnabled())
-						log.error(ee) ;
+						log.error("",ee) ;
 				}
 			}
 		}

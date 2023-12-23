@@ -362,10 +362,10 @@ public class IOTTLogger extends MarkerIgnoringBase implements ILogger
 //	}
 
 	
-	@Override
-	public void error(Throwable t)
-	{
-		
-	}
+//	@Override
+//	public void error(String msg,Throwable t)
+//	{
+//		
+//	}
 
 }

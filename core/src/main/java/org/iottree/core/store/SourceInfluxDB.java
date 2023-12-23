@@ -60,6 +60,11 @@ public class SourceInfluxDB extends Source implements Closeable
 	{
 		return "InfluxDB";
 	}
+	
+	public boolean checkValid(StringBuilder failedr)
+	{
+		return true ;
+	}
 
 	private InfluxDB influxDbBuild()
 	{
@@ -78,6 +83,8 @@ public class SourceInfluxDB extends Source implements Closeable
 		influxDB.setLogLevel(InfluxDB.LogLevel.NONE) ;
 		return influxDB;
 	}
+	
+	
 	
 	public boolean checkConn(StringBuilder failedr)
 	{

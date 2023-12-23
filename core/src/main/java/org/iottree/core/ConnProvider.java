@@ -598,7 +598,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 			}
 			catch (Exception e)
 			{
-				log.error(e);
+				log.error("connprovider name="+ConnProvider.this.name+" err",e);
 				//e.printStackTrace();
 			}
 			finally

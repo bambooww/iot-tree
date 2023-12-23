@@ -90,7 +90,7 @@ public class LoggerObj extends AbstractLogger
 		LoggerManager.getLogDo().error(msg) ;
 	}
 
-	public void error(Throwable t)
+	public void error(String msg,Throwable t)
 	{
 		if(ctrl<0)
 			return ;
@@ -98,7 +98,7 @@ public class LoggerObj extends AbstractLogger
 		if(ctrl==0&&!LoggerManager.Is_Error)
 			return ;
 		
-		LoggerManager.getLogDo().error(t) ;
+		LoggerManager.getLogDo().error(msg,t) ;
 	}
 
 	public void warn(String msg)

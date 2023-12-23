@@ -447,7 +447,7 @@ public class MCmdAsynEndPoint implements Runnable
 			catch(Exception ee)
 			{
 				if(log.isErrorEnabled())
-					log.error(ee) ;
+					log.error("",ee) ;
 			}
 		}
 	}

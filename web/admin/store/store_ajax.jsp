@@ -193,6 +193,10 @@ case "del_o":
 	}
 	out.print("delete handler failed") ;
 	break ;
+case "rt_data":
+	JSONObject tmpjo = stmgr.RT_toJO() ;
+	tmpjo.write(out) ;
+	break;
 }
 
 %>

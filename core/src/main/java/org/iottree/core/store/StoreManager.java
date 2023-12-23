@@ -61,7 +61,7 @@ public class StoreManager
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			log.error(e);
+			log.error("load Sors err",e);
 			return null ;
 		}
 	}
@@ -92,21 +92,28 @@ public class StoreManager
 	{
 		String stname = st.getName() ;
 		StringBuilder failedr = new StringBuilder() ;
-		if(Convert.isNullOrEmpty(st.getId()))
-		{
-			st.id = CompressUUID.createNewId() ;
-		}
+		
 		
 		if(!Convert.checkVarName(stname, true, failedr))
 		{
 			throw new Exception(failedr.toString());
 		}
 		
+		if(Convert.isNullOrEmpty(st.getId()))
+		{
+			st.id = CompressUUID.createNewId() ;
+		}
+		
+		if(!st.checkValid(failedr))
+			throw new Exception(failedr.toString());
+		
 		Source oldst = getSourceByName(st.getName()) ;
 		if(oldst!=null && !oldst.getId().equals(st.getId()))
 		{
 			throw new Exception("store with name="+st.getName()+" is existed") ;
 		}
+		
+		
 		getName2Source().put(st.getName(), st);
 		if (bsave)
 			saveSors();
@@ -197,7 +204,7 @@ public class StoreManager
 
 	File prjDir = null;
 
-	private LinkedHashMap<String,StoreHandler> name2handlers = null ;
+	private LinkedHashMap<String,StoreHandler> id2handlers = null ;
 
 	private StoreManager(String prjid)
 	{
@@ -209,20 +216,20 @@ public class StoreManager
 		
 	}
 	
-	private LinkedHashMap<String, StoreHandler> getName2Handler()
+	private LinkedHashMap<String, StoreHandler> getId2Handler()
 	{
-		if(name2handlers!=null)
-			return name2handlers ;
+		if(id2handlers!=null)
+			return id2handlers ;
 		
 		try
 		{
-			name2handlers = loadHandlers();
-			return name2handlers;
+			id2handlers = loadHandlers();
+			return id2handlers;
 		}
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			log.error(e);
+			log.error("loadHandlers err",e);
 			return null ;
 		}
 	}
@@ -230,24 +237,24 @@ public class StoreManager
 	public List<StoreHandler> listHandlers()
 	{
 		ArrayList<StoreHandler> rets = new ArrayList<>();
-		rets.addAll(getName2Handler().values());
+		rets.addAll(getId2Handler().values());
 		return rets;
 	}
 	
 
 	public StoreHandler getHandlerById(String id)
 	{
-		for(StoreHandler sh: getName2Handler().values())
-		{
-			if(id.equals(sh.getId()))
-				return sh ;
-		}
-		return null ;
+		return getId2Handler().get(id) ;
 	}
 	
 	public StoreHandler getHandlerByName(String name)
 	{
-		return getName2Handler().get(name) ;
+		for(StoreHandler sh: getId2Handler().values())
+		{
+			if(name.equals(sh.getName()))
+				return sh ;
+		}
+		return null ;
 	}
 	
 	public void setHandler(StoreHandler ah) throws Exception
@@ -271,7 +278,7 @@ public class StoreManager
 			throw new IllegalArgumentException("Handler with name="+n+" is already existed!") ;
 		}
 		ah.prj = this.prj ;
-		this.getName2Handler().put(ah.getName(), ah) ;
+		this.getId2Handler().put(ah.getId(), ah) ;
 		this.saveHandlers();
 	}
 	
@@ -331,7 +338,7 @@ public class StoreManager
 		StoreHandler ao = this.getHandlerById(id) ;
 		if(ao==null)
 			return false;
-		this.getName2Handler().remove(ao.getName()) ;
+		this.getId2Handler().remove(id) ;
 		this.saveHandlers();
 		return true ;
 	}
@@ -387,7 +394,7 @@ public class StoreManager
 				continue ;
 			o.fromJO(tmpjo,true,true);
 			o.prj = this.prj ;
-			n2st.put(o.getName(), o);
+			n2st.put(o.getId(), o);
 		}
 		return n2st;
 	}
@@ -397,7 +404,7 @@ public class StoreManager
 		JSONObject jo = new JSONObject() ;
 		JSONArray jarr = new JSONArray();
 		jo.put("handlers",jarr) ;
-		for (StoreHandler st : getName2Handler().values())
+		for (StoreHandler st : getId2Handler().values())
 		{
 			JSONObject tmpjo = st.toJO() ;
 			jarr.put(tmpjo);
@@ -425,5 +432,23 @@ public class StoreManager
 		{
 			h.RT_stop();
 		}
+	}
+	
+	/**
+	 * output RT info
+	 * @return
+	 */
+	public JSONObject RT_toJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		
+		JSONArray h_jarr = new JSONArray() ;
+		jo.put("handlers", h_jarr) ;
+		for(StoreHandler sh:this.listHandlers())
+		{
+			JSONObject tmpjo = sh.RT_toJO() ;
+			h_jarr.put(tmpjo) ;
+		}
+		return jo ;
 	}
 }

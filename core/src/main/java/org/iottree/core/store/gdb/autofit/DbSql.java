@@ -30,6 +30,14 @@ public abstract class DbSql
 		{
 			return new DBSqlMySql();
 		}
+		else if(dbt==DBType.sqlite)
+		{
+			return new DBSqlSQLite();
+		}
+		else if(dbt==DBType.oracle)
+		{
+			return new DBSqlOracle();
+		}
 		else
 			throw new IllegalArgumentException("not support for db type="+dbt);
 	}

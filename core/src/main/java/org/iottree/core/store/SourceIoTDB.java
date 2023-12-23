@@ -17,6 +17,11 @@ public class SourceIoTDB extends Source
 		return "IoTDB";
 	}
 
+	public boolean checkValid(StringBuilder failedr)
+	{
+		return true ;
+	}
+	
 	public boolean checkConn(StringBuilder failedr)
 	{
 		throw new NotImplementedError();

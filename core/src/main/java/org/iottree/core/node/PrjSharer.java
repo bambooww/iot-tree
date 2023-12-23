@@ -75,7 +75,7 @@ public abstract class PrjSharer extends PrjNode
 			log.info(e.getMessage());
 			
 			if(log.isDebugEnabled())
-				log.error(e);
+				log.error("",e);
 		}
 		finally
 		{

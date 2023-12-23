@@ -316,7 +316,7 @@ public class DBResult
 			catch(Exception ee)
 			{
 				if(log.isDebugEnabled())
-					log.error(ee) ;
+					log.error("",ee) ;
 			}
 		}
 

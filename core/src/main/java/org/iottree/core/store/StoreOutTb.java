@@ -1,16 +1,22 @@
 package org.iottree.core.store;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.basic.ValAlert;
+import org.iottree.core.store.gdb.DBResult;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
+import org.iottree.core.store.gdb.DBUtil.InstallCB;
 import org.iottree.core.store.gdb.autofit.DbSql;
 import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
 import org.iottree.core.store.gdb.autofit.JavaForeignKeyInfo;
@@ -53,6 +59,12 @@ public class StoreOutTb extends StoreOut
 	
 	@data_val(param_name = "col_valstr")
 	String colValStr = "val_str" ;
+	
+	@data_val(param_name = "col_alertnum")
+	String colAlertNum = "alert_num" ;
+	
+	@data_val(param_name = "col_alertinf")
+	String colAlertInf = "alert_inf" ;
 	
 //	@data_val(param_name = "val_tp")
 //	String valTp = "str" ;
@@ -120,7 +132,23 @@ public class StoreOutTb extends StoreOut
 	
 	public String getColValStr()
 	{
+		if(Convert.isNullOrEmpty(this.colValStr))
+			return "val_str";
 		return this.colValStr ;
+	}
+	
+	public String getColAlertNum()
+	{
+		if(Convert.isNullOrEmpty(this.colAlertNum))
+			return "alert_num";
+		return this.colAlertNum ;
+	}
+	
+	public String getColAlertInf()
+	{
+		if(Convert.isNullOrEmpty(this.colAlertInf))
+			return "alert_inf";
+		return this.colAlertInf ;
 	}
 	
 	public boolean checkValid(StringBuilder failedr)
@@ -167,6 +195,8 @@ public class StoreOutTb extends StoreOut
 	
 	public static final int MAX_ID_LEN =  20 ;
 	
+	private static final int MAX_ALERT_INF_LEN = 200 ;
+	
 	private JavaTableInfo getJavaTableInfo()
 	{
 		if(tableInfo!=null)
@@ -188,10 +218,10 @@ public class StoreOutTb extends StoreOut
 		pkcol = new JavaColumnInfo(this.getColTag(),true, XmlVal.XmlValType.vt_string, tag_maxlen+10,
 				false, false,"", false,-1,"",false,false);
 		
-		norcols.add(new JavaColumnInfo(this.getColUpDT(),false, XmlVal.XmlValType.vt_int64, -1,
+		norcols.add(new JavaColumnInfo(this.getColUpDT(),false, XmlVal.XmlValType.vt_date, -1,
 				true, false,this.getColUpDT()+"_idx", false,-1, "",false,false));
 		
-		norcols.add(new JavaColumnInfo(this.getColChgDT(),false, XmlVal.XmlValType.vt_int64, -1,
+		norcols.add(new JavaColumnInfo(this.getColChgDT(),false, XmlVal.XmlValType.vt_date, -1,
 				false, false,"", false,-1, "",false,false));
 		
 		norcols.add(new JavaColumnInfo(this.getColValid(),false, XmlVal.XmlValType.vt_int16, 2,
@@ -201,6 +231,12 @@ public class StoreOutTb extends StoreOut
 				false, false,"", false,-1, "",false,false));
 		
 		norcols.add(new JavaColumnInfo(this.getColValStr(),false, XmlVal.XmlValType.vt_string, 20,
+				false, false,"", false,-1, "",false,false));
+		
+		norcols.add(new JavaColumnInfo(this.getColAlertNum(),false, XmlVal.XmlValType.vt_int16, 4,
+				false, false,"", false,-1, "",false,false));
+		
+		norcols.add(new JavaColumnInfo(this.getColAlertInf(),false, XmlVal.XmlValType.vt_string, MAX_ALERT_INF_LEN,
 				false, false,"", false,-1, "",false,false));
 		
 //		JavaColumnInfo(String coln,boolean b_pk, XmlVal.XmlValType vt, int maxlen,
@@ -272,21 +308,9 @@ public class StoreOutTb extends StoreOut
 		}
 		//create table
 		DBConnPool cp = sor.getConnPool() ;
-		Connection conn = null;
 		try
 		{
-			conn = cp.getConnection() ;
-			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
-			{
-				failedr.append("table ["+this.tableName+"] is aleady existed") ;
-				return false;
-			}
-			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-			JavaTableInfo jti = getJavaTableInfo();
-			List<String> sqls = dbsql.getCreationSqls(jti);
-			//List<String> sqls = Arrays.asList("create table "+this.tableName+"(Tag );") ; 
-			//dbsql.getUpdateByPkIdSql(jti, tablename)
-			DBUtil.runSqls(conn, sqls);
+			createOrUpTable(cp);
 		}
 		catch(Exception e)
 		{
@@ -294,12 +318,35 @@ public class StoreOutTb extends StoreOut
 			e.printStackTrace();
 			return false;
 		}
-		finally
-		{
-			cp.free(conn);
-		}
 		return true ;
 	}
+	
+	private void createOrUpTable(DBConnPool cp) throws Exception
+	{
+		Connection conn =null;
+		try
+		{
+			conn = cp.getConnection() ;
+			JavaTableInfo jti = getJavaTableInfo();
+			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
+			{
+				// TODO check update col length
+				DBUtil.checkAndAlterTable(jti,cp,conn,tableName,null) ;
+				return ;
+			}
+			
+			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
+			
+			List<String> sqls = dbsql.getCreationSqls(jti);
+			DBUtil.runSqls(conn, sqls);
+		}
+		finally
+		{
+			if(conn!=null)
+				cp.free(conn);
+		}
+	}
+	
 	
 	DBConnPool connPool = null ;
 	
@@ -315,7 +362,11 @@ public class StoreOutTb extends StoreOut
 			return false;
 		}
 		connPool = sor.getConnPool() ;
-		synCols = new String[] {this.getColUpDT(),this.getColChgDT(),this.getColValid(),this.getColValTp(),this.getColValStr()} ;
+		synCols = new String[] {this.getColUpDT(),this.getColChgDT(),this.getColValid(),
+				this.getColValTp(),this.getColValStr(),this.getColAlertNum(),this.getColAlertInf()} ;
+
+		createOrUpTable(connPool) ;
+		
 		return true ;
 	}
 	
@@ -336,13 +387,34 @@ public class StoreOutTb extends StoreOut
 			short valid = (short)(uav.isValid()?1:0);
 			String valstr = uav.getStrVal(tag.getDecDigits());
 			String valtp = tag.getValTp().getStr() ;
+			List<ValAlert> vas = tag.getValAlerts();
+			short alert_n = 0 ;
+			String alert_inf = "" ;
+			if(vas!=null&&vas.size()>0)
+			{
+				for(ValAlert va:vas)
+				{
+					if(va.RT_is_triggered())
+					{
+						alert_n ++ ;
+						if(alert_n>1)
+							alert_inf+=",";
+						alert_inf += va.getAlertTitle() ;
+					}
+				}
+				if(alert_inf.length()>MAX_ALERT_INF_LEN)
+					alert_inf = alert_inf.substring(0,MAX_ALERT_INF_LEN-1) ;
+			}
+			
 			DataRow dr = dt.createNewRow() ;
 			dr.putValue(this.getColTag(), tag.getNodePathCxt());
-			dr.putValue(this.getColUpDT(), valdt);
-			dr.putValue(this.getColChgDT(), valchgdt);
+			dr.putValue(this.getColUpDT(), new Date(valdt));
+			dr.putValue(this.getColChgDT(), new Date(valchgdt));
 			dr.putValue(this.getColValid(), valid);
 			dr.putValue(this.getColValTp(), valtp);
 			dr.putValue(this.getColValStr(), valstr);
+			dr.putValue(this.getColAlertNum(), alert_n);
+			dr.putValue(this.getColAlertInf(), alert_inf);
 			
 			dt.addRow(dr);
 		}

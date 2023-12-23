@@ -60,7 +60,7 @@ if(Convert.isNotNullEmpty(id))
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(700,450);
+dlg.resize_to(700,600);
 </script>
 <style>
 </style>
@@ -96,12 +96,12 @@ dlg.resize_to(700,450);
 %>
 	    </select>
 	  </div>
-	  <div class="layui-form-mid">DB Host:</div>
-		<div class="layui-input-inline">
+	  <div class="layui-form-mid host_port">DB Host:</div>
+		<div class="layui-input-inline host_port">
       <input type="text" id="db_host" name="db_host" value="<%=db_host%>"  autocomplete="off"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Port:</div>
-	  <div class="layui-input-inline" style="width: 100px;">
+    <div class="layui-form-mid host_port">Port:</div>
+	  <div class="layui-input-inline host_port" style="width: 100px;">
 	    <input type="number" id="db_port" name="db_port" value="<%=db_port_str%>"  autocomplete="off" class="layui-input">
 	  </div>
   </div>
@@ -112,12 +112,12 @@ dlg.resize_to(700,450);
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="db_name" name="db_name" value="<%=db_name%>"  autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">User:</div>
-    <div class="layui-input-inline" style="width: 130px;">
+	  <div class="layui-form-mid user_psw">User:</div>
+    <div class="layui-input-inline user_psw" style="width: 130px;">
       <input type="text" id="db_user" name="db_user" value="<%=db_user%>"  autocomplete="off"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Password:</div>
-	  <div class="layui-input-inline" style="width: 130px;">
+    <div class="layui-form-mid user_psw">Password:</div>
+	  <div class="layui-input-inline user_psw" style="width: 130px;">
 	    <input type="password" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
 	  </div>
  </div>
@@ -143,11 +143,31 @@ layui.use('form', function(){
 			  $("#db_port").val(pdef) ;
 			  form.render();
 		  }
+		  
+		  update_ui();
 	  });
 	  
 	  $("#drv_name").val("<%=drv_name%>") ;
 	  form.render();
 });
+
+function update_ui()
+{
+	let drv_name = $("#drv_name").val() ;
+	 if(drv_name=='sqlite')
+	  {
+		  $(".user_psw").css("display","none") ;
+		  $(".host_port").css("display","none") ;
+		  
+	  }
+	  else
+	  {
+		  $(".user_psw").css("display","") ;
+		  $(".host_port").css("display","") ;
+	  }
+}
+
+update_ui();
 	
 function win_close()
 {
@@ -180,32 +200,42 @@ function do_submit(cb)
 		cb(false,"driver cannot be null") ;
 		return ;
 	}
-	var db_host = $('#db_host').val();
-	if(!db_host)
+	
+	let db_host="";
+	let db_port=0;
+	let db_user="";
+	let db_psw="";
+	
+	if(drv_name!='sqlite')
 	{
-		cb(false,"db_host cannot be null") ;
-		return ;
+		db_host = $('#db_host').val();
+		if(!db_host)
+		{
+			cb(false,"db_host cannot be null") ;
+			return ;
+		}
+		db_port = parseInt($('#db_port').val());
+		if(db_port==NaN)
+		{
+			cb(false,"db port must > 0 ") ;
+			return ;
+		}
+		db_user = $('#db_user').val();
+		if(!db_user)
+		{
+			cb(false,"db_user cannot be null") ;
+			return ;
+		}
+		db_psw = $('#db_psw').val();
 	}
-	var db_port = parseInt($('#db_port').val());
-	if(db_port==NaN)
-	{
-		cb(false,"db port must > 0 ") ;
-		return ;
-	}
+	
 	var db_name = $('#db_name').val();
 	if(!db_name)
 	{
 		cb(false,"db_name cannot be null") ;
 		return ;
 	}
-	var db_user = $('#db_user').val();
-	if(!db_user)
-	{
-		cb(false,"db_user cannot be null") ;
-		return ;
-	}
-	var db_psw = $('#db_psw').val();
-	
+		
 	cb(true,{id:id,_tp:"jdbc",name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
 		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw});
 	//var dbname=document.getElementById('db_name').value;

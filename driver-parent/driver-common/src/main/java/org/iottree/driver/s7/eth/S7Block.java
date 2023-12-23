@@ -330,7 +330,7 @@ public class S7Block
 			catch(Exception e)
 			{
 				if(S7Msg.log.isDebugEnabled())
-					S7Msg.log.error(e);
+					S7Msg.log.error("",e);
 			}
 			//retbs = resp.getRetData() ;
 			

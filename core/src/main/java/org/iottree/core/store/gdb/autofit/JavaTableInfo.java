@@ -60,6 +60,17 @@ public class JavaTableInfo implements IXmlDataable
 		return rets ;
 	}
 	
+	public List<String> getAllColNames()
+	{
+		ArrayList<String> rets = new ArrayList<>() ;
+		rets.add(pkColInfo.getColumnName()) ;
+		for(JavaColumnInfo col:norColInfos)
+		{
+			rets.add(col.getColumnName()) ;
+		}
+		return rets ;
+	}
+	
 	public JavaColumnInfo getColumnInfoByName(String n)
 	{
 		if(pkColInfo.getColumnName().equalsIgnoreCase(n))

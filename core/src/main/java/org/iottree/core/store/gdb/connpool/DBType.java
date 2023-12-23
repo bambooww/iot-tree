@@ -16,7 +16,7 @@ public enum DBType
 	
 	db2,
 	
-	sqllite,
+	sqlite,
 	
 	informix,
 	

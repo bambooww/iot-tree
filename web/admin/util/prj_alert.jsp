@@ -289,7 +289,7 @@ visibility: hidden;
 </div>
 <div class="mid" onclick="on_handler_clk()">
  <blockquote class="layui-elem-quote ">Alert Handlers
- <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+ <div style="position: absolute;right:10px;top:11px;width:180px;border:0px solid;height:35px;">
  <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
  	<%--

@@ -1,5 +1,6 @@
 package org.iottree.core.store;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.iottree.core.Config;
 import org.iottree.core.plugin.PlugDir;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.store.gdb.ConnPoolMgr;
@@ -83,12 +85,29 @@ public class SourceJDBC extends Source
 			return this ;
 		}
 		
+		public boolean checkJdbcUrlVar(String var_name)
+		{
+			if(this.jdbcUrl==null)
+				return false;
+			String k = "{$"+var_name+"}" ;
+			return this.jdbcUrl.indexOf(k)>=0 ;
+		}
+		
 		public String calJdbcUrl(String host,int port,String dbname)
 		{
 			String tmps = this.jdbcUrl ;
 			tmps = tmps.replace("{$host}", host) ;
 			tmps = tmps.replace("{$port}", ""+port) ;
 			tmps = tmps.replace("{$db_name}", dbname) ;
+			
+			String fp =  Config.getDataDirBase()+"/db_sqlite/" ;
+			File f = new File(fp) ;
+			if(!f.exists())
+				f.mkdirs() ;
+			
+			tmps = tmps.replace("{$$data_db_sqlite}",fp) ;
+			//tmps = tmps.replace("{$$data_dyn}", Config.) ;
+			
 			return tmps ;
 		}
 	}
@@ -225,7 +244,13 @@ public class SourceJDBC extends Source
 	
 	public String getSorTpTitle()
 	{
-		return "DB:"+this.drvName ;
+		Drv drv = getJDBCDriver(this.drvName) ;
+		String tt= null;
+		if(drv!=null)
+			tt = drv.getTitle() ;
+		if(Convert.isNullOrEmpty(tt))
+			tt = this.drvName ;
+		return "DB:"+tt ;
 	}
 	
 	public String getDrvName()
@@ -265,6 +290,13 @@ public class SourceJDBC extends Source
 			return "" ;
 		
 		return this.dbPsw ;
+	}
+	
+	public boolean checkValid(StringBuilder failedr)
+	{
+		if(!Convert.checkVarName(this.dbName, "DB Name", false, failedr))
+			return false;
+		return true ;
 	}
 	
 	private transient DBConnPool connPool = null ;

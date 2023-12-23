@@ -151,6 +151,15 @@ position:absolute;
 	left:16px;
 }
 
+.h_item .rt
+{
+	position:absolute;
+	font-size: 15px;
+	top:2px;
+	right:76px;
+}
+
+
 .h_item .f
 {
 	position:absolute;
@@ -195,6 +204,7 @@ position:absolute;
 	top:5px;
 	border:1px solid;
 	right:80px;
+	
 }
 
 .h_item .oper
@@ -233,6 +243,15 @@ position:absolute;
 	margin-bottom: 30px;
 }
 
+.out_item .rt
+{
+position:absolute;
+	font-size: 18px;
+	top:3px;
+	right:10px;
+	visibility: hidden;
+}
+
 .out_item .tp
 {
 	position:absolute;
@@ -243,7 +262,7 @@ position:absolute;
 .out_item .tpt
 {
 	position:absolute;
-	font-size: 15px;
+	font-size: 13px;
 	bottom:1px;
 	left:5px;
 }
@@ -308,7 +327,7 @@ int tags_num = tags.size() ;
 	{
 		String tagid = tag.getId() ;
 		String np = tag.getNodeCxtPathIn(prj) ;
-		String tt = tag.getTitle() ;
+		String tt = "["+tag.getValTp()+"]  "+tag.getNodePathName()+"&#13;"+tag.getNodePathTitle() ;
 		String en_c = true?"green":"gray" ;
 		String en_t = true?"Enabled":"Disabled" ;
 %><div class="tag_item" title="<%=tt%>" tag_id="<%=tagid%>" tag_np="<%=np %>" id="tag_<%=tagid%>" ><i class="fa fa-square en" style="color:<%=en_c%>" title="<%=en_t%>"></i>
@@ -322,13 +341,10 @@ int tags_num = tags.size() ;
  </div>
 <div class="mid" onclick="on_handler_clk()">
  <blockquote class="layui-elem-quote ">Handlers
- <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Add</button>
- 	<%--
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Runtime Data</button>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>','ind',null)">+Indicator Data</button>
- 	 --%>
+ <div style="position: absolute;right:10px;top:11px;width:100px;border:0px solid;height:35px;">
+ <button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Add</button>
  </div>
+ 	
 </blockquote>
  <div id="handler_list"  class="list" onscroll="on_list_scroll()">
  	
@@ -415,7 +431,6 @@ function on_handler_clk(item)
 
 function update_tags()
 {
-	
 	if(!cur_h)
 	{
 		$(".tag_item").css("display","none") ;
@@ -503,9 +518,10 @@ function update_outs()
 			//console.log(ob) ;
 			let en_c = ob.en?"green":"gray" ;
 			let en_t = ob.en?"Enabled":"Disabled" ;
-			tmps += `<div id="out_\${ob.id}" class="out_item" tp="\${ob.tp}" hid="\${h.id}" t="\${ob.t}" >
+			tmps += `<div id="out_\${ob.id}" class="out_item" tp="\${ob.tp}" hid="\${h.id}" t="\${ob.t}" title="\${ob.t}" >
 				<span class="enable_c"><i class="fa fa-square en chk_out" id="\${ob.id}" hid="\${h.id}"  style="color:\${en_c}" title="\${en_t}"></i></span>
-				<span class="t">\${ob.t}</span>
+				<span class="t">\${ob.n}-[\${ob.table}]</span>
+				<span class="rt" id="o_rt_\${ob.id}"><span id="o_init_\${ob.id}" ><i class="fa-solid fa-circle"></i></span> <span id="o_run_\${ob.id}" ><i class="fa-solid fa-circle"></i></span> <span id="o_err_\${ob.id}"  style="visibility:hidden" ><i class="fa-solid fa-triangle-exclamation"></i></span></span>
 				<span class="tpt">\${ob.tpt}</span>
 				<span class="oper">
 					<button title="init or create out" type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="init_o('\${prjid}','\${h.id}','\${ob.id}')"><i class="fa-solid fa-rotate-right"></i></button>
@@ -559,7 +575,6 @@ function update_handlers()
 		let tmps="" ;
 		for(let ob of os)
 		{
-			//console.log(ob) ;
 			let trigger_c = ob.trigger_c?'background-color:'+ob.trigger_c:'' ;
 			let trigger_dis = ob.trigger_en?'':'display:none' ;
 			let release_c = ob.release_c?'background-color:'+ob.release_c:'' ;
@@ -579,9 +594,10 @@ function update_handlers()
 			let en_c = ob.en?"green":"gray" ;
 			let en_t = ob.en?"Enabled":"Disabled" ;
 			tmps += `<div id="h_\${ob.id}" style="top:\${y}px" class="h_item" hid="\${ob.id}" n="\${ob.n}" t="\${ob.t}" tp="\${ob.tp}" onclick="on_handler_clk(this)" alert_uids="\${ob.alert_uids}">
-				<span class="t">\${ob.t}</span>
+				<span class="t">\${ob.t} [\${ob.n}]</span>
 				<span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="f" ><i class="fa fa-filter" style="font-size:18px;"></i>\${f_tt}</span>
+				<span class="rt" ><i id='h_run_\${ob.id}' class='fa fa-circle-notch fa-lg'></i></span>
 				<span class="s" ><i class="fa-regular fa-square-check" style="font-size:18px;"></i>\${s_tt}</span>
 				<span class="trigger_c" style="\${trigger_c};\${trigger_dis}">Trigger [\${ob.lvl}]&nbsp;</span>
 				<span class="release_c" style="\${release_c};\${release_dis}">Release</span>
@@ -748,10 +764,10 @@ function add_or_edit_o(prjid,tp,hid,id)
 {
 	if(event)
 		event.stopPropagation();
-	var tt = "Add Handler Output";
+	var tt = "Add Handler Output ["+tp+"]";
 	if(id)
 	{
-		tt = "Edit Handler Output";
+		tt = "Edit Handler Output ["+tp+"]";
 	}
 	if(id==null)
 		id = "" ;
@@ -953,6 +969,68 @@ function on_list_scroll()
 	redraw_conn()
 }
 
+
+function rt_update()
+{
+	send_ajax("store_ajax.jsp",{op:"rt_data",prjid:prjid},(bsucc,ret)=>{
+		if(!bsucc&&ret.indexOf("{")!=0)
+		{
+			//show err
+			return;
+		}
+		let ob = null;
+		eval("ob="+ret) ;
+		for(let h of ob.handlers)
+		{
+			let c = "grey" ;
+			if(h.en)
+				c = h.run?"green":"red" ;
+			
+			if(h.run)
+				$("#h_run_"+h.id).addClass("fa-spin").css("color",c);
+			else
+				$("#h_run_"+h.id).removeClass("fa-spin").css("color",c);
+			
+			for(let o of h.outs)
+			{
+				let init_ok = o.init_ok ;
+				let init_c = "grey" ;
+				let init_t="" ;
+				if(h.run && h.en)
+				{
+					init_c = init_ok?"green":"red" ;
+					init_t = init_ok?"Init Ok":"Init Failed" ;
+				}
+					
+				let run_ok = o.run_ok;
+				let run_c = "grey";
+				let run_t="" ;
+				if(!h.run)
+				{
+					$("#o_rt_"+o.id).css("visibility","hidden") ;
+					return ;
+				}
+				
+				$("#o_rt_"+o.id).css("visibility","visible") ;
+				if(h.run && h.en)
+				{
+					run_c = run_ok?"green":"red" ;
+					run_t = run_ok?"Run Ok":"Run Error" ;
+				}
+					
+				$("#o_init_"+o.id).css("color",init_c).attr("title",init_t) ;
+				$("#o_run_"+o.id).css("color",init_c).attr("title",run_t) ;
+				if(h.run && h.en && o.err)
+					$("#o_err_"+o.id).css("color","red").css("visibility","visible").attr("title",o.err) ;
+				else
+					$("#o_err_"+o.id).css("visibility","hidden") ;
+			}
+		}
+		
+	}) ;
+}
+
+setInterval(rt_update,7000) ;
 
 </script>
 

@@ -363,13 +363,13 @@ public class MQTTClientDrv extends DevDriver
 	}
 	
 	@Override
-	public boolean RT_writeVal(UADev dev,DevAddr da,Object v)
+	public boolean RT_writeVal(UACh ch,UADev dev,UATag tag,DevAddr da,Object v)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean RT_writeVals(UADev dev,DevAddr[] da,Object[] v)
+	public boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags,DevAddr[] da,Object[] v)
 	{
 		return false;
 	}

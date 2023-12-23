@@ -74,7 +74,7 @@ public class MSlaveTcpServer extends MSlave
 	        {
 	        	e.printStackTrace();
 	            if (log.isErrorEnabled())
-	                log.error(e);
+	                log.error("",e);
 	        }
 	        finally
 	        {

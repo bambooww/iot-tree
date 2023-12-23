@@ -209,7 +209,7 @@ public class BindHandlerHtml extends BindHandler
 			{
 				e.printStackTrace();
 				if(log.isDebugEnabled())
-					log.error(e);
+					log.error("",e);
 			}
 		}
 		return true;
