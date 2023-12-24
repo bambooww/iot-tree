@@ -210,6 +210,7 @@
 			                            <include>data/plugins/mail/</include>
 			                            <include>data/plugins/auth_demo/</include>
 			                            <include>data/plugins/inner/</include>
+			                            <include>data/plugins/_libs/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>
