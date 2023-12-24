@@ -13,7 +13,8 @@
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
    String user = request.getParameter("user") ;
-   
+   if(Convert.isNullOrEmpty(user))
+	   user="" ;
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
 	UAHmi uahmi = UAUtil.findHmiByPath(path) ;
