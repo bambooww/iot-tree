@@ -196,7 +196,7 @@ public abstract class ConnPt implements IXmlDataValidator
 		 * last data dt
 		 */
 		long endDT = -1 ;
-		
+	
 		String monName = null ;
 		
 		MonData[] monDatas = null;
