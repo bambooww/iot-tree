@@ -47,5 +47,6 @@ h6
 img
 {
 	border:2px solid;
-	border-color:blue;
+	border-color:#a4a4a4;
+	max-width: 80%;max-height: 80%;
 }

@@ -734,14 +734,21 @@ public abstract class ConnPt implements IXmlDataValidator
 		if(jn==null)
 			return ;
 		
-		if(jn instanceof UADev)
+		try
 		{
-			UADev d = (UADev)jn;
-			this.bindedDrv.RT_onConnReady(this,d.getBelongTo(),d);
+			if(jn instanceof UADev)
+			{
+				UADev d = (UADev)jn;
+				this.bindedDrv.RT_onConnReady(this,d.getBelongTo(),d);
+			}
+			else if(jn instanceof UACh)
+			{
+				this.bindedDrv.RT_onConnReady(this,(UACh)jn,null);
+			}
 		}
-		else if(jn instanceof UACh)
+		catch(Exception e)
 		{
-			this.bindedDrv.RT_onConnReady(this,(UACh)jn,null);
+			e.printStackTrace();
 		}
 	}
 	
@@ -750,7 +757,15 @@ public abstract class ConnPt implements IXmlDataValidator
 		onConnReadyOrNot(false) ;
 		if(this.bindedDrv==null)
 			return ;
-		this.bindedDrv.RT_onConnInvalid(this);
+		
+		try
+		{
+			this.bindedDrv.RT_onConnInvalid(this);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	/**

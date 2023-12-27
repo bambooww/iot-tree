@@ -1,6 +1,5 @@
 package org.iottree.driver.common.clh;
 
-import java.io.Closeable;
 import java.util.List;
 
 import org.iottree.core.UACh;
@@ -64,29 +63,56 @@ public class ApcSmartUPS extends CmdLineHandler
 		super.init(cld, sb) ;
 		
 		UACh ch = this.belongTo.getBelongToCh() ;
-		List<UADev> devs = ch.getDevs() ;
-		boolean bdirty = false;
-		for(UADev dev:devs)
-		{
-			tagTemp = dev.getOrAddTag("temp", "Temperature", "UPS temperature", ValTP.vt_float, false) ;
-			
-			tagLowBatteryV = dev.getOrAddTag("low_b_v", "Low battery voltage alarm", "Low battery voltage alarm", ValTP.vt_bool, false) ;
-			tagUpsOverload = dev.getOrAddTag("st_overload", "UPS Overloaded Running", "Ups Overloaded Running", ValTP.vt_bool, false) ;
-			tagUpsUseBattery = dev.getOrAddTag("st_use_battery", "UPS Using battery inverter", "Using battery inverter", ValTP.vt_bool, false) ;
-			tagUpsOnline = dev.getOrAddTag("st_online", "UPS Using Online", "Using Online", ValTP.vt_bool, false) ;
-			
-			tagBatteryStdV = dev.getOrAddTag("battery_stdv", "Battery standard  voltage", "Battery standard  voltage", ValTP.vt_int32, false) ;  ; // 48
-			tagBatteryV = dev.getOrAddTag("battery_v", "Battery voltage", "Battery voltage", ValTP.vt_float, false) ; // dd.dd
-			tagBatteryCap = dev.getOrAddTag("battery_cap", "Battery capacity", "Battery capacity", ValTP.vt_float, false) ; // dd.dd
-			
-			if(dev.isDirty())
-				bdirty = true;
-		}
+		//this.belongTo.get
+		//boolean bdirty = false;
 		
-		if(bdirty)
+		tagTemp = ch.getOrAddTag("temp", "Temperature", "UPS temperature", ValTP.vt_float, false) ;
+		
+		tagLowBatteryV = ch.getOrAddTag("low_b_v", "Low battery voltage alarm", "Low battery voltage alarm", ValTP.vt_bool, false) ;
+		tagUpsOverload = ch.getOrAddTag("st_overload", "UPS Overloaded Running", "Ups Overloaded Running", ValTP.vt_bool, false) ;
+		tagUpsUseBattery = ch.getOrAddTag("st_use_battery", "UPS Using battery inverter", "Using battery inverter", ValTP.vt_bool, false) ;
+		tagUpsOnline = ch.getOrAddTag("st_online", "UPS Using Online", "Using Online", ValTP.vt_bool, false) ;
+		
+		tagBatteryStdV = ch.getOrAddTag("battery_stdv", "Battery standard  voltage", "Battery standard  voltage", ValTP.vt_int32, false) ;  ; // 48
+		tagBatteryV = ch.getOrAddTag("battery_v", "Battery voltage", "Battery voltage", ValTP.vt_float, false) ; // dd.dd
+		tagBatteryCap = ch.getOrAddTag("battery_cap", "Battery capacity", "Battery capacity", ValTP.vt_float, false) ; // dd.dd
+		
+		if(ch.isDirty())
 			ch.save();
 		return true;
 	}
+	
+	//replace by channel,not need device.  ch is a device too
+	
+//	public boolean init(CmdLineDrv cld,StringBuilder sb) throws Exception
+//	{
+//		super.init(cld, sb) ;
+//		
+//		UACh ch = this.belongTo.getBelongToCh() ;
+//		//this.belongTo.get
+//		List<UADev> devs = ch.getDevs() ;
+//		boolean bdirty = false;
+//		for(UADev dev:devs)
+//		{
+//			tagTemp = dev.getOrAddTag("temp", "Temperature", "UPS temperature", ValTP.vt_float, false) ;
+//			
+//			tagLowBatteryV = dev.getOrAddTag("low_b_v", "Low battery voltage alarm", "Low battery voltage alarm", ValTP.vt_bool, false) ;
+//			tagUpsOverload = dev.getOrAddTag("st_overload", "UPS Overloaded Running", "Ups Overloaded Running", ValTP.vt_bool, false) ;
+//			tagUpsUseBattery = dev.getOrAddTag("st_use_battery", "UPS Using battery inverter", "Using battery inverter", ValTP.vt_bool, false) ;
+//			tagUpsOnline = dev.getOrAddTag("st_online", "UPS Using Online", "Using Online", ValTP.vt_bool, false) ;
+//			
+//			tagBatteryStdV = dev.getOrAddTag("battery_stdv", "Battery standard  voltage", "Battery standard  voltage", ValTP.vt_int32, false) ;  ; // 48
+//			tagBatteryV = dev.getOrAddTag("battery_v", "Battery voltage", "Battery voltage", ValTP.vt_float, false) ; // dd.dd
+//			tagBatteryCap = dev.getOrAddTag("battery_cap", "Battery capacity", "Battery capacity", ValTP.vt_float, false) ; // dd.dd
+//			
+//			if(dev.isDirty())
+//				bdirty = true;
+//		}
+//		
+//		if(bdirty)
+//			ch.save();
+//		return true;
+//	}
 
 //	@Override
 //	public void RT_init() throws Exception
@@ -97,18 +123,23 @@ public class ApcSmartUPS extends CmdLineHandler
 	boolean bJustConn = false;
 
 	@Override
-	public void RT_onConned(ConnPtStream cpt) // throws Exception
+	public void RT_onConned(ConnPtStream cpt) throws Exception
 	{
 		super.RT_onConned(cpt);
 		bJustConn = true ;
 	}
 
 	@Override
-	public void RT_onDisconn(ConnPtStream cpt) //throws Exception
+	public void RT_onDisconn(ConnPtStream cpt) throws Exception
 	{
 		super.RT_onDisconn(cpt);
 		
 		bConnOk = false;
+	}
+	
+	protected boolean RT_useNoWait()
+	{
+		return false;
 	}
 
 	@Override

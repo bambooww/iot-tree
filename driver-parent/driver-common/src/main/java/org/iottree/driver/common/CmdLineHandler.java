@@ -9,6 +9,8 @@ import java.util.function.Consumer;
 import org.iottree.core.ConnException;
 import org.iottree.core.ConnPt;
 import org.iottree.core.conn.ConnPtStream;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -18,7 +20,7 @@ import org.iottree.core.util.logger.LoggerManager;
  * @author jason.zhu
  *
  */
-public abstract class CmdLineHandler
+public abstract class CmdLineHandler extends JSObMap
 {
 	public static interface IRecvCallback<T>
 	{
@@ -50,6 +52,7 @@ public abstract class CmdLineHandler
 	protected abstract int getRecvMaxLen() ;
 	
 	
+	
 	protected boolean init(CmdLineDrv cld,StringBuilder sb) throws Exception
 	{
 		this.belongTo = cld ;
@@ -61,12 +64,12 @@ public abstract class CmdLineHandler
 	
 	protected ConnPtStream conn = null ;
 	
-	protected void RT_onConned(ConnPtStream cpt)// throws Exception
+	protected void RT_onConned(ConnPtStream cpt) throws Exception
 	{
 		this.conn = cpt ;
 	}
 	
-	protected void RT_onDisconn(ConnPtStream cpt) //throws Exception
+	protected void RT_onDisconn(ConnPtStream cpt) throws Exception
 	{
 		if(conn==cpt)
 			conn = null ;
@@ -98,6 +101,7 @@ public abstract class CmdLineHandler
 	
 	private IRecvCallback<String> curSynRet = null ;
 	private String recvRet = null ;
+	private boolean bRecvSyn = false;
 	
 	protected synchronized boolean sendRecvSyn(String str,IRecvCallback<String> ret) throws Exception
 	{
@@ -124,11 +128,39 @@ public abstract class CmdLineHandler
 		}
 	}
 	
-	synchronized final void RT_onRecved(byte[] bs)
+	@JsDef
+	synchronized public String send_recv_syn(String str)  throws Exception
+	{
+		bRecvSyn = true;
+		try
+		{
+			recvRet = null ;
+			clearInputBuf() ;
+			if(!this.sendStr(str))
+				return null;
+			this.wait(this.belongTo.getRecvTimeOut());
+			//curSynRet = null ;
+			if(recvRet==null)
+				return null ;
+			return recvRet ;
+		}
+		finally
+		{
+			bRecvSyn = false;
+		}
+	}
+	
+	@JsDef
+	synchronized public void send_asyn(String str) throws Exception
+	{
+		sendStr(str);
+	}
+	
+	synchronized final void RT_onRecved(byte[] bs) throws Exception 
 	{
 		String ss = new String(bs) ;
 		
-		if(curSynRet!=null)
+		if(bRecvSyn || curSynRet!=null)
 		{
 			curSynRet = null; //not interfere next recv	
 			this.recvRet = ss ;
@@ -139,7 +171,9 @@ public abstract class CmdLineHandler
 		RT_onRecved(ss) ;
 	}
 	
+	protected abstract boolean RT_useNoWait() ;
+	
 	public abstract void RT_runInLoop(ConnPtStream cpt) throws Exception;
 	
-	public abstract void RT_onRecved(String cmd) ;
+	public abstract void RT_onRecved(String cmd)  throws Exception ;
 }

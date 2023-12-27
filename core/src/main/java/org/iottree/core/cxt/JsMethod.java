@@ -169,22 +169,28 @@ public class JsMethod extends JsSub implements ProxyExecutable
 	{
 		ArrayList<JsMethod> rets = new ArrayList<>();
 		Class<?> c = ob.getClass();
-		for (Method m : c.getMethods())
+		do
 		{
-			HostAccess.Export exp = m.getAnnotation(HostAccess.Export.class);
-			if (exp == null)
+			for (Method m : c.getDeclaredMethods())
 			{
-				JsDef jsdef = m.getAnnotation(JsDef.class) ;
-				if(jsdef==null)
+				HostAccess.Export exp = m.getAnnotation(HostAccess.Export.class);
+				if (exp == null)
 				{
-					if(!chk_prefix || !m.getName().startsWith(JS_PREFIX))
-						continue ;
+					JsDef jsdef = m.getAnnotation(JsDef.class) ;
+					if(jsdef==null)
+					{
+						if(!chk_prefix || !m.getName().startsWith(JS_PREFIX))
+							continue ;
+					}
 				}
+	
+				JsMethod jm = new JsMethod(ob, m);
+				rets.add(jm);
 			}
-
-			JsMethod jm = new JsMethod(ob, m);
-			rets.add(jm);
+			
+			c = c.getSuperclass();
 		}
+		while(c!=null) ;
 		return rets;
 	}
 	

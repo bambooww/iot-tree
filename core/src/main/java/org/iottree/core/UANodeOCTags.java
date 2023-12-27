@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
@@ -141,6 +142,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	// return null ;
 	// }
 
+	@JsDef
 	public void save() throws Exception
 	{
 		// UARep rep = getTopUARep() ;
@@ -154,6 +156,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		bDirty = false;
 	}
 	
+	@JsDef
 	public boolean isDirty()
 	{
 		return this.bDirty ;
@@ -553,6 +556,14 @@ public abstract class UANodeOCTags extends UANodeOC
 		return addTag(name,title,desc,vt,bsave) ;
 	}
 	
+	@JsDef
+	private UATag get_add_tag(String name,String title,String desc,String vtstr,boolean bsave) throws Exception
+	{
+		UAVal.ValTP vt = UAVal.getValTp(vtstr) ;
+		if(vt==null)
+			throw new IllegalArgumentException("unknown vt "+vtstr) ;
+		return getOrAddTag(name,title,desc, vt,bsave) ; 
+	}
 
 	public boolean delTag(UATag t) throws Exception
 	{

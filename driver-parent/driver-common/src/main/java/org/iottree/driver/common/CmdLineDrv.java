@@ -1,12 +1,14 @@
 package org.iottree.driver.common;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.iottree.core.Config;
 import org.iottree.core.ConnPt;
 import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
@@ -19,6 +21,8 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.util.Convert;
 import org.iottree.driver.common.clh.ApcSmartUPS;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class CmdLineDrv extends DevDriver
 {
@@ -34,6 +38,7 @@ public class CmdLineDrv extends DevDriver
 	public CmdLineDrv asHandler(CmdLineHandler h)
 	{
 		this.handler = h ;
+		h.belongTo = this ;
 		return this ;
 	}
 	
@@ -81,18 +86,61 @@ public class CmdLineDrv extends DevDriver
 		return handler.getTitle();// "Cmd Line Handler";
 	}
 	
-	static List<DevDriver> SUB_DRVS = Arrays.asList(
-			new CmdLineDrv().asHandler(new ApcSmartUPS())
-			) ;
+	static List<DevDriver> SUB_DRVS = null ;
+	
+	
+	static List<CmdLineDrv> loadJsDrvs() //throws IOException
+	{
+		ArrayList<CmdLineDrv> rets = new ArrayList<>() ;
+		
+		File f = new File(Config.getDataDirBase()+"/dev_drv/cmd_line_js/list.json") ;
+		
+		try
+		{
+			String txt = Convert.readFileTxt(f, "UTF-8") ;
+			if(Convert.isNullOrEmpty(txt))
+				return rets ;
+			
+			JSONArray jarr = new JSONArray(txt) ;
+			int len = jarr.length() ;
+			for(int i = 0 ; i < len ; i ++)
+			{
+				JSONObject jo = jarr.getJSONObject(i) ;
+				CmdLineHandlerJS cmh = new CmdLineHandlerJS(jo) ;
+				CmdLineDrv cld = new CmdLineDrv().asHandler(cmh) ;
+				rets.add(cld) ;
+			}
+			return rets;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	private static List<DevDriver> listDrivers()
+	{
+		if(SUB_DRVS!=null)
+			return SUB_DRVS;
+		ArrayList<DevDriver> rets = new ArrayList<>() ;
+		
+		rets.add(new CmdLineDrv().asHandler(new ApcSmartUPS()));
+		List<CmdLineDrv> ss = loadJsDrvs() ;
+		rets.addAll(ss) ;
+		//rets.addAll(loadJsDrvs()) ; 
+		SUB_DRVS = rets ;
+		return rets ;
+	}
 	
 	protected List<DevDriver> supportMultiDrivers()
 	{
-		return SUB_DRVS ;
+		return listDrivers() ;
 	}
 	
 	public boolean isConnPtToDev()
 	{
-		return true;
+		return false;
 	}
 
 	@Override
@@ -280,8 +328,9 @@ public class CmdLineDrv extends DevDriver
 	}
 
 	@Override
-	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev)
+	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev) throws Exception
 	{
+		
 		this.connPtS = (ConnPtStream)cp ;
 		this.connInputS = this.connPtS.getInputStream() ;
 
@@ -290,7 +339,7 @@ public class CmdLineDrv extends DevDriver
 	}
 
 	@Override
-	protected void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev)
+	protected void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev) throws Exception
 	{
 		
 		stopRecv();
@@ -299,10 +348,23 @@ public class CmdLineDrv extends DevDriver
 		if(this.connPtS==cp)
 			this.connPtS = null ;
 	}
+	
+	protected boolean RT_useLoopNoWait()
+	{
+		return this.handler.RT_useNoWait();
+	}
 
 	@Override
 	protected boolean RT_runInLoop(UACh ch, UADev dev, StringBuilder failedr) throws Exception
 	{
+		//this.handler.RT_runInLoop(this.connPtS);
+		return true;
+	}
+	
+	@Override
+	protected boolean RT_runInLoopNoWait(UACh ch, UADev dev, StringBuilder failedr) throws Exception
+	{
+		
 		this.handler.RT_runInLoop(this.connPtS);
 		return true;
 	}

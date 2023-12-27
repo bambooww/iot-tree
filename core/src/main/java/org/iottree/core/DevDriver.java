@@ -8,6 +8,8 @@ import java.util.*;
 import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -21,7 +23,7 @@ import org.iottree.core.util.xmldata.XmlData;
  * 
  * @author zzj
  */
-public abstract class DevDriver implements IPropChecker
+public abstract class DevDriver extends JSObMap implements IPropChecker
 {
 	protected static ILogger log = LoggerManager.getLogger(DevDriver.class);
 
@@ -338,7 +340,6 @@ public abstract class DevDriver implements IPropChecker
 	 */
 	protected boolean initDriver(StringBuilder failedr) throws Exception
 	{
-
 		return true;
 	}
 
@@ -486,17 +487,25 @@ public abstract class DevDriver implements IPropChecker
 	{
 		return -1;
 	}
+	
+	public final long getUsingInterval()
+	{
+		long drv_int = getRunInterval();
+		if (drv_int < 0)
+			drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
+		if (drv_int < 0)
+			drv_int = 0;
+		return drv_int ;
+	}
+	
+	private long lastLoopNoWaitDT =-1 ;
 
 	Runnable runner = new Runnable() {
 		public void run()
 		{
 			try
 			{
-				long drv_int = getRunInterval();
-				if (drv_int < 0)
-					drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
-				if (drv_int < 0)
-					drv_int = 0;
+				long drv_int = getUsingInterval();
 
 				StringBuilder failedr = new StringBuilder();
 				log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName()
@@ -509,18 +518,40 @@ public abstract class DevDriver implements IPropChecker
 				{
 					try
 					{
-						Thread.sleep(drv_int);
-						
-						if(!DevDriver.this.isConnPtToDev())
+						if(RT_useLoopNoWait())
 						{
-							cpt = belongToCh.getConnPt();
-							if(cpt!=null&&!cpt.isConnReady())
-								cpt.RT_checkConn();
+							if(System.currentTimeMillis()-lastLoopNoWaitDT>=drv_int)
+							{
+								lastLoopNoWaitDT = System.currentTimeMillis() ; 
+								if(!DevDriver.this.isConnPtToDev())
+								{
+									cpt = belongToCh.getConnPt();
+									if(cpt!=null&&!cpt.isConnReady())
+										cpt.RT_checkConn();
+								}
+							}
+							
+							if (!RT_runInLoopNoWait(ch, null, failedr))
+								break;
+							
+							Thread.sleep(1);
+							continue ;
 						}
-
-						// System.out.println("-----1-------");
-						if (!RT_runInLoop(ch, null, failedr))
-							break;
+						else
+						{
+							Thread.sleep(drv_int);
+							
+							if(!DevDriver.this.isConnPtToDev())
+							{
+								cpt = belongToCh.getConnPt();
+								if(cpt!=null&&!cpt.isConnReady())
+									cpt.RT_checkConn();
+							}
+	
+							// System.out.println("-----1-------");
+							if (!RT_runInLoop(ch, null, failedr))
+								break;
+						}
 					}
 					catch ( InterruptedException ie)
 					{
@@ -542,7 +573,7 @@ public abstract class DevDriver implements IPropChecker
 			catch ( Exception e)
 			{
 				System.err.println(e.getMessage());
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 			finally
 			{
@@ -638,9 +669,9 @@ public abstract class DevDriver implements IPropChecker
 	 * 
 	 * @param cp
 	 */
-	protected abstract void RT_onConnReady(ConnPt cp, UACh ch, UADev dev);
+	protected abstract void RT_onConnReady(ConnPt cp, UACh ch, UADev dev) throws Exception;
 
-	final void RT_onConnInvalid(ConnPt cp)
+	final void RT_onConnInvalid(ConnPt cp) throws Exception
 	{
 		UACh ch = this.getBelongToCh();
 		if (this.isConnPtToDev())
@@ -662,7 +693,7 @@ public abstract class DevDriver implements IPropChecker
 	 * 
 	 * @param cp
 	 */
-	protected abstract void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev);
+	protected abstract void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev) throws Exception;
 
 	/**
 	 * implementor will use this interface method to check self state and may
@@ -674,6 +705,16 @@ public abstract class DevDriver implements IPropChecker
 	 */
 	protected abstract boolean RT_runInLoop(UACh ch, UADev dev, StringBuilder failedr) throws Exception;
 
+
+	protected boolean RT_runInLoopNoWait(UACh ch, UADev dev, StringBuilder failedr) throws Exception
+	{
+		return false;
+	}
+	
+	protected boolean RT_useLoopNoWait()
+	{
+		return false;
+	}
 	/**
 	 * if driver RT_initDriver or RT_runInLoop failed,or to be stopped this
 	 * method will be called.
@@ -717,6 +758,7 @@ public abstract class DevDriver implements IPropChecker
 	
 	private String warnInf = null ;
 	
+	@JsDef
 	public void RT_fireDrvWarn(String msg)
 	{
 		this.warnDT = System.currentTimeMillis() ;

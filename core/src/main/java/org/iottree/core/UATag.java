@@ -1102,10 +1102,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		RT_setUAVal(uav);
 	}
 	
+	@JsDef
 	public UAVal RT_setValErr(String err)
 	{
 		return RT_setValErr(err,null) ;
 	}
+	
 	
 	public UAVal RT_setValErr(String err,Exception e)
 	{
@@ -1120,6 +1122,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return uav ;
 	}
 	
+	@JsDef
 	public synchronized UAVal RT_setValRaw(Object v,boolean ignore_nochg,Long updt,Long chgdt)
 	{
 		curRawVal = v ;
@@ -1216,6 +1219,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		Object objv = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
 		this.RT_setValRaw(objv,ignore_chg,null,chgdt);
 	}
+	
+	@JsDef
+	public void RT_setValRawStr(String strv)
+	{
+		//System.out.println("set val row "+strv) ;
+		Object v = UAVal.transStr2ObjVal(this.getValTpRaw(), strv);
+		this.RT_setValRaw(v,true,null,null);
+	}
 //	
 //	
 //	public void RT_setVal(Object v)
@@ -1240,6 +1251,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * @param v
 	 * @throws Exception 
 	 */
+	@JsDef
 	public UAVal RT_setValRaw(Object v)
 	{
 		return this.RT_setValRaw(v,true,null,null);
