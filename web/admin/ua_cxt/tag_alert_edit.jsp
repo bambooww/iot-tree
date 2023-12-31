@@ -55,8 +55,8 @@ for(ValAlertTp tp:ValAlertTp.ALL)
 	String param2_t = tp.getParam2Title(lang) ;
 	String param3_t = tp.getParam3Title(lang) ;
 	
-	String trigger_cond = Convert.plainToHtml(tp.getTriggerCond(lang)) ;
-	String release_cond = Convert.plainToHtml(tp.getReleaseCond(lang)) ;
+	String trigger_cond = Convert.plainToHtml(tp.getTriggerCond(lang),false) ;
+	String release_cond = Convert.plainToHtml(tp.getReleaseCond(lang),false) ;
 	
 	String chk = "";
 	if(bfirst)
@@ -191,11 +191,23 @@ function update_ui()
 	let tmps ="" ;
 	let trigger_cond = opt.attr("trigger_cond") ;
 	let release_cond = opt.attr("release_cond") ;
-	tmps += trigger_cond+"<br/>";
+	tmps += trigger_cond+"\r\n";
 	tmps += release_cond
-	$("#tp_ppt").html(tmps) ;
+	$("#tp_ppt").html(convertHTML(tmps)) ;
 	
 	form.render();
+}
+
+function convertHTML(str)
+{
+	  var characters = [/&/g, /</g, />/g, /\"/g, /\'/g];
+	  var entities = ["&amp;", "&lt;", "&gt;", "&quot;", "&apos;"];
+	  for(var i = 0; i < characters.length; i++)
+	  {
+	    str = str.replace(characters[i], entities[i]);
+	  }
+	  
+	  return str;
 }
 update_ui();
 
@@ -220,19 +232,11 @@ function do_submit(cb)
 	ret.en = $("#en").prop("checked") ;
     ret.tp = parseInt($("#tp").val()) ;
     ret.tpt =$("#tp option:selected").text();
-    /*
-    ret.group = parseInt($("#group").val()) ;
-    if(isNaN(ret.group))
-    	ret.group=0 ;
-    let lvlstr = $("#lvl").val();
-    ret.lvl = parseInt(lvlstr) ;
-    if(isNaN(ret.lvl))
-    	ret.lvl=0 ;
-    */
+
     ret.name = $("#name").val() ;
-    if(ret.name && !chk_name_nodiv(ret.name))
+    if(ret.name && !chk_name(ret.name))
     {
-    	cb(false,"name must a-z A-z 0-9") ;
+    	cb(false,"name must a-z A-z first 0-9 first and followed a-z A-z _") ;
     	return ;
     }
     ret.param1 = $("#param1").val() ;

@@ -213,6 +213,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		this.valTranser=t.valTranser;
 		this.valChgedCacheLen = t.valChgedCacheLen ;
+		if(t.valAlerts!=null)
+		{
+			ArrayList<ValAlert> vas = new ArrayList<>() ;
+			for(ValAlert va:t.valAlerts)
+			{
+				vas.add(va.copyMe(this, false)) ;
+			}
+			this.valAlerts = vas ;
+		}
 	}
 	
 	void constructNodeTree()
@@ -289,8 +298,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.bCanWrite = false ;
 		this.scanRate = -1;
 		this.decDigits = dec_digits ;
+		
+		this.clearCache();
 	}
 	
+	synchronized private void clearCache()
+	{
+		codeItem =null;
+	}
 	/**
 	 * tag in project may has it's own name title and desc
 	 * so there are defined by rename retitle redesc
@@ -983,16 +998,23 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(!this.isMidExpress())
 			return null ;
-		if(codeItem!=null)
-			return codeItem ;
+		UACodeItem ci = codeItem;
+		if(ci!=null)
+			return ci ;
 		
-		if(Convert.isNullOrEmpty(this.addr))
-			return null ;
-		UAContext cxt = CXT_getBelongToCxt();
-		if(cxt== null)
-			return null;
-		codeItem = new UACodeItem("",this.addr,cxt) ;
-		return codeItem;
+		synchronized(this)
+		{
+			if(codeItem!=null)
+				return codeItem ;
+	
+			if(Convert.isNullOrEmpty(this.addr))
+				return null ;
+			UAContext cxt = CXT_getBelongToCxt();
+			if(cxt== null)
+				return null;
+			codeItem = new UACodeItem("",this.addr,cxt) ;
+			return codeItem;
+		}
 	}
 	
 	/**

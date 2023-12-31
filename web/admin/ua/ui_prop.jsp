@@ -220,6 +220,7 @@ if(!bdlg)
 %>
  </div>
 </blockquote>
+<div style="position: absolute;top:53px;bottom:3px;overflow: auto;width:100%;">
 <table class="prop_table" >
 <tr>
   <%--
@@ -343,6 +344,7 @@ String sel="" ;
     </td>
   </tr>
 </table>
+</div>
 <%--
 <%
 if(!bdlg)

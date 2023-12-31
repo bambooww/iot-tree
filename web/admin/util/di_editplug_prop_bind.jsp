@@ -58,7 +58,7 @@ if(!bind_tag_only)
     <label class="layui-form-label">Client Script:</label>
     <div class="layui-input-block">
     ()=>{
-      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10" onclick="on_client_js_edit()"></textarea>
+      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10" ondblclick="on_client_js_edit()"></textarea>
       }
       <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
@@ -87,6 +87,7 @@ layui.use('form', function(){
 });
 
 var ow = dlg.get_opener_w() ;
+var path = null ;
 var plugpm = ow.editor_plugcb_pm;
 var js_cxt = null ;
 if(plugpm!=null)
@@ -95,8 +96,10 @@ if(plugpm!=null)
 	//console.log(plugpm) ;
 	var di = plugpm.di ;
 	let pb = plugpm.val;
+	path = plugpm.path ;
 	
-	js_cxt = pb.JS_getCxt();
+	if(pb)
+		js_cxt = pb.JS_getCxt();
 	var pdf = di.findProDefItemByName(plugpm.name) ;
 	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
 	$("#name").val(plugpm.name) ;

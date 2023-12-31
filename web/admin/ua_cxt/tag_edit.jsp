@@ -14,7 +14,7 @@
 	{
 		if(o==null)
 			return "" ;
-		return ""+o ;
+		return Convert.plainToJsStr(""+o) ;
 	}
 	 %><%
 	 if(!Convert.checkReqEmpty(request, out, "path"))
@@ -326,7 +326,7 @@ var bmid = <%=bmid%>;
 var name= "<%=html_str(name) %>" ;
 var title = "<%=html_str(title)%>" ;
 var desc = "<%=html_str(desc)%>";
-var addr = `<%=html_str(addr)%>`;
+var addr = "<%=html_str(addr)%>";
 var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;

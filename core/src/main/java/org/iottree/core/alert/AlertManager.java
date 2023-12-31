@@ -341,8 +341,11 @@ public class AlertManager
 	{
 		if(this.alertHandlers==null)
 			return ;
+		ValAlert va = ai.getValAlert() ;
 		this.alertHandlers.forEach((id,ah)->{
 			if(!ah.isEnable())
+				return ;
+			if(!ah.checkValAlertRelated(va))
 				return ;
 			ah.RT_processOutAsyn(ai) ;
 		});
@@ -350,7 +353,6 @@ public class AlertManager
 	
 	public void RT_fireAlert(ValAlert va,Object cur_val)
 	{
-		
 		if(!queTh.isRunning())
 			return ; //discard
 		AlertItem ai = new AlertItem(va,cur_val) ;

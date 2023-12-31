@@ -471,6 +471,7 @@ public class ModbusBlock
 			if(!mc.tickCanRun())
 				continue ;
 			
+			//System.out.println("mc=="+mc) ;
 			Thread.sleep(this.interReqMs);
 			
 			List<ModbusAddr> addrs = cmd2addr.get(mc) ;
@@ -502,6 +503,7 @@ public class ModbusBlock
 			{
 				ModbusCmdReadWords mcw = (ModbusCmdReadWords)mc ;
 				int[] rvs = mcw.getRetVals() ;
+				//System.out.println("addrs len="+addrs.size()+"  rvs="+rvs) ;
 				if(rvs==null)
 				{//err set address invalid
 					if(chkSuccessiveFailed(true))
@@ -517,6 +519,7 @@ public class ModbusBlock
 					int rv = rvs[i] ;
 					memTb.setValNumber(ValTP.vt_int16, (regpos+i)*2, rv);//,ByteOrder.ModbusWord);
 				}
+				
 				transMem2Addrs(addrs);
 				chkSuccessiveFailed(false) ;
 			}

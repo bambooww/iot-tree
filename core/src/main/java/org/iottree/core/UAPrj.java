@@ -948,18 +948,22 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				//old context with js env will rebuild
 				RT_reContext();
 				
-				// StringBuilder failedr = new StringBuilder() ;
-				// start connprovider
-				startStopConn(true);
-
-				// start channel drivers
-				startStopCh(true);
-				
-				startStopTask(true) ;
-				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
 				StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+				// StringBuilder failedr = new StringBuilder() ;
+				
+				// start channel drivers
+				startStopCh(true);
+				
+				// start connprovider
+				startStopConn(true);
+
+				
+				
+				startStopTask(true) ;
+				
+				
 
 				while (rtRun)
 				{

@@ -556,6 +556,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 {
 	
 	editor_plugcb_pm = {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
+	//console.log(11,editor_plugcb_pm)
 
 	if(tp.indexOf("event_")==0)
 	{
@@ -595,8 +596,10 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 			tt = "Bind Properties" ;
 			bind_tag_only = pn_def.bind_tag_only ;
 		}
+		if(!bind_tag_only)
+			bind_tag_only=false;
 			
-		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id+"&bind_tag_only="+bind_tag_only,
+		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id+"&bind_tag_only="+bind_tag_only+"&p="+path,
 				{title:tt,w:'500px',h:'420px',shade: 0.01,
 					on_val_chg:(v)=>{
 						jq_ele.val(v) ;

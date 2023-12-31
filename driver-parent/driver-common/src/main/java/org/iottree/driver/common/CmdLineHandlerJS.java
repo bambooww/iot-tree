@@ -265,7 +265,8 @@ public class CmdLineHandlerJS extends CmdLineHandler
 			}
 			catch(Exception ee)
 			{
-				ee.printStackTrace();
+				if(log.isDebugEnabled())
+					log.debug("CmdLineHandlerJS "+FN_RUN_IN_LOOP+" error",ee);
 				throw new ConnException(ee.getMessage()) ;//make conn close and ch driver is not stop
 			}
 		}
