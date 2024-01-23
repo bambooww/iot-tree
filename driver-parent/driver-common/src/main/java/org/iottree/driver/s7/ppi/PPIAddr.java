@@ -3,6 +3,7 @@ package org.iottree.driver.s7.ppi;
 import java.util.List;
 
 import org.iottree.core.DevAddr;
+import org.iottree.core.UADev;
 import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 
@@ -134,13 +135,13 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	}
 	
 	@Override
-	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str, ValTP vtp, StringBuilder failedr)
 	{
 		return parsePPIAddr(str,vtp,failedr) ;
 	}
 	
 	@Override
-	public ChkRes checkAddr(String addr,ValTP vtp)
+	public ChkRes checkAddr(UADev dev,String addr,ValTP vtp)
 	{
 		StringBuilder failedr = new StringBuilder() ;
 		AddrPt apt = parseAddrPt(addr,failedr) ;
@@ -209,7 +210,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		return null;
 	}

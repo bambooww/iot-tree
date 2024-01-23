@@ -3,6 +3,7 @@ package org.iottree.driver.s7.eth;
 import java.util.List;
 
 import org.iottree.core.DevAddr;
+import org.iottree.core.UADev;
 import org.iottree.core.UAVal.ValTP;
 
 /**
@@ -105,7 +106,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	}
 	
 	@Override
-	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str, ValTP vtp, StringBuilder failedr)
 	{
 		return parseS7Addr(str,vtp,failedr) ;
 	}
@@ -162,7 +163,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	
 	
 	@Override
-	public ChkRes checkAddr(String addr,ValTP vtp)
+	public ChkRes checkAddr(UADev dev,String addr,ValTP vtp)
 	{
 		StringBuilder failedr = new StringBuilder() ;
 		S7Addr apt = parseAddrPt(addr,failedr) ;
@@ -250,7 +251,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		return null;
 	}

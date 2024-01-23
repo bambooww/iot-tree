@@ -23,7 +23,7 @@ public class DevAddrFix extends DevAddr
 	
 	
 	@Override
-	public DevAddr parseAddr(String addr, ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String addr, ValTP vtp, StringBuilder failedr)
 	{
 		return new DevAddrFix(addr,vtp);
 	}
@@ -35,7 +35,7 @@ public class DevAddrFix extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		return null;
 	}

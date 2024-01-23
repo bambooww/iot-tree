@@ -61,19 +61,39 @@ public class DataUtil
 	
 	public final static short bytesToShort(byte[] bytes)
 	{
-		return bytesToShort(bytes,0);
+		return bytesToShort(bytes,0,ByteOrder.LittleEndian);
+	}
+	
+	public final static short bytesToShort(byte[] bytes,int offset)
+	{
+		return bytesToShort(bytes,offset,ByteOrder.LittleEndian) ;
 	}
 
-	public final static short bytesToShort(byte[] bytes,int offset)
+	public final static short bytesToShort(byte[] bytes,int offset,ByteOrder bo)
 	{
 		if (bytes == null || bytes.length < 2+offset)
 			throw new IllegalArgumentException("byte array size must be "+(2+offset));
 
-		short i = 0;
-		i = (short) (bytes[offset] & 0xFF);
-		i = (short) ((i << 8) | (bytes[offset+1] & 0xFF));
+		int i = 0;
+		
+		if(bo==ByteOrder.ModbusWord)
+		{ // b0 b1 b2 b3  - b2 b3 b0 b1 (based word)
+			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
+		}
+		else if(bo==ByteOrder.BigEndian)
+		{
+			i = ((bytes[offset+1] & 0xFF) << 8) | (bytes[offset] & 0xFF);
+		}
+		else
+		{//little endian
+			i = ((bytes[offset] & 0xFF) << 8) | (bytes[offset+1] & 0xFF);
+		}
+		
+		
+		//i = (short) (bytes[offset] & 0xFF);
+		//i = (short) ((i << 8) | (bytes[offset+1] & 0xFF));
 
-		return i;
+		return (short)i;
 	}
 
 	public final static byte[] shortToBytes(short i)
@@ -271,6 +291,8 @@ public class DataUtil
 	
 	public final static float bytesToFloat(byte[] bytes,int offset,ByteOrder bo)
 	{
+		if(bo==null)
+			bo = ByteOrder.LittleEndian;
 		return Float.intBitsToFloat(bytesToInt(bytes,offset,bo));
 	}
 

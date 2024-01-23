@@ -623,16 +623,6 @@ function open_doc()
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_prop" src="./ua/ui_prop.jsp?dlg=false&&tabid=drv&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
-<%--
-			    <div class="layui-tab-item" style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
-			      <iframe id="if_rep" border="0" src11="rep.jsp?tabid=main&id=<%=repid %>" src0="rep_editor.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
-			      <iframe id="if_main" src="rep_editor_graph.jsp?tabid=main&id=<%=repid %>" style="width:100%;height:100%;border:0px"></iframe>
-				</div>
- --%>
-				<%--
-			       <iframe id="if_access" src="./ua_cxt/cxt_accessor.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
-			        --%>
-		
 			  </div>
 			</div>
 		    </div>

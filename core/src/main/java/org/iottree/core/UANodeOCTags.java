@@ -247,6 +247,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d != null && tmpn != null && d != tmpn)
 			throw new IllegalArgumentException("tag with name=" + name + " existed");
 
+		UADev dev= this.getBelongToDev() ;
 		if(Convert.isNotNullEmpty(addr) &&!bmid)
 		{
 			IDevDriverable ddable = getDevDriverable() ;
@@ -255,7 +256,7 @@ public abstract class UANodeOCTags extends UANodeOC
 				DevDriver dd = ddable.getRelatedDrv() ;
 				if(dd!=null)
 				{
-					DevAddr.ChkRes chkres = dd.checkAddr(addr, vt) ;
+					DevAddr.ChkRes chkres = dd.checkAddr(dev,addr, vt) ;
 					if(chkres!=null)
 					{
 						if(chkres.getChkVal()<=0)

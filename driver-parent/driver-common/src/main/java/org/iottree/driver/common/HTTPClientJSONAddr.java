@@ -3,12 +3,13 @@ package org.iottree.driver.common;
 import java.util.List;
 
 import org.iottree.core.DevAddr;
+import org.iottree.core.UADev;
 import org.iottree.core.UAVal.ValTP;
 
 public class HTTPClientJSONAddr extends DevAddr
 {
 	@Override
-	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str, ValTP vtp, StringBuilder failedr)
 	{
 		return null;
 	}
@@ -20,7 +21,7 @@ public class HTTPClientJSONAddr extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		return null;
 	}

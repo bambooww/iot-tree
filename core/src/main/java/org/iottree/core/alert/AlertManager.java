@@ -8,6 +8,7 @@ import java.util.List;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.basic.ValAlert;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.queue.HandleResult;
@@ -19,7 +20,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class AlertManager
+public class AlertManager  extends JSObMap
 {
 	private static HashMap<String,AlertManager> prjid2mgr = new HashMap<>() ;
 	
@@ -79,6 +80,11 @@ public class AlertManager
 		return alertHandlers ;
 	}
 	
+//	private List<AlertHandler> list_handlers()
+//	{
+//		ArrayList<AlertHandler>
+//		alertHandlers.values()
+//	}
 
 	public AlertHandler getHandlerById(String id)
 	{

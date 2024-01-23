@@ -21,7 +21,7 @@ import org.iottree.driver.common.modbus.sniffer.SnifferCmd;
  * every UADev in channel may has this object fit for runtime running
  * @author jason.zhu
  */
-public class ModbusDevItem //extends DevModel
+public class ModbusDevItem
 {
 	private transient List<ModbusAddr> maddrs = new ArrayList<>() ;
 	

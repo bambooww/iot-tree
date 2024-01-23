@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.DevAddr;
+import org.iottree.core.UADev;
 import org.iottree.core.UAVal.ValTP;
 
 /**
@@ -102,7 +103,7 @@ public class SimulatorAddr extends DevAddr
 //	}
 	
 	@Override
-	public DevAddr parseAddr(String str,ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str,ValTP vtp, StringBuilder failedr)
 	{
 		DevAddr r = parseSimFuncAddr(str,vtp, failedr);
 		if(r!=null)
@@ -222,7 +223,7 @@ public class SimulatorAddr extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		
 		return null;

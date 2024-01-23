@@ -103,6 +103,7 @@ public class UAVal //extends JSObMap
 				return false;
 			}
 		}
+		
 	}
 	
 	public static ValTP getValTp(String tpstr)

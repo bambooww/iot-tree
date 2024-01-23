@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.DevAddr;
+import org.iottree.core.UADev;
 import org.iottree.core.UAVal.ValTP;
 
 /**
@@ -42,7 +43,7 @@ public class MQTTClientAddr extends DevAddr
 	 * topic#payload
 	 */
 	@Override
-	public DevAddr parseAddr(String str, ValTP vtp, StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str, ValTP vtp, StringBuilder failedr)
 	{
 		int idx = str.indexOf('+') ;
 		if(idx<=0)
@@ -78,7 +79,7 @@ public class MQTTClientAddr extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		return null;
 	}

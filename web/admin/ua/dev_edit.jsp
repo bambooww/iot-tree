@@ -160,6 +160,8 @@ var form = null;
 layui.use('form', function(){
 	  form = layui.form;
 	  form.render();
+	  
+	  $("#name").focus() ;
 });
 
 function win_close()

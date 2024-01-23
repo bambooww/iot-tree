@@ -50,13 +50,13 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	
 	
 	@Override
-	public DevAddr parseAddr(String str, ValTP vtp,StringBuilder failedr)
+	public DevAddr parseAddr(UADev dev,String str, ValTP vtp,StringBuilder failedr)
 	{
 		return parseModbusAddr(str, vtp,failedr) ;
 	}
 	
 	@Override
-	public ChkRes checkAddr(String addr,ValTP vtp)
+	public ChkRes checkAddr(UADev dev,String addr,ValTP vtp)
 	{
 		StringBuilder failedr = new StringBuilder() ;
 		ModbusAddr ma = parseModbusAddr(addr, vtp,failedr) ;
@@ -125,7 +125,7 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	}
 
 
-	public DevAddr guessAddr(String str)
+	public DevAddr guessAddr(UADev dev,String str)
 	{
 		if(Convert.isNullOrEmpty(str)||str.length()<2)
 			return null ;//guess failed
@@ -151,7 +151,7 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 		leftstr = UAUtil.transAddrNumByGuess(leftstr,5) ;
 		
 		StringBuilder sb = new StringBuilder() ;
-		return parseAddr(c+leftstr, vtp,sb) ;
+		return parseAddr(dev,c+leftstr, vtp,sb) ;
 	}
 	
 	public short getAddrTp()

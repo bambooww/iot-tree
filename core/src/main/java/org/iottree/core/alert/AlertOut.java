@@ -1,6 +1,9 @@
 package org.iottree.core.alert;
 
+import java.util.List;
+
 import org.iottree.core.UAPrj;
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
@@ -8,7 +11,7 @@ import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
 
 @data_class
-public abstract class AlertOut
+public abstract class AlertOut extends JSObMap
 {
 	public static final String[] TPS = new String[] {"js"};//{"ui","js"} ;
 	public static final String[] TP_TITLES = new String[] {"JS"}; // {"UI","JS"} ;
@@ -60,6 +63,13 @@ public abstract class AlertOut
 	public String getTitle()
 	{
 		return this.title ;
+	}
+	
+	public List<AlertHandler> getRelatedHandlers()
+	{
+		AlertManager am = AlertManager.getInstance(this.prj.getId()) ;
+		//am.
+		return null ;
 	}
 	
 	public boolean isEnable()

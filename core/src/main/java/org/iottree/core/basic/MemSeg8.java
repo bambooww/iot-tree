@@ -124,7 +124,7 @@ public class MemSeg8 extends MemSeg
 		case vt_uint16:
 			if(len<2)
 				throw new IllegalArgumentException("int16 must 2 bytes len") ;
-			short shortv = DataUtil.bytesToShort(buf,sidx) ;
+			short shortv = DataUtil.bytesToShort(buf,sidx,bo) ;
 			if(tp==ValTP.vt_int16)
 				return shortv ;
 			else
@@ -151,7 +151,7 @@ public class MemSeg8 extends MemSeg
 		case vt_float:
 			if(len<4)
 				throw new IllegalArgumentException("float must 4 bytes len") ;
-			return DataUtil.bytesToFloat(buf,sidx);
+			return DataUtil.bytesToFloat(buf,sidx,bo);
 		case vt_double:
 			if(len<8)
 				throw new IllegalArgumentException("double must 8 bytes len") ;

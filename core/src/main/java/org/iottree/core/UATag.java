@@ -243,16 +243,27 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
+		StringBuilder sb = new StringBuilder() ;
+		if(this.checkParseAddr(addr, vt, sb)==null)
+			throw new IllegalArgumentException("invalid addr ,parse failedr:"+sb) ;
+		
 		setNameTitle(name,title,desc) ;
 		this.addr = addr ;
 		this.valTp = vt ;
 		this.bCanWrite = canwrite ;
 		this.scanRate = srate;
 		this.decDigits = dec_digits ;
+		
+		synchronized(this)
+		{
+			this.devAddr=null;
+			this.getDevAddr(true,sb) ;
+		}
 	}
 	
 	void setTagSys(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
+		
 		setNameTitleSys(name,title,desc) ;
 		this.addr = addr ;
 		this.valTp = vt ;
@@ -571,23 +582,36 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public DevAddr getDevAddr(StringBuilder failedr)
 	{
+		return getDevAddr(true,failedr);
+	}
+	
+	public DevAddr getDevAddr(boolean force_parse,StringBuilder failedr)
+	{
 		if(Convert.isNullOrEmpty(addr))
 			return null ;
-		if(devAddr!=null)
+		if(!force_parse && devAddr!=null)
 			return devAddr;
 		UAVal.ValTP vt = getValTpRaw() ;
 		if(vt==null)
 			return null ;
-		DevDriver dd =getRelatedDriver();
-		if(dd==null)
-			return null;
-		devAddr = dd.getSupportAddr().parseAddr(this.addr,vt, failedr);
+//		DevDriver dd =getRelatedDriver();
+//		if(dd==null)
+//			return null;
+//		UADev dev = this.getBelongToDev() ;
+		devAddr =checkParseAddr(addr,vt,failedr) ;
 		if(devAddr!=null)
 			devAddr.belongTo = this ;
 		return devAddr ;
 	}
 	
-	
+	private DevAddr checkParseAddr(String addr,ValTP vt,StringBuilder failedr)
+	{
+		DevDriver dd =getRelatedDriver();
+		if(dd==null)
+			return null;
+		UADev dev = this.getBelongToDev() ;
+		return dd.getSupportAddr().parseAddr(dev,addr,vt, failedr);
+	}
 	
 	public UAVal.ValTP getValTpRaw()
 	{
@@ -1505,10 +1529,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		switch(key.toLowerCase())
 		{
 		case "_pv":
+			boolean r = false;
 			if(v instanceof String)
-				RT_writeValStr((String)v) ;
+				r = RT_writeValStr((String)v) ;
 			else
-				RT_writeVal(v) ;
+				r = RT_writeVal(v) ;
+			if(!r)
+				throw new RuntimeException("JS_set _pv="+v+" err in tag "+this.getNodePath()) ;
 			return ;
 		case "_value":
 			if(v instanceof String)

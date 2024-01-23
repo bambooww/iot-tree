@@ -81,7 +81,9 @@
 			return null ;
 		if(!(n instanceof UANodeOCTags))
 			return null ;
+		
 		UANodeOCTags nt = (UANodeOCTags)n;
+		UADev dev = nt.getBelongToDev() ;
 		IDevDriverable ddable = nt.getDevDriverable() ;
 		if(ddable==null)
 			return null ;
@@ -91,7 +93,7 @@
 		
 		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
 		UAVal.ValTP vtp = UAVal.getValTp(vt) ;
-		return dd.checkAddr(addr, vtp) ;
+		return dd.checkAddr(dev,addr, vtp) ;
 	}
 %><%
 if(!Convert.checkReqEmpty(request, out, "op","path"))

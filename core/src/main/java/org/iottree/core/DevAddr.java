@@ -132,10 +132,10 @@ public abstract class DevAddr
 	 * @param str
 	 * @return failed return null,and may fill failedr reson desc
 	 */
-	public abstract DevAddr parseAddr(String str,ValTP vtp, StringBuilder failedr) ;
+	public abstract DevAddr parseAddr(UADev dev,String str,ValTP vtp, StringBuilder failedr) ;
 	
 	
-	public ChkRes checkAddr(String addr,ValTP vtp)
+	public ChkRes checkAddr(UADev dev,String addr,ValTP vtp)
 	{
 		return null ;
 	}
@@ -148,7 +148,7 @@ public abstract class DevAddr
 	 * @param str
 	 * @return
 	 */
-	public abstract DevAddr guessAddr(String str) ;
+	public abstract DevAddr guessAddr(UADev dev,String str) ;
 	
 	public abstract List<String> listAddrHelpers() ;
 	

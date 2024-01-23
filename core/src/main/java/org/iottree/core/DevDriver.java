@@ -418,14 +418,14 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 * @param vtp
 	 * @return
 	 */
-	public ChkRes checkAddr(String addr, ValTP vtp)
+	public ChkRes checkAddr(UADev dev,String addr, ValTP vtp)
 	{
 		DevAddr daddr = this.getSupportAddr();
 		if (daddr == null)
 			return null;
 
 		// StringBuilder failedr = new StringBuilder() ;
-		return daddr.checkAddr(addr, vtp);
+		return daddr.checkAddr(dev,addr, vtp);
 	}
 
 	/**

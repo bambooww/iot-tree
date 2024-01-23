@@ -57,7 +57,7 @@ for(ValTranser vt: ValTranser.listValTransers())
 for(UAVal.ValTP vt:UAVal.ValTP.values())
 {
 	String sel="" ;
-	if(vt==UAVal.ValTP.vt_double)
+	if(vt==UAVal.ValTP.vt_float)
 		sel = "selected=\'selected\'";
 	 %><option value="<%=vt.getInt()%>" <%=sel %>><%=vt.getStr() %></option><%
 }
