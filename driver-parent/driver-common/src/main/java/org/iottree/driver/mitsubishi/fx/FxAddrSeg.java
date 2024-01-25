@@ -33,6 +33,12 @@ public class FxAddrSeg
 	 */
 	int baseValStart = 0 ;
 	
+	int baseAddrForceOnOff = -1 ;
+	
+	int extBaseValStart = -1 ;
+	
+	int extBaseAddrForceOnOff = -1 ;
+	
 	transient FxAddrDef belongTo ;
 	
 	FxAddrSeg(int baseaddr,String title,int valstart,int valend,int digit_num,UAVal.ValTP[] tps,boolean b_write)
@@ -49,6 +55,29 @@ public class FxAddrSeg
 	public FxAddrSeg asBaseValStart(int v)
 	{
 		this.baseValStart = v ;
+		return this ;
+	}
+	
+	public FxAddrSeg EXT_asBaseValStart(int v)
+	{
+		this.extBaseValStart = v ;
+		return this ;
+	}
+	
+	public FxAddrSeg EXT_asBaseAddrForceOnOff(int v)
+	{
+		this.extBaseAddrForceOnOff = v ;
+		return this ;
+	}
+	
+	public boolean isExtCmd()
+	{
+		return this.extBaseValStart>=0 || this.extBaseAddrForceOnOff >=0 ;
+	}
+	
+	public FxAddrSeg asBaseAddrForceOnOff(int addr)
+	{
+		this.baseAddrForceOnOff = addr ;
 		return this ;
 	}
 	

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.iottree.core.util.Convert;
 import org.iottree.driver.mitsubishi.fx.FxMsg;
-import org.iottree.driver.mitsubishi.fx.FxMsgReq;
+import org.iottree.driver.mitsubishi.fx.FxMsgReqR;
 import org.junit.Test;
 
 public class FxMsgTest
@@ -43,15 +43,15 @@ public class FxMsgTest
 	@Test
 	public void test1()
 	{
-		FxMsgReq fmBR = new FxMsgReq() ;
+		FxMsgReqR fmBR = new FxMsgReqR() ;
 		//fmBR.asAddrTp('X');//.asStationCode(5).asPCCode(0xff);
-		fmBR.asCmd(FxMsg.CMD_BR).asStartAddr(0x80,0).asByteNum(5);
+		fmBR.asStartAddr(0x80,0).asByteNum(5);
 		
 		String tmps = new String(fmBR.toBytes()) ;
 		System.out.println(tmps) ;
 		
 		//fmBR.asAddrTp('X');//.asStationCode(1).asPCCode(0xff);
-		fmBR.asCmd(FxMsg.CMD_BR).asStartAddr(0x80,0).asByteNum(5);
+		fmBR.asStartAddr(0x80,0).asByteNum(5);
 		
 		byte[] bs = fmBR.toBytes() ;
 		tmps = new String(bs) ;

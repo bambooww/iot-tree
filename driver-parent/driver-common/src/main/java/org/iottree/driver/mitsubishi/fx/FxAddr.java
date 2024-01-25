@@ -30,15 +30,23 @@ public class FxAddr extends DevAddr implements Comparable<FxAddr>
 	public static final int TP_X_START = 0x80 ; //128
 	public static final int TP_Y_START = 0xA0 ; //160
 	
+	public static final int TP_X_FORCE_ONOFF = 0x400 ;
+	public static final int TP_Y_FORCE_ONOFF = 0x500 ;
+	public static final int TP_S_FORCE_ONOFF = 0x00 ;
+	
 	public static final int TP_TC_START = 0xC0 ; // timer contacts
 	public static final int TP_TCOIL_START = 0x2C0 ; // timer coil
 	
 	public static final int TP_TV_START = 0x800;// time value
 	public static final int TP_TR_START = 0x4C0 ; //Time reset
 	
+	public static final int TP_T_FORCE_ONOFF = 0x600 ;
+	
 	public static final int TP_CC_START = 0x1C0 ; // counter contaces ;
 	public static final int TP_CCOIL_START = 0x3C0 ; //counter coil
 	public static final int TP_CR_START = 0x5C0 ;  // Counter Reset
+	
+	public static final int TP_C_FORCE_ONOFF = 0xE00 ;
 	
 	public static final int TP_CV16_START = 0xA00 ; //counter value
 	public static final int TP_CV32_START = 0xC00 ;//3072;
@@ -47,6 +55,8 @@ public class FxAddr extends DevAddr implements Comparable<FxAddr>
 	public static final int TP_MS_START = 0x1E0 ; // M specila Special Aux. Relays
 	public static final int TP_PM_START = 0x300 ;//768
 	
+	public static final int TP_M_FORCE_ONOFF = 0x800 ;
+	public static final int TP_MS_FORCE_ONOFF = 0xF00 ;
 	
 	public static final int TP_OC_START = 0x3C0 ;//960
 	public static final int TP_RC_START = 0x5C0 ;//1472 
@@ -232,7 +242,8 @@ public class FxAddr extends DevAddr implements Comparable<FxAddr>
 		//if(vtp!=ValTP.vt_bool)
 		return CHK_RES_OK;
 	}
-
+	
+	
 	@Override
 	public boolean isSupportGuessAddr()
 	{

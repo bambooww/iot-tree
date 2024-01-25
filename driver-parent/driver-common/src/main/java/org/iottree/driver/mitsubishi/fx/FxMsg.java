@@ -3,8 +3,6 @@ package org.iottree.driver.mitsubishi.fx;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.iottree.core.UAVal.ValTP;
-import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -56,6 +54,8 @@ public abstract class FxMsg
 	
 	//String cmd = "BR" ;
 	
+	boolean bExt = false;
+	
 	public FxMsg()
 	{}
 	
@@ -73,6 +73,16 @@ public abstract class FxMsg
 //		return this ;
 //	}
 	
+	public boolean isExtCmd()
+	{
+		return this.bExt ;
+	}
+	
+	public FxMsg asExt(boolean b_ext)
+	{
+		this.bExt = b_ext ;
+		return this ;
+	}
 	
 	public abstract byte[] toBytes() ;
 	

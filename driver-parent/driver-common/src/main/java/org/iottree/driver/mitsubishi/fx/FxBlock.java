@@ -6,15 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.iottree.core.UAVal;
-import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
-
-import com.google.common.primitives.UnsignedInteger;
+import org.iottree.core.util.xmldata.DataUtil;
 
 public class FxBlock
 {
@@ -55,15 +53,20 @@ public class FxBlock
 	 */
 	private transient int lastFailedCC  = 0 ;
 	
-	private transient FxDriver ppiDrv = null ;
+	private transient long lastWriteFailedDT = -1 ;
 	
+	private transient String lastWriteFailedInf = null ;
+	
+	private transient FxDriver fxDrv = null ;
+	
+	private transient FxAddrSeg fxSeg =null ;
 	/**
 	 * 
 	 * @param addrs same prefix and sorted by addr num
 	 * @param block_size
 	 * @param scan_inter_ms
 	 */
-	FxBlock(List<FxAddr> addrs,
+	FxBlock(FxAddrSeg seg,List<FxAddr> addrs,
 			int block_size,long scan_inter_ms)//,int failed_successive)
 	{
 		//devId = devid ;
@@ -72,6 +75,7 @@ public class FxBlock
 		if(block_size<=0)
 			throw new IllegalArgumentException("block cannot <=0 ");
 		//this.memTp = memtp ;
+		this.fxSeg = seg ;
 		this.addrs = addrs ;
 		this.blockSize = block_size ;
 		this.scanInterMS = scan_inter_ms;
@@ -103,13 +107,20 @@ public class FxBlock
 	
 	boolean initCmds(FxDriver drv)
 	{
-		ppiDrv = drv ;
+		fxDrv = drv ;
 		
 		if(addrs==null||addrs.size()<=0)
 			return false ;
 
 		FxAddr fxaddr = addrs.get(0) ;
-		int base_addr = fxaddr.addrSeg.getBaseAddr() ;
+		int base_addr = -1 ;
+		if(fxSeg.isExtCmd())
+			base_addr = fxaddr.addrSeg.extBaseValStart;
+		else
+			base_addr = fxaddr.addrSeg.getBaseAddr() ;
+		
+		if(base_addr<0)
+			return false;
 		//System.out.println("11") ;
 		FxCmd curcmd = null ;
 		int cur_reg = -1 ;
@@ -140,7 +151,7 @@ public class FxBlock
 
 			curcmd = new FxCmdR(base_addr,cur_reg,regnum)
 					.withScanIntervalMS(this.scanInterMS);//(this.getFC(),this.scanInterMS,
-			curcmd.initCmd(drv);
+			curcmd.initCmd(drv,fxSeg.isExtCmd());
 			cmd2addr.put(curcmd, curaddrs);
 				
 			cur_reg = regp ;
@@ -157,7 +168,7 @@ public class FxBlock
 //				regnum += lastma.getValTP().getValByteLen() ;
 			curcmd = new FxCmdR(base_addr,cur_reg,regnum)
 					.withScanIntervalMS(this.scanInterMS);
-			curcmd.initCmd(drv);
+			curcmd.initCmd(drv,fxSeg.isExtCmd());
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setRecvEndTimeout(recvTO);
 			cmd2addr.put(curcmd, curaddrs);
@@ -218,6 +229,54 @@ public class FxBlock
 				
 		}
 		return null;
+	}
+	
+	public byte[] transValToBytesByAddr(FxAddr da,Object v,StringBuilder failedr)
+	{
+		UAVal.ValTP vt = da.getValTP();
+		if(vt==null)
+		{
+			failedr.append("no valtp in addr") ;
+			return null ;
+		}
+		if(vt==UAVal.ValTP.vt_bool)
+		{
+			failedr.append("vt_bool is not supported") ;
+			return null ;
+		}
+
+		if(!vt.isNumberVT())
+		{
+			failedr.append("valtp is not number") ;
+			return null ;
+		}
+		
+		int intv ;
+		if(v instanceof Number)
+			intv = ((Number)v).intValue() ;
+		else if(v instanceof String)
+			intv = Integer.parseInt(""+v) ;
+		else
+		{
+			failedr.append("invalid val,it must be number") ;
+			return null ;
+		}
+		
+		int blen = vt.getValByteLen() ;
+		if(blen==4)
+		{
+			byte[] rets = new byte[4] ;
+			DataUtil.intToBytes(intv,rets,0,ByteOrder.BigEndian) ;
+			return rets ;
+		}
+		else if(blen==2)
+		{
+			byte[] rets = new byte[2] ;
+			DataUtil.shortToBytes((short)intv,rets,0,ByteOrder.BigEndian) ;
+			return rets ;
+		}
+		failedr.append("valtp is not 2 or 4") ;
+		return null ;
 	}
 	
 	public boolean setValByAddr(FxAddr da,Object v)
@@ -330,8 +389,8 @@ public class FxBlock
 			
 			List<FxAddr> addrs = cmd2addr.get(mc) ;
 			cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
-			FxMsgResp resp = cmdr.getResp();
-			FxMsgReq req = cmdr.getReq() ;
+			FxMsgRespR resp = cmdr.getResp();
+			FxMsgReqR req = cmdr.getReq() ;
 			byte[] retbs = null;
 			if(resp==null)
 				continue ;
@@ -393,20 +452,103 @@ public class FxBlock
 			Thread.sleep(this.interReqMs);
 			
 			mc.doCmd(ep.getInputStream(),ep.getOutputStream());
+			
+			if(mc instanceof FxCmdW)
+			{
+				FxCmdW fcw = (FxCmdW)mc ;
+				if(!fcw.isAck())
+					log.error(fcw.toString() +" is not ack");
+				else
+				{
+					if(log.isDebugEnabled())
+					{
+						log.debug(fcw.toString() +" is run ok (ack=true)");
+					}
+				}
+			}
 		}
 	}
 	
-	public boolean setWriteCmdAsyn(FxAddr addr, Object v)
+	public boolean setWriteCmdAsyn(FxAddr fxaddr, Object v)
 	{
-//		PPICmdW mc = new PPICmdW((short)devId,memTp,addr,v);
-//		mc.initCmd(ppiDrv);
-//
-//		
-//		synchronized(writeCmds)
-//		{
-//			writeCmds.addLast(mc);
-//		}
+		
+		if(!fxSeg.matchAddr(fxaddr))
+		{
+			return false;
+		}
+		
+		FxCmd fxcmd = null ;
+		if(fxSeg.isValBit())
+		{
+//			int base_addr = fxaddr.addrSeg.baseAddrForceOnOff ;
+//			if(base_addr<0)
+//				return false;
+			
+			int base_addr =-1;
+			if(fxSeg.isExtCmd())
+				base_addr = fxaddr.addrSeg.extBaseAddrForceOnOff;
+			else
+				base_addr = fxaddr.addrSeg.baseAddrForceOnOff ;
+			//if(base_addr<0)
+			//	base_addr = fxaddr.addrSeg.baseAddrForceOnOff ;
+			if(base_addr<0)
+				return false;
+			
+			boolean bv ;
+			if(v instanceof Boolean)
+				bv = (Boolean)v ;
+			else if(v instanceof Number)
+				bv = ((Number)v).intValue()>0 ;
+			else if(v instanceof String)
+				bv = "true".equalsIgnoreCase((String)v) || "1".equalsIgnoreCase((String)v) ;
+			else
+			{
+				return false;
+			}
+			int addrn = fxaddr.getAddrNum() ;
+			fxcmd = new FxCmdOnOff(base_addr,addrn,bv) ;
+		}
+		else
+		{
+			int base_addr = -1;
+			if(fxSeg.isExtCmd())
+				base_addr = fxaddr.addrSeg.extBaseValStart;
+			else
+				base_addr = fxaddr.addrSeg.getBaseAddr() ;
+			
+			if(base_addr<0)
+				return false;//base_addr = fxaddr.addrSeg.getBaseAddr() ;
+			
+			int regp = fxaddr.getBytesInBase();//.getOffsetBytes() ;
+			StringBuilder failedr = new StringBuilder() ;
+			byte[] bs = transValToBytesByAddr(fxaddr,v,failedr) ;
+			if(bs==null)
+			{
+				lastWriteFailedDT = System.currentTimeMillis() ;
+				lastWriteFailedInf = failedr.toString() ;
+				return false;
+			}
+			
+			fxcmd = new FxCmdW(base_addr,regp,bs);
+		}
+		
+		fxcmd.initCmd(fxDrv,fxSeg.isExtCmd());
+		
+		synchronized(writeCmds)
+		{
+			writeCmds.addLast(fxcmd);
+		}
 		return true;
 		
+	}
+	
+	public long getLastWriteFailedDT()
+	{
+		return lastWriteFailedDT;
+	}
+	
+	public String getLastWriteFailedInf()
+	{
+		return this.lastWriteFailedInf ;
 	}
 }

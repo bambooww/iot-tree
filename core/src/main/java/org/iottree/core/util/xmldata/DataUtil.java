@@ -106,11 +106,23 @@ public class DataUtil
 	
 	public final static void shortToBytes(short i,byte[] bytes,int offset)
 	{
-		// int is 32bits, 4Bytes
-		bytes[offset+1] = (byte) (i & 0xFF);
-
-		i = (short) (i >>> 8);
-		bytes[offset] = (byte) (i & 0xFF);
+		 shortToBytes(i,bytes,offset,null) ;
+	}
+	
+	public final static void shortToBytes(short i,byte[] bytes,int offset,ByteOrder bo)
+	{
+		if(bo==ByteOrder.BigEndian)
+		{
+			bytes[offset] = (byte) (i & 0xFF);
+			i = (short) (i >>> 8);
+			bytes[offset+1] = (byte) (i & 0xFF);
+		}
+		else
+		{//ByteOrder.ModbusWord default
+			bytes[offset+1] = (byte) (i & 0xFF);
+			i = (short) (i >>> 8);
+			bytes[offset] = (byte) (i & 0xFF);
+		}
 	}
 	
 	public final static int bytesToInt(byte[] bytes,ByteOrder bo)

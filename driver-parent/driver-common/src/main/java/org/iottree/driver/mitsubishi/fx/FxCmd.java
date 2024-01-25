@@ -3,10 +3,6 @@ package org.iottree.driver.mitsubishi.fx;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.iottree.driver.s7.ppi.PPICmd;
-import org.iottree.driver.s7.ppi.PPIDriver;
-import org.iottree.driver.s7.ppi.PPIMemTp;
-
 public abstract class FxCmd
 {
 	final static int RECV_TIMEOUT_DEFAULT = 1000;
@@ -32,6 +28,8 @@ public abstract class FxCmd
 	protected long recvEndTimeout = RECV_END_TIMEOUT_DEFAULT;
 	
 	protected long reqInterMS = 0 ;
+	
+	boolean bExt = false;
 	
 	public FxCmd() //(short dev_addr,FxMemTp fx_mtp)
 	{
@@ -95,9 +93,10 @@ public abstract class FxCmd
 	}
 
 	
-	void initCmd(FxDriver drv)
+	void initCmd(FxDriver drv,boolean b_ext)
 	{
 		this.drv = drv ;
+		this.bExt = b_ext ;
 	}
 	
 	public boolean tickCanRun()

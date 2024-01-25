@@ -1,11 +1,7 @@
 package org.iottree.driver.mitsubishi.fx;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import org.iottree.core.util.Convert;
-import org.iottree.driver.s7.ppi.PPIDriver;
 
 
 public class FxCmdR extends FxCmd
@@ -17,10 +13,10 @@ public class FxCmdR extends FxCmd
 	private int startAddr ;
 	
 	
-	transient private FxMsgReq req = null ;
+	transient private FxMsgReqR req = null ;
 	
 	//transient byte[] retBs = null ;
-	private transient FxMsgResp resp = null ;
+	private transient FxMsgRespR resp = null ;
 	
 	public FxCmdR(int base_addr,int startaddr,int readnum)
 	{
@@ -51,13 +47,13 @@ public class FxCmdR extends FxCmd
 //		return this.retBs ;
 //	}
 	
-	void initCmd(FxDriver drv)
+	void initCmd(FxDriver drv,boolean b_ext)
 	{
-		super.initCmd(drv);
+		super.initCmd(drv,b_ext);
 		
-		FxMsgReq reqr = new FxMsgReq() ;
+		FxMsgReqR reqr = new FxMsgReqR() ;
 		
-		reqr.asStartAddr(this.baseAddr,startAddr).asByteNum(readNum);
+		reqr.asStartAddr(this.baseAddr,startAddr).asByteNum(readNum).asExt(b_ext);
 		
 		req = reqr ;
 	}
@@ -70,12 +66,12 @@ public class FxCmdR extends FxCmd
 		//write
 		byte[] bs1 = req.toBytes();
 		
-		//if(FxMsg.log.isTraceEnabled())
-		{
-			FxMsg.log.trace("req ->"+Convert.byteArray2HexStr(bs1, " "));
-			System.out.println("req ->"+Convert.byteArray2HexStr(bs1, " ")) ;
-		}
-		FxMsgResp resp = new FxMsgResp(this.readNum) ;
+//		//if(FxMsg.log.isTraceEnabled())
+//		{
+//			FxMsg.log.trace("req ->"+Convert.byteArray2HexStr(bs1, " "));
+//			System.out.println("req ->"+Convert.byteArray2HexStr(bs1, " ")) ;
+//		}
+		FxMsgRespR resp = new FxMsgRespR(this.readNum) ;
 		
 		FxMsg.clearInputStream(inputs,50) ;
 		outputs.write(bs1);
@@ -88,8 +84,8 @@ public class FxCmdR extends FxCmd
 			//throw new IOException("read failed,"+resp.errInf) ;
 		}
 		
-		byte[] bs = resp.byteBuf ;
-		System.out.println(Convert.byteArray2HexStr(bs, " ")) ;		
+//		byte[] bs = resp.byteBuf ;
+//		System.out.println(Convert.byteArray2HexStr(bs, " ")) ;		
 		
 		//System.out.println("resp <-"+Convert.byteArray2HexStr(resp.toBytes(), " "));
 		onResp(resp);
@@ -98,18 +94,18 @@ public class FxCmdR extends FxCmd
 	}
 	
 	
-	private void onResp(FxMsgResp resp)
+	private void onResp(FxMsgRespR resp)
 	{
 		//resp.get
 		this.resp = resp ;
 	}
 	
-	public FxMsgReq getReq()
+	public FxMsgReqR getReq()
 	{
 		return this.req ;
 	}
 	
-	public FxMsgResp getResp()
+	public FxMsgRespR getResp()
 	{
 		return this.resp;
 	}

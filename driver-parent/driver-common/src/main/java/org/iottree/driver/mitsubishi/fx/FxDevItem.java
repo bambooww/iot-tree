@@ -68,7 +68,7 @@ public class FxDevItem
 		fxAddrs= tmpads ;
 		
 		
-		int failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
+		//int failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
 		
 		int blocksize = 32;
 		if(devDef!=null)
@@ -96,7 +96,7 @@ public class FxDevItem
 			
 			for(Map.Entry<FxAddrSeg, List<FxAddr>> seg2ads:seg2addrs.entrySet())
 			{
-				FxBlock blk = new FxBlock(seg2ads.getValue(),blocksize,inter_ms);
+				FxBlock blk = new FxBlock(seg2ads.getKey(),seg2ads.getValue(),blocksize,inter_ms);
 				blk.setTimingParam(reqto, recvto, inter_ms);
 				if(blk.initCmds(fxDrv))
 					seg2block.put(seg2ads.getKey(),blk) ;

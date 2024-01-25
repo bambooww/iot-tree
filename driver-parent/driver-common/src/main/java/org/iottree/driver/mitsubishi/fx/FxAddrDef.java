@@ -1,10 +1,8 @@
 package org.iottree.driver.mitsubishi.fx;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
 
 public class FxAddrDef

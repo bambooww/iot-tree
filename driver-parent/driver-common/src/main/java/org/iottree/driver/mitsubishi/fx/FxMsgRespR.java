@@ -3,7 +3,7 @@ package org.iottree.driver.mitsubishi.fx;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FxMsgResp extends FxMsg
+public class FxMsgRespR extends FxMsg
 {
 	int byteNum ;
 	//boolean[] regVals = null ;
@@ -12,7 +12,7 @@ public class FxMsgResp extends FxMsg
 	boolean readOk=false;
 	String errInf = null ;
 	
-	public FxMsgResp(int bytenum)
+	public FxMsgRespR(int bytenum)
 	{
 		this.byteNum = bytenum ;
 		//regVals = new boolean[regnum] ;
@@ -39,8 +39,8 @@ public class FxMsgResp extends FxMsg
 		
 		int len = 3+this.byteNum*2 ;
 		byte[] ret = new byte[len] ;
-		//boolean bend = false; 
-		long curt = System.currentTimeMillis() ;
+		
+		//long curt = System.currentTimeMillis() ;
 		while(true)
 		{
 			switch(st)

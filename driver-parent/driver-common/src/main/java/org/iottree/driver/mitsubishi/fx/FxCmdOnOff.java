@@ -5,27 +5,29 @@ import java.io.OutputStream;
 
 import org.iottree.core.util.Convert;
 
-public class FxCmdW extends FxCmd
+/**
+ * bit pos force On / Off Writer cmd
+ * @author jason.zhu
+ *
+ */
+public class FxCmdOnOff extends FxCmd
 {
 	private int baseAddr ; 
 	
-	private byte[] wBytes  ;
+	private boolean bOn ;
 	
 	private int startAddr ;
 	
 	
-	transient private FxMsgReqW req = null ;
+	transient private FxMsgReqOnOff req = null ;
 	
-	//transient byte[] retBs = null ;
 	private transient boolean bAck = false ;
 	
-	public FxCmdW(int base_addr,int startaddr,byte[] w_bytes)
+	public FxCmdOnOff(int base_addr,int startaddr,boolean b_on)
 	{
-		//super((short)0,fx_mtp);
 		this.baseAddr = base_addr ;
 		this.startAddr = startaddr; //offet byte or T/C
-		this.wBytes = w_bytes;
-		//so T /C must 
+		this.bOn = b_on;
 	}
 	
 	public int getBaseAddr()
@@ -38,54 +40,60 @@ public class FxCmdW extends FxCmd
 		return startAddr ;
 	}
 	
-	public byte[] getWriteBytes()
+	public boolean isOn()
 	{
-		return wBytes ;
+		return this.bOn ;
 	}
-
-	public boolean isAck()
+	
+	public boolean isOff()
 	{
-		return this.bAck ;
+		return !this.bOn ;
 	}
+	
+//	public byte[] getRetData()
+//	{
+//		return this.retBs ;
+//	}
 	
 	void initCmd(FxDriver drv,boolean b_ext)
 	{
 		super.initCmd(drv,b_ext);
 		
-		FxMsgReqW reqw = new FxMsgReqW() ;
+		FxMsgReqOnOff reqr = new FxMsgReqOnOff() ;
 		
-		reqw.asStartAddr(this.baseAddr,startAddr).asBytesVal(this.wBytes).asExt(b_ext);
+		reqr.asStartAddr(this.baseAddr,startAddr).asOnOrOff(bOn).asExt(b_ext);
 		
-		req = reqw ;
+		req = reqr ;
 	}
 	
 	public boolean doCmd(InputStream inputs,OutputStream outputs)  throws Exception
 	{
 		Thread.sleep(this.drv.getCmdInterval());
-
+		
 		//write
 		byte[] bs1 = req.toBytes();
 		
-		if(FxMsg.log.isTraceEnabled())
+		//if(FxMsg.log.isTraceEnabled())
 		{
-			FxMsg.log.trace("reqw ->"+Convert.byteArray2HexStr(bs1, " "));
-			//System.out.println("reqw->"+Convert.byteArray2HexStr(bs1, " ")) ;
+			FxMsg.log.trace("req ->"+Convert.byteArray2HexStr(bs1, " "));
+			System.out.println("req ->"+Convert.byteArray2HexStr(bs1, " ")) ;
 		}
-		
 		FxMsg.clearInputStream(inputs,50) ;
 		outputs.write(bs1);
 		int c = FxMsg.readCharTimeout(inputs, recvTimeout);
 		bAck = (c==FxMsg.ACK) ;
-		
+		System.out.println(" FxCmdOnOff - "+this.bAck) ;
 		return true;
 	}
 	
+	public boolean isAck()
+	{
+		return this.bAck ;
+	}
 	
-	
-	public FxMsgReqW getReq()
+	public FxMsgReqOnOff getReq()
 	{
 		return this.req ;
 	}
-	
 	
 }

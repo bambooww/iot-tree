@@ -1420,11 +1420,24 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			tp = da.getValTP();
 		else
 			tp = this.getValTpRaw();
-		Object v = UAVal.transStr2ObjVal(tp, strv);
-		if(v==null)
-			return false;
+		
+		try
+		{
+			Object v = UAVal.transStr2ObjVal(tp, strv);
+			if(v==null)
+			{
+				failedr.append("transfer str to target val err:empty or null") ;
+				return false;
+			}
 		
 		return RT_writeVal(v,failedr) ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			failedr.append(ee.getMessage()) ;
+			return false;
+		}
 	}
 	
 	

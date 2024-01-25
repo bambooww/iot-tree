@@ -1,8 +1,6 @@
 package org.iottree.driver.mitsubishi.fx;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +11,10 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UATag;
-import org.iottree.core.DevDriver.Model;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
-import org.iottree.core.util.Convert;
-import org.iottree.driver.s7.ppi.PPIDevItem;
 
 public class FxDriver extends DevDriver
 {
@@ -260,17 +255,30 @@ public class FxDriver extends DevDriver
 //		System.out.println(Convert.byteArray2HexStr(bs, " ")) ;		
 //		return true;
 	}
+	
+	private FxDevItem getDevItem(UADev dev)
+	{
+		for(FxDevItem mdi:fxDevItems)
+		{
+			if(mdi.getUADev().equals(dev))
+					return mdi ;
+		}
+		return null ;
+	}
 
 	@Override
 	public boolean RT_writeVal(UACh ch,UADev dev,UATag tag, DevAddr da, Object v)
 	{
-		return false;
+		FxDevItem mdi = getDevItem(dev) ;
+		if(mdi==null)
+			return false;
+		return mdi.RT_writeVal(da, v) ;
 	}
 
 	@Override
 	public boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags, DevAddr[] da, Object[] v)
 	{
-		return false;
+		throw new RuntimeException("no impl") ;
 	}
 
 }
