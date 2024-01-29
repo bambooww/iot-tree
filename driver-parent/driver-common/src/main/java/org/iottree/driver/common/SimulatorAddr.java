@@ -221,9 +221,15 @@ public class SimulatorAddr extends DevAddr
 		
 		return false;
 	}
+	
+	@Override
+	public String toCheckAdjStr()
+	{
+		return null ;
+	}
 
 	@Override
-	public DevAddr guessAddr(UADev dev,String str)
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		
 		return null;

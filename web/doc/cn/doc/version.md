@@ -197,11 +197,22 @@ Connectors新增了Xml格式的导入导出功能，这样可以方便项目之�
 
 
 
-### 版本 1.0.x (计划)
+### 版本 1.0.1
 
+CmdLineHandler Driver support JS impl
+Alert Handler to out limit bug fixed
+Modbus驱动Block Size bug fixed
 完善对关系数据库的指标数据存储，统计功能。并且配套新增UI组件用来展示。
 完善一些图元库
 
+
+
+### 版本 1.0.2
+
+增加驱动分类功能，并且使用树形选择对话框。
+标签编辑增加数据类型驱动限定，并且完善了验证功能。
+新增三菱PLC的部分设备驱动。
+其他一些优化改进
 
 
 

@@ -465,9 +465,34 @@ public abstract class ConnProvider implements IXmlDataValidator
 	 */
 	public final List<DevDriver> supportDrivers()
 	{
+		List<DevDriver> drvs = DevManager.getInstance().getDrivers() ;
+		
+//		Class<? extends ConnPt> supc = supportConnPtClass();
+//		
+//		
+//		ArrayList<DevDriver> rets =new ArrayList<>() ;
+//		for(DevDriver drv:drvs)
+//		{
+//			Class<? extends ConnPt> c = drv.supportConnPtClass() ;
+//			if(c==null)
+//				continue ;
+//			if(c.isAssignableFrom(supc))
+//			{
+//				List<Class<? extends ConnPt>> cs = drv.notsupportConnPtClass() ;
+//				if(cs!=null&&cs.contains(supc))
+//					continue ;
+//				rets.add(drv);
+//			}
+//		}
+//		return rets ;
+		return filterDrivers(drvs);
+	}
+	
+	public final List<DevDriver> filterDrivers(List<DevDriver> drvs)
+	{
 		Class<? extends ConnPt> supc = supportConnPtClass();
 		
-		List<DevDriver> drvs = DevManager.getInstance().getDrivers() ;
+		//List<DevDriver> drvs = DevManager.getInstance().getDrivers() ;
 		ArrayList<DevDriver> rets =new ArrayList<>() ;
 		for(DevDriver drv:drvs)
 		{

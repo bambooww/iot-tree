@@ -1733,7 +1733,7 @@ function add_or_edit_ch(rep_path,ch_path)
 
 function act_ch_sel_drv(n,op)
 {
-	dlg.open("dev/drv_ch_selector.jsp?repid="+repid+"&chid="+n.id,
+	dlg.open("ua/drv_selector.jsp?prjid="+repid+"&chid="+n.id,
 			{title:"Driver Selector",w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[

@@ -140,7 +140,7 @@ public class FxDevItem
 		ArrayList<FxAddr> r = new ArrayList<>() ;
 		for(FxAddr ma:this.fxAddrs)
 		{
-			if(prefix.equals(ma.prefix))
+			if(prefix.equals(ma.getPrefix()))
 				r.add(ma);
 		}
 		Collections.sort(r);

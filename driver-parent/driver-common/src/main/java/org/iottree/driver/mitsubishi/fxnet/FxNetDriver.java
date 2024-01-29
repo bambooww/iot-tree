@@ -10,6 +10,15 @@ import org.iottree.core.UADev;
 import org.iottree.core.UATag;
 import org.iottree.core.basic.PropGroup;
 
+/**
+ * Fx PLC In RS485,and may has device id support
+ * 
+ * format:
+ * 05 
+ * 
+ * @author jason.zhu
+ *
+ */
 public class FxNetDriver extends DevDriver
 {
 
@@ -47,42 +56,38 @@ public class FxNetDriver extends DevDriver
 	@Override
 	public boolean supportDevFinder()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevDef()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	private static FxNetAddr FX_NET_ADDR = new FxNetAddr() ;
 
 	@Override
 	public DevAddr getSupportAddr()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return FX_NET_ADDR;
 	}
 
 	@Override
 	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

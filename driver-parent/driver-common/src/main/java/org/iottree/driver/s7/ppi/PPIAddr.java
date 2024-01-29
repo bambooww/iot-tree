@@ -210,7 +210,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	}
 
 	@Override
-	public DevAddr guessAddr(UADev dev,String str)
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		return null;
 	}
@@ -301,6 +301,12 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	public String toString()
 	{
 		return addrPt+" "+this.valTP;
+	}
+	
+	@Override
+	public String toCheckAdjStr()
+	{
+		return addrPt.toString();
 	}
 	
 	/**

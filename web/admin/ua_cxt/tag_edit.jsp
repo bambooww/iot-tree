@@ -34,7 +34,7 @@
 	String valtp_str = "" ;
 	long srate = 200;
 	int dec_digits = -1 ;
-	boolean canw = false;
+	String canw = "";
 	String desc = "" ;
 	String trans = null ;
 	boolean b_val_filter=false;
@@ -59,6 +59,21 @@
 		out.print("no node with path="+path) ;
 		return ;
 	}
+	
+	UADev dev = n.getBelongToDev() ;
+	UACh ch = n.getBelongToCh() ;
+	UAVal.ValTP[] vtps = null;
+	if(ch!=null)
+	{
+		DevDriver dd = ch.getDriver() ;
+		if(dd!=null)
+		{
+			vtps = dd.getLimitValTPs(dev);
+		}
+	}
+	if(vtps==null)
+		vtps = UAVal.ValTP.values() ;
+	
 	if( Convert.isNotNullEmpty(id))
 	{
  		tag = n.getTagById(id) ;
@@ -80,7 +95,7 @@
  			valtp_str = ""+valtp.getInt() ;
  		dec_digits = tag.getDecDigits() ;
  		srate = tag.getScanRate() ;
- 		canw = tag.isCanWrite();
+ 		canw = ""+tag.isCanWrite();
  		trans = tag.getValTranser() ;
  		if(Convert.isNullOrEmpty(trans))
  			trans = null ;
@@ -95,8 +110,7 @@
  			alerts = jarr.toString();
  		}
 	}
-%>
-<html>
+%><html>
 <head>
 <title>Tag Editor </title>
 <jsp:include page="../head.jsp">
@@ -160,9 +174,9 @@ dlg.resize_to(850,600);
     <label class="layui-form-label">Data type</label>
     <div class="layui-input-inline" style="width: 100px;">
       <select  id="vt"  name="vt"  class="layui-input" lay-filter="vt" >
-        <option value="">-</option>
+        <option value="">---</option>
 <%
-for(UAVal.ValTP vt:UAVal.ValTP.values())
+for(UAVal.ValTP vt:vtps)
 {
 	boolean bnum = vt.isNumberVT() ;
 	 %><option value="<%=vt.getInt()%>" b_num="<%=bnum%>"><%=vt.getStr() %></option><%
@@ -177,6 +191,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
     <div class="layui-form-mid">R/W:</div>
     <div class="layui-input-inline" style="width: 150px;">
       <select id="canw"  name="canw" class="layui-input">
+        <option value="">---</option>
         <option value="false">Read Only</option>
         <option value="true">Read/Write</option>
       </select>
@@ -538,14 +553,14 @@ function get_input_val(id,defv,bnum)
 }
 function do_submit(cb)
 {
-	var id=$("#id").val() ;
-	var n = $('#name').val();
+	let id=$("#id").val() ;
+	let n = $('#name').val();
 	if(n==null||n=='')
 	{
 		cb(false,'please input name') ;
 		return ;
 	}
-	var tt = $('#title').val();
+	let tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
 		//cb(false,'please input title') ;
@@ -556,16 +571,16 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
-	var bloc = $("#local").prop("checked") ;
-	var b_val_filter = $("#b_val_filter").prop("checked") ;
-	var loc_defv = get_input_val("local_defval") ;
-	var bloc_autosave = $("#local_autosave").prop("checked") ;
+	let bloc = $("#local").prop("checked") ;
+	let b_val_filter = $("#b_val_filter").prop("checked") ;
+	let loc_defv = get_input_val("local_defval") ;
+	let bloc_autosave = $("#local_autosave").prop("checked") ;
 	let max_val_str = $("#max_val_str").val() ;
 	let min_val_str = $("#min_val_str").val() ;
 	//let alert_low = $("#alert_low").val();
 	//let alert_high = $("#alert_high").val();
 	
-	var canw = get_input_val("canw",null)=="true";
+	let canw = get_input_val("canw","");
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
 		vt:get_input_val("vt",""),
@@ -610,32 +625,49 @@ function chk_addr()
 	send_ajax("./tag_ajax.jsp",{op:"chk_addr",
 		vt:get_input_val("vt",""),
 		addr:get_input_val("addr",""),
+		canw:get_input_val("canw",""),
 		path:node_path
 		},(bsucc,ret)=>{
 			if(ret=="{}")
 				return ;
 			var r ;
 			eval("r="+ret) ;
-			if(r.res>0)
+			if(r.guess)
 			{
-				dlg.msg("check ok");
-				return ;//
-			}
-				
-			if(r.res<0)
-			{
-				dlg.msg(r.prompt) ;
-				return ;
-			}
-			if(r.addr)
-				$("#addr").val(r.addr) ;
-			var vt = r.vt+"" ;
-			if(vt)
-			{
-				$("#vt").val(vt) ;
+				if(r.addr)
+					$("#addr").val(r.addr) ;
+				var vt = r.vt+"" ;
+				if(vt)
+				{
+					$("#vt").val(vt) ;
+				}
+				$("#canw").val(""+r.canw) ;
 				form.render();
 			}
-			dlg.msg(r.prompt) ;
+			else
+			{
+				if(r.res>0)
+				{
+					dlg.msg("check ok");
+					return ;//
+				}
+					
+				if(r.res<0)
+				{
+					dlg.msg(r.prompt) ;
+					return ;
+				}
+				if(r.addr)
+					$("#addr").val(r.addr) ;
+				var vt = r.vt+"" ;
+				if(vt)
+				{
+					$("#vt").val(vt) ;
+					form.render();
+				}
+				dlg.msg(r.prompt) ;
+			}
+			
 	});
 }
 

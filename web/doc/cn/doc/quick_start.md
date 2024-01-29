@@ -13,7 +13,7 @@
 
 下载压缩包，解压到你希望的目录下面即可。
 
-如你运行环境是windows，推荐下载"iot-tree-xx.xx.x-winjdk.zip"版本，这个版本内部自带windows x64版本的jdk，这样你可以使用最简单的方式启动。
+如你运行环境是windows，推荐下载"iot-tree-xx.xx.x-winjre.zip"版本，这个版本内部自带windows x64版本的jre，这样你可以使用最简单的方式启动。
 
 <a href="https://github.com/bambooww/iot-tree/releases" target="_blank">下载地址</a>
 
@@ -23,7 +23,7 @@
 
 # 2 运行条件
 
-如你运行环境是windows x64，并且下载了"iot-tree-xx.xx.x-winjdk.zip"版本，那么你已经具备了全部的运行条件。下面的运行条件也就不需要关心了。
+如你运行环境是windows x64，并且下载了"iot-tree-xx.xx.x-winjre.zip"版本，那么你已经具备了全部的运行条件。下面的运行条件也就不需要关心了。
 
 ## 2.1 iot-tree-xx.xx.x.zip版本运行条件
 Java运行环境版本在1.8及以上，并且确保你的运行环境针对Java的环境变量如Path JAVA_HOME已经被设置好了。
@@ -119,8 +119,7 @@ iottree->
 
 
 ```
-http://localhost:9090
-
+http://localhost:9090/admin/
 ```
 
 第一次管理登录需要接受软件使用许可条款，并且输入管理员密码，请牢记此密码，后续对此系统的管理员登录都需要输入此密码。

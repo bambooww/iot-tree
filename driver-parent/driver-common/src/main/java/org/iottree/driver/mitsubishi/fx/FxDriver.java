@@ -2,6 +2,7 @@ package org.iottree.driver.mitsubishi.fx;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.iottree.core.ConnException;
@@ -11,11 +12,21 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UATag;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
 
+/**
+ * FX Protocal support FX PLC download RS442 Port
+ * 
+ * format：
+ * 02 xxxx  03  checksum 
+ * 
+ * @author jason.zhu
+ *
+ */
 public class FxDriver extends DevDriver
 {
 	
@@ -119,11 +130,22 @@ public class FxDriver extends DevDriver
 	{
 		return null;
 	}
+	
+	
+	private static FxAddr FX_Addr = new FxAddr() ;
+	
+	private static ValTP[] LIMIT_VTPS = new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16,ValTP.vt_int32,ValTP.vt_uint32} ;
 
 	@Override
 	public DevAddr getSupportAddr()
 	{
-		return new FxAddr();
+		return FX_Addr;
+	}
+	
+	@Override
+	public ValTP[] getLimitValTPs(UADev dev)
+	{
+		return LIMIT_VTPS ;
 	}
 	
 	public long getReadTimeout()

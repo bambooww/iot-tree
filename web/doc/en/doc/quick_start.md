@@ -123,8 +123,7 @@ iottree->
 Open the browser and enter the host address to install and start IOT tree in the address bar. As follows:
 
 ```
-http://localhost:9090
-
+http://localhost:9090/admin/
 ```
 
 

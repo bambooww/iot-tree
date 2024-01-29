@@ -94,22 +94,8 @@ dlg.resize_to(600,400);
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>driver</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
-      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input"/>
+      <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input" autocomplete="off"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />
-      <%--
-      <select name="drv" id="drv" >
-<%
-for(DevDriver dd:dds)
-{
-%>
-			<option value="<%=dd.getName()%>"><%=dd.getTitle() %></option>
-<%
-}
-%>
-		</select>
-		<div class="layui-form-mid layui-word-aux" onclick="select_drv()">select</div>
-		 --%>
-		
     </div>
   </div>
   <div class="layui-form-item layui-form-text">
@@ -134,9 +120,12 @@ function win_close()
 
 function select_drv()
 {
-	dlg.open_win("drv_selector.jsp?edit=true",
-			{title:"<wbt:lang>sel_drv_title</wbt:lang>",w:'400',h:'535'},
-			[{title:'<wbt:lang>ok</wbt:lang>',style:""},{title:'Clear',style:"primary"},{title:'<wbt:lang>cancel</wbt:lang>',style:"primary"}],
+	let drv_name = $("#drv").val() ;
+	let drv_tt = $("#drv_title").val() ;
+	dlg.open("drv_selector.jsp?edit=true",
+			{title:"<wbt:lang>sel_drv_title</wbt:lang>",w:'400',h:'500',drv_name:drv_name,drv_tt:drv_tt},
+			//[{title:'Ok',style:""},{title:'Clear',style:"primary"},{title:'Cancel',style:"primary"}],
+ 			["Ok","Clear","Cancel"],
 			[
 				function(dlgw)
 				{

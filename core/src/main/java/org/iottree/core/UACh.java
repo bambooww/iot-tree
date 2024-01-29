@@ -214,7 +214,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	 */
 	public List<DevDriver> getSupportedDrivers() throws Exception
 	{
-		UAPrj rep = this.getBelongTo() ;
+		//UAPrj rep = this.getBelongTo() ;
 		
 		//
 		ConnProvider cp =getConnJoinedProvider();
@@ -224,6 +224,20 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		}
 		
 		return cp.supportDrivers() ;	
+	}
+	
+	public List<DevDriver> filterSupportedDrivers(List<DevDriver> drvs) throws Exception
+	{
+		//UAPrj rep = this.getBelongTo() ;
+		
+		//
+		ConnProvider cp =getConnJoinedProvider();
+		if(cp==null)
+		{// no conn
+			return drvs;//DevManager.getInstance().listDriversNotNeedConn() ;
+		}
+		
+		return cp.filterDrivers(drvs) ;	
 	}
 	
 	

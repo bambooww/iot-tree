@@ -43,6 +43,8 @@ public class DevManager // implements IResCxt
 	
 	private ArrayList<DevDriver> drivers = new ArrayList<>();
 	
+	private ArrayList<DevDrvCat> driverCats = new ArrayList<>() ;
+	
 	private ArrayList<DevLib> libs = null ;
 	
 	private DevManager()
@@ -82,27 +84,45 @@ public class DevManager // implements IResCxt
 		int len = jarr.length() ;
 		for(int i = 0 ; i < len ; i ++)
 		{
-			JSONObject jo = jarr.getJSONObject(i) ;
-			String ln = jo.optString("class") ;
-			if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
-				continue ;
-			try
+			//load cat
+			JSONObject catjo = jarr.getJSONObject(i) ;
+			DevDrvCat ddc = new DevDrvCat() ;
+			ddc.name = catjo.getString("cat_name") ;
+			ddc.title = catjo.getString("cat_title") ;
+			this.driverCats.add(ddc) ;
+			
+			JSONArray d_jarr = catjo.getJSONArray("drivers") ;
+			int dlen = d_jarr.length() ;
+			for(int j = 0 ; j < dlen ; j ++)
 			{
-				Class<?> c = Class.forName(ln);
-				DevDriver dd = (DevDriver)c.getConstructor().newInstance() ;
-				if(dd==null)
+				JSONObject jo = d_jarr.getJSONObject(j) ;
+				String ln = jo.optString("class") ;
+				if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
 					continue ;
-				List<DevDriver> multi_dds = dd.supportMultiDrivers() ;
-				if(multi_dds==null||multi_dds.size()<=0)
-					drivers.add(dd) ;
-				else
-					drivers.addAll(multi_dds) ;
-			}
-			catch(Exception e)
-			{
-				//e.printStackTrace();
-				log.warn("load driver ["+ln+"] failed!") ;
-			}
+				try
+				{
+					Class<?> c = Class.forName(ln);
+					DevDriver dd = (DevDriver)c.getConstructor().newInstance() ;
+					if(dd==null)
+						continue ;
+					List<DevDriver> multi_dds = dd.supportMultiDrivers() ;
+					if(multi_dds==null||multi_dds.size()<=0)
+					{
+						drivers.add(dd) ;
+						ddc.drivers.add(dd) ;
+					}
+					else
+					{
+						drivers.addAll(multi_dds) ;
+						ddc.drivers.addAll(multi_dds) ;
+					}
+				}
+				catch(Exception e)
+				{
+					//e.printStackTrace();
+					log.warn("load driver ["+ln+"] failed!") ;
+				}
+				}
 		}
 	}
 	
@@ -445,6 +465,10 @@ public class DevManager // implements IResCxt
 		return true;
 	}
 	
+	public List<DevDrvCat> getDriverCats()
+	{
+		return this.driverCats ;
+	}
 	
 	public List<DevDriver> getDrivers()
 	{

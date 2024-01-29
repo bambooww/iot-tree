@@ -1,5 +1,7 @@
 package org.iottree.core;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 import org.iottree.core.UAVal.ValTP;
@@ -148,7 +150,7 @@ public abstract class DevAddr
 	 * @param str
 	 * @return
 	 */
-	public abstract DevAddr guessAddr(UADev dev,String str) ;
+	public abstract DevAddr guessAddr(UADev dev,String str,ValTP vtp) ;
 	
 	public abstract List<String> listAddrHelpers() ;
 	
@@ -158,6 +160,7 @@ public abstract class DevAddr
 	{
 		return valTP ;
 	}
+	 
 	
 //	public abstract int getRegPos();
 //	
@@ -168,6 +171,7 @@ public abstract class DevAddr
 	public abstract boolean canWrite() ;
 	
 	
+	public abstract String toCheckAdjStr() ;
 	
 	//public abstract int getAddrBitNum() ;
 	
@@ -182,6 +186,14 @@ public abstract class DevAddr
 //	 * quality
 //	 */
 //	private transient boolean lastQT= false ;
+	
+	public void writeGuessAdjOut(Writer out) throws IOException
+	{
+		String addr = this.toCheckAdjStr() ;
+		if(addr==null)
+			addr="" ;
+		out.write("{\"guess\":true,\"addr\":\""+addr+"\",\"vt\":"+this.getValTP().getInt()+",\"canw\":"+this.canWrite()+"}") ;
+	}
 	
 	private transient UAVal uaVal = new UAVal() ;
 	

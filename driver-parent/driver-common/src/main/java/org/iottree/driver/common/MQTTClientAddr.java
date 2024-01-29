@@ -79,7 +79,7 @@ public class MQTTClientAddr extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(UADev dev,String str)
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		return null;
 	}
@@ -98,6 +98,11 @@ public class MQTTClientAddr extends DevAddr
 		return null;
 	}
 
+	@Override
+	public String toCheckAdjStr()
+	{
+		return null ;
+	}
 
 //	@Override
 //	public int getRegPos()

@@ -281,6 +281,14 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 */
 	public abstract DevAddr getSupportAddr();
 
+	/**
+	 * 
+	 * @return
+	 */
+	public ValTP[] getLimitValTPs(UADev dev)
+	{
+		return null ;
+	}
 	// final protected boolean getPropValBool(String groupn,String itemn,boolean
 	// defv)
 	// {

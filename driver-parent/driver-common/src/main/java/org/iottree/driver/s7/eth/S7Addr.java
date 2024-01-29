@@ -251,7 +251,7 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	}
 
 	@Override
-	public DevAddr guessAddr(UADev dev,String str)
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		return null;
 	}
@@ -367,6 +367,11 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		return ret;
 	}
 	
+	@Override
+	public String toCheckAdjStr()
+	{
+		return toString();
+	}
 	/**
 DB<num>,<S7 data type><address>
 DB<num>,<S7 data type><address><.bit>

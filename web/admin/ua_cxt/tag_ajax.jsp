@@ -7,8 +7,7 @@
 	java.util.*,
 	org.json.*,
 	java.net.*,
-	java.util.*"%><%!
-	private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
+	java.util.*"%><%!private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
 	{
 		if(!(n instanceof UANodeOCTags))
 			return null ;
@@ -30,7 +29,7 @@
 		UAVal.ValTP dt = UAVal.getValTp(vt) ;
 		long srate = Convert.parseToInt64(request.getParameter("srate"),100);
 		String strcanw = request.getParameter("canw") ;
-		boolean canw = "true".equalsIgnoreCase(strcanw);
+		//boolean canw = "true".equalsIgnoreCase(strcanw);
 
 		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
 		String min_val_str = request.getParameter("min_val_str") ;
@@ -44,7 +43,7 @@
 		
 		String trans = request.getParameter("trans") ;
 
-		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,canw,srate,trans) ;
+		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
@@ -74,26 +73,46 @@
 		return ret ;
 	}
 	
-	private static DevAddr.ChkRes chkAddr(UANode n,HttpServletRequest request)
+	private static boolean chkAddr(UANode n,HttpServletRequest request,Writer out) throws Exception
 	{
+		String canw = request.getParameter("canw") ;
 		String addr = request.getParameter("addr");
+		
+		int vt = Convert.parseToInt32(request.getParameter("vt"),-1);
+		
 		if(Convert.isNullOrEmpty(addr))
-			return null ;
+			return false ;
 		if(!(n instanceof UANodeOCTags))
-			return null ;
+			return false ;
+		UAVal.ValTP vtp = null;
+		if(vt>=0)
+			vtp = UAVal.getValTp(vt) ;
 		
 		UANodeOCTags nt = (UANodeOCTags)n;
 		UADev dev = nt.getBelongToDev() ;
 		IDevDriverable ddable = nt.getDevDriverable() ;
 		if(ddable==null)
-			return null ;
+			return false ;
 		DevDriver dd = ddable.getRelatedDrv() ;
 		if(dd==null)
-			return null;
+			return false;
+
+		DevAddr da = dd.getSupportAddr() ;
+		if(da.isSupportGuessAddr())
+		{
+			DevAddr gda = da.guessAddr(dev, addr, vtp) ;
+			if(gda!=null)
+			{
+				gda.writeGuessAdjOut(out) ;
+				return true ;
+			}
+		}
 		
-		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
-		UAVal.ValTP vtp = UAVal.getValTp(vt) ;
-		return dd.checkAddr(dev,addr, vtp) ;
+		DevAddr.ChkRes chkres = dd.checkAddr(dev,addr, vtp) ;
+		if(chkres==null)
+			return false;
+		out.write(chkres.toJsonStr()) ;
+		return true ;
 	}
 %><%
 if(!Convert.checkReqEmpty(request, out, "op","path"))
@@ -268,17 +287,14 @@ case "rt":
 	out.print("]");
 	break ;
 case "chk_addr":
-	DevAddr.ChkRes chkres = chkAddr(n,request) ;
-	if(chkres==null)
+	//DevAddr.ChkRes chkres = chkAddr(n,request,out) ;
+	boolean b = chkAddr(n,request,out) ;
+	if(!b)
 	{
 		out.print("{}");
 		return ;
 	}
-	else
-	{
-		out.print(chkres.toJsonStr()) ;
-	}
-	break;
+	return ;
 }
 
 %>

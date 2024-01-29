@@ -228,7 +228,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	}
 	
 	public UATag addOrUpdateTagInMem(String tagid, boolean bmid, String name, String title, String desc, String addr,
-			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, String trans) throws Exception
+			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null;
@@ -247,6 +247,12 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d != null && tmpn != null && d != tmpn)
 			throw new IllegalArgumentException("tag with name=" + name + " existed");
 
+		Boolean canw = null;
+		if("true".equalsIgnoreCase(canw_str))
+			canw = true ;
+		else if("false".equalsIgnoreCase(canw_str))
+			canw = false;
+		
 		UADev dev= this.getBelongToDev() ;
 		if(Convert.isNotNullEmpty(addr) &&!bmid)
 		{
@@ -256,14 +262,30 @@ public abstract class UANodeOCTags extends UANodeOC
 				DevDriver dd = ddable.getRelatedDrv() ;
 				if(dd!=null)
 				{
-					DevAddr.ChkRes chkres = dd.checkAddr(dev,addr, vt) ;
-					if(chkres!=null)
-					{
-						if(chkres.getChkVal()<=0)
-						{
-							throw new IllegalArgumentException(chkres.getChkPrompt()) ;
-						}
+					StringBuilder failedr = new StringBuilder() ;
+					DevAddr p_addr = dd.getSupportAddr().parseAddr(dev, addr, vt, failedr) ;
+					if(p_addr!=null)
+					{// auto fit address
+						if(canw==null)
+							canw = p_addr.canWrite() ;
+						else if(!p_addr.canWrite())
+							canw = false;
 						
+						addr = p_addr.toString() ;
+						if(vt!=p_addr.getValTP())
+							vt = p_addr.getValTP() ;
+					}
+					else
+					{
+						DevAddr.ChkRes chkres = dd.checkAddr(dev,addr, vt) ;
+						if(chkres!=null)
+						{
+							if(chkres.getChkVal()<=0)
+							{
+								throw new IllegalArgumentException(chkres.getChkPrompt()) ;
+							}
+							
+						}
 					}
 				}
 			}
@@ -293,10 +315,10 @@ public abstract class UANodeOCTags extends UANodeOC
 	}
 
 	public UATag addOrUpdateTag(String tagid, boolean bmid, String name, String title, String desc, String addr,
-			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, String trans) throws Exception
+			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans) throws Exception
 	{
 		UATag tag = addOrUpdateTagInMem(tagid, bmid, name, title, desc, addr,
-				vt, dec_digits, canw, srate, trans) ;
+				vt, dec_digits, canw_str, srate, trans) ;
 		save();
 		return tag;
 	}

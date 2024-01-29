@@ -35,7 +35,7 @@ public class DevAddrFix extends DevAddr
 	}
 
 	@Override
-	public DevAddr guessAddr(UADev dev,String str)
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		return null;
 	}
@@ -75,6 +75,12 @@ public class DevAddrFix extends DevAddr
 	public boolean canWrite()
 	{
 		return false;
+	}
+
+	@Override
+	public String toCheckAdjStr()
+	{
+		return null;
 	}
 
 }

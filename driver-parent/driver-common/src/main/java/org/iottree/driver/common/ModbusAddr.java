@@ -124,13 +124,12 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 		}
 	}
 
-
-	public DevAddr guessAddr(UADev dev,String str)
+	@Override
+	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
 		if(Convert.isNullOrEmpty(str)||str.length()<2)
 			return null ;//guess failed
 		char c = str.charAt(0);
-		ValTP vtp = null ;
 		switch(c)
 		{
 		case '0':
@@ -139,7 +138,8 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 			break;
 		case '3':
 		case '4':
-			vtp = ValTP.vt_int16;
+			if(vtp!=ValTP.vt_uint16)
+				vtp = ValTP.vt_int16;
 			break;
 		default:
 			str = "0"+str ;
@@ -147,11 +147,11 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 		}
 		
 		c = str.charAt(0);
-		String leftstr = str.substring(1);
-		leftstr = UAUtil.transAddrNumByGuess(leftstr,5) ;
+		//String leftstr = formatVal(Integer.parseInt(str.substring(1)),5);
+		//leftstr = UAUtil.transAddrNumByGuess(leftstr,5) ;
 		
 		StringBuilder sb = new StringBuilder() ;
-		return parseAddr(dev,c+leftstr, vtp,sb) ;
+		return parseAddr(dev,str, vtp,sb) ;
 	}
 	
 	public short getAddrTp()
@@ -188,8 +188,8 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 	{
 		switch(addrTp)
 		{
-		case 0:
-		case 4:
+		case '0':
+		case '4':
 			return true ;
 		default:
 			return false;
@@ -220,7 +220,39 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 //		return getRegPos()*8+getBitPos() ;
 //	}
 	
+	private String formatVal()
+	{
+		String s = ""+(regPos+1);
+		int len = s.length() ;
+		if(len>5)
+			return null ;
+		StringBuilder sb = new StringBuilder() ;
+		for(int i = 0 ; i < 5-len ; i ++)
+			sb.append('0') ;
+		sb.append(s) ;
+		return sb.toString() ;
+	}
 	
+	@Override
+	public String toCheckAdjStr()
+	{
+		String str = this.getAddr();
+		char c = str.charAt(0);
+		String fstr = this.formatVal() ;
+		if(fstr==null)
+			return null ;
+		
+		switch(c)
+		{
+		case '0':
+		case '1':
+		case '3':
+		case '4':
+			return c+formatVal() ;
+		default:
+			return null ;
+		}
+	}
 	
 	@Override
 	public int compareTo(ModbusAddr o)

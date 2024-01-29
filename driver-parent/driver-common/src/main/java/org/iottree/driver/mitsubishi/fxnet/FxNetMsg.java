@@ -1,4 +1,4 @@
-package org.iottree.driver.mitsubishi.fx;
+package org.iottree.driver.mitsubishi.fxnet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,30 +6,11 @@ import java.io.InputStream;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
-/**
- * PLC inner address defintion
- * 
- * D:   PLC-Address*2+1000H;   数据寄存器D bit16
-    T:   PLC-Address+00C0H; //timer  bit16
-    C:   PLC-Address*2+01C0H; //count  bit16
-    S:   PLC-Address*3;  状态继电器
-    M:   PLC-Address*2+0100H;   辅助继电器
-    Y:   PLC-Address+00A0H; out
-    X:   PLC-Address+0080H; input(只能读不能写，输入寄存器必须由外部信号驱动)
-    
-         PLC-Address元件是指最低位开始后的第N个元件的位置。
-         
- * @author jason.zhu
- * 
- *   》02 30 30 30 38 30 30 35 03 36 30
- * 《 02 30 30 30 30 30 30 30 30 30 30 03 45 33
- *
- */
-public abstract class FxMsg
+public abstract class FxNetMsg
 {
-	public static ILogger log = LoggerManager.getLogger(FxMsg.class) ;
+	public static ILogger log = LoggerManager.getLogger(FxNetMsg.class) ;
 	
-	public static ILogger log_w = LoggerManager.getLogger(FxMsg.class.getCanonicalName()+"_w") ;
+	public static ILogger log_w = LoggerManager.getLogger(FxNetMsg.class.getCanonicalName()+"_w") ;
 	/**
 	 * one byte acknowledgement
 	 */
@@ -43,45 +24,51 @@ public abstract class FxMsg
 	
 	public static final byte NCK  =0x15;
 	
-	public static final byte CMD_BR = 0x30 ;
-	public static final byte CMD_BW = 0x31 ;
-	public static final byte CMD_FORCE_ON = 0x37 ;
-	public static final byte CMD_FORCE_OFF = 0x38 ;
+	/**
+	 * PLC Addr (0xFF)   e.g 1-15
+	 */
+	short stationCode = 1 ;
 	
-	//int stationCode = 1 ;
+	/**
+	 * PC Addr 0xFF
+	 */
+	short pcCode = 0xFF ;
 	
-	//int pcCode = 1 ;
+	byte msgWait = '0' ;
 	
-	//String cmd = "BR" ;
+	byte[] startAddrBS5 = null ;
 	
-	boolean bExt = false;
-	
-	public FxMsg()
+	public FxNetMsg()
 	{}
 	
 	//private abstract  
 	
-//	public FxMsg asStationCode(int station_c)
-//	{
-//		this.stationCode = station_c ;
-//		return this ;
-//	}
-//	
-//	public FxMsg asPCCode(int c)
-//	{
-//		this.pcCode = c ;
-//		return this ;
-//	}
-	
-	public boolean isExtCmd()
+	public FxNetMsg asStationCode(short station_c)
 	{
-		return this.bExt ;
+		this.stationCode = station_c ;
+		return this ;
 	}
 	
-	public FxMsg asExt(boolean b_ext)
+	public FxNetMsg asPCCode(short c)
 	{
-		this.bExt = b_ext ;
+		this.pcCode = c ;
 		return this ;
+	}
+	
+	public FxNetMsg asStartAddrBS5(byte[] bs)
+	{
+		if(bs==null||bs.length!=5)
+			throw new IllegalArgumentException("invalid bytes 5 length addr") ;
+		this.startAddrBS5 = bs ;
+		return this ;
+	}
+	/**
+	 * e.g  X 0 0 0 0  , S 0 0 0 0 ,  T N 1 2 3
+	 * @return
+	 */
+	public byte[] getStartAddrBS5()
+	{
+		return this.startAddrBS5 ;
 	}
 	
 	public abstract byte[] toBytes() ;
@@ -191,6 +178,7 @@ public abstract class FxMsg
 		
 		throw new IOException("time out "+timeout+"ms") ;
 	}
+	
 	
 	
 	

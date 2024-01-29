@@ -204,9 +204,21 @@ Improved JS editing prompt, added internal plugin support for $$http
 The document is basically complete
 
 
-### version 1.0.x (Plan)
+### version 1.0.1
 
 
+CmdLineHandler Driver support JS impl
+Alert Handler to out limit bug fixed
+Modbus Driver Block Size bug fixed
+
+
+### version 1.0.2
+
+
+Add device driver category and use a tree selection dialog box.
+Tag editing has added data-driven limitations and improved check functionality.
+Add some device drivers for Mitsubishi PLC.
+Other optimization improvements
 
 
 ### version 1.1.x (Plan)
