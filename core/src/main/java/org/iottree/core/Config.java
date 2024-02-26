@@ -463,19 +463,9 @@ public class Config
 	 */
 	private static boolean bAuthDefaultLogin = false;
 	
-	private static String appTitle = "Tomato Server" ;
+	private static String appTitle = "IOT-Tree Server" ;
 	
-//	/**
-//	 * �������id��Ӧ��������
-//	 * TBSserver�������ʼ������������ʱ��������Ҫһ������
-//	 * ͨ�������ļ�������<domain int32_id="0" name="souln.com.cn"/>
-//		<domain int32_id="1" name="gojetsoft.com"/>
-//		������������
-//		
-//		�û�ϵͳ��ÿ���û�Ҳ��Ҫָ�������ĸ���
-//	 */
-//	private static HashMap<Integer,String> id2domain = new HashMap<Integer,String>() ;
-	
+	private static String serverId = "" ;
 	/**
 	 * һЩ����£���������Ҫ֪���Լ�����α������ʵ�
 	 * ����Ϣ���Ǵ洢����������ķ���ǰ׺
@@ -710,6 +700,11 @@ public class Config
 	public static boolean isDebug()
 	{
 		return bDebug ;
+	}
+	
+	public static String getServerId()
+	{
+		return serverId ;
 	}
 	
 	public static String getAppTitle()

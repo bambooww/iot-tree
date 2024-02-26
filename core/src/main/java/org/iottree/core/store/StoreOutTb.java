@@ -374,7 +374,7 @@ public class StoreOutTb extends StoreOut
 	protected void RT_runInLoop()
 	{
 		//StoreHandlerRT sh = (StoreHandlerRT)this.belongTo ;
-		Connection conn = null;
+		Connection conn = null; 
 		//getJavaTableInfo().
 		DataTable dt = new DataTable() ;
 		for(UATag tag: belongTo.listSelectedTags())

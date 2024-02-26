@@ -5,32 +5,19 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.Writer;
 import java.util.*;
-import java.util.function.Predicate;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
-import org.iottree.core.plugin.PlugManager;
-import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.IResNode;
-import org.iottree.core.res.ResDir;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
-import org.iottree.core.util.js.Debug;
-import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.web.Mime;
 import org.iottree.core.util.xmldata.*;
 
 import com.google.common.eventbus.EventBus;
-import static com.google.common.base.Preconditions.*;
 
 public class UAManager //implements IResCxt
 {
@@ -415,7 +402,7 @@ public class UAManager //implements IResCxt
 			if(Convert.isNotNullEmpty(id)&&!id.equals(prjid))
 				continue;
 			//chk id
-			StringBuilder failedr = new StringBuilder() ;
+//			StringBuilder failedr = new StringBuilder() ;
 //			if(!Convert.checkVarName(prjid, true,failedr))
 //			{
 //				continue ;

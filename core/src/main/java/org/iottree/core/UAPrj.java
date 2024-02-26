@@ -474,14 +474,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return getPrjSubDir();
 	}
 
-	File getRepFile()
+	File getPrjFile()
 	{
 		return UAManager.getPrjFile(this.id);
 	}
 
 	public long getSavedDT()
 	{
-		File f = getRepFile();
+		File f = getPrjFile();
 		if (!f.exists())
 			return -1;
 		return f.lastModified();

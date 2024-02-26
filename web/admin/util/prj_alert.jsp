@@ -136,7 +136,7 @@ position:absolute;
 	position:relative;
 	left:10%;
 	width:80%;
-	height:40px;
+	height:60px;
 	border:1px solid;
 	margin-top: 7px;
 	margin-bottom: 20px;
@@ -165,6 +165,14 @@ position:absolute;
 	top:5px;
 	border:1px solid;
 	right:80px;
+}
+
+.h_item .record_c
+{
+	position:absolute;
+	font-size: 13px;
+	bottom:1px;
+	left:30px;
 }
 
 .h_item .oper
@@ -289,7 +297,8 @@ visibility: hidden;
 </div>
 <div class="mid" onclick="on_handler_clk()">
  <blockquote class="layui-elem-quote ">Alert Handlers
- <div style="position: absolute;right:10px;top:11px;width:180px;border:0px solid;height:35px;">
+ <div style="position: absolute;right:10px;top:11px;width:220px;border:0px solid;height:35px;">
+ <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="show_alert_his('<%=prjid %>')">History</button>
  <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
  	<%--
@@ -502,11 +511,14 @@ function update_handlers()
 			let trigger_dis = ob.trigger_en?'':'display:none' ;
 			let release_c = ob.release_c?'background-color:'+ob.release_c:'' ;
 			let release_dis = ob.release_en?'':'display:none' ;
+			let inner_record = ob.b_inner_record?"√":"×";
+			let outer_record = ob.b_outer_record?"√":"×";
 			
 			tmps += `<div id="h_\${ob.id}" class="h_item" h_id="\${ob.id}" t="\${ob.t}" onclick="on_handler_clk(this)" out_ids="\${ob.out_ids}" alert_uids="\${ob.alert_uids}">
 				<span class="t">\${ob.t}</span>
 				<span class="trigger_c" style="\${trigger_c};\${trigger_dis}">Trigger [\${ob.lvl}]&nbsp;</span>
 				<span class="release_c" style="\${release_c};\${release_dis}">Release</span>
+				<span class="record_c" >Inner Record:\${inner_record} Outter Record:\${outer_record}</span>
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_h('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_handler('\${prjid}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
@@ -687,151 +699,18 @@ function add_or_edit_o(prjid,id)
 			]);
 }
 
-
-function import_dc_txt(prjid,cid)
-{
-	var tt = "Import Data Node";
-	dlg.open("prj_dict_dc_imp_txt.jsp?prjid="+prjid+"&cid="+cid,
-			{title:tt},
-			['Ok','Cancel'],
-			[
-				function(dlgw)
-				{
-					dlgw.do_submit((bsucc,ret)=>{
-						 if(!bsucc)
-						 {
-							 dlg.msg(ret) ;
-							 return;
-						 }
-						 
-						 ret.op="dc_imp_txt" ;
-						 ret.prjid=prjid;
-						 ret.cid = cid ;
-						 var pm = {
-									type : 'post',
-									url : "./prj_dict_ajax.jsp",
-									data :ret
-								};
-							$.ajax(pm).done((ret)=>{
-								if("succ"!=ret)
-								{
-									dlg.msg(ret) ;
-									return ;
-								}
-								
-								dlg.close();
-								document.location.href=document.location.href;
-							}).fail(function(req, st, err) {
-								dlg.msg(err);
-							});
-				 	});
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
-function add_or_edit_dn(prjid,cid,id)
+function show_alert_his(prjid)
 {
 	event.stopPropagation();
-	var tt = "Add Data Node";
-	if(id)
-	{
-		tt = "Edit Data Node";
-	}
-	if(id==null)
-		id = "" ;
-	dlg.open("prj_dict_dn_edit.jsp?prjid="+prjid+"&cid="+cid+"&id="+id,
-			{title:tt},
-			['Ok','Cancel'],
+	dlg.open("/prj_alert_his.jsp?prjid="+prjid,
+			{title:"Alert History"},
+			['Close'],
 			[
-				function(dlgw)
-				{
-					dlgw.do_submit((bsucc,ret)=>{
-						 if(!bsucc)
-						 {
-							 dlg.msg(ret) ;
-							 return;
-						 }
-						 
-						 ret.op="add_dn" ;
-						 if(id)
-							 ret.op = "edit_dn";
-						 ret.prjid=prjid;
-						 ret.cid = cid ;
-						 ret.id = id ;
-						 var pm = {
-									type : 'post',
-									url : "./prj_dict_ajax.jsp",
-									data :ret
-								};
-							$.ajax(pm).done((ret)=>{
-								if("succ"!=ret)
-								{
-									dlg.msg(ret) ;
-									return ;
-								}
-								
-								dlg.close();
-								document.location.href=document.location.href;
-							}).fail(function(req, st, err) {
-								dlg.msg(err);
-							});
-				 	});
-				},
 				function(dlgw)
 				{
 					dlg.close();
 				}
 			]);
-}
-
-
-function task_act_del(prjid,taskid,actid)
-{
-	layer.confirm('delete selected action?', function(index)
-		    {
-		    	send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=act_del&taskid="+taskid+"&actid="+actid,function(bsucc,ret){
-		    		if(bsucc&&ret=='succ')
-		    		{
-			    		document.location.href=document.location.href;
-		    		}
-		    		else
-		    			layer.msg("del err:"+ret) ;
-		    	}) ;
-		      
-		      
-		    });
-}
-
-
-function start_stop(b,taskid)
-{
-	var op = "start" ;
-	if(!b)
-		op = "stop";
-	$.ajax({
-        type: 'post',
-        url:'prj_task_ajax.jsp',
-        data: {op:op,prjid:prjid,taskid:taskid},
-        async: true,  
-        success: function (result) {  
-        	if("ok"==result)
-        	{
-        		document.location.href=document.location.href ;
-        	}
-        	else
-        	{
-        		dlg.msg(result) ;
-        	}
-        },
-        error:function(req,err,e)
-        {
-        	dlg.msg(e);
-        }
-    });
 }
 
 var in_panel = null ;

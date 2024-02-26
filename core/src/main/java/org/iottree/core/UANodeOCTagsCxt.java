@@ -361,6 +361,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		if(renderJsonSubs(w, tag2lastdt))
 			bchg = true ;
 		
+		JSONArray jarr = this.CXT_getAlertsJArr() ;
+		if(jarr!=null && jarr.length()>0)
+		{// alert_handlers/alert_items
+			w.write(",\"has_alert\":true,\"alerts\":");
+			jarr.write(w) ;
+		}
 		
 		w.write("}");
 		return bchg;

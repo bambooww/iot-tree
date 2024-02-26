@@ -2361,14 +2361,21 @@ public class Convert
 		if (f.length() > 10485760)
 			throw new RuntimeException("file is too long");
 
-		ArrayList<String> ss = new ArrayList<>();
 		try (FileInputStream fis = new FileInputStream(f);)
 		{
+			return readStreamTxtLines(fis, encod) ;
+		}
+	}
+	
+	public static List<String> readStreamTxtLines(InputStream inputs, String encod) throws IOException
+	{
+		ArrayList<String> ss = new ArrayList<>();
+
 			InputStreamReader isr = null;
 			if (Convert.isNullOrEmpty(encod))
-				isr = new InputStreamReader(fis);
+				isr = new InputStreamReader(inputs);
 			else
-				isr = new InputStreamReader(fis, encod);
+				isr = new InputStreamReader(inputs, encod);
 
 			BufferedReader br = new BufferedReader(isr);
 			String ln;
@@ -2379,7 +2386,7 @@ public class Convert
 					continue;
 				ss.add(ln);
 			}
-		}
+
 		return ss;
 	}
 

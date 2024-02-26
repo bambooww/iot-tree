@@ -48,6 +48,8 @@ public class QueueThread<T>
 	{
 		public void run()
 		{
+			handler.initHandler();
+			
 			while(procTh!=null)
 			{
 				QueItem<T> qi = dequeue_qi() ;
@@ -144,7 +146,7 @@ public class QueueThread<T>
 		procTh.start() ;
 	}
 	
-	public void stop()
+	public synchronized void stop()
 	{
 		if(procTh==null)
 			return ;

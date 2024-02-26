@@ -441,6 +441,7 @@ dlg.dlg_top=true;
 <%--
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
  --%>
+ 		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History">History</button>
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" title="delete"><i class="fa fa-times"></i></button>
 		</span>
 		<h3>Alerts List</h3>
@@ -474,6 +475,7 @@ dlg.dlg_top=true;
  
 <script>
 
+var prjid = "<%=prjid%>" ;
 document.addEventListener('touchmove', function (event) {
 	    event.preventDefault();
  }, false);
@@ -1041,6 +1043,20 @@ function show_or_hide_alerts()
 function hide_alerts()
 {
 	$("#alert_list_c").css("display","none");
+}
+
+function show_alerts_his()
+{
+	event.stopPropagation();
+	dlg.open("/prj_alert_his.jsp?prjid="+prjid,
+			{title:"Alert History"},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 async function  f()

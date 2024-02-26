@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.*;
-import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
 
 /**
@@ -147,7 +146,9 @@ public class ModbusAddr extends DevAddr implements Comparable<ModbusAddr>
 		}
 		
 		c = str.charAt(0);
-		//String leftstr = formatVal(Integer.parseInt(str.substring(1)),5);
+		//int vv = Integer.parseInt(str.substring(1)) ;
+		
+		//String leftstr = formatVal(,5);
 		//leftstr = UAUtil.transAddrNumByGuess(leftstr,5) ;
 		
 		StringBuilder sb = new StringBuilder() ;

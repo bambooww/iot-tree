@@ -2,6 +2,8 @@ package org.iottree.core.util.queue;
 
 public interface IObjHandler<T>
 {
+	public void initHandler() ;
+	
 	/**
 	 * 失败的尝试次数
 	 * @return

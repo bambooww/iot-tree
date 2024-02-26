@@ -1627,10 +1627,35 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
 				w.write(",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
-						+ ",\"chgdt\":" + dt_chg + "}");
+						+ ",\"chgdt\":" + dt_chg);
 			else
 				w.write(",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":"
-						+ dt + ",\"chgdt\":" + dt_chg + "}");
+						+ dt + ",\"chgdt\":" + dt_chg);
+			
+			boolean bfirst = true;
+			for(ValAlert va:this.valAlerts)
+			{
+				if(va.RT_is_triggered())
+				{
+					JSONObject tmpjo = va.RT_get_triggered_jo() ;
+					if(tmpjo==null)
+						continue ;
+					if(bfirst)
+					{
+						bfirst = false;
+						w.write(",\"alerts\":[");
+						tmpjo.write(w) ;
+					}
+					else
+					{
+						w.write(",");
+						tmpjo.write(w) ;
+					}
+				}
+			}
+			if(!bfirst)
+				w.write("]");
+			w.write("}");
 		}
 		else
 		{
@@ -1706,7 +1731,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		if(this.RT_hasAlertTriggered())
+		{
 			w.write(",\"alert\":true");
+//			JSONArray jarr = this.CXT_getAlertsJArr() ;
+//			if(jarr!=null && jarr.length()>0)
+//			{//
+//				sw.write(",\"has_alert\":true,\"alerts\":");
+//				jarr.write(sw) ;
+//			}
+		}
 
 		JSONObject jo = getExtAttrJO() ;
 		if(jo!=null)

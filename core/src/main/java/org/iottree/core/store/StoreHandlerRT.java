@@ -21,6 +21,10 @@ public class StoreHandlerRT extends StoreHandler
 	
 	List<String> prefixs = new ArrayList<>() ;
 	
+	//Time Based Limit TODO
+	
+	//Trigger condition  TODO
+	
 	@Override
 	public String getTp()
 	{

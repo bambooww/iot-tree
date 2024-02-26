@@ -2,7 +2,6 @@ package org.iottree.driver.mitsubishi.fx;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.iottree.core.ConnException;

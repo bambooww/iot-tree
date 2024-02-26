@@ -24,6 +24,7 @@ import org.iottree.core.store.gdb.autofit.JavaTableInfo;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlVal;
@@ -688,7 +689,7 @@ public class StoreOutTbHis extends StoreOut
 				//do insert
 				
 				DataRow dr = dataTB.createNewRow() ;
-				String newid = CompressUUID.createNewId() ;
+				String newid = IdCreator.newSeqId();//CompressUUID.createNewId() ;
 				dr.putValue(this.getColAutoId(),newid) ;
 				dr.putValue(this.getColTag(), tag.getNodePathCxt());
 				dr.putValue(this.getColUpDT(), new Date(valdt));

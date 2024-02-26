@@ -46,7 +46,32 @@ public class StoreManager
 		}
 	}
 	
+	static HashMap<String,SourceJDBC> name2innerSor = new HashMap<>() ;
+	
 	static LinkedHashMap<String, Source> name2sor = null;//
+	
+	public static SourceJDBC getInnerSource(String name)
+	{
+		SourceJDBC innersor = name2innerSor.get(name) ;
+		if(innersor!=null)
+			return innersor ;
+		
+		synchronized(StoreManager.class)
+		{
+			innersor = name2innerSor.get(name) ;
+			if(innersor!=null)
+				return innersor ;
+			
+			innersor = new SourceJDBC() ;
+			innersor.setJDBCInfo("sqlite","", -1, "_inner_"+name, "", "") ;
+			innersor.id="_inner" ;
+			innersor.name="_inner" ;
+			innersor.title="Inner" ;
+			
+			name2innerSor.put(name,innersor) ;
+			return innersor ;
+		}
+	}
 	
 	private static LinkedHashMap<String, Source> getName2Source()
 	{
@@ -56,6 +81,7 @@ public class StoreManager
 		try
 		{
 			name2sor = loadSors();
+			//name2sor.
 			return name2sor;
 		}
 		catch (Exception e)

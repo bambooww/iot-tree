@@ -142,7 +142,7 @@ public class DBResult
 		transResultSetToDataTable(tablename,0,rset, index, count,cb) ;
 	}
 	
-	static DataTable transResultSetToDataTable(String tablename,int tableidx,ResultSet rset, int index, int count,IDBSelectCallback cb)
+	public static DataTable transResultSetToDataTable(String tablename,int tableidx,ResultSet rset, int index, int count,IDBSelectCallback cb)
 			throws SQLException, Exception
 	{
 		if(Convert.isNullOrEmpty(tablename))

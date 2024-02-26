@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +20,8 @@ namespace wclient
         public FormClient()
         {
             InitializeComponent();
+
+          
         }
 
         private void FormClient_LoadAsync(object sender, EventArgs e)

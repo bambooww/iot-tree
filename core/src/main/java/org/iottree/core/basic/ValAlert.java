@@ -12,6 +12,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -331,7 +332,7 @@ public class ValAlert extends JSObMap
 	private void RT_trigger(Object cur_val)
 	{
 		this.bTrigged = true ;
-		this.triggerUID = CompressUUID.createNewId() ;
+		this.triggerUID = IdCreator.newSeqId();//CompressUUID.createNewId() ;
 		this.lastTriggedDT = System.currentTimeMillis() ;
 		this.lastTriggedVal = cur_val ;
 		
@@ -422,5 +423,15 @@ public class ValAlert extends JSObMap
 	public long RT_last_released_dt()
 	{
 		return this.lastReleasedDT ;
+	}
+	
+	public JSONObject RT_get_triggered_jo()
+	{
+		if(!this.bTrigged)
+			return null ;
+		
+		JSONObject jo = new JSONObject() ;
+		
+		return jo ;
 	}
 }
