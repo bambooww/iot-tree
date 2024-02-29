@@ -37,6 +37,7 @@ namespace wclient
             string hostu = Conf.getHostUrl();
 
             this.webView.Source = new System.Uri(hostu, System.UriKind.Absolute);
+            timer1.Enabled = true;
         }
 
 
@@ -111,13 +112,17 @@ namespace wclient
 
         private const int TOP_TICK_N = 50;
 
+        private const int REFRESH_TICK_N = 864000; // 1 day
+
         private int showTopPanelTick = 0;
+
+        private int refreshTick = 0;
 
         private void panelTop_MouseEnter(object sender, EventArgs e)
         {
             this.panelTop.Height = 30;
             showTopPanelTick = TOP_TICK_N;
-            timer1.Enabled = true;
+            
         }
 
         private void panelTop_MouseLeave(object sender, EventArgs e)
@@ -132,11 +137,22 @@ namespace wclient
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            showTopPanelTick--;
-            if(showTopPanelTick<=0)
+            if(this.panelTop.Height>1)
             {
-                timer1.Enabled = false;
-                this.panelTop.Height = 1;
+                showTopPanelTick--;
+                if (showTopPanelTick <= 0)
+                {
+                    //timer1.Enabled = false;
+                    this.panelTop.Height = 1;
+                }
+            }
+            
+
+            refreshTick++;
+            if(refreshTick>=REFRESH_TICK_N)
+            {
+                refreshTick = 0;
+                this.webView.Reload();
             }
         }
 
