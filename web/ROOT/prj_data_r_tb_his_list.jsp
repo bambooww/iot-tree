@@ -39,9 +39,11 @@ if(storeo==null)
 	out.print("no outer found") ;
 	return ;
 }
-if(!storeo.isInitOk())
+StringBuilder failedr = new StringBuilder() ;
+if(!storeo.checkOrInitOk(failedr))
 {
-	out.print("the outer is not enable or init failed!") ;
+	//out.print("the outer is not enable or init failed!") ;
+	out.print(failedr) ;
 	return ;
 }
 
