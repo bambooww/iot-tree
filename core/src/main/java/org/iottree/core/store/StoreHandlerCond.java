@@ -6,25 +6,26 @@ import java.util.List;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.UAVal;
-import org.iottree.core.store.StoreHandler.TagsFilter;
-import org.iottree.core.store.gdb.DataTable;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class StoreHandlerRT extends StoreHandler
+/**
+ * store handler for tag value change condition(by triggered)
+ * 1,for boolean value type,it may be recorded when value on-off or off-on
+ * 2,for number value type ,it may be save every time it is found changed(it has acquire interval pm)
+ * 
+ * @author jason.zhu
+ *
+ */
+public class StoreHandlerCond extends StoreHandler
 {
-	public static final String TP = "rt" ;
+	public static final String TP = "cond" ;
 	
 	boolean filterAll = true ;
 	
 	List<String> prefixs = new ArrayList<>() ;
 	
-	//Time Based Limit TODO
-	
-	//Trigger condition  TODO
 	
 	@Override
 	public String getTp()
@@ -35,7 +36,7 @@ public class StoreHandlerRT extends StoreHandler
 	@Override
 	public String getTpTitle()
 	{
-		return "Tag Runtime Data Handler";
+		return "Tag Value Condition Handler";
 	}
 	
 	public boolean isFilterAll()
@@ -86,7 +87,7 @@ public class StoreHandlerRT extends StoreHandler
 		return false;
 	}
 	
-	private final static List<StoreOut> supportedOuts = Arrays.asList(new StoreOutTb(),new StoreOutTbHis()) ; 
+	private final static List<StoreOut> supportedOuts = Arrays.asList(new StoreOutTbRec()) ; 
 	
 	@Override
 	public List<StoreOut> getSupportedOuts()

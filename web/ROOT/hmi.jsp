@@ -3,8 +3,10 @@
 	import="java.util.*,
 				java.io.*,
 				java.util.*,
+				org.json.*,
 				org.iottree.core.*,
 				org.iottree.core.res.*,
+				org.iottree.core.store.*,
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
@@ -24,6 +26,7 @@
 	}
 	String hmitt = uahmi.getTitle();
 	UANode topn = uahmi.getTopNode() ;
+	UANodeOCTagsCxt cxtn = uahmi.getBelongTo() ;
 	UAPrj prj = null ;
 	String prjid = "" ;
 	String prjname = "" ;
@@ -78,6 +81,12 @@
 		can_write  = pa.checkWriteRight(path, request) ;
 		n_w_p = Convert.plainToJsStr(pa.getNoWriteRightPrompt()) ;
 	}
+	String conn_brk_prompt = uahmi.getConnBrokenPrompt() ;
+	if(Convert.isNullOrEmpty(conn_brk_prompt))
+		conn_brk_prompt = "Connection is Broken." ;
+	String not_run_prompt = uahmi.getNotRunPrompt() ;
+	if(Convert.isNullOrEmpty(not_run_prompt))
+		not_run_prompt = "Project is not running." ;
 	//String repname = rep.getName() ;
 %><!DOCTYPE html>
 <html>
@@ -346,26 +355,39 @@ margin-top:5px;
 	zIndex:65535;
 }
 
-.alert
+.pwin
 {
 	position: absolute;
-	right:60px;top:160px;width:500px;height:300px;
+	right:60px;top:180px;width:500px;height:300px;
 	background-color: #555555;
 	z-index: 60002;
 	opacity: 0.5;color: #bbbbbb;
 }
 
-.alert:hover
+.pwin:hover
 {
 	opacity: 1.0;
 }
 
-.alert .op
+.pwin .op
 {
 	position: absolute;
 	right:0px;
 	top:0px;
 	background-color: #aaaaaa;
+}
+
+.data_list_c::-webkit-scrollbar {
+    width: 10px;
+}
+
+.data_list_c::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 5px; 
+}
+
+.data_list_c::-webkit-scrollbar-thumb:hover {
+    background: #81ec26;
 }
 </style>
 
@@ -392,11 +414,13 @@ dlg.dlg_top=true;
 			<iframe id="left_pan_iframe" src="" style="width:100%;height:90%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
 		</div>
 		 --%>
+		 
 		<div class="mid">
-			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
-				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
+			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e">
+			<%-- 
+				<div id="win_act_store" style="position: absolute; display0: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="add new store"  onclick="store_add_db()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="add new store"  >
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -410,7 +434,7 @@ dlg.dlg_top=true;
 				
 				<div id="win_act_conn" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group" style="width:40px">
-					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title=""  onclick="conn_add()">
+					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="" >
 					    <i class="layui-icon">&#xe654;</i>
 					  </button>
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm">
@@ -421,28 +445,22 @@ dlg.dlg_top=true;
 					  </button>
 					</div>
 				</div>
+				--%>
 		</div>
 		
 		</div>
 
-
-	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x"></i></div>
-	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x"></i></div>
-	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x"></i></div>
-	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
-	<!-- 
-<script src="/_iottree/di_div_comps/echarts.min.js"></script>
-<script src="/_iottree/di_div_comps/switchs/comp_button.js"></script>
-<script src="/_iottree/di_div_comps/meters/comp_gauge2.js"></script>
-
- -->
- 	<div id="alert_list_c" style="display:none" class="alert">
+<div style="z-index:65534;position: absolute;right:0px;top:0px">
+	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x" title="fit windows"></i></div>
+	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x" title="zoom up"></i></div>
+	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x" title="zoom down"></i></div>
+	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
+	<div id="oper_data" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
+	
+	<div id="alert_list_c" style="display:none" class="pwin">
  		<span class="op">
-<%--
-			<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
- --%>
  		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History">History</button>
-			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" title="delete"><i class="fa fa-times"></i></button>
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" ><i class="fa fa-times"></i></button>
 		</span>
 		<h3>Alerts List</h3>
  		<div class="" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
@@ -462,17 +480,81 @@ dlg.dlg_top=true;
             <tbody id="alert_list" >
                 
             </tbody>
- <%--
-            <tfoot>
-                <tr>
-                    <td colspan="5">【table，thead，tbody，tfoot】 colspan：合并行， rowspan：合并列 </td>
-                </tr>
-            </tfoot>
-             --%>
         </table>
  		</div>
  	</div>
+ 	
+ 	<div id="data_list_c" style="display:none;top:230px;width:800px;" class="pwin" >
+ 		<span class="op">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_datas()" title="hidde"><i class="fa fa-times"></i></button>
+		</span>
+		<h3>Data List</h3>
+ 		<div class="data_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
+ 			<table cellpadding="0" cellspacing="0" style="width:100%;">
+            <thead>
+                <tr>
+                	
+                	<th>Title</th>
+                	<th>Update Time</th>
+                    <th>Change Time</th>
+                    <th>Valid</th>
+                    <th>Value</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
  
+            <tbody id="data_list" >
+<%
+LinkedHashMap<UATag,String> tag2tt = uahmi.getShowTag2Title() ;
+JSONArray jarr_dtags = new JSONArray() ;
+StoreManager storem = StoreManager.getInstance(prjid) ;
+for(Map.Entry<UATag,String> en:tag2tt.entrySet())
+{
+	UATag tag = en.getKey() ;
+	String tt = en.getValue() ;
+	String pp = tag.getNodeCxtPathIn(cxtn) ;
+	String tagp = tag.getNodePathCxt();//.getNodePath() ;
+	
+	List<StoreOut> storeos = storem.findStoreOutsByTag(tag, true, true);
+	boolean b_his = (storeos!=null && storeos.size()>0) ;
+	jarr_dtags.put(pp) ;
+%>
+	<tr id="dtag_<%=pp %>" title="<%=tagp %>">
+	  <td><%=tt %></td>
+	  <td class="updt"></td>
+	  <td class="chgdt"></td>
+	  <td class="valid"></td>
+	  <td class="val"></td>
+	  <td >
+<%
+if(b_his)
+{
+	for(StoreOut so:storeos)
+	{
+		String outtp = so.getOutTp() ;
+		String outtpt = so.getOutTpTitle() ;
+		String outid = so.getId() ;
+%><button onclick="show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="show history - <%=outtpt%>">&nbsp;&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;&nbsp;</button>
+<%
+	}
+}
+%>
+	  </td>
+	</tr>
+<%
+}
+%>
+            </tbody>
+        </table>
+ 		</div>
+ 	</div>
+ 	
+</div>
+	<%-- 
+<script src="/_iottree/di_div_comps/echarts.min.js"></script>
+<script src="/_iottree/di_div_comps/switchs/comp_button.js"></script>
+<script src="/_iottree/di_div_comps/meters/comp_gauge2.js"></script>
+ --%>
 <script>
 
 var prjid = "<%=prjid%>" ;
@@ -491,14 +573,15 @@ var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
 var hmi_id="<%=hmiid%>" ;
 
-
-
 var res_ref_id ="<%=res_ref_id%>";
 var res_lib_id="<%=reslibid%>";
 var res_id="<%=resid%>";
 
 var can_write=<%=can_write%>;
 var no_write_p = "<%=n_w_p%>" ;
+
+var conn_brk_prompt = "<%=conn_brk_prompt%>" ;
+var not_run_prompt = "<%=not_run_prompt%>" ;
 //$util.hmi_can_write = can_write;
 
 layui.use('element', function(){
@@ -525,6 +608,11 @@ $('#oper_zoomdown').click(function()
 $("#oper_alert").click(function()
 {
 	show_or_hide_alerts() ;
+});
+
+$("#oper_data").click(function()
+{
+	show_or_hide_datas() ;
 });
 
 function add_tab()
@@ -796,7 +884,7 @@ function show_overlay(bshow,title)
 		overlay_div.style.width = '100%';
 		overlay_div.style.height = '100%';
 		
-		overlay_div.style.zIndex=65534;
+		overlay_div.style.zIndex=65530;
 		document.body.appendChild(overlay_div);
 	}
 	
@@ -805,8 +893,8 @@ function show_overlay(bshow,title)
 		overlay_msg_div = $(document.createElement('div'));//;
 		var wh = $(window).height();
 		var ww = $(window).width();
-		var w=300;
-		var h=w*0.618;
+		var w=500;
+		var h=w*(1-0.618);
 		var left=ww/2-w/2;
 		var top=wh/2-h/2;
 		overlay_msg_div.css("position","absolute");
@@ -829,10 +917,10 @@ function show_overlay(bshow,title)
 
 	}
 	
-	overlay_msg_div.html(title);
+	overlay_msg_div.html(`<span style="display:table-cell; vertical-align:middle;color:#990000">\${title}</span>`);
 	if(bshow)
 	{
-		overlay_msg_div.css("display","");
+		overlay_msg_div.css("display","table");
 		overlay_div.style.display = '';
 	}
 	else
@@ -888,6 +976,7 @@ function ws_conn()
     	if(d.cxt_rt)
     	{
     		hmiModel.updateRtNodes(d.cxt_rt);
+    		update_data_list(d.cxt_rt) ;
     	}
     	
     	let iob =$("#oper_alert_i") ; 
@@ -920,8 +1009,8 @@ function ws_conn()
     	if(d.prj_run)
     		show_overlay(false);
     	else
-    		show_overlay(true,"project is not running.");
-    	
+    		show_overlay(true,not_run_prompt);
+    	 
     	if(b_conn_first)
 		{
 			b_conn_first=false;
@@ -930,7 +1019,7 @@ function ws_conn()
     };
     
     ws.onclose = function (event) {
-    	show_overlay(true,"conn broken");
+    	show_overlay(true,conn_brk_prompt);
     	ws_disconn();
         log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
     };
@@ -1032,12 +1121,10 @@ function cxt_rt()
 function show_or_hide_alerts()
 {
 	let dis= $("#alert_list_c").css("display");
-	console.log(dis) ;
 	if("none"==dis)
 		$("#alert_list_c").css("display","");
 	else
 		$("#alert_list_c").css("display","none");
-	//$("#alert_list").html(tmps) ;
 }
 
 function hide_alerts()
@@ -1057,6 +1144,79 @@ function show_alerts_his()
 					dlg.close();
 				}
 			]);
+}
+
+function show_or_hide_datas()
+{
+	let dis= $("#data_list_c").css("display");
+	if("none"==dis)
+		$("#data_list_c").css("display","");
+	else
+		$("#data_list_c").css("display","none");
+}
+
+function hide_datas()
+{
+	$("#data_list_c").css("display","none");
+}
+
+function show_data_his(outtp,outid,tagp,title)
+{
+	event.stopPropagation();
+	dlg.open_win("/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
+			{title:"Data History - "+title,w:960,h:650},
+			[],
+			[]);
+}
+
+var dtags = <%=jarr_dtags%>;
+
+function update_data_list(cxt_rt)
+{
+	for(let dtag of dtags)
+	{
+		let tr = document.getElementById("dtag_"+dtag) ;
+		if(!tr)
+			continue ;
+		let ss = dtag.split('.') ;
+		let curob = cxt_rt ;
+		for(let i = 0 ; i < ss.length-1 ; i ++)
+		{
+			let s = ss[i] ;
+			let bgit=false;
+			for(let sub of curob.subs)
+			{
+				if(sub.n==s)
+				{
+					curob = sub;
+					bgit=true;break ;
+				}
+			}
+			if(!bgit)
+			{
+				curob=null;break ;
+			}
+		}
+		if(!curob)
+			continue ;
+		let tag = null ;
+		let tagn = ss[ss.length-1] ;
+		for(let t of curob.tags)
+		{
+			if(t.n==tagn)
+			{
+				tag = t ;break ;
+			}
+		}
+		if(tag==null)
+			continue ;
+		
+		$(tr).find("td[class$='updt']").html(new Date(tag.dt).format_local('yyyy-MM-dd hh:mm:ss'));
+		$(tr).find("td[class$='chgdt']").html(new Date(tag.chgdt).format_local('yyyy-MM-dd hh:mm:ss')) ;
+		$(tr).find("td[class$='val']").html(tag.strv) ;
+		$(tr).find("td[class$='valid']").html(tag.valid?'√':'×') ;
+	}
+	// console.log(cxt_rt) ;
 }
 
 async function  f()

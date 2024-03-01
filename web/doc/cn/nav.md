@@ -54,6 +54,8 @@
 ##### <a href="doc/device/drv_modbus.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Modbus协议驱动</a>
 ##### <a href="doc/device/drv_ppi.md" target="main">&nbsp;&nbsp;&nbsp;6.4 PPI协议驱动</a>
 ##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 西门子以太网</a>
+##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 三菱FX</a>
+##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 三菱FX Net</a>
 
 #### <a href="doc/hmi/index.md" >7 人机交互（HMI）</a>
 ##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;7.1 HMI编辑

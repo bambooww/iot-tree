@@ -216,6 +216,14 @@ Modbus驱动Block Size bug fixed
 
 
 
+### 版本 1.0.3
+
+Alert管理对象同步创建bug解决
+新增项目内部SQLite数据源支持
+新增AlertHandler内部数据源和外部数据源自动记录功能
+
+
+
 ### 版本 1.1.x (计划)
 
 新增多节点的数据协同，支持大规模分布式部署

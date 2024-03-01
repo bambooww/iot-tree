@@ -224,6 +224,9 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		case StoreHandlerRT.TP:
 			ao = new StoreHandlerRT() ;
 			break ;
+		case StoreHandlerCond.TP:
+			ao = new StoreHandlerCond() ;
+			break ;
 		case StoreHandlerInd.TP:
 			ao = new StoreHandlerInd() ;
 			break ;
@@ -335,10 +338,14 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 	
 	public abstract boolean checkFilterFit(UATag tag) ;
 	
+	public abstract List<StoreOut> getSupportedOuts();
+	
 	public boolean isSelectAll()
 	{
 		return this.selectedAll ;
 	}
+	
+	//private transient List<UATag> selTags = null ;
 	
 	public HashSet<String> getSelectTagIds()
 	{
@@ -351,7 +358,10 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		if(tag_nps!=null)
 			ss.addAll(tag_nps) ;
 		this.selectedTags =ss;
+		
+		selTags = null ;
 	}
+	
 	
 	public LinkedHashMap<String,StoreOut> getId2Out()
 	{
@@ -621,6 +631,9 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 	{
 		for(StoreOut so:this.listOuts())
 		{
+			if(!so.isEnable())
+				continue ;
+			
 			StringBuilder failedr = new StringBuilder() ;
 			try
 			{

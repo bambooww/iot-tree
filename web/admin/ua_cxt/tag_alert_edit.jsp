@@ -42,7 +42,7 @@ dlg.resize_to(590,500);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item"  id="dt_tp">
-    <label class="layui-form-label">Alert Type</label>
+    <label class="layui-form-label">Alert/Event Type</label>
     <div class="layui-input-inline" style="width: 180px;">
       <select  id="tp"  name="tp"  class="layui-input" placeholder="" lay-filter="tp">
 <%
@@ -191,9 +191,9 @@ function update_ui()
 	let tmps ="" ;
 	let trigger_cond = opt.attr("trigger_cond") ;
 	let release_cond = opt.attr("release_cond") ;
-	tmps += trigger_cond+"\r\n";
-	tmps += release_cond
-	$("#tp_ppt").html(convertHTML(tmps)) ;
+	tmps +=     "<span style='color:red;'>Trigger&nbsp;&nbsp;&nbsp;Condition:</span>"+convertHTML(trigger_cond)+"<br>";
+	tmps += "<span style='color:green;'>Release Condition:</span>"+convertHTML(release_cond) ;
+	$("#tp_ppt").html(tmps) ;
 	
 	form.render();
 }

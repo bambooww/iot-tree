@@ -221,6 +221,14 @@ Add some device drivers for Mitsubishi PLC.
 Other optimization improvements
 
 
+### version 1.0.3
+
+
+Alert management object synchronization creation bug resolution
+New project internal SQLite data source support
+New AlertHandler internal data source and outer data source automatic recording function added
+
+
 ### version 1.1.x (Plan)
 
 

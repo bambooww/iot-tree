@@ -418,11 +418,15 @@ public class AlertHandler extends JSObMap //implements IJsProp
 				dr.doInsertDB(conn, recordJTI.getTableName(), COL_NAMES_INSERT) ;
 				
 				if(b_outer)
+				{
 					if(delOld(conn,recordJTI.getTableName(),"TriggerDT",keep_days,outerLastDelDT))
 						outerLastDelDT = System.currentTimeMillis() ;
+				}
 				else
+				{
 					if(delOld(conn,recordJTI.getTableName(),"TriggerDT",keep_days,innerLastDelDT))
 						innerLastDelDT = System.currentTimeMillis() ;
+				}
 			}
 			finally
 			{
@@ -473,7 +477,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 			
 			ps.setObject(1, olddt);
 			ps.executeUpdate() ;
-			System.out.println(new Date()+" alert handler del old "+delsql.toString());
+			//System.out.println(new Date()+" alert handler del old "+delsql.toString());
 			return true;
 		}
 		finally

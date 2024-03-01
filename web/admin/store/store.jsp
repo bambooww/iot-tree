@@ -525,7 +525,8 @@ function update_outs()
 				<span class="tpt">\${ob.tpt}</span>
 				<span class="oper">
 					<button title="init or create out" type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="init_o('\${prjid}','\${h.id}','\${ob.id}')"><i class="fa-solid fa-rotate-right"></i></button>
-					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.tp}','\${h.id}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.tp}','\${h.id}','\${ob.id}')" title="edit out"><i class="fa fa-pencil"></i></button>
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="view_o('\${prjid}','\${ob.tp}','\${h.id}','\${ob.id}')" title="view data"><i class="fa fa-list-alt"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_out('\${prjid}','\${h.id}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
 				</span>
 				</div>` ;
@@ -807,6 +808,22 @@ function add_or_edit_o(prjid,tp,hid,id)
 							});
 				 	});
 				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function view_o(prjid,tp,hid,id)
+{
+	if(event)
+		event.stopPropagation();
+	var tt = "View Output Data ["+tp+"]";
+	dlg.open("o_"+tp+"_view.jsp?prjid="+prjid+"&hid="+hid+"&id="+id,
+			{title:tt},
+			['Close'],
+			[
 				function(dlgw)
 				{
 					dlg.close();

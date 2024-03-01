@@ -232,7 +232,10 @@ if(Convert.isNotNullEmpty(ext_str))
 &nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
         <td>
-        	<input type="checkbox"   lay-skin="primary" /> <input type="checkbox"  lay-skin="primary" />
+        	<input type="checkbox"   lay-skin="primary" id="client_show_<%=tag.getId()%>"/>
+        </td>
+        <td>
+        	<input type="checkbox"   lay-skin="primary" />
         </td>
       </tr>
 <%

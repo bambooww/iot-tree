@@ -263,8 +263,8 @@ for(PropGroup pg:pgs)
 	for(PropItem pi:pis)
 	{
 %>
-  <tr id="pi_<%=pi.getName()%>" onclick="sel_pi('<%=pi.getName()%>')">
-    <td style="width:50%" class="td_left"><%=pi.getTitle() %></td>
+  <tr id="pi_<%=pi.getName()%>" onclick="sel_pi('<%=pi.getName()%>')" title="<%=pi.getDesc()%>">
+    <td style="width:50%" class="td_left" ><%=pi.getTitle() %></td>
     <td style="width:50%;color:#010101">
 <%
 	PropItem.ValOpts vopts = pi.getValOpts();
@@ -290,14 +290,29 @@ if(vopts==null || pi.isReadOnly())
 		defv = pi.getDefaultVal().toString() ;
 	String multiln = "" ;
 	boolean bmultiln = pi.isTxtMultiLine() ;
+	String popname = pi.getPopName() ;
+	String poptitle = pi.getPopTitle() ;
+	boolean has_pop = Convert.isNotNullEmpty(popname) ;
 	String uname = pg.getName()+"."+pi.getName();
-	if(bmultiln)
+	if(bmultiln||has_pop)
 	{
+		if(has_pop)
+		{
+%>
+		<textarea id="piv_<%=uname %>" class="pi_edit_unit" type="<%=inptp %>" 
+			step="<%=inp_step %>"  
+			style="padding-left: 3px;height:100%" <%=readonly %> onclick="pop_edit('<%=popname %>','<%=poptitle %>','piv_<%=uname %>')"><%=defv %></textarea> 
+	<%
+		}
+		else
+		{
 %>
 		<textarea id="piv_<%=uname %>" class="pi_edit_unit" type="<%=inptp %>" 
 			step="<%=inp_step %>"  
 			style="padding-left: 3px;height:100%" <%=readonly %> onclick="pop_multi_ln_edit('piv_<%=uname %>')"><%=defv %></textarea> 
-	<%
+
+<%
+		}
 	}
 	else
 	{
@@ -387,6 +402,35 @@ function pop_multi_ln_edit(inputid)
 	cur_txt = input.value ;
 	dlg.open("ui_prop_multiln.jsp",
 			{title:"<wbt:lang>edit_txt</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 input.value=ret.txt ;
+						 
+						 setDirty(true) ;
+						 dlg.close() ;
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function pop_edit(popname,poptitle,inputid)
+{
+	var input = document.getElementById(inputid) ;
+	cur_txt = input.value ;
+	dlg.open("ui_prop_pop_"+popname+".jsp?nodepath="+path,
+			{title:poptitle,w:'500px',h:'400px',inputv:cur_txt},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)

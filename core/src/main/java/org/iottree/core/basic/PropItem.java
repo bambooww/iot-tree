@@ -280,6 +280,12 @@ public class PropItem
 	@data_val(param_name = "multi_line")
 	boolean bTxtMultiLine = false;
 	
+	@data_val(param_name = "pop")
+	String popName = null ;
+	
+	@data_val(param_name = "popt")
+	String popTitle = null ;
+	
 	ValChker<?> valChker = null ;
 	
 	public PropItem()
@@ -396,7 +402,24 @@ public class PropItem
 		return this ;
 	}
 	
-	public void setValChker(ValChker vc)
+	public String getPopName()
+	{
+		return this.popName ;
+	}
+	
+	public String getPopTitle()
+	{
+		return this.popTitle ;
+	}
+	
+	public PropItem withPop(String pname,String ptitle)
+	{
+		this.popName = pname ;
+		this.popTitle = ptitle ;
+		return this ;
+	}
+	
+	public void setValChker(ValChker<?> vc)
 	{
 		this.valChker = vc ;
 	}

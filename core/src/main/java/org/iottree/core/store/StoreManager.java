@@ -6,12 +6,14 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -443,6 +445,39 @@ public class StoreManager
 		}
 	}
 	
+	public List<StoreOut> findStoreOutsByTag(UATag tag,boolean ignore_disabled,boolean history_only)
+	{
+		ArrayList<StoreOut> rets = new ArrayList<>() ;
+		String tagid = tag.getNodeCxtPathIn(this.prj) ;
+		for(StoreHandler sh:getId2Handler().values())
+		{
+			if(!sh.isEnable() && ignore_disabled)
+				continue ;
+			
+			HashSet<String> tagids = sh.getSelectTagIds() ;
+			if(tagids==null)
+				continue ;
+			
+			
+			if(!tagids.contains(tagid))
+				continue ;
+			
+			LinkedHashMap<String,StoreOut> id2out = sh.getId2Out() ;
+			if(id2out==null)
+				continue ;
+			for(StoreOut out:id2out.values())
+			{
+				if(!out.isEnable() && ignore_disabled)
+					continue ;
+				
+				if(history_only && !out.isStoreHistory())
+					continue ;
+				
+				rets.add(out) ;
+			}
+		}
+		return rets ;
+	}
 	
 	public void RT_start()
 	{

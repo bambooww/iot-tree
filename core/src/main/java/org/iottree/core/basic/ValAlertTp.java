@@ -199,12 +199,13 @@ public abstract class ValAlertTp extends JSObMap
 		case "cn":
 			if (Convert.isNullOrEmpty(this.triggerCn))
 				return null;
-
-			return "触发条件:" + this.triggerCn;
+//"触发条件:" + 
+			return this.triggerCn;
 		default:
 			if (Convert.isNullOrEmpty(this.triggerEn))
 				return null;
-			return "Trigger Condition:" + this.triggerEn;
+			//"Trigger Condition:" +
+			return  this.triggerEn;
 		}
 	}
 
@@ -235,11 +236,13 @@ public abstract class ValAlertTp extends JSObMap
 		case "cn":
 			if (Convert.isNullOrEmpty(this.releaseCn))
 				return null;
-			return "解除条件:" + this.releaseCn;
+			//"解除条件:" +
+			return  this.releaseCn;
 		default:
 			if (Convert.isNullOrEmpty(this.releaseEn))
 				return null;
-			return "Release Condition:" + this.releaseEn;
+			//"Release Condition:" +
+			return  this.releaseEn;
 		}
 	}
 

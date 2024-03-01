@@ -80,6 +80,12 @@ public class StoreOutTb extends StoreOut
 	{
 		return "Realtime Data Table";
 	}
+	
+	@Override
+	public boolean isStoreHistory()
+	{
+		return false;
+	}
 
 	public String getSorName()
 	{
@@ -284,11 +290,8 @@ public class StoreOutTb extends StoreOut
 //		}
 //	}
 	
-	public boolean initOut(StringBuilder failedr)
+	protected boolean initOutInner(StringBuilder failedr)
 	{
-		if(!super.initOut(failedr))
-			return false;
-		
 		if(Convert.isNullOrEmpty(this.sorName))
 		{
 			failedr.append("no Store source name") ;
@@ -353,7 +356,7 @@ public class StoreOutTb extends StoreOut
 	String[] synCols = null ;
 	
 	@Override
-	protected boolean RT_init(StringBuilder failedr) throws Exception
+	protected boolean RT_initInner(StringBuilder failedr) throws Exception
 	{
 		SourceJDBC sor = (SourceJDBC)StoreManager.getSourceByName(this.sorName) ;
 		if(sor==null)

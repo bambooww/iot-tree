@@ -85,22 +85,56 @@ public abstract class StoreOut
 	
 	public abstract boolean checkValid(StringBuilder failedr) ;
 	
+	protected abstract boolean initOutInner(StringBuilder failedr) ;
+	
+	public abstract boolean isStoreHistory() ;
+	
+	boolean initOk = false;
+	
 	public boolean initOut(StringBuilder failedr)
 	{
 		if(!checkValid(failedr))
 			return false;
 		
-		return true ;
+		if(initOutInner(failedr))
+		{
+			initOk = true ;
+			return true ;
+		}
+		return false ;
+	}
+	
+	public boolean checkOrInitOk(StringBuilder failedr)
+	{
+		if(initOk)
+			return true ;
+		return initOut(failedr) ;
+	}
+	
+	public boolean isInitOk()
+	{
+		return this.initOk ;
 	}
 	
 	//will be call before run in loop
-	protected abstract boolean RT_init(StringBuilder failedr) throws Exception;
+	protected abstract boolean RT_initInner(StringBuilder failedr) throws Exception;
 	
 	protected abstract void RT_runInLoop() throws Exception ;
 	
 	boolean rtInitOk = false;
 	boolean rtRunOk = false;
 	String rtErrorInfo = null ;
+	
+	boolean RT_init(StringBuilder failedr) throws Exception
+	{
+		if(RT_initInner(failedr))
+		{
+			rtInitOk = true ;
+			return true ;
+		}
+		
+		return false;
+	}
 	
 	public boolean RT_isInitOk()
 	{

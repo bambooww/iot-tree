@@ -12,7 +12,7 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "prjid"))
+if(!Convert.checkReqEmpty(request, out, "prjid","hid","id"))
 	return ;
 
 String prjid = request.getParameter("prjid");
@@ -22,16 +22,36 @@ if(prj==null)
 	out.print("no prj found") ;
 	return ;
 }
-
-AlertManager amgr= AlertManager.getInstance(prjid) ;
-List<String> outer_sors = amgr.HIS_getRecordOuterSorNames() ;
-
+String hid= request.getParameter("hid");
+String id= request.getParameter("id");
+StoreManager stom = StoreManager.getInstance(prjid) ;
+StoreHandler storeh = stom.getHandlerById(hid) ;
+if(storeh==null)
+{
+	out.print("no handler found") ;
+	return ;
+}
+StoreOutTbHis storeo = (StoreOutTbHis)storeh.getOutById(id) ;
+if(storeo==null)
+{
+	out.print("no outer found") ;
+	return ;
+}
+StringBuilder failedr = new StringBuilder() ;
+if(!storeo.checkOrInitOk(failedr))
+{
+	//out.print("the outer is not enable or init failed!") ;
+	out.print(failedr.toString()) ;
+	return ;
+}
+String tagpath = request.getParameter("tagpath") ;
+List<UATag> seltags = storeh.listSelectedTags() ;
 %><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title></title>
-<jsp:include page="./head.jsp"></jsp:include>
+<jsp:include page="../head.jsp"></jsp:include>
     <style>
 .layui-form-label{
     width: 120px;
@@ -93,26 +113,22 @@ dlg.resize_to(860,600) ;
 </script>
 <body>
 <div class="top">
-  Source <select id="sor_sel">
-  <option value="">Inner</option>
+  Tag <select id="tag_sel">
+  <option value=""> --- </option>
 <%
-for(String sor:outer_sors)
+for(UATag tag:seltags)
 {
-%><option value="<%=sor%>"><%=sor %></option><%
+	String fullp = tag.getNodePathCxt() ;
+	String tagp = tag.getNodeCxtPathIn(prj) ;
+%><option value="<%=fullp%>"><%=tagp %></option><%
 }
 %>
   </select>
-  Handler
-  <select id="handler_sel">
+  Valid
+  <select id="valid_sel">
   <option value=""> --- </option>
-<%
-for(AlertHandler ah:amgr.getHandlers().values())
-{
-	String ahn = ah.getName() ;
-	String aht = ah.getTitle() ;
-%><option value="<%=ahn%>"><%=aht %></option><%
-}
-%>
+  <option value="true">true</option>
+  <option value="false">false</option>
   </select>
   Start Date
   <input type="datetime-local" id="start_dt" name="start_dt"/>
@@ -136,14 +152,13 @@ for(AlertHandler ah:amgr.getHandlers().values())
   </colgroup>
   <thead>
     <tr style="background-color: #cccccc">
-     <th>Trigger Time</th>
-      <th>Release Time</th>
-      <th>Handler</th>
-      <th>Tag</th>
+     <th>Tag</th>
+      <th>Update Time</th>
+      <th>Change Time</th>
+      <th>Valid</th>
       <th>Type</th>
       <th>Value</th>
-      <th>Level</th>
-      <th>Prompt</th>
+      <th>Alert</th>
     </tr> 
   </thead>
   <tbody id="list_cont" class="list_cont">
@@ -154,12 +169,14 @@ for(AlertHandler ah:amgr.getHandlers().values())
 <script>
 
 var prjid = "<%=prjid%>";
+var hid = "<%=hid%>" ;
+var id =  "<%=id%>" ;
 
 var table ;
 var table_cur_page = 1 ;
 
-var sor = "" ;
-var handler = "" ;
+var tagpath = "" ;
+var valid = "" ;
 var start_dt = "" ;
 var end_dt = "" ;
 layui.use('table', function()
@@ -171,8 +188,8 @@ layui.use('table', function()
 function show_list(u,pm,bappend) {
 	
 	cur_list_u = u ;
-	pm.sor = sor||"" ;
-	pm.handler=handler||"" ;
+	pm.tagpath = tagpath||"" ;
+	pm.valid=valid||"" ;
 	pm.start_dt = start_dt||"" ;
 	pm.end_dt = end_dt||"" ;
 	send_ajax(u,pm,(bsucc,ret)=>{
@@ -191,13 +208,13 @@ function show_list(u,pm,bappend) {
 function update_list()
 {
 	page_idx=0 ;
-	show_list("prj_alert_his_list.jsp",{prjid:prjid,pageidx:0},false) ;
+	show_list("o_r_tb_his_view_list.jsp",{prjid:prjid,hid:hid,id:id,pageidx:0},false) ;
 }
 
 
 function show_list_more() {
 	page_idx++ ;
-	show_list("prj_alert_his_list.jsp",{prjid:prjid,pageidx:page_idx},true) ; 
+	show_list("o_r_tb_his_view_list.jsp",{prjid:prjid,hid:hid,id:id,pageidx:page_idx},true) ; 
 }
 
 update_list();
@@ -234,8 +251,8 @@ var sdiv = $("#main_left")[0] ;
  
 function do_search()
 {
-	sor = $("#sor_sel").val() ;
-	handler = $("#handler_sel").val() ;
+	tagpath = $("#tag_sel").val() ;
+	valid = $("#valid_sel").val() ;
 	start_dt = $("#start_dt").val() ;
 	end_dt = $("#end_dt").val() ;
 	update_list() ;
@@ -243,9 +260,10 @@ function do_search()
 
 function do_search_all()
 {
-	sor = $("#sor_sel").val() ;
-	handler = "" ;
-	$("#handler_sel").val("") ;
+	tagpath="" ;
+	$("#tag_sel").val("") ;
+	valid = "" ;
+	$("#valid_sel").val("") ;
 	start_dt = "" ;
 	$("#start_dt").val("") ;
 	end_dt = "" ;

@@ -21,6 +21,8 @@ import org.json.JSONObject;
 /**
  * for alert config to other objs like tag
  * 
+ * Value Event or Alert
+ * 
  * @author jason.zhu
  */
 @data_class

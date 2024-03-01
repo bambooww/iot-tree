@@ -213,7 +213,7 @@ In the middle "Alert Handlers" area, click the "+Add" button or click the edit i
 
 
 
-It can be seen that alarm processing is very simple, just define parameters such as the alarm processing name, title, alarm level, whether it is enabled, and trigger color. In a sense, alarm processing is the classification of alarm source data.
+It can be seen that alarm processing is very simple, just define the alarm processing name, title, alarm level and whether it is enabled, trigger color, and parameters of the alarm record. In a sense, alarm processing is the classification of alarm source data.
 
 This can be improved in the future. If you have any good suggestions, you can provide them to us.
 
@@ -379,7 +379,41 @@ After association, there will be a connection line between the output and handle
 
 <img src="../img/main/m033.png" />
 
-## 4 Summary
+## 4 Alarm Record
+
+### 4.1 Alarm recording parameters based on handler
+
+
+
+Starting from version 1.0.3, IOT-Tree supports internal automatic recording of alarms (supported by the built-in SQLite data source), and this record must be specified by the Alert Handler.
+
+In the newly added or edited dialog of the Alert Handler above, you can see that there are two sections in the Record option: Inner and Outer. Among them, Inner represents the internal record after the alarm is triggered, and the number of days for recording alarm information can be specified. By default, this is enabled.
+
+And for Outer, you need to enable it and also specify the configured data source (data source configuration is independent of the project, please refer to the relevant content). And the storage days of alarm records can also be set.
+
+Note: If you want the alarm records to be permanently saved, please set the Keep Days to 0 or less.
+
+Through this configuration, IOT Tree will store triggered alarms according to the configuration of this handler.
+
+
+### 4.2 Viewing alarm records
+
+
+
+For the management end:
+
+With this alarm record storage, you can click the "History" button in the Alert tab of the project management page to view it. As shown in the following figure:
+
+
+
+<img src="../img/main/m062.png" />
+
+
+If you click on the alarm icon at the front of the monitoring HMI and click "History" above the real-time alarm window, you can view the same dialog:
+
+<img src="../img/main/m063.png" />
+
+## 5 Summary
 
 
 

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ page import="java.util.*,
 	java.io.*,
+	org.json.*,
 	org.iottree.core.*,
 	org.iottree.core.basic.*,
 	org.iottree.core.task.*,
@@ -12,7 +13,7 @@
 	"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "prjid"))
+if(!Convert.checkReqEmpty(request, out, "prjid","tag","outid"))
 	return ;
 
 String prjid = request.getParameter("prjid");
@@ -22,16 +23,45 @@ if(prj==null)
 	out.print("no prj found") ;
 	return ;
 }
+String tagpath = request.getParameter("tag") ;
+UATag tag = (UATag)UAManager.getInstance().findNodeByPath(tagpath) ; 
+if(tag==null || tag.getBelongToPrj()!=prj)
+{
+	out.print("no tag found") ;
+	return ;
+}
+StoreManager storem = StoreManager.getInstance(prjid) ;
 
-AlertManager amgr= AlertManager.getInstance(prjid) ;
-List<String> outer_sors = amgr.HIS_getRecordOuterSorNames() ;
-
+List<StoreOut> storeos = storem.findStoreOutsByTag(tag, true, true);
+if(storeos==null||storeos.size()<0)
+{
+	out.print("no valid store out found") ;
+	return ;
+}
+String outid = request.getParameter("outid") ;
+StoreOut storeo = null ;
+for(StoreOut so:storeos)
+{
+	if(so.getId().equals(outid))
+	{
+		storeo = so ; break ;
+	}
+}
+if(storeo==null)
+{
+	out.print("no store out matched") ;
+	return ;
+}
+String oid = storeo.getId() ;
+StoreHandler storeh = storeo.getBelongTo() ;
+String hid = storeh.getId() ;
 %><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title></title>
 <jsp:include page="./head.jsp"></jsp:include>
+<script type="text/javascript" src="/_js/echarts/echarts.min.js"></script>
     <style>
 .layui-form-label{
     width: 120px;
@@ -73,7 +103,8 @@ position: absolute;
 	position: absolute;
 	top:30px;
 	left:0px;
-	width:100%;
+	width:40%;
+	height0:100%;
 	border:1px solid #c1c1c1;
 	bottom:0px;
 	overflow-y:scroll;
@@ -85,35 +116,26 @@ white-space: nowrap;
 text-overflow: ellipsis;
 }
 
+.main_right
+{
+	position: absolute;
+	top:30px;
+	right:0px;
+	left:40%;
+	height0:100%;
+	border:1px solid #c1c1c1;
+	bottom:0px;
+	overflow-y:scroll;
+}
 
     </style>
 </head>
 <script type="text/javascript">
-dlg.resize_to(860,600) ;
+//dlg.resize_to(960,600) ;
 </script>
-<body>
+<body >
 <div class="top">
-  Source <select id="sor_sel">
-  <option value="">Inner</option>
-<%
-for(String sor:outer_sors)
-{
-%><option value="<%=sor%>"><%=sor %></option><%
-}
-%>
-  </select>
-  Handler
-  <select id="handler_sel">
-  <option value=""> --- </option>
-<%
-for(AlertHandler ah:amgr.getHandlers().values())
-{
-	String ahn = ah.getName() ;
-	String aht = ah.getTitle() ;
-%><option value="<%=ahn%>"><%=aht %></option><%
-}
-%>
-  </select>
+  
   Start Date
   <input type="datetime-local" id="start_dt" name="start_dt"/>
   End Date
@@ -124,26 +146,20 @@ for(AlertHandler ah:amgr.getHandlers().values())
   <div class="main_left" id="main_left">
 <table id="" class="layui-table"  lay-filter="apiquote_list"  lay-size="sm" lay-even0="true"  style="width:100%">
   	<colgroup>
+    <col width="100">
+    <col width="100">
     <col width="30">
-    <col width="250">
-    <col width="100">
-    <col width="150">
-    <col width="70">
-    <col width="100">
-    <col width="70">
+    <col width="170">
     <col width="100">
     <col>
   </colgroup>
   <thead>
     <tr style="background-color: #cccccc">
-     <th>Trigger Time</th>
-      <th>Release Time</th>
-      <th>Handler</th>
-      <th>Tag</th>
-      <th>Type</th>
+      <th>Update Time</th>
+      <th>Change Time</th>
+      <th>Valid</th>
       <th>Value</th>
-      <th>Level</th>
-      <th>Prompt</th>
+      <th>Alert</th>
     </tr> 
   </thead>
   <tbody id="list_cont" class="list_cont">
@@ -151,15 +167,19 @@ for(AlertHandler ah:amgr.getHandlers().values())
   </tbody>
 </table>
 </div>
+<div class="main_right" id="main_right">
+</div>
 <script>
 
 var prjid = "<%=prjid%>";
+var tagpath = "<%=tagpath%>" ;
+var hid = "<%=hid%>" ;
+var oid = "<%=oid%>" ;
 
 var table ;
 var table_cur_page = 1 ;
 
-var sor = "" ;
-var handler = "" ;
+var valid = "" ;
 var start_dt = "" ;
 var end_dt = "" ;
 layui.use('table', function()
@@ -171,8 +191,8 @@ layui.use('table', function()
 function show_list(u,pm,bappend) {
 	
 	cur_list_u = u ;
-	pm.sor = sor||"" ;
-	pm.handler=handler||"" ;
+	pm.tag = tagpath||"" ;
+	pm.valid=valid||"" ;
 	pm.start_dt = start_dt||"" ;
 	pm.end_dt = end_dt||"" ;
 	send_ajax(u,pm,(bsucc,ret)=>{
@@ -191,16 +211,69 @@ function show_list(u,pm,bappend) {
 function update_list()
 {
 	page_idx=0 ;
-	show_list("prj_alert_his_list.jsp",{prjid:prjid,pageidx:0},false) ;
+	show_list("prj_data_r_tb_his_list.jsp",{prjid:prjid,hid:hid,oid:oid,pageidx:0},false) ;
 }
 
 
 function show_list_more() {
 	page_idx++ ;
-	show_list("prj_alert_his_list.jsp",{prjid:prjid,pageidx:page_idx},true) ; 
+	show_list("prj_data_r_tb_his_list.jsp",{prjid:prjid,hid:hid,oid:oid,pageidx:page_idx},true) ; 
 }
 
 update_list();
+
+var chart = null ;
+
+
+//var X_Data=[];
+var chart_data=[];
+
+function show_chart(data)
+{
+	//console.log(xdata,ydata) ;
+	//X_Data.push(...xdata);
+	chart_data.push(...data);
+	chart = echarts.init($("#main_right")[0]);
+
+	  var option = {
+			
+			tooltip: {
+				trigger: 'axis'
+			},
+			
+			grid: {
+				left: '3%',
+				right: '4%',
+				bottom: '3%',
+				containLabel: true
+			},
+			toolbox: {
+				feature: {
+					//saveAsImage: {}
+				}
+			},
+			xAxis: {
+				type: 'time',
+				//boundaryGap: false,
+				//data: X_Data //[1, 2, 3, 4, 5, 6, 7] //
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: [
+				{
+					
+					type: 'line',
+					//stack: '总量',
+					data: chart_data //[120, 132, '', 134, 90, 230, 210] //
+				}
+			]
+		};
+
+	  chart.setOption(option);
+}
+
+//show_chart();
 
 function on_row_clk(id)
 {}
@@ -234,22 +307,27 @@ var sdiv = $("#main_left")[0] ;
  
 function do_search()
 {
-	sor = $("#sor_sel").val() ;
-	handler = $("#handler_sel").val() ;
+	//tagpath = $("#tag_sel").val() ;
+	valid = $("#valid_sel").val() ;
 	start_dt = $("#start_dt").val() ;
 	end_dt = $("#end_dt").val() ;
+	
+	chart_data=[];
 	update_list() ;
 }
 
 function do_search_all()
 {
-	sor = $("#sor_sel").val() ;
-	handler = "" ;
-	$("#handler_sel").val("") ;
+	//tagpath="" ;
+	//$("#tag_sel").val("") ;
+	valid = "" ;
+	$("#valid_sel").val("") ;
 	start_dt = "" ;
 	$("#start_dt").val("") ;
 	end_dt = "" ;
 	 $("#end_dt").val("") ;
+	 
+	 chart_data=[];
 	update_list() ;
 }
 </script>

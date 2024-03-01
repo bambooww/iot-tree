@@ -499,9 +499,9 @@ function edit_alert(idx)
 {
 	if(event)
 		event.preventDefault() || (event.returnValue = false);
-	let tt = "Edit Tag Alert Source"
+	let tt = "Edit Tag Alert/Event Source"
 	if(idx==undefined||idx==null)
-		tt = "Add Tag Alert Source"
+		tt = "Add Tag Alert/Event Source"
 	let dd = null;
 	if(idx>=0)
 		dd = alerts_dd[idx] ;

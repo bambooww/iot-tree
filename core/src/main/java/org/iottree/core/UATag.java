@@ -27,6 +27,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
+import org.iottree.core.store.StoreManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -754,7 +755,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		return null ;
 	}
-	
+
+
 	public boolean isCanWrite()
 	{
 		return bCanWrite;
@@ -1234,11 +1236,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			uav = new UAVal(true,v,updt,chgdt) ;
 		else
 			uav = new UAVal(false,null,updt,chgdt) ;
+		
 		RT_setUAVal(uav);
+		
 		if(uav.isValid() && bval_chg)
 		{
 			RT_chkAlerts() ;
 		}
+		
+		//RT_chkStore() ;
 		return uav ;
 	}
 	

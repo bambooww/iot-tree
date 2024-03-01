@@ -107,6 +107,7 @@ td
 {font-size: 12px;
 }
 
+
 .pi_edit_table tr:hover {
 	background-color: #979797;
 }
@@ -246,7 +247,7 @@ dlg.resize_to(800,620);
 </script>
 </head>
 <body>
-<table class="prop_table" style="border:solid 1px" >
+<table class="prop_table" style="border:solid 1px">
   <tr>
     <td style="width:45%" >
     <div id="prop_edit_path" class="prop_edit_path">[<%=cptp %>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

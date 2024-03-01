@@ -193,6 +193,7 @@ if(b_tags)
         <th>Quality</th>
         <th>Write</th>
         <th>Oper</th>
+        <th title="Show at client or not">Client</th>
         <th>Store</th>
      </tr>
    </thead>
@@ -205,29 +206,7 @@ if(b_tags)
 }
 %>
 </form>
-<%
-if(false)//(b_tags)
-{
-%>
-<table width='100%' border='1' height="120">
-<tr>
- <td>
- script test <input type='button' value='run' onclick="run_script_test('')"/> 
- </td>
- <td>script test result</td>
-</tr>
- <tr>
-  <td>
-   <textarea id='script_test' rows="6" style="overflow: scroll;width:98%"></textarea>
-  </td>
-  <td>
-   <textarea id='script_res' rows="6" style="overflow: scroll;width:98%"></textarea>
-  </td>
- </tr>
-</table>
-<%
-}
-%>
+
 <br><br>
 </body>
 <script>

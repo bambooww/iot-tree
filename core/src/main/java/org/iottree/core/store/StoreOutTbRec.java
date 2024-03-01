@@ -29,11 +29,18 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.iottree.core.util.xmldata.data_val;
 
-public class StoreOutTbHis extends StoreOut
+/**
+ * Support storing data from multiple time points with one record to improve storage and reception performance.
+ *  And reduce database data rows and access times
+ * 
+ * @author jason.zhu
+ *
+ */
+public class StoreOutTbRec extends StoreOut
 {
-	public static final String TP = "r_tb_his" ;
+	public static final String TP = "r_tb_rec" ;
 	
-	static ILogger log = LoggerManager.getLogger(StoreOutTbHis.class) ;
+	static ILogger log = LoggerManager.getLogger(StoreOutTbRec.class) ;
 	
 	@data_val(param_name = "sor_n")
 	String sorName = null ;
