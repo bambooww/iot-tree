@@ -229,6 +229,20 @@ New project internal SQLite data source support
 New AlertHandler internal data source and outer data source automatic recording function added
 
 
+### version 1.0.4
+
+
+Add the Show Tags attribute to the HMI node of the project management end, so that the corresponding front-end UI supports Tag table data display configuration. If the Tag has historical data supported by the Store, it can pop up to display historical data;
+Add pop-up window editing support for project node attribute values, which can support more diverse input of attribute values, such as tag selectors, colors, etc.
+Handling some bugs
+
+
+### version 1.0.5
+
+
+SQLite Native load java.io.tmpdir may has no access right bug fixed
+
+
 ### version 1.1.x (Plan)
 
 

@@ -62,8 +62,7 @@
 ##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;7.2 Common properties
 ##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;7.3 Properties binding and event handling
 ##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.4 HMI Components</a>
-
-
+##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;7.5 HMI Client's data list</a>
 
 #### <a href="doc/js/index.md"> 8 JS Script Usage</a>
 

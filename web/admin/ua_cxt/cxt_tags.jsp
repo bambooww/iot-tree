@@ -22,8 +22,8 @@ if(node==null)
 	return ;
 }
 //DevDef devdef = null ;
-UANode prj = node.getTopNode() ;
-String prj_name = prj.getName();//.getName() ;
+UANode topn = node.getTopNode() ;
+String prj_name = topn.getName();//.getName() ;
 String node_id = node.getId() ;
 UAHmi hmi = null ;
 boolean bhmi = false;
@@ -32,6 +32,15 @@ if(node instanceof UAHmi)
 	bhmi = true ;
 	hmi = (UAHmi)node;
 }
+
+UAPrj prj = null ;
+String prjid = "" ;
+if(topn instanceof UAPrj)
+{
+	prj = (UAPrj)topn ;
+	prjid = prj.getId() ;
+}
+
 /*
 if(node instanceof UAHmi)
 {
@@ -193,8 +202,14 @@ if(b_tags)
         <th>Quality</th>
         <th>Write</th>
         <th>Oper</th>
-        <th title="Show at client or not">Client</th>
+<%
+if(prj!=null)
+{
+%>
         <th>Store</th>
+<%
+}
+%>
      </tr>
    </thead>
    <tbody id="div_list_bd_">
@@ -210,6 +225,7 @@ if(b_tags)
 <br><br>
 </body>
 <script>
+var prjid = "<%=prjid%>" ;
 var prj_name = "<%=prj_name%>" ;
 var node_id = "<%=node_id%>" ;
 var path = "<%=path%>" ;
@@ -1011,6 +1027,16 @@ function bind_ext(path)
 function node_access(p)
 {
 	window.open(p) ;
+}
+
+function show_data_his(outtp,outid,tagp,title)
+{	
+	if(!prjid)
+		return ;
+	dlg.open_win("/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
+			{title:"Data History - "+title,w:960,h:650},
+			[],
+			[]);
 }
 
 </script>

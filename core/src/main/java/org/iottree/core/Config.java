@@ -544,6 +544,10 @@ public class Config
 				if(!tmpdir.exists())
 					tmpdir.mkdirs() ;
 				System.setProperty("iottree.tmp_dir",getDataDirBase()+"/tmp/");
+				File javaiotemp = new File(getDataDirBase()+"/tmp_java_io/") ;
+				if(!javaiotemp.exists())
+					javaiotemp.mkdirs() ;
+				System.setProperty("java.io.tmpdir",javaiotemp.getCanonicalPath());
 				log.info("Data File Base="+dataFileBase) ;
 				
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));

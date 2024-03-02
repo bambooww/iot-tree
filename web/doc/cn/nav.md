@@ -62,8 +62,7 @@
 ##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;7.2 图元通用属性说明
 ##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;7.3 HMI属性绑定和事件处理
 ##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.4 HMI组件(控件)</a>
-
-
+##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;7.5 HMI客户端数据列表展示</a>
 
 #### <a href="doc/js/index.md"> 8 JS脚本支持</a>
 

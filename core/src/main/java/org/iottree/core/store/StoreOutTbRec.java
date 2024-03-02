@@ -282,7 +282,7 @@ public class StoreOutTbRec extends StoreOut
 			}
 		}
 		
-		if(!has_bool && !has_int && has_float)
+		if(!has_bool && !has_int && !has_float)
 			throw new Exception("no bool or number tag selected!") ;
 		
 		int tag_maxlen = 20 ;

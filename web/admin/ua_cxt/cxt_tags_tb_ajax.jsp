@@ -4,6 +4,7 @@
 	org.iottree.core.*,
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
+	org.iottree.core.store.*,
 	org.iottree.core.comp.*
 	"%><%!
 	private static class TagComp implements Comparator<UATag>
@@ -59,6 +60,15 @@ if(node==null)
 	out.print("node not found"); 
 	return ;
 }
+UANode topn = node.getTopNode() ;
+UAPrj prj = null ;
+StoreManager storem = null;
+if(topn instanceof UAPrj)
+{
+	prj = (UAPrj)topn ;
+	storem = StoreManager.getInstance(prj.getId()) ;
+}
+
 UAHmi hmi = null ;
 boolean bhmi = false;
 if(node instanceof UAHmi)
@@ -99,9 +109,9 @@ String hmitt = "" ;
 if(bhmi)
 {
 	hmitt ="UI ["+hmi.getNodePath()+"]";
-}%>
+}
 
-<%
+
 int tags_num = 0 ;
 for(UANodeOCTags tn:tns)
 {
@@ -121,6 +131,7 @@ for(UANodeOCTags tn:tns)
 		tags_num ++ ;
 		String tagpath = tag.getNodePath();//.getNodePathCxt() ;
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
+		String tagp = tag.getNodePathCxt();
 		boolean bloc = tag.getParentNode()==node_tags;
 		String cssstr="" ;
 		if(tag.isSysTag())
@@ -231,12 +242,29 @@ if(Convert.isNotNullEmpty(ext_str))
 %>&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
 &nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
-        <td>
-        	<input type="checkbox"   lay-skin="primary" id="client_show_<%=tag.getId()%>"/>
+<%
+if(storem!=null)
+{
+	List<StoreOut> storeos = storem.findStoreOutsByTag(tag, true, true);
+	boolean b_his = (storeos!=null && storeos.size()>0) ;
+%><td>
+<%
+if(b_his)
+{
+	for(StoreOut so:storeos)
+	{
+		String outtp = so.getOutTp() ;
+		String outtpt = so.getOutTpTitle() ;
+		String outid = so.getId() ;
+%><a href="javascript:show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="show history - <%=outtpt%>">&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</a>
+<%
+	}
+}
+%>
         </td>
-        <td>
-        	<input type="checkbox"   lay-skin="primary" />
-        </td>
+<%
+}
+%>
       </tr>
 <%
 	}

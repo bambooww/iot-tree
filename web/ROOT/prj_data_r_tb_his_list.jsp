@@ -86,10 +86,23 @@ for(DataRow dr:dt.getRows())
 	
 	if(bfirst) bfirst=false;
 	else jarrsb.append(",") ;
-	if(valid)
-		jarrsb.append("[\""+Convert.toFullYMDHMS(updt)+"\",").append(val).append("]") ;
+	
+	if(chgdt.equals(updt))
+	{
+		if(valid)
+			jarrsb.append("[\"").append(Convert.toFullYMDHMS(updt)).append("\",").append(val).append("]") ;
+		else
+			jarrsb.append("[\"").append(Convert.toFullYMDHMS(updt)).append("\",\"\"]") ;
+	}
 	else
-		jarrsb.append("[\""+Convert.toFullYMDHMS(updt)+"\",\"\"]") ;
+	{
+		if(valid)
+			jarrsb.append("[\"").append(Convert.toFullYMDHMS(chgdt)).append("\",").append(val).append("],")
+				.append("[\"").append(Convert.toFullYMDHMS(updt)).append("\",").append(val).append("]");
+		else
+			jarrsb.append("[\"").append(Convert.toFullYMDHMS(chgdt)).append("\",\"\"],")
+				.append("[\"").append(Convert.toFullYMDHMS(updt)).append("\",\"\"]");
+	}
 %>
 
 <%--
