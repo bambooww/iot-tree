@@ -79,6 +79,7 @@ public class DBSqlSQLite extends DbSql
 			.append("(");
 		
 		JavaColumnInfo pkcol = jti.getPkColumnInfo() ;
+		boolean bfirst = true ;
 		if(pkcol!=null)
 		{
 			if(pkcol.isAutoVal() && pkcol.getValType()!=XmlVal.XmlValType.vt_string)
@@ -93,12 +94,16 @@ public class DBSqlSQLite extends DbSql
 				.append(getSqlType(pkcol.getValType(),pkcol.getMaxLen()))
 				.append(" primary key");
 			}
+			bfirst = false ;
 		}
 		
 		for(JavaColumnInfo tmpjci:jti.getNorColumnInfos())
 		{
-			if(tmpsb.charAt(tmpsb.length()-1)!=',')
-				tmpsb.append(',');
+			if(bfirst) bfirst=false;
+			else
+				tmpsb.append(',') ;
+//			if(tmpsb.charAt(tmpsb.length()-1)!=',')
+//				tmpsb.append(',');
 			
 			tmpsb.append(tmpjci.getColumnName()).append(" ")
 				.append(getSqlType(tmpjci.getValType(),tmpjci.getMaxLen()));

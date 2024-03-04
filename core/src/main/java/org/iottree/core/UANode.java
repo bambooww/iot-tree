@@ -2,7 +2,6 @@ package org.iottree.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropNode;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.cxt.JsEnv;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.basic.PropItem.PValTP;

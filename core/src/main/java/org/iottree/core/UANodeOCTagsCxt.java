@@ -4,27 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptContext;
-import javax.script.SimpleScriptContext;
-
-import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.alert.AlertItem;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
-import org.iottree.core.cxt.JSObPk;
 import org.iottree.core.cxt.JsEnv;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.JsSub;
 import org.iottree.core.cxt.JsSubOb;
 import org.iottree.core.cxt.UAContext;
-import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -45,7 +38,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7775465863975907067L;
+	//private static final long serialVersionUID = 7775465863975907067L;
 
 	/**
 	 * runtime context

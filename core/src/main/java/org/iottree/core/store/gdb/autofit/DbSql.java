@@ -118,17 +118,22 @@ public abstract class DbSql
 			.append("(");
 		
 		JavaColumnInfo pkcol = jti.getPkColumnInfo() ;
+		boolean bfirst = true ;
 		if(pkcol!=null)
 		{
 			tmpsb.append(pkcol.getColumnName()).append(" ")
 				.append(getSqlType(pkcol.getValType(),pkcol.getMaxLen()))
 				.append(" primary key");
+			bfirst = false;
 		}
 		
 		for(JavaColumnInfo tmpjci:jti.getNorColumnInfos())
 		{
-			if(tmpsb.charAt(tmpsb.length()-1)!=',')
-				tmpsb.append(',');
+			if(bfirst) bfirst=false;
+			else
+				tmpsb.append(',') ;
+//			if(tmpsb.charAt(tmpsb.length()-1)!=',')
+//				tmpsb.append(',');
 			
 			tmpsb.append(tmpjci.getColumnName()).append(" ")
 				.append(getSqlType(tmpjci.getValType(),tmpjci.getMaxLen()));

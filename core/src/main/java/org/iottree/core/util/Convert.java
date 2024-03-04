@@ -3,6 +3,7 @@ package org.iottree.core.util;
 import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.net.*;
 
@@ -2519,6 +2520,15 @@ public class Convert
 			IRelatedFile tar_rf = rf2rf.getValue() ;
 			FileUtils.copyFile(sorf, tar_rf.getRelatedFile());
 		}
+	}
+	
+	public static long currentTimeNano()
+	{
+//		long offset=System.currentTimeMillis()*1_000_000 - System.nanoTime();
+//		long curns = System.nanoTime() + offset;
+		Instant instant = Instant.now();
+		int tt = instant.getNano();                // Represent a moment in UTC.
+		return instant.toEpochMilli()/1000*1000_000_000 + tt;
 	}
 
 

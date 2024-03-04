@@ -2,51 +2,33 @@ package org.iottree.core;
 
 import java.io.*;
 import java.util.*;
-import java.util.function.Predicate;
-
-import javax.script.Bindings;
 import javax.script.Invocable;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.js.Debug;
-import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
-import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyArray;
-import org.graalvm.polyglot.proxy.ProxyObject;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
-import org.iottree.core.cxt.IJSOb;
-import org.iottree.core.cxt.JSObMap;
-import org.iottree.core.cxt.JSProxyOb;
-import org.iottree.core.cxt.JSProxyObGetter;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
-import org.iottree.core.res.ResDir;
-import org.iottree.core.res.ResManager;
 import org.iottree.core.store.StoreManager;
+import org.iottree.core.store.tssdb.TSSAdapterPrj;
 import org.iottree.core.task.Task;
 import org.iottree.core.task.TaskManager;
 import org.json.JSONObject;
-
-import kotlin.NotImplementedError;
 
 /**
  * UA Project
@@ -948,6 +930,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				//old context with js env will rebuild
 				RT_reContext();
 				
+				TSSAdapterPrj.getInstance(UAPrj.this).RT_start() ;
+				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
 				StoreManager.getInstance(UAPrj.this.getId()).RT_start();
@@ -1014,6 +998,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
 				StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
+				
+				TSSAdapterPrj.getInstance(UAPrj.this).RT_stop() ;
 			}
 		}
 	};

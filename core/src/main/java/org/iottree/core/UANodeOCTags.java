@@ -1,18 +1,13 @@
 package org.iottree.core;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -375,10 +370,10 @@ public abstract class UANodeOCTags extends UANodeOC
 			this.num = num ;
 		}
 		
-		public boolean isEmpty()
-		{
-			return Convert.isNullOrEmpty(this.name);
-		}
+//		public boolean isEmpty()
+//		{
+//			return Convert.isNullOrEmpty(this.name);
+//		}
 		
 		public String toString(String defv)
 		{
