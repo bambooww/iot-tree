@@ -145,9 +145,15 @@ text-overflow:ellipsis;
 	color: white;
 }
 
+#div_list_bd button
+{
+	border:0px;
+	background-color: rgba(0,0,0,0);
+}
+
 </style>
 <body marginwidth="0" marginheight="0">
-<form class="layui-form" action="">
+<form class="layui-form" action="" onsubmit="return false;">
  <blockquote class="layui-elem-quote ">&nbsp;
  <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node.getNodePath() %> 
  <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
@@ -206,13 +212,14 @@ if(b_tags)
 if(prj!=null)
 {
 %>
+		<th title="inner recorder">Recorder</th>
         <th>Store</th>
 <%
 }
 %>
      </tr>
    </thead>
-   <tbody id="div_list_bd_">
+   <tbody id="div_list_bd">
 
     </tbody>
 </table>
@@ -847,7 +854,7 @@ function refresh_tags()
 	if(!b_tags)
 		return ;
 	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys+"&sortby="+sort_by,function(bsucc,ret){
-		$("#div_list_bd_").html(ret);
+		$("#div_list_bd").html(ret);
 		init_tr();
 		
 		var tn = $('#tb_cur tr[id*="ctag_"]:last-child').attr("tag_num");
@@ -1029,6 +1036,74 @@ function node_access(p)
 	window.open(p) ;
 }
 
+function rec_tag_set(ob,tag,tt)
+{
+	let show_c = $(document.getElementById("rec_tag_show_"+tag)) ;
+	dlg.open("./tag_rec_param_edit.jsp?prjid="+prjid+"&tag="+tag,
+			{title:"Tag "+tt+" Record Param Setup",w:'500px',h:'400px'},
+			['Ok','Unset','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.tag=tag ;
+						 ret.prjid=prjid;
+						 ret.op = "set";
+						 //ret.id = id ;
+						 //console.log(ret);
+						 send_ajax('./tag_rec_param_ajax.jsp',ret,function(bsucc,rr)
+							{
+								if(!bsucc || rr.indexOf('succ')<0)
+								{
+									dlg.msg(rr);
+									return ;
+								}
+								$(ob).css("color","green") ;
+								show_c.css("display","inline") ;
+								dlg.close();
+								
+							},false);
+							
+						 
+						 //
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.confirm('unset this record param?',{btn:["Yes","Cancel"],title:"Unset Confirm"},function ()
+				    {
+							send_ajax("tag_rec_param_ajax.jsp",{op:"unset",prjid:prjid,tag:tag},function(bsucc,ret){
+					    		if(!bsucc || ret!='succ')
+					    		{
+					    			dlg.msg("unset err:"+ret) ;
+					    			return ;
+					    		}
+					    		//
+					    		$(ob).css("color","#d2d2d2") ;
+					    		show_c.css("display","none") ;
+								dlg.close() ;
+					    	}) ;
+						});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	return false;
+}
+
+function rec_tag_show(tagpath,title)
+{
+	dlg.msg(tagpath) ;
+}
+
 function show_data_his(outtp,outid,tagp,title)
 {	
 	if(!prjid)
@@ -1038,6 +1113,7 @@ function show_data_his(outtp,outid,tagp,title)
 			[],
 			[]);
 }
+
 
 </script>
 </html>

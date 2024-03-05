@@ -220,5 +220,8 @@ public class TSSTagSegs<T>
 		}
 	}
 	
-	
+	public int getUnsavedSegsNum()
+	{
+		return memSegs.size()+(this.bLastSegDirty?1:0) ;
+	}
 }

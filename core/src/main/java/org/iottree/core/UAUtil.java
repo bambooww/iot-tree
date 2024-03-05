@@ -122,6 +122,17 @@ public class UAUtil
 			throw new IllegalArgumentException("path is not hmi node") ;
 		return (UAHmi)n ;
 	}
+	
+	public static UATag findTagByPath(String path)
+	{
+		UANode n = findNodeByPath(path) ;
+		if(n==null)
+			return null ;
+		if(!(n instanceof UATag))
+			throw new IllegalArgumentException("path is not tag node") ;
+		return (UATag)n ;
+	}
+	
 	public static boolean isDevDefPath(String path)
 	{
 		return path.indexOf('-')>0 ;

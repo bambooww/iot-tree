@@ -25,13 +25,17 @@ public class TSSAdapter4Test extends TSSAdapter
 		pms.add(new TSSTagParam("aa.ss.ii",ValTP.vt_int16,1000)) ;
 		pms.add(new TSSTagParam("kk.bb",ValTP.vt_bool,5000)) ;
 		pms.add(new TSSTagParam("kk.mm.ff",ValTP.vt_float,500)) ;
+		
+		pms.add(new TSSTagParam("aa.ss.ii2",ValTP.vt_int16,1000)) ;
+		pms.add(new TSSTagParam("kk.bb2",ValTP.vt_bool,5000)) ;
+		pms.add(new TSSTagParam("kk.mm.ff2",ValTP.vt_float,500)) ;
 		return pms ;
 	}
 	
 	@Override
 	protected long getSaveIntervalMS() 
 	{
-		return 1000 ;
+		return 500 ;
 	}
 	
 	@Override
@@ -74,5 +78,11 @@ public class TSSAdapter4Test extends TSSAdapter
 		DBConnPool connPool = new DBConnPool(DBType.sqlite, "", "org.sqlite.JDBC", url,null, null,
 				null, "0", "10",this.getClass().getClassLoader());
 		return connPool ;
+	}
+	
+	public File getDBFile()
+	{
+		String fp =  "../data/tmp/tssdb_test/ttsr._test.db" ;
+		return new File(fp) ;
 	}
 }

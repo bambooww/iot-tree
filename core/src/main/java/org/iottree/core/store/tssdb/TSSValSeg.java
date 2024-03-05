@@ -94,4 +94,25 @@ public class TSSValSeg<T>
 	{
 		return startDT+","+(bvalid?"1":"0")+","+(val==null?"":val.toString())+","+endDT ;
 	}
+	
+	public boolean containsDT(long dt)
+	{
+		if(dt<startDT) return false;
+		if(dt>endDT) return false;
+		if(dt<endDT) return true ;
+		
+		//dt==endDT
+		return startDT==endDT ;
+	}
+	
+	public boolean hitFromToDT(long from_dt,long to_dt)
+	{
+		if(startDT==endDT)
+			return from_dt<=startDT && startDT<to_dt ;
+		
+		if(to_dt<startDT) return false;
+		if(from_dt>=endDT) return false;
+		
+		return true;
+	}
 }

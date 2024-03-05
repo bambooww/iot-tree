@@ -8,6 +8,13 @@ public class TSSValPt<T>
 	
 	T val ;
 	
+	public TSSValPt(long dt,boolean bvalid,T val)
+	{
+		this.dt = dt ;
+		this.bvalid = bvalid ;
+		this.val = val ;
+	}
+	
 	public long getDT()
 	{
 		return dt ;

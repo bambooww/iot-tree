@@ -5,6 +5,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.store.*,
+	org.iottree.core.store.record.*,
 	org.iottree.core.comp.*
 	"%><%!
 	private static class TagComp implements Comparator<UATag>
@@ -63,10 +64,12 @@ if(node==null)
 UANode topn = node.getTopNode() ;
 UAPrj prj = null ;
 StoreManager storem = null;
+RecManager recmgr = null ;
 if(topn instanceof UAPrj)
 {
 	prj = (UAPrj)topn ;
 	storem = StoreManager.getInstance(prj.getId()) ;
+	recmgr = RecManager.getInstance(prj) ;
 }
 
 UAHmi hmi = null ;
@@ -243,6 +246,26 @@ if(Convert.isNotNullEmpty(ext_str))
 &nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
 <%
+if(recmgr!=null)
+{
+%><td><%
+	if(recmgr.checkTagCanRecord(tag))
+	{
+		String tmppath = tag.getNodeCxtPathInPrj() ;
+		boolean bset = recmgr.getRecTagParam(tag) !=null;
+		String color = bset?"green":"#d2d2d2" ;
+		String dis_show = bset?"inline":"none" ;
+		
+%><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="set tag be automatically recorded internal." style="color:<%=color%>">&nbsp;<i class="fa fa-download" /></i>&nbsp;</button>
+  <span id="rec_tag_show_<%=tmppath %>" style="display:<%=dis_show%>;">
+<a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show recorded history" >&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</a>
+</span>
+<%
+	}
+%></td><%
+}
+
+
 if(storem!=null)
 {
 	List<StoreOut> storeos = storem.findStoreOutsByTag(tag, true, true);

@@ -535,12 +535,19 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return null ;
 	}
 	
+	private transient UAPrj _prj = null ;
+	
 	public UAPrj getBelongToPrj()
 	{
+		if(_prj!=null)
+			return _prj ;
+		
 		UANode uan = this.getTopNode() ;
 		if(uan instanceof UAPrj)
-			return (UAPrj)uan ;
-		return null ;
+		{
+			_prj = (UAPrj)uan ;
+		}
+		return _prj ;
 	}
 	
 	
@@ -1296,6 +1303,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				uav = tmpv ;
 		}
 		this.curVal = uav ;
+		
+		UAPrj prj = this.getBelongToPrj() ;
+		if(prj!=null)
+			prj.RT_onTagValSet(this);
 	}
 	
 	/**

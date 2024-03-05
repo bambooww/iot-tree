@@ -10,7 +10,7 @@ public abstract class TSSIO
 {
 	private HashMap<String,Integer> tagsMap = null ;
 	
-	protected abstract boolean initIO(DBConnPool cp,StringBuilder failedr) ;
+	public abstract boolean initIO(DBConnPool cp,StringBuilder failedr) ;
 	
 	public final HashMap<String,Integer> getTagsMap()  throws Exception
 	{
@@ -48,7 +48,7 @@ public abstract class TSSIO
 	
 	//public abstract 
 	
-	public abstract boolean saveValSeg(TSSTagSegs<?> t,TSSValSeg<?> r) throws Exception;
+//	public abstract boolean saveValSeg(TSSTagSegs<?> t,TSSValSeg<?> r) throws Exception;
 	
 	public static class SavePK
 	{
@@ -78,6 +78,10 @@ public abstract class TSSIO
 	
 	protected abstract int saveTagSegsPKS(List<SavePK> pks) throws Exception;
 	
+	private transient long lastSaveDT = -1 ;
+	private transient long lastSaveCost = -1 ;
+	private transient int lastSaveSegNum = - 1 ;
+	
 	public final void saveTagSegs(List<TSSTagSegs<?>> ts) throws Exception
 	{
 		ArrayList<SavePK> pks=  new ArrayList<>() ;
@@ -96,8 +100,10 @@ public abstract class TSSIO
 			return ;
 		
 		long st = System.currentTimeMillis() ;
-		int rown = saveTagSegsPKS(pks) ;
-		System.out.println(" save pks row num ["+rown+"] cost ms="+(System.currentTimeMillis()-st)) ;
+		lastSaveSegNum = saveTagSegsPKS(pks) ;
+		lastSaveDT = System.currentTimeMillis() ;
+		lastSaveCost = lastSaveDT -st ;
+		//System.out.println(" save pks row num ["+rown+"] cost ms="+(System.currentTimeMillis()-st)) ;
 		
 		for(SavePK pk:pks)
 		{
@@ -111,5 +117,47 @@ public abstract class TSSIO
 			}
 		}
 		
+	}
+	
+	
+	public long RT_getLastSaveDT()
+	{
+		return this.lastSaveDT ;
+	}
+	
+	public long RT_getLastSaveCost()
+	{
+		return this.lastSaveCost ;
+	}
+	
+	public int RT_getLastSaveSegNum()
+	{
+		return this.lastSaveSegNum ;
+	}
+	
+	// read methods
+	
+	/**
+	 * 此方法要限制返回数据长度
+	 * 
+	 * @param <T>
+	 * @param ts
+	 * @param from_dt
+	 * @param to_dt
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt) throws Exception ;
+	
+	public abstract <T> TSSValSeg<T> readValSegAt(TSSTagSegs<T> ts, long at_dt) throws Exception ;
+	
+	public abstract <T> List<TSSValSeg<T>> readValSegAt2(TSSTagSegs<T> ts, long at_dt1,long at_dt2) throws Exception ;
+	
+	public final <T> TSSValPt<T> getValPt(TSSTagSegs<T> ts, long at_dt) throws Exception
+	{
+		TSSValSeg<T> vs = readValSegAt( ts, at_dt) ;
+		if(vs==null)
+			return null ;
+		return new TSSValPt<>(at_dt,vs.bvalid,vs.val) ;
 	}
 }

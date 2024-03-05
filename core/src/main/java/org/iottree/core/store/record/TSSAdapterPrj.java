@@ -1,4 +1,4 @@
-package org.iottree.core.store.tssdb;
+package org.iottree.core.store.record;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,56 +10,55 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
+import org.iottree.core.store.tssdb.TSSAdapter;
+import org.iottree.core.store.tssdb.TSSIO;
+import org.iottree.core.store.tssdb.TSSIOSQLite;
+import org.iottree.core.store.tssdb.TSSTagParam;
 
 public class TSSAdapterPrj extends TSSAdapter
 {
-	private static final HashMap<String,TSSAdapterPrj> name2recm = new HashMap<>() ;
+//	private static final HashMap<String,TSSAdapterPrj> name2recm = new HashMap<>() ;
+//	
+//	public static TSSAdapter getInstance(UAPrj prj)
+//	{
+//		String name = prj.getName();
+//		TSSAdapterPrj recm = name2recm.get(name) ;
+//		if(recm!=null)
+//			return recm ;
+//		
+//		synchronized(TSSAdapter.class)
+//		{
+//			recm = name2recm.get(name) ;
+//			if(recm!=null)
+//				return recm ;
+//			
+//			recm = new TSSAdapterPrj(name) ;
+//			name2recm.put(name,recm) ;
+//			return recm ;
+//		}
+//	}
 	
-	public static TSSAdapter getInstance(UAPrj prj)
-	{
-		String name = prj.getName();
-		TSSAdapterPrj recm = name2recm.get(name) ;
-		if(recm!=null)
-			return recm ;
-		
-		synchronized(TSSAdapter.class)
-		{
-			recm = name2recm.get(name) ;
-			if(recm!=null)
-				return recm ;
-			
-			recm = new TSSAdapterPrj(name) ;
-			name2recm.put(name,recm) ;
-			return recm ;
-		}
-	}
-	
-	String prjName = null ;
+	//String prjName = null ;
 	
 	UAPrj prj = null ;
 	
 	TSSIO recIO = null ;
 	
-	protected TSSAdapterPrj(String prjname)
+	protected TSSAdapterPrj(UAPrj prj)
 	{
-		this.prjName = prjname ;
+		//this.prjName = prjname ;
 		
-		this.prj = UAManager.getInstance().getPrjByName(prjName) ;
+		this.prj = prj ;//UAManager.getInstance().getPrjByName(prjName) ;
 		
-		this.asTagParams(createTagParams()) ;
+		//this.asTagParams(createTagParams()) ;
 	}
 	
-	private List<TSSTagParam> createTagParams()
-	{
-		ArrayList<TSSTagParam> pms = new ArrayList<>() ;
-		
-		return pms ;
-	}
+
 	
 	@Override
 	protected long getSaveIntervalMS() 
 	{
-		return 100 ;
+		return 1000 ;
 	}
 
 	@Override
@@ -85,7 +84,7 @@ public class TSSAdapterPrj extends TSSAdapter
 			if(recIO!=null)
 				return recIO ;
 			
-			SourceJDBC innersor = StoreManager.getInnerSource(prjName+".ttsr") ;
+			SourceJDBC innersor = StoreManager.getInnerSource(prj.getName()+".tssdb") ;
 			DBConnPool cp= innersor.getConnPool() ;
 			
 			recIO = new TSSIOSQLite() ;

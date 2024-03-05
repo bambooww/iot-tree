@@ -468,6 +468,27 @@ background-color: #fff ;
 {
 cursor: pointer;
 }
+
+.top_toolbox
+{
+	position:absolute;float:left;margin-right:30px;top:5px;bottom:5px;font: 20px solid;color:#fff5e2;
+	border-radius:5px;
+	
+	padding-top:5px;
+	text-align: center;
+}
+
+.top_tool
+{
+background-color: #515658;
+	box-shadow: 2px 2px 2px #888888;
+}
+
+.top_toolbox span
+{
+   margin-top:10px;
+   cursor: pointer;
+}
 </style>
 
 </head>
@@ -479,25 +500,27 @@ function open_doc()
 </script>
 <body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
- <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
+ <div style="float: left;position:relative;left:0px;margin-left:5px;top:5px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
-		<div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 20px solid" >
-		<%=rep.getTitle()%>
+		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
+		[<%=rep.getTitle()%>]
 		</div>
-		 <div style="position:relative;float: right;right:320px;margin-right:30px;width:110px;margin-top:10px;font: 20px solid;color:#fff5e2;background-color: #515658">
-		 <i id="prj_btn_start"  class="fa fa-play fa-lg top_btn" style="color:grey" title="start project" onclick="prj_run(true)"></i>
-		 <i id="prj_btn_stop"  class="fa fa-stop fa-lg top_btn" style="color:grey" title="stop project" onclick="prj_run(false)"></i>
+		<div class="top_toolbox top_tool"  style="left:40%;width:210px">
+		 		  <span id='share_run' onclick='clk_share_run()' title="Share Project"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+				  <span id='task_run' onclick='clk_task_run()' title="Task Manager"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+				  <span id='alert' onclick='clk_alert()' title="Alert Manager"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+				  <span id='data_dict' onclick='clk_dd()' title="Dictionary Manager"><i class='fa fa-book fa-lg'></i></span>
+				  <span id='recorder' onclick='clk_rec()' title="Tag Data Recorder"><i class="fa fa-download  fa-lg"></i></span>
+				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database  fa-lg"></i></span>
 		</div>
-     <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
- <%--
-			<i class="fa fa-server  fa-lg  top_btn" onclick="dev_lib()"></i><span style="font: 20px solid"></span>
-			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid"></span>
-			 --%>
-			<%--
-			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
-		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
-		     --%>
-		     <span style="font: 20px solid;cursor:hand;"  onclick="open_doc()"><i class="fa fa-question-circle fa-lg  top_btn" ></i>Help Document</span>
+		
+		 <div class="top_toolbox top_tool" style="right:300px;width:110px;">
+		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
+		 	&nbsp;&nbsp;&nbsp;
+		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
+		</div>
+     <div class="top_toolbox"  style="right:10px;width:110px;color:#fff5e2;">
+		     <span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;Help</span>
 		 </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">
@@ -590,11 +613,7 @@ function open_doc()
 				  </a>
 				   --%>
 				  &nbsp;&nbsp;<span title="Refresh browser tree"><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
-				  <span id='share_run' onclick='clk_share_run()' title="Share Project"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
-				  <span id='task_run' onclick='clk_task_run()' title="Task Manager"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-				  <span id='alert' onclick='clk_alert()' title="Alert Manager"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-				  <span id='data_dict' onclick='clk_dd()' title="Dictionary Manager"><i class='fa fa-book fa-lg'></i></span>
-				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database  fa-lg"></i></span>
+				  
 				  
 				 </div>
            </div>
@@ -2060,7 +2079,7 @@ function add_tab(id,title,u)
 
 	layuiEle.tabAdd('tab_hmi_editor', {
 		    id:id,title: title
-		    ,content:"<iframe id='if_"+id+"' src='"+u+"' style='width:100%;height:100%'></iframe>"
+		    ,content:"<iframe id='if_"+id+"' src='"+u+"' style='width:100%;height:100%;border:0px;'></iframe>"
 		});
 	resize_iframe_h();
 	layuiEle.tabChange('tab_hmi_editor', id);
@@ -2272,6 +2291,12 @@ function clk_store()
 {
 	event.stopPropagation();
 	add_tab("___store","<i class='fa fa-database'></i>Data Store","./store/store.jsp?prjid="+prjid) ;
+}
+
+function clk_rec()
+{
+	event.stopPropagation();
+	add_tab("___rec","<i class='fa fa-download'></i>Tag Recoder","./store/rec_mgr.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

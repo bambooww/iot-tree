@@ -25,7 +25,7 @@ import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.store.StoreManager;
-import org.iottree.core.store.tssdb.TSSAdapterPrj;
+import org.iottree.core.store.record.RecManager;
 import org.iottree.core.task.Task;
 import org.iottree.core.task.TaskManager;
 import org.json.JSONObject;
@@ -332,6 +332,17 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			return hs.get(0);
 		}
 		return this.getHmiById(hmiMainId);
+	}
+	
+	public UATag getTagByPath(String tagpath)
+	{
+		UANode n = this.getDescendantNodeByPath(tagpath) ;
+		if(n==null)
+			return null ;
+		if(n instanceof UATag)
+			return (UATag)n ;
+		else
+			return null ;
 	}
 
 	public boolean chkValid()
@@ -930,7 +941,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				//old context with js env will rebuild
 				RT_reContext();
 				
-				TSSAdapterPrj.getInstance(UAPrj.this).RT_start() ;
+				RecManager.getInstance(UAPrj.this).RT_start() ;
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
@@ -999,7 +1010,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				
 				StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
-				TSSAdapterPrj.getInstance(UAPrj.this).RT_stop() ;
+				RecManager.getInstance(UAPrj.this).RT_stop() ;
 			}
 		}
 	};
@@ -1440,5 +1451,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		StringWriter sw = new StringWriter();
 		UANodeFilter.JSON_renderMidNodesWithTagsByExtName(sw, UAPrj.this, mid_ext,tag_ext);
 		return sw.toString();
+	}
+	
+	void RT_onTagValSet(UATag tag)
+	{
+		RecManager.getInstance(this).fireUATagChanged(tag);
 	}
 }
