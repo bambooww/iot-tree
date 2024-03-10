@@ -41,6 +41,23 @@ public class TSSValSeg<T>
 		this.bNew = b_new ;
 	}
 	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof TSSValSeg))
+			return false;
+		TSSValSeg<?> ovs = (TSSValSeg<?>)obj ;
+		if(startDT!=ovs.startDT)
+			return false;
+		if(bvalid!=ovs.bvalid)
+			return false;
+		if(endDT!=ovs.endDT)
+			return false;
+		if(!bvalid)
+			return true ;
+		
+		return val.equals(ovs.val) ;
+	}
 	
 //	public boolean isDirty()
 //	{
@@ -114,5 +131,10 @@ public class TSSValSeg<T>
 		if(from_dt>=endDT) return false;
 		
 		return true;
+	}
+	
+	public String toString()
+	{
+		return toFormatStr() ;
 	}
 }

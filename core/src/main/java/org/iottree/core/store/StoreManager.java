@@ -75,6 +75,7 @@ public class StoreManager
 		}
 	}
 	
+	
 	private static LinkedHashMap<String, Source> getName2Source()
 	{
 		if(name2sor!=null)

@@ -58,7 +58,7 @@ public class RecIOSQLite extends RecIO
 		try
 		{
 			tableTagMap = createOrUpTagMapTable(innerPool);// createOrUpTable(innerPool,getJTITagMap()) ;
-			tableTagData = createOrUpTable(innerPool,getJTITagData()) ;
+			tableTagData = DBUtil.createOrUpTable(innerPool,getJTITagData(),true) ;
 			return true ;
 		}
 		catch(Exception e)
@@ -79,14 +79,14 @@ public class RecIOSQLite extends RecIO
 			conn = cp.getConnection() ;
 			if(DBUtil.tableExists(conn, cp.getDatabase(), tablen))
 			{
-				return getDBTable(conn,tablen);
+				return DBUtil.getDBTable(conn,tablen);
 			}
 			
 			String sql ="create table "+tablen +"(TagIdx INTEGER PRIMARY KEY  AUTOINCREMENT,Tag char("+tag_maxlen +"))" ;
 			
 			List<String> sqls = Arrays.asList(sql) ;
 			DBUtil.runSqls(conn, sqls);
-			return getDBTable(conn,tablen);
+			return DBUtil.getDBTable(conn,tablen);
 		}
 		finally
 		{
@@ -95,68 +95,68 @@ public class RecIOSQLite extends RecIO
 		}
 	}
 	
-	private DataTable createOrUpTable(DBConnPool cp,JavaTableInfo jti) throws Exception
-	{
-		Connection conn =null;
-		try
-		{
-			String tablen = jti.getTableName() ;
-			conn = cp.getConnection() ;
-			if(DBUtil.tableExists(conn, cp.getDatabase(), tablen))
-			{
-				// TODO check update col length
-				DBUtil.checkAndAlterTable(jti,cp,conn,tablen,null) ;
-				return getDBTable(conn,tablen);
-			}
-			
-			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-			
-			List<String> sqls = dbsql.getCreationSqls(jti);
-			DBUtil.runSqls(conn, sqls);
-			return getDBTable(conn,tablen);
-		}
-		finally
-		{
-			if(conn!=null)
-				cp.free(conn);
-		}
-	}
+//	private DataTable createOrUpTable(DBConnPool cp,JavaTableInfo jti) throws Exception
+//	{
+//		Connection conn =null;
+//		try
+//		{
+//			String tablen = jti.getTableName() ;
+//			conn = cp.getConnection() ;
+//			if(DBUtil.tableExists(conn, cp.getDatabase(), tablen))
+//			{
+//				// TODO check update col length
+//				DBUtil.checkAndAlterTable(jti,cp,conn,tablen,null) ;
+//				return getDBTable(conn,tablen);
+//			}
+//			
+//			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
+//			
+//			List<String> sqls = dbsql.getCreationSqls(jti);
+//			DBUtil.runSqls(conn, sqls);
+//			return getDBTable(conn,tablen);
+//		}
+//		finally
+//		{
+//			if(conn!=null)
+//				cp.free(conn);
+//		}
+//	}
 	
-	private DataTable getDBTable(Connection conn,String tablename)
-			throws Exception
-		{
-				String sel_sql = "select * from "+tablename+" where 1=0" ;
-				
-				PreparedStatement ps = null ;
-				ResultSet rs = null ;
-				try
-				{
-					ps = conn.prepareStatement(sel_sql) ;
-					rs = ps.executeQuery() ;
-					return DBResult.transResultSetToDataTable(rs,tablename,0, -1) ;
-				}
-				finally
-				{
-					if(rs!=null)
-					{
-						try
-						{
-							rs.close() ;
-						}
-						catch(Exception ee) {}
-					}
-						
-					if(ps!=null)
-					{
-						try
-						{
-							ps.close() ;
-						}
-						catch(Exception ee) {}
-					}
-				}
-			}
-		
+//	private DataTable getDBTable(Connection conn,String tablename)
+//			throws Exception
+//		{
+//				String sel_sql = "select * from "+tablename+" where 1=0" ;
+//				
+//				PreparedStatement ps = null ;
+//				ResultSet rs = null ;
+//				try
+//				{
+//					ps = conn.prepareStatement(sel_sql) ;
+//					rs = ps.executeQuery() ;
+//					return DBResult.transResultSetToDataTable(rs,tablename,0, -1) ;
+//				}
+//				finally
+//				{
+//					if(rs!=null)
+//					{
+//						try
+//						{
+//							rs.close() ;
+//						}
+//						catch(Exception ee) {}
+//					}
+//						
+//					if(ps!=null)
+//					{
+//						try
+//						{
+//							ps.close() ;
+//						}
+//						catch(Exception ee) {}
+//					}
+//				}
+//			}
+//		
 	
 	private JavaTableInfo getJTITagMap() throws Exception
 	{

@@ -5,6 +5,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.iottree.core.Config;
+import org.iottree.core.util.ILang;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -13,7 +14,7 @@ import org.iottree.core.util.logger.LoggerManager;
  * @author jason.zhu
  *
  */
-public class AdminFilter implements Filter
+public class AdminFilter implements Filter,ILang
 {
 	static
 	{
@@ -94,7 +95,10 @@ public class AdminFilter implements Filter
 		if(!LoginUtil.checkAdminLogin(req))
 		{
 			if(sp.endsWith("_ajax.jsp"))
+			{
+				resp.getWriter().write(g("need_login"));
 				return ;
+			}
 			resp.sendRedirect("/admin/login/login.jsp");
 			return ;
 		}

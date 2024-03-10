@@ -14,6 +14,8 @@ import org.iottree.core.store.tssdb.TSSAdapter;
 import org.iottree.core.store.tssdb.TSSIO;
 import org.iottree.core.store.tssdb.TSSIOSQLite;
 import org.iottree.core.store.tssdb.TSSTagParam;
+import org.iottree.core.store.tssdb.TSSTagSegs;
+import org.iottree.core.store.tssdb.TSSValSeg;
 
 public class TSSAdapterPrj extends TSSAdapter
 {
@@ -51,9 +53,9 @@ public class TSSAdapterPrj extends TSSAdapter
 		this.prj = prj ;//UAManager.getInstance().getPrjByName(prjName) ;
 		
 		//this.asTagParams(createTagParams()) ;
+		
+		//this.asSavedListener(tssSavedLis);
 	}
-	
-
 	
 	@Override
 	protected long getSaveIntervalMS() 
@@ -87,7 +89,7 @@ public class TSSAdapterPrj extends TSSAdapter
 			SourceJDBC innersor = StoreManager.getInnerSource(prj.getName()+".tssdb") ;
 			DBConnPool cp= innersor.getConnPool() ;
 			
-			recIO = new TSSIOSQLite() ;
+			recIO = new TSSIOSQLite(this) ;
 			StringBuilder failedr = new StringBuilder() ;
 			if(!recIO.initIO(cp,failedr))
 				throw new RuntimeException(failedr.toString()) ;

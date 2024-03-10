@@ -514,7 +514,7 @@ function open_doc()
 				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database  fa-lg"></i></span>
 		</div>
 		
-		 <div class="top_toolbox top_tool" style="right:300px;width:110px;">
+		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>

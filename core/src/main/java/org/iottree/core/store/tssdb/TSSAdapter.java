@@ -18,6 +18,41 @@ import org.json.JSONObject;
  */
 public abstract class TSSAdapter
 {
+	public static interface ISavedListener
+	{
+		/**
+		 * 
+		 * @param b_insert
+		 *            true=insert false=update
+		 * @param tagsegs
+		 * @param valseg
+		 * @param saved_enddt
+		 *            结束时间不能使用valseg，很可能并发情况下，valseg中的值会被改变
+		 */
+		public void onTagSegSaved(boolean b_insert, TSSTagSegs<?> tagsegs, Integer tagidx, TSSValSeg<?> valseg,
+				long saved_enddt);
+
+		// public void onTagSegUpdated(TSSTagSegs<?> tagsegs,TSSValSeg<?>
+		// valseg,long saved_enddt);
+	}
+
+	/**
+	 * 打包保存监听器
+	 * 
+	 * @author jason.zhu
+	 *
+	 */
+	public static interface IPkSavedListener
+	{
+		/**
+		 * 
+		 * @param segs
+		 */
+		public void onTagSegsSaved(List<TSSSavePK> savepks);
+
+		// public void onTagSegUpdated(TSSTagSegs<?> tagsegs,TSSValSeg<?>
+		// valseg,long saved_enddt);
+	}
 	// protected String name = null ;
 
 	protected HashMap<String, TSSTagSegs<Boolean>> tag2segs_bool = null;// new
@@ -33,6 +68,10 @@ public abstract class TSSAdapter
 	// protected long minSaveGapMS = 1000 ;
 
 	private Thread th = null;
+
+	private ISavedListener savedLis = null;
+
+	private IPkSavedListener pkSavedLis = null;
 
 	/**
 	 * 对应于独立的目录
@@ -59,6 +98,18 @@ public abstract class TSSAdapter
 		return this;
 	}
 
+	// public TSSAdapter asSavedListener(ISavedListener lis)
+	// {
+	// savedLis = lis ;
+	// return this ;
+	// }
+
+	public TSSAdapter asPkSavedListener(IPkSavedListener lis)
+	{
+		pkSavedLis = lis;
+		return this;
+	}
+
 	protected abstract long getSaveIntervalMS();
 
 	private void checkCanStart()
@@ -69,6 +120,29 @@ public abstract class TSSAdapter
 		}
 		if (this.getIO() == null)
 			throw new RuntimeException("no IO gotten");
+	}
+
+	private boolean initOk = false;
+
+	/**
+	 * call by outer
+	 * 
+	 * @param failedr
+	 * @return
+	 */
+	public final boolean RT_init(boolean force_reinit, StringBuilder failedr)
+	{
+		if (!force_reinit && initOk)
+		{
+			return true;
+		}
+
+		if (RT_init(failedr))
+		{
+			initOk = true;
+			return true;
+		}
+		return false;
 	}
 
 	protected boolean RT_init(StringBuilder failedr) // throws Exception
@@ -85,9 +159,9 @@ public abstract class TSSAdapter
 
 			HashMap<String, Integer> tag2idx = io.getTagsMap();
 
-			HashMap<Integer, TSSValSeg<Boolean>> tagidx2lastseg_bool = io.<Boolean>loadLastTagsSeg(Boolean.class);
-			HashMap<Integer, TSSValSeg<Long>> tagidx2lastseg_int = io.<Long>loadLastTagsSeg(Long.class);
-			HashMap<Integer, TSSValSeg<Double>> tagidx2lastseg_float = io.<Double>loadLastTagsSeg(Double.class);
+			HashMap<Integer, TSSValSegFT<Boolean>> tagidx2lastseg_bool = io.<Boolean>readTagIdx2MinMaxSeg(Boolean.class);
+			HashMap<Integer, TSSValSegFT<Long>> tagidx2lastseg_int = io.<Long>readTagIdx2MinMaxSeg(Long.class);
+			HashMap<Integer, TSSValSegFT<Double>> tagidx2lastseg_float = io.<Double>readTagIdx2MinMaxSeg(Double.class);
 
 			HashMap<String, TSSTagSegs<Boolean>> t2ts_bool = new HashMap<>();
 			HashMap<String, TSSTagSegs<Long>> t2ts_int = new HashMap<>();
@@ -103,31 +177,37 @@ public abstract class TSSAdapter
 
 				if (pm.isValInt())
 				{
-					TSSValSeg<Long> lastseg = tagidx2lastseg_int.get(idx);
-					if (lastseg == null)
+					TSSValSegFT<Long> ft = tagidx2lastseg_int.get(idx);
+					if (ft == null)
 						continue;
-					TSSTagSegs<Long> ts = new TSSTagSegs<Long>(this, tag, pm, lastseg, false);
+					if(ft.from.equals(ft.to))
+						ft.to = ft.from ;//只有一条记录的特殊情况
+					
+					TSSTagSegs<Long> ts = new TSSTagSegs<Long>(this, tag, idx, pm,ft.from, ft.to, false);
 					t2ts_int.put(tag, ts);
 					continue;
 				}
 
 				if (pm.isValBool())
 				{
-					TSSValSeg<Boolean> lastseg = tagidx2lastseg_bool.get(idx);
-					if (lastseg == null)
+					TSSValSegFT<Boolean> ft = tagidx2lastseg_bool.get(idx);
+					if (ft == null)
 						continue;
-
-					TSSTagSegs<Boolean> ts = new TSSTagSegs<Boolean>(this, tag, pm, lastseg, false);
+					if(ft.from.equals(ft.to))
+						ft.to = ft.from ;
+					TSSTagSegs<Boolean> ts = new TSSTagSegs<Boolean>(this, tag, idx, pm,ft.from, ft.to, false);
 					t2ts_bool.put(tag, ts);
 					continue;
 				}
 
 				if (pm.isValFloat())
 				{
-					TSSValSeg<Double> lastseg = tagidx2lastseg_float.get(idx);
-					if (lastseg == null)
+					TSSValSegFT<Double> ft = tagidx2lastseg_float.get(idx);
+					if (ft == null)
 						continue;
-					TSSTagSegs<Double> ts = new TSSTagSegs<Double>(this, tag, pm, lastseg, false);
+					if(ft.from.equals(ft.to))
+						ft.to = ft.from ;
+					TSSTagSegs<Double> ts = new TSSTagSegs<Double>(this, tag, idx, pm,ft.from, ft.to, false);
 					t2ts_float.put(tag, ts);
 					continue;
 				}
@@ -144,6 +224,32 @@ public abstract class TSSAdapter
 			failedr.append(ee.getMessage());
 			return false;
 		}
+	}
+
+	public TSSTagSegs<?> getTagSegs(String tag)
+	{
+		TSSTagSegs<?> ret = null;
+		if (tag2segs_int != null)
+		{
+			ret = tag2segs_int.get(tag);
+			if (ret != null)
+				return ret;
+		}
+
+		if (tag2segs_float != null)
+		{
+			ret = tag2segs_float.get(tag);
+			if (ret != null)
+				return ret;
+		}
+
+		if (tag2segs_bool != null)
+		{
+			ret = tag2segs_bool.get(tag);
+			if (ret != null)
+				return ret;
+		}
+		return null;
 	}
 
 	// protected abstract DBConnPool getConnPool() ;
@@ -239,8 +345,41 @@ public abstract class TSSAdapter
 		segss.addAll(this.tag2segs_int.values());
 		segss.addAll(this.tag2segs_float.values());
 
-		io.saveTagSegs(segss);
+		List<TSSSavePK> spks = io.saveTagSegs(segss);
+
+		//
+		if (this.pkSavedLis != null && spks != null && spks.size() > 0)
+		{
+//			ArrayList<TSSTagSegs<?>> ss = new ArrayList<>(spks.size());
+//			for (TSSSavePK spk : spks)
+//				ss.add(spk.segs);
+			this.fireTagSegsSaved(spks);
+		}
+
 	}
+
+	// protected final void fireTagValSegSaved(boolean b_insert,TSSTagSegs<?>
+	// tagsegs,Integer tagidx,TSSValSeg<?> valseg,long saved_enddt)
+	// {
+	// if(savedLis==null)
+	// return ;
+	// savedLis.onTagSegSaved(b_insert,tagsegs,tagidx, valseg,saved_enddt);
+	// }
+
+	protected final void fireTagSegsSaved(List<TSSSavePK> savepks)
+	{
+		if (savepks == null)
+			return;
+		pkSavedLis.onTagSegsSaved(savepks);
+	}
+
+	// protected final void fireTagSegUpdated(TSSTagSegs<?> tagsegs,TSSValSeg<?>
+	// valseg,long saved_enddtl)
+	// {
+	// if(savedLis==null)
+	// return ;
+	// savedLis.onTagSegUpdated(tagsegs, valseg, saved_enddtl);
+	// }
 
 	public int getUnsavedSegsNum()
 	{
@@ -271,6 +410,26 @@ public abstract class TSSAdapter
 		if (pm == null)
 			throw new IllegalArgumentException("no param found with tag=" + tag);
 
+		if (bvalid)
+		{// 无效状态因为值可以认为是不变的，也就不需要gap控制数据量了
+			if (pm.minRecordGap > 0 && (dt - pm.lastAddDT < pm.minRecordGap))
+				return;// ignore to record
+		}
+
+		try
+		{
+			addTagValue(pm, dt, bvalid, val);
+		}
+		finally
+		{
+			pm.lastAddDT = System.currentTimeMillis();
+		}
+	}
+
+	private <T> void addTagValue(TSSTagParam pm, long dt, boolean bvalid, T val)
+	{
+		String tag = pm.tag;
+
 		if (pm.isValInt())
 		{
 			Long lv = null;
@@ -280,14 +439,18 @@ public abstract class TSSAdapter
 			TSSTagSegs<Long> ts = tag2segs_int.get(tag);
 			if (ts == null)
 			{
+				// Integer idx = getIO().getOrAddTagIdx(tag) ;
 				TSSValSeg<Long> lastseg = new TSSValSeg<>(dt, bvalid, lv, true);// b_new)
-				ts = new TSSTagSegs<>(this, tag, pm, lastseg, true);// (this,tag,100,5,20000)
-																	// ;
+				ts = new TSSTagSegs<>(this, tag, null, pm,lastseg, lastseg, true);// (this,tag,100,5,20000)
+				// ;
 				tag2segs_int.put(tag, ts);
 			}
 			else
 			{
-				ts.addPointValid(dt, lv);
+				if (bvalid)
+					ts.addPointValid(dt, lv);
+				else
+					ts.addPointInvalid(dt, false);
 			}
 			return;
 		}
@@ -301,14 +464,19 @@ public abstract class TSSAdapter
 			TSSTagSegs<Double> ts = tag2segs_float.get(tag);
 			if (ts == null)
 			{
+				// Integer idx = getIO().getOrAddTagIdx(tag) ; // may cause
+				// speed low
 				TSSValSeg<Double> lastseg = new TSSValSeg<>(dt, bvalid, dv, true);// b_new)
-				ts = new TSSTagSegs<>(this, tag, pm, lastseg, true);// (this,tag,100,5,20000)
-																	// ;
+				ts = new TSSTagSegs<>(this, tag, null, pm,lastseg, lastseg, true);// (this,tag,100,5,20000)
+				// ;
 				tag2segs_float.put(tag, ts);
 			}
 			else
 			{
-				ts.addPointValid(dt, dv);
+				if (bvalid)
+					ts.addPointValid(dt, dv);
+				else
+					ts.addPointInvalid(dt, false);
 			}
 			return;
 		}
@@ -318,14 +486,18 @@ public abstract class TSSAdapter
 			TSSTagSegs<Boolean> ts = tag2segs_bool.get(tag);
 			if (ts == null)
 			{
+				// Integer idx = getIO().getOrAddTagIdx(tag) ;
 				TSSValSeg<Boolean> lastseg = new TSSValSeg<>(dt, bvalid, (Boolean) val, true);// b_new)
-				ts = new TSSTagSegs<>(this, tag, pm, lastseg, true);// (this,tag,100,5,20000)
-																	// ;
+				ts = new TSSTagSegs<>(this, tag, null, pm,lastseg, lastseg, true);// (this,tag,100,5,20000)
+				// ;
 				tag2segs_bool.put(tag, ts);
 			}
 			else
 			{
-				ts.addPointValid(dt, (Boolean) val);
+				if (bvalid)
+					ts.addPointValid(dt, (Boolean) val);
+				else
+					ts.addPointInvalid(dt, false);
 			}
 			return;
 		}
@@ -339,7 +511,7 @@ public abstract class TSSAdapter
 		checkCanStart();
 
 		StringBuilder failedr = new StringBuilder();
-		if (!RT_init(failedr))
+		if (!RT_init(false, failedr))
 		{
 			throw new RuntimeException(failedr.toString());
 		}
@@ -393,5 +565,139 @@ public abstract class TSSAdapter
 		rtInfo.b_running = this.RT_isRunning();
 
 		return rtInfo;
+	}
+
+	// read
+	
+	public final HashMap<String,Integer> getTagsMap()  throws Exception
+	{
+		return this.getIO().getTagsMap() ;
+	}
+	
+	public <T> List<TSSValSeg<T>> readValSegs(String tag, long from_dt, long to_dt) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		
+		return this.getIO().readValSegs(ts, from_dt, to_dt);
+	}
+
+	public <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt) throws Exception
+	{
+		// TODO same cache to improve speed
+
+		return this.getIO().readValSegs(ts, from_dt, to_dt);
+	}
+	
+	
+	
+	public <T> TSSValSeg<T> readValSegAt(String tag, long at_dt) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		
+		return this.getIO().readValSegAt(ts, at_dt);
+	}
+
+	public <T> TSSValSeg<T> readValSegAt(TSSTagSegs<T> ts, long at_dt) throws Exception
+	{
+		return this.getIO().readValSegAt(ts, at_dt);
+	}
+	
+	public <T> TSSValSegHit<T> readValSegAt(String tag,long at_dt,boolean b_prev,boolean b_next) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		return this.getIO().readValSegAt(ts, at_dt,b_prev,b_next);
+	}
+	public <T> TSSValSegHit<T> readValSegAt(TSSTagSegs<T> ts,long at_dt,boolean b_prev,boolean b_next) throws Exception
+	{
+		return this.getIO().readValSegAt(ts, at_dt,b_prev,b_next);
+	}
+	
+	
+	public <T> List<TSSValSeg<T>> readValSegAt2(String tag, long at_dt1, long at_dt2) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		
+		return this.getIO().readValSegAt2(ts, at_dt1, at_dt2);
+	}
+
+	public <T> List<TSSValSeg<T>> readValSegAt2(TSSTagSegs<T> ts, long at_dt1, long at_dt2) throws Exception
+	{
+		return this.getIO().readValSegAt2(ts, at_dt1, at_dt2);
+	}
+
+	
+	public <T> TSSValPt<T> readValPt(String tag, long at_dt) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		return this.getIO().readValPt(ts, at_dt);
+	}
+	public <T> TSSValPt<T> readValPt(TSSTagSegs<T> ts, long at_dt) throws Exception
+	{
+		return this.getIO().readValPt(ts, at_dt);
+	}
+
+	public <T> TSSValSegHitNext<T> readValSegAtAndNext(String tag, long at_dt) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		return this.getIO().readValSegAtAndNext(ts, at_dt);
+	}
+	public <T> TSSValSegHitNext<T> readValSegAtAndNext(TSSTagSegs<T> ts, long at_dt) throws Exception
+	{
+		return this.getIO().readValSegAtAndNext(ts, at_dt);
+	}
+
+	public <T> TSSValSegHitPrev<T> readValSegAtAndPrev(String tag, long at_dt) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return null ;
+		return this.getIO().readValSegAtAndPrev(ts, at_dt);
+	}
+	public <T> TSSValSegHitPrev<T> readValSegAtAndPrev(TSSTagSegs<T> ts, long at_dt) throws Exception
+	{
+		return this.getIO().readValSegAtAndPrev(ts, at_dt);
+	}
+	
+	public <T> TSSValSeg<T> readValSegNext(TSSTagSegs<T> ts,TSSValSeg<T> vs) throws Exception
+	{
+		return this.getIO().readValSegNext(ts, vs);
+	}
+	
+	public <T> TSSValSeg<T> readValSegAtOrNext(TSSTagSegs<T> ts,long at_dt) throws Exception
+	{
+		return this.getIO().readValSegAtOrNext(ts, at_dt);
+	}
+	
+	
+	public <T> void iterValSegsFrom(String tag, long from_dt,IValSegSelectCB<T> cb) throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
+		if(ts==null)
+			return  ;
+		this.getIO().iterValSegsFrom(ts, from_dt, cb);
+	}
+	public <T> void iterValSegsFrom(TSSTagSegs<T> ts,long from_dt,IValSegSelectCB<T> cb) throws Exception
+	{
+		this.getIO().iterValSegsFrom(ts, from_dt, cb);
 	}
 }

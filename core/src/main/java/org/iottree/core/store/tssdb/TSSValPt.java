@@ -29,4 +29,20 @@ public class TSSValPt<T>
 	{
 		return val ;
 	}
+	
+	public Long getValInt64()
+	{
+		if(val==null || !bvalid)
+			return null ;
+		
+		if(val instanceof Number)
+			return ((Number)val).longValue() ;
+		
+		throw new RuntimeException("") ;
+	}
+	
+	public String toString()
+	{
+		return "("+dt+","+bvalid+","+val+")" ;
+	}
 }

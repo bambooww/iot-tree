@@ -532,6 +532,8 @@ public class SimInstance extends SimNode
 		if(insTh!=null)
 			return true ;
 		
+		cxt = null ;//clear cache
+		
 		if(!initInstance(failedr))
 			return false;
 		

@@ -28,7 +28,7 @@
 ##### <a href="doc/main/hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 Node:(HMI)</a>
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Tasks</a>
 ##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Alert Support</a>
-##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
+##### <a href="doc/store/index.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
 <!--
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 Data Dictionary</a>
 -->
@@ -71,16 +71,19 @@
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS In UI Event Handling</a>
 ##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api Inner Plugin - \$$http
 
+#### <a href="doc/store/index.md" >9 Data storage, processing, and presentation</a>
+##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;9.1 Simple storage and output of Tag data</a>
+##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Internal timing segment recorder (TSSDB)</a>
 
-#### <a href="doc/advanced/index.md" >9 Extends Functions</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Plugin Development - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Plugin Development - Authority</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Outer OPC UA Support</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.5 Device simulators</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.6 Remote control from master station to sub station</a>
+#### <a href="doc/advanced/index.md" >10 Extends Functions</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 Plugins Development</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 Plugin Development - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 Plugin Development - Authority</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.4 Outer OPC UA Support</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.5 Device simulators</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.6 Remote control from master station to sub station</a>
 
-#### <a href="doc/version.md" >10 Version</a>
+#### <a href="doc/version.md" >11 Version</a>
 
 
 <script>

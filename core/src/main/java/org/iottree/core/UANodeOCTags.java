@@ -266,7 +266,7 @@ public abstract class UANodeOCTags extends UANodeOC
 						else if(!p_addr.canWrite())
 							canw = false;
 						
-						addr = p_addr.toString() ;
+						addr = p_addr.getAddr();//.toString() ;
 						if(vt!=p_addr.getValTP())
 							vt = p_addr.getValTP() ;
 					}

@@ -1455,6 +1455,6 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	void RT_onTagValSet(UATag tag)
 	{
-		RecManager.getInstance(this).fireUATagChanged(tag);
+		RecManager.getInstance(this).RT_fireUATagChanged(tag);
 	}
 }

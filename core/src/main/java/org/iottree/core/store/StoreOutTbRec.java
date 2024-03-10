@@ -410,7 +410,7 @@ public class StoreOutTbRec extends StoreOut
 		this.connPool = sor.getConnPool() ;
 		try
 		{
-			createOrUpTable(connPool);
+			DBUtil.createOrUpTable(connPool,this.getJavaTableInfo());
 		}
 		catch(Exception e)
 		{
@@ -421,33 +421,33 @@ public class StoreOutTbRec extends StoreOut
 		return true ;
 	}
 	
-	JavaTableInfo tableInfo = null ;
-	
-	private void createOrUpTable(DBConnPool cp) throws Exception
-	{
-		Connection conn =null;
-		try
-		{
-			conn = cp.getConnection() ;
-			tableInfo = getJavaTableInfo();
-			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
-			{
-				// TODO check update col length
-				DBUtil.checkAndAlterTable(tableInfo,cp,conn,tableName,null) ;
-				return ;
-			}
-			
-			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-			
-			List<String> sqls = dbsql.getCreationSqls(tableInfo);
-			DBUtil.runSqls(conn, sqls);
-		}
-		finally
-		{
-			if(conn!=null)
-				cp.free(conn);
-		}
-	}
+//	JavaTableInfo tableInfo = null ;
+//	
+//	private void createOrUpTable(DBConnPool cp) throws Exception
+//	{
+//		Connection conn =null;
+//		try
+//		{
+//			conn = cp.getConnection() ;
+//			tableInfo = getJavaTableInfo();
+//			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
+//			{
+//				// TODO check update col length
+//				DBUtil.checkAndAlterTable(tableInfo,cp,conn,tableName,null) ;
+//				return ;
+//			}
+//			
+//			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
+//			
+//			List<String> sqls = dbsql.getCreationSqls(tableInfo);
+//			DBUtil.runSqls(conn, sqls);
+//		}
+//		finally
+//		{
+//			if(conn!=null)
+//				cp.free(conn);
+//		}
+//	}
 	
 	public DataTable getDBTable()
 		throws Exception
@@ -517,9 +517,9 @@ public class StoreOutTbRec extends StoreOut
 //		synCols = new String[] {this.getColUpDT(),this.getColChgDT(),this.getColValid(),
 //				this.getColValTp(),this.getColValStr(),this.getColAlertNum(),this.getColAlertInf()} ;
 
-		createOrUpTable(connPool) ;
+		dataTB = DBUtil.createOrUpTable(connPool,this.getJavaTableInfo(),true) ;
 		
-		dataTB = getDBTable() ;
+		//dataTB = getDBTable() ;
 		return true ;
 	}
 	

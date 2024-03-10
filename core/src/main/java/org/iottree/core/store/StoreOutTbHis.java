@@ -403,7 +403,7 @@ public class StoreOutTbHis extends StoreOut
 		this.connPool = sor.getConnPool() ;
 		try
 		{
-			createOrUpTable(connPool);
+			DBUtil.createOrUpTable(connPool,this.getJavaTableInfo());
 		}
 		catch(Exception e)
 		{
@@ -414,81 +414,81 @@ public class StoreOutTbHis extends StoreOut
 		return true ;
 	}
 	
-	JavaTableInfo tableInfo = null ;
+//	JavaTableInfo tableInfo = null ;
+//	
+//	private void createOrUpTable(DBConnPool cp) throws Exception
+//	{
+//		Connection conn =null;
+//		try
+//		{
+//			conn = cp.getConnection() ;
+//			tableInfo = getJavaTableInfo();
+//			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
+//			{
+//				// TODO check update col length
+//				DBUtil.checkAndAlterTable(tableInfo,cp,conn,tableName,null) ;
+//				return ;
+//			}
+//			
+//			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
+//			
+//			List<String> sqls = dbsql.getCreationSqls(tableInfo);
+//			DBUtil.runSqls(conn, sqls);
+//		}
+//		finally
+//		{
+//			if(conn!=null)
+//				cp.free(conn);
+//		}
+//	}
 	
-	private void createOrUpTable(DBConnPool cp) throws Exception
-	{
-		Connection conn =null;
-		try
-		{
-			conn = cp.getConnection() ;
-			tableInfo = getJavaTableInfo();
-			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
-			{
-				// TODO check update col length
-				DBUtil.checkAndAlterTable(tableInfo,cp,conn,tableName,null) ;
-				return ;
-			}
-			
-			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-			
-			List<String> sqls = dbsql.getCreationSqls(tableInfo);
-			DBUtil.runSqls(conn, sqls);
-		}
-		finally
-		{
-			if(conn!=null)
-				cp.free(conn);
-		}
-	}
-	
-	public DataTable getDBTable()
-		throws Exception
-	{
-			String sel_sql = "select ";
-			boolean bfirst = true ;
-			for(String s:allColNames)
-			{
-				if(bfirst) bfirst=false;
-				else sel_sql+=",";
-				sel_sql += s ;
-			}
-			sel_sql += " from "+this.getTableName()+" where 1=0" ;
-			
-			PreparedStatement ps = null ;
-			ResultSet rs = null ;
-			Connection conn = null;
-			try
-			{
-				conn = connPool.getConnection() ;
-				ps = conn.prepareStatement(sel_sql) ;
-				rs = ps.executeQuery() ;
-				return DBResult.transResultSetToDataTable(rs,this.getTableName(),0, -1) ;
-			}
-			finally
-			{
-				if(rs!=null)
-				{
-					try
-					{
-						rs.close() ;
-					}
-					catch(Exception ee) {}
-				}
-					
-				if(ps!=null)
-				{
-					try
-					{
-						ps.close() ;
-					}
-					catch(Exception ee) {}
-				}
-				
-				if(conn!=null)
-					connPool.free(conn);
-			}
-		}
+//	public DataTable getDBTable()
+//		throws Exception
+//	{
+//			String sel_sql = "select ";
+//			boolean bfirst = true ;
+//			for(String s:allColNames)
+//			{
+//				if(bfirst) bfirst=false;
+//				else sel_sql+=",";
+//				sel_sql += s ;
+//			}
+//			sel_sql += " from "+this.getTableName()+" where 1=0" ;
+//			
+//			PreparedStatement ps = null ;
+//			ResultSet rs = null ;
+//			Connection conn = null;
+//			try
+//			{
+//				conn = connPool.getConnection() ;
+//				ps = conn.prepareStatement(sel_sql) ;
+//				rs = ps.executeQuery() ;
+//				return DBResult.transResultSetToDataTable(rs,this.getTableName(),0, -1) ;
+//			}
+//			finally
+//			{
+//				if(rs!=null)
+//				{
+//					try
+//					{
+//						rs.close() ;
+//					}
+//					catch(Exception ee) {}
+//				}
+//					
+//				if(ps!=null)
+//				{
+//					try
+//					{
+//						ps.close() ;
+//					}
+//					catch(Exception ee) {}
+//				}
+//				
+//				if(conn!=null)
+//					connPool.free(conn);
+//			}
+//		}
 	
 	
 	DBConnPool connPool = null ;
@@ -510,9 +510,9 @@ public class StoreOutTbHis extends StoreOut
 //		synCols = new String[] {this.getColUpDT(),this.getColChgDT(),this.getColValid(),
 //				this.getColValTp(),this.getColValStr(),this.getColAlertNum(),this.getColAlertInf()} ;
 
-		createOrUpTable(connPool) ;
+		dataTB = DBUtil.createOrUpTable(connPool,this.getJavaTableInfo(),true) ;
 		
-		dataTB = getDBTable() ;
+		//dataTB = getDBTable() ;
 		return true ;
 	}
 	

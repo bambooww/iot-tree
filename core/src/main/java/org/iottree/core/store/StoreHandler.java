@@ -577,7 +577,6 @@ public abstract class StoreHandler extends JSObMap //implements IJsProp
 		ArrayList<UATag> tags = new ArrayList<>() ;
 		if(tagids==null)
 		{
-			System.out.print("11");
 			this.selTags = tags ;
 			return this.selTags ;
 		}

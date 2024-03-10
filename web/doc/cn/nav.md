@@ -28,7 +28,7 @@
 ##### <a href="doc/main/hmi.md" target="main">&nbsp;&nbsp;&nbsp;4.7 特殊节点：UI(HMI)</a>
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 项目任务</a>
 ##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 报警支持</a>
-##### <a href="doc/main/store.md" target="main">&nbsp;&nbsp;&nbsp;4.9 数据储存</a>
+##### <a href="doc/store/index.md" target="main">&nbsp;&nbsp;&nbsp;4.9 数据储存</a>
 <!--
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 数据字典</a>
 -->
@@ -71,16 +71,19 @@
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS在UI事件处理中的使用</a>
 ##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api内部插件 - \$$http
 
+#### <a href="doc/store/index.md" >9 数据存储、处理和展示</a>
+##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;9.1 标签数据简单存储和输出</a>
+##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;9.2 内部时序段记录器 (TSSDB)</a>
 
-#### <a href="doc/advanced/index.md" >9 高级特性</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;9.1 插件开发</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;9.2 插件开发 - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;9.3 插件开发 - Authority</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;9.4 对外提供OPC UA接口</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;9.5 设备模拟器</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;9.6 主站-子站远程控制</a>
+#### <a href="doc/advanced/index.md" >10 高级特性</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 插件开发</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 插件开发 - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 插件开发 - Authority</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.4 对外提供OPC UA接口</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.5 设备模拟器</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.6 主站-子站远程控制</a>
 
-#### <a href="doc/version.md" >10 版本说明</a>
+#### <a href="doc/version.md" >11 版本说明</a>
 
 
 <script>

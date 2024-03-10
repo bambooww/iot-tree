@@ -7,6 +7,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*,
+	org.iottree.core.util.*,
 	org.iottree.core.util.web.*,
 	org.iottree.core.util.xmldata.*
 "%>
@@ -35,11 +36,17 @@
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 </head>
 <style>
-
+.top_right
+{
+	position: absolute;
+	right:20px;
+	
+}
 </style>
 <body>
   <div id="header" style="white-space:nowrap;top:0;width:100%;height:70px;background-color: #dfdfdf">
   	<img src="../inc/logo3.png"/>
+  	<div class="top_right"><%=Lan.getUsingLang()%></div>
   </div>
   <div style="margin:0 auto;margin-top:100px;width:520px;height:500px; line-height:100px; text-align:center; border:0px solid #F00">
   <%

@@ -4,33 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.iottree.core.UAPrj;
-import org.iottree.core.UATag;
 import org.iottree.core.basic.ValAlert;
-import org.iottree.core.cxt.IJsProp;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
-import org.iottree.core.store.Source;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.gdb.DBResult;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
-import org.iottree.core.store.gdb.autofit.DbSql;
-import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
-import org.iottree.core.store.gdb.autofit.JavaForeignKeyInfo;
 import org.iottree.core.store.gdb.autofit.JavaTableInfo;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserJSON;
-import org.iottree.core.util.xmldata.XmlVal;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONArray;
@@ -653,7 +645,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 			{// TODO may move to AlertManager
 				SourceJDBC innersor = StoreManager.getInnerSource(prj.getName()) ;
 				innerPool = innersor.getConnPool() ;
-				innerDT = AlertManager.createOrUpTable(innerPool,recordJTI) ;
+				innerDT = DBUtil.createOrUpTable(innerPool,recordJTI,true) ;
 			}
 			catch(Exception ee)
 			{
@@ -667,7 +659,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 			{
 				SourceJDBC outersor = (SourceJDBC)StoreManager.getSourceByName(outerRecordSor) ;
 				outerPool = outersor.getConnPool() ;
-				outerDT = AlertManager.createOrUpTable(outerPool,recordJTI) ;
+				outerDT = DBUtil.createOrUpTable(outerPool,recordJTI,true) ;
 			}
 			catch(Exception ee)
 			{

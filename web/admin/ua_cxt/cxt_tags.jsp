@@ -119,6 +119,12 @@ background-color: #eeeeee
 	background-color: #373737;
 }
 
+.tag_row:hover {
+	background-color: #a2a2a2;
+	//border:2px solid;
+}
+
+
 table, th, td
 {
 border:1px solid;
@@ -693,8 +699,18 @@ function show_cxt_dyn(p,cxt)
 			strchgdt = new Date(chgdt).format("hh:mm:ss");//
 			strchgdtt = new Date(chgdt).format("yyyy-MM-dd hh:mm:ss");//
 		}
-			
-		show_ele_html("ctag_v_"+tagp,strv,true) ;
+		
+		let bfilter = $(document.getElementById("ctag_v_"+tagp)).attr("filter")=='true' ;
+		if(bfilter && strv)
+		{
+			strv = strv+(bfilter?"<span style='color:green' title='has anti-interference filter'>[F]</span>":"") ;
+			show_ele_html("ctag_v_"+tagp,strv,false) ;
+		}
+		else
+		{
+			show_ele_html("ctag_v_"+tagp,strv,true) ;
+		}
+		
 		show_ele_html("ctag_dt_"+tagp,strdt,0,strdtt) ;
 		show_ele_html("ctag_chgdt_"+tagp,strchgdt,0,strchgdtt) ;
 		var qstr = bvalid==true?"<span style='color:green'>✓</span>":"<span style='color:red'>✘</span>";
@@ -1039,7 +1055,7 @@ function node_access(p)
 function rec_tag_set(ob,tag,tt)
 {
 	let show_c = $(document.getElementById("rec_tag_show_"+tag)) ;
-	dlg.open("./tag_rec_param_edit.jsp?prjid="+prjid+"&tag="+tag,
+	dlg.open("../store/rec_tag_param_edit.jsp?prjid="+prjid+"&tag="+tag,
 			{title:"Tag "+tt+" Record Param Setup",w:'500px',h:'400px'},
 			['Ok','Unset','Cancel'],
 			[
@@ -1057,7 +1073,7 @@ function rec_tag_set(ob,tag,tt)
 						 ret.op = "set";
 						 //ret.id = id ;
 						 //console.log(ret);
-						 send_ajax('./tag_rec_param_ajax.jsp',ret,function(bsucc,rr)
+						 send_ajax('../store/rec_tag_param_ajax.jsp',ret,function(bsucc,rr)
 							{
 								if(!bsucc || rr.indexOf('succ')<0)
 								{

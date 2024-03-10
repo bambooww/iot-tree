@@ -11,11 +11,21 @@ public class TSSTagParam
 	
 	long gatherIntv ;
 	
-	public TSSTagParam(String tag,UAVal.ValTP valtp,long gather_intv)
+	long minRecordGap  = -1;
+	
+	/**
+	 * for cal gap
+	 */
+	transient long lastAddDT = -1 ;
+	
+	transient boolean lastValid = false;
+	
+	public TSSTagParam(String tag,UAVal.ValTP valtp,long gather_intv,long min_record_gap)
 	{
 		this.tag = tag ;
 		this.valTp = valtp ;
 		this.gatherIntv = gather_intv ;
+		this.minRecordGap = min_record_gap ;
 	}
 	
 	public long getBreakGapIntv()
@@ -24,6 +34,11 @@ public class TSSTagParam
 			return -1 ;
 		
 		return gatherIntv * 3 ; //采样间隔的3倍，认为中间有中断数据获取间隔
+	}
+	
+	public long getMinRecordGap()
+	{
+		return this.minRecordGap ;
 	}
 	
 	public boolean isValBool()

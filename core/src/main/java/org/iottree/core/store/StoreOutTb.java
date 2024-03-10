@@ -313,7 +313,7 @@ public class StoreOutTb extends StoreOut
 		DBConnPool cp = sor.getConnPool() ;
 		try
 		{
-			createOrUpTable(cp);
+			DBUtil.createOrUpTable(cp,getJavaTableInfo());
 		}
 		catch(Exception e)
 		{
@@ -324,32 +324,32 @@ public class StoreOutTb extends StoreOut
 		return true ;
 	}
 	
-	private void createOrUpTable(DBConnPool cp) throws Exception
-	{
-		Connection conn =null;
-		try
-		{
-			conn = cp.getConnection() ;
-			JavaTableInfo jti = getJavaTableInfo();
-			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
-			{
-				// TODO check update col length
-				DBUtil.checkAndAlterTable(jti,cp,conn,tableName,null) ;
-				return ;
-			}
-			
-			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-			
-			List<String> sqls = dbsql.getCreationSqls(jti);
-			DBUtil.runSqls(conn, sqls);
-		}
-		finally
-		{
-			if(conn!=null)
-				cp.free(conn);
-		}
-	}
-	
+//	private void createOrUpTable(DBConnPool cp) throws Exception
+//	{
+//		Connection conn =null;
+//		try
+//		{
+//			conn = cp.getConnection() ;
+//			JavaTableInfo jti = getJavaTableInfo();
+//			if(DBUtil.tableExists(conn, cp.getDatabase(), tableName))
+//			{
+//				// TODO check update col length
+//				DBUtil.checkAndAlterTable(jti,cp,conn,tableName,null) ;
+//				return ;
+//			}
+//			
+//			DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
+//			
+//			List<String> sqls = dbsql.getCreationSqls(jti);
+//			DBUtil.runSqls(conn, sqls);
+//		}
+//		finally
+//		{
+//			if(conn!=null)
+//				cp.free(conn);
+//		}
+//	}
+//	
 	
 	DBConnPool connPool = null ;
 	
@@ -368,7 +368,7 @@ public class StoreOutTb extends StoreOut
 		synCols = new String[] {this.getColUpDT(),this.getColChgDT(),this.getColValid(),
 				this.getColValTp(),this.getColValStr(),this.getColAlertNum(),this.getColAlertInf()} ;
 
-		createOrUpTable(connPool) ;
+		DBUtil.createOrUpTable(connPool,getJavaTableInfo()) ;
 		
 		return true ;
 	}

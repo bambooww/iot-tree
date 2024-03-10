@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import java.lang.reflect.*;
-
+import org.iottree.core.store.gdb.xorm.XORMUtil;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -72,7 +71,7 @@ public class DBResult
 	// / </summary>
 	int proReturnValue = Integer.MIN_VALUE;
 
-	Hashtable outParams = new Hashtable();
+	Hashtable<String,Object> outParams = new Hashtable<String,Object>();
 
 	DBResult()
 	{
@@ -162,7 +161,6 @@ public class DBResult
 		for (j = 0; j < col_count; j++)
 		{
 			colName[j] = meta.getColumnName(j + 1);
-			 ;
 			DataColumn dc = new DataColumn(colName[j], null,
 					meta.getColumnType(j+1),
 					meta.getPrecision(j+1),
@@ -294,7 +292,7 @@ public class DBResult
 			if(cb!=null)
 			{
 				if(!cb.onFindDataRow(tableidx, dt, i, dr))
-					return null;//����Ҫ��������ֱ�ӷ���
+					return null;//
 			}
 			else
 				dt.addRow(dr);
@@ -427,7 +425,7 @@ public class DBResult
 	// / ��������õ��Ǵ洢���̣���!=null,���������û�в���
 	// / �����û�е��ô洢���̣���==null
 	// / </summary>
-	public Hashtable getOutputParam()
+	public Hashtable<String,Object> getOutputParam()
 	{
 		return outParams;
 	}
@@ -436,120 +434,58 @@ public class DBResult
 	// /
 	// / </summary>
 	// / <returns></returns>
-	public int GetResultType()
+	public int getResultType()
 	{
 		return 1;
 	}
 
-//	public <T> ArrayList<T> transTable2XORMObjList(int table_idx, Class<T> t)
-//			throws Exception
-//	{
-//		return transTable2XORMObjList(table_idx, t,null) ;
-//	}
-//	
-//	<T> ArrayList<T> transTable2XORMObjList(int table_idx, Class<T> t,DataOut dout)
-//		throws Exception
-//	{
-//		int ts = this.resultSet.tables.size();
-//		if (ts <= 0 || ts <= table_idx)
-//			throw new GdbException("No table find in db result at idx="
-//					+ table_idx);
-//		
-//		DataTable dt = resultSet.getTable(table_idx);
-//		if(dout!=null)
-//		{
-//			dout.totalCount = dt.getTotalCount() ;
-//		}
-//		return transTable2XORMObjList(t, dt);
-//	}
+	public <T> ArrayList<T> transTable2XORMObjList(int table_idx, Class<T> t)
+			throws Exception
+	{
+		return transTable2XORMObjList(table_idx, t,null) ;
+	}
+	
+	<T> ArrayList<T> transTable2XORMObjList(int table_idx, Class<T> t,DataOut dout)
+		throws Exception
+	{
+		int ts = this.resultSet.tables.size();
+		if (ts <= 0 || ts <= table_idx)
+			throw new GdbException("No table find in db result at idx="
+					+ table_idx);
+		
+		DataTable dt = resultSet.getTable(table_idx);
+		if(dout!=null)
+		{
+			dout.totalCount = dt.getTotalCount() ;
+		}
+		return transTable2XORMObjList(t, dt);
+	}
 
-//	public static <T> ArrayList<T> transTable2XORMObjList(Class<T> t, DataTable dt) throws InstantiationException, IllegalAccessException, Exception
-//	{
-//		ArrayList<T> res = new ArrayList<T>();
-//
-//		for (DataRow dr : dt.getRows())
-//		{
-//			T t_ins = t.newInstance();
-//
-//			XORMUtil.fillXORMObjByDataRow(dr, t_ins);
-//			res.add(t_ins);
-//		}
-//
-//		return res;
-//	}
-//
-//	public static <T> T transDataRow2XORMObj(Class<T> t,DataRow dr)
-//	 throws InstantiationException, IllegalAccessException, Exception
-//	{
-//		T t_ins = t.newInstance();
-//
-//		XORMUtil.fillXORMObjByDataRow(dr, t_ins);
-//		
-//		return t_ins ;
-//	}
-	// / <summary>
-	// / ����ORMap������������������б��ת��
-	// / </summary>
-	// / <param name="table_idx"></param>
-	// / <param name="t"></param>
-	// / <returns></returns>
-//	public <T> ArrayList<T> transTable2ObjList(int table_idx, Class<T> t)
-//	throws Exception
-//	{
-//		return transTable2ObjList(table_idx, t,null) ;
-//	}
-//	
-//	public <T> ArrayList<T> transTable2ObjList(String table_name, Class<T> t)
-//	throws Exception
-//	{
-//		DataTable dt = resultSet.getTable(table_name);
-//		if(dt==null)
-//			throw new GdbException("No table find in db result with name="
-//					+ table_name);
-//		return transTable2ObjList(dt, t, null);
-//	}
-//	
-//	<T> ArrayList<T> transTable2ObjList(int table_idx, Class<T> t,DataOut dout)
-//	throws Exception
-//	{
-//		DataTable dt = resultSet.getTable(table_idx);
-//		if(dt==null)
-//			throw new GdbException("No table find in db result at idx="
-//					+ table_idx);
-//		return transTable2ObjList(dt, t, dout);
-//	}
-//	
-//	<T> ArrayList<T> transTable2ObjList(DataTable dt, Class<T> t,DataOut dout)
-//			throws Exception
-//	{
-//		ORMap sm = func.getBelongTo().getBelongTo().getORMap(
-//				t.getCanonicalName());
-//		if (sm == null)
-//			throw new GdbException("Cannot find SelectMap with type="
-//					+ t.getCanonicalName());
-//
-////		int ts = this.resultSet.tables.size();
-////		if (ts <= 0 || ts <= table_idx)
-////			throw new GdbException("No table find in db result at idx="
-////					+ table_idx);
-////
-////		DataTable dt = resultSet.getTable(table_idx);
-//		if(dout!=null)
-//			dout.totalCount = dt.totalCount ;
-//		
-//		ArrayList<T> res = new ArrayList<T>();
-//
-//		for (DataRow dr : dt.getRows())
-//		{
-//			T t_ins = t.newInstance();
-//
-//			if (fillObjProp(func, t, dr, sm, t_ins))
-//				res.add(t_ins);
-//		}
-//
-//		return res;
-//	}
+	public static <T> ArrayList<T> transTable2XORMObjList(Class<T> t, DataTable dt) throws InstantiationException, IllegalAccessException, Exception
+	{
+		ArrayList<T> res = new ArrayList<T>();
 
+		for (DataRow dr : dt.getRows())
+		{
+			T t_ins = t.newInstance();
+
+			XORMUtil.fillXORMObjByDataRow(dr, t_ins);
+			res.add(t_ins);
+		}
+
+		return res;
+	}
+
+	public static <T> T transDataRow2XORMObj(Class<T> t,DataRow dr)
+	 throws InstantiationException, IllegalAccessException, Exception
+	{
+		T t_ins = t.newInstance();
+
+		XORMUtil.fillXORMObjByDataRow(dr, t_ins);
+		
+		return t_ins ;
+	}
+	
 }
 
 class SqlDataProcessor

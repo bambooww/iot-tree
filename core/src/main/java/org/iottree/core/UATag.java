@@ -1173,11 +1173,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		UAVal uav = new UAVal(err,e) ;
 		//RT_setUAVal(uav);
-		this.curVal = uav ; //强制替换
+		//this.curVal = uav ; //强制替换
+		
+		RT_setUAVal(uav);
 		return uav ;
 	}
 	
-	@JsDef
+	//@JsDef
 	public synchronized UAVal RT_setValRaw(Object v,boolean ignore_nochg,Long updt,Long chgdt)
 	{
 		curRawVal = v ;
@@ -1192,12 +1194,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				{
 					v = vt.transVal(v) ;
 					v = UAVal.transStr2ObjVal(vt.getTransValTP(),v.toString()) ;
-					//v = UAVal.transStr2ObjVal(this.getValTp(),v.toString()) ;
 				}
 				catch(Exception ee)
 				{
 					return this.RT_setValErr(ee.getMessage(),ee);
-					//return ;
 				}
 			}
 		}
@@ -1490,7 +1490,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 		case "_pv":
 		case "_value":
+			if(!uav.isValid() && UACodeItem.isRunInJS())
+				throw new RuntimeException("invalid tag value with="+this.getNodePathCxt()) ;
 			return uav.getObjVal() ;
+			
 		case "_valid":
 			return uav.isValid() ;
 		case "_updt":

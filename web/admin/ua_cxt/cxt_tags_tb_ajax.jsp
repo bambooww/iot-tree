@@ -167,7 +167,7 @@ for(UANodeOCTags tn:tns)
 %>
    <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
    	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
-   	title="<%=tt%>" tag_num="<%=tags_num %>"
+   	title="<%=tt%>" tag_num="<%=tags_num %>" class="tag_row"
 <%
 if(bloc&&!tag.isSysTag())
 {
@@ -194,6 +194,7 @@ if(bloc&&!tag.isSysTag())
 	   t = "L" ;
    else if(tag.isMidExpress())
 	   t = "M" ;
+   boolean anti = tag.isValFilter() ;
 %></td>
         <td style="text-align: center;"><%=t %></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>" 
@@ -210,7 +211,7 @@ if(bloc&&!tag.isSysTag())
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
-        <td style="width:80px" id="ctag_v_<%=cxtpath%>"></td>
+        <td style="width:80px" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_chgdt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>

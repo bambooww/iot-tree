@@ -73,7 +73,7 @@ running...
 ### 1.2 数据接入和整合能力
 
 IOT-Tree Server支持接入来自不同数据源（不同标准）的数据： 
-通讯协议：Modbus (Modbus RTU/Modbus TCP)，西门子PPI/S7协议(PLC S7-200/300/1200/1500)
+通讯协议：Modbus (Modbus RTU/Modbus TCP)，西门子PPI/S7协议(PLC S7-200/300/1200/1500)，三菱PLC协议
 应用协议：OPC（OPC UA、OPC DA）相关协议，HTTP、MQTT
 数据库： MySQL、SQL Server 和 Oracle
 

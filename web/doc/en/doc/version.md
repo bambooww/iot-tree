@@ -243,7 +243,12 @@ Handling some bugs
 SQLite Native load java.io.tmpdir may has no access right bug fixed
 
 
-### version 1.1.x (Plan)
+### version 1.1.0
+
+
+
+
+### version 1.2.0 (Plan)
 
 
 

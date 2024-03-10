@@ -342,11 +342,17 @@ public class UAVal //extends JSObMap
 	
 	public Object getObjVal()
 	{
+		if(!this.bValid)
+			return null ; //make share js call error ,and has no default value out
+		
 		return objVal ;
 	}
 	
 	public String getStrVal(int dec_digits)
 	{
+		if(!this.bValid)
+			return null ; 
+		
 		if(objVal==null)
 			return "" ;
 		

@@ -472,7 +472,7 @@ public class Config
 	 */
 	private static ArrayList<String> httpBases = new ArrayList<String>() ;
 	
-	private static String appLang = "cn";
+	private static String appLang = "en";
 	
 	/**
 	 * ������֧��
@@ -562,7 +562,7 @@ public class Config
 				
 				appLang = confRootEle.getAttribute("lang");
 				if(Convert.isNullOrEmpty(appLang))
-					appLang = "cn";
+					appLang = "en";
 				
 				
 				 loadLangsConfig();

@@ -16,19 +16,20 @@ public class TSSAdapter4Test extends TSSAdapter
 	
 	public TSSAdapter4Test()
 	{
+		
 		this.asTagParams(createTagParams()) ;
 	}
 	
 	private List<TSSTagParam> createTagParams()
 	{
 		ArrayList<TSSTagParam> pms = new ArrayList<>() ;
-		pms.add(new TSSTagParam("aa.ss.ii",ValTP.vt_int16,1000)) ;
-		pms.add(new TSSTagParam("kk.bb",ValTP.vt_bool,5000)) ;
-		pms.add(new TSSTagParam("kk.mm.ff",ValTP.vt_float,500)) ;
+		pms.add(new TSSTagParam("aa.ss.ii",ValTP.vt_int16,1000,-1)) ;
+		pms.add(new TSSTagParam("kk.bb",ValTP.vt_bool,5000,-1)) ;
+		pms.add(new TSSTagParam("kk.mm.ff",ValTP.vt_float,500,-1)) ;
 		
-		pms.add(new TSSTagParam("aa.ss.ii2",ValTP.vt_int16,1000)) ;
-		pms.add(new TSSTagParam("kk.bb2",ValTP.vt_bool,5000)) ;
-		pms.add(new TSSTagParam("kk.mm.ff2",ValTP.vt_float,500)) ;
+		pms.add(new TSSTagParam("aa.ss.ii2",ValTP.vt_int16,1000,-1)) ;
+		pms.add(new TSSTagParam("kk.bb2",ValTP.vt_bool,5000,-1)) ;
+		pms.add(new TSSTagParam("kk.mm.ff2",ValTP.vt_float,500,-1)) ;
 		return pms ;
 	}
 	
@@ -56,7 +57,7 @@ public class TSSAdapter4Test extends TSSAdapter
 			if(recIO!=null)
 				return recIO ;
 			
-			recIO = new TSSIOSQLite() ;
+			recIO = new TSSIOSQLite(this) ;
 			StringBuilder failedr = new StringBuilder() ;
 			if(!recIO.initIO(getConnPool(),failedr))
 				throw new RuntimeException(failedr.toString()) ;

@@ -38,15 +38,15 @@ public class DBSqlSQLite extends DbSql
 		}
 		else if(vt==XmlValType.vt_int64)
 		{
-			return "INTEGER";
+			return "BIGINT";
 		}
 		else if(vt==XmlValType.vt_int16)
 		{
-			return "INTEGER";
+			return "SMALLINT";
 		}
 		else if(vt==XmlValType.vt_byte)
 		{
-			return "INTEGER";
+			return "TINYINT";
 		}
 		else if(vt==XmlValType.vt_string)
 		{
@@ -58,11 +58,11 @@ public class DBSqlSQLite extends DbSql
 				return "TEXT";
 			}
 			
-			return "char("+maxlen+")";
+			return "varchar("+maxlen+")";
 		}
 		else if(vt==XmlValType.vt_bool)
 		{
-			return "INTEGER";
+			return "bit";
 		}
 		else// if(vt==XmlValType.vt_xml_schema)
 		{

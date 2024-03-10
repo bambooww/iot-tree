@@ -1,9 +1,6 @@
 package org.iottree.core.alert;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,14 +14,10 @@ import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
-import org.iottree.core.store.gdb.DBResult;
-import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataTable;
-import org.iottree.core.store.gdb.autofit.DbSql;
 import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
 import org.iottree.core.store.gdb.autofit.JavaForeignKeyInfo;
 import org.iottree.core.store.gdb.autofit.JavaTableInfo;
-import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.queue.HandleResult;
@@ -527,71 +520,9 @@ public class AlertManager  extends JSObMap
 		return AlertHandler.selectRecords(sor.getConnPool(),tablename,start_dt,end_dt,handler_name,pageidx,pagesize) ;
 	}
 	
-	static DataTable createOrUpTable(DBConnPool cp,JavaTableInfo jti) throws Exception
-	{
-		Connection conn =null;
-		try
-		{
-			conn = cp.getConnection() ;
-			//JavaTableInfo jti = getJavaTableInfo();
-			if(DBUtil.tableExists(conn, cp.getDatabase(), jti.getTableName()))
-			{
-				DBUtil.checkAndAlterTable(jti,cp,conn,jti.getTableName(),null) ;
-			}
-			else
-			{
-			
-					DbSql dbsql = DbSql.getDbSqlByDBType(cp.getDBType()) ;
-					
-					List<String> sqls = dbsql.getCreationSqls(jti);
-					DBUtil.runSqls(conn, sqls);
-			}
-			return getDBTable(conn,jti.getTableName()) ;
-		}
-		finally
-		{
-			if(conn!=null)
-				cp.free(conn);
-		}
-	}
 	
-	static DataTable getDBTable(Connection conn,String tablename)
-			throws Exception
-		{
-				String sel_sql = "select * from "+tablename+" where 1=0" ;
-				
-				PreparedStatement ps = null ;
-				ResultSet rs = null ;
-				//Connection conn = null;
-				try
-				{
-					//conn = connPool.getConnection() ;
-					ps = conn.prepareStatement(sel_sql) ;
-					rs = ps.executeQuery() ;
-					return DBResult.transResultSetToDataTable(rs,tablename,0, -1) ;
-				}
-				finally
-				{
-					if(rs!=null)
-					{
-						try
-						{
-							rs.close() ;
-						}
-						catch(Exception ee) {}
-					}
-						
-					if(ps!=null)
-					{
-						try
-						{
-							ps.close() ;
-						}
-						catch(Exception ee) {}
-					}
-					
-				}
-			}
+	
+	
 	
 //	public void RT_fireReleased(ValAlert va,Object cur_val)
 //	{

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ln"  name_jp=""  version="004">
+  <dd_node name="dvalue_tt" name_cn="差值计算" name_en="D-value calculation"  visible="1" order_no="1"/>
+  <dd_node name="dvalue_desc" name_cn="按照每天、每小时等时间段计算此累计值的差值。如流量计每天累计值通过当天起始时间和结束时间的差值获得" name_en="Calculate the difference between this cumulative value based on daily, hourly, and other time periods. The daily cumulative value of the flow meter is obtained by the difference between the start and end times of the day"/>
+  
+  <dd_node name="jmpchg_tt" name_cn="值跳变记录" name_en="Value jump record"  visible="1" order_no="1"/>
+  <dd_node name="jmpchg_desc" name_cn="值根据一定规则从一个值到另一个值的变化做记录" name_en="Record the changes in values from one value to another according to certain rules"/>
+  
+  <dd_node name="stbpts_tt" name_cn="值平稳记录" name_en="Value stable changing record"  visible="1" order_no="1"/>
+  <dd_node name="stbpts_desc" name_cn="值根据变化斜率低于一定的值做记录" name_en="Record the value based on the slope of change below a certain value"/>
+  
+  <dd_node name="mutpts_tt" name_cn="值突变记录" name_en="Value mutation record"  visible="1" order_no="1"/>
+  <dd_node name="mutpts_desc" name_cn="值根据变化斜率超过一定的值做记录" name_en="Record the value based on the slope of change exceeding a certain value"/>
+  
+  <dd_node name="name_existed" name_cn="相同名字的对象已经存在" name_en="An object with the same name already exists"  visible="1" order_no="1"/>
+  
+</dd_class>

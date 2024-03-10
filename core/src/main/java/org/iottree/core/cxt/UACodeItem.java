@@ -22,6 +22,17 @@ import org.iottree.core.util.Convert;
  */
 public class UACodeItem
 {
+	static ThreadLocal<Boolean> thInJS = new ThreadLocal<>() ;
+	
+	public static boolean isRunInJS()
+	{
+		Boolean b = thInJS.get() ;
+		if(b==null)
+			return false; 
+		
+		return b ;
+	}
+			
 	String name = null ;
 	
 	/**
@@ -175,9 +186,19 @@ public class UACodeItem
 	{
 		if(blockFn!=null)
 			return runCodeFunc();
-		synchronized(cxt)
+		
+		try
 		{
-			return codeCS.eval() ;
+			thInJS.set(true);
+			
+			synchronized(cxt)
+			{
+				return codeCS.eval() ;
+			}
+		}
+		finally
+		{
+			thInJS.remove();
 		}
 //		if(blockFn==null)
 //			return codeCS.eval() ;
@@ -192,7 +213,16 @@ public class UACodeItem
 //		//function name must no in obj
 //		Invocable inv = (Invocable)cxt.getScriptEngine() ;
 //		return inv.invokeFunction(blockFn, paramvals) ;
-		return cxt.scriptInvoke(blockFn, paramvals) ;
+		try
+		{
+			thInJS.set(true);
+			
+			return cxt.scriptInvoke(blockFn, paramvals) ;
+		}
+		finally
+		{
+			thInJS.remove();
+		}
 	}
 	
 	

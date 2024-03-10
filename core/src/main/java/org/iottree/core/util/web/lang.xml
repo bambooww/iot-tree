@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ln"  name_jp=""  version="004">
+  <dd_node name="need_login" name_cn="页面已经过期，请刷新并重新登录" name_en="The page has timeout please refresh and login again"  visible="1" order_no="1"/>
+  
+</dd_class>
