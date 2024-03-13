@@ -253,13 +253,20 @@ if(recmgr!=null)
 	if(recmgr.checkTagCanRecord(tag))
 	{
 		String tmppath = tag.getNodeCxtPathInPrj() ;
-		boolean bset = recmgr.getRecTagParam(tag) !=null;
-		String color = bset?"green":"#d2d2d2" ;
+		RecTagParam rtp = recmgr.getRecTagParam(tag) ;
+		boolean bset =  rtp!=null;
+		boolean ben = rtp!=null && rtp.isEnable();
+		String color = "#d2d2d2" ;
+		if(bset)
+		{
+			color = ben?"green":"#b46c24" ;
+		}
 		String dis_show = bset?"inline":"none" ;
 		
 %><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="set tag be automatically recorded internal." style="color:<%=color%>">&nbsp;<i class="fa fa-download" /></i>&nbsp;</button>
   <span id="rec_tag_show_<%=tmppath %>" style="display:<%=dis_show%>;">
-<a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show recorded history" >&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</a>
+<a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show recorded history" >&nbsp;<i class="fa fa-line-chart" ></i></a>
+
 </span>
 <%
 	}

@@ -310,6 +310,11 @@ public class DBUtil
 		}
 	}
 	
+	public static DataTable executeQuerySql(Connection conn, String sql) throws Exception
+	{
+		return executeQuerySql(conn, sql,"t1") ;
+	}
+	
 	public static DataTable executeQuerySql(DBConnPool cp, String sql) throws Exception
 	{
 		Connection conn = null;

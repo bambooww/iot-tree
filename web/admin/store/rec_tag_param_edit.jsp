@@ -83,6 +83,14 @@ dlg.resize_to(690,500);
 {
 	width:120px;
 }
+
+.layui-form-checkbox i
+{
+border-style:solid solid solid solid;
+border-left: 1px;
+border-color:blue;
+}
+
 .prompt
 {
 	border:1px solid;
@@ -95,6 +103,7 @@ dlg.resize_to(690,500);
   height:40px;
   margin-bottom:5px;
   position: relative;
+  border-color: #e6e6e6;
 }
 
 .t
@@ -102,7 +111,7 @@ dlg.resize_to(690,500);
 	position:absolute;
 	font-size: 18px;
 	top:2px;
-	left:38px;
+	left:45px;
 }
 
 .f
@@ -110,7 +119,7 @@ dlg.resize_to(690,500);
 	position:absolute;
 	font-size: 15px;
 	top:20px;
-	left:50px;
+	left:55px;
 	color:#00988b;
 	cursor:pointer;
 	bottom:7px;
@@ -119,9 +128,10 @@ dlg.resize_to(690,500);
 .psel
 {
   position:absolute;
-	font-size: 18px;
+	font-size: 15px;
+	width:35px;
 	top:2px;
-	left:6px;
+	left:10px;
 }
 
 .enable_c
@@ -246,7 +256,7 @@ function trans_pro2html(ob)
 	let bsel = usingproids.indexOf(id)>=0 ;
 	let chked = bsel?"checked":"" ;
 	return `<li>
-	 <span class="psel"><input proid="\${id}" class="pro_chk" type="checkbox" \${chked} /></span>
+	 <span class="psel"><input proid="\${id}" class="pro_chk" type="checkbox" \${chked} lay-skin="primary" /></span>
 	<span class="t"><span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>\${ob.t} [\${ob.n}]</span>
 	<span class="f" ><i class="fa fa-gear" style="font-size:16px;"></i>\${ob.tpt}</span>
 	</li>`;
@@ -281,7 +291,7 @@ function do_submit(cb)
     		proids.push(ob.attr("proid")) ;
     });
     ret.using_pros=proids ;
-	cb(true,{jstr:JSON.stringify(ret)});
+	cb(true,{jstr:JSON.stringify(ret),en:ret.en});
 	return ;
 }
 

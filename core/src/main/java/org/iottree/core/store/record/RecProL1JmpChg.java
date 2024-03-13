@@ -254,4 +254,17 @@ public class RecProL1JmpChg extends RecProL1  implements ILang
 		rets.addAll(robis) ;
 		return rets ;
 	}
+	
+	// UI
+	
+//		protected String UI_getTempTitle()
+//		{
+//			return this.getTitle()+" "+getTpTitle();
+//		}
+//
+//		@Override
+//		protected String UI_getTempIcon()
+//		{
+//			return "/_iottree/res/jmpchg.png" ;
+//		}
 }

@@ -511,7 +511,8 @@ function open_doc()
 				  <span id='alert' onclick='clk_alert()' title="Alert Manager"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
 				  <span id='data_dict' onclick='clk_dd()' title="Dictionary Manager"><i class='fa fa-book fa-lg'></i></span>
 				  <span id='recorder' onclick='clk_rec()' title="Tag Data Recorder"><i class="fa fa-download  fa-lg"></i></span>
-				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database  fa-lg"></i></span>
+				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database fa-lg"></i></span>
+				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="UI Dialog Manager"><i class="fa fa-area-chart fa-lg"></i></span>
 		</div>
 		
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
@@ -2297,6 +2298,12 @@ function clk_rec()
 {
 	event.stopPropagation();
 	add_tab("___rec","<i class='fa fa-download'></i>Tag Recoder","./store/rec_mgr.jsp?prjid="+prjid) ;
+}
+
+function clk_ui_mgr()
+{
+	event.stopPropagation();
+	add_tab("___uimgr","<i class='fa fa-area-chart'></i>UI Ｄialogs","./ua_hmi/ui_mgr.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

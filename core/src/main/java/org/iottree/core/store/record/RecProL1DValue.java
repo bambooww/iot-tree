@@ -3,14 +3,17 @@ package org.iottree.core.store.record;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.store.Source;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
@@ -30,10 +33,18 @@ import org.iottree.core.store.tssdb.TSSTagSegs;
 import org.iottree.core.store.tssdb.TSSValPtEval;
 import org.iottree.core.store.tssdb.TSSValSeg;
 import org.iottree.core.store.tssdb.TSSValSegHit;
+import org.iottree.core.ui.IUIProvider;
+import org.iottree.core.ui.IUITemp;
+import org.iottree.core.ui.UITemp;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.Lan;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.json.JSONObject;
+
+import kotlin.NotImplementedError;
 
 /**
  * 记录数据处理，累计值间隔差值提取
@@ -43,6 +54,8 @@ import org.json.JSONObject;
  */
 public class RecProL1DValue extends RecProL1  implements ILang
 {
+	private static ILogger log = LoggerManager.getLogger(RecProL1DValue.class) ;
+	
 	public static final String TP = "dvalue" ;
 	
 	public static final List<RecValStyle> FIT_VAL_STYLES =Arrays.asList(RecValStyle.successive_accumulation) ; 
@@ -198,9 +211,31 @@ public class RecProL1DValue extends RecProL1  implements ILang
 				throw new IllegalArgumentException("invalid tp") ;
 			}
 		}
+		
+		private String getDTFmt()
+		{
+			switch(val)
+			{
+			case 10: //second
+				return "yyyy-MM-dd HH:mm:ss" ;
+			case 11: //min
+				return "yyyy-MM-dd HH:mm" ;
+			case 12: //hour
+				return "yyyy-MM-dd HH" ;
+			case 13: //day
+				return "yyyy-MM-dd" ;
+			default:
+				throw new IllegalArgumentException("invalid tp") ;
+			}
+		}
+		
+		public SimpleDateFormat getDTFormat()
+		{
+			return new SimpleDateFormat(getDTFmt()) ;
+		}
 	}
 	
-	public static class RowOb<T>
+	public static abstract class RowOb
 	{
 		@XORMProperty(name="TagIdx",has_col = true)
 		public int tagIdx ;
@@ -213,19 +248,54 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		@XORMProperty(name="Accuracy",has_col = true)
 		public int accuracy ;
 		
-		@XORMProperty(name="Val",has_col = true)
-		public T val ;
+		public abstract Number getVal() ;
 		
+		
+		public Long getValI()
+		{
+			throw new NotImplementedError() ;
+		}
+		
+		public Double getValF()
+		{
+			throw new NotImplementedError() ;
+		}
+	}
+	
+	@XORMClass(table_name="tt",inherit_parent = true)
+	public static class RowObI extends RowOb
+	{
+		@XORMProperty(name="Val",has_col = true)
+		public Long val ;
+		
+		public Number getVal()
+		{
+			return val ;
+		}
+		
+		public Long getValI()
+		{
+			return val ;
+		}
 		
 	}
 	
 	@XORMClass(table_name="tt",inherit_parent = true)
-	public static class RowObI extends RowOb<Long>
-	{}
-	
-	@XORMClass(table_name="tt",inherit_parent = true)
-	public static class RowObF extends RowOb<Double>
-	{}
+	public static class RowObF extends RowOb
+	{
+		@XORMProperty(name="Val",has_col = true)
+		public Double val ;
+		
+		public Number getVal()
+		{
+			return val ;
+		}
+		
+		public Double getValF()
+		{
+			return val ;
+		}
+	}
 
 	ByWay byWay = ByWay.day ;
 	
@@ -342,16 +412,16 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		}
 	}
 	
-	private HashMap<Integer,RowOb<?>> tag2lastob = null ;
+	private HashMap<Integer,RowOb> tag2lastob = null ;
 
 	@Override
 	protected boolean RT_initPro(StringBuilder failedr)
 	{
 		try
 		{
-			HashMap<Integer,RowOb<?>> t2o = new HashMap<>() ;
-			List<RowOb<?>> lastobs = readLastsGroupByTag() ;
-			for(RowOb<?> o:lastobs)
+			HashMap<Integer,RowOb> t2o = new HashMap<>() ;
+			List<RowOb> lastobs = readLastsGroupByTag() ;
+			for(RowOb o:lastobs)
 			{
 				t2o.put(o.tagIdx, o) ;
 			}
@@ -418,9 +488,10 @@ public class RecProL1DValue extends RecProL1  implements ILang
 			return false;
 		
 		TSSTagSegs<?> tseg = savepk.getTagSegs() ;
+		boolean bfloat = tseg.getValTP().isNumberFloat() ;
 		long dt = savepk.getLastSegEndDT();
 		long[] sedt = this.byWay.getStartEndAt(dt) ;
-		RowOb<?> lastob = tag2lastob.get(tseg.getTagIdx()) ;
+		RowOb lastob = tag2lastob.get(tseg.getTagIdx()) ;
 		long fromdt = savepk.getFromDT() ;
 		//long todt = savepk.getToDT() ;
 		long startdt = -1 ;
@@ -448,9 +519,17 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		long st = System.currentTimeMillis() ;
 		if(processFromTo(savepk.getTagSegs(),startdt,savepk.getToDT()))
 		{
-			long et = System.currentTimeMillis() ;
-			System.out.println("dval process cost from "+startdt+" - "+savepk.getToDT()+" cost="+(et-st)) ;
-			RowOb<?> rob = new RowOb<>() ;
+			if(log.isDebugEnabled())
+			{
+				long et = System.currentTimeMillis() ;
+				log.debug("dval process cost from "+startdt+" - "+savepk.getToDT()+" cost="+(et-st)) ;
+			}
+			
+			RowOb rob = null;
+			if(bfloat)
+				rob = new RowObF() ;
+			else
+				rob = new RowObI() ;
 			rob.dt = savepk.getToDT() ;
 			tag2lastob.put(tseg.getTagIdx(), rob) ;
 		}
@@ -494,7 +573,7 @@ public class RecProL1DValue extends RecProL1  implements ILang
 			else
 				jti = jtiI ;
 			
-			RowOb<?> rob = this.readLastByTag(bfloat,jti.getTableName(), tag.getTagIdx()) ;
+			RowOb rob = this.readLastByTag(bfloat,jti.getTableName(), tag.getTagIdx()) ;
 			long lastSavedStartDT = -1 ;
 			if(rob!=null)
 				lastSavedStartDT = rob.dt ;
@@ -508,12 +587,17 @@ public class RecProL1DValue extends RecProL1  implements ILang
 				if(nextv==null)
 					return true;//end
 
-				if(nextv.getValDouble()<curv.getValDouble())
-				{
-					System.out.println("XX ") ;
-				}
+//				if(nextv.getValDouble()<curv.getValDouble())
+//				{
+//					System.out.println("XX ") ;
+//				}
 				boolean binsert = curdt>lastSavedStartDT ;
-				System.out.println(" curdt="+curdt+"  lastsaveddt="+lastSavedStartDT+"  insert="+binsert) ;
+				
+				if(log.isDebugEnabled())
+				{
+					log.debug(" curdt="+curdt+"  lastsaveddt="+lastSavedStartDT+"  insert="+binsert) ;
+				}
+				
 				calDValueAndRecord(conn,binsert,jti,tag,curv,nextv);
 				
 				curv = nextv ;
@@ -617,7 +701,7 @@ public class RecProL1DValue extends RecProL1  implements ILang
 	
 	private <T> void insertOrUpdata(Connection conn,boolean binsert,boolean bfloat ,JavaTableInfo jti,Integer tagidx,long startdt,T val,short accuracy) throws Exception
 	{
-		//RowOb<?> rob = readByStartDT(conn,bfloat,jti, tagidx, startdt) ;
+		//RowOb rob = readByStartDT(conn,bfloat,jti, tagidx, startdt) ;
 		if(binsert)
 		{// insert
 			insertByStartDT(conn, bfloat ,jti,tagidx, startdt, val, accuracy) ;
@@ -724,7 +808,7 @@ public class RecProL1DValue extends RecProL1  implements ILang
 	
 	// ------------ read data
 	
-	private RowOb<?> readByStartDT(boolean bfloat,JavaTableInfo jti,Integer tagidx,long startdt) throws Exception
+	private RowOb readByStartDT(boolean bfloat,JavaTableInfo jti,Integer tagidx,long startdt) throws Exception
 	{
 		String sql = "select * from "+jti.getTableName()+" where TagIdx=? and DT=?" ;
 		if(bfloat)
@@ -743,7 +827,7 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		}
 	}
 	
-	public RowOb<?> readLastByTag(boolean bfloat,String tablen,Integer tagidx) throws Exception
+	public RowOb readLastByTag(boolean bfloat,String tablen,Integer tagidx) throws Exception
 	{
 		String sql = "select max(DT) as MAX_DT,* from "+tablen+" where TagIdx="+tagidx ;
 		if(bfloat)
@@ -762,17 +846,85 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		}
 	}
 	
-	public List<RowOb<?>> readLastsGroupByTag() throws Exception
+	public List<RowOb> readLastsGroupByTag() throws Exception
 	{
 		String sql = "select max(DT) as MAX_DT,* from "+jtiI.getTableName()+" group by TagIdx" ;
 		String sql2 = "select max(DT) as MAX_DT,* from "+jtiF.getTableName()+" group by TagIdx" ;
 		
 		List<RowObI> robis =  DBUtil.executeQuerySqlWithXORM(connPool,sql,RowObI.class) ;
 		List<RowObF> robfs =  DBUtil.executeQuerySqlWithXORM(connPool,sql2,RowObF.class) ;
-		ArrayList<RowOb<?>> rets =new ArrayList<>() ;
+		ArrayList<RowOb> rets =new ArrayList<>() ;
 		rets.addAll(robis) ;
 		rets.addAll(robfs) ;
 		return rets ;
 	}
 	
+	public List<RowOb> readRowsForPage(String tagpath, long to_dt,boolean b_desc,int limit_num) throws Exception
+	{
+		TSSTagSegs<?> ts = this.belongTo.getTSSTagSegs(tagpath) ;
+		if(ts==null)
+			throw new IllegalArgumentException("no TSSTagSegs found with prj tag path="+tagpath);
+		ValTP vtp = ts.getValTP() ;
+		Integer tagidx = ts.getTagIdx() ;
+		JavaTableInfo jti = null ;
+		boolean bfloat = vtp.isNumberFloat();
+		if(bfloat)
+		{
+			jti = jtiF ;
+		}
+		else
+		{
+			jti = jtiI ;
+		}
+		
+		Connection conn = null ;
+		try
+		{
+			conn = connPool.getConnection() ;
+			return readRowsForPage(conn,jti,bfloat,tagidx,  to_dt,b_desc,limit_num) ;
+		}
+		finally
+		{
+			if(conn!=null)
+				connPool.free(conn);
+		}
+	}
+	
+	private List<RowOb> readRowsForPage(Connection conn,JavaTableInfo jti,boolean bfloat,Integer tagidx, long to_dt,boolean b_desc,int limit_num) throws Exception
+	{
+		String sql = "select * from "+jti.getTableName()+" where tagidx="+tagidx+" and DT<"+to_dt+" order by DT" ;
+		if(b_desc)
+			sql += " desc" ;
+		if(limit_num>0)
+			sql += " limit "+limit_num ;
+		
+		//ArrayList<RowOb> rets = new ArrayList<>() ;
+		
+		DataTable dt = DBUtil.executeQuerySql(conn, sql) ;
+		ArrayList<RowOb> rets = new ArrayList<>() ;
+		if(bfloat)
+		{
+			List<RowObF> obs = DBResult.transTable2XORMObjList(RowObF.class, dt) ;
+			rets.addAll(obs) ;
+		}
+		else
+		{
+			List<RowObI> obs = DBResult.transTable2XORMObjList(RowObI.class, dt) ;
+			rets.addAll(obs) ;
+		}
+		return rets ;
+	}
+	
+	// UI
+	
+//	protected String UI_getTempTitle()
+//	{
+//		return this.getTitle()+" "+byWay.getTitle() ;
+//	}
+//
+//	@Override
+//	protected String UI_getTempIcon()
+//	{
+//		return "/_iottree/res/dvalue.png" ;
+//	}
 }

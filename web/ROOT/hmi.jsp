@@ -5,6 +5,7 @@
 				java.util.*,
 				org.json.*,
 				org.iottree.core.*,
+				org.iottree.core.ui.*,
 				org.iottree.core.res.*,
 				org.iottree.core.store.*,
 				org.iottree.core.plugin.*,
@@ -389,6 +390,46 @@ margin-top:5px;
 .data_list_c::-webkit-scrollbar-thumb:hover {
     background: #81ec26;
 }
+
+.ui_list_c
+{
+display: flex;
+ flex-wrap: wrap;
+}
+
+.ui_item
+{
+position:relative;
+	width:80px;
+	height:80px;
+	border:0px solid ;
+	border-color:#0699f0;
+	margin:5px;
+}
+
+.ui_item .t
+{
+	position:absolute;
+	font-size: 18px;
+	left:0px;
+	right:0px;
+	bottom: 2px;
+}
+
+.ui_item:hover
+{
+	background-color:#f3cf56;
+}
+
+.ui_item img
+{
+	position:relative;
+	top:5px;
+	width:50px;
+	height:50px;
+	border:1px solid;
+	
+}
 </style>
 
 </head>
@@ -456,6 +497,7 @@ dlg.dlg_top=true;
 	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x" title="zoom down"></i></div>
 	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
 	<div id="oper_data" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
+	<div id="oper_ui" class="oper" style="top:280px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
 	
 	<div id="alert_list_c" style="display:none" class="pwin">
  		<span class="op">
@@ -549,6 +591,33 @@ if(b_his)
  		</div>
  	</div>
  	
+ 	<div id="ui_list_c" style="display:none;top:280px;width:500px;height:280px" class="pwin" >
+ 		<span class="op">
+			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_uis()" title="hidde"><i class="fa fa-times"></i></button>
+		</span>
+		<h3>Dialog/UI List</h3>
+ 		<div class="ui_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
+<%
+	for(UIItem uii:UIManager.getInstance(prj).getId2Items().values())
+	{
+		String uiid = uii.getId() ;
+		String tt = uii.getTitle() ;
+		String url = Convert.plainToHtml(uii.getUrl()) ;
+		int w = uii.getWidth() ;
+		int h = uii.getHeight() ;
+		String icon = uii.getIconUrl() ;
+		if(Convert.isNullOrEmpty(icon))
+			icon = "/_iottree/res/ui_def.png" ;
+%>
+	<div class="ui_item" uiid="<%=uiid%>" uitt="<%=tt %>" ui_url="<%=url%>" ui_w="<%=w %>" ui_h="<%=h%>">
+	    <img src="<%=icon %>" />
+		<span class="t"><%=tt %></span>
+	</div>
+<%
+	}
+%>
+ 		</div>
+ 	</div>
 </div>
 	<%-- 
 <script src="/_iottree/di_div_comps/echarts.min.js"></script>
@@ -614,6 +683,12 @@ $("#oper_data").click(function()
 {
 	show_or_hide_datas() ;
 });
+
+$("#oper_ui").click(function()
+{
+	show_or_hide_uis() ;
+});
+
 
 function add_tab()
 {
@@ -1169,6 +1244,22 @@ function show_data_his(outtp,outid,tagp,title)
 			[]);
 }
 
+function show_or_hide_uis()
+{
+	let dis= $("#ui_list_c").css("display");
+	if("none"==dis)
+		$("#ui_list_c").css("display","");
+	else
+		$("#ui_list_c").css("display","none");
+}
+
+function hide_uis()
+{
+	$("#ui_list_c").css("display","none");
+}
+
+
+
 var dtags = <%=jarr_dtags%>;
 
 function update_data_list(cxt_rt)
@@ -1218,6 +1309,21 @@ function update_data_list(cxt_rt)
 	}
 	// console.log(cxt_rt) ;
 }
+
+$(".ui_item").click(function(){
+	let ob = $(this) ;
+	let uiid = ob.attr("uiid") ;
+	let uitt = ob.attr("uitt") ;
+	let url = ob.attr("ui_url") ;
+	let w = parseInt(ob.attr("ui_w")||"900") ;
+	let h = parseInt(ob.attr("ui_h")||"600") ;
+	dlg.msg(uiid+uitt+url) ;
+	dlg.open_win(url,
+			{title:uitt,w:w,h:h},
+			[],
+			[]);
+}) ;
+		
 
 async function  f()
 {

@@ -167,7 +167,7 @@ public abstract class TSSIO
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt) throws Exception ;
+	public abstract <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception;
 	
 	public abstract <T> TSSValSeg<T> readValSegAt(TSSTagSegs<T> ts, long at_dt) throws Exception ;
 	

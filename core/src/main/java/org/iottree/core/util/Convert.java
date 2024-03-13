@@ -84,6 +84,14 @@ public class Convert
 		// return HM.format(d);
 		return new SimpleDateFormat("HH:mm").format(d);
 	}
+	
+	public static String toHMS(Date d)
+	{
+		if (d == null)
+			return "";
+		// return HM.format(d);
+		return new SimpleDateFormat("HH:mm:ss").format(d);
+	}
 
 	static SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 

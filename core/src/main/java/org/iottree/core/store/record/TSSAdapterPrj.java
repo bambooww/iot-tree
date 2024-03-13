@@ -62,7 +62,7 @@ public class TSSAdapterPrj extends TSSAdapter
 	{
 		return 1000 ;
 	}
-
+	
 	@Override
 	protected boolean RT_init(StringBuilder failedr)
 	{

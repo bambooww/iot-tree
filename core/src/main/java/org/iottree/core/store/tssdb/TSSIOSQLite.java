@@ -603,9 +603,9 @@ public class TSSIOSQLite extends TSSIO
 			Number num = (Number)val ;
 			switch(val_vt)
 			{
-			case vt_date:
-				val = new Date(num.longValue()) ;
-				break ;
+//			case vt_date:
+//				val = new Date(num.longValue()) ;
+//				break ;
 			case vt_double:
 				val = num.doubleValue() ;
 				break ;
@@ -1033,7 +1033,7 @@ public class TSSIOSQLite extends TSSIO
 	}
 
 	@Override
-	public <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt) throws Exception
+	public <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception
 	{
 		if (from_dt > to_dt)
 			return null;
@@ -1044,7 +1044,11 @@ public class TSSIOSQLite extends TSSIO
 			return null;
 		String tablen = ts.param.getTableName(TN_TAG_SEG);
 		String sql = "select * from " + tablen + " where TagIdx=? and EndDT>=? and StartDT<? order by StartDT";
-
+		if(b_desc)
+			sql += " desc" ;
+		if(limit_num>0)
+			sql += " limit "+limit_num ;
+		
 		Connection conn = null;
 
 		PreparedStatement ps = null;

@@ -122,7 +122,7 @@ public abstract class TSSAdapter
 			throw new RuntimeException("no IO gotten");
 	}
 
-	private boolean initOk = false;
+	protected boolean initOk = false;
 
 	/**
 	 * call by outer
@@ -574,21 +574,21 @@ public abstract class TSSAdapter
 		return this.getIO().getTagsMap() ;
 	}
 	
-	public <T> List<TSSValSeg<T>> readValSegs(String tag, long from_dt, long to_dt) throws Exception
+	public <T> List<TSSValSeg<T>> readValSegs(String tag, long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception
 	{
 		@SuppressWarnings("unchecked")
 		TSSTagSegs<T> ts = (TSSTagSegs<T>)getTagSegs(tag) ;
 		if(ts==null)
 			return null ;
 		
-		return this.getIO().readValSegs(ts, from_dt, to_dt);
+		return this.getIO().readValSegs(ts, from_dt, to_dt,b_desc,limit_num);
 	}
 
-	public <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt) throws Exception
+	public <T> List<TSSValSeg<T>> readValSegs(TSSTagSegs<T> ts, long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception
 	{
 		// TODO same cache to improve speed
 
-		return this.getIO().readValSegs(ts, from_dt, to_dt);
+		return this.getIO().readValSegs(ts, from_dt, to_dt,b_desc,limit_num);
 	}
 	
 	

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,9 @@ import org.iottree.core.store.tssdb.TSSSavePK;
 import org.iottree.core.store.tssdb.TSSTagParam;
 import org.iottree.core.store.tssdb.TSSTagSegs;
 import org.iottree.core.store.tssdb.TSSValSeg;
+import org.iottree.core.ui.IUIProvider;
+import org.iottree.core.ui.IUITemp;
+import org.iottree.core.ui.UITemp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
@@ -36,7 +40,7 @@ import org.json.JSONObject;
  * 
  * @author jason.zhu
  */
-public class RecManager implements ILang
+public class RecManager implements ILang, IUIProvider
 {
 	private static final HashMap<String, RecManager> name2recm = new HashMap<>();
 
@@ -98,9 +102,26 @@ public class RecManager implements ILang
 		tssAdpPrj.asPkSavedListener(tssPkSavedLis);
 	}
 
+	private boolean bQueInitOk = false;
+
 	public TSSAdapterPrj getTSSAdapterPrj()
 	{
+		RT_initForQuery(false);
+
 		return tssAdpPrj;
+	}
+
+	void RT_initForQuery(boolean reinit)
+	{
+		if (this.bQueInitOk && !reinit)
+			return;
+		StringBuilder failedr = new StringBuilder();
+		bQueInitOk = this.RT_init(reinit, failedr);
+	}
+
+	private void clearFroQuery()
+	{
+		RT_initForQuery(true);
 	}
 
 	private File getRecTagsFile()
@@ -183,8 +204,8 @@ public class RecManager implements ILang
 	public void setRecTagParam(String tag, RecTagParam rtp) throws IOException
 	{
 		HashMap<String, RecTagParam> tag2p = getRecTagParams();
-		
-		RecTagParam oldrtp = tag2p.get(tag) ;
+
+		RecTagParam oldrtp = tag2p.get(tag);
 		boolean bdirty = false;
 		if (rtp == null)
 		{
@@ -195,33 +216,35 @@ public class RecManager implements ILang
 			tag2p.put(tag, rtp);
 			bdirty = true;
 		}
-		
 
 		if (bdirty)
+		{
 			saveRecTags();
-		
-		HashSet<String> proids = new HashSet<>() ;
-		if(oldrtp!=null)
-		{
-			List<String> ss= oldrtp.getUsingProIds() ;
-			if(ss!=null)
-				proids.addAll(ss) ;
+
+			clearFroQuery();
 		}
-		if(rtp!=null)
+
+		HashSet<String> proids = new HashSet<>();
+		if (oldrtp != null)
 		{
-			List<String> ss= rtp.getUsingProIds() ;
-			if(ss!=null)
-				proids.addAll(ss) ;
+			List<String> ss = oldrtp.getUsingProIds();
+			if (ss != null)
+				proids.addAll(ss);
 		}
-		for(String proid:proids)
+		if (rtp != null)
 		{
-			RecPro rp = this.getRecProById(proid) ;
-			if(rp==null)
-				continue ;
+			List<String> ss = rtp.getUsingProIds();
+			if (ss != null)
+				proids.addAll(ss);
+		}
+		for (String proid : proids)
+		{
+			RecPro rp = this.getRecProById(proid);
+			if (rp == null)
+				continue;
 			rp.clearCache();
 		}
 	}
-	
 
 	public void setRecProL1SelTagIds(String id, List<String> tagids) throws Exception
 	{
@@ -251,35 +274,57 @@ public class RecManager implements ILang
 		if (bdirty)
 		{
 			this.saveRecTags();
+
+			clearFroQuery();
 			rpl1.clearCache();
 		}
 	}
-	
-	List<UATag> listRecProUsingTags(String id)
+
+	public List<UATag> listRecProUsingTags(String id)
 	{
 		RecPro ao = this.getRecProById(id);
 		if (ao == null || !(ao instanceof RecProL1))
-			return null;//throw new Exception("no RecPro or not RecProL1 with id=" + id);
+			return null;// throw new Exception("no RecPro or not RecProL1 with
+						// id=" + id);
 
 		RecProL1 rpl1 = (RecProL1) ao;
 
-		ArrayList<UATag> rets = new ArrayList<>() ;
+		ArrayList<UATag> rets = new ArrayList<>();
 		for (RecTagParam rtp : this.getRecTagParams().values())
 		{
-			List<String> proids = rtp.getUsingProIds() ;
-			if(proids==null)
-				continue ;
-			if(proids.contains(id))
+			List<String> proids = rtp.getUsingProIds();
+			if (proids == null)
+				continue;
+			if (proids.contains(id))
 			{
 				String tagid = rtp.tagId;
-				
+
 				UANode n = this.prj.findNodeById(tagid);
-				if(n==null || !(n instanceof UATag))
-					continue ;
-				rets.add((UATag)n) ;
+				if (n == null || !(n instanceof UATag))
+					continue;
+				rets.add((UATag) n);
 			}
 		}
-		return rets ;
+		return rets;
+	}
+
+	public List<RecProL1> listUsingRecProsByTag(UATag tag)
+	{
+		RecTagParam rtp = this.getRecTagParam(tag);
+		if (rtp == null)
+			return null;
+		List<String> pids = rtp.getUsingProIds();
+		if (pids == null)
+			return null;
+		ArrayList<RecProL1> rets = new ArrayList<>(pids.size());
+		for (String pid : pids)
+		{
+			RecPro rp = this.getRecProById(pid);
+			if (rp == null || !(rp instanceof RecProL1))
+				continue;
+			rets.add((RecProL1) rp);
+		}
+		return rets;
 	}
 	//
 
@@ -296,21 +341,31 @@ public class RecManager implements ILang
 		return this.getRecTagParams().get(tag.getNodeCxtPathInPrj());
 	}
 
+	public TSSTagSegs<?> getTSSTagSegs(String tagpath)
+	{
+		return this.getTSSAdapterPrj().getTagSegs(tagpath);
+	}
+
+	public TSSTagSegs<?> getTSSTagSegs(UATag tag)
+	{
+		return getTSSTagSegs(tag.getNodeCxtPathInPrj());
+	}
+
 	public List<RecProL1> listFitRecProsByValStyle(RecValStyle rvs)
 	{
-		ArrayList<RecProL1> rets = new ArrayList<>() ;
-		for(RecPro rp:this.getId2RecPro().values())
+		ArrayList<RecProL1> rets = new ArrayList<>();
+		for (RecPro rp : this.getId2RecPro().values())
 		{
-			if(!(rp instanceof RecProL1))
-				continue ;
-			RecProL1 rpl1 = (RecProL1)rp ;
-			List<RecValStyle> vss = rpl1.getSupportedValStyle() ;
-			if(vss==null)
-				continue ;
-			if(vss.contains(rvs))
-				rets.add(rpl1) ;
+			if (!(rp instanceof RecProL1))
+				continue;
+			RecProL1 rpl1 = (RecProL1) rp;
+			List<RecValStyle> vss = rpl1.getSupportedValStyle();
+			if (vss == null)
+				continue;
+			if (vss.contains(rvs))
+				rets.add(rpl1);
 		}
-		return rets ;
+		return rets;
 	}
 	// saver mgr
 
@@ -546,15 +601,17 @@ public class RecManager implements ILang
 		return true;
 	}
 
-
 	// runtime
 
-	private boolean RT_init(StringBuilder failedr)
+	private boolean RT_init(boolean reinit, StringBuilder failedr)
 	{
 		ArrayList<TSSTagParam> pms = new ArrayList<>();
 		HashSet<String> tagset = new HashSet<>();
 		for (RecTagParam rtp : this.getRecTagParams().values())
 		{
+			if (!rtp.isEnable())
+				continue;
+
 			String tagp = rtp.getTagPath();
 			UATag tag = rtp.getUATag();// this.prj.getTagByPath(tagp) ;
 			if (tag == null)
@@ -563,12 +620,12 @@ public class RecManager implements ILang
 			pms.add(ttp);
 			tagset.add(tagp);
 
-			//rtp.asUATag(tag);
+			// rtp.asUATag(tag);
 		}
 
 		recTagSet = tagset;
 		tssAdpPrj.asTagParams(pms);
-		if (!tssAdpPrj.RT_init(true, failedr)) // make sure to re init
+		if (!tssAdpPrj.RT_init(reinit, failedr)) // make sure to re init
 			return false;
 
 		for (RecTagParam rtp : this.getRecTagParams().values())
@@ -597,7 +654,7 @@ public class RecManager implements ILang
 			return;
 
 		StringBuilder failedr = new StringBuilder();
-		if (!RT_init(failedr))
+		if (!RT_init(true, failedr))
 			throw new RuntimeException(failedr.toString());
 
 		tssAdpPrj.RT_start();
@@ -676,30 +733,69 @@ public class RecManager implements ILang
 		return jo;
 	}
 
-	// /**
-	// * TSS Saved Listener,it will trigger RecPro to work
-	// */
-	// private TSSAdapter.ISavedListener tssSavedLis = new
-	// TSSAdapter.ISavedListener() {
-	//
-	// @Override
-	// public void onTagSegSaved(boolean b_insert, TSSTagSegs<?> tagsegs,
-	// Integer tagidx,TSSValSeg<?> valseg, long saved_enddt)
-	// {
-	// String tag = tagsegs.getTag() ;
-	// if(!recTagSet.contains(tag))
-	// return ;
-	// RecTagParam rtp = getRecTagParams().get(tag) ;
-	// if(rtp==null)
-	// return ;
-	// List<RecProL1> pros = rtp.listPros() ;
-	// if(pros==null)
-	// return ;
-	// for(RecProL1 pro:pros)
-	// {
-	// //pro.RT_doPro() ;
-	// }
-	// }
-	// };
+	// ------- ui
+	private UITemp ui_temp = new UITemp() {
+
+		@Override
+		public String getName()
+		{
+			return "_tss";
+		}
+
+		@Override
+		public String getTitle()
+		{
+			return "Tag Recorder";
+		}
+
+		@Override
+		public boolean checkTagsFitOrNot(List<UATag> tags)
+		{
+			if(tags==null||tags.size()>1)
+				return false;
+			RecTagParam pm = getRecTagParam(tags.get(0));
+			return pm != null;
+		}
+
+		@Override
+		public String calUrl(List<String> tagids)
+		{
+			if (tagids == null || tagids.size() < 0)
+				throw new IllegalArgumentException("no tag id found");
+			if (tagids.size() > 1)
+				throw new IllegalArgumentException("one tag id is fit");
+
+			return "/prj_tag_rec_tss.jsp?prjid=" + RecManager.this.prj.getId() + "&tagid=" + tagids.get(0);
+		}
+		
+		@Override
+		public String getIconUrl()
+		{
+			return "/_iottree/res/ui_tss.png" ;
+		}
+	};
+
+	//private List<IUITemp> ui_temps = Arrays.asList(ui_temp);
+
+	/**
+	 * get recorded tag UI temps
+	 */
+	@Override
+	public List<IUITemp> UI_getTemps()
+	{
+		ArrayList<IUITemp> rets = new ArrayList<>() ;
+		rets.add(ui_temp) ;
+		
+		for(RecPro rp:this.getId2RecPro().values())
+		{
+			if(!(rp instanceof RecProL1))
+				continue ;
+			RecProL1 rpl1 = (RecProL1)rp ;
+			List<IUITemp> tps = rpl1.UI_getTemps() ;
+			if(tps!=null)
+				rets.addAll(tps) ;
+		}
+		return rets;
+	}
 
 }

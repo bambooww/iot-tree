@@ -936,6 +936,21 @@ function rt_update()
 	}) ;
 }
 
+function rt_get_info()
+{
+	send_ajax("rec_ajax.jsp",{op:"rt_data",prjid:prjid},(bsucc,ret)=>{
+		if(!bsucc)
+		{
+			console.log(ret) ;
+			return ;
+		}
+		let ob = null ;
+		eval("ob="+ret) ;
+		$("#rt_info").html("<pre>"+ret+"</pre>") ;
+	}); 
+}
+
+//setInterval(rt_get_info,3000) ;
 //setInterval(rt_update,7000) ;
 
 </script>

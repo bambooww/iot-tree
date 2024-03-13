@@ -1,6 +1,7 @@
 package org.iottree.core.store.tssdb;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -256,9 +257,17 @@ public class TSSTagSegs<T>
 	}
 	
 	// read funcs
-	public List<TSSValSeg<T>> readValSegs(long from_dt, long to_dt) throws Exception
+	public List<TSSValSeg<T>> readValSegs(long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception
 	{
-		return this.getBelongTo().readValSegs(this, from_dt, to_dt) ;
+		return this.getBelongTo().readValSegs(this, from_dt, to_dt,b_desc,limit_num) ;
+	}
+	
+	public final List<TSSValSeg<?>> readValSegsNoT(long from_dt, long to_dt,boolean b_desc,int limit_num) throws Exception
+	{
+		List<TSSValSeg<T>> vss = readValSegs(from_dt, to_dt,b_desc,limit_num) ;
+		ArrayList<TSSValSeg<?>> rets = new ArrayList<>() ;
+		rets.addAll(vss) ;
+		return rets ;
 	}
 	
 	public TSSValSeg<T> readValSegAt(long at_dt) throws Exception

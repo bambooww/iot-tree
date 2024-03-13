@@ -1080,7 +1080,11 @@ function rec_tag_set(ob,tag,tt)
 									dlg.msg(rr);
 									return ;
 								}
-								$(ob).css("color","green") ;
+								if(ret.en)
+									$(ob).css("color","green") ;
+								else
+									$(ob).css("color","#b46c24") ;
+								
 								show_c.css("display","inline") ;
 								dlg.close();
 								
@@ -1094,7 +1098,7 @@ function rec_tag_set(ob,tag,tt)
 				{
 					dlg.confirm('unset this record param?',{btn:["Yes","Cancel"],title:"Unset Confirm"},function ()
 				    {
-							send_ajax("tag_rec_param_ajax.jsp",{op:"unset",prjid:prjid,tag:tag},function(bsucc,ret){
+							send_ajax("../store/rec_tag_param_ajax.jsp",{op:"unset",prjid:prjid,tag:tag},function(bsucc,ret){
 					    		if(!bsucc || ret!='succ')
 					    		{
 					    			dlg.msg("unset err:"+ret) ;
@@ -1117,7 +1121,12 @@ function rec_tag_set(ob,tag,tt)
 
 function rec_tag_show(tagpath,title)
 {
-	dlg.msg(tagpath) ;
+	if(!prjid)
+		return ;
+	dlg.open_win("/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
+			{title:"Tag Recorded History - "+title,w:960,h:650,wh_auto:true},
+			[],
+			[]);
 }
 
 function show_data_his(outtp,outid,tagp,title)
@@ -1129,7 +1138,6 @@ function show_data_his(outtp,outid,tagp,title)
 			[],
 			[]);
 }
-
 
 </script>
 </html>

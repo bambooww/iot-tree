@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ln"  name_jp=""  version="004">
+
+  <dd_node name="name_existed" name_cn="相同名字的对象已经存在" name_en="An object with the same name already exists"  visible="1" order_no="1"/>
+  
+</dd_class>
