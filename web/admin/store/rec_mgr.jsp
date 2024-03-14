@@ -465,10 +465,12 @@ function update_pros()
 				<span class="t">\${ob.t} [\${ob.n}]</span>
 				<span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="f" ><i class="fa fa-gear" style="font-size:16px;"></i>\${ob.tpt}</span>
-				<span class="rt" ><i id='p_run_\${ob.id}' class='fa fa-circle-notch fa-lg'></i></span>
+				
+				
 				
 				<button id="btn_save_\${ob.id}"  type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary save_btn" onclick="save_p_tag_ids('\${prjid}','\${ob.id}')">Save</button>
 				<span class="oper">
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="access_p('\${ob.tp}','\${ob.t}','\${ob.id}')"><i class="fa fa-paper-plane"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_p('\${ob.tp}','\${ob.t}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_pro('\${prjid}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
 				</span>
@@ -586,6 +588,12 @@ function add_or_edit_p(tp,tt,id)
 					dlg.close();
 				}
 			]);
+}
+
+function access_p(tp,tt,id)
+{
+	event.stopPropagation();
+	dlg.msg("TODO") ;
 }
 
 function del_out(prjid,hid,id)

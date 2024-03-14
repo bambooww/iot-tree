@@ -211,6 +211,16 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 		return rets;
 	}
+	
+	public UATag findTagById(String id)
+	{
+		UANode uan = this.findNodeById(id);
+		if (uan == null || !(uan instanceof UATag))
+		{
+			return null;
+		}
+		return (UATag) uan;
+	}
 
 	@Override
 	public List<IOCBox> OC_getSubs()

@@ -57,23 +57,28 @@
 ##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 Mitsubishi FX</a>
 ##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 Mitsubishi FX Net</a>
 
-#### <a href="doc/hmi/index.md" >7 HMI</a>
-##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;7.1 HMI Editing
-##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;7.2 Common properties
-##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;7.3 Properties binding and event handling
-##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.4 HMI Components</a>
-##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;7.5 HMI Client's data list</a>
+#### <a href="doc/js/index.md"> 7 JS Script Usage</a>
 
-#### <a href="doc/js/index.md"> 8 JS Script Usage</a>
+##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;7.1 JS In Middel Tag</a>
+##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;7.2 JS In Task</a>
+##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;7.3 JS In UI Event Handling</a>
+##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;7.4 Js Api Inner Plugin - \$$http
 
-##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS In Middel Tag</a>
-##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS In Task</a>
-##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS In UI Event Handling</a>
-##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api Inner Plugin - \$$http
+#### <a href="doc/store/index.md" >8 Data storage, processing, and presentation</a>
+##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;8.1 Simple storage and output of Tag data</a>
+##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;8.2 Internal timing segment recorder (TSSDB)</a>
+##### <a href="doc/store/inner_recpro.md" target="main">&nbsp;&nbsp;&nbsp;8.3 Secondary processing of recorded data</a>
 
-#### <a href="doc/store/index.md" >9 Data storage, processing, and presentation</a>
-##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;9.1 Simple storage and output of Tag data</a>
-##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;9.2 Internal timing segment recorder (TSSDB)</a>
+
+#### <a href="doc/hmi/index.md" >9 HMI and Dialog</a>
+##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 HMI (UI) Node
+##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;9.2 HMI Node Editing
+##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;9.3 Common properties
+##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;9.4 Properties binding and event handling
+##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;9.5 HMI Components</a>
+##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
+##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
+
 
 #### <a href="doc/advanced/index.md" >10 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 Plugins Development</a>

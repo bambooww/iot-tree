@@ -263,7 +263,7 @@ if(recmgr!=null)
 		}
 		String dis_show = bset?"inline":"none" ;
 		
-%><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="set tag be automatically recorded internal." style="color:<%=color%>">&nbsp;<i class="fa fa-download" /></i>&nbsp;</button>
+%><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="set tag be automatically recorded internal." style="color:<%=color%>">&nbsp;<i class="fa fa-edit" /></i>&nbsp;</button>
   <span id="rec_tag_show_<%=tmppath %>" style="display:<%=dis_show%>;">
 <a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show recorded history" >&nbsp;<i class="fa fa-line-chart" ></i></a>
 

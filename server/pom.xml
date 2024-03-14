@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.0.4</version>
+    <version>1.3.0</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -194,6 +194,7 @@
 			                            <include>log/tt.bat</include>
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
+			                            <include>tomcat/temp/readme.txt</include>
 			                            <include>wrapper.*</include>
 			                            <include>iottree_win_panel.exe</include>
 			                        </includes>

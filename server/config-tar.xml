@@ -6,6 +6,7 @@
 		<webapp name="doc" />
 		<webapp name="_js" />
 		<webapp name="_iottree" />
+		<webapp name="_ui" />
 	</webapps>
 	
 	<!-- opc ua server support. 

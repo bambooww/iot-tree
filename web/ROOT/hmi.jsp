@@ -5,6 +5,7 @@
 				java.util.*,
 				org.json.*,
 				org.iottree.core.*,
+				org.iottree.core.store.record.*,
 				org.iottree.core.ui.*,
 				org.iottree.core.res.*,
 				org.iottree.core.store.*,
@@ -53,6 +54,7 @@
 	boolean bprj = topn instanceof UAPrj ;
 	UADev owner_dev = null;
 	DevDef owner_def = null ;
+	RecManager rec_mgr = null ;
 	if(bprj)
 	{
 		prj = (UAPrj)topn;
@@ -72,6 +74,11 @@
 		res_ref_id =reslibid= prj.getResLibId() ;
 		//reslibid = owner_dev.getId();
 		resid = owner_dev.getId();
+	}
+	
+	if(prj!=null)
+	{
+		rec_mgr = RecManager.getInstance(prj) ;
 	}
 	
 	PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
@@ -569,6 +576,19 @@ for(Map.Entry<UATag,String> en:tag2tt.entrySet())
 	  <td class="val"></td>
 	  <td >
 <%
+
+if(rec_mgr!=null && rec_mgr.checkTagCanRecord(tag))
+{
+	String tmppath = tag.getNodeCxtPathInPrj() ;
+	RecTagParam rtp = rec_mgr.getRecTagParam(tag) ;
+	if(rtp!=null)
+	{
+%>
+<button onclick="rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show inner recorded history" style="background-color:#4def3e">&nbsp;<i class="fa fa-line-chart" ></i>&nbsp;</button>
+<%
+	}
+}
+
 if(b_his)
 {
 	for(StoreOut so:storeos)
@@ -576,7 +596,8 @@ if(b_his)
 		String outtp = so.getOutTp() ;
 		String outtpt = so.getOutTpTitle() ;
 		String outid = so.getId() ;
-%><button onclick="show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="show history - <%=outtpt%>">&nbsp;&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;&nbsp;</button>
+%>
+<button onclick="show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="show outer data source history - <%=outtpt%>">&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</button>
 <%
 	}
 }
@@ -600,11 +621,28 @@ if(b_his)
 <%
 	for(UIItem uii:UIManager.getInstance(prj).getId2Items().values())
 	{
+		List<String> tagids = uii.getTagIds() ;
+		if(tagids!=null && tagids.size()>0)
+		{
+			boolean ball_under=true ;
+			for(String tmpid:tagids)
+			{
+				UATag tag = cxtn.findTagById(tmpid) ;
+				if(tag==null)
+				{
+					ball_under = false;
+					break ;
+				}
+			}
+			if(!ball_under)
+				continue ;  //
+		}
 		String uiid = uii.getId() ;
 		String tt = uii.getTitle() ;
 		String url = Convert.plainToHtml(uii.getUrl()) ;
 		int w = uii.getWidth() ;
 		int h = uii.getHeight() ;
+		
 		String icon = uii.getIconUrl() ;
 		if(Convert.isNullOrEmpty(icon))
 			icon = "/_iottree/res/ui_def.png" ;
@@ -1235,6 +1273,16 @@ function hide_datas()
 	$("#data_list_c").css("display","none");
 }
 
+function rec_tag_show(tagpath,title)
+{
+	if(!prjid)
+		return ;
+	dlg.open_win("/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
+			{title:"Tag Recorded History - "+title,w:960,h:650,wh_auto:true},
+			[],
+			[]);
+}
+
 function show_data_his(outtp,outid,tagp,title)
 {
 	event.stopPropagation();
@@ -1243,6 +1291,7 @@ function show_data_his(outtp,outid,tagp,title)
 			[],
 			[]);
 }
+
 
 function show_or_hide_uis()
 {

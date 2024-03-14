@@ -495,16 +495,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return (UAHmi) uan;
 	}
 	
-	public UATag findTagById(String id)
-	{
-		UANode uan = this.findNodeById(id);
-		if (uan == null || !(uan instanceof UATag))
-		{
-			return null;
-		}
-		return (UATag) uan;
-	}
-
+	
 	public JSONObject toOCUnitJSON()
 	{
 		return IOCBox.transOCUnitToJSON(this);

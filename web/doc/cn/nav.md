@@ -57,23 +57,28 @@
 ##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 三菱FX</a>
 ##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 三菱FX Net</a>
 
-#### <a href="doc/hmi/index.md" >7 人机交互（HMI）</a>
-##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;7.1 HMI编辑
-##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;7.2 图元通用属性说明
-##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;7.3 HMI属性绑定和事件处理
-##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;7.4 HMI组件(控件)</a>
-##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;7.5 HMI客户端数据列表展示</a>
+#### <a href="doc/js/index.md"> 7 JS脚本支持</a>
 
-#### <a href="doc/js/index.md"> 8 JS脚本支持</a>
+##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;7.1 JS在中间标签(Middle Tag)的使用</a>
+##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;7.2 JS在任务(Task)中的使用</a>
+##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;7.3 JS在UI事件处理中的使用</a>
+##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;7.4 Js Api内部插件 - \$$http
 
-##### <a href="doc/js/js_in_midtag.md">&nbsp;&nbsp;&nbsp;8.1 JS在中间标签(Middle Tag)的使用</a>
-##### <a href="doc/js/js_in_task.md">&nbsp;&nbsp;&nbsp;8.2 JS在任务(Task)中的使用</a>
-##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;8.3 JS在UI事件处理中的使用</a>
-##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;8.4 Js Api内部插件 - \$$http
+#### <a href="doc/store/index.md" >8 数据存储、处理和展示</a>
+##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;8.1 标签数据简单存储和输出</a>
+##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;8.2 内部时序段记录器 (TSSDB)</a>
+##### <a href="doc/store/inner_recpro.md" target="main">&nbsp;&nbsp;&nbsp;8.3 记录数据二次处理</a>
 
-#### <a href="doc/store/index.md" >9 数据存储、处理和展示</a>
-##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;9.1 标签数据简单存储和输出</a>
-##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;9.2 内部时序段记录器 (TSSDB)</a>
+
+#### <a href="doc/hmi/index.md" >9 人机交互(HMI)和对话框(Dialog)</a>
+##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 界面HMI（UI）节点
+##### <a href="doc/hmi/hmi_edit.md" target="main">&nbsp;&nbsp;&nbsp;9.2 HMI节点编辑
+##### <a href="doc/hmi/hmi_props.md" target="main">&nbsp;&nbsp;&nbsp;9.3 图元通用属性说明
+##### <a href="doc/hmi/hmi_bind_evt.md" target="main">&nbsp;&nbsp;&nbsp;9.4 HMI属性绑定和事件处理
+##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;9.5 HMI组件(控件)</a>
+##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI客户端数据列表展示</a>
+##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 记录数据展示</a>
+
 
 #### <a href="doc/advanced/index.md" >10 高级特性</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 插件开发</a>
