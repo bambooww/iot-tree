@@ -8,6 +8,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
@@ -165,9 +166,10 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		if(lpgs!=null)
 			pgs.addAll(lpgs) ;
 		
-		PropGroup pg = new PropGroup("cxt_tags","Context Tags") ;
-		pg.addPropItem(new PropItem("ref_locked","Ref Locked","Can edit tags context or not",PValTP.vt_bool,true,
-				null,null,0));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup pg = new PropGroup("cxt_tags",lan);//"Context Tags") ;
+		pg.addPropItem(new PropItem("ref_locked",lan,PValTP.vt_bool,true,
+				null,null,0)); //"Ref Locked","Can edit tags context or not"
 		pgs.add(pg) ;
 		//
 		cxt_tags = pgs;

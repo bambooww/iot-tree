@@ -192,6 +192,12 @@ public class ConnProTcpServer extends ConnProvider
 		return TP;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "TCP Server" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return false;

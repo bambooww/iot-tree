@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+	<dd_node id="1" name="pg_cmd_line" name_cn="命令行驱动" name_en="Cmd Line Driver" desc_cn="" desc_en=""/>
+
+	<dd_node id="1" name="pg_timing" name_cn="时间参数" name_en="Timing" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_auto_demotion" name_cn="自动降级" name_en="Auto-Demotion" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_data_access" name_cn="数据访问" name_en="Data Access" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_data_encod" name_cn="数据编码" name_en="Data Encoding" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_block_size" name_cn="数据块大小" name_en="Block Sizes" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_framing" name_cn="帧" name_en="Framing" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pg_conns" name_cn="链接" name_en="Connections" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pg_modbus_ch" name_cn="通道下的Modbus参数" name_en="Modbus in Channel" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_modbus_spk" name_cn="Modbus 设备" name_en="Modbus Device" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pg_mqtt_conn" name_cn="MQTT 链接" name_en="MQTT Connection" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_mqtt_tag" name_cn="MQTT 标签" name_en="MQTT Tag" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pg_ping" name_cn="Ping" name_en="Ping" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pi_recv_to" name_cn="接收过期时间(毫秒)" name_en="Receive Timeout(millisecond)" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pi_title" name_cn="标题" name_en="Title" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_url" name_cn="URL" name_en="URL" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_js" name_cn="JS脚本" name_en="JavaScript" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pi_conn_tryc" name_cn="失败重新尝试次数" name_en="Fail Retry times" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_req_to" name_cn="请求过期时间(毫秒)" name_en="Request Timeout(millisecond)" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_inter_req" name_cn="多个请求间隔(毫秒)" name_en="Inter-request millisecond" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_en" name_cn="使能失败时自动降级" name_en="Enable auto-demotion on failure" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_tryc" name_cn="降级前失败重新尝试次数" name_en="Demote after Retry times" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_ms" name_cn="降级之后时间间隔毫秒" name_en="Demote for millisecond" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_no_req" name_cn="在降级中丢弃请求" name_en="Discard request during demotion" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_z_b_addr" name_cn="使用0开始的地址" name_en="Use Zero based addressing" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_z_b_bit_in_reg" name_cn="在寄存器中使用0开始的bit位" name_en="Use Zero based bit in register" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_h_reg_b_mask_w" name_cn="使用保留寄存器位掩码写入" name_en="Use holding register bit mask write" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_f06_reg1_w" name_cn="使用功能码06写入单个寄存器" name_en="Modbus 06 for single register writes" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_f05_coil1_w" name_cn="使用功能码05写入单个线圈" name_en="Modbus 05 for single coil writes" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_byte_ord_def" name_cn="使用Modbus缺省字节顺序" name_en="Use default Modbus byte order" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_fw_low32" name_cn="32位数据类型中首字(word)是低位" name_en="First word low in 32bit data types" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_fdw_low64" name_cn="64位数据类型中首双字(2word)是低位" name_en="First Dword low in 64bit data types" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_modicon_ord" name_cn="Modicon位顺序(MSB中的位0)" name_en="Modicon bit ordering(bit 0 in MSB)" desc_cn="" desc_en=""/>
+		
+		
+		<dd_node id="1" name="pi_out_coils" name_cn="输出线圈" name_en="Output Coils" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_in_coils" name_cn="输入线圈" name_en="Input Coils" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_internal_reg" name_cn="内部寄存器" name_en="Internal Registers" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_holding" name_cn="保存寄存器" name_en="Holding Registers" desc_cn="" desc_en=""/>
+
+		<dd_node id="1" name="pi_m_tcp_f" name_cn="使用Modbus Tcp帧" name_en="Use Modbus Tcp framing" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_leading_bs" name_cn="前导字节Leading bytes" name_en="Leading bytes" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_trailing_bs" name_cn="尾随字节Trailing bytes" name_en="Trailing bytes" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_run_model" name_cn="Modbus驱动运行模式" name_en="Modbus Driver Run Model" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_mdev_addr" name_cn="Modbus设备地址" name_en="Modbus Device Address" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_scan_intv" name_cn="扫描间隔(毫秒)" name_en="Scan Interval(millisecond)" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_failed_tryn" name_cn="连续失败次数认为失败" name_en="Fail after successive times" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_recv_to" name_cn="接收应答过期时间" name_en="Receive response timeout(millisecond)" desc_cn="" desc_en=""/>
+
+		<dd_node id="1" name="pi_timeout" name_cn="检测过期时间(毫秒)" name_en="Check Timeout(ms)" desc_cn="检测过期时间(毫秒)，太小容易不成功" desc_en="Check Timeout(ms),too small may check error"/>
+		<dd_node id="1" name="pi_chk_inter" name_cn="检测时间间隔(毫秒)" name_en="Check Interval(ms)" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_topic" name_cn="订阅主题" name_en="Subscribe Topic" desc_cn="" desc_en="Subscribe Topic"/>
+		
+		<dd_node id="1" name="pi_server_host" name_cn="主机IP或地址" name_en="Server Host" desc_cn="" desc_en="MQTT Server IP or Address"/>
+		<dd_node id="1" name="pi_server_port" name_cn="主机端口" name_en="Server Port" desc_cn="" desc_en="MQTT Server Port"/>
+		<dd_node id="1" name="pi_clientid" name_cn="客户端Id" name_en="Client Id" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_username" name_cn="用户名" name_en="User Name" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_userpsw" name_cn="用户密码" name_en="User Password" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_conn_to_sec" name_cn="连接过期时间(秒)" name_en="Connection Timeout Seconds" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_ka_int" name_cn="保持活动间隔秒数" name_en="KeepAliveInterval Seconds" desc_cn="" desc_en=""/>
+
+</dd_class>	

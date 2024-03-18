@@ -12,6 +12,12 @@ public class ConnProOPCUA extends ConnProvider
 		return TP;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "OPC UA" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return true;

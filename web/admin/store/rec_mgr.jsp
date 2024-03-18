@@ -7,7 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.store.record.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -230,7 +230,7 @@ position:absolute;
 </style>
 <body marginwidth="0" marginheight="0">
 <div class="left">
- <blockquote class="layui-elem-quote ">Recorded Tags</blockquote>
+ <blockquote class="layui-elem-quote "><wbt:g>rec_tags</wbt:g></blockquote>
  <div class="list" onscroll="on_list_scroll()">
 <%
 List<RecTagParam> params = recmgr.listRecTagParams();
@@ -242,8 +242,8 @@ int tags_num = params.size() ;
 		String np = tag.getNodeCxtPathIn(prj) ;
 		String tt = "["+tag.getValTp()+"]  "+tag.getNodePathName()+"&#13;"+tag.getNodePathTitle() ;
 		String en_c = true?"green":"gray" ;
-		String en_t = true?"Enabled":"Disabled" ;
-%><div class="tag_item" title="<%=tt%>" tag_id="<%=tagid%>" tag_np="<%=np %>" id="tag_<%=tagid%>" ><i class="fa fa-square en" style="color:<%=en_c%>" title="<%=en_t%>"></i>
+		String en_t = true?"enabled":"disabled" ;
+%><div class="tag_item" title="<%=tt%>" tag_id="<%=tagid%>" tag_np="<%=np %>" id="tag_<%=tagid%>" ><i class="fa fa-square en" style="color:<%=en_c%>" title="<wbt:g><%=en_t%></wbt:g>"></i>
 	<span class="tt"><%=np %></span><span class="chk_tag_c"><input type="checkbox"  tag_id="<%=tagid %>" class="chk_tag" onclick="on_chk_tag(this,'<%=tagid%>')"/></span>
 	</div>
 <%
@@ -253,9 +253,9 @@ int tags_num = params.size() ;
  </div>
  </div>
 <div class="mid" onclick="on_pro_clk()">
- <blockquote class="layui-elem-quote ">Processor L1
+ <blockquote class="layui-elem-quote "><wbt:g>processor</wbt:g> L1
  <div style="position: absolute;right:10px;top:11px;width:100px;border:0px solid;height:35px;">
- <button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_pro_sel(false)">+Add</button>
+ <button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_pro_sel(false)">+<wbt:g>add</wbt:g></button>
  </div>
 </blockquote>
 
@@ -269,9 +269,9 @@ int tags_num = params.size() ;
 
 <div class="right">
 
- <blockquote class="layui-elem-quote ">Processor L2
+ <blockquote class="layui-elem-quote "><wbt:g>processor</wbt:g> L2
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_pro_sel(true)">+Add</button>
+ 	<button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_pro_sel(true)">+<wbt:g>add</wbt:g></button>
  </div>
 </blockquote>
 
@@ -460,14 +460,11 @@ function update_pros()
 		for(let ob of os)
 		{
 			let en_c = ob.en?"green":"gray" ;
-			let en_t = ob.en?"Enabled":"Disabled" ;
+			let en_t = ob.en?"<wbt:g>enabled</wbt:g>":"<wbt:g>disabled</wbt:g>" ;
 			tmps += `<div id="p_\${ob.id}" style="top:\${y}px" class="p_item" hid="\${ob.id}" n="\${ob.n}" t="\${ob.t}" tp="\${ob.tp}" onclick="on_pro_clk(this)" alert_uids="\${ob.alert_uids}">
 				<span class="t">\${ob.t} [\${ob.n}]</span>
 				<span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="f" ><i class="fa fa-gear" style="font-size:16px;"></i>\${ob.tpt}</span>
-				
-				
-				
 				<button id="btn_save_\${ob.id}"  type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary save_btn" onclick="save_p_tag_ids('\${prjid}','\${ob.id}')">Save</button>
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="access_p('\${ob.tp}','\${ob.t}','\${ob.id}')"><i class="fa fa-paper-plane"></i></button>
@@ -504,12 +501,12 @@ function del_pro(prjid,id)
 {
 	//event.stopPropagation();
 	let ob = $("#p_"+id);
-	dlg.confirm('delete this processor ['+ob.attr("n")+']?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,processor</wbt:g> ['+ob.attr("n")+']?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("rec_ajax.jsp",{op:"del_p",prjid:prjid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -524,8 +521,8 @@ function add_pro_sel(b_l2)
 	if(b_l2)
 		u = "./rec_pro_sel.jsp?l2=true";
 	
-	dlg.open(u,{title:"Select Process Type"},
-			['Cancel'],
+	dlg.open(u,{title:"<wbt:g>select,processor,type</wbt:g>"},
+			['<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -540,16 +537,16 @@ function add_pro_sel(b_l2)
 
 function add_or_edit_p(tp,tt,id)
 {
-	var tt = "Add Processor ["+tt+"]";
+	var tt = "<wbt:g>add,processor</wbt:g> ["+tt+"]";
 	if(id)
 	{
-		tt = "Edit Processor ["+tt+"]";
+		tt = "<wbt:g>edit,processor</wbt:g> ["+tt+"]";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("rec_pro_"+tp+"_edit.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -596,15 +593,18 @@ function access_p(tp,tt,id)
 	dlg.msg("TODO") ;
 }
 
+/*
+ 
+ 
 function del_out(prjid,hid,id)
 {
 	event.stopPropagation();
-	dlg.confirm('delete this output?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>delete,this,output</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("store_ajax.jsp",{op:"del_o",prjid:prjid,hid:hid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -618,8 +618,8 @@ function on_clk_filter(hid,filter_str)
 	if(!filter_str)
 	{
 		dlg.open("./filter_sel.jsp",
-				{title:"Select Filter Type"},
-				['Cancel'],
+				{title:"<wbt:g>select,filter,type</wbt:g>"},
+				['<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -639,11 +639,12 @@ function on_clk_filter(hid,filter_str)
 	add_or_edit_filter(hid,tp,sub_str)
 }
 
+
 function add_o(prjid,hid)
 {
 	dlg.open("./o_sel.jsp?prjid="+prjid+"&hid="+hid,
-			{title:"Select Source Type"},
-			['Cancel'],
+			{title:"<wbt:g>select,sor,type</wbt:g>"},
+			['<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -660,16 +661,16 @@ function add_or_edit_o(prjid,tp,hid,id)
 {
 	if(event)
 		event.stopPropagation();
-	var tt = "Add Handler Output ["+tp+"]";
+	var tt = "<wbt:g>add,handler,output</wbt:g> ["+tp+"]";
 	if(id)
 	{
-		tt = "Edit Handler Output ["+tp+"]";
+		tt = "<wbt:g>edit,handler,output</wbt:g> ["+tp+"]";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("o_"+tp+"_edit.jsp?prjid="+prjid+"&hid="+hid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -714,10 +715,10 @@ function view_o(prjid,tp,hid,id)
 {
 	if(event)
 		event.stopPropagation();
-	var tt = "View Output Data ["+tp+"]";
+	var tt = "<wbt:g>view,output,data</wbt:g> ["+tp+"]";
 	dlg.open("o_"+tp+"_view.jsp?prjid="+prjid+"&hid="+hid+"&id="+id,
 			{title:tt},
-			['Close'],
+			['<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -725,7 +726,6 @@ function view_o(prjid,tp,hid,id)
 				}
 			]);
 }
-
 function init_o(prjid,hid,id)
 {
 	dlg.loading(true) ;
@@ -734,6 +734,9 @@ function init_o(prjid,hid,id)
 		dlg.msg(ret) ;
 	});
 }
+*/
+
+
 
 
 var in_panel = null ;
@@ -913,7 +916,7 @@ function rt_update()
 				if(h.run && h.en)
 				{
 					init_c = init_ok?"green":"red" ;
-					init_t = init_ok?"Init Ok":"Init Failed" ;
+					init_t = init_ok?"<wbt:g>init,ok</wbt:g>":"<wbt:g>init,failed</wbt:g>" ;
 				}
 					
 				let run_ok = o.run_ok;
@@ -929,7 +932,7 @@ function rt_update()
 				if(h.run && h.en)
 				{
 					run_c = run_ok?"green":"red" ;
-					run_t = run_ok?"Run Ok":"Run Error" ;
+					run_t = run_ok?"<wbt:g>run,ok</wbt:g>":"<wbt:g>run,err</wbt:g>" ;
 				}
 					
 				$("#o_init_"+o.id).css("color",init_c).attr("title",init_t) ;

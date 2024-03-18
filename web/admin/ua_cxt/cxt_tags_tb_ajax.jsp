@@ -7,7 +7,7 @@
 	org.iottree.core.store.*,
 	org.iottree.core.store.record.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 	private static class TagComp implements Comparator<UATag>
 	{
 		String sortBy = null ;
@@ -237,14 +237,14 @@ if(bloc&&!tag.isSysTag())
 
 String ext_str = tag.getExtAttrStr() ;
 String ext_color = "" ;
-String tagt = "Set extended properties" ;
+String tagt = "set extended properties" ;
 if(Convert.isNotNullEmpty(ext_str))
 {
 	ext_color="color:#17c680" ;
 	tagt = ext_str.replaceAll("\\r", "&#10;").replaceAll("\\n", "&#13;").replaceAll("\"","&#34;") ;
 }
 %>&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
-&nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title=" access"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
+&nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title="<wbt:g>access</wbt:g>"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
 <%
 if(recmgr!=null)
@@ -263,9 +263,9 @@ if(recmgr!=null)
 		}
 		String dis_show = bset?"inline":"none" ;
 		
-%><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="set tag be automatically recorded internal." style="color:<%=color%>">&nbsp;<i class="fa fa-edit" /></i>&nbsp;</button>
+%><button onclick="rec_tag_set(this,'<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="<wbt:g>set,tag,recorder</wbt:g>" style="color:<%=color%>">&nbsp;<i class="fa fa-edit" /></i>&nbsp;</button>
   <span id="rec_tag_show_<%=tmppath %>" style="display:<%=dis_show%>;">
-<a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="show recorded history" >&nbsp;<i class="fa fa-line-chart" ></i></a>
+<a href="javascript:rec_tag_show('<%=tmppath %>','<%=tag.getTitle() %> [<%=tmppath %>]')" title="<wbt:g>show,recorded,history</wbt:g>" >&nbsp;<i class="fa fa-line-chart" ></i></a>
 
 </span>
 <%
@@ -287,7 +287,7 @@ if(b_his)
 		String outtp = so.getOutTp() ;
 		String outtpt = so.getOutTpTitle() ;
 		String outid = so.getId() ;
-%><a href="javascript:show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="show history - <%=outtpt%>">&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</a>
+%><a href="javascript:show_data_his('<%=outtp %>','<%=outid %>','<%=tagp%>','<%=tt %>')" title="<wbt:g>show,history</wbt:g> - <%=outtpt%>">&nbsp;<i class="fa fa-line-chart" /></i>&nbsp;</a>
 <%
 	}
 }

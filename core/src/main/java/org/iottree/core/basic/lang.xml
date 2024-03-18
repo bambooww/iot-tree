@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ln"  name_jp=""  version="004">
+
+  <dd_node name="pi_pop_seltags" name_cn="标签选择" name_en="Select Tags"  visible="1" order_no="1"/>
+</dd_class>

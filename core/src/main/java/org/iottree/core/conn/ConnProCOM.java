@@ -75,6 +75,12 @@ public class ConnProCOM extends ConnProvider
 		return "com" ;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "COM" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return true;

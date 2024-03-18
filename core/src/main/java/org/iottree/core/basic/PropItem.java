@@ -3,6 +3,8 @@ package org.iottree.core.basic;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import org.iottree.core.dict.DataNode;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
 import org.json.JSONArray;
 
@@ -253,11 +255,11 @@ public class PropItem
 	@data_val
 	String name = null ;
 	
-	@data_val
-	String title = null ;
-	
-	@data_val
-	String desc = null ;
+//	@data_val
+//	String title = null ;
+//	
+//	@data_val
+//	String desc = null ;
 	
 	/**
 	 * string bool int double
@@ -283,20 +285,30 @@ public class PropItem
 	@data_val(param_name = "pop")
 	String popName = null ;
 	
-	@data_val(param_name = "popt")
-	String popTitle = null ;
+//	@data_val(param_name = "popt")
+//	String popTitle = null ;
 	
 	ValChker<?> valChker = null ;
 	
-	public PropItem()
-	{}
 	
-	public PropItem(String n,String t,String d,PValTP vt,boolean breadonly,
+	//public static final String POP_N_MULTI = "multi_ln" ;
+	public static final String POP_N_SEL_TAGS = "seltags" ;
+//	public PropItem()
+//	{}
+	
+	DataNode lanDN = null ;
+	
+	public PropItem(String n,Lan prop_lan,PValTP vt,boolean breadonly,
 			String[] valopt_ts,Object[] valopt_vals,Object def_val)
 	{
 		this.name = n ;
-		this.title = t ;
-		this.desc = d ;
+		
+		lanDN = prop_lan.gn("pi_"+n) ;
+		if(lanDN==null)
+			throw new IllegalArgumentException("no pi_"+n+" found in prop_lang") ;
+		
+//		this.title = t ;
+//		this.desc = d ;
 		this.vt = vt ; 
 		this.valTp = vt.getStr() ;
 		this.bReadOnly = breadonly ;
@@ -304,25 +316,25 @@ public class PropItem
 		defaultVal = def_val ;
 	}
 	
-	public PropItem(String n,String t,String d,PValTP vt,boolean breadonly,
-			List<?> nts,Class<?> objc,String title_m,String val_m,Object def_val)
-	{
-		this.name = n ;
-		this.title = t ;
-		this.desc = d ;
-		this.vt = vt ; 
-		this.valTp = vt.getStr() ;
-		this.bReadOnly = breadonly ;
-		try
-		{
-			valOpts = transValOpts(vt,nts,objc,title_m,val_m);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		defaultVal = def_val ;
-	}
+//	public PropItem(String n,String t,String d,PValTP vt,boolean breadonly,
+//			List<?> nts,Class<?> objc,String title_m,String val_m,Object def_val)
+//	{
+//		this.name = n ;
+//		this.title = t ;
+//		this.desc = d ;
+//		this.vt = vt ; 
+//		this.valTp = vt.getStr() ;
+//		this.bReadOnly = breadonly ;
+//		try
+//		{
+//			valOpts = transValOpts(vt,nts,objc,title_m,val_m);
+//		}
+//		catch(Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//		defaultVal = def_val ;
+//	}
 	
 	public String getName()
 	{
@@ -331,7 +343,8 @@ public class PropItem
 	
 	public String getTitle()
 	{
-		return title ;
+		//return title ;
+		return lanDN.getNameByLang(Lan.getUsingLang());
 	}
 	
 	public String getValTp()
@@ -347,7 +360,8 @@ public class PropItem
 	
 	public String getDesc()
 	{
-		return desc ;
+		//return desc ;
+		return lanDN.getAttr("desc_"+Lan.getUsingLang()) ; //.getNameByLang(Lan.getUsingLang());
 	}
 	
 	public boolean isReadOnly()
@@ -402,6 +416,8 @@ public class PropItem
 		return this ;
 	}
 	
+	DataNode piPopDN = null ;
+	
 	public String getPopName()
 	{
 		return this.popName ;
@@ -409,13 +425,23 @@ public class PropItem
 	
 	public String getPopTitle()
 	{
-		return this.popTitle ;
+		if(piPopDN==null)
+			return this.popName ;
+		
+		return piPopDN.getNameByLang(Lan.getUsingLang()) ;
 	}
 	
-	public PropItem withPop(String pname,String ptitle)
+	
+	
+	public PropItem withPop(String pname) //,Lan lan)//,String ptitle)
 	{
 		this.popName = pname ;
-		this.popTitle = ptitle ;
+		//this.popTitle = ptitle ;
+		Lan lan = Lan.getLangInPk(this.getClass()) ;
+		piPopDN = lan.gn("pi_pop_"+pname) ;
+		if(piPopDN==null)
+			throw new IllegalArgumentException("no pi_pop_"+pname+" found") ;
+		
 		return this ;
 	}
 	

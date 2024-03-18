@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+  <dd_node id="1" name="tags_num" name_cn="标签数" name_en="Tags number" />
+  <dd_node id="1" name="middle" name_cn="中间" name_en="Middle" />
+  
+</dd_class>

@@ -17,6 +17,7 @@ import org.iottree.core.bind.EventBindItem;
 import org.iottree.core.bind.PropBindItem;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONArray;
@@ -169,14 +170,16 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 
 	private PropGroup getHmiPropGroup()
 	{
-		PropGroup r = new PropGroup("hmi", "HMI(UI)");
-		r.addPropItem(new PropItem("conn_borken_prompt", "Conn Broken Prompt", "Conn Broken Prompt Show in UI",
-				PValTP.vt_str, false, null, null, ""));
-		r.addPropItem(new PropItem("not_run_prompt", "Not Run Prompt", "Project is not run prompt Show in UI",
-				PValTP.vt_str, false, null, null, ""));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup r = new PropGroup("hmi",lan);//, "HMI(UI)");
+		
+		r.addPropItem(new PropItem("conn_borken_prompt",lan,
+				PValTP.vt_str, false, null, null, "")); // "Conn Broken Prompt", "Conn Broken Prompt Show in UI"
+		r.addPropItem(new PropItem("not_run_prompt", lan,
+				PValTP.vt_str, false, null, null, "")); //"Not Run Prompt", "Project is not run prompt Show in UI"
 
-		r.addPropItem(new PropItem("show_tags", "Show Tags", "Tags data will show in HMI client.", PValTP.vt_str, false,
-				null, null, "").withTxtMultiLine(true).withPop("seltags", "Select Tags"));
+		r.addPropItem(new PropItem("show_tags", lan, PValTP.vt_str, false,
+				null, null, "").withTxtMultiLine(true).withPop(PropItem.POP_N_SEL_TAGS));//, "Select Tags")); //"Show Tags", "Tags data will show in HMI client."
 		// r.addPropItem(new PropItem("devid","Dev Id","Device
 		// ID",PValTP.vt_str,false,null,null,""));
 		return r;

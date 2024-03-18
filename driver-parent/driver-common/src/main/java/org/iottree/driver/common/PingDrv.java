@@ -14,6 +14,7 @@ import org.iottree.core.UAUtil;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.util.Lan;
 
 public class PingDrv extends DevDriver
 {
@@ -46,9 +47,12 @@ public class PingDrv extends DevDriver
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> rets = new ArrayList<>() ;
-		PropGroup pg = new PropGroup("ping","Ping");
-		pg.addPropItem(new PropItem("timeout","Check Timeout","Check Timeout(ms),too small may check error",PValTP.vt_int,false,null,null,3000));
-		pg.addPropItem(new PropItem("chk_inter","Check Interval","Check Interval(ms)",PValTP.vt_int,false,null,null,10000));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup pg = new PropGroup("ping",lan);//"Ping");
+		
+		pg.addPropItem(new PropItem("timeout",lan,PValTP.vt_int,false,null,null,3000)); //"Check Timeout","Check Timeout(ms),too small may check error"
+		pg.addPropItem(new PropItem("chk_inter",lan,PValTP.vt_int,false,null,null,10000)); // "Check Interval","Check Interval(ms)"
 		
 		rets.add(pg);
 		return rets;

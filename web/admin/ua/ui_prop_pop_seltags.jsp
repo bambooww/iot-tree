@@ -170,9 +170,9 @@ width:100%;
     	<table style="width:100%;border:0px" class='left_tb' id="tb_left_tags">
     		<thead>
     			<tr style="background-color: #f0f0f0">
-    				<td width="50%">Tag</td>
-      				<td>Title</td>
-    				<td width="20%">Value Type</td>
+    				<td width="50%"><wbt:g>tag</wbt:g></td>
+      				<td><wbt:g>title</wbt:g></td>
+    				<td width="20%"><wbt:g>val,type</wbt:g></td>
     			</tr>
     		</thead>
     		<tbody id="bind_tb_body" >
@@ -205,15 +205,15 @@ for(UATag tag:cxtNode.listTagsAll())
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="sel_or_not(false)" title="unbind from tag"><i class="fa-solid fa-arrow-left"></i></button>
 	    </td>
 	    <td style="width:95%;vertical-align: top;height:100%"  >
-	    <div id="prop_edit_path" class="prop_edit_path">Selected Tags &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    <div id="prop_edit_path" class="prop_edit_path"><wbt:g>selected,tags</wbt:g> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      
     </div>
 	    <div id=""  class="prop_edit_panel" style="height:420px">
 	       <table style="width:100%;overflow: auto;" >
 	       	 <thead>
 	       	   <tr>
-	       	    <th style="width:50%">Tag</th>
-	       	    <th style="width:50%">Show Title</th>
+	       	    <th style="width:50%"><wbt:g>tag</wbt:g></th>
+	       	    <th style="width:50%"><wbt:g>show,title</wbt:g></th>
 	       	   </tr>
 	       	 </thead>
 	       	 <tbody id="tb_right_seled">
@@ -266,7 +266,7 @@ function sel_or_not(b)
 	{
 		if(!cur_tag_tr)
 		{
-			dlg.msg("Please select tag in left!") ;
+			dlg.msg("<wbt:g>pls,select,tag,left</wbt:g>") ;
 			return ;
 		}
 		let tagp = cur_tag_tr.attr("tagp") ;
@@ -277,7 +277,7 @@ function sel_or_not(b)
 	{
 		if(!cur_sel_tr)
 		{
-			dlg.msg("Please select item in right!") ;
+			dlg.msg("<wbt:g>pls,select,item,right</wbt:g>") ;
 			return ;
 		}
 		cur_sel_tr.remove() ;
@@ -305,7 +305,7 @@ function set_right_tag(tagp,title)
 	let old = get_right_tag(tagp) ;
 	if(old)
 	{
-		dlg.msg("this tag is already selected.");
+		dlg.msg("<wbt:g>this,tag,be_selected</wbt:g>");
 		return ;
 	}
 	

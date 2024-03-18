@@ -23,6 +23,12 @@ public class ConnProVirtual  extends ConnProvider
 		return "virtual";
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "Virtual" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return true;

@@ -20,6 +20,7 @@ import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.driver.common.clh.ApcSmartUPS;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -168,9 +169,10 @@ public class CmdLineDrv extends DevDriver
 		
 		PropGroup gp = null;
 		
-		gp = new PropGroup("cmd_line","Cmd Line Driver");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		gp = new PropGroup("cmd_line",lan);//"Cmd Line Driver");
 		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("recv_to","Receive Timeout(millisecond)","",PValTP.vt_int,false,null,null,3000));
+		gp.addPropItem(new PropItem("recv_to",lan,PValTP.vt_int,false,null,null,3000)); //"Receive Timeout(millisecond)",""
 		pgs.add(gp) ;
 		
 		

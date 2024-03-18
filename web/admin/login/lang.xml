@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+  <dd_node id="1001" name="accept" name_cn="接受" name_en="Accept" />
+  <dd_node id="1001" name="decline" name_cn="不接受" name_en="Decline" />
+  
+  <dd_node id="1001" name="yms_admin_psw" name_cn="请设置管理员密码" name_en="You must setup admin's password" />
+  <dd_node id="1001" name="admin_login" name_cn="管理员登录" name_en="Login to admin panel" />
+  
+  <dd_node id="1001" name="user" name_cn="用户" name_en="User" />
+  <dd_node id="1001" name="psw" name_cn="密码" name_en="Password" />
+  <dd_node id="1001" name="repsw" name_cn="重复密码" name_en="Re Password" />
+  
+  <dd_node id="1001" name="set_psw_login" name_cn="设置密码并登录" name_en="Set Password and Login" />
+  <dd_node id="1001" name="reset" name_cn="重置" name_en="Reset" />
+  <dd_node id="1001" name="repsw" name_cn="重复密码" name_en="Re Password" />
+  <dd_node id="1001" name="login" name_cn="登录" name_en="Login" />
+  <dd_node id="1001" name="use_lang" name_cn="使用语言" name_en="Use Language" />
+  
+  <dd_node id="1001" name="pls_inp_psw" name_cn="请输入密码" name_en="Please input password" />
+  <dd_node id="1001" name="pls_inp_repsw" name_cn="请输入重复密码" name_en="Please input repassword" />
+  
+  <dd_node id="1001" name="psw_repsw_neq" name_cn="密码和重复密码不一致" name_en="password and repassword is no equal" />
+  <dd_node id="1001" name="login_failed" name_cn="登录失败" name_en="Login failed" />
+  
+</dd_class>

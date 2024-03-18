@@ -9,6 +9,7 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return ;
+String using_lan = Lan.getUsingLang() ;
 	//String op = request.getParameter("op");
 	String prjid = request.getParameter("id");
 	//String id = request.getParameter("id");
@@ -501,18 +502,18 @@ function open_doc()
 <body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:5px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
-   <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree Project</div>
+   <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree <wbt:g>prj</wbt:g></div>
 		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
 		[<%=rep.getTitle()%>]
 		</div>
 		<div class="top_toolbox top_tool"  style="left:40%;width:210px">
-		 		  <span id='share_run' onclick='clk_share_run()' title="Share Project"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
-				  <span id='task_run' onclick='clk_task_run()' title="Task Manager"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-				  <span id='alert' onclick='clk_alert()' title="Alert Manager"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-				  <span id='data_dict' onclick='clk_dd()' title="Dictionary Manager"><i class='fa fa-book fa-lg'></i></span>
-				  <span id='recorder' onclick='clk_rec()' title="Tag Data Recorder"><i class="fa fa-edit fa-lg"></i></span>
-				  <span id='store' onclick='clk_store()' title="Data Store"><i class="fa fa-database fa-lg"></i></span>
-				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="UI Dialog Manager"><i class="fa fa-area-chart fa-lg"></i></span>
+		 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+				  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+				  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+				  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
+				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
+				  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
+				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
 		</div>
 		
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
@@ -520,8 +521,10 @@ function open_doc()
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
 		</div>
-     <div class="top_toolbox"  style="right:10px;width:110px;color:#fff5e2;">
-		     <span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;Help</span>
+     <div class="top_toolbox"  style="right:10px;width:180px;color:#fff5e2;">
+     <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
+	 <button class="layui-btn layui-btn-primary layui-btn-xs <%=("cn".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('cn')">CN</button>
+		     &nbsp;&nbsp;<span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;<wbt:g>help</wbt:g></span>
 		 </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">
@@ -533,7 +536,7 @@ function open_doc()
 				<button type="button" class="btn btn-default"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
 				 --%>
 				<div class="btn-group open"  id="btn_menu_conn">
-				  <a class="btn" href="#"><i class="fa fa-link fa-fw"></i> Connectors</a>
+				  <a class="btn" href="#"><i class="fa fa-link fa-fw"></i> <wbt:g>connectors</wbt:g></a>
 				  <a class="btn" href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
@@ -551,7 +554,7 @@ function open_doc()
 											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span>
 											 --%>
 											&nbsp;&nbsp;<span style="left:5px;width:15px;height:15px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;&nbsp;&nbsp;&nbsp;</span>
-											[{{ connector.tp }}]{{ connector.title }} 
+											[{{ connector.tpt }}]{{ connector.title }} 
 										</td>
 										<%--
 										<td width="25px">
@@ -607,13 +610,13 @@ function open_doc()
           <button type="button" class="btn btn-default" ><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
            --%>
            <div class="btn-group open"  id="btn_menu_tree">
-				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> Browser</a>
+				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> <wbt:g>browser,tree</wbt:g></a>
 				  <%--
 				  <a class="btn "  href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
 				   --%>
-				  &nbsp;&nbsp;<span title="Refresh browser tree"><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
+				  &nbsp;&nbsp;<span title="<wbt:g>refresh,browser,tree</wbt:g>"><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
 				  
 				  
 				 </div>
@@ -631,8 +634,8 @@ function open_doc()
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
-			    <li class="layui-this"><i class="fa fa-tags" ></i>[Tags]</li>
-			    <li ><i class="fa fa-list-alt" ></i>Properties</li>
+			    <li class="layui-this"><i class="fa fa-tags" ></i>[<wbt:g>tags</wbt:g>]</li>
+			    <li ><i class="fa fa-list-alt" ></i><wbt:g>props</wbt:g></li>
 			    
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
@@ -659,23 +662,23 @@ var connpro_menu = [
 	
 //	{content:'Tcp Server For Opc Agent',callback:function(){edit_cp("opc_agent","");}},
 //	{content:'sm_divider'},
-	{content:'<i class="fa fa-link"></i> Link',header: true},
-	{content:'Tcp Client',callback:function(){edit_cpt("tcp_client","","");}},
-	{content:'COM',callback : function(){edit_cpt("com","","");}},
-	{content:'Tcp Server',callback:function(){edit_cp("tcp_server","");}},
-	{content:'<i class="fa fa-link"></i> Binder',header: true},
+	{content:'<i class="fa fa-link"></i> <wbt:g>link_conn</wbt:g>',header: true},
+	{content:'Tcp <wbt:g>client</wbt:g>',callback:function(){edit_cpt("tcp_client","","");}},
+	{content:'<wbt:g>com_p</wbt:g>',callback : function(){edit_cpt("com","","");}},
+	{content:'Tcp <wbt:g>server_e</wbt:g>',callback:function(){edit_cp("tcp_server","");}},
+	{content:'<i class="fa fa-link"></i> <wbt:g>bind_conn</wbt:g>',header: true},
 //	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
 <%
 	if(ConnProvider.hasConnProvider("opc_da"))
 	{
 %>
-	{content:'OPC DA Client',callback:function(){edit_cpt("opc_da","","");}},
+	{content:'OPC DA <wbt:g>client</wbt:g>',callback:function(){edit_cpt("opc_da","","");}},
 <%
 	}
 %>
-{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
+{content:'OPC UA <wbt:g>client</wbt:g>',callback:function(){edit_cpt("opc_ua","","");}},
 //	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
-	{content:'<i class="fa fa-link"></i> Message',header: true},
+	{content:'<i class="fa fa-link"></i> <wbt:g>msg_conn</wbt:g>',header: true},
 	{content:'HTTP Url',callback:function(){
 		edit_cp("http","");
 		//dlg.msg("support later")
@@ -683,28 +686,28 @@ var connpro_menu = [
 	{content:'MQTT',callback:function(){
 		edit_cp("mqtt","","");
 	}},
-	{content:'WebSocket Client',callback:function(){
+	{content:'WebSocket <wbt:g>client</wbt:g>',callback:function(){
 		edit_cpt("ws_client","","");
 	}},
 	{content:'sm_divider'},
-	{content:'Others',header: true},
+	{content:'<wbt:g>oths_conn</wbt:g>',header: true},
 	{content:'IOTTree Node',callback:function(){
 		edit_cpt("iottree_node","","");
 	}},
 	{content:'sm_divider'},
-	{content:'Virtual',callback : function(){edit_cpt("virtual","","");}}
+	{content:'<wbt:g>virtual_e</wbt:g>',callback : function(){edit_cpt("virtual","","");}}
 ];
 
 var tree_menu = [
-	{content:'Share',header: true},
-	{content:'Share as a node',callback:function(){share_as_node();}},
+	{content:'<wbt:g>share</wbt:g>',header: true},
+	{content:'<wbt:g>share_as_n</wbt:g>',callback:function(){share_as_node();}},
 	{content:'sm_divider'},
 	
 ];
 
 $('#btn_menu_conn').click(function(){
 	$(this).selectMenu({
-		title : 'Add Connector ',
+		title : '<wbt:g>add,connector</wbt:g>',
 		regular : true,
 		data : connpro_menu
 	});
@@ -712,8 +715,8 @@ $('#btn_menu_conn').click(function(){
 
 function share_as_node()
 {
-	dlg.open("./ua/prj_share.jsp?prjid="+prjid,{title:"Share project as a node",w:'500px',h:'400px'},
-			['Ok','Close'],
+	dlg.open("./ua/prj_share.jsp?prjid="+prjid,{title:"<wbt:g>share_as_n</wbt:g>",w:'500px',h:'400px'},
+			['<wbt:g>ok</wbt:g>','<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -734,21 +737,6 @@ function share_as_node()
 }
 
 
-function task_setup()
-{
-	add_tab("___task","<i class='fa fa-circle-notch'></i>Tasks","./ua/prj_task.jsp?prjid="+prjid) ;
-	/*
-	dlg.open("./ua/prj_task.jsp?prjid="+prjid,{title:"setup project task",w:'800px',h:'400px'},
-			['Close'],
-			[
-				
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-	*/
-}
 
 function resize_iframe_h()
 {
@@ -831,28 +819,28 @@ function on_conn_ui_showed()
 	        		var cpid = $(this).attr("cp_id");
 	        		var cptp = $(this).attr("cp_tp");
 	        		var brun = $(this).attr("cp_run")=='true';
-	        		var tt = "<i class='fa fa-play'></i> Start" ;
+	        		var tt = "<i class='fa fa-play'></i> <wbt:g>start</wbt:g>" ;
 	        		if(brun)
-	        			tt = "<i class='fa fa-stop'></i> Stop" ;
+	        			tt = "<i class='fa fa-stop'></i> <wbt:g>stop</wbt:g>" ;
 					d.push({ content : tt, callback:()=>{
 							rt_cp_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
-					d.push({content:'<i class="fa fa-link"></i> Add Connection',callback:()=>{
+					d.push({content:'<i class="fa fa-link"></i> <wbt:g>add,conn</wbt:g>',callback:()=>{
 						edit_cpt(cptp,cpid,"") ;
 					}});
 					
-					d.push({ content : '<i class="fa fa-pencil"></i> Edit Connector', callback:()=>{
+					d.push({ content : '<i class="fa fa-pencil"></i> <wbt:g>edit,connector</wbt:g>', callback:()=>{
 						edit_cp(cptp,cpid) ;
 					}});
 					
-					d.push({ content : '<i class="fa fa-file"></i> Import Xml Connector', callback:()=>{
+					d.push({ content : '<i class="fa fa-file"></i> <wbt:g>imp</wbt:g> Xml <wbt:g>connector</wbt:g>', callback:()=>{
 						import_xml_cpt(cptp,cpid) ;
 					}});
 					
 					
 					d.push({content:'sm_divider'});
-					d.push({ content : '<i class="fa fa-arrow-rotate-right"></i> Reset', callback:()=>{
+					d.push({ content : '<i class="fa fa-arrow-rotate-right"></i> <wbt:g>reset</wbt:g>', callback:()=>{
 						reset_cp(cptp,cpid) ;
 					}});
 					
@@ -860,13 +848,13 @@ function on_conn_ui_showed()
 					if(cptp=='tcp_server')
 					{
 						d.push({content:'sm_divider'});
-						d.push({ content : '<i class="fa fa-magic"></i> Config Wizard', callback:()=>{
+						d.push({ content : '<i class="fa fa-magic"></i> <wbt:g>config,wizard</wbt:g>', callback:()=>{
 							config_wizard(cptp,cpid) ;
 						}});
 					}
 					
 					d.push({content:'sm_divider'});
-					d.push({ content : '<i class="fa fa-times"></i> Delete Connector', callback:()=>{
+					d.push({ content : '<i class="fa fa-times"></i> <wbt:g>del,connector</wbt:g>', callback:()=>{
 						del_cp(cpid);
 					}}) ;
 					return d;
@@ -893,43 +881,43 @@ function on_conn_ui_showed()
 	        		var connid = $(this).attr("conn_id");
 	        		var conntt = $(this).attr("tt");
 	        		var bconn = $(this).attr("conn_ready")=='true';
-	        		var tt = "<i class='fa fa-play'></i> Start" ;
+	        		var tt = "<i class='fa fa-play'></i> <wbt:g>start</wbt:g>" ;
 	        		if(bconn)
-	        			tt = "<i class='fa fa-stop'></i> Stop" ;
+	        			tt = "<i class='fa fa-stop'></i> <wbt:g>stop</wbt:g>" ;
 					d.push({ content : tt, callback:()=>{
 							rt_cpt_start_stop(cpid);
 						}});
 					d.push({content:'sm_divider'});
 					if(cptp=="opc_ua"||cptp=="opc_agent"||cptp=="opc_da")
 					{
-						d.push({ content : '<i class="fa fa-pencil"></i> Bind', callback:()=>{
+						d.push({ content : '<i class="fa fa-pencil"></i> <wbt:g>bind</wbt:g>', callback:()=>{
 							edit_bind_setup(cptp,cpid,connid,conntt) ;
 						}});
 					}
 					if(cptp=="mqtt")
 					{
-						d.push({ content : '<i class="fa fa-pencil"></i> Test', callback:()=>{
+						d.push({ content : '<i class="fa fa-pencil"></i> <wbt:g>test</wbt:g>', callback:()=>{
 							edit_mqtt_test(cptp,cpid,connid) ;
 						}});
 					}
 					if(cptp=="iottree_node")
 					{
-						d.push({ content : '<i class="fa fa fa-history"></i> Syn Tree', callback:()=>{
+						d.push({ content : '<i class="fa fa fa-history"></i> <wbt:g>sync,tree</wbt:g>', callback:()=>{
 							iottree_node_syn_tree(cptp,cpid,connid) ;
 						}});
 					}
-					d.push({ content : '<i class="fa fa-eye"></i> Monitor', callback:()=>{
+					d.push({ content : '<i class="fa fa-eye"></i> <wbt:g>sync,monitor</wbt:g>', callback:()=>{
 						window.open("./conn/cpt_mon.jsp?prjid="+repid+"&cpid="+cpid+"&cid="+connid) ;
 					}});
 					d.push({content:'sm_divider'});
-					d.push({ content : '<i class="fa fa-pencil"></i> Edit', callback:()=>{
+					d.push({ content : '<i class="fa fa-pencil"></i> <wbt:g>edit</wbt:g>', callback:()=>{
 						edit_cpt(cptp,cpid,connid) ;
 					}});
-					d.push({ content : '<i class="fa fa-file"></i> Export Xml', callback:()=>{
+					d.push({ content : '<i class="fa fa-file"></i> <wbt:g>export</wbt:g> Xml', callback:()=>{
 						export_xml_cpt(cptp,cpid,connid) ;
 					}});
 					d.push({content:'sm_divider'});
-					d.push({ content : '<i class="fa fa-times"></i> Delete', callback:()=>{
+					d.push({ content : '<i class="fa fa-times"></i> <wbt:g>del</wbt:g>', callback:()=>{
 						del_cpt(cpid,connid);
 					}}) ;
 					return d;
@@ -947,10 +935,10 @@ var cxt_menu = {
 		
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
-		{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
+		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
 		
-		{op_name:"edit_prj",op_title:"Edit Project",op_icon:"fa fa-pencil",op_action:act_edit_prj},
-		{op_name:"paste_ch",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+		{op_name:"edit_prj",op_title:"<wbt:g>edit,prj</wbt:g>",op_icon:"fa fa-pencil",op_action:act_edit_prj},
+		{op_name:"paste_ch",op_title:"<wbt:g>paste</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
 			//console.log(copiedItem);
 			return true;//copiedItem!=null&&copiedItem.type=="ch";
 		}},
@@ -961,7 +949,7 @@ var cxt_menu = {
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
-		{op_name:"paste_dev",op_title:"Paste Device",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+		{op_name:"paste_dev",op_title:"<wbt:g>paste,dev</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
 			return true;//copiedItem!=null&&copiedItem.type=="dev";
 		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
@@ -977,7 +965,7 @@ var cxt_menu = {
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		
-		{op_name:"cp_ch",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
+		{op_name:"cp_ch",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
 		
 		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return !tn.run;
@@ -994,9 +982,9 @@ var cxt_menu = {
 		{op_name:"edit_dev",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_dev},
 		//{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
-		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
-		{op_name:"cp_dev",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
-		{op_name:"add_to_lib",op_title:"Add To Library",op_icon:"fa fa-copy",op_action:act_node_add_to_lib},
+		{op_name:"paste_dev",op_title:"<wbt:lang>paste</wbt:lang>",op_icon:"fa fa-clipboard",op_action:act_node_paste},
+		{op_name:"cp_dev",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
+		{op_name:"add_to_lib",op_title:"<wbt:g>add,to,lib</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_add_to_lib},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
@@ -1015,7 +1003,7 @@ var cxt_menu = {
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
-		{op_name:"paste_dev",op_title:"Paste",op_icon:"fa fa-clipboard",op_action:act_node_paste},
+		{op_name:"paste_dev",op_title:"<wbt:g>paste</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
 			return true;//!tn.ref_locked;
@@ -1028,12 +1016,12 @@ var cxt_menu = {
 		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
-		{op_name:"cp_hmi",op_title:"Copy",op_icon:"fa fa-copy",op_action:act_node_copy},
+		{op_name:"cp_hmi",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
 		{op_name:"del_ui",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
-		{op_name:"set_main_ui",op_title:"Set as main ui",op_icon:"fa fa-star",op_action:act_main_hmi,op_chk:(tn)=>{
+		{op_name:"set_main_ui",op_title:"<wbt:lang>set_as_main_ui</wbt:lang>",op_icon:"fa fa-star",op_action:act_main_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
 	]
@@ -1043,8 +1031,6 @@ function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","./ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
 	$("#if_tags").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
-	//$("#if_context").attr("src","./ua_cxt/cxt_accessor.jsp?tabid=main&path="+tn.path);
-	//$("#if_context").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
 }
 
 function on_tree_loaded(data)
@@ -1108,32 +1094,12 @@ function act_node_copy(n,op)
 			dlg.msg(ret) ;
 			return ;
 		}
-		dlg.msg("copied ok") ;
+		dlg.msg("<wbt:g>cp_ok</wbt:g>") ;
 	});
 }
 
 function act_node_paste(n,op)
 {
-	/*
-	if(copiedItem==null)
-		return ;
-	let ppath=n.path ;
-	
-	if(n.type=="prj")
-	{//paste ch
-		if(copiedItem.type!='ch')
-			return ;
-		
-	}
-	else if(n.type=='ch')
-	{
-		if(copiedItem.type!='dev')
-			return ;
-	}
-	else
-		return ;
-	*/
-	//send_ajax("./ua/node_copy_paste_ajax.jsp",{op:"paste",ppath:n.path,path:copiedItem.path},(bsucc,ret)=>{
 	send_ajax("./ua/node_copy_paste_ajax.jsp",{op:"paste",path:n.path},(bsucc,ret)=>{
 		if(!bsucc||ret!="succ")
 		{
@@ -1163,8 +1129,8 @@ function reset_cp(cptp,cpid)
 function edit_cp(cptp,cpid)
 {
 	dlg.open_win("conn/cp_edit_"+cptp+".jsp?prjid="+repid+"&cpid="+cpid,
-			{title:"["+cptp+"] Connections Provider Editor",w:'800',h:'535'},
-			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"["+cptp+"] <wbt:g>conns,provider,editor</wbt:g>",w:'800',h:'535'},
+			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>apply</wbt:g>',style:"warm",enable:false},{title:'<wbt:g>cancel</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1326,7 +1292,7 @@ function del_cpt(cpid,connid)
 			url : "./conn/cp_ajax.jsp",
 			data :{prjid:repid,op:'conn_del',cpid:cpid,connid:connid}
 		};
-	if(dlg.confirm("delete this connection?",null,()=>{
+	if(dlg.confirm("<wbt:g>del,this,conn</wbt:g>?",null,()=>{
 		$.ajax(pm).done((ret)=>{
 			if(typeof(ret)=='string')
 				eval("ret="+ret);
@@ -1349,7 +1315,7 @@ function edit_bind_setup(cptp,cpid,connid,tt)
 	//	u = "./conn/cpt_bind_sel_tree.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
 	dlg.open_win(u,
 			{title:"Binding Setting ["+cptp+"] "+tt,w:'800',h:'550'},
-			['Ok',{title:'Cancel',style:"primary"}],
+			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>cancel</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1379,7 +1345,7 @@ function edit_mqtt_test(cptp,cpid,connid)
 {
 	dlg.open_win("./conn/ext/cpt_msg_pub_test.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
 			{title:"Message Send/Publish Tester ["+cptp+"]",w:'800',h:'550'},
-			[{title:'Close',style:"primary"}],
+			[{title:'<wbt:g>close</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1393,7 +1359,7 @@ function iottree_node_syn_tree(cptp,cpid,connid)
 {
 	dlg.open_win("./conn/ext/cpt_iottree_node_syn.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
 			{title:"IOTTree Node Synchroniation ["+cptp+"]",w:'800',h:'550'},
-			[{title:'Close',style:"primary"}],
+			[{title:'<wbt:g>close</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1406,9 +1372,9 @@ function iottree_node_syn_tree(cptp,cpid,connid)
 function edit_cpt(cptp,cpid,connid)
 {
 	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" Connection Editor",w:'800',h:'600'},
+			{title:cptp+" <wbt:g>conn,editor</wbt:g>",w:'800',h:'600'},
 			//['Ok','Apply','Cancel','Help'],//
-			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>apply</wbt:g>',style:"warm",enable:false},{title:'<wbt:g>cancel</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			
 			[
 				function(dlgw)
@@ -1464,9 +1430,9 @@ function edit_cpt(cptp,cpid,connid)
 function export_xml_cpt(cptp,cpid,connid)
 {
 	dlg.open_win("conn/cpt_xml_export.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:" Connection Xml Exporter",w:'800',h:'600'},
+			{title:" <wbt:g>conn</wbt:g> Xml <wbt:g>export</wbt:g>",w:'800',h:'600'},
 			//['Ok','Apply','Cancel','Help'],//
-			['Copy',{title:'Close',style:"primary"}],
+			['<wbt:g>copy</wbt:g>',{title:'<wbt:g>close</wbt:g>',style:"primary"}],
 			
 			[
 				function(dlgw)
@@ -1484,9 +1450,9 @@ function export_xml_cpt(cptp,cpid,connid)
 function import_xml_cpt(cptp,cpid)
 {
 	dlg.open_win("conn/cpt_xml_import.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid,
-			{title:" Connection Xml Importer",w:'800',h:'600'},
+			{title:" <wbt:g>conn</wbt:g> Xml <wbt:g>imp</wbt:g>",w:'800',h:'600'},
 			//['Ok','Apply','Cancel','Help'],//
-			['Import',{title:'Close',style:"primary"}],
+			['<wbt:g>import</wbt:g>',{title:'<wbt:g>close</wbt:g>',style:"primary"}],
 			
 			[
 				function(dlgw)
@@ -1561,8 +1527,8 @@ function act_prop(n,op)
 {
 	//repid="+repid+"&id="+n.id
 	dlg.open_win("ua/ui_prop.jsp?path="+n.path,
-			{title:"Properties",w:'800',h:'535'},
-			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"<wbt:g>props</wbt:g>",w:'800',h:'535'},
+			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>apply</wbt:g>',style:"warm",enable:false},{title:'<wbt:g>cancel</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1574,11 +1540,6 @@ function act_prop(n,op)
 						refresh_ui();
 						dlg.close();
 					});
-					
-					//save_prop(dlgw,n.id,()=>{
-					//	refresh_ui();
-					//	dlg.close();
-					//});
 				},
 				function(dlgw)
 				{
@@ -1634,8 +1595,8 @@ function act_edit_ch(n,op)
 function act_edit_prj(n,op)
 {
 	dlg.open("ua/prj_edit.jsp?id="+prjid,
-			{title:"Edit Project",w:'500px',h:'400px'},
-			['Ok','Cancel'],
+			{title:"<wbt:g>edit,prj</wbt:g>",w:'500px',h:'400px'},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1672,7 +1633,7 @@ function act_edit_prj(n,op)
 
 function act_del_ch(n,op)
 {
-	dlg.confirm("delete this channel?",null,()=>{
+	dlg.confirm("<wbt:g>del,this,channel</wbt:g>?",null,()=>{
 		var ret={} ;
 		 ret.ch_path = n.path;
 		 ret.op="del" ;
@@ -1754,7 +1715,7 @@ function add_or_edit_ch(rep_path,ch_path)
 function act_ch_sel_drv(n,op)
 {
 	dlg.open("ua/drv_selector.jsp?prjid="+repid+"&chid="+n.id,
-			{title:"Driver Selector",w:'500px',h:'400px'},
+			{title:"<wbt:g>drv_sel</wbt:g>",w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
@@ -1796,7 +1757,7 @@ function act_ch_sel_drv(n,op)
 function act_node_add_to_lib(n,op)
 {
 	dlg.open("dev/devdef_add_from_prj.jsp?devpath="+n.path,
-			{title:"Add to Library",w:'500px',h:'400px'},
+			{title:"<wbt:g>add,to,lib</wbt:g>",w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
@@ -1818,7 +1779,7 @@ function act_node_add_to_lib(n,op)
 									dlg.msg(ret);
 									return ;
 								}
-								dlg.msg("add ok");
+								dlg.msg("<wbt:g>add,succ</wbt:g>");
 								dlg.close();
 								
 							},false);
@@ -1846,8 +1807,7 @@ function act_ch_start_stop(n,op)
 				dlg.msg(ret);
 				return ;
 			}
-			dlg.msg("cmd issued") ;
-			//refresh_ui() ;
+			dlg.msg("<wbt:g>cmd_triggered</wbt:g>") ;
 		},false);
 }
 
@@ -1944,7 +1904,7 @@ function add_or_edit_dev(ch_path,dev_path)
 								dlg.msg(ret);
 								return ;
 							}
-							dlg.msg("Add device ok");
+							dlg.msg("<wbt:g>add,dev,succ</wbt:g>");
 							dlg.close();
 							refresh_ui() ;
 						},false);
@@ -2052,10 +2012,9 @@ function act_hmi_edit_ui(n,op)
 
 function act_open_cxt_script(n,op)
 {
-	
 	dlg.open_win("ua_cxt/cxt_script.jsp?path="+n.path,
-			{title:"JS Context Test",w:'950',h:'600'},
-			['Close',"Help"],
+			{title:"<wbt:g>js_cxt_test</wbt:g>",w:'950',h:'600'},
+			['<wbt:g>close</wbt:g>',"<wbt:g>help</wbt:g>"],
 			[
 				function(dlgw)
 				{
@@ -2066,7 +2025,6 @@ function act_open_cxt_script(n,op)
 					alert("help");
 				}
 			]);
-	
 }
 
 function add_tab(id,title,u)
@@ -2136,7 +2094,7 @@ function draw_fit()
 	if(curTabIF.contentWindow.draw_fit)
 		curTabIF.contentWindow.draw_fit() ;
 }
-
+/*
 function list_comps()
 {
 	dlg.open_win("ua_hmi/hmi_left_comp.jsp?edit=true",
@@ -2157,8 +2115,8 @@ function list_comps()
 function dev_lib()
 {
 	dlg.open_win("dev/dev_lib_lister.jsp?mgr=true",
-			{title:"Device Library",w:'1000',h:'560'},
-			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"<wbt:g>dev,lib</wbt:g>",w:'1000',h:'560'},
+			[{title:'<wbt:g>close</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -2170,7 +2128,7 @@ function dev_lib()
 				}
 			]);
 }
-
+*/
 //////////edit panel
 $(document).ready(function()
 {
@@ -2277,33 +2235,39 @@ function clk_task_run()
 	task_setup();
 }
 
+
+function task_setup()
+{
+	add_tab("___task","<i class='fa fa-circle-notch'></i><wbt:g>tasks</wbt:g>","./ua/prj_task.jsp?prjid="+prjid) ;
+}
+
 function clk_alert()
 {
-	add_tab("___alert","<i class='fa fa-bell'></i>Alert","./util/prj_alert.jsp?prjid="+prjid) ;
+	add_tab("___alert","<i class='fa fa-bell'></i><wbt:g>alert</wbt:g>","./util/prj_alert.jsp?prjid="+prjid) ;
 }
 
 function clk_dd()
 {
 	event.stopPropagation();
-	add_tab("___dd","<i class='fa fa-book'></i>Data Dictionary","./util/prj_dict.jsp?prjid="+prjid) ;
+	add_tab("___dd","<i class='fa fa-book'></i><wbt:g>data,dict</wbt:g>","./util/prj_dict.jsp?prjid="+prjid) ;
 }
 
 function clk_store()
 {
 	event.stopPropagation();
-	add_tab("___store","<i class='fa fa-database'></i>Data Store","./store/store.jsp?prjid="+prjid) ;
+	add_tab("___store","<i class='fa fa-database'></i><wbt:g>data,store</wbt:g>","./store/store.jsp?prjid="+prjid) ;
 }
 
 function clk_rec()
 {
 	event.stopPropagation();
-	add_tab("___rec","<i class='fa fa-edit'></i>Tag Recoder","./store/rec_mgr.jsp?prjid="+prjid) ;
+	add_tab("___rec","<i class='fa fa-edit'></i><wbt:g>tag,recorder</wbt:g>","./store/rec_mgr.jsp?prjid="+prjid) ;
 }
 
 function clk_ui_mgr()
 {
 	event.stopPropagation();
-	add_tab("___uimgr","<i class='fa fa-area-chart'></i>UI Ｄialogs","./ua_hmi/ui_mgr.jsp?prjid="+prjid) ;
+	add_tab("___uimgr","<i class='fa fa-area-chart'></i><wbt:g>ui,dialogs</wbt:g>","./ua_hmi/ui_mgr.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)
@@ -2326,10 +2290,10 @@ function show_conn_msg(ob)
 		if(!u)
 		{
 			u = "conn/msg_show.jsp?prjid="+prjid+"&cpid="+cpid+"&cid="+cid+"&msgid="+msgid;
-			t = "Show Message"
+			t = "<wbt:g>show,msg</wbt:g>"
 		}
 		dlg.open(u,{title:t,w:'450px',h:'500px'},
-				['Close'],
+				['<wbt:g>close</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -2476,8 +2440,8 @@ function prj_rt()
 function show_conn_new_dev(cpid,cid)
 {
 	dlg.open("conn/cpt_new_devs.jsp?prjid="+prjid+"&cpid="+cpid+"&cid="+cid,
-			{title:"New Devices Found",w:'450px',h:'500px'},
-			['Close'],
+			{title:"<wbt:g>new_devs_f</wbt:g>",w:'450px',h:'500px'},
+			['<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -2490,13 +2454,13 @@ function rt_cp_start_stop(cp_id)
 {
 	var ele = $("#cp_"+cp_id) ;
 	var pm={repid:repid,cp_id:cp_id} ;
-	var tt = "stop connector issued" ;
+	var tt = "<wbt:g>stop,connector,triggered</wbt:g>" ;
 	if("true"==ele.attr("cp_run"))
 		pm.op="cp_stop" ;
 	else
 	{
 		pm.op="cp_start" ;
-		tt = "start connector issued" ;
+		tt = "<wbt:g>start,connector,triggered</wbt:g>" ;
 	}
 	send_ajax("./conn/rt_ajax.jsp",pm,(bsucc,ret)=>{
 		if(!bsucc)
@@ -2544,6 +2508,18 @@ layui.use('element', function(){
 });
 
 setInterval(prj_rt,3000) ;
+
+function chg_lan(ln)
+{
+	send_ajax("./login/login_ajax.jsp",{op:"set_session_lan",lan:ln},(bsucc,ret)=>{
+		if(!bsucc||ret!='succ')
+		{
+			dlg.msg(ret) ;
+			return;
+		}
+		document.location.href=document.location.href;
+	});
+}
 </script>
 <script src="./js/split.js"></script>
 </body>

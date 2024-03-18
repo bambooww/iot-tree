@@ -1,5 +1,27 @@
 # Versions
 
+
+### version 1.4.0
+
+
+Added multi-language xml resource file support, first configuration to add language selection. Revised multi-language support for some pages.
+
+handle some bugs
+
+
+### version 1.5.0 Plan
+
+
+Add MQTT-based deployment instance (IOTTree Node) data sharing and connector support. This provides preliminary distributed support for IOTTree, enabling hierarchical relationships between remote sub-stations and the main station.
+
+
+### version 2.0.0 (Plan)
+
+
+
+
+
+
 ### version 1.3.0
 
 
@@ -10,18 +32,6 @@ Realize the overall framework of the TSSR based record processor, which can supp
 Realize unified management support for business/data display UI dialog boxes. You can display output on the front end through configuration. For example, based on the above TSSR data record and processor, their are all can has UI dialog resources. You can configure to use them in the project.
 
 Handling some bugs
-
-
-
-### version 1.4.0 (Plan)
-
-
-Multi language support
-
-
-### version 2.0.0 (Plan)
-
-
 
 
 

@@ -21,6 +21,12 @@ public class ConnProWSClient extends ConnProvider
 		return TP;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "WebSocket Client" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return true;

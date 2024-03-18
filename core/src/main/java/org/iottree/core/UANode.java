@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.basic.PropGroup;
@@ -627,11 +628,14 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	static ArrayList<PropGroup> basicPGS = new ArrayList<>();
 	static
 	{
-		PropGroup pg = new PropGroup("basic","Basic") ;
-		pg.addPropItem(new PropItem("id","Id","Object's id",PValTP.vt_str,true,null,null,""));
-		pg.addPropItem(new PropItem("name","Name","Object's name",PValTP.vt_str,false,null,null,""));
-		pg.addPropItem(new PropItem("title","Title","Object's title",PValTP.vt_str,false,null,null,""));
-		pg.addPropItem(new PropItem("desc","Description","Object's Description",PValTP.vt_str,false,null,null,""));
+		Lan lan = Lan.getPropLangInPk(UANode.class) ;
+		
+		PropGroup pg = new PropGroup("basic",lan) ;
+		
+		pg.addPropItem(new PropItem("id",lan,PValTP.vt_str,true,null,null,"")); //"Id","Object's id"
+		pg.addPropItem(new PropItem("name",lan,PValTP.vt_str,false,null,null,"")); //"Name","Object's name"
+		pg.addPropItem(new PropItem("title",lan,PValTP.vt_str,false,null,null,"")); //"Title","Object's title"
+		pg.addPropItem(new PropItem("desc",lan,PValTP.vt_str,false,null,null,"")); // "Description","Object's Description"
 		
 		basicPGS.add(pg) ;
 	}

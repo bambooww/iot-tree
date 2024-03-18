@@ -107,7 +107,7 @@ dlg.resize_to(650,400);
   </div>
 
   <div class="layui-form-item">
-    <label class="layui-form-label">Device:</label>
+    <label class="layui-form-label"><wbt:lang>dev</wbt:lang>:</label>
     <div class="layui-input-inline">
       <input type="hidden" id="libid" name="libid"  value="<%=libid%>"/>
       <input type="hidden" id="catid" name="catid"  value="<%=catid%>"/>
@@ -221,7 +221,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'<wbt:lang>pls_input_name</wbt:lang>') ;
+		cb(false,'<wbt:lang>pls,input,name</wbt:lang>') ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -240,7 +240,7 @@ function do_submit(cb)
 	{
 		if(!dev_model)
 		{
-			cb(false,'please select Model') ;
+			cb(false,'<wbt:g>pls,select</wbt:g> Model') ;
 			return ;
 		}
 	}

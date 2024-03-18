@@ -33,9 +33,9 @@ dlg.resize_to(700,400);
   </colgroup>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Status</th>
+      <th><wbt:g>name</wbt:g></th>
+      <th><wbt:g>desc</wbt:g></th>
+      <th><wbt:g>status</wbt:g></th>
       <th></th>
     </tr> 
   </thead>
@@ -63,7 +63,7 @@ for(AbstractService as:ass)
     <tr>
       <td><%=as.getTitle() %></td>
       <td><%=as.getBrief() %></td>
-      <td><span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t %></td>
+      <td><span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<wbt:g><%=run_t %></wbt:g></td>
       <td>
 <%
 if(as.isEnable())

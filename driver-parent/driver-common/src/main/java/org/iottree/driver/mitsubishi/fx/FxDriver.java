@@ -16,6 +16,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
+import org.iottree.core.util.Lan;
 
 /**
  * FX Protocal support FX PLC download RS442 Port
@@ -95,12 +96,13 @@ public class FxDriver extends DevDriver
 		
 		PropGroup gp = null;
 		
-		gp = new PropGroup("timing","Timing");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		gp = new PropGroup("timing",lan);//"Timing");
 
-		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
-		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
-		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
+		gp.addPropItem(new PropItem("req_to",lan,PValTP.vt_int,false,null,null,1000)); //"Request Timeout(millisecond)",""
+		gp.addPropItem(new PropItem("failed_tryn",lan,PValTP.vt_int,false,null,null,3)); //"Fail after successive times",""
+		gp.addPropItem(new PropItem("recv_to",lan,PValTP.vt_int,false,null,null,200)); //"Receive response timeout(millisecond)",""
+		gp.addPropItem(new PropItem("inter_req",lan,PValTP.vt_int,false,null,null,0)); //"Inter-request millisecond",""
 		pgs.add(gp) ;
 		
 //		gp = new PropGroup("auto_demotion","Auto-Demotion");
@@ -110,9 +112,9 @@ public class FxDriver extends DevDriver
 //		gp.addPropItem(new PropItem("dm_no_req","Discard request during demotion","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
 //		pgs.add(gp) ;
 		
-		gp = new PropGroup("block_size","Block Sizes");
-		gp.addPropItem(new PropItem("out_coils","Output Coils","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("reg","Internal Registers","",PValTP.vt_int,false,null,null,32));
+		gp = new PropGroup("block_size",lan);//"Block Sizes");
+		gp.addPropItem(new PropItem("out_coils",lan,PValTP.vt_int,false,null,null,32)); //"Output Coils",""
+		gp.addPropItem(new PropItem("reg",lan,PValTP.vt_int,false,null,null,32)); //"Internal Registers",""
 		pgs.add(gp) ;
 		
 		return pgs;

@@ -13,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.ConnPt;
 import org.iottree.core.DevAddr;
 import org.iottree.core.DevDriver;
@@ -61,23 +62,22 @@ public class MQTTClientDrv extends DevDriver
 	@Override
 	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
-		PropGroup r = new PropGroup("mqtt_conn", "MQTT Connection");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("mqtt_conn",lan);// "MQTT Connection");
 
-		r.addPropItem(new PropItem("server_host", "Server Host", "MQTT Server IP or Address", PValTP.vt_str, false,
-				null, null, "localhost"));
+		r.addPropItem(new PropItem("server_host", lan , PValTP.vt_str, false,
+				null, null, "localhost")); //"Server Host", "MQTT Server IP or Address"
 		r.addPropItem(
-				new PropItem("server_port", "Server Port", "MQTT Server Port", PValTP.vt_int, false, null, null, 1883));
-
-		r.addPropItem(new PropItem("clientid", "Client Id", "Client Id", PValTP.vt_str, false, null, null,
-				CompressUUID.createNewId()));
-
-		r.addPropItem(new PropItem("username", "User Name", "User Name", PValTP.vt_str, false, null, null, ""));
-		r.addPropItem(new PropItem("userpsw", "User Password", "User Password", PValTP.vt_str, false, null, null, ""));
-
-		r.addPropItem(new PropItem("conn_to_sec", "Connection Timeout Seconds", "Connection Timeout Seconds",
-				PValTP.vt_int, false, null, null, 10));
-		r.addPropItem(new PropItem("ka_int", "KeepAliveInterval Seconds", "Connection Timeout Seconds", PValTP.vt_int,
-				false, null, null, 10));
+				new PropItem("server_port", lan, PValTP.vt_int, false, null, null, 1883)); //"Server Port", "MQTT Server Port"
+		r.addPropItem(new PropItem("clientid",lan, PValTP.vt_str, false, null, null,
+				CompressUUID.createNewId()));// "Client Id", "Client Id"
+		r.addPropItem(new PropItem("username", lan, PValTP.vt_str, false, null, null, "")); //"User Name", "User Name"
+		r.addPropItem(new PropItem("userpsw", lan, PValTP.vt_str, false, null, null, "")); // "User Password", "User Password"
+		r.addPropItem(new PropItem("conn_to_sec", lan,
+				PValTP.vt_int, false, null, null, 10)); //"Connection Timeout Seconds", "Connection Timeout Seconds"
+		r.addPropItem(new PropItem("ka_int", lan, PValTP.vt_int,
+				false, null, null, 10)); //"KeepAliveInterval Seconds", ""
 
 		ArrayList<PropGroup> pgs = new ArrayList<>();
 		pgs.add(r);
@@ -86,10 +86,12 @@ public class MQTTClientDrv extends DevDriver
 
 	public List<PropGroup> getPropGroupsForDev()
 	{
-		PropGroup gp = new PropGroup("mqtt_tag", "");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup gp = new PropGroup("mqtt_tag", lan);//"");
 
 		gp.addPropItem(
-				new PropItem("topic", "Subscribe Topic", "Subscribe Topic", PValTP.vt_str, false, null, null, ""));
+				new PropItem("topic", lan, PValTP.vt_str, false, null, null, "")); //"Subscribe Topic", "Subscribe Topic"
 
 		List<PropGroup> pgs = new ArrayList<PropGroup>();
 		pgs.add(gp);

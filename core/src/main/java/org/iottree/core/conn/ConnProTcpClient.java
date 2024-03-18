@@ -30,6 +30,12 @@ public class ConnProTcpClient extends ConnProvider
 		return "tcp_client" ;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "TCP Client" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return true;

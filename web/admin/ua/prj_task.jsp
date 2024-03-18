@@ -5,7 +5,7 @@
 	org.iottree.core.task.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -52,12 +52,12 @@ background-color: #eeeeee
 
 </style>
 <body marginwidth="0" marginheight="0">
- <blockquote class="layui-elem-quote ">Task List
+ <blockquote class="layui-elem-quote "><wbt:g>task,list</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_task('<%=prjid %>',null)">+Add Task</button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_task('<%=prjid %>',null)">+<wbt:g>add,task</wbt:g></button>
  	
  	 <button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_task()">
-							 <i class="fa-solid fa-file-import"></i>&nbsp;Import Task
+							 <i class="fa-solid fa-file-import"></i>&nbsp;<wbt:g>imp,task</wbt:g>
 							</button>
 							
  </div>
@@ -105,27 +105,27 @@ for(Task jt:jts)
 if(jt.isEnable())
 {
 %>
-<span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<%=run_t %>
+<span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<wbt:g><%=run_t %></wbt:g>
       
 <%
 	if(jt.RT_isRunning())
 	{
 %>
 
-		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop task" onclick="start_stop(false,'<%=jt.getId()%>')"></i>
+		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="<wbt:g>stop,task</wbt:g>" onclick="start_stop(false,'<%=jt.getId()%>')"></i>
 		 
 <%
 	}
 	else
 	{
 %>
-<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start task" onclick="start_stop(true,'<%=jt.getId()%>')"></i>
+<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="<wbt:g>start,task</wbt:g>" onclick="start_stop(true,'<%=jt.getId()%>')"></i>
 <%
 	}
 }
 else
 {
-%><span id="" style="width:20px;height:20px;background-color: grey;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Disabled
+%><span id="" style="width:20px;height:20px;background-color: grey;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<wbt:g>disabled</wbt:g>
 <%
 }
 %>
@@ -134,8 +134,8 @@ else
         
       </th>
        <th>
-		<a href="javascript:add_or_edit_task('<%=prjid %>','<%=jt.getId()%>')"><i title="edit task" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a>
-	   <a href="javascript:task_del('<%=prjid %>','<%=jt.getId()%>')" style="color:red"><i title="delete task" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
+		<a href="javascript:add_or_edit_task('<%=prjid %>','<%=jt.getId()%>')"><i title="<wbt:g>edit,task</wbt:g>" class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a>
+	   <a href="javascript:task_del('<%=prjid %>','<%=jt.getId()%>')" style="color:red"><i title="<wbt:g>del,task</wbt:g>" class="fa fa-times fa-lg " aria-hidden="true"></i></a>
 	  </th>
 	  <th>
 <a href="javascript:add_or_edit_task_act('<%=prjid %>','<%=jt.getId()%>',null)"><i title="add action" class="fa fa-plus fa-lg " aria-hidden="true"></i></a>
@@ -162,9 +162,9 @@ if(tas!=null&&tas.size()>0)
        <td><%=ta.getName() %></td>
       
       <td colspan="3">
-      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','init')" class="layui-btn layui-btn-<%=(ta.hasInitScript()?"normal":"primary") %> layui-border-blue layui-btn-sm">init script</button>
-      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','run')" class="layui-btn layui-btn-<%=(ta.hasRunScript()?"normal":"primary") %> layui-border-blue layui-btn-sm" >run in loop script</button>
-      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','end')" class="layui-btn layui-btn-<%=(ta.hasEndScript()?"normal":"primary") %> layui-border-blue layui-btn-sm">end script</button>
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','init')" class="layui-btn layui-btn-<%=(ta.hasInitScript()?"normal":"primary") %> layui-border-blue layui-btn-sm"><wbt:g>init_js</wbt:g></button>
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','run')" class="layui-btn layui-btn-<%=(ta.hasRunScript()?"normal":"primary") %> layui-border-blue layui-btn-sm" ><wbt:g>loop_js</wbt:g></button>
+      	<button onclick="edit_task_js('<%=jt.getId() %>','<%=ta.getId() %>','end')" class="layui-btn layui-btn-<%=(ta.hasEndScript()?"normal":"primary") %> layui-border-blue layui-btn-sm"><wbt:g>end_js</wbt:g></button>
       	
       </td>
       <td>
@@ -285,16 +285,16 @@ function export_task(prjid,taskid)
 
 function add_or_edit_task(prjid,id)
 {
-	var tt = "Add Project Task";
+	var tt = "<wbt:g>add,prj,task</wbt:g>";
 	if(id)
 	{
-		tt = "Edit Project Task";
+		tt = "<wbt:g>edit,prj,task</wbt:g>";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("prj_task_edit.jsp?prjid="+prjid+"&taskid="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -339,16 +339,16 @@ function add_or_edit_task(prjid,id)
 
 function add_or_edit_task_act(prjid,taskid,id)
 {
-	var tt = "Add Task Action";
+	var tt = "<wbt:g>add,task,action</wbt:g>";
 	if(id)
 	{
-		tt = "Edit Task Action";
+		tt = "<wbt:g>edit,task,action</wbt:g>";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("prj_task_act_edit.jsp?prjid="+prjid+"&taskid="+taskid+"&actid="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

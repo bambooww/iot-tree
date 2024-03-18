@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.*;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
 import org.apache.commons.io.FileUtils;
 import org.graalvm.polyglot.HostAccess;
@@ -616,7 +617,9 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	
 	private PropGroup getChPropGroup()
 	{
-		PropGroup r = new PropGroup("ch","Channel");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("ch",lan);//,"Channel");
 		DevDriver dd = this.getDriver() ;
 		if(dd==null)
 		{
@@ -628,13 +631,13 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 				ts[i] = dds.get(i).getTitle() ;
 				vs[i] = dds.get(i).getName() ;
 			}
-			r.addPropItem(new PropItem("drv","Driver","Device Driver used by Channel",PValTP.vt_str,false,ts,vs,""));
+			r.addPropItem(new PropItem("drv",lan,PValTP.vt_str,false,ts,vs,"")); //"Driver","Device Driver used by Channel"
 		}
 		else
-			r.addPropItem(new PropItem("drv","Driver","Device Driver used by Channel",PValTP.vt_str,true,null,null,""));
+			r.addPropItem(new PropItem("drv",lan,PValTP.vt_str,true,null,null,"")); //"Driver","Device Driver used by Channel"
 		
-		r.addPropItem(new PropItem("drv_intv","Driver scan interval","Driver scan interval on every loop",PValTP.vt_int,
-				false,null,null,1000));
+		r.addPropItem(new PropItem("drv_intv",lan,PValTP.vt_int,
+				false,null,null,1000)); //"Driver scan interval","Driver scan interval on every loop"
 				
 		//r.addPropItem(new PropItem("script","JavaScript","JavaScript run interval by Channel",PValTP.vt_str,false,null,null,"")
 		//		.withTxtMultiLine(true));

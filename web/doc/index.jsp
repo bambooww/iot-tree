@@ -10,6 +10,7 @@
 	org.iottree.core.ws.*,
 	org.iottree.core.util.xmldata.*
 "%><%
+String lan = Lan.getUsingLang() ;
 %><!DOCTYPE html>
 <html class="">
 <head>
@@ -83,6 +84,7 @@ visibility: visible;
 </div>
 </body>
 <script type="text/javascript">
+var using_lan = "<%=lan%>" ;
 function set_lang(lang)
 {
 	$("#nav").attr("src",lang+"/nav.md") ;
@@ -110,5 +112,7 @@ function nav_to(p)
 {
 	$("#main").attr("src",p) ;
 }
+
+set_lang(using_lan) ;
 </script>
 </html>

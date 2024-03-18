@@ -10,14 +10,16 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%>
-<%
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
+	if(!Convert.checkReqEmpty(request, out, "prjid"))
+		return ;
+	
 	String prjid = request.getParameter("prjid") ;
 
 UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 if(prj==null)
 {
-	out.print("no rep node found");
+	out.print("no project node found");
 	return ;
 }
 
@@ -33,7 +35,7 @@ String user = "";
 String psw = "";
 int conn_int = 60;
 
-long push_int = 10 ;
+long push_int = 10000 ;
 
 String chked_en = "" ;
 String chked_w = "" ;
@@ -67,7 +69,7 @@ if(bwrite)
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(700,400);
+dlg.resize_to(750,400);
 </script>
 <style>
 </style>
@@ -75,11 +77,11 @@ dlg.resize_to(700,400);
 <body>
 <form class="layui-form" action="">
 <div class="layui-form-item">
-    <label class="layui-form-label">Enable:</label>
+    <label class="layui-form-label"><wbt:g>enable</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Writable:</div>
+	  <div class="layui-form-mid"><wbt:g>writable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="checkbox" id="writable" name="writable" <%=chked_w%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
@@ -95,35 +97,35 @@ dlg.resize_to(700,400);
     --%>
     <div id="edit_mqtt">
      <div class="layui-form-item">
-    <label class="layui-form-label">MQTT Host:</label>
+    <label class="layui-form-label">MQTT <wbt:g>host</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="mqtt_host" name="mqtt_host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Port:</div>
+    <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="mqtt_port" name="mqtt_port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="number" id="mqtt_port" name="mqtt_port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
-	 <div class="layui-form-mid">Conn Timeout:</div>
+	 <div class="layui-form-mid"><wbt:g>conn,timeout</wbt:g>(<wbt:g>second</wbt:g>):</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    
-	    <input type="text" id="mqtt_conn_to" name="mqtt_conn_to" value="<%=conn_to%>"  title="seconds" autocomplete="off" class="layui-input">
+	    <input type="number" id="mqtt_conn_to" name="mqtt_conn_to" value="<%=conn_to%>"  title="seconds" autocomplete="off" class="layui-input">
 	  </div>
   </div>
 
   <div class="layui-form-item">
-    <label class="layui-form-label">MQTT User:</label>
+    <label class="layui-form-label">MQTT <wbt:g>user</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="mqtt_user" name="mqtt_user" value="<%=user%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Password:</div>
+    <div class="layui-form-mid"><wbt:g>psw</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="mqtt_psw" name="mqtt_psw" value="<%=psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Push Interval:</label>
+    <label class="layui-form-label"><wbt:g>push,intv</wbt:g>(<wbt:g>ms</wbt:g>):</label>
     <div class="layui-input-inline">
-      <input type="text" id="push_int" name="push_int" value="<%=push_int%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      <input type="number" id="push_int" name="push_int" value="<%=push_int%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
     
   </div>
@@ -161,25 +163,25 @@ function do_submit(cb)
 	var host = $('#mqtt_host').val();
 	if(host==null||host=='')
 	{
-		cb(false,'Please input host') ;
+		cb(false,'<wbt:g>pls,input,host</wbt:g>') ;
 		return ;
 	}
 	var port = $('#mqtt_port').val();
 	if(port==null||port=='')
 	{
-		cb(false,'Please input port') ;
+		cb(false,'<wbt:g>pls,input,port</wbt:g>') ;
 		return ;
 	}
 	var vp = parseInt(port);
 	if(vp==NaN||vp<0)
 	{
-		cb(false,'Please input valid port') ;
+		cb(false,'<wbt:g>pls,input,valid,port</wbt:g>') ;
 	}
 	
 	var conn_to = $('#mqtt_conn_to').val();
 	if(conn_to==null||conn_to=='')
 	{
-		cb(false,'Please input connection timeout') ;
+		cb(false,'<wbt:g>pls,input,conn,timeout</wbt:g>') ;
 		return ;
 	}
 	conn_to = parseInt(conn_to);

@@ -6,7 +6,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%!
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 	
 	%><%
 	String hmipath = request.getParameter("hmi_path") ;
@@ -56,13 +56,13 @@ dlg.resize_to(600,400);
 <form class="layui-form" action="">
 <input type="hidden" id="id" value="<%=hmi.getId()%>"/>
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="name" name="name" lay-verify="required" value="<%=name %>" autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title"  lay-verify="required" value="<%=title %>" autocomplete="off" class="layui-input">
     </div>
@@ -70,11 +70,12 @@ dlg.resize_to(600,400);
  </form>
 </body>
 <script type="text/javascript">
+dlg.set_dlg_title("<wbt:g>add</wbt:g>/<wbt:g>edit</wbt:g> HMI") ;
 
 layui.use('form', function(){
 	  var form = layui.form;
 });
-	
+
 function win_close()
 {
 	dlg.close(0);

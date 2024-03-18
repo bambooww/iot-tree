@@ -19,6 +19,7 @@ import org.iottree.core.basic.ValChker;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtTcpClient;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 
 
 public class S7EthDriver extends DevDriver
@@ -135,10 +136,13 @@ public class S7EthDriver extends DevDriver
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
-		PropGroup gp_nor = new PropGroup("s7_comm_pm","S7 Communication Parameters");
+		
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup gp_nor = new PropGroup("s7_comm_pm",lan);//"S7 Communication Parameters");
 		//PropItem pi = new PropItem("link_tp","Link Type","",PValTP.vt_int,false,new String[] {"PC","OP","PG"},new Object[] {false,true},false));
 		
-		PropItem pi_rack = new PropItem("rack","CPU Rack","",PValTP.vt_int,false,null,null,0) ;
+		PropItem pi_rack = new PropItem("rack",lan,PValTP.vt_int,false,null,null,0) ; //"CPU Rack",""
 		pi_rack.setValChker(new ValChker<Number>() {
 			@Override
 			public boolean checkVal(Number v, StringBuilder failedr)
@@ -150,7 +154,7 @@ public class S7EthDriver extends DevDriver
 				return false;
 			}});
 		gp_nor.addPropItem(pi_rack);
-		PropItem pi_slot = new PropItem("slot","CPU Slot","",PValTP.vt_int,false,null,null,1) ;
+		PropItem pi_slot = new PropItem("slot",lan,PValTP.vt_int,false,null,null,1) ; //"CPU Slot",""
 		pi_slot.setValChker(new ValChker<Number>() {
 
 			@Override
@@ -173,11 +177,11 @@ public class S7EthDriver extends DevDriver
 				return r>0;
 			}};
 		
-		PropGroup gp_tsap = new PropGroup("s7_comm_pm","S7 Communication Parameters");
-		PropItem pi_local_tsap = new PropItem("tsap_local","Local TSAP (hex)","",PValTP.vt_str,false,null,null,"4D57") ;
+		PropGroup gp_tsap = new PropGroup("s7_comm_pm",lan);//"S7 Communication Parameters");
+		PropItem pi_local_tsap = new PropItem("tsap_local",lan,PValTP.vt_str,false,null,null,"4D57") ; //"Local TSAP (hex)",""
 		pi_local_tsap.setValChker(tsapchk);
 		gp_tsap.addPropItem(pi_local_tsap);
-		PropItem pi_remote_tsap = new PropItem("tsap_remote","Remote TSAP (hex)","",PValTP.vt_str,false,null,null,"4D57") ;
+		PropItem pi_remote_tsap = new PropItem("tsap_remote",lan,PValTP.vt_str,false,null,null,"4D57") ; //"Remote TSAP (hex)",""
 		pi_remote_tsap.setValChker(tsapchk);
 		gp_tsap.addPropItem(pi_remote_tsap);
 		

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+	<dd_node id="1" name="pg_timing" name_cn="时间参数" name_en="Timing" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_auto_demotion" name_cn="自动降级" name_en="Auto-Demotion" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_block_size" name_cn="数据块大小" name_en="Block Sizes" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pg_ppi_spk" name_cn="PPI 设备" name_en="PPI Device" desc_cn="" desc_en=""/>
+
+		<dd_node id="1" name="pi_req_to" name_cn="请求过期时间(毫秒)" name_en="Request Timeout(millisecond)" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_inter_req" name_cn="多个请求间隔(毫秒)" name_en="Inter-request millisecond" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_failed_tryn" name_cn="连续失败次数认为失败" name_en="Fail after successive times" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_recv_to" name_cn="接收应答过期时间" name_en="Receive response timeout(millisecond)" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_en" name_cn="使能失败时自动降级" name_en="Enable auto-demotion on failure" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_tryc" name_cn="降级前失败重新尝试次数" name_en="Demote after Retry times" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_ms" name_cn="降级之后时间间隔毫秒" name_en="Demote for millisecond" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_dm_no_req" name_cn="在降级中丢弃请求" name_en="Discard request during demotion" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_out_coils" name_cn="输出线圈" name_en="Output Coils" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_in_coils" name_cn="输入线圈" name_en="Input Coils" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_internal_reg" name_cn="内部寄存器" name_en="Internal Registers" desc_cn="" desc_en=""/>
+		<dd_node id="1" name="pi_holding" name_cn="保存寄存器" name_en="Holding Registers" desc_cn="" desc_en=""/>
+		
+		<dd_node id="1" name="pi_dev_addr" name_cn="设备地址" name_en="Device Address" desc_cn="" desc_en=""/>
+</dd_class>	

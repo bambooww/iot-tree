@@ -442,6 +442,16 @@ public abstract class ConnProvider implements IXmlDataValidator
 	 */
 	public abstract String getProviderType() ;
 	
+	/**
+	 * provider type title
+	 * @return
+	 */
+	public abstract String getProviderTpt();
+//	{
+//		String ptp = this.getProviderType() ;
+//		
+//	}
+	
 	public abstract boolean isSingleProvider() ;
 	
 	public abstract Class<? extends ConnPt> supportConnPtClass() ;

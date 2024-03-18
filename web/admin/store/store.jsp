@@ -7,7 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -173,7 +173,7 @@ position:absolute;
 {
 	position:absolute;
 	font-size: 15px;
-	left:140px;
+	left:180px;
 	color:#00988b;
 	cursor:pointer;
 	bottom:7px;
@@ -318,7 +318,7 @@ position:absolute;
 </style>
 <body marginwidth="0" marginheight="0">
 <div class="left">
- <blockquote class="layui-elem-quote ">Tags List</blockquote>
+ <blockquote class="layui-elem-quote "><wbt:g>tags,list</wbt:g></blockquote>
  <div class="list" onscroll="on_list_scroll()">
 <%
 List<UATag> tags = prj.listTagsAll() ;
@@ -340,9 +340,9 @@ int tags_num = tags.size() ;
  </div>
  </div>
 <div class="mid" onclick="on_handler_clk()">
- <blockquote class="layui-elem-quote ">Handlers
+ <blockquote class="layui-elem-quote "><wbt:g>handlers</wbt:g>
  <div style="position: absolute;right:10px;top:11px;width:100px;border:0px solid;height:35px;">
- <button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_or_edit_h('<%=prjid %>','rt',null)">+Add</button>
+ <button type="button" style="top:3px;" class="layui-btn layui-btn-sm " onclick="add_or_edit_h('<%=prjid %>','rt',null)">+<wbt:g>add</wbt:g></button>
  </div>
  	
 </blockquote>
@@ -356,7 +356,7 @@ int tags_num = tags.size() ;
 
 <div class="right">
 
- <blockquote class="layui-elem-quote ">Outputs
+ <blockquote class="layui-elem-quote "><wbt:g>outputs</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
  	
  </div>
@@ -517,7 +517,7 @@ function update_outs()
 		{
 			//console.log(ob) ;
 			let en_c = ob.en?"green":"gray" ;
-			let en_t = ob.en?"Enabled":"Disabled" ;
+			let en_t = ob.en?"<wbt:g>enabled</wbt:g>":"<wbt:g>disabled</wbt:g>" ;
 			tmps += `<div id="out_\${ob.id}" class="out_item" tp="\${ob.tp}" hid="\${h.id}" t="\${ob.t}" title="\${ob.t}" >
 				<span class="enable_c"><i class="fa fa-square en chk_out" id="\${ob.id}" hid="\${h.id}"  style="color:\${en_c}" title="\${en_t}"></i></span>
 				<span class="t">\${ob.n}-[\${ob.table}]</span>
@@ -532,7 +532,7 @@ function update_outs()
 				</div>` ;
 		}
 		
-		tmps += `<div id="out_add_\${h.id}" hid="\${h.id}" class="out_item_add chk_out" h_tp="\${h.tp}" title="add out" onclick="add_o('\${prjid}','\${h.id}')" ><i class="fa fa-plus"></i></div>` ;
+		tmps += `<div id="out_add_\${h.id}" hid="\${h.id}" class="out_item_add chk_out" h_tp="\${h.tp}" title="<wbt:g>add,output</wbt:g>" onclick="add_o('\${prjid}','\${h.id}')" ><i class="fa fa-plus"></i></div>` ;
 	}
 	$("#out_list").html(tmps) ;
 }
@@ -584,16 +584,16 @@ function update_handlers()
 			//console.log(ob) ;
 			let f_tt = "" ;
 			if(ob.filter_all)
-				f_tt = "Use all tags ["+tags_num+"]" ;
+				f_tt = "<wbt:g>user_all_tags</wbt:g> ["+tags_num+"]" ;
 			else
-				f_tt = "Filter by prefix ["+"]" ;
+				f_tt = "<wbt:g>filter_by_prefix</wbt:g> ["+"]" ;
 			let s_tt="" ;
 			if(ob.sel_all)
-				s_tt="Select all" ;
+				s_tt="<wbt:g>sel_all</wbt:g>" ;
 			else
-				s_tt ="Check the box" ;
+				s_tt ="<wbt:g>chk_the_box</wbt:g>" ;
 			let en_c = ob.en?"green":"gray" ;
-			let en_t = ob.en?"Enabled":"Disabled" ;
+			let en_t = ob.en?"<wbt:g>enabled</wbt:g>":"<wbt:g>disabled</wbt:g>" ;
 			tmps += `<div id="h_\${ob.id}" style="top:\${y}px" class="h_item" hid="\${ob.id}" n="\${ob.n}" t="\${ob.t}" tp="\${ob.tp}" onclick="on_handler_clk(this)" alert_uids="\${ob.alert_uids}">
 				<span class="t">\${ob.t} [\${ob.n}]</span>
 				<span class="enable_c"><i class="fa fa-square en" style="color:\${en_c}" title="\${en_t}"></i></span>
@@ -602,7 +602,7 @@ function update_handlers()
 				<span class="s" ><i class="fa-regular fa-square-check" style="font-size:18px;"></i>\${s_tt}</span>
 				<span class="trigger_c" style="\${trigger_c};\${trigger_dis}">Trigger [\${ob.lvl}]&nbsp;</span>
 				<span class="release_c" style="\${release_c};\${release_dis}">Release</span>
-				<button id="btn_save_\${ob.id}" class="save_btn" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('\${prjid}','\${ob.id}')">Save</button>
+				<button id="btn_save_\${ob.id}" class="save_btn" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('\${prjid}','\${ob.id}')"><wbt:g>save</wbt:g></button>
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_h('\${prjid}','\${ob.tp}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_handler('\${prjid}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
@@ -635,12 +635,12 @@ function del_handler(prjid,id)
 {
 	event.stopPropagation();
 	let ob = $("#h_"+id);
-	dlg.confirm('delete this handler ['+ob.attr("n")+']?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,handler</wbt:g> ['+ob.attr("n")+']?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("store_ajax.jsp",{op:"del_h",prjid:prjid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -652,16 +652,16 @@ function del_handler(prjid,id)
 function add_or_edit_h(prjid,tp,id)
 {
 	event.stopPropagation();
-	var tt = "Add Handler";
+	var tt = "<wbt:g>add,handler</wbt:g>";
 	if(id)
 	{
-		tt = "Edit Handler";
+		tt = "<wbt:g>edit,handler</wbt:g>";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("h_"+tp+"_edit.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -704,12 +704,12 @@ function add_or_edit_h(prjid,tp,id)
 function del_out(prjid,hid,id)
 {
 	event.stopPropagation();
-	dlg.confirm('delete this output?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>delete,this,output</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("store_ajax.jsp",{op:"del_o",prjid:prjid,hid:hid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -718,13 +718,14 @@ function del_out(prjid,hid,id)
 				});
 }
 
+
 function on_clk_filter(hid,filter_str)
 {
 	if(!filter_str)
 	{
 		dlg.open("./filter_sel.jsp",
-				{title:"Select Filter Type"},
-				['Cancel'],
+				{title:"<wbt:g>select,filter,type</wbt:g>"},
+				['<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -747,8 +748,8 @@ function on_clk_filter(hid,filter_str)
 function add_o(prjid,hid)
 {
 	dlg.open("./o_sel.jsp?prjid="+prjid+"&hid="+hid,
-			{title:"Select Source Type"},
-			['Cancel'],
+			{title:"<wbt:g>select,sor,type</wbt:g>"},
+			['<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -765,16 +766,16 @@ function add_or_edit_o(prjid,tp,hid,id)
 {
 	if(event)
 		event.stopPropagation();
-	var tt = "Add Handler Output ["+tp+"]";
+	var tt = "<wbt:g>add,handler,output</wbt:g> ["+tp+"]";
 	if(id)
 	{
-		tt = "Edit Handler Output ["+tp+"]";
+		tt = "<wbt:g>edit,handler,output</wbt:g> ["+tp+"]";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("o_"+tp+"_edit.jsp?prjid="+prjid+"&hid="+hid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -819,10 +820,10 @@ function view_o(prjid,tp,hid,id)
 {
 	if(event)
 		event.stopPropagation();
-	var tt = "View Output Data ["+tp+"]";
+	var tt = "<wbt:g>view,output,data</wbt:g> ["+tp+"]";
 	dlg.open("o_"+tp+"_view.jsp?prjid="+prjid+"&hid="+hid+"&id="+id,
 			{title:tt},
-			['Close'],
+			['<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1016,7 +1017,7 @@ function rt_update()
 				if(h.run && h.en)
 				{
 					init_c = init_ok?"green":"red" ;
-					init_t = init_ok?"Init Ok":"Init Failed" ;
+					init_t = init_ok?"<wbt:g>init,ok</wbt:g>":"<wbt:g>init,failed</wbt:g>" ;
 				}
 					
 				let run_ok = o.run_ok;
@@ -1032,7 +1033,7 @@ function rt_update()
 				if(h.run && h.en)
 				{
 					run_c = run_ok?"green":"red" ;
-					run_t = run_ok?"Run Ok":"Run Error" ;
+					run_t = run_ok?"<wbt:g>run_ok</wbt:g>":"<wbt:g>run_err</wbt:g>" ;
 				}
 					
 				$("#o_init_"+o.id).css("color",init_c).attr("title",init_t) ;

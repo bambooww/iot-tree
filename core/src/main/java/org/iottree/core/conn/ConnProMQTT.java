@@ -25,6 +25,12 @@ public class ConnProMQTT extends ConnProvider
 	{
 		return TP;
 	}
+	
+	@Override
+	public String getProviderTpt()
+	{
+		return "MQTT" ;
+	}
 
 	public String getTitle()
 	{

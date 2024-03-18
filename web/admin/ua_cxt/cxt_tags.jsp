@@ -5,7 +5,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "path"))
@@ -166,7 +166,7 @@ text-overflow:ellipsis;
  <a href="javascript:node_access('<%=node.getNodePath() %>')" id="node_access_<%=node.getId() %>"  title="Access" ><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
  
  </div>
-  <div style="left:20px;top:25px;position:absolute;font-size: 15px;">tags number is:<span id="tags_num"></span></div>
+  <div style="left:20px;top:25px;position:absolute;font-size: 15px;"><wbt:g>tags_num</wbt:g>:<span id="tags_num"></span></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%
@@ -175,15 +175,15 @@ text-overflow:ellipsis;
  	if(true) //(bdevdef||!ref_locked)
  	{
  %>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+Add Tag</button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>&nbsp;&nbsp;
 <%
  	}
 %>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+Add Middle Tag</button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+<wbt:g>add,middle,tag</wbt:g></button>&nbsp;&nbsp;
  	<%--
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
-  <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="Hide System Tags|Show System Tags" />
+  <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="<wbt:g>hide,system,tags</wbt:g>|<wbt:g>show,system,tags</wbt:g>" />
 <%
    }
 %>
@@ -203,23 +203,23 @@ if(b_tags)
 </th>
 
         <th style="width:15px;text-align: center;">T</th>
-    	<th sort_by="name">Tag</th>
-    	<th sort_by="title">Title</th>
-        <th sort_by="addr">Address</th>
-        <th sort_by="valtp">Value Type</th>
-        <th >Alert</th>
-        <th>Value</th>
-        <th>Update DT</th>
-        <th>Change DT</th>
-        <th>Quality</th>
-        <th>Write</th>
-        <th>Oper</th>
+    	<th sort_by="name"><wbt:g>tag</wbt:g></th>
+    	<th sort_by="title"><wbt:g>title</wbt:g></th>
+        <th sort_by="addr"><wbt:g>addr</wbt:g></th>
+        <th sort_by="valtp"><wbt:g>val,type</wbt:g></th>
+        <th ><wbt:g>alert</wbt:g></th>
+        <th><wbt:g>val</wbt:g></th>
+        <th><wbt:g>update,time</wbt:g></th>
+        <th><wbt:g>change,time</wbt:g></th>
+        <th><wbt:g>valid</wbt:g></th>
+        <th><wbt:g>write</wbt:g></th>
+        <th><wbt:g>oper</wbt:g></th>
 <%
 if(prj!=null)
 {
 %>
-		<th title="inner recorder">Recorder</th>
-        <th>Store</th>
+		<th title="inner recorder"><wbt:g>recorder</wbt:g></th>
+        <th><wbt:g>store</wbt:g></th>
 <%
 }
 %>
@@ -312,12 +312,12 @@ function init_right_menu()
 	        	rightClick : true,
 	        	data : ()=>{
 					var d = [
-						{ content : 'Paste Tag', callback:()=>{
+						{ content : '<wbt:g>paste,tag</wbt:g>', callback:()=>{
 							paste_tag();
 						}}
 					];
 					if(get_selected_tagids()!='')
-						d.push({ content : 'Copy Selected Tag', callback:()=>{
+						d.push({ content : '<wbt:g>copy,selected,tag</wbt:g>', callback:()=>{
 							copy_tag(get_selected_tagids());
 						}})
 					return d;
@@ -398,7 +398,7 @@ function init_tr()
 	        	data : ()=>{
 	        		if(false)//b_refed&&!t_sys)
 	        		{
-	        			return [{ content : 'Rename Tag', callback:()=>{
+	        			return [{ content : '<wbt:g>rename,tag</wbt:g>', callback:()=>{
 							rename_tag(t_path,t_id);
 						}}];
 	        		}
@@ -406,31 +406,31 @@ function init_tr()
 	        		if(t_loc&&!t_sys)
 	        		{
 	        			var r=[] ;
-	        			r.push({ content : 'Modify Tag', callback:()=>{
+	        			r.push({ content : '<wbt:g>modify,tag</wbt:g>', callback:()=>{
 								add_or_modify_tag(t_id);
 							}});
 	        			
-	        			r.push({ content : 'Copy Tag', callback:()=>{
+	        			r.push({ content : '<wbt:g>copy,tag</wbt:g>', callback:()=>{
 								copy_tag($(this).attr("tag_id"));
 							}});
 	        			if(get_selected_tagids()!='')
 	        			{
-	        				r.push({ content : 'Copy Selected Tag', callback:()=>{
+	        				r.push({ content : '<wbt:g>copy,selected,tag</wbt:g>', callback:()=>{
 								
 								copy_tag(get_selected_tagids());
 							}});
 	        				
-	        				r.push({ content : 'Delete Selected Tag', callback:()=>{
+	        				r.push({ content : '<wbt:g>del,selected,tag</wbt:g>', callback:()=>{
 								
 								del_tag(get_selected_tagids());
 							}});
 	        			}
 							
 							
-	        			r.push({ content : 'Paste Tag', callback:()=>{
+	        			r.push({ content : '<wbt:g>paste,tag</wbt:g>', callback:()=>{
 								paste_tag();
 							}});
-	        			r.push({ content : 'Delete Tag', callback:()=>{
+	        			r.push({ content : '<wbt:g>del,tag</wbt:g>', callback:()=>{
 								del_tag(t_id);
 							}});
 						
@@ -457,7 +457,7 @@ function copy_tag(tagid)
 					dlg.msg(ret);
 					return ;
 				}
-				dlg.msg("copied ok") ;
+				dlg.msg("<wbt:g>copied,ok</wbt:g>") ;
 			},false);
 }
 
@@ -529,15 +529,15 @@ function get_selected_ids_in_table()
 
 function add_or_modify_tag(id,bmid)
 {
-	var tt = "Modify "+(bmid?"Middle":"")+" Tag";
+	var tt = "<wbt:g>modify</wbt:g> "+(bmid?"<wbt:g>middle</wbt:g>":"")+" <wbt:g>tag</wbt:g>";
 	if(id==null||id=='')
-		tt = "Add "+(bmid?"Middle":"")+" Tag" ;
+		tt = "<wbt:g>add</wbt:g> "+(bmid?"<wbt:g>middle</wbt:g>":"")+" <wbt:g>tag</wbt:g>" ;
 	var u = "./tag_edit.jsp?path="+path+"&id="+id
 	if(bmid)
 		u+="&mid=true";
 
 		dlg.open(u,{title:tt,w:'500px',h:'400px'},
-				['Ok','Cancel'],
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -562,9 +562,6 @@ function add_or_modify_tag(id,bmid)
 									dlg.close();
 									refresh_tags();
 								},false);
-								
-							 
-							 //document.location.href=document.location.href;
 					 	});
 					},
 					function(dlgw)
@@ -578,7 +575,7 @@ function rename_tag(p,id)
 {
 	dlg.open("./tag_rename.jsp?path="+p+"&id="+id,
 			{title:"Rename Refered Tag",w:'500px',h:'400px'},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -632,7 +629,7 @@ function del_tag(id)
 	 }
 	 
 	 ret.id = id ;
-	 dlg.confirm("make sure to delete selected tags？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	 dlg.confirm("<wbt:g>del,selected,tags</wbt:g>？",{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 	 { 
 		 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
 			{
@@ -652,7 +649,7 @@ function w_tag(id)
 	var strv = $("#ctag_w_"+id).val();
 	if(strv==null||strv=="")
 	{
-		dlg.msg("please input write value") ;
+		dlg.msg("<wbt:g>pls,input,write,val</wbt:g>") ;
 		return ;
 	}
 	send_ajax("./cxt_dyn_ajax.jsp",{path:path,tagid:id,v:strv,op:"w"},(bsucc,ret)=>{
@@ -703,7 +700,7 @@ function show_cxt_dyn(p,cxt)
 		let bfilter = $(document.getElementById("ctag_v_"+tagp)).attr("filter")=='true' ;
 		if(bfilter && strv)
 		{
-			strv = strv+(bfilter?"<span style='color:green' title='has anti-interference filter'>[F]</span>":"") ;
+			strv = strv+(bfilter?"<span style='color:green' title='<wbt:g>has,filter</wbt:g>'>[F]</span>":"") ;
 			show_ele_html("ctag_v_"+tagp,strv,false) ;
 		}
 		else
@@ -1005,7 +1002,7 @@ function bind_ext(path)
 {
 	dlg.open("../util/prj_dict_bind_selector.jsp?path="+path,
 			{title:"Ext Binder",w:'500px',h:'400px'},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1056,8 +1053,8 @@ function rec_tag_set(ob,tag,tt)
 {
 	let show_c = $(document.getElementById("rec_tag_show_"+tag)) ;
 	dlg.open("../store/rec_tag_param_edit.jsp?prjid="+prjid+"&tag="+tag,
-			{title:"Tag "+tt+" Record Param Setup",w:'500px',h:'400px'},
-			['Ok','Unset','Cancel'],
+			{title:"<wbt:g>tag</wbt:g> "+tt+" <wbt:g>recorder,setup</wbt:g>",w:'500px',h:'400px'},
+			['<wbt:g>ok</wbt:g>','<wbt:g>unset</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1096,12 +1093,12 @@ function rec_tag_set(ob,tag,tt)
 				},
 				function(dlgw)
 				{
-					dlg.confirm('unset this record param?',{btn:["Yes","Cancel"],title:"Unset Confirm"},function ()
+					dlg.confirm('<wbt:g>unset,this,recorder</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>unset,confirm</wbt:g>"},function ()
 				    {
 							send_ajax("../store/rec_tag_param_ajax.jsp",{op:"unset",prjid:prjid,tag:tag},function(bsucc,ret){
 					    		if(!bsucc || ret!='succ')
 					    		{
-					    			dlg.msg("unset err:"+ret) ;
+					    			dlg.msg("<wbt:g>unset,err</wbt:g>:"+ret) ;
 					    			return ;
 					    		}
 					    		//
@@ -1124,7 +1121,7 @@ function rec_tag_show(tagpath,title)
 	if(!prjid)
 		return ;
 	dlg.open_win("/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
-			{title:"Tag Recorded History - "+title,w:960,h:650,wh_auto:true},
+			{title:"<wbt:g>tag,recorded,history</wbt:g> - "+title,w:960,h:650,wh_auto:true},
 			[],
 			[]);
 }
@@ -1134,7 +1131,7 @@ function show_data_his(outtp,outid,tagp,title)
 	if(!prjid)
 		return ;
 	dlg.open_win("/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
-			{title:"Data History - "+title,w:960,h:650},
+			{title:"<wbt:g>data,history</wbt:g> - "+title,w:960,h:650},
 			[],
 			[]);
 }

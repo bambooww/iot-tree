@@ -16,6 +16,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 
 
 public class LangTag extends BodyTagSupport
@@ -168,11 +169,54 @@ public class LangTag extends BodyTagSupport
 		}
 		for(Lang lan:lans)
 		{
-			String v = lan.getLangValue(key) ;
+			String v = lan.getLangValueNoPPT(key) ;
 			if(v!=null)
 				return v ;
 		}
 		return "[x]"+key+"[x]" ;
+	}
+	
+	public static String getLangValue(PageContext pc,List<String> keys) throws JspTagException
+	{
+		HttpServletRequest req = (HttpServletRequest)pc.getRequest();
+		boolean brefresh = "true".equals(req.getParameter("lang_refresh")) ;
+		String path = getPath(pc) ;
+		if(!path.endsWith("/")&&!"/".equals(path))
+		{
+			int k = path.lastIndexOf('/') ;
+			if(k>0)
+			{
+				path = path.substring(0,k+1) ;
+			}
+		}
+		List<Lang> lans = getLangChain(pc, path,brefresh) ;
+		if(lans==null||lans.size()<=0)
+		{
+			return "[x]"+Convert.combineStrWith(keys, ",")+"[x]" ;
+		}
+		
+		String ln = Lan.getUsingLang() ;
+		String gap = "en".equals(ln)?" ":"" ;
+		StringBuilder sb = new StringBuilder() ;
+		boolean bfirst=true ;
+		for(String key:keys)
+		{
+			String v = null ;
+			for(Lang lan:lans)
+			{
+				v = lan.getLangValueNoPPT(key) ;
+				//v = lan.getLangValue(key) ;
+				if(v!=null)
+					break ;
+			}
+			if(v==null)
+				v = "[x]"+key+"[x]" ;
+			if(bfirst) bfirst=false;
+			else
+				sb.append(gap) ;
+			sb.append(v) ;
+		}
+		return sb.toString();// "[x]"+Convert.combineStrWith(keys, ",")+"[x]" ;
 	}
 
 	public int doEndTag() throws JspTagException
@@ -184,8 +228,18 @@ public class LangTag extends BodyTagSupport
 				String tmps = bodyContent.getString();
 				if(tmps!=null&&!(tmps=tmps.trim()).equals(""))
 				{
-					String vv  = getLangValue(pageContext,tmps);
-					pageContext.getOut().write(vv);
+					int sp = tmps.indexOf(',') ;
+					if(sp<0)
+					{
+						String vv  = getLangValue(pageContext,tmps);
+						pageContext.getOut().write(vv);
+					}
+					else
+					{
+						List<String> ss = Convert.splitStrWith(tmps, ",") ;
+						String vv  = getLangValue(pageContext,ss);
+						pageContext.getOut().write(vv);
+					}
 				}
 			}
 		}

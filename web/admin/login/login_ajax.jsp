@@ -12,10 +12,11 @@
 	String user = request.getParameter("user") ;
 	String psw = request.getParameter("psw") ;
 	String op =  request.getParameter("op") ;
+	String lan = request.getParameter("lan") ;
 	switch(op)
 	{
 	case "login":
-		if(LoginUtil.doLogin(request, user, psw))
+		if(LoginUtil.doLogin(request, user, psw,lan))
 		{
 			out.print("succ") ;
 		}
@@ -27,6 +28,25 @@
 	case "logout":
 		LoginUtil.doLogout(request) ;
 		out.print("ok") ;
+		break ;
+	case "set_lan":
+		if(!Convert.checkReqEmpty(request,  out, "lan"))
+			return ;
+		//lan = request.getParameter("lan") ;
+		Lan.setSysLang(lan) ;
+		out.print("succ") ;
+		break ;
+	case "set_session_lan":
+		if(!Convert.checkReqEmpty(request,  out, "lan"))
+			return ;
+		LoginUtil.SessionItem si = LoginUtil.getAdminLoginSession(session) ;
+		if(si==null)
+		{
+			out.print("no login session") ;
+			return ;
+		}
+		si.lan = lan ;
+		out.print("succ") ;
 		break ;
 	}
 	

@@ -2,6 +2,8 @@ package org.iottree.core.basic;
 
 import java.util.*;
 
+import org.iottree.core.dict.DataNode;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
 
 /**
@@ -18,19 +20,25 @@ public class PropGroup
 	@data_val
 	String name = null ;
 	
-	@data_val
-	String title = null ;
+//	@data_val
+//	String title = null ;
 	
 	@data_obj(obj_c=PropItem.class)
 	List<PropItem> props = new ArrayList<>() ;
 	
-	public PropGroup()
-	{}
+	DataNode lanDN = null ;
 	
-	public PropGroup(String n,String t)
+//	public PropGroup()
+//	{}
+	
+	public PropGroup(String n,Lan prop_lan) //String t)
 	{
 		this.name = n ;
-		this.title = t ;
+//		this.title = t ;
+		//propLan = prop_lan ;
+		lanDN = prop_lan.gn("pg_"+n) ;
+		if(lanDN==null)
+			throw new IllegalArgumentException("no pg_"+n+" found in prop_lang") ;
 	}
 	
 	//private transient 
@@ -63,6 +71,7 @@ public class PropGroup
 	
 	public String getTitle()
 	{
-		return title ;
+		return lanDN.getNameByLang(Lan.getUsingLang());//.g(this.name) ;
+		//return title ;
 	}
 }

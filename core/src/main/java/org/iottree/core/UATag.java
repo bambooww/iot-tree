@@ -11,6 +11,7 @@ import java.util.List;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
 import org.iottree.core.util.xmldata.XmlVal.*;
 import org.graalvm.polyglot.*;
@@ -852,14 +853,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(lpgs!=null)
 			pgs.addAll(lpgs) ;
 		
-		PropGroup pg = new PropGroup("tag","Tag Properties");
-		pg.addPropItem(new PropItem("mid","Is Middle Tag","",PValTP.vt_bool,true,null,null,false));
-		pg.addPropItem(new PropItem("addr","Address Or Script Expression","",PValTP.vt_str,false,null,null,""));
-		pg.addPropItem(new PropItem("vt","Data type","",PValTP.vt_int,false,UAVal.ValTPTitles,UAVal.ValTPVals,1));
-		pg.addPropItem(new PropItem("w","Client Access","",PValTP.vt_bool,false,new String[] {"Read Only","Read/Write"},new Object[] {false,true},false));
-		pg.addPropItem(new PropItem("sc","ScanRate","",PValTP.vt_int,false,null,null,100));
-		pg.addPropItem(new PropItem("minv","Min Value","",PValTP.vt_str,false,null,null,""));
-		pg.addPropItem(new PropItem("maxv","Max Value","",PValTP.vt_str,false,null,null,""));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup pg = new PropGroup("tag",lan);//"Tag Properties");
+		pg.addPropItem(new PropItem("mid",lan,PValTP.vt_bool,true,null,null,false)); //"Is Middle Tag",""
+		pg.addPropItem(new PropItem("addr",lan,PValTP.vt_str,false,null,null,"")); //,"Address Or Script Expression",""
+		pg.addPropItem(new PropItem("vt",lan,PValTP.vt_int,false,UAVal.ValTPTitles,UAVal.ValTPVals,1)); //,"Data type",""
+		pg.addPropItem(new PropItem("w",lan,PValTP.vt_bool,false,new String[] {"Read Only","Read/Write"},new Object[] {false,true},false)); //"Client Access",""
+		pg.addPropItem(new PropItem("sc",lan,PValTP.vt_int,false,null,null,100)); //"ScanRate",""
+		pg.addPropItem(new PropItem("minv",lan,PValTP.vt_str,false,null,null,"")); //"Min Value",""
+		pg.addPropItem(new PropItem("maxv",lan,PValTP.vt_str,false,null,null,"")); // "Max Value",""
 		pgs.add(pg) ;
 		
 		tagPGS = pgs;

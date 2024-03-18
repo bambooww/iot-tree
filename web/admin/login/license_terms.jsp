@@ -23,18 +23,15 @@
 		lictxt = Convert.readFileTxt(licf, "utf-8") ;
 		lic_ok = true;
 	}
+	
+	String syslan = Lan.getSysLang() ;
+	if(syslan==null)
+		syslan="" ;
 %><!DOCTYPE html>
 <html>
 <head>
 <title>IOT Tree Server</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp"></jsp:include>
 </head>
 <style>
 
@@ -51,14 +48,16 @@
 if(lic_ok)
 {
 %>
-  <button onclick="do_accept()">Accept</button>
-  <button>Decline</button>
+  <button onclick="do_accept()" class="layui-btn"><wbt:lang>accept</wbt:lang></button>
+  <button class="layui-btn layui-btn-primary layui-border"><wbt:lang>decline</wbt:lang></button>
 <%
 }
 %>
 </div>
 </body>
 <script type="text/javascript">
+
+var sysln = "<%=syslan%>" ;
 
 function do_accept()
 {
@@ -83,5 +82,34 @@ $(window).resize(function(){
 });
 
 fit();
+
+function set_sys_lan()
+{
+	dlg.open("lan_sel.jsp",{title:"Select Language"},
+				['Cancel'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				],(ret)=>{
+					if(!ret)
+						return ;
+					ret.op="set_lan" ;
+					send_ajax("login_ajax.jsp",ret,(bsucc,rr)=>{
+						if(!bsucc || rr!='succ')
+						{
+							dlg.msg(rr);
+							return ;
+						}
+						document.location.href=document.location.href ;
+					}) ;
+				});
+}
+
+if(!sysln)
+{
+	set_sys_lan();
+}
 </script>
 </html>

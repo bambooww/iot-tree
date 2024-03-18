@@ -9,7 +9,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
@@ -55,27 +55,27 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="name" name="name" value="<%=name%>" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>" required  lay-verify="required" placeholder="Pls input name" autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:g>enable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Properties:</label>
+    <label class="layui-form-label"><wbt:g>props</wbt:g>:</label>
     <div class="layui-input-block">
         
     </div>

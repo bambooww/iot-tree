@@ -7,7 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -263,7 +263,7 @@ visibility: hidden;
 </style>
 <body marginwidth="0" marginheight="0">
 <div class="left">
- <blockquote class="layui-elem-quote ">Alert Sources</blockquote>
+ <blockquote class="layui-elem-quote "><wbt:g>alert,sors</wbt:g></blockquote>
  <div class="list">
 <%
 	for(UATag tag:prj.listTagsAll())
@@ -281,8 +281,8 @@ visibility: hidden;
 			String id = va.getUid() ;
 			String tt = Convert.plainToHtml(va.toTitleStr()) ;
 			String en_c = va.isEnable()?"green":"gray" ;
-			String en_t = va.isEnable()?"Enabled":"Disabled" ;
-%><div class="alert_item" title="<%=tt%>"><i class="fa fa-square en" style="color:<%=en_c%>" title="<%=en_t%>"></i>
+			String en_t = va.isEnable()?"enabled":"disabled" ;
+%><div class="alert_item" title="<%=tt%>"><i class="fa fa-square en" style="color:<%=en_c%>" title="<wbt:g><%=en_t%></wbt:g>"></i>
 	<span class="tt"><%=tt %></span><span class="chk_alert_c"><input type="checkbox" id="<%=id %>"  class="chk_alert" onclick="on_chk_alert('<%=id%>')"/></span>
 	</div>
 
@@ -296,14 +296,11 @@ visibility: hidden;
  </div>
 </div>
 <div class="mid" onclick="on_handler_clk()">
- <blockquote class="layui-elem-quote ">Alert Handlers
+ <blockquote class="layui-elem-quote "><wbt:g>alert,handlers</wbt:g>
  <div style="position: absolute;right:10px;top:11px;width:220px;border:0px solid;height:35px;">
- <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="show_alert_his('<%=prjid %>')">History</button>
- <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')">Save </button>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+Add </button>
- 	<%--
- 	<button class="layui-btn layui-btn-sm layui-border-blue"  onclick="import_alert()"><i class="fa-solid fa-file-import"></i>&nbsp;Import</button>
- 	 --%>
+ <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="show_alert_his('<%=prjid %>')"><wbt:g>history</wbt:g></button>
+ <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')"><wbt:g>save</wbt:g></button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
  </div>
 </blockquote>
  <div id="handler_list" class="list">
@@ -313,9 +310,9 @@ visibility: hidden;
  <div id="out_conn_panel" class="out_conn_panel"></div>
 </div>
 <div class="right">
- <blockquote class="layui-elem-quote ">Outputs
+ <blockquote class="layui-elem-quote "><wbt:g>outputs</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_o('<%=prjid %>',null)">+Add </button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_o('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
  </div>
 </blockquote>
  <div id="out_list" class="list">
@@ -480,7 +477,7 @@ function update_outs(end_cb)
 				<span class="tpt">\${ob.tpt}</span>
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_o('\${prjid}','\${ob.id}')"><i class="fa fa-pencil"></i></button>
-					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_out('\${prjid}','\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_out('\${prjid}','\${ob.id}')" title="<wbt:g>del</wbt:g>"><i class="fa-regular fa-rectangle-xmark"></i></button>
 				</span>
 				</div>` ;
 		}
@@ -553,12 +550,12 @@ function save_h_inout_ids(prjid)
 function del_handler(prjid,id)
 {
 	event.stopPropagation();
-	dlg.confirm('delete this handler?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,handler</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("prj_alert_ajax.jsp",{op:"del_h",prjid:prjid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -570,16 +567,16 @@ function del_handler(prjid,id)
 function add_or_edit_h(prjid,id)
 {
 	event.stopPropagation();
-	var tt = "Add Alert Handler";
+	var tt = "<wbt:g>add,alert,handler</wbt:g>";
 	if(id)
 	{
-		tt = "Edit Alert Handler";
+		tt = "<wbt:g>edit,alert,handler</wbt:g>";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("prj_alert_h_edit.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -631,12 +628,12 @@ function add_or_edit_h(prjid,id)
 function del_out(prjid,id)
 {
 	event.stopPropagation();
-	dlg.confirm('delete this output?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,output</wbt:g>?',{btn:["Yes","Cancel"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("prj_alert_ajax.jsp",{op:"del_o",prjid:prjid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -648,16 +645,16 @@ function del_out(prjid,id)
 function add_or_edit_o(prjid,id)
 {
 	event.stopPropagation();
-	var tt = "Add Alert Output";
+	var tt = "<wbt:g>add,alert,output</wbt:g>";
 	if(id)
 	{
-		tt = "Edit Alert Output";
+		tt = "<wbt:g>edit,alert,output</wbt:g>";
 	}
 	if(id==null)
 		id = "" ;
 	dlg.open("prj_alert_o_edit.jsp?prjid="+prjid+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -703,8 +700,8 @@ function show_alert_his(prjid)
 {
 	event.stopPropagation();
 	dlg.open("/prj_alert_his.jsp?prjid="+prjid,
-			{title:"Alert History"},
-			['Close'],
+			{title:"<wbt:g>alert,history</wbt:g>"},
+			['<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{

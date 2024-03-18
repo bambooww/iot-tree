@@ -10,7 +10,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid","cpid"))
 	return;
 String repid = request.getParameter("prjid") ;
@@ -72,6 +72,7 @@ if(Convert.isNullOrEmpty(encod))
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(800,750);
+
 </script>
 <style type="text/css">
 .layui-form-item

@@ -15,6 +15,7 @@
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
+String using_lan = Lan.getUsingLang() ;
 //UAContext.getOrLoadJsApi() ;
 %><!DOCTYPE html>
 <html class="">
@@ -42,6 +43,14 @@ visibility: visible;
 .fz a
 {
 background:#aaaaaa; 
+}
+
+.top_lan
+{
+	position: absolute;
+	right:10px;
+	top:15px;
+	width:100px;
 }
 
 .lib_item
@@ -115,6 +124,10 @@ background:#aaaaaa;
 			<div class="iot-logo">
 				<a><img src="inc/logo1.png" width="40px" height="40px"/> IOT-Tree Server</a>
 			</div>
+			<div class="top_lan">
+	 <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
+	 <button class="layui-btn layui-btn-primary layui-btn-xs <%=("cn".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('cn')">CN</button>
+	</div>
 			<!-- end logo -->
 			<!-- start nav -->
 			<div class="iot-top-nav navbar">
@@ -127,9 +140,9 @@ background:#aaaaaa;
 				</div>
 				<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 				  <ul class="nav navbar-nav">
-					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i> Home</a></li>
-					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i> Helper</a></li>
-					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i> Feedback</a></li>
+					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i><wbt:lang>home</wbt:lang></a></li>
+					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i><wbt:lang>helper</wbt:lang></a></li>
+					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i><wbt:lang>feedback</wbt:lang></a></li>
 				  </ul>
 				</nav>
 			</div>
@@ -145,7 +158,7 @@ background:#aaaaaa;
 			end search -->
 
 			<div class="iot-user-nav">
-					<div class="iot-top-user"><a class="login" href="javascript:logout()">logout</a>
+					<div class="iot-top-user"><a class="login" href="javascript:logout()"><wbt:lang>logout</wbt:lang></a>
 					
 <%
 List<IPro> pros = ProManager.getInstance().listPros() ;
@@ -162,6 +175,7 @@ if(pros.size()>0)
 		</div>
 	</div>
 	
+	
 
 <div class="iot-container-wrap" style="height: auto !important;">
 		<div class="container" style="height: auto !important;">
@@ -170,7 +184,7 @@ if(pros.size()>0)
 				<div class="iot-main-content" style="height: auto !important; min-height: 0px !important;">
 					<div class="iot-mod iot-question-detail iot-item">
 						<div class="mod-head">
-							<h1>Local Projects</h1>
+							<h1><wbt:lang>local_prj</wbt:lang></h1>
 							
 							<div style="float:left;top:5px;position: absolute;left:160px" >
 							<a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_prj()">
@@ -178,14 +192,14 @@ if(pros.size()>0)
 							<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;Add
+							</span>&nbsp;<wbt:lang>add</wbt:lang>
 							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<a class0="btn btn-success"  style0="width:100px;height:40px;" href="javascript:imp_prj()">
 							<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;Import
+							</span>&nbsp;<wbt:lang>import</wbt:lang>
 							 <input type="file" id='add_file' onchange="add_file_onchg()" name="file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 &nbsp;&nbsp;&nbsp;&nbsp;
@@ -193,7 +207,7 @@ if(pros.size()>0)
 							<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;Import Demo
+							</span>&nbsp;<wbt:lang>import</wbt:lang> Demo
 							</a>
 							
 							<%--
@@ -301,12 +315,12 @@ else
 <%
 if(rep.isMainPrj())
 {
-%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Main</span><%
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>main_prj</wbt:lang></span><%
 }
 
 if(rep.isAutoStart())
 {
-%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Auto Start</span><%
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>auto_start</wbt:lang></span><%
 }
 %>
          </div>
@@ -314,7 +328,7 @@ if(rep.isAutoStart())
 
        <div class="text-color-999">
            <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
-           • modified date:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
+           • <wbt:lang>modified_date</wbt:lang>:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
        </div>
    </div>
 <%
@@ -323,7 +337,7 @@ if(rep.isAutoStart())
 	if(cc>6)
 	{
 %>
-<div style="border:0px solid #ffff00;height:45px;text-align:right;padding-right:30px;"><a id="more_prj_show"  onclick="more_prj()">more projects...</a></div>
+<div style="border:0px solid #ffff00;height:45px;text-align:right;padding-right:30px;"><a id="more_prj_show"  onclick="more_prj()"><wbt:lang>more_prjs</wbt:lang>...</a></div>
 <%
 	}
 %>
@@ -353,14 +367,14 @@ if(rep.isAutoStart())
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1>Device Library </h1>
+					        <h1><wbt:lang>dev_lib</wbt:lang></h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        	<a href="javascript:dev_lib_import()">
 					        	<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp; Import
+							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang>
 							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 <%--
@@ -439,13 +453,13 @@ if(rep.isAutoStart())
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1 style="width:200px">HMI Library</h1>
+					        <h1 style="width:200px"><wbt:lang>hmi_lib</wbt:lang></h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        	<a href="javascript:comp_lib_import()"><span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp; Import
+							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang>
 							<input type="file" id='complib_add_file' onchange="complib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 							<%--
@@ -524,7 +538,7 @@ if(rep.isAutoStart())
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1 style="width:200px">Simulator</h1>
+					        <h1 style="width:200px"><wbt:lang>simulator</wbt:lang></h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        <a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_or_edit_simins()">
@@ -532,20 +546,20 @@ if(rep.isAutoStart())
 							<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;Add
+							</span>&nbsp;<wbt:lang>add</wbt:lang>
 							</a>&nbsp;&nbsp;&nbsp;&nbsp;
 							
 					        	<a href="javascript:sim_ins_import()"><span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp; Import</a>
+							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang></a>
 							<input type="file" id='add_sim_file' onchange="add_sim_file_onchg()" name="file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 							<a class0="btn btn-success"  href="javascript:imp_simins_demo()">
 							<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;Import Demo
+							</span>&nbsp;<wbt:lang>import</wbt:lang> Demo
 							</a>
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a title="simulator help" style="width:100px;height:40px;" href="/doc/en/sim/index.md" target="_blank">
@@ -625,7 +639,7 @@ else
 <%
 if(ins.isAutoStart())
 {
-%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue">Auto Start</span><%
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>auto_start</wbt:lang></span><%
 }
 %>
          </div>
@@ -633,7 +647,7 @@ if(ins.isAutoStart())
 
        <div class="text-color-999">
            <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
-           • modified date:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(ins.getSavedDT())) %></span>
+           • <wbt:lang>modified_date</wbt:lang>:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(ins.getSavedDT())) %></span>
        </div>
    </div>
 <%
@@ -648,18 +662,18 @@ if(ins.isAutoStart())
 				<div class="iot-side-bar">
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Services</h3>
+					        <h3><wbt:lang>services</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
 					       
-					       <a href="javascript:service_setup()">setup</a>
+					       <a href="javascript:service_setup()"><wbt:lang>setup</wbt:lang></a>
 					        
 					    </div>
 					</div>
 					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Number of sessions</h3>
+					        <h3><wbt:lang>num_of_sess</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
 					       <%=WSServer.getSessionNum() %>
@@ -668,7 +682,7 @@ if(ins.isAutoStart())
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <span class="tt">Data Source</span>
+					        <span class="tt"><wbt:lang>data_sor</wbt:lang></span>
 					        <span class="op" onclick="add_sor_sel()"><i class="fa-solid fa-plus fa-lg"></i></span>
 					    </div>
 					    <div class="mod-body fz" id="data_sor_list">
@@ -679,21 +693,21 @@ if(ins.isAutoStart())
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Plugins and Dict</h3>
+					        <h3><wbt:lang>plugins_dict</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
-					    	<a href="javascript:open_plugins()" >Plugins</a>&nbsp;
-					    	<a href="javascript:open_ext_prop()" >Global Dict</a>
+					    	<a href="javascript:open_plugins()" ><wbt:lang>plugins</wbt:lang></a>&nbsp;
+					    	<a href="javascript:open_ext_prop()" ><wbt:lang>g_dict</wbt:lang></a>
 					    	
 					    </div>
 					</div>
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3>Others</h3>
+					        <h3><wbt:lang>others</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
-					       <a href="javascript:log_ctrl()" >log controller</a>
+					       <a href="javascript:log_ctrl()" ><wbt:lang>log_ctrl</wbt:lang></a>
 					       
 					     </div>
 					</div>
@@ -712,6 +726,12 @@ if(ins.isAutoStart())
 </div>
 </body>
 <script type="text/javascript">
+
+layui.use(['form'], function(){
+	  var form = layui.form;
+	  
+	  form.render() ;
+});
 
 var all_panels=[];
 function open_rep(id)
@@ -788,7 +808,7 @@ function show_hide(id)
 
 function del_rep(id)
 {
-	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm("<wbt:lang>del_sure</wbt:lang>",{btn:["<wbt:lang>yes</wbt:lang>","<wbt:lang>cancel</wbt:lang>"],title:"<wbt:lang>del_confirm</wbt:lang>"},function ()
     {
 		send_ajax('ua/prj_ajax.jsp',{op:"del",id:id},function(bsucc,ret){
 			if(!bsucc||ret!='ok')
@@ -806,8 +826,8 @@ function open_devlib(id)
 	if(!id)
 		id = "" ;
 	dlg.open_win("dev/dev_main.jsp?edit=true&libid="+id,
-			{title:"Device Library",w:'1000',h:'560'},
-			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"<wbt:lang>dev_lib</wbt:lang>",w:'1000',h:'560'},
+			[{title:'<wbt:lang>close</wbt:lang>',style:"primary"},{title:'<wbt:lang>help</wbt:lang>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -822,8 +842,8 @@ function open_devlib(id)
 function add_prj()
 {
 	dlg.open("ua/prj_edit.jsp",
-			{title:"Add Project",w:'500px',h:'400px'},
-			['Ok','Cancel'],
+			{title:"<wbt:lang>add_prj</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -925,8 +945,8 @@ function add_file_onchg()
 function before_imp(tmpfn,bdemo)
 {
 	dlg.open("ua/prj_import.jsp?tmpfn="+tmpfn+"&demo="+bdemo,
-			{title:"Import project",w:'500px',h:'400px'},
-			['Do Import','Cancel'],
+			{title:"<wbt:lang>imp_prj</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>do_imp</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -959,8 +979,8 @@ function imp_prj()
 function imp_prj_demo()
 {
 	dlg.open("ua/prj_demo_list.jsp",
-			{title:"Import Demo project",w:'500px',h:'400px'},
-			['Select','Cancel'],
+			{title:"<wbt:lang>imp_demo_prj</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>select</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -987,8 +1007,8 @@ function imp_prj_demo()
 function imp_simins_demo()
 {
 	dlg.open("sim/sim_demo_list.jsp",
-			{title:"Import Demo Simulator Instance",w:'500px',h:'400px'},
-			['Select','Cancel'],
+			{title:"<wbt:lang>imp_demo_sim</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>select</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1034,8 +1054,8 @@ function devlib_before_imp(tmpfn)
 {
 
 	dlg.open("dev/lib_import.jsp?tmpfn="+tmpfn,
-			{title:"Import Device Library",w:'500px',h:'400px'},
-			['Do Import','Cancel'],
+			{title:"<wbt:lang>imp_dev_lib</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>do_imp</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1096,12 +1116,12 @@ function devlib_add_file_onchg()
 
 function devlib_del(libid)
 {
-	dlg.confirm('delete this library?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:lang>del,this,dev,lib</wbt:lang>?',{btn:['<wbt:lang>yes</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
 		    {
 					send_ajax("./dev/lib_ajax.jsp","op=del&libid="+libid,function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
 			    			return ;
 			    		}
 			    		document.location.href=document.location.href;
@@ -1111,16 +1131,16 @@ function devlib_del(libid)
 
 function devlib_add_or_edit(libid)
 {
-	var tt = "Edit Lib" ;
+	var tt = "<wbt:lang>edit,device,lib</wbt:lang>" ;
 	if(!libid)
 	{
 		libid ="" ;
-		tt = "Add Lib" ;
+		tt = "<wbt:lang>add,device,lib</wbt:lang>" ;
 	}
 		
 	dlg.open("./dev/lib_edit.jsp?libid="+libid,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1174,8 +1194,8 @@ function complib_before_imp(tmpfn)
 {
 
 	dlg.open("ua_hmi/comp_lib_import.jsp?tmpfn="+tmpfn,
-			{title:"Import HMI Library",w:'500px',h:'400px'},
-			['Do Import','Cancel'],
+			{title:"<wbt:lang>import,hmi,lib</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>do_imp</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1229,7 +1249,7 @@ function complib_add_file_onchg()
    　  },
       　error: function(data)
          {
-  				dlg.msg("upload failed");
+  				dlg.msg("<wbt:lang>upload,failed</wbt:lang>");
 　　　}
   　　});
 }
@@ -1239,8 +1259,8 @@ function open_complib(id)
 	if(!id)
 		id = "" ;
 	dlg.open_win("ua_hmi/comp_lib_main.jsp?edit=true&libid="+id,
-			{title:"HMI Comp Library",w:'1000',h:'560'},
-			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"<wbt:lang>hmi_comp_lib</wbt:lang>",w:'1000',h:'560'},
+			[{title:'<wbt:lang>close</wbt:lang>',style:"primary"},{title:'<wbt:lang>help</wbt:lang>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -1255,12 +1275,12 @@ function open_complib(id)
 
 function complib_del(libid)
 {
-	dlg.confirm('delete this HMI library?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:lang>del,this,hmi,lib</wbt:lang>?',{btn:["<wbt:lang>yes</wbt:lang>","<wbt:lang>cancel</wbt:lang>"],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
 		    {
 					send_ajax("./ua_hmi/comp_ajax.jsp","op=lib_del&libid="+libid,function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
 			    			return ;
 			    		}
 			    		document.location.href=document.location.href;
@@ -1270,16 +1290,16 @@ function complib_del(libid)
 
 function complib_add_or_edit(libid)
 {
-	var tt = "Edit HMI Lib" ;
+	var tt = "<wbt:lang>edit,hmi,lib</wbt:lang>" ;
 	if(!libid)
 	{
 		libid ="" ;
-		tt = "Add HMI Lib" ;
+		tt = "<wbt:lang>add,hmi,lib</wbt:lang>" ;
 	}
 		
 	dlg.open("./ua_hmi/comp_lib_edit.jsp?libid="+libid,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1331,7 +1351,7 @@ function logout()
         	}
         	else
         	{
-        		dlg.msg("Login failed") ;
+        		dlg.msg("<wbt:lang>logout,failed</wbt:lang>") ;
         	}
         },
         error:function(req,err,e)
@@ -1344,8 +1364,8 @@ function logout()
 function service_setup()
 {
 	dlg.open("service/service_mgr.jsp",
-			{title:"Service Manager",w:'500px',h:'400px'},
-			['Close'],
+			{title:"<wbt:lang>service_mgr</wbt:lang>",w:'500px',h:'400px'},
+			['<wbt:lang>close</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -1362,7 +1382,7 @@ function open_simins(id)
 
 function del_simins(id)
 {
-	dlg.confirm("make sure to delete it？",{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm("<wbt:lang>del,this,simins</wbt:lang>?",{btn:["<wbt:lang>yes</wbt:lang>","<wbt:lang>cancel</wbt:lang>"],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
     {
 		send_ajax('sim/sim_ajax.jsp',{op:"ins_del",insid:id},function(bsucc,ret){
 			if(!bsucc||ret!='succ')
@@ -1382,14 +1402,14 @@ function exp_simins(id)
 
 function add_or_edit_simins(insid)
 {
-	var tt = "Add Simulator Instance";
+	var tt = "<wbt:g>add,simins</wbt:g>";
 	if(insid)
-		tt = "Edit Simulator Instance";
+		tt = "<wbt:g>edit,simins</wbt:g>";
 	else
 		insid="" ;
 	dlg.open("sim/sim_ins_edit.jsp?insid="+insid,
 			{title:tt,w:'500px',h:'400px'},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1627,6 +1647,18 @@ function add_or_edit_source(tp,t,id)
 					dlg.close();
 				}
 			]);
+}
+
+function chg_lan(ln)
+{
+	send_ajax("./login/login_ajax.jsp",{op:"set_session_lan",lan:ln},(bsucc,ret)=>{
+		if(!bsucc||ret!='succ')
+		{
+			dlg.msg(ret) ;
+			return;
+		}
+		document.location.href=document.location.href;
+	});
 }
 </script>
 </html>

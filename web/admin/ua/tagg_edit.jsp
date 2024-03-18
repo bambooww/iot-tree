@@ -8,7 +8,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%>
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
 String taggpath = request.getParameter("tagg_path") ;
 String ppath = request.getParameter("ppath") ;
@@ -39,10 +39,12 @@ else
 String name = tagg.getName() ;
 String title = tagg.getTitle() ;
 String desc = tagg.getDesc();
+
+String tt = bedit?"edit,tagg":"add,tagg";
 %>
 <html>
 <head>
-<title>Tag Editor</title>
+<title>Tag Group Editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -57,19 +59,19 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="name" name="name" value="<%=name %>"   lay-verify="required" autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title" value="<%=title %>"   lay-verify="required" autocomplete="off" class="layui-input">
     </div>
   </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text"  id="desc"  name="desc" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
     </div>
@@ -77,6 +79,7 @@ dlg.resize_to(600,400);
  </form>
 </body>
 <script type="text/javascript">
+dlg.set_dlg_title("<wbt:g><%=tt%></wbt:g>") ;
 
 layui.use('form', function(){
 	  var form = layui.form;

@@ -5,7 +5,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.iottree.core.Config;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -56,8 +58,20 @@ public class AdminFilter implements Filter,ILang
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain fc) throws ServletException, IOException
 	{
+		String lan = request.getParameter("_lan_") ;//req url first
+		if(Convert.isNullOrEmpty(lan))
+		{
+			HttpServletRequest req = (HttpServletRequest) request;
+			LoginUtil.SessionItem si = LoginUtil.getAdminLoginSession(req.getSession()) ;
+			if(si!=null)
+				lan = si.lan ; // then session
+		}
+		
 		try
 		{
+			if(Convert.isNotNullEmpty(lan))
+				Lan.setLangInThread(lan);
+			
 			synchronized(AdminFilter.class)
 			{
 				runJspNum ++ ;
@@ -67,6 +81,9 @@ public class AdminFilter implements Filter,ILang
 		}
 		finally
 		{
+			if(Convert.isNotNullEmpty(lan))
+				Lan.setLangInThread(null);
+			
 			synchronized(AdminFilter.class)
 			{
 				runJspNum -- ;

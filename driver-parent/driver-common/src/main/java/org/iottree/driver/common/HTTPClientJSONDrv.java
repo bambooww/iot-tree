@@ -22,6 +22,7 @@ import org.iottree.core.UATag;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.util.Lan;
 
 /**
  * 
@@ -62,10 +63,12 @@ public class HTTPClientJSONDrv extends DevDriver
 		
 		PropGroup gp = null;
 		
-		gp = new PropGroup("conns","Connections");
-		gp.addPropItem(new PropItem("title","Title","",PValTP.vt_str,false,null,null,""));
-		gp.addPropItem(new PropItem("url","URL","",PValTP.vt_str,false,null,null,""));
-		gp.addPropItem(new PropItem("js","JavaScript","",PValTP.vt_str,false,null,null,"").withTxtMultiLine(true));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		gp = new PropGroup("conns",lan);//"Connections");
+		gp.addPropItem(new PropItem("title",lan,PValTP.vt_str,false,null,null,"")); //"Title",""
+		gp.addPropItem(new PropItem("url",lan,PValTP.vt_str,false,null,null,"")); //"URL",""
+		gp.addPropItem(new PropItem("js",lan,PValTP.vt_str,false,null,null,"").withTxtMultiLine(true)); //"JavaScript",""
 		pgs.add(gp) ;
 		
 		return pgs;

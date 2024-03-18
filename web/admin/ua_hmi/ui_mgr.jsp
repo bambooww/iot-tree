@@ -7,7 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -213,7 +213,7 @@ position:absolute;
 
 <div class="left_t">
      <div class="blk_top">
-      <blockquote class="layui-elem-quote ">Tags
+      <blockquote class="layui-elem-quote "><wbt:g>tags</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
 
  </div>
@@ -223,10 +223,10 @@ position:absolute;
      <table style="width:100%;border:0px" class='besel'>
     		<thead>
     			<tr style="background-color: #f0f0f0">
-    				<td width="30%">Tag</td>
-    				<td width="30%">Title</td>
-    				<td width="30%">Address</td>
-    				<td width="20%">Value Type</td>
+    				<td width="30%"><wbt:g>tag</wbt:g></td>
+    				<td width="30%"><wbt:g>title</wbt:g></td>
+    				<td width="30%"><wbt:g>addr</wbt:g></td>
+    				<td width="20%"><wbt:g>val,type</wbt:g></td>
     			</tr>
     		</thead>
     		<tbody id="tag_tb_body" style="height0:390px">
@@ -256,7 +256,7 @@ for(RecTagParam rtp:recm.getRecTagParams().values())
   </div>
  <div class="left_b" >
      <div class="blk_top">
-     <blockquote class="layui-elem-quote ">UI Templates
+     <blockquote class="layui-elem-quote ">UI <wbt:g>temps</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
 	
  </div>
@@ -267,10 +267,10 @@ for(RecTagParam rtp:recm.getRecTagParams().values())
     		<thead>
     			<tr style="background-color: #f0f0f0">
     			<td width="10%"></td>
-    				<td width="20%">Name</td>
-    				<td width="30%">Title</td>
-    				<td width="20%">Tag Num</td>
-    				<td width="20%">Size</td>
+    				<td width="20%"><wbt:g>name</wbt:g></td>
+    				<td width="30%"><wbt:g>title</wbt:g></td>
+    				<td width="20%"><wbt:g>tag,num</wbt:g></td>
+    				<td width="20%"><wbt:g>size</wbt:g></td>
     			</tr>
     		</thead>
     		<tbody id="temps_tb_body">
@@ -281,9 +281,9 @@ for(RecTagParam rtp:recm.getRecTagParams().values())
   </div>
 <div class="right" >
   <div class="blk_top">
-  <blockquote class="layui-elem-quote ">UI Items
+  <blockquote class="layui-elem-quote ">UI <wbt:g>items</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
-	<button id="btn_add_item" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-disabled" onclick="add_or_edit_item(null)">+Add</button>
+	<button id="btn_add_item" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-disabled" onclick="add_or_edit_item(null)">+<wbt:g>add</wbt:g></button>
  </div>
  </blockquote></div>
   <div class="blk_c" id="items_list">
@@ -318,7 +318,7 @@ function update_items_ui()
 		for(let ob of items)
 		{
 			let en_c = ob.en?"green":"gray" ;
-			let en_t = ob.en?"Enabled":"Disabled" ;
+			let en_t = ob.en?"<wbt:g>enabled</wbt:g>":"<wbt:g>disabled</wbt:g>" ;
 			let y = 0 ;
 			tmps += `<div id="p_\${ob.id}" style0="top:\${y}px" class="p_item" hid="\${ob.id}" n="\${ob.n}" t="\${ob.t}" tp="\${ob.tp}" onclick="on_pro_clk(this)" alert_uids="\${ob.alert_uids}">
 			    <img src="\${ob.icon||''}" width="50" height="50" style="border:1px solid;"/>
@@ -329,7 +329,7 @@ function update_items_ui()
 				
 				<span class="oper">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_item('\${ob.id}')"><i class="fa fa-pencil"></i></button>
-					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_item('\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_item('\${ob.id}')" title="<wbt:g>del</wbt:g>"><i class="fa-regular fa-rectangle-xmark"></i></button>
 				</span>
 
 				</div>` ;
@@ -423,10 +423,10 @@ function add_or_edit_item(id)
 	let tempn = cur_tempn ;
 	
 	let tagids_str = "" ; 
-	let tt = "Add UI Item";
+	let tt = "<wbt:g>add,ui,item</wbt:g>";
 	if(id)
 	{
-		tt = "Edit UI Item";
+		tt = "<wbt:g>edit,ui,item</wbt:g>";
 		tagids_str="";
 		tempn="" ;
 	}
@@ -435,7 +435,7 @@ function add_or_edit_item(id)
 		
 		if(!tagids||tagids.length<=0||!tempn)
 		{
-			dlg.msg("Please select tag and UI Template first");
+			dlg.msg("<wbt:g>pls_sel_tag_uitemp_fst</wbt:g>");
 			return ;
 		}
 		tagids_str=tagids.join(',') ;
@@ -446,7 +446,7 @@ function add_or_edit_item(id)
 		id = "" ;
 	dlg.open("ui_item_edit.jsp?prjid="+prjid+"&tagids="+tagids_str+"&tempn="+tempn+"&id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -481,12 +481,12 @@ function del_item(id)
 	if(event)
 		event.stopPropagation();
 	let ob = $("#p_"+id);
-	dlg.confirm('delete this UI Item ['+ob.attr("n")+']?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,ui,item</wbt:g> ['+ob.attr("n")+']?',{btn:['<wbt:g>yes</wbt:g>','<wbt:g>cancel</wbt:g>'],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("ui_ajax.jsp",{op:"del_item",prjid:prjid,id:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 						update_items();

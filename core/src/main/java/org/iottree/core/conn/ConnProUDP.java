@@ -14,6 +14,11 @@ public class ConnProUDP extends ConnProvider
 		return TP;	
 	}
 
+	@Override
+	public String getProviderTpt()
+	{
+		return "UDP" ;
+	}
 
 	@Override
 	public boolean isSingleProvider()

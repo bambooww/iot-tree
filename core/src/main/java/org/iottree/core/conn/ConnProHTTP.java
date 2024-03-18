@@ -13,6 +13,12 @@ public class ConnProHTTP extends ConnProvider
 		return TP;
 	}
 	
+	@Override
+	public String getProviderTpt()
+	{
+		return "HTTP" ;
+	}
+	
 	public boolean isSingleProvider()
 	{
 		return false;

@@ -1,43 +1,251 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dd_class id="1" name="ua_lang"  name_jp=""  >
-  <dd_node id="1001" name="add_ch" name_cn="新增通道" name_en="Add Channel" />
-  <dd_node id="1001" name="new_ch" name_cn="新增通道" name_en="New Channel" />
-  <dd_node id="1001" name="data_cxt" name_cn="数据上下文" name_en="Data Context" />
-  <dd_node id="1001" name="cxt_script_test" name_cn="JS上下文测试" name_en="JS Context Test" />
-  <dd_node id="1001" name="properties" name_cn="属性" name_en="Properties" />
-  <dd_node id="1001" name="new_hmi" name_cn="新人机交互HMI" name_en="New HMI" />
-  <dd_node id="1001" name="new_tag_mid" name_cn="新标签（中间）" name_en="New Tag Middle" />
-  <dd_node id="1001" name="delete" name_cn="删除" name_en="Delete" />
-  <dd_node id="1001" name="new_dev" name_cn="新增设备" name_en="New Device" />
-  <dd_node id="1001" name="add_dev" name_cn="新增设备" name_en="Add Device" />
-  <dd_node id="1001" name="edit_dev" name_cn="编辑设备" name_en="Edit Device" />
-  <dd_node id="1001" name="refresh_dev" name_cn="刷新设备" name_en="Refresh Device" />
-  <dd_node id="1001" name="device" name_cn="设备" name_en="Device" />
+
+  <dd_node id="1" name="home" name_cn="首页" name_en="Home" />
+  <dd_node id="1" name="helper" name_cn="帮助" name_en="Helper" />
+  <dd_node id="1" name="feedback" name_cn="反馈" name_en="Feedback" />
+  <dd_node id="1" name="logout" name_cn="退出登录" name_en="Logout" />
+  <dd_node id="1" name="reset" name_cn="重置" name_en="Reset" />
+  
+  <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
+  <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />
+  <dd_node id="1" name="add" name_cn="新增" name_en="Add" />
+  <dd_node id="1" name="import" name_cn="导入" name_en="Import" />
+  <dd_node id="1" name="imp" name_cn="导入" name_en="Import" />
+  <dd_node id="1" name="export" name_cn="导出" name_en="Export" />
+  <dd_node id="1" name="main_prj" name_cn="主项目" name_en="Main" />
+  <dd_node id="1" name="auto_start" name_cn="自动启动" name_en="Auto Start" />
+  
+  <dd_node id="1" name="modified_date" name_cn="修改时间" name_en="modified date" />
+  <dd_node id="1" name="more_prjs" name_cn="更多项目" name_en="more projects" />
+  <dd_node id="1" name="dev_lib" name_cn="设备库" name_en="Device Library" />
+  <dd_node id="1" name="hmi_lib" name_cn="图库" name_en="HMI Library" />
+  <dd_node id="1" name="simulator" name_cn="模拟器" name_en="Simulator" />
+  <dd_node id="1" name="bind" name_cn="绑定" name_en="Bind" />
+  <dd_node id="1" name="test" name_cn="测试" name_en="Test" />
+  <dd_node id="1" name="sync" name_cn="同步" name_en="Sync" />
+  <dd_node id="1" name="monitor" name_cn="监视" name_en="Monitor" />
+  <dd_node id="1" name="time" name_cn="时间" name_en="Time" />
+  <dd_node id="1" name="left" name_cn="左边" name_en="Left" />
+  <dd_node id="1" name="right" name_cn="右边" name_en="Right" />
+  
+  
+  <dd_node id="1" name="close" name_cn="关闭" name_en="Close" />
+  <dd_node id="1" name="help" name_cn="帮助" name_en="Help" />
+  <dd_node id="1" name="yes" name_cn="确定" name_en="Yes" />
+  
+  <dd_node id="1" name="del_confirm" name_cn="删除确认" name_en="Delete Confirm" />
+  <dd_node id="1" name="del_sure" name_cn="确认要删除此项么?" name_en="make sure to delete it?" />
+  
+  <dd_node id="1" name="imp_prj" name_cn="导入项目" name_en="Import project" />
+  <dd_node id="1" name="do_imp" name_cn="确定导入" name_en="Do Import" />
+  <dd_node id="1" name="select" name_cn="选择" name_en="Select" />
+  <dd_node id="1" name="imp_demo_prj" name_cn="导入演示项目" name_en="Import Demo project" />
+  <dd_node id="1" name="imp_demo_sim" name_cn="导入演示模拟实例" name_en="Import Demo Simulator Instance" />
+  <dd_node id="1" name="imp_dev_lib" name_cn="导入设备库" name_en="Import Device Library" />
+  <dd_node id="1" name="edit_dev_lib" name_cn="编辑设备库" name_en="Edit Device Library" />
+  
+  
+  <dd_node id="1" name="services" name_cn="服务程序" name_en="Services" />
+  <dd_node id="1" name="setup" name_cn="设置" name_en="Setup" />
+  <dd_node id="1" name="num_of_sess" name_cn="会话数" name_en="Number of sessions" />
+  <dd_node id="1" name="data_sor" name_cn="数据源" name_en="Data Source" />
+  <dd_node id="1" name="plugins_dict" name_cn="插件和字典" name_en="Plugins and Dict" />
+  <dd_node id="1" name="plugins" name_cn="插件" name_en="Plugins" />
+  <dd_node id="1" name="g_dict" name_cn="全局字典" name_en="Global Dict" />
+  <dd_node id="1" name="others" name_cn="其他" name_en="Others" />
+  <dd_node id="1" name="log_ctrl" name_cn="日志控制" name_en="Log controller" />
+  
+  
+  <dd_node id="1" name="channel" name_cn="通道" name_en="Channel" />
+  <dd_node id="1" name="add_prj" name_cn="新增项目" name_en="Add Project" />
+  <dd_node id="1" name="add_ch" name_cn="新增通道" name_en="Add Channel" />
+  <dd_node id="1" name="new_ch" name_cn="新增通道" name_en="New Channel" />
+  <dd_node id="1" name="data_cxt" name_cn="数据上下文" name_en="Data Context" />
+  <dd_node id="1" name="cxt_script_test" name_cn="JS上下文测试" name_en="JS Context Test" />
+  <dd_node id="1" name="properties" name_cn="属性" name_en="Properties" />
+  <dd_node id="1" name="props" name_cn="属性" name_en="Properties" />
+  <dd_node id="1" name="new_hmi" name_cn="新增人机交互HMI" name_en="New HMI" />
+  <dd_node id="1" name="new_tag_mid" name_cn="新增标签（中间）" name_en="New Tag Middle" />
+  <dd_node id="1" name="delete" name_cn="删除" name_en="Delete" />
+  <dd_node id="1" name="new_dev" name_cn="新增设备" name_en="New Device" />
+  <dd_node id="1" name="add_dev" name_cn="新增设备" name_en="Add Device" />
+  <dd_node id="1" name="edit_dev" name_cn="编辑设备" name_en="Edit Device" />
+  <dd_node id="1" name="refresh_dev" name_cn="刷新设备" name_en="Refresh Device" />
+  <dd_node id="1" name="device" name_cn="设备" name_en="Device" />
+  <dd_node id="1" name="dev" name_cn="设备" name_en="Device" />
+  <dd_node id="1" name="edit" name_cn="编辑" name_en="Edit" />
+  <dd_node id="1" name="lib" name_cn="库" name_en="Library" />
+  <dd_node id="1" name="hmi" name_cn="图" name_en="HMI" />
+  <dd_node id="1" name="del" name_cn="删除" name_en="Delete" />
+  <dd_node id="1" name="confirm" name_cn="确认" name_en="Confirm" />
+  <dd_node id="1" name="err" name_cn="错误" name_en="Error" />
+  <dd_node id="1" name="failed" name_cn="失败" name_en="Failed" />
+  <dd_node id="1" name="upload" name_cn="上传" name_en="Upload" />
+  <dd_node id="1" name="simins" name_cn="模拟器实例" name_en="Simulator Instance" />
+  <dd_node id="1" name="triggered" name_cn="已触发" name_en="Triggered" />
+  <dd_node id="1" name="new_devs_f" name_cn="新设备被发现" name_en="New Devices Found" />
+  <dd_node id="1" name="tagg" name_cn="标签组" name_en="Tag Group" />
+  
+  
+  <dd_node id="1" name="link_conn" name_cn="连接接入" name_en="Link" />
+  <dd_node id="1" name="bind_conn" name_cn="绑定接入" name_en="Binder" />
+  <dd_node id="1" name="msg_conn" name_cn="消息接入" name_en="Message" />
+  <dd_node id="1" name="oths_conn" name_cn="其他接入" name_en="Others" />
+  <dd_node id="1" name="msg" name_cn="消息" name_en="Message" />
+  <dd_node id="1" name="show" name_cn="显示" name_en="Show" />
+  <dd_node id="1" name="hide" name_cn="隐藏" name_en="Hide" />
+  <dd_node id="1" name="update" name_cn="更新" name_en="Update" />
+  <dd_node id="1" name="change" name_cn="改变" name_en="Change" />
+  <dd_node id="1" name="valid" name_cn="有效" name_en="Valid" />
+  <dd_node id="1" name="quality" name_cn="质量" name_en="Quality" />
+  <dd_node id="1" name="oper" name_cn="操作" name_en="Oper" />
+  <dd_node id="1" name="write" name_cn="写" name_en="Write" />
+  <dd_node id="1" name="recorder" name_cn="记录" name_en="Recorder" />
+  <dd_node id="1" name="has" name_cn="有" name_en="Has" />
+  
+  
+  <dd_node id="1" name="client" name_cn="客户端" name_en="Client" />
+  <dd_node id="1" name="server_e" name_cn="服务端" name_en="Server" />
+  <dd_node id="1" name="com_p" name_cn="串口通信COM" name_en="COM Port" />
+  <dd_node id="1" name="virtual_e" name_cn="虚拟接入" name_en="Virtual" />
+  <dd_node id="1" name="js_cxt_test" name_cn="JS上下文测试" name_en="JS Context Test" />
+  <dd_node id="1" name="cmd_triggered" name_cn="指令已触发" name_en="Cmd Triggered" />
+  <dd_node id="1" name="succ" name_cn="成功" name_en="Ok" />
+  <dd_node id="1" name="drv_sel" name_cn="驱动选择" name_en="Driver Selector" />
     
-  <dd_node id="1001" name="new_tag" name_cn="新增标签" name_en="New Tag" />
-  <dd_node id="1001" name="new_tag_group" name_cn="新增标签组" name_en="New Tag Group" />
+    <dd_node id="1" name="hmi_comp_lib" name_cn="图元库" name_en="HMI Comp Library" />
+    <dd_node id="1" name="this" name_cn="这个" name_en="This" />
+    
+    <dd_node id="1" name="service_mgr" name_cn="服务程序管理" name_en="Service Manager" />
+    
+    <dd_node id="1" name="share" name_cn="共享" name_en="Share" />
+    <dd_node id="1" name="share_as_n" name_cn="共享为一个节点" name_en="Share as A Node" />
+    <dd_node id="1" name="pls" name_cn="请" name_en="Please" />
+    <dd_node id="1" name="push" name_cn="推送" name_en="Push" />
+    
+    <dd_node id="1" name="writable" name_cn="可写" name_en="Writable" />
+    
+    
+    <dd_node id="1" name="task" name_cn="任务" name_en="Task" />
+    <dd_node id="1" name="tasks" name_cn="任务" name_en="Tasks" />
+    <dd_node id="1" name="alert" name_cn="报警" name_en="Alert" />
+    <dd_node id="1" name="dict" name_cn="字典" name_en="Dictionary" />
+    <dd_node id="1" name="data" name_cn="数据" name_en="Data" />
+    <dd_node id="1" name="recorder" name_cn="记录器" name_en="Recorder" />
+    <dd_node id="1" name="recorded" name_cn="已记录" name_en="Recorded" />
+    <dd_node id="1" name="record" name_cn="记录" name_en="Record" />
+    <dd_node id="1" name="store" name_cn="存储" name_en="Store" />
+    <dd_node id="1" name="dialog" name_cn="对话框" name_en="Dialog" />
+    <dd_node id="1" name="dialogs" name_cn="对话框" name_en="Dialogs" />
+    <dd_node id="1" name="ui" name_cn="UI" name_en="UI" />
+    <dd_node id="1" name="paste" name_cn="粘贴" name_en="Paste" />
+    <dd_node id="1" name="copy" name_cn="复制" name_en="Copy" />
+    <dd_node id="1" name="copied" name_cn="已复制" name_en="Copied" />
+    <dd_node id="1" name="to" name_cn="到" name_en="To" />
+    <dd_node id="1" name="list" name_cn="列表" name_en="List" />
+    <dd_node id="1" name="sors" name_cn="源" name_en="Sources" />
+    <dd_node id="1" name="sor" name_cn="源" name_en="Source" />
+    <dd_node id="1" name="handlers" name_cn="处理程序" name_en="Handlers" />
+    <dd_node id="1" name="handler" name_cn="处理程序" name_en="Handler" />
+    <dd_node id="1" name="save" name_cn="保存" name_en="Save" />
+    <dd_node id="1" name="history" name_cn="历史" name_en="History" />
+    <dd_node id="1" name="outputs" name_cn="输出" name_en="Outputs" />
+    <dd_node id="1" name="output" name_cn="输出" name_en="Output" />
+    
+    <dd_node id="1" name="apply" name_cn="应用" name_en="Apply" />
+    <dd_node id="1" name="conns" name_cn="连接" name_en="Connections" />
+    <dd_node id="1" name="conn" name_cn="连接" name_en="Connection" />
+    <dd_node id="1" name="provider" name_cn="提供" name_en="Provider" />
+    <dd_node id="1" name="editor" name_cn="编辑器" name_en="Editor" />
+    <dd_node id="1" name="set" name_cn="设置" name_en="Set" />
+    <dd_node id="1" name="unset" name_cn="取消设置" name_en="Unset" />
+    
+    <dd_node id="1" name="mgr" name_cn="管理" name_en="Manager" />
+    <dd_node id="1" name="rec_tags" name_cn="记录的标签" name_en="Recorded Tags" />
+    <dd_node id="1" name="processor" name_cn="处理器" name_en="Processor" />
+    <dd_node id="1" name="found" name_cn="被找到" name_en="Found" />
+    <dd_node id="1" name="system" name_cn="系统" name_en="System" />
+    <dd_node id="1" name="intv" name_cn="时间间隔" name_en="Interval" />
+    <dd_node id="1" name="ms" name_cn="毫秒" name_en="MS" />
+    <dd_node id="1" name="second" name_cn="秒" name_en="Second" />
+    <dd_node id="1" name="action" name_cn="活动" name_en="Action" />
+    <dd_node id="1" name="host" name_cn="主机" name_en="Host" />
+    <dd_node id="1" name="port" name_cn="端口" name_en="Port" />
+    <dd_node id="1" name="timeout" name_cn="过期" name_en="Timeout" />
+    <dd_node id="1" name="user" name_cn="用户" name_en="User" />
+    <dd_node id="1" name="psw" name_cn="密码" name_en="Password" />
+    
+    <dd_node id="1" name="set_as_main_ui" name_cn="设置为主界面" name_en="Set as Main UI" />
+    <dd_node id="1" name="cp_ok" name_cn="复制成功" name_en="Copied Ok" />
+  <dd_node id="1" name="new_tag" name_cn="新增标签" name_en="New Tag" />
+  <dd_node id="1" name="new_tag_group" name_cn="新增标签组" name_en="New Tag Group" />
   
-  <dd_node id="1001" name="write_val" name_cn="写数据" name_en="Write Value" />
-  <dd_node id="1001" name="edit_ui" name_cn="编辑UI" name_en="Edit UI" />
+  <dd_node id="1" name="write_val" name_cn="写数据" name_en="Write Value" />
+  <dd_node id="1" name="val" name_cn="值" name_en="Value" />
+  <dd_node id="1" name="edit_ui" name_cn="编辑UI" name_en="Edit UI" />
   
-  <dd_node id="1002" name="title" name_cn="标题" name_en="Title"/>
-  <dd_node id="1003" name="driver" name_cn="驱动" name_en="Driver"/>   
-  <dd_node id="1004" name="description" name_cn="描述" name_en="Description"/>   
-  <dd_node id="1004" name="ok" name_cn="确认" name_en="Ok"/>  
-  <dd_node id="1004" name="cancel" name_cn="关闭" name_en="Cancel"/> 
-  <dd_node id="1004" name="pls_input" name_cn="请输入" name_en="Please input "/>
-  <dd_node id="1004" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/>
+  <dd_node id="1" name="name" name_cn="名称" name_en="Name"/>
+  <dd_node id="1" name="title" name_cn="标题" name_en="Title"/>
+  <dd_node id="1" name="desc" name_cn="描述" name_en="Description"/>
+  <dd_node id="1" name="enable" name_cn="使能" name_en="Enable"/>
+  <dd_node id="1" name="status" name_cn="状态" name_en="Status"/>
+  <dd_node id="1" name="addr" name_cn="地址" name_en="Address"/>
+  <dd_node id="1" name="temps" name_cn="模板" name_en="Templates"/>
+  <dd_node id="1" name="temp" name_cn="模板" name_en="Template"/>
+  <dd_node id="1" name="size" name_cn="尺寸" name_en="Size"/>
+  <dd_node id="1" name="num" name_cn="数量" name_en="Num"/>
+  <dd_node id="1" name="items" name_cn="项" name_en="Items"/>
+  <dd_node id="1" name="item" name_cn="项" name_en="Item"/>
   
-  <dd_node id="1004" name="select_drv" name_cn="选择驱动" name_en="Select Driver"/>
+  <dd_node id="1" name="running" name_cn="运行中" name_en="Running"/>
+  <dd_node id="1" name="run" name_cn="运行" name_en="Run"/>
+  <dd_node id="1" name="run_ok" name_cn="运行正常" name_en="Run Ok"/>
+  <dd_node id="1" name="run_err" name_cn="运行异常" name_en="Run Error"/>
+  <dd_node id="1" name="pause" name_cn="暂停" name_en="Pause"/>
+  <dd_node id="1" name="disabled" name_cn="已禁用" name_en="Disabled"/>
+  <dd_node id="1" name="enabled" name_cn="已启用" name_en="Enabled"/>
+  <dd_node id="1" name="stopped" name_cn="停止" name_en="Stopped"/>
   
-  <dd_node id="1004" name="edit_ch" name_cn="编辑通道" name_en="Edit Channel"/>
-  <dd_node id="1004" name="modify" name_cn="修改" name_en="Modify"/>
   
-  <dd_node id="1004" name="start" name_cn="启动" name_en="Start"/>
-  <dd_node id="1004" name="stop" name_cn="停止" name_en="Stop"/>
+  <dd_node id="1" name="connectors" name_cn="接入" name_en="Connectors"/>
+  <dd_node id="1" name="connector" name_cn="接入" name_en="Connector"/>
+  <dd_node id="1" name="config" name_cn="配置" name_en="Config"/>
+  <dd_node id="1" name="wizard" name_cn="向导" name_en="Wizard"/>
   
-  <dd_node id="1004" name="access" name_cn="访问" name_en="Access"/>
-  <dd_node id="1004" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
+  <dd_node id="1" name="browser" name_cn="浏览" name_en="Browser"/>
+  <dd_node id="1" name="tree" name_cn="树" name_en="Tree"/>
+  <dd_node id="1" name="refresh" name_cn="刷新" name_en="Refresh"/>
+	<dd_node id="1" name="tags" name_cn="标签" name_en="Tags"/>
+	<dd_node id="1" name="tag" name_cn="标签" name_en="Tag"/>
+<dd_node id="1" name="input" name_cn="输入" name_en="Input"/>
+  
+  <dd_node id="1" name="driver" name_cn="驱动" name_en="Driver"/>   
+  <dd_node id="1" name="description" name_cn="描述" name_en="Description"/>   
+  <dd_node id="1" name="ok" name_cn="确认" name_en="Ok"/>  
+  <dd_node id="1" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1" name="pls_input" name_cn="请输入" name_en="Please input "/>
+  <dd_node id="1" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/>
+  
+  <dd_node id="1" name="select_drv" name_cn="选择驱动" name_en="Select Driver"/>
+  <dd_node id="1" name="select" name_cn="选择" name_en="Select"/>
+  <dd_node id="1" name="selected" name_cn="选中的" name_en="Selected"/>
+  <dd_node id="1" name="be_selected" name_cn="已被选择" name_en="is Selected"/>
+  <dd_node id="1" name="type" name_cn="类型" name_en="Type"/>
+  <dd_node id="1" name="filter" name_cn="过滤器" name_en="Filter"/>
+  <dd_node id="1" name="view" name_cn="查看" name_en="View"/>
+  <dd_node id="1" name="rename" name_cn="重命名" name_en="Rename"/> 
+   
+  
+  <dd_node id="1" name="edit_ch" name_cn="编辑通道" name_en="Edit Channel"/>
+  <dd_node id="1" name="modify" name_cn="修改" name_en="Modify"/>
+  
+  <dd_node id="1" name="start" name_cn="启动" name_en="Start"/>
+  <dd_node id="1" name="stop" name_cn="停止" name_en="Stop"/>
+  
+  <dd_node id="1" name="access" name_cn="访问" name_en="Access"/>
+  <dd_node id="1" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
+    
     
   
 </dd_class>

@@ -67,37 +67,37 @@ for(IdName idn:idnames)
 	UAPrj oldp = UAManager.getInstance().getPrjById(idn.getId()) ;
 	UAPrj namep = UAManager.getInstance().getPrjByName(idn.getName()) ;
 	String bgcolor = "#8dd35f" ;
-	String prompt="New project will import" ;
+	String prompt="new_prj_will_imp";//New project will import" ;
 	boolean b_can_imp=true;
 	if(oldp!=null)
 	{
 		bgcolor = "#ff8080" ;
-		prompt = "Project is already existed " ;
+		prompt = "prj_existed";//Project is already existed" ;
 		if(oldp.RT_isRunning())
 		{
-			prompt+=",it's in running.";
+			prompt+=",it_in_run";
 			b_can_imp = false;
 		}
 	}
 	else if(namep!=null)
 	{
-		prompt = "Project with this name already existed " ;
+		prompt = "prj_n_existed";//Project with this name already existed" ;
 	}
 %>
 <div class="imp_item" style="background-color: <%=bgcolor%>;border:1px solid;min-height:160px;">
   <table style="height:100%;width:100%">
     <tr>
-      <td colspan="3" align="center"><h4><%=prompt %></h4></td>
+      <td colspan="3" align="center"><h4><wbt:g><%=prompt %></wbt:g></h4></td>
     </tr>
     <tr>
-      <td valign="middle"  align="right">Name:</td>
+      <td valign="middle"  align="right"><wbt:g>name</wbt:g>:</td>
       <td><input type="text" id="inputn_<%=id %>" value="<%=idn.getName() %>" style="width:90%"/>
      
       </td>
       <td></td>
     </tr>
     <tr>
-      <td valign="middle" align="right">Title:</td>
+      <td valign="middle" align="right"><wbt:g>title</wbt:g>:</td>
       <td>
       <input type="text" id="inputt_<%=id %>" value="<%=idn.getTitle() %>  "  style="width:90%"/>
       </td>
@@ -105,22 +105,22 @@ for(IdName idn:idnames)
     </tr>
     <tr>
       <td colspan="3" align="center">
-      <input type="radio" id="" name="radio_<%=id %>" value="ignore">Do not import
+      <input type="radio" id="" name="radio_<%=id %>" value="ignore"><wbt:g>do_not_imp</wbt:g>
 <%
 	if(oldp!=null)
 	{
 %>
-      <input type="radio" id="" name="radio_<%=id %>" value="replace" checked="checked">Replace
+      <input type="radio" id="" name="radio_<%=id %>" value="replace" checked="checked"><wbt:g>replace</wbt:g>
 <%
 	}
 	
     if(namep!=null)
 	{
-%><input type="radio" id="" name="radio_<%=id %>" value="rename" checked="checked">Rename to import<%
+%><input type="radio" id="" name="radio_<%=id %>" value="rename" checked="checked"><wbt:g>rename_imp</wbt:g><%
 	}
 	else
 	{
-%><input type="radio" id="" name="radio_<%=id %>" value="new" checked="checked">Create New One<%
+%><input type="radio" id="" name="radio_<%=id %>" value="new" checked="checked"><wbt:g>create_new</wbt:g><%
 	}
 %>
 	
@@ -165,7 +165,7 @@ function do_submit(cb)
 			var newname = $("#inputn_"+id).val() ;
 			if(newname==name)
 			{
-				dlg.msg("name ["+newname+"] must be changed") ;
+				dlg.msg("<wbt:g>name</wbt:g> ["+newname+"] <wbt:g>must_be_chg</wbt:g>") ;
 				return ;
 			}
 			var tt=$("#inputt_"+id).val();
@@ -179,11 +179,11 @@ function do_submit(cb)
 	
 	if(!b)
 	{
-		dlg.msg("please select to import!") ;
+		dlg.msg("<wbt:g>pls_sel_imp</wbt:g>") ;
 		return ;
 	}
 	
-	console.log(pms);
+	//console.log(pms);
 	
 	send_ajax('prj_imp_ajax.jsp',pms,function(bsucc,ret)
 	{

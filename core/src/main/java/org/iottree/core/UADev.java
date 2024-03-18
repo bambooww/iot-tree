@@ -12,6 +12,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
@@ -311,9 +312,11 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 		{//add driver prop used in this channel
 			if(uad.isConnPtToDev())
 			{
-				PropGroup pg = new PropGroup("dev","Device run parameters") ;
-				pg.addPropItem(new PropItem("dev_intv","Read Interval MS","",PValTP.vt_int,false,
-						null,null,100));
+				Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+				
+				PropGroup pg = new PropGroup("dev",lan);//,"Device run parameters") ;
+				pg.addPropItem(new PropItem("dev_intv",lan,PValTP.vt_int,false,
+						null,null,100)); //"Read Interval MS",""
 				pgs.add(pg) ;
 			}
 			

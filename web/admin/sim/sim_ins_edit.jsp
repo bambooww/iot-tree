@@ -63,18 +63,18 @@ dlg.resize_to(600,300);
 <body>
 <form class="layui-form" action="">
 <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" name="name" id="name" value="<%=name%>" autocomplete="off" class="layui-input"/>
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:g>enable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	  <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
-    <div class0="layui-input-block" class="layui-input-inline">
+    <label class="layui-form-label"><wbt:g>title</wbt:g></label>
+    <div class0="layui-input-block" class="layui-input-inline" style="width:360px;">
       <input type="text" name="title" id="title" value="<%=title%>" autocomplete="off" class="layui-input"/>
     </div>
     

@@ -16,6 +16,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.iottree.core.dict.DataClass;
 import org.iottree.core.dict.DataNode;
 import org.iottree.core.dict.DictManager;
+import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.xml.sax.SAXException;
 
 /**
@@ -130,11 +132,62 @@ public class Lang
 		DataNode dn = langDC.getNodeByName(key);
 		if (dn == null)
 			return "[X]" + key + "[X]";
-		String tmps = dn.getNameByLang(defaultLang);
+		String ln = Lan.getUsingLang() ;
+		String tmps = dn.getNameByLang(ln) ;//(defaultLang);
 		if (tmps != null)
 			return tmps;
 
 		return "[X]" + key + "[X]";
+	}
+	
+	String getLangValueNoPPT(String key)
+	{
+		if (langDC == null)
+			return null;
+		DataNode dn = langDC.getNodeByName(key);
+		if (dn == null)
+			return null;
+		String ln = Lan.getUsingLang() ;
+		String tmps = dn.getNameByLang(ln) ;//(defaultLang);
+		if (tmps != null)
+			return tmps;
+
+		return null;
+	}
+	
+	public String getLangValue(List<String> keys)
+	{
+		if (langDC == null)
+			return "[X]" + Convert.combineStrWith(keys, ",") + "[X]";
+		
+		String ln = Lan.getUsingLang() ;
+		String gap = "en".equals(ln)?" ":"" ;
+		StringBuilder sb = new StringBuilder() ;
+		boolean bfirst = true ;
+		for(String key:keys)
+		{
+			if(bfirst) bfirst =false;
+			else sb.append(gap) ;
+			
+			DataNode dn = langDC.getNodeByName(key);
+			if (dn == null)
+			{
+				sb.append("[X]" + key + "[X]");
+				continue ;
+			}
+			
+			String tmps = dn.getNameByLang(ln) ;//(defaultLang);
+			if (tmps != null)
+			{
+				sb.append(tmps) ;
+				continue ;
+			}
+	
+			sb.append( "[X]" + key + "[X]");
+			
+		}
+		
+		return sb.toString() ;
 	}
 
 	public DataNode getLangDataNode(String key)

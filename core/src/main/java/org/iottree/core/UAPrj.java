@@ -7,6 +7,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -370,22 +371,21 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	private PropGroup getPrjPropGroup()
 	{
-		PropGroup r = new PropGroup("prj", "Project");
-
-		r.addPropItem(new PropItem("script", "JavaScript",
-				"JavaScript run interval by Project,you can do controller logic here", PValTP.vt_str, false, null, null,
-				"").withTxtMultiLine(true));
-
-		r.addPropItem(new PropItem("script_int", "JavaScript Interval", "JavaScript run interval(ms)", PValTP.vt_int,
-				false, null, null, "10000"));
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
 		
-		r.addPropItem(new PropItem("operators", "Operators",
-				"Operators may has name and password,it's may need to input when do some operation command.", PValTP.vt_str, false, null, null,
-				"").withTxtMultiLine(true));
+		PropGroup r = new PropGroup("prj", lan);//"Project");
+
+		r.addPropItem(new PropItem("script", lan, PValTP.vt_str, false, null, null,
+				"").withTxtMultiLine(true)); //"JavaScript","JavaScript run interval by Project,you can do controller logic here"
+
+		r.addPropItem(new PropItem("script_int", lan, PValTP.vt_int,
+				false, null, null, "10000")); //"JavaScript Interval", "JavaScript run interval(ms)"
 		
-		r.addPropItem(new PropItem("perm_dur", "Permission duration In seconds",
-				"Duration of authority after operator authentication.", PValTP.vt_int, false, null, null,
-				"300"));
+		r.addPropItem(new PropItem("operators",lan, PValTP.vt_str, false, null, null,
+				"").withTxtMultiLine(true)); // "Operators","Operators may has name and password,it's may need to input when do some operation command."
+		
+		r.addPropItem(new PropItem("perm_dur", lan, PValTP.vt_int, false, null, null,
+				"300")); // "Permission duration In seconds","Duration of authority after operator authentication."
 		return r;
 	}
 

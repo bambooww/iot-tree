@@ -17,6 +17,7 @@ import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.ValChker;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtStream;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.common.ModbusAddr;
@@ -100,27 +101,29 @@ public class PPIDriver extends DevDriver
 		
 		PropGroup gp = null;
 		
-		gp = new PropGroup("timing","Timing");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		gp = new PropGroup("timing",lan);//"Timing");
 		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
 		//
-		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
-		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
-		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
+		gp.addPropItem(new PropItem("req_to",lan,PValTP.vt_int,false,null,null,1000)); //"Request Timeout(millisecond)",""
+		gp.addPropItem(new PropItem("failed_tryn",lan,PValTP.vt_int,false,null,null,3)); //"Fail after successive times",""
+		gp.addPropItem(new PropItem("recv_to",lan,PValTP.vt_int,false,null,null,200)); //"Receive response timeout(millisecond)",""
+		gp.addPropItem(new PropItem("inter_req",lan,PValTP.vt_int,false,null,null,0)); //"Inter-request millisecond",""
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("auto_demotion","Auto-Demotion");
-		gp.addPropItem(new PropItem("en","Enable auto-demotion on failure","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
-		gp.addPropItem(new PropItem("dm_tryc","Demote after Retry times","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("dm_ms","Demote for millisecond","",PValTP.vt_int,false,null,null,10000));
-		gp.addPropItem(new PropItem("dm_no_req","Discard request during demotion","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
+		gp = new PropGroup("auto_demotion",lan);//"Auto-Demotion");
+		gp.addPropItem(new PropItem("en",lan,PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false)); //"Enable auto-demotion on failure",""
+		gp.addPropItem(new PropItem("dm_tryc",lan,PValTP.vt_int,false,null,null,3)); //"Demote after Retry times",""
+		gp.addPropItem(new PropItem("dm_ms",lan,PValTP.vt_int,false,null,null,10000)); //"Demote for millisecond",""
+		gp.addPropItem(new PropItem("dm_no_req",lan,PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false)); //"Discard request during demotion",""
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("block_size","Block Sizes");
-		gp.addPropItem(new PropItem("out_coils","Output Coils","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("in_coils","Input Coils","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("internal_reg","Internal Registers","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("holding","Holding","",PValTP.vt_int,false,null,null,32));
+		gp = new PropGroup("block_size",lan);//"Block Sizes");
+		gp.addPropItem(new PropItem("out_coils",lan,PValTP.vt_int,false,null,null,32)); //"Output Coils",""
+		gp.addPropItem(new PropItem("in_coils",lan,PValTP.vt_int,false,null,null,32)); //"Input Coils",""
+		gp.addPropItem(new PropItem("internal_reg",lan,PValTP.vt_int,false,null,null,32)); //"Internal Registers",""
+		gp.addPropItem(new PropItem("holding",lan,PValTP.vt_int,false,null,null,32)); //"Holding",""
 		pgs.add(gp) ;
 		
 		return pgs;
@@ -136,9 +139,12 @@ public class PPIDriver extends DevDriver
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
-		PropGroup gp = new PropGroup("ppi_spk","PPI Device");
 		
-		PropItem pi = new PropItem("dev_addr","Device Address","",PValTP.vt_int,false,null,null,1) ;
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup gp = new PropGroup("ppi_spk",lan);//"PPI Device");
+		
+		PropItem pi = new PropItem("dev_addr",lan,PValTP.vt_int,false,null,null,1) ; //"Device Address",""
 		pi.setValChker(new ValChker<Number>() {
 
 			@Override

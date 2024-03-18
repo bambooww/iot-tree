@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+  <dd_node id="1" name="user_all_tags" name_cn="使用所有标签" name_en="Use all tags" />
+  <dd_node id="1" name="filter_by_prefix" name_cn="根据前缀过滤" name_en="Filter by prefix" />
+  <dd_node id="1" name="sel_all" name_cn="选择全部" name_en="Select All" />
+  <dd_node id="1" name="chk_the_box" name_cn="选择框" name_en="Check the box" />
+  
+</dd_class>

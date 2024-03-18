@@ -10,8 +10,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.util.web.*,
 	org.iottree.core.util.xmldata.*
-"%>
-<%@ taglib uri="wb_tag" prefix="wbt"%><%
+"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	boolean has_setpsw = LoginUtil.checkAdminSetPsw() ;
     if(!has_setpsw)
     {
@@ -42,6 +41,10 @@
 	right:20px;
 	
 }
+.layui-form-label
+{
+	width:150px;
+}
 </style>
 <body>
   <div id="header" style="white-space:nowrap;top:0;width:100%;height:70px;background-color: #dfdfdf">
@@ -53,27 +56,27 @@
 if(!has_setpsw)
 {
 %>
-   <h3>You must setup admin's password</h3>
+   <h3><wbt:lang>yms_admin_psw</wbt:lang></h3>
 <%
 }
 else
 {
 	%>
-	<h3>Login to admin panel</h3>
+	<h3><wbt:lang>admin_login</wbt:lang></h3>
 	<%
 }
 %>
   <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">User</label>
-    <div class="layui-input-block">
+    <label class="layui-form-label"><wbt:lang>user</wbt:lang></label>
+    <div class="layui-input-inline" style="width:300px;">
       <input type="text" id="username" name="username" value="admin" readonly="readonly" required lay-verify="required" autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Password</label>
-    <div class="layui-input-block">
-      <input type="password" id="psw" name="psw" value=""  placeholder="Please Input Password" autocomplete="off" class="layui-input">
+    <label class="layui-form-label"><wbt:lang>psw</wbt:lang></label>
+    <div class="layui-input-inline" style="width:300px;">
+      <input type="password" id="psw" name="psw" value=""   autocomplete="off" class="layui-input">
     </div>
   </div>
 <%
@@ -82,15 +85,16 @@ if(!has_setpsw)
 %>
   
  <div class="layui-form-item">
-    <label class="layui-form-label">Re Password</label>
-    <div class="layui-input-block">
-      <input type="password" id="repsw"  name="repsw" placeholder="Please Input Password Again" autocomplete="off" class="layui-input">
+    <label class="layui-form-label"><wbt:lang>repsw</wbt:lang></label>
+    <div class="layui-input-inline" style="width:300px;">
+      <input type="password" id="repsw"  name="repsw" autocomplete="off" class="layui-input">
     </div>
   </div>
     <div class="layui-form-item">
-    <div class="layui-input-block">
-      <button class="layui-btn" lay-submit lay-filter="setpsw_login">Set Password and Login</button>
-      <button type="reset" class="layui-btn layui-btn-primary">Reset</button>
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline" style="width:300px;">
+      <button class="layui-btn" lay-submit lay-filter="setpsw_login"><wbt:lang>set_psw_login</wbt:lang></button>
+      <button type="reset" class="layui-btn layui-btn-primary"><wbt:lang>reset</wbt:lang></button>
     </div>
   </div>
 <%
@@ -98,10 +102,19 @@ if(!has_setpsw)
 else
 {
 %>
+<%--
+<div class="layui-form-item">
+    <label class="layui-form-label"><wbt:lang>use_lang</wbt:lang></label>
+    <div class="layui-input-block" style0="width:500px;">
+		<input type="radio" name="lan" value="en" title="English" checked>
+       <input type="radio" name="lan" value="cn" title="中文">
+    </div>
+  </div>
+   --%>
   <div class="layui-form-item">
     <div class="layui-input-block">
-      <button class="layui-btn" lay-submit lay-filter="login">Login</button>
-      <button type="reset" class="layui-btn layui-btn-primary">Reset</button>
+      <button class="layui-btn" lay-submit lay-filter="login"><wbt:lang>login</wbt:lang></button>
+      <button type="reset" class="layui-btn layui-btn-primary"><wbt:lang>reset</wbt:lang></button>
     </div>
   </div>
 <%
@@ -119,7 +132,7 @@ layui.use('form', function(){
 	    var psw = $("#psw").val() ;
 	    if(psw==null||psw=="")
 	    {
-	    	dlg.msg("Please input password") ;
+	    	dlg.msg("<wbt:lang>pls_inp_psw</wbt:lang>") ;
 	    	return false;
 	    }
 	    do_login(psw);
@@ -131,23 +144,23 @@ layui.use('form', function(){
 		  var repsw = $("#repsw").val() ;
 		    if(psw==null||psw=="")
 		    {
-		    	dlg.msg("Please input password") ;
+		    	dlg.msg("<wbt:lang>pls_inp_psw</wbt:lang>") ;
 		    	return false;
 		    }
 		    if(repsw==null||repsw=="")
 		    {
-		    	dlg.msg("Please input repassword") ;
+		    	dlg.msg("<wbt:lang>pls_inp_repsw</wbt:lang>") ;
 		    	return false;
 		    }
 		    if(psw!=repsw)
 		    {
-		    	dlg.msg("password and repassword is no equal") ;
+		    	dlg.msg("<wbt:lang>psw_repsw_neq</wbt:lang>") ;
 		    	return false;
 		    }
 		    do_login(psw);
 		    return false;
 		  });
-	  
+	  form.render();
 	});
 
 function do_login(psw)
@@ -164,7 +177,7 @@ function do_login(psw)
         	}
         	else
         	{
-        		dlg.msg("Login failed") ;
+        		dlg.msg("<wbt:lang>login_failed</wbt:lang>") ;
         	}
         },
         error:function(req,err,e)

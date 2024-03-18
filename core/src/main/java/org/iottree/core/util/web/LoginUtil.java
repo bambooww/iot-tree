@@ -39,7 +39,21 @@ public class LoginUtil
 		}
 	}
 	
+	public static class SessionItem
+	{
+		public String lan = null ;
+		
+		public long loginDT  =System.currentTimeMillis();
+		
+		public SessionItem(String lang)
+		{
+			this.lan = lang ;
+		}
+	}
+	
 	private static final String ADMIN_LOGIN = "_admin" ;
+	
+	
 	
 	private static UserAuthItem loadUserAuthItem(String username) throws IOException
 	{
@@ -75,7 +89,7 @@ public class LoginUtil
 	
 	
 	
-	public static boolean doLogin(HttpServletRequest req,String username,String password) throws Exception
+	public static boolean doLogin(HttpServletRequest req,String username,String password,String lang) throws Exception
 	{
 		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
 		if(pa!=null && pa.canCheckAdminUser())
@@ -83,7 +97,7 @@ public class LoginUtil
 			PlugAuthUser u = pa.checkAdminUser(username, password);
 			if(u==null)
 				return false;
-			req.getSession().setAttribute(ADMIN_LOGIN, true);
+			req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem(lang));
 			return true ;
 		}
 		
@@ -102,13 +116,13 @@ public class LoginUtil
 				return false;
 		}
 		
-		req.getSession().setAttribute(ADMIN_LOGIN, true);
+		req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem(lang));
 		return true ;
 	}
 	
 	public static void doLogout(HttpServletRequest req)
 	{
-		req.getSession().setAttribute(ADMIN_LOGIN, false);
+		req.getSession().removeAttribute(ADMIN_LOGIN) ;//, false);
 	}
 	/**
 	 * check admin has set his psw or not
@@ -133,13 +147,14 @@ public class LoginUtil
 	
 	public static boolean checkAdminLogin(HttpSession hs)
 	{
+		SessionItem si = getAdminLoginSession(hs) ;
+		return si!=null;
+	}
+	
+	public static SessionItem getAdminLoginSession(HttpSession hs)
+	{
 		if(hs==null)
-			return false;
-		Object ob = hs.getAttribute(ADMIN_LOGIN);
-		if(ob==null)
-			return false;
-		if(!(ob instanceof Boolean))
-			return false;
-		return (Boolean)ob;
+			return null;
+		return (SessionItem)hs.getAttribute(ADMIN_LOGIN);
 	}
 }

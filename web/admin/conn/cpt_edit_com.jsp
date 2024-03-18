@@ -9,7 +9,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
@@ -58,7 +58,7 @@ String cp_tp = cp.getProviderType() ;
 %>
 <html>
 <head>
-<title>tcp client conn editor</title>
+<title>conn editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/dlg_layer.js"></script>
@@ -71,15 +71,15 @@ dlg.resize_to(800,430);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:g>enable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
@@ -97,7 +97,7 @@ for(String cid:ConnProCOM.listSysComs())
 }
 %>   </select>
     </div>
-    <div class="layui-form-mid">Baud rate:</div>
+    <div class="layui-form-mid"><wbt:g>baud</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="baud"  lay-filter="baud">
 <%
@@ -110,7 +110,7 @@ for(int b:ConnPtCOM.BAUDS)
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Data bits:</label>
+    <label class="layui-form-label"><wbt:g>data_bits</wbt:g>:</label>
     <div class="layui-input-inline">
       	    <select id="databits" lay-filter="databits">
 <%
@@ -121,7 +121,7 @@ for(int dbit:ConnPtCOM.DATABITS)
 }
 %>   </select>
     </div>
-    <div class="layui-form-mid">Parity:</div>
+    <div class="layui-form-mid"><wbt:g>parity</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="parity" lay-filter="parity">
 <%
@@ -129,15 +129,15 @@ for(int dbit:ConnPtCOM.DATABITS)
 for(int i = 0 ; i < ConnPtCOM.PARITY.length ; i ++)
 {
 	int pri = ConnPtCOM.PARITY[i] ;
-	String tt =  ConnPtCOM.PARITY_TITLE[i] ;
-%><option value="<%=pri%>"><%=tt %></option>
+	String tt =  ConnPtCOM.PARITY_NAME[i] ;
+%><option value="<%=pri%>"><wbt:g>parity_<%=tt %></wbt:g></option>
 <%
 }
 %>   </select>
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Stop bits:</label>
+    <label class="layui-form-label"><wbt:g>stop_bits</wbt:g>:</label>
     <div class="layui-input-inline">
       	    <select id="stopbits" lay-filter="stopbits">
       	    	
@@ -149,7 +149,7 @@ for(int dbit:ConnPtCOM.STOPBITS)
 }
 %>   </select>
     </div>
-    <div class="layui-form-mid">Flow Control:</div>
+    <div class="layui-form-mid"><wbt:g>flow_ctrl</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="flowctl" lay-filter="flowctl">
 <%
@@ -164,7 +164,7 @@ for(int i = 0 ; i < ConnPtCOM.FLOWCTL.length;i++)
 	  </div>
   </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block" style="width:650px">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
@@ -261,7 +261,7 @@ function get_val(id,title,cb,bnum)
 	var v = $('#'+id).val();
 	if(v==null||v=='')
 	{
-		cb(false,'Please input '+title) ;
+		cb(false,'<wbt:g>pls,input</wbt:g>'+title) ;
 		throw "no "+title+" input" ;
 	}
 	if(bnum)
@@ -269,7 +269,7 @@ function get_val(id,title,cb,bnum)
 		v = parseInt(v);
 		if(v==NaN)
 		{
-			cb(false,'Please input valid '+title) ;
+			cb(false,'<wbt:g>pls,input,valid</wbt:g>'+title) ;
 			throw "invalid "+title+" input" ;
 		}
 	}
@@ -282,13 +282,13 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'Please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'Please input title') ;
+		cb(false,'<wbt:g>pls,input,title</wbt:g>') ;
 		return ;
 	}
 	var ben = $("#enable").prop("checked") ;
@@ -296,12 +296,12 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
-	var comid = get_val("comid","Port Id",cb,false);
-	var baud = get_val("baud","Baud rate",cb,true);
-	var databits = get_val("databits","Data bits",cb,true);
-	var parity = get_val("parity","Parity",cb,true);
-	var stopbits = get_val("stopbits","Stop bits",cb,true);
-	var flowctl = get_val("flowctl","Flow control",cb,true);
+	var comid = get_val("comid","<wbt:g>com_port,id</wbt:g>",cb,false);
+	var baud = get_val("baud","<wbt:g>baud</wbt:g>",cb,true);
+	var databits = get_val("databits","<wbt:g>data_bits</wbt:g>",cb,true);
+	var parity = get_val("parity","<wbt:g>parity</wbt:g>",cb,true);
+	var stopbits = get_val("stopbits","<wbt:g>stop_bits</wbt:g>",cb,true);
+	var flowctl = get_val("flowctl","<wbt:g>flow_ctrl</wbt:g>",cb,true);
 	
 	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
 		comid:comid,baud:baud,databits:databits,

@@ -30,7 +30,7 @@ case "list":
 			
 		List<ConnPt> cpts = cp.listConns() ;
 %>
-{"id":"<%=cp.getId()%>","title":"<%=cp.getTitle()%>","tp":"<%=cp.getProviderType()%>","static_txt":"<%=cp.getStaticTxt()%>","connections":[
+{"id":"<%=cp.getId()%>","title":"<%=cp.getTitle()%>","tp":"<%=cp.getProviderType()%>","tpt":"<%=cp.getProviderTpt()%>","static_txt":"<%=cp.getStaticTxt()%>","connections":[
 <%
 		boolean bf = true;
 		for(ConnPt cpt:cpts)

@@ -13,6 +13,7 @@
 	String prjid=request.getParameter("prjid");
 	String id=request.getParameter("taskid");
 	Task jst = null ;
+	String tt="add,prj,task" ;
 	if(Convert.isNotNullEmpty(id))
 	{
 		jst = TaskManager.getInstance().getTask(prjid, id) ;
@@ -21,6 +22,7 @@
 	out.print("no task found") ;
 	return ;
 		}
+		tt = "edit.prj.task";
 	}
 String name = "" ;
 String title = "" ;
@@ -69,23 +71,23 @@ dlg.resize_to(600,300);
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" name="name" id="name" value="<%=name%>" autocomplete="off" class="layui-input"/>
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:lang>enable</wbt:lang>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	  <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
+    <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="title" id="title" value="<%=title%>" autocomplete="off" class="layui-input"/>
     </div>
-    <label class="layui-form-mid">Interval MS</label>
-    <div class="layui-input-inline">
-      <input type="text" name="int_ms" id="int_ms" value="<%=  int_ms %>" autocomplete="off" class="layui-input"/>
+    <label class="layui-form-mid"><wbt:g>intv,ms</wbt:g></label>
+    <div class="layui-input-inline" style="width: 70px;">
+      <input type="number" name="int_ms" id="int_ms" value="<%=  int_ms %>" autocomplete="off" class="layui-input"/>
     </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Description</label>
+    <label class="layui-form-label"><wbt:lang>desc</wbt:lang></label>
     <div class="layui-input-block" >
       <input type="text" name="desc" id="desc" value="<%=desc %>" autocomplete="off" class="layui-input"/>
     </div>
@@ -93,6 +95,8 @@ dlg.resize_to(600,300);
 </form>
 </body>
 <script type="text/javascript">
+
+dlg.set_dlg_title("<wbt:g><%=tt%></wbt:g>") ;
 
 layui.use('form', function(){
 	  var form = layui.form;
@@ -121,7 +125,7 @@ function do_submit(cb)
 	var int_ms = parseInt(int_ms);
 	if(int_ms==NaN||int_ms<=0)
 	{
-		cb(false,'Please input valid interval ms') ;
+		cb(false,'<wbt:g>pls,input,valid,intv,ms</wbt:g>') ;
 	}
 	cb(true,{name:n,title:t,desc:desc,int_ms:int_ms,enable:ben})
 	

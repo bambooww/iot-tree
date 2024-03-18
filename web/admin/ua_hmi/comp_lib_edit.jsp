@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
 	String libid = request.getParameter("libid") ;
 	String title = "" ;
@@ -45,7 +45,7 @@ dlg.resize_to(400,220);
 <form class="layui-form" action="">
   
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:lang>title</wbt:lang>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title" value="<%=title %>"  autocomplete="off" class="layui-input">
     </div>

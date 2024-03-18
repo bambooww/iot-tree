@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="pg_basic" name_cn="基本" name_en="Basic" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_ch" name_cn="通道" name_en="Channel" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_dev" name_cn="设备运行参数" name_en="Device run parameters" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_hmi" name_cn="人机交互HMI(UI)" name_en="HMI(UI)" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_cxt_tags" name_cn="上下文标签" name_en="Context Tags" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_prj" name_cn="项目" name_en="Project" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_tag" name_cn="标签属性" name_en="Tag Properties" desc_cn="" desc_en=""/>
+
+    <dd_node id="1" name="pi_id" name_cn="ID" name_en="Id" desc_cn="对象唯一id" desc_en="Object's id"/>
+    <dd_node id="1" name="pi_name" name_cn="名称" name_en="Name" desc_cn="对象名称" desc_en="Object's name"/>
+    <dd_node id="1" name="pi_title" name_cn="标题" name_en="Title" desc_cn="对象标题" desc_en="Object's title"/>
+    <dd_node id="1" name="pi_desc" name_cn="描述" name_en="Description" desc_cn="对象描述" desc_en="Object's Description"/>
+  
+  	<dd_node id="1" name="pi_mid" name_cn="是否是中间标签" name_en="Is Middle Tag" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_addr" name_cn="地址或脚本表达式" name_en="Address Or Script Expression" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_vt" name_cn="数据类型" name_en="Data type" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_w" name_cn="终端访问" name_en="Client Access" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_sc" name_cn="扫描速率" name_en="ScanRate" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_minv" name_cn="最小值" name_en="Min Value" desc_cn="" desc_en=""/>
+  	<dd_node id="1" name="pi_maxv" name_cn="最大值" name_en="Max Value" desc_cn="" desc_en=""/>
+
+	<dd_node id="1" name="pi_ref_locked" name_cn="引用锁定" name_en="Ref Locked" desc_cn="能否编辑标签上下文" desc_en="Can edit tags context or not"/>
+	
+	<dd_node id="1" name="pi_script" name_cn="JS脚本" name_en="JS Script" desc_cn="项目中定时运行的JS脚本，你可以在此实现简单的控制逻辑" desc_en="JavaScript run interval by Project,you can do controller logic here"/>
+	<dd_node id="1" name="pi_script_int" name_cn="JS脚本运行间隔(毫秒)" name_en="JS Script run Interval(ms)" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_operators" name_cn="操作员" name_en="Operators" desc_cn="前端下指令操作员账号" desc_en="Operators may has name and password,it's may need to input when do some operation command."/>
+	<dd_node id="1" name="pi_perm_dur" name_cn="权限持续时间(秒)" name_en="Permission duration In seconds" desc_cn="下指令验证成功之后有效时间，在此时间内不需要重复验证!" desc_en="Duration of authority after operator authentication."/>
+
+	<dd_node id="1" name="pi_drv" name_cn="设备驱动" name_en="Device Driver" desc_cn="被通道使用的设备驱动" desc_en="Device Driver used by Channel"/>
+	<dd_node id="1" name="pi_drv_intv" name_cn="驱动扫描时间间隔(毫秒)" name_en="Driver scan interval(ms)" desc_cn="驱动循环扫描时间间隔" desc_en="Driver scan interval on every loop"/>
+
+	<dd_node id="1" name="pi_dev_intv" name_cn="读取时间间隔(毫秒)" name_en="Read Interval MS" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pi_conn_borken_prompt" name_cn="连接中断提示" name_en="Conn Broken Prompt" desc_cn="在监控画面中，连接中断时的提示" desc_en="Conn Broken Prompt Show in UI"/>
+	<dd_node id="1" name="pi_not_run_prompt" name_cn="未运行提示" name_en="Not Run Prompt" desc_cn="在监控画面中，项目没有运行时的提示" desc_en="Project is not run prompt Show in UI"/>
+	<dd_node id="1" name="pi_show_tags" name_cn="显示标签" name_en="Show Tags" desc_cn="在监控画面中列举显示的标签" desc_en="Tags data will show in HMI client."/>
+	
+</dd_class>

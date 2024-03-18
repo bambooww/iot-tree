@@ -23,6 +23,12 @@ public class ConnProIOTTreeNode extends ConnProvider
 	{
 		return TP;
 	}
+	
+	@Override
+	public String getProviderTpt()
+	{
+		return "IOTTree Node" ;
+	}
 
 	public boolean isSingleProvider()
 	{

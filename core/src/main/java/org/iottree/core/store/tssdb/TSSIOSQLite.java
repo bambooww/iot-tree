@@ -644,8 +644,9 @@ public class TSSIOSQLite extends TSSIO
 		if (idx == null)
 			return null;
 		String tablen = ts.param.getTableName(TN_TAG_SEG);
-		String sql = "select * from " + tablen + " where TagIdx=? and StartDT<=? and (EndDT>? or EndDT=StartDT) order by StartDT";
-
+		//String sql = "select * from " + tablen + " where TagIdx=? and StartDT<=? and (EndDT>? or (EndDT==? and EndDT=StartDT)) order by StartDT";
+		String sql = "select * from " + tablen + " where TagIdx=? and ((StartDT<=? and EndDT>?) or (StartDT=? and EndDT=StartDT)) order by StartDT";
+		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -655,14 +656,21 @@ public class TSSIOSQLite extends TSSIO
 			ps.setInt(1, idx);
 			ps.setLong(2, at_dt);
 			ps.setLong(3, at_dt);
+			ps.setLong(4, at_dt);
 
 			rs = ps.executeQuery();
+			
+			
 			// DBResult.transResultSetToDataTable(rs, tablen, 0, -1, cb);
 			DataTable dt = DBResult.transResultSetToDataTable(TN_TAG_MAP, 0, rs, 0, -1, null);
 			if (dt.getRowNum() == 0)
 				return null;
 			if (dt.getRowNum() > 1)
-				throw new Exception("more than 1 seg found in one time point");
+			{
+				if(log.isErrorEnabled())
+					log.error(sql);
+				throw new Exception("more than 1 seg found in one time point tag="+tag+" table="+tablen+" TagIdx="+idx+" at_dt="+at_dt);
+			}
 			DataRow dr = dt.getRow(0);
 			UAVal.ValTP valtp = ts.param.valTp ;
 			

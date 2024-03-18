@@ -13,7 +13,7 @@ Quick Start
 
 # 1 Downloading and Unzip
 
-Download zip file,and unzip to directory you wanted.
+Please go to the GitHub Release page and select the latest version. Download the compressed package and extract it to the directory you want.
 
 If your running environment is windows, it is recommended to download the "iot-tree-xx.xx.x-winjdk.zip" version. This version comes with the JDK of "windows x64" version, so that you can start it in the simplest way.
 

@@ -28,6 +28,7 @@ public class ConnPtCOM extends ConnPtStream
 	
 	public static int[] PARITY = new int[] {0,1,2};
 	public static String[] PARITY_TITLE = new String[] {"None","Odd","Even"};
+	public static String[] PARITY_NAME = new String[] {"none","odd","even"};
 	
 	public static int[] FLOWCTL = new int[] {0,1,2,3,4};
 	public static String[] FLOWCTL_TITLE = new String[] {"None","DTR","RTS","RTS DTR","RTS Always"};

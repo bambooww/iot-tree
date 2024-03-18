@@ -1,7 +1,7 @@
 package org.iottree.core.util;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 
 import org.iottree.core.Config;
@@ -13,10 +13,23 @@ public class Lan
 {
 	static HashMap<String, Object> pk2lang = new HashMap<>();
 
+	static HashMap<String, Object> pk2prop_lang = new HashMap<>();
+
+
 	public static Lan getLangInPk(Class<?> c)
 	{
+		return getOrLoadLangInPk(c,pk2lang,"lang.xml");
+	}
+	
+	public static Lan getPropLangInPk(Class<?> c)
+	{
+		return getOrLoadLangInPk(c,pk2prop_lang,"prop_lang.xml");
+	}
+	
+	private static Lan getOrLoadLangInPk(Class<?> c,HashMap<String, Object> pk2obj,String filename)
+	{
 		String pkn = c.getPackage().getName();
-		Object ln = pk2lang.get(pkn);
+		Object ln = pk2obj.get(pkn);
 		if (ln != null)
 		{
 			if (ln instanceof String)
@@ -27,7 +40,7 @@ public class Lan
 
 		synchronized (c)
 		{
-			ln = pk2lang.get(pkn);
+			ln = pk2obj.get(pkn);
 			if (ln != null)
 			{
 				if (ln instanceof String)
@@ -39,25 +52,25 @@ public class Lan
 			Lan lg = null;
 			try
 			{
-				lg = loadLang(c);
+				lg = loadLang(c,filename);
 			}
 			catch ( Exception e)
 			{
 				e.printStackTrace();
 			}
 			if (lg == null)
-				pk2lang.put(pkn, "");
+				pk2obj.put(pkn, "");
 			else
-				pk2lang.put(pkn, lg);
+				pk2obj.put(pkn, lg);
 			return lg;
 		}
 	}
 
-	private static Lan loadLang(Class<?> c) throws Exception
+	private static Lan loadLang(Class<?> c,String filename) throws Exception
 	{
 		String pkn = c.getPackage().getName();
 
-		String pkresln = "/" + pkn.replaceAll("\\.", "/") + "/lang.xml";
+		String pkresln = "/" + pkn.replaceAll("\\.", "/") + "/"+filename;
 		// InputStream inputs = null ;
 
 		// inputs = c.getResourceAsStream(pkresln) ;
@@ -70,7 +83,7 @@ public class Lan
 		DataClass dc = DictManager.loadDataClassByResPath(c, pkresln);
 		if (dc == null)
 		{
-			pk2lang.put(pkn, "");
+			//pk2lang.put(pkn, "");
 			return null;
 		}
 		return new Lan(dc);
@@ -95,10 +108,58 @@ public class Lan
 	/**
 	 * used for install config
 	 * @param ln
+	 * @throws IOException 
 	 */
-	public static void setSysUsingLang(String ln)
+	public static void setSysLang(String ln) throws IOException
 	{
 		sys_ln = ln ;
+		
+		if(sys_ln==null)
+			sys_ln="" ;
+		
+		saveSysLan(sys_ln) ;
+	}
+	
+	public static String getSysLang()
+	{
+		return sys_ln ;
+	}
+	
+	private static void saveSysLan(String ln) throws IOException
+	{
+		String fp = Config.getDataDirBase()+"/auth/__sys_lang.txt" ;
+		File f = new File(fp) ;
+		if(!f.getParentFile().exists())
+		{
+			f.getParentFile().mkdirs() ;
+		}
+		Convert.writeFileTxt(f, ln, "utf-8");
+	}
+	
+	private static String loadSysLan() throws IOException
+	{
+		String fp = Config.getDataDirBase()+"/auth/__sys_lang.txt" ;
+		File f = new File(fp) ;
+		if(!f.exists())
+		{
+			return null ;
+		}
+		String ss = Convert.readFileTxt(f, "utf-8") ;
+		if(ss==null||(ss=ss.trim()).equals(""))
+			return null ;
+		return ss ;
+	}
+	
+	static
+	{
+		try
+		{
+			sys_ln = loadSysLan() ;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public static String getUsingLang()
@@ -134,5 +195,20 @@ public class Lan
 			return "[x" + name + "x]";
 		
 		return dn.getNameByLang(getUsingLang());
+	}
+	
+	public DataNode gn(String name)
+	{
+		return dc.getNodeByName(name);
+	}
+	
+	public String g(String name,String pn)
+	{
+		DataNode dn = dc.getNodeByName(name);
+		if (dn == null)
+			return "[p]" + name + "[p]";
+		
+		String ppn = pn+"_"+getUsingLang() ;
+		return dn.getAttr(ppn) ;
 	}
 }

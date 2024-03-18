@@ -9,7 +9,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
@@ -65,39 +65,39 @@ dlg.resize_to(800,500);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="name" name="name" value="<%=name%>"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>"   class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:g>enable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Host:</label>
+    <label class="layui-form-label"><wbt:g>host</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="host" name="host" value="<%=host%>"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Port:</div>
+    <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="port" name="port" value="<%=port%>"  class="layui-input">
+	    <input type="number" id="port" name="port" value="<%=port%>"  class="layui-input">
 	  </div>
 	 <div class="layui-form-mid"><button><i class="fa-regular fa-circle-question "></i></button></div>
 	  
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Connect timeout:</label>
+    <label class="layui-form-label"><wbt:g>conn,timeout</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  class="layui-input">
     </div>
   </div>
     <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-inline" style="width:80%">
       <textarea  id="desc"  name="desc"  class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
@@ -170,7 +170,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'Please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -188,24 +188,24 @@ function do_submit(cb)
 	var host = $('#host').val();
 	if(host==null||host=='')
 	{
-		cb(false,'Please input host') ;
+		cb(false,'<wbt:g>pls,input,host</wbt:g>') ;
 		return ;
 	}
 	var port = $('#port').val();
 	if(port==null||port=='')
 	{
-		cb(false,'Please input port') ;
+		cb(false,'<wbt:g>pls,input,port</wbt:g>') ;
 		return ;
 	}
 	var vp = parseInt(port);
 	if(vp==NaN||vp<0)
 	{
-		cb(false,'Please input valid port') ;
+		cb(false,'<wbt:g>pls,input,valid,port</wbt:g>') ;
 	}
 	var connto = $("#conn_to").val() ;
 	if(connto==NaN)
 	{
-		cb(false,'Please input valid connect timeout') ;
+		cb(false,'<wbt:g>pls,input,valid,conn,timeout</wbt:g>') ;
 	}
 	
 	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto});

@@ -22,6 +22,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValChker;
 import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.NetUtil;
 import org.iottree.core.util.NetUtil.Adapter;
 import org.iottree.core.util.logger.ILogger;
@@ -61,10 +62,11 @@ public class ModbusDrvRTU extends DevDriver
 	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
-		PropGroup gp = new PropGroup("modbus_ch","Modbus in Channel");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup gp = new PropGroup("modbus_ch",lan);//"Modbus in Channel");
 		
-		PropItem pi = new PropItem("run_model","Modbus Driver Run Model","",PValTP.vt_int,false,
-				new String[] {"Normal","Sniffer"},new Object[] {0,SNIFFER_MODEL},0) ;
+		PropItem pi = new PropItem("run_model",lan,PValTP.vt_int,false,
+				new String[] {"Normal","Sniffer"},new Object[] {0,SNIFFER_MODEL},0) ; //"Modbus Driver Run Model",""
 		
 		gp.addPropItem(pi);
 		pgs.add(gp) ;
@@ -76,9 +78,10 @@ public class ModbusDrvRTU extends DevDriver
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
 		ArrayList<PropGroup> pgs = new ArrayList<>() ;
-		PropGroup gp = new PropGroup("modbus_spk","Modbus Device");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup gp = new PropGroup("modbus_spk",lan);//"Modbus Device");
 		
-		PropItem pi = new PropItem("mdev_addr","Modbus Device Address","",PValTP.vt_int,false,null,null,1) ;
+		PropItem pi = new PropItem("mdev_addr",lan,PValTP.vt_int,false,null,null,1) ; //"Modbus Device Address",""
 		pi.setValChker(new ValChker<Number>() {
 
 			@Override
@@ -112,51 +115,86 @@ public class ModbusDrvRTU extends DevDriver
 		
 		PropGroup gp = null;
 		
-		gp = new PropGroup("timing","Timing");
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		gp = new PropGroup("timing",lan);//"Timing");
+		
+
 		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
 		//
-		gp.addPropItem(new PropItem("scan_intv","Scan Interval(millisecond)","",PValTP.vt_int,false,null,null,ModbusCmd.SCAN_INTERVER_DEFAULT));
-		gp.addPropItem(new PropItem("req_to","Request Timeout(millisecond)","",PValTP.vt_int,false,null,null,1000));
-		gp.addPropItem(new PropItem("failed_tryn","Fail after successive times","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("recv_to","Receive response timeout(millisecond)","",PValTP.vt_int,false,null,null,200));
-		gp.addPropItem(new PropItem("inter_req","Inter-request millisecond","",PValTP.vt_int,false,null,null,0));
+		gp.addPropItem(new PropItem("scan_intv",lan,PValTP.vt_int,false,null,null,ModbusCmd.SCAN_INTERVER_DEFAULT)); //"Scan Interval(millisecond)",""
+		gp.addPropItem(new PropItem("req_to",lan,PValTP.vt_int,false,null,null,1000)); //,"Request Timeout(millisecond)",""
+		gp.addPropItem(new PropItem("failed_tryn",lan,PValTP.vt_int,false,null,null,3)); //"Fail after successive times",""
+		gp.addPropItem(new PropItem("recv_to",lan,PValTP.vt_int,false,null,null,200)); //"Receive response timeout(millisecond)",""
+		gp.addPropItem(new PropItem("inter_req",lan,PValTP.vt_int,false,null,null,0)); //"Inter-request millisecond",""
 		
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("auto_demotion","Auto-Demotion");
-		gp.addPropItem(new PropItem("en","Enable auto-demotion on failure","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
-		gp.addPropItem(new PropItem("dm_tryc","Demote after Retry times","",PValTP.vt_int,false,null,null,3));
-		gp.addPropItem(new PropItem("dm_ms","Demote for millisecond","",PValTP.vt_int,false,null,null,10000));
-		gp.addPropItem(new PropItem("dm_no_req","Discard request during demotion","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
+		gp = new PropGroup("auto_demotion",lan);//"Auto-Demotion");
+		
+		gp.addPropItem(new PropItem("en",lan,PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false)); //"Enable auto-demotion on failure",""
+		gp.addPropItem(new PropItem("dm_tryc",lan,PValTP.vt_int,false,null,null,3)); //"Demote after Retry times",""
+		gp.addPropItem(new PropItem("dm_ms",lan,PValTP.vt_int,false,null,null,10000)); //"Demote for millisecond",""
+		gp.addPropItem(new PropItem("dm_no_req",lan,PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false)); //"Discard request during demotion",""
+//		gp.addPropItem(new PropItem("en","Enable auto-demotion on failure","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
+//		gp.addPropItem(new PropItem("dm_tryc","Demote after Retry times","",PValTP.vt_int,false,null,null,3));
+//		gp.addPropItem(new PropItem("dm_ms","Demote for millisecond","",PValTP.vt_int,false,null,null,10000));
+//		gp.addPropItem(new PropItem("dm_no_req","Discard request during demotion","",PValTP.vt_bool,false,new String[] {"Disabled","Enabled"},new Object[] {false,true},false));
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("data_access","Data Access");
-		gp.addPropItem(new PropItem("z_b_addr","Use Zero based addressing","",PValTP.vt_bool,false,null,null,true));
-		gp.addPropItem(new PropItem("z_b_bit_in_reg","Use Zero based bit in register","",PValTP.vt_bool,false,null,null,true));
-		gp.addPropItem(new PropItem("h_reg_b_mask_w","Use holding register bit mask write","",PValTP.vt_bool,false,null,null,false));
-		gp.addPropItem(new PropItem("f06_reg1_w","Modbus 06 for single register writes","",PValTP.vt_bool,false,null,null,true));
-		gp.addPropItem(new PropItem("f05_coil1_w","Modbus 05 for single coil writes","",PValTP.vt_bool,false,null,null,true));
+		gp = new PropGroup("data_access",lan);//"Data Access");
+		gp.addPropItem(new PropItem("z_b_addr",lan,PValTP.vt_bool,false,null,null,true)); //"Use Zero based addressing",""
+		gp.addPropItem(new PropItem("z_b_bit_in_reg",lan,PValTP.vt_bool,false,null,null,true)); //"Use Zero based bit in register"
+		gp.addPropItem(new PropItem("h_reg_b_mask_w",lan,PValTP.vt_bool,false,null,null,false)); //"Use holding register bit mask write",""
+		gp.addPropItem(new PropItem("f06_reg1_w",lan,PValTP.vt_bool,false,null,null,true)); //"Modbus 06 for single register writes",""
+		gp.addPropItem(new PropItem("f05_coil1_w",lan,PValTP.vt_bool,false,null,null,true)); //"Modbus 05 for single coil writes",""
+		
+//		gp.addPropItem(new PropItem("z_b_addr","Use Zero based addressing","",PValTP.vt_bool,false,null,null,true));
+//		gp.addPropItem(new PropItem("z_b_bit_in_reg","Use Zero based bit in register","",PValTP.vt_bool,false,null,null,true));
+//		gp.addPropItem(new PropItem("h_reg_b_mask_w","Use holding register bit mask write","",PValTP.vt_bool,false,null,null,false));
+//		gp.addPropItem(new PropItem("f06_reg1_w","Modbus 06 for single register writes","",PValTP.vt_bool,false,null,null,true));
+//		gp.addPropItem(new PropItem("f05_coil1_w","Modbus 05 for single coil writes","",PValTP.vt_bool,false,null,null,true));
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("data_encod","Data Encoding");
-		gp.addPropItem(new PropItem("byte_ord_def","Use default Modbus byte order","",PValTP.vt_bool,false,null,null,true));
-		gp.addPropItem(new PropItem("fw_low32","First word low in 32bit data types","",PValTP.vt_bool,false,null,null,true));
-		gp.addPropItem(new PropItem("fdw_low64","First Dword low in 64bit data types","",PValTP.vt_bool,false,null,null,false));
-		gp.addPropItem(new PropItem("modicon_ord","Modicon bit ordering(bit 0 in MSB)","",PValTP.vt_bool,false,null,null,false));
+		gp = new PropGroup("data_encod",lan);//"Data Encoding");
+		gp.addPropItem(new PropItem("byte_ord_def",lan,PValTP.vt_bool,false,null,null,true)); //"Use default Modbus byte order",""
+		gp.addPropItem(new PropItem("fw_low32",lan,PValTP.vt_bool,false,null,null,true)); //"First word low in 32bit data types",""
+		gp.addPropItem(new PropItem("fdw_low64",lan,PValTP.vt_bool,false,null,null,false)); //"First Dword low in 64bit data types",""
+		gp.addPropItem(new PropItem("modicon_ord",lan,PValTP.vt_bool,false,null,null,false)); //"Modicon bit ordering(bit 0 in MSB)",""
+
+//		gp.addPropItem(new PropItem("byte_ord_def","Use default Modbus byte order","",PValTP.vt_bool,false,null,null,true));
+//		gp.addPropItem(new PropItem("fw_low32","First word low in 32bit data types","",PValTP.vt_bool,false,null,null,true));
+//		gp.addPropItem(new PropItem("fdw_low64","First Dword low in 64bit data types","",PValTP.vt_bool,false,null,null,false));
+//		gp.addPropItem(new PropItem("modicon_ord","Modicon bit ordering(bit 0 in MSB)","",PValTP.vt_bool,false,null,null,false));
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("block_size","Block Sizes");
-		gp.addPropItem(new PropItem("out_coils","Output Coils","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("in_coils","Input Coils","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("internal_reg","Internal Registers","",PValTP.vt_int,false,null,null,32));
-		gp.addPropItem(new PropItem("holding","Holding","",PValTP.vt_int,false,null,null,32));
+		gp = new PropGroup("block_size",lan);//"Block Sizes");
+		gp.addPropItem(new PropItem("out_coils",lan,PValTP.vt_int,false,null,null,32)); //"Output Coils",""
+		gp.addPropItem(new PropItem("in_coils",lan,PValTP.vt_int,false,null,null,32)); //"Input Coils",""
+		gp.addPropItem(new PropItem("internal_reg",lan,PValTP.vt_int,false,null,null,32)); //"Internal Registers",""
+		gp.addPropItem(new PropItem("holding",lan,PValTP.vt_int,false,null,null,32)); //"Holding",""
+		
+//		gp.addPropItem(new PropItem("out_coils","Output Coils","",PValTP.vt_int,false,null,null,32));
+//		gp.addPropItem(new PropItem("in_coils","Input Coils","",PValTP.vt_int,false,null,null,32));
+//		gp.addPropItem(new PropItem("internal_reg","Internal Registers","",PValTP.vt_int,false,null,null,32));
+//		gp.addPropItem(new PropItem("holding","Holding","",PValTP.vt_int,false,null,null,32));
 		pgs.add(gp) ;
 		
-		gp = new PropGroup("framing","Framing");
-		gp.addPropItem(new PropItem("m_tcp_f","Use Modbus Tcp framing","",PValTP.vt_bool,false,null,null,false));
-		gp.addPropItem(new PropItem("leading_bs","Leading bytes","",PValTP.vt_int,false,null,null,0));
-		gp.addPropItem(new PropItem("trailing_bs","Trailing bytes","",PValTP.vt_int,false,null,null,0));
+		gp = new PropGroup("framing",lan);//"Framing");
+		gp.addPropItem(new PropItem("m_tcp_f",lan,PValTP.vt_bool,false,null,null,false)); //"Use Modbus Tcp framing",""
+		gp.addPropItem(new PropItem("leading_bs",lan,PValTP.vt_int,false,null,null,0)); //"Leading bytes",""
+		gp.addPropItem(new PropItem("trailing_bs",lan,PValTP.vt_int,false,null,null,0)); //"Trailing bytes",""
+//		gp.addPropItem(new PropItem("m_tcp_f","Use Modbus Tcp framing","",PValTP.vt_bool,false,null,null,false));
+//		gp.addPropItem(new PropItem("leading_bs","Leading bytes","",PValTP.vt_int,false,null,null,0));
+//		gp.addPropItem(new PropItem("trailing_bs","Trailing bytes","",PValTP.vt_int,false,null,null,0));
 		pgs.add(gp) ;
+		
+		
+		
+		
+		
+		
+		
 		
 		return pgs;
 	}
