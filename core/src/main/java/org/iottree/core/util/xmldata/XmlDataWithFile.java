@@ -539,6 +539,7 @@ public class XmlDataWithFile
 	 */
 	public static class CombinedFileHead
 	{
+		int headLen ;
 		XmlData innerXmlData = null;
 
 		ArrayList<String> fileNames = new ArrayList<String>();
@@ -553,8 +554,9 @@ public class XmlDataWithFile
 		 */
 		XmlData combinedFormatXmlData = null;
 
-		private CombinedFileHead()
+		private CombinedFileHead(int headlen)
 		{
+			this.headLen = headlen ;
 		}
 
 		public XmlData getInnerXmlData()
@@ -612,8 +614,11 @@ public class XmlDataWithFile
 		// read first line
 		StringBuilder firstline = new StringBuilder();
 		int c, firstline_len = -1, datalen = -1;
+		int headlen = 0 ;
 		while ((c = inputs.read()) >= 0)
 		{
+			headlen ++ ;
+			
 			if (c == '\n')
 			{
 				if (firstline.length() > 50)
@@ -653,10 +658,12 @@ public class XmlDataWithFile
 			throw new Exception("invalid data format,data read len[" + readlen
 					+ "] is less to data len[" + datalen + "]");
 		}
+		
+		headlen += datalen ;
 
 		XmlData xd = XmlData.parseFromByteArrayUTF8(databuf);
 
-		CombinedFileHead ret = new CombinedFileHead();
+		CombinedFileHead ret = new CombinedFileHead(headlen);
 		ret.innerXmlData = xd.getSubDataSingle("data");
 		ret.combinedFormatXmlData = xd;
 		List<XmlData> fxds = xd.getSubDataArray("files");
@@ -682,8 +689,11 @@ public class XmlDataWithFile
 		// read first line
 		StringBuilder firstline = new StringBuilder();
 		int c, firstline_len = -1, datalen = -1;
+		int headlen = 0 ;
 		while ((c = inputs.read()) >= 0)
 		{
+			headlen ++ ;
+			
 			if (c == '\n')
 			{
 				if (firstline.length() > 50)
@@ -723,12 +733,14 @@ public class XmlDataWithFile
 			throw new Exception("invalid data format,data read len[" + readlen
 					+ "] is less to data len[" + datalen + "]");
 		}
+		
+		headlen+= datalen ;
 
 		XmlData xd = XmlData.parseFromByteArrayUTF8(databuf);
 
 		//System.out.println(xd.toXmlString()) ;
 		
-		CombinedFileHead ret = new CombinedFileHead();
+		CombinedFileHead ret = new CombinedFileHead(headlen);
 		ret.innerXmlData = xd.getSubDataSingle("data");
 		ret.combinedFormatXmlData = xd;
 		List<XmlData> fxds = xd.getSubDataArray("files");
@@ -761,7 +773,7 @@ public class XmlDataWithFile
 
 	XmlData innerXmlData = null;
 
-	ArrayList<String> localPathToBeSend = new ArrayList<String>();
+	ArrayList<File> localPathToBeSend = new ArrayList<>();
 
 	ArrayList<MemFileItem> memFileItems = new ArrayList<MemFileItem>();
 
@@ -785,9 +797,24 @@ public class XmlDataWithFile
 		{
 			for (String lp : localpaths)
 			{
-				localPathToBeSend.add(lp);
+				localPathToBeSend.add(new File(lp));
 			}
 		}
+	}
+	
+	public static XmlDataWithFile createFrom(XmlData xd, List<File> localfs)
+	{
+		XmlDataWithFile ret = new XmlDataWithFile() ;
+		ret.innerXmlData = xd;
+		ret.innerXmlData.belongToXdFile = ret ;
+		if (localfs != null)
+		{
+			for (File lp : localfs)
+			{
+				ret.localPathToBeSend.add(lp);
+			}
+		}
+		return ret ;
 	}
 
 	/**
@@ -803,7 +830,7 @@ public class XmlDataWithFile
 		{
 			for (String lp : localpaths)
 			{
-				localPathToBeSend.add(lp);
+				localPathToBeSend.add(new File(lp));
 			}
 		}
 		
@@ -827,7 +854,7 @@ public class XmlDataWithFile
 		return innerXmlData;
 	}
 	
-	public List<String> getLocalFilePaths()
+	public List<File> getLocalFilePaths()
 	{
 		return this.localPathToBeSend ;
 	}
@@ -874,7 +901,7 @@ public class XmlDataWithFile
 		{
 			for (String fp : fps)
 			{
-				localPathToBeSend.add(fp);
+				localPathToBeSend.add(new File(fp));
 			}
 		}
 	}
@@ -902,6 +929,13 @@ public class XmlDataWithFile
 				fos.close() ;
 		}
 	}
+	
+	public byte[] writeToPkBuf()
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
+		writeToStream(baos, new DefaultSendCB());
+		return baos.toByteArray() ;
+	}
 
 	/**
 	 * ���㷢�����ݵĳ���--����֧��http��ʽ����ǰ��Ҫ�趨��ContentLength
@@ -918,9 +952,9 @@ public class XmlDataWithFile
 		if (localPathToBeSend!=null&&localPathToBeSend.size() > 0)
 		{
 			List<XmlData> fxds = sendxd.getOrCreateSubDataArray("files");
-			for (String lp : localPathToBeSend)
+			for (File f : localPathToBeSend)
 			{
-				File f = new File(lp);
+				//File f = new File(lp);
 				if (!f.exists())
 					continue;
 
@@ -978,9 +1012,9 @@ public class XmlDataWithFile
 		if (localPathToBeSend!=null&&localPathToBeSend.size() > 0)
 		{
 			List<XmlData> fxds = sendxd.getOrCreateSubDataArray("files");
-			for (String lp : localPathToBeSend)
+			for (File f : localPathToBeSend)
 			{
-				File f = new File(lp);
+				//File f = new File(lp);
 				if (!f.exists())
 					continue;
 
@@ -1202,6 +1236,44 @@ public class XmlDataWithFile
 
 			rcb.afterRecvFile(filen, filelen);
 		}
+	}
+	
+	public static XmlDataFilesMem readFromBuf(byte[] totalbuf,StringBuilder failedr) throws Exception
+	{
+		ByteArrayInputStream bais = new ByteArrayInputStream(totalbuf) ;
+		CombinedFileHead cfh = readCombinedFileHead(bais);
+		XmlData xd = cfh.combinedFormatXmlData;
+		XmlData innerxd = xd.getSubDataSingle("data");
+		//if(innerxd!=null)
+			//innerxd.belongToXdFile = this ;
+		
+		XmlDataFilesMem xdfm = new XmlDataFilesMem(totalbuf,cfh.headLen,innerxd) ;
+//		xdfm.innerXD = innerxd ;
+//		xdfm.headBufLen = cfh.headLen ;
+		xdfm.totalBuf = totalbuf ;
+
+		List<XmlData> fxds = xd.getSubDataArray("files");
+		if (fxds != null && fxds.size() > 0)
+		{
+			int startpos = xdfm.headBufLen ;
+			for (XmlData fxd : fxds)
+			{
+				String filen = fxd.getParamValueStr("name");
+				long filelen = fxd.getParamValueInt64("len", -1);
+				
+				if(startpos+filelen>totalbuf.length)
+				{
+					failedr.append("file "+filen+" length ("+filelen+") is bigger than total buf len") ;
+					return null ;
+				}
+	
+				xdfm.fileItems.add(new XmlDataFilesMem.FileItem(filen,startpos,(int)filelen)) ;
+				startpos += filelen ;
+				
+			}
+		}
+		
+		return xdfm ;
 	}
 
 	public static void main(String[] args) throws Exception

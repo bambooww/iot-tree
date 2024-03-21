@@ -245,7 +245,8 @@ function show_chart(data)
 				//data: X_Data //[1, 2, 3, 4, 5, 6, 7] //
 			},
 			yAxis: {
-				type: 'value'
+				type: 'value',
+				scale:true
 			},
 			series: [
 				{

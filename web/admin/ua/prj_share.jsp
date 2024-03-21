@@ -28,7 +28,7 @@ PrjShareMQTT ps = (PrjShareMQTT)PrjShareManager.getInstance().getSharer(prjid) ;
 boolean benable = true;
 boolean bwrite=true;
 String host = "";
-String port  = "";
+String port  = "1883";
 
 int conn_to = 30;
 String user = "";

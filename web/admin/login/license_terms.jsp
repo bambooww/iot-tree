@@ -102,7 +102,7 @@ function set_sys_lan()
 							dlg.msg(rr);
 							return ;
 						}
-						document.location.href=document.location.href ;
+						location.reload() ;
 					}) ;
 				});
 }

@@ -14,7 +14,7 @@
 	java.util.*"
 	%><%!
 	static final int map_show_len = 25 ;
-	%><%
+	%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 
 if(!Convert.checkReqEmpty(request, out, "prjid","cpid"))
 	return;
@@ -597,7 +597,7 @@ function bind_import()
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)

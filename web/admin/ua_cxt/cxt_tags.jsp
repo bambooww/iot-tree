@@ -470,7 +470,7 @@ function paste_tag()
 					dlg.msg(ret);
 					return ;
 				}
-				//document.location.href=document.location.href;
+				//location.reload();
 				refresh_tags();
 			},false);
 }
@@ -602,7 +602,7 @@ function rename_tag(p,id)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -1030,7 +1030,7 @@ function bind_ext(path)
 									$("#node_ext_"+id).css("color","#17c680") ;
 								else
 									$("#node_ext_"+id).css("color","#111111") ;
-								//document.location.href=document.location.href;
+								//location.reload();
 							},false);
 							
 						 

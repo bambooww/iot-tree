@@ -162,7 +162,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //	@data_val(param_name="alert_high")
 //	String alertHighVal = null ;
 	
-	@data_obj(param_name = "alert")
+	@data_obj(param_name = "alert",obj_c = ValAlert.class)
 	List<ValAlert> valAlerts = null ;
 	/**
 	 * save val his, to support 
@@ -720,6 +720,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public List<ValAlert> getValAlerts()
 	{
 		return this.valAlerts ;
+	}
+	
+	void setValAlerts(List<ValAlert> vas)
+	{
+		this.valAlerts = vas ;
+		if(vas!=null)
+		{
+			for(ValAlert va:vas)
+				va.setBelongTo(this);
+		}
 	}
 
 	public JSONArray getValAlertsJArr() throws Exception

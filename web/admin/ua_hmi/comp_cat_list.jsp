@@ -208,7 +208,7 @@ function edit_devdef(id)
 									return ;
 								}
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							}).fail(function(req, st, err) {
 								dlg.msg(err);
 							});
@@ -232,7 +232,7 @@ function del_devdef(id)
 			    			return ;
 			    		}
 			    		//
-						document.location.href=document.location.href;
+						location.reload();
 			    	}) ;
 				});
 }

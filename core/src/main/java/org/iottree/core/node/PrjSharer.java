@@ -1,9 +1,13 @@
 package org.iottree.core.node;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.iottree.core.UAHmi;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
@@ -14,6 +18,7 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
+import org.iottree.core.util.xmldata.XmlDataWithFile;
 import org.json.JSONObject;
 
 /**
@@ -111,7 +116,23 @@ public abstract class PrjSharer extends PrjNode
 			return ;
 		
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(p) ;
-		this.sendMsg(callerprjid, MsgTp.resp, xd.toBytesWithUTF8());
+		
+		// add hmi file
+		ArrayList<File> fs = new ArrayList<>() ;
+		List<UAHmi> hmis = p.listSubHmiNodesAll() ;
+		for(UAHmi hmi:hmis)
+		{
+			File f = hmi.getRelatedFile() ;
+			if(log.isDebugEnabled())
+				log.debug(" SW_sharerOnReq hmi f="+f.getCanonicalPath()) ;
+			if(!f.exists())
+				continue ;
+			fs.add(f) ;
+		}
+			
+		XmlDataWithFile xdf = XmlDataWithFile.createFrom(xd,fs) ;
+		byte[] resp_cont = xdf.writeToPkBuf();//.writeToStream(outputs);
+		this.sendMsg(callerprjid, MsgTp.resp, resp_cont);
 	}
 	
 	protected void SW_shareOnWrite(String callerprjid,byte[] cont) throws Exception

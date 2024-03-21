@@ -145,7 +145,7 @@ layui.use('form', function(){
 					dlg.msg(ret) ;
 					return ;
 				}
-				document.location.href=document.location.href;
+				location.reload();
 			}) ;
 		  });
 	 form.render();
@@ -173,7 +173,7 @@ function set_all_def()
 			dlg.msg(ret);
 			return ;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	}) ;
 }
 

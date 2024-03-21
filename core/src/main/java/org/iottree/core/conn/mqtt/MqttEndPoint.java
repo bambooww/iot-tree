@@ -15,12 +15,16 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MqttEndPoint
 {
+	static ILogger log = LoggerManager.getLogger(MqttEndPoint.class) ;
+	
 	public static boolean checkTopicValid(String topic_str,StringBuilder failedr)
 	{
 		try
@@ -353,7 +357,8 @@ public class MqttEndPoint
 			for (String topic : this.topics)
 			{
 				client.subscribe(topic, 0);
-				System.out.println(" mqtt conned to [" + tar + "] subscribe topic=" + topic);
+				if(log.isDebugEnabled())
+					log.debug(" mqtt conned to [" + tar + "] subscribe topic=" + topic);
 			}
 
 			bLastConnFailed = false;

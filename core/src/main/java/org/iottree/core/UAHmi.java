@@ -257,9 +257,14 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		ISaver rep = (ISaver) this.getTopNode();
 
 		File subdir = rep.getSaverDir();
-		if (!subdir.exists())
-			subdir.mkdirs();
+//		if (!subdir.exists())
+//			subdir.mkdirs();
 		return new File(subdir, "hmi_" + this.getId() + ".txt");
+	}
+	
+	public String getHmiFileName()
+	{
+		return "hmi_" + this.getId() + ".txt";
 	}
 
 	private transient List<BindDI> binds = null;

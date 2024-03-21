@@ -91,6 +91,29 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	// }
 	// super.constructNodeTree();
 	// }
+	
+	public  List<UAHmi> listSubHmiNodesAll()
+	{
+		ArrayList<UAHmi> rets = new ArrayList<>() ;
+		listSubHmiNodesAll(rets) ;
+		return rets ;
+	}
+	
+	private void listSubHmiNodesAll(List<UAHmi> hmis)
+	{
+		if(this.hmis!=null)
+			hmis.addAll(this.hmis) ;
+		List<UANode> ns = this.getSubNodes();
+		if (ns == null)
+			return ;
+		for (UANode n : ns)
+		{
+			if (n instanceof UANodeOCTagsCxt)
+			{
+				((UANodeOCTagsCxt) n).listSubHmiNodesAll(hmis);
+			}
+		}
+	}
 
 	public List<UAHmi> getHmis()
 	{
@@ -149,8 +172,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	{
 		UAUtil.assertUAName(name);
 
-		UAHmi ch = getHmiByName(name);
-		if (ch != null && ch != hmi)
+		UAHmi oldhmi = getHmiByName(name);
+		if (oldhmi != null && oldhmi != hmi)
 		{
 			throw new IllegalArgumentException("hmi with name=" + name + " existed");
 		}

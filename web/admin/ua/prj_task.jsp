@@ -233,7 +233,7 @@ function show_script()
 								return ;
 							}
 							dlg.close() ;
-							document.location.href=document.location.href;
+							location.reload();
 						}) ;
 				},
 				function(dlgw)
@@ -274,7 +274,7 @@ function task_del(prjid,id)
 		    			layer.msg("del err:"+ret) ;
 		    	}) ;
 		      
-		      document.location.href=document.location.href;
+		      location.reload();
 		    });
 }
 
@@ -323,7 +323,7 @@ function add_or_edit_task(prjid,id)
 								}
 								
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							}).fail(function(req, st, err) {
 								dlg.msg(err);
 							});
@@ -378,7 +378,7 @@ function add_or_edit_task_act(prjid,taskid,id)
 								}
 								
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							}).fail(function(req, st, err) {
 								dlg.msg(err);
 							});
@@ -399,7 +399,7 @@ function task_act_del(prjid,taskid,actid)
 		    	send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=act_del&taskid="+taskid+"&actid="+actid,function(bsucc,ret){
 		    		if(bsucc&&ret=='succ')
 		    		{
-			    		document.location.href=document.location.href;
+			    		location.reload();
 		    		}
 		    		else
 		    			layer.msg("del err:"+ret) ;
@@ -423,7 +423,7 @@ function start_stop(b,taskid)
         success: function (result) {  
         	if("ok"==result)
         	{
-        		document.location.href=document.location.href ;
+        		location.reload() ;
         	}
         	else
         	{

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="
+	org.json.*,
 	org.iottree.core.*,
 	org.iottree.core.conn.*,
 				org.iottree.core.util.*,
@@ -51,8 +52,15 @@ if(cpt==null)
 switch(op)
 {
 case "syn_tree":
-	cpt.getCaller().callShareTree();
-	out.print("send syn tree");
+	StringBuilder failedr = new StringBuilder() ;
+	if(cpt.RT_synTree(failedr))
+		out.print("ok");
+	else
+		out.print(failedr.toString()) ;
+	return ;
+case "syn_st":
+	JSONObject jo = cpt.RT_getSynTreeInf(30000) ;
+	jo.write(out) ;
 	return ;
 }
 %>unknown op

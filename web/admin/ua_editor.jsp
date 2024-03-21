@@ -653,7 +653,7 @@ function act_ch_new_dev(n,op)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)

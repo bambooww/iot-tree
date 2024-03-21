@@ -135,7 +135,7 @@ layui.use('element', function(){
 	
 function refresh_me()
 {
-	document.location.href=document.location.href;
+	location.reload();
 }
 
 function refresh_rt()

@@ -97,7 +97,7 @@ function add()
 						 }
 						 //console.log(ret);
 						 dlg.close();
-						 document.location.href=document.location.href;
+						 location.reload();
 				 	});
 				},
 				function(dlgw)

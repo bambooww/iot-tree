@@ -113,14 +113,14 @@ layui.use('table', function()
 
 function refresh_ui()
 {
-	document.location.href=document.location.href;
+	location.reload();
 }
 
 function edit_server(n,t)
 {
 	dlg.open("service_edit_"+n+".jsp",
-			{title:t+" setup",w:'500px',h:'400px'},
-			['Ok','<wbt:lang>cancel</wbt:lang>'],
+			{title:t+" <wbt:g>setup</wbt:g>",w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -167,7 +167,7 @@ function start_stop(b,n)
         success: function (result) {  
         	if("ok"==result)
         	{
-        		document.location.href=document.location.href ;
+        		location.reload() ;
         	}
         	else
         	{

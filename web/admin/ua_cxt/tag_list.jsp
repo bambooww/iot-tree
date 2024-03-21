@@ -524,7 +524,7 @@ function paste_tag()
 					dlg.msg(ret);
 					return ;
 				}
-				document.location.href=document.location.href;
+				location.reload();
 			},false);
 }
 
@@ -597,11 +597,11 @@ function add_or_modify_tag(id,bmid)
 										return ;
 									}
 									dlg.close();
-									document.location.href=document.location.href;
+									location.reload();
 								},false);
 								
 							 
-							 //document.location.href=document.location.href;
+							 //location.reload();
 					 	});
 					},
 					function(dlgw)
@@ -638,11 +638,11 @@ function rename_tag(p,id)
 									return ;
 								}
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -679,7 +679,7 @@ function del_tag(id)
 					return ;
 				}
 				dlg.close();
-				document.location.href=document.location.href;
+				location.reload();
 			},false);
 	 });
 }

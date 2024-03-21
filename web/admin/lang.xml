@@ -18,6 +18,7 @@
   
   <dd_node id="1" name="modified_date" name_cn="修改时间" name_en="modified date" />
   <dd_node id="1" name="more_prjs" name_cn="更多项目" name_en="more projects" />
+  <dd_node id="1" name="more" name_cn="更多" name_en="More" />
   <dd_node id="1" name="dev_lib" name_cn="设备库" name_en="Device Library" />
   <dd_node id="1" name="hmi_lib" name_cn="图库" name_en="HMI Library" />
   <dd_node id="1" name="simulator" name_cn="模拟器" name_en="Simulator" />
@@ -119,14 +120,22 @@
     
     <dd_node id="1" name="service_mgr" name_cn="服务程序管理" name_en="Service Manager" />
     
+    
+    <dd_node id="1" name="not_share" name_cn="未共享" name_en="Not Share" />
+    <dd_node id="1" name="not_share" name_cn="未共享" name_en="Not Share" />
+    <dd_node id="1" name="share_conn_failed" name_cn="已共享但连接失败" name_en="Share but connection failed" />
+    <dd_node id="1" name="share_conn_ok" name_cn="已共享并且连接正常" name_en="Share and connection ok" />
+    
     <dd_node id="1" name="share" name_cn="共享" name_en="Share" />
     <dd_node id="1" name="share_as_n" name_cn="共享为一个节点" name_en="Share as A Node" />
+    <dd_node id="1" name="click_it" name_cn="点击这个" name_en="Click it" />
+    <dd_node id="1" name="click" name_cn="点击" name_en="Click" />
     <dd_node id="1" name="pls" name_cn="请" name_en="Please" />
     <dd_node id="1" name="push" name_cn="推送" name_en="Push" />
     
     <dd_node id="1" name="writable" name_cn="可写" name_en="Writable" />
     
-    
+    <dd_node id="1" name="node_syn" name_cn="节点同步" name_en="Node Synchroniation" />
     <dd_node id="1" name="task" name_cn="任务" name_en="Task" />
     <dd_node id="1" name="tasks" name_cn="任务" name_en="Tasks" />
     <dd_node id="1" name="alert" name_cn="报警" name_en="Alert" />
@@ -174,6 +183,7 @@
     <dd_node id="1" name="port" name_cn="端口" name_en="Port" />
     <dd_node id="1" name="timeout" name_cn="过期" name_en="Timeout" />
     <dd_node id="1" name="user" name_cn="用户" name_en="User" />
+    <dd_node id="1" name="users" name_cn="用户" name_en="Users" />
     <dd_node id="1" name="psw" name_cn="密码" name_en="Password" />
     
     <dd_node id="1" name="set_as_main_ui" name_cn="设置为主界面" name_en="Set as Main UI" />

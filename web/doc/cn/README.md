@@ -123,6 +123,8 @@ IOT-Tree Server可以以项目为单位，基于多种通信方式部署成一�
 
 
 
+[中心-子站远程监控][center_substation]
+
 
 ## 2 IOT-Tree Server组成内容
 ### 2.1 基于项目的管理机制
@@ -208,3 +210,4 @@ IOT-Tree为了方便监控系统现场计算机（或支持触摸功能的一体
 [lamp_demo]: ./doc/case/example_lamp_demo.md
 
 [embed_ctrl_demo]: ./doc/case/example_embed.md
+[center_substation]: ./doc/advanced/main_sub_station.md

@@ -85,8 +85,8 @@
 ##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 插件开发 - JsApi</a>
 ##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 插件开发 - Authority</a>
 ##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.4 对外提供OPC UA接口</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.5 设备模拟器</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.6 主站-子站远程控制</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.5 中心-子站远程监控</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.6 设备模拟器</a>
 
 #### <a href="doc/version.md" >11 版本说明</a>
 

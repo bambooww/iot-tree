@@ -173,7 +173,13 @@ function do_submit(cb)
 			pms["id_"+id]="rename_"+newname ;
 		}
 		else
-			pms["id_"+id]=v ;
+		{
+			var newname = $("#inputn_"+id).val() ;
+			var tt=$("#inputt_"+id).val();
+			pms["id_"+id+"_title"]=tt;
+			pms["id_"+id]="rename_"+newname ;
+		}
+			
 		b=true ;
 	}
 	
@@ -183,7 +189,7 @@ function do_submit(cb)
 		return ;
 	}
 	
-	//console.log(pms);
+	console.log(pms);
 	
 	send_ajax('prj_imp_ajax.jsp',pms,function(bsucc,ret)
 	{

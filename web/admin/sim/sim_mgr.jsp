@@ -56,7 +56,7 @@ layui.use('table', function()
 
 function refresh_ui()
 {
-	document.location.href=document.location.href;
+	location.reload();
 }
 
 function edit_server(n)
@@ -110,7 +110,7 @@ function start_stop(b,n)
         success: function (result) {  
         	if("ok"==result)
         	{
-        		document.location.href=document.location.href ;
+        		location.reload() ;
         	}
         	else
         	{

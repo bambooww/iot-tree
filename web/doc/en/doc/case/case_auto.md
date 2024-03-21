@@ -620,8 +620,8 @@ Select the green start button and click on the blank padding on the right corres
 
 Client JS
 ```
-$event.fire_to_server();
-$util.msg("start cmd issued") ;
+if($server.fire_to_server())
+    $util.msg("start cmd issued") ;
 ```
 
 Server JS
@@ -640,8 +640,8 @@ Similarly, check the red Stop button and fill in the following script in the Eve
 
 Client JS
 ```
-$event.fire_to_server();
-$util.msg("stop cmd issued") ;
+if($server.fire_to_server())
+   $util.msg("stop cmd issued") ;
 ```
 
 Server JS
@@ -681,8 +681,8 @@ Client JS
 ```
  var v = valve1.open_v; //$this.open_v;
  $util.dlg_input_num({tp:'slide',min:0,max:100,val:v},(val)=>{
-      $event.fire_to_server(val);
-      $util.msg("valve cmd issued") ;
+      if($server.fire_to_server(val))
+        $util.msg("valve cmd issued") ;
  }) ;
 ```
 
@@ -725,7 +725,7 @@ Client JS
 ```
  var v = $this.txt;
  $util.dlg_input_num({is_float:true,val:v},(val)=>{
-      $event.fire_to_server(val);
+      $server.fire_to_server(val);
       $util.msg("chang high level issued") ;
  }) ;
 ```
@@ -744,7 +744,7 @@ Client JS
 ```
  var v = $this.txt;
  $util.dlg_input_num({is_float:true,val:v},(val)=>{
-      $event.fire_to_server(val);
+      $server.fire_to_server(val);
       $util.msg("chang low level issued") ;
  }) ;
 ```

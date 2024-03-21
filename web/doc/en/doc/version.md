@@ -1,24 +1,23 @@
 # Versions
 
 
-### version 1.4.0
+### version 1.5.0
 
 
-Added multi-language xml resource file support, first configuration to add language selection. Revised multi-language support for some pages.
-
-handle some bugs
-
-
-### version 1.5.0 Plan
-
-
-Add MQTT-based deployment instance (IOTTree Node) data sharing and connector support. This provides preliminary distributed support for IOTTree, enabling hierarchical relationships between remote sub-stations and the main station.
+Add MQTT-based deployment instance (IOTTree Node) data sharing and connector support. This provides preliminary distributed support for IOTTree, enabling hierarchical relationships between remote sub-stations and the center.
 
 
 ### version 2.0.0 (Plan)
 
 
 
+
+### version 1.4.0
+
+
+Added multi-language xml resource file support, first configuration to add language selection. Revised multi-language support for some pages.
+
+handle some bugs
 
 
 

@@ -10,7 +10,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid","cpid","cid"))
 	return;
 	String prjid = request.getParameter("prjid") ;
@@ -82,7 +82,7 @@ function add_to_ch(n)
 			dlg.msg(ret.err) ;
 			return ;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 </script>

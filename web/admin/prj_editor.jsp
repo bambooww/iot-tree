@@ -1358,11 +1358,13 @@ function edit_mqtt_test(cptp,cpid,connid)
 function iottree_node_syn_tree(cptp,cpid,connid)
 {
 	dlg.open_win("./conn/ext/cpt_iottree_node_syn.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"IOTTree Node Synchroniation ["+cptp+"]",w:'800',h:'550'},
+			{title:"IOTTree <wbt:g>node_syn</wbt:g>",w:'550',h:'300'},
 			[{title:'<wbt:g>close</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
+					if(dlgw.is_syn_ok())
+						refresh_ui() ;
 					dlg.close();
 				}
 				
@@ -1617,7 +1619,7 @@ function act_edit_prj(n,op)
 								return ;
 							}
 							 dlg.close();
-							 document.location.href=document.location.href;
+							 location.reload();
 						},false);
 							
 						 //console.log(ret);
@@ -1744,7 +1746,7 @@ function act_ch_sel_drv(n,op)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -1785,7 +1787,7 @@ function act_node_add_to_lib(n,op)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -1910,7 +1912,7 @@ function add_or_edit_dev(ch_path,dev_path)
 						},false);
 						
 					 
-					 //document.location.href=document.location.href;
+					 //location.reload();
 			 	});
 			},
 			function(dlgw)
@@ -1993,7 +1995,7 @@ function act_new_hmi(n,op)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -2313,18 +2315,18 @@ function prj_rt()
 		update_prj_run(ret.run);
 		
 		var c = "grey" ;
-		var t = "not share";
+		var t = "<wbt:g>not_share</wbt:g>\r\n<wbt:g>click_it,share_as_n</wbt:g>";
 		if(ret.share)
 		{
 			if(ret.share_run)
 			{
 				c = "green" ;
-				t = "Share and connection ok" ;
+				t = "<wbt:g>share_conn_ok</wbt:g>" ;
 			}
 			else
 			{
 				c = "red" ;
-				t = "share and connection failure "
+				t = "<wbt:g>share_conn_failed</wbt:g>"
 			}
 		}
 		$("#share_run").css("color",c);
@@ -2512,12 +2514,13 @@ setInterval(prj_rt,3000) ;
 function chg_lan(ln)
 {
 	send_ajax("./login/login_ajax.jsp",{op:"set_session_lan",lan:ln},(bsucc,ret)=>{
+		
 		if(!bsucc||ret!='succ')
 		{
 			dlg.msg(ret) ;
 			return;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 </script>

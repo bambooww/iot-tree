@@ -674,7 +674,7 @@ function act_node_new_tag(n,op)
 							},false);
 							
 						 
-						 //document.location.href=document.location.href;
+						 //location.reload();
 				 	});
 				},
 				function(dlgw)

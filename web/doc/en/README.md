@@ -129,6 +129,8 @@ This distributed function can greatly facilitate the linkage of cross regional m
 
 
 
+[Center-substation remote monitoring][center_substation]
+
 
 
 ## 2 Composition of IOT-Tree Server
@@ -219,3 +221,4 @@ If you encounter problems with the system or have suggestions, you can send us e
 [lamp_demo]: ./doc/case/example_lamp_demo.md
 
 [embed_ctrl_demo]: ./doc/case/example_embed.md
+[center_substation]: ./doc/advanced/main_sub_station.md

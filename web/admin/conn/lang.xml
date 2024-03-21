@@ -10,4 +10,12 @@
   <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
   <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
   
+  <dd_node id="1" name="syn_tt" name_cn="与接入的子站进行组织树的同步" name_en="Synchronize the tree with sub station" />
+  <dd_node id="1" name="syn_no_conn_pt" name_cn="当前接入没有启动连接，请先启动连接或启动项目，连接正常之后才能同步！" name_en="Not connected, please start the connector or project first!" />
+  <dd_node id="1" name="pls_start_syn_btn" name_cn="请点击下面的[开始同步]按钮启动同步" name_en="Please click [Start Sync] button below to start synchronization" />
+  <dd_node id="1" name="start_syn" name_cn="开始同步" name_en="Start Sync" />
+  <dd_node id="1" name="syn_overw_pt" name_cn="请注意你之前的修改可能会被同步覆盖" name_en="Note: your previous modifications may be overwritten by synchronization" />
+  <dd_node id="1" name="syn_ok" name_cn="同步成功" name_en="Synchronization succeeded" />
+  <dd_node id="1" name="syn_is_running" name_cn="正在同步中" name_en="Synchronizing" />
+  <dd_node id="1" name="syn_timeout" name_cn="同步时间过期" name_en="Synchronization timeout" />
 </dd_class>

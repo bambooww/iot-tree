@@ -357,7 +357,7 @@ function del_res()
 			    			return ;
 			    		}
 			    		//
-						document.location.href=document.location.href;
+						location.reload();
 			    	}) ;
 				});
 }

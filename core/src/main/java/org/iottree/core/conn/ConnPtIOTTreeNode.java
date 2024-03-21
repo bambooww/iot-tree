@@ -2,7 +2,9 @@ package org.iottree.core.conn;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -27,6 +29,8 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlData;
+import org.iottree.core.util.xmldata.XmlDataFilesMem;
+import org.iottree.core.util.xmldata.XmlDataWithFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,6 +57,23 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	private transient boolean shareWritable = false ;
 	
 	private transient long lastPushDT = -1 ;
+	
+	public static class SynTreeInf
+	{
+		public XmlDataFilesMem respXDF = null ;
+		
+		public long respDT = -1 ;
+		
+		public Boolean bSynOk=null;
+		
+		public String synErr=null;
+		
+		public boolean synErrTimeout = false;
+		
+		public long startDT = -1 ;
+	}
+	
+	private transient SynTreeInf synTreeInf = new SynTreeInf() ;
 	
 	public ConnPtIOTTreeNode()
 	{
@@ -106,8 +127,16 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 			//if(!shareprjid.equals(this.sharePrjId))
 			//	return ;
 			
-			XmlData xd = XmlData.parseFromByteArray(cont, "UTF-8");
-			onNodeShareRespXmlData(xd);
+			//XmlData xd = XmlData.parseFromByteArray(cont, "UTF-8");
+			StringBuilder failedr = new StringBuilder() ;
+			XmlDataFilesMem xdf = XmlDataWithFile.readFromBuf(cont, failedr) ;
+			if(xdf==null)
+			{
+				if(log.isErrorEnabled())
+					log.error("SW_callerOnResp read XmlDataFilesMem failed="+failedr.toString()) ;
+				return ;
+			}
+			onNodeShareRespXmlData(xdf);
 			
 		}
 		
@@ -119,13 +148,35 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		}
 	};
 
-	private void onNodeShareRespXmlData(XmlData xd) throws Exception
+	private void onNodeShareRespXmlData(XmlDataFilesMem xdf) throws Exception
 	{
+		SynTreeInf sti = synTreeInf ;
+		
+		sti.respXDF = xdf ;
+		sti.respDT = System.currentTimeMillis() ;
+		
 		UACh ch = this.getJoinedCh();
 		if(ch==null)
+		{
+			sti.bSynOk = false;
+			sti.synErr = "no joined channel" ;
 			return ;
-		//System.out.println("xmldata==="+xd.toXmlString());
-		ch.Node_refreshByPrjXmlData(xd);
+		}
+		
+		try
+		{
+			//System.out.println("xmldata==="+xd.toXmlString());
+			ch.Node_refreshByPrjXmlData(xdf);
+
+			sti.bSynOk=true;
+			sti.synErr="";
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			sti.bSynOk=false;
+			sti.synErr=e.getMessage();
+		}
 		//System.out.println("ch refresh by prj ok ") ;
 	}
 	
@@ -151,6 +202,74 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 		finally
 		{
 			lastPushDT = System.currentTimeMillis();
+		}
+	}
+	
+	
+	private static final int MAX_NUM = 5 ;
+	/**
+	 * record tag update info for later timeout checking
+	 * @author jason.zhu
+	 *
+	 */
+	private static class Tag2Up
+	{
+		UATag tag ;
+		
+		
+		LinkedList<UAVal> prevVals = new LinkedList<>() ;
+		
+		public Tag2Up(UATag tag,UAVal val)
+		{
+			this.tag = tag ;
+			this.prevVals.addLast(val);
+		}
+		
+		public void putVal(UAVal v)
+		{
+			prevVals.addLast(v);
+			
+			if(prevVals.size()>MAX_NUM)
+				prevVals.removeFirst() ;
+		}
+		
+		public UAVal getLastVal()
+		{
+			return prevVals.getLast() ;
+		}
+	}
+	
+	private transient HashMap<String,Tag2Up> tagp2upMap = new HashMap<>() ;
+	
+	private void setToBuf(UATag tag,UAVal val)
+	{
+		String tagp = tag.getNodeCxtPathInPrj() ;
+		Tag2Up t2u = tagp2upMap.get(tagp) ;
+		if(t2u!=null)
+		{
+			t2u.putVal(val);
+			return ;
+		}
+		
+		t2u = new Tag2Up(tag,val) ;
+		tagp2upMap.put(tagp,t2u) ;
+		return ;
+	}
+	
+	private void setTagErrInBuf(long dt)
+	{
+		for(Tag2Up t2u:tagp2upMap.values())
+		{
+			UAVal lastv = t2u.getLastVal() ;
+			if(!lastv.isValid())
+				continue ; //
+			UATag tag = t2u.tag ;
+			
+			
+			UAVal uav = new UAVal(false, null,dt,dt);
+			tag.RT_setUAVal(uav);
+			
+			setToBuf(tag,uav) ;
 		}
 	}
 	
@@ -180,6 +299,8 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 				UAVal uav = new UAVal(bvalid, ov,dt,chgdt);
 				//tag.RT_setValStr(strv, true);
 				tag.RT_setUAVal(uav);
+				
+				setToBuf(tag,uav) ;
 			}
 		}
 		
@@ -347,7 +468,14 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	{
 		if (prjCaller == null)
 			return false;
-		if(System.currentTimeMillis()-this.lastPushDT>30000)
+		PrjCallerMQTT pc = (PrjCallerMQTT)this.getCaller();
+		MqttEndPoint mep = pc.getMqttEP() ;
+		if(mep==null)
+			return false;
+		long intv = mep.getMQTTKeepAliveInterval();
+		if(intv<=0)
+			intv = 30000 ;
+		if(System.currentTimeMillis()-this.lastPushDT>intv)
 			return false;
 		return prjCaller.isConnReady();
 	}
@@ -399,6 +527,12 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	{
 		PrjCaller pc = getCaller() ;
 		pc.checkConn();
+		
+		if(!isConnReady())
+		{
+			long dt = System.currentTimeMillis() ;
+			setTagErrInBuf(dt) ;
+		}
 	}
 	
 
@@ -464,4 +598,66 @@ public class ConnPtIOTTreeNode  extends ConnPtMSG
 	}
 
 
+	public boolean RT_synTree(StringBuilder failedr)
+	{
+		try
+		{
+			this.getCaller().callShareTree();
+			
+			//synTreeInf = new SynTreeInf() ;
+			synTreeInf.startDT = System.currentTimeMillis() ;
+			synTreeInf.bSynOk = null ;
+			synTreeInf.synErr = null ;
+			synTreeInf.synErrTimeout = false;
+			return true ;
+		}
+		catch(Exception e)
+		{
+			failedr.append(e.getMessage()) ;
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean RT_isInSynTree(long timeout)
+	{
+		if(synTreeInf==null)
+			return false;
+		
+		if(System.currentTimeMillis()-synTreeInf.startDT>timeout)
+		{
+			if(synTreeInf.startDT>0)
+			{
+				synTreeInf.bSynOk=false;
+				//synTreeInf.synErr = "timeout" ;
+				synTreeInf.synErrTimeout = true;
+			}
+			return false;
+		}
+		
+		return synTreeInf.bSynOk==null ;
+	}
+	
+	public JSONObject RT_getSynTreeInf(long timeout)
+	{
+		JSONObject jo = new JSONObject() ;
+		boolean binsyn = this.RT_isInSynTree(timeout) ;
+		jo.put("in_syn", binsyn) ;
+		jo.put("start_dt", synTreeInf.startDT) ;
+		
+		if(binsyn)
+		{
+			//jo.put("start_dt", synTreeInf.startDT) ;
+		}
+		else
+		{
+			
+			jo.putOpt("syn_ok", synTreeInf.bSynOk) ;
+			jo.putOpt("syn_err", synTreeInf.synErr) ;
+			jo.put("resp_dt", synTreeInf.respDT);
+			jo.put("resp_to", synTreeInf.synErrTimeout) ;
+			
+		}
+		return jo ;
+	}
 }

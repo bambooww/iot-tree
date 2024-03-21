@@ -7,12 +7,14 @@ import java.util.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
+import org.iottree.core.util.xmldata.XmlDataFilesMem.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
+import org.iottree.core.basic.ValAlert;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
@@ -875,21 +877,24 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	 * @param xd
 	 * @throws Exception
 	 */
-	public void Node_refreshByPrjXmlData(XmlData xd) throws Exception
+	public void Node_refreshByPrjXmlData(XmlDataFilesMem xdf) throws Exception
 	{
 		UAPrj r = new UAPrj() ;
+		XmlData xd = xdf.getInnerXD() ;
 		DataTranserXml.injectXmDataToObj(r, xd);
 		//other prj make all as sub node
 		List<UANode> subnodes = r.getSubNodes() ;
 		for(UANode subn:subnodes)
 		{
-			Node_refreshBySubNode(this,subn,true) ;
-			
+			Node_refreshBySubNode(xdf,this,subn,true) ;
 		}
 		this.save();
+		
+		List<XmlDataFilesMem.FileItem> fis = xdf.getFileItems() ;
+		
 	}
 	
-	private void Node_refreshBySubNode(UANodeOCTagsGCxt gcxt,UANode uan,boolean firstlvl) throws Exception
+	private void Node_refreshBySubNode(XmlDataFilesMem xdf,UANodeOCTagsGCxt gcxt,UANode uan,boolean firstlvl) throws Exception
 	{
 		if(uan instanceof UANodeOCTagsGCxt)
 		{
@@ -908,7 +913,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			{
 				for(UANode tmpsub:tmpsubs)
 				{
-					Node_refreshBySubNode(tg,tmpsub,false) ;
+					Node_refreshBySubNode(xdf,tg,tmpsub,false) ;
 				}
 			}
 		}
@@ -918,18 +923,32 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			UANode tmpn = gcxt.getSubNodeByName(t.getName()) ;
 			if(tmpn==null)
 			{
-				gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", 
+				UATag loctg = gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", 
 						t.getValTp(),t.getDecDigits(), t.bCanWrite, t.scanRate,false) ;
+				loctg.setValAlerts(t.getValAlerts()) ;
 			}
 		}
 		else if(uan instanceof UAHmi)
 		{
 			UAHmi hmi = (UAHmi)uan ;
+			String fn = hmi.getHmiFileName() ;
+			FileItem fi = xdf.getFileItem(fn) ;
 			//hmi.
-			//gcxt.addHmi("",  hmi.getName(), hmi.getTitle(), hmi.getDesc(), null);
+			UAHmi oldn = gcxt.getHmiByName(hmi.getName()) ;
+			UAHmi up_hmi = oldn ;
+			if(oldn==null)
+				up_hmi = gcxt.addHmi("",  hmi.getName(), hmi.getTitle(), hmi.getDesc(), null);
+			else
+				up_hmi = gcxt.updateHmi(oldn, hmi.getName(), hmi.getTitle(), hmi.getDesc()) ;
+			
+			File rfile = up_hmi.getRelatedFile() ;
+			
+			xdf.writeFileItemTo(fi, rfile);
 			// TODO: 1,up node must has sub node's lib comp
 			//            2 hmi may use sub node project res,it must syn too
 			//            it's must be designed carefully
+			
+			
 		}
 		
 	}

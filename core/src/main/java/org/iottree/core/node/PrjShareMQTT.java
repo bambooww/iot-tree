@@ -47,9 +47,15 @@ public class PrjShareMQTT extends PrjSharer
 			@Override
 			public void messageArrived(String topic, MqttMessage message) throws Exception
 			{
+				if(log.isDebugEnabled())
+					log.debug("messageArrived "+topic+" "+message.getPayload());
+				
 				NodeMsg nm = parseNodeMsg(topic,message.getPayload());
 				if(nm==null)
 					return ;//do nothing
+				
+				if(log.isDebugEnabled())
+					log.debug("messageArrived NodeMsg="+nm);
 				onRecvedMsg(nm);
 			}
 

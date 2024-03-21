@@ -31,6 +31,10 @@
 	String users = ser.getAuthUsers();
 	if(users==null)
 		users = "" ;
+	if(user==null)
+		user="" ;
+	if(psw==null)
+		psw ="" ;
 %>
 <html>
 <head>
@@ -49,39 +53,39 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Mqtt Enable:</label>
+    <label class="layui-form-label">MQTT <wbt:g>enable</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="mqtt_en" name="enable" <%=chked_mqtt_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Port:</div>
+	  <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="mqtt_port" name="mqtt_port" value="<%=mqtt_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="number" id="mqtt_port" name="mqtt_port" value="<%=mqtt_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label">Tcp Enable:</label>
+    <label class="layui-form-label">Tcp <wbt:g>enable</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="tcp_en" name="tcp_en" <%=chked_tcp_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Port:</div>
+	  <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="tcp_port" name="tcp_port" value="<%=tcp_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="number" id="tcp_port" name="tcp_port" value="<%=tcp_port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">User:</label>
+    <label class="layui-form-label"><wbt:g>user</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="user" name="user"  class="layui-input" value="<%=user%>">
 	  </div>
-	  <div class="layui-form-mid">Password:</div>
+	  <div class="layui-form-mid"><wbt:g>psw</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="text" id="psw" name="psw" value="<%=psw%>"  class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item layui-form-text">
-    <label class="layui-form-label">Users</label>
-    <div class="layui-input-block">
-      <textarea name="users" id="users" class="layui-textarea"><%=users %></textarea>
+    <label class="layui-form-label"><wbt:g>more,users</wbt:g></label>
+    <div class="layui-input-inline" style="width:400px">
+      <textarea name="users" id="users" class="layui-textarea" title="u1=xxx&#13;&#10;u2=yyy"><%=users %></textarea>
     </div>
   </div>
 </form>
@@ -107,7 +111,7 @@ function do_submit(cb)
 	var mqtt_port = $('#mqtt_port').val();
 	if(mqtt_en && (mqtt_port==null||mqtt_port==''))
 	{
-		cb(false,'Please input mqtt port') ;
+		cb(false,'<wbt:g>pls,input</wbt:g>MQTT<wbt:g>port</wbt:g>') ;
 		return ;
 	}
 	var mqtt_port = parseInt(mqtt_port);

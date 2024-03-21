@@ -767,7 +767,7 @@ function set_prj_main(id)
 			dlg.msg(ret) ;
 			return ;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 
@@ -779,7 +779,7 @@ function set_prj_auto_start(id,b)
 			dlg.msg(ret) ;
 			return ;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 
@@ -791,7 +791,7 @@ function set_simins_auto_start(id,b)
 			dlg.msg(ret) ;
 			return ;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 
@@ -816,7 +816,7 @@ function del_rep(id)
 				dlg.msg(ret) ;
 				return ;
 			}
-			document.location.href=document.location.href;
+			location.reload();
 		});
      });
 }
@@ -864,7 +864,7 @@ function add_prj()
 								return ;
 							}
 							 dlg.close();
-							 document.location.href=document.location.href;
+							 location.reload();
 						},false);
 						
 				 	});
@@ -928,7 +928,7 @@ function add_file_onchg()
 		success: function(data)
        	{
  	  		//dlg.msg(data);
- 	  		//document.location.href=document.location.href;
+ 	  		//location.reload();
  	  		if(data.indexOf("succ=")==0)
  	  			before_imp(data.substring(5)) ;
  	  		else
@@ -959,7 +959,7 @@ function before_imp(tmpfn,bdemo)
 						 }
 						 //console.log(ret);
 						 dlg.close();
-						 document.location.href=document.location.href;
+						 location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -992,7 +992,7 @@ function imp_prj_demo()
 						 }
 						 //console.log(ret);
 						 dlg.close();
-						 //document.location.href=document.location.href;
+						 //location.reload();
 						 before_imp(ret,true);
 				 	});
 				},
@@ -1026,7 +1026,7 @@ function imp_simins_demo()
 								 return ;
 							}
 							dlg.close();
-							document.location.href=document.location.href;
+							location.reload();
 						 });
 						
 						 
@@ -1072,7 +1072,7 @@ function devlib_before_imp(tmpfn)
 						 //var w = document.getElementById("devdef_lister").contentWindow ;
 						// w.drv_sel_chg();
 						 dlg.close();
-						 document.location.href=document.location.href;
+						 location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -1101,7 +1101,7 @@ function devlib_add_file_onchg()
 		success: function(data)
        	{
  	  		//dlg.msg(data);
- 	  		//document.location.href=document.location.href;
+ 	  		//location.reload();
  	  		if(data.indexOf("succ=")==0)
  	  			devlib_before_imp(data.substring(5)) ;
  	  		else
@@ -1124,7 +1124,7 @@ function devlib_del(libid)
 			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
 			    			return ;
 			    		}
-			    		document.location.href=document.location.href;
+			    		location.reload();
 			    	}) ;
 				});
 }
@@ -1164,7 +1164,7 @@ function devlib_add_or_edit(libid)
 									return ;
 								}
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							}).fail(function(req, st, err) {
 								dlg.msg(err);
 							});
@@ -1212,7 +1212,7 @@ function complib_before_imp(tmpfn)
 						 //var w = document.getElementById("devdef_lister").contentWindow ;
 						// w.drv_sel_chg();
 						 dlg.close();
-						 document.location.href=document.location.href;
+						 location.reload();
 				 	});
 				},
 				function(dlgw)
@@ -1241,7 +1241,7 @@ function complib_add_file_onchg()
 		success: function(data)
        	{
  	  		//dlg.msg(data);
- 	  		//document.location.href=document.location.href;
+ 	  		//location.reload();
  	  		if(data.indexOf("succ=")==0)
  	  			complib_before_imp(data.substring(5)) ;
  	  		else
@@ -1283,7 +1283,7 @@ function complib_del(libid)
 			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
 			    			return ;
 			    		}
-			    		document.location.href=document.location.href;
+			    		location.reload();
 			    	}) ;
 				});
 }
@@ -1323,7 +1323,7 @@ function complib_add_or_edit(libid)
 									return ;
 								}
 								dlg.close();
-								document.location.href=document.location.href;
+								location.reload();
 							}).fail(function(req, st, err) {
 								dlg.msg(err);
 							});
@@ -1390,7 +1390,7 @@ function del_simins(id)
 				dlg.msg(ret) ;
 				return ;
 			}
-			document.location.href=document.location.href;
+			location.reload();
 		});
      });
 }
@@ -1433,7 +1433,7 @@ function add_or_edit_simins(insid)
 								return ;
 							}
 							 dlg.close();
-							 document.location.href=document.location.href;
+							 location.reload();
 						},false);
 				 	});
 				},
@@ -1465,7 +1465,7 @@ function add_sim_file_onchg()
 		success: function(data)
        	{
  	  		if(data.indexOf("succ")==0)
- 	  			document.location.href=document.location.href;
+ 	  			location.reload();
  	  		else
  	  			dlg.msg(data) ;
    　  },
@@ -1657,7 +1657,7 @@ function chg_lan(ln)
 			dlg.msg(ret) ;
 			return;
 		}
-		document.location.href=document.location.href;
+		location.reload();
 	});
 }
 </script>

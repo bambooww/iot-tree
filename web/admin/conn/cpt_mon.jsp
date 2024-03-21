@@ -120,7 +120,7 @@ function refresh_me()
 	if(!brefresh)
 		return ;
 		
-	document.location.href = document.location.href;
+	location.reload();
 }
 
 function read_dt()
