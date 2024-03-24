@@ -218,10 +218,13 @@ public class RecTagParam implements Comparable<RecTagParam>
 		if(Convert.isNullOrEmpty(tagid))
 			return null ;
 		
-		UANode node = UAManager.getInstance().findNodeById(tagid) ;
-		if(!(node instanceof UATag))
+		UATag tag = recm.prj.findTagById(tagid) ;//.findNodeById(id)
+//		UANode node = UAManager.getInstance().findNodeById(tagid) ;
+		if(tag==null)
 			return null ;
-		UATag tag = (UATag)node ;
+//		if(!(node instanceof UATag))
+//			return null ;
+//		UATag tag = (UATag)node ;
 		
 		long gintv = jo.optLong("gather_intv",-1) ;
 		int vsty = jo.optInt("val_style", 0) ;

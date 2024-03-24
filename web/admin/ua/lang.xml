@@ -25,5 +25,8 @@
 	<dd_node id="1004" name="create_new" name_cn="创建新的一个项目" name_en="Create New One"/>
 	<dd_node id="1004" name="must_be_chg" name_cn="必须被改变" name_en="must be changed"/>
 	<dd_node id="1004" name="pls_sel_imp" name_cn="请选择导入" name_en="please select to import!"/>
+	
+	<dd_node id="1004" name="sel_dev_in_lib" name_cn="在设备库中选择" name_en="Select Device in Library"/>
+
 
 </dd_class>

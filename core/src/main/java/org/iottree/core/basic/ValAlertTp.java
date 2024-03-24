@@ -5,8 +5,10 @@ import java.util.List;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ILang;
+import org.iottree.core.util.Lan;
 
-public abstract class ValAlertTp extends JSObMap
+public abstract class ValAlertTp extends JSObMap implements ILang
 {
 	public static final ValAlertTp[] ALL = new ValAlertTp[] { new VAT_OnOff(), new VAT_NegT(), new VAT_PosT(),
 			new VAT_BitEqu(), new VAT_BitOffToOn(), new VAT_BitOnToOff(), new VAT_ValEqu(), new VAT_ValNotEqu(),
@@ -30,26 +32,26 @@ public abstract class ValAlertTp extends JSObMap
 
 	// private int val;
 	// private String name ;
-	private String titleEn;
-	private String titleCn;
+//	private String titleEn;
+//	private String titleCn;
+//
+//	private String descEn = "";
+//	private String descCn = "";
+//
+//	protected String triggerEn = "";
+//	protected String triggerCn = "";
+//
+//	protected String releaseEn = "";
+//	protected String releaseCn = "";
 
-	private String descEn = "";
-	private String descCn = "";
-
-	protected String triggerEn = "";
-	protected String triggerCn = "";
-
-	protected String releaseEn = "";
-	protected String releaseCn = "";
-
-	protected String param1TitleCn = "";
-	protected String param1TitleEn = "";
-
-	protected String param2TitleCn = "";
-	protected String param2TitleEn = "";
-
-	protected String param3TitleCn = "";
-	protected String param3TitleEn = "";
+//	protected String param1TitleCn = "";
+//	protected String param1TitleEn = "";
+//
+//	protected String param2TitleCn = "";
+//	protected String param2TitleEn = "";
+//
+//	protected String param3TitleCn = "";
+//	protected String param3TitleEn = "";
 
 	ValAlert valAlert = null;
 
@@ -93,87 +95,87 @@ public abstract class ValAlertTp extends JSObMap
 	public final ValAlertTp copyMe(ValAlert va)
 	{
 		ValAlertTp newins = newIns();
-		newins.titleEn = this.titleEn;
-		newins.titleCn = this.titleCn;
-		newins.descEn = this.descEn;
-		newins.descCn = this.descCn;
-		newins.triggerEn = this.triggerEn;
-		newins.triggerCn = this.triggerCn;
-		newins.releaseEn = this.releaseEn;
-		newins.releaseCn = this.releaseCn;
-		newins.param1TitleCn = this.param1TitleCn;
-		newins.param1TitleEn = this.param1TitleEn;
-		newins.param2TitleCn = this.param2TitleCn;
-		newins.param2TitleEn = this.param2TitleEn;
-		newins.param3TitleCn = this.param3TitleCn;
-		newins.param3TitleEn = this.param3TitleEn;
+//		newins.titleEn = this.titleEn;
+//		newins.titleCn = this.titleCn;
+//		newins.descEn = this.descEn;
+//		newins.descCn = this.descCn;
+//		newins.triggerEn = this.triggerEn;
+//		newins.triggerCn = this.triggerCn;
+//		newins.releaseEn = this.releaseEn;
+//		newins.releaseCn = this.releaseCn;
+//		newins.param1TitleCn = this.param1TitleCn;
+//		newins.param1TitleEn = this.param1TitleEn;
+//		newins.param2TitleCn = this.param2TitleCn;
+//		newins.param2TitleEn = this.param2TitleEn;
+//		newins.param3TitleCn = this.param3TitleCn;
+//		newins.param3TitleEn = this.param3TitleEn;
 		newins.asVA(va);
 		return newins;
 	}
 
-	public ValAlertTp asTitle(String en, String cn)
+//	public ValAlertTp asTitle(String en, String cn)
+//	{
+//		titleEn = en;
+//		titleCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asDesc(String en, String cn)
+//	{
+//		descEn = en;
+//		descCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asTrigger(String en, String cn)
+//	{
+//		triggerEn = en;
+//		triggerCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asRelease(String en, String cn)
+//	{
+//		releaseEn = en;
+//		releaseCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asParam1Title(String en, String cn)
+//	{
+//		param1TitleEn = en;
+//		param1TitleCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asParam2Title(String en, String cn)
+//	{
+//		param2TitleEn = en;
+//		param2TitleCn = cn;
+//		return this;
+//	}
+//
+//	public ValAlertTp asParam3Title(String en, String cn)
+//	{
+//		param3TitleEn = en;
+//		param3TitleCn = cn;
+//		return this;
+//	}
+
+	public String getTitle()
 	{
-		titleEn = en;
-		titleCn = cn;
-		return this;
+		return g("vatp_"+this.getName()) ;//this.titleEn;
 	}
 
-	public ValAlertTp asDesc(String en, String cn)
-	{
-		descEn = en;
-		descCn = cn;
-		return this;
-	}
+//	public String getTitleCn()
+//	{
+//		return this.titleCn;
+//	}
 
-	public ValAlertTp asTrigger(String en, String cn)
-	{
-		triggerEn = en;
-		triggerCn = cn;
-		return this;
-	}
-
-	public ValAlertTp asRelease(String en, String cn)
-	{
-		releaseEn = en;
-		releaseCn = cn;
-		return this;
-	}
-
-	public ValAlertTp asParam1Title(String en, String cn)
-	{
-		param1TitleEn = en;
-		param1TitleCn = cn;
-		return this;
-	}
-
-	public ValAlertTp asParam2Title(String en, String cn)
-	{
-		param2TitleEn = en;
-		param2TitleCn = cn;
-		return this;
-	}
-
-	public ValAlertTp asParam3Title(String en, String cn)
-	{
-		param3TitleEn = en;
-		param3TitleCn = cn;
-		return this;
-	}
-
-	public String getTitleEn()
-	{
-		return this.titleEn;
-	}
-
-	public String getTitleCn()
-	{
-		return this.titleCn;
-	}
-
-	// public String getTriggerEn()
-	// {
-	// return triggerEn;
-	// }
+	 public String getTriggerCond()
+	 {
+		 return g("vatp_"+this.getName(),"trigger") ;
+	 }
 	//
 	//
 	//
@@ -192,27 +194,27 @@ public abstract class ValAlertTp extends JSObMap
 	// this.triggerCn = triggerCn;
 	// }
 
-	public String getTriggerCond(String lang)
-	{
-		switch (lang)
-		{
-		case "cn":
-			if (Convert.isNullOrEmpty(this.triggerCn))
-				return null;
-//"触发条件:" + 
-			return this.triggerCn;
-		default:
-			if (Convert.isNullOrEmpty(this.triggerEn))
-				return null;
-			//"Trigger Condition:" +
-			return  this.triggerEn;
-		}
-	}
+//	public String getTriggerCond(String lang)
+//	{
+//		switch (lang)
+//		{
+//		case "cn":
+//			if (Convert.isNullOrEmpty(this.triggerCn))
+//				return null;
+////"触发条件:" + 
+//			return this.triggerCn;
+//		default:
+//			if (Convert.isNullOrEmpty(this.triggerEn))
+//				return null;
+//			//"Trigger Condition:" +
+//			return  this.triggerEn;
+//		}
+//	}
 
-	// public String getReleaseEn()
-	// {
-	// return releaseEn;
-	// }
+	 public String getReleaseCond()
+	 {
+		 return g("vatp_"+this.getName(),"release") ;
+	 }
 	//
 	// public void setReleaseEn(String releaseEn)
 	// {
@@ -229,74 +231,77 @@ public abstract class ValAlertTp extends JSObMap
 	// this.releaseCn = releaseCn;
 	// }
 
-	public String getReleaseCond(String lang)
+//	public String getReleaseCond(String lang)
+//	{
+//		switch (lang)
+//		{
+//		case "cn":
+//			if (Convert.isNullOrEmpty(this.releaseCn))
+//				return null;
+//			//"解除条件:" +
+//			return  this.releaseCn;
+//		default:
+//			if (Convert.isNullOrEmpty(this.releaseEn))
+//				return null;
+//			//"Release Condition:" +
+//			return  this.releaseEn;
+//		}
+//	}
+
+	public String getDesc()
 	{
-		switch (lang)
-		{
-		case "cn":
-			if (Convert.isNullOrEmpty(this.releaseCn))
-				return null;
-			//"解除条件:" +
-			return  this.releaseCn;
-		default:
-			if (Convert.isNullOrEmpty(this.releaseEn))
-				return null;
-			//"Release Condition:" +
-			return  this.releaseEn;
-		}
+		return g("vatp_"+this.getName(),"desc") ;
 	}
 
-	public String getDescEn()
+//	public void setDescEn(String descEn)
+//	{
+//		this.descEn = descEn;
+//	}
+//
+//	public String getDescCn()
+//	{
+//		return descCn;
+//	}
+//
+//	public void setDescCn(String descCn)
+//	{
+//		this.descCn = descCn;
+//	}
+
+	public String getParam1Title()
 	{
-		return descEn;
+		return g("vatp_"+this.getName(),"param1tt","") ;
+//		switch (lang)
+//		{
+//		case "cn":
+//			return this.param1TitleCn;
+//		default:
+//			return this.param1TitleEn;
+//		}
 	}
 
-	public void setDescEn(String descEn)
+	public String getParam2Title()
 	{
-		this.descEn = descEn;
+		return g("vatp_"+this.getName(),"param2tt","") ;
+//		switch (lang)
+//		{
+//		case "cn":
+//			return this.param2TitleCn;
+//		default:
+//			return this.param2TitleEn;
+//		}
 	}
 
-	public String getDescCn()
+	public String getParam3Title()
 	{
-		return descCn;
-	}
-
-	public void setDescCn(String descCn)
-	{
-		this.descCn = descCn;
-	}
-
-	public String getParam1Title(String lang)
-	{
-		switch (lang)
-		{
-		case "cn":
-			return this.param1TitleCn;
-		default:
-			return this.param1TitleEn;
-		}
-	}
-
-	public String getParam2Title(String lang)
-	{
-		switch (lang)
-		{
-		case "cn":
-			return this.param2TitleCn;
-		default:
-			return this.param2TitleEn;
-		}
-	}
-
-	public String getParam3Title(String lang)
-	{
-		switch (lang)
-		{
-		case "cn":
-			return this.param3TitleCn;
-		default:
-			return this.param3TitleEn;
-		}
+		return g("vatp_"+this.getName(),"param3tt","") ;
+//		switch (lang)
+//		{
+//		case "cn":
+//			return this.param3TitleCn;
+//		default:
+//			return this.param3TitleEn;
+//		}
 	}
 
 	public final boolean isValid()
@@ -329,7 +334,7 @@ public abstract class ValAlertTp extends JSObMap
 		case "name":
 			return this.getName() ;
 		case "title":
-			return this.getTitleEn() ;
+			return this.getTitle() ;
 		}
 		return null;
 	}
@@ -353,9 +358,9 @@ class VAT_OnOff extends ValAlertTp
 	{
 		// super(va);
 
-		this.asTitle("On Off", "开关量").asTrigger("The current value==Alarm value", "当前值==报警值(0/1)")
-				.asRelease("The current value<>Alarm value", "当前值<>报警值(0/1)")
-				.asParam1Title("Alarm Value(0/1)", "报警值(0/1)");
+//		this.asTitle("On Off", "开关量").asTrigger("The current value==Alarm value", "当前值==报警值(0/1)")
+//				.asRelease("The current value<>Alarm value", "当前值<>报警值(0/1)")
+//				.asParam1Title("Alarm Value(0/1)", "报警值(0/1)");
 	}
 
 	protected ValAlertTp newIns()
@@ -390,7 +395,7 @@ class VAT_OnOff extends ValAlertTp
 			p1 = 0;
 		else
 		{
-			failedr.append("invalid param1 ");
+			failedr.append(g("invalid_pm")+"1");
 			return false;
 		}
 		return true;
@@ -413,12 +418,9 @@ class VAT_NegT extends ValAlertTp
 {
 	public VAT_NegT()// ValAlert va)
 	{
-		// super(va);
-
-		this.asTitle("Negative Transition", "负跳变")
-				.asTrigger("The current value has changed from non-0 to 0", "当前值由非0变化为0")
-				.asRelease("The current value has changed from 0 to non-0", "当前值由0变化为非0");
-
+//		this.asTitle("Negative Transition", "负跳变")
+//				.asTrigger("The current value has changed from non-0 to 0", "当前值由非0变化为0")
+//				.asRelease("The current value has changed from 0 to non-0", "当前值由0变化为非0");
 	}
 
 	protected ValAlertTp newIns()
@@ -471,9 +473,9 @@ class VAT_PosT extends ValAlertTp
 	public VAT_PosT() // (ValAlert va)
 	{
 		// super(va);
-		this.asTitle("Positive transition", "正跳变")
-				.asTrigger("The current value has changed from 0 to non-0", "当前值由0变化为非0")
-				.asRelease("The current value has changed from non-0 to 0", "当前值由非0变化为0");
+//		this.asTitle("Positive transition", "正跳变")
+//				.asTrigger("The current value has changed from 0 to non-0", "当前值由0变化为非0")
+//				.asRelease("The current value has changed from non-0 to 0", "当前值由非0变化为0");
 
 	}
 
@@ -531,10 +533,10 @@ class VAT_BitEqu extends ValAlertTp
 	{
 		// super(va);
 
-		this.asTitle("Bit==", "Bit==")
-				.asTrigger("Current value of specified bit==specified value(0/1)", "当前数值指定位==指定值(0/1)")
-				.asRelease("Current value of specified bit<>specified value(0/1)", "当前数值指定位<>指定值(0/1)")
-				.asParam1Title("Bit Position", "指定位").asParam2Title("Alarm Value(0/1)", "指定值(0/1)");
+//		this.asTitle("Bit==", "Bit==")
+//				.asTrigger("Current value of specified bit==specified value(0/1)", "当前数值指定位==指定值(0/1)")
+//				.asRelease("Current value of specified bit<>specified value(0/1)", "当前数值指定位<>指定值(0/1)")
+//				.asParam1Title("Bit Position", "指定位").asParam2Title("Alarm Value(0/1)", "指定值(0/1)");
 	}
 
 	protected ValAlertTp newIns()
@@ -607,10 +609,10 @@ class VAT_BitOffToOn extends ValAlertTp
 	{
 		// super(va);
 
-		this.asTitle("Bit Off->On", "位0->1")
-				.asTrigger("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
-				.asRelease("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
-				.asParam1Title("Bit Position", "指定位");
+//		this.asTitle("Bit Off->On", "位0->1")
+//				.asTrigger("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
+//				.asRelease("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
+//				.asParam1Title("Bit Position", "指定位");
 	}
 
 	protected ValAlertTp newIns()
@@ -677,10 +679,10 @@ class VAT_BitOnToOff extends ValAlertTp
 	{
 		// super(va);
 
-		this.asTitle("Bit On->Off", "位1->0")
-				.asTrigger("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
-				.asRelease("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
-				.asParam1Title("Bit Position", "指定位");
+//		this.asTitle("Bit On->Off", "位1->0")
+//				.asTrigger("The current value of the specified bit changes from 1 to 0", "当前数值指定位由1变0")
+//				.asRelease("The current value of the specified bit changes from 0 to 1", "当前数值指定位由0变1")
+//				.asParam1Title("Bit Position", "指定位");
 	}
 
 	protected ValAlertTp newIns()
@@ -749,14 +751,14 @@ class VAT_ValEqu extends ValAlertTp
 	public VAT_ValEqu()// (ValAlert va)
 	{
 
-		this.asTitle("Value ==", "值==").asTrigger(
-				"Current value>=reference value - trigger error, and current value<=reference value+trigger error",
-				"当前值>=基准值-触发误差 且 当前值<=基准值+触发误差")
-				.asRelease(
-						"Current value<reference value - release error, or current value>reference value+release error",
-						"当前值<基准值-解除误差 或 当前值>基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value ==", "值==").asTrigger(
+//				"Current value>=reference value - trigger error, and current value<=reference value+trigger error",
+//				"当前值>=基准值-触发误差 且 当前值<=基准值+触发误差")
+//				.asRelease(
+//						"Current value<reference value - release error, or current value>reference value+release error",
+//						"当前值<基准值-解除误差 或 当前值>基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()
@@ -839,15 +841,15 @@ class VAT_ValNotEqu extends ValAlertTp
 	public VAT_ValNotEqu() // (ValAlert va)
 	{
 
-		this.asTitle("Value <>", "值<>")
-				.asTrigger(
-						"Current value<reference value - trigger error, or current value>reference value+trigger error",
-						"当前值<基准值-触发误差 或 当前值>基准值+触发误差")
-				.asRelease(
-						"Current value>=reference value - release error, and current value<=reference value+release error",
-						"当前值>=基准值-解除误差 且 当前值<=基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value <>", "值<>")
+//				.asTrigger(
+//						"Current value<reference value - trigger error, or current value>reference value+trigger error",
+//						"当前值<基准值-触发误差 或 当前值>基准值+触发误差")
+//				.asRelease(
+//						"Current value>=reference value - release error, and current value<=reference value+release error",
+//						"当前值>=基准值-解除误差 且 当前值<=基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()
@@ -930,10 +932,10 @@ class VAT_ValGt extends ValAlertTp
 	public VAT_ValGt() // (ValAlert va)
 	{
 
-		this.asTitle("Value >", "值>").asTrigger("Current value>reference value + trigger error", "当前值>基准值+触发误差")
-				.asRelease("Current value<=reference value + release error", "当前值<=基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value >", "值>").asTrigger("Current value>reference value + trigger error", "当前值>基准值+触发误差")
+//				.asRelease("Current value<=reference value + release error", "当前值<=基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()
@@ -1016,10 +1018,10 @@ class VAT_ValGtEqu extends ValAlertTp
 	public VAT_ValGtEqu() // (ValAlert va)
 	{
 
-		this.asTitle("Value >=", "值>=").asTrigger("Current value>=reference value + trigger error", "当前值>=基准值+触发误差")
-				.asRelease("Current value<reference value + release error", "当前值<基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value >=", "值>=").asTrigger("Current value>=reference value + trigger error", "当前值>=基准值+触发误差")
+//				.asRelease("Current value<reference value + release error", "当前值<基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()
@@ -1102,10 +1104,10 @@ class VAT_ValLt extends ValAlertTp
 	public VAT_ValLt() // (ValAlert va)
 	{
 
-		this.asTitle("Value <", "值<").asTrigger("Current value<reference value + trigger error", "当前值<基准值+触发误差")
-				.asRelease("Current value>=reference value + release error", "当前值>=基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value <", "值<").asTrigger("Current value<reference value + trigger error", "当前值<基准值+触发误差")
+//				.asRelease("Current value>=reference value + release error", "当前值>=基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()
@@ -1188,10 +1190,10 @@ class VAT_ValLtEqu extends ValAlertTp
 	public VAT_ValLtEqu() // (ValAlert va)
 	{
 
-		this.asTitle("Value <=", "值<=").asTrigger("Current value<=reference value + trigger error", "当前值<=基准值+触发误差")
-				.asRelease("Current value>reference value + release error", "当前值>基准值+解除误差")
-				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
-				.asParam3Title("Release Error", "解除误差");
+//		this.asTitle("Value <=", "值<=").asTrigger("Current value<=reference value + trigger error", "当前值<=基准值+触发误差")
+//				.asRelease("Current value>reference value + release error", "当前值>基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
 	}
 
 	protected ValAlertTp newIns()

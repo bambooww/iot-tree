@@ -177,8 +177,8 @@ function sel_devdef()
 	var devid = $("#devid").val() ;
 	dlg.open_win("../dev/dev_main.jsp?dlg=true&drv="+drv_name+"&sel_libcat=true&sel_dev=true"+
 			"&sel_libid="+libid+"&sel_catid="+catid+"&sel_devid="+devid,
-			{title:"Select Device in Library",w:'1000',h:'560'},
-			['<wbt:lang>ok</wbt:lang>','No choice','<wbt:lang>cancel</wbt:lang>'],
+			{title:"<wbt:g>sel_dev_in_lib</wbt:g>",w:'1000',h:'560'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:g>deselect</wbt:g>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)
 				{
@@ -190,7 +190,7 @@ function sel_devdef()
 					var sel = dlgw.get_selected() ;
 					if(sel==null)
 					{
-						dlg.msg("please select device") ;
+						dlg.msg("<wbt:g>pls,select,dev</wbt:g>") ;
 						return ;
 					}//sel.cat_title+"-"+
 					$("#devdef_tt").val(sel.dev_tt+"["+sel.dev_n+"]") ;

@@ -86,7 +86,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
-<b>Context @ <%=path_title %></b>
+<b><wbt:g>cxt</wbt:g> @ <%=path_title %></b>
 
 <div style="position: absolute;width:100%;top:20px;bottom:10px;overflow: hidden;">
 <table border='1' style="width:100%;height:100%;">
@@ -96,7 +96,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
   	<div id="tree" class="tree" style="height:100%;overflow: auto;"></div>
    </div>
    <div id="node_detail" style="top:60%;height:40%;width:100%;overflow: auto;border:1px solid;">
-   Node Detail
+   
    </div>
   </td>
   <td>
@@ -116,11 +116,11 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	if(Convert.isNotNullEmpty(sample_txt_id))
 	{
 	%>
-	<button onclick="insert_sample()">insert sample</button>
+	<button onclick="insert_sample()"><wbt:g>insert,sample</wbt:g></button>
 	<%
 	}
 	%>
-	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" placeholder="Input JS Script Here"></textarea>
+	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" placeholder="JS Script"></textarea>
 	&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
 	  </td>
 	 </tr>
@@ -128,12 +128,12 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	
 	  <td  colspan="2">
 	  <div style="position: relative;height:20px;">
-	  script test result <span id="run_st"></span>
+	  <wbt:g>result</wbt:g> <span id="run_st"></span>
 	  <%
 if(Convert.isNotNullEmpty(path))
 {
 %>
-<div style="right:10px;top:0px;position:absolute;"><input type='button' value='Test Run' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" /></div>
+<div style="right:10px;top:0px;position:absolute;"><input type='button' value='<wbt:g>test_run</wbt:g>' onclick="run_script_test('')" class="layui-btn layui-btn-sm layui-border-blue" /></div>
 <%
 }
 %>

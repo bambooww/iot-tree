@@ -6,8 +6,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%>
-<%
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 if(!Convert.checkReqEmpty(request, out, "libid"))
 	return ;
 	String libid = request.getParameter("libid") ;
@@ -57,13 +56,13 @@ dlg.resize_to(400,220);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="name" name="title" value="<%=name %>"  class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title" value="<%=title %>"  autocomplete="off" class="layui-input">
     </div>
@@ -100,14 +99,15 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'please input title') ;
-		return ;
+		//cb(false,'please input title') ;
+		//return ;
+		n = tt ;
 	}
 	cb(true,{libid:libid,catid:catid,name:n,title:tt});
 }

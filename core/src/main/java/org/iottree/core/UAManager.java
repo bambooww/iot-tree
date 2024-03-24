@@ -516,16 +516,16 @@ public class UAManager //implements IResCxt
 		return rep.getDescendantNodeByPath(ss) ;
 	}
 	
-	public UANode findNodeById(String id)
-	{
-		for(UAPrj rep:this.listPrjs())
-		{
-			UANode n = rep.findNodeById(id) ;
-			if(n!=null)
-				return n ;
-		}
-		return null ;
-	}
+//	public UANode findNodeById(String id)
+//	{ // tag id may same in diff prjs
+//		for(UAPrj rep:this.listPrjs())
+//		{
+//			UANode n = rep.findNodeById(id) ;
+//			if(n!=null)
+//				return n ;
+//		}
+//		return null ;
+//	}
 	
 	Thread uaMonTh = null;
 	

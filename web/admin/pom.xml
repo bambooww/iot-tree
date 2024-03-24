@@ -81,6 +81,7 @@
 			                        <includes>
 			                            <include>_iottree/</include>
 			                            <include>_js/</include>
+			                            <include>_ui/</include>
 			                            <include>admin/</include>
 			                            <include>opencharts/</include>
 			                        </includes>

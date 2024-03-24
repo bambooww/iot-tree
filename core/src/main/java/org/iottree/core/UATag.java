@@ -247,7 +247,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		StringBuilder sb = new StringBuilder() ;
 		if(this.checkParseAddr(addr, vt, sb)==null)
-			throw new IllegalArgumentException("invalid addr ,parse failedr:"+sb) ;
+		{
+			DevDriver dd = this.getRelatedDriver() ;
+			if(dd!=null && dd.getSupportAddr()!=null)
+				throw new IllegalArgumentException("invalid addr ,parse failedr:"+sb) ;
+		}
 		
 		setNameTitle(name,title,desc) ;
 		this.addr = addr ;

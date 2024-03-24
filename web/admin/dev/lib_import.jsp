@@ -68,12 +68,12 @@ dlg.resize_to(600,400);
 <body>
 <%
 String bgcolor = "#8dd35f" ;
-String prompt="New library will import" ;
+String prompt="new_lib_imp" ;
 boolean b_can_imp=true;
 if(devlib!=null)
 {
 	bgcolor = "#ff8080" ;
-	prompt = "Device library is already existed " ;
+	prompt = "devlib_al_existed" ;
 }
 
 %>
@@ -81,32 +81,29 @@ if(devlib!=null)
 <div class="imp_item" style="background-color: <%=bgcolor%>">
   <table style="height:100%;width:100%">
     <tr>
-      <td colspan="3" align="center"><h3><%=prompt %></h3></td>
+      <td colspan="3" align="center"><h3><wbt:g><%=prompt %></wbt:g></h3></td>
     </tr>
     <tr>
       <td valign="middle" >
 
       </td>
       <td>
-      Title:<input type="text" id="inputt" value="<%=libtitle %>" />
+      <wbt:g>title</wbt:g>:<input type="text" id="inputt" value="<%=libtitle %>" />
       </td>
       <td></td>
     </tr>
     <tr>
       <td colspan="3" align="center">
-      <input type="radio" id="" name="radio_op" value="ignore">Do not import
+      <input type="radio" id="" name="radio_op" value="ignore"><wbt:g>do_not_imp</wbt:g>
 <%
 	if(devlib!=null)
 	{
 %>
-      <input type="radio" id="" name="radio_op" value="replace" >Replace
+      <input type="radio" id="" name="radio_op" value="replace" ><wbt:g>replace</wbt:g>
 <%
 	}
 
-%><input type="radio" id="" name="radio_op" value="new" checked="checked">Create New One<%
-	
-%>
-	
+%><input type="radio" id="" name="radio_op" value="new" checked="checked"><wbt:g>create_new</wbt:g>
      
       </td>
     </tr>

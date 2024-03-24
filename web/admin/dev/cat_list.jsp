@@ -4,7 +4,7 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 String libid = request.getParameter("libid") ;
@@ -50,31 +50,16 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
     </style>
 </head>
 <body>
-Devices in [<%=lib.getTitle() %>/<%=cat.getTitle() %>]<br>
- <%--
-  <legend>Devices in [<%=lib.getTitle() %>/<%=cat.getTitle() %>]</legend>
-<div class="layui-form-item" style="align-content: ">
- <div class="layui-inline" style="left:0px">
-  <label class="layui-form-mid">Id</label>
-  <div class="layui-input-inline" style="width: 150px;">
-    <input type="text" id="view_id"  name="view_id" placeholder="" autocomplete="off" class="layui-input" value="<%="" %>" >
-  </div>
-  <div class="layui-form-mid"></div>
-  <div class="layui-input-inline" style="width: 150px;">
-    <input type="text" id="view_title"  name="view_title" placeholder="" autocomplete="off" class="layui-input" value="<%=""%>" >
-  </div>
-</div>
-</div>
- --%>
+[<%=lib.getTitle() %>/<%=cat.getTitle() %>] - <wbt:g>dev,list</wbt:g>
  <%
  if(bedit)
  {
  %>
- <div style="float:left;margin-left:8px;margin-top:4px;">
+ <div style="float:right;margin-right:8px;margin-top:4px;">
       <table id="top_oper">
           <tr>
           <td style="padding-left: 5px;">
-           <a id="top_oper_add_dev" class="layui-btn  layui-btn-sm layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;Add Device</a>
+           <button id="top_oper_add_dev" class="layui-btn  layui-btn-sm layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;<wbt:g>add,dev</wbt:g></button>
               </td>
               <td>
               <form class="layui-form" action="">
@@ -95,10 +80,10 @@ Devices in [<%=lib.getTitle() %>/<%=cat.getTitle() %>]<br>
 <table id="view_colorval"  class="layui-table" lay-filter="dl_list"  lay-size="sm" lay-even="true" style="width:100%" border="1">
    <thead style="background-color: #cccccc">
      <tr>
-	  <td style="width:15%">Name</td>
-	  <td style="width:40%">Title</td>
-	  <td style="width:15%">Driver</td>
-	  <td style="width:35%">Oper</td>
+	  <td style="width:15%"><wbt:g>name</wbt:g></td>
+	  <td style="width:40%"><wbt:g>title</wbt:g></td>
+	  <td style="width:15%"><wbt:g>driver</wbt:g></td>
+	  <td style="width:35%"><wbt:g>oper</wbt:g></td>
 	</tr>
   </thead>
   <tbody id="color_list">
@@ -201,12 +186,12 @@ function add_devdef()
 
 function edit_devdef(id)
 {
-	let tt = "Add Device";
+	let tt = "<wbt:g>add,dev</wbt:g>";
 	if(id)
-		tt = "Edit Device" ;
+		tt = "<wbt:g>edit,dev</wbt:g>" ;
 	dlg.open("devdef_edit.jsp?libid="+libid+"&catid="+catid+"&devid="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -247,12 +232,12 @@ function edit_devdef(id)
 
 function del_devdef(id)
 {
-	dlg.confirm('delete this device?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,dev</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("cat_ajax.jsp","op=dev_del&libid="+libid+"&catid="+catid+"&devid="+id,function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//

@@ -6,9 +6,10 @@ import java.util.Map;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.util.ILang;
 import org.json.JSONObject;
 
-public class ValTransScaling extends ValTranser
+public class ValTransScaling extends ValTranser implements ILang
 {
 	public static final String NAME = "scaling";
 	
@@ -37,7 +38,7 @@ public class ValTransScaling extends ValTranser
 	@Override
 	public String getTitle()
 	{
-		return "Scaling";
+		return g("scaling");
 	}
 	
 	public int getScalingTp()

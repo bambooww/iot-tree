@@ -8,7 +8,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 	 %><%
 	String lang = "en" ;
@@ -42,7 +42,7 @@ dlg.resize_to(590,500);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item"  id="dt_tp">
-    <label class="layui-form-label">Alert/Event Type</label>
+    <label class="layui-form-label"><wbt:g>alert</wbt:g>/<wbt:g>evt</wbt:g> <wbt:g>type</wbt:g></label>
     <div class="layui-input-inline" style="width: 180px;">
       <select  id="tp"  name="tp"  class="layui-input" placeholder="" lay-filter="tp">
 <%
@@ -50,13 +50,13 @@ boolean bfirst = true ;
 for(ValAlertTp tp:ValAlertTp.ALL)
 {
 	int tpv = tp.getTpVal();
-	String tpt = tp.getTitleEn() ;
-	String param1_t = tp.getParam1Title(lang) ;
-	String param2_t = tp.getParam2Title(lang) ;
-	String param3_t = tp.getParam3Title(lang) ;
+	String tpt = tp.getTitle() ;
+	String param1_t = tp.getParam1Title() ;
+	String param2_t = tp.getParam2Title() ;
+	String param3_t = tp.getParam3Title() ;
 	
-	String trigger_cond = Convert.plainToHtml(tp.getTriggerCond(lang),false) ;
-	String release_cond = Convert.plainToHtml(tp.getReleaseCond(lang),false) ;
+	String trigger_cond = Convert.plainToHtml(tp.getTriggerCond(),false) ;
+	String release_cond = Convert.plainToHtml(tp.getReleaseCond(),false) ;
 	
 	String chk = "";
 	if(bfirst)
@@ -72,7 +72,7 @@ for(ValAlertTp tp:ValAlertTp.ALL)
 %>
       </select>
     </div>
-    <div class="layui-form-mid">Enable</div>
+    <div class="layui-form-mid"><wbt:g>enable</wbt:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="en" name="en"  title="Enable or Not" lay-skin="switch"> 
 	  </div>
@@ -92,34 +92,34 @@ for(ValAlertTp tp:ValAlertTp.ALL)
   </div>
    --%>
    <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g></label>
 		<div class="layui-input-inline" style="width: 250px;">
 	    <input type="text" id="name" name="name" class="layui-input" value=""/>
 	  </div>
 	</div>
    <div class="layui-form-item" id="param1_c">
-    <label class="layui-form-label" id="param1_t">Reference Value</label>
+    <label class="layui-form-label" id="param1_t"><wbt:g>ref_val</wbt:g></label>
 	 <div class="layui-input-inline" style="width: 250px;" id="param1_d">
 	    <input type="text" id="param1" name="param1" value="0" class="layui-input"/> 
 	  </div>
   </div>
 
 <div class="layui-form-item" id="param2_c">
-    <label class="layui-form-label param_title" id="param2_t">Trigger Error</label>
+    <label class="layui-form-label param_title" id="param2_t"><wbt:g>trigger_err</wbt:g></label>
 	 <div class="layui-input-inline" style="width: 250px;" id="param2_d">
 	    <input type="text" id="param2" name="param2" value="0" class="layui-input"/> 
 	  </div>
   </div>
   
   <div class="layui-form-item" id="param3_c">
-    <label class="layui-form-label param_title" id="param3_t">Release Error</label>
+    <label class="layui-form-label param_title" id="param3_t"><wbt:g>relase_err</wbt:g></label>
 	 <div class="layui-input-inline" style="width: 250px;" id="param3_d">
 	    <input type="text" id="param3" name="param3" value="0" class="layui-input"/> 
 	  </div>
   </div>
   
   <div class="layui-form-item" >
-    <label class="layui-form-label param_title" ">Prompt</label>
+    <label class="layui-form-label param_title" "><wbt:g>prompt</wbt:g></label>
 	 <div class="layui-input-inline" style="width: 250px;" >
 	    <input type="text" id="prompt" name="prompt" value="" class="layui-input"/> 
 	  </div>
@@ -191,8 +191,8 @@ function update_ui()
 	let tmps ="" ;
 	let trigger_cond = opt.attr("trigger_cond") ;
 	let release_cond = opt.attr("release_cond") ;
-	tmps +=     "<span style='color:red;'>Trigger&nbsp;&nbsp;&nbsp;Condition:</span>"+convertHTML(trigger_cond)+"<br>";
-	tmps += "<span style='color:green;'>Release Condition:</span>"+convertHTML(release_cond) ;
+	tmps +=     "<span style='color:red;'><wbt:g>trigger_cond</wbt:g>:</span>"+convertHTML(trigger_cond)+"<br>";
+	tmps += "<span style='color:green;'><wbt:g>release_cond</wbt:g>:</span>"+convertHTML(release_cond) ;
 	$("#tp_ppt").html(tmps) ;
 	
 	form.render();

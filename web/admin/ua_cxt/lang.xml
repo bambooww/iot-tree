@@ -3,4 +3,41 @@
   <dd_node id="1" name="tags_num" name_cn="标签数" name_en="Tags number" />
   <dd_node id="1" name="middle" name_cn="中间" name_en="Middle" />
   
+  <dd_node id="1" name="local" name_cn="本地化" name_en="Local" />
+  <dd_node id="1" name="local_ptt" name_cn="本地化标签可设置缺省值并且修改会被自动保存。&amp;#13;&amp;#10; 可以作为项目参数使用" name_en="Localized Tag can be set with default values and modifications will be automatically saved.&amp;#13;&amp;#10; it can be used as project parameters" />
+  
+  <dd_node id="1" name="auto_save" name_cn="自动保存" name_en="Auto Save" />
+  <dd_node id="1" name="dbclk_open_jse" name_cn="双击打开JS编辑器" name_en="Double click to open JS editor" />
+  <dd_node id="1" name="en_anti_interf" name_cn="使能抗干扰" name_en="Enable anti-interference" />
+  
+  <dd_node id="1" name="alt_evt" name_cn="报警/事件" name_en="Alert/Event" />
+  
+  <dd_node id="1" name="edit_mid_tag_js" name_cn="编辑中间标签JS表达式" name_en="Edit Middle Tag JS Express" />
+  
+  
+  <dd_node id="1" name="ref_val" name_cn="参考值" name_en="Reference Value" />
+  <dd_node id="1" name="trigger_err" name_cn="触发误差" name_en="Trigger Error" />
+  <dd_node id="1" name="release_err" name_cn="释放误差" name_en="Release Error" />
+  
+  <dd_node id="1" name="trigger_cond" name_cn="触发条件" name_en="Trigger Condition" />
+  <dd_node id="1" name="release_cond" name_cn="释放条件" name_en="Release Condition" />
+  
+  <dd_node name="linear" name_cn="线性" name_en="Linear" />
+  <dd_node name="squ_root" name_cn="平方根" name_en="Square root" />
+  
+  <dd_node name="scaling" name_cn="缩放比例" name_en="Scaling" />
+  <dd_node id="1" name="test_run" name_cn="测试运行" name_en="Test Run" />
+  <dd_node id="1"  name="none" name_cn="无" name_en="None" />
+  <dd_node id="1" name="row_val" name_cn="原始值" name_en="Raw Value" />
+  <dd_node id="1" name="row_val_r" name_cn="原始值范围" name_en="Raw Value Range" />
+  <dd_node id="1" name="scaled_val" name_cn="比例值" name_en="Scaled Value" />
+  <dd_node id="1" name="scaled_val_r" name_cn="比例值范围" name_en="Scaled Value Range" />
+  <dd_node id="1" name="no_transfer" name_cn="无转换" name_en="No transfer" />
+  <dd_node id="1" name="high_v" name_cn="高值" name_en="High" />
+  <dd_node id="1" name="low_v" name_cn="低值" name_en="Low" />
+  <dd_node id="1" name="clamp" name_cn="强制限定" name_en="Clamp" />
+  
+  <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer" />
+  <dd_node id="1" name="inverser" name_cn="反向转换" name_en="Inverser" />
+  
 </dd_class>

@@ -9,7 +9,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 	public static String html_str(Object o)
 	{
 		if(o==null)
@@ -160,18 +160,18 @@ dlg.resize_to(850,600);
      <td width="90%">
 	<input type="hidden" id="id" name="name" value="<%=html_str(id)%>">
 	  <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline" style="width: 200px;">
       <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 300px;">
 	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
 	  </div>
 	  
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Data type</label>
+    <label class="layui-form-label"><wbt:g>data,type</wbt:g></label>
     <div class="layui-input-inline" style="width: 100px;">
       <select  id="vt"  name="vt"  class="layui-input" lay-filter="vt" >
         <option value="">---</option>
@@ -184,16 +184,16 @@ for(UAVal.ValTP vt:vtps)
 %>
       </select>
     </div>
-    <div class="layui-form-mid">Decimal Digits:</div>
+    <div class="layui-form-mid"><wbt:g>dec_digit</wbt:g>:</div>
     <div class="layui-input-inline" style="width: 50px;">
       <input type="text" id="dec_digits" name="dec_digits" class="layui-input">
     </div>
-    <div class="layui-form-mid">R/W:</div>
+    <div class="layui-form-mid"><wbt:g>r_or_w</wbt:g>:</div>
     <div class="layui-input-inline" style="width: 150px;">
       <select id="canw"  name="canw" class="layui-input">
         <option value="">---</option>
-        <option value="false">Read Only</option>
-        <option value="true">Read/Write</option>
+        <option value="false"><wbt:g>r</wbt:g></option>
+        <option value="true"><wbt:g>rw</wbt:g></option>
       </select>
     </div>
   </div>
@@ -217,16 +217,16 @@ if(!bmid)
 {
 %>
     <div class="layui-form-item" id="fi_local">
-    <div class="layui-form-label">Local</div>
-	  <div class="layui-input-inline" style="width: 100px;">
+    <div class="layui-form-label"><wbt:g>local</wbt:g></div>
+	  <div class="layui-input-inline" style="width: 100px;" title="<wbt:g>local_ptt</wbt:g>">
 	   <input type="checkbox" id="local" name="local" <%=loc_chked%> lay-skin="switch"  lay-filter="local" class="layui-input">
 	  </div>
 	  <div id="local_setting" style="<%=loc_set%>">
-    <label class="layui-form-mid">DefaultVal</label>
+    <label class="layui-form-mid"><wbt:g>default_val</wbt:g></label>
     <div class="layui-input-inline">
       <input type="text"  id="local_defval"  name="local_defval"  class="layui-input" style="width: 150px;">
     </div>
-    <div class="layui-form-mid">Auto Save</div>
+    <div class="layui-form-mid"><wbt:g>auto_save</wbt:g></div>
 	  <div class="layui-input-inline" style="width: 80px;">
 	   <input type="checkbox" id="local_autosave" name="local_autosave" <%=loc_autosave_chk%> lay-skin="switch"  lay-filter="local_autosave" class="layui-input">
 	  </div>
@@ -236,12 +236,12 @@ if(!bmid)
 }
 %>
     <div class="layui-form-item" id="addr_setting">
-    <label class="layui-form-label"><%=(bmid?"Express JS":"Address") %>:</label>
+    <label class="layui-form-label"><wbt:g><%=(bmid?"js_exp":"addr") %></wbt:g>:</label>
     <div class="layui-input-inline" style="width:400px">
 <%
 if(bmid)
 {
-%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" ondblclick="on_js_edit()" title="double click to open JS editor"></textarea>
+%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" ondblclick="on_js_edit()" title="<wbt:g>dbclk_open_jse</wbt:g>"></textarea>
 <%
 }
 else
@@ -277,35 +277,35 @@ if(!bmid)
 {
 %>
   <div class="layui-form-item" id="transfer_setting">
-    <label class="layui-form-label">Transfer</label>
+    <label class="layui-form-label"><wbt:g>transfer</wbt:g></label>
     <div class="layui-input-block" style="width:370px">
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
     </div>
   </div>
   
   <div class="layui-form-item" id="val_filter_setting">
-    <label class="layui-form-label">Filter</label>
+    <label class="layui-form-label"><wbt:g>filter</wbt:g></label>
     <div class="layui-input-block" style="width:370px">
       <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=b_val_filter_chked%> lay-skin="switch"  lay-filter="b_val_filter" class="layui-input">
-      Enable anti-interference
+      <wbt:g>en_anti_interf</wbt:g>
     </div>
   </div>
 <%
 }
 %>
   <div class="layui-form-item" id="max_min_val" style="display:none;">
-    <label class="layui-form-label">Min Value</label>
+    <label class="layui-form-label"><wbt:g>min,val</wbt:g></label>
     <div class="layui-input-inline" style="width: 80px;">
      <input type="number" id="min_val_str" name="min_val_str" class="layui-input">
     </div>
      
-    <div class="layui-form-mid">Max Value</div>
+    <div class="layui-form-mid"><wbt:g>max,val</wbt:g></div>
     <div class="layui-input-inline" style="width: 80px;">
       <input type="number" id="max_val_str" name="max_val_str" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Alert<i class="fa-solid fa-bell"></i></label>
+    <label class="layui-form-label"><wbt:g>alert</wbt:g><i class="fa-solid fa-bell"></i></label>
     <div class="layui-input-inline"  style="width:500px;">
       <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
     </div>
@@ -314,7 +314,7 @@ if(!bmid)
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text"  id="desc"  name="desc"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
     </div>
@@ -322,9 +322,9 @@ if(!bmid)
   </td>
   <td>
  <div class="layui-btn-container">
-    <button onclick="on_new_tag()"  class="layui-btn">&nbsp;New&nbsp;&nbsp;</button>
-    <button onclick="on_copy_tag()" class="layui-btn">&nbsp;Copy&nbsp;</button>
-    <button  class="layui-btn">Delete</button>
+    <button onclick="on_new_tag()"  class="layui-btn layui-btn-primary" style="width:90px;"><wbt:g>add</wbt:g></button>
+    <button onclick="on_copy_tag()" class="layui-btn layui-btn-primary" style="width:90px;"><wbt:g>copy</wbt:g></button>
+    <button  class="layui-btn layui-btn-primary" style="width:90px;"><wbt:g>del</wbt:g></button>
     </div>
     
   </td>
@@ -451,8 +451,8 @@ update_alert_s();
 function edit_trans()
 {
 	dlg.open("./tag_trans_edit.jsp",
-			{title:"value transfer",w:'600px',h:'400px'},
-			['Ok','Cancel'],
+			{title:"<wbt:g>val,transfer</wbt:g>",w:'600px',h:'400px'},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -499,14 +499,14 @@ function edit_alert(idx)
 {
 	if(event)
 		event.preventDefault() || (event.returnValue = false);
-	let tt = "Edit Tag Alert/Event Source"
+	let tt = "<wbt:g>edit,tag,alt_evt,sor</wbt:g>"
 	if(idx==undefined||idx==null)
-		tt = "Add Tag Alert/Event Source"
+		tt ="<wbt:g>add,tag,alt_evt,sor</wbt:g>"
 	let dd = null;
 	if(idx>=0)
 		dd = alerts_dd[idx] ;
 	dlg.open("./tag_alert_edit.jsp",	{title:tt,w:'600px',h:'400px',dd:dd},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -521,7 +521,7 @@ function edit_alert(idx)
 							 let oldidx = get_alert_idx_name(ret.name) ;
 							 if(oldidx>=0 && oldidx!=idx)
 							 {
-								 dlg.msg("name ["+ret.name+"] is already exists");
+								 dlg.msg("<wbt:g>name</wbt:g> ["+ret.name+"] <wbt:g>is_al_exist</wbt:g>");
 								 return ;
 							 }
 						 }
@@ -557,7 +557,7 @@ function do_submit(cb)
 	let n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	let tt = $('#title').val();
@@ -648,7 +648,7 @@ function chk_addr()
 			{
 				if(r.res>0)
 				{
-					dlg.msg("check ok");
+					dlg.msg("<wbt:g>chk,succ</wbt:g>");
 					return ;//
 				}
 					
@@ -675,8 +675,8 @@ function on_js_edit()
 {
 	let txt = $("#addr").val() ;
 	dlg.open("./cxt_script.jsp?dlg=true&opener_txt_id=addr&path="+node_path,
-			{title:"Edit Middle Tag JS Express",w:'600px',h:'400px',},
-			['Ok','Cancel'],
+			{title:"<wbt:g>edit_mid_tag_js</wbt:g>",w:'600px',h:'400px',},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

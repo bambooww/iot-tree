@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%!
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 	static void renderTreeData(Writer out,UACh ch) throws Exception
 	{
 		out.write("[{") ;
@@ -83,7 +83,9 @@ tr:hover
 }
 </style>
 <body>
-Selected:<span id="seled"></span>
+<blockquote class="layui-elem-quote " id="selected_info">&nbsp;
+ <wbt:g>selected</wbt:g>:<span id="seled"></span>
+ </blockquote>
 <div id="cat_tree"></div>
 <%--
 
@@ -198,7 +200,7 @@ function do_submit(cb)
 {
 	if(seled_drv==null)
 	{
-		cb(false,'Please select a driver') ;
+		cb(false,'<wbt:g>pls,select,driver</wbt:g>') ;
 		return ;
 	}
 	cb(true,seled_drv);

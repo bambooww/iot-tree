@@ -4,7 +4,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
@@ -81,12 +81,12 @@ if(bdlg)
 if(!bedit)
 {
 %><blockquote class="layui-elem-quote " id="selected_info">&nbsp;
- Selected Category:<span id="selected_libcat_tt" style="color:red"><%=sel_lib_tt %> - <%=sel_cat_tt %></span> 
+ <wbt:g>sel_cat</wbt:g>:<span id="selected_libcat_tt" style="color:red"><%=sel_lib_tt %> - <%=sel_cat_tt %></span> 
 <%
 if(bsel_dev)
 {
 %>
- Selected Device:<span id="selected_dev_tt" style="color:red"><%=sel_dev_tt %></span>
+ <wbt:g>sel_dev</wbt:g>:<span id="selected_dev_tt" style="color:red"><%=sel_dev_tt %></span>
 <%
 }
 %>

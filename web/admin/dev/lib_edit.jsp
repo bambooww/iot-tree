@@ -80,7 +80,7 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'please input title') ;
+		cb(false,'<wbt:g>pls,input,title</wbt:g>') ;
 		return ;
 	}
 	cb(true,{libid:libid,title:tt});

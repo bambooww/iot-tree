@@ -234,7 +234,7 @@ public class ValAlert extends JSObMap
 	@JsDef
 	public String getTpTitle()
 	{
-		return alertTp.getTitleEn() ;
+		return alertTp.getTitle() ;
 	}
 	
 	@JsDef
@@ -312,7 +312,7 @@ public class ValAlert extends JSObMap
 	public JSONObject toJO() throws Exception
 	{
 		JSONObject jo = DataTranserJSON.extractJSONFromObj(this) ;
-		String tpt = this.getAlertTp().getTitleEn() ;
+		String tpt = this.getAlertTp().getTitle() ;
 		jo.put("tpt", tpt) ;
 		return jo ;
 	}

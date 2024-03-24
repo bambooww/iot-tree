@@ -192,7 +192,7 @@ public class Lan
 	{
 		DataNode dn = dc.getNodeByName(name);
 		if (dn == null)
-			return "[x" + name + "x]";
+			return "[x]" + name + "[x]";
 		
 		return dn.getNameByLang(getUsingLang());
 	}
@@ -210,5 +210,18 @@ public class Lan
 		
 		String ppn = pn+"_"+getUsingLang() ;
 		return dn.getAttr(ppn) ;
+	}
+	
+	public String g(String name,String pn,String def)
+	{
+		DataNode dn = dc.getNodeByName(name);
+		if (dn == null)
+			return def;
+		
+		String ppn = pn+"_"+getUsingLang() ;
+		String ret = dn.getAttr(ppn) ;
+		if(ret==null)
+			return def ;
+		return ret ;
 	}
 }

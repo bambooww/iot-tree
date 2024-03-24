@@ -392,20 +392,22 @@ background-color: #ffffff;
 <body class="layout-body">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
 <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
- <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree Device Definition Editor </div>
+ <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree <wbt:g>dev_def_editor</wbt:g> </div>
  <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
 		<%=dev.getTitle()%>-<%=dev.getName() %>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#fff5e2">
+ <%--
 			<i class="fa fa-floppy-o fa-lg top_btn" onclick="tab_save()" ></i>
-			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid">UI Library</span>
+			<i class="fa fa-cogs  fa-lg  top_btn" onclick="list_comps()"></i><span style="font: 20px solid">UI <wbt:g>lib</wbt:g></span>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn"></i>
+		     --%>
 </div>
 </div>
 <div class='hj-wrap'>
 		
         <div class="hj-transverse-split-div subwin" style="width:20%">
-           <div class="subwin_toolbar">Browser</div>
+           <div class="subwin_toolbar"><wbt:g>browser</wbt:g></div>
            <div id="tree" class="subwin_content"></div>
             <label class="hj-transverse-split-label"></label>
         </div>
@@ -416,8 +418,8 @@ background-color: #ffffff;
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
-			    <li class="layui-this">[Tags]</li>
-			    <li >Properties</li>
+			    <li class="layui-this"><wbt:g>tags</wbt:g></li>
+			    <li ><wbt:g>props</wbt:g></li>
 <%--
 			    <li>Device</li>
  --%>
@@ -587,8 +589,8 @@ function act_edit_devdef(n,op)
 function act_prop(n,op)
 {
 	dlg.open_win("ua/ui_prop.jsp?repid="+repid+"&id="+n.id,
-			{title:"Properties",w:'800',h:'535'},
-			['Ok',{title:'Apply',style:"warm",enable:false},{title:'Cancel',style:"primary"},{title:'Help',style:"primary"}],
+			{title:"<wbt:g>props</wbt:g>",w:'800',h:'535'},
+			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>apply</wbt:g>',style:"warm",enable:false},{title:'<wbt:g>cancel</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -644,7 +646,7 @@ function save_prop(dlgw,id,succcb)
 function act_node_new_tag(n,op)
 {
 	dlg.open("../tag/tag_edit.jsp",
-			{title:"Add Tag",w:'500px',h:'400px'},
+			{title:"<wbt:g>add,tag</wbt:g>",w:'500px',h:'400px'},
 			['Ok','Cancel'],
 			[
 				function(dlgw)

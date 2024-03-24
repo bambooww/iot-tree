@@ -137,7 +137,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	// return null ;
 	// }
 
-	@JsDef
+	
 	public void save() throws Exception
 	{
 		// UARep rep = getTopUARep() ;
@@ -151,7 +151,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		bDirty = false;
 	}
 	
-	@JsDef
+	
 	public boolean isDirty()
 	{
 		return this.bDirty ;
@@ -285,6 +285,9 @@ public abstract class UANodeOCTags extends UANodeOC
 				}
 			}
 		}
+		
+		if(canw==null)
+			canw = false;
 		
 		if (d == null)
 		{

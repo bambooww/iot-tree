@@ -8,7 +8,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 	 %><%
 	
@@ -31,7 +31,7 @@ dlg.resize_to(590,600);
 	<div class="layui-form-item">
     <label class="layui-form-label">&nbsp;</label>
     <div class="layui-input-block">
-      <input type="radio" name="name" value="none" title="None" checked="checked" lay-filter="name">
+      <input type="radio" name="name" value="none" title="<wbt:g>none</wbt:g>" checked="checked" lay-filter="name">
 <%
 for(ValTranser vt: ValTranser.listValTransers())
 {
@@ -45,11 +45,11 @@ for(ValTranser vt: ValTranser.listValTransers())
   <div class="layui-card" id="card_none" style="display:none">
   
   <div class="layui-card-body">
-  	No transfer
+  	<wbt:g>no_transfer</wbt:g>
   </div>
   </div>
  <div class="layui-form-item" style="display:none" id="dt_tp">
-    <label class="layui-form-label">Data type</label>
+    <label class="layui-form-label"><wbt:g>data,type</wbt:g></label>
     <div class="layui-input-inline" style="width: 120px;">
       <select  id="_vt"  name="_vt"  class="layui-input" placeholder="">
         <option value="">-</option>
@@ -73,20 +73,20 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
   <div class="layui-card-body">
  -->
     <div class="layui-form-item">
-    <label class="layui-form-label">Scaling Type</label>
+    <label class="layui-form-label"><wbt:g>scaling,type</wbt:g></label>
     <div class="layui-input-block">
-      <input type="radio" name="tp" value="1" title="Linear" checked="checked" lay-filter="tp">
-  	<input type="radio" name="tp" value="2" title="Square root"  lay-filter="tp">
+      <input type="radio" name="tp" value="1" title="<wbt:g>linear</wbt:g>" checked="checked" lay-filter="tp">
+  	<input type="radio" name="tp" value="2" title="<wbt:g>squ_root</wbt:g>"  lay-filter="tp">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Raw Value Range</label>
+    <label class="layui-form-label"><wbt:g>row_val_r</wbt:g></label>
     <div class="layui-input-block">
-      <div class="layui-form-mid">High:</div>
+      <div class="layui-form-mid"><wbt:g>high_v</wbt:g>:</div>
 <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="raw_high" name="raw_high" value="" class="layui-input"/>
 	  </div>
-      <div class="layui-form-mid">Low:</div>
+      <div class="layui-form-mid"><wbt:g>low_v</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="raw_low" name="raw_low" value="" class="layui-input"/>
 	  </div>
@@ -97,13 +97,13 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 
     
     <div class="layui-form-item">
-    <label class="layui-form-label">Scaled Value Range</label>
+    <label class="layui-form-label"><wbt:g>scaled_val_r</wbt:g></label>
     <div class="layui-input-block">
-      <div class="layui-form-mid">High:</div>
+      <div class="layui-form-mid"><wbt:g>high_v</wbt:g>:</div>
 <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="scaled_high" name="scaled_high" value="" class="layui-input"/> 
 	  </div>
-      <div class="layui-form-mid">Clamp</div>
+      <div class="layui-form-mid"><wbt:g>clamp</wbt:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="scaled_high_c" name="scaled_high_c" title="Clamp" lay-skin="switch" >
 	  </div>
@@ -115,11 +115,11 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
   <div class="layui-form-item">
     <label class="layui-form-label"></label>
     <div class="layui-input-block">
-      <div class="layui-form-mid">Low:</div>
+      <div class="layui-form-mid"><wbt:g>low_v</wbt:g>:</div>
 <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="scaled_low" name="scaled_low" value="" class="layui-input"/> 
 	  </div>
-      <div class="layui-form-mid">Clamp</div>
+      <div class="layui-form-mid"><wbt:g>clamp</wbt:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="scaled_low_c" name="scaled_low_c"  title="Clamp" lay-skin="switch"> 
 	  </div>
@@ -136,19 +136,19 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
   <div class="layui-card-body">
  -->
     <div class="layui-form-item">
-    <label class="layui-form-label">transfer</label>
+    <label class="layui-form-label"><wbt:g>transfer</wbt:g></label>
     <div class="layui-input-block">
     ($tag,$input)=>{
-      <textarea rows="10" cols="60" id="js_txt" ondblclick="on_js_edit()" title="double click to open edit JS dialog"></textarea>
-    }
+      <textarea rows="9" cols="60" id="js_txt" style="border-color: #e6e6e6" ondblclick="on_js_edit()" title="double click to open edit JS dialog"></textarea>
+    <br>}
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">inverser</label>
+    <label class="layui-form-label"><wbt:g>inverser</wbt:g></label>
     <div class="layui-input-block">
      ($tag,$input)=>{
-      <textarea rows="10" cols="60" id="inverse_js_txt" ondblclick="on_js_edit_inv()" title="double click to open edit JS dialog"></textarea>
-    }
+      <textarea rows="9" cols="60" id="inverse_js_txt" style="border-color: #e6e6e6"  ondblclick="on_js_edit_inv()" title="double click to open edit JS dialog"></textarea>
+    <br>}
     </div>
   </div>
 <!-- 
@@ -258,7 +258,7 @@ function do_submit(cb)
 	var vt = $("#_vt").val() ;
 	if(vt==null||vt=="")
 	{
-		cb(false,"please select Data type") ;
+		cb(false,"<wbt:g>pls,select,data,type</wbt:g>") ;
 		return false;
 	}
 	
@@ -292,7 +292,7 @@ function get_scaling(n,vt,cb)
 	var tp = $("input[name='tp']:checked").val();
 	if(!tp)
 	{
-		cb(false,"please select scaling type") ;
+		cb(false,"<wbt:g>pls,select,scaling,type</wbt:g>") ;
 		return false;
 	}
 	tp = parseInt(tp) ;
@@ -301,7 +301,7 @@ function get_scaling(n,vt,cb)
 	var raw_l = get_input_val("raw_low",null,true) ;
 	if(raw_h==null||raw_l==null)
 	{
-		cb(false,"please input raw value") ;
+		cb(false,"<wbt:g>pls,input,row_val</wbt:g>") ;
 		return false;
 	}
 	
@@ -309,7 +309,7 @@ function get_scaling(n,vt,cb)
 	var scaled_l = get_input_val("scaled_low",null,true) ;
 	if(scaled_h==null||scaled_l==null)
 	{
-		cb(false,"please input scaled value") ;
+		cb(false,"<wbt:g>pls,input,scaled_val</wbt:g>") ;
 		return false;
 	}
 	
@@ -338,7 +338,7 @@ function get_js(n,vt,cb)
 	
 	if(jstxt==null||(jstxt=trim(jstxt))=="")
 	{
-		cb(false,"please input js code") ;
+		cb(false,"<wbt:g>pls,input,js,code</wbt:g>") ;
 		return false;
 	}
 	
@@ -354,8 +354,8 @@ function on_js_edit()
 {
 	let txt = $("#js_txt").val() ;
 	dlg.open("../ua_cxt/cxt_script.jsp?dlg=true&no_parent=true&no_this=true&opener_txt_id=js_txt&path="+path,
-			{title:"Edit JS - transfer",w:'600px',h:'400px',},
-			['Ok','Cancel'],
+			{title:"<wbt:g>edit</wbt:g> JS - <wbt:g>transfer</wbt:g>",w:'600px',h:'400px',},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -375,8 +375,8 @@ function on_js_edit_inv()
 {
 	let txt = $("#inverse_js_txt").val() ;
 	dlg.open("../ua_cxt/cxt_script.jsp?dlg=true&no_parent=true&no_this=true&opener_txt_id=inverse_js_txt&path="+path,
-			{title:"Edit JS - inverser",w:'600px',h:'400px',},
-			['Ok','Cancel'],
+			{title:"<wbt:g>edit</wbt:g> JS - <wbt:g>inverser</wbt:g>",w:'600px',h:'400px',},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

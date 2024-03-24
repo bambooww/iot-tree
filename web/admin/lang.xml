@@ -87,7 +87,7 @@
   <dd_node id="1" name="triggered" name_cn="已触发" name_en="Triggered" />
   <dd_node id="1" name="new_devs_f" name_cn="新设备被发现" name_en="New Devices Found" />
   <dd_node id="1" name="tagg" name_cn="标签组" name_en="Tag Group" />
-  
+  <dd_node id="1" name="replace" name_cn="替换" name_en="Replace" />
   
   <dd_node id="1" name="link_conn" name_cn="连接接入" name_en="Link" />
   <dd_node id="1" name="bind_conn" name_cn="绑定接入" name_en="Binder" />
@@ -185,6 +185,13 @@
     <dd_node id="1" name="user" name_cn="用户" name_en="User" />
     <dd_node id="1" name="users" name_cn="用户" name_en="Users" />
     <dd_node id="1" name="psw" name_cn="密码" name_en="Password" />
+    <dd_node id="1" name="dec_digit" name_cn="小数位数" name_en="Decimal Digits" />
+    <dd_node id="1" name="r" name_cn="只读" name_en="Read Only" />
+    <dd_node id="1" name="rw" name_cn="读写" name_en="Read/Write" />
+    <dd_node id="1" name="r_or_w" name_cn="读或写" name_en="Read/Write" />
+    <dd_node id="1" name="default_val" name_cn="缺省值" name_en="Default Val" />
+    
+    
     
     <dd_node id="1" name="set_as_main_ui" name_cn="设置为主界面" name_en="Set as Main UI" />
     <dd_node id="1" name="cp_ok" name_cn="复制成功" name_en="Copied Ok" />
@@ -201,12 +208,21 @@
   <dd_node id="1" name="enable" name_cn="使能" name_en="Enable"/>
   <dd_node id="1" name="status" name_cn="状态" name_en="Status"/>
   <dd_node id="1" name="addr" name_cn="地址" name_en="Address"/>
+  <dd_node id="1" name="js_exp" name_cn="JS表达式" name_en="JS Express"/>
   <dd_node id="1" name="temps" name_cn="模板" name_en="Templates"/>
   <dd_node id="1" name="temp" name_cn="模板" name_en="Template"/>
   <dd_node id="1" name="size" name_cn="尺寸" name_en="Size"/>
   <dd_node id="1" name="num" name_cn="数量" name_en="Num"/>
   <dd_node id="1" name="items" name_cn="项" name_en="Items"/>
   <dd_node id="1" name="item" name_cn="项" name_en="Item"/>
+  <dd_node id="1" name="max" name_cn="最大" name_en="Max"/>
+  <dd_node id="1" name="min" name_cn="最小" name_en="Min"/>
+  <dd_node id="1" name="cxt" name_cn="上下文" name_en="Context"/>
+  <dd_node id="1" name="insert" name_cn="插入" name_en="Insert"/>
+  <dd_node id="1" name="sample" name_cn="例子" name_en="Sample"/>
+  <dd_node id="1" name="result" name_cn="结果" name_en="Result"/>
+  <dd_node id="1" name="js" name_cn="JS" name_en="JS"/>
+  <dd_node id="1" name="code" name_cn="代码" name_en="Code"/>
   
   <dd_node id="1" name="running" name_cn="运行中" name_en="Running"/>
   <dd_node id="1" name="run" name_cn="运行" name_en="Run"/>
@@ -216,6 +232,10 @@
   <dd_node id="1" name="disabled" name_cn="已禁用" name_en="Disabled"/>
   <dd_node id="1" name="enabled" name_cn="已启用" name_en="Enabled"/>
   <dd_node id="1" name="stopped" name_cn="停止" name_en="Stopped"/>
+  <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer"/>
+  <dd_node id="1" name="evt" name_cn="事件" name_en="Event"/>
+  <dd_node id="1" name="prompt" name_cn="提示" name_en="Prompt"/>
+  <dd_node id="1" name="is_al_exist" name_cn="已经存在" name_en="is already exists"/>
   
   
   <dd_node id="1" name="connectors" name_cn="接入" name_en="Connectors"/>
@@ -240,6 +260,7 @@
   <dd_node id="1" name="select_drv" name_cn="选择驱动" name_en="Select Driver"/>
   <dd_node id="1" name="select" name_cn="选择" name_en="Select"/>
   <dd_node id="1" name="selected" name_cn="选中的" name_en="Selected"/>
+  <dd_node id="1" name="deselect" name_cn="取消选择" name_en="Deselect"/>
   <dd_node id="1" name="be_selected" name_cn="已被选择" name_en="is Selected"/>
   <dd_node id="1" name="type" name_cn="类型" name_en="Type"/>
   <dd_node id="1" name="filter" name_cn="过滤器" name_en="Filter"/>
@@ -255,7 +276,7 @@
   
   <dd_node id="1" name="access" name_cn="访问" name_en="Access"/>
   <dd_node id="1" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
-    
+  <dd_node id="1" name="cat" name_cn="分类" name_en="Category"/>
     
   
 </dd_class>

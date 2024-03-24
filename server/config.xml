@@ -9,6 +9,7 @@
 		<webapp name="_iottree" />
 		<webapp name="_ui" />
 		<webapp name="opencharts" path="../../opencharts" />
+		<webapp name="_sys" />
 	</webapps>
 	
 	<system>

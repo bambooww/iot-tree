@@ -6,7 +6,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
 if(!Convert.checkReqEmpty(request, out, "libid","catid"))
 	return ;
@@ -74,19 +74,19 @@ dlg.resize_to(400,320);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="name" name="name" value="<%=name %>"  class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title" value="<%=title %>"  autocomplete="off" class="layui-input">
     </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Driver</label>
+    <label class="layui-form-label"><wbt:g>driver</wbt:g></label>
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />
@@ -124,8 +124,8 @@ function get_input_val(id,defv,bnum)
 function select_drv()
 {
 	dlg.open_win("../ua/drv_selector.jsp?edit=true",
-			{title:"select driver",w:'400',h:'535'},
-			[{title:'<wbt:lang>ok</wbt:lang>',style:""},{title:'Clear',style:"primary"},{title:'<wbt:lang>cancel</wbt:lang>',style:"primary"}],
+			{title:"<wbt:g>select,driver</wbt:g>",w:'400',h:'535'},
+			[{title:'<wbt:lang>ok</wbt:lang>',style:""},{title:'<wbt:lang>deselect</wbt:lang>',style:"primary"},{title:'<wbt:lang>cancel</wbt:lang>',style:"primary"}],
 			[
 				function(dlgw)
 				{
@@ -161,14 +161,15 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'please input title') ;
-		return ;
+		//cb(false,'please input title') ;
+		//return ;
+		tt = n ;
 	}
 	var drv = $("#drv").val()
 	cb(true,{libid:libid,catid:catid,devid:devid,name:n,title:tt,drv:drv});
