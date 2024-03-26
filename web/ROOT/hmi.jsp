@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%>
-<%@ page
+<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%><%@ page
 	import="java.util.*,
 				java.io.*,
 				java.util.*,
@@ -12,8 +11,7 @@
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
-				java.net.*"%>
-<%
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
    String user = request.getParameter("user") ;
@@ -416,11 +414,12 @@ position:relative;
 
 .ui_item .t
 {
-	position:absolute;
-	font-size: 18px;
+	position:relative;
+	font-size: 16px;
 	left:0px;
 	right:0px;
-	bottom: 2px;
+	top:5px;
+	line-height:12px;
 }
 
 .ui_item:hover
@@ -508,21 +507,21 @@ dlg.dlg_top=true;
 	
 	<div id="alert_list_c" style="display:none" class="pwin">
  		<span class="op">
- 		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History">History</button>
+ 		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History"><lan:g>history_d</lan:g></button>
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" ><i class="fa fa-times"></i></button>
 		</span>
-		<h3>Alerts List</h3>
+		<h3><lan:g>alerts,list</lan:g></h3>
  		<div class="" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
-                	<th>Time</th>
-                	<th>Handler</th>
-                    <th>Tag</th>
-                    <th>Type</th>
-                    <th>Value</th>
-                    <th>Level</th>
-                    <th>Prompt</th>
+                	<th><lan:g>time</lan:g></th>
+                	<th><lan:g>handler</lan:g></th>
+                    <th><lan:g>tag</lan:g></th>
+                    <th><lan:g>type</lan:g></th>
+                    <th><lan:g>val</lan:g></th>
+                    <th><lan:g>lvl</lan:g></th>
+                    <th><lan:g>prompt</lan:g></th>
                 </tr>
             </thead>
  
@@ -537,18 +536,18 @@ dlg.dlg_top=true;
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_datas()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<h3>Data List</h3>
+		<h3><lan:g>data,list</lan:g></h3>
  		<div class="data_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
                 	
-                	<th>Title</th>
-                	<th>Update Time</th>
-                    <th>Change Time</th>
-                    <th>Valid</th>
-                    <th>Value</th>
-                    <th>Operation</th>
+                	<th><lan:g>title</lan:g></th>
+                	<th><lan:g>up_dt</lan:g></th>
+                    <th><lan:g>chg_dt</lan:g></th>
+                    <th><lan:g>valid</lan:g></th>
+                    <th><lan:g>val</lan:g></th>
+                    <th><lan:g>oper</lan:g></th>
                 </tr>
             </thead>
  
@@ -616,7 +615,7 @@ if(b_his)
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_uis()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<h3>Dialog/UI List</h3>
+		<h3><lan:g>dlg_ui,list</lan:g></h3>
  		<div class="ui_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
 <%
 	for(UIItem uii:UIManager.getInstance(prj).getId2Items().values())
@@ -639,6 +638,12 @@ if(b_his)
 		}
 		String uiid = uii.getId() ;
 		String tt = uii.getTitle() ;
+		String tip="" ;
+		if(tt.length()>10)
+		{
+			tip = tt ;
+			tt = tt.substring(10)+".." ;
+		}
 		String url = Convert.plainToHtml(uii.getUrl()) ;
 		int w = uii.getWidth() ;
 		int h = uii.getHeight() ;
@@ -649,7 +654,7 @@ if(b_his)
 %>
 	<div class="ui_item" uiid="<%=uiid%>" uitt="<%=tt %>" ui_url="<%=url%>" ui_w="<%=w %>" ui_h="<%=h%>">
 	    <img src="<%=icon %>" />
-		<span class="t"><%=tt %></span>
+		<div class="t" title="<%=tip%>"><%=tt %></div>
 	</div>
 <%
 	}
@@ -1249,8 +1254,8 @@ function show_alerts_his()
 {
 	event.stopPropagation();
 	dlg.open("/prj_alert_his.jsp?prjid="+prjid,
-			{title:"Alert History"},
-			['Close'],
+			{title:"<lan:g>alert,his</lan:g>"},
+			['<lan:g>close</lan:g>'],
 			[
 				function(dlgw)
 				{
@@ -1278,7 +1283,7 @@ function rec_tag_show(tagpath,title)
 	if(!prjid)
 		return ;
 	dlg.open_win("/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
-			{title:"Tag Recorded History - "+title,w:960,h:650,wh_auto:true},
+			{title:"<lan:g>tag,rec,his</lan:g> - "+title,w:960,h:650,wh_auto:true},
 			[],
 			[]);
 }
@@ -1287,7 +1292,7 @@ function show_data_his(outtp,outid,tagp,title)
 {
 	event.stopPropagation();
 	dlg.open_win("/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
-			{title:"Data History - "+title,w:960,h:650},
+			{title:"<lan:g>data,his</lan:g> - "+title,w:960,h:650},
 			[],
 			[]);
 }

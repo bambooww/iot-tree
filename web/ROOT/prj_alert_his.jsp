@@ -9,7 +9,7 @@
 	org.iottree.core.store.*,
 	org.iottree.core.alert.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="lan"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -93,8 +93,8 @@ dlg.resize_to(860,600) ;
 </script>
 <body>
 <div class="top">
-  Source <select id="sor_sel">
-  <option value="">Inner</option>
+  <lan:g>sor</lan:g> <select id="sor_sel">
+  <option value=""> Inner </option>
 <%
 for(String sor:outer_sors)
 {
@@ -102,7 +102,7 @@ for(String sor:outer_sors)
 }
 %>
   </select>
-  Handler
+  <lan:g>handler</lan:g>
   <select id="handler_sel">
   <option value=""> --- </option>
 <%
@@ -114,12 +114,11 @@ for(AlertHandler ah:amgr.getHandlers().values())
 }
 %>
   </select>
-  Start Date
-  <input type="datetime-local" id="start_dt" name="start_dt"/>
-  End Date
+  <lan:g>start_dt</lan:g><input type="datetime-local" id="start_dt" name="start_dt"/>
+  <lan:g>end_dt</lan:g>
   <input type="datetime-local" id="end_dt" name="end_dt"/>
-  <button onclick="do_search()">Search</button>
-  <button onclick="do_search_all()">All</button>
+  <button onclick="do_search()"><lan:g>search</lan:g></button>
+  <button onclick="do_search_all()"><lan:g>all</lan:g></button>
 </div>
   <div class="main_left" id="main_left">
 <table id="" class="layui-table"  lay-filter="apiquote_list"  lay-size="sm" lay-even0="true"  style="width:100%">
@@ -136,13 +135,13 @@ for(AlertHandler ah:amgr.getHandlers().values())
   </colgroup>
   <thead>
     <tr style="background-color: #cccccc">
-     <th>Trigger Time</th>
-      <th>Release Time</th>
-      <th>Handler</th>
-      <th>Tag</th>
-      <th>Type</th>
-      <th>Value</th>
-      <th>Level</th>
+     <th><lan:g>trigger_dt</lan:g></th>
+      <th><lan:g>release_dt</lan:g></th>
+      <th><lan:g>handler</lan:g></th>
+      <th><lan:g>tag</lan:g></th>
+      <th><lan:g>type</lan:g></th>
+      <th><lan:g>val</lan:g></th>
+      <th><lan:g>lvl</lan:g></th>
       <th>Prompt</th>
     </tr> 
   </thead>

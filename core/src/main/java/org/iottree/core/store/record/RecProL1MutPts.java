@@ -40,25 +40,25 @@ public class RecProL1MutPts extends RecProL1  implements ILang
 	 */
 	public static enum MutTP
 	{
-		up_only(0,"Up Only"),  //
-		up_to_vertex(1,"Up To Vertex"),
-		up_to_vertex_sustain(2,"Up To Vertex And Sustain"),
+		up_only(0,"u_o"),  //"Up Only"
+		up_to_vertex(1,"u_t_v"), //"Up To Vertex"
+		up_to_vertex_sustain(2,"u_t_v_s"), //"Up To Vertex And Sustain"
 		
-		down_only(10,"Down Only"),
-		down_to_vertex(11,"Down To Vertex"),
-		down_to_vertex_sustain(12,"Down To Vertex And Sustain"),
+		down_only(10,"d_o"), //"Down Only"
+		down_to_vertex(11,"d_t_v"), //"Down To Vertex"
+		down_to_vertex_sustain(12,"d_t_v_s"), //"Down To Vertex And Sustain"
 		
-		up_down(20,"Up And Down"),
-		down_up(21,"Down And Up");
+		up_down(20,"u_d"), //"Up And Down"
+		down_up(21,"d_u"); //"Down And Up"
 		
 		
 		private final int val ;
-		private final String title;
+		private final String mark;
 		
-		MutTP(int v,String tt)
+		MutTP(int v,String m)
 		{
 			val = v ;
-			title = tt;
+			mark = m;
 			//this.mark = mark ;
 		}
 		
@@ -69,7 +69,8 @@ public class RecProL1MutPts extends RecProL1  implements ILang
 		
 		public String getTitle()
 		{
-			return title ;
+			Lan lan = Lan.getLangInPk(RecProL1MutPts.class) ;
+			return lan.g("mut_"+this.mark) ;
 		}
 		
 		public static MutTP valOfInt(int i)

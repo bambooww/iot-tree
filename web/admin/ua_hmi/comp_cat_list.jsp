@@ -4,7 +4,7 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 String libid = request.getParameter("libid") ;
@@ -80,8 +80,8 @@ Comp in [<%=lib.getTitle() %>/<%=cat.getTitle() %>]<br>
 <table id="view_colorval"  class="layui-table" lay-filter="dl_list"  lay-size="sm" lay-even="true" style="width:100%" border="1">
    <thead style="background-color: #cccccc">
      <tr>
-	  <td style="width:40%">Title</td>
-	  <td style="width:35%">Oper</td>
+	  <td style="width:40%"><wbt:g>title</wbt:g></td>
+	  <td style="width:35%"><wbt:g>oper</wbt:g></td>
 	</tr>
   </thead>
   <tbody id="color_list">

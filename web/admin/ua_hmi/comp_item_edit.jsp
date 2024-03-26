@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
 String libid =request.getParameter("libid") ;
 String catid =request.getParameter("catid") ;
@@ -37,7 +37,7 @@ dlg.resize_to(400,200);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g>:</label>
     <div class="layui-input-block">
       <input type="text" id="title" name="title" value="<%=title %>" class="layui-input">
     </div>
@@ -72,7 +72,7 @@ function do_submit(cb)
 	var tt = $('#title').val();
 	if(tt==null||tt=='')
 	{
-		cb(false,'please input title') ;
+		cb(false,'<wbt:g>pls,input,title</wbt:g>') ;
 		return ;
 	}
 	cb(true,{title:tt});

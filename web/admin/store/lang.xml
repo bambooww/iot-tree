@@ -4,5 +4,19 @@
   <dd_node id="1" name="filter_by_prefix" name_cn="根据前缀过滤" name_en="Filter by prefix" />
   <dd_node id="1" name="sel_all" name_cn="选择全部" name_en="Select All" />
   <dd_node id="1" name="chk_the_box" name_cn="选择框" name_en="Check the box" />
+  <dd_node id="1" name="selector" name_cn="选择器" name_en="Selector" />
+  <dd_node id="1" name="filter_p" name_cn="过滤前缀" name_en="Filter Prefix" />
+  <dd_node id="1" name="way" name_cn="方式" name_en="Way" />
+  <dd_node id="1" name="inner_s" name_cn="内部存储" name_en="Inner" />
+  <dd_node id="1" name="jmp_tp" name_cn="跳变类型" name_en="Jump Type" />
+  <dd_node id="1" name="mut_tp" name_cn="突变类型" name_en="Mutation Type" />
+  <dd_node id="1" name="slope_tp" name_cn="斜率类型" name_en="Slope Type" />
+  
+  <dd_node id="1" name="processor" name_cn="处理器" name_en="Processor" />
+  
+  <dd_node id="1" name="val_sty" name_cn="值特征" name_en="Value Style" />
+  <dd_node id="1" name="gather_intv_ms" name_cn="收集间隔毫秒" name_en="Gather Interval MS" />
+  <dd_node id="1" name="keep_days" name_cn="保留天数" name_en="Keep Days" />
+  <dd_node id="1" name="min_rec_intv" name_cn="最小记录间隔" name_en="Min Record Interval" />
   
 </dd_class>

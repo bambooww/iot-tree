@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="store"  name_jp=""  >
+
+  <dd_node id="1" name="ot_r_tb" name_cn="实时数据表" name_en="Realtime Data Table" />
+  <dd_node id="1" name="ot_r_tb_his" name_cn="历史数据表" name_en="History Data Table" />
+  
+</dd_class>

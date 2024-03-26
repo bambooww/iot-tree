@@ -47,27 +47,27 @@ dlg.resize_to(600,400);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Enable:</label>
+    <label class="layui-form-label"><wbt:g>enable</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Port:</div>
+	  <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="text" id="port" name="port" value="<%=port%>"  class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">User:</label>
+    <label class="layui-form-label"><wbt:g>user</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="user" name="user"  class="layui-input" value="<%=user%>">
 	  </div>
-	  <div class="layui-form-mid">Password:</div>
+	  <div class="layui-form-mid"><wbt:g>psw</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="text" id="psw" name="psw" value="<%=psw%>"  class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item layui-form-text">
-    <label class="layui-form-label">Users</label>
+    <label class="layui-form-label"><wbt:g>more,users</wbt:g></label>
     <div class="layui-input-block">
       <textarea name="users" id="users" class="layui-textarea"><%=users %></textarea>
     </div>

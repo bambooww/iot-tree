@@ -16,5 +16,14 @@
 			<required>false</required>
 		</attribute>
 	</tag>
+	<tag>
+		<name>g</name>
+		<tag-class>org.iottree.core.util.web.LangTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>lan</name>
+			<required>false</required>
+		</attribute>
+	</tag>
 	
 </taglib>

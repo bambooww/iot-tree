@@ -1,12 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dd_class id="1" name="ua_lang"  name_jp=""  >
   
-  <dd_node id="1002" name="title" name_cn="标题" name_en="Title"/>
+  <dd_node id="1" name="title" name_cn="标题" name_en="Title"/>
    
-  <dd_node id="1004" name="ok" name_cn="确认" name_en="Ok"/>  
-  <dd_node id="1004" name="cancel" name_cn="关闭" name_en="Cancel"/> 
-  <dd_node id="1004" name="pls_input" name_cn="请输入" name_en="Please input "/>
-  <dd_node id="1004" name="user" name_cn="用户" name_en="User"/> 
-  <dd_node id="1004" name="psw" name_cn="密码" name_en="Password"/>
+  <dd_node id="1" name="ok" name_cn="确认" name_en="Ok"/>  
+  <dd_node id="1" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1" name="pls_input" name_cn="请输入" name_en="Please input "/>
+  <dd_node id="1" name="input" name_cn="输入" name_en="Input "/>
+  <dd_node id="1" name="user" name_cn="用户" name_en="User"/> 
+  <dd_node id="1" name="psw" name_cn="密码" name_en="Password"/>
   
+  <dd_node id="1" name="alerts" name_cn="报警" name_en="Alerts"/>
+  <dd_node id="1" name="alert" name_cn="报警" name_en="Alert"/>
+  <dd_node id="1" name="list" name_cn="列表" name_en="List"/>
+  <dd_node id="1" name="data" name_cn="数据" name_en="Data"/>
+  
+  <dd_node id="1" name="history_d" name_cn="历史数据" name_en="History"/>
+  <dd_node id="1" name="his" name_cn="历史数据" name_en="History"/>
+  <dd_node id="1" name="rec" name_cn="记录" name_en="Record"/>
+  <dd_node id="1" name="basic_rec" name_cn="基本记录器" name_en="Basic Recorder"/>
+  <dd_node id="1" name="time" name_cn="时间" name_en="Time"/>
+  <dd_node id="1" name="handler" name_cn="处理者" name_en="Handler"/>
+  <dd_node id="1" name="tag" name_cn="标签" name_en="Tag"/>
+  <dd_node id="1" name="type" name_cn="类型" name_en="Type"/>
+  <dd_node id="1" name="val" name_cn="值" name_en="Value"/>
+  <dd_node id="1" name="lvl" name_cn="级别" name_en="Level"/>
+  <dd_node id="1" name="prompt" name_cn="提示" name_en="Prompt"/>
+
+	<dd_node id="1" name="title" name_cn="标题" name_en="Title"/>
+	<dd_node id="1" name="up_dt" name_cn="更新时间" name_en="Update Time"/>
+	<dd_node id="1" name="chg_dt" name_cn="变化时间" name_en="Change Time"/>
+	<dd_node id="1" name="valid" name_cn="有效" name_en="Valid"/>
+	<dd_node id="1" name="oper" name_cn="标题" name_en="Operation"/>
+	
+	<dd_node id="1" name="dlg_ui" name_cn="对话框/UI" name_en="Dialog/UI"/>
+	
+	<dd_node id="1" name="backsp" name_cn="回退" name_en="Back"/>
+	<dd_node id="1" name="reset" name_cn="重置" name_en="Reset"/>
+	<dd_node id="1" name="close" name_cn="关闭" name_en="Close"/>
+	<dd_node id="1" name="ok" name_cn="确定" name_en="Ok"/>
+	<dd_node id="1" name="welcome_to" name_cn="欢迎使用" name_en="Welcome to "/>
+	<dd_node id="1" name="enter" name_cn="进入" name_en="Enter"/>
+	<dd_node id="1" name="admin" name_cn="管理" name_en="Admin"/>
+	
+	<dd_node id="1" name="search" name_cn="搜索" name_en="Search"/>
+	<dd_node id="1" name="sor" name_cn="源" name_en="Source"/>
+	<dd_node id="1" name="start_dt" name_cn="开始时间" name_en="Start Date"/>
+	<dd_node id="1" name="end_dt" name_cn="结束时间" name_en="End Date"/>
+	<dd_node id="1" name="from_dt" name_cn="起始时间" name_en="From Date"/>
+	<dd_node id="1" name="to_dt" name_cn="结束时间" name_en="To Date"/>
+	<dd_node id="1" name="dt" name_cn="日期" name_en="Date"/>
+	<dd_node id="1" name="span" name_cn="跨度" name_en="Span"/>
+	<dd_node id="1" name="all" name_cn="全部" name_en="All"/>
+	
+	<dd_node id="1" name="trigger_dt" name_cn="触发时间" name_en="Trigger Time"/>
+	<dd_node id="1" name="release_dt" name_cn="释放时间" name_en="Release Time"/>
 </dd_class>

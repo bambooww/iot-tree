@@ -5,7 +5,7 @@
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
@@ -156,12 +156,12 @@ if(bdlg)
 if(!bedit)
 {
 %><blockquote class="layui-elem-quote " id="selected_info">&nbsp;
- Selected Category:<span id="selected_libcat_tt" style="color:red"><%=sel_lib_tt %> - <%=sel_cat_tt %></span> 
+ <wbt:g>selected,cat</wbt:g>:<span id="selected_libcat_tt" style="color:red"><%=sel_lib_tt %> - <%=sel_cat_tt %></span> 
 <%
 if(bsel_comp)
 {
 %>
- Selected HMI Comp:<span id="selected_comp_tt" style="color:red"><%=sel_comp_tt %></span>
+ <wbt:g>selected</wbt:g> HMI <wbt:g>comp</wbt:g>:<span id="selected_comp_tt" style="color:red"><%=sel_comp_tt %></span>
 <%
 }
 %>
@@ -182,7 +182,7 @@ if(bedit || bsel_comp)
  %>
  <div id="right_add_div" style="float:left;margin-left:8px;margin-top:4px;width:100%;display:none;">
   <span id="top_right_tt"></span>
-  <a id="top_oper_add_comp" class="layui-btn  layui-btn-sm layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;Add Component Item</a>
+  <a id="top_oper_add_comp" class="layui-btn  layui-btn-sm layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;<wbt:g>add_comp</wbt:g></a>
   </div>
   <%
  }
@@ -405,12 +405,12 @@ function del_comp_item(ob)
 
 function del_comp(id)
 {
-	dlg.confirm('delete this item?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,item</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("comp_ajax.jsp",{op:"comp_del",libid:sel_libid,catid:sel_catid,compid:id},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -426,15 +426,15 @@ function add_comp()
 
 function edit_comp(id)
 {
-	var tt = "Edit Component";
+	var tt = "<wbt:g>edit,comp</wbt:g>";
 	if(!id)
 	{
-		tt = "Add Component";
+		tt = "<wbt:g>add,comp</wbt:g>";
 		id="" ;
 	}
 		
 	dlg.open("comp_item_edit.jsp?libid="+sel_libid+"&catid="+sel_catid+"&compid="+id,
-			{title:tt},['Ok','Cancel'],
+			{title:tt},['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -514,7 +514,7 @@ function init_right_menu()
 	        	rightClick : true,
 	        	data : ()=>{
 					var d = [
-						{ content : 'Paste', callback:()=>{
+						{ content : '<wbt:g>paste</wbt:g>', callback:()=>{
 							paste_item();
 						}}
 					];
@@ -571,16 +571,16 @@ function init_comp_menu()
 	        	data : ()=>{
 
 	        			var r=[] ;
-	        			r.push({ content : 'Modify Item', callback:()=>{
+	        			r.push({ content : '<wbt:g>modify</wbt:g>', callback:()=>{
 	        				edit_comp(compid);
 							}});
 	        			
-	        			r.push({ content : 'Copy', callback:()=>{
+	        			r.push({ content : '<wbt:g>copy</wbt:g>', callback:()=>{
 	        				copy_item(sel_libid,compid);
 							}});
 
 	        			
-	        			r.push({ content : 'Delete', callback:()=>{
+	        			r.push({ content : '<wbt:g>del</wbt:g>', callback:()=>{
 	        				del_comp(compid);
 							}});
 						
@@ -606,7 +606,7 @@ function copy_item(libid,compid)
 						dlg.msg(ret);
 						return ;
 					}
-					dlg.msg("copy item ok") ;
+					dlg.msg("<wbt:g>copy,item,ok</wbt:g>") ;
 				},false);
 	
 }

@@ -87,11 +87,11 @@ public class StoreOutTbHis extends StoreOut
 		return TP;
 	}
 
-	@Override
-	public String getOutTpTitle()
-	{
-		return "History Data Table";
-	}
+//	@Override
+//	public String getOutTpTitle()
+//	{
+//		return "History Data Table";
+//	}
 	
 	@Override
 	public boolean isStoreHistory()

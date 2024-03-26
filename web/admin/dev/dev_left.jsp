@@ -56,7 +56,7 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
         }
         .layui-table-view
         {
-        	margin-top: 45px;
+        	margin-top: 30px;
         }
           .layui-table-cell {
             height: auto;
@@ -66,14 +66,15 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
 </head>
 <body>
     <div style="float:left;margin-left:8px;margin-top:4px;">
-      <table id="top_oper">
+      <table id="top_oper" style="width:100%;">
           <tr>
           <td style="padding-left: 5px;">
-           <wbt:g>lib</wbt:g>: 
+           <wbt:g>lib</wbt:g>: <%=libtitle %>
               </td>
+<%--
               <td>
               <form class="layui-form" action="">
-                 <select id="lib_ids" name="lib_ids" lay-filter="lib_ids" style="width:50px">
+                 <select id="lib_ids" name="lib_ids" lay-filter="lib_ids" style="width:50px" lay-ignore>
         <%
  for(DevLib dl:DevManager.getInstance().getDevLibs())
  {
@@ -93,7 +94,7 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
 if(bedit)
 {
 %>
-<div class="btn-group open"  id="btn_menu_lib" style="border:1px solid;border-color: #c9c9c9">
+<div class="btn-group open"  id="btn_menu_lib" style="border:0px solid;border-color: #c9c9c9">
 				  <a class="btn" href="#">---</a>
 				  <a class="btn" href="#">
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
@@ -103,8 +104,9 @@ if(bedit)
 }
 %>
               </td>
+               --%>
               <td style="padding-left: 15px;">
-              <button id="top_oper_add_cat" type="button" class="layui-btn  layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i><wbt:g>cat</wbt:g></button>
+              <button id="top_oper_add_cat" type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i><wbt:g>cat</wbt:g></button>
               </td>
           </tr>
       </table>
@@ -248,8 +250,8 @@ function on_sel_cat(id,tt)
 
 function refresh_table(bfirst)
 {
-	libid = $("#lib_ids").val() ;
-	libtitle =$('#lib_ids option:selected').html();
+	//libid = $("#lib_ids").val() ;
+	//libtitle =$('#lib_ids option:selected').html();
 	table.reload("lib_list",{url:"lib_ajax.jsp?op=list&libid="+libid});
 	if(!bfirst)
 	{
@@ -280,9 +282,9 @@ function lib_add_or_edit(edit)
 {
 	if(event)
 		event.stopPropagation();
-	var libid = "";
-	if(edit)
-		libid = $("#lib_ids").val() ;
+	//var libid = "";
+	//if(edit)
+	//	libid = $("#lib_ids").val() ;
 	dlg.open("lib_edit.jsp?libid="+libid,
 			{title:"<wbt:g>edit,lib</wbt:g>"},
 			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
@@ -329,7 +331,7 @@ function lib_add_cat()
 
 function lib_del_cat(cid)
 {
-	var libid = $("#lib_ids").val() ;
+	//var libid = $("#lib_ids").val() ;
 	dlg.confirm('<wbt:g>del,this,cat</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("lib_ajax.jsp","op=del_cat&libid="+libid+"&catid="+cid,function(bsucc,ret){
@@ -348,7 +350,7 @@ function lib_add_edit_cat(catid)
 {
 	if(!catid)
 		catid ="" ;
-	var libid = $("#lib_ids").val() ;
+	//var libid = $("#lib_ids").val() ;
 	dlg.open("cat_edit.jsp?libid="+libid+"&catid="+catid,
 			{title:"<wbt:g>edit,cat</wbt:g>"},
 			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],

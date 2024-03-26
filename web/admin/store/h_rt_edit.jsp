@@ -11,7 +11,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="w"%>
 <%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return ;
@@ -79,43 +79,43 @@ dlg.resize_to(600,500);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
+    <label class="layui-form-label"><w:g>name</w:g></label>
     <div class="layui-input-inline" style="width:250px;">
       <input type="text" name="name" id="name" value="<%=name %>" class="layui-input"/>
     </div>
-    <div class="layui-form-mid">Enable</div>
+    <div class="layui-form-mid"><w:g>enable</w:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item" >
-  <label class="layui-form-label">Title</label>
+  <label class="layui-form-label"><w:g>title</w:g></label>
     <div class="layui-input-inline" style="width:250px;">
       <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
     </div>
-   <div class="layui-form-mid">Scan Interval</div>
+   <div class="layui-form-mid"><w:g>scan,intv</w:g></div>
 	  <div class="layui-input-inline" style="width: 100px;">
-	    <input type="number" id="scan_intv" name="scan_intv" value="<%=scan_intv%>" class="layui-input"/>
+	    <input type="number" id="scan_intv" name="scan_intv" value="<%=scan_intv%>" class="layui-input" title="<w:g>ms</w:g>"/>
 	  </div>
   </div>
 	<div class="layui-form-item" >
-	  <label class="layui-form-label">Filter</label>
+	  <label class="layui-form-label"><w:g>filter</w:g></label>
 	    <div class="layui-input-inline" style="width:150px;">
 	      <select id="filter_all"  lay-filter="filter_all" >
-	    	<option value="true">Use all tags</option>
-	    	<option value="false">Filter by prefix</option>
+	    	<option value="true"><w:g>user_all_tags</w:g></option>
+	    	<option value="false"><w:g>filter_by_prefix</w:g></option>
 	    </select>
 	    </div>
-	    <label class="layui-form-mid">Selector</label>
+	    <label class="layui-form-mid"><w:g>selector</w:g></label>
 	     <div class="layui-input-inline" style="width:150px;">
 	      <select id="sel_all"  lay-filter="sel_all" >
-	      	<option value="false">Check the box</option>
-	    	<option value="true">Select all</option>
+	      	<option value="false"><w:g>chk_the_box</w:g></option>
+	    	<option value="true"><w:g>sel_all</w:g></option>
 	    </select>
 	    </div>
 	  </div>
     <div class="layui-form-item" id="filter_prefix_c" style="display:none">
-	  <label class="layui-form-label">Filter Prefix</label>
+	  <label class="layui-form-label"><w:g>filter_p</w:g></label>
 	    <div class="layui-input-inline" style="width:300px;">
 	      <textarea id="filter_prefixs"  style="width:300px;height:100px;"><%=filter_prefix %></textarea>
 	    </div>
@@ -165,7 +165,7 @@ function do_submit(cb)
 	let n =  $('#name').val();
 	if(!n)
 	{
-		cb(false,"No name input") ;
+		cb(false,"<w:g>pls,input,name</w:g>") ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -186,7 +186,7 @@ function do_submit(cb)
 	let scan_intv = parseInt($("#scan_intv").val()) ;
 	if(isNaN(scan_intv))
 	{
-		cb(false,"Scan Interval(Millisecond) is invalid");
+		cb(false,"<w:g>scan,intv,invalid</w:g>");
 		return;
 	}
 	

@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%>
 <%
 String tp = request.getParameter("tp") ;
 String strv = request.getParameter("v") ;
@@ -53,7 +53,7 @@ if("slide".equals(tp))
 {
 %>
 <form style="height:150px">
-    <label for="val" style="font-size:3em">Input Value:<span id="val_lb"><%=val %></span></label>
+    <label for="val" style="font-size:3em"><lan:g>input,val</lan:g>:<span id="val_lb"><%=val %></span></label>
     <input type="range" name="val" id="val" data-highlight="true"
 			min="<%=min %>" max="<%=max %>" value="<%=val%>" onchange="val_chged()">
 </form>
@@ -64,7 +64,7 @@ else
 {
 %>
 <form style="height:150px">
-    <label for="val" style="font-size:3em">Input Value:</label>
+    <label for="val" style="font-size:3em"><lan:g>input,val</lan:g>:</label>
     <input type="number" name="val" id="val" data-highlight="true"
 		value="<%=val%>" onchange="val_chged()">
 </form>

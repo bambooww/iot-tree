@@ -10,7 +10,7 @@
 	org.iottree.core.store.record.*,
 	org.iottree.core.alert.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="lan"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
@@ -124,12 +124,12 @@ text-overflow: ellipsis;
 <body >
 <div class="top">
   
-  Start Date
+  <lan:g>start_dt</lan:g>
   <input type="datetime-local" id="start_dt" name="start_dt"/>
-  End Date
+  <lan:g>end_dt</lan:g>
   <input type="datetime-local" id="end_dt" name="end_dt"/>
-  <button onclick="do_search()">Search</button>
-  <button onclick="do_search_all()">All</button>
+  <button onclick="do_search()"><lan:g>search</lan:g></button>
+  <button onclick="do_search_all()"><lan:g>all</lan:g></button>
 </div>
   <div class="main_left" id="main_left">
 <table id="" class="layui-table"  lay-filter="apiquote_list"  lay-size="sm" lay-even0="true"  style="width:100%">
@@ -143,11 +143,11 @@ text-overflow: ellipsis;
   </colgroup>
   <thead>
     <tr style="background-color: #cccccc">
-      <th>From</th>
-      <th>To</th>
-      <th>Span</th>
-      <th>Valid</th>
-      <th>Value</th>
+      <th><lan:g>from_dt</lan:g></th>
+      <th><lan:g>to_dt</lan:g></th>
+      <th><lan:g>span</lan:g></th>
+      <th><lan:g>valid</lan:g></th>
+      <th><lan:g>val</lan:g></th>
     </tr> 
   </thead>
   <tbody id="list_cont" class="list_cont">

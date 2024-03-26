@@ -87,9 +87,11 @@ public class LangTag extends BodyTagSupport
 				if(reqf.isFile())
 					reqf = reqf.getParentFile() ;
 				String fp = null ;
-				if(path.startsWith("/"))
+				String cxtp = pc.getServletContext().getContextPath() ;
+//				if(Convert.isNullOrEmpty(cxtp))
+//					cxtp = "/ROOT" ;
+				if(path.startsWith("/") && Convert.isNotNullEmpty(cxtp))
 				{
-					String cxtp = pc.getServletContext().getContextPath() ;
 					if(path.startsWith(cxtp))
 					{
 						fp = Config.getWebappBase()+path;
@@ -103,8 +105,10 @@ public class LangTag extends BodyTagSupport
 				{
 					fp = reqf.getCanonicalPath()+"/"+path ;
 				}
-				
-				File f = new File(new File(fp),"lang.xml");
+				File tmpff = new File(fp) ;
+//				if(tmpff.isFile())
+//					tmpff=  tmpff.getParentFile() ;
+				File f = new File(tmpff,"lang.xml");
 				if (f.exists())
 				{
 					wpl = new Lang(f, null);
@@ -157,7 +161,7 @@ public class LangTag extends BodyTagSupport
 		if(!path.endsWith("/")&&!"/".equals(path))
 		{
 			int k = path.lastIndexOf('/') ;
-			if(k>0)
+			if(k>=0)
 			{
 				path = path.substring(0,k+1) ;
 			}
@@ -184,7 +188,7 @@ public class LangTag extends BodyTagSupport
 		if(!path.endsWith("/")&&!"/".equals(path))
 		{
 			int k = path.lastIndexOf('/') ;
-			if(k>0)
+			if(k>=0)
 			{
 				path = path.substring(0,k+1) ;
 			}

@@ -11,7 +11,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="w"%>
 <%
 	String id = request.getParameter("id") ;
 
@@ -68,21 +68,21 @@ dlg.resize_to(700,600);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><w:g>name</w:g>:</label>
     <div class="layui-input-inline" style="width: 150px;">
       <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input" <%=Convert.isNotNullEmpty(name)?"readonly":"" %>>
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><w:g>title</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>"  autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><w:g>enable</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
  </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Driver:</label>
+    <label class="layui-form-label"><w:g>driver</w:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="drv_name"  lay-filter="drv_name" >
 	    	<option value="">--</option>
@@ -96,34 +96,34 @@ dlg.resize_to(700,600);
 %>
 	    </select>
 	  </div>
-	  <div class="layui-form-mid host_port">DB Host:</div>
+	  <div class="layui-form-mid host_port">DB <w:g>host</w:g>:</div>
 		<div class="layui-input-inline host_port">
       <input type="text" id="db_host" name="db_host" value="<%=db_host%>"  autocomplete="off"  class="layui-input">
     </div>
-    <div class="layui-form-mid host_port">Port:</div>
+    <div class="layui-form-mid host_port"><w:g>port</w:g>:</div>
 	  <div class="layui-input-inline host_port" style="width: 100px;">
 	    <input type="number" id="db_port" name="db_port" value="<%=db_port_str%>"  autocomplete="off" class="layui-input">
 	  </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">DB Name:</label>
+    <label class="layui-form-label">DB <w:g>name</w:g>:</label>
     
 	  
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="db_name" name="db_name" value="<%=db_name%>"  autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid user_psw">User:</div>
+	  <div class="layui-form-mid user_psw"><w:g>user</w:g>:</div>
     <div class="layui-input-inline user_psw" style="width: 130px;">
       <input type="text" id="db_user" name="db_user" value="<%=db_user%>"  autocomplete="off"  class="layui-input">
     </div>
-    <div class="layui-form-mid user_psw">Password:</div>
+    <div class="layui-form-mid user_psw"><w:g>psw</w:g>:</div>
 	  <div class="layui-input-inline user_psw" style="width: 130px;">
 	    <input type="password" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
 	  </div>
  </div>
 
       <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><w:g>desc</w:g>:</label>
     <div class="layui-input-block" style="width: 450px;">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
@@ -179,7 +179,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'please input name') ;
+		cb(false,'<w:g>pls,input,name</w:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -197,7 +197,7 @@ function do_submit(cb)
 	var drv_name = $('#drv_name').val();
 	if(!drv_name)
 	{
-		cb(false,"driver cannot be null") ;
+		cb(false,"<w:g>pls,select,driver</w:g>") ;
 		return ;
 	}
 	
@@ -211,19 +211,19 @@ function do_submit(cb)
 		db_host = $('#db_host').val();
 		if(!db_host)
 		{
-			cb(false,"db_host cannot be null") ;
+			cb(false,"<w:g>pls,input,host</w:g>") ;
 			return ;
 		}
 		db_port = parseInt($('#db_port').val());
 		if(db_port==NaN)
 		{
-			cb(false,"db port must > 0 ") ;
+			cb(false,"port > 0 ") ;
 			return ;
 		}
 		db_user = $('#db_user').val();
 		if(!db_user)
 		{
-			cb(false,"db_user cannot be null") ;
+			cb(false,"<w:g>pls,input,user</w:g>") ;
 			return ;
 		}
 		db_psw = $('#db_psw').val();
@@ -232,7 +232,7 @@ function do_submit(cb)
 	var db_name = $('#db_name').val();
 	if(!db_name)
 	{
-		cb(false,"db_name cannot be null") ;
+		cb(false,"<w:g>pls,input</w:g> DB <w:g>name</w:g>") ;
 		return ;
 	}
 		

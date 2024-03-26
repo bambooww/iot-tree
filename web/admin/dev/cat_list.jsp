@@ -50,7 +50,7 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
     </style>
 </head>
 <body>
-[<%=lib.getTitle() %>/<%=cat.getTitle() %>] - <wbt:g>dev,list</wbt:g>
+<span style="top:4px;">[<%=lib.getTitle() %>/<%=cat.getTitle() %>] - <wbt:g>dev,list</wbt:g></span>
  <%
  if(bedit)
  {
@@ -59,7 +59,7 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
       <table id="top_oper">
           <tr>
           <td style="padding-left: 5px;">
-           <button id="top_oper_add_dev" class="layui-btn  layui-btn-sm layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;<wbt:g>add,dev</wbt:g></button>
+           <button id="top_oper_add_dev" class="layui-btn  layui-btn-xs layui-btn-primary " ><i class="fa-regular fa-square-plus"></i>&nbsp;<wbt:g>add,dev</wbt:g></button>
               </td>
               <td>
               <form class="layui-form" action="">

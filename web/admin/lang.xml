@@ -29,7 +29,9 @@
   <dd_node id="1" name="time" name_cn="时间" name_en="Time" />
   <dd_node id="1" name="left" name_cn="左边" name_en="Left" />
   <dd_node id="1" name="right" name_cn="右边" name_en="Right" />
-  
+  <dd_node id="1" name="comp" name_cn="组件" name_en="Component" />
+  <dd_node id="1" name="resources" name_cn="资源" name_en="Resources" />
+  <dd_node id="1" name="resource" name_cn="资源" name_en="Resource" />
   
   <dd_node id="1" name="close" name_cn="关闭" name_en="Close" />
   <dd_node id="1" name="help" name_cn="帮助" name_en="Help" />
@@ -88,6 +90,8 @@
   <dd_node id="1" name="new_devs_f" name_cn="新设备被发现" name_en="New Devices Found" />
   <dd_node id="1" name="tagg" name_cn="标签组" name_en="Tag Group" />
   <dd_node id="1" name="replace" name_cn="替换" name_en="Replace" />
+  <dd_node id="1" name="scan" name_cn="扫描" name_en="Scan" />
+  <dd_node id="1" name="invalid" name_cn="无效" name_en="Invalid" />
   
   <dd_node id="1" name="link_conn" name_cn="连接接入" name_en="Link" />
   <dd_node id="1" name="bind_conn" name_cn="绑定接入" name_en="Binder" />
@@ -234,9 +238,11 @@
   <dd_node id="1" name="stopped" name_cn="停止" name_en="Stopped"/>
   <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer"/>
   <dd_node id="1" name="evt" name_cn="事件" name_en="Event"/>
+  <dd_node id="1" name="evts" name_cn="事件" name_en="Events"/>
   <dd_node id="1" name="prompt" name_cn="提示" name_en="Prompt"/>
   <dd_node id="1" name="is_al_exist" name_cn="已经存在" name_en="is already exists"/>
-  
+  <dd_node id="1" name="interface" name_cn="接口" name_en="Interface"/>
+  <dd_node id="1" name="do_map" name_cn="映射" name_en="Map"/>
   
   <dd_node id="1" name="connectors" name_cn="接入" name_en="Connectors"/>
   <dd_node id="1" name="connector" name_cn="接入" name_en="Connector"/>

@@ -75,11 +75,11 @@ public class StoreOutTb extends StoreOut
 		return TP;
 	}
 
-	@Override
-	public String getOutTpTitle()
-	{
-		return "Realtime Data Table";
-	}
+//	@Override
+//	public String getOutTpTitle()
+//	{
+//		return "Realtime Data Table";
+//	}
 	
 	@Override
 	public boolean isStoreHistory()

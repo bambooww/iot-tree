@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%>
 <%
 String tp = request.getParameter("tp") ;
 String strv = request.getParameter("v") ;
@@ -65,7 +65,7 @@ if("slide".equals(tp))
 {
 %>
 <p>
-  <label for="amount">输入值：</label>
+  <label for="amount"><lan:g>input,val</lan:g>:</label>
   <input type="text" id="val" style="border:0; color:#f6931f; font-weight:bold;">
 </p>
 <div id="slider" style="height:200px;"></div>

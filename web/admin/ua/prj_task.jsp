@@ -206,17 +206,17 @@ function show_script()
 	switch(taskact_js.jstp)
 	{
 	case "init":
-		tt = "Edit Init Script (run once)" ;
+		tt = "<wbt:g>edit_init_js</wbt:g>" ;
 		break ;
 	case "run":
-		tt = "Edit Run Script (run interval)" ;
+		tt = "<wbt:g>edit_run_js</wbt:g>" ;
 		break;
 	case "end":
-		tt = "Edit End Script (run once)" ;
+		tt = "<wbt:g>edit_end_js</wbt:g>" ;
 		break;
 	}
 	dlg.open("../ua_cxt/cxt_script.jsp?op=task&path="+prjpath+"&taskid="+taskact_js.taskid+"&opener_txt_id=ta_js",
-			{title:tt},['Ok','Cancel'],
+			{title:tt},['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -265,17 +265,15 @@ function edit_task_js(taskid,actid,jstp)
 
 function task_del(prjid,id)
 {
-	layer.confirm('delete selected task?', function(index)
-		    {
-		    	send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=del&taskid="+id,function(bsucc,ret){
-		    		if(bsucc&&ret=='succ')
-		    			obj.del();
-		    		else
-		    			layer.msg("del err:"+ret) ;
-		    	}) ;
-		      
-		      location.reload();
-		    });
+	dlg.confirm('<wbt:g>del,selected,task</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
+    {
+		send_ajax("prj_task_ajax.jsp","prjid="+prjid+"&op=del&taskid="+id,function(bsucc,ret){
+    		if(bsucc&&ret=='succ')
+    			obj.del();
+    		else
+    			layer.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
+		});
+    }) ;
 }
 
 function export_task(prjid,taskid)

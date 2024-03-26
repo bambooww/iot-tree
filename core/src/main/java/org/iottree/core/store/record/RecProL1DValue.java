@@ -62,10 +62,10 @@ public class RecProL1DValue extends RecProL1  implements ILang
 			
 	public static enum ByWay
 	{
-		second(10,"By Second","sec"),  // 
-		minute(11,"By Minute","mi"),
-		hour(12,"By Hour","h"),
-		day(13,"By Day","d");
+		second(10,"sec"),  // ,"By Second"
+		minute(11,"mi"),  // ,"By Minute"
+		hour(12,"h"), // ,"By Hour"
+		day(13,"d");  //,"By Day"
 		
 		// 没有意义
 //		week(14,"By Week","w"),
@@ -73,13 +73,13 @@ public class RecProL1DValue extends RecProL1  implements ILang
 //		year(16,"By Year","y");
 		
 		private final int val ;
-		private final String title;
+		//private final String title;
 		private final String mark ;
 		
-		ByWay(int v,String tt,String mark)
+		ByWay(int v,String mark)
 		{
 			val = v ;
-			title = tt;
+			//title = tt;
 			this.mark = mark ;
 		}
 		
@@ -90,7 +90,9 @@ public class RecProL1DValue extends RecProL1  implements ILang
 		
 		public String getTitle()
 		{
-			return title ;
+			Lan lan = Lan.getLangInPk(RecProL1DValue.class) ;
+			return lan.g("by_way_"+mark) ;
+			//return title ;
 		}
 		
 		public String getMark()

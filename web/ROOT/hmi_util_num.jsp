@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	String user = request.getParameter("user") ;
 	if(user==null)
 		user = "" ;
@@ -51,25 +51,25 @@ dlg.resize_to(720,790);
 	              <td><input type=button onclick="addValue('1')" value=" 1 "></td>
 	              <td><input type=button onclick="addValue('2')" value=" 2 "></td>
 	              <td><input type=button onclick="addValue('3')" value=" 3 "></td>
-	              <td><input name="button10" type=button value="回退" onclick="bkValue()"></td>
+	              <td><input name="button10" type=button value="<lan:g>back</lan:g>" onclick="bkValue()"></td>
 	            </tr>
 	            <tr align="left" valign="middle">
 	              <td><input type=button onclick="addValue('4')" value=" 4 "></td>
 	              <td><input type=button onclick="addValue('5')" value=" 5 "></td>
 	              <td><input type=button onclick="addValue('6')" value=" 6 "></td>
-	              <td><INPUT type=button value=重置 onclick="reset_psw()"></td>
+	              <td><INPUT type=button value="<lan:g>reset</lan:g>"  onclick="reset_psw()"></td>
 	            </tr>
 	            <tr align="left" valign="middle">
 	              <td><input type=button onclick="addValue('7')" value=" 7 "></td>
 	              <td><input type=button onclick="addValue('8')" value=" 8 "></td>
 	              <td><input type=button onclick="addValue('9')" value=" 9 "></td>
-	              <td><input class=button type=button value="关闭" name="Submit222" onclick="win_close()"></td>
+	              <td><input class=button type=button value="<lan:g>close</lan:g>" name="Submit222" onclick="win_close()"></td>
 	            </tr>
 	            <tr align="left" valign="middle">
 	              <td><input type=button onclick="addValue('7')" value="&lt;"></td>
 	              <td><input type=button onclick="addValue('8')" value=" 0 "></td>
 	              <td><input type=button onclick="addValue('9')" value="&gt;"></td>
-				  <td> <input type=button onclick="do_ok()" value="确定" style="background-color:blue;color:white "></td>
+				  <td> <input type=button onclick="do_ok()" value="<lan:g>ok</lan:g>" style="background-color:blue;color:white "></td>
 	            </tr>
 	          </table>
 	          </td>
@@ -109,7 +109,7 @@ function do_ok()
 	var psw = document.getElementById('input_psw').value;
 	if(psw==null||psw=='')
 	{
-		dlg.msg("please input password");
+		dlg.msg("<lan:g>pls,input,psw</lan:g>");
 		return ;
 	}
 	

@@ -535,12 +535,12 @@ function add_pro_sel(b_l2)
 			});
 }
 
-function add_or_edit_p(tp,tt,id)
+function add_or_edit_p(tp,t,id)
 {
-	var tt = "<wbt:g>add,processor</wbt:g> ["+tt+"]";
+	let tt = "<wbt:g>add,processor</wbt:g> ["+t+"]";
 	if(id)
 	{
-		tt = "<wbt:g>edit,processor</wbt:g> ["+tt+"]";
+		tt = "<wbt:g>edit,processor</wbt:g> ["+t+"]";
 	}
 	if(id==null)
 		id = "" ;

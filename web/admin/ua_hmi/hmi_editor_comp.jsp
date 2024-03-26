@@ -7,8 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.res.*,
 	org.iottree.core.comp.*,
-				java.net.*"%>
-<%
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "tabid","libid","catid","id"))
 		return ;
 	//String op = request.getParameter("op");
@@ -291,16 +290,16 @@ height:50px;background-color: grey;
 <body class="layout-body">
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
 <div style="float: left;position:relative;left:0px;margin-left:5px;top:2px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
- <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree HMI Component Editor </div>
+ <img src="../inc/logo1.png" width="40px" height="40px"/>IOTTree HMI <wbt:g>comp,editor</wbt:g> </div>
  <div style="float: left;position:relative;left:100px;margin-left:5px;top:2px;font: 25px solid">
 		<%=lib.getTitle() %>-<%=cc.getTitle()%>-<%=ci.getTitle()%>
 		</div>
  <div style="float: right;margin-right:10px;margin-top:10px;font: 20px solid;color:#ffffff">
  			
- 			<button class="layui-btn layui-btn-warm"  onclick="up_to_prj()">Update To Project</button>
+ 			<button class="layui-btn layui-btn-warm"  onclick="up_to_prj()"><wbt:g>up_to_prjs</wbt:g></button>
  			&nbsp;
- 			<i class="fa-brands fa-squarespace fa-lg top_btn" onclick="open_res()" title="resources"></i>
-			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" title="save this component"></i>
+ 			<i class="fa-brands fa-squarespace fa-lg top_btn" onclick="open_res()" title="<wbt:g>resources</wbt:g>"></i>
+			<i class="fa fa-floppy-disk fa-lg top_btn" onclick="tab_save()" title="<wbt:g>save,this,comp</wbt:g>"></i>
 		    <i id="lr_btn_fitwin"  class="fa fa-crosshairs fa-lg top_btn" onclick="draw_fit()" title="show fit"></i>
 </div>
 </div>
@@ -359,8 +358,8 @@ height:50px;background-color: grey;
 			<div style="position0: absolute; width: 100%; height:90%; border:1 solid;border-color: red">
 				<div class="layui-tab">
   <ul class="layui-tab-title">
-    <li class="layui-this">Properties</li>
-    <li>Events</li>
+    <li class="layui-this"><wbt:g>props</wbt:g></li>
+    <li><wbt:g>evts</wbt:g></li>
   </ul>
   <div class="layui-tab-content">
     <div class="layui-tab-item layui-show">
@@ -395,14 +394,14 @@ height:50px;background-color: grey;
 		</div>
 		
 		<div id="inter_editor" class="toolbox" style="left:50px;top:385px;">
-				<div class="title"><h3>Interface</h3></div>
+				<div class="title"><h3><wbt:g>interface</wbt:g></h3></div>
 				<div class="content" style="height:180px"> 
 					<div id='inter_prop_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: #f9f9f9; z-index: 60000; ;float:left">
 						<div style="position0:relative;top:0px;height:20px;background-color: grey;width:100%;float:left">
-						Properties<button onclick="inter_prop_edit()">+Add</button>
-						<button onclick="inter_prop_test()">Test</button>
-						<button onclick="inter_prop_paste()">Paste</button>
-						<button onclick="inter_prop_map()">Map</button>
+						<wbt:g>props</wbt:g><button onclick="inter_prop_edit()">+<wbt:g>add</wbt:g></button>
+						<button onclick="inter_prop_test()"><wbt:g>test</wbt:g></button>
+						<button onclick="inter_prop_paste()"><wbt:g>paste</wbt:g></button>
+						<button onclick="inter_prop_map()"><wbt:g>do_map</wbt:g></button>
 						</div>
 					</div>
 					<div id="inter_prop_list" style="position0:absolute;top:20px;height:160px;width:100%;background-color: #f9f9f9;overflow: auto;">
@@ -411,7 +410,7 @@ height:50px;background-color: grey;
 				  </div>
 					<div id='inter_event_panel' style="border: 1; font: 15; flex: 1;width: 100%;  background-color: window; z-index: 60000; ">
 						<div style="position0:absolute;top:0px;height:20px;background-color: grey;width:100%">
-						Events<button onclick="inter_event_edit()">+add</button></div>
+						<wbt:g>evts</wbt:g><button onclick="inter_event_edit()">+<wbt:g>add</wbt:g></button></div>
 						<div id="inter_event_list" style="position0:absolute;top:20px;height:120px;width:100%">
 							
 						</div>

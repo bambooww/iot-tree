@@ -1,16 +1,20 @@
 package org.iottree.core.store.record;
 
+import org.iottree.core.util.Lan;
+
 public enum RecValStyle
 {
-	successive_normal(0),  // 
-	successive_accumulation(1),
-	discrete(2); // bool enum etc
+	successive_normal(0,"succ_nor"),  // 
+	successive_accumulation(1,"succ_acc"),
+	discrete(2,"discrete"); // bool enum etc
 	
 	private final int val ;
+	private final String mark ;
 	
-	RecValStyle(int v)
+	RecValStyle(int v,String m)
 	{
 		val = v ;
+		this.mark = m ;
 	}
 	
 	public int getVal()
@@ -20,17 +24,8 @@ public enum RecValStyle
 	
 	public String getTitle()
 	{
-		switch(val)
-		{
-		case 0:
-			return "Successive Normal" ;
-		case 1:
-			return "Successive Accumulation";
-		case 2:
-			return "Discrete (bool/enum)";
-		default:
-			return null ;
-		}
+		Lan lan = Lan.getLangInPk(RecValStyle.class) ;
+		return lan.g("val_sty_"+this.mark) ;
 	}
 	
 	public static RecValStyle valOfInt(int i)

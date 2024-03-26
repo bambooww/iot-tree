@@ -14,4 +14,28 @@
   
   <dd_node name="name_existed" name_cn="相同名字的对象已经存在" name_en="An object with the same name already exists"  visible="1" order_no="1"/>
   
+  
+  <dd_node id="1" name="by_way_sec" name_cn="每秒" name_en="By Second" />
+  <dd_node id="1" name="by_way_mi" name_cn="每分" name_en="By Minute" />
+  <dd_node id="1" name="by_way_h" name_cn="每小时" name_en="By Hour" />
+  <dd_node id="1" name="by_way_d" name_cn="每天" name_en="By Day" />
+	
+  <dd_node id="1" name="mut_u_o" name_cn="向上" name_en="Up Only" />
+  <dd_node id="1" name="mut_u_t_v" name_cn="向上到顶点" name_en="Up To Vertex" />
+  <dd_node id="1" name="mut_u_t_v_s" name_cn="向上到顶点并保持" name_en="Up To Vertex And Sustain" />
+  
+  <dd_node id="1" name="mut_d_o" name_cn="向下" name_en="Down Only" />
+  <dd_node id="1" name="mut_d_t_v" name_cn="向下到顶点" name_en="Down To Vertex" />
+  <dd_node id="1" name="mut_d_t_v_s" name_cn="向下顶点并保持" name_en="Down To Vertex And Sustain" />
+  
+  <dd_node id="1" name="mut_u_d" name_cn="向上并向下" name_en="Up And Down" />
+  <dd_node id="1" name="mut_d_u" name_cn="向下并向上" name_en="Down And Up" />
+
+  <dd_node id="1" name="slope_tp_fixed" name_cn="固定斜率" name_en="Fixed slope" />
+  <dd_node id="1" name="slope_tp_multi_mean" name_cn="均值倍数斜率" name_en="Mean multiple slope" />
+
+  <dd_node id="1" name="val_sty_succ_nor" name_cn="普通连续值" name_en="Successive Normal" />
+  <dd_node id="1" name="val_sty_succ_acc" name_cn="累积连续值" name_en="Successive Accumulation" />
+  <dd_node id="1" name="val_sty_discrete" name_cn="离散值(bool/enum)" name_en="Discrete (bool/enum)" />
+  
 </dd_class>

@@ -7,7 +7,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%>
 <html>
 <head>
 <title>auth</title>
@@ -23,13 +23,13 @@ dlg.resize_to(400,250);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">User</label>
+    <label class="layui-form-label"><lan:g>user</lan:g></label>
     <div class="layui-input-inline">
       <input type="text" name="user" id="user" class="layui-input" autocomplete="new-password"/>
     </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label">Password</label>
+    <label class="layui-form-label"><lan:g>psw</lan:g></label>
     <div class="layui-input-inline">
       <input type="password" name="psw" id="psw" class="layui-input" autocomplete="new-password"/>
     </div>

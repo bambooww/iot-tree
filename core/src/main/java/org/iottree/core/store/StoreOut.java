@@ -3,6 +3,7 @@ package org.iottree.core.store;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ILang;
 import org.iottree.core.util.xmldata.DataTranserJSON;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -10,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @data_class
-public abstract class StoreOut
+public abstract class StoreOut implements ILang
 {
 //	public static final String[] TPS = new String[] {"jdbc_tb"};//{"ui","js"} ;
 //	public static final String[] TP_TITLES = new String[] {"Table"}; // {"UI","JS"} ;
@@ -81,7 +82,10 @@ public abstract class StoreOut
 	
 	public abstract String getOutTp() ;
 	
-	public abstract String getOutTpTitle() ;
+	public final String getOutTpTitle()
+	{
+		return g("ot_"+getOutTp()) ;
+	}
 	
 	public abstract boolean checkValid(StringBuilder failedr) ;
 	

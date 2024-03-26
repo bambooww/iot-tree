@@ -1549,7 +1549,7 @@ function del_sor(id)
 {
 	let ob = $("#sor_"+id);
 	event.stopPropagation();
-	dlg.confirm('Delete this Source ['+ob.attr('n')+'] ?', {btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,sor</wbt:g> ['+ob.attr('n')+'] ?', {btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 	{
 		send_ajax("./store/store_ajax.jsp",{op:"del_sor",id:id},(bsucc,ret)=>{
     		if(!bsucc||ret!="succ")
@@ -1573,8 +1573,8 @@ function test_sor(id)
 function add_sor_sel()
 {
 	dlg.open("./store/store_sor_sel.jsp",
-			{title:"Select Source Type"},
-			['Cancel'],
+			{title:"<wbt:g>select,data,sor,type</wbt:g>"},
+			['<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -1599,16 +1599,16 @@ function add_or_edit_source(tp,t,id)
 {
 	if(event)
 		event.stopPropagation();
-	tt = "Add Data Source - "+t;
+	tt = "<wbt:g>add,data,sor</wbt:g> - "+t;
 	if(id)
 	{
-		tt = "Edit Data Source - "+t;
+		tt = "<wbt:g>edit,data,sor</wbt:g> - "+t;
 	}
 	if(!id)
 		id = "" ;
 	dlg.open("./store/store_sor_edit_"+tp+".jsp?id="+id,
 			{title:tt},
-			['Ok','Cancel'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

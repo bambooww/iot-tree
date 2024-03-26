@@ -12,7 +12,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="w"%>
 <%
 if(!Convert.checkReqEmpty(request,  out, "prjid"))
 	return ;
@@ -38,7 +38,7 @@ if(Convert.isNotNullEmpty(id))
 	RecPro pro = recm.getRecProById(id) ;
 	if(pro==null || !(pro instanceof RecProL1MutPts))
 	{
-		out.print("no RecProL1DValue found") ;
+		out.print("no RecProL1MutPts found") ;
 		return ;
 	}
 	proDV = (RecProL1MutPts)pro ;
@@ -66,24 +66,24 @@ dlg.resize_to(700,600);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><w:g>name</w:g>:</label>
     <div class="layui-input-inline" style="width: 150px;">
       <input type="text" id="name" name="name" value="<%=name%>"  autocomplete="off"  class="layui-input" <%=Convert.isNotNullEmpty(name)?"readonly":"" %>>
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><w:g>title</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>"  autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><w:g>enable</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
  </div>
   <div class="layui-form-item">
-  <label class="layui-form-label">Data Source:</label>
+  <label class="layui-form-label"><w:g>data,sor</w:g>:</label>
     <div class="layui-input-inline" style="width: 150px;">
       <select id="sor_name"  lay-filter="sor_name" >
-	    	<option value=""> Inner </option>
+	    	<option value=""> <w:g>inner_s</w:g> </option>
 <%
 List<Source> sors = storem.listSources() ;
 	for(Source sor:sors)
@@ -107,7 +107,7 @@ List<Source> sors = storem.listSources() ;
 	 </div>
 	 
 	 <div class="layui-form-item">
-  <label class="layui-form-label">Jump Type:</label>
+  <label class="layui-form-label"><w:g>mut_tp</w:g>:</label>
     <div class="layui-input-inline" style="width: 150px;">
       <select id="muttp"  lay-filter="muttp" >
 <%
@@ -124,7 +124,7 @@ List<Source> sors = storem.listSources() ;
 	    </select>
     </div>
     
-    <div class="layui-form-mid">Slope Type:</div>
+    <div class="layui-form-mid"><w:g>slope_tp</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="slopetp"  lay-filter="slopetp" >
 <%
@@ -142,7 +142,7 @@ for(RecProL1MutPts.SlopeTP w:RecProL1MutPts.SlopeTP.values())
 	 </div>
 	 
       <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><w:g>desc</w:g>:</label>
     <div class="layui-input-block" style="width: 450px;">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
@@ -202,7 +202,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'please input name') ;
+		cb(false,'<w:g>pls,input,name</w:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();

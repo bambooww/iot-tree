@@ -27,6 +27,9 @@
 	<dd_node id="1004" name="pls_sel_imp" name_cn="请选择导入" name_en="please select to import!"/>
 	
 	<dd_node id="1004" name="sel_dev_in_lib" name_cn="在设备库中选择" name_en="Select Device in Library"/>
-
-
+	
+	<dd_node id="1004" name="edit_init_js" name_cn="编辑初始化JS(运行一次)" name_en="Edit Init JS (run once)"/>
+	<dd_node id="1004" name="edit_run_js" name_cn="编辑运行JS(重复运行)" name_en="Edit Run JS (run interval)"/>
+	<dd_node id="1004" name="edit_end_js" name_cn="编辑结束JS(运行一次)" name_en="Edit End JS (run once)"/>
+		
 </dd_class>

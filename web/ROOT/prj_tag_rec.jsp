@@ -8,7 +8,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="lan"%><%!
 
 %><%
 if(!Convert.checkReqEmpty(request, out, "prjid","tag"))
@@ -76,7 +76,7 @@ ol,ul
 <body marginwidth="0" marginheight="0">
 <div class="layui-tab layui-tab-card" lay-filter="pro_tabs" style="top:0px;">
   <ul class="layui-tab-title">
-    <li class="layui-this" lay-id="11">Basic Recorder</li>
+    <li class="layui-this" lay-id="11"><lan:g>basic_rec</lan:g></li>
 <%
 for(RecProL1 rp:rps)
 {

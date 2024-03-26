@@ -2,4 +2,13 @@
 <dd_class id="1" name="ua_lang"  name_jp=""  >
   <dd_node id="1" name="pls_sel_tag_uitemp_fst" name_cn="请先选择标签和UI模板" name_en="Please select tag and UI Template first" />
   
+  <dd_node id="1" name="new_lib_imp" name_cn="新库将被导入" name_en="New library will import" />
+  <dd_node id="1" name="lib_al_existed" name_cn="设备库已经存在" name_en="HMI Comp library is already existed" />
+  <dd_node id="1" name="do_not_imp" name_cn="不导入" name_en="Do not import" />
+  <dd_node id="1" name="create_new" name_cn="创建新的" name_en="Create New One" />
+  
+  <dd_node id="1" name="add_comp" name_cn="添加组件" name_en="Add Component Item" />
+  
+  <dd_node id="1" name="up_to_prjs" name_cn="更新到项目中" name_en="Update To Projects" />
+  
 </dd_class>

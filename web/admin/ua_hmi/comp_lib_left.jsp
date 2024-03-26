@@ -4,7 +4,7 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
 %><%
 String libid = request.getParameter("libid") ;
@@ -69,7 +69,7 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
       <table id="top_oper">
           <tr>
           <td style="padding-left: 5px;">
-           Lib: 
+           <wbt:g>lib</wbt:g>: 
               </td>
               <td>
               <form class="layui-form" action="">
@@ -104,7 +104,7 @@ if(false) //(bedit)
 %>
               </td>
               <td style="padding-left: 15px;">
-              <button id="top_oper_add_cat" type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i>Category</button>
+              <button id="top_oper_add_cat" type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i><wbt:g>cat</wbt:g></button>
               </td>
           </tr>
       </table>
@@ -114,9 +114,7 @@ if(false) //(bedit)
 </table>
   <script type="text/html" id="row_toolbar">
 <div class="layui-btn-group">
-{{ if(true){  }}
-  <a class="layui-btn layui-btn-xs " lay-event0="show" title=show devices"><i class="fa fa-archive" ></i></a>
-{{ } }}
+
   <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit"><i class="fa fa-pencil"></i></button>
   
 <button type="button" class="layui-btn layui-btn-xs layui-btn-danger"  lay-event="del" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
@@ -168,8 +166,8 @@ layui.use('table', function()
  if(bedit)
  {
 	 //cols.push({field: 'n', title: 'Name', width:'25%'}) ;
-	 cols.push({field: 't', title: 'Title', width:'65%'});
-	 cols.push({field: 'Oper', title: 'Oper', width:"35%" ,toolbar: '#row_toolbar'}) ;
+	 cols.push({field: 't', title: '<wbt:g>title</wbt:g>', width:'80%'});
+	 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"20%" ,toolbar: '#row_toolbar'}) ;
  }
  else
  {
@@ -288,17 +286,17 @@ function lib_add_cat()
 function lib_del_cat(cid)
 {
 	var libid = $("#lib_ids").val() ;
-	console.log(libid) ;
+	//console.log(libid) ;
 	if(!libid)
 	{
 		dlg.msg("no lib selected") ;
 	}
-	dlg.confirm('delete this category?',{btn:["Yes","Cancel"],title:"Delete Confirm"},function ()
+	dlg.confirm('<wbt:g>del,this,cat</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
 					send_ajax("comp_lib_ajax.jsp","op=del_cat&libid="+libid+"&catid="+cid,function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
-			    			dlg.msg("del err:"+ret) ;
+			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
 			    			return ;
 			    		}
 			    		//
@@ -313,8 +311,8 @@ function lib_add_edit_cat(catid)
 		catid ="" ;
 	var libid = $("#lib_ids").val() ;
 	dlg.open("comp_cat_edit.jsp?libid="+libid+"&catid="+catid,
-			{title:"Edit Category"},
-			['Ok','Cancel'],
+			{title:"<wbt:g>edit,cat</wbt:g>"},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

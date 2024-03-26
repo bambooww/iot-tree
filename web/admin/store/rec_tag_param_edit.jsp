@@ -10,7 +10,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%!
 
 	 %><%
 	if(!Convert.checkReqEmpty(request, out,"prjid", "tag"))
@@ -144,7 +144,7 @@ border-color:blue;
 <body>
 <form class="layui-form" action="" onsubmit="return false;">
  <div class="layui-form-item"  id="dt_tp">
-    <label class="layui-form-label">Value Style</label>
+    <label class="layui-form-label"><w:g>val_sty</w:g></label>
     <div class="layui-input-inline" style="width: 210px;">
       <select  id="val_style"  name="val_style"  class="layui-input" placeholder="" lay-filter="val_style">
 <%
@@ -157,28 +157,28 @@ for(RecValStyle tp:RecValStyle.values())
 %>
       </select>
     </div>
-    <div class="layui-form-mid">Enable</div>
+    <div class="layui-form-mid"><w:g>enable</w:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="en" name="en"  title="Enable or Not" lay-skin="switch" <%=chked %>> 
 	  </div>
 </div>
 <div class="layui-form-item">
-    <label class="layui-form-label">Gather Interval MS</label>
+    <label class="layui-form-label"><w:g>gather_intv_ms</w:g></label>
 		<div class="layui-input-inline" style="width: 100px;">
 	    <input type="number" id="gather_intv" name="gather_intv" class="layui-input" value=""/>
 	  </div>
-	  <div class="layui-form-mid">Keep Days</div>
+	  <div class="layui-form-mid"><w:g>keep_days</w:g></div>
 	  <div class="layui-input-inline" style="width: 80px;">
 	    <input type="number" id="keep_days" name="keep_days"  class="layui-input"  title=""  value=""> 
 	  </div>
-	   <div class="layui-form-mid">Min Record Interval</div>
+	   <div class="layui-form-mid"><w:g>min_rec_intv</w:g></div>
 	  <div class="layui-input-inline" style="width: 80px;">
-	    <input type="number" id="min_rec_intv" name="min_rec_intv"  class="layui-input"  title=""  value=""> 
+	    <input type="number" id="min_rec_intv" name="min_rec_intv"  class="layui-input"  title="<w:g>ms</w:g>"  value=""> 
 	  </div>
 	  
 </div>
 <div class="layui-form-item">
-    <label class="layui-form-label">Process</label>
+    <label class="layui-form-label"><w:g>processor</w:g></label>
 	<div class="layui-input-inline" style="width: 350px;">
 	    <ul class="pro_list" id="pro_list">
 
