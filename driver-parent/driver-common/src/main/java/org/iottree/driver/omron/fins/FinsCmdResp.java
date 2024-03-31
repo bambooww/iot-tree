@@ -1,17 +1,19 @@
-package org.iottree.driver.omron.fins.eth;
+package org.iottree.driver.omron.fins;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class FinsEthMsgRespR extends FinsEthMsg
+import org.iottree.core.util.IBSOutput;
+
+public class FinsCmdResp extends FinsCmd
 {
 	int errorCode = -1 ;
 	byte[] respVals = null ;
 	
-	public FinsEthMsgRespR(short tar_clientid, short sor_clientid)
+	public FinsCmdResp(FinsMode fins_mode)
 	{
-		super(tar_clientid, sor_clientid);
+		super(fins_mode) ;
 	}
 
 	@Override
@@ -38,12 +40,12 @@ public class FinsEthMsgRespR extends FinsEthMsg
 	}
 
 	@Override
-	protected void writeParam(OutputStream outputs) throws IOException
+	protected void writeParam(IBSOutput outputs) // throws IOException
 	{
 		
 	}
 
-	public static FinsEthMsgRespR readFromStream(InputStream inputs,long timeout) throws IOException
+	public static FinsCmdResp readFromStream(InputStream inputs,long timeout) throws IOException
 	{
 		
 		//FinsEthMsgRespR ret = new FinsEthMsgRespR() ;

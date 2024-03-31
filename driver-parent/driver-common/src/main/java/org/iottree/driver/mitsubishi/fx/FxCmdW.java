@@ -66,9 +66,9 @@ public class FxCmdW extends FxCmd
 		//write
 		byte[] bs1 = req.toBytes();
 		
-		if(FxMsg.log.isTraceEnabled())
+		if(FxMsg.log_w.isTraceEnabled())
 		{
-			FxMsg.log.trace("reqw ->"+Convert.byteArray2HexStr(bs1, " "));
+			FxMsg.log_w.trace("reqw ->"+Convert.byteArray2HexStr(bs1, " "));
 			//System.out.println("reqw->"+Convert.byteArray2HexStr(bs1, " ")) ;
 		}
 		

@@ -212,8 +212,8 @@ if(!bdlg)
 {
 %>
 <div style="border:0px solid #ffff00;height:45px;text-align:right;padding-right:30px">
-<button id="btn_apply" type="button" class="layui-btn layui-btn-sm  layui-btn-warm layui-btn-disabled" style="margin-right:5px;width:80px" onclick="dlg.btn_clk('x20210306090015_1',1)"><wbt:g>apply</wbt:g></button>
-<button id="btn_help" type="button" class="layui-btn layui-btn-sm  layui-btn-primary " style="margin-right:5px;width:80px" onclick="dlg.btn_clk('x20210306090015_1',3)"><wbt:g>help</wbt:g></button>
+<button id="btn_apply" type="button" class="layui-btn layui-btn-sm  layui-btn-warm layui-btn-disabled" style="margin-right:5px;width:80px" ><wbt:g>apply</wbt:g></button>
+<button id="btn_help" type="button" class="layui-btn layui-btn-sm  layui-btn-primary " style="margin-right:5px;width:80px" ><wbt:g>help</wbt:g></button>
 </div>
 <%
 }

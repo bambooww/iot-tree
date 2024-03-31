@@ -16,25 +16,28 @@
 		boolean bcat_first=true ;
 		for(DevDrvCat ddc:DevManager.getInstance().getDriverCats())
 		{
-			if(bcat_first) bcat_first=false;
-			else out.write(",") ;
-			out.write("{\"text\": \""+ddc.getTitle()+"\"") ;
-			out.write(",\"id\": \""+ddc.getName()+"\",\"type\":\"cat\"") ;
-			out.write(",\"icon0\":\"icon_tagg\",\"state\": {\"opened\": true}") ;
-			out.write(",\"children\": [") ;
-			boolean b_first = true ;
 			List<DevDriver> drvs = ddc.getDrivers() ;
 			if(ch!=null)
 				drvs = ch.filterSupportedDrivers(drvs) ;
 			if(drvs==null||drvs.size()<=0)
 				continue ;
+			if(bcat_first) bcat_first=false;
+			else out.write(",") ;
+			out.write("{\"text\": \""+ddc.getTitle()+"\"") ;
+			out.write(",\"id\": \""+ddc.getName()+"\",\"type\":\"cat\"") ;
+			out.write(",\"state\": {\"opened\": true}") ;
+			out.write(",\"children\": [") ;
+			boolean b_first = true ;
 			
-			for(DevDriver dd:drvs)
+			//if(drvs!=null&&drvs.size()>0)
 			{
-				if(b_first) b_first=false;
-				else out.write(",") ;
-				out.write("{\"text\": \""+dd.getTitle()+"\"") ;
-				out.write(",\"id\": \""+dd.getName()+"\"}") ;
+				for(DevDriver dd:drvs)
+				{
+					if(b_first) b_first=false;
+					else out.write(",") ;
+					out.write("{\"text\": \""+dd.getTitle()+"\"") ;
+					out.write(",\"id\": \""+dd.getName()+"\",\"type\":\"drv\"}") ;
+				}
 			}
 			out.write("]}") ;
 		}
@@ -80,6 +83,20 @@ dlg.resize_to(400,500);
 tr:hover
 {
 	background-color: grey;
+}
+
+.folder
+{
+	color:#f9dbb9
+}
+.drv
+{
+	
+}
+
+.drv_sel
+{
+	color:green;
 }
 </style>
 <body>
@@ -127,6 +144,8 @@ if(!tree_sel_id)
 		tree_sel_id = drv_name ;
 }
 
+var checkedNode = undefined;
+
 function tree_init()
 {
 	$.jstree.destroy();
@@ -157,7 +176,27 @@ function tree_init()
 							return name + ' ' + counter;
 						}
 					},
-					'plugins' : ['types','unique'] //'state',','contextmenu' 'dnd',
+					"types": {
+				        "cat": {
+				            "icon": "fa fa-folder folder"
+				        },
+				        "drv": {
+				            "icon": "fa fa-gear drv"
+				        }
+				    },
+				    conditionalselect: function (node, event) {
+				        if ($("#cat_tree").jstree().is_parent(node)) {
+				            return false;
+				        }
+				        node.icon = 'fa fa-gear drv_sel';
+				        if (checkedNode) {
+				            checkedNode.icon = 'fa fa-gear drv';
+				        }
+				        $("#cat_tree").jstree().redraw(true);
+				        checkedNode = node;
+				        return true;
+				    },
+					'plugins' : ['conditionalselect','types','unique'] //'state',','contextmenu' 'dnd',
 				}
 		).bind("activate_node.jstree", function (obj, e) {
 		    var currentNode = e.node;
@@ -170,7 +209,7 @@ function tree_init()
 		});
 		
 		if(tree_sel_id)
-			$('#cat_tree').jstree('select_node', tree_sel_id);
+			$('#cat_tree').jstree('select_node', tree_sel_id).icon = 'fa fa-gear drv_sel';
 }
 
 function on_tree_node_sel(n)

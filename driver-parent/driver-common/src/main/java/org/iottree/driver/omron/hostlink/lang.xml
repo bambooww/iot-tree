@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name=""  name_jp=""  >
+
+
+	<dd_node id="1" name="encode_00" name_cn="Normal completion" name_en="Normal completion" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_01" name_cn="" name_en="Not executable in RUN mode" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_02" name_cn="" name_en="Not executable in MONITOR mode" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_03" name_cn="" name_en="UM write-protected" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_04" name_cn="" name_en="Address over" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_0B" name_cn="" name_en="Not executable in PROGRAM mode" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_13" name_cn="" name_en="FCS error" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_14" name_cn="" name_en="Format error" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_15" name_cn="" name_en="Entry number data error" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_16" name_cn="" name_en="Command not supported" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_18" name_cn="" name_en="Frame length error" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_19" name_cn="" name_en="Not executable" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_20" name_cn="" name_en="Could not create I/O table" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_21" name_cn="" name_en="Not executable due to CPU Unit CPU error (See note.)" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_23" name_cn="" name_en="User memory protected" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_A3" name_cn="" name_en="Aborted due to FCS error in transmission data" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_A4" name_cn="" name_en="Aborted due to format error in transmission data" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_A5" name_cn="" name_en="Aborted due to entry number data error in transmission data" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="encode_A8" name_cn="" name_en="Aborted due to frame length error in transmission data" desc_cn="" desc_en=""/>
+</dd_class>

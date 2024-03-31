@@ -125,7 +125,7 @@ function select_drv()
 	dlg.open("drv_selector.jsp?edit=true",
 			{title:"<wbt:lang>sel_drv_title</wbt:lang>",w:'400',h:'500',drv_name:drv_name,drv_tt:drv_tt},
 			//[{title:'Ok',style:""},{title:'Clear',style:"primary"},{title:'Cancel',style:"primary"}],
- 			["Ok","Clear","Cancel"],
+ 			["<wbt:g>ok</wbt:g>","<wbt:g>unselect</wbt:g>","<wbt:g>cancel</wbt:g>"],
 			[
 				function(dlgw)
 				{
@@ -161,7 +161,7 @@ function do_submit(cb)
 	var n = $('#name').val();
 	if(n==null||n=='')
 	{
-		cb(false,'Please input name') ;
+		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
 		return ;
 	}
 	var tt = $('#title').val();
@@ -172,7 +172,7 @@ function do_submit(cb)
 	var drv = $('#drv').val() ;
 	if(false)//if(drv==null||drv=='')
 	{
-		cb(false,'Please select driver') ;
+		cb(false,'<wbt:g>pls,sel,driver</wbt:g>') ;
 		return ;
 	}
 	var desc = document.getElementById('desc').value;

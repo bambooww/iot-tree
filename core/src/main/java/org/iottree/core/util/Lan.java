@@ -197,6 +197,15 @@ public class Lan
 		return dn.getNameByLang(getUsingLang());
 	}
 	
+	public String g_def(String name,String defv)
+	{
+		DataNode dn = dc.getNodeByName(name);
+		if (dn == null)
+			return defv ;
+		
+		return dn.getNameByLang(getUsingLang());
+	}
+	
 	public DataNode gn(String name)
 	{
 		return dc.getNodeByName(name);

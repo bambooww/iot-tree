@@ -43,6 +43,7 @@
   <dd_node id="1" name="imp_prj" name_cn="导入项目" name_en="Import project" />
   <dd_node id="1" name="do_imp" name_cn="确定导入" name_en="Do Import" />
   <dd_node id="1" name="select" name_cn="选择" name_en="Select" />
+  <dd_node id="1" name="unselect" name_cn="取消选择" name_en="Unselect" />
   <dd_node id="1" name="imp_demo_prj" name_cn="导入演示项目" name_en="Import Demo project" />
   <dd_node id="1" name="imp_demo_sim" name_cn="导入演示模拟实例" name_en="Import Demo Simulator Instance" />
   <dd_node id="1" name="imp_dev_lib" name_cn="导入设备库" name_en="Import Device Library" />
