@@ -23,9 +23,9 @@ public class FinsCmdTest
 	@Test
     public void testHLFinsMsgMemR() throws Exception
     {
-		FinsMode fm = FinsMode.getModel_CS_CJ() ;
+		FinsMode fm = FinsMode.getMode_CS_CJ1() ;
 		HLFinsReqMemR crr = new HLFinsReqMemR(fm) ;
-		crr.asReqR("CIO",true, 0, 5).asFinsHeaderSerial() ;
+		crr.asReqR("CIO",true, 0,0, 5).asFinsHeaderSerial() ;
 		
 		//StringBuilder sb = new StringBuilder() ;
 		String str = crr.packToStr();
@@ -39,7 +39,7 @@ public class FinsCmdTest
 		//System.out.println(resp.getBitStr()) ;
 		assertTrue("01011".equals(resp.getBitStr())) ;
 		
-		crr.asReqR("CIO",false, 0, 3).asFinsHeaderSerial() ;
+		crr.asReqR("CIO",false, 0,0, 3).asFinsHeaderSerial() ;
 		//sb = new StringBuilder() ;
 		str = crr.packToStr();
 		//System.out.println(sb) ;
@@ -53,11 +53,43 @@ public class FinsCmdTest
     }
 	
 	@Test
+	public void testHLFinsMsgMemWCIOBits() throws Exception
+    {
+		FinsMode fm = FinsMode.getMode_CS_CJ1() ;
+		HLFinsReqMemW crr = new HLFinsReqMemW(fm) ;
+		crr.asReqWBit("CIO", 100,5, 5, Arrays.asList(true,true,false,false,true)).asFinsHeaderSerial() ;
+		//crr.asReqR("CIO",true, 0, 5).asFinsHeaderSerial() ;
+		
+		//StringBuilder sb = new StringBuilder() ;
+		String str = crr.packToStr();
+		
+		assertTrue("@00FA0000000000102300064050005010100000174*\r".equals(str)) ;
+		//System.out.println(str) ;
+		
+    }
+	
+	@Test
+	public void testHLFinsMsgMemR_D() throws Exception
+    {
+		FinsMode fm = FinsMode.getMode_CS_CJ1() ;
+		HLFinsReqMemR crr = new HLFinsReqMemR(fm) ;
+		crr.asReqR("D",false, 100,0, 4).asFinsHeaderSerial(0x0A,0,0) ;
+		//crr.asReqR("CIO",true, 0, 5).asFinsHeaderSerial() ;
+		
+		//StringBuilder sb = new StringBuilder() ;
+		String str = crr.packToStr();
+		                  
+		assertTrue("@00FA0000A000001018200640000040A*\r".equals(str)) ;
+		//System.out.println(str) ;
+		
+    }
+	
+	@Test
 	public void testHLFinsMsgMemW() throws Exception
     {
-		FinsMode fm = FinsMode.getModel_CS_CJ() ;
+		FinsMode fm = FinsMode.getMode_CS_CJ1() ;
 		HLFinsReqMemW crr = new HLFinsReqMemW(fm) ;
-		crr.asReqWBit("CIO", 0, 5, Arrays.asList(true,false,false,true,true)).asFinsHeaderSerial() ;
+		crr.asReqWBit("CIO", 0,0, 5, Arrays.asList(true,false,false,true,true)).asFinsHeaderSerial() ;
 		//crr.asReqR("CIO",true, 0, 5).asFinsHeaderSerial() ;
 		
 		//StringBuilder sb = new StringBuilder() ;

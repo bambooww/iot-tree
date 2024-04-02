@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="aa"  name_jp=""  >
+	<dd_node id="1" name="deftp_X" name_cn="输入Inputs" name_en="Inputs" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_Y" name_cn="输出Outputs" name_en="Outputs" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_M" name_cn="辅助继电器Auxiliary Relays" name_en="Auxiliary Relays" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_S" name_cn="状态States" name_en="States" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_TS" name_cn="计时器触点Timer Contacts" name_en="Timer Contacts" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_CS" name_cn="计数器触点Counter Contacts" name_en="Counter Contacts" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_TR" name_cn="计时器重置Timer Reset" name_en="Timer Reset" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_CR" name_cn="计数器重置Counter Reset" name_en="Counter Reset" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_T" name_cn="计时器值Timer Value" name_en="Timer Value" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_C" name_cn="计数器值Counter Value" name_en="Counter Value" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_D" name_cn="数据寄存器Data Register" name_en="Data Registers" desc_cn="" desc_en=""/>
+</dd_class>

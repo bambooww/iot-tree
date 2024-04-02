@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iottree.core.util.xmldata.DataUtil;
 import org.iottree.driver.omron.fins.FinsMode;
+import org.iottree.driver.omron.hostlink.HLException;
 import org.iottree.driver.omron.hostlink.HLMsgReq;
 
 public class HLFinsRespMemR extends HLFinsResp
@@ -21,20 +22,20 @@ public class HLFinsRespMemR extends HLFinsResp
 	}
 
 	@Override
-	protected void parseFinsRet(String fins_ret) throws Exception
+	protected void parseFinsRet(String fins_ret) throws HLException
 	{
 		FinsMode.AreaCode ac = myReq.getAreaCode() ;
 		retBS = hex2bytes(fins_ret) ;
 		if(ac.isBit())
 		{
 			if(retBS.length!=myReq.itemNum)
-				throw new Exception("response data num is not match to request") ;
+				throw new HLException(0,"response data num is not match to request") ;
 			
 		}
 		else
 		{
 			if(retBS.length!=myReq.itemNum*2)
-				throw new Exception("response data num is not match to request") ;
+				throw new HLException(0,"response data num is not match to request") ;
 		}
 	}
 

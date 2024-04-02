@@ -132,7 +132,11 @@ public class HLAddr extends DevAddr implements Comparable<HLAddr>
 	
 	public boolean isBitVal()
 	{
-		return this.bitNum>=0 ;
+		if( this.bitNum>=0 )
+			return true ;
+		if(addrSeg.isValBitOnly())
+			return true ;
+		return false;
 	}
 	
 	public int getDigitNum()
@@ -219,6 +223,10 @@ public class HLAddr extends DevAddr implements Comparable<HLAddr>
 		{
 			return new ChkRes(-1,addr,vtp,"Invalid HLAddr no address def found");
 		}
+		if(vtp==null)
+		{
+			return new ChkRes(-1,addr,vtp,"Invalid HLAddr no ValTP found");
+		}
 		HLAddrSeg seg = addrdef.findSeg(vtp,ss.get(1)) ;
 		if(seg==null)
 		{
@@ -254,10 +262,20 @@ public class HLAddr extends DevAddr implements Comparable<HLAddr>
 		String addr = ss.get(1) ;
 		int k = addr.indexOf(".") ;
 		String bitstr = null ;
+		
 		if(k>0)
 		{
 			bitstr = addr.substring(k+1) ;
 			addr = addr.substring(0,k) ;
+			//if(vtp==null)
+			vtp = ValTP.vt_bool ;
+		}
+		else
+		{
+			if(vtp==null)
+				vtp = ValTP.vt_uint16 ;
+			else if(!vtp.isNumberVT())
+				vtp = ValTP.vt_uint16 ;
 		}
 		return fx_m.transAddr(prefix, addr,bitstr, vtp, failedr) ;
 	}

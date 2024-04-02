@@ -636,7 +636,10 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			r.addPropItem(new PropItem("drv",lan,PValTP.vt_str,false,ts,vs,"")); //"Driver","Device Driver used by Channel"
 		}
 		else
+		{
 			r.addPropItem(new PropItem("drv",lan,PValTP.vt_str,true,null,null,"")); //"Driver","Device Driver used by Channel"
+			r.addPropItem(new PropItem("drv_tt",lan,PValTP.vt_str,true,null,null,""));
+		}
 		
 		r.addPropItem(new PropItem("drv_intv",lan,PValTP.vt_int,
 				false,null,null,1000)); //"Driver scan interval","Driver scan interval on every loop"
@@ -657,6 +660,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			{
 			case "drv":
 				return this.drvName;
+			case "drv_tt":
+				DevDriver dd = this.getDriver() ;
+				if(dd==null)
+					return "" ;
+				return dd.getTitle() ;
 			case "drv_intv":
 				return drvIntMS;
 //			case "script":

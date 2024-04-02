@@ -5,9 +5,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import org.iottree.core.ConnException;
+
 public abstract class HLMsgReq extends HLMsg
 {
-	long readTO = 1000;
+//	long readTO = 2000;
+	
+//	public HLMsgReq asReadTimeout(long rto)
+//	{
+//		this.readTO = rto ;
+//		return this ;
+//	}
 	
 	public final String packToStr()
 	{
@@ -23,14 +31,14 @@ public abstract class HLMsgReq extends HLMsg
 		return sb.toString() ;
 	}
 	
-	public final void writeTo(OutputStream outputs) throws IOException
+	public final String writeTo(OutputStream outputs) throws IOException
 	{
 		//StringBuilder sb = new StringBuilder() ;
 		String str = this.packToStr();
-		
 		byte[] bs = str.getBytes() ;
 		outputs.write(bs);
 		outputs.flush();
+		return str ;
 	}
 	
 	protected abstract void packContent(StringBuilder sb) ;
@@ -38,9 +46,9 @@ public abstract class HLMsgReq extends HLMsg
 	
 	protected abstract HLMsgResp newRespInstance() ;
 	
-	public HLMsgResp readRespFrom(InputStream inputs,OutputStream outputs) throws Exception
+	public HLMsgResp readRespFrom(InputStream inputs,OutputStream outputs,long read_to,int retry_c) throws Exception
 	{
-		String txt = readFrom(inputs,outputs,this.readTO) ;
+		String txt = readFrom(inputs,outputs,read_to,retry_c) ;
 		return parseFromTxt(txt);
 		
 	}
@@ -52,9 +60,9 @@ public abstract class HLMsgReq extends HLMsg
 		return ret ;
 	}
 	
-	private String readFrom(InputStream inputs,OutputStream outputs,long read_to) throws Exception
+	private String readFrom(InputStream inputs,OutputStream outputs,long read_to,int retry_c) throws Exception
 	{
-		String firstpk = readRespPk(true,inputs, read_to, 2000) ;
+		String firstpk = readRespPk(true,inputs, read_to,retry_c, 2000) ;
 		if(firstpk.endsWith("*"))
 		{// single pk
 			int len = firstpk.length() ;
@@ -70,7 +78,7 @@ public abstract class HLMsgReq extends HLMsg
 		do
 		{
 			outputs.write('\r');
-			mstr = readRespPk(false,inputs, read_to, 2000) ;
+			mstr = readRespPk(false,inputs, read_to,retry_c, 2000) ;
 			more_pks.add(mstr) ;
 		}while(!mstr.endsWith("*")) ;
 		
@@ -103,15 +111,26 @@ public abstract class HLMsgReq extends HLMsg
 		return sb.toString() ;
 	}
 	
+	
+	private transient int readToCC = 0 ;
 
-	private static int readTo(InputStream inputs,long timeout) throws IOException
+	private int readTo(InputStream inputs,long timeout,int retry_c) throws HLException,IOException
 	{
 		long st = System.currentTimeMillis() ;
 		
 		while(inputs.available()<=0)
 		{
 			if(System.currentTimeMillis()-st>timeout)
-				throw new IOException("time out") ;
+			{
+				readToCC ++ ;
+				if(readToCC>retry_c)
+				{
+					readToCC = 0 ;
+					throw new HLException(HLException.ERR_TIMEOUT_SERIOUS,"time out "+timeout+"ms. may be this value is too small!") ;
+				}
+				else
+					throw new HLException(HLException.ERR_TIMEOUT_NOR,"time out "+timeout+"ms. may be this value is too small!") ;
+			}
 			
 			try
 			{
@@ -119,6 +138,8 @@ public abstract class HLMsgReq extends HLMsg
 			}
 			catch(Exception e) {}
 		}
+		
+		readToCC = 0 ;
 		
 		return inputs.read() ;
 	}
@@ -130,14 +151,14 @@ public abstract class HLMsgReq extends HLMsg
 	 * @return
 	 * @throws Exception
 	 */
-	private static String readRespPk(boolean bfirst,InputStream inputs,long timeout,int max_len) throws Exception
+	private String readRespPk(boolean bfirst,InputStream inputs,long timeout,int retry_c,int max_len) throws Exception
 	{
 		boolean in_pk = !bfirst ;
 		int c ;
 		StringBuilder sb = new StringBuilder() ;
 		while(true)
 		{
-			c = readTo(inputs,timeout);
+			c = readTo(inputs,timeout,retry_c);
 			if(!in_pk)
 			{
 				if(c!='@')

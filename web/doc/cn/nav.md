@@ -56,6 +56,7 @@
 ##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 西门子以太网</a>
 ##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 三菱FX</a>
 ##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 三菱FX Net</a>
+##### <a href="doc/device/drv_omron_hl_fins.md" target="main">&nbsp;&nbsp;&nbsp;6.8 欧姆龙 HostLink FINS</a>
 
 #### <a href="doc/js/index.md"> 7 JS脚本支持</a>
 

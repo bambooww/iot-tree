@@ -8,9 +8,9 @@ import org.iottree.driver.omron.hostlink.HLDriver;
 
 public abstract class HLCmd
 {
-	final static int RECV_TIMEOUT_DEFAULT = 1000;
+	final static int RECV_TIMEOUT_DEFAULT = 2000;
 
-	final static int RECV_END_TIMEOUT_DEFAULT = 20;
+	final static int RECV_END_TIMEOUT_DEFAULT = 1500;
 	
 	protected HLFinsDriver drv = null ;
 	
@@ -33,6 +33,8 @@ public abstract class HLCmd
 	protected long recvEndTimeout = RECV_END_TIMEOUT_DEFAULT;
 	
 	protected long reqInterMS = 0 ;
+	
+	protected int failedRetryC = 3 ;
 	
 	
 	public HLCmd() //(short dev_addr,FxMemTp fx_mtp)
@@ -63,8 +65,12 @@ public abstract class HLCmd
 		return recvTimeout;
 	}
 
-	public HLCmd withRecvTimeout(long rto)
+	public HLCmd withRecvTimeout(long rto,int retry_c)
 	{
+		this.failedRetryC = retry_c ;
+		if(this.failedRetryC<0)
+			this.failedRetryC = 3 ;
+			
 		if (rto <= 0)
 		{
 			recvTimeout = RECV_TIMEOUT_DEFAULT;
@@ -116,7 +122,7 @@ public abstract class HLCmd
 		return false;
 	}
 	
-	public abstract boolean doCmd(InputStream inputs,OutputStream outputs)  throws Exception;
+	public abstract boolean doCmd(InputStream inputs,OutputStream outputs,StringBuilder failedr)  throws Exception;
 	
 
 }

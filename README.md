@@ -50,7 +50,7 @@ running...
 
 IOT-Tree Server supports access to data from different data sources (different standards):
 
-Communication protocol: Modbus (Modbus RTU/Modbus TCP), Siemens PPI/S7 protocol (PLC S7-200/300/1200/1500)
+Communication protocol: Modbus (Modbus RTU/Modbus TCP), Siemens PPI/S7 protocol (PLC S7-200/300/1200/1500),Mitsubishi PLC protocol, Omron PLC protocol
 
 Application Protocols: OPC (OPC UA, OPC DA) related protocols, HTTP, MQTT
 

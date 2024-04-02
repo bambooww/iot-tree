@@ -22,6 +22,8 @@
   <dd_node id="1" name="trigger_cond" name_cn="触发条件" name_en="Trigger Condition" />
   <dd_node id="1" name="release_cond" name_cn="释放条件" name_en="Release Condition" />
   
+  <dd_node name="range" name_cn="范围" name_en="Range" />
+  <dd_node name="chk" name_cn="验证" name_en="Check" />
   <dd_node name="linear" name_cn="线性" name_en="Linear" />
   <dd_node name="squ_root" name_cn="平方根" name_en="Square root" />
   

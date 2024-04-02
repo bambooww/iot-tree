@@ -1,10 +1,11 @@
 package org.iottree.driver.omron.hostlink;
 
-import org.iottree.core.UAVal;
+import org.iottree.core.*;
+import org.iottree.core.DevAddr.IAddrDefSeg;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
 
-public class HLAddrSeg
+public class HLAddrSeg implements IAddrDefSeg
 {
 	String title ;
 	
@@ -29,17 +30,39 @@ public class HLAddrSeg
 	
 	transient HLAddrDef belongTo ;
 	
-	HLAddrSeg(String title,int valstart,int valend,int digit_num,UAVal.ValTP[] tps,boolean b_write,boolean b_hasbit)
+	HLAddrSeg(String title,int valstart,int valend,int digit_num,UAVal.ValTP[] tps)
 	{
 		this.title = title ;
 		this.valStart = valstart ;
 		this.valEnd = valend ;
 		this.digitNum = digit_num ;
 		this.valTPs = tps ;
-		this.bWrite = b_write ;
-		this.bHasBit = b_hasbit ;
+		//,boolean b_write,boolean b_hasbit
+//		this.bWrite = b_write ;
+//		this.bHasBit = b_hasbit ;
 	}
 	
+	public HLAddrSeg asWrite(boolean bw)
+	{
+		this.bWrite = bw ;
+		return this;
+	}
+	
+	/**
+	 * word has 16bit - can to pos
+	 * @param b
+	 * @return
+	 */
+	public HLAddrSeg asHasSubBit(boolean b)
+	{
+		this.bHasBit = b ;
+		return this;
+	}
+	
+	public boolean isValBitOnly()
+	{
+		return this.valTPs.length==1 && this.valTPs[0]==ValTP.vt_bool ;
+	}
 	
 	public String getTitle()
 	{
@@ -83,6 +106,13 @@ public class HLAddrSeg
 			if(vt==vtp)
 				return true ;
 		}
+		
+		if(vtp==ValTP.vt_bool)
+		{
+			if(this.bHasBit)
+				return true ;
+		}
+		
 		return false ;
 	}
 	
@@ -121,5 +151,49 @@ public class HLAddrSeg
 	{
 		int addrn = addr.getAddrNum() ;
 		return addrn>=this.valStart && addrn<=this.valEnd;
+	}
+
+	@Override
+	public String getRangeFrom()
+	{
+		return this.belongTo.prefix+Convert.toIntDigitsStr(valStart,digitNum) ;
+	}
+
+	@Override
+	public String getRangeTo()
+	{
+		return this.belongTo.prefix+Convert.toIntDigitsStr(valEnd,digitNum) ;
+	}
+
+	@Override
+	public String getSample()
+	{
+		return "";
+	}
+}
+
+class HLAddrSegSubBit extends HLAddrSeg
+{
+	HLAddrSegSubBit(HLAddrSeg seg)
+	{
+		super(seg.title, seg.valStart, seg.valEnd, seg.digitNum, new ValTP[] {ValTP.vt_bool});
+		this.belongTo = seg.belongTo ;
+	}
+
+	@Override
+	public String getRangeFrom()
+	{
+		return this.belongTo.prefix+Convert.toIntDigitsStr(valStart,digitNum)+".xx" ;
+	}
+
+	@Override
+	public String getRangeTo()
+	{
+		return this.belongTo.prefix+Convert.toIntDigitsStr(valEnd,digitNum) +".xx";
+	}
+	
+	public String getRangeStr()
+	{
+		return super.getRangeStr()+" [00-xx-15]" ;
 	}
 }

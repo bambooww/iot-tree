@@ -80,14 +80,20 @@ public class HLDevItem
 		
 		//int failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
 		
-		int blocksize = 32;
+		int blocksize_bit = 64;
+		int blocksize_word = 32;
 		if(devDef!=null)
-			blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
-		if(blocksize<=0)
-			blocksize=32;
+		{
+			blocksize_word = devDef.getOrDefaultPropValueInt("block_size", "word", 32);
+			blocksize_bit = devDef.getOrDefaultPropValueInt("block_size", "bit", 64);
+		}
+		if(blocksize_bit<=0)
+			blocksize_bit=64;
+		if(blocksize_word<=0)
+			blocksize_word=32;
 		
 		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;;//devDef.getPropValueLong("timing", "req_to", 1000) ;
-		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;
+		int failed_tryn = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3) ;
 		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 100) ;
 		
 		HLModel fx_m = (HLModel)uaDev.getDrvDevModel() ;
@@ -106,9 +112,15 @@ public class HLDevItem
 			
 			for(Map.Entry<HLAddrSeg, List<HLAddr>> seg2ads:seg2addrs.entrySet())
 			{
-				HLBlock blk = new HLBlock(this,seg2ads.getKey(),seg2ads.getValue(),blocksize,inter_ms);
+				HLAddrSeg seg = seg2ads.getKey();
+				HLBlock blk = null;
+				if(seg.isValBitOnly())
+					blk = new HLBlock(this,seg,seg2ads.getValue(),blocksize_bit,inter_ms,failed_tryn);
+				else
+					blk = new HLBlock(this,seg,seg2ads.getValue(),blocksize_word,inter_ms,failed_tryn);
 				blk.prefix = prefix ;
-				blk.setTimingParam(reqto, recvto, inter_ms);
+				//blk.setTimingParam(reqto, recvto, inter_ms);
+				blk.setTimingParam(reqto, inter_ms);
 				if(blk.initCmds(driver))
 					seg2block.put(seg2ads.getKey(),blk) ;
 			}
@@ -132,11 +144,12 @@ public class HLDevItem
 	}
 	
 	
-	public boolean doCmd(ConnPtStream ep)  throws Exception
+	public boolean doCmd(ConnPtStream ep,StringBuilder failedr)  throws Exception
 	{
 		for(HLBlock blk:seg2block.values())
 		{
-			blk.runCmds(ep);
+			if(!blk.runCmds(ep,failedr))
+				return false;
 		}
 
 		return true;

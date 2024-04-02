@@ -13,7 +13,7 @@ public abstract class HLMsgResp extends HLMsg
 	
 	String endCode = null ;
 	
-	String retTxt = null ;
+	private String retTxt = null ;
 	
 	String headCode = null ;
 	
@@ -34,10 +34,15 @@ public abstract class HLMsgResp extends HLMsg
 		return headCode;
 	}
 
+	public String getRetTxt()
+	{
+		return retTxt ;
+	}
 	
 	protected void parseFrom(String str) throws Exception
 	{
-		int len = str.length() ;
+		this.retTxt = str ;
+		//int len = str.length() ;
 		if('@'!=str.charAt(0))
 			throw new IllegalArgumentException("no start @") ;
 		this.plcUnit = bcd2_to_byte(str.charAt(1),str.charAt(2)) ;

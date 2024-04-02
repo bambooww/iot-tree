@@ -6,6 +6,7 @@ import java.io.FileFilter;
 import java.util.*;
 
 import org.iottree.core.DevAddr.ChkRes;
+import org.iottree.core.DevAddr.IAddrDef;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
 import org.iottree.core.cxt.JSObMap;
@@ -155,6 +156,15 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		public String getTitle()
 		{
 			return title ;
+		}
+		
+		/**
+		 * 
+		 * @return null表示不支持
+		 */
+		public List<IAddrDef> getAddrDefs()
+		{
+			return null ;
 		}
 	}
 	// ---------------------dev cat and device

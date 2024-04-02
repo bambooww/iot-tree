@@ -161,17 +161,17 @@ public abstract class HLFinsReq extends HLMsgReq
 		return DataUtil.intToBytes(i) ;
 	}
 	
-	protected static final void int2byte3(int i,byte[] bytes,int offset)
-	{
-		bytes[offset+3] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+2] = (byte) (i & 0xFF);
-		i = i >>> 8;
-		bytes[offset+1] = (byte) (i & 0xFF);
-		//i = i >>> 8;
-		//bytes[offset] = (byte) (i & 0xFF);
-		
-	}
+//	protected static final void int2byte3(int i,byte[] bytes,int offset)
+//	{
+//		bytes[offset+2] = (byte) (i & 0xFF);
+//		i = i >>> 8;
+//		bytes[offset+1] = (byte) (i & 0xFF);
+//		i = i >>> 8;
+//		bytes[offset+0] = (byte) (i & 0xFF);
+//		//i = i >>> 8;
+//		//bytes[offset] = (byte) (i & 0xFF);
+//		
+//	}
 	
 	protected static final byte[] short2bytes(short i)
 	{

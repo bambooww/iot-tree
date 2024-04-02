@@ -7,7 +7,8 @@
 	java.util.*,
 	org.json.*,
 	java.net.*,
-	java.util.*"%><%!private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
+	java.util.*"%><%!
+	private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
 	{
 		if(!(n instanceof UANodeOCTags))
 			return null ;
@@ -138,7 +139,7 @@ case "edit_tag":
 	}
 	catch(Exception e)
 	{
-		e.printStackTrace();
+		//e.printStackTrace();
 		out.print(e.getMessage());
 		return ;
 	}

@@ -54,7 +54,7 @@ public abstract class HLMsg
 	
 	protected static String byte2hex(int b,boolean fix_len2)
 	{
-		String s = Integer.toHexString(b);
+		String s = Integer.toHexString(b).toUpperCase();
 		if(fix_len2)
 		{
 			if (s.length() == 1)
@@ -97,12 +97,29 @@ public abstract class HLMsg
 	public static String calFCS(String str)
 	{
 		byte[] bs = str.getBytes() ;
-		byte[] fcs16 = new byte[2] ;
-		calFCS16(bs, fcs16) ;
-		return new String(fcs16) ;
+		//byte[] fcs16 = new byte[2] ;
+		return calFCS(bs) ;
+		//return new String(fcs16) ;
 	}
 	
-	public static void calFCS16(byte[] bs,byte[] fcs16)
+//	public static void calFCS16(byte[] bs,byte[] fcs16)
+//	{
+//		int chksum = 0 ;
+//		//int len = bs.length ;
+//		for(byte b:bs)
+//		{
+//			//byte b = bs[i] ;
+//			chksum ^=b ;
+//		}
+//		
+//		//chksum= chksum & 0xFF ;
+//		int h = (chksum >> 4) & 0xF ;
+//		int l = chksum & 0xF ;
+//		fcs16[0] = (byte)('0'+h) ;
+//		fcs16[1] = (byte)('0'+l) ;
+//	}
+	
+	public static String calFCS(byte[] bs)
 	{
 		int chksum = 0 ;
 		//int len = bs.length ;
@@ -113,10 +130,16 @@ public abstract class HLMsg
 		}
 		
 		//chksum= chksum & 0xFF ;
-		int h = (chksum >> 4) & 0xF ;
-		int l = chksum & 0xF ;
-		fcs16[0] = (byte)('0'+h) ;
-		fcs16[1] = (byte)('0'+l) ;
+//		int h = (chksum >> 4) & 0xF ;
+//		int l = chksum & 0xF ;
+//		fcs16[0] = (byte)('0'+h) ;
+//		fcs16[1] = (byte)('0'+l) ;
+		int v = chksum & 0xFF ;
+		
+		String r = Integer.toHexString(v).toUpperCase() ;
+		if(r.length()==1)
+			return "0"+r ;
+		return r ;
 	}
 	
 

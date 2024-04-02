@@ -4,6 +4,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.driver.omron.fins.FinsEndCode;
 import org.iottree.driver.omron.fins.FinsMode;
+import org.iottree.driver.omron.hostlink.HLException;
 import org.iottree.driver.omron.hostlink.HLMsg;
 import org.iottree.driver.omron.hostlink.HLMsgReq;
 import org.iottree.driver.omron.hostlink.HLMsgResp;
@@ -47,10 +48,10 @@ short icf = -1 ;
 	}
 	
 	@Override
-	protected void parseHLTxt(String hl_txt) throws Exception
+	protected void parseHLTxt(String hl_txt) throws HLException
 	{
 		if(!"FA".equals(this.getHeadCode()))
-			throw new Exception("no FA Host link msg") ;
+			throw new HLException(0,"no FA Host link msg") ;
 		
 		String enc = this.getHLEndCode() ;
 		if(!"00".equals(enc))
@@ -58,13 +59,13 @@ short icf = -1 ;
 			String tt = getEndCodeTitle(enc) ;
 			if(Convert.isNullOrEmpty(tt))
 				tt = enc ;
-			throw new Exception("resp end err:"+tt) ;
+			throw new HLException(0,"resp end err:"+tt) ;
 		}
 		
 		parseFinsTxt(hl_txt) ;
 	}
 	
-	private void parseFinsTxt(String hl_txt) throws Exception
+	private void parseFinsTxt(String hl_txt) throws HLException
 	{
 		short main ;
 		short sub  ;
@@ -106,16 +107,22 @@ short icf = -1 ;
 		
 		
 		finsEndCode = new FinsEndCode(main,sub) ;
-		if(!finsEndCode.isNormal())
-			throw new Exception(finsEndCode.getErrorInf()) ;
-		
-		parseFinsRet(fins_txt) ;
+
+		if(finsEndCode.isNormal())
+		{
+			parseFinsRet(fins_txt) ;
+		}
 	}
 	
 	public FinsEndCode getFinsEndCode()
 	{
 		return this.finsEndCode ;
 	}
+	
+	public boolean isFinsEndOk()
+	{
+		return this.finsEndCode.isNormal() ;
+	}
 
-	protected abstract void parseFinsRet(String fins_txt) throws Exception;
+	protected abstract void parseFinsRet(String fins_txt) throws HLException;
 }

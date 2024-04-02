@@ -17,6 +17,8 @@ public class HLFinsReqMemR extends HLFinsReq
 	
 	int beginAddr ;
 	
+	int beginBit ;
+	
 	int itemNum ;
 	
 	FinsMode.AreaCode areaCode = null ; 
@@ -49,7 +51,7 @@ public class HLFinsReqMemR extends HLFinsReq
 	}
 	
 	
-	public HLFinsReqMemR asReqR(String mem_area,boolean b_bit,int begin_addr,int item_num)
+	public HLFinsReqMemR asReqR(String mem_area,boolean b_bit,int begin_addr,int begin_bit,int item_num)
 	{
 		if(b_bit)
 			areaCode = mode.getAreaCodeBit(mem_area) ;
@@ -60,6 +62,7 @@ public class HLFinsReqMemR extends HLFinsReq
 		
 		//this.memAreaCode = ac.getCode() ;
 		this.beginAddr = begin_addr ;
+		this.beginBit = begin_bit ;
 		this.itemNum = item_num ;
 		return this ;
 	}
@@ -74,7 +77,8 @@ public class HLFinsReqMemR extends HLFinsReq
 	{
 		byte[] bs = new byte[6] ;
 		bs[0] = (byte)areaCode.getCode();
-		int2byte3(beginAddr,bs,1) ;
+		short2bytes((short)beginAddr,bs,1) ;
+		bs[3] = (byte)beginBit;//short2bytes((short)beginAddr,bs,3) ;
 		short2bytes((short)itemNum,bs,4) ;
 		outputs.write(bs);
 	}

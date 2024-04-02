@@ -13,6 +13,8 @@ public class HLFinsReqMemW extends HLFinsReq
 	
 	int beginAddr ;
 	
+	int beginBit =0 ;
+	
 	int itemNum ;
 	
 	List<Boolean> bitVals = null ;
@@ -41,7 +43,7 @@ public class HLFinsReqMemW extends HLFinsReq
 	}
 	
 	
-	public HLFinsReqMemW asReqWBit(String mem_area,int begin_addr,int item_num,List<Boolean> bitvals)
+	public HLFinsReqMemW asReqWBit(String mem_area,int begin_addr,int begin_bit,int item_num,List<Boolean> bitvals)
 	{
 		areaCode = mode.getAreaCodeBit(mem_area) ;
 		
@@ -50,6 +52,7 @@ public class HLFinsReqMemW extends HLFinsReq
 		
 		//this.memAreaCode = ac.getCode() ;
 		this.beginAddr = begin_addr ;
+		this.beginBit = begin_bit ;
 		this.itemNum = item_num ;
 		this.bitVals = bitvals ;
 		this.bBit = true ;
@@ -64,6 +67,7 @@ public class HLFinsReqMemW extends HLFinsReq
 		
 		//this.memAreaCode = ac.getCode() ;
 		this.beginAddr = begin_addr ;
+		this.beginBit = 0 ;
 		this.itemNum = item_num ;
 		this.wordVals = wvals;
 		this.bBit = false ;
@@ -84,7 +88,9 @@ public class HLFinsReqMemW extends HLFinsReq
 		{
 			bs = new byte[6+itemNum] ;
 			bs[0] = (byte)areaCode.getCode();
-			int2byte3(beginAddr,bs,1) ;
+			//int2byte3(beginAddr,bs,1) ;
+			short2bytes((short)beginAddr,bs,1) ;
+			bs[3] = (byte)beginBit;
 			short2bytes((short)itemNum,bs,4) ;
 			for(int i = 0 ; i < itemNum ; i ++)
 				bs[6+i] = (byte)(this.bitVals.get(i)?1:0) ; 
@@ -93,7 +99,9 @@ public class HLFinsReqMemW extends HLFinsReq
 		{
 			bs = new byte[6+itemNum*2] ;
 			bs[0] = (byte)areaCode.getCode();
-			int2byte3(beginAddr,bs,1) ;
+			//int2byte3(beginAddr,bs,1) ;
+			short2bytes((short)beginAddr,bs,1) ;
+			bs[3] = (byte)beginBit;
 			short2bytes((short)itemNum,bs,4) ;
 			for(int i = 0 ; i < itemNum ; i ++)
 			{

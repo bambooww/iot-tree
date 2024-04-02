@@ -3,10 +3,13 @@ package org.iottree.driver.omron.hostlink;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.DevAddr.IAddrDef;
+import org.iottree.core.DevAddr.IAddrDefSeg;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ILang;
 
-public class HLAddrDef
+public class HLAddrDef implements IAddrDef,ILang
 {
 	/**
 	 * X Y M
@@ -21,6 +24,8 @@ public class HLAddrDef
 		this.prefix = prefix ;
 		//this.title = title ;
 	}
+	
+	
 	
 	public HLAddrDef asValTpSeg(HLAddrSeg seg)
 	{
@@ -103,5 +108,24 @@ public class HLAddrDef
 			}
 		}
 		return null ;
+	}
+
+	@Override
+	public String getDefTypeForDoc()
+	{
+		return g("deftp_"+this.prefix);
+	}
+
+	@Override
+	public List<IAddrDefSeg> getSegsForDoc()
+	{
+		ArrayList<IAddrDefSeg> rets = new ArrayList<>() ; 
+		rets.addAll(segs) ;
+		for(HLAddrSeg seg:segs)
+		{
+			if(seg.isHasBit())
+				rets.add(new HLAddrSegSubBit(seg)) ;
+		}
+		return rets;
 	}
 }

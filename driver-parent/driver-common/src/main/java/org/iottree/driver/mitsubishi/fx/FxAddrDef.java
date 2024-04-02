@@ -3,9 +3,12 @@ package org.iottree.driver.mitsubishi.fx;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.DevAddr.IAddrDef;
+import org.iottree.core.DevAddr.IAddrDefSeg;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.util.ILang;
 
-public class FxAddrDef
+public class FxAddrDef implements IAddrDef,ILang
 {
 	
 	
@@ -93,4 +96,20 @@ public class FxAddrDef
 		return null ;
 	}
 	//public FxAddr trans
+
+	@Override
+	public String getDefTypeForDoc()
+	{
+		return g("deftp_"+this.prefix);
+		
+	}
+
+	@Override
+	public List<IAddrDefSeg> getSegsForDoc()
+	{
+		ArrayList<IAddrDefSeg> rets = new ArrayList<>() ; 
+		rets.addAll(segs) ;
+		
+		return rets;
+	}
 }

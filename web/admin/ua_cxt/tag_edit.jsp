@@ -154,7 +154,7 @@ dlg.resize_to(850,600);
 
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" action="" onsubmit="return false;">
  <table style="width:100%	">
    <tr>
      <td width="90%">
@@ -258,6 +258,7 @@ if(!bmid)
 {
 %>
     	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()"><i class="fa-solid fa-check"></i></button>
+    	<button class="layui-btn layui-btn-primary" title="Address Help" onclick="help_addr()"><i class="fa-solid fa-question"></i></button>
 <%
 }
 %>
@@ -632,6 +633,7 @@ function chk_addr()
 				return ;
 			var r ;
 			eval("r="+ret) ;
+			//console.log(r) ;
 			if(r.guess)
 			{
 				if(r.addr)
@@ -669,6 +671,11 @@ function chk_addr()
 			}
 			
 	});
+}
+
+function help_addr()
+{
+	window.open("tag_addr_helper.jsp?path="+node_path) ;
 }
 
 function on_js_edit()

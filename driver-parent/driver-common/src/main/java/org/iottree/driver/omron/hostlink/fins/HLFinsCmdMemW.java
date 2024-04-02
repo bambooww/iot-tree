@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.omron.fins.FinsMode;
 import org.iottree.driver.omron.hostlink.HLModel;
 import org.iottree.driver.omron.hostlink.HLMsg;
@@ -13,9 +15,13 @@ import kotlin.NotImplementedError;
 
 public class HLFinsCmdMemW extends HLCmd
 {
+	public static ILogger log = LoggerManager.getLogger(HLFinsCmdMemW.class) ;
+	
 	private int startAddr ;
 	
 	private int bitPos =-1;
+	
+	private boolean bBitOnly = false;
 	
 	private List<Boolean> bitVals = null ;
 	
@@ -43,6 +49,16 @@ public class HLFinsCmdMemW extends HLCmd
 		this.startAddr = startaddr;
 		this.bitPos = bit_pos ;
 		this.bitVals = bitvals ;
+		this.bBitOnly = false ;
+		return this ;
+	}
+	
+	public HLFinsCmdMemW asBitOnlyVals(int startaddr,List<Boolean> bitvals)
+	{
+		this.startAddr = startaddr;
+		//this.bitPos = bit_pos ;
+		this.bitVals = bitvals ;
+		this.bBitOnly = true ;
 		return this ;
 	}
 	
@@ -51,6 +67,7 @@ public class HLFinsCmdMemW extends HLCmd
 		this.startAddr = startaddr;
 		this.bitPos = -1 ;
 		this.wordVals = wvals ;
+		this.bBitOnly = false ;
 		return this ;
 	}
 	
@@ -76,7 +93,9 @@ public class HLFinsCmdMemW extends HLCmd
 		FinsMode fm = m.getFinsMode() ;
 		HLFinsReqMemW reqw = new HLFinsReqMemW(fm) ;
 		if(this.bitPos>=0)
-			reqw.asReqWBit(block.prefix, startAddr*16+bitPos, bitVals.size(), bitVals) ;
+			reqw.asReqWBit(block.prefix, startAddr,bitPos, bitVals.size(), bitVals) ;
+		else if(bBitOnly)
+			reqw.asReqWBit(block.prefix, startAddr,0, bitVals.size(), bitVals) ;
 		else
 			reqw.asReqWWord(block.prefix ,startAddr,wordVals.size(),wordVals) ;
 		
@@ -94,7 +113,7 @@ public class HLFinsCmdMemW extends HLCmd
 		req = reqw ;
 	}
 	
-	public boolean doCmd(InputStream inputs,OutputStream outputs)  throws Exception
+	public boolean doCmd(InputStream inputs,OutputStream outputs,StringBuilder failedr)  throws Exception
 	{
 		Thread.sleep(this.drv.getCmdInterval());
 
@@ -102,19 +121,43 @@ public class HLFinsCmdMemW extends HLCmd
 		
 		// HLFinsRespMemR resp = new HLFinsRespMemR(this.req) ;
 		HLMsg.clearInputStream(inputs,50) ;
-		req.writeTo(outputs);
+		String str = req.writeTo(outputs);
 		
-		HLFinsRespOnlyEnd resp = (HLFinsRespOnlyEnd)req.readRespFrom(inputs, outputs) ;
+		if(log.isDebugEnabled())
+			log.debug("-> ["+str+"]");
 		
-		onResp(resp);
+		HLFinsRespOnlyEnd resp = (HLFinsRespOnlyEnd)req.readRespFrom(inputs, outputs,this.recvTimeout,this.failedRetryC) ;
+		
+		if(resp!=null && resp.isFinsEndOk())
+		{
+			onRespOk(resp);
+			
+			if(log.isDebugEnabled())
+				log.debug("<- ok ["+resp.getRetTxt()+"]");
+		}
+		else
+		{
+			onRespErr(resp) ;
+			if(log.isDebugEnabled())
+				log.debug("<- err ["+resp.getRetTxt()+"] "+resp.getFinsEndCode().getErrorInf());
+		}
+		
 		
 		return true;
 	}
 	
-	private void onResp(HLFinsRespOnlyEnd resp)
+	private void onRespOk(HLFinsRespOnlyEnd resp)
 	{
 		//resp.get
 		this.resp = resp ;
+		bAck = resp!=null ;
+	}
+	
+	private void onRespErr(HLFinsRespOnlyEnd resp)
+	{
+		//resp.get
+		this.resp = resp ;
+		bAck = resp!=null ;
 	}
 	
 	public HLFinsReqMemW getReq()

@@ -513,7 +513,44 @@ public class Convert
 	{
 		return toDecimalDigitsStr(d, dec_digit_num, true);
 	}
+	
+	public static String toIntDigitsStr(int i,int digit_num)
+	{
+		return toIntDigitsStr(i,digit_num,10) ;
+	}
 
+	public static String toIntDigitsStr(int i,int digit_num,int radix)
+	{
+		String r = Integer.toString(i, radix);
+		int dx = digit_num - r.length() ;
+		if(dx<=0)
+			return r ;
+		switch(dx)
+		{
+		case 1:
+			return "0"+i ;
+		case 2:
+			return "00"+i ;
+		case 3:
+			return "000"+i ;
+		case 4:
+			return "0000"+i ;
+		case 5:
+			return "00000"+i ;
+		case 6:
+			return "000000"+i ;
+		case 7:
+			return "0000000"+i ;
+		case 8:
+			return "00000000"+i ;
+		case 9:
+			return "000000000"+i ;
+		case 10:
+			return "0000000000"+i ;
+		default:
+			return "00000000000"+i ;
+		}
+	}
 	/**
 	 * 判断变量名称是否有效 该方法用来为输入有效的变量名称做验证
 	 * 

@@ -3,22 +3,21 @@ package org.iottree.driver.omron.hostlink;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.DevDriver;
+import org.iottree.core.DevAddr.IAddrDef;
 import org.iottree.core.DevDriver.Model;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
-import org.iottree.driver.mitsubishi.fx.FxAddrDef;
-import org.iottree.driver.mitsubishi.fx.FxAddrSeg;
-import org.iottree.driver.mitsubishi.fx.FxModel;
 import org.iottree.driver.omron.fins.FinsMode;
 
 import kotlin.NotImplementedError;
 
 public abstract class HLModel  extends DevDriver.Model
 {
-	private HashMap<String,HLAddrDef> prefix2addrdef = new HashMap<>() ;
+	private LinkedHashMap<String,HLAddrDef> prefix2addrdef = new LinkedHashMap<>() ;
 	
 	public HLModel(String name, String t)
 	{
@@ -58,6 +57,11 @@ public abstract class HLModel  extends DevDriver.Model
 			return null ;
 		}
 		
+		if(bit_n>=0 && vtp!=ValTP.vt_bool)
+		{
+			failedr.append("address with bit must bool type") ;
+			return null ;
+		}
 		return transAddr(prefix,addr_n, bit_n,vtp,failedr) ;
 	}
 
@@ -147,6 +151,13 @@ public abstract class HLModel  extends DevDriver.Model
 		return rets ;
 	}
 	
+	public List<IAddrDef> getAddrDefs()
+	{
+		ArrayList<IAddrDef> rets = new ArrayList<>() ;
+		rets.addAll(prefix2addrdef.values()) ;
+		return rets ;
+	}
+	
 	public abstract FinsMode getFinsMode() ;
 	
 	static ArrayList<Model> models = new ArrayList<>() ;
@@ -178,21 +189,58 @@ class HLModel_CJ1 extends HLModel
 	{
 		super("cj1", "CJ1,CP1");
 
-		setAddrDef(new HLAddrDef("CIO")
-				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,false))
-				);
 		setAddrDef(new HLAddrDef("A")
-				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},false,true))
-				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},false,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,959,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,958,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,true))
+				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(false).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(false).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("RW",448,959,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("RW",448,958,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("CIO")
+				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("C")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("CS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("D")
+				.asValTpSeg(new HLAddrSeg("IO",0,32767,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,32766,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("DR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("IO",0,14,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("H")
+				.asValTpSeg(new HLAddrSeg("IO",0,1535,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,1534,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("IR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TK")
+				.asValTpSeg(new HLAddrSeg("IO",0,31,2,new ValTP[] {ValTP.vt_bool}).asWrite(false).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("T")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("W")
+				.asValTpSeg(new HLAddrSeg("IO",0,511,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,510,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
 				);
 	}
 	
 	public FinsMode getFinsMode()
 	{
-		return FinsMode.getModel_CS_CJ();
+		return FinsMode.getMode_CS_CJ1();
 	}
 }
 
@@ -203,21 +251,60 @@ class HLModel_CJ2 extends HLModel
 	{
 		super("cj2", "CJ2");
 
-		setAddrDef(new HLAddrDef("CIO")
-				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,false))
-				);
 		setAddrDef(new HLAddrDef("A")
-				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},false,true))
-				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},false,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,959,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,958,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,true))
+				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(false).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(false).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("RW",448,1471,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("RW",448,1470,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("R",10000,11535,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(false).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("R",10000,11534,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(false).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("CIO")
+				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("C")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("CS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("D")
+				.asValTpSeg(new HLAddrSeg("IO",0,32767,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,32766,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("DR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("IO",0,14,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("H")
+				.asValTpSeg(new HLAddrSeg("IO",0,1535,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,1534,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("IR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TK")
+				.asValTpSeg(new HLAddrSeg("IO",0,127,3,new ValTP[] {ValTP.vt_bool}).asWrite(false).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("T")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("W")
+				.asValTpSeg(new HLAddrSeg("IO",0,511,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,510,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
 				);
 	}
 	
 	public FinsMode getFinsMode()
 	{
-		return FinsMode.getModel_CS_CJ();
+		return FinsMode.getMode_CJ2();
 	}
 }
 
@@ -228,21 +315,58 @@ class HLModel_CS1 extends HLModel
 	{
 		super("cs1", "CS1");
 
-		setAddrDef(new HLAddrDef("CIO")
-				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,false))
-				);
 		setAddrDef(new HLAddrDef("A")
-				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},false,true))
-				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},false,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,959,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("RW",448,958,3,new ValTP[] {ValTP.vt_bool,ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,true))
+				.asValTpSeg(new HLAddrSeg("R",0,447,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(false).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("R",0,446,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(false).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("RW",448,959,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("RW",448,958,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("CIO")
+				.asValTpSeg(new HLAddrSeg("IO",0,6143,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,6142,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("C")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("CS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("D")
+				.asValTpSeg(new HLAddrSeg("IO",0,32767,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,32766,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("DR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				.asValTpSeg(new HLAddrSeg("IO",0,14,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("H")
+				.asValTpSeg(new HLAddrSeg("IO",0,1535,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,1534,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("IR")
+				.asValTpSeg(new HLAddrSeg("IO",0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TK")
+				.asValTpSeg(new HLAddrSeg("IO",0,31,2,new ValTP[] {ValTP.vt_bool}).asWrite(false).asHasSubBit(false))
+				);
+		
+		setAddrDef(new HLAddrDef("T")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("TS")
+				.asValTpSeg(new HLAddrSeg("IO",0,4095,4,new ValTP[] {ValTP.vt_bool}).asWrite(true).asHasSubBit(false))
+				);
+		setAddrDef(new HLAddrDef("W")
+				.asValTpSeg(new HLAddrSeg("IO",0,511,3,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("IO",0,510,3,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
 				);
 	}
 	
 	public FinsMode getFinsMode()
 	{
-		return FinsMode.getModel_CS_CJ();
+		return FinsMode.getMode_CS_CJ1();
 	}
 }
 
@@ -254,8 +378,8 @@ class HLModel_C200H extends HLModel
 		super("c200h", "C200H");
 
 		setAddrDef(new HLAddrDef("AR")
-				.asValTpSeg(new HLAddrSeg("AR",0,27,2,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16},true,true))
-				.asValTpSeg(new HLAddrSeg("AR",0,26,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float},true,false))
+				.asValTpSeg(new HLAddrSeg("AR",0,27,2,new ValTP[] {ValTP.vt_bool,ValTP.vt_int16,ValTP.vt_uint16}).asWrite(true).asHasSubBit(true))
+				.asValTpSeg(new HLAddrSeg("AR",0,26,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asWrite(true).asHasSubBit(false))
 				);
 	}
 	

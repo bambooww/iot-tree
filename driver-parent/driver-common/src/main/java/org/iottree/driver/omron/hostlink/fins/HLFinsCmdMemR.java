@@ -3,7 +3,10 @@ package org.iottree.driver.omron.hostlink.fins;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.omron.fins.FinsMode;
+import org.iottree.driver.omron.hostlink.HLException;
 import org.iottree.driver.omron.hostlink.HLModel;
 import org.iottree.driver.omron.hostlink.HLMsg;
 
@@ -11,24 +14,28 @@ import kotlin.NotImplementedError;
 
 public class HLFinsCmdMemR extends HLCmd
 {
+	public static ILogger log = LoggerManager.getLogger(HLFinsCmdMemR.class) ;
+	
 	//private int baseAddr ; 
 	
 	private int readNum  ;
 	
 	private int startAddr ;
 	
+	private boolean bReadBit = false;
 	
 	transient private HLFinsReqMemR req = null ;
 	
 	//transient byte[] retBs = null ;
 	private transient HLFinsRespMemR resp = null ;
 	
-	public HLFinsCmdMemR(int startaddr,int readnum)
+	public HLFinsCmdMemR(int startaddr,int readnum,boolean readbit)
 	{
 		//super((short)0,fx_mtp);
 		//this.baseAddr = base_addr ;
 		this.startAddr = startaddr; //offet byte or T/C
 		this.readNum = readnum; //read bytes
+		this.bReadBit = readbit ;
 		//so T /C must 
 	}
 	
@@ -47,6 +54,10 @@ public class HLFinsCmdMemR extends HLCmd
 		return readNum ;
 	}
 	
+	public boolean isReadBit()
+	{
+		return bReadBit;
+	}
 //	public byte[] getRetData()
 //	{
 //		return this.retBs ;
@@ -65,7 +76,7 @@ public class HLFinsCmdMemR extends HLCmd
 		HLFinsReqMemR crr = new HLFinsReqMemR(fm) ;
 		// all read by word
 		
-		crr.asReqR(block.prefix,false, startAddr,readNum) ;
+		crr.asReqR(block.prefix,bReadBit, startAddr,0,readNum) ;
 		
 		if(!devitem.bNetOrSerial)
 		{
@@ -81,19 +92,53 @@ public class HLFinsCmdMemR extends HLCmd
 		req = crr ;
 	}
 	
-	public boolean doCmd(InputStream inputs,OutputStream outputs)  throws Exception
+	public boolean doCmd(InputStream inputs,OutputStream outputs,StringBuilder failedr)  throws Exception
 	{
 		Thread.sleep(this.drv.getCmdInterval());
 		resp = null;
 		
 		// HLFinsRespMemR resp = new HLFinsRespMemR(this.req) ;
 		HLMsg.clearInputStream(inputs,50) ;
-		req.writeTo(outputs);
+		String str = req.writeTo(outputs);
+		if(log.isDebugEnabled())
+			log.debug("-> ["+str+"]");
 		
-		HLFinsRespMemR resp = (HLFinsRespMemR)req.readRespFrom(inputs, outputs) ;
+		HLFinsRespMemR resp = null;
 		
-		onResp(resp);
+		try
+		{
+			resp = (HLFinsRespMemR)req.readRespFrom(inputs, outputs,this.recvTimeout,this.failedRetryC) ;
 		
+			onResp(resp);
+			
+	//		if(log.isDebugEnabled())
+	//			log.debug("<- ["+resp.getRetTxt()+"]");
+			
+			//onResp(resp);
+			
+			if(resp.isFinsEndOk())
+			{
+				if(log.isDebugEnabled())
+					log.debug("ok <- ["+resp.getRetTxt()+"]");
+			}
+			else
+			{
+				//onRespErr(resp) ;
+				if(log.isDebugEnabled())
+					log.debug("err <- ["+resp.getRetTxt()+"] "+resp.getFinsEndCode().getErrorInf());
+			}
+		}
+		catch(HLException ee)
+		{
+			if(ee.getErrCode()==HLException.ERR_TIMEOUT_SERIOUS)
+			{
+				failedr.append(ee.getMessage()) ;
+				return false;
+			}
+			
+			if(log.isDebugEnabled())
+				log.debug("err code:"+ee.getErrCode(), ee);
+		}
 		return true;
 	}
 	

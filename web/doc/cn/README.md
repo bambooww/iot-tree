@@ -73,8 +73,10 @@ running...
 ### 1.2 数据接入和整合能力
 
 IOT-Tree Server支持接入来自不同数据源（不同标准）的数据： 
-通讯协议：Modbus (Modbus RTU/Modbus TCP)，西门子PPI/S7协议(PLC S7-200/300/1200/1500)，三菱PLC协议
+通讯协议：Modbus (Modbus RTU/Modbus TCP)，西门子PPI/S7协议(PLC S7-200/300/1200/1500)，三菱PLC协议，欧姆龙PLC协议
+
 应用协议：OPC（OPC UA、OPC DA）相关协议，HTTP、MQTT
+
 数据库： MySQL、SQL Server 和 Oracle
 
 IOT-Tree Server提供了工业OPC统一标准接口的支持。通过对接入的设备和数据来源进行简单明了的管理，屏蔽了底层复杂的设备和数据源的差异性，以极大的易操作性实现工业、自动化系统、物联网系统和互联网的互联。

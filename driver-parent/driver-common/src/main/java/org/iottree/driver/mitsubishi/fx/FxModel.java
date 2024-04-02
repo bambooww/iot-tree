@@ -3,9 +3,11 @@ package org.iottree.driver.mitsubishi.fx;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.DevDriver;
+import org.iottree.core.DevAddr.IAddrDef;
 import org.iottree.core.UAVal.ValTP;
 
 public class FxModel extends DevDriver.Model
@@ -52,7 +54,7 @@ public class FxModel extends DevDriver.Model
 	public static final int TP_D_SPEC_START = 0x0E00 ; //3584
 	public static final int TP_D_START = 0x1000 ; //4096
 	
-	private HashMap<String,FxAddrDef> prefix2addrdef = new HashMap<>() ;
+	private LinkedHashMap<String,FxAddrDef> prefix2addrdef = new LinkedHashMap<>() ;
 	
 	public FxModel(String name, String t)
 	{
@@ -166,6 +168,13 @@ public class FxModel extends DevDriver.Model
 		}
 		for(List<FxAddr> ads:rets.values())
 			Collections.sort(ads);
+		return rets ;
+	}
+	
+	public List<IAddrDef> getAddrDefs()
+	{
+		ArrayList<IAddrDef> rets = new ArrayList<>() ;
+		rets.addAll(prefix2addrdef.values()) ;
 		return rets ;
 	}
 }

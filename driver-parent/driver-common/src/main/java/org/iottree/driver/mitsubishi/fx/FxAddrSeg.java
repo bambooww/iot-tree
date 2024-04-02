@@ -1,9 +1,11 @@
 package org.iottree.driver.mitsubishi.fx;
 
+import org.iottree.core.DevAddr.IAddrDefSeg;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.util.Convert;
 
-public class FxAddrSeg
+public class FxAddrSeg implements IAddrDefSeg
 {
 	String title ;
 	
@@ -187,5 +189,29 @@ public class FxAddrSeg
 	{
 		int addrn = addr.getAddrNum() ;
 		return addrn>=this.valStart && addrn<=this.valEnd;
+	}
+
+	@Override
+	public String getRangeFrom()
+	{
+		if(bOctal)
+			return this.belongTo.prefix+Convert.toIntDigitsStr(valStart,digitNum,8) ;
+		else
+			return this.belongTo.prefix+Convert.toIntDigitsStr(valStart,digitNum) ;
+	}
+
+	@Override
+	public String getRangeTo()
+	{
+		if(bOctal)
+			return this.belongTo.prefix+Convert.toIntDigitsStr(valEnd,digitNum,8) +"(Octal)";
+		else
+			return this.belongTo.prefix+Convert.toIntDigitsStr(valEnd,digitNum) ;
+	}
+
+	@Override
+	public String getSample()
+	{
+		return "";
 	}
 }

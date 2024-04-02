@@ -79,11 +79,25 @@ public class FinsMode
 		return name2code_word.get(name) ;
 	}
 	
-	private static FinsMode_CS modelCSCJ = new FinsMode_CS() ;
+	private static FinsMode_CS modelCSCJ = new FinsMode_CS(false) ;
 	
-	public static FinsMode getModel_CS_CJ()
+	private static FinsMode_CS modelCJ2 = new FinsMode_CS(true) ;
+	
+	private static FinsMode_CV modeCV = new FinsMode_CV() ;
+	
+	public static FinsMode getMode_CS_CJ1()
 	{
 		return modelCSCJ ;
+	}
+	
+	public static FinsMode getMode_CJ2()
+	{
+		return modelCJ2;
+	}
+	
+	public static FinsMode getMode_CV()
+	{
+		return modeCV ;
 	}
 }
 
@@ -94,22 +108,73 @@ public class FinsMode
  */
 class FinsMode_CS extends FinsMode
 {
-	protected FinsMode_CS()
+	protected FinsMode_CS(boolean cj2)
 	{
 		setAreaCode(new AreaCode("CIO","CIO Bit Area",ValTP.vt_bool,0x30));
-		setAreaCode(new AreaCode("WR","Work Area Bit Area",ValTP.vt_bool,0x31));
-		setAreaCode(new AreaCode("HR","Holding Bit Area",ValTP.vt_bool,0x32));
-		setAreaCode(new AreaCode("AR","Auxiliary Bit Area",ValTP.vt_bool,0x33));
+		setAreaCode(new AreaCode("W","Work Area Bit Area",ValTP.vt_bool,0x31));
+		setAreaCode(new AreaCode("H","Holding Bit Area",ValTP.vt_bool,0x32));
+		setAreaCode(new AreaCode("A","Auxiliary Bit Area",ValTP.vt_bool,0x33));
 		
 		setAreaCode(new AreaCode("CIO","CIO Area",ValTP.vt_int16,0xB0));
-		setAreaCode(new AreaCode("WR","Work Area",ValTP.vt_int16,0xB1));
-		setAreaCode(new AreaCode("HR","Holding Area",ValTP.vt_int16,0xB2));
-		setAreaCode(new AreaCode("AR","Auxiliary Area",ValTP.vt_int16,0xB3));
+		setAreaCode(new AreaCode("W","Work Area",ValTP.vt_int16,0xB1));
+		setAreaCode(new AreaCode("H","Holding Area",ValTP.vt_int16,0xB2));
+		setAreaCode(new AreaCode("A","Auxiliary Area",ValTP.vt_int16,0xB3));
 		
+		setAreaCode(new AreaCode("TS","Timer Completion Flag (Status)",ValTP.vt_bool,0x09));
+		setAreaCode(new AreaCode("CS","Counter Completion Flag (Status)",ValTP.vt_bool,0x09));
+		
+		setAreaCode(new AreaCode("T","Timer Area",ValTP.vt_int16,0x89));
+		setAreaCode(new AreaCode("C","Counter Area",ValTP.vt_int16,0x89));
+		
+		setAreaCode(new AreaCode("D","Data Memory Area",ValTP.vt_bool,0x02));
+		setAreaCode(new AreaCode("D","Data Memory Area",ValTP.vt_int16,0x82));
+		
+		setAreaCode(new AreaCode("DR","Data Register",ValTP.vt_int16,0xBC));
+		
+
+		for(int i = 0 ; i <= 0xF ; i ++)
+		{
+			String str_i = (i<10?("0"+i):(""+i)) ;
+			setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_bool,0x20+i));
+			if(cj2)
+				setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_int16,0x50+i));
+			else
+				setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_int16,0xA0+i));
+		}
+		for(int i = 0x10 ; i <= 0x18 ; i ++)
+		{
+			String str_i = (i<10?("0"+i):(""+i)) ;
+			setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_bool,0xE0+i));
+			setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_int16,0x60+i));
+		}
+		
+		setAreaCode(new AreaCode("IR","Index Register",ValTP.vt_int32,0xDC));
 	}
 }
 
 class FinsMode_CV extends FinsMode
 {
-	
+	protected FinsMode_CV()
+	{
+		setAreaCode(new AreaCode("CIO","CIO Bit Area",ValTP.vt_bool,0x00));
+		setAreaCode(new AreaCode("A","Auxiliary Bit Area",ValTP.vt_bool,0x00));
+		
+		setAreaCode(new AreaCode("CIO","CIO Area",ValTP.vt_int16,0x80));
+		setAreaCode(new AreaCode("A","Auxiliary Area",ValTP.vt_int16,0x80));
+		
+		setAreaCode(new AreaCode("TS","Timer Completion Flag (Status)",ValTP.vt_bool,0x01));
+		setAreaCode(new AreaCode("CS","Counter Completion Flag (Status)",ValTP.vt_bool,0x01));
+		setAreaCode(new AreaCode("T","Timer Area",ValTP.vt_int16,0x81));
+		setAreaCode(new AreaCode("C","Counter Area",ValTP.vt_int16,0x81));
+		
+		setAreaCode(new AreaCode("D","Data Memory Area",ValTP.vt_int16,0x82));
+		
+		setAreaCode(new AreaCode("DR","Data Register",ValTP.vt_int16,0x9C));
+
+		for(int i = 0 ; i <= 0x7 ; i ++)
+		{
+			String str_i = (i<10?("0"+i):(""+i)) ;
+			setAreaCode(new AreaCode("E"+str_i+":","Expansion Data Memory",ValTP.vt_int16,0x90+i));
+		}
+	}
 }

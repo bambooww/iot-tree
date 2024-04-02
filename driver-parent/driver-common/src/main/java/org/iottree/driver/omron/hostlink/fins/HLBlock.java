@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.iottree.core.UAVal;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
@@ -43,9 +44,9 @@ public class HLBlock
 	
 	private int failedSuccessive = 3 ;
 	
-	private long reqTO = 1000 ;
+	private long reqTO = 2000 ;
 	
-	private long recvTO = 100 ;
+	//private long recvTO = 1000 ;
 	
 	private long interReqMs = 0 ;
 	
@@ -75,7 +76,7 @@ public class HLBlock
 	 * @param scan_inter_ms
 	 */
 	HLBlock(HLDevItem devitem,HLAddrSeg seg,List<HLAddr> addrs,
-			int block_size,long scan_inter_ms)//,int failed_successive)
+			int block_size,long scan_inter_ms,int failed_successive)
 	{
 		this.devItem = devitem ;
 		
@@ -89,13 +90,13 @@ public class HLBlock
 		this.addrs = addrs ;
 		this.blockSize = block_size ;
 		this.scanInterMS = scan_inter_ms;
-		//this.failedSuccessive = failed_successive;
+		this.failedSuccessive = failed_successive;
 	}
 	
-	public void setTimingParam(long req_to,long recv_to,long inter_reqms)
+	public void setTimingParam(long req_to,long inter_reqms)
 	{
 		this.reqTO = req_to ;
-		this.recvTO = recv_to ;
+//		this.recvTO = recv_to ;
 		this.interReqMs = inter_reqms ;
 	}
 		
@@ -115,6 +116,20 @@ public class HLBlock
 		return this.memTb ;
 	}
 	
+	public long getReqTimeout()
+	{
+		return this.reqTO ;
+	}
+	
+//	public long getRecvTimeout()
+//	{
+//		return this.recvTO ;
+//	}
+	
+	public long getInterReqMS()
+	{
+		return this.interReqMs ;
+	}
 	/**
 	 * 
 	 * @param drv
@@ -133,6 +148,7 @@ public class HLBlock
 		HLCmd curcmd = null ;
 		int cur_reg = -1 ;
 		ArrayList<HLAddr> curaddrs = null ;
+		boolean bbit_only = this.addrSeg.isValBitOnly() ;
 		for(HLAddr ma:addrs)
 		{
 			int regp = ma.getAddrNum();//.getBytesInBase();//.getOffsetBytes() ;
@@ -158,7 +174,8 @@ public class HLBlock
 				blen  = 0 ;
 			int regnum = lastma.getAddrNum()-cur_reg+1+blen;
 
-			curcmd = new HLFinsCmdMemR(cur_reg,regnum).withScanIntervalMS(this.scanInterMS); ;
+			
+			curcmd = new HLFinsCmdMemR(cur_reg,regnum,bbit_only).withScanIntervalMS(this.scanInterMS); ;
 					//(this.getFC(),this.scanInterMS,
 			curcmd.initCmd(drv,this);
 			cmd2addr.put(curcmd, curaddrs);
@@ -178,7 +195,7 @@ public class HLBlock
 			int regnum = lastma.getAddrNum()-cur_reg+1+blen ;
 //			if(!lastma.bValBit)
 //				regnum += lastma.getValTP().getValByteLen() ;
-			curcmd = new HLFinsCmdMemR(cur_reg,regnum)
+			curcmd = new HLFinsCmdMemR(cur_reg,regnum,bbit_only)
 					.withScanIntervalMS(this.scanInterMS);
 			curcmd.initCmd(drv,this);
 			//curcmd.setRecvTimeout(reqTO);
@@ -188,7 +205,7 @@ public class HLBlock
 		
 		for(HLCmd mc:cmd2addr.keySet())
 		{
-			mc.withRecvTimeout(reqTO).withRecvEndTimeout(recvTO);
+			mc.withRecvTimeout(reqTO,failedSuccessive);//.withRecvEndTimeout(recvTO);
 			if(log.isDebugEnabled())
 				log.debug("init modbus cmd="+mc);
 		}
@@ -214,12 +231,20 @@ public class HLBlock
 		int inbit = da.getBitNum() ;
 		if(vt==UAVal.ValTP.vt_bool)
 		{
-			int vv = memTb.getValNumber(UAVal.ValTP.vt_int16,regp,ByteOrder.LittleEndian).intValue() ;
-			return (vv & (1<<inbit))>0 ;
+			if(inbit>=0)
+			{
+				int vv = memTb.getValNumber(UAVal.ValTP.vt_int16,regp,ByteOrder.LittleEndian).intValue() ;
+				return (vv & (1<<inbit))>0 ;
+			}
+			else if(addrSeg.isValBitOnly())
+			{//one bool val - one byte
+				byte bv = memTb.getValNumber(ValTP.vt_byte, da.getAddrNum()).byteValue() ;
+				return bv != 0;
+			}
 		}
 		else if(vt.isNumberVT())
 		{
-			Number nbv = memTb.getValNumber(vt,regp,ByteOrder.BigEndian) ;
+			Number nbv = memTb.getValNumber(vt,regp,ByteOrder.LittleEndian) ;
 //			if(vt.getValByteLen()==4)
 //			{
 //				nbv = memTb.getValNumber(vt,da.getBytesInBase(),ByteOrder.ModbusWord) ;
@@ -368,10 +393,10 @@ public class HLBlock
 	
 	
 	
-	public boolean runCmds(IConnEndPoint ep) throws Exception
+	public boolean runCmds(IConnEndPoint ep,StringBuilder failedr) throws Exception
 	{
 		this.runWriteCmdAndClear(ep);
-		return runReadCmds(ep) ;
+		return runReadCmds(ep,failedr) ;
 		
 	}
 	
@@ -435,10 +460,11 @@ public class HLBlock
 	}
 	
 
-	private boolean runReadCmds(IConnEndPoint ep) throws Exception
+	private boolean runReadCmds(IConnEndPoint ep,StringBuilder failedr) throws Exception
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
 		boolean ret = true;
+		boolean bbit_only = this.addrSeg.isValBitOnly() ;
 		for(HLCmd mc:cmd2addr.keySet())
 		{
 			if(!mc.tickCanRun())
@@ -448,14 +474,15 @@ public class HLBlock
 			Thread.sleep(this.interReqMs);
 			
 			List<HLAddr> addrs = cmd2addr.get(mc) ;
-			cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
+			boolean cmdres = cmdr.doCmd(ep.getInputStream(),ep.getOutputStream(),failedr) ;
 			HLFinsRespMemR resp = cmdr.getResp();
 			HLFinsReqMemR req = cmdr.getReq() ;
 			byte[] retbs = null;
-			if(resp==null)
-				continue ;
 			
-			retbs = resp.getReturnBytes() ;
+			
+			retbs = null;
+			if(cmdres && resp!=null)
+				retbs = resp.getReturnBytes() ;
 			
 			if(retbs==null)
 			{
@@ -470,7 +497,19 @@ public class HLBlock
 
 			int offsetbs = req.getBeginAddr() ;
 			//int offsetbs = cmdr.getOffsetBytes() ;
-			memTb.setValBlock(offsetbs*2, retbs.length, retbs, 0);
+			if(bbit_only)
+			{
+				for(int i = 0 ; i < retbs.length ; i ++)
+				{
+					byte b  = retbs[i] ;
+					memTb.setValNumber(ValTP.vt_byte, offsetbs+i,b) ;
+				}
+			}
+			else
+			{
+				memTb.setValBlock(offsetbs*2, retbs.length, retbs, 0);
+			}
+			
 			transMem2Addrs(addrs);
 			chkSuccessiveFailed(false) ;
 		}
@@ -513,7 +552,11 @@ public class HLBlock
 			
 			Thread.sleep(this.interReqMs);
 			
-			mc.doCmd(ep.getInputStream(),ep.getOutputStream());
+			StringBuilder failedr = new StringBuilder() ;
+			boolean res = mc.doCmd(ep.getInputStream(),ep.getOutputStream(),failedr);
+			
+			if(!res)
+				log.error(failedr.toString()); 
 			
 			if(mc instanceof HLFinsCmdMemW)
 			{
@@ -555,9 +598,11 @@ public class HLBlock
 			}
 			fxcmd = new HLFinsCmdMemW();
 			fxcmd.withScanIntervalMS(this.scanInterMS);
-			fxcmd.asBitVals(fxaddr.getAddrNum(), fxaddr.getBitNum(), Arrays.asList(bv)) ;
+			if(addrSeg.isValBitOnly())
+				fxcmd.asBitOnlyVals(fxaddr.getAddrNum(), Arrays.asList(bv)) ;
+			else
+				fxcmd.asBitVals(fxaddr.getAddrNum(), fxaddr.getBitNum(), Arrays.asList(bv)) ;
 			//(this.getFC(),this.scanInterMS,
-			
 		}
 		else
 		{

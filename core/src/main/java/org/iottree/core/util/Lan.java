@@ -71,14 +71,6 @@ public class Lan
 		String pkn = c.getPackage().getName();
 
 		String pkresln = "/" + pkn.replaceAll("\\.", "/") + "/"+filename;
-		// InputStream inputs = null ;
-
-		// inputs = c.getResourceAsStream(pkresln) ;
-		// if(inputs==null)
-		// {
-		// pk2lang.put(pkn,"") ;
-		// return null ;
-		// }
 
 		DataClass dc = DictManager.loadDataClassByResPath(c, pkresln);
 		if (dc == null)

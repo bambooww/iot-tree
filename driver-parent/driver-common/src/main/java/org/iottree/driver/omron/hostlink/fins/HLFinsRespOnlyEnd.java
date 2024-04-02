@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.iottree.core.util.xmldata.DataUtil;
 import org.iottree.driver.omron.fins.FinsMode;
+import org.iottree.driver.omron.hostlink.HLException;
 import org.iottree.driver.omron.hostlink.HLMsgReq;
 
 public class HLFinsRespOnlyEnd extends HLFinsResp
@@ -20,7 +21,7 @@ public class HLFinsRespOnlyEnd extends HLFinsResp
 	}
 
 	@Override
-	protected void parseFinsRet(String fins_ret) throws Exception
+	protected void parseFinsRet(String fins_ret) throws HLException
 	{
 		
 	}

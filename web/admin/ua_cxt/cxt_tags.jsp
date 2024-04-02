@@ -108,6 +108,10 @@ if(Convert.isNotNullEmpty(ext_str))
 <script src="/_js/selectmenu/selectmenu.min.js"></script>
 </head>
 <style>
+body
+{
+user-select: none;
+}
 .oc-toolbar .toolbarbtn
 {
 width:40px;height:40px;margin: 5px;

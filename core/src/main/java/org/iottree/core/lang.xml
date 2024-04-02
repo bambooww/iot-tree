@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="R" name_cn="读" name_en="Read" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="RW" name_cn="读/写" name_en="Read/Write" desc_cn="" desc_en=""/>
+	
+</dd_class>

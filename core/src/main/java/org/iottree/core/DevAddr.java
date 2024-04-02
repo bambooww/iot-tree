@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.List;
 
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.util.Lan;
 
 /**
  * for every defferent device driver,each driver may has it's own addr rule.
@@ -262,5 +263,53 @@ public abstract class DevAddr
 	{
 		UATag tag = this.getBelongTo() ;
 		tag.RT_setValErr("", null) ;
+	}
+	
+	public static interface IAddrDefSeg
+	{
+		String getRangeFrom() ;
+		
+		String getRangeTo() ;
+		
+		ValTP[] getValTPs() ;
+		
+		public boolean isWritable() ;
+		
+		public String getSample() ;
+		
+		
+		public default String getRangeStr()
+		{
+			return getRangeFrom()+" - "+getRangeTo() ;
+		}
+		
+		public default String getValTPsStr()
+		{
+			StringBuilder sb = new StringBuilder() ;
+			boolean bfirst = true ;
+			for(ValTP vtp:this.getValTPs())
+			{
+				if(bfirst) bfirst=false;
+				else sb.append(",") ;
+				sb.append(vtp.getStr()) ;
+			}
+			return sb.toString() ;
+		}
+		
+		public default String getReadWriteStr()
+		{
+			Lan lan = Lan.getLangInPk(DevAddr.class) ;
+			if(isWritable())
+				return lan.g("RW") ;
+			else
+				return lan.g("R") ;
+		}
+	}
+	
+	public static interface IAddrDef
+	{
+		public String getDefTypeForDoc() ;
+		
+		public List<IAddrDefSeg> getSegsForDoc() ;
 	}
 }

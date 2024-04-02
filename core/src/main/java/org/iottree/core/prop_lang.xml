@@ -31,6 +31,7 @@
 	<dd_node id="1" name="pi_perm_dur" name_cn="权限持续时间(秒)" name_en="Permission duration In seconds" desc_cn="下指令验证成功之后有效时间，在此时间内不需要重复验证!" desc_en="Duration of authority after operator authentication."/>
 
 	<dd_node id="1" name="pi_drv" name_cn="设备驱动" name_en="Device Driver" desc_cn="被通道使用的设备驱动" desc_en="Device Driver used by Channel"/>
+	<dd_node id="1" name="pi_drv_tt" name_cn="设备驱动标题" name_en="Device Driver Title" desc_cn="被通道使用的设备驱动" desc_en="Device Driver used by Channel"/>
 	<dd_node id="1" name="pi_drv_intv" name_cn="驱动扫描时间间隔(毫秒)" name_en="Driver scan interval(ms)" desc_cn="驱动循环扫描时间间隔" desc_en="Driver scan interval on every loop"/>
 
 	<dd_node id="1" name="pi_dev_intv" name_cn="读取时间间隔(毫秒)" name_en="Read Interval MS" desc_cn="" desc_en=""/>
