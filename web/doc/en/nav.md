@@ -56,7 +56,7 @@
 ##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 Simens Ethernet</a>
 ##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 Mitsubishi FX</a>
 ##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 Mitsubishi FX Net</a>
-##### <a href="doc/device/drv_omron_hl_fins.md" target="main">&nbsp;&nbsp;&nbsp;6.8 Omron HostLink FINS</a>
+##### <a href="doc/device/drv_omron_hl_fins_serial.md" target="main">&nbsp;&nbsp;&nbsp;6.8 Omron HostLink FINS Serial</a>
 
 #### <a href="doc/js/index.md"> 7 JS Script Usage</a>
 
