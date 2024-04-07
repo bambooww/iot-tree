@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="aa"  name_jp=""  >
+
+
+	<dd_node id="1" name="contact_X" name_cn="外部输入X" name_en="External input X" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="contact_Y" name_cn="外部输出Y" name_en="External output Y" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="contact_R" name_cn="内部继电器R" name_en="Internal relay R" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="contact_X" name_cn="连接继电器L" name_en="Link relay L" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="contact_X" name_cn="定时器T" name_en="Timer T" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="contact_X" name_cn="计数器C" name_en="Counter C" desc_cn="" desc_en=""/>
+</dd_class>

@@ -29,6 +29,7 @@ import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.record.RecManager;
 import org.iottree.core.task.Task;
 import org.iottree.core.task.TaskManager;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -77,6 +78,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	@data_val(param_name="perm_dur")
 	int permDur = 300 ;
+	
+	@data_val(param_name="client_hmis")
+	String clientHmis = null ;
 	/**
 	 * last script date time
 	 */
@@ -335,6 +339,32 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return this.getHmiById(hmiMainId);
 	}
 	
+	public List<UAHmi> listHmiNodesAll()
+	{
+		ArrayList<UAHmi> rets = new ArrayList<>() ;
+		listHmiNodesAll(this,rets) ;
+		return rets ;
+	}
+
+	private void listHmiNodesAll(UANodeOCTagsCxt cxt,List<UAHmi> hmis)
+	{
+		List<UAHmi> chmis = cxt.getHmis() ;
+		if(chmis!=null)
+		{
+			for(UAHmi hmi:chmis)
+			{
+				hmis.add(hmi) ;
+			}
+		}
+		
+		List<UANodeOCTagsCxt> cxts = cxt.getSubNodesCxt();
+		if(cxts==null)
+			return ;
+		for(UANodeOCTagsCxt tmpcxt:cxts)
+			listHmiNodesAll(tmpcxt,hmis) ;
+	}
+
+	
 	public UATag getTagByPath(String tagpath)
 	{
 		UANode n = this.getDescendantNodeByPath(tagpath) ;
@@ -386,6 +416,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		
 		r.addPropItem(new PropItem("perm_dur", lan, PValTP.vt_int, false, null, null,
 				"300")); // "Permission duration In seconds","Duration of authority after operator authentication."
+		
+		r.addPropItem(new PropItem("client_hmis", lan, PValTP.vt_str, false, null, null,"").withPop(PropItem.POP_N_CLIENT_HMIS)); 
+		
 		return r;
 	}
 
@@ -403,6 +436,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				return this.operators;
 			case "perm_dur":
 				return this.permDur ;
+			case "client_hmis":
+				return this.clientHmis ;
 			}
 		}
 		return super.getPropValue(groupn, itemn);
@@ -426,6 +461,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			case "perm_dur":
 				this.permDur = Integer.parseInt(strv) ;
 				return true;
+			case "client_hmis":
+				this.clientHmis = strv;
+				return true ;
 			}
 
 		}
@@ -1232,6 +1270,46 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	public long getOperPermDurSec()
 	{
 		return this.permDur;
+	}
+	
+	public static class HmiNavItem
+	{
+		public String path ;
+		
+		public String icon ;
+		
+		public String title ;
+		
+		public String color ;
+		
+		private HmiNavItem(String path,String icon,String title,String color)
+		{
+			this.path = path ;
+			this.icon = icon ;
+			this.title = title ;
+			this.color = color ;
+		}
+	}
+	
+	public LinkedHashMap<String,HmiNavItem> getClientHMIPath2NavList()
+	{
+		if(Convert.isNullOrEmpty(this.clientHmis))
+			return null ;
+		
+		LinkedHashMap<String,HmiNavItem> rets = new LinkedHashMap<>() ;
+		JSONArray jarr = new JSONArray(this.clientHmis) ;
+		int len = jarr.length() ;
+		for(int i = 0 ; i < len ; i ++)
+		{
+			JSONObject jo = jarr.getJSONObject(i) ;
+			String path = jo.getString("path") ;
+			String icon = jo.optString("icon") ;
+			String tt = jo.getString("title") ;
+			String color = jo.optString("color") ;
+			HmiNavItem ni = new HmiNavItem(path,icon,tt,color) ;
+			rets.put(path, ni) ;
+		}
+		return rets ;
 	}
 
 	private void startStopTask(boolean b)

@@ -27,8 +27,9 @@
 	
 	<dd_node id="1" name="pi_script" name_cn="JS脚本" name_en="JS Script" desc_cn="项目中定时运行的JS脚本，你可以在此实现简单的控制逻辑" desc_en="JavaScript run interval by Project,you can do controller logic here"/>
 	<dd_node id="1" name="pi_script_int" name_cn="JS脚本运行间隔(毫秒)" name_en="JS Script run Interval(ms)" desc_cn="" desc_en=""/>
-	<dd_node id="1" name="pi_operators" name_cn="操作员" name_en="Operators" desc_cn="前端下指令操作员账号" desc_en="Operators may has name and password,it's may need to input when do some operation command."/>
-	<dd_node id="1" name="pi_perm_dur" name_cn="权限持续时间(秒)" name_en="Permission duration In seconds" desc_cn="下指令验证成功之后有效时间，在此时间内不需要重复验证!" desc_en="Duration of authority after operator authentication."/>
+	<dd_node id="1" name="pi_operators" name_cn="客户端操作员" name_en="Client Operators" desc_cn="前端下指令操作员账号" desc_en="Operators may has name and password,it's may need to input when do some operation command."/>
+	<dd_node id="1" name="pi_perm_dur" name_cn="客户端权限持续时间(秒)" name_en="Client Permission Duration In Seconds" desc_cn="下指令验证成功之后有效时间，在此时间内不需要重复验证!" desc_en="Duration of authority after operator authentication."/>
+	<dd_node id="1" name="pi_client_hmis" name_cn="客户端画面列表" name_en="Client HMI(UI) List" desc_cn="客户端监控多个画面导航列表" desc_en="Client UI of multiple HMI navigation lists."/>
 
 	<dd_node id="1" name="pi_drv" name_cn="设备驱动" name_en="Device Driver" desc_cn="被通道使用的设备驱动" desc_en="Device Driver used by Channel"/>
 	<dd_node id="1" name="pi_drv_tt" name_cn="设备驱动标题" name_en="Device Driver Title" desc_cn="被通道使用的设备驱动" desc_en="Device Driver used by Channel"/>

@@ -44,6 +44,7 @@
   <dd_node id="1" name="do_imp" name_cn="确定导入" name_en="Do Import" />
   <dd_node id="1" name="select" name_cn="选择" name_en="Select" />
   <dd_node id="1" name="unselect" name_cn="取消选择" name_en="Unselect" />
+  
   <dd_node id="1" name="imp_demo_prj" name_cn="导入演示项目" name_en="Import Demo project" />
   <dd_node id="1" name="imp_demo_sim" name_cn="导入演示模拟实例" name_en="Import Demo Simulator Instance" />
   <dd_node id="1" name="imp_dev_lib" name_cn="导入设备库" name_en="Import Device Library" />
@@ -269,11 +270,14 @@
   <dd_node id="1" name="selected" name_cn="选中的" name_en="Selected"/>
   <dd_node id="1" name="deselect" name_cn="取消选择" name_en="Deselect"/>
   <dd_node id="1" name="be_selected" name_cn="已被选择" name_en="is Selected"/>
+  <dd_node id="1" name="un_selected" name_cn="未被选择" name_en="Selected"/>
   <dd_node id="1" name="type" name_cn="类型" name_en="Type"/>
   <dd_node id="1" name="filter" name_cn="过滤器" name_en="Filter"/>
   <dd_node id="1" name="view" name_cn="查看" name_en="View"/>
   <dd_node id="1" name="rename" name_cn="重命名" name_en="Rename"/> 
-   
+  
+  <dd_node id="1" name="color" name_cn="颜色" name_en="Color"/>
+  <dd_node id="1" name="icon" name_cn="图标" name_en="Icon"/>  
   
   <dd_node id="1" name="edit_ch" name_cn="编辑通道" name_en="Edit Channel"/>
   <dd_node id="1" name="modify" name_cn="修改" name_en="Modify"/>

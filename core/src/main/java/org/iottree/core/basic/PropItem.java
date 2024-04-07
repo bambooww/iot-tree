@@ -293,6 +293,8 @@ public class PropItem
 	
 	//public static final String POP_N_MULTI = "multi_ln" ;
 	public static final String POP_N_SEL_TAGS = "seltags" ;
+	
+	public static final String POP_N_CLIENT_HMIS = "client_hmis" ;
 //	public PropItem()
 //	{}
 	

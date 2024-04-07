@@ -2,6 +2,7 @@
 <dd_class id="1" name="ln"  name_jp=""  version="004">
 
   <dd_node name="pi_pop_seltags" name_cn="标签选择" name_en="Select Tags" />
+  <dd_node name="pi_pop_client_hmis" name_cn="客户端HMI(UI)列表" name_en="Client HMI(UI) list" />
   
   <dd_node name="invalid_pm" name_cn="无效参数" name_en="Invalid Param" />
   

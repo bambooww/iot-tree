@@ -383,6 +383,54 @@ margin-top:5px;
 	background-color: #aaaaaa;
 }
 
+.navwin
+{
+	position: absolute;
+	left:0px;top:0px;width:100px;height:100%;
+	background-color: #555555;
+	
+	z-index:65534;
+	opacity: 0.5;color: #bbbbbb;
+}
+
+.navwin:hover
+{
+	opacity: 1.0;
+}
+
+.navwin .op
+{
+	position: absolute;
+	right:0px;
+	top:0px;
+	background-color: #aaaaaa;
+}
+
+.nav_item
+{
+	position:relative;
+	width:90%;
+	left:5%;
+	height:90px;
+	//border:2px solid;
+	border-color:#17c6a3;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.nav_item:hover
+{
+	background-color: yellow;
+}
+
+.nav_item .icon
+{
+	width:50px;
+	height:50px;
+	
+	font-size:50px;
+}
+
 .data_list_c::-webkit-scrollbar {
     width: 10px;
 }
@@ -497,6 +545,34 @@ dlg.dlg_top=true;
 		
 		</div>
 
+<%
+LinkedHashMap<String,UAPrj.HmiNavItem> path2tt = prj.getClientHMIPath2NavList() ;
+if(path2tt!=null)
+{
+%>
+<div id="nav_list" style="" class="navwin">
+<%
+	for(Map.Entry<String,UAPrj.HmiNavItem> p2t:path2tt.entrySet())
+	{
+		UAPrj.HmiNavItem navi = p2t.getValue() ;
+		String icon = navi.icon ;
+		String tt = navi.title ;
+		String color = navi.color ;
+		if(Convert.isNullOrEmpty(icon))
+			icon = "f1d8" ;
+		if(Convert.isNullOrEmpty(color))
+			color = "#76d170" ;
+%><div class="nav_item" onclick="nav_hmi('<%=p2t.getKey()%>')">
+		<span class="icon"><i class="fa" style="color:<%=color%>;">&#x<%=icon %></i></span>
+		<div class="tt"><%=tt %></div>
+</div>
+<%
+	}
+%>
+</div>
+<%
+}
+%>
 <div style="z-index:65534;position: absolute;right:0px;top:0px">
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x" title="fit windows"></i></div>
 	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x" title="zoom up"></i></div>
@@ -1377,7 +1453,13 @@ $(".ui_item").click(function(){
 			[],
 			[]);
 }) ;
-		
+
+function nav_hmi(p)
+{
+	p = '/'+prj_name+'/'+p.replace(/\./g, '/');
+	dlg.msg(p) ;
+	document.location.href=p ;
+}
 
 async function  f()
 {
