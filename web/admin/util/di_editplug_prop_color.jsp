@@ -70,7 +70,7 @@ else
 }
 
 if(input_v!=null&&input_v!="")
-{console.log(input_v);
+{
 	var tc = tinycolor(input_v)
 	cur_color = input_v = tc.toHex() ;
 	cur_alpha = tc.toRgb().a;

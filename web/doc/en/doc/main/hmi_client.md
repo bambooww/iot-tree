@@ -128,7 +128,40 @@ So we have prepared the monitoring UI and operator verification. We right-click 
 You can only truly give instructions if you enter the username and password correctly. Next, we can configure the client.
 
 
-## 3 HMI Client Configuration
+## 3 HMI Client Navigation
+
+
+
+The client monitoring page may require multiple. In general, most on-site central control computers only have a few monitoring pages. Meanwhile, in our project tree. It is also possible to define multiple HMI nodes, some of which exist as sub nodes of the top-level nodes. So we also need a navigation list that needs to be deployed to the client, listing only a few pages that the user is concerned about.
+
+IOT-Tree supports a project property configuration in version 1.5.2:
+
+
+<b>Client HMI(UI) List</b>
+
+
+
+Click on the root node in the project tree, and then open the "Properties" list tab on the right. As shown in the following figure:
+
+
+<img src="../img/main/m064.png"/>
+
+
+
+Click on the input area of the "Client HMI (UI) List" property item, and you will see a pop-up dialog:
+
+
+<img src="../img/main/m065.png"/>
+
+
+
+This dialog is divided into two parts: below are the HMI nodes that were not selected in the project, and above are the selected HMI nodes. You can click on the selection button below to add.
+
+For the selected HMI nodes, you can also set the list title, modify the order, select the list icon and color. After confirmation, don't forget to click on the button "Apply". After completion, when the relevant monitoring page are displayed on the client, a navigation bar will appear on the left, allowing users to intuitively switch between multiple pages. As shown in the figure:
+
+<img src="../img/main/m066.png"/>
+
+## 4 HMI Client Configuration
 
 
 
@@ -154,7 +187,7 @@ After confirmation, click the refresh button to display the corresponding screen
 
 <img src="../img/main/m061.png"/>
 
-## 4 Configure automatic startup with Windows startup
+## 5 Configure automatic startup with Windows startup
 
 
 
@@ -165,7 +198,7 @@ Next, for the convenience of your customer operator, you would like to automatic
 2. Press the Win+R key combination, enter the command "shell:startup" in the pop-up run box, and after entering, you can see that Windows pops up the current user's startup directory. You just need to put the shortcut from earlier into it.
 
 
-## 5 Summary
+## 6 Summary
 
 
 

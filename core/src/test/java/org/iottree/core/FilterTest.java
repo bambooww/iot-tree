@@ -9,7 +9,7 @@ public class FilterTest  extends TestCase
 	public void test1() throws Exception
 	{
 		long base_dt = System.currentTimeMillis() - 10000;
-		UATag tag = new UATag("n1", "n1", "", "", ValTP.vt_float, 2) ;
+		UATag tag = new UATag("n1", "n1", "", "", ValTP.vt_float, 2,null) ;
 		UAValList uvl = new UAValList(20) ;
 		UAVal uv = uvl.filterValByAntiInterference(tag) ;
 		assertEquals(uv,null) ;

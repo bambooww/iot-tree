@@ -62,12 +62,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * is middle express tqg
 	 */
 	@data_val(param_name = "mid")
-	boolean bMidExp = false;
+	boolean bMid = false;
 	
 	@data_val(param_name = "midt")
 	private String get_MidT()
 	{
-		return bMidExp?"M":"" ;
+		return bMid?"M":"" ;
 	}
 	/**
 	 * addr or express
@@ -77,6 +77,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient DevAddr devAddr = null ;
 	
+	@data_val(param_name = "mid_w_js")
+	String midWriterJS = "" ;
 	/**
 	 * node local var tag or not
 	 * if true. Tag addr is ignore and this tag value will not related driver
@@ -202,11 +204,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.retitle = null;
 		this.redesc = null ;
 		
-		bMidExp = t.bMidExp;
+		bMid = t.bMid;
 		if(Convert.isNotNullEmpty(newaddr))
 			this.addr = newaddr ;
 		else
 			this.addr = t.addr;
+		this.midWriterJS = t.midWriterJS ;
 		this.valTp = t.valTp;
 		this.decDigits = t.decDigits ;
 
@@ -295,34 +298,35 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	 * @param addrexp
 	 * @param vt
 	 */
-	UATag(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits)
+	UATag(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits,String mid_w_js)
 	{
 		super(name,title,desc) ;
-		this.bMidExp = true ;
+		this.bMid = true ;
 		this.addr = addrexp ;
 		this.valTp = vt ;
 		this.bCanWrite = false ;
 		this.scanRate = -1;
 		this.decDigits = dec_digits ;
+		this.midWriterJS = mid_w_js ;
 	}
 	
-	void setTagMid(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits)
+	
+	
+	void setTagMid(String name,String title,String desc,String addrexp,UAVal.ValTP vt,int dec_digits,boolean canwrite,String w_js)
 	{
 		setNameTitle(name,title,desc) ;
-		this.bMidExp = true ;
+		this.bMid = true ;
 		this.addr = addrexp ;
 		this.valTp = vt ;
-		this.bCanWrite = false ;
+		this.bCanWrite = canwrite ;
 		this.scanRate = -1;
 		this.decDigits = dec_digits ;
+		this.midWriterJS = w_js ;
 		
 		this.clearCache();
 	}
 	
-	synchronized private void clearCache()
-	{
-		codeItem =null;
-	}
+	
 	/**
 	 * tag in project may has it's own name title and desc
 	 * so there are defined by rename retitle redesc
@@ -427,7 +431,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		nt.rename = this.rename ;
 		nt.retitle = this.retitle ;
 		nt.redesc = this.redesc;
-		nt.bMidExp = this.bMidExp;
+		nt.bMid = this.bMid;
+		nt.midWriterJS = this.midWriterJS ;
 		
 		nt.addr = this.addr ;
 		nt.valTp = this.valTp;
@@ -513,7 +518,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 
 	public boolean isMidExpress()
 	{
-		return bMidExp;
+		return bMid;
 	}
 	
 	public UADev getBelongToDev()
@@ -643,6 +648,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public int getDecDigits()
 	{
 		return decDigits ;
+	}
+	
+	public String getMidWriterJS()
+	{
+		if(this.midWriterJS==null)
+			return "" ;
+		return this.midWriterJS ;
 	}
 	
 	public long getScanRate()
@@ -916,7 +928,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			switch(itemn)
 			{
 			case "mid":
-				this.bMidExp = "true".contentEquals(strv) ;
+				this.bMid = "true".contentEquals(strv) ;
 				return true;
 			case "addr":
 				this.addr = strv ;
@@ -1039,6 +1051,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	private transient UACodeItem codeItem = null ;
 	
+	private transient UACodeItem codeItemMidW = null ;
+	
+	synchronized private void clearCache()
+	{
+		codeItem =null;
+		codeItemMidW = null ;
+	}
+	
 	//private transient UAVal midVal = null ;
 	
 	
@@ -1063,6 +1083,30 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				return null;
 			codeItem = new UACodeItem("",this.addr,cxt) ;
 			return codeItem;
+		}
+	}
+	
+	public UACodeItem CXT_getMidCodeItemW() throws ScriptException
+	{
+		if(!this.isMidExpress())
+			return null ;
+		UACodeItem ci = codeItemMidW;
+		if(ci!=null)
+			return ci ;
+		
+		synchronized(this)
+		{
+			if(codeItemMidW!=null)
+				return codeItemMidW ;
+	
+			if(Convert.isNullOrTrimEmpty(this.midWriterJS))
+				return null ;
+			UAContext cxt = CXT_getBelongToCxt();
+			if(cxt== null)
+				return null;
+			codeItemMidW = new UACodeItem("","{\r\n"+this.midWriterJS+"\r\n}") ;
+			codeItemMidW.initItem(cxt,"$tag","$input") ;
+			return codeItemMidW;
 		}
 	}
 	
@@ -1094,9 +1138,42 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			//e.printStackTrace();
 			return RT_setValErr(e.getMessage(),e) ;
 		}
+	}
+	
+	boolean CXT_writeMidVal(Object objv,StringBuilder failedr)
+	{
+		if(!this.isMidExpress())
+		{
+			failedr.append("not mid tag") ;
+			return false;
+		}
 		
-		//this.RT_setUAVal(v);
-		//return v;
+		if(!this.bCanWrite)
+		{
+			failedr.append("not writable mid tag") ;
+			return false;
+		}
+		
+		try
+		{
+			UACodeItem ci =  CXT_getMidCodeItemW();
+			if(ci==null)
+			{
+				failedr.append("node write js code") ;
+				return false;
+			}
+			ci.runCodeFunc(this,objv) ;
+			return true ;
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+			RT_setValErr(e.getMessage(),e) ;
+			failedr.append("write err:"+e.getMessage()) ;
+			if(log.isDebugEnabled())
+				log.debug("CXT_writeMidVal input "+objv+" err", e);
+			return false;
+		}
 	}
 	
 	UAVal RT_readValFromDriver()
@@ -1391,7 +1468,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@JsDef
 	public boolean RT_writeVal(Object v) //throws Exception
 	{
-		return RT_writeVal(v,null) ;
+		StringBuilder failedr = new StringBuilder() ;
+		return RT_writeVal(v,failedr) ;
 	}
 	
 	public boolean RT_writeVal(Object v,StringBuilder failedr) //throws Exception
@@ -1399,6 +1477,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.isLocalTag())
 		{
 			return RT_writeValLocal(v);
+		}
+		
+		if(this.isMidExpress())
+		{
+			if(!this.bCanWrite)
+			{
+				failedr.append("no writable tag") ;
+				return false;
+			}
+			return CXT_writeMidVal(v,failedr) ;
 		}
 		
 		UACh ch = this.getBelongToCh();
@@ -1579,12 +1667,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 		case "_pv":
 			boolean r = false;
+			StringBuilder failedr = new StringBuilder() ;
 			if(v instanceof String)
-				r = RT_writeValStr((String)v) ;
+				r = RT_writeValStr((String)v,failedr) ;
 			else
-				r = RT_writeVal(v) ;
+				r = RT_writeVal(v,failedr) ;
 			if(!r)
-				throw new RuntimeException("JS_set _pv="+v+" err in tag "+this.getNodePath()) ;
+				throw new RuntimeException("JS_set _pv="+v+" err in tag "+this.getNodePath()+" err:"+failedr) ;
 			return ;
 		case "_value":
 			if(v instanceof String)
@@ -1669,25 +1758,28 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 						+ dt + ",\"chgdt\":" + dt_chg);
 			
 			boolean bfirst = true;
-			for(ValAlert va:this.valAlerts)
+			if(this.valAlerts!=null)
 			{
-				if(va.RT_is_triggered())
+				for(ValAlert va:this.valAlerts)
 				{
-					JSONObject tmpjo = va.RT_get_triggered_jo() ;
-					if(tmpjo==null)
-						continue ;
-					if(bfirst)
+					if(va.RT_is_triggered())
 					{
-						bfirst = false;
-						w.write(",\"alerts\":[");
-						tmpjo.write(w) ;
+						JSONObject tmpjo = va.RT_get_triggered_jo() ;
+						if(tmpjo==null)
+							continue ;
+						if(bfirst)
+						{
+							bfirst = false;
+							w.write(",\"alerts\":[");
+							tmpjo.write(w) ;
+						}
+						else
+						{
+							w.write(",");
+							tmpjo.write(w) ;
+						}
 					}
-					else
-					{
-						w.write(",");
-						tmpjo.write(w) ;
-					}
-				}
+				}// end of for
 			}
 			if(!bfirst)
 				w.write("]");
@@ -1742,7 +1834,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		else
 			w.write(this.getNodeCxtPathIn(innode, "_"));
 		w.write("\",\"t\":\"");
-		w.write(getTitle());
+		w.write(Convert.plainToJsStr(getTitle()));
 		if(innode!=null)
 		{
 			w.write("\",\"p\":\"");
@@ -1755,7 +1847,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				w.write("\",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
 						+ ",\"chgdt\":" + dt_chg );
 			else
-				w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + strv + "\",\"strv\":\"" + strv + "\",\"dt\":" + dt
+				w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + Convert.plainToJsStr(strv) + "\",\"strv\":\"" + Convert.plainToJsStr(strv) + "\",\"dt\":" + dt
 						+ ",\"chgdt\":" + dt_chg );
 		}
 		else
@@ -1785,5 +1877,91 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		w.write("}");
 		//bchged = true;
+	}
+	
+	public JSONObject RT_toFlatJson()
+	{
+		UAVal val = RT_getVal();
+		// if(val==null)
+		// continue ;
+
+		boolean bvalid = false;
+		String strv = "";
+		long dt = -1;
+		long dt_chg = -1;
+		String str_err = "";
+
+		if (val != null)
+		{
+			bvalid = val.isValid();
+			//Object v = val.getObjVal();
+			strv = val.getStrVal(getDecDigits());
+			dt = val.getValDT();// Convert.toFullYMDHMS(new
+								// Date(val.getValDT())) ;
+			dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new
+
+			str_err = val.getErr();
+			if (str_err == null)
+				str_err = "";
+		}
+		else
+		{
+			dt_chg = System.currentTimeMillis();
+		}
+
+		JSONObject jo = new JSONObject() ;
+		jo.put("uid", this.getNodePathCxt()) ;
+		jo.put("valid", bvalid) ;
+		jo.put("up_dt", dt) ;
+		jo.put("chg_dt", dt_chg) ;
+		//ValTP vtp = getValTp();
+		if (bvalid)
+		{
+			jo.put("v", val.getObjVal()) ;
+		}
+		else
+		{
+			jo.putOpt("err", str_err) ;
+		}
+		return jo ;
+	}
+	
+	public void renderDefJson(Writer w) throws IOException
+	{
+		// w.write("\""+tg.getName()+"\":");
+//		w.write("{\"uid\":\"");
+//		w.write(this.getNodePathCxt());
+//		w.write("\",\"n\":\"");
+//		w.write(getName());
+//		w.write("\",\"t\":\"");
+//		w.write(getTitle());
+//		ValTP vtp = getValTp();
+//		w.write("\",\"tp\":\"");
+//		w.write(vtp.getStr());
+//		w.write("\",\"w\":"+this.bCanWrite);
+//		
+//		JSONObject jo = getExtAttrJO() ;
+//		if(jo!=null)
+//		{
+//			w.write(",\"ext\":" + jo.toString() );
+//		}
+//		
+//		w.write("}");
+		//bchged = true;
+		toDefJO().write(w) ;
+	}
+	
+	public JSONObject toDefJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("uid",this.getNodePathCxt()) ;
+		jo.put("n", this.getName()) ;
+		jo.putOpt("t", this.getTitle()) ;
+		ValTP vtp = getValTp();
+		jo.putOpt("tp",vtp.getStr());
+		jo.put("w", this.bCanWrite) ;
+		JSONObject ejo = getExtAttrJO() ;
+		jo.putOpt("ext",ejo);
+		return jo ;
 	}
 }

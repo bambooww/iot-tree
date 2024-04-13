@@ -7,8 +7,7 @@
 				org.iottree.core.res.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
-				java.net.*"%>
-<%
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "tabid","path"))
 		return ;
 	//String op = request.getParameter("op");
@@ -590,11 +589,11 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 	}
 	else
 	{
-		var tt = "Edit Properties" ;
+		var tt = "<wbt:g>edit,props</wbt:g>" ;
 		var bind_tag_only=false;
 		if(tp=="prop_bind")
 		{
-			tt = "Bind Properties" ;
+			tt = "<wbt:g>bind,props</wbt:g>" ;
 			bind_tag_only = pn_def.bind_tag_only ;
 		}
 		if(!bind_tag_only)
@@ -606,7 +605,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 						jq_ele.val(v) ;
 						editor.applyUI2SelectedItem();
 					}},
-				['Ok','Cancel'],
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -629,6 +628,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 							var ret = dlgw.editplug_get() ;
 							var v = ret.v ;
 							jq_ele.val(v) ;
+							//console.log(v) ;
 							editor.applyUI2SelectedItem();
 						}
 						dlg.close();

@@ -19,7 +19,7 @@ if NOT DEFINED IOTTREE_HOME set IOTTREE_HOME=%cd%
 
 @REM echo IOTTREE_HOME=%cd%
 
-set CLASSPATH=%IOTTREE_HOME%\lib\*;%IOTTREE_HOME%\tomcat\lib\*;%IOTTREE_HOME%\tomcat\bin\bootstrap.jar;%IOTTREE_HOME%\tomcat\bin\tomcat-juli.jar
+set CLASSPATH=%IOTTREE_HOME%\tomcat\lib\*;%IOTTREE_HOME%\tomcat\bin\bootstrap.jar;%IOTTREE_HOME%\tomcat\bin\tomcat-juli.jar;%IOTTREE_HOME%\lib\*
 
 goto run_server
 

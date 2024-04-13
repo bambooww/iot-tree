@@ -931,8 +931,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			UANode tmpn = gcxt.getSubNodeByName(t.getName()) ;
 			if(tmpn==null)
 			{
-				UATag loctg = gcxt.addOrUpdateTagSys(null, t.bMidExp, t.getName(), t.getTitle(), t.getDesc(), "", 
-						t.getValTp(),t.getDecDigits(), t.bCanWrite, t.scanRate,false) ;
+				UATag loctg = gcxt.addOrUpdateTagSys(null, t.bMid, t.getName(), t.getTitle(), t.getDesc(), "", 
+						t.getValTp(),t.getDecDigits(), t.bCanWrite, t.scanRate,false,t.midWriterJS) ;
 				loctg.setValAlerts(t.getValAlerts()) ;
 			}
 		}

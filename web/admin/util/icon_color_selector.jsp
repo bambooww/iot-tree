@@ -64,6 +64,13 @@ color: red;
 .icon_item:hover {
 	background-color: grey;
 }
+.btop
+{
+	font-weight: bold;
+	font-size:16px;
+	background-color: #f2f2f2;
+	height:40px;
+}
 </style>
 <script type="text/javascript">
 dlg.resize_to(700,600) ;
@@ -71,11 +78,11 @@ dlg.resize_to(700,600) ;
 
 </script>
 <body>
-<blockquote class="layui-elem-quote" style="height:40px">
-	<div style="color:red"><i id="sel_icon" class="fa" style="font-size: 30px"></i> <span id="sel_txt"></span>
-		<input type="color" id="sel_color" onchange="on_chg(this)"/>
+<div class="btop" style="">
+	<div style0="color:red"><i id="sel_icon" class="fa" style="font-size: 30px"></i> <span id="sel_txt"></span>
+		<wbt:g>modify,color</wbt:g><input type="color" id="sel_color" onchange="on_chg(this)"/>
 	</div>
-</blockquote>
+</div>
 	<div class="oc-toolbar btns">
 <%
 //int i = 0 ;
@@ -97,7 +104,7 @@ for(int i = 0;i<675;i++)
 let pm = dlg.get_opener_opt("pm") ;
 if(pm)
 {
-	console.log(pm) ;
+	//console.log(pm) ;
 	$("#sel_icon").html("&#x"+pm.icon) ;
 	$("#sel_icon").css("color",pm.color) ;
 	$("#sel_color").val(pm.color) ;

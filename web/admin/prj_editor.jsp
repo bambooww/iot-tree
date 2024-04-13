@@ -506,7 +506,7 @@ function open_doc()
 		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
 		[<%=rep.getTitle()%>]
 		</div>
-		<div class="top_toolbox top_tool"  style="left:40%;width:210px">
+		<div class="top_toolbox top_tool"  style="left:40%;width:250px">
 		 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 				  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
 				  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
@@ -514,8 +514,8 @@ function open_doc()
 				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
 				  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
+				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>up_router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
 		</div>
-		
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
@@ -2270,6 +2270,12 @@ function clk_ui_mgr()
 {
 	event.stopPropagation();
 	add_tab("___uimgr","<i class='fa fa-area-chart'></i><wbt:g>ui,dialogs</wbt:g>","./ua_hmi/ui_mgr.jsp?prjid="+prjid) ;
+}
+
+function clk_router_mgr()
+{
+	event.stopPropagation();
+	add_tab("___router","<i class='fa fa-sitemap fa-flip-vertical'></i><wbt:g>up_router</wbt:g>","./router/router_mgr.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

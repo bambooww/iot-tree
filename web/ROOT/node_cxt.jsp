@@ -33,6 +33,15 @@
 		case "tags_list":
 			ntcxt.CXT_renderTagsJson(out, false, -1) ;
 			break ;
+		case "def":
+			ntcxt.DEF_renderJson(out, false, null) ;
+			break ;
+		case "def_tags_flat":
+			ntcxt.CXT_renderDefJsonFlat(out, false) ;
+			break ;
+		case "rt_tags_flat":
+			ntcxt.CXT_renderRTJsonFlat(out, false) ;
+			break ;
 		default:
 			if(Convert.isNotNullEmpty(mid_ext)||Convert.isNotNullEmpty(tag_ext))
 			{

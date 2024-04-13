@@ -75,6 +75,11 @@
 			<artifactId>js-scriptengine</artifactId>
 
 		</dependency>
+		
+		<dependency>
+	    <groupId>tanukisoft</groupId>
+	    <artifactId>wrapper</artifactId>
+	</dependency>
         <!-- 
 		<dependency>
 			<groupId>com.alibaba</groupId>

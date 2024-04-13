@@ -38,13 +38,14 @@
 		//String alert_low = request.getParameter("alert_low") ;
 		//String alert_high = request.getParameter("alert_high") ;
 		String alert_jstr = request.getParameter("alerts") ;
+		String mid_w_js = request.getParameter("mid_w_js") ;
 		
 		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
 		String trans = request.getParameter("trans") ;
 
-		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans) ;
+		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans,mid_w_js) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);

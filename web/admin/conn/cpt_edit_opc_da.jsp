@@ -10,7 +10,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
@@ -55,6 +55,9 @@ if(Convert.isNullOrEmpty(host))
 String progid = cpt.getProgId() ;
 long int_ms = cpt.getUpdateIntMs() ;
 String cp_tp = cp.getProviderType() ;
+String chk_pros = cpt.getChkProcessName() ;
+boolean chk_pros_reboot = cpt.isChkProcessReboot() ;
+long chk_pros_reboot_after = cpt.getChkProcessRebootAfter() ;
 %>
 <html>
 <head>
@@ -71,15 +74,15 @@ dlg.resize_to(800,600);
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Name:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="name" name="name" value="<%=name%>"  lay-verify="required" autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid">Title:</div>
+    <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="text" id="title" name="title" value="<%=title%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid">Enable:</div>
+	  <div class="layui-form-mid"><wbt:g>enable</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
@@ -123,17 +126,30 @@ for(String cid:progids)
 
 <div class="layui-form-item">
     <label class="layui-form-label"></label>
-    <div class="layui-input-inline">
-     
-    </div>
 	 <div class="layui-form-mid">Update Interval</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="number" id="int_ms" name="int_ms" value="<%=int_ms%>"  class="layui-input">
 	  </div>
+	  
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">Check Process</label>
+	  <div class="layui-input-inline" style="width: 250px;">
+	    <input type="text" id="chk_pros" name="chk_pros" value="<%=chk_pros %>"  autocomplete="off" class="layui-input" title="<wbt:g>dbclk,select</wbt:g>" ondblclick="sel_pro()">
+	  </div>
+	  <div class="layui-form-mid">Failed Reboot</div>
+	  <div class="layui-input-inline" style="width: 50px;">
+	    <input type="checkbox" id="chk_pros_reboot" name="chk_pros_reboot"  lay-skin="switch"  lay-filter="chk_pros_reboot"  <%=chk_pros_reboot?"checked":"" %>  autocomplete="off" class="layui-input">
+	   </div>
+	  <div class="layui-form-mid">After(MS)</div>
+	  <div class="layui-input-inline" style="width: 100px;">
+	    <input type="number" id="chk_pros_reboot_after" name="chk_pros_reboot_after" value="<%=chk_pros_reboot_after %>"  autocomplete="off" class="layui-input">
+	  </div>
   </div>
   
     <div class="layui-form-item">
-    <label class="layui-form-label">Description:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
@@ -172,6 +188,11 @@ layui.use('form', function(){
 		  
 	  form.render(); 
 });
+
+function sel_pro()
+{
+	
+}
 
 var _tmpid = 0 ;
 
@@ -254,7 +275,14 @@ function do_submit(cb)
 		cb(false,'Please input valid Update interval') ;
 	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:opc_host,prog_id:prog_id,int_ms:int_ms});
+	let chk_pros = trim($("#chk_pros").val()) ;
+	chk_pros_reboot = $("#chk_pros_reboot").prop("checked") ;
+	chk_pros_reboot_after = get_input_val("chk_pros_reboot_after",600000,true)
+	
+	let pm ={id:conn_id,name:n,title:tt,desc:desc,enable:ben,opc_host:opc_host,prog_id:prog_id,int_ms:int_ms,
+			chk_pros:chk_pros,chk_pros_reboot:chk_pros_reboot,chk_pros_reboot_after:chk_pros_reboot_after};
+	
+	cb(true,pm);
 }
 
 </script>

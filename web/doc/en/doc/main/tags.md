@@ -109,11 +109,27 @@ For JS script support, please refer to:
 In the tag list corresponding to a container node, click the "+Add Middle Tag" button to open the Add Edit Middle Tag dialog.
 
 
+### 5.1 Read Only Middle Tag
+
 <img src="../img/main/m012.png" />
 
 
 
-It can be seen that in addition to the items related to name, title, and data type, there is also an Express JS content. This content takes the current container node as the context and can run JS code that outputs values.
+It can be seen that in addition to the items related to name, title, and data type, there is also an Express JS content. This content takes the current container node as the context and can run JS code that outputs to tag value.
+
+
+### 5.2 Read/Write Middle Tag
+
+<img src="../img/main/m067.png" />
+
+
+
+In the Read/Write selection box, select the Read/Write option and you will see an On Write JS input box appear. You can fill in the JS script in the input box, which will be triggered when this tag is written.
+
+Please take a closer look at this input box, and you can see that JS code is essentially an internal code of a function, with two input parameters $tag $input. Among them, $input represents the value that the Tag is written to, and the type of this value is determined by the Data Type.
+
+The writing and reading of intermediate nodes are exactly the opposite, where you can provide updates to multiple data or specific JS logic.
+
 
 
 For JS script support:[IOT-Tree JS Script][js]

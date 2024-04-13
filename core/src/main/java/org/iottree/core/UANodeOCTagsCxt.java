@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.alert.AlertItem;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.ValAlert;
@@ -331,6 +332,126 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 
 		CXT_calMidTagsValLocal();
+	}
+	
+	public void DEF_renderJson(Writer w,boolean b_inc_sys,HashMap<String, Object> extpms) throws IOException
+	{
+		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"t\":\""+Convert.plainToJsStr(this.getTitle())+"\",\"tp\":\""+this.getNodeTp()+"\"");
+		if (extpms != null)
+		{
+			for (Map.Entry<String, Object> n2v : extpms.entrySet())
+			{
+				String tmpn = n2v.getKey();
+				if ("id".contentEquals(tmpn) || "n".contentEquals(tmpn))
+					throw new RuntimeException("extend pms cannot has name id and n");
+				Object tmpv = n2v.getValue();
+				if (tmpv instanceof Boolean || tmpv instanceof Number)
+					w.write(",\"" + tmpn + "\":" + tmpv);
+				else
+					w.write(",\"" + tmpn + "\":\"" + tmpv + "\"");
+			}
+		}
+		
+		JSONObject jo = this.getExtAttrJO() ;
+		if(jo!=null)
+		{
+			w.write(",\"ext\":" + jo.toString() );
+		}
+		
+		
+		DEF_renderJsonTags(w, b_inc_sys) ;
+		
+		
+		DEF_renderJsonSubs(w, b_inc_sys,extpms) ;
+		
+		w.write("}");
+	}
+	
+	private void DEF_renderJsonTags(Writer w,boolean b_inc_sys) throws IOException
+	{
+		w.write(",\"tags\":[");
+		boolean bfirst = true;
+		List<UATag> tags = null;
+		if(b_inc_sys)
+			tags = this.listTags();
+		else
+			tags = this.getNorTags() ;
+		for (UATag tg : tags)
+		{
+			if (!bfirst)
+				w.write(",");
+			else
+				bfirst = false;
+			tg.renderDefJson(w);
+		}
+		w.write("]");
+	}
+	
+	private void DEF_renderJsonSubs(Writer w,boolean b_inc_sys,HashMap<String, Object> extpms) throws IOException
+	{
+		boolean bfirst;
+		List<UANodeOCTagsCxt> subtgs = this.getSubNodesCxt() ;
+		if(subtgs!=null&&subtgs.size()>0)
+		{
+			w.write(",\"subs\":[");
+			bfirst = true;
+			for (UANodeOCTagsCxt subtg : subtgs)
+			{
+				if (!bfirst)
+					w.write(",");
+				else
+					bfirst = false;
+
+				subtg.DEF_renderJson(w, b_inc_sys,extpms) ;
+			}
+			w.write("]");
+		}
+	}
+	
+	public void CXT_renderRTJsonFlat(Writer w,boolean b_sys) throws IOException
+	{
+		w.write("[");
+		List<UATag> tags = null ;
+		if(b_sys)
+			tags = this.listTagsAll() ;
+		else
+			tags = this.listTagsNorAll() ;
+		boolean bfirst = true ;
+		for(UATag tag : tags)
+		{
+			if (!bfirst)
+				w.write(",");
+			else
+				bfirst = false;
+			
+			JSONObject rt = tag.RT_toFlatJson() ;
+			rt.write(w) ;
+		}
+		
+		w.write("]");
+	}
+	
+	public void CXT_renderDefJsonFlat(Writer w,boolean b_sys) throws IOException
+	{
+		w.write("[");
+		List<UATag> tags = null ;
+		if(b_sys)
+			tags = this.listTagsAll() ;
+		else
+			tags = this.listTagsNorAll() ;
+		boolean bfirst = true ;
+		for(UATag tag : tags)
+		{
+			if (!bfirst)
+				w.write(",");
+			else
+				bfirst = false;
+			
+			JSONObject tmpjo = tag.toDefJO() ;
+			tmpjo.write(w) ;
+		}
+		
+		w.write("]");
 	}
 
 	public void CXT_renderJson(Writer w) throws IOException

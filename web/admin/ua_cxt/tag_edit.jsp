@@ -43,6 +43,7 @@
 	//String alert_low="" ;
 	//String alert_high="" ;
 	String alerts = null ;
+	String mid_w_js = "" ;
 	
 	if(id==null)
 		id = "" ;
@@ -102,6 +103,7 @@
  		b_val_filter = tag.isValFilter() ;
  		min_val_str = tag.getMinValStr() ;
  		max_val_str = tag.getMaxValStr() ;
+ 		mid_w_js = tag.getMidWriterJS() ;
  		//alert_low = tag.getAlertLowValStr() ;
  		//alert_high = tag.getAlertHighValStr() ;
  		JSONArray jarr = tag.getValAlertsJArr() ;
@@ -190,7 +192,7 @@ for(UAVal.ValTP vt:vtps)
     </div>
     <div class="layui-form-mid"><wbt:g>r_or_w</wbt:g>:</div>
     <div class="layui-input-inline" style="width: 150px;">
-      <select id="canw"  name="canw" class="layui-input">
+      <select id="canw"  name="canw" class="layui-input" lay-filter="canw">
         <option value="">---</option>
         <option value="false"><wbt:g>r</wbt:g></option>
         <option value="true"><wbt:g>rw</wbt:g></option>
@@ -241,7 +243,7 @@ if(!bmid)
 <%
 if(bmid)
 {
-%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="addr"  name="addr"   class="layui-input" ondblclick="on_js_edit()" title="<wbt:g>dbclk_open_jse</wbt:g>"></textarea>
+%><textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;font-size: 12px"  id="addr"  name="addr"   class="layui-input" ondblclick="on_js_edit()" title="<wbt:g>dbclk_open_jse</wbt:g>"></textarea>
 <%
 }
 else
@@ -264,6 +266,24 @@ if(!bmid)
 %>
     </div>
   </div>
+<%
+if(bmid)
+{
+%>
+  <div class="layui-form-item" id="w_js_setting">
+    <label class="layui-form-label"><wbt:g>exp_wjs</wbt:g>:</label>
+    <div class="layui-input-inline" style="width:500px;color:#c1c1c1;font-size: 12px;">
+    ($tag,$input)=>{
+	<textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="mid_w_js"  name="mid_w_js"   class="layui-input" ondblclick="on_wjs_edit()" title="<wbt:g>dbclk_open_jse</wbt:g>"></textarea>
+	}
+    </div>
+    <div class="layui-input-inline" >
+
+    </div>
+  </div>
+<%
+}
+%>
   <%--
    <div class="layui-form-item">
     <label class="layui-form-label">Scan rate:</label>
@@ -346,7 +366,8 @@ var addr = "<%=html_str(addr)%>";
 var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
-var canw = "<%=canw%>"
+var canw = "<%=canw%>";
+var mid_w_js = "<%=html_str(mid_w_js)%>" ;
 var trans_dd = <%=trans%>;
 var bloc=<%=blocal%>
 var loc_devf="<%=html_str(local_defval)%>" ;
@@ -381,6 +402,12 @@ function update_form()
 	else
 		$("#max_min_val").css("display","none") ;
 	
+	if(bmid)
+	{
+		//console.log(canw) ;
+		$("#w_js_setting").css("display",(canw=='true')?"":"none");
+	}
+	
 }
 
 var form ;
@@ -390,6 +417,7 @@ layui.use('form', function(){
 	  $("#name").val(name) ;
 	  $("#title").val(title) ;
 	  $("#addr").val(addr) ;
+	  $("#mid_w_js").val(mid_w_js) ;
 	  $("#desc").val(desc) ;
 	  if(dec_digits>0)
 	  	$("#dec_digits").val(dec_digits);
@@ -408,12 +436,21 @@ layui.use('form', function(){
 		        var b = obj.elem.checked ;
 		  update_form();
 		  });
+	  form.on('select(canw)', function(obj){
+		  canw =$("#canw").val() ;
+		  update_form();
+		  });
 	  form.on("select(vt)",function(obj){
 		  //      var b = obj.elem.checked ;
 		  update_form();
 		  });
 	  update_form();
 	  form.render();
+	  
+	  if(!tag_id)
+		  $("#name").focus() ;
+	  else
+	  	$("#title").focus() ;
 });
 	
 function win_close()
@@ -578,10 +615,19 @@ function do_submit(cb)
 	let bloc_autosave = $("#local_autosave").prop("checked") ;
 	let max_val_str = $("#max_val_str").val() ;
 	let min_val_str = $("#min_val_str").val() ;
+	let mid_w_js = $("#mid_w_js").val() ;
 	//let alert_low = $("#alert_low").val();
 	//let alert_high = $("#alert_high").val();
 	
 	let canw = get_input_val("canw","");
+	if('true'==canw && bmid)
+	{
+		if(trim(mid_w_js)=='')
+		{
+			cb(false,"<wbt:g>pls,input,exp_wjs</wbt:g>")
+			return ;
+		}
+	}
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
 		vt:get_input_val("vt",""),
@@ -590,7 +636,7 @@ function do_submit(cb)
 		canw:canw,
 		trans:JSON.stringify(trans_dd),
 		b_val_filter:b_val_filter,
-		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,
+		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,mid_w_js:mid_w_js,
 		min_val_str:min_val_str,max_val_str:max_val_str,alerts:JSON.stringify(alerts_dd),
 		});
 	//var dbname=document.getElementById('db_name').value;
@@ -698,6 +744,28 @@ function on_js_edit()
 				}
 			]);
 }
+
+function on_wjs_edit()
+{
+	let txt = $("#mid_w_js").val() ;
+	dlg.open("./cxt_script.jsp?dlg=true&opener_txt_id=mid_w_js&path="+node_path,
+			{title:"<wbt:g>edit_mid_tag_js</wbt:g>",w:'600px',h:'400px',},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					let jstxt = dlgw.get_edited_js();
+					
+					$("#mid_w_js").val(jstxt) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 
 </script>
 </html>

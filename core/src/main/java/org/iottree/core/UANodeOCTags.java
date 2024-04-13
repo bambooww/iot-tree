@@ -223,7 +223,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	}
 	
 	public UATag addOrUpdateTagInMem(String tagid, boolean bmid, String name, String title, String desc, String addr,
-			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans) throws Exception
+			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans,String mid_w_js) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null;
@@ -292,7 +292,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d == null)
 		{
 			if (bmid)
-				d = new UATag(name, title, desc, addr, vt, dec_digits);
+				d = new UATag(name, title, desc, addr, vt, dec_digits,mid_w_js);
 			else
 				d = new UATag(name, title, desc, addr, vt, dec_digits, canw, srate);
 			d.id = this.getNextIdByRoot();
@@ -302,7 +302,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		else
 		{
 			if (bmid)
-				d.setTagMid(name, title, desc, addr, vt, dec_digits);
+				d.setTagMid(name, title, desc, addr, vt, dec_digits,canw,mid_w_js);
 			else
 				d.setTagNor(name, title, desc, addr, vt, dec_digits, canw, srate);
 		}
@@ -313,10 +313,10 @@ public abstract class UANodeOCTags extends UANodeOC
 	}
 
 	public UATag addOrUpdateTag(String tagid, boolean bmid, String name, String title, String desc, String addr,
-			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans) throws Exception
+			UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans,String mid_w_js) throws Exception
 	{
 		UATag tag = addOrUpdateTagInMem(tagid, bmid, name, title, desc, addr,
-				vt, dec_digits, canw_str, srate, trans) ;
+				vt, dec_digits, canw_str, srate, trans,mid_w_js) ;
 		save();
 		return tag;
 	}
@@ -403,8 +403,13 @@ public abstract class UANodeOCTags extends UANodeOC
 		else
 			return new NameNum(name.substring(0,k), Integer.parseInt(name.substring(k)));
 	}
-
+	
 	public UATag addTagByCopy(UATag cp_tag) throws Exception
+	{
+		return addTagByCopy(cp_tag,false,false) ; 
+	}
+
+	public UATag addTagByCopy(UATag cp_tag,boolean b_chg_title,boolean b_chg_addr) throws Exception
 	{
 		String name = cp_tag.getName();
 		NameNum n_name = getNameEndNum(name);
@@ -437,12 +442,23 @@ public abstract class UANodeOCTags extends UANodeOC
 			}
 		} while (oldtag != null);
 
-		n_title.num++ ;
-		//n_addr.num += step ;
+		
+		
 		// may has bug
 		//UATag newtag = new UATag(cp_tag, name,n_title.toString(name),n_addr.toString(""));
-		
-		UATag newtag = new UATag(cp_tag, name,n_title.toString(name),old_addr);
+		String newtt = cp_tag.getTitle() ;
+		if(b_chg_title)
+		{
+			n_title.num++ ;
+			newtt = n_title.toString(name);
+		}
+		String new_addr = old_addr ;
+		if(b_chg_addr)
+		{
+			n_addr.num += step ;
+			new_addr = n_addr.toString("") ;
+		}
+		UATag newtag = new UATag(cp_tag, name,newtt,new_addr);
 		newtag.id = this.getNextIdByRoot();
 		tags.add(newtag);
 		constructNodeTree();
@@ -470,7 +486,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	}
 
 	UATag addOrUpdateTagSys(String tagid, boolean bmid, String name, String title, String desc, String addr,
-			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, boolean bsave) throws Exception
+			UAVal.ValTP vt, int dec_digits, boolean canw, long srate, boolean bsave,String mid_w_js) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		UATag d = null;
@@ -495,7 +511,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		if (d == null)
 		{
 			if (bmid)
-				d = new UATag(name, title, desc, addr, vt, dec_digits);
+				d = new UATag(name, title, desc, addr, vt, dec_digits,mid_w_js);
 			else
 			{
 				d = new UATag();
@@ -511,7 +527,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		else
 		{
 			if (bmid)
-				d.setTagMid(name, title, desc, addr, vt, dec_digits);
+				d.setTagMid(name, title, desc, addr, vt, dec_digits,canw,mid_w_js);
 			else
 				d.setTagSys(name, title, desc, addr, vt, dec_digits, canw, srate);
 		}

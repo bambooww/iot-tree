@@ -30,6 +30,12 @@
 	    <artifactId>iottree-ext-opcda</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
+	
+	<dependency>
+	    <groupId>org.iottree.ext</groupId>
+	    <artifactId>iottree-ext-basic</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
   
 
     <dependency>
@@ -192,6 +198,7 @@
 			                            <include>log/wrapper.log</include>
 			                            <include>log/tail.exe</include>
 			                            <include>log/tt.bat</include>
+			                            <include>mon/*.*</include>
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
 			                            <include>tomcat/temp/readme.txt</include>
@@ -286,7 +293,7 @@
 				                <delete dir="../_output/web/ROOT/target/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/.settings/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
-			                    
+			                    <!-- 
 			                    <echo message="package zip file" />
 			                    
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
@@ -317,7 +324,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                   
+			                    -->
                 				
 							</tasks>
 						</configuration>

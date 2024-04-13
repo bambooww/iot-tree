@@ -18,7 +18,7 @@ public class Debug extends JSObMap
 	}
 	
 	@JsDef
-	public void print(String txt)
+	public void print(Object txt)
 	{
 		if(pw!=null)
 		{
@@ -29,7 +29,7 @@ public class Debug extends JSObMap
 	}
 	
 	@JsDef
-	public void println(String txt)
+	public void println(Object txt)
 	{
 		if(pw!=null)
 		{

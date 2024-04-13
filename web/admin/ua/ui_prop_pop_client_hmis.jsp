@@ -121,16 +121,22 @@ position: absolute;
 	top:1px;
 	cursor: pointer;
 }
+.btop
+{
+	font-weight: bold;
+	font-size:16px;
+	background-color: #b2b2b2;
+}
 </style>
 </head>
 <body>
 <div class="layui-panel">
-<wbt:g>be_selected</wbt:g>
-<div id="hmi_list" style="height:60%;overflow: auto;"> 
+<div class="btop"><wbt:g>selected</wbt:g></div>
+<div id="hmi_list" style="height:50%;overflow: auto;border:0px solid;"> 
 </div>
 </div>
-<wbt:g>un_selected</wbt:g>
-<div id="hmi_list_unsel" style="height:38%;overflow: auto;"> 
+<div class="btop"><wbt:g>un_selected</wbt:g></div>
+<div id="hmi_list_unsel" style="height:38%;overflow: auto;border:0px solid;"> 
 </div>
 
 </body>
@@ -181,7 +187,7 @@ function update_ui()
 		tmps += `<div class="hmi_item" id="hi_\${h.path}" nodep="\${h.path}">
 		<div class="topt">\${h.path} (\${shmi.title})</div>
 		<div class="inputt"><wbt:g>list,title</wbt:g>:<input type="text" id="inp_\${h.path}" value="\${h.title}"/></div>
-		<div class="icon" ><i class="fa" style="color:\${color};" path="\${h.path}" sel_color="#76d170" sel_icon="\${icon}" onclick="sel_icon_color(this)">&#x\${icon}</i></div>
+		<div class="icon" ><i class="fa" style="color:\${color};" path="\${h.path}" sel_color="\${color}" sel_icon="\${icon}" onclick="sel_icon_color(this)">&#x\${icon}</i></div>
 		
 		<span class="u" style="\${up_hidden}" onclick="up_down('\${h.path}',true)"><i class="fa fa-arrow-up"></i></span>
 		<span class="d" style="\${down_hidden}" onclick="up_down('\${h.path}',false)"><i class="fa fa-arrow-down"></i></span>

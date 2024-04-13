@@ -31,11 +31,13 @@
 	String prjid = "" ;
 	String prjname = "" ;
 	String hmiid = uahmi.getId() ;
+	String path_in_prj = null ;
 	if(topn instanceof UAPrj)
 	{
 		prj = (UAPrj)topn ;
 		prjid = prj.getId() ;
 		prjname = prj.getName() ;
+		path_in_prj = uahmi.getNodeCxtPathInPrj() ;
 	}
 	
 	String res_ref_id="" ;
@@ -410,10 +412,9 @@ margin-top:5px;
 {
 	position:relative;
 	width:90%;
-	left:5%;
+	left:3%;
 	height:90px;
-	//border:2px solid;
-	border-color:#17c6a3;
+	
 	margin-top: 20px;
 	text-align: center;
 }
@@ -429,6 +430,12 @@ margin-top:5px;
 	height:50px;
 	
 	font-size:50px;
+}
+
+.nav_cur
+{
+	border:2px solid;
+	border-color:#17c6a3;
 }
 
 .data_list_c::-webkit-scrollbar {
@@ -547,13 +554,19 @@ dlg.dlg_top=true;
 
 <%
 LinkedHashMap<String,UAPrj.HmiNavItem> path2tt = prj.getClientHMIPath2NavList() ;
-if(path2tt!=null)
+if(path2tt!=null && path2tt.size()>0)
 {
 %>
 <div id="nav_list" style="" class="navwin">
 <%
 	for(Map.Entry<String,UAPrj.HmiNavItem> p2t:path2tt.entrySet())
 	{
+		boolean bcur = false ;
+		String pp = p2t.getKey() ;
+		bcur = pp.equals(path_in_prj) ;
+		String nav_cur = "" ;
+		if(bcur)
+			nav_cur = "nav_cur" ;
 		UAPrj.HmiNavItem navi = p2t.getValue() ;
 		String icon = navi.icon ;
 		String tt = navi.title ;
@@ -562,7 +575,7 @@ if(path2tt!=null)
 			icon = "f1d8" ;
 		if(Convert.isNullOrEmpty(color))
 			color = "#76d170" ;
-%><div class="nav_item" onclick="nav_hmi('<%=p2t.getKey()%>')">
+%><div class="nav_item <%=nav_cur %>" onclick="nav_hmi('<%=pp%>')">
 		<span class="icon"><i class="fa" style="color:<%=color%>;">&#x<%=icon %></i></span>
 		<div class="tt"><%=tt %></div>
 </div>

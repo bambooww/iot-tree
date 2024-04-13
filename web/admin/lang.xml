@@ -270,11 +270,12 @@
   <dd_node id="1" name="selected" name_cn="选中的" name_en="Selected"/>
   <dd_node id="1" name="deselect" name_cn="取消选择" name_en="Deselect"/>
   <dd_node id="1" name="be_selected" name_cn="已被选择" name_en="is Selected"/>
-  <dd_node id="1" name="un_selected" name_cn="未被选择" name_en="Selected"/>
+  <dd_node id="1" name="un_selected" name_cn="未被选择" name_en="Not Selected"/>
   <dd_node id="1" name="type" name_cn="类型" name_en="Type"/>
   <dd_node id="1" name="filter" name_cn="过滤器" name_en="Filter"/>
   <dd_node id="1" name="view" name_cn="查看" name_en="View"/>
   <dd_node id="1" name="rename" name_cn="重命名" name_en="Rename"/> 
+  <dd_node id="1" name="dbclk" name_cn="双击" name_en="Double Click"/>
   
   <dd_node id="1" name="color" name_cn="颜色" name_en="Color"/>
   <dd_node id="1" name="icon" name_cn="图标" name_en="Icon"/>  
@@ -289,5 +290,6 @@
   <dd_node id="1" name="start/stop" name_cn="启动/停止" name_en="Start/Stop"/>
   <dd_node id="1" name="cat" name_cn="分类" name_en="Category"/>
     
-  
+  <dd_node id="1" name="up_router" name_cn="上位路由" name_en="Upper Router"/>
+ 
 </dd_class>

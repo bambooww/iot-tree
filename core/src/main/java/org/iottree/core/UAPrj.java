@@ -1532,6 +1532,34 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return sw.toString();
 	}
 	
+	@HostAccess.Export
+	public String JS_get_def_json() throws IOException
+	{
+		StringWriter sw = new StringWriter();
+		this.DEF_renderJson(sw,false,null) ;
+		return sw.toString();
+	}
+	
+	@HostAccess.Export
+	public String JS_get_def_json_flat() throws IOException
+	{
+		StringWriter sw = new StringWriter();
+		this.CXT_renderDefJsonFlat(sw,false) ;
+		return sw.toString();
+	}
+	
+	@HostAccess.Export
+	public String JS_get_rt_json_flat() throws IOException
+	{
+		JSONArray jarr = new JSONArray() ;
+		for(UATag tag : this.listTagsNorAll())
+		{
+			JSONObject rt = tag.RT_toFlatJson() ;
+			jarr.put(rt) ;
+		}
+		return jarr.toString() ;
+	}
+	
 	void RT_onTagValSet(UATag tag)
 	{
 		RecManager.getInstance(this).RT_fireUATagChanged(tag);

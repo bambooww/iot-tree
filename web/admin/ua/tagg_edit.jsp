@@ -81,8 +81,14 @@ dlg.resize_to(600,400);
 <script type="text/javascript">
 dlg.set_dlg_title("<wbt:g><%=tt%></wbt:g>") ;
 
+var name = "<%=name%>" ;
+
 layui.use('form', function(){
 	  var form = layui.form;
+	  if(!name)
+	  	$("#name").focus() ;
+	  else
+		  $("#title").focus() ;
 });
 	
 function win_close()

@@ -1,5 +1,16 @@
 # Versions
 
+### version 1.5.2
+
+
+
+
+
+### version 2.0.0 (Plan)
+
+
+
+
 ### version 1.5.1
 
 
@@ -8,12 +19,6 @@ Fixed a bug in node localization caused by internal tag duplication in different
 Adjusting alarm type multilingual XML support, improving multilingual support for some pages
 
 New Omron PLC Hostlink FINS Serial device driver added
-
-
-
-### version 2.0.0 (Plan)
-
-
 
 
 

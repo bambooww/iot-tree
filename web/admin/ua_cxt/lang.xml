@@ -14,6 +14,9 @@
   
   <dd_node id="1" name="edit_mid_tag_js" name_cn="编辑中间标签JS表达式" name_en="Edit Middle Tag JS Express" />
   
+  <dd_node id="1" name="exp_wjs" name_cn="写入时JS" name_en="On Write JS" />
+  <dd_node id="1" name="edit_mid_tag_wjs" name_cn="编辑中间标签写入时JS表达式" name_en="Edit Middle Tag On Write JS Express" />
+  
   
   <dd_node id="1" name="ref_val" name_cn="参考值" name_en="Reference Value" />
   <dd_node id="1" name="trigger_err" name_cn="触发误差" name_en="Trigger Error" />
