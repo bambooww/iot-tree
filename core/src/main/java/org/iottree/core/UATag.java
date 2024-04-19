@@ -1872,7 +1872,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		JSONObject jo = getExtAttrJO() ;
 		if(jo!=null)
 		{
-			w.write(",\"ext\":" + jo.toString() );
+			//w.write(",\"ext\":" + jo.toString() );
+			UTIL_renderExtPropsByJO(w,jo,false) ; 
 		}
 		
 		w.write("}");
@@ -1923,6 +1924,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			jo.putOpt("err", str_err) ;
 		}
+		
+		JSONObject extjo = this.getExtAttrJO() ;
+		if(extjo!=null)
+		{
+			for(String tmpk:extjo.keySet())
+			{
+				Object tmpv = extjo.get(tmpk) ;
+				jo.put("ext_"+tmpk, tmpv) ;
+			}
+		}
+		
 		return jo ;
 	}
 	

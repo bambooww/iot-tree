@@ -69,7 +69,8 @@ public abstract class UANodeFilter
 		JSONObject jo = n.getExtAttrJO() ;
 		if(jo!=null)
 		{
-			w.write(",\"ext\":" + jo.toString() );
+			//w.write(",\"ext\":" + jo.toString() );
+			UANode.UTIL_renderExtPropsByJO(w,jo,false) ;
 		}
 		renderJsonTags(w,n, tags) ;
 		w.write("}");

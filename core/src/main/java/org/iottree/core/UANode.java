@@ -1,6 +1,8 @@
 package org.iottree.core;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -755,6 +757,21 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 				ss.add(new JsProp(n.getName(),n,null,true,n.getTitle(),n.getDesc()));//
 		}
 		return ss ;
+	}
+
+	
+	protected static void UTIL_renderExtPropsByJO(Writer w,JSONObject ext_jo,boolean bfirst) throws IOException
+	{
+		for(String n : JSONObject.getNames(ext_jo))
+		{
+			if(bfirst) bfirst= false;
+			else w.write(',');
+			
+			Object ob = ext_jo.get(n) ;
+			w.write("\"ext_"+n+"\":");
+			w.write(JSONObject.valueToString(ob));
+		}
+		
 	}
 	
 }

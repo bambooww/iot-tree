@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+	<dd_node id="1" name="bs_s" name_cn="单选" name_en="Single Selection" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="bs_m" name_cn="多选" name_en="Multi Selection" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="bs_i_b" name_cn="输入Bool" name_en="Input Bool" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="bs_i_i" name_cn="输入整数" name_en="Input Integer" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="bs_i_f" name_cn="输入浮点数" name_en="Input Float" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="bs_i_s" name_cn="输入字符串" name_en="Input String" desc_cn="" desc_en=""/>
+	
+</dd_class>

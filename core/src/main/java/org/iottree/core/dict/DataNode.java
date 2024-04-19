@@ -14,6 +14,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 
 /**
@@ -409,5 +410,13 @@ public class DataNode extends JSObMap implements Comparable<DataNode>
 			}
 		}
 		return ss ;
+	}
+	
+	public JSONObject toSimpleJO()
+	{
+		JSONObject jo = new JSONObject();
+		jo.put("n", this.name) ;
+		jo.put("t", this.getTitle()) ;
+		return jo ;
 	}
 }

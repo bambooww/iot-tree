@@ -32,10 +32,15 @@
   <dd_node id="1" name="comp" name_cn="组件" name_en="Component" />
   <dd_node id="1" name="resources" name_cn="资源" name_en="Resources" />
   <dd_node id="1" name="resource" name_cn="资源" name_en="Resource" />
+  <dd_node id="1" name="interval" name_cn="时间间隔" name_en="Interval" />
+  <dd_node id="1" name="out" name_cn="输出" name_en="Out" />
+  <dd_node id="1" name="style" name_cn="方式" name_en="Style" />
+  <dd_node id="1" name="will_impl_later" name_cn="还未实现，敬请期待!" name_en="It will be implemented in the future!" />
   
   <dd_node id="1" name="close" name_cn="关闭" name_en="Close" />
   <dd_node id="1" name="help" name_cn="帮助" name_en="Help" />
   <dd_node id="1" name="yes" name_cn="确定" name_en="Yes" />
+  <dd_node id="1" name="class" name_cn="类" name_en="Class" />
   
   <dd_node id="1" name="del_confirm" name_cn="删除确认" name_en="Delete Confirm" />
   <dd_node id="1" name="del_sure" name_cn="确认要删除此项么?" name_en="make sure to delete it?" />
@@ -257,6 +262,10 @@
 	<dd_node id="1" name="tags" name_cn="标签" name_en="Tags"/>
 	<dd_node id="1" name="tag" name_cn="标签" name_en="Tag"/>
 <dd_node id="1" name="input" name_cn="输入" name_en="Input"/>
+<dd_node id="1" name="cannot_empty" name_cn="不能为空" name_en="Cannot Be Empty"/>
+
+<dd_node id="1" name="read" name_cn="读取" name_en="Read"/>
+<dd_node id="1" name="write" name_cn="写入" name_en="Write"/>
   
   <dd_node id="1" name="driver" name_cn="驱动" name_en="Driver"/>   
   <dd_node id="1" name="description" name_cn="描述" name_en="Description"/>   
@@ -291,5 +300,16 @@
   <dd_node id="1" name="cat" name_cn="分类" name_en="Category"/>
     
   <dd_node id="1" name="up_router" name_cn="上位路由" name_en="Upper Router"/>
- 
+  <dd_node id="1" name="router" name_cn="路由" name_en="Router"/>
+  <dd_node id="1" name="collation" name_cn="整理" name_en="Collation"/>
+  <dd_node id="1" name="collator" name_cn="整理器" name_en="Collator"/>
+  
+  <dd_node id="1" name="path" name_cn="路径" name_en="Path"/>
+  <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer"/>
+  <dd_node id="1" name="adapter" name_cn="适配器" name_en="Adapter"/>
+  <dd_node id="1" name="outer" name_cn="外部" name_en="Outer"/>
+  <dd_node id="1" name="inner" name_cn="内部" name_en="Inner"/>
+  
+  <dd_node id="1" name="topic" name_cn="主题" name_en="Topic"/>
+  
 </dd_class>

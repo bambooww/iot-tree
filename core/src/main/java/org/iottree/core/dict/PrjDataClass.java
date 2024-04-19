@@ -16,6 +16,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
+import org.iottree.core.dict.DataClass.BindStyle;
 import org.iottree.core.util.Convert;
 
 public class PrjDataClass extends JSObMap// implements IJSOb
@@ -133,8 +134,6 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 			dc.writeToXml(osw);
 			osw.flush();
 		}
-		
-		
 	}
 	
 	
@@ -152,12 +151,13 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 		return true ;
 	}
 	
-	public DataClass addDataClass(String name,String title,boolean benable,String bind_for,boolean bind_multi,HashMap<String,String> props) throws IOException
+	public DataClass addDataClass(String name,String title,boolean benable,String bind_for,BindStyle bind_s,HashMap<String,String> props) throws IOException
 	{
 		DataClass dc = DataClass.createNewClass(name, title) ;
 		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
-		dc.setBindMulti(bind_multi);
+		//dc.setBindMulti(bind_multi);
+		dc.setBindStyle(bind_s);
 		dc.setExtAttrs(props);
 		saveDataClass(dc) ;
 		id2dc.put(dc.getClassId(), dc) ;
@@ -165,7 +165,7 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 	}
 
 	public boolean updateDataClass(String classid,String name,String title,boolean benable,
-			String bind_for,boolean bind_multi,HashMap<String,String> props) throws IOException
+			String bind_for,BindStyle bind_s,HashMap<String,String> props) throws IOException
 	{
 		DataClass dc = this.getDataClassById(classid) ;
 		if(dc==null)
@@ -174,7 +174,8 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 		dc.title = title ;
 		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
-		dc.setBindMulti(bind_multi);
+		//dc.setBindMulti(bind_multi);
+		dc.setBindStyle(bind_s);
 		dc.setExtAttrs(props);
 		saveDataClass(dc) ;
 		return true;

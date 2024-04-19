@@ -30,32 +30,46 @@ PrjDataClass pdc = DictManager.getInstance().getPrjDataClassByPrjId(prjid) ;
 String jstr = node.getExtAttrStr() ;
 if(jstr=="")
 	jstr = null ;
+
+int dc_num = 0 ;
+
+for(DataClass dc:pdc.getDataClassAll())
+{
+	if(!dc.isBindFor(node.getNodeTp()))
+		continue ;
+	if(!dc.isClassEnable())
+		continue ;
+	dc_num ++ ;
+}
+int height = dc_num*100 ;
+if(height<500)
+	height = 500 ;
 %><!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title></title>
 <jsp:include page="../head.jsp"></jsp:include>
-    <style>
-        .layui-form-label{
-            width: 120px;
-        }
-        .layui-input-block {
-            margin-left: 10px;
-            min-height: 36px;
-            width:95%;
-        }
-        .layui-table-view
-        {
-        	margin-top: 3px;
-        }
-    </style>
+<style>
+    .layui-form-label{
+        width: 120px;
+    }
+    .layui-input-block {
+        margin-left: 10px;
+        min-height: 36px;
+        width:95%;
+    }
+    .layui-table-view
+    {
+    	margin-top: 3px;
+    }
+</style>
 </head>
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(600,<%=height%>);
 </script>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" action="" onsubmit="return false;">
 <blockquote class="layui-elem-quote ">
 <div>Node Path:[<%=path %>] <%=node.getTitle() %></div>
 </blockquote>
@@ -67,31 +81,67 @@ for(DataClass dc:pdc.getDataClassAll())
 		continue ;
 	if(!dc.isClassEnable())
 		continue ;
+	String c_n = dc.getClassName() ;
 	dc_names+=",'"+dc.getClassName()+"'" ;
-	boolean bmulti = dc.isBindMulti() ;
-	String tp = "radio";
-	if(bmulti)
-		tp = "checkbox" ;
+	DataClass.BindStyle bs = dc.getBindStyle() ;
+	boolean bmulti =bs==DataClass.BindStyle.m; 
+	boolean binput = bs.isInput() ;
+%>
+		<div class="layui-form-item" id="dc_<%=c_n %>" dc_multi="<%=bmulti%>" dc_input="<%=binput%>">
+		<label class="layui-form-label"><%=dc.getClassTitle() %></label>
+	  	<div class="layui-input-inline"  style="width:350px;">
+<%
+	if(bs.isInput())
+	{
+		switch(bs)
+		{
+		case i_b:
+%>
+	<select id="dc_inp_<%=c_n%>" dc_bs="b" lay-filter="dc_inp_<%=c_n%>" >
+			<option value="" selected="selected"> -- </option>
+			<option value="true">True</option>
+			<option value="false">False</option>
+	</select>
+<%
+			break ;
+		case i_i:
+%><input type="number" oninput="this.value = this.value.replace(/\-[^0-9]/g, '');"  dc_bs="i" id="dc_inp_<%=c_n%>"  name="dn_<%=c_n%>" class="layui-input"/><%
+			break ;
+		case i_f:
+%><input type="number"  id="dc_inp_<%=c_n%>"  name="dn_<%=c_n%>" dc_bs="f" class="layui-input"/><%
+			break ;
+		case i_s:
+		default:
+%><input type="text"  id="dc_inp_<%=c_n%>"  name="dn_<%=c_n%>" dc_bs="s" class="layui-input"/><%
+			break ;
+		}
+	}
+	else
+	{
+		
+		String tp = "radio";
+		if(bmulti)
+			tp = "checkbox" ;
 	
 %>
-<div style="background-color: grey;top:0px;margin:0"><%=dc.getClassTitle() %></div>
-<div class="layui-form-item" id="dc_<%=dc.getClassName() %>" dc_multi="<%=bmulti %>" >
-  <div class="layui-input-block"  >
+
 <%
 	for(DataNode dn:dc.getRootNodes())
 	{
 %>
 <span style="border:1;white-space: nowrap;">
-<input dc_name="<%=dc.getClassName() %>" dn_name="<%=dn.getName() %>"  lay-skin="primary" type="<%=tp %>"  id="dn_<%=dc.getClassName() %>_<%=dn.getName() %>" 
-	name="dn_<%=dc.getClassName() %>" title="<%=dn.getTitle() %>"  value="<%=dn.getName()%>">
+<input dc_name="<%=c_n %>" dn_name="<%=dn.getName() %>"  lay-skin="primary" type="<%=tp %>"  id="dn_<%=dc.getClassName() %>_<%=dn.getName() %>" 
+	name="dn_<%=c_n%>"  title="<%=dn.getTitle() %>"  value="<%=dn.getName()%>">
 </span>
 <%
 	}
-%> <button onclick="clear_sel('<%=dc.getClassName() %>')">Clear</button>
-    </div>
-  </div>
+%> <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="clear_sel('<%=dc.getClassName() %>')" title="<wbt:g>clear</wbt:g>"><i class="fa fa-x"></i></button>
+    
 <%
-}
+	}
+%></div>
+  </div><%
+} //end of for
 
 if(dc_names.length()>0)
 {
@@ -110,25 +160,35 @@ var jstr = <%=jstr%> ;
 
 function set_val_in_dc(dc)
 {
-	var ob = $('#dc_'+dc);
-	var bmulti = ("true"==ob.attr("dc_multi")) ;
-	var v = null ;
+	let ob = $('#dc_'+dc);
+	let bmulti = ("true"==ob.attr("dc_multi")) ;
+	let binput =  ("true"==ob.attr("dc_input")) ;
+	let v = null ;
 	if(jstr!=null)
 		v = jstr[dc] ;
-	if(v==null||v=="")
+	if(v===null||v==="")
 		return ;
 
-	if(bmulti)
+	if(binput)
 	{
-		for(var tmpv of v)
-		{
-			$("#dn_"+dc+"_"+tmpv).prop("checked",true) ;
-		}
+		let inp = $("#dc_inp_"+dc) ;
+		inp.val(""+v) ;
 	}
 	else
 	{
-		$("#dn_"+dc+"_"+v).prop("checked",true) ;
+		if(bmulti)
+		{
+			for(var tmpv of v)
+			{
+				$("#dn_"+dc+"_"+tmpv).prop("checked",true) ;
+			}
+		}
+		else
+		{
+			$("#dn_"+dc+"_"+v).prop("checked",true) ;
+		}
 	}
+	
 }
 
 function set_vals()
@@ -142,12 +202,13 @@ function set_vals()
 
 
 var dc_names=[<%=dc_names%>];
+
 layui.use('form', function(){
 	  form = layui.form;
 	  
-
 	  set_vals();
 	  form.render();
+	  form.render("select");
 });
 
 
@@ -168,25 +229,51 @@ function clear_sel(dc)
 
 function get_val_in_dc(dc)
 {
-	var ob = $('#dc_'+dc);
-	var bmulti = ("true"==ob.attr("dc_multi")) ;
-	var ret = null ;
-	if(bmulti)
+	let ob = $('#dc_'+dc);
+	let bmulti = ("true"==ob.attr("dc_multi")) ;
+	let binput =  ("true"==ob.attr("dc_input")) ;
+	let ret = null ;
+	if(binput)
 	{
-		ret=[] ;
-		ob.find("input[type=checkbox]:checked").each(function(){
-			var dnname = $(this).attr("dn_name") ;
-			var v = $(this).val() ;
-			ret.push(v) ;
-		}) ;
+		let dcob = $("#dc_inp_"+dc) ;
+		ret = dcob.val() ;
+		let dcbs = dcob.attr("dc_bs") ;
+		console.log(ret,dcbs) ;
+		switch(dcbs)
+		{
+		case "b":
+			if(ret=='true') ret = true ;
+			else if(ret=='false') ret=false;
+			else ret = null ;
+			break ;
+		case "i":
+			ret = parseInt(ret) ;
+			break ;
+		case "f":
+			ret = parseFloat(ret) ;
+			break ;
+		}
 	}
 	else
 	{
-		ob.find("input[type=radio]:checked").each(function(){
-			var dnname = $(this).attr("dn_name") ;
-			ret = $(this).val() ;
-		}) ;
+		if(bmulti)
+		{
+			ret=[] ;
+			ob.find("input[type=checkbox]:checked").each(function(){
+				var dnname = $(this).attr("dn_name") ;
+				var v = $(this).val() ;
+				ret.push(v) ;
+			}) ;
+		}
+		else
+		{
+			ob.find("input[type=radio]:checked").each(function(){
+				var dnname = $(this).attr("dn_name") ;
+				ret = $(this).val() ;
+			}) ;
+		}
 	}
+	
 	return ret ;
 }
 
@@ -202,13 +289,11 @@ function do_submit(cb)
 		ret[dcn] = v ;
 		bgit=true;
 	}
-	
 	if(!bgit)
 		ret="" ;
 	else
 		ret = JSON.stringify(ret);
 	
-	//console.log(ret) ;
 	cb(true,{jstr:ret});
 	
 }

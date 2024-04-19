@@ -9,7 +9,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="w"%>
 <%
 if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return ;
@@ -28,7 +28,7 @@ boolean benable = true;
 String title = "" ;
 String desc = "" ;
 List<String> bind_for = null ;
-boolean bind_m = false;
+DataClass.BindStyle bind_sty = null;
 DataClass dc = null ;
 if(Convert.isNotNullEmpty(id))
 {
@@ -42,7 +42,7 @@ if(Convert.isNotNullEmpty(id))
 	name = dc.getClassName() ;
 	title = dc.getClassTitle() ;
 	bind_for = dc.getBindForList() ;
-	bind_m = dc.isBindMulti() ;
+	bind_sty = dc.getBindStyle() ;
 	benable = dc.isClassEnable() ;
 }
 String chked = "" ;
@@ -52,37 +52,35 @@ if(benable)
 <html>
 <head>
 <title>DataClass editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);
 </script>
 <style>
+.layui-form-label
+{
+	width:100px;
+}
 </style>
 </head>
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
-    <div class0="layui-input-block" class="layui-input-inline">
+    <label class="layui-form-label"><w:g>name</w:g></label>
+    <div class="layui-input-inline" style="width:100px;">
       <input type="text" name="name" id="name" value="<%=name %>" class="layui-input"/>
     </div>
-    <div class="layui-form-mid">Enable</div>
+    <div class="layui-form-mid"><w:g>title</w:g></div>
 	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
+	  </div>
+    <div class="layui-form-mid"><w:g>enable</w:g></div>
+	  <div class="layui-input-inline" style="width: 50px;">
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
- <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
-    <div class="layui-input-inline">
-      <input type="text" name="title" id="title" value="<%=title %>" class="layui-input"/>
-    </div>
-  </div>
    <div class="layui-form-item">
-    <label class="layui-form-label">Bind For</label>
+    <label class="layui-form-label"><w:g>bind_for</w:g></label>
     <div class="layui-input-inline">
     <span style="border:1;white-space: nowrap;">
 <%
@@ -109,26 +107,27 @@ dlg.resize_to(600,400);
   </div>
   
      <div class="layui-form-item">
-    <label class="layui-form-label">Bind Style</label>
-    <div class="layui-input-inline">
-        <span style="border:1;white-space: nowrap;">
+    <label class="layui-form-label"><w:g>bind_sty</w:g></label>
+    <div class="layui-input-inline" style="white-space: nowrap;">
+       
 <%
-if(bind_m)
+int cc = 0 ;
+for(DataClass.BindStyle bs:DataClass.BindStyle.values())
 {
+	String bn = bs.name() ;
+	String ck = (bind_sty==bs)?"checked":"";
+	
 %>
-	<input type="radio"  id="bind_style_s" name="bind_style" title="Single"  value="single" />
-	<input type="radio"  id="bind_style_m" name="bind_style" title="MultiSelect"  value="multi"  checked="checked"/>
+	<input type="radio"  id="bind_style_<%=bn %>" name="bind_style" title="<%=bs.getTitle() %>"  value="<%=bn %>"  <%=ck %>/>
 <%
-}
-else
-{
-%>
-	<input type="radio"  id="bind_style_s" name="bind_style" title="Single"  value="single"  checked="checked"/>
-	<input type="radio"  id="bind_style_m" name="bind_style" title="MultiSelect"  value="multi" />
-<%
+	if(cc==2)
+	{
+%><br/><%
+	}
+	cc++ ;
 }
 %>
-		</span>
+	
     </div>
   </div>
 

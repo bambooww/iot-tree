@@ -514,7 +514,7 @@ function open_doc()
 				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
 				  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
-				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>up_router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
+				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
 		</div>
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
@@ -2275,7 +2275,7 @@ function clk_ui_mgr()
 function clk_router_mgr()
 {
 	event.stopPropagation();
-	add_tab("___router","<i class='fa fa-sitemap fa-flip-vertical'></i><wbt:g>up_router</wbt:g>","./router/router_mgr.jsp?prjid="+prjid) ;
+	add_tab("___router","<i class='fa fa-sitemap fa-rotate-270'></i><wbt:g>data,router</wbt:g>","./router/router_mgr.jsp?prjid="+prjid) ;
 }
 
 function show_conn_msg(ob)

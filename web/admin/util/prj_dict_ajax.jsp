@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
 	java.io.*,
 	org.iottree.core.*,
-	org.iottree.core.task.*,
+	org.json.*,
 	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
@@ -47,14 +47,19 @@ switch(op)
 case "edit_dc":
 case "add_dc":
 	String bind_for = request.getParameter("bind_for") ;
-	boolean bind_m = "multi".equals(request.getParameter("bind_style")) ;
+	String bs = request.getParameter("bind_style");
+	DataClass.BindStyle bind_sty = null;
+	if(Convert.isNullOrEmpty(bs))
+		bind_sty = DataClass.BindStyle.s ;
+	else
+		bind_sty = DataClass.BindStyle.valueOf(bs) ;
 	boolean benable = !"false".equals(request.getParameter("enable")) ;
 	try
 	{
 		if(dc==null)
-			dc = pdc.addDataClass(name, title,benable,bind_for,bind_m,null) ;
+			dc = pdc.addDataClass(name, title,benable,bind_for,bind_sty,null) ;
 		else
-			pdc.updateDataClass(classid, name, title,benable,bind_for,bind_m,null) ;
+			pdc.updateDataClass(classid, name, title,benable,bind_for,bind_sty,null) ;
 		
 		out.print("succ") ;
 	}
@@ -91,6 +96,8 @@ case "edit_dn":
 	if(!Convert.checkReqEmpty(request, out,"name"))
 		return ;
 case "add_dn":
+	if(!Convert.checkReqEmpty(request, out, "name"))
+		return ;
 	try
 	{
 		DataNode newdn = pdc.addOrUpdateDataNode(classid,name,title) ; 
@@ -102,14 +109,20 @@ case "add_dn":
 		out.print(e.getMessage()) ;
 	}
 	break;
-case "act_del":
-	if(!Convert.checkReqEmpty(request, out, "taskid","actid"))
+case "del_dn":
+	if(!Convert.checkReqEmpty(request, out, "cid","name"))
 		return ;
-	if(true)
-		out.print("succ") ;
-	else
-		out.print("del error") ;	
-	break;
+	dc.delDataNode(name) ;
+	out.print("succ") ;
+	return;
+case "list_dns":
+	JSONArray jarr = new JSONArray() ;
+	for(DataNode tmpdn:dc.getRootNodes())
+	{
+		jarr.put(tmpdn.toSimpleJO()) ;
+	}
+	out.print(jarr.toString()) ;
+	return ;
 case "list_html":
 	for(DataNode tmpdn:dc.getRootNodes())
 	{

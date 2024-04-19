@@ -334,6 +334,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		CXT_calMidTagsValLocal();
 	}
 	
+	
 	public void DEF_renderJson(Writer w,boolean b_inc_sys,HashMap<String, Object> extpms) throws IOException
 	{
 		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"t\":\""+Convert.plainToJsStr(this.getTitle())+"\",\"tp\":\""+this.getNodeTp()+"\"");
@@ -355,7 +356,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		JSONObject jo = this.getExtAttrJO() ;
 		if(jo!=null)
 		{
-			w.write(",\"ext\":" + jo.toString() );
+			//w.write(",\"ext\":" + jo.toString() );
+			UTIL_renderExtPropsByJO(w,jo,false) ; 
 		}
 		
 		
@@ -498,7 +500,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		JSONObject jo = this.getExtAttrJO() ;
 		if(jo!=null)
 		{
-			w.write(",\"ext\":" + jo.toString() );
+			//w.write(",\"ext\":" + jo.toString() );
+			UTIL_renderExtPropsByJO(w,jo,false) ; 
 		}
 		
 		

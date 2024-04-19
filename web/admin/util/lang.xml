@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+  <dd_node id="1" name="dict" name_cn="字典" name_en="Dictionary" />
+  <dd_node id="1" name="bind_for" name_cn="绑定目标" name_en="Bind For" />
+  <dd_node id="1" name="bind_sty" name_cn="绑定方式" name_en="Bind Style" />
+  <dd_node id="1" name="input_by_user" name_cn="用户输入" name_en="Input By User" />
+  
+</dd_class>

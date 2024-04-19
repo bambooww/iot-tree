@@ -31,6 +31,7 @@ import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,6 +42,8 @@ import org.w3c.dom.Element;
  */
 public class DataClass extends JSObMap
 {
+	static Lan lan = Lan.getLangInPk(DataClass.class) ;
+	
 	public static final String ATTRN_EXT_ATTR_NAMES = "ext_attr_names" ;
 	public static final String ATTRN_EXT_ATTR_TITLES = "ext_attr_titles" ;
 	public static final String ATTRN_EXT_ATTR_DESCS = "ext_attr_descs" ;
@@ -48,6 +51,28 @@ public class DataClass extends JSObMap
 	public static final String[] BIND_FOR = {"all",UAPrj.NODE_TP,UACh.NODE_TP,UADev.NODE_TP,UATagG.NODE_TP,UATag.NODE_TP,UAHmi.NODE_TP} ;
 	public static final String[] BIND_FOR_TITLE = {"All","Project","Channel","Device","TagGroup","Tag","Hmi"} ;
 	
+	public static enum BindStyle
+	{
+		s, //single
+		m,
+		i_b,
+		i_i,
+		i_f,
+		i_s;
+		
+		
+		public String getTitle()
+		{
+			return lan.g("bs_"+this.name()) ;
+		}
+		
+		public boolean isInput()
+		{
+			return this.name().startsWith("i_") ;
+		}
+		
+		
+	}
 	/**
 	 * id
 	 */
@@ -328,17 +353,30 @@ public class DataClass extends JSObMap
 		return ss.contains(bf) ;
 	}
 	
-	public void setBindMulti(boolean b)
+//	public void setBindMulti(boolean b)
+//	{
+//		if(b)
+//			this.setExtAttr("bind_style", "m");
+//		else
+//			this.setExtAttr("bind_style", "s");
+//	}
+	
+	public void setBindStyle(BindStyle bs)
 	{
-		if(b)
-			this.setExtAttr("bind_style", "m");
-		else
-			this.setExtAttr("bind_style", "s");
+		this.setExtAttr("bind_style", bs.name());
 	}
 	
-	public boolean isBindMulti()
+//	public boolean isBindMulti()
+//	{
+//		return "m".equals() ;
+//	}
+	
+	public BindStyle getBindStyle()
 	{
-		return "m".equals(this.getExtAttrValue("bind_style")) ;
+		String n = this.getExtAttrValue("bind_style") ;
+		if(Convert.isNullOrEmpty(n))
+			return BindStyle.s ;
+		return BindStyle.valueOf(n) ;
 	}
 
 	public List<String[]> getExtNameTitles()

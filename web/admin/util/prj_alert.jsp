@@ -300,7 +300,7 @@ visibility: hidden;
  <div style="position: absolute;right:10px;top:11px;width:220px;border:0px solid;height:35px;">
  <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="show_alert_his('<%=prjid %>')"><wbt:g>history</wbt:g></button>
  <button id="btn_save" type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="save_h_inout_ids('<%=prjid %>')"><wbt:g>save</wbt:g></button>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_h('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="add_or_edit_h('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
  </div>
 </blockquote>
  <div id="handler_list" class="list">
@@ -312,7 +312,7 @@ visibility: hidden;
 <div class="right">
  <blockquote class="layui-elem-quote "><wbt:g>outputs</wbt:g>
  <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_edit_o('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue layui-btn-primary" onclick="add_or_edit_o('<%=prjid %>',null)">+<wbt:g>add</wbt:g> </button>
  </div>
 </blockquote>
  <div id="out_list" class="list">

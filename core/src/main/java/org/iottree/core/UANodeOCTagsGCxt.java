@@ -30,6 +30,8 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 	@data_obj(obj_c=UATagG.class)
 	List<UATagG> taggs = new ArrayList<>() ;
 	
+	
+	
 	public UANodeOCTagsGCxt()
 	{}
 	
@@ -348,4 +350,12 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 //		}
 //	}
 	
+	/**
+	 * when recved an data package which has multi tags in this GGxt will be updated
+	 * @param subpath2val
+	 */
+	public void RT_updateSubTags(HashMap<String,UAVal> subpath2val)
+	{
+	// TODO 	
+	}
 }
