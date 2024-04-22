@@ -25,7 +25,7 @@ public class ROAJdbcSQLServer extends ROAJdbc
 	}
 
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji, String recved_txt) throws Exception
+	protected void RT_onRecvedFromJoinIn(JoinIn ji, Object recved_txt) throws Exception
 	{
 		
 	}

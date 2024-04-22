@@ -9,8 +9,6 @@ public class JoinOut extends RouterJoin
 //	
 //	boolean bPull;
 	
-	
-	
 	public JoinOut(RouterNode node,String name) //,String title,String desc) //,boolean b_push,boolean b_pull)
 	{
 		super(node,name); //,title,desc);

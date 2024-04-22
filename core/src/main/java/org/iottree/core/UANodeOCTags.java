@@ -1,6 +1,7 @@
 package org.iottree.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.function.Consumer;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 
@@ -795,6 +797,16 @@ public abstract class UANodeOCTags extends UANodeOC
 				return t;
 		return null;
 	}
+	
+	public UATag getTagNorById(String id)
+	{
+		for (UATag t : tags)
+		{
+			if (id.contentEquals(t.getId()))
+				return t;
+		}
+		return null ;
+	}
 
 //	public UATag getTagByCxtPath(String cxtpath)
 //	{
@@ -894,7 +906,56 @@ public abstract class UANodeOCTags extends UANodeOC
 		
 		t.belongToNode = this ;
 	}
+	
+	public List<UATag> getTagsNorByIds(List<String> tagids)
+	{
+		if(tagids==null)
+			return null ;
+		ArrayList<UATag> rets = new ArrayList<>() ;
+		for(String tagid:tagids)
+		{
+			UATag tag = this.getTagNorById(tagid) ;
+			if(tag==null)
+				continue ;
+			rets.add(tag) ;
+		}
+		return rets ;
+	}
 
+	public int moveTagsTo(List<String> tagids,String tar_path) throws Exception
+	{
+		
+		UANode node = UAManager.getInstance().findNodeByPath(tar_path) ; 
+		if(node==null || !(node instanceof UANodeOCTags) || node==this)
+			return -1 ;
+		
+		List<UATag> tgs = getTagsNorByIds(tagids) ;
+		if(tgs==null||tgs.size()<=0)
+			return 0;
+		
+		UANodeOCTags tar = (UANodeOCTags)node ;
+		int mv_c = 0 ;
+		for(UATag tg:tgs)
+		{
+			String tn = tg.getName() ;
+			UATag t_oldt = tar.getTagByName(tn) ;
+			if(t_oldt!=null)
+				continue ;
+			if(this.tags.remove(tg))
+			{
+				tg.parentNode = tar ;
+				tar.tags.add(tg) ;
+				mv_c ++ ;
+			}
+		}
+		if(mv_c>0)
+		{
+			this.save();
+		}
+		return mv_c ;
+	}
+	
+	
 	/**
 	 * node will be init before start RT
 	 */
@@ -980,4 +1041,12 @@ public abstract class UANodeOCTags extends UANodeOC
 //		return rets;
 //	}
 	
+	private static Lan lan = Lan.getLangInPk(UANodeOCTags.class) ;
+	
+	public static final List<String> CONTAINER_NODE_TPS =  Arrays.asList(UAPrj.NODE_TP,UACh.NODE_TP,UADev.NODE_TP,UATagG.NODE_TP) ;
+	
+	public static final String getContainerNodeTitle(String tp)
+	{
+		return lan.g("ntp_"+tp) ;
+	}
 }

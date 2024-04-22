@@ -5,4 +5,10 @@
 	<dd_node id="1" name="R" name_cn="读" name_en="Read" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="RW" name_cn="读/写" name_en="Read/Write" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="ntp_prj" name_cn="项目根" name_en="Project" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ntp_ch" name_cn="通道" name_en="Channel" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ntp_dev" name_cn="设备" name_en="Device" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ntp_tagg" name_cn="标签组" name_en="TagGroup" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ntp_tag" name_cn="标签" name_en="Tag" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ntp_hmi" name_cn="HMI" name_en="HMI" desc_cn="" desc_en=""/>
 </dd_class>

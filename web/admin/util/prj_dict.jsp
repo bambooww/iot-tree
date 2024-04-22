@@ -181,14 +181,14 @@ for(DataClass dc:dcs)
 	  <span class="op">
 	  	<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_dc('<%=dc.getClassId()%>')" title="Edit Data Class"><i class="fa fa-pencil"></i></button>
 	      <button class="layui-btn layui-btn-xs layui-btn-normal"  onclick="import_dc_txt('<%=dc.getClassId()%>')" title="Import by Txt"><i class="fa-solid fa-file-import"></i></button>
-	      <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_dc('<%=dc.getClassId()%>')"" title="<w:g>del,data,class</w:g>"><i class="fa-regular fa-rectangle-xmark"></i></button>
+	      <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_dc('<%=dc.getClassId()%>')" title="<w:g>del,data,class</w:g>"><i class="fa-regular fa-rectangle-xmark"></i></button>
 	  </span>
 	</div> 
 <%
 }
 %>
 </div>
-<div class="right" id="dn_list">
+<div class="right" id="dn_list" style="">
 
 </div>
 
@@ -235,7 +235,7 @@ function show_dns(cid,dns,dc_ob)
 		return ;
 	}
 	let tmps=`<div class="dn_top"> \${dc_ob.attr("dc_title")} - \${dc_ob.attr("dc_name")} [\${dc_ob.attr("bs_title")}] 
-		 <button onclick="add_or_edit_dn('\${cid}','')" title="<w:g>add,data,node</w:g>" style="position:absolute;right:10px;"><i class="fa fa-plus " aria-hidden="true"></i><w:g>add,data,item</w:g></button>
+		 <button class="layui-btn layui-btn-xs " style="top:5px;right:5px;position: absolute;" onclick="add_or_edit_dn('\${cid}','')" title="<w:g>add,data,item</w:g>" style="position:absolute;right:10px;"><i class="fa fa-plus " aria-hidden="true"></i><w:g>add,data,item</w:g></button>
 		</div><div class="dn_list">` ;
 	for(let dn of dns)
 	{

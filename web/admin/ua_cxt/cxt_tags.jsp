@@ -424,6 +424,10 @@ function init_tr()
 								copy_tag(get_selected_tagids());
 							}});
 	        				
+							r.push({ content : '<wbt:g>move,selected,tag</wbt:g>', callback:()=>{
+									move_tag(get_selected_tagids());
+							}});
+	        				
 	        				r.push({ content : '<wbt:g>del,selected,tag</wbt:g>', callback:()=>{
 								
 								del_tag(get_selected_tagids());
@@ -452,9 +456,9 @@ function init_tr()
 
 init_right_menu();
 
-function copy_tag(tagid)
+function copy_tag(tagids)
 {
-	send_ajax('./tag_ajax.jsp',{op:"copy",path:cxt_path,tagids:tagid},function(bsucc,ret)
+	send_ajax('./tag_ajax.jsp',{op:"copy",path:cxt_path,tagids:tagids},function(bsucc,ret)
 			{
 				if(!bsucc || ret.indexOf('succ')<0)
 				{
@@ -463,6 +467,50 @@ function copy_tag(tagid)
 				}
 				dlg.msg("<wbt:g>copied,ok</wbt:g>") ;
 			},false);
+}
+
+function move_tag(tagids)
+{
+	dlg.open("../util/prj_tree_node_sel.jsp?prjid="+prjid,{title:"<wbt:g>select,move,tar</wbt:g>",w:'500px',h:'400px'},
+			['<wbt:g>ok</wbt:g>','<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.get_select((bsucc,ret)=>{
+						if(!bsucc)
+						{
+							dlg.msg(ret);
+							return ;
+						}
+						
+						//dlg.msg(ret) ;
+						
+						send_ajax('./tag_ajax.jsp',{op:"move",path:cxt_path,tagids:tagids,tar:ret},function(bsucc,ret)
+								{
+									if(!bsucc || ret.indexOf('succ=')<0)
+									{
+										dlg.msg(ret);
+										return ;
+									}
+									let mvn = parseInt(ret.substring(5)) ;
+									if(mvn<0)
+										dlg.msg("<wbt:g>move,failed</wbt:g>") ;
+									else if(mvn==0)
+										dlg.msg("<wbt:g>moved,tags</wbt:g>"+mvn) ;
+									else
+										dlg.msg("<wbt:g>moved,tags</wbt:g>"+mvn+"<wbt:g>ok</wbt:g>") ;
+									dlg.close();
+									if(mvn>0)
+										location.reload() ;
+								},false);
+					});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	
 }
 
 function paste_tag()

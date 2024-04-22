@@ -23,6 +23,7 @@
   <dd_node id="1" name="hmi_lib" name_cn="图库" name_en="HMI Library" />
   <dd_node id="1" name="simulator" name_cn="模拟器" name_en="Simulator" />
   <dd_node id="1" name="bind" name_cn="绑定" name_en="Bind" />
+  <dd_node id="1" name="binded" name_cn="已绑定" name_en="Binded" />
   <dd_node id="1" name="test" name_cn="测试" name_en="Test" />
   <dd_node id="1" name="sync" name_cn="同步" name_en="Sync" />
   <dd_node id="1" name="monitor" name_cn="监视" name_en="Monitor" />
@@ -65,7 +66,9 @@
   <dd_node id="1" name="g_dict" name_cn="全局字典" name_en="Global Dict" />
   <dd_node id="1" name="others" name_cn="其他" name_en="Others" />
   <dd_node id="1" name="log_ctrl" name_cn="日志控制" name_en="Log controller" />
-  
+  <dd_node id="1" name="debug" name_cn="调试" name_en="Debug" />
+  <dd_node id="1" name="clear" name_cn="清除" name_en="Clear" />
+  <dd_node id="1" name="search" name_cn="搜索" name_en="Search" />
   
   <dd_node id="1" name="channel" name_cn="通道" name_en="Channel" />
   <dd_node id="1" name="add_prj" name_cn="新增项目" name_en="Add Project" />
@@ -161,17 +164,21 @@
     <dd_node id="1" name="ui" name_cn="UI" name_en="UI" />
     <dd_node id="1" name="paste" name_cn="粘贴" name_en="Paste" />
     <dd_node id="1" name="copy" name_cn="复制" name_en="Copy" />
+    <dd_node id="1" name="move" name_cn="移动" name_en="Move" />
     <dd_node id="1" name="copied" name_cn="已复制" name_en="Copied" />
+    <dd_node id="1" name="moved" name_cn="已移动" name_en="Moved" />
     <dd_node id="1" name="to" name_cn="到" name_en="To" />
     <dd_node id="1" name="list" name_cn="列表" name_en="List" />
     <dd_node id="1" name="sors" name_cn="源" name_en="Sources" />
     <dd_node id="1" name="sor" name_cn="源" name_en="Source" />
+    <dd_node id="1" name="tar" name_cn="目标" name_en="Target" />
     <dd_node id="1" name="handlers" name_cn="处理程序" name_en="Handlers" />
     <dd_node id="1" name="handler" name_cn="处理程序" name_en="Handler" />
     <dd_node id="1" name="save" name_cn="保存" name_en="Save" />
     <dd_node id="1" name="history" name_cn="历史" name_en="History" />
     <dd_node id="1" name="outputs" name_cn="输出" name_en="Outputs" />
     <dd_node id="1" name="output" name_cn="输出" name_en="Output" />
+    <dd_node id="1" name="date" name_cn="日期" name_en="Date" />
     
     <dd_node id="1" name="apply" name_cn="应用" name_en="Apply" />
     <dd_node id="1" name="conns" name_cn="连接" name_en="Connections" />

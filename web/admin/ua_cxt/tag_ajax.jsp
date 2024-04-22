@@ -208,6 +208,26 @@ case "copy":
 	session.setAttribute("tags_copied", new String[]{path,tagidsstr} ) ;
 	out.print("succ") ;
 	break;
+case "move":
+	if(!Convert.checkReqEmpty(request, out, "tar"))
+		return ;
+	if(!(n instanceof UANodeOCTags))
+	{
+		out.print("not tags node") ;
+		break ;
+	}
+	UANodeOCTags sorn = (UANodeOCTags)n ;
+	String tar = request.getParameter("tar") ;
+	tagidsstr = (String)request.getParameter("tagids") ;
+	tagids = Convert.splitStrWith(tagidsstr, ",") ;
+	if(tagids==null||tagids.size()<=0)
+	{
+		out.print("no tag id input") ;
+		break ;
+	}
+	int moved_n = sorn.moveTagsTo(tagids, tar) ;
+	out.print("succ="+moved_n) ;
+	break;
 case "paste":
 	String tag_ids = request.getParameter("tag_ids") ;
 	String cp_path =null;

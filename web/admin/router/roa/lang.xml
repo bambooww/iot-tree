@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dd_class id="1" name="ua_lang"  name_jp=""  >
-
-  <dd_node id="1" name="producer" name_cn="生产者" name_en="Producer" />
-  <dd_node id="1" name="consumer" name_cn="消费者" name_en="Consumer" />
-  
-</dd_class>

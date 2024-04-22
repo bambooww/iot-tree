@@ -87,4 +87,47 @@ public abstract class RouterJoin implements ILang
 		//this.id = jo.getString("id") ;
 		return true ;
 	}
+	
+
+	private long rtLastDT = -1 ;
+	
+	private String rtLastErr = null ;
+	
+	private Exception rtLastExp = null ;
+	
+	private Object rtLastData = null ;
+	
+
+	void RT_setLastData(Object data)
+	{
+		this.rtLastDT = System.currentTimeMillis() ;
+		this.rtLastData = data ;
+	}
+	
+	void RT_fireLastErr(String err,Exception ee)
+	{
+		this.rtLastDT = System.currentTimeMillis() ;
+		this.rtLastErr = err ;
+		this.rtLastExp = ee ;
+	}
+	
+	public long RT_getLastDT()
+	{
+		return this.rtLastDT ;
+	}
+	
+	public Object RT_getLastData()
+	{
+		return this.rtLastData ;
+	}
+	
+	public JSONObject RT_getRunInf()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("rt_err_dt", this.rtLastDT) ;
+		jo.putOpt("rt_last_err", this.rtLastErr) ;
+		
+		//jo.putOpt(, value)
+		return jo ;
+	}
 }

@@ -135,27 +135,35 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		return rets ;
 	}
 	
-	final void sendTxtOutToJoinOut(JoinOut jo,String txt) throws Exception
+	/**
+	 * called by overrider
+	 * @param jo
+	 * @param data
+	 * @throws Exception
+	 */
+	protected final void RT_sendToJoinOut(JoinOut jo,Object data)// throws Exception
 	{
+		jo.RT_setLastData(data);
+		
 		for(JoinConn jc : this.belongTo.CONN_getRIC2ROAMap().values())
 		{
 			String fid = jc.getFromId() ;
 			if(fid.equals(jo.getFromId()))
 			{
 				JoinIn ji = jc.getToJI() ;
-				sendTxtOutToConn(jo,jc,ji,txt) ;
+				sendOutToConn(jo,jc,ji,data) ;
 			}
 		}
 	}
 	
-	final void sendTxtOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,String txt) throws Exception
+	final void sendOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,Object data)// throws Exception
 	{
-		String ret = jc.RT_doTrans(txt) ;
+		Object ret = jc.RT_doTrans(data) ;
 		if(ret==null)
 			return ;//error
 		
 		RouterOuterAdp roa = (RouterOuterAdp)ji.getBelongNode() ;
-		roa.RT_onRecvedFromJoinIn(ji,ret) ;
+		roa.RT_recvedFromJoinIn(ji,ret) ;
 	}
 	
 	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt) ;
@@ -217,7 +225,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 			}
 			catch(Exception e) {}
 			
-			runInIntvLoop() ;
+			RT_runInIntvLoop() ;
 		}
 	}
 	
@@ -244,7 +252,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		@Override
 		public HandleResult processObj(TagVal o, int retrytime) throws Exception
 		{
-			runOnChgTagVal(o) ;
+			RT_runOnChgTagVal(o) ;
 			return HandleResult.Succ;
 		}
 
@@ -265,7 +273,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	/**
 	 * override by sub
 	 */
-	protected void runInIntvLoop()
+	protected void RT_runInIntvLoop()
 	{
 		
 	}
@@ -273,11 +281,22 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	/**
 	 * override by sub
 	 */
-	protected void runOnChgTagVal(TagVal tv)
+	protected void RT_runOnChgTagVal(TagVal tv)
 	{
 		
 	}
 	
+	public boolean DEBUG_triggerOutData(StringBuilder failedr)
+	{
+		failedr.append("not supported") ;
+		return false;
+	}
+	
+	/**
+	 * called by inner running when found tag value changed
+	 * @param tag
+	 * @throws Exception
+	 */
 	public void fireChangedTagVal(UATag tag) throws Exception
 	{
 		if(this.queTh==null)
@@ -288,6 +307,8 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		this.queTh.enqueue(tv) ;
 	}
 	
+//	private String rtErr = null ;
+//	private long rtDT = -1 ;
 	
 	private transient UAContext cxt = null ;
 	
@@ -303,11 +324,11 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 				return cxt ;
 			
 			cxt = new UAContext(this.belongPrj);
-			//cxt.asTask(this) ;
-			//this.scriptEng = cxt.getScriptEngine() ;
 			return cxt ;
 		}
 	}
+	
+	
 	
 	public JSONObject toJO()
 	{
@@ -324,6 +345,8 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 			this.outIntervalMS = 30000 ;
 		return true ;
 	}
+	
+	
 	
 	public static RouterInnCollator transFromJO(RouterManager rm,JSONObject jo,StringBuilder failedr)
 	{
@@ -355,7 +378,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		return dp ;
 	}
 	
-	static List<RouterInnCollator> RICS = Arrays.asList(new RICSelTags(null),new RICDef(null),new RICRunTime(null)) ;
+	static List<RouterInnCollator> RICS = Arrays.asList(new RICSelTags(null),new RICFilterTags(null),new RICDef(null),new RICRunTime(null)) ;
 	
 	public static List<RouterInnCollator> listRICAll()
 	{

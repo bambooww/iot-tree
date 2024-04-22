@@ -114,7 +114,7 @@ public class RICSelTags extends RouterInnCollator
 	 * override by sub
 	 */
 	@Override
-	protected void runInIntvLoop()
+	protected void RT_runInIntvLoop()
 	{
 		
 	}
@@ -123,7 +123,7 @@ public class RICSelTags extends RouterInnCollator
 	 * override by sub
 	 */
 	@Override
-	protected void runOnChgTagVal(TagVal tv)
+	protected void RT_runOnChgTagVal(TagVal tv)
 	{
 		
 	}

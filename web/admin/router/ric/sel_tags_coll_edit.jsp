@@ -48,6 +48,7 @@ String name =ric.getName() ;
 String title = ric.getTitle() ;
 String desc = ric.getDesc() ;
 long out_intv = ric.getOutIntervalMS() ;
+RICSelTags.OutStyle os = ric.getOutStyle() ;
 List<UATag> out_tags = ric.getRTOutTags() ;
 String out_tagtxt = "" ;
 JSONArray out_tagids = new JSONArray() ;
@@ -134,7 +135,10 @@ dlg.resize_to(700,500);
 	for(RouterInnCollator.OutStyle outs:RouterInnCollator.OutStyle.values())
 	{
 		int v = outs.getInt() ;
-%><option value="<%=v%>"><%=outs.getTitle() %></option>
+		String chk = "" ;
+		if(os!=null&&os.getInt()==v)
+			chk="selected";
+%><option value="<%=v%>" <%=chk %>><%=outs.getTitle() %></option>
 <%
 	}
 %>
@@ -185,14 +189,19 @@ layui.use('form', function(){
 function sel_tags(rw)
 {
 	let seltagids = [] ;
+	let w_only = "" ;
 	if(rw=='r')
 		seltagids = out_tagids ;
 	else if(rw=='w')
+	{
 		seltagids = in_tagids ;
+		w_only = "true" ;
+	}
+		
 	else
 		return ;
 	
-	dlg.open("../../ua_cxt/cxt_tag_selector.jsp?multi=true&path="+prj_path,//+"&val="+tmpv,
+	dlg.open("../../ua_cxt/cxt_tag_selector.jsp?w_only="+w_only+"&multi=true&path="+prj_path,//+"&val="+tmpv,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagids:seltagids},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -210,7 +219,6 @@ function sel_tags(rw)
 						in_tagids = ret ;
 						$("#w_tags").val(txt);
 					}
-						
 					dlg.close();
 				},
 				function(dlgw)
@@ -259,6 +267,18 @@ function win_close()
 	dlg.close(0);
 }
 
+function get_input_val(id,defv,bnum)
+{
+	var n = $('#'+id).val();
+	if(n==null||n=='')
+	{
+		return defv ;
+	}
+	if(bnum)
+		return parseInt(n);
+	return n;
+}
+
 function do_submit(cb)
 {
 	let n = $("#name").val() ;
@@ -276,7 +296,9 @@ function do_submit(cb)
 	let t =  $("#title").val() ;
 	if(!t) t = "" ;
 	let d = $("#desc").val() ;
-	let pm={n:n,t:t,d:d,out_tagids:out_tagids,in_tagids:in_tagids,en:ben} ;
+	let out_sty = $("#out_sty").val() ;
+	let out_intv = get_input_val("out_intv",30000,true) ;
+	let pm={n:n,t:t,d:d,out_tagids:out_tagids,in_tagids:in_tagids,en:ben,out_sty:out_sty,out_intv:out_intv} ;
 	cb(true,pm) ;
 }
 

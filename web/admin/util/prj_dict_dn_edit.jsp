@@ -63,13 +63,13 @@ dlg.resize_to(600,300);
 <body>
 <form class="layui-form" action="">
  <div class="layui-form-item">
-    <label class="layui-form-label">Name</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class0="layui-input-block" class="layui-input-inline">
       <input type="text" name="name" id="name" value="<%=name %>"  autocomplete="off" class="layui-input"/>
     </div>
   </div>
  <div class="layui-form-item">
-    <label class="layui-form-label">Title</label>
+    <label class="layui-form-label"><wbt:g>title</wbt:g></label>
     <div class="layui-input-inline">
       <input type="text" name="title" id="title" value="<%=title %>"  autocomplete="off" class="layui-input"/>
     </div>
@@ -103,13 +103,10 @@ function do_submit(cb)
 		tt = n;
 	}
 	
-	var desc = "";//document.getElementById('desc').value;
+	var desc = "";
 	if(desc==null)
 		desc ='' ;
 	cb(true,{name:n,title:tt,desc:desc});
-	//var dbname=document.getElementById('db_name').value;
-	
-	//document.getElementById('form1').submit() ;
 }
 
 </script>

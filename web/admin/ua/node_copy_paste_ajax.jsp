@@ -83,6 +83,25 @@ case "paste":
 		return;
 	}
 	
+	if(node instanceof UATagG)
+	{
+		if(!(pnode instanceof UANodeOCTagsGCxt))
+		{
+			out.print("copy paste is not matched");
+			return;
+		}
+		try
+		{
+			((UANodeOCTagsGCxt)pnode).deepPasteTagG((UATagG)node);
+			out.print("succ");
+		}
+		catch(Exception e)
+		{
+			out.print(e.getMessage());
+		}
+		return;
+	}
+	
 	if(node instanceof UAHmi)
 	{
 		if(!(pnode instanceof UANodeOCTagsCxt))

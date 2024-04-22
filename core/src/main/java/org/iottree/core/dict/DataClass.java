@@ -24,6 +24,7 @@ import org.iottree.core.Config;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UAHmi;
+import org.iottree.core.UANodeOCTags;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UATagG;
@@ -351,6 +352,22 @@ public class DataClass extends JSObMap
 			return false;
 		List<String> ss = Convert.splitStrWith(tmps, " ,|") ;
 		return ss.contains(bf) ;
+	}
+	
+	public boolean isBindForContainer()
+	{
+		String tmps = this.getExtAttrValue("bind_for") ;
+		if(Convert.isNullOrEmpty(tmps))
+			return false;
+		List<String> ss = Convert.splitStrWith(tmps, " ,|") ;
+		if(ss.contains("all"))
+			return true;
+		for(String tp:UANodeOCTags.CONTAINER_NODE_TPS)
+		{
+			if(ss.contains(tp)) return true ;
+		}
+		
+		return false;
 	}
 	
 //	public void setBindMulti(boolean b)

@@ -3,33 +3,35 @@
   <dd_node id="1001" name="name" name_cn="名称" name_en="Name" />
   <dd_node id="1002" name="title" name_cn="标题" name_en="Title"/>
   <dd_node id="1003" name="driver" name_cn="驱动" name_en="Driver"/>   
-  <dd_node id="1004" name="description" name_cn="描述" name_en="Description"/>   
-  <dd_node id="1004" name="ok" name_cn="确认" name_en="Ok"/>  
-  <dd_node id="1004" name="cancel" name_cn="关闭" name_en="Cancel"/> 
-  <dd_node id="1004" name="pls_input" name_cn="请输入" name_en="Please input "/>
-  <dd_node id="1004" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/> 
+  <dd_node id="1" name="description" name_cn="描述" name_en="Description"/>   
+  <dd_node id="1" name="ok" name_cn="确认" name_en="Ok"/>  
+  <dd_node id="1" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1" name="pls_input" name_cn="请输入" name_en="Please input "/>
+  <dd_node id="1" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/> 
 
-<dd_node id="1004" name="init_js" name_cn="初始化JS脚本" name_en="Init JS Script"/>
-<dd_node id="1004" name="loop_js" name_cn="定时重复JS脚本" name_en="Run in Loop JS Script"/>
-<dd_node id="1004" name="end_js" name_cn="结束JS脚本" name_en="End JS Script"/>
+<dd_node id="1" name="init_js" name_cn="初始化JS脚本" name_en="Init JS Script"/>
+<dd_node id="1" name="loop_js" name_cn="定时重复JS脚本" name_en="Run in Loop JS Script"/>
+<dd_node id="1" name="end_js" name_cn="结束JS脚本" name_en="End JS Script"/>
+<dd_node id="1" name="one" name_cn="一个" name_en="One"/>
 
-<dd_node id="1004" name="edit_txt" name_cn="文本编辑" name_en="Txt Editor"/>
+<dd_node id="1" name="edit_txt" name_cn="文本编辑" name_en="Txt Editor"/>
 
-	<dd_node id="1004" name="new_prj_will_imp" name_cn="新项目将被导入" name_en="New project will import"/>
-	<dd_node id="1004" name="prj_existed" name_cn="新项目将被导入" name_en="Project is already existed"/>
-	<dd_node id="1004" name="it_in_run" name_cn="它正在运行中" name_en="it's in running"/>
-	<dd_node id="1004" name="prj_n_existed" name_cn="这个名称的项目已经存在" name_en="Project with this name already existed"/>
-	<dd_node id="1004" name="do_not_imp" name_cn="不要导入" name_en="Do not import"/>
-	<dd_node id="1004" name="replace" name_cn="替换" name_en="Replace"/>
-	<dd_node id="1004" name="rename_imp" name_cn="修改名称导入" name_en="Rename to import"/>
-	<dd_node id="1004" name="create_new" name_cn="创建新的一个项目" name_en="Create New One"/>
-	<dd_node id="1004" name="must_be_chg" name_cn="必须被改变" name_en="must be changed"/>
-	<dd_node id="1004" name="pls_sel_imp" name_cn="请选择导入" name_en="please select to import!"/>
+	<dd_node id="1" name="new_prj_will_imp" name_cn="新项目将被导入" name_en="New project will import"/>
+	<dd_node id="1" name="prj_existed" name_cn="新项目将被导入" name_en="Project is already existed"/>
+	<dd_node id="1" name="it_in_run" name_cn="它正在运行中" name_en="it's in running"/>
+	<dd_node id="1" name="prj_n_existed" name_cn="这个名称的项目已经存在" name_en="Project with this name already existed"/>
+	<dd_node id="1" name="do_not_imp" name_cn="不要导入" name_en="Do not import"/>
+	<dd_node id="1" name="replace" name_cn="替换" name_en="Replace"/>
+	<dd_node id="1" name="rename_imp" name_cn="修改名称导入" name_en="Rename to import"/>
+	<dd_node id="1" name="create_new" name_cn="创建新的一个项目" name_en="Create New One"/>
+	<dd_node id="1" name="must_be_chg" name_cn="必须被改变" name_en="must be changed"/>
+	<dd_node id="1" name="pls_sel_imp" name_cn="请选择导入" name_en="please select to import!"/>
 	
-	<dd_node id="1004" name="sel_dev_in_lib" name_cn="在设备库中选择" name_en="Select Device in Library"/>
+	<dd_node id="1" name="sel_dev_in_lib" name_cn="在设备库中选择" name_en="Select Device in Library"/>
 	
-	<dd_node id="1004" name="edit_init_js" name_cn="编辑初始化JS(运行一次)" name_en="Edit Init JS (run once)"/>
-	<dd_node id="1004" name="edit_run_js" name_cn="编辑运行JS(重复运行)" name_en="Edit Run JS (run interval)"/>
-	<dd_node id="1004" name="edit_end_js" name_cn="编辑结束JS(运行一次)" name_en="Edit End JS (run once)"/>
-		
+	<dd_node id="1" name="edit_init_js" name_cn="编辑初始化JS(运行一次)" name_en="Edit Init JS (run once)"/>
+	<dd_node id="1" name="edit_run_js" name_cn="编辑运行JS(重复运行)" name_en="Edit Run JS (run interval)"/>
+	<dd_node id="1" name="edit_end_js" name_cn="编辑结束JS(运行一次)" name_en="Edit End JS (run once)"/>
+	
+	<dd_node id="1" name="path_must_be" name_cn="路径必须是变量名称组合而成，变量名必须使用a-z A-Z 0-9 _ 并且以 a-z A-Z 开头" name_en="path must be combined by var name,which must use a-z A-Z 0-9 _ and a-z A-Z first"/> 
 </dd_class>

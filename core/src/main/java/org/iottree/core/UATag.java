@@ -1882,6 +1882,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public JSONObject RT_toFlatJson()
 	{
+		return RT_toJson(true,false,false);
+	}
+	
+	public JSONObject RT_toJson(boolean b_flat,boolean show_n,boolean show_t)
+	{
 		UAVal val = RT_getVal();
 		// if(val==null)
 		// continue ;
@@ -1911,7 +1916,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 
 		JSONObject jo = new JSONObject() ;
-		jo.put("uid", this.getNodePathCxt()) ;
+		if(b_flat)
+			jo.put("uid", this.getNodePathCxt()) ;
+		if(show_n)
+			jo.put("n", this.getName()) ;
+		if(show_t)
+			jo.put("t", this.getTitle()) ;
 		jo.put("valid", bvalid) ;
 		jo.put("up_dt", dt) ;
 		jo.put("chg_dt", dt_chg) ;

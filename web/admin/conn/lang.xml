@@ -10,6 +10,14 @@
   <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
   <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
   
+  <dd_node id="1" name="bind_map" name_cn="绑定映射" name_en="Bind Map" />
+  <dd_node id="1" name="tags_in_ch" name_cn="通道下标签" name_en="Tags In Channel" />
+  <dd_node id="1" name="add_tag_in_ch" name_cn="通道中新增标签" name_en="Add Tag In Channel" />
+  <dd_node id="1" name="under_ch" name_cn="通道下" name_en="Under Channel" />
+  <dd_node id="1" name="txt" name_cn="文本" name_en="Text" />
+  
+  <dd_node id="1" name="ign_not_exist" name_cn="忽略不存在" name_en="Ingore Not Existed" />
+  <dd_node id="1" name="auto_c_tag" name_cn="自动创建标签" name_en="Auto Create Tag" />
   <dd_node id="1" name="syn_tt" name_cn="与接入的子站进行组织树的同步" name_en="Synchronize the tree with sub station" />
   <dd_node id="1" name="syn_no_conn_pt" name_cn="当前接入没有启动连接，请先启动连接或启动项目，连接正常之后才能同步！" name_en="Not connected, please start the connector or project first!" />
   <dd_node id="1" name="pls_start_syn_btn" name_cn="请点击下面的[开始同步]按钮启动同步" name_en="Please click [Start Sync] button below to start synchronization" />

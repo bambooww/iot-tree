@@ -14,7 +14,7 @@
 	java.util.*"
 	%><%!
 	static final int map_show_len = 25 ;
-	%><%@ taglib uri="wb_tag" prefix="wbt"%><%
+	%><%@ taglib uri="wb_tag" prefix="w"%><%
 
 if(!Convert.checkReqEmpty(request, out, "prjid","cpid"))
 	return;
@@ -96,7 +96,7 @@ body {
 
 table, th, td
 {
-border:1px solid;
+border:0px solid #555555;
 }
 th
 {
@@ -105,6 +105,7 @@ th
 }
 td
 {font-size: 12px;
+
 }
 
 
@@ -121,8 +122,9 @@ margin: 0 auto;
 
 .prop_table tr>td
 {
-	border: 0;
-	height:100%
+	border: 1px solid #555555;
+	height:100%;
+	text-overflow: ellipsis;
 }
 
 .prop_table tr>div
@@ -204,7 +206,6 @@ border: 0px solid #b4b4b4;
 margin: 0 auto;
 }
 
-
 .pi_edit_table tr>td
 {
 	border: 1px solid #b4b4b4;
@@ -241,15 +242,16 @@ width:100%;
  background-color: #1e90ff;
 }
 
+
 </style>
 <script>
-dlg.resize_to(800,620);
+dlg.resize_to(1000,700);
 </script>
 </head>
 <body>
-<table class="prop_table" style="border:solid 1px">
+<table class="prop_table" style="border:solid 1px;height:100%">
   <tr>
-    <td style="width:45%" >
+    <td style="width:45%;vertical-align: top;" >
     <div id="prop_edit_path" class="prop_edit_path">[<%=cptp %>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     
     
@@ -257,10 +259,11 @@ dlg.resize_to(800,620);
  <button id="btn_tree_list" class="layui-btn layui-btn-xs layui-btn-primary" title="set tree or list" onclick="set_tree_list()"><i class="fa-solid fa-folder-tree"></i></button>
         <button class="layui-btn layui-btn-xs layui-btn-primary" title="set bind parameters" onclick="set_bind_pm()"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
          --%>
-         <button class="layui-btn layui-btn-xs layui-btn-primary" title="refresh" onclick="refresh_tb_list()"><i class="fa fa-refresh" aria-hidden="true"></i></button> 
-         &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="inp_search" size="10" onkeydown="do_search_ret(event)"/>
-         <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search()" title="search"><i class="fa-solid fa-magnifying-glass"></i></button>
-         <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search(true)" title="clear search"><i class="fa-solid fa-eraser"></i></button>
+         <button class="layui-btn layui-btn-xs layui-btn-primary" title="refresh" onclick="refresh_tb_list(true)"><i class="fa fa-refresh" aria-hidden="true"></i></button> 
+         &nbsp;&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-filter"></i><input type="text" id="inp_search" size="10" onkeydown="do_search_ret(event)"/>
+         <button class="layui-btn layui-btn-xs layui-btn-primary" onclick="search()" title="<w:g>filter</w:g>"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <select id="prefix_sel" style="border-color:#00bdad;color:#00bdad;max-width:100px;" onchange="on_filter_prefix_chg(this)" title="<w:g>select,filter</w:g>"></select>
+         <button id="btn_clear" class="layui-btn layui-btn-xs layui-btn-primary " onclick="search(true)" title="<w:g>clear,filter</w:g>"><i class="fa-solid fa-eraser"></i></button>
 <%
 if(support_tree)
 {
@@ -270,14 +273,14 @@ if(support_tree)
 }
 %>
     </div>
-       <div id="list_table" class="prop_edit_cat" style="height:420px;width:400px">
+       <div id="list_table" class="prop_edit_cat" style="height:560px;width:100%">
     	<table style="width:100%;border:0px" class='besel'>
     		<thead>
     			<tr style="background-color: #f0f0f0">
-    				<td width="50%">Path</td>
-    				<td width="30%">Title</td>
-    				<td width="10%">Type</td>
-    				<td width="20%">Value</td>
+    				<td width="50%"><w:g>path</w:g></td>
+    				<td width="30%"><w:g>title</w:g></td>
+    				<td width="10%"><w:g>type</w:g></td>
+    				<td width="20%"><w:g>val</w:g></td>
     			</tr>
     		</thead>
     		<tbody id="bind_tb_body" style="height0:390px">
@@ -289,7 +292,7 @@ if(support_tree)
 if(support_tree)
 {
 %>
-	<div id="list_tree" class="prop_edit_cat" style="height:420px;display:none;width:400px">
+	<div id="list_tree" class="prop_edit_cat" style="height:560px;display:none;width:400px">
 	</div>
 <%
 }
@@ -321,23 +324,23 @@ if(support_tree)
        </tr>
        --%>
        <tr style="height:100%;border:solid 0px">
-         <td style="width:5%;vertical-align:middle;"  >
+         <td style="width:5%;vertical-align:middle;background-color: #f0f0f0"  >
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(true)" title="bind to tag"><i class="fa-solid fa-arrow-right"></i></button><br><br>
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_copy()" title="copy create tag and bind"><i class="fa fa-angles-right"></i><br><i class="fa fa-tag"></i></button><br><br>
 	     	<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="map_or_not(false)" title="unbind from tag"><i class="fa-solid fa-arrow-left"></i></button>
 	    </td>
 	    <td style="width:95%;vertical-align: top;height:100%"  >
-	    <div id="prop_edit_path" class="prop_edit_path">Bind Map &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button id="btn_tag_syn" class="layui-btn layui-btn-xs layui-btn-primary" title="export" onclick="bind_export()"><i class="fa-solid fa-arrow-up"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
-      <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="import" onclick="bind_import()"><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
-      <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="add tag in channel" onclick="add_tag()"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
+	    <div id="prop_edit_path" class="prop_edit_path"><w:g>bind_map</w:g> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button id="btn_tag_syn" class="layui-btn layui-btn-xs layui-btn-primary" title="<w:g>export</w:g>" onclick="bind_export()"><i class="fa-solid fa-arrow-up"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
+      <button id="" class="layui-btn layui-btn-xs layui-btn-primary" title="<w:g>import</w:g>" onclick="bind_import()"><i class="fa-solid fa-arrow-down"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
+      <button id="" class="layui-btn layui-btn-xs layui-btn-primary " style="border-color:#00bdad;color:#00bdad;" title="<w:g>add_tag_in_ch</w:g>" onclick="add_tag()"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;<i class="fa fa-tag"></i></button>
     </div>
-	    <div id=""  class="prop_edit_panel" style="height:420px">
+	    <div id=""  class="prop_edit_panel" style="height:560px">
 	       <table style="width:100%;overflow: auto;" >
 	       	 <thead>
 	       	   <tr>
-	       	    <th style="width:50%">Map Binded</th>
-	       	    <th style="width:50%">Tags In Channel</th>
+	       	    <th style="width:50%"><w:g>binded</w:g></th>
+	       	    <th style="width:50%"><w:g>tags_in_ch</w:g></th>
 	       	   </tr>
 	       	 </thead>
 	       	 <tbody id="tb_bind_map">
@@ -356,10 +359,10 @@ if(support_tree)
 %>
 <tr style="border:solid 1px;height:15px" tagp="<%=tagp%>" bindp="<%=c_p%>">
 <%
-	if(tagp.length()>map_show_len)
-		tagp = "..."+tagp.substring(tagp.length()-map_show_len) ;
-	if(c_p.length()>map_show_len)
-		c_p = "..."+c_p.substring(c_p.length()-map_show_len) ;
+	//if(tagp.length()>map_show_len)
+	//	tagp = "..."+tagp.substring(tagp.length()-map_show_len) ;
+	//if(c_p.length()>map_show_len)
+	//	c_p = "..."+c_p.substring(c_p.length()-map_show_len) ;
 	String vtstr = "" ;
 	UAVal v;
 	UAVal.ValTP vt = tag.getValTp();
@@ -418,6 +421,27 @@ function new_id()
 	return "i"+uid_cc ;
 }
 
+function update_prefix_sel(path)
+{
+	if(!path) return ;
+	
+	let s = path.length ;
+	let tmps="<option value=''></option>" ;
+	for(let i = 1 ; i < 20 && i <s ; i ++)
+	{
+		let p = path.substring(0,i) ;
+		tmps += `<option value="\${p}">\${p}</option>`; 
+	}
+	$("#prefix_sel").html(tmps) ;
+}
+
+function on_filter_prefix_chg(ele)
+{
+	let selv = $(ele).val() ;
+	$("#inp_search").val(selv) ;
+	search() ;
+}
+
 function add_bind_item(bpath,tpath)
 {
 	var k = tpath.indexOf(':') ;
@@ -438,10 +462,10 @@ function add_bind_item(bpath,tpath)
 	var tmpid =new_id();
 	var tmps = "<tr id='ntag_"+tmpid+"' tagp='"+tpath+"' bindp='"+bpath+"' onclick='on_right(this)'>";
 	
-		if(tagp.length>map_show_len)
-			tagp = "..."+tagp.substring(tagp.length-map_show_len) ;
-		if(bpath.length>map_show_len)
-			bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
+		//if(tagp.length>map_show_len)
+		//	tagp = "..."+tagp.substring(tagp.length-map_show_len) ;
+		//if(bpath.length>map_show_len)
+		//	bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
 
 	 tmps += "<td>"+bpath+"</td>";
 	 tmps += "<td>"+tagp+":"+vt+"</td>";
@@ -455,8 +479,8 @@ function add_bind_item(bpath,tpath)
 function add_tag()
 {
 	dlg.open("../ua/tag_path_simple.jsp",
-			{title:"Edit Tag Path Under Channel",w:'500px',h:'400px'},
-			['Ok','Close'],
+			{title:"<w:g>under_ch</w:g><w:g>edit,tag,path</w:g>",w:'500px',h:'400px'},
+			['<w:g>ok</w:g>','<w:g>close</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -513,8 +537,8 @@ function map_set_to_tr(tr,bpath)
 	var tmptd = tr.children('td').eq(0) ;
 	tr.attr("bindp",bpath) ;
 	tmptd.attr("title",bpath) ;
-	if(bpath.length>map_show_len)
-		bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
+	//if(bpath.length>map_show_len)
+	//	bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
 	tmptd.html(bpath);
 }
 
@@ -554,8 +578,8 @@ function get_map_list()
 function bind_export()
 {
 	dlg.open("cpt_bind_port.jsp?op=export&prjid="+prjid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"Export Bind",w:'800px',h:'600px'},
-			['Close'],
+			{title:"<w:g>export,bind</w:g>",w:'800px',h:'600px'},
+			['<w:g>close</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -567,8 +591,8 @@ function bind_export()
 function bind_import()
 {
 	dlg.open("cpt_bind_port.jsp?op=import&prjid="+prjid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:"Export Bind",w:'500px',h:'400px'},
-			['Import','Close'],
+			{title:"<w:g>import,bind</w:g>",w:'500px',h:'400px'},
+			['<w:g>import</w:g>','<w:g>close</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -583,7 +607,6 @@ function bind_import()
 						 ret.cptp = cptp ;
 						 ret.connid = connid ;
 						 ret.op='import';
-						 //console.log(ret);
 						 send_ajax('cpt_bind_ajax.jsp',ret,function(bsucc,ret)
 							{
 								if(!bsucc || ret.indexOf('succ')<0)
@@ -657,12 +680,12 @@ function map_or_not(b)
 			vs = tree_get_left_vals() ;
 		if(vs.length<=0)
 		{
-			dlg.msg("please select item left") ;
+			dlg.msg("<w:g>pls,select,item,left</w:g>") ;
 			return ;
 		}
 		if(vs.length!=1)
 		{
-			dlg.msg("please select one item left") ;
+			dlg.msg("<w:g>pls,select,one,item,left</w:g>") ;
 			return ;
 		}
 		map_set_to_tr(cur_bind_map_tr,vs[0])

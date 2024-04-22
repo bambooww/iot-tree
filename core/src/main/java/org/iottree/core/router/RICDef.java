@@ -57,7 +57,7 @@ public class RICDef extends RouterInnCollator implements ILang
 	 * override by sub
 	 */
 	@Override
-	protected void runInIntvLoop()
+	protected void RT_runInIntvLoop()
 	{
 		List<JoinOut> jos = getConnectedJoinOuts();
 		if(jos==null||jos.size()<=0)
@@ -70,7 +70,7 @@ public class RICDef extends RouterInnCollator implements ILang
 				String txt = readOutTxt(jo) ;
 				if(txt==null)
 					continue ;
-				sendTxtOutToJoinOut(jo,txt) ;
+				RT_sendToJoinOut(jo,txt) ;
 			}
 			catch(Exception e)
 			{
@@ -83,7 +83,6 @@ public class RICDef extends RouterInnCollator implements ILang
 	
 	private String readOutTxt(JoinOut jo) throws Exception
 	{
-		
 			switch(jo.name)
 			{
 			case "def_tree":

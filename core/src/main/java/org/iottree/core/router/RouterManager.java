@@ -138,7 +138,7 @@ public class RouterManager
 	
 	public RouterInnCollator getInnerCollatorById(String id)
 	{
-		RouterInnCollator ret = this.id2inns.get(id) ;
+		RouterInnCollator ret = this.getInnerCollatorsMap().get(id) ;
 		return ret;
 //		if(ret!=null)
 //			return ret ;
@@ -162,7 +162,7 @@ public class RouterManager
 //			return null ;
 //		}
 		
-		for(RouterInnCollator ric:this.getInnerCollators())
+		for(RouterInnCollator ric:this.getInnerCollatorsMap().values())
 		{
 			if(ric.getName().equals(name))
 				return ric ;
@@ -604,7 +604,7 @@ public class RouterManager
 		return oldjc ;
 	}
 	
-	public JoinConn CONN_RIC_setConnJS(String fromid,String toid,String jstxt) throws Exception
+	public JoinConn CONN_RIC_setConnJS(String fromid,String toid,boolean js_en,String jstxt) throws Exception
 	{
 		JoinConn jc = CONN_RIC_getConn(fromid,toid) ;
 		if(jc==null)
@@ -612,6 +612,7 @@ public class RouterManager
 		if(Convert.isNullOrTrimEmpty(jstxt))
 			jstxt = null ;
 		jc.transJS = jstxt ;
+		jc.bEnJS = js_en ;
 		this.CONN_save();
 		return jc ;
 	}
@@ -659,13 +660,14 @@ public class RouterManager
 		return oldjc ;
 	}
 	
-	public JoinConn CONN_ROA_setConnJS(String fromid,String toid,String jstxt) throws Exception
+	public JoinConn CONN_ROA_setConnJS(String fromid,String toid,boolean js_en,String jstxt) throws Exception
 	{
 		JoinConn jc = CONN_ROA_getConn(fromid,toid) ;
 		if(jc==null)
 			return null ;
 		if(Convert.isNullOrTrimEmpty(jstxt))
 			jstxt = null ;
+		jc.bEnJS = js_en ;
 		jc.transJS = jstxt ;
 		this.CONN_save();
 		return jc ;
@@ -762,5 +764,42 @@ public class RouterManager
 	public void RT_stop()
 	{
 		
+	}
+	
+	public JSONObject RT_getRunInf()
+	{
+		JSONObject jo = new JSONObject() ;
+		JSONArray jarr = new JSONArray() ;
+		for(RouterInnCollator ric : this.getInnerCollatorsMap().values())
+		{
+			JSONObject tmpjo = ric.RT_getRunInf() ;
+			jarr.put(tmpjo) ;
+		}
+		jo.put("rics", jarr) ;
+		
+		jarr = new JSONArray() ;
+		for(RouterOuterAdp roa : this.getOuterAdpsMap().values())
+		{
+			JSONObject tmpjo = roa.RT_getRunInf() ;
+			jarr.put(tmpjo) ;
+		}
+		jo.put("roas", jarr) ;
+		
+		jarr = new JSONArray() ;
+		for(JoinConn jc:this.CONN_getRIC2ROAMap().values())
+		{
+			JSONObject tmpjo = jc.RT_getRunInf() ;
+			jarr.put(tmpjo) ;
+		}
+		jo.put("ric2roa_conns", jarr) ;
+		
+		jarr = new JSONArray() ;
+		for(JoinConn jc:this.CONN_getROA2RICMap().values())
+		{
+			JSONObject tmpjo = jc.RT_getRunInf() ;
+			jarr.put(tmpjo) ;
+		}
+		jo.put("roa2ric_conns", jarr) ;
+		return jo ;
 	}
 }

@@ -21,6 +21,7 @@ import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
+import org.iottree.core.filter.UANodeFilter;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;

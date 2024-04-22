@@ -3,6 +3,7 @@ package org.iottree.core.router;
 import java.util.List;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -116,6 +117,7 @@ public abstract class RouterNode
 		return null ;
 	}
 	
+	
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
@@ -169,4 +171,43 @@ public abstract class RouterNode
 		return true ;
 	}
 	
+	private long rtLastErrDT =-1;//System.currentTimeMillis() ; ;
+	private String rtLastErr = null;//"test err" ;
+	private Throwable rtLastExcept = null ;
+	
+	protected void RT_fireErr(String err,Throwable e)
+	{
+		this.rtLastErr = err ;
+		this.rtLastExcept = e ;
+		if(Convert.isNullOrEmpty(err) && e==null)
+			this.rtLastErrDT = -1 ;
+		else
+			this.rtLastErrDT = System.currentTimeMillis() ;
+	}
+	
+	public long RT_getLastErrDT()
+	{
+		return rtLastErrDT ;
+	}
+	
+	public String getLastErr()
+	{
+		return rtLastErr ;
+	}
+	
+	public Throwable getLastException()
+	{
+		return rtLastExcept ;
+	}
+	
+	public JSONObject RT_getRunInf()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("id", this.id) ;
+		jo.put("rt_err_dt", this.rtLastErrDT) ;
+		jo.putOpt("rt_last_err", this.rtLastErr) ;
+		
+		//jo.putOpt(, value)
+		return jo ;
+	}
 }

@@ -5,13 +5,14 @@
 				org.iottree.core.*,
 				org.iottree.core.util.*,
 				java.net.*"%><%!
-				public static void renderTagGroup(Writer out,UATagG tg) throws Exception
+				public static void renderTagGroup(Writer out,UATagG tg,boolean b_sel,boolean cont_only) throws Exception
 				{
 					out.write("{\"text\": \""+tg.getName()+"\"") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
 					out.write(",\"ref_locked\":"+tg.isRefLocked()) ;
+					out.write(",\"state\": {\"opened\": "+(b_sel?"true":"false")+"}") ;
 					out.write(",\"children\": [") ;
 					List<UATagG> tgs = tg.getSubTagGs() ;
 					boolean bfirst = true ;
@@ -24,14 +25,15 @@
 								bfirst = false;
 							else
 								out.write(',') ;
-							renderTagGroup(out,subtg);
+							renderTagGroup(out,subtg,b_sel,cont_only);
 						}
 					}
-					renderHmis(bfirst,out,tg);
+					if(!cont_only)
+						renderHmis(bfirst,out,tg);
 					out.write("]}") ;
 				}
 	
-				public static void renderTagGroupInCxt(boolean bfirst,Writer out,UANodeOCTagsGCxt dev) throws Exception
+				public static void renderTagGroupInCxt(boolean bfirst,Writer out,UANodeOCTagsGCxt dev,boolean b_sel,boolean cont_only) throws Exception
 				{
 					//DevDef dd = dev.getDevDef();
 					List<UATagG> tgs = dev.getSubTagGs();
@@ -44,11 +46,12 @@
 								bfirst = false;
 							else
 								out.write(',') ;
-							renderTagGroup(out,tg);
+							renderTagGroup(out,tg,b_sel,cont_only);
 						}
 					}
 					
-					renderHmis(bfirst,out,dev) ;
+					if(!cont_only)
+						renderHmis(bfirst,out,dev) ;
 				}
 				
 				public static void renderHmis(boolean bfirst,Writer out,UANodeOCTagsCxt tagcxt) throws Exception
@@ -72,6 +75,8 @@
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
 	String id = request.getParameter("id");
+	boolean b_sel = "true".equals(request.getParameter("sel")) ;
+	boolean cont_only = "true".equals(request.getParameter("cont_only")) ;
 	UAPrj rep = UAManager.getInstance().getPrjById(id);
 	if(rep==null)
 	{
@@ -110,6 +115,9 @@
 				drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
 		}
 		
+		if(b_sel)
+			drvfit="" ;
+		
 		boolean b_connpt_to_dev = false;
 		if(drv!=null)
 		{
@@ -131,7 +139,7 @@
 		  ,"id":"<%=ch.getId() %>"
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
-		  ,"state": {"opened": false}
+		  ,"state": {"opened": <%=(b_sel?"true":"false")%>}
 		  ,"icon":"icon_ch_hidden"
 		 ,"children": [
 <%
@@ -172,24 +180,25 @@
 			  ,"id":"<%=dev.getId() %>"
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"
-			  ,"state": {"opened": false}
+			  ,"state": {"opened": <%=(b_sel?"true":"false")%>}
 			   ,"icon":"icon_dev_hidden"
 			  ,"children": [
 <%
-renderTagGroupInCxt(true,out,dev) ;
+renderTagGroupInCxt(true,out,dev,b_sel,cont_only) ;
 %>
 			   ]
 			}
 	<%
 		}
-		renderTagGroupInCxt(bf2,out, ch);
+		renderTagGroupInCxt(bf2,out, ch,b_sel,cont_only);
 		//renderHmis(bf2,out,ch) ;
 %>
 		  ]
 		}
 <%
 	}
-	renderHmis(bf1,out,rep) ;
+	if(!cont_only)
+		renderHmis(bf1,out,rep) ;
 %>
 
 	]}

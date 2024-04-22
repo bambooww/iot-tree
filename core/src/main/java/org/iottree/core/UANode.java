@@ -760,7 +760,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	}
 
 	
-	protected static void UTIL_renderExtPropsByJO(Writer w,JSONObject ext_jo,boolean bfirst) throws IOException
+	public static void UTIL_renderExtPropsByJO(Writer w,JSONObject ext_jo,boolean bfirst) throws IOException
 	{
 		for(String n : JSONObject.getNames(ext_jo))
 		{
@@ -773,6 +773,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		}
 		
 	}
+	
 	
 }
 

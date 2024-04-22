@@ -20,6 +20,8 @@ public class JoinConn
 	
 	String toId = null ;
 	
+	boolean bEnJS = false;
+	
 	String transJS = null ;
 	
 	private UACodeItem codeItem = null ;
@@ -38,6 +40,11 @@ public class JoinConn
 		this.toJI = toji ;
 		this.fromId = fromid ;
 		this.toId = toid ;
+	}
+	
+	public boolean isTransJSEnable()
+	{
+		return this.bEnJS ;
 	}
 	
 	public synchronized JoinConn asTransJS(String js)
@@ -110,10 +117,17 @@ public class JoinConn
 		return this.codeItem ;
 	}
 	
+	private long rt_transErrDT = -1;//System.currentTimeMillis() ;
+	
+	private String rt_transErrInf = null;//"test err" ;
+	
 	private Exception rt_transErr = null ;
 	
-	public String RT_doTrans(String input)// throws Exception 
+	public Object RT_doTrans(Object input)// throws Exception 
 	{
+		if(!this.bEnJS)
+			return input ;
+		
 		try
 		{
 			UACodeItem ci = getCodeItem() ;
@@ -121,15 +135,29 @@ public class JoinConn
 				return input ;
 			
 			Object jo = ci.runCodeFunc(input) ;
+			if(jo==null)
+			{
+				rt_transErrDT = System.currentTimeMillis() ;
+				rt_transErrInf = "js code return null" ;
+				return null ;
+			}
+			rt_transErrDT = -1 ;
 			rt_transErr = null ;
 			return jo.toString() ;
 		}
 		catch(Exception ee)
 		{
 			ee.printStackTrace();
+			rt_transErrDT = System.currentTimeMillis() ;
+			rt_transErrInf = ee.getMessage() ;
 			rt_transErr = ee ;
 			return null ;
 		}
+	}
+	
+	public String RT_getTransInf()
+	{
+		return this.rt_transErrInf ;
 	}
 	
 	public Exception RT_getTransErr()
@@ -137,20 +165,31 @@ public class JoinConn
 		return this.rt_transErr ;
 	}
 	
+	public JSONObject RT_getRunInf()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("key", this.getKey()) ;
+		jo.put("rt_err_dt", this.rt_transErrDT) ;
+		jo.putOpt("rt_last_err", this.rt_transErrInf) ;
+		
+		//jo.putOpt(, value)
+		return jo ;
+	}
+	
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("fid",this.fromId);
 		jo.put("tid",this.toId);
+		jo.put("key", this.getKey()) ;
 		jo.putOpt("js", transJS) ;
+		jo.put("en_js", this.bEnJS) ;
 		return jo ;
 	}
 	
 	public JSONObject toListJO()
 	{
-		JSONObject jo = new JSONObject() ;
-		jo.put("fid",this.fromId);
-		jo.put("tid",this.toId);
+		JSONObject jo = toJO();
 		jo.put("has_js", Convert.isNotNullTrimEmpty(transJS)) ;
 		return jo ;
 	}
@@ -175,6 +214,7 @@ public class JoinConn
 		
 		JoinConn ret = new JoinConn(rm,jjo,ji,fid,tid) ;
 		ret.transJS = jo.optString("js") ;
+		ret.bEnJS = jo.optBoolean("en_js",false) ;
 		return ret ;
 	}
 	
@@ -198,6 +238,7 @@ public class JoinConn
 		
 		JoinConn ret = new JoinConn(rm,jjo,ji,fid,tid) ;
 		ret.transJS = jo.optString("js") ;
+		ret.bEnJS = jo.optBoolean("en_js",false) ;
 		return ret ;
 	}
 }

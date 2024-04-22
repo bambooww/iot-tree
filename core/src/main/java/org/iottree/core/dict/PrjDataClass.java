@@ -153,6 +153,14 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 	
 	public DataClass addDataClass(String name,String title,boolean benable,String bind_for,BindStyle bind_s,HashMap<String,String> props) throws IOException
 	{
+		StringBuilder sb = new StringBuilder() ;
+		if(!Convert.checkVarName(name, true, sb))
+			throw new IllegalArgumentException(sb.toString()) ;
+		
+		DataClass olddc = this.getDataClassByName(name) ;
+		if(olddc!=null)
+			throw new IllegalArgumentException("DataClass with name="+name+" existed!") ;
+		
 		DataClass dc = DataClass.createNewClass(name, title) ;
 		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
@@ -170,11 +178,19 @@ public class PrjDataClass extends JSObMap// implements IJSOb
 		DataClass dc = this.getDataClassById(classid) ;
 		if(dc==null)
 			return false;
+		
+		StringBuilder sb = new StringBuilder() ;
+		if(!Convert.checkVarName(name, true, sb))
+			throw new IllegalArgumentException(sb.toString()) ;
+		
+		DataClass olddc = this.getDataClassByName(name) ;
+		if(olddc!=null && dc!=olddc)
+			throw new IllegalArgumentException("DataClass with name="+name+" existed!") ;
+		
 		dc.name = name ;
 		dc.title = title ;
 		dc.setClassEnable(benable);
 		dc.setBindFor(bind_for);
-		//dc.setBindMulti(bind_multi);
 		dc.setBindStyle(bind_s);
 		dc.setExtAttrs(props);
 		saveDataClass(dc) ;

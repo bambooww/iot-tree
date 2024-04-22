@@ -5,6 +5,8 @@ import java.util.List;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.Lan;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONObject;
 
 /**
@@ -18,6 +20,7 @@ public abstract class RouterOuterAdp extends RouterNode
 {
 	static Lan lan = Lan.getLangInPk(RouterOuterAdp.class) ;
 	
+	static ILogger log = LoggerManager.getLogger(RouterOuterAdp.class) ;
 	
 	/**
 	 * 
@@ -54,30 +57,50 @@ public abstract class RouterOuterAdp extends RouterNode
 	
 	public abstract RouterOuterAdp newInstance(RouterManager rm) ;
 	
-	final void sendTxtOutToJoinOut(JoinOut jo,String txt)
+//	final void sendTxtOutToJoinOut(JoinOut jo,String txt)
+//	{
+//		for(JoinConn jc : this.belongTo.CONN_getROA2RICMap().values())
+//		{
+//			String fid = jc.getFromId() ;
+//			if(fid.equals(jo.getFromId()))
+//			{
+//				JoinIn ji = jc.getToJI() ;
+//				sendTxtOutToConn(jo,jc,ji,txt) ;
+//			}
+//		}
+//	}
+	
+//	final void sendTxtOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,String txt)
+//	{
+//		String ret = jc.RT_doTrans(txt) ;
+//		if(ret==null)
+//			return ;//error
+//		
+//		RouterInnCollator roa = (RouterInnCollator)ji.getBelongNode() ;
+//		roa.RT_onRecvedFromJoinIn(ji,ret) ;
+//	}
+	
+	
+	
+	
+	final void RT_recvedFromJoinIn(JoinIn ji,Object recved_ob)
 	{
-		for(JoinConn jc : this.belongTo.CONN_getROA2RICMap().values())
+		ji.RT_setLastData(recved_ob);
+		
+		try
 		{
-			String fid = jc.getFromId() ;
-			if(fid.equals(jo.getFromId()))
-			{
-				JoinIn ji = jc.getToJI() ;
-				sendTxtOutToConn(jo,jc,ji,txt) ;
-			}
+			RT_onRecvedFromJoinIn(ji,recved_ob);
+		}
+		catch(Throwable ee)
+		{
+			log.error(ee.getMessage(), ee);
+			this.RT_fireErr("RT_recvedFromJoinIn ["+ji.name+"] err", ee);
+			if(log.isDebugEnabled())
+				log.debug("RT_recvedFromJoinIn ["+ji.name+"] err",ee);
 		}
 	}
 	
-	final void sendTxtOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,String txt)
-	{
-		String ret = jc.RT_doTrans(txt) ;
-		if(ret==null)
-			return ;//error
-		
-		RouterInnCollator roa = (RouterInnCollator)ji.getBelongNode() ;
-		roa.RT_onRecvedFromJoinIn(ji,ret) ;
-	}
-	
-	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt) throws Exception;
+	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,Object recved_ob) throws Exception;
 	
 	public abstract void RT_start();
 	

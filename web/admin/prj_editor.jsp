@@ -264,19 +264,7 @@ top:45px;height:100%;
 {
 height:30px;
 }
-/*
 
-
-
-
-
-
-ul.layui-tab-title li:first-child i{
-display: none;
-}
-
-
-*/
 .layui-tab {
     margin: 0px;
     padding:0px;
@@ -997,13 +985,14 @@ var cxt_menu = {
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi,op_chk:(tn)=>{
 			return true;//return !tn.in_dev;
 		}},
+		{op_name:"cp_tagg",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
 		{op_name:"modify_tagg",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_tagg,op_chk:(tn)=>{
 			return true;// !tn.in_dev;
 		}},
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
-		{op_name:"paste_dev",op_title:"<wbt:g>paste</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste},
+		{op_name:"paste_tagg",op_title:"<wbt:g>paste</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
 		{op_name:"del_tagg",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_tagg,op_chk:(tn)=>{
 			return true;//!tn.ref_locked;
@@ -1313,9 +1302,9 @@ function edit_bind_setup(cptp,cpid,connid,tt)
 	var u = "./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
 	//if(cptp=='opc_ua')
 	//	u = "./conn/cpt_bind_sel_tree.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
-	dlg.open_win(u,
+	dlg.open(u,
 			{title:"Binding Setting ["+cptp+"] "+tt,w:'800',h:'550'},
-			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>cancel</wbt:g>',style:"primary"}],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

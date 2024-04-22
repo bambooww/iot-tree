@@ -4,6 +4,7 @@
 				java.io.*,
 				java.util.*,
 				org.iottree.core.*,
+				org.iottree.core.filter.*,
 	org.iottree.core.util.*,
 	org.iottree.core.comp.*,
 				java.net.*"%>

@@ -18,6 +18,7 @@ boolean b_multi = "true".equals(request.getParameter("multi")) ;
 //String op = request.getParameter("op");
 String path=request.getParameter("path");
 
+boolean w_only = "true".equalsIgnoreCase(request.getParameter("w_only")) ;
 	//String repname = rep.getName() ;
 	
 UANode n = UAUtil.findNodeByPath(path);//rep.findNodeById(id) ;
@@ -46,6 +47,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <style>
 		table{border-collapse:collapse;}
 		body,td{font-size:12px;cursor:default;}
+		body,th{font-size:13px;cursor:default;}
 </style>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
@@ -63,15 +65,18 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <div style="float:left;overflow: auto;height: 90%;width:99%">
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
-  <td width='2%'></td>
-  <td width='15%'>Path Name</td>
-  <td width='15%'>Title</td>
+  <th width='2%'></th>
+  <th width='30%'><wbt:g>tag</wbt:g></th>
+  <th width='40%'><wbt:g>title</wbt:g></th>
 
-  <td width='6%'>Value Type</td>
+  <th width='6%'><wbt:g>val,type</wbt:g></th>
+  <th width='5%'><wbt:g>write</wbt:g></th>
  </tr>
 <%
 	for(UATag tg : tags)
 	{
+		if(w_only && !tg.isCanWrite())
+			continue ;
 		String tagid = tg.getId() ;
 		String pathn = tg.getNodeCxtPathIn(ntags) ;
 		String patht =  tg.getNodeCxtPathTitleIn(ntags) ;
@@ -85,6 +90,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
   <td><%=patht %></td>
   
   <td><%=tg.getValTp() %></td>
+  <td><%=tg.isCanWrite()?"✔":"" %></td>
   </tr>
 <%
 	}

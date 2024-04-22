@@ -38,6 +38,7 @@ function on_left(tr)
 		cur_lefts_trs.length=0;
 	}
 	
+	update_prefix_sel($(tr).attr("path")) ;
 	//TODO shift support later
 	
 	if(cur_lefts_trs.indexOf(tr)<0)
@@ -151,15 +152,19 @@ var search_key = "" ;
 
 function search(bclear)
 {
-	
 	var sk = "";
 	if(bclear)
+	{
+		$("#prefix_sel").val("");
 		$("#inp_search").val("") ;
+		$("#btn_clear").removeClass("layui-bg-blue");
+	}
 	else
 		sk = $("#inp_search").val() ;
 	search_key = sk ;
 	if(!sk)
 	{
+		$("#btn_clear").removeClass("layui-bg-blue");
 		refresh_tb_list(false)
 		return ;
 	}
@@ -167,6 +172,7 @@ function search(bclear)
 	$('#bind_tb_body').html("") ;
 	page_last_idx = 0 ;
 	page_has_next = true;
+	$("#btn_clear").addClass("layui-bg-blue");
 	show_tb_list();
 	return ;
 }
@@ -265,7 +271,7 @@ function ob2tr_row(ob)
 	var ret = "<tr title='"+tt+"' path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
 	var txt = ob.path ;
 	var txtlen = txt.length ;
-	if(txtlen>ROW_MAX_LEN)
+	if(false) //(txtlen>ROW_MAX_LEN)
 	{
 		ret += "<td title='"+txt+"'>..."+txt.substring(txtlen-ROW_MAX_LEN)+"</td>";
 	}
@@ -325,8 +331,8 @@ $("#list_table").scroll(()=>{
 	 {//reach btm
 		 if(!page_has_next)
 			{
-				if(!allshow)
-					lj.msg("all list ok");
+				//if(!allshow)
+				//	dlg.msg("all list ok");
 				allshow=true;
 				return;
 			}

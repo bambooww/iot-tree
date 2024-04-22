@@ -5,6 +5,7 @@
 	<dd_node id="1" name="ric_def" name_cn="项目定义结构" name_en="Project Definition Tree" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="ric_rt" name_cn="项目实时数据" name_en="Project Runtime Data" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="ric_sel_tags" name_cn="标签选择" name_en="Tags Selector" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ric_filter_tags" name_cn="标签过滤" name_en="Tags Filter" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="j_def_tree" name_cn="树形结构定义" name_en="Tree Data Structure" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="j_def_flat" name_cn="扁平结构定义" name_en="Flat Data Structure" desc_cn="" desc_en=""/>
@@ -14,6 +15,9 @@
 	
 	<dd_node id="1" name="j_sel_tags_in" name_cn="写入标签" name_en="Write Into Tag" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="j_sel_tags_out" name_cn="输出标签数据" name_en="Read Tag Data" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="j_filter_tags_out" name_cn="输出标签数据" name_en="Out Tag Data" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="j_filter_out" name_cn="输出数据" name_en="Out Data" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="os_interval" name_cn="定时触发" name_en="Triggering based on intervals" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="os_on_change" name_cn="值变化触发" name_en="Triggering on change" desc_cn="" desc_en=""/>

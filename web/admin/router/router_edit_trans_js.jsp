@@ -45,7 +45,11 @@
 	String jstxt = jc.getTransJS() ;
 	if(jstxt==null)
 		jstxt= "" ;
-%><%@ taglib uri="wb_tag" prefix="wbt"%>
+	
+	String chk_en="" ;
+	if(jc.isTransJSEnable())
+		chk_en = "checked";
+%><%@ taglib uri="wb_tag" prefix="w"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -62,23 +66,44 @@
 }
     </style>
     <script type="text/javascript">
-    dlg.resize_to(450,430);
+    dlg.resize_to(550,520);
     </script>
 </head>
 <body>
-<div style="width:100%;height:300px;border:0px solid;">
-($input)=>{
-<textarea id="jstxt" style="width:100%;height:280px;"><%=jstxt %></textarea>
+<form class="layui-form" action="" onsubmit="return false;">
+<div class="layui-form-item">
+    <label class="layui-form-label"><w:g>enable</w:g>:</label>
+	  <div class="layui-input-inline" style="width:50px;">
+	    <input type="checkbox" id="en" name="en" <%=chk_en%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+	  
+ </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">JS:</label>
+	  
+	  <div class="layui-input-inline" style="width: 400px;">
+	    ($input)=>{
+<textarea id="jstxt" style="width:100%;height:280px;" class="layui-input"><%=jstxt %></textarea>
 &nbsp;&nbsp;}
 </div>
+ </div>
+</form>
 <script>
+
+layui.use('form', function(){
+	  form = layui.form;
+	  
+	  form.render();
+});
+
 function do_submit(cb)
 {
+	let en_js = $("#en").prop("checked") ;
 	let jstxt = $("#jstxt").val() ;
 	jstxt = trim(jstxt) ;
 	if(!jstxt)
 		jstxt="" ;
-	cb(true,jstxt) ;
+	cb(true,{js:jstxt,en_js:en_js}) ;
 }
 </script>
 </body>

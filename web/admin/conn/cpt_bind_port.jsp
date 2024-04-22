@@ -13,7 +13,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%!
 	
 	%><%
 	if(!Convert.checkReqEmpty(request, out,"op", "prjid","cptp"))
@@ -84,11 +84,11 @@ if("import".equals(op))
     <div class="layui-input-inline">
       
     </div>
-    <div class="layui-form-mid">Ingore Not Existed:</div>
+    <div class="layui-form-mid"><w:g>ign_not_exist</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="ignore_null" name="ignore_null" checked='checked' lay-skin="switch"  lay-filter="ignore_null" class="layui-input">
 	  </div>
-	<div class="layui-form-mid">Auto Create Tag:</div>
+	<div class="layui-form-mid"><w:g>auto_c_tag</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <input type="checkbox" id="auto_create_tag" name="auto_create_tag" checked='checked' lay-skin="switch"  lay-filter="auto_create_tag" class="layui-input">
 	  </div>
@@ -105,7 +105,7 @@ else
     </div>
     <div class="layui-form-mid"></div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <button type="button" class="layui-btn">Copy</button>
+	    <button type="button" class="layui-btn"><w:g>copy</w:g></button>
 	  </div>
 
   </div>
@@ -179,7 +179,7 @@ function get_val(id,title,cb,bnum)
 	var v = $('#'+id).val();
 	if(v==null||v=='')
 	{
-		cb(false,'Please input '+title) ;
+		cb(false,'<w:g>pls,input</w:g> '+title) ;
 		throw "no "+title+" input" ;
 	}
 	if(bnum)
@@ -187,7 +187,7 @@ function get_val(id,title,cb,bnum)
 		v = parseInt(v);
 		if(v==NaN)
 		{
-			cb(false,'Please input valid '+title) ;
+			cb(false,'<w:g>pls,input,valid</w:g> '+title) ;
 			throw "invalid "+title+" input" ;
 		}
 	}
@@ -204,7 +204,7 @@ function do_submit(cb)
 	txt = trim(txt) ;
 	if(txt==null||txt=='')
 	{
-		dlg.msg("no import text input") ;
+		dlg.msg("<w:g>pls,input,txt</w:g>") ;
 		return ;
 	}
 

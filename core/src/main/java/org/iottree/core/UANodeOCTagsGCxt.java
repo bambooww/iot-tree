@@ -350,6 +350,44 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 //		}
 //	}
 	
+
+	public UATagG deepPasteTagG(UATagG tgg) throws Exception
+	{
+		String newn = tgg.getName();
+		newn = this.calNextSubNameAuto(newn);
+		return deepPasteTagG(tgg, newn, tgg.getTitle());
+	}
+
+	public UATagG deepPasteTagG(UATagG tgg, String newname, String newtitle) throws Exception
+	{
+		UANode oldn = this.getSubNodeByName(newname);
+		if (oldn != null)
+		{
+			throw new Exception("ch name [" + newname + "] already existed");
+		}
+
+		UATagG newtgg = new UATagG();
+
+		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
+		tgg.copyTreeWithNewSelf(null,newtgg, null, false, true,rf2new);
+		newtgg.id = this.getNextIdByRoot();
+		// newch.name = newname;
+		newtgg.setNameTitle(newname, null, null);
+		// UACh newch = new UACh ch.deepCopyMe();
+		// newch.id=this.getNextIdByRoot();
+		this.taggs.add(newtgg);
+		this.constructNodeTree();
+		//
+//		for (UADev tmpd : newch.devs)
+//		{
+//			tmpd.updateByDevDef(rf2new);
+//		}
+//		this.constructNodeTree();
+		this.save();
+		Convert.copyRelatedFile(rf2new);
+		return newtgg;
+	}
+	
 	/**
 	 * when recved an data package which has multi tags in this GGxt will be updated
 	 * @param subpath2val

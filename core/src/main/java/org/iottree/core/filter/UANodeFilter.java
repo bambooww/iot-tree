@@ -1,4 +1,4 @@
-package org.iottree.core;
+package org.iottree.core.filter;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -7,6 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iottree.core.UANode;
+import org.iottree.core.UANodeOCTags;
+import org.iottree.core.UATag;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
@@ -63,7 +66,7 @@ public abstract class UANodeFilter
 	
 	private static void renderNodeTags(Writer w,UANodeOCTags pn,UANodeOCTags n,List<UATag> tags) throws IOException
 	{
-		w.write("{\"id\":\"" + n.id + "\",\"n\":\"" + n.getNodeCxtPathIn(pn,"_")+ "\"");
+		w.write("{\"id\":\"" + n.getId() + "\",\"n\":\"" + n.getNodeCxtPathIn(pn,"_")+ "\"");
 		w.write(",\"t\":\"" + n.getTitle() + "\"");
 		w.write(",\"p\":\"" + n.getNodeCxtPathIn(pn,".") + "\"");
 		JSONObject jo = n.getExtAttrJO() ;

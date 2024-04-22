@@ -13,7 +13,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%!
 	
 	%><%
 	String path = request.getParameter("path") ;
@@ -31,20 +31,26 @@
 <title>Simple Tag Edit</title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(500,500);
+dlg.resize_to(500,300);
 </script>
 </head>
+<style>
+.layui-form-label
+{
+	width:120px;
+}
+</style>
 <body>
 <form class="layui-form" action="">
   <div class="layui-form-item">
-    <label class="layui-form-label">Path</label>
-    <div class="layui-input-block">
+    <label class="layui-form-label"><w:g>tag,path</w:g></label>
+    <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="path" name="path" value="<%=path%>"  class="layui-input">
     </div>
 
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">Value Tp</label>
+    <label class="layui-form-label"><w:g>val,type</w:g></label>
     <div class="layui-input-inline" style="width:80px">
           	<select id="vt" lay-filter="vt" >
 <%
@@ -58,12 +64,15 @@ for(UAVal.ValTP vtp:UAVal.ValTP.values())
 %>
     	</select>
     </div>
-	<label class="layui-form-label">Title</label>
-    <div class="layui-input-inline">
+	<div class="layui-form-mid"></div>
+    
+  </div>
+<div class="layui-form-item">
+    <label class="layui-form-label"><w:g>title</w:g></label>
+    <div class="layui-input-inline" style="width:300px">
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
     </div>
-  </div>
-
+ </div>
  </form>
 </body>
 <script type="text/javascript">
@@ -122,7 +131,7 @@ function get_val(id,title,cb,bnum)
 	var v = $('#'+id).val();
 	if(v==null||v=='')
 	{
-		cb(false,'Please input '+title) ;
+		cb(false,'<w:g>pls,input</w:g> '+title) ;
 		throw "no "+title+" input" ;
 	}
 	if(bnum)
@@ -130,7 +139,7 @@ function get_val(id,title,cb,bnum)
 		v = parseInt(v);
 		if(v==NaN)
 		{
-			cb(false,'Please input valid '+title) ;
+			cb(false,'<w:g>pls,input,valid</w:g> '+title) ;
 			throw "invalid "+title+" input" ;
 		}
 	}
@@ -145,18 +154,18 @@ function do_submit(cb)
 	var vtstr = $("#vt").val() ;
 	if(path==null||path=='')
 	{
-		dlg.msg("no path input") ;
+		dlg.msg("<w:g>pls,input,path</w:g>") ;
 		return ;
 	}
 	if(vtstr==null||vtstr=='')
 	{
-		dlg.msg("no Value Tp Selected") ;
+		dlg.msg("<w:g>pls,select,val,type</w:g>") ;
 		return ;
 	}
 	
 	if(!chk_var_path(path,true))
 	{
-		dlg.msg("path must be combined by var name,which must use a-z A-Z 0-9 _ and a-z A-Z first");
+		dlg.msg("<w:g>path_must_be</w:g>");
 		return;
 	}
 

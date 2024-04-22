@@ -55,7 +55,7 @@ public class RICRunTime extends RouterInnCollator implements ILang
 	 * override by sub
 	 */
 	@Override
-	protected void runInIntvLoop()
+	protected void RT_runInIntvLoop()
 	{
 		
 	}

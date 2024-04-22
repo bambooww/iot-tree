@@ -18,12 +18,15 @@
 
 String op = request.getParameter("op");
 String prjid = request.getParameter("prjid");
+String ricid = request.getParameter("ricid") ;
+String roaid = request.getParameter("roaid") ;
 String id = request.getParameter("id") ;
 String nname = request.getParameter("name") ;
 
 String fid = request.getParameter("fid") ;
 String tid = request.getParameter("tid") ;
-String jstxt = request.getParameter("jstxt") ;
+String js = request.getParameter("js") ;
+boolean js_en = "true".equals(request.getParameter("en_js")) ;
 UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 if(prj==null)
 {
@@ -127,7 +130,7 @@ case "ric_set_trans_js":
 	if(!Convert.checkReqEmpty(request, out,  "fid","tid"))
 		return ;
 	
-	if(rmgr.CONN_RIC_setConnJS(fid, tid, jstxt)!=null)
+	if(rmgr.CONN_RIC_setConnJS(fid, tid, js_en,js)!=null)
 		out.print("succ") ;
 	else
 		out.print("set failed") ;
@@ -157,11 +160,82 @@ case "roa_set_trans_js":
 	if(!Convert.checkReqEmpty(request, out,  "fid","tid"))
 		return ;
 	
-	if(rmgr.CONN_ROA_setConnJS(fid, tid, jstxt)!=null)
+	if(rmgr.CONN_ROA_setConnJS(fid, tid, js_en,js)!=null)
 		out.print("succ") ;
 	else
 		out.print("set failed") ;
 	return ;
-case "out_mon": //monitor alert output
+case "ric_debug_trigger_data":
+	if(!Convert.checkReqEmpty(request, out, "prjid","id"))
+		return ;
+	RouterInnCollator ric = rmgr.getInnerCollatorById(id) ;
+	if(ric==null)
+	{
+		out.print("no ric found with id="+id) ;
+		return ;
+	}
+	failedr = new StringBuilder() ;
+	if(!ric.DEBUG_triggerOutData(failedr))
+		out.print(failedr.toString()) ;
+	else
+		out.print("trigger ok") ;
+	return ;
+case "ric_debug_join_data":
+	if(!Convert.checkReqEmpty(request, out, "id","name"))
+		return ;
+	boolean bout = "true".equals(request.getParameter("out")) ;
+	ric = rmgr.getInnerCollatorById(id) ;
+	if(ric==null)
+	{
+		out.print("no ric found with id="+id) ;
+		return ;
+	}
+	RouterJoin jj = null;
+	if(bout)
+		jj = ric.getJoinOutByName(nname) ;
+	else
+		jj = ric.getJoinInByName(nname) ;
+	if(jj==null)
+	{
+		out.print("no join found with name "+nname) ;
+		return ;
+	}
+	long ldt = jj.RT_getLastDT() ;
+	String ldd = ""+ jj.RT_getLastData() ;
+	JSONObject tmpjo = new JSONObject() ;
+	tmpjo.put("dt",ldt) ;
+	tmpjo.put("d",ldd) ;
+	tmpjo.write(out) ;
+	return ;
+case "roa_debug_join_data":
+	if(!Convert.checkReqEmpty(request, out, "id","name"))
+		return ;
+	bout = "true".equals(request.getParameter("out")) ;
+	RouterOuterAdp roa = rmgr.getOuterAdpById(id) ;
+	if(roa==null)
+	{
+		out.print("no roa found with id="+id) ;
+		return ;
+	}
+	jj = null;
+	if(bout)
+		jj = roa.getJoinOutByName(nname) ;
+	else
+		jj = roa.getJoinInByName(nname) ;
+	if(jj==null)
+	{
+		out.print("no join found with name "+nname) ;
+		return ;
+	}
+	ldt = jj.RT_getLastDT() ;
+	ldd = ""+ jj.RT_getLastData() ;
+	tmpjo = new JSONObject() ;
+	tmpjo.put("dt",ldt) ;
+	tmpjo.put("d",ldd) ;
+	tmpjo.write(out) ;
+	return ;
+case "rt_inf": //monitor alert output
+	jo = rmgr.RT_getRunInf() ;
+	jo.write(out) ;
 	break ;
 }%>
