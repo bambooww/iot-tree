@@ -26,6 +26,7 @@ import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
+import org.iottree.core.router.RouterManager;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.record.RecManager;
 import org.iottree.core.task.Task;
@@ -986,6 +987,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
 				StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+				
+				RouterManager.getInstance(UAPrj.this).RT_start();
 				// StringBuilder failedr = new StringBuilder() ;
 				
 				// start channel drivers
@@ -1051,6 +1054,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
 				RecManager.getInstance(UAPrj.this).RT_stop() ;
+				
+				RouterManager.getInstance(UAPrj.this).RT_stop();
 			}
 		}
 	};

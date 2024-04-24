@@ -75,7 +75,7 @@ public class RICRunTime extends RouterInnCollator implements ILang
 	}
 	
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt)
+	protected void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved)
 	{
 		
 	}

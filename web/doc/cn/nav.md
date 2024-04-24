@@ -29,10 +29,8 @@
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 项目任务</a>
 ##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 报警支持</a>
 ##### <a href="doc/store/index.md" target="main">&nbsp;&nbsp;&nbsp;4.9 数据储存</a>
-<!--
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 数据字典</a>
--->
-##### <a href="doc/main/hmi_client.md" target="main">&nbsp;&nbsp;&nbsp;4.10 HMI客户端支持</a>
+##### <a href="doc/main/hmi_client.md" target="main">&nbsp;&nbsp;&nbsp;4.11 HMI客户端支持</a>
 
 
 #### <a href="doc/conn/index.md" >5 接入(Connector)</a>

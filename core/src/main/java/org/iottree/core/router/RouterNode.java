@@ -117,6 +117,10 @@ public abstract class RouterNode
 		return null ;
 	}
 	
+	public abstract boolean RT_start() ;
+	public abstract void RT_stop();
+	public abstract boolean RT_isRunning();
+	
 	
 	public JSONObject toJO()
 	{
@@ -206,7 +210,7 @@ public abstract class RouterNode
 		jo.put("id", this.id) ;
 		jo.put("rt_err_dt", this.rtLastErrDT) ;
 		jo.putOpt("rt_last_err", this.rtLastErr) ;
-		
+		jo.put("run_st",this.RT_isRunning()) ;
 		//jo.putOpt(, value)
 		return jo ;
 	}

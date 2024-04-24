@@ -29,10 +29,8 @@
 ##### <a href="doc/main/task.md" target="main">&nbsp;&nbsp;&nbsp;4.8 Tasks</a>
 ##### <a href="doc/main/alert.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Alert Support</a>
 ##### <a href="doc/store/index.md" target="main">&nbsp;&nbsp;&nbsp;4.9 Data Store</a>
-<!--
 ##### <a href="doc/main/dict.md" target="main">&nbsp;&nbsp;&nbsp;4.10 Data Dictionary</a>
--->
-##### <a href="doc/main/hmi_client.md" target="main">&nbsp;&nbsp;&nbsp;4.10 HMI Client</a>
+##### <a href="doc/main/hmi_client.md" target="main">&nbsp;&nbsp;&nbsp;4.11 HMI Client</a>
 
 
 #### <a href="doc/conn/index.md" >5 Connectors</a>

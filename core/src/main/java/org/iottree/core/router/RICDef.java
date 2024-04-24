@@ -70,7 +70,8 @@ public class RICDef extends RouterInnCollator implements ILang
 				String txt = readOutTxt(jo) ;
 				if(txt==null)
 					continue ;
-				RT_sendToJoinOut(jo,txt) ;
+				RouterObj ro = new RouterObj(txt) ;
+				RT_sendToJoinOut(jo,ro) ;
 			}
 			catch(Exception e)
 			{
@@ -96,7 +97,7 @@ public class RICDef extends RouterInnCollator implements ILang
 	}
 	
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt)
+	protected void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved)
 	{
 		
 	}

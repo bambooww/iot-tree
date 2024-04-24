@@ -12,9 +12,15 @@ public class RICFilterTags extends RouterInnCollator
 	
 	private SubFilteredTree subFilterTree = null ;
 	
+	JoinOut filterOut = new JoinOut(this,"filter_out") ;
+	
+	private List<JoinOut> jouts = Arrays.asList(filterOut
+			) ;
+	
 	public RICFilterTags(RouterManager rm)
 	{
 		super(rm);
+		//filterOut.asHelpTxt("") ;
 	}
 	
 	@Override
@@ -38,10 +44,7 @@ public class RICFilterTags extends RouterInnCollator
 		return OutStyle.interval  ;
 	}
 	
-	JoinOut filterOut = new JoinOut(this,"filter_out") ;
 	
-	private List<JoinOut> jouts = Arrays.asList(filterOut
-			) ;
 	
 	@Override
 	public List<JoinIn> getJoinInList()
@@ -70,7 +73,7 @@ public class RICFilterTags extends RouterInnCollator
 			return ;
 		}
 		
-		RT_sendToJoinOut(filterOut,datajo) ;
+		RT_sendToJoinOut(filterOut,new RouterObj(datajo)) ;
 	}
 	
 	@Override
@@ -84,12 +87,12 @@ public class RICFilterTags extends RouterInnCollator
 			return false;
 		}
 		
-		RT_sendToJoinOut(filterOut,datajo) ;
+		RT_sendToJoinOut(filterOut,new RouterObj(datajo)) ;
 		return true;
 	}
 	
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt)
+	protected void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved)
 	{
 		
 	}

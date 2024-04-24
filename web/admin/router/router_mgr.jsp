@@ -140,7 +140,12 @@ background-color: #eeeeee
 	bottom:2px;
 	background-color:red;
 }
-
+.ric_item .run_st
+{
+	position:absolute;
+	right:2px;cursor:pointer;
+	top:2px;
+}
 .ric_item .oper
 {
 	position:absolute;
@@ -218,6 +223,12 @@ background-color: #eeeeee
 	left:2px;
 	bottom:2px;
 	background-color:red;
+}
+.roa_item .run_st
+{
+	position:absolute;cursor:pointer;
+	right:2px;
+	top:2px;
 }
 .roa_item .oper
 {
@@ -571,6 +582,7 @@ function show_rics()
 			<span class="t">\${ob.t}</span>
 			<span class="tpt" >\${ob._tpt}</span>
 			<span class="rt" id="ric_rt_\${ob.id}"></span>
+			<span class="run_st" onclick="debug_node_start_stop('ric','\${ob.id}')"><i id='ric_st_\${ob.id}' class='fa fa-circle-notch'></i></span>
 			<span class="oper">
 			 	\${oper}
 			 </span>
@@ -722,12 +734,12 @@ function show_roas()
 		tmps += `<div id="o_\${ob.id}" class="roa_item" roaid="\${ob.id}" style="top:\${pos}px;\${brd}" h_id="\${ob.id}" t="\${ob.t}" onclick="on_roa_clk(this)" out_ids="\${ob.out_ids}">
 			<span class="t">\${ob.t||ob.n}</span>
 			<div class="bk_icon" style="background:url(./roa/\${ob._tp}.png) no-repeat"></div>
+			<span class="run_st" onclick="debug_node_start_stop('roa','\${ob.id}')"><i id='roa_st_\${ob.id}' class='fa fa-circle-notch'></i></span>
 			<span class="rt" id="roa_rt_\${ob.id}"></span>
 			<span class="oper">
 			 	\${oper}
 			 </span>
 			</div>` ;
-
 	}
 	$("#out_list").html(tmps) ;
 	draw_roa_node_joins();
@@ -1340,6 +1352,26 @@ function debug_join_data(ric_or_roa,ric_roa_id,n,b_out)
 				]);
 	}) ;
 }
+	
+function debug_node_start_stop(ntp,id)
+{
+	let pm = {op:"debug_start_stop",prjid:prjid} ;
+	if("ric"==ntp)
+		pm.ricid=id ;
+	else if("roa"==ntp)
+		pm.roaid = id ;
+	else
+		return ;
+
+	send_ajax("router_ajax.jsp",pm,(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("succ=")!=0)
+		{
+			console.log(ret) ;
+			return ;
+		}
+		dlg.msg(ret.substring(5)) ;
+	}) ;
+}
 
 function rt_update()
 {
@@ -1368,8 +1400,11 @@ function rt_update_in(ob)
 				let dt = new Date(ric.rt_err_dt).format("yyyy-MM-dd hh:mm:ss")
 				tmps = `<span title="\${dt}-\${ric.rt_last_err}">X</span>`;
 			}
-			
 			$("#ric_rt_"+ric.id).html(tmps) ;
+			if(ric.run_st)
+				$("#ric_st_"+ric.id).addClass("fa-spin").css("color","green");
+			else
+				$("#ric_st_"+ric.id).removeClass("fa-spin").css("color",'red');
 		}
 	}
 	
@@ -1384,6 +1419,10 @@ function rt_update_in(ob)
 				tmps = `<span title="\${dt}-\${ric.rt_last_err}">X</span>`;
 			}
 			$("#roa_rt_"+ric.id).html(tmps) ;
+			if(ric.run_st)
+				$("#roa_st_"+ric.id).addClass("fa-spin").css("color","green");
+			else
+				$("#roa_st_"+ric.id).removeClass("fa-spin").css("color",'red');
 		}
 	}
 	

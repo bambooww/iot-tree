@@ -2,9 +2,11 @@ package org.iottree.core.router;
 
 import javax.script.ScriptException;
 
+import org.iottree.core.ConnPt.DataTp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.json.JSONObject;
 
 public class JoinConn
@@ -24,7 +26,11 @@ public class JoinConn
 	
 	String transJS = null ;
 	
-	private UACodeItem codeItem = null ;
+//	private UACodeItem codeItem = null ;
+	
+	private UAContext context = null ;
+	private String jsFN = null ;
+	//private boolean hasJS = false;
 	
 	JoinConn(RouterManager rm,JoinOut fromjo,JoinIn toji)
 	{
@@ -53,7 +59,10 @@ public class JoinConn
 			this.transJS = js.trim() ;
 		else
 			this.transJS = null ;
-		this.codeItem = null ;
+		//this.codeItem = null ;
+		context = null ;
+		jsFN = null ;
+		//this.hasJS = !Convert.isNullOrTrimEmpty(js) ;
 		return this ;
 	}
 	
@@ -94,28 +103,48 @@ public class JoinConn
 	
 	private UAContext getCxt() throws ScriptException
 	{
+		if(context!=null)
+			return context;
+		
+		if(Convert.isNullOrTrimEmpty(this.transJS))
+			return null ;
+		
 		RouterNode rn = this.fromJO.getBelongNode() ;
 		if(rn instanceof RouterInnCollator)
 		{
-			return ((RouterInnCollator)rn).RT_getContext() ;
+			context = ((RouterInnCollator)rn).RT_getContext() ;
 		}
 		rn = this.toJI.getBelongNode() ;
 		if(rn instanceof RouterInnCollator)
 		{
-			return ((RouterInnCollator)rn).RT_getContext() ;
+			context = ((RouterInnCollator)rn).RT_getContext() ;
 		}
-		return null ;
-	}
-	
-	private synchronized UACodeItem getCodeItem() throws ScriptException
-	{
-		if(Convert.isNullOrTrimEmpty(transJS))
+		
+		if(context==null)
 			return null ;
 		
-		this.codeItem = new UACodeItem("","{\r\n"+transJS+"\r\n}") ;
-		this.codeItem.initItem(getCxt(), "$input") ;
-		return this.codeItem ;
+		jsFN = "__JoinConn_"+IdCreator.newSeqId() ;
+		String tmps ="function "+jsFN + "($input){\r\n" ;
+		tmps += transJS ;
+		tmps += "\r\n}\r\n";
+		tmps += "function "+jsFN + "_w($__input__,$__txt_only__){\r\n" +
+				"let $input = $__input__;if(!$__txt_only__)eval(\"$input=\"+$__input__);\r\n"+ 
+				"let ret = "+jsFN+"($input);"+
+				"if(typeof(ret)==\"string\") return ret;"+
+				"return JSON.stringify(ret);\r\n}" ;
+		context.scriptEval(tmps);				
+		return context ;
 	}
+	
+//	private synchronized UACodeItem getCodeItem() throws ScriptException
+//	{
+//		if(Convert.isNullOrTrimEmpty(transJS))
+//			return null ;
+//		
+//		this.codeItem = new UACodeItem("","{\r\n"+transJS+"\r\n}") ;
+//		this.codeItem.initItem(getCxt(), "$__input__","$__txt_only__") ;
+//		return this.codeItem ;
+//	}
 	
 	private long rt_transErrDT = -1;//System.currentTimeMillis() ;
 	
@@ -123,27 +152,37 @@ public class JoinConn
 	
 	private Exception rt_transErr = null ;
 	
-	public Object RT_doTrans(Object input)// throws Exception 
+	public RouterObj RT_doTrans(RouterObj input)// throws Exception 
 	{
 		if(!this.bEnJS)
 			return input ;
 		
+//		if(!this.hasJS)
+//		{
+//			rt_transErrDT = System.currentTimeMillis() ;
+//			rt_transErrInf = "no js text";
+//			rt_transErr = null ;
+//			return null ;
+//		}
 		try
 		{
-			UACodeItem ci = getCodeItem() ;
-			if(ci==null)
-				return input ;
-			
-			Object jo = ci.runCodeFunc(input) ;
-			if(jo==null)
+//			UACodeItem ci = getCodeItem() ;
+//			if(ci==null)
+//				return input ;
+			UAContext cxt = this.getCxt() ;
+			if(cxt==null)
+				return null ;
+			String res = (String)cxt.scriptInvoke(jsFN + "_w",input.getTxt(),input.isTxtOnly());
+			if(Convert.isNullOrEmpty(res))
 			{
 				rt_transErrDT = System.currentTimeMillis() ;
-				rt_transErrInf = "js code return null" ;
+				rt_transErrInf = "js code return null or empty" ;
 				return null ;
 			}
+			
 			rt_transErrDT = -1 ;
 			rt_transErr = null ;
-			return jo.toString() ;
+			return new RouterObj(res) ;
 		}
 		catch(Exception ee)
 		{
@@ -190,7 +229,7 @@ public class JoinConn
 	public JSONObject toListJO()
 	{
 		JSONObject jo = toJO();
-		jo.put("has_js", Convert.isNotNullTrimEmpty(transJS)) ;
+		jo.put("has_js",Convert.isNotNullTrimEmpty(transJS)) ;
 		return jo ;
 	}
 	
@@ -215,6 +254,7 @@ public class JoinConn
 		JoinConn ret = new JoinConn(rm,jjo,ji,fid,tid) ;
 		ret.transJS = jo.optString("js") ;
 		ret.bEnJS = jo.optBoolean("en_js",false) ;
+		//ret.hasJS = !Convert.isNullOrTrimEmpty(ret.transJS) ;
 		return ret ;
 	}
 	
@@ -239,6 +279,7 @@ public class JoinConn
 		JoinConn ret = new JoinConn(rm,jjo,ji,fid,tid) ;
 		ret.transJS = jo.optString("js") ;
 		ret.bEnJS = jo.optBoolean("en_js",false) ;
+		//ret.hasJS = !Convert.isNullOrTrimEmpty(ret.transJS) ;
 		return ret ;
 	}
 }

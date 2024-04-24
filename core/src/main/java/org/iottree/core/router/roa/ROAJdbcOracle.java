@@ -2,6 +2,7 @@ package org.iottree.core.router.roa;
 
 import org.iottree.core.router.JoinIn;
 import org.iottree.core.router.RouterManager;
+import org.iottree.core.router.RouterObj;
 import org.iottree.core.router.RouterOuterAdp;
 
 public class ROAJdbcOracle extends ROAJdbc
@@ -25,7 +26,7 @@ public class ROAJdbcOracle extends ROAJdbc
 	}
 
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji, Object recved_txt) throws Exception
+	protected void RT_onRecvedFromJoinIn(JoinIn ji, RouterObj recved_txt) throws Exception
 	{
 		
 	}

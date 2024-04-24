@@ -5,6 +5,7 @@ import java.util.List;
 import org.iottree.core.router.JoinIn;
 import org.iottree.core.router.JoinOut;
 import org.iottree.core.router.RouterManager;
+import org.iottree.core.router.RouterObj;
 import org.iottree.core.router.RouterOuterAdp;
 
 public class ROAJdbcMySql extends ROAJdbc
@@ -28,7 +29,7 @@ public class ROAJdbcMySql extends ROAJdbc
 	}
 
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji, Object recved_txt) throws Exception
+	protected void RT_onRecvedFromJoinIn(JoinIn ji, RouterObj recved_txt) throws Exception
 	{
 		
 	}

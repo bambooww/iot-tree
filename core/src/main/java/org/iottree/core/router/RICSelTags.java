@@ -27,9 +27,37 @@ public class RICSelTags extends RouterInnCollator
 	
 	OutStyle outSty = OutStyle.interval ;
 	
+	
+	private List<JoinOut> jouts = Arrays.asList(
+			new JoinOut(this,"sel_tags_out") //,false,true)
+			) ;
+	
+	private static final String J_TAGS_IN = "sel_tags_in";
+	
+	JoinIn jin = new JoinIn(this,J_TAGS_IN) ;
+	
+	private List<JoinIn> jinws = Arrays.asList(
+			 jin
+			) ;
+	
+	static String JIN_HELP = "" ;
+	static
+	{
+		StringBuilder sb = new StringBuilder() ;
+		
+		sb.append(" CMD: write_tag\r\n") ;
+		JSONObject helpfmt = new JSONObject() ;
+		helpfmt.put("cmd", "write_tag") ;
+		helpfmt.put("tag", "tag.path.in.prj") ;
+		helpfmt.put("value", "bool,int,float etc") ;
+		sb.append(helpfmt.toString(2)).append("\r\n e.g: {\"cmd\":\"write_tag\",\"tag\":\"\",\"value\":true}\r\n") ;
+	}
+	
 	public RICSelTags(RouterManager rm)
 	{
 		super(rm);
+		
+		jin.asHelpTxt(JIN_HELP) ;
 	}
 	
 	@Override
@@ -84,16 +112,16 @@ public class RICSelTags extends RouterInnCollator
 			tags.add(tag) ;
 		}
 		this.rtInWriteTags = tags ;
+		
+		StringBuilder sb = new StringBuilder() ;
+		sb.append(JIN_HELP).append("\r\n Tags:\r\n") ;
+		for(UATag tag:tags)
+		{
+			sb.append(tag.getNodeCxtPathInPrj()+"\r\n") ;
+		}
+		this.jin.asHelpTxt(sb.toString()) ;
 	}
-	
-	private List<JoinOut> jouts = Arrays.asList(
-			new JoinOut(this,"sel_tags_out") //,false,true)
-			) ;
-	
-	private List<JoinIn> jinws = Arrays.asList(
-			new JoinIn(this,"sel_tags_in") //,false,true)
-			) ;
-	
+
 	@Override
 	public List<JoinIn> getJoinInList()
 	{
@@ -128,20 +156,60 @@ public class RICSelTags extends RouterInnCollator
 		
 	}
 	
-	public String pullOut(String join_out_name) throws Exception
+//	public String pullOut(String join_out_name) throws Exception
+//	{
+//		switch(join_out_name)
+//		{
+//		case "out":
+//			return this.belongTo.belongTo.JS_get_rt_json_flat();
+//		default:
+//			return null ;
+//		}
+//	}
+	
+	@Override
+	protected void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved)
 	{
-		switch(join_out_name)
+		if(J_TAGS_IN.equals(ji.getName()))
 		{
-		case "out":
-			return this.belongTo.belongTo.JS_get_rt_json_flat();
-		default:
-			return null ;
+			JSONObject recvjo = recved.getJSONObject(); //(JSONObject)recved ;
+			RT_onInWriteTag(recvjo) ;
 		}
 	}
 	
-	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt)
+	private void RT_onInWriteTag(JSONObject recvjo)
 	{
+		String cmd = recvjo.optString("cmd") ;
+		if("write_tag".equals(cmd))
+		{
+			String path = recvjo.optString("tag") ;
+			if(Convert.isNullOrEmpty(path))
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: write_tag jo has not tag prop \r\n"+recvjo.toString(), null);
+				return ;
+			}
+			Object objv = recvjo.opt("value") ;
+			if(objv==null)
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: write_tag jo has not value prop \r\n"+recvjo.toString(), null);
+				return ;
+			}
+			UATag tag = this.belongPrj.getTagByPath(path) ;
+			if(tag==null)
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: not tag with path="+path, null);
+				return ;
+			}
+			StringBuilder failedr = new StringBuilder() ;
+			if(!tag.RT_writeVal(objv, failedr))
+			{
+				this.RT_fireErr("RT_onInWriteTag warn:"+failedr, null);
+				return ;
+			}
+			return ;
+		}
+		
+		this.RT_fireErr("RT_onInWriteTag warn: unknown recved JSON \r\n"+recvjo.toString(), null);
 		
 	}
 	

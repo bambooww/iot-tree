@@ -34,6 +34,26 @@ if(prj==null)
 	return ;
 }
 RouterManager rmgr= RouterManager.getInstance(prj) ;
+RouterInnCollator ric = null ;
+if(Convert.isNotNullEmpty(ricid))
+{
+	ric = rmgr.getInnerCollatorById(ricid) ;
+	if(ric==null)
+	{
+		out.print("no ric found with id="+ricid) ;
+		return ;
+	}
+}
+RouterOuterAdp roa = null ;
+if(Convert.isNotNullEmpty(roaid))
+{
+	roa = rmgr.getOuterAdpById(roaid) ;
+	if(roa==null)
+	{
+		out.print("no roa found with id="+roaid) ;
+		return ;
+	}
+}
 
 switch(op)
 {
@@ -168,7 +188,7 @@ case "roa_set_trans_js":
 case "ric_debug_trigger_data":
 	if(!Convert.checkReqEmpty(request, out, "prjid","id"))
 		return ;
-	RouterInnCollator ric = rmgr.getInnerCollatorById(id) ;
+	ric = rmgr.getInnerCollatorById(id) ;
 	if(ric==null)
 	{
 		out.print("no ric found with id="+id) ;
@@ -201,7 +221,10 @@ case "ric_debug_join_data":
 		return ;
 	}
 	long ldt = jj.RT_getLastDT() ;
-	String ldd = ""+ jj.RT_getLastData() ;
+	RouterObj ro = jj.RT_getLastData() ; 
+	String ldd = "" ;
+	if(ro!=null)
+		ldd = ro.getTxt() ;
 	JSONObject tmpjo = new JSONObject() ;
 	tmpjo.put("dt",ldt) ;
 	tmpjo.put("d",ldd) ;
@@ -211,7 +234,7 @@ case "roa_debug_join_data":
 	if(!Convert.checkReqEmpty(request, out, "id","name"))
 		return ;
 	bout = "true".equals(request.getParameter("out")) ;
-	RouterOuterAdp roa = rmgr.getOuterAdpById(id) ;
+	roa = rmgr.getOuterAdpById(id) ;
 	if(roa==null)
 	{
 		out.print("no roa found with id="+id) ;
@@ -228,7 +251,10 @@ case "roa_debug_join_data":
 		return ;
 	}
 	ldt = jj.RT_getLastDT() ;
-	ldd = ""+ jj.RT_getLastData() ;
+	ro = jj.RT_getLastData() ; 
+	ldd = "" ;
+	if(ro!=null)
+		ldd = ro.getTxt() ;
 	tmpjo = new JSONObject() ;
 	tmpjo.put("dt",ldt) ;
 	tmpjo.put("d",ldd) ;
@@ -238,4 +264,56 @@ case "rt_inf": //monitor alert output
 	jo = rmgr.RT_getRunInf() ;
 	jo.write(out) ;
 	break ;
+case "debug_start_stop":
+	if(ric!=null)
+	{
+		if(ric.RT_isRunning())
+		{
+			ric.RT_stop() ;
+			out.print("succ=stop ok") ;
+			return ;
+		}
+		else
+		{
+			ric.RT_start() ;
+			out.print("succ=start ok") ;
+			return ;
+		}
+	}
+	
+	if(roa!=null)
+	{
+		if(roa.RT_isRunning())
+		{
+			roa.RT_stop() ;
+			out.print("succ=stop ok") ;
+			return ;
+		}
+		else
+		{
+			roa.RT_start() ;
+			out.print("succ=start ok") ;
+			return ;
+		}
+	}
+	out.print("no router node ") ;
+	/*
+	boolean bstart = "true".equals(request.getParameter("start")) ;
+	if(bstart)
+	{
+		if(ric!=null)
+			ric.RT_start() ;
+		else if(roa!=null)
+			roa.RT_start() ;
+	}
+	else
+	{
+		if(ric!=null)
+			ric.RT_stop() ;
+		else if(roa!=null)
+			roa.RT_stop() ;
+	}
+	out.print("succ") ;
+	*/
+	return ;
 }%>

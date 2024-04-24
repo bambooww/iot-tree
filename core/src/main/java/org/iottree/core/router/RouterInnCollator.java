@@ -141,7 +141,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	 * @param data
 	 * @throws Exception
 	 */
-	protected final void RT_sendToJoinOut(JoinOut jo,Object data)// throws Exception
+	protected final void RT_sendToJoinOut(JoinOut jo,RouterObj data)// throws Exception
 	{
 		jo.RT_setLastData(data);
 		
@@ -156,17 +156,19 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		}
 	}
 	
-	final void sendOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,Object data)// throws Exception
+	private final void sendOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,RouterObj data)// throws Exception
 	{
-		Object ret = jc.RT_doTrans(data) ;
+		RouterObj ret = jc.RT_doTrans(data) ;
 		if(ret==null)
 			return ;//error
 		
 		RouterOuterAdp roa = (RouterOuterAdp)ji.getBelongNode() ;
+		
+		ji.RT_setLastData(ret);
 		roa.RT_recvedFromJoinIn(ji,ret) ;
 	}
 	
-	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt) ;
+	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved) ;
 	//public abstract String pullOut(String join_out_name) throws Exception;
 	
 	
@@ -213,6 +215,19 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 			queTh = null ;
 			return ;
 		}
+	}
+	
+	public boolean RT_isRunning()
+	{
+		OutStyle os = getOutStyle() ;
+		switch(os)
+		{
+		case interval:
+			return thread!=null ;
+		case on_change:
+			return queTh!=null && queTh.isRunning() ;
+		}
+		return false;
 	}
 	
 	private void runInterval()

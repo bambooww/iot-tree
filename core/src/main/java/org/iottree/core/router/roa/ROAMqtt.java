@@ -5,6 +5,7 @@ import java.util.List;
 import org.iottree.core.router.JoinIn;
 import org.iottree.core.router.JoinOut;
 import org.iottree.core.router.RouterManager;
+import org.iottree.core.router.RouterObj;
 import org.iottree.core.router.RouterOuterAdp;
 
 public class ROAMqtt extends RouterOuterAdp
@@ -28,7 +29,7 @@ public class ROAMqtt extends RouterOuterAdp
 	}
 
 	@Override
-	protected void RT_onRecvedFromJoinIn(JoinIn ji, Object recved_txt) throws Exception
+	protected void RT_onRecvedFromJoinIn(JoinIn ji, RouterObj recved_txt) throws Exception
 	{
 		
 	}
@@ -46,10 +47,9 @@ public class ROAMqtt extends RouterOuterAdp
 	}
 
 	@Override
-	public void RT_start()
+	public boolean RT_start()
 	{
-		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
 	@Override

@@ -747,11 +747,6 @@ public class RouterManager
 	
 	public void RT_start()
 	{
-		for(RouterInnCollator ric:this.getInnerCollatorsMap().values())
-		{
-			ric.RT_start() ;
-		}
-		
 		for(RouterOuterAdp roa:this.getOuterAdpsMap().values())
 		{
 			if(!roa.isEnable())
@@ -759,11 +754,27 @@ public class RouterManager
 			
 			roa.RT_start() ;
 		}
+		
+		for(RouterInnCollator ric:this.getInnerCollatorsMap().values())
+		{
+			if(!ric.isEnable())
+				continue ;
+			
+			ric.RT_start() ;
+		}
 	}
 	
 	public void RT_stop()
 	{
+		for(RouterOuterAdp roa:this.getOuterAdpsMap().values())
+		{
+			roa.RT_stop() ;
+		}
 		
+		for(RouterInnCollator ric:this.getInnerCollatorsMap().values())
+		{
+			ric.RT_stop();
+		}
 	}
 	
 	public JSONObject RT_getRunInf()

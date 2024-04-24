@@ -46,10 +46,9 @@ public abstract class ROAJdbc extends RouterOuterAdp implements ILang
 
 
 	@Override
-	public void RT_start()
+	public boolean RT_start()
 	{
-		// TODO Auto-generated method stub
-		
+		return false;
 	}
 
 	@Override

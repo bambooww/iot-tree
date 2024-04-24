@@ -68,7 +68,7 @@ if(in_tagids!=null)
 	for(UATag tag:in_tags)
 	{
 		in_tagids.put(tag.getId()) ;
-		in_tagtxt += tag.getNodePath() +"\r\n";
+		in_tagtxt += tag.getNodeCxtPathIn(prj) +"\r\n";
 	}
 }
  

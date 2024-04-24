@@ -83,7 +83,7 @@ public abstract class RouterOuterAdp extends RouterNode
 	
 	
 	
-	final void RT_recvedFromJoinIn(JoinIn ji,Object recved_ob)
+	final void RT_recvedFromJoinIn(JoinIn ji,RouterObj recved_ob)
 	{
 		ji.RT_setLastData(recved_ob);
 		
@@ -100,9 +100,37 @@ public abstract class RouterOuterAdp extends RouterNode
 		}
 	}
 	
-	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,Object recved_ob) throws Exception;
+	protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved_ob) throws Exception;
 	
-	public abstract void RT_start();
+	protected final void RT_sendToJoinOut(JoinOut jo,RouterObj data)// throws Exception
+	{
+		jo.RT_setLastData(data);
+		
+		for(JoinConn jc : this.belongTo.CONN_getROA2RICMap().values())
+		{
+			String fid = jc.getFromId() ;
+			if(fid.equals(jo.getFromId()))
+			{
+				JoinIn ji = jc.getToJI() ;
+				sendOutToConn(jo,jc,ji,data) ;
+			}
+		}
+	}
+	
+	final void sendOutToConn(JoinOut jo,JoinConn jc,JoinIn ji,RouterObj data)// throws Exception
+	{
+		RouterObj ret = jc.RT_doTrans(data) ;
+		if(ret==null)
+			return ;//error
+		
+		RouterInnCollator ric = (RouterInnCollator)ji.getBelongNode() ;
+		ji.RT_setLastData(ret);
+		ric.RT_onRecvedFromJoinIn(ji,ret) ;
+	}
+	
+	//protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt) ;
+	
+	public abstract boolean RT_start();
 	
 	public abstract void RT_stop();
 	

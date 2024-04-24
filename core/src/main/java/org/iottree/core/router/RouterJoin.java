@@ -1,6 +1,7 @@
 package org.iottree.core.router;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
 import org.json.JSONObject;
@@ -18,6 +19,10 @@ public abstract class RouterJoin implements ILang
 	String title = null;
 	
 	String desc = null ;
+	
+	private transient String helpTxt = null ;
+	
+	private transient Object relatedObj = null ;
 	
 	public RouterJoin(RouterNode node,String name) //,String title,String desc)
 	{
@@ -66,6 +71,31 @@ public abstract class RouterJoin implements ILang
 			this.desc = d ;
 	}
 	
+	/**
+	 * 获取帮助文本，里面可以包含消息格式说明等内容。
+	 * @return
+	 */
+	public String getHelpTxt()
+	{
+		return this.helpTxt ;
+	}
+	
+	public RouterJoin asHelpTxt(String txt)
+	{
+		this.helpTxt = txt ;
+		return this ;
+	}
+	
+	public Object getRelatedObj()
+	{
+		return this.relatedObj ;
+	}
+	
+	public void setRelatedObj(Object obj)
+	{
+		this.relatedObj = obj ;
+	}
+	
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
@@ -79,6 +109,7 @@ public abstract class RouterJoin implements ILang
 		JSONObject jo = this.toJO() ;
 		jo.putOpt("t", this.getTitle()) ;
 		jo.putOpt("d", this.getDesc()) ;
+		jo.put("has_help", Convert.isNotNullEmpty(this.helpTxt)) ;
 		return jo;
 	}
 	
@@ -95,10 +126,10 @@ public abstract class RouterJoin implements ILang
 	
 	private Exception rtLastExp = null ;
 	
-	private Object rtLastData = null ;
+	private RouterObj rtLastData = null ;
 	
 
-	void RT_setLastData(Object data)
+	void RT_setLastData(RouterObj data)
 	{
 		this.rtLastDT = System.currentTimeMillis() ;
 		this.rtLastData = data ;
@@ -116,7 +147,7 @@ public abstract class RouterJoin implements ILang
 		return this.rtLastDT ;
 	}
 	
-	public Object RT_getLastData()
+	public RouterObj RT_getLastData()
 	{
 		return this.rtLastData ;
 	}
