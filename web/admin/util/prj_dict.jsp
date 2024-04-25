@@ -78,11 +78,18 @@ background-color: #eeeeee
 .dc_item .t
 {
 	position:absolute;
-	font-size: 20px;
-	top:5px;
+	font-size: 15px;
+	top:2px;
 	left:10px;
 }
 
+.dc_item .bs
+{
+	position:absolute;
+	font-size: 12px;
+	bottom:1px;
+	left:10px;
+}
 
 .dc_item .op
 {
@@ -110,17 +117,26 @@ background-color: #eeeeee
 	margin-bottom: 2px;
 	left:5%;
 	width:90%;
-	height:30px;
+	height:40px;
 	border:1px solid #aaaaaa;
 }
 
 .dn_item .t
 {
 	position:absolute;
-	font-size: 15px;
-	top:5px;
+	font-size: 14px;
+	top:1px;
 	left:10px;
 }
+
+.dn_item .n
+{
+	position:absolute;
+	font-size: 12px;
+	bottom:1px;
+	left:10px;
+}
+
 .dn_item .op
 {
 	position:absolute;
@@ -133,9 +149,10 @@ background-color: #eeeeee
 {
 	position:relative;
 	width:100%;
-	height:35px;
+	height:30px;
 	top:0px;
-	font-size:20px;
+	font-size:15px;
+	font-weight:bold;
 	background:#f2f2f2;
 }
 
@@ -174,10 +191,10 @@ for(DataClass dc:dcs)
 	String dc_title = dc.getClassTitle() ;
 	DataClass.BindStyle bs = dc.getBindStyle() ;
 %>
-	<div class="dc_item" dc_id="<%=cid %>" onclick="on_dc_clk(this)" is_input="<%=bs.isInput()%>" dc_title="<%=dc_title%>" dc_name="<%=dc_name %>" bs_title="<%=bs.getTitle() %>">
+	<div class="dc_item" id="cid_<%=cid %>" dc_id="<%=cid %>" onclick="on_dc_clk(this)" is_input="<%=bs.isInput()%>" dc_title="<%=dc_title%>" dc_name="<%=dc_name %>" bs_title="<%=bs.getTitle() %>">
 	  <span class="n"></span>
-	  <span class="t"><%=dc_title %> - <%=dc_name %> [<%=bs.getTitle() %>]</span>
-	  <span class="bs"></span>
+	  <span class="t"><%=dc_title %> - <%=dc_name %></span>
+	  <span class="bs"> [<%=bs.getTitle() %>]</span>
 	  <span class="op">
 	  	<button class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_dc('<%=dc.getClassId()%>')" title="Edit Data Class"><i class="fa fa-pencil"></i></button>
 	      <button class="layui-btn layui-btn-xs layui-btn-normal"  onclick="import_dc_txt('<%=dc.getClassId()%>')" title="Import by Txt"><i class="fa-solid fa-file-import"></i></button>
@@ -212,6 +229,8 @@ function on_dc_clk(ele)
 
 function update_dns(cid,dc_ob)
 {
+	if(!dc_ob)
+		dc_ob = $("#cid_"+cid) ;
 	send_ajax("prj_dict_ajax.jsp","prjid="+prjid+"&op=list_dns&prjid="+prjid+"&cid="+cid,function(bsucc,ret){
 		if(!bsucc || ret.indexOf("[")!=0)
 		{
@@ -228,7 +247,7 @@ function show_dns(cid,dns,dc_ob)
 {
 	if(dc_ob.attr("is_input")=='true')
 	{
-		let tmps=`<div style="width:90%;height:100px;border:2px solid #00ba7d;font-size:20px;">
+		let tmps=`<div style="width:90%;height:100px;border:2px solid #00ba7d;font-size:15px;">
 			 \${dc_ob.attr("dc_title")} -\${dc_ob.attr("dc_name")} [\${dc_ob.attr("bs_title")}] <br>  <w:g>input_by_user</w:g>
 			</div>`
 		$("#dn_list").html(tmps) ;
@@ -243,8 +262,8 @@ function show_dns(cid,dns,dc_ob)
 		let t = dn.t ;
 		tmps += `
 			<div class="dn_item" dc_id="\${cid}" dn_n="\${n}">
-			  <span class="n"></span>
-			  <span class="t">\${t} - \${n}</span>
+			  <span class="n">\${n}</span>
+			  <span class="t">\${t}</span>
 			  <span class="op">
 			  	<button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_dn('\${cid}','\${n}')" title="Edit Data Class"><i class="fa fa-pencil"></i></button>
 				<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_dn('\${cid}','\${n}')" title="Delete Data Node"><i class="fa-regular fa-rectangle-xmark"></i></button>

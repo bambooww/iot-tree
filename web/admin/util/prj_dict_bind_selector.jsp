@@ -166,7 +166,7 @@ function set_val_in_dc(dc)
 	let v = null ;
 	if(jstr!=null)
 		v = jstr[dc] ;
-	if(v===null||v==="")
+	if(v===null||v===""||v===undefined)
 		return ;
 
 	if(binput)
@@ -284,7 +284,7 @@ function do_submit(cb)
 	for(var dcn of dc_names)
 	{
 		var v = get_val_in_dc(dcn) ;
-		if(v==null)
+		if(v==null||v=="")
 			continue ;
 		ret[dcn] = v ;
 		bgit=true;

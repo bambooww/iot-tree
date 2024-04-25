@@ -1053,7 +1053,7 @@ function on_tag_mouseup(tagid)
 function bind_ext(path)
 {
 	dlg.open("../util/prj_dict_bind_selector.jsp?path="+path,
-			{title:"Ext Binder",w:'500px',h:'400px'},
+			{title:"<wbt:g>edit,dict_ext_props</wbt:g>",w:'500px',h:'400px'},
 			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)

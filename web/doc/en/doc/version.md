@@ -8,6 +8,9 @@ Add support for writing values in the middle tag: trigger the corresponding JS s
 Preliminary implementation of the Router Out basic framework, enabling IOT-Tree to support more upper level or external system data sharing based on messages.
 
 
+### version 1.6.1
+
+
 ### version 2.0.0 (Plan)
 
 
