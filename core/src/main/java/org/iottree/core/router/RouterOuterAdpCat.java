@@ -132,7 +132,7 @@ public class RouterOuterAdpCat implements ILang
 		static
 		{
 			registerOuterAdpDef("mqtt","org.iottree.core.router.roa.ROAMqtt",MQ) ;
-			registerOuterAdpDef("kafka","org.iottree.ext.kafka.ROAKafka",MQ) ;
+			registerOuterAdpDef("kafka","org.iottree.ext.roa.ROAKafka",MQ) ;
 			
 			registerOuterAdpDef("db_mysql","",DB) ; //org.iottree.core.router.roa.ROAJdbcMySql
 			registerOuterAdpDef("db_oracle","",DB) ; //org.iottree.core.router.roa.ROAJdbcOracle

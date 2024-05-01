@@ -4,14 +4,13 @@
 	org.iottree.core.*,
 				org.iottree.core.util.*,
 				org.iottree.core.node.*,
-				org.iottree.core.router.*,
-				org.iottree.ext.kafka.*,
+				org.iottree.core.router.*,org.iottree.ext.roa.*,
 				org.iottree.core.basic.*,
 				org.iottree.core.util.web.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 		return ;
 	
@@ -119,15 +118,15 @@ border:1px solid;border-color:#d2d2d2;overflow: auto;width:200px;height:150px;
     --%>
     <div id="edit_mqtt">
      <div class="layui-form-item">
-    <label class="layui-form-label">Broker <wbt:g>host</wbt:g>:</label>
+    <label class="layui-form-label">Broker <w:g>host</w:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="host" name="host" value="<%=host%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
+    <div class="layui-form-mid"><w:g>port</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="number" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
-	 <div class="layui-form-mid"><wbt:g>conn,timeout</wbt:g>(<wbt:g>second</wbt:g>):</div>
+	 <div class="layui-form-mid"><w:g>conn,timeout</w:g>(<w:g>second</w:g>):</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    
 	    <input type="number" id="mqtt_conn_to" name="mqtt_conn_to" value="<%=conn_to%>"  title="seconds" autocomplete="off" class="layui-input">
@@ -135,26 +134,26 @@ border:1px solid;border-color:#d2d2d2;overflow: auto;width:200px;height:150px;
   </div>
 
   <div class="layui-form-item">
-    <label class="layui-form-label">Broker <wbt:g>user</wbt:g>:</label>
+    <label class="layui-form-label">Broker <w:g>user</w:g>:</label>
     <div class="layui-input-inline">
-      <input type="text" id="mqtt_user" name="mqtt_user" value="<%=user%>"  lay-verify="required"  autocomplete="off" class="layui-input">
+      <input type="text" id="user" name="user" value="<%=user%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid"><wbt:g>psw</wbt:g>:</div>
+    <div class="layui-form-mid"><w:g>psw</w:g>:</div>
 	  <div class="layui-input-inline" style="width: 150px;">
-	    <input type="text" id="mqtt_psw" name="mqtt_psw" value="<%=psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
+	    <input type="text" id="psw" name="psw" value="<%=psw%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
   </div>
    <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>producer</wbt:g></label>
+    <label class="layui-form-label"><w:g>producer</w:g></label>
     <div class="layui-input-inline pclist" id="send_confs" >
       &nbsp;
     </div>
-    <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_prod()">+<wbt:g>add</wbt:g></button></div>
-    <div class="layui-form-mid"><wbt:g>consumer</wbt:g></div>
+    <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_prod()">+<w:g>add</w:g></button></div>
+    <div class="layui-form-mid"><w:g>consumer</w:g></div>
     <div class="layui-input-inline pclist" id="recv_confs" >
       &nbsp;
     </div>
-    <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_cons()">+<wbt:g>add</wbt:g></button></div>
+    <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_cons()">+<w:g>add</w:g></button></div>
   </div>
   
   
@@ -237,12 +236,12 @@ function add_or_edit_prod(id)
 {
 	cur_prod_ob = get_send_conf(id) ;
 	console.log(id,cur_prod_ob) ;
-	let tt = '<wbt:g>add</wbt:g> Producer Parameter';
+	let tt = '<w:g>add</w:g> Producer Parameter';
 	if(cur_prod_ob)
-		tt = '<wbt:g>edit</wbt:g> Producer Parameter';
-	dlg.open("kafka_adp_topic_edit.jsp",
+		tt = '<w:g>edit</w:g> Producer Parameter';
+	dlg.open("util_topic_edit.jsp",
 			{title:tt,pm:cur_prod_ob},
-			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -307,12 +306,12 @@ function del_cons(id)
 function add_or_edit_cons(id)
 {
 	cur_cons_ob = get_recv_conf(id) ;
-	let tt = '<wbt:g>add</wbt:g> Consumer Parameter';
+	let tt = '<w:g>add</w:g> Consumer Parameter';
 	if(cur_cons_ob)
-		tt = '<wbt:g>edit</wbt:g> Consumer Parameter';
-	dlg.open("kafka_adp_topic_edit.jsp",
+		tt = '<w:g>edit</w:g> Consumer Parameter';
+	dlg.open("util_topic_edit.jsp",
 			{title:tt,pm:cur_cons_ob},
-			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -350,7 +349,7 @@ function do_submit(cb)
 	let n = $("#name").val() ;
 	if(!n)
 	{
-		cb(false,'<wbt:g>pls,input,name</wbt:g>') ;
+		cb(false,'<w:g>pls,input,name</w:g>') ;
 		return ;
 	}
 	let t =  $("#title").val() ;
@@ -360,19 +359,19 @@ function do_submit(cb)
 	var host = $('#host').val();
 	if(host==null||host=='')
 	{
-		cb(false,'<wbt:g>pls,input,host</wbt:g>') ;
+		cb(false,'<w:g>pls,input,host</w:g>') ;
 		return ;
 	}
 	var port = $('#port').val();
 	if(port==null||port=='')
 	{
-		cb(false,'<wbt:g>pls,input,port</wbt:g>') ;
+		cb(false,'<w:g>pls,input,port</w:g>') ;
 		return ;
 	}
 	var vp = parseInt(port);
 	if(vp==NaN||vp<0)
 	{
-		cb(false,'<wbt:g>pls,input,valid,port</wbt:g>') ;
+		cb(false,'<w:g>pls,input,valid,port</w:g>') ;
 	}
 	
 	

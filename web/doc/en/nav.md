@@ -78,16 +78,19 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
 
+#### <a href="doc/router/index.md" >10 Data Router</a>
+##### <a href="doc/router/router_mqtt.md" >&nbsp;&nbsp;&nbsp;10.1 MQTT Router</a>
+##### <a href="doc/router/router_kafka.md">&nbsp;&nbsp;&nbsp;10.2 Kafka Router</a>
 
-#### <a href="doc/advanced/index.md" >10 Extends Functions</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 Plugin Development - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 Plugin Development - Authority</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.4 Outer OPC UA Support</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.5 Center-substation remote monitoring</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.6 Device simulators</a>
+#### <a href="doc/advanced/index.md" >11 Extends Functions</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 Plugins Development</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 Plugin Development - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 Plugin Development - Authority</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.4 Outer OPC UA Support</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.5 Center-substation remote monitoring</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.6 Device simulators</a>
 
-#### <a href="doc/version.md" >11 Version</a>
+#### <a href="doc/version.md" >12 Version</a>
 
 
 <script>

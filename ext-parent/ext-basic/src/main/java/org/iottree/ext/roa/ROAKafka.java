@@ -1,21 +1,20 @@
-package org.iottree.core.router.roa;
+package org.iottree.ext.roa;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
-import org.iottree.core.ConnPt;
-import org.iottree.core.conn.ConnPtMQTT;
-import org.iottree.core.conn.mqtt.MqttEndPoint;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.iottree.core.router.JoinIn;
 import org.iottree.core.router.JoinOut;
 import org.iottree.core.router.RouterManager;
@@ -27,9 +26,9 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ROAMqtt extends RouterOuterAdp
+public class ROAKafka extends RouterOuterAdp
 {
-static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
+	static ILogger log = LoggerManager.getLogger(ROAKafka.class);
 	
 	public static class SendConf
 	{
@@ -126,17 +125,21 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 	}
 	
 	
+	private KafkaProducer<String, String> producer;
+
+	private KafkaConsumer<String, String> consumer;
+
 	String brokerHost ;
 
-	int brokerPort = 1883;
+	int brokerPort = 9092;
 	
 	String user = "" ;
 	
 	String psw = "" ;
-
-	int connTimeoutSec = 30 ;
 	
-	int connKeepAliveInterval = -1;
+	int producerAck = 1 ;
+	
+	int producerRetries = 3 ;
 	
 	ArrayList<SendConf> sendConfs = new ArrayList<>() ;
 	
@@ -144,7 +147,7 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 	
 	private Thread th = null ;
 	
-	public ROAMqtt(RouterManager rm)
+	public ROAKafka(RouterManager rm)
 	{
 		super(rm);
 	}
@@ -152,13 +155,15 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 	@Override
 	public String getTp()
 	{
-		return "mqtt";
+		return "kafka";
 	}
+	
+
 	
 	@Override
 	public RouterOuterAdp newInstance(RouterManager rm)
 	{
-		return new ROAMqtt(rm);
+		return new ROAKafka(rm);
 	}
 	
 	public String getBrokerHost()
@@ -188,35 +193,27 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		return this.psw ;
 	}
 	
-	public int getConnTimeSec()
-	{
-		return this.connTimeoutSec ;
-	}
 	
-	public int getConnKeepAliveIntv()
-	{
-		return this.connKeepAliveInterval ;
-	}
 
-	public ROAMqtt asBroker(String host, int port)
+	public ROAKafka asBroker(String host, int port)
 	{
 		this.brokerHost = host;
 		this.brokerPort = port;
 		return this;
 	}
 	
-	public ROAMqtt asBrokerAuth(String user,String psw)
+	public ROAKafka asBrokerAuth(String user,String psw)
 	{
 		this.user = user ;
 		this.psw = psw ;
 		return this ;
 	}
 	
-	public ROAMqtt asTime(int conn_to_sec, int keep_interval_sec)
+	public ROAKafka asProducerPM(int ack,int retries)
 	{
-		connTimeoutSec = conn_to_sec;
-		connKeepAliveInterval = keep_interval_sec;
-		return this;
+		this.producerAck = ack ;
+		this.producerRetries = retries ;
+		return this ;
 	}
 	
 	public List<SendConf> getSendConfs()
@@ -287,14 +284,12 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		return leftJoinOuts ;
 	}
 	
-	
-	
 	@Override
 	protected void RT_onRecvedFromJoinIn(JoinIn ji,RouterObj recved_data) throws Exception
 	{
 		if(!bRTInitOk)
 		{
-			this.RT_fireErr("ROAMqtt is not init ok", null);
+			this.RT_fireErr("ROAKafka is not init ok", null);
 			return ;
 		}
 		
@@ -306,8 +301,8 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		String txt = recved_data.getTxt();//.toString() ;
 		if(txt==null)
 			return ;
-		//ProducerRecord<String, String> pr = new ProducerRecord<>(topic,txt) ;
-		this.publish(topic, txt.getBytes("UTF-8"));
+		ProducerRecord<String, String> pr = new ProducerRecord<>(topic,txt) ;
+		send(pr) ;
 	}
 	
 	@Override
@@ -318,8 +313,8 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		jo.put("port", this.brokerPort) ;
 		jo.put("user", user) ;
 		jo.put("psw", psw) ;
-		jo.put("to_sec", this.connTimeoutSec) ;
-		jo.put("keep_intv", this.connKeepAliveInterval) ;
+		jo.put("ack", this.producerAck) ;
+		jo.put("retries", this.producerRetries) ;
 		JSONArray jar = new JSONArray() ;
 		for(SendConf sc:this.sendConfs)
 		{
@@ -343,8 +338,8 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		this.brokerPort = jo.optInt("port",9092) ;
 		this.user = jo.optString("user","") ;
 		this.psw = jo.optString("psw","") ;
-		this.connTimeoutSec = jo.optInt("to_sec",30) ;
-		this.connKeepAliveInterval= jo.optInt("keep_intv",-1) ;
+		this.producerAck = jo.optInt("ack",1) ;
+		this.producerRetries= jo.optInt("retries",3) ;
 		JSONArray jarr = jo.optJSONArray("send_confs") ;
 		ArrayList<SendConf> scs = new ArrayList<>() ;
 		if(jarr!=null)
@@ -380,16 +375,6 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		return true;
 	}
 	
-	private transient MqttEndPoint mqttEP = null;
-	
-	protected MqttEndPoint getMqttEP()
-	{
-		if (mqttEP != null)
-			return mqttEP;
-		mqttEP = new MqttEndPoint("iottree_roa_mqtt_" + this.getId()).withCallback(this.RT_mqttCB);
-		return mqttEP;
-	}
-	
 	private boolean bRTInitOk = false;
 
 	protected void RT_init()
@@ -401,10 +386,27 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 
 		try
 		{
-			MqttEndPoint ep = getMqttEP();
-			ep.withMqttServer(this.brokerHost, this.brokerPort, user, psw);
-			ep.withTime(connTimeoutSec, connKeepAliveInterval) ;
+			Properties properties = new Properties();
+			properties.put("bootstrap.servers", brokerHost + ":" + brokerPort);
+			properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+			properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+			properties.put("acks", "1"); // 0 1 -1
+			properties.put("retries", "5"); //
 			
+			if(Convert.isNotNullEmpty(this.user))
+			{
+				properties.put("security.protocol", "SASL_PLAINTEXT");
+				properties.put("sasl.mechanism", "PLAIN");
+				properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
+				
+				//properties.put("security.protocol", "SASL_PLAINTEXT");
+				//properties.put("sasl.mechanism", "SCRAM-SHA-256"); //SCRAM-SHA-512
+				//properties.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
+
+			}
+	
+			producer = new KafkaProducer<String, String>(properties);
+	
 			ArrayList<String> recv_tps = new ArrayList<>() ;
 			if(this.recvConfs!=null&&this.recvConfs.size()>0)
 			{
@@ -419,7 +421,13 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 			
 			if(recv_tps.size()>0)
 			{
-				ep.withListenTopic(recv_tps) ;
+				properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); 
+		        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		
+				properties.put("group.id", "experiment");
+				
+				consumer = new KafkaConsumer<>(properties);
+				consumer.subscribe(recv_tps);
 			}
 			bRTInitOk = true ;
 			this.RT_fireErr(null, null);
@@ -431,71 +439,46 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		}
 	}
 
-	private void checkConn()
+
+	private void consumer()
 	{
+		if(consumer==null)
+			return ;
 		try
 		{
-			Thread.sleep(5000);
-		}
-		catch(Exception ee)
-		{}
-		
-		MqttEndPoint ep = getMqttEP();
-		ep.checkConn();
-	}
-	
-
-	private MqttCallback RT_mqttCB = new MqttCallback() {
-
-		@Override
-		public void connectionLost(Throwable cause)
-		{
-			// MqttConnectionUtils.r();\
-			System.out.println(" * conn lost");
-		}
-
-		@Override
-		public void messageArrived(String topic, MqttMessage message) throws Exception
-		{
-			RT_onRecvedMsg(topic, message.getPayload());
-		}
-
-		@Override
-		public void deliveryComplete(IMqttDeliveryToken token)
-		{
-			MqttMessage mm;
-			try
+			while (th!=null)
 			{
-				mm = token.getMessage();
-				// System.out.println("mqtt msg deliveryComplete=" +
-				// mm.getPayload().length);
+				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+				for (ConsumerRecord<String, String> record : records)
+				{
+//					String info = String.format("[Topic: %s][Partition:%d][Offset:%d][Key:%s][Message:%s]",
+//							record.topic(), record.partition(), record.offset(), record.key(), record.value());
+//					log.info("Received:" + info);
+//					System.out.println("Received:" + info);
+					String topic = record.topic() ;
+					String msg = record.value() ;
+					
+					List<JoinOut> jos = getJoinOutList() ;
+					if(jos==null||jos.size()<=0)
+						continue ;
+					for(JoinOut jo:jos)
+					{
+						RecvConf rc = (RecvConf)jo.getRelatedObj();
+						if(topic.equals(rc.topic))
+							this.RT_sendToJoinOut(jo, new RouterObj(msg));
+					}
+				}
 			}
-			catch ( MqttException e)
-			{
-				e.printStackTrace();
-			}
-			// .getPayload().length
-
 		}
-	};
-
-	
-
-	protected void RT_onRecvedMsg(String topic, byte[] bs) throws Exception
-	{
-		String msg = new String(bs,"UTF-8") ;
-		
-		List<JoinOut> jos = getJoinOutList() ;
-		if(jos==null||jos.size()<=0)
-			return ;
-		for(JoinOut jo:jos)
+		finally
 		{
-			RecvConf rc = (RecvConf)jo.getRelatedObj();
-			if(MqttEndPoint.checkTopicMatch(rc.topic, topic))
-				this.RT_sendToJoinOut(jo, new RouterObj(msg));
+			th = null ;
+			if(producer!=null)
+				producer.close();
+			if(consumer!=null)
+				consumer.close();
 		}
 	}
-
 	
 	@Override
 	public synchronized boolean RT_start()
@@ -504,7 +487,7 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 			return true;
 		
 		RT_init() ;
-		th = new Thread(this::checkConn);
+		th = new Thread(this::consumer);
 		th.start();
 		return true ;
 	}
@@ -524,19 +507,43 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 		return th!=null ;
 	}
 
-
-	public void publish(String topic, byte[] data) throws MqttPersistenceException, MqttException
+	/**
+	 * 同步发送消息
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 */
+	public void send(ProducerRecord<String, String> record) throws InterruptedException, ExecutionException, TimeoutException
 	{
-		publish(topic, data, 0);
+		if(producer==null)
+			return ;
+		
+//		try
+//		{
+			producer.send(record).get(200, TimeUnit.MILLISECONDS);
+//		}
+//		catch ( Exception ex)
+//		{
+//			log.error(ex.getMessage(), ex);
+//		}
+
 	}
 
-	public void publish(String topic, byte[] data, int qos) throws MqttPersistenceException, MqttException
+	/**
+	 * 异步发送消息
+	 */
+	public void sendAsync(ProducerRecord<String, String> record, Callback callback)
 	{
-		getMqttEP().publish(topic, data, qos);
+		if(producer==null)
+			return ;
+//		try
+//		{
+			producer.send(record, callback);
+//		}
+//		catch ( Exception ex)
+//		{
+//			log.error(ex.getMessage(), ex);
+//		}
 	}
 
-	public void publish(String topic, String txt) throws Exception
-	{
-		publish(topic, txt.getBytes("utf-8"), 1);
-	}
 }

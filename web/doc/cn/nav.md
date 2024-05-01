@@ -78,16 +78,19 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI客户端数据列表展示</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 记录数据展示</a>
 
+#### <a href="doc/router/index.md" >10 数据路由Data Router</a>
+##### <a href="doc/router/router_mqtt.md" >&nbsp;&nbsp;&nbsp;10.1 MQTT路由</a>
+##### <a href="doc/router/router_kafka.md">&nbsp;&nbsp;&nbsp;10.2 Kafka路由</a>
 
-#### <a href="doc/advanced/index.md" >10 高级特性</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 插件开发</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 插件开发 - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 插件开发 - Authority</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.4 对外提供OPC UA接口</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.5 中心-子站远程监控</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.6 设备模拟器</a>
+#### <a href="doc/advanced/index.md" >11 高级特性</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 插件开发</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 插件开发 - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 插件开发 - Authority</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.4 对外提供OPC UA接口</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.5 中心-子站远程监控</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.6 设备模拟器</a>
 
-#### <a href="doc/version.md" >11 版本说明</a>
+#### <a href="doc/version.md" >12 版本说明</a>
 
 
 <script>
