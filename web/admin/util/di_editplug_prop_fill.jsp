@@ -139,7 +139,7 @@ function init_edit()
 	$("#div_preview")[0].appendChild(canvas);
 	
 	$("#name").val(plugpm.name) ;
-	console.log(plugpm);
+	//console.log(plugpm);
 	var val = plugpm.val ;
 	if(val)
 	{

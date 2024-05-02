@@ -562,7 +562,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 	{
 		dlg.open("../util/di_editplug_"+tp+".jsp?p="+path,
 				{title:"Edit Event",w:'500px',h:'400px',shade: false},
-				['Ok','Cancel','Help'],
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>','<wbt:g>help</wbt:g>'],
 				[
 					function(dlgw)
 					{
@@ -600,11 +600,12 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 			bind_tag_only=false;
 			
 		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id+"&bind_tag_only="+bind_tag_only+"&p="+path,
-				{title:tt,w:'500px',h:'420px',shade: 0.01,
-					on_val_chg:(v)=>{
-						jq_ele.val(v) ;
-						editor.applyUI2SelectedItem();
-					}},
+				{title:tt,w:'500px',h:'420px',shade: 0.01
+					//,on_val_chg:(v)=>{
+					//	jq_ele.val(v) ;// some bug here
+					//	editor.applyUI2SelectedItem();
+					//}
+				},
 				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
@@ -628,7 +629,6 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 							var ret = dlgw.editplug_get() ;
 							var v = ret.v ;
 							jq_ele.val(v) ;
-							//console.log(v) ;
 							editor.applyUI2SelectedItem();
 						}
 						dlg.close();
@@ -901,6 +901,7 @@ $('#btn_prop_showhidden').click(function(){
 		b_prop_show=true;
 	}
 });
+
 
 </script>
 </body>

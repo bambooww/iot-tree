@@ -304,7 +304,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				<!--
+                				
                 				<delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
 
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
@@ -324,7 +324,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                    -->
+			                    
                 				
 							</tasks>
 						</configuration>
