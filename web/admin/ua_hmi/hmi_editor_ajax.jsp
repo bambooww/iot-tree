@@ -3,6 +3,7 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,org.iottree.core.res.*,
 	org.iottree.core.comp.*,
+	org.iottree.core.util.web.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -11,6 +12,7 @@
 		return;
 	String op = request.getParameter("op");
 	String path=request.getParameter("path");
+	String gn = request.getParameter("gn") ;
 	/*
 	String hmiid = request.getParameter("hmiid");
 	UARep rep = UAManager.getInstance().getRepById(repid) ;
@@ -26,8 +28,9 @@
 		out.print("no hmi found") ;
 		return ;
 	}
-	if("load".equals(op))
+	switch(op)
 	{
+	case "load": //.equals(op))
 		UANode branchn = h.getRefBranchNode();
 		if(branchn!=null&&branchn instanceof UAHmi)
 			h = (UAHmi)branchn ;
@@ -44,21 +47,27 @@
 		//System.out.println("{\"hmipath\":\""+np+"\",\"refpath\":\""+refpath_cxt+"\"}\r\n") ;
 		out.print("{\"path\":\""+""+"\",\"rb_path\":\""+""+"\",\"res_lib_id\":\""+reslibid+"\",\"res_id\":\""+resid+"\"}\r\n") ;
 		out.print(txt);
-	}
-	else if("save".equals(op))
-	{
+		return ;
+	case "save":
 		if(!Convert.checkReqEmpty(request, out, "txt"))
 			return;
-		String txt = request.getParameter("txt");
+		txt = request.getParameter("txt");
 		h.saveHmiUITxt(txt);
 		out.print("save ok");
-	}
-	else if("main".equals(op))
-	{
+	
+		return ;
+	case "main":
 		if(h.setMainInPrj())
 			out.print("set as main ui ok");
 		else
 			out.print("set as main ui failed");
+		return;
+	case "help_prompt_lan":
+		if(Convert.isNullOrEmpty(gn))
+			return ;
+		String gv = LangTag.getLangValue(pageContext, gn) ;
+		out.print(gv) ;
+		return ;
 	}
 %>
 

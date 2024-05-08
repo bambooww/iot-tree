@@ -11,4 +11,6 @@
   
   <dd_node id="1" name="up_to_prjs" name_cn="更新到项目中" name_en="Update To Projects" />
   
+  <dd_node id="1" name="prompt_mirror" name_cn="请使用按键←→↑↓调整对被选中图元镜像调整" name_en="Please use the keyboard ←→ ↑↓ to adjust the mirror image of the selected element" />
+  
 </dd_class>

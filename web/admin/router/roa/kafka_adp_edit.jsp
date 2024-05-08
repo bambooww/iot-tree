@@ -47,9 +47,11 @@ String title = roa.getTitle() ;
 String host = roa.getBrokerHost();
 int port = roa.getBrokerPort() ;
 
-int conn_to = 30;
+long send_to = roa.getSendTimeout() ;
 String user = roa.getUser();
 String psw = roa.getPsw() ;
+ROAKafka.SecurityProto sec_proto = roa.getSecurityProto() ;
+ROAKafka.SaslMech sec_sasl_mech = roa.getSaslMech() ;
 //int conn_int = 60;
 
 //long push_int = 10000 ;
@@ -87,6 +89,15 @@ dlg.resize_to(750,500);
 .pclist
 {
 border:1px solid;border-color:#d2d2d2;overflow: auto;width:200px;height:150px;
+}
+
+.sasl_mech
+{
+	display: none;
+}
+.user_psw
+{
+display: none;
 }
 </style>
 </head>
@@ -126,15 +137,40 @@ border:1px solid;border-color:#d2d2d2;overflow: auto;width:200px;height:150px;
 	  <div class="layui-input-inline" style="width: 70px;">
 	    <input type="number" id="port" name="port" value="<%=port%>"  lay-verify="required" autocomplete="off" class="layui-input">
 	  </div>
-	 <div class="layui-form-mid"><w:g>conn,timeout</w:g>(<w:g>second</w:g>):</div>
+	 <div class="layui-form-mid"><w:g>send,timeout</w:g>(<w:g>second</w:g>):</div>
 	  <div class="layui-input-inline" style="width: 70px;">
 	    
-	    <input type="number" id="mqtt_conn_to" name="mqtt_conn_to" value="<%=conn_to%>"  title="seconds" autocomplete="off" class="layui-input">
+	    <input type="number" id="send_to" name="send_to" value="<%=send_to%>"  title="seconds" autocomplete="off" class="layui-input">
 	  </div>
   </div>
-
-  <div class="layui-form-item">
-    <label class="layui-form-label">Broker <w:g>user</w:g>:</label>
+<div class="layui-form-item">
+    <label class="layui-form-label"><w:g>sec_proto</w:g>:</label>
+    <div class="layui-input-inline">
+      <select id="sec_proto" lay-filter="sec_proto">
+<%
+	for(ROAKafka.SecurityProto sp:ROAKafka.SecurityProto.values())
+	{
+		String sel = (sp==sec_proto?"selected":"") ;
+%><option value="<%=sp.id%>" <%=sel %>><%=sp.name %></option><%
+	}
+%>
+      </select>
+    </div>
+    <div class="layui-form-mid sasl_mech"><w:g>sasl_mech</w:g>:</div>
+	  <div class="layui-input-inline sasl_mech" style="width: 200px;">
+	          <select id="sec_sasl_mech">
+<%
+	for(ROAKafka.SaslMech sp:ROAKafka.SaslMech.values())
+	{
+		String sel = (sp==sec_sasl_mech?"selected":"") ;
+%><option value="<%=sp.id%>" <%=sel %>><%=sp.name %></option><%
+	}
+%>
+      </select>
+	  </div>
+  </div>
+  <div class="layui-form-item user_psw">
+    <label class="layui-form-label"><w:g>user</w:g>:</label>
     <div class="layui-input-inline">
       <input type="text" id="user" name="user" value="<%=user%>"  lay-verify="required"  autocomplete="off" class="layui-input">
     </div>
@@ -163,6 +199,7 @@ border:1px solid;border-color:#d2d2d2;overflow: auto;width:200px;height:150px;
 </body>
 <script type="text/javascript">
 
+var form = null;
 var prjid="<%=prjid%>";
 
 var js_ob = <%=js_ob%> ;
@@ -171,12 +208,35 @@ var cur_prod_ob = null ;
 var cur_cons_ob = null ;
 
 layui.use('form', function(){
-	  var form = layui.form;
+	  form = layui.form;
 	  
+	  form.on('select(sec_proto)', function(obj){
+		  update_fm();
+	  });
+		
 	  update_ui() ;
+	  
+	  update_fm();
 	  
 	  form.render();
 	});
+
+function update_fm()
+{
+	let v = parseInt($("#sec_proto").val());
+	switch(v)
+	{
+	case 2: //SASL_PLAINTEXT(2
+		$(".sasl_mech").css("display","block") ;
+		$(".user_psw").css("display","block") ;
+		break;
+	default:
+		$(".sasl_mech").css("display","none") ;
+		$(".user_psw").css("display","none") ;
+		break ;
+	}
+	form.render();
+}
 
 function get_send_conf(id)
 {
@@ -344,6 +404,19 @@ function win_close()
 	dlg.close(0);
 }
 
+
+function get_input_val(id,defv,bnum)
+{
+	var n = $('#'+id).val();
+	if(n==null||n=='')
+	{
+		return defv ;
+	}
+	if(bnum)
+		return parseInt(n);
+	return n;
+}
+
 function do_submit(cb)
 {
 	let n = $("#name").val() ;
@@ -374,7 +447,9 @@ function do_submit(cb)
 		cb(false,'<w:g>pls,input,valid,port</w:g>') ;
 	}
 	
-	
+	let send_to = get_input_val('send_to',1000,true) ;
+	let sec_proto= get_input_val('sec_proto',0,true) ;
+	let sec_sasl_mech= get_input_val('sec_sasl_mech',0,true) ;
 	var user = $('#user').val();
 	if(user==null||user=='')
 	{
@@ -394,6 +469,9 @@ function do_submit(cb)
 	js_ob.t = t ;;
 	js_ob.host = host ;
 	js_ob.port = port ;
+	js_ob.sec_proto = sec_proto ;
+	js_ob.sec_sasl_mech = sec_sasl_mech;
+	js_ob.send_to=send_to;
 	js_ob.user = user ;
 	js_ob.psw = psw ;
 	cb(true,js_ob) ;

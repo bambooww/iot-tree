@@ -1,0 +1,13 @@
+{
+	"name":"main_plug","title":"Plug In Main Demo",
+	"js_api":
+	[
+	],
+
+	"auth":
+	[
+		{
+			"name":"auth_main","class":"com.xxx.app.UserAuth"
+		}
+	]
+}

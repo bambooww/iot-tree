@@ -232,15 +232,30 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	
 	private void runInterval()
 	{
-		while(thread!=null)
+		try
 		{
-			try
+			while(thread!=null)
 			{
-				Thread.sleep(this.outIntervalMS);
+				try
+				{
+					Thread.sleep(this.outIntervalMS);
+				}
+				catch(Exception e) {}
+				
+				try
+				{
+					RT_runInIntvLoop() ;
+				}
+				catch(Exception ee)
+				{
+					ee.printStackTrace();
+					this.RT_fireErr(ee.getMessage(), ee);
+				}
 			}
-			catch(Exception e) {}
-			
-			RT_runInIntvLoop() ;
+		}
+		finally
+		{
+			thread=null ;
 		}
 	}
 	
@@ -288,7 +303,7 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	/**
 	 * override by sub
 	 */
-	protected void RT_runInIntvLoop()
+	protected void RT_runInIntvLoop() throws Exception
 	{
 		
 	}

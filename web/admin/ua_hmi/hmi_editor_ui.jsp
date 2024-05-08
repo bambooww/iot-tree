@@ -334,10 +334,23 @@ margin-top:5px;
 		left:100px;
 		width:150px;
 }
+.prompt_p
+{
+	position: absolute;
+	left:60px;
+	min-height: 40px;
+	min-width:100px;
+	bottom: 10px;
+	border:1px solid;
+	display:none;
+	color:#00ffdd;
+	background-color: #003935;
+	z-index:1001;
+}
 </style>
 </head>
 <body class="layout-body">
-
+	
 		<div class="left " style="overflow: hidden;">
 		
 			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-puzzle-piece fa-3x lr_btn"></i><br>&nbsp;</div>
@@ -437,7 +450,7 @@ if(bprj)
 			<iframe src="hmi_left_basic_di.jsp" height="230px" width="100%"></iframe>
 		</div>
 	</div>
-
+<div id="prompt_p" class="prompt_p"></div>
 <script>
 
 toolbox_init("#toolbar_basic");
@@ -526,7 +539,8 @@ function init_iottpanel()
 	panel.setInEdit(true);
 	editor = new oc.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
 		plug_cb:editor_plugcb,
-		on_prompt_msg:on_editor_prompt
+		on_prompt_msg:on_editor_prompt,
+		on_prompt_help:on_editor_help
 	}) ;
 	hmiView = new oc.hmi.HMIView(hmiModel,panel,editor,{
 		copy_paste_url:"../util/copy_paste_ajax.jsp",
@@ -548,6 +562,29 @@ function init_iottpanel()
 function on_editor_prompt(m)
 {
 	dlg.msg(m) ;
+}
+
+function on_editor_help(h)
+{
+	if(!h)
+	{
+		$("#prompt_p").html("").css("display","none") ;
+		return ;
+	}
+	//dlg.msg(h) ;
+	if(h.indexOf("g:")==0)
+	{
+		let gn = h.substring(2) ;
+		send_ajax("hmi_editor_ajax.jsp",{op:"help_prompt_lan",path:path,gn:gn},(bsucc,ret)=>{
+			if(!bsucc)
+				return ;
+			$("#prompt_p").html(ret).css("display","block") ;
+			setTimeout(on_editor_help,5000) ;
+		}) ;
+		return;
+	}
+	$("#prompt_p").html(h).css("display","block") ;
+	setTimeout(on_editor_help,5000) ;
 }
 
 var editor_plugcb_pm=null ;

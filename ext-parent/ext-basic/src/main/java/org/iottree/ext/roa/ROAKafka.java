@@ -3,12 +3,16 @@ package org.iottree.ext.roa;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -124,6 +128,93 @@ public class ROAKafka extends RouterOuterAdp
 		}
 	}
 	
+	public static enum SecurityProto {
+	    /** Un-authenticated, non-encrypted channel */
+	    PLAINTEXT(0, "PLAINTEXT"),
+	    /** SSL channel */
+//	    SSL(1, "SSL"),
+	    /** SASL authenticated, non-encrypted channel */
+	    SASL_PLAINTEXT(2, "SASL_PLAINTEXT");
+	    /** SASL authenticated, SSL channel */
+//	    SASL_SSL(3, "SASL_SSL");
+
+	    private static final Map<Short, SecurityProto> CODE_TO_SECURITY_PROTOCOL;
+	    private static final List<String> NAMES;
+
+	    static {
+	        SecurityProto[] protocols = SecurityProto.values();
+	        List<String> names = new ArrayList<>(protocols.length);
+	        Map<Short, SecurityProto> codeToSecurityProtocol = new HashMap<>(protocols.length);
+	        for (SecurityProto proto : protocols) {
+	            codeToSecurityProtocol.put(proto.id, proto);
+	            names.add(proto.name);
+	        }
+	        CODE_TO_SECURITY_PROTOCOL = Collections.unmodifiableMap(codeToSecurityProtocol);
+	        NAMES = Collections.unmodifiableList(names);
+	    }
+
+	    /** The permanent and immutable id of a security protocol -- this can't change, and must match kafka.cluster.SecurityProtocol  */
+	    public final short id;
+
+	    /** Name of the security protocol. This may be used by client configuration. */
+	    public final String name;
+
+	    SecurityProto(int id, String name) {
+	        this.id = (short) id;
+	        this.name = name;
+	    }
+
+	    public static List<String> names() {
+	        return NAMES;
+	    }
+
+	    public static SecurityProto forId(short id) {
+	        return CODE_TO_SECURITY_PROTOCOL.get(id);
+	    }
+
+	    /** Case insensitive lookup by protocol name */
+	    public static SecurityProto forName(String name) {
+	        return SecurityProto.valueOf(name.toUpperCase(Locale.ROOT));
+	    }
+
+	}
+	
+	public static enum SaslMech
+	{
+		PLAIN(0, "PLAIN"),
+		SCRAM_SHA_256(1, "SCRAM-SHA-256"),
+		SCRAM_SHA_512(2, "SCRAM-SHA-512");
+
+		
+	    public final int id;
+
+	    
+	    public final String name;
+
+	    SaslMech(int id, String name) {
+	        this.id = (short) id;
+	        this.name = name;
+	    }
+
+//	    public static List<String> names() {
+//	        return NAMES;
+//	    }
+
+	    public static SaslMech fromId(int id)
+	    {
+	    	switch(id)
+	    	{
+	    	case 0:
+	    		return PLAIN ;
+	    	case 1:
+	    		return SCRAM_SHA_256;
+	    	case 2:
+	    		return SCRAM_SHA_512;
+	    	default:
+	    		return PLAIN; 
+	    	}
+	    }
+	}
 	
 	private KafkaProducer<String, String> producer;
 
@@ -132,6 +223,11 @@ public class ROAKafka extends RouterOuterAdp
 	String brokerHost ;
 
 	int brokerPort = 9092;
+	
+	/**
+	 * producer send time out
+	 */
+	long sendTo = 1000 ;
 	
 	String user = "" ;
 	
@@ -145,6 +241,10 @@ public class ROAKafka extends RouterOuterAdp
 	
 	ArrayList<RecvConf> recvConfs = new ArrayList<>() ;
 	
+	SecurityProto securityProto = SecurityProto.PLAINTEXT ;
+	
+	SaslMech saslMech  = SaslMech.PLAIN;
+
 	private Thread th = null ;
 	
 	public ROAKafka(RouterManager rm)
@@ -177,6 +277,21 @@ public class ROAKafka extends RouterOuterAdp
 	public int getBrokerPort()
 	{
 		return this.brokerPort ;
+	}
+	
+	public long getSendTimeout()
+	{
+		return this.sendTo ;
+	}
+
+	public SecurityProto getSecurityProto()
+	{
+		return this.securityProto ;
+	}
+	
+	public SaslMech getSaslMech()
+	{
+		return this.saslMech ;
 	}
 	
 	public String getUser()
@@ -311,10 +426,15 @@ public class ROAKafka extends RouterOuterAdp
 		JSONObject jo = super.toJO() ;
 		jo.put("host", this.brokerHost) ;
 		jo.put("port", this.brokerPort) ;
+		jo.put("send_to", sendTo) ;
 		jo.put("user", user) ;
 		jo.put("psw", psw) ;
 		jo.put("ack", this.producerAck) ;
 		jo.put("retries", this.producerRetries) ;
+		
+		jo.put("sec_proto", this.securityProto.id) ;
+		jo.put("sec_sasl_mech", this.saslMech.id) ;
+		
 		JSONArray jar = new JSONArray() ;
 		for(SendConf sc:this.sendConfs)
 		{
@@ -336,10 +456,16 @@ public class ROAKafka extends RouterOuterAdp
 			return false;
 		this.brokerHost = jo.optString("host","") ;
 		this.brokerPort = jo.optInt("port",9092) ;
+		sendTo = jo.optLong("send_to", 1000) ;
 		this.user = jo.optString("user","") ;
 		this.psw = jo.optString("psw","") ;
 		this.producerAck = jo.optInt("ack",1) ;
 		this.producerRetries= jo.optInt("retries",3) ;
+		
+		short t = (short)jo.optInt("sec_proto",0) ;
+		this.securityProto = SecurityProto.forId(t) ;//, this.securityProto.id) ;
+		this.saslMech = SaslMech.fromId(jo.optInt("sec_sasl_mech", 0)) ;
+		
 		JSONArray jarr = jo.optJSONArray("send_confs") ;
 		ArrayList<SendConf> scs = new ArrayList<>() ;
 		if(jarr!=null)
@@ -393,17 +519,34 @@ public class ROAKafka extends RouterOuterAdp
 			properties.put("acks", "1"); // 0 1 -1
 			properties.put("retries", "5"); //
 			
-			if(Convert.isNotNullEmpty(this.user))
+			switch(securityProto)
 			{
-				properties.put("security.protocol", "SASL_PLAINTEXT");
-				properties.put("sasl.mechanism", "PLAIN");
-				properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
-				
+			case PLAINTEXT:
+				break ; //Un-authenticated, non-encrypted channel
+			case SASL_PLAINTEXT:
+				properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
 				//properties.put("security.protocol", "SASL_PLAINTEXT");
-				//properties.put("sasl.mechanism", "SCRAM-SHA-256"); //SCRAM-SHA-512
-				//properties.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
-
+				
+				properties.put("sasl.mechanism", this.saslMech.name) ;//"PLAIN"); SCRAM-SHA-256");SCRAM-SHA-512
+				switch(this.saslMech)
+				{
+				case PLAIN:
+					properties.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
+					break ;
+				case SCRAM_SHA_256:
+				case SCRAM_SHA_512:
+					properties.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
+					break ;
+				}
+				break ;
 			}
+			
+//			if(Convert.isNotNullEmpty(this.user))
+//			{
+//				properties.put("security.protocol", "SASL_PLAINTEXT");
+//				properties.put("sasl.mechanism", "SCRAM-SHA-256"); //SCRAM-SHA-512
+//				properties.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"" + this.user + "\" password=\"" + this.psw + "\";");
+//			}
 	
 			producer = new KafkaProducer<String, String>(properties);
 	
@@ -520,7 +663,7 @@ public class ROAKafka extends RouterOuterAdp
 		
 //		try
 //		{
-			producer.send(record).get(200, TimeUnit.MILLISECONDS);
+			producer.send(record).get(sendTo, TimeUnit.MILLISECONDS);
 //		}
 //		catch ( Exception ex)
 //		{

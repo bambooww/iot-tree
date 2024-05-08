@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ZipUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -44,7 +45,20 @@ public class PlugDir
 	
 	//private HashMap<String, Object> auth_name2ob = null;
 
-	public PlugDir(File plugdirf)
+//	public PlugDir(File plugdirf)
+//	{
+////		// this.name = name ;
+////		plugDirF = plugdirf;// new
+////							// File(Config.getDataDirBase()+"/plugins/"+name+"/");
+////		if (!plugDirF.exists())
+////			throw new IllegalArgumentException("no plug dir founded,name=" + name);
+////
+////		loadConfigJson();
+//		
+//		this(plugdirf,null) ;
+//	}
+	
+	private PlugDir(File plugdirf,ClassLoader cl)
 	{
 		// this.name = name ;
 		plugDirF = plugdirf;// new
@@ -52,7 +66,8 @@ public class PlugDir
 		if (!plugDirF.exists())
 			throw new IllegalArgumentException("no plug dir founded,name=" + name);
 
-		loadConfigJson();
+		this.plugCL = cl ;
+		//loadConfigJson();
 	}
 
 	private boolean loadConfigJson()// throws IOException
@@ -60,7 +75,10 @@ public class PlugDir
 		String txt = null;
 		try
 		{
-			txt = Convert.readFileTxt(new File(plugDirF, "config.json"), "UTF-8");
+			if(plugDirF.isFile())
+				txt = ZipUtil.readZipTxt(plugDirF, "WEB-INF/config.json", "UTF-8") ;
+			else
+				txt = Convert.readFileTxt(new File(plugDirF, "config.json"), "UTF-8");
 		}
 		catch ( Exception e)
 		{
@@ -79,6 +97,7 @@ public class PlugDir
 		return true;
 	}
 	
+	
 	public JSONObject getConfigJO()
 	{
 		return this.plugConfigJO ;
@@ -96,12 +115,12 @@ public class PlugDir
 		return true;
 	}
 
-	static PlugDir parseDir(File plugdirf)
+	static PlugDir parseDir(File plugdirf,ClassLoader cl)
 	{
 		if (!checkDirValid(plugdirf))
 			return null;
 
-		PlugDir pdir = new PlugDir(plugdirf);
+		PlugDir pdir = new PlugDir(plugdirf,cl);
 		if (!pdir.loadConfigJson())
 			return null;
 		return pdir;

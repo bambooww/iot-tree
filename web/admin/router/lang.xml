@@ -10,4 +10,9 @@
   <dd_node id="1" name="rootp" name_cn="根路径" name_en="Root Path" />
   <dd_node id="1" name="cont_n" name_cn="容器节点" name_en="Container Node" />
   <dd_node id="1" name="cont_n_p" name_cn="容器节点属性" name_en="Container Node Prop" />
+  
+  <dd_node id="1" name="sec_proto" name_cn="安全协议" name_en="Security Protocal" />
+  <dd_node id="1" name="sasl_mech" name_cn="SASL机制" name_en="SASL Mechanism" />
+  <dd_node id="1" name="send" name_cn="发送" name_en="Send" />
+  
 </dd_class>

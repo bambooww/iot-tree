@@ -7,6 +7,9 @@
 		<webapp name="_js" />
 		<webapp name="_iottree" />
 		<webapp name="_ui" />
+		<!--
+		<webapp name="main" path="main/main.war" /> 
+		 -->
 	</webapps>
 	
 	<!-- opc ua server support. 

@@ -69,7 +69,7 @@ public class PlugManager
 		{
 			if(dirf.getName().startsWith("_"))
 				continue ;
-			PlugDir pd = PlugDir.parseDir(dirf);
+			PlugDir pd = PlugDir.parseDir(dirf,null);
 			if(pd==null)
 				continue ;
 			name2plug.put(pd.getName(), pd) ;
@@ -77,7 +77,14 @@ public class PlugManager
 		//return plugname2cl ;
 	}
 	
-	
+	public void fireWebappLoaded(String appn,ClassLoader cl,File webinf_dir)
+	{
+		PlugDir pd = PlugDir.parseDir(webinf_dir,cl);
+		if(pd==null)
+			return ;
+		name2plug.put(pd.getName(), pd) ;
+		System.out.println(" find webapp plug ["+appn+"] @ "+webinf_dir.getPath()) ;
+	}
 	
 	public Collection<PlugDir> listPlugs()
 	{
@@ -184,7 +191,6 @@ public class PlugManager
 				e.printStackTrace();
 			}
 		}
-		
 		return null ;
 	}
 	
@@ -220,7 +226,7 @@ public class PlugManager
 			plugAuth = new PlugAuth(ob,token_cookie) ;
 			plugAuth.asNoRightPrompt(no_r_p, no_w_p) ;
 			plugAuth.initAuth() ;
-			
+			System.out.println("plug_auth ["+name+"] " +ob.getClass().getCanonicalName()+" set ok") ;
 			return plugAuth;
 		}
 		finally
@@ -254,7 +260,7 @@ public class PlugManager
 		{
 			if(dirf.getName().startsWith("_"))
 				continue ;
-			PlugDir pd = PlugDir.parseDir(dirf);
+			PlugDir pd = PlugDir.parseDir(dirf,null);
 			if(pd==null)
 				continue ;
 			pds.put(pd.getName(), pd) ;

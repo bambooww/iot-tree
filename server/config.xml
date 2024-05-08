@@ -10,6 +10,8 @@
 		<webapp name="_ui" />
 		<webapp name="opencharts" path="../../opencharts" />
 		<webapp name="_sys" />
+		
+		<webapp name="main"/>
 	</webapps>
 	
 	<system>
@@ -29,6 +31,15 @@
 			no_write_right_prompt="No write permission"
 			>
 	</plug_auth>
+	
+	
 	 -->
+	<plug_auth name="auth_main" 
+			login_url="/main/login/login.jsp"
+			token_cookie_name="token"
+			no_read_right_prompt="No read permission"
+			no_write_right_prompt="No write permission"
+			>
+	</plug_auth>
 	
 </iottree>

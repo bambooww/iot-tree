@@ -1,6 +1,8 @@
 package org.iottree.server;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
@@ -8,6 +10,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.jasper.servlet.JasperInitializer;
 import org.iottree.core.Config;
 import org.iottree.core.Config.Webapp;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
 
@@ -78,6 +81,9 @@ public class ServerTomcat implements IServerBootComp
 		
 		String wbase = Config.getWebappBase();
 		File wbf = new File(wbase);
+		
+		HashMap<String,Context> app2cxt = new HashMap<>() ;
+		HashMap<String,File> app2ff = new HashMap<>() ;
 		//tomcat.setPort(w.getPort());
 		for (Webapp app : w.getAppList())
 		{
@@ -86,7 +92,9 @@ public class ServerTomcat implements IServerBootComp
 			String fp = wbase + "/" + appn;
 			if(Convert.isNotNullEmpty(path))
 				fp = wbase+"/"+path ;
-			if (!(new File(fp).exists()))
+			
+			File ff = new File(fp) ;
+			if (!(ff.exists()))
 				continue;
 
 			Context cxt = null ;
@@ -100,12 +108,28 @@ public class ServerTomcat implements IServerBootComp
 				///System.out.println("starting webapp="+appn);
 				cxt = tomcat.addWebapp("/" + appn, fp);
 			}
+			
+			app2cxt.put(appn, cxt) ;
+			app2ff.put(appn,ff) ;
 			cxt.addServletContainerInitializer(new JasperInitializer(), null);
 		}
 		
 		tomcat.getConnector() ;//call it to list port
 		System.out.println("web port "+((w.getPort()>0)?" http:"+w.getPort():"")+(w.getSslPort()>0?("  https:"+w.getSslPort()):"")) ;
 		tomcat.start();
+		
+		for(Map.Entry<String, Context> n2cxt:app2cxt.entrySet())
+		{
+			String appn = n2cxt.getKey() ;
+			ClassLoader tmpcl = n2cxt.getValue().getLoader().getClassLoader() ;
+			//ClassLoader tmpcl = cxt.getClass().getClassLoader() ;
+			//System.out.println(n2cxt.getKey()+ " cl="+tmpcl.hashCode()+" "+tmpcl.toString()) ;
+			File webf = app2ff.get(appn) ;
+			if(webf.isDirectory())
+				webf = new File(webf,"WEB-INF/") ;
+			
+			PlugManager.getInstance().fireWebappLoaded(appn, tmpcl, webf);
+		}
 	}
 	
 	private static Connector getNorConnector(int port)

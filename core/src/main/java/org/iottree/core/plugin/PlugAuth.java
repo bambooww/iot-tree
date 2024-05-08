@@ -136,6 +136,10 @@ public class PlugAuth
 	public String getTokenByRequest(HttpServletRequest req)
 	{
 		String tk = req.getHeader(tokenCookieName) ;
+		if(Convert.isNullOrEmpty(tk))
+		{
+			tk = (String)req.getSession().getAttribute(tokenCookieName) ;
+		}
 		if(Convert.isNotNullEmpty(tk))
 			return tk ;
 		

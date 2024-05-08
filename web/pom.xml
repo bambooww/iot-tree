@@ -14,7 +14,7 @@
 
   <name>web-parent</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url></url>
 
   <properties>
 	<output.directory>../_output</output.directory>
@@ -118,5 +118,6 @@
   	<module>admin</module>
   	<module>ROOT</module>
   	<module>doc</module>
+  	<module>main</module>
   </modules>
 </project>
