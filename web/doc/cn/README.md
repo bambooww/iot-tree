@@ -8,12 +8,16 @@ IOT-Tree Server是一个物联网接入、数据规整、人机交互展示的�
 
 在此树状管理基础之上，IOT-Tree Server提供了基于Web方式的在线组态界面（人机交互界面）的设计、配置和在线应用。
 
+对外，IOT-Tree提供了各种对接适配器支持，可以根据用户需要提供数据推送(MQTT、Kafka、Mail)；数据输出(Excel、CSV)；数据存储(Database);设备模拟(Modbus Slave)等内容。
+
 IOT-Tree Server主要使用Java开发，其管理界面完全基于Web方式。
 
 
 
 
 
+
+<img src="./doc/img/tree.png" />
 
 
 [快速开始][quick_start]
@@ -183,6 +187,14 @@ IOT-Tree为了方便监控系统现场计算机（或支持触摸功能的一体
 
 
 <img src="./doc/img/readme_24.png">
+
+### 2.7 自定义管理界面
+
+你可以使用标准的"Java Webapp"开发方式实现你的自定义管理导航界面和web前后端，并且部署到IOT-Tree Server中。由此，你可以无缝的整合IOT-Tree中的项目数据和实时监控画面，为用户提供更加丰富的SCADA系统（如驾驶舱、3D和GIS地图支持）。
+
+
+
+<img src="./doc/img/adv/a025.png">
 
 
 ## 其他

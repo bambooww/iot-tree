@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -201,6 +201,7 @@
 			                            <include>mon/*.*</include>
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
+			                            <include>tomcat/webapps/readme.txt</include>
 			                            <include>tomcat/temp/readme.txt</include>
 			                            <include>wrapper.*</include>
 			                            <include>iottree_win_panel.exe</include>
@@ -293,7 +294,7 @@
 				                <delete dir="../_output/web/ROOT/target/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/.settings/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
-			                    <!-- 
+			                    
 			                    <echo message="package zip file" />
 			                    
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
@@ -324,7 +325,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                     -->
+			                     
                 				
 							</tasks>
 						</configuration>

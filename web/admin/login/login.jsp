@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="
 	org.iottree.core.util.*,
-	org.iottree.core.*,
+	org.iottree.core.*,org.iottree.core.plugin.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -21,6 +21,10 @@
     		return ;
     	}
     }
+    
+    PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+    if(pa!=null)
+    	has_setpsw = true ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -70,7 +74,7 @@ else
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>user</wbt:lang></label>
     <div class="layui-input-inline" style="width:300px;">
-      <input type="text" id="username" name="username" value="admin" readonly="readonly" required lay-verify="required" autocomplete="off" class="layui-input">
+      <input type="text" id="username" name="username" value="admin" required autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
@@ -129,17 +133,29 @@ layui.use('form', function(){
 	  var form = layui.form;
 
 	  form.on('submit(login)', function(data){
+		  var user = $("#username").val() ;
+		  if(!user)
+		  {
+			  dlg.msg("<wbt:lang>pls,input,user</wbt:lang>") ;
+			  return false;
+		  }
 	    var psw = $("#psw").val() ;
 	    if(psw==null||psw=="")
 	    {
 	    	dlg.msg("<wbt:lang>pls_inp_psw</wbt:lang>") ;
 	    	return false;
 	    }
-	    do_login(psw);
+	    do_login(user,psw);
 	    return false;
 	  });
 	  
 	  form.on('submit(setpsw_login)', function(data){
+		  var user = $("#username").val() ;
+		  if(!user)
+		  {
+			  dlg.msg("<wbt:lang>pls,input,user</wbt:lang>") ;
+			  return false;
+		  }
 		  var psw = $("#psw").val() ;
 		  var repsw = $("#repsw").val() ;
 		    if(psw==null||psw=="")
@@ -157,18 +173,18 @@ layui.use('form', function(){
 		    	dlg.msg("<wbt:lang>psw_repsw_neq</wbt:lang>") ;
 		    	return false;
 		    }
-		    do_login(psw);
+		    do_login(user,psw);
 		    return false;
 		  });
 	  form.render();
 	});
 
-function do_login(psw)
+function do_login(user,psw)
 {
 	$.ajax({
         type: 'post',
         url:'./login_ajax.jsp',
-        data: {op:"login",user:"admin",psw:psw},
+        data: {op:"login",user:user,psw:psw},
         async: true,  
         success: function (result) {  
         	if("succ"==result)

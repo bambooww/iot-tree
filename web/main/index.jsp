@@ -24,12 +24,13 @@
 	<span class="nav_item " style="background-color: #2d363c;width:300px;">IOT-Tree Main Demo</span>
 	<span class="nav_item" id="ni_iottree" onclick="nav_to('iottree')">Monitor1</span>
 	<span class="nav_item" id="ni_u1"  onclick="nav_to('u1')">Monitor2</span>
-	<span class="nav_item" id="ni_nav1"  onclick="nav_to('nav1')">Tables</span>
-	<span class="nav_item" id="ni_nav2"  onclick="nav_to('nav2')">Stat.</span>
+	<span class="nav_item" id="ni_nav1"  onclick="nav_to('tb')">Tables</span>
+	<span class="nav_item" id="ni_nav2"  onclick="nav_to('st')">Stat.</span>
 </div>
  <div class="main" id="main">
 </div>
 <script>
+
 function nav_to(p)
 {
 	$(".nav_item").removeClass("nav_sel") ;
@@ -42,6 +43,12 @@ function nav_to(p)
 	case "u1":
 		$("#main").html(`<iframe src="/watertank/u1"  style="width:100%;height:100%;overflow:hidden;border:0px;"></iframe>`) ;
 		return ;
+	case "tb":
+		$("#main").html(`Your table data here:<br><table style="width:80%"><tr><td>1</td><td>2</td><td>3</td></tr></table>`) ;
+		return ;
+	case "st":
+		$("#main").html(`Your stat data here`) ;
+		return  ;
 	default:
 		alert('navigate to '+p) ;
 		return ;

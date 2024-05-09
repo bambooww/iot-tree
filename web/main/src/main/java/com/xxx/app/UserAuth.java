@@ -69,7 +69,7 @@ public class UserAuth
 	 */
 	public boolean checkReadRight(String node_path,String reg_name)
 	{
-		System.out.println("checkReadRight "+node_path+" "+reg_name) ;
+		//System.out.println("checkReadRight "+node_path+" "+reg_name) ;
 		if("admin".equals(reg_name)||"user1".equals(reg_name))
 			return true ;
 		return false;
@@ -86,7 +86,7 @@ public class UserAuth
 	 */
 	public boolean checkWriteRight(String node_path,String reg_name)
 	{
-		System.out.println("checkWriteRight "+node_path+" "+reg_name) ;
+		//System.out.println("checkWriteRight "+node_path+" "+reg_name) ;
 		
 		if("admin".equals(reg_name))
 			return true ;

@@ -63,8 +63,8 @@ public class PlugDir
 		// this.name = name ;
 		plugDirF = plugdirf;// new
 							// File(Config.getDataDirBase()+"/plugins/"+name+"/");
-		if (!plugDirF.exists())
-			throw new IllegalArgumentException("no plug dir founded,name=" + name);
+//		if (!plugDirF.exists())
+//			throw new IllegalArgumentException("no plug dir founded,name=" + name);
 
 		this.plugCL = cl ;
 		//loadConfigJson();
@@ -78,7 +78,15 @@ public class PlugDir
 			if(plugDirF.isFile())
 				txt = ZipUtil.readZipTxt(plugDirF, "WEB-INF/config.json", "UTF-8") ;
 			else
-				txt = Convert.readFileTxt(new File(plugDirF, "config.json"), "UTF-8");
+			{
+				File jf = new File(plugDirF, "config.json") ;
+				if(!jf.exists())
+					return false;
+				txt = Convert.readFileTxt(jf, "UTF-8");
+			}
+			
+			if(Convert.isNullOrEmpty(txt))
+				return false;
 		}
 		catch ( Exception e)
 		{
@@ -117,8 +125,8 @@ public class PlugDir
 
 	static PlugDir parseDir(File plugdirf,ClassLoader cl)
 	{
-		if (!checkDirValid(plugdirf))
-			return null;
+//		if (!checkDirValid(plugdirf))
+//			return null;
 
 		PlugDir pdir = new PlugDir(plugdirf,cl);
 		if (!pdir.loadConfigJson())

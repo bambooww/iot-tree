@@ -51,7 +51,7 @@ public abstract class ConnProvider implements IXmlDataValidator
 			System.out.println("load conn provider ["+tp+"] ok") ;
 			return true ;
 		}
-		catch(Exception e)
+		catch(Throwable e)
 		{
 			//e.printStackTrace();
 			if(log.isWarnEnabled())

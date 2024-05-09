@@ -13,6 +13,7 @@ Based on this tree management, IOT-Tree Server provides the design, configuratio
 
 IOT-Tree Server is an open source software developed using Java. It's admin ui is completely web-based.
 
+<img src="./web/doc/en/doc/img/tree.png" />
 
 [Quick Start][quick_start]
 
@@ -150,6 +151,12 @@ Based on internally unified tags, you can flexibly and conveniently define the d
 IOT-Tree provides a client program for monitoring UI to facilitate the use of on-site computers (or all-in-one PCs that support touch functionality) in the monitoring system. It can facilitate automatic startup of the device and fill the monitoring screen.
 
 <img src="./web/doc/en/doc/img/readme_24.png">
+
+### 2.7 Custom management UI
+
+You can use the standard Java Webapp development method to implement your custom management navigation UI and web front-end and back-end, and deploy them to the IOT-Tree Server. As a result, you can seamlessly integrate project data and real-time monitoring HMI in IOT-Tree, providing users with a richer SCADA system (such as cockpit, 3D and GIS map support).
+
+<img src="./web/doc/en/doc/img/adv/a025.png">
 
 ## Know more
 

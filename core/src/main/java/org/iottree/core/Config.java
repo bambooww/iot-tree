@@ -154,10 +154,13 @@ public class Config
 		
 		String path = null ;
 		
-		private Webapp(String appn,String path)
+		boolean bMain=false;
+		
+		private Webapp(String appn,String path,boolean b_main)
 		{
 			this.appName = appn ;
 			this.path = path ;
+			this.bMain = b_main ;
 		}
 		
 		public String getAppName()
@@ -168,6 +171,11 @@ public class Config
 		public String getPath()
 		{
 			return this.path ;
+		}
+		
+		public boolean isMain()
+		{
+			return this.bMain ;
 		}
 	}
 	
@@ -215,6 +223,16 @@ public class Config
 			}
 			return null ;
 		}
+		
+		public Webapp getMainApp()
+		{
+			for(Webapp w:this.webapps)
+			{
+				if(w.bMain)
+					return w ;
+			}
+			return null ;
+		}
 	}
 	
 	public static Webapps getWebapps()
@@ -238,10 +256,19 @@ public class Config
 				boolean bload = !"false".equalsIgnoreCase(wele.getAttribute("load")) ;
 				if(!bload)
 					continue ;
-				r.webapps.add(new Webapp(appn,path)) ;
+				boolean bmain = "true".equals(wele.getAttribute("main")) ;
+				r.webapps.add(new Webapp(appn,path,bmain)) ;
 			}
 		}
 		return r ;
+	}
+	
+	public static Webapp getWebappMain()
+	{
+		Webapps ws = getWebapps() ;
+		if(ws==null)
+			return null ;
+		return ws.getMainApp() ;
 	}
 	/**
 	 * ������е�ģ������

@@ -10,10 +10,14 @@ She uses a clear architecture, including communication connection, channel, devi
 
 Based on this tree management, IOT-Tree Server provides the design, configuration and online application of online configuration interface (Human-Computer Interaction Interface) based on Web.
 
+Externally, IOT-Tree provides various docking adapter support, which can provide data push (MQTT, Kafka, Mail) ; Data output (Excel, CSV); Data storage (Database); Device simulation (Modbus Slave) and other related content.
+
 IOT-Tree Server is mainly developed using Java. It's admin ui is completely web-based.
 
 
 
+
+<img src="./doc/img/tree.png" />
 
 
 
@@ -194,6 +198,14 @@ IOT-Tree provides a client program for monitoring UI to facilitate the use of on
 
 
 <img src="./doc/img/readme_24.png">
+
+### 2.7 Custom management UI
+
+
+You can use the standard Java Webapp development method to implement your custom management navigation UI and web front-end and back-end, and deploy them to the IOT-Tree Server. As a result, you can seamlessly integrate project data and real-time monitoring HMI in IOT-Tree, providing users with a richer SCADA system (such as cockpit, 3D and GIS map support).
+
+
+<img src="./doc/img/adv/a025.png">
 
 
 

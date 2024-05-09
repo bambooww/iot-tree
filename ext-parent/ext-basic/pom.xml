@@ -3,7 +3,7 @@
   <parent>
     <artifactId>ext-parent</artifactId>
     <groupId>org.iottree.ext</groupId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>iottree-ext-basic</artifactId>
@@ -21,7 +21,7 @@
          <dependency>
 	    <groupId>org.iottree</groupId>
 	    <artifactId>iottree-core</artifactId>
-	    <version>1.6.0</version>
+	    <version>1.6.1</version>
 	</dependency>
 	
     <dependency>

@@ -9,6 +9,12 @@
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	//response.sendRedirect("/admin") ;
+Config.Webapp wapp = Config.getWebappMain() ;
+if(wapp!=null)
+{
+	response.sendRedirect("/"+wapp.getAppName()) ;
+	return ;
+}
 UAManager uamgr = UAManager.getInstance();
 List<UAPrj> prjs = uamgr.listPrjs();
 if(prjs==null||prjs.size()<=0)
