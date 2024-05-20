@@ -10,11 +10,15 @@ import org.iottree.core.router.RouterInnCollator.OutStyle;
 import org.iottree.core.router.RouterInnCollator.TagVal;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class RICSelTags extends RouterInnCollator
 {
+	static ILogger log = LoggerManager.getLogger(RICSelTags.class) ;
+	
 	public static final String TP="sel_tags";
 	
 	
@@ -27,14 +31,14 @@ public class RICSelTags extends RouterInnCollator
 	
 	OutStyle outSty = OutStyle.interval ;
 	
-	
+	JoinOut jout = new JoinOut(this,"sel_tags_out") ;
 	private List<JoinOut> jouts = Arrays.asList(
-			new JoinOut(this,"sel_tags_out") //,false,true)
+			jout
 			) ;
 	
 	private static final String J_TAGS_IN = "sel_tags_in";
 	
-	JoinIn jin = new JoinIn(this,J_TAGS_IN) ;
+	JoinIn jin = new JoinIn(this,J_TAGS_IN);
 	
 	private List<JoinIn> jinws = Arrays.asList(
 			 jin
@@ -45,12 +49,15 @@ public class RICSelTags extends RouterInnCollator
 	{
 		StringBuilder sb = new StringBuilder() ;
 		
-		sb.append(" CMD: write_tag\r\n") ;
+		sb.append("CMD: write_tag\r\n\r\n") ;
 		JSONObject helpfmt = new JSONObject() ;
 		helpfmt.put("cmd", "write_tag") ;
 		helpfmt.put("tag", "tag.path.in.prj") ;
 		helpfmt.put("value", "bool,int,float etc") ;
-		sb.append(helpfmt.toString(2)).append("\r\n e.g: {\"cmd\":\"write_tag\",\"tag\":\"\",\"value\":true}\r\n") ;
+		helpfmt.put("dt", "ms") ;
+		helpfmt.put("timeout", "ms") ;
+		sb.append(helpfmt.toString(2)).append("\r\n e.g:\r\n {\"cmd\":\"write_tag\", \"tag\":\"ch1.p1.d1.start\", \"value\":true,\"dt\":12345678,\"timeout\":30000}") ;
+		JIN_HELP = sb.toString() ;
 	}
 	
 	public RICSelTags(RouterManager rm)
@@ -114,11 +121,13 @@ public class RICSelTags extends RouterInnCollator
 		this.rtInWriteTags = tags ;
 		
 		StringBuilder sb = new StringBuilder() ;
-		sb.append(JIN_HELP).append("\r\n Tags:\r\n") ;
+		sb.append(JIN_HELP).append("\r\n\r\nTags:\r\n") ;
 		for(UATag tag:tags)
 		{
 			sb.append(tag.getNodeCxtPathInPrj()+"\r\n") ;
 		}
+		
+		//sb.append("\r\n").append(JIN_HELP) ;
 		this.jin.asHelpTxt(sb.toString()) ;
 	}
 
@@ -144,7 +153,17 @@ public class RICSelTags extends RouterInnCollator
 	@Override
 	protected void RT_runInIntvLoop()
 	{
+		if(rtOutTags==null||rtOutTags.size()<=0)
+			return ;
 		
+		JSONArray jarr = new JSONArray() ;
+		for(UATag tag:rtOutTags)
+		{
+			JSONObject jo = tag.RT_toFlatJson() ;
+			jarr.put(jo) ;
+		}
+		
+		RT_sendToJoinOut(jout,new RouterObj(jarr)) ;
 	}
 	
 	/**
@@ -194,18 +213,49 @@ public class RICSelTags extends RouterInnCollator
 				this.RT_fireErr("RT_onInWriteTag warn: write_tag jo has not value prop \r\n"+recvjo.toString(), null);
 				return ;
 			}
+			long dt = recvjo.optLong("dt",-1) ;
+			long timeout = recvjo.optLong("timeout",-1) ;
+			if(dt<=0 || timeout<=0)
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: write_tag jo has no dt or timeout value prop \r\n"+recvjo.toString(), null);
+				return ;
+			}
+			if(System.currentTimeMillis()>dt+timeout)
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: write_tag is timeout and discard \r\n"+recvjo.toString(), null);
+				return ;
+			}
 			UATag tag = this.belongPrj.getTagByPath(path) ;
 			if(tag==null)
 			{
 				this.RT_fireErr("RT_onInWriteTag warn: not tag with path="+path, null);
 				return ;
 			}
+			UATag write_tag = null ;
+			for(UATag wt : this.rtInWriteTags)
+			{
+				if(wt.getId().equals(tag.getId()))
+				{
+					write_tag = wt ;
+					break ;
+				}
+			}
+			if(write_tag==null)
+			{
+				this.RT_fireErr("RT_onInWriteTag warn: tag is not set to be write path="+path, null);
+				return ;
+			}
+			
 			StringBuilder failedr = new StringBuilder() ;
-			if(!tag.RT_writeVal(objv, failedr))
+			log.warn("RT_onInWriteTag RT_writeVal path="+path+" val="+objv);
+			if(!write_tag.RT_writeVal(objv, failedr))
 			{
 				this.RT_fireErr("RT_onInWriteTag warn:"+failedr, null);
 				return ;
 			}
+			
+			
+			
 			return ;
 		}
 		

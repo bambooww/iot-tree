@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="inject" name_cn="注入" name_en="Inject" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="switch" name_cn="路径切换" name_en="Switch" desc_cn="" desc_en=""/>
+	
+	
+	
+</dd_class>

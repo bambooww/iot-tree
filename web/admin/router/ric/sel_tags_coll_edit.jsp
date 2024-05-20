@@ -57,7 +57,7 @@ if(out_tags!=null)
 	for(UATag tag:out_tags)
 	{
 		out_tagids.put(tag.getId()) ;
-		out_tagtxt += tag.getNodePath() +"\r\n";
+		out_tagtxt += tag.getNodeCxtPathIn(prj) +"\r\n";
 	}
 }
 List<UATag> in_tags = ric.getRTInWriteTags() ;

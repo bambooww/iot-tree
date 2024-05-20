@@ -38,12 +38,15 @@ String using_lan = Lan.getUsingLang() ;
 <title>IOTTree Project Editor</title>
 <jsp:include page="head.jsp">
 <jsp:param value="true" name="tree"/>
+<jsp:param value="true" name="tab"/>
 </jsp:include>
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 <script src="/_js/selectmenu/selectmenu.min.js"></script>
 <script src="./js/ua_tree.js"></script>
 <script src="./js/ua.js"></script>
 <script src="./js/vue.min.js"></script>
+<script type="text/javascript" src="./js/tab.js" ></script>
+<link rel="stylesheet" href="./js/tab.css" />
 <style>
 body {
 	margin: 0px;
@@ -478,6 +481,29 @@ background-color: #515658;
    margin-top:10px;
    cursor: pointer;
 }
+
+.left_btm
+{
+	position: absolute;
+	left:0px;width:30%;
+	bottom: 0px;
+	height:200px;
+	border: 1px solid;
+	border-color: #cccccc;
+}
+
+.left_btm .show_hid
+{
+	position: absolute;
+	right:3px;top:3px;
+	width:20px;
+	text-align:center;
+}
+
+.tab .tab-header-item .close
+{
+	display:none;
+}
 </style>
 
 </head>
@@ -494,15 +520,17 @@ function open_doc()
 		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
 		[<%=rep.getTitle()%>]
 		</div>
-		<div class="top_toolbox top_tool"  style="left:40%;width:250px">
+		<div class="top_toolbox top_tool"  style="left:40%;width:120px">
 		 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 				  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
 				  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+				  <%--
 				  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
 				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
 				  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
 				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
+				 --%>
 		</div>
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
@@ -516,7 +544,7 @@ function open_doc()
 		 </div>
 </div>
 <div class='hj-wrap' style="opacity: 1.0;">
-        <div id="div_conn" class="hj-transverse-split-div subwin" style="width:20%">
+        <div id="div_conn" class="hj-transverse-split-div subwin" style="width:15%">
 			<div class="subwin_toolbar">
 			<span style="left:20px;display:none" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>
 			<%--
@@ -588,10 +616,10 @@ function open_doc()
 	            <div id="conn_ch" style="width:25%;height:100%;overflow:hidden;float:left;border-top: solid 1px;border-color: #cccccc;"> </div>
             
 	      </div>
-	     
+	      
 	    </div>
        
-        <div id="div_brw" class="hj-transverse-split-div subwin" style="width:20%">
+        <div id="div_brw" class="hj-transverse-split-div subwin" style="width:15%">
            <div class="subwin_toolbar">
           <%--
           Browser
@@ -616,7 +644,7 @@ function open_doc()
             <label class="hj-transverse-split-label"></label>
         </div>
          
-        <div id="div_content" class="hj-transverse-split-div" style="width:60%;background-color: #ebeef3;border:1px solid;border-color: #ebeef3">
+        <div id="div_content" class="hj-transverse-split-div" style="width:70%;background-color: #ebeef3;border:1px solid;border-color: #ebeef3">
            <div style="padding-left:10px;padding-right:0px;marign0:10px;width:100%;height:100%;position:inherit;background-color: #ebeef3;z-index:60000" id="right_tabs">
              
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
@@ -639,7 +667,19 @@ function open_doc()
 		    </div>
             <label class="hj-transverse-split-label"></label>
         </div>
+        
+        <div class="left_btm">
+    	
+    	<div class="left_btm_tab">
+    	<ul></ul>
+          <div></div>
+          </div>
+          <div id="show_hid" class="show_hid"><i class="fa fa-angle-double-down" aria-hidden="true" /></i></div>
     </div>
+    
+    </div>
+    
+    
 <script>
 var repid="<%=prjid%>";
 var prjid="<%=prjid%>";
@@ -1950,7 +1990,8 @@ function act_main_hmi(n,op)
 
 function act_hmi_edit_ui(n,op)
 {
-	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
+	console.log(n)
+	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
 /*
@@ -2121,19 +2162,6 @@ function dev_lib()
 }
 */
 //////////edit panel
-$(document).ready(function()
-{
-	$('#edit_panel_btn').click(function()
-	{
-		$('#edit_panel').slideToggle();
-		$(this).toggleClass("cerrar");
-   	});
- 		
-	$('#lr_btn_fitwin').click(function()
-	{
-		draw_fit();
-   	});
-});
 
 function slide_toggle(obj,w)
 {
@@ -2266,6 +2294,61 @@ function clk_router_mgr()
 	event.stopPropagation();
 	add_tab("___router","<i class='fa fa-sitemap fa-rotate-270'></i><wbt:g>data,router</wbt:g>","./router/router_mgr.jsp?prjid="+prjid) ;
 }
+
+function init_left_btm()
+{
+	$("#show_hid").click(function(){
+		let lb = $(".left_btm") ;
+		let h = lb.height() ;
+		if(h<50)
+		{
+			$(this).html(`<i class="fa fa-angle-double-down" aria-hidden="true" /></i>`) ;
+			let oldh=  $(this).attr("__h") ;
+			lb.css("height",oldh+"px") ;
+		}
+		else
+		{
+			$(this).html(`<i class="fa fa-angle-double-up" aria-hidden="true" /></i>`) ;
+			$(this).attr("__h",""+h) ;
+			lb.css("height","30px") ;
+		}
+	});
+	
+
+    $(".left_btm_tab").tab();
+    
+    let tmps = `<iframe src="./mn/mn_mgr.jsp?prjid=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
+	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps});
+	tmps=`<div   style="height:100px;width:290px;font-size:30px;color:#57a9d0"><br>
+		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
+		  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
+		  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
+		  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
+		  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
+		  </div>
+		  `;
+	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>extends</wbt:g>', 'id': 'lb_tab_extend', 'content': tmps});
+	
+	$(".left_btm_tab").tab('selectTab', 'lb_tab_msg_net');
+}
+
+
+$(document).ready(function()
+{
+	$('#edit_panel_btn').click(function()
+	{
+		$('#edit_panel').slideToggle();
+		$(this).toggleClass("cerrar");
+   	});
+ 		
+	$('#lr_btn_fitwin').click(function()
+	{
+		draw_fit();
+   	});
+	
+	init_left_btm() ;
+});
+
 
 function show_conn_msg(ob)
 {

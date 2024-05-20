@@ -498,7 +498,7 @@ static ILogger log = LoggerManager.getLogger(ROAMqtt.class);
 
 	
 	@Override
-	public synchronized boolean RT_start()
+	protected synchronized boolean RT_start_ov()
 	{
 		if(th!=null)
 			return true;

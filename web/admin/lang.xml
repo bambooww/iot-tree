@@ -50,12 +50,16 @@
   <dd_node id="1" name="do_imp" name_cn="确定导入" name_en="Do Import" />
   <dd_node id="1" name="select" name_cn="选择" name_en="Select" />
   <dd_node id="1" name="unselect" name_cn="取消选择" name_en="Unselect" />
+  <dd_node id="1" name="done" name_cn="完成" name_en="Done" />
+  <dd_node id="1" name="extends" name_cn="扩展" name_en="Extends" />
   
   <dd_node id="1" name="imp_demo_prj" name_cn="导入演示项目" name_en="Import Demo project" />
   <dd_node id="1" name="imp_demo_sim" name_cn="导入演示模拟实例" name_en="Import Demo Simulator Instance" />
   <dd_node id="1" name="imp_dev_lib" name_cn="导入设备库" name_en="Import Device Library" />
   <dd_node id="1" name="edit_dev_lib" name_cn="编辑设备库" name_en="Edit Device Library" />
   
+  <dd_node id="1" name="msg_net" name_cn="消息处理流程" name_en="Message Flow" />
+  <dd_node id="1" name="flow" name_cn="流程" name_en="Flow" />
   
   <dd_node id="1" name="services" name_cn="服务程序" name_en="Services" />
   <dd_node id="1" name="setup" name_cn="设置" name_en="Setup" />

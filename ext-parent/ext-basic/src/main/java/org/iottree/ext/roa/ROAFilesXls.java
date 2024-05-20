@@ -31,12 +31,11 @@ public class ROAFilesXls extends ROAFiles
 	@Override
 	protected void RT_onRecvedFromJoinIn(JoinIn ji, RouterObj recved_ob) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public boolean RT_start()
+	protected boolean RT_start_ov()
 	{
 		// TODO Auto-generated method stub
 		return false;

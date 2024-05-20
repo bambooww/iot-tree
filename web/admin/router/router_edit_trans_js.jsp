@@ -66,7 +66,7 @@
 }
     </style>
     <script type="text/javascript">
-    dlg.resize_to(550,520);
+    dlg.resize_to(750,520);
     </script>
 </head>
 <body>
@@ -81,18 +81,16 @@
  <div class="layui-form-item">
     <label class="layui-form-label">JS:</label>
 	  
-	  <div class="layui-input-inline" style="width: 400px;">
+	  <div class="layui-input-inline" style="width: 600px;">
 	    ($input)=>{
-<textarea id="jstxt" style="width:100%;height:280px;" class="layui-input"><%=jstxt %></textarea>
-&nbsp;&nbsp;}
+<textarea id="jstxt" style="width:100%;height:280px;overflow: auto;white-space: nowrap;" class="layui-input"><%=jstxt %></textarea>
+&nbsp;}
 </div>
  </div>
 </form>
 <script>
-
 layui.use('form', function(){
 	  form = layui.form;
-	  
 	  form.render();
 });
 

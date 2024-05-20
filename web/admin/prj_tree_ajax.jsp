@@ -7,7 +7,7 @@
 				java.net.*"%><%!
 				public static void renderTagGroup(Writer out,UATagG tg,boolean b_sel,boolean cont_only) throws Exception
 				{
-					out.write("{\"text\": \""+tg.getName()+"\"") ;
+					out.write("{\"text\": \""+tg.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(tg.getTitle())+"\"}") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
@@ -67,7 +67,7 @@
 						else out.write(",") ;
 						
 						boolean ref = hmi.isRefedNode();
-						out.write("{\"text\": \""+hmi.getName()+"\",\"title\":\""+hmi.getTitle()+"\",\"ref\":"+ref) ;
+						out.write("{\"text\": \""+hmi.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle())+"\"},\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
 						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_hmi\",\"state\": {\"opened\": true}}") ;
 					}
@@ -86,7 +86,7 @@
 	
 	{
 	"text":"<%=rep.getName() %>"
-	,"id":"<%=rep.getId() %>"
+	,"id":"<%=rep.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(rep.getTitle())%>"}
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
 	,"icon": "icon_prj"
@@ -136,7 +136,7 @@
 %>
 		{
 		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
-		  ,"id":"<%=ch.getId() %>"
+		  ,"id":"<%=ch.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(ch.getTitle())%>"}
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
 		  ,"state": {"opened": <%=(b_sel?"true":"false")%>}
@@ -177,7 +177,7 @@
 %>
 			{
 				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title='<%=dev.getTitle()%><%=model_t%>'><%=dev.getName() %><%=model_n%></span><%=deft%> <%=devok%>"
-			  ,"id":"<%=dev.getId() %>"
+			  ,"id":"<%=dev.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(dev.getTitle())%>"}
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"
 			  ,"state": {"opened": <%=(b_sel?"true":"false")%>}

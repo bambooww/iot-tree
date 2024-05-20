@@ -93,7 +93,7 @@ public abstract class RouterOuterAdp extends RouterNode
 		}
 		catch(Throwable ee)
 		{
-			log.error(ee.getMessage(), ee);
+			//log.error(ee.getMessage(), ee);
 			this.RT_fireErr("RT_recvedFromJoinIn ["+ji.name+"] err", ee);
 			if(log.isDebugEnabled())
 				log.debug("RT_recvedFromJoinIn ["+ji.name+"] err",ee);
@@ -125,12 +125,27 @@ public abstract class RouterOuterAdp extends RouterNode
 		
 		RouterInnCollator ric = (RouterInnCollator)ji.getBelongNode() ;
 		ji.RT_setLastData(ret);
+		if(!ric.isEnable())
+		{
+//			if(log.isDebugEnabled())
+//				log.debug("");
+			return ;
+		}
 		ric.RT_onRecvedFromJoinIn(ji,ret) ;
 	}
 	
 	//protected abstract void RT_onRecvedFromJoinIn(JoinIn ji,String recved_txt) ;
 	
-	public abstract boolean RT_start();
+	public final boolean RT_start()
+	{
+		if(!this.bEnable)
+			return false;
+		
+		return RT_start_ov() ;
+	}
+	
+	protected abstract boolean RT_start_ov() ;
+	
 	
 	public abstract void RT_stop();
 	

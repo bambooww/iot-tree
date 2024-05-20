@@ -46,7 +46,7 @@ public abstract class ROAJdbc extends RouterOuterAdp implements ILang
 
 
 	@Override
-	public boolean RT_start()
+	protected boolean RT_start_ov()
 	{
 		return false;
 	}

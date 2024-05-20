@@ -209,7 +209,11 @@ public abstract class RouterNode
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id) ;
 		jo.put("rt_err_dt", this.rtLastErrDT) ;
-		jo.putOpt("rt_last_err", this.rtLastErr) ;
+		Throwable t = rtLastExcept ;
+		String exp = "";
+		if(t!=null)
+			exp = t.getMessage() ;
+		jo.putOpt("rt_last_err", this.rtLastErr+":"+exp) ;
 		jo.put("run_st",this.RT_isRunning()) ;
 		//jo.putOpt(, value)
 		return jo ;

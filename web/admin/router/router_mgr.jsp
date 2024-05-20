@@ -154,6 +154,22 @@ background-color: #eeeeee
 	bottom:7px;
 }
 
+.oper_l
+{
+	position:absolute;
+	font-size: 15px;
+	left:10px;
+	bottom:1px;
+}
+
+.oper_r
+{
+	position:absolute;
+	font-size: 15px;
+	right:10px;
+	bottom:1px;
+}
+
 .right_j
 {
 	position:absolute;
@@ -533,7 +549,7 @@ function show_rics()
 				tmps += `<div id="ric_out_\${ob.id}-\${outj.n}" ric_id="\${ob.id}" fid="\${ob.id}-\${outj.n}" class="right_j jout" style="top:\${ypos}px;cursor:pointer;" j_n="\${outj.n}" t="\${ob.t}" onclick="on_ric_out_join_clk(this)" ">
 					<span class="t">\${outj.t||outj.n}</span>
 					<span class="ricon" ><i class="fa-solid fa-right-long"></i></span>
-					<span class="oper">
+					<span class="oper_l">
 						<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="debug_join_data(true,'\${ob.id}','\${outj.n}',true)"><i class="fa fa-j"></i></button>
 					 </span>
 					</div>`;
@@ -548,8 +564,9 @@ function show_rics()
 				tmps += `<div id="ric_in_\${ob.id}-\${inj.n}" ric_id="\${ob.id}" class="right_j" style="top:\${ypos}px" j_n="\${inj.n}" t="\${ob.t}">
 					<span class="t">\${inj.t||inj.n}</span>
 					<span class="ricon" ><input class="ric_in_chk" type="checkbox" id="ric_in_chk_\${ob.id}-\${inj.n}" tid="\${ob.id}-\${inj.n}" onclick="on_ric_in_chk(this)"/><i class="fa-solid fa-left-long"></i></span>
-					<span class="oper">
+					<span class="oper_l">
 						<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="debug_join_data(true,'\${ob.id}','\${inj.n}',false)"><i class="fa fa-j"></i></button>
+						<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="help_join(true,'\${ob.id}','\${inj.n}',false)"><i class="fa fa-question"></i></button>
 					 </span>
 					</div>`;
 				ypos += 60 ;
@@ -688,7 +705,7 @@ function show_roas()
 				tmps += `<div id="roa_out_\${ob.id}-\${outj.n}" roa_id="\${ob.id}" class="left_j jout" fid="\${ob.id}-\${outj.n}" style="top:\${ypos}px;cursor:pointer;" j_n="\${outj.n}" t="\${ob.t}" onclick="on_roa_out_join_clk(this)">
 					<span class="t">\${outj.t||outj.n}</span>
 					<span class="licon" ><i class="fa-solid fa-left-long"></i></span>
-					<span class="oper">
+					<span class="oper_r">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="debug_join_data(false,'\${ob.id}','\${outj.n}',true)"><i class="fa fa-j"></i></button>
 					 </span>
 					</div>`;
@@ -703,8 +720,9 @@ function show_roas()
 				tmps += `<div id="roa_in_\${ob.id}-\${inj.n}" roa_id="\${ob.id}"class="left_j" style="top:\${ypos}px" j_n="\${inj.n}" t="\${ob.t}" >
 					<span class="t">\${inj.t||inj.n}</span>
 					<span class="licon" ><i class="fa-solid fa-right-long"></i><input class="roa_in_chk" type="checkbox" id="roa_in_chk_\${ob.id}-\${inj.n}" tid="\${ob.id}-\${inj.n}" onclick="on_roa_in_chk(this)"/></span>
-					<span class="oper">
+					<span class="oper_r">
 					<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="debug_join_data(false,'\${ob.id}','\${inj.n}',false)"><i class="fa fa-j"></i></button>
+					<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" onclick="help_join(false,'\${ob.id}','\${inj.n}',false)"><i class="fa fa-question"></i></button>
 					 </span>
 					</div>`;
 				ypos += 60 ;
@@ -733,7 +751,7 @@ function show_roas()
 		let brd = ob.en?"":"border-color:#aaaaaa"
 		tmps += `<div id="o_\${ob.id}" class="roa_item" roaid="\${ob.id}" style="top:\${pos}px;\${brd}" h_id="\${ob.id}" t="\${ob.t}" onclick="on_roa_clk(this)" out_ids="\${ob.out_ids}">
 			<span class="t">\${ob.t||ob.n}</span>
-			<div class="bk_icon" style="background:url(./roa/\${ob._tp}.png) no-repeat"></div>
+			<div class="bk_icon" style="background:url(./roa/img/\${ob._tp}.png) no-repeat"></div>
 			<span class="run_st" onclick="debug_node_start_stop('roa','\${ob.id}')"><i id='roa_st_\${ob.id}' class='fa fa-circle-notch'></i></span>
 			<span class="rt" id="roa_rt_\${ob.id}"></span>
 			<span class="oper">
@@ -1340,7 +1358,7 @@ function debug_join_data(ric_or_roa,ric_roa_id,n,b_out)
 		}
 		let pm;
 		eval("pm="+ret) ;
-		console.log(pm) ;
+		//console.log(pm) ;
 		dlg.open("./router_debug_shower.jsp",
 				{title:'<wbt:g>debug,data</wbt:g>',pm:pm},
 				['<wbt:g>cancel</wbt:g>'],
@@ -1352,6 +1370,34 @@ function debug_join_data(ric_or_roa,ric_roa_id,n,b_out)
 				]);
 	}) ;
 }
+
+function help_join(ric_or_roa,ric_roa_id,n,b_out)
+{
+	let op = "ric_join_help";
+	if(!ric_or_roa)
+		op = "roa_join_help";
+	
+	send_ajax("router_ajax.jsp",{op:op,prjid:prjid,id:ric_roa_id,name:n,out:b_out},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		let pm;
+		eval("pm="+ret) ;
+		//console.log(pm) ;
+		dlg.open("./router_helper.jsp",
+				{title:'<wbt:g>debug,data</wbt:g>',pm:pm},
+				['<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	}) ;
+}
+
 	
 function debug_node_start_stop(ntp,id)
 {

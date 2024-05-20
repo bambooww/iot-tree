@@ -10,6 +10,8 @@ String ver = Config.getVersion() ;
 				boolean oc = "true".equals(request.getParameter("oc"));
 				boolean oc_min= "true".equals(request.getParameter("oc_min"));
 				boolean tree  ="true".equals(request.getParameter("tree"));
+				boolean tab = "true".equals(request.getParameter("tab"));
+				boolean mn = "true".equals(request.getParameter("mn"));
 	if(bsimple)
 	{
 %>
@@ -64,5 +66,14 @@ if(tree)
 <link rel="stylesheet" href="/_js/jstree/themes/default/style.min.css" />
 <link type="text/css" href="/admin/inc/tree.css" rel="stylesheet" />
 <%
+}
+if(mn)
+{
+%><%
+}
+
+if(mn)
+{
+%><script src="/_js/mn/mn.js"></script><%
 }
 %>

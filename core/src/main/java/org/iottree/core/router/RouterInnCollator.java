@@ -165,6 +165,8 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 		RouterOuterAdp roa = (RouterOuterAdp)ji.getBelongNode() ;
 		
 		ji.RT_setLastData(ret);
+		if(!roa.isEnable())
+			return ;
 		roa.RT_recvedFromJoinIn(ji,ret) ;
 	}
 	
@@ -174,6 +176,9 @@ public abstract class RouterInnCollator extends RouterNode implements ILang
 	
 	public synchronized boolean RT_start()
 	{
+		if(!this.bEnable)
+			return false;
+		
 		OutStyle os = getOutStyle() ;
 		switch(os)
 		{

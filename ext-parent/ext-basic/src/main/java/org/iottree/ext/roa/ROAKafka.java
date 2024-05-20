@@ -583,7 +583,15 @@ public class ROAKafka extends RouterOuterAdp
 	}
 
 
-	private void consumer()
+	private Runnable consumerRunner = new Runnable()
+	{
+		public void run()
+		{
+			consumerRun() ;
+		}
+	};
+	
+	private void consumerRun()
 	{
 		if(consumer==null)
 			return ;
@@ -591,46 +599,66 @@ public class ROAKafka extends RouterOuterAdp
 		{
 			while (th!=null)
 			{
-				ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-				for (ConsumerRecord<String, String> record : records)
+				try
 				{
-//					String info = String.format("[Topic: %s][Partition:%d][Offset:%d][Key:%s][Message:%s]",
-//							record.topic(), record.partition(), record.offset(), record.key(), record.value());
-//					log.info("Received:" + info);
-//					System.out.println("Received:" + info);
-					String topic = record.topic() ;
-					String msg = record.value() ;
-					
-					List<JoinOut> jos = getJoinOutList() ;
-					if(jos==null||jos.size()<=0)
-						continue ;
-					for(JoinOut jo:jos)
+					ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+					for (ConsumerRecord<String, String> record : records)
 					{
-						RecvConf rc = (RecvConf)jo.getRelatedObj();
-						if(topic.equals(rc.topic))
-							this.RT_sendToJoinOut(jo, new RouterObj(msg));
+	//					String info = String.format("[Topic: %s][Partition:%d][Offset:%d][Key:%s][Message:%s]",
+	//							record.topic(), record.partition(), record.offset(), record.key(), record.value());
+	//					log.info("Received:" + info);
+						
+						String topic = record.topic() ;
+						String msg = record.value() ;
+						//System.out.println("Received:" + msg);
+						List<JoinOut> jos = getJoinOutList() ;
+						if(jos==null||jos.size()<=0)
+							continue ;
+						for(JoinOut jo:jos)
+						{
+							RecvConf rc = (RecvConf)jo.getRelatedObj();
+							if(topic.equals(rc.topic))
+								RT_sendToJoinOut(jo, new RouterObj(msg));
+						}
 					}
 				}
-			}
+				catch(Throwable ee)
+				{
+					if(log.isDebugEnabled())
+						log.debug("consumer error",ee);
+					
+					try
+					{
+					Thread.sleep(100);
+					}
+					catch(Exception se) {}
+				}
+			}//end of while
 		}
 		finally
 		{
 			th = null ;
 			if(producer!=null)
+			{
 				producer.close();
+				producer = null ;
+			}
 			if(consumer!=null)
+			{
 				consumer.close();
+				consumer = null ;
+			}
 		}
 	}
 	
 	@Override
-	public synchronized boolean RT_start()
+	protected synchronized boolean RT_start_ov()
 	{
 		if(th!=null)
 			return true;
 		
 		RT_init() ;
-		th = new Thread(this::consumer);
+		th = new Thread(consumerRunner);
 		th.start();
 		return true ;
 	}
@@ -641,6 +669,18 @@ public class ROAKafka extends RouterOuterAdp
 		Thread tmpth = th ;
 		if(tmpth!=null)
 			tmpth.interrupt(); 
+		
+		if(producer!=null)
+		{
+			producer.close();
+			producer = null ;
+		}
+		if(consumer!=null)
+		{
+			consumer.close();
+			consumer = null ;
+		}
+		
 		th = null ;
 	}
 	

@@ -434,12 +434,12 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		UANode p = this.getParentNode() ;
 		if(p==null)
 		{
-			return this.getTitle() ;
+			return "/"+this.getTitle() ;
 			//return "" ;
 		}
 		String ppt = p.getNodePathTitle() ;
 		if(Convert.isNullOrEmpty(ppt))
-			return this.getTitle() ;
+			return "/"+this.getTitle() ;
 		else
 			return ppt+"/"+this.getTitle();
 	}

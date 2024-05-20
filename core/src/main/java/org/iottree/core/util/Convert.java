@@ -2372,6 +2372,11 @@ public class Convert
 			fos.write(txt.getBytes(encod));
 		}
 	}
+	
+	public static void writeFileTxt(File f,String txt) throws IOException
+	{
+		writeFileTxt(f,txt,"UTF-8") ;
+	}
 	/**
 	 * 读取文件到字符串
 	 * 
@@ -2386,6 +2391,11 @@ public class Convert
 			return new String(bs);
 		else
 			return new String(bs, encod);
+	}
+	
+	public static String readFileTxt(File f) throws IOException
+	{
+		return readFileTxt(f,"UTF-8") ;
 	}
 
 	public static byte[] readFileBuf(File f) throws IOException

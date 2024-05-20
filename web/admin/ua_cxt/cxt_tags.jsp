@@ -165,12 +165,12 @@ text-overflow:ellipsis;
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 18"><%=node.getNodePath() %> 
+ <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 17"><span title=""><%=node.getNodePath() %></span>  <span>[<wbt:g>tags_num</wbt:g>:</span><span id="tags_num"></span>]
  <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
  <a href="javascript:node_access('<%=node.getNodePath() %>')" id="node_access_<%=node.getId() %>"  title="Access" ><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
  
  </div>
-  <div style="left:20px;top:25px;position:absolute;font-size: 15px;"><wbt:g>tags_num</wbt:g>:<span id="tags_num"></span></div>
+  <div style="left:20px;top:25px;position:absolute;font-size: 15px;"><%=node.getNodePathTitle() %></div>
    <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
    
    <%

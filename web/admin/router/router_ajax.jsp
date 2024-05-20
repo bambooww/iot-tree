@@ -260,6 +260,56 @@ case "roa_debug_join_data":
 	tmpjo.put("d",ldd) ;
 	tmpjo.write(out) ;
 	return ;
+case "ric_join_help":
+	if(!Convert.checkReqEmpty(request, out, "id","name"))
+		return ;
+	bout = "true".equals(request.getParameter("out")) ;
+	ric = rmgr.getInnerCollatorById(id) ;
+	if(ric==null)
+	{
+		out.print("no ric found with id="+id) ;
+		return ;
+	}
+	jj = null;
+	if(bout)
+		jj = ric.getJoinOutByName(nname) ;
+	else
+		jj = ric.getJoinInByName(nname) ;
+	if(jj==null)
+	{
+		out.print("no join found with name "+nname) ;
+		return ;
+	}
+	String txt = jj.getHelpTxt() ;
+	tmpjo = new JSONObject() ;
+	tmpjo.put("txt",txt) ;
+	tmpjo.write(out) ;
+	return ;
+case "roa_join_help":
+	if(!Convert.checkReqEmpty(request, out, "id","name"))
+		return ;
+	bout = "true".equals(request.getParameter("out")) ;
+	roa = rmgr.getOuterAdpById(id) ;
+	if(roa==null)
+	{
+		out.print("no roa found with id="+id) ;
+		return ;
+	}
+	jj = null;
+	if(bout)
+		jj = roa.getJoinOutByName(nname) ;
+	else
+		jj = roa.getJoinInByName(nname) ;
+	if(jj==null)
+	{
+		out.print("no join found with name "+nname) ;
+		return ;
+	}
+	txt = jj.getHelpTxt() ;
+	tmpjo = new JSONObject() ;
+	tmpjo.put("txt",txt) ;
+	tmpjo.write(out) ;
+	return ;
 case "rt_inf": //monitor alert output
 	jo = rmgr.RT_getRunInf() ;
 	jo.write(out) ;

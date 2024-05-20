@@ -1,0 +1,134 @@
+.tab {
+	height: 100%;
+	margin: 0;
+	border: 1px solid #cccccc;
+}
+
+/* tab标签部分 */
+.tab .tab-header {
+	height: 30px;
+	padding: 0
+	font-size: 12px;
+	line-height: 30px;
+	background-color: #f2f2f2;
+	border-bottom: 1px solid #eaeef3;
+	margin-bottom:0px;
+}
+.tab .tab-header-items {
+	display: inline-block;
+	height: 100%;
+}
+.tab .tab-header-item {
+	position: relative;
+	float: left;
+	margin: 0 2px;
+	padding: 0 10px 0 10px;
+	border: 1px solid #cccccc;
+	border-bottom: none;
+	border-radius: 7px 7px 0 0;
+	cursor: pointer;
+}
+.tab .tab-header-select {
+	position: relative;
+	float: right;
+	display: inline-block;
+	margin-top: 4px;
+	width: 16px;
+	height: 16px;
+	opacity: 1;
+}
+.tab .tab-header-select-down {
+	background0: url(./accordion_arrows.png) no-repeat -17px center;
+}
+.tab .tab-header-select-up {
+	background0: url(./accordion_arrows.png) no-repeat 0px center;
+}
+.tab-header-select:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+.tab .tab-overflow-items {
+	display: none;
+}
+
+/* 标签选中样式 */
+.tab .tab-header-item.tab-header-selected {
+	background: #ffffff;
+}
+/* 关闭按钮样式 */
+.tab .tab-header-item .close {
+	display: inline-block;
+	position: absolute;
+	top: 8px;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	background: url(./tabs_icons.png) no-repeat -34px center;
+	opacity: 0.5;
+}
+.tab .tab-header-item .close:hover {
+	opacity: 1;
+}
+
+/* 内容面板样式 */
+.tab .tab-content {
+	overflow-y: hidden;
+	padding: 0px 0px;
+	border-bottom: 2px solid transparent;
+}
+.tab .tab-content .tab-content-item {
+	height: 100%;
+}
+.tab .tab-content .tab-content-item.hide {
+	display: none;
+}
+
+/* 选择隐藏标签 */
+.tab .hide-title-list {
+	position: absolute;
+	top: 16px;
+	right: 0;
+	display: none;
+	padding: 5px;
+	overflow: hidden;
+	border: 1px solid #95B8E7;
+	box-shadow: 1px 1px 1px #888;
+	background: #FFFFFF;
+	z-index: 1000;
+}
+.tab .hide-title-list li {
+	padding: 0 10px;
+	font-size: 14px;
+	line-height: 25px;
+	white-space:nowrap;
+	cursor: pointer;
+}
+.tab .hide-title-list li:hover {
+	color: #FFFFFF;
+	background: #95B8E7;
+}
+
+/* 标签右键菜单 */
+.tab-contextmenu {
+	display: none;
+	position: absolute;
+	width: 140px;
+	height: 125px;
+	padding: 5px;
+	overflow: hidden;
+	border: 1px solid #95B8E7;
+	box-shadow: 1px 1px 1px #888;
+	background: #FFFFFF;
+}
+.tab-contextmenu .tab-contextmenu-item {
+	width: 120px;
+	height: 25px;
+	padding: 0 10px;
+	font-size: 14px;
+	line-height: 25px;
+	cursor: pointer;
+}
+.tab-contextmenu .tab-contextmenu-item:hover {
+	color: #FFFFFF;
+	background: #95B8E7;
+}

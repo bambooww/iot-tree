@@ -75,16 +75,17 @@ function drag(ev)
 						
 						
 <%
+int N = 736;
 //int i = 0 ;
 //for(String fan:fans)
-for(int i = 0;i<675;i++)
+for(int i = 0;i<N;i++)
 {
 	String fan = Integer.toHexString(0xf000+i);
 	//i++;
 	//if(i>=100)
 	//	break;
 	%>
-<div title=""  class="toolbarbtn" ><i class="fa" fa_icon="<%=fan%>" draggable="true" ondragstart="drag(event)">&#x<%=fan %></i></div>
+<div title=""  class="toolbarbtn" ><i class="fa" fa_icon="<%=fan%>" title="<%=fan%>"  draggable="true" ondragstart="drag(event)">&#x<%=fan %></i></div>
 	<%
 }
 %>

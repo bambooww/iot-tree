@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="make_loop_err" name_cn="形成环形路径错误" name_en="Make Loop Path Error" desc_cn="" desc_en=""/>
+	
+	
+</dd_class>
