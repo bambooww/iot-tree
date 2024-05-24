@@ -1,6 +1,7 @@
 package org.iottree.core.msgnet;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.json.JSONObject;
 
 /**
@@ -11,6 +12,44 @@ import org.json.JSONObject;
  */
 public class MNConn
 {
+	public enum TransTP
+	{
+		none(0), map(1), js(2);
+
+		private final int val;
+
+		TransTP(int v)
+		{
+			val = v;
+		}
+
+		public int getInt()
+		{
+			return val;
+		}
+
+		public String getTitle()
+		{
+			Lan lan = Lan.getLangInPk(TransTP.class);
+			return lan.g("transtp_" + this.name());
+		}
+
+		public static TransTP valOfInt(int i)
+		{
+			switch (i)
+			{
+			case 0:
+				return none;
+			case 1:
+				return map;
+			case 2:
+				return js;
+			default:
+				return null;
+			}
+		}
+	}
+	
 	String to_nid ;
 	MNNode to = null ;
 	
@@ -20,7 +59,7 @@ public class MNConn
 	
 	int outIdx = 0 ;
 	
-	boolean bJsEn = false;
+	TransTP transTP = TransTP.none;
 	
 	String jsTxt = null ;
 	
@@ -76,9 +115,9 @@ public class MNConn
 		return calConnId(from.getId(),this.outIdx,to_nid) ;
 	}
 	
-	public boolean isJsEn()
+	public TransTP getTransTP()
 	{
-		return bJsEn ;
+		return transTP ;
 	}
 	
 	public String getJsTxt()
@@ -96,7 +135,7 @@ public class MNConn
 		JSONObject jo = new JSONObject() ;
 		jo.put("idx", this.outIdx) ;
 		jo.put("tid", to_nid) ;
-		jo.put("js_en", this.bJsEn) ;
+		jo.put("trans_tp", this.transTP.val) ;
 		jo.putOpt("js", this.jsTxt) ;
 		return jo ;
 	}
@@ -116,7 +155,7 @@ public class MNConn
 			return null;
 		
 		MNConn ret = new MNConn(connout,idx,tid) ;
-		ret.bJsEn = jo.optBoolean("js_en",false) ;
+		ret.transTP = TransTP.valOfInt(jo.optInt("trans_tp",0)) ;
 		ret.jsTxt = jo.optString("js") ;
 		return ret ;
 	}
@@ -125,4 +164,19 @@ public class MNConn
 //		this.bJsEn = jo.optBoolean("js_en",false) ;
 //		this.jsTxt = jo.optString("js") ;
 //	}
+	
+		public MNMsg RT_transMsg(MNMsg msg)
+		{
+			switch(transTP)
+			{
+			case none:
+				return msg ;
+			case map:
+			case js:
+				throw new RuntimeException("no impl") ;
+			
+			default:
+				return msg ;
+			}
+		}
 }

@@ -1,7 +1,9 @@
 package org.iottree.server;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.catalina.Context;
@@ -10,6 +12,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.jasper.servlet.JasperInitializer;
 import org.iottree.core.Config;
 import org.iottree.core.Config.Webapp;
+import org.iottree.core.UAServer;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
@@ -37,7 +40,8 @@ public class ServerTomcat implements IServerBootComp
 	}
 	
 	Tomcat tomcat = null ;
-	public void startTomcat(ClassLoader cl) throws Exception
+	
+	public List<UAServer.WebItem> startTomcat(ClassLoader cl) throws Exception
 	{
 		Config.Webapps w = Config.getWebapps();
 
@@ -115,9 +119,13 @@ public class ServerTomcat implements IServerBootComp
 		}
 		
 		tomcat.getConnector() ;//call it to list port
-		System.out.println("web port "+((w.getPort()>0)?" http:"+w.getPort():"")+(w.getSslPort()>0?("  https:"+w.getSslPort()):"")) ;
+		System.out.println("web port "+((w.getPort()>0)?" http:"+w.getPort():"")+(w.getSslPort()>0?("  https:"+w.getSslPort()):"")+" tomcat starting ...") ;
+		long st = System.currentTimeMillis() ;
 		tomcat.start();
 		
+		System.out.println(" tomcat started . cost ["+(System.currentTimeMillis()-st)+"] ms") ;
+		
+		ArrayList<UAServer.WebItem> wis = new ArrayList<>() ;
 		for(Map.Entry<String, Context> n2cxt:app2cxt.entrySet())
 		{
 			String appn = n2cxt.getKey() ;
@@ -128,8 +136,11 @@ public class ServerTomcat implements IServerBootComp
 			if(webf.isDirectory())
 				webf = new File(webf,"WEB-INF/") ;
 			
-			PlugManager.getInstance().fireWebappLoaded(appn, tmpcl, webf);
+			UAServer.WebItem wi = new UAServer.WebItem(appn, tmpcl, webf) ;
+			wis.add(wi) ;
 		}
+		
+		return wis ;
 	}
 	
 	private static Connector getNorConnector(int port)

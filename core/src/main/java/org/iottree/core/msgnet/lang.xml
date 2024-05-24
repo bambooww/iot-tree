@@ -4,5 +4,11 @@
 
 	<dd_node id="1" name="make_loop_err" name_cn="形成环形路径错误" name_en="Make Loop Path Error" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="_com" name_cn="通用" name_en="common" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_func" name_cn="功能" name_en="function" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_net" name_cn="网络" name_en="network" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_seq" name_cn="序列化" name_en="sequence" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_parser" name_cn="解析" name_en="parser" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_storage" name_cn="存储" name_en="storage" desc_cn="" desc_en=""/>
 	
 </dd_class>

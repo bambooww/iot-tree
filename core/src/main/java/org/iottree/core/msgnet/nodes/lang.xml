@@ -5,7 +5,8 @@
 	<dd_node id="1" name="inject" name_cn="注入" name_en="Inject" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="switch" name_cn="路径切换" name_en="Switch" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="js_func" name_cn="JS函数" name_en="JS Function" desc_cn="" desc_en=""/>
 	
-	
+	<dd_node id="1" name="no_intv_ms" name_cn="没有设置时间间隔" name_en="No interval param set" desc_cn="" desc_en=""/>
 	
 </dd_class>

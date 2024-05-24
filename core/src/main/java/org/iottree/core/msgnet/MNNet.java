@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
@@ -47,6 +48,8 @@ public class MNNet
 	
 	
 	LinkedHashMap<String,MNNode> id2node = new LinkedHashMap<>() ;
+	
+	LinkedHashMap<String,MNModule> id2module = new LinkedHashMap<>() ;
 	
 //	static MNNet loadFromFile(String id,File f) throws Exception
 //	{
@@ -166,6 +169,16 @@ public class MNNet
 		return this.id2node ;
 	}
 	
+	
+	public MNModule getModuleById(String mid)
+	{
+		return id2module.get(mid) ;
+	}
+	
+	public Map<String,MNModule> getModuleMapAll()
+	{
+		return this.id2module ;
+	}
 //	/**
 //	 * 获得网络内部的Collector节点
 //	 * @return
@@ -183,22 +196,36 @@ public class MNNet
 //	}
 
 
-	static MNNode createFromJO(MNNet net,JSONObject jo,StringBuilder failedr) //throws Exception
+	static MNBase parseFromJO(MNNet net,JSONObject jo,boolean node_or_module,StringBuilder failedr) //throws Exception
 	{
-		String tp = jo.getString("_tp") ;
-		MNNode n = MNManager.getNodeByTP(tp) ;
-		if(n==null)
+		String full_tp = jo.optString("_tp") ;
+		if(Convert.isNullOrEmpty(full_tp))
 		{
-			failedr.append("unknown tp="+tp) ;
+			failedr.append("no _tp found in jo") ;
 			return null ;
 		}
+		MNBase n = null;
+		if(node_or_module)
+			n = MNManager.getNodeByFullTP(full_tp) ;
+		else
+			n = MNManager.getModuleByFullTP(full_tp) ;
+		if(n==null)
+		{
+			failedr.append("unknown tp="+full_tp) ;
+			return null ;
+		}
+		
 		try
 		{
-			n = (MNNode)n.getClass().getConstructor().newInstance() ;
-			n.belongTo = net ;
-			if(!n.fromJO(jo))
+			MNBase newn = (MNBase)n.createNewIns(net) ;
+			
+			if(!newn.fromJO(jo))
+			{
 				failedr.append("node create failed") ;
-			return n ;
+				return null ;
+			}
+			//newn.setNodeTP(n.getNodeTP(),n.getNodeTPTitle());
+			return newn ;
 		}
 		catch(Exception e)
 		{
@@ -207,20 +234,82 @@ public class MNNet
 		}
 	}
 	
-	public MNNode createNewNodeByTP(String tp,float x,float y)  throws Exception
+	public MNNode createNewNodeByFullTP(String full_tp,float x,float y,String module_id)  throws Exception
 	{
-		MNNode n = MNManager.getNodeByTP(tp) ;
+		MNModule m = null ;
+		if(Convert.isNotNullEmpty(module_id))
+		{
+			m = this.getModuleById(module_id) ;
+			if(m==null)
+				throw new MNException("no module found with id="+module_id) ;
+		}
+		
+		//m.getSupportedNodeByTP(tp) ;
+		MNNode n = MNManager.getNodeByFullTP(full_tp) ;
 		if(n==null)
 			return null ;
-		n = (MNNode)n.getClass().getConstructor().newInstance() ;
-		n.belongTo = this ;
-		//n.id = "n"+nextMaxSubId();
-		n.x = x ;
-		n.y = y ;
-		id2node.put(n.id, n) ;
+		MNModule tp_md = n.TP_getRelatedModule() ;
+		if(tp_md!=null && m==null)
+			throw new MNException("no related module input") ;
+		else if(tp_md==null && m!=null)
+			throw new MNException("node has no related module,but you set") ;
+		MNNode new_n = n.createNewIns(this) ;
+		
+		new_n.x = x ;
+		new_n.y = y ;
+		String tpt = n.getTPTitle() ;
+		//new_n.setNodeTP(n.getNodeTP(),tpt);
+		new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		id2node.put(new_n.id, new_n) ;
+		if(m!=null)
+			m.nodeIdSet.add(new_n.id) ;
 		
 		save() ;
-		return n ;
+		return new_n ;
+	}
+	
+	public MNModule createNewModuleByFullTP(String full_tp,float x,float y)  throws Exception
+	{
+		MNModule m = MNManager.getModuleByFullTP(full_tp) ;
+		if(m==null)
+		{
+			return null ;
+		}
+		MNModule new_n = m.createNewIns(this) ;
+		
+		new_n.x = x ;
+		new_n.y = y ;
+		String tpt = m.getTPTitle() ;
+		//new_n.setNodeTP(m.getNodeTP(),tpt);
+		new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		id2module.put(new_n.id, new_n) ;
+		
+		save() ;
+		return new_n ;
+	}
+	
+	private int calcNextTitleSuffix(String tpt)
+	{
+		int len = tpt.length() ;
+		int max_i = 0 ;
+		for(MNNode n:this.id2node.values())
+		{
+			String tt = n.getTitle() ;
+			if(!tt.startsWith(tpt))
+				continue ;
+			String ss = tt.substring(len).trim() ;
+			try
+			{
+				int i = Integer.parseInt(ss) ;
+				if(i>max_i)
+					max_i = i ;
+			}
+			catch(Exception ee)
+			{
+				continue ;
+			}
+		}
+		return max_i+1 ;
 	}
 	
 //	public MNNode createNewNodeByPaste(String node_uid,float x,float y)  throws Exception
@@ -316,15 +405,32 @@ public class MNNet
 		}
 	}
 	
-	public MNNode delNodeByID(String node_id,boolean bsave) throws Exception
+	public MNBase delNodeModuleByID(String id,boolean bsave) throws Exception
 	{
-		MNNode n = this.getNodeById(node_id) ;
-		if(n==null)
+		MNNode n = this.getNodeById(id) ;
+		MNModule m = this.getModuleById(id) ;
+		if(m==null&&n==null)
 			return null ;
-		this.id2node.remove(node_id) ;
+		MNBase ret = null ;
+		if(m!=null)
+		{
+			Set<String> nids = m.getRelatedNodeIdSet() ;
+			for(String nid:nids)
+			{
+				this.id2node.remove(nid) ;
+			}
+			this.id2module.remove(id) ;
+			ret = m ;
+		}
+		if(n!=null)
+		{
+			this.id2node.remove(id) ;
+			ret = n ;
+		}
+		
 		if(bsave)
 			this.save();
-		return n;
+		return ret;
 	}
 	
 	public MNConn delConnByUID(String conn_uid,boolean bsave)
@@ -357,7 +463,7 @@ public class MNNet
 			}
 			else
 			{
-				MNNode n = delNodeByID(uid,false) ;
+				MNBase n = delNodeModuleByID(uid,false) ;
 				if(n!=null)
 					r++;
 			}
@@ -403,6 +509,7 @@ public class MNNet
 		MNNode n = this.getNodeById(node_id);
 		if(n==null)
 			return null ;
+		
 		this.id2node.remove(node_id) ;
 		
 		if(bsave)
@@ -413,7 +520,7 @@ public class MNNet
 		return n ;
 	}
 	
-	public MNNode setNodeParamJO(String node_id,JSONObject pmjo,boolean bsave) throws Exception
+	public MNNode setNodeParamJO(String node_id,JSONObject pmjo,boolean bsave) throws IOException
 	{
 		MNNode n = this.getNodeById(node_id);
 		if(n==null)
@@ -423,6 +530,22 @@ public class MNNet
 			this.save();
 		return n ;
 	}
+	
+	public MNBase setDetailJO(String node_id,JSONObject detail_jo,boolean node_or_module,boolean bsave) throws IOException
+	{
+		MNBase n = null ;
+		if(node_or_module)
+			n = this.getNodeById(node_id);
+		else
+			n = this.getModuleById(node_id);
+		if(n==null)
+			return null ;
+		n.setDetailJO(detail_jo);
+		if(bsave)
+			this.save();
+		return n ;
+	}
+	
 	/**
 	 * 根据前端返回的基本（布局）信息，对自身进行更新并保存
 	 * @param jo
@@ -440,6 +563,22 @@ public class MNNet
 				if(Convert.isNullOrEmpty(id))
 					continue ;
 				MNNode rnn = this.getNodeById(id);
+				if(rnn==null)
+					continue ;
+				if(!rnn.fromJOBasic(n_jo,failedr))
+					return  false;
+			}
+		}
+		jarr = jo.optJSONArray("modules") ;
+		if(jarr!=null)
+		{
+			for(int i = 0 ; i < jarr.length() ; i ++)
+			{
+				JSONObject n_jo = jarr.getJSONObject(i) ;
+				String id = n_jo.optString("id") ;
+				if(Convert.isNullOrEmpty(id))
+					continue ;
+				MNModule rnn = this.getModuleById(id);
 				if(rnn==null)
 					continue ;
 				if(!rnn.fromJOBasic(n_jo,failedr))
@@ -487,6 +626,12 @@ public class MNNet
 			jarr.put(n.toJO()) ;
 		}
 		jo.put("nodes", jarr) ;
+		jarr = new JSONArray() ;
+		for(MNModule n:id2module.values())
+		{
+			jarr.put(n.toJO()) ;
+		}
+		jo.put("modules", jarr) ;
 		return jo ;
 	}
 	
@@ -508,10 +653,31 @@ public class MNNet
 			{
 				JSONObject tmpjo = jarr.getJSONObject(i) ;
 				StringBuilder failedr = new StringBuilder() ;
-				MNNode n = createFromJO(this,tmpjo,failedr) ;
+				MNNode n = (MNNode)parseFromJO(this,tmpjo,true,failedr) ;
 				if(n==null)
+				{
+					log.warn(failedr.toString() +" in msg net node "+this.title+"-"+this.id);
 					continue ;
+				}
 				id2node.put(n.getId(), n) ;
+			}
+		}
+		
+		jarr = jo.optJSONArray("modules") ;
+		if(jarr!=null)
+		{
+			int len = jarr.length() ;
+			for(int i = 0 ; i < len ; i ++)
+			{
+				JSONObject tmpjo = jarr.getJSONObject(i) ;
+				StringBuilder failedr = new StringBuilder() ;
+				MNModule n = (MNModule)parseFromJO(this,tmpjo,false,failedr) ;
+				if(n==null)
+				{
+					log.warn(failedr.toString() +" in msg net module "+this.title+"-"+this.id);
+					continue ;
+				}
+				id2module.put(n.getId(), n) ;
 			}
 		}
 		
@@ -543,7 +709,7 @@ public class MNNet
 		}
 		MNNodeStart nstart = (MNNodeStart)n;
 		//return RT_triggerNodeStart(nstart,null,failedr) ;
-		return nstart.RT_trigger(null,failedr) ;
+		return nstart.RT_trigger(failedr) ;
 	}
 	
 }

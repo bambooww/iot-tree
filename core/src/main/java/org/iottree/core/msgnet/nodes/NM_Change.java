@@ -1,12 +1,14 @@
 package org.iottree.core.msgnet.nodes;
 
-import org.iottree.core.msgnet.MNNode;
+import org.iottree.core.msgnet.MNConn;
+import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
+import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class NSSwitch extends MNNodeMid implements ILang
+public class NM_Change extends MNNodeMid implements ILang
 {
 	@Override
 	public String getColor()
@@ -35,31 +37,25 @@ public class NSSwitch extends MNNodeMid implements ILang
 	@Override
 	public int getOutNum()
 	{
-		return 3;
+		return 1;
+	}
+
+//	@Override
+	public String getTP()
+	{
+		return "change";
 	}
 
 	@Override
-	public String getNodeTP()
+	public String getTPTitle()
 	{
-		return "switch";
+		return g("change");
 	}
 
 	@Override
-	public String getNodeTPTitle()
+	public boolean isParamReady(StringBuilder failedr)
 	{
-		return g("switch");
-	}
-
-	@Override
-	public boolean needParam()
-	{
-		return false;
-	}
-
-	@Override
-	public boolean isParamReady()
-	{
-		return false;
+		return true;
 	}
 
 	@Override
@@ -73,6 +69,12 @@ public class NSSwitch extends MNNodeMid implements ILang
 	{
 		
 	}
+	
+	// --------------
 
-
+	@Override
+	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
+	{
+		return RTOut.ALL ;
+	}
 }

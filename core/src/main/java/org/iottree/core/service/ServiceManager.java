@@ -49,10 +49,6 @@ public class ServiceManager
 				if(c==null)
 					continue ;
 				AbstractService as = (AbstractService)c.newInstance() ;
-				HashMap<String,String> conf = this.loadServiceConf(as.getName()) ;
-				as.initService(conf);
-				if(as.isEnable())
-					as.startService();
 				allServices.add(as) ;
 			}
 			catch(Exception e)
@@ -91,5 +87,31 @@ public class ServiceManager
 				return r ;
 		}
 		return null ;
+	}
+	
+	synchronized public void start()
+	{
+		for(AbstractService as : allServices)
+		{
+			try
+			{
+				HashMap<String,String> conf = this.loadServiceConf(as.getName()) ;
+				as.initService(conf);
+				if(as.isEnable())
+					as.startService();
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
+		}
+	}
+	
+	synchronized public void stop()
+	{
+		for(AbstractService as : allServices)
+		{
+			as.stopService() ;
+		}
 	}
 }

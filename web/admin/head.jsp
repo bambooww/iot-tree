@@ -12,6 +12,7 @@ String ver = Config.getVersion() ;
 				boolean tree  ="true".equals(request.getParameter("tree"));
 				boolean tab = "true".equals(request.getParameter("tab"));
 				boolean mn = "true".equals(request.getParameter("mn"));
+				boolean cm = "true".equals(request.getParameter("cm"));
 	if(bsimple)
 	{
 %>
@@ -22,6 +23,7 @@ String ver = Config.getVersion() ;
 <script src="/_js/dlg_layer.js"></script>
 <script defer src="/_js/font6/js/all.js"></script>
 <link href="/_js/font6/css/all.css" rel="stylesheet">
+<script src="/admin/js/util.js"></script>
 <%
 	}
 	else
@@ -57,6 +59,18 @@ if(oc_min)
 <script src="/_js/oc/oc.min.js?v=<%=ver%>"></script>
 <script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
+<%
+}
+if(cm)
+{
+%>
+<link href="/_js/cm/lib/codemirror.css" rel="stylesheet">
+<script src="/_js/cm/lib/codemirror.js"></script>
+  <link href="/_js/cm/addon/hint/show-hint.css" rel="stylesheet" >
+  <script src="/_js/cm/addon/hint/show-hint.js"></script>
+  <script src="/_js/cm/addon/hint/javascript-hint.js"></script>
+  <script src="/_js/cm/mode/javascript/javascript.js"></script>
+  <link href="/_js/cm/theme/eclipse.css" rel="stylesheet" >
 <%
 }
 if(tree)

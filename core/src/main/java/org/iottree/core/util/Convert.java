@@ -2387,6 +2387,8 @@ public class Convert
 	public static String readFileTxt(File f, String encod) throws IOException
 	{
 		byte[] bs = readFileBuf(f);
+		if(bs==null)
+			return null ;
 		if (isNullOrEmpty(encod))
 			return new String(bs);
 		else
@@ -2400,6 +2402,8 @@ public class Convert
 
 	public static byte[] readFileBuf(File f) throws IOException
 	{
+		if(!f.exists())
+			return null ;
 		if (f.length() > 10485760)
 			throw new RuntimeException("file is too long");
 

@@ -195,7 +195,7 @@ color:red;
 {
 position:absolute;display:none;z-index:1000;left:0px;
 background-color: #ffffff;
-top:0px;height:100%;
+top:0px;bottom:0px;
 }
 
 
@@ -228,12 +228,12 @@ border: 1;
 </head>
 <body style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; overflow: hidden;user-select:none;" >
 <div id="leftcat_comp" class="show_hid_icon" style="left:0px;" onclick="show_hiddle_left()" title="show or hidden left panel"><i class="fa fa-cogs fa-lg lr_btn"></i><br>&nbsp; </div>
-		<div id="left_panel" class="left_panel_win"  style="10px;">
+		<div id="left_panel" class="left_panel_win"  >
 			<div class="left_panel_bar" >
 				<span id="left_panel_title" style="font-size: 18px;left:35px;position: relative;top:5px;">Nodes</span>
 			</div>
 			 
-			<iframe id="left_pan_iframe" src="mn_node_list.jsp" style="width:100%;height:100%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
+			<iframe id="left_pan_iframe" src="mn_node_list.jsp" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>
 		</div>
 <div id="mid" class="mid">
 			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" >
@@ -242,7 +242,7 @@ border: 1;
 			<div style="right:0px;" class="show_hid_icon" title="show or hide right panel" id="btn_prop_showhidden"><i class="fa fa-bars fa-lg"></i></div>
 	<div id='edit_panel'  class="right_panel_win" >
 		<div id="tab_title" style="position: absolute;left:10px;top:3px;width:145px;font-size: 18px;border:0px solid;color:#555555;"></div>
-	<div class="right_tab">
+	<div class="right_tab" >
       <ul style="white-space: nowrap;"><span style="left:5px;top:-10px;position:relative;border:0px solid;display: inline-block;width:156px"></span>
       </ul>
       <div>
@@ -264,8 +264,6 @@ border: 1;
 <div id="p_info" style="display:none"></div>
 <div id="edit_events"  style="display:none"></div>
 <div id="edit_toolbar"  style="display:none"></div>
-
-	 
 	 <div id="cont_props" class="sub_win" style="top:80px;width:350px;bottom:10px;overflow: auto;display:none;position: absolute;">
 		<div class="title">Properties</div>
 		<div id=edit_props style="height:97%;width:100%;border:0px;background-color: #ffffff"></div>
@@ -340,7 +338,8 @@ function init_iottpanel()
 	panel = new mn.DrawPanel("panel_main",{
 		on_mouse_mv:on_panel_mousemv,
 		on_resolution_chg:on_panel_resolution,
-		on_model_chg:on_model_chg
+		on_model_chg:on_model_chg,
+		on_item_sel_chg:on_item_sel_chg
 	});
 	panel.setInEdit(true);
 	editor = new mn.DrawEditor("edit_props","edit_events","edit_toolbar",panel,{
@@ -355,8 +354,20 @@ function init_iottpanel()
 			setTimeout("draw_fit()",1000)
 			
 		},
-		onAddNode:(tp,x,y)=>{
-			send_ajax("./mn_ajax.jsp",{op:"node_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y},
+		onAddNode:(tp,x,y,moduleid)=>{
+			send_ajax("./mn_ajax.jsp",{op:"node_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||""},
+	                (bsucc,ret)=>{
+	                	
+	                	if(!bsucc||ret!="succ")
+	                	{
+	                		dlg.msg(ret) ;
+	                		return ;
+	                	}
+	                	reload_net();
+	                }) ;
+		},
+		onAddModule:(tp,x,y)=>{
+			send_ajax("./mn_ajax.jsp",{op:"module_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y},
 	                (bsucc,ret)=>{
 	                	
 	                	if(!bsucc||ret!="succ")
@@ -383,11 +394,14 @@ function init_iottpanel()
 			on_del_items(sis) ;
 		},
 		onDINodeOpen:(node)=>{
-			on_node_open(node);
+			on_node_module_open(true,node);
+		},
+		onDIModuleOpen:(node)=>{
+			on_node_module_open(false,node);
 		},
 		onNodeStartTrigger:(node)=>{
 			//console.log("start node trigger",node) ;
-			send_ajax("./mn_ajax.jsp",{op:"node_start_trigger",prjid:prjid,netid:netid,"node_uid":node.id},
+			send_ajax("./mn_ajax.jsp",{op:"node_start_trigger",prjid:prjid,netid:netid,"nodeid":node.id},
 	                (bsucc,ret)=>{
 	                	if(!bsucc||ret!="succ")
 	                	{
@@ -404,10 +418,10 @@ function init_iottpanel()
 	loadLayer = hmiView.getLayer();
 	intedit = hmiView.getInteract();
 
-	reload_net();
+	reload_net(true,true);
 }
 
-function reload_net()
+function reload_net(reload,bfit)
 {
 	send_ajax("mn_ajax.jsp",{op:"load_net",prjid:prjid,netid:netid},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
@@ -417,16 +431,77 @@ function reload_net()
 		}
 		var ob =null;
 		eval("ob="+ret) ;
+		ob.reload=reload||false;
 		intedit.clearSelectedItems();
 		hmiModel.load_def(ob) ;
+		if(bfit)
+			draw_fit();
 	});
 }
 
 init_iottpanel();
 
-function on_node_open(node)
+function on_item_sel_chg(items)
 {
-	console.log("node open",node) ;
+	if(!items || items.length!=1)
+	{
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+		return ;
+	}
+	let item = items[0] ;
+	if(item.getClassName()==mn.view.DIModule.CN)
+	{
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,item.id,item.title) ;
+	}
+	else
+	{
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+	}
+}
+
+function on_node_module_open(b_node_module,mn)
+{
+	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&nodeid=\${mn.id}`;
+	let tt = "<wbt:lang>node,param</wbt:lang>";
+	let pm={op:"detail_set",prjid:prjid,netid:netid,nodeid:mn.id};
+	if(!b_node_module)
+	{
+		url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&moduleid=\${mn.id}`;
+		tt = "<wbt:lang>module,param</wbt:lang>";
+		let pm={op:"detail_set",prjid:prjid,netid:netid,moduleid:mn.id};
+	}
+		
+	dlg.open(url,{title:tt,w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+
+						 pm.jstr=JSON.stringify(ret) ;
+						 send_ajax('mn_ajax.jsp',pm,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.msg("<wbt:g>done</wbt:g>");
+								dlg.close();
+								reload_net();
+							},false);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function on_editor_prompt(m)
@@ -444,7 +519,7 @@ function net_save_basic()
 			return ;
 		}
 		dlg.msg("done");
-		reload_net();
+		reload_net(true);
 	});
 }
 
@@ -658,13 +733,22 @@ function init_right()
 
 init_right();
 
+function resize_zz()
+{
+	var h = $(window).height();
+	$("#left_pan_iframe").css("height",(h-38)+"px");
+}
+
 var resize_cc = 0 ;
 $(window).resize(function(){
 	panel.updatePixelSize() ;
 	resize_cc ++ ;
 	if(resize_cc<=1)
 		draw_fit();
-	});
+	resize_zz();
+});
+
+resize_zz();
 </script>
 
 </html>

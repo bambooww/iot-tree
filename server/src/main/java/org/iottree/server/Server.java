@@ -3,14 +3,9 @@ package org.iottree.server;
 import java.io.*;
 import java.util.*;
 
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.security.SecurityClassLoad;
-import org.apache.catalina.startup.Tomcat;
 import org.iottree.core.Config;
-import org.iottree.core.ConnProvider;
 import org.iottree.core.UAManager;
-import org.iottree.core.UAPrj;
-import org.iottree.core.service.ServiceManager;
+import org.iottree.core.UAServer;
 import org.iottree.core.sim.SimManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
@@ -125,19 +120,16 @@ public class Server
 		}
 
 		serverTomcat = new ServerTomcat();
-		serverTomcat.startTomcat(tbs_loader);
+		List<UAServer.WebItem> wis = serverTomcat.startTomcat(tbs_loader);
 
-		ServiceManager.getInstance();
-		// System.out.println(" all web comp loaded,fire event");
-		// runFileMon();
-		UAManager.getInstance().start();
-		
-		SimManager.getInstance().start();
-		
-		ConnProvider.getAllConnProviders();
+		//------ after tomcat start 
+		// old service start here
+		// -----
 
 		for(String n:ServerBootCompMgr.getInstance().getAllServerBootNames())
 			ServerBootCompMgr.getInstance().startBootComp(n);
+		
+		UAServer.onServerStarted(wis);
 		
 		if(bservice)
 		{
@@ -152,13 +144,8 @@ public class Server
 
 	static void stopServer()
 	{
-		
-		UAManager.getInstance().stop();
-		
-		SimManager.getInstance().stop();
-		
-		WSHelper.onSysClose();
-		
+		UAServer.beforeServerStop();
+
 		try
 		{
 			ServerBootCompMgr.getInstance().stopAllBootComp();
@@ -169,7 +156,6 @@ public class Server
 		{
 		}
 
-		
 		//
 		if(serverTomcat!=null)
 		{

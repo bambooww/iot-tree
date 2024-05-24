@@ -11,8 +11,9 @@
 		<webapp name="opencharts" path="../../opencharts" />
 		<webapp name="msg_net" path="../../msg_net" />
 		<webapp name="_sys" />
-		<!-- 
 		<webapp name="main" main="true"/>
+		<!-- 
+		
 		<webapp name="main" path="main/main.war" /> 
 		 -->
 		

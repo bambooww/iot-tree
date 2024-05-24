@@ -1,10 +1,12 @@
 package org.iottree.core.msgnet;
 
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONArray;
@@ -15,18 +17,9 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public abstract class MNNode
+public abstract class MNNode extends MNBase
 {
-	String id = null ;
-	
-	String title = null ;
-	
-	String desc = null;
-	
-	MNNet belongTo = null ;
-	
-	float x = 0 ;
-	float y = 0 ;
+	private MNModule TP_relatedM = null ;
 	
 	protected transient String _nodeState = null ;
 	
@@ -42,56 +35,49 @@ public abstract class MNNode
 	
 	public MNNode() //(RNDef def)
 	{
-		this.id = IdCreator.newSeqId() ;
-		this.title = this.getNodeTPTitle();
+		super();
+		//this.title = this.getNodeTPTitle();
 	}
 	
-
-	public abstract String getNodeTP() ;
-	
-	
-	public abstract String getNodeTPTitle() ;
-	
-
-	
-	public String getId()
+	void TP_setRelatedModule(MNModule m)
 	{
-		return this.id ;
+		this.TP_relatedM = m ;
+		this.cat = m.cat ;
 	}
 	
-//	public String getUID()
-//	{
-//		return belongTo.getUid()+"."+this.id ;
-//	}
-	
-	public String getTitle()
+	public MNModule TP_getRelatedModule()
 	{
-		return title ;
+		return this.TP_relatedM ;
 	}
 	
-	public String getDesc()
+	protected final String getOwnerTP()
 	{
-		return desc ;
+		if(this.TP_relatedM==null)
+			return null ;
+		else
+			return this.TP_relatedM.getTP() ;
 	}
 	
-	public MNNet getBelongTo()
+	final MNNode createNewIns(MNNet net) throws Exception
 	{
-		return this.belongTo ;
+		MNNode new_n = (MNNode)this.getClass().getConstructor().newInstance() ;
+		new_n.TP_relatedM = this.TP_relatedM ;
+		new_n.belongTo = net;
+		new_n.cat = this.cat ;
+		//if(relatedM!=null)
+		//	relatedM.nodeIdSet.add(new_n.id) ;
+		return new_n ;
 	}
 	
-	
-	public float getX()
+	public MNModule getOwnRelatedModule()
 	{
-		return x ;
+		for(MNModule m:this.belongTo.getModuleMapAll().values())
+		{
+			if(m.nodeIdSet.contains(this.getId()))
+				return m ;
+		}
+		return null ;
 	}
-	public float getY()
-	{
-		return  y;
-	}
-
-	public abstract String getColor() ;
-	
-	public abstract String getIcon() ;
 	
 	public abstract JSONTemp getInJT();
 	
@@ -106,6 +92,11 @@ public abstract class MNNode
 	
 
 	public abstract int getOutNum() ;
+	
+	public final MNConnOut getConnOut()
+	{
+		return this.connOut ;
+	}
 	
 	public final MNConn getOutConn(int idx,String to_nid)
 	{
@@ -232,51 +223,27 @@ public abstract class MNNode
 		return connOut.cleanConns() ;
 	}
 	
-	/**
-	 * 节点是否需要设置参数才能运行，如果需要则需要定制UI展示设置界面
-	 * 并且根据输入的参数和debug上下文，进行界面展示
-	 * @return
-	 */
-	public abstract boolean needParam();
-	
-	/**
-	 * 判断节点参数是否完备，只有完备之后的节点才可以运行
-	 * @return
-	 */
-	public abstract boolean isParamReady();
-	
-	//to be override
-	public abstract JSONObject getParamJO();
-		
-	//to be override
-	public final void setParamJO(JSONObject jo)
-	{
-		setParamJO(jo,System.currentTimeMillis()) ;
-	}
-	
-	protected abstract void setParamJO(JSONObject jo,long up_dt);
 	
 	
-	public void renderOut(Writer w)
-	{
-		JSONObject jo = toJO() ;
-		jo.write(w) ; 
-	}
+	
 	
 	public JSONObject toJO()
 	{
-		JSONObject jo = new JSONObject() ;
-		jo.put("id", this.id) ;
-		jo.putOpt("title", this.title) ;
-		jo.putOpt("desc", desc);
-		jo.put("_tp", getNodeTP()) ;
-//		jo.put("uid", this.getUID());
-		jo.put("x", this.x) ;
-		jo.put("y", this.y) ;
+		JSONObject jo = super.toJO();//new JSONObject() ;
+//		jo.put("id", this.id) ;
+//		String tt = this.title ;
+//		if(Convert.isNullOrEmpty(tt))
+//			tt = this.getNodeTPTitle() ;
+//		jo.putOpt("title", tt) ;
+//		jo.putOpt("desc", desc);
+//		jo.put("_tp", getNodeTP()) ;
+////		jo.put("uid", this.getUID());
+//		jo.put("x", this.x) ;
+//		jo.put("y", this.y) ;
+		
 		jo.put("in", this.supportInConn()) ;
 		jo.put("out_num", getOutNum()) ;
-		jo.put("color", this.getColor()) ;
-		jo.put("icon", this.getIcon()) ;
+		
 //		jo.put("w", this.w) ;
 //		jo.put("h", this.h) ;
 		
@@ -285,56 +252,91 @@ public abstract class MNNode
 		{
 			jo.putOpt("_node_err",_nodeErr.getMessage()) ;
 		}
-		
-		
-		
-		
+
 		if(connOut!=null)
 		{
 			JSONArray jarr = connOut.toJArr() ;
 			jo.putOpt("out_conns", jarr) ;
 		}
-//		if(!(this instanceof MNNodeInput) && this.isInputMulti())
-//			jo.put("input_multi", true) ;
-		
-		JSONObject pmjo = this.getParamJO() ;
-		jo.putOpt("pm_jo", pmjo) ;
-		jo.put("pm_need", this.needParam()) ;
-		jo.put("pm_ready", this.isParamReady()) ;
+
+//		JSONObject pmjo = this.getParamJO() ;
+//		jo.putOpt("pm_jo", pmjo) ;
+//		//jo.put("pm_need", this.needParam()) ;
+//		StringBuilder sb = new StringBuilder() ;
+//		boolean br = this.isParamReady(sb);
+//		jo.put("pm_ready", br) ;
+//		if(!br)
+//			jo.put("pm_err", sb.toString()) ;
+//		else
+//			jo.put("pm_err", "") ;
 		
 		return jo;
 	}
 	
 	public boolean fromJO(JSONObject jo)
 	{
-		this.id = jo.getString("id") ;
-		this.title = jo.optString("title") ;
-		this.desc = jo.optString("desc") ;
-		this.x = jo.optFloat("x",0) ;
-		this.y = jo.optFloat("y",0) ;
-//		this.w = jo.optFloat("w",100) ;
-//		this.h = jo.optFloat("h",100) ;
-		//this.bStart = jo.optBoolean("b_start",false) ;
+		super.fromJO(jo) ;
 		
 		MNConnOut cos = new MNConnOut(this);
 		if(cos.fromJArr(this, jo.optJSONArray("out_conns")))
 			this.connOut = cos ;
-		
-		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
-		long updt = this.belongTo.updateDT ;
-		this.setParamJO(pmjo,updt);
 		
 		return true;
 	}
 	
 	protected boolean fromJOBasic(JSONObject jo,StringBuilder failedr)
 	{
-		this.x = jo.optFloat("x", this.x) ;
-		this.y = jo.optFloat("y", this.y) ;
-		//this.title = jo.optString("title") ;
-		//this.desc = jo.optString("desc") ;
-		//this.bStart = jo.optBoolean("b_start",false) ;
+		super.fromJOBasic(jo, failedr) ;
+		
+		
 		return true ;
 	}
 	
+	
+	
+	// runtime 
+	
+	
+	
+	protected abstract RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg) ;
+	
+	final private void RT_onMsgInWithTrans(MNConn in_conn,MNMsg msg)
+	{
+		RTOut out = RT_onMsgIn(in_conn,msg) ;
+		msg = in_conn.RT_transMsg(msg) ;
+		if(msg==null)
+			return ; // stopped by conn
+		
+		this.RT_sendMsgOut(out,msg);
+	}
+
+	protected final void RT_sendMsgOut(RTOut out,MNMsg msg)
+	{
+		if(out==null||!out.hasOut)
+			return ;
+	
+		int outn = this.getOutNum() ;
+		if(outn<=0)
+			return ;
+		MNConnOut co = getConnOut() ;
+		if(co==null)
+			return ;
+		
+		for(int i = 0 ; i < outn ; i ++)
+		{
+			if(out.outIdxs!=null && !out.outIdxs.contains(i))
+				continue ;
+			
+			List<MNConn> conns = co.getConns(i) ;
+			if(conns==null)
+				continue ;
+			for(MNConn conn:conns)
+			{
+				MNNode ton = conn.getToNode() ;
+				if(ton==null)
+					return ;
+				ton.RT_onMsgInWithTrans(conn, msg);
+			}
+		}
+	}
 }

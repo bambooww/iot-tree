@@ -33,3 +33,15 @@ function chk_var_path(path,letter_first)
 	}
 	return true;
 }
+
+function get_input_val(id,defv,bnum)
+{
+	var n = $('#'+id).val();
+	if(n==null||n=='')
+	{
+		return defv ;
+	}
+	if(bnum)
+		return parseInt(n);
+	return n;
+}

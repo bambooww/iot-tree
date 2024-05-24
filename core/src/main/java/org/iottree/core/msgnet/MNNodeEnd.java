@@ -52,4 +52,5 @@ public abstract class MNNodeEnd extends MNNode
 		this.bOnOff = jo.optBoolean("out_onoff",false) ;
 		return true ;
 	}
+	
 }

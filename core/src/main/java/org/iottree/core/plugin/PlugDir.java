@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.Config;
@@ -41,7 +42,7 @@ public class PlugDir
 	
 	JSONArray js_auth_arr = null ;
 	
-	
+	JSONObject msg_net_jo = null ;
 	
 	//private HashMap<String, Object> auth_name2ob = null;
 
@@ -102,6 +103,7 @@ public class PlugDir
 
 		js_api_arr = jo.optJSONArray("js_api");
 		js_auth_arr = jo.optJSONArray("auth") ;
+		msg_net_jo = jo.optJSONObject("msg_net") ;
 		return true;
 	}
 	
@@ -357,4 +359,9 @@ public class PlugDir
 			return null ;
 	}
 
+	public JSONObject getMsgNetJO()
+	{
+		return this.msg_net_jo ;
+	}
+	
 }

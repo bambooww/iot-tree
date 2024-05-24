@@ -1,33 +1,26 @@
-package org.iottree.core.msgnet.nodes;
+package org.iottree.ext.msg_net;
 
+import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
-import org.iottree.core.msgnet.MNNode;
+import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.MNNodeStart;
-import org.iottree.core.util.ILang;
+import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class NSInject extends MNNodeStart implements ILang
+public class KafkaOut_NE extends MNNodeEnd
 {
+	@Override
+	public String getTP()
+	{
+		return "kafka_out";
+	}
 
 	@Override
-	public String getColor()
+	public String getTPTitle()
 	{
-		return "#9fbccf";
+		return "Kafka Out";
 	}
-	
-	@Override
-	public String getIcon()
-	{
-		return "\\uf04b";
-	}
-	
-	@Override
-	public boolean supportInOnOff()
-	{
-		return true;
-	}
-	
 	
 	@Override
 	public JSONTemp getInJT()
@@ -44,31 +37,23 @@ public class NSInject extends MNNodeStart implements ILang
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		return 0;
 	}
 
 	@Override
-	public String getNodeTP()
+	public String getColor()
 	{
-		return "inject";
+		return "#debed7";
 	}
 
 	@Override
-	public String getNodeTPTitle()
+	public String getIcon()
 	{
-		return g("inject");
-	}
-
-
-	@Override
-	public boolean needParam()
-	{
-		// TODO Auto-generated method stub
-		return false;
+		return "\\uf0ec";
 	}
 
 	@Override
-	public boolean isParamReady()
+	public boolean isParamReady(StringBuilder failedr)
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -88,11 +73,11 @@ public class NSInject extends MNNodeStart implements ILang
 		
 	}
 
-	public boolean RT_trigger(MNMsg msg,StringBuilder failedr)
+	@Override
+	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		failedr.append("TODO") ;
-		return false;
+		// TODO Auto-generated method stub
+		return null;
 	}
-
 
 }

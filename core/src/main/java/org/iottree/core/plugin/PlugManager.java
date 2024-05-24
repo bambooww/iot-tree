@@ -14,8 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.Config;
+import org.iottree.core.UAServer;
 import org.iottree.core.cxt.JSObPk;
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.Convert;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 
 /**
@@ -77,13 +80,19 @@ public class PlugManager
 		//return plugname2cl ;
 	}
 	
-	public void fireWebappLoaded(String appn,ClassLoader cl,File webinf_dir)
+	public void onWebappLoaded(UAServer.WebItem wi)
 	{
-		PlugDir pd = PlugDir.parseDir(webinf_dir,cl);
+		PlugDir pd = PlugDir.parseDir(wi.getWebDir(),wi.getAppClassLoader());
 		if(pd==null)
 			return ;
 		name2plug.put(pd.getName(), pd) ;
-		System.out.println(" find webapp plug ["+appn+"] @ "+webinf_dir.getPath()) ;
+		System.out.println(" find webapp plug ["+wi.getAppName()+"] @ "+wi.getWebDir().getPath()) ;
+		
+		JSONObject msg_net_jo = pd.getMsgNetJO() ;
+		if(msg_net_jo!=null)
+		{
+			MNManager.registerNode(wi, msg_net_jo);
+		}
 	}
 	
 	public Collection<PlugDir> listPlugs()

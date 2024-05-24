@@ -82,6 +82,21 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	<jsp:param value="true" name="tree"/>
 </jsp:include>
 <script>
+        var require = {
+            paths: {
+                'vs': '/_js/monaco/vs'
+            }
+        };
+        
+</script>
+        <script src="/_js/monaco/vs/loader.js"></script>
+        <script src="/_js/monaco/vs/editor/editor.main.nls.js"></script>
+        <script src="/_js/monaco/vs/editor/editor.main.js"></script>
+
+  <style>
+    .CodeMirror {top:0px;bottom:0px;height:330px;border-top: 1px solid #888; border-bottom: 1px solid #888;}
+  </style>
+<script>
 	dlg.resize_to(900,600) ;
 </script>
 </head>
@@ -100,16 +115,16 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
    </div>
   </td>
   <td>
-	  <table style="width:100%;height:100%">
+	  <table style="width:100%;height:100%;">
 	 <tr height="75%">
-	  <td colspan="2">&nbsp;&nbsp;
+	  <td colspan="2" style="vertical-align: top;">
 	<%
-	String cheight = "100%" ;
+	String cheight = "330px" ;
 	if(Convert.isNotNullEmpty(func_params))
 	{
-		cheight="200px" ;
+		cheight="310px" ;
 	%>
-	(<%=func_params %>)=&gt;{
+	&nbsp;&nbsp;(<%=func_params %>)=&gt;{
 	<%
 	}
 	
@@ -120,8 +135,9 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 	<%
 	}
 	%>
-	   <textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" placeholder="JS Script"></textarea>
-	&nbsp;&nbsp;<%=(Convert.isNotNullEmpty(func_params)?"}":"")%>
+	   <%--<textarea id='script_test' rows="6" style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" placeholder="JS Script"></textarea> --%>
+	   <div id='script_test' style="overflow: scroll;width:100%;height:<%=cheight%>;padding:5px;" ></div>
+	<%=(Convert.isNotNullEmpty(func_params)?"&nbsp;&nbsp;}":"")%>
 	  </td>
 	 </tr>
 	  <tr height0="20%">
@@ -142,7 +158,7 @@ if(Convert.isNotNullEmpty(path))
 	 </tr>
 	 <tr height="20%">
 	  <td  colspan="2">
-	   <div id='script_res' rows="6" style="overflow: scroll;width:100%;height:100%;border:1px solid;"></div>
+	   <div id='script_res' style="overflow: scroll;width:100%;height:100%;border:1px solid;"></div>
 	  </td>
 	 </tr>
 	</table>
@@ -173,6 +189,8 @@ function log(s)
 {
 	document.getElementById('log_inf').innerHTML = s ;
 }
+
+
 
 function tree_init()
 {
@@ -240,20 +258,82 @@ function open_help_ob(cn)
 			[],[]);
 }
 
+var editor ;
 
 function init()
 {
+	let jsstr = "" ;
 	if(opener_txt_id!='')
 	{
 		var ow = dlg.get_opener_w();
 		var txtob = ow.document.getElementById(opener_txt_id) ;
 		if(txtob!=null)
 		{
-			$("#script_test").val(txtob.value) ;
+			jsstr = txtob.value;
+			$("#script_test").val(jsstr) ;
 		}
 	}
 	
+	js_edit_init(jsstr);
+	//editor=CodeMirror.fromTextArea(document.getElementById("script_test"),{
+	//    mode:"javascript",
+	//    lineNumbers:true,
+	//    theme:"eclipse"
+	//});
+	
 	tree_init();
+}
+
+function js_edit_init(jsstr)
+{
+	require(['vs/editor/editor.main'], function () {
+        // "javascript"
+        editor = monaco.editor.create(document.getElementById('script_test'), {
+            model: null,
+            minimap: {
+                enabled: false
+            }
+        });
+        monaco.languages.registerCompletionItemProvider('javascript', {
+            provideCompletionItems: function(model, position) {
+                // Define the completion items
+                var suggestions = [
+                    {
+                        label: 'console.log',
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        insertText: 'console.log(\${1});',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        documentation: 'Log output to console'
+                    },
+                    {
+                        label: 'function',
+                        kind: monaco.languages.CompletionItemKind.Keyword,
+                        insertText: 'function \${1:fname}(\${2:args}) {\n\t$0\n}',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        documentation: 'Define a function'
+                    }
+                ];
+                return { suggestions: suggestions };
+            }
+        });
+        const newModel = monaco.editor.createModel(
+        		"",
+                "javascript"
+        );
+        editor.setModel(newModel);
+        editor.setValue(jsstr);
+    })
+
+}
+
+function get_edit_js()
+{
+	return editor.getValue();
+}
+
+function set_edit_js(txt)
+{
+	return editor.setValue(txt);
 }
 
 function insert_sample()
@@ -265,8 +345,9 @@ function insert_sample()
 	var txtob = ow.document.getElementById(sample_txt_id) ;
 	if(txtob!=null)
 	{
-		var oldv = $("#script_test").val() ;
-		$("#script_test").val(oldv+"\r\n"+txtob.value) ;
+		var oldv = get_edit_js();//$("#script_test").val() ;
+		//$("#script_test").val(oldv+"\r\n"+txtob.value) ;
+		set_edit_js(oldv+"\r\n"+txtob.value);
 	}
 	
 }
@@ -275,7 +356,7 @@ init() ;
 
 function run_script_test(fn)
 {
-	var scode = document.getElementById('script_test').value ;
+	var scode = get_edit_js();// document.getElementById('script_test').value ;
 	if(scode==null||scode==''||trim(scode)=='')
 		return ;
 	var pm = {path:path,txt:scode} ;
@@ -301,7 +382,7 @@ function run_script_test(fn)
 
 function get_edited_js()
 {
-	return $("#script_test").val() ;
+	return get_edit_js();//$("#script_test").val() ;
 }
 </script>
 </html>

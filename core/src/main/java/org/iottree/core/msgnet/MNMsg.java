@@ -1,94 +1,45 @@
 package org.iottree.core.msgnet;
 
+import java.util.HashMap;
+
+import org.iottree.core.util.IdCreator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author jason.zhu
+ *
+ */
 public class MNMsg
 {
-	boolean bTxtOnly = false ;
-	String txt = null ;
+	String _msgId ;
 	
-	JSONObject jo = null ;
-	JSONArray jarr = null ;
+	HashMap<String,Object> heads = new HashMap<>() ;
 	
-	public MNMsg(String txt,boolean b_txt_only)
+	Object payload = null ; 
+	
+	public MNMsg()
 	{
-		this.txt = txt ;
-		this.bTxtOnly = b_txt_only ;
+		_msgId = IdCreator.newSeqId() ;
 	}
 	
-	public MNMsg(Object obj)
+	public MNMsg asPayload(Object payload)
 	{
-		if(obj instanceof JSONObject)
-		{
-			jo = (JSONObject)obj ;
-			return ;
-		}
-		if(obj instanceof JSONArray)
-		{
-			jarr = (JSONArray)obj ;
-			return ;
-		}
-		if(obj instanceof String)
-		{
-			this.txt = (String)obj ;
-			String ss = this.txt.trim() ;
-			if(ss.startsWith("{"))
-			{
-				try
-				{
-					JSONObject tmpjo = new JSONObject(ss) ;
-					this.jo = tmpjo ;
-				}
-				catch(Exception ee)
-				{
-					this.bTxtOnly = true ;
-				}
-			}
-			else if(ss.startsWith("["))
-			{
-				try
-				{
-					JSONArray tmpjarr = new JSONArray(ss) ;
-					this.jarr = tmpjarr ;
-				}
-				catch(Exception ee)
-				{
-					this.bTxtOnly = true ;
-				}
-			}
-			return ;
-		}
-		
-		throw new IllegalArgumentException("unknown obj tp="+obj.getClass().getCanonicalName()) ;
+		this.payload = payload ;
+		return this ;
 	}
 	
-	public boolean isTxtOnly()
+	public String getMsgId()
 	{
-		return this.bTxtOnly ;
+		return _msgId ;
 	}
 	
-	public String getTxt()
+	public JSONObject toJO()
 	{
-		if(this.txt!=null || this.bTxtOnly)
-			return this.txt ;
-		
-		if(jo!=null)
-			return jo.toString() ;
-		
-		if(jarr!=null)
-			return jarr.toString() ;
-		
-		return null ;
-	}
-	
-	public JSONObject getJSONObject()
-	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("_msgid", _msgId) ;
+		jo.putOpt("payload", payload) ;
 		return jo ;
-	}
-	
-	public JSONArray getJSONArray()
-	{
-		return jarr ;
 	}
 }

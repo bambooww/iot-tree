@@ -3,14 +3,16 @@ package org.iottree.core.msgnet;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.UAServer;
 import org.iottree.core.msgnet.nodes.*;
+import org.iottree.core.msgnet.modules.*;
+import org.iottree.core.msgnet.util.ConfNode;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -40,24 +42,155 @@ public class MNManager
 		}
 	}
 	
-	private static LinkedHashMap<String,MNNode> TP2NODE = new LinkedHashMap<>() ;
+	private static LinkedHashMap<String,MNCat> NAME2CATS = new LinkedHashMap<>() ;
 	
-	public static void registerNode(MNNode mnn)
+	private static LinkedHashMap<String,MNNode> TP2NODE = new LinkedHashMap<>() ;
+	private static LinkedHashMap<String,MNModule> TP2Module = new LinkedHashMap<>() ;
+	
+	public static MNCat registerCat(MNCat cat)
 	{
-		String tp = mnn.getNodeTP() ;
-		TP2NODE.put(tp,mnn) ;
+		NAME2CATS.put(cat.getName(),cat) ;
+		return cat ;
+	}
+	
+	public static MNCat registerCat(String name,String title)
+	{
+		MNCat cat = new MNCat(name,title) ;
+		return registerCat(cat) ;
+	}
+	
+	public static void registerNode(MNNode mnn,MNCat cat)
+	{
+		//mnn.setNodeTP(tp, tpt);
+		//String tp = mnn.getNodeTP() ;
+		mnn.setCat(cat);
+		TP2NODE.put(mnn.getTPFull(),mnn) ;
+		cat.nodes.add(mnn) ;
+	}
+	
+	private static void registerNode(ConfNode confn,MNCat cat)
+	{
+		try
+		{
+			UAServer.WebItem wi = cat.getWebItem() ;
+			Class<?> c = wi.getAppClassLoader().loadClass(confn.getClassName()) ;
+			MNNode mnn = (MNNode)c.newInstance() ;
+			registerNode(mnn,cat);
+		}
+		catch(Exception ee)
+		{
+			if(log.isDebugEnabled())
+				log.error(ee.getMessage(), ee);
+			log.warn(ee.getMessage());
+		}
+	}
+	
+	public static void registerNode(UAServer.WebItem wi,JSONObject msg_net_jo)
+	{
+		String catn = wi.getAppName() ;
+		catn = msg_net_jo.optString("cat_name",catn) ;
+		String title = msg_net_jo.optString("cat_title") ;
+		MNCat cat = registerCat(catn,title).asWebItem(wi) ;
+		
+		List<ConfNode> nodes = ConfNode.parseConfNodes(msg_net_jo) ;
+		 for(ConfNode nn:nodes)
+		 {
+			 registerNode(nn,cat) ;
+		 }
+	}
+	
+	public static void registerModule(MNModule mnn,MNCat cat)
+	{
+		//mnn.setNodeTP(tp, tpt);
+		//String tp = mnn.getNodeTP() ;
+		mnn.setCat(cat);
+		TP2Module.put(mnn.getTPFull(),mnn) ;
+		cat.modules.add(mnn) ;
+	}
+	
+	public static void registerModule(String classname,MNCat cat)
+	{
+		try
+		{
+			Class<?> c = Class.forName(classname) ;
+			MNModule m = (MNModule)c.newInstance() ;
+			registerModule(m,cat);
+		}
+		catch(Exception ee)
+		{
+			if(log.isDebugEnabled())
+				log.error(ee.getMessage(), ee);
+			log.warn(ee.getMessage());
+		}
 	}
 
 	static
 	{
-		registerNode(new NSInject()) ;
-		registerNode(new NSDebug()) ;
-		registerNode(new NSSwitch()) ;
+		MNCat cat = registerCat(new MNCat("_com")) ;
+		registerNode(new NS_Inject(),cat) ;
+		registerNode(new NE_Debug(),cat) ;
+		registerNode(new NM_JsFunc(),cat) ;
+		
+		cat = registerCat(new MNCat("_func")) ;
+		registerNode(new NM_Switch(),cat) ;
+		registerNode(new NM_Change(),cat) ;
+		
+		cat = registerCat(new MNCat("_net")) ;
+		registerModule("org.iottree.ext.msg_net.Kafka_M",cat) ;
+		
+		cat = registerCat(new MNCat("_storage")) ;
+		registerModule(new M_DBSql(),cat) ;
+		
+//		registerCat(new MNNodeCat("network")) ;
+//		registerCat(new MNNodeCat("seq")) ;
+//		registerCat(new MNNodeCat("parser")) ;
+//		registerCat(new MNNodeCat("storage")) ;
+		
+		
+		
 	}
 	
-	static MNNode getNodeByTP(String tp)
+	public static MNCat getCatByName(String name)
 	{
-		return TP2NODE.get(tp) ;
+		return NAME2CATS.get(name) ;
+	}
+	
+	public static MNNode getNodeByFullTP(String full_tp)
+	{
+		if(Convert.isNullOrEmpty(full_tp))
+			return null ;
+		List<String> ss = Convert.splitStrWith(full_tp, ".") ;
+		int sz = ss.size() ;
+		if(sz<=1) return null ;
+		
+		if(sz==2)
+		{
+			MNCat cat = getCatByName(ss.get(0)) ;
+			if(cat==null)
+				return null ;
+			return cat.getNodeByTP(ss.get(1)) ;
+		}
+		
+		MNCat cat = getCatByName(ss.get(0)) ;
+		if(cat==null)
+			return null ;
+		MNModule m = cat.getModuleByTP(ss.get(1)) ;
+		if(m==null)
+			return null ;
+		
+		return m.getSupportedNodeByTP(ss.get(2)) ;
+	}
+	
+	public static MNModule getModuleByFullTP(String full_tp)
+	{
+		return TP2Module.get(full_tp) ;
+	}
+	
+	public static List<MNCat> listRegisteredCats()
+	{
+		ArrayList<MNCat> rets = new ArrayList<>() ;
+		rets.addAll(NAME2CATS.values()) ;
+		return rets ;
 	}
 	
 	public static List<MNNode> listRegisteredNodes()

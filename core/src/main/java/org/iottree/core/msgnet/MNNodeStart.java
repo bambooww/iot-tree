@@ -58,6 +58,12 @@ public abstract class MNNodeStart extends MNNode
 		return true ;
 	}
 	
+	@Override
+	protected final RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg)
+	{
+		throw new RuntimeException("start has no in") ;
+	}
+	
 
-	public abstract boolean RT_trigger(MNMsg msg,StringBuilder failedr) ;
+	public abstract boolean RT_trigger(StringBuilder failedr) ;
 }

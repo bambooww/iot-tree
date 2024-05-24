@@ -9,5 +9,19 @@
 		{
 			"name":"auth_main","class":"com.xxx.app.UserAuth"
 		}
-	]
+	],
+	"msg_net":
+	{
+		"cat_name":"appt",
+		"cat_title":"Test Demo",
+		"nodes":[
+			{
+				"tp":"que_num","tpt":"Query material quantity","class":"com.xxx.app.mn.N_QueryNum",
+				"pm_ui_path":"../que_num.jsp","doc_path":"../que_num_doc.html"
+			}
+		],
+		"modules":[
+		
+		]
+	}
 }

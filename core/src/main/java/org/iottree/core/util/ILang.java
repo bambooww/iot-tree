@@ -10,6 +10,14 @@ public interface ILang
 		return ln.g(name) ;
 	}
 	
+	default public String g_def(String name,String def)
+	{
+		Lan ln = Lan.getLangInPk(this.getClass()) ;
+		if(ln==null)
+			return def;
+		return ln.g_def(name,def) ;
+	}
+	
 	default public String g(String name,String propn)
 	{
 		Lan ln = Lan.getLangInPk(this.getClass()) ;
