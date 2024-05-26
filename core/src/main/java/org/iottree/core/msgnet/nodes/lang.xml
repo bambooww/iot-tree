@@ -2,6 +2,8 @@
 <dd_class id="1" name="ua_lang"  name_jp=""  >
 
 
+	<dd_node id="1" name="manual" name_cn="手动触发器" name_en="Manual Trigger" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="timer" name_cn="定时触发器" name_en="Timer Trigger" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="inject" name_cn="注入" name_en="Inject" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="switch" name_cn="路径切换" name_en="Switch" desc_cn="" desc_en=""/>

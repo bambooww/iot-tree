@@ -72,8 +72,11 @@
 
 /* 内容面板样式 */
 .tab .tab-content {
+	position:absolute;
+	top:30px;
 	overflow-y: hidden;
 	padding: 0px 0px;
+	width:100%;
 	border-bottom: 2px solid transparent;
 }
 .tab .tab-content .tab-content-item {

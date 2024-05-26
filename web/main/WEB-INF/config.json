@@ -14,14 +14,11 @@
 	{
 		"cat_name":"appt",
 		"cat_title":"Test Demo",
-		"nodes":[
+		"items":[
 			{
 				"tp":"que_num","tpt":"Query material quantity","class":"com.xxx.app.mn.N_QueryNum",
-				"pm_ui_path":"../que_num.jsp","doc_path":"../que_num_doc.html"
+				"pm_ui_path":"/mn/que_num.html","doc_path":"/mn/que_num_doc.html"
 			}
-		],
-		"modules":[
-		
 		]
 	}
 }

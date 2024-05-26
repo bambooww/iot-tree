@@ -4,7 +4,7 @@ import org.iottree.core.util.Lan;
 
 public enum RepeatTP
 {
-	none(0), intv(1), intv_bt(2);
+	intv(1), intv_bt(2);
 
 	private final int val;
 
@@ -28,8 +28,8 @@ public enum RepeatTP
 	{
 		switch (i)
 		{
-		case 0:
-			return none;
+//		case 0:
+//			return none;
 		case 1:
 			return intv;
 		case 2:

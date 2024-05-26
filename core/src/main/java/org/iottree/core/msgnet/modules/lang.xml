@@ -3,6 +3,7 @@
 
 
 	<dd_node id="1" name="db_sql" name_cn="数据库SQL" name_en="DB SQL" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_rt" name_cn="实时标签Tag" name_en="Real-time Tag" desc_cn="" desc_en=""/>
 	
 	
 </dd_class>

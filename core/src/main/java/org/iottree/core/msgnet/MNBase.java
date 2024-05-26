@@ -2,6 +2,7 @@ package org.iottree.core.msgnet;
 
 import java.io.Writer;
 
+import org.iottree.core.UAServer;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
@@ -28,6 +29,9 @@ public abstract class MNBase implements ILang
 	float x = 0 ;
 	float y = 0 ;
 	
+	boolean bEnable = true ;
+	
+	boolean bShowRT = false;
 //	private String nodeTp = null ;
 //	
 //	private String nodeTpT = null ;
@@ -40,6 +44,21 @@ public abstract class MNBase implements ILang
 	void setCat(MNCat cat)
 	{
 		this.cat = cat ;
+	}
+	
+	public MNCat getCat()
+	{
+		return this.cat ;
+	}
+	
+	public String TP_getParamUrl()
+	{
+		return this.cat.getParamUrl(this) ;
+	}
+	
+	public String TP_getDocUrl()
+	{
+		return this.cat.getDocUrl(this) ;
 	}
 
 	public String getId()
@@ -79,6 +98,16 @@ public abstract class MNBase implements ILang
 		return  y;
 	}
 	
+	public boolean isEnable()
+	{
+		return this.bEnable ;
+	}
+	
+	public boolean isShowRT()
+	{
+		return this.bShowRT ;
+	}
+	
 	public String getTPFull()
 	{
 		String ownn = this.getOwnerTP() ;
@@ -115,6 +144,8 @@ public abstract class MNBase implements ILang
 	public abstract String getColor() ;
 	
 	public abstract String getIcon() ;
+	
+	
 	/**
 	 * 判断节点参数是否完备，只有完备之后的节点才可以运行
 	 * @return
@@ -123,7 +154,7 @@ public abstract class MNBase implements ILang
 	
 	//to be override
 	public abstract JSONObject getParamJO();
-		
+	
 	//to be override
 	final void setParamJO(JSONObject jo)
 	{
@@ -161,8 +192,12 @@ public abstract class MNBase implements ILang
 //		jo.put("uid", this.getUID());
 		jo.put("x", this.x) ;
 		jo.put("y", this.y) ;
+		jo.put("enable", this.bEnable) ;
+		jo.put("show_rt", this.bShowRT) ;
 		jo.put("color", this.getColor()) ;
 		jo.put("icon", this.getIcon()) ;
+		if(this instanceof IMNRunner)
+			jo.put("runner", true) ;
 		
 		JSONObject pmjo = this.getParamJO() ;
 		jo.putOpt("pm_jo", pmjo) ;
@@ -185,11 +220,8 @@ public abstract class MNBase implements ILang
 		this.desc = jo.optString("desc") ;
 		this.x = jo.optFloat("x",0) ;
 		this.y = jo.optFloat("y",0) ;
-		
-//		this.w = jo.optFloat("w",100) ;
-//		this.h = jo.optFloat("h",100) ;
-		//this.bStart = jo.optBoolean("b_start",false) ;
-		
+		this.bEnable = jo.optBoolean("enable",true) ;
+		this.bShowRT = jo.optBoolean("show_rt",false) ;
 		
 		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
 		long updt = this.belongTo.updateDT ;
@@ -202,10 +234,16 @@ public abstract class MNBase implements ILang
 	{
 		this.x = jo.optFloat("x", this.x) ;
 		this.y = jo.optFloat("y", this.y) ;
+		this.bShowRT = jo.optBoolean("show_rt",false) ;
 		//this.title = jo.optString("title") ;
 		//this.desc = jo.optString("desc") ;
 		//this.bStart = jo.optBoolean("b_start",false) ;
 		return true ;
 	}
+	
+	
+	// -- RT
+	
+
 	
 }

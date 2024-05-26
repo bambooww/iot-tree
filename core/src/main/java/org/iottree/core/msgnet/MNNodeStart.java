@@ -20,9 +20,9 @@ public abstract class MNNodeStart extends MNNode
 		return false;
 	}
 
-	public boolean supportInOnOff()
+	public final boolean supportInOnOff()
 	{
-		return false;
+		return this instanceof IMNOnOff;
 	}
 	
 	public boolean getInOnOff()
@@ -34,6 +34,7 @@ public abstract class MNNodeStart extends MNNode
 	public JSONObject toJO()
 	{
 		JSONObject jo = super.toJO();
+		
 		jo.put("in_onoff_sup", this.supportInOnOff()) ;
 		if(supportInOnOff())
 			jo.put("in_onoff", this.bOnOff) ;
@@ -64,6 +65,4 @@ public abstract class MNNodeStart extends MNNode
 		throw new RuntimeException("start has no in") ;
 	}
 	
-
-	public abstract boolean RT_trigger(StringBuilder failedr) ;
 }

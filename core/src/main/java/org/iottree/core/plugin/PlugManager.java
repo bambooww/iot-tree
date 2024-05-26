@@ -91,7 +91,7 @@ public class PlugManager
 		JSONObject msg_net_jo = pd.getMsgNetJO() ;
 		if(msg_net_jo!=null)
 		{
-			MNManager.registerNode(wi, msg_net_jo);
+			MNManager.registerByWebItem(wi, msg_net_jo);
 		}
 	}
 	

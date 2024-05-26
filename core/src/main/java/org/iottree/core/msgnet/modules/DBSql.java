@@ -1,51 +1,38 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.modules;
 
-import org.iottree.core.msgnet.MNConn;
-import org.iottree.core.msgnet.MNMsg;
-import org.iottree.core.msgnet.MNNodeEnd;
-import org.iottree.core.msgnet.MNNodeStart;
-import org.iottree.core.msgnet.RTOut;
-import org.iottree.core.util.jt.JSONTemp;
+import java.util.List;
+
+import org.iottree.core.msgnet.MNModule;
+import org.iottree.core.msgnet.MNNode;
 import org.json.JSONObject;
 
-public class KafkaOut_NE extends MNNodeEnd
+public class DBSql extends MNModule
 {
 	@Override
 	public String getTP()
 	{
-		return "kafka_out";
+		return "db_sql";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "Kafka Out";
-	}
-	
-	@Override
-	public JSONTemp getInJT()
-	{
-		return null;
-	}
-
-	@Override
-	public JSONTemp getOutJT()
-	{
-		return null;
+		return g("db_sql");
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#debed7";
+		return "#e7b686";
 	}
 
 	@Override
 	public String getIcon()
 	{
-		return "\\uf0ec";
+		return "\\uf1c0";
 	}
 
+	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
@@ -68,10 +55,11 @@ public class KafkaOut_NE extends MNNodeEnd
 	}
 
 	@Override
-	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
+	protected List<MNNode> getSupportedNodes()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	
 }

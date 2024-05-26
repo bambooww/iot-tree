@@ -179,6 +179,14 @@ public class MNNet
 	{
 		return this.id2module ;
 	}
+	
+	public MNBase getItemById(String id)
+	{
+		MNBase n = id2node.get(id) ;
+		if(n!=null)
+			return n;
+		return id2module.get(id) ;
+	}
 //	/**
 //	 * 获得网络内部的Collector节点
 //	 * @return
@@ -295,6 +303,23 @@ public class MNNet
 		for(MNNode n:this.id2node.values())
 		{
 			String tt = n.getTitle() ;
+			if(!tt.startsWith(tpt))
+				continue ;
+			String ss = tt.substring(len).trim() ;
+			try
+			{
+				int i = Integer.parseInt(ss) ;
+				if(i>max_i)
+					max_i = i ;
+			}
+			catch(Exception ee)
+			{
+				continue ;
+			}
+		}
+		for(MNModule m:this.id2module.values())
+		{
+			String tt = m.getTitle() ;
 			if(!tt.startsWith(tpt))
 				continue ;
 			String ss = tt.substring(len).trim() ;
@@ -707,9 +732,15 @@ public class MNNet
 			failedr.append("no start node") ;
 			return false;
 		}
-		MNNodeStart nstart = (MNNodeStart)n;
+		
+		if(!(n instanceof IMNOnOff))
+		{
+			failedr.append("no OnOff node") ;
+			return false;
+		}
+		IMNOnOff nstart = (IMNOnOff)n;
 		//return RT_triggerNodeStart(nstart,null,failedr) ;
-		return nstart.RT_trigger(failedr) ;
+		return nstart.RT_triggerByOnOff(failedr) ;
 	}
 	
 }

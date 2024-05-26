@@ -34,17 +34,9 @@ public static ArrayList<String> getFANames() throws Exception
 <html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.js"></script>
+<jsp:include page="../head.jsp"></jsp:include>
+
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
 </head>
 <style>
 i:hover{
@@ -75,7 +67,7 @@ function drag(ev)
 						
 						
 <%
-int N = 736;
+int N = 2304;
 //int i = 0 ;
 //for(String fan:fans)
 for(int i = 0;i<N;i++)
@@ -85,7 +77,7 @@ for(int i = 0;i<N;i++)
 	//if(i>=100)
 	//	break;
 	%>
-<div title=""  class="toolbarbtn" ><i class="fa" fa_icon="<%=fan%>" title="<%=fan%>"  draggable="true" ondragstart="drag(event)">&#x<%=fan %></i></div>
+<div title=""  class="toolbarbtn"  style="font-size: 30px"><i class="fa" fa_icon="<%=fan%>" title="<%=fan%>"  draggable="true" ondragstart="drag(event)">&#x<%=fan %></i></div>
 	<%
 }
 %>

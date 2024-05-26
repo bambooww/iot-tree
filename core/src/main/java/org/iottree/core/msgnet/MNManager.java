@@ -12,7 +12,7 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.msgnet.nodes.*;
 import org.iottree.core.msgnet.modules.*;
-import org.iottree.core.msgnet.util.ConfNode;
+import org.iottree.core.msgnet.util.ConfItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -59,62 +59,67 @@ public class MNManager
 		return registerCat(cat) ;
 	}
 	
-	public static void registerNode(MNNode mnn,MNCat cat)
+	public static void registerItem(MNBase mnn,MNCat cat)
 	{
 		//mnn.setNodeTP(tp, tpt);
 		//String tp = mnn.getNodeTP() ;
 		mnn.setCat(cat);
-		TP2NODE.put(mnn.getTPFull(),mnn) ;
-		cat.nodes.add(mnn) ;
-	}
-	
-	private static void registerNode(ConfNode confn,MNCat cat)
-	{
-		try
+		if(mnn instanceof MNNode)
 		{
-			UAServer.WebItem wi = cat.getWebItem() ;
-			Class<?> c = wi.getAppClassLoader().loadClass(confn.getClassName()) ;
-			MNNode mnn = (MNNode)c.newInstance() ;
-			registerNode(mnn,cat);
+			TP2NODE.put(mnn.getTPFull(),(MNNode)mnn) ;
+			cat.nodes.add((MNNode)mnn) ;
 		}
-		catch(Exception ee)
+		else
 		{
-			if(log.isDebugEnabled())
-				log.error(ee.getMessage(), ee);
-			log.warn(ee.getMessage());
+			TP2Module.put(mnn.getTPFull(),(MNModule)mnn) ;
+			cat.modules.add((MNModule)mnn) ;
 		}
 	}
 	
-	public static void registerNode(UAServer.WebItem wi,JSONObject msg_net_jo)
+	public static void registerByWebItem(UAServer.WebItem wi,JSONObject msg_net_jo)
 	{
 		String catn = wi.getAppName() ;
 		catn = msg_net_jo.optString("cat_name",catn) ;
 		String title = msg_net_jo.optString("cat_title") ;
 		MNCat cat = registerCat(catn,title).asWebItem(wi) ;
 		
-		List<ConfNode> nodes = ConfNode.parseConfNodes(msg_net_jo) ;
-		 for(ConfNode nn:nodes)
+		List<ConfItem> cis = ConfItem.parseConfItems(msg_net_jo) ;
+		 for(ConfItem ci:cis)
 		 {
-			 registerNode(nn,cat) ;
+			 try
+			{
+					Class<?> c = wi.getAppClassLoader().loadClass(ci.getClassName()) ;
+					MNBase mnn = (MNBase)c.newInstance() ;
+					mnn.setCat(cat);
+					cat.item2conf.put(mnn.getTPFull(), ci) ;
+					registerItem(mnn,cat);
+				}
+				catch(Exception ee)
+				{
+					//if(log.isDebugEnabled())
+					//	log.error(ee.getMessage(), ee);
+					ee.printStackTrace();
+					//log.warn(ee.getMessage());
+				}
 		 }
 	}
 	
-	public static void registerModule(MNModule mnn,MNCat cat)
-	{
-		//mnn.setNodeTP(tp, tpt);
-		//String tp = mnn.getNodeTP() ;
-		mnn.setCat(cat);
-		TP2Module.put(mnn.getTPFull(),mnn) ;
-		cat.modules.add(mnn) ;
-	}
+//	public static void registerModule(MNModule mnn,MNCat cat)
+//	{
+//		//mnn.setNodeTP(tp, tpt);
+//		//String tp = mnn.getNodeTP() ;
+//		mnn.setCat(cat);
+//		TP2Module.put(mnn.getTPFull(),mnn) ;
+//		cat.modules.add(mnn) ;
+//	}
 	
-	public static void registerModule(String classname,MNCat cat)
+	public static void registerItem(String classname,MNCat cat)
 	{
 		try
 		{
 			Class<?> c = Class.forName(classname) ;
 			MNModule m = (MNModule)c.newInstance() ;
-			registerModule(m,cat);
+			registerItem(m,cat);
 		}
 		catch(Exception ee)
 		{
@@ -127,19 +132,26 @@ public class MNManager
 	static
 	{
 		MNCat cat = registerCat(new MNCat("_com")) ;
-		registerNode(new NS_Inject(),cat) ;
-		registerNode(new NE_Debug(),cat) ;
-		registerNode(new NM_JsFunc(),cat) ;
+		registerItem(new ManualTrigger(),cat) ;
+		registerItem(new TimerTrigger_NS(),cat) ;
+		registerItem(new NE_Debug(),cat) ;
+		
 		
 		cat = registerCat(new MNCat("_func")) ;
-		registerNode(new NM_Switch(),cat) ;
-		registerNode(new NM_Change(),cat) ;
+		registerItem(new NM_JsFunc(),cat) ;
+		registerItem(new NM_Switch(),cat) ;
+		registerItem(new NM_Change(),cat) ;
+		
+		
+		cat = registerCat(new MNCat("_dev")) ;
+		registerItem(new TagRuntime(),cat) ;
 		
 		cat = registerCat(new MNCat("_net")) ;
-		registerModule("org.iottree.ext.msg_net.Kafka_M",cat) ;
+		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
+		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
 		
 		cat = registerCat(new MNCat("_storage")) ;
-		registerModule(new M_DBSql(),cat) ;
+		registerItem(new DBSql(),cat) ;
 		
 //		registerCat(new MNNodeCat("network")) ;
 //		registerCat(new MNNodeCat("seq")) ;

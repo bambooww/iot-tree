@@ -211,7 +211,7 @@ color:#555555;
 
 .show_hid_icon
 {
-position:absolute;top:0px;width:30px;height:25px;z-index:1001;color:#1e1e1e;cursor:pointer;
+position:absolute;top:0px;width:30px;height:23px;z-index:1001;color:#1e1e1e;cursor:pointer;
 border:1px solid #cccccc;background-color: #f2f2f2;padding-top:5px;text-align: center;
 }
 .right_panel_win
@@ -443,6 +443,14 @@ init_iottpanel();
 
 function on_item_sel_chg(items)
 {
+	if(!items||items.length<=0)
+	{
+		let u1 = `mn_panel.jsp?prjid=\${prjid}&netid=\${netid}`;
+		if(u1!=$("#right_info_iframe").attr("src"))
+			$("#right_info_iframe").attr("src",u1);
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+		return ;
+	}
 	if(!items || items.length!=1)
 	{
 		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
@@ -457,17 +465,21 @@ function on_item_sel_chg(items)
 	{
 		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
 	}
+	
+	let u1 = `mn_panel.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${item.id}`;
+	if(u1!=$("#right_info_iframe").attr("src"))
+		$("#right_info_iframe").attr("src",u1);
 }
 
 function on_node_module_open(b_node_module,mn)
 {
 	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&nodeid=\${mn.id}`;
-	let tt = "<wbt:lang>node,param</wbt:lang>";
+	let tt = "<wbt:lang>node,param</wbt:lang> - "+mn.title;
 	let pm={op:"detail_set",prjid:prjid,netid:netid,nodeid:mn.id};
 	if(!b_node_module)
 	{
 		url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&moduleid=\${mn.id}`;
-		tt = "<wbt:lang>module,param</wbt:lang>";
+		tt = "<wbt:lang>module,param</wbt:lang> - "+mn.title;
 		let pm={op:"detail_set",prjid:prjid,netid:netid,moduleid:mn.id};
 	}
 		
@@ -724,7 +736,7 @@ function init_right()
 		$("#tab_title").html(title) ;
 	}});
 	
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<div id="info_cont">info</div>`});
+	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<div id="help_cont">help</div>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<div id="debug_cont">debug</div>`});
 	$(".right_tab").tab('selectTab', 'lb_tab_i');
@@ -737,6 +749,7 @@ function resize_zz()
 {
 	var h = $(window).height();
 	$("#left_pan_iframe").css("height",(h-38)+"px");
+	$("#right_info_iframe").css("height",(h-38)+"px");
 }
 
 var resize_cc = 0 ;

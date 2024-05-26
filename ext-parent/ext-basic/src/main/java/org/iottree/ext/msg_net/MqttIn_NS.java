@@ -1,38 +1,54 @@
-package org.iottree.core.msgnet.modules;
+package org.iottree.ext.msg_net;
 
-import java.util.List;
-
-import org.iottree.core.msgnet.MNModule;
-import org.iottree.core.msgnet.MNNode;
+import org.iottree.core.msgnet.MNNodeStart;
+import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class M_DBSql extends MNModule
+public class MqttIn_NS extends MNNodeStart
 {
 	@Override
 	public String getTP()
 	{
-		return "db_sql";
+		return "mqtt_in";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("db_sql");
+		return "MQTT In";
+	}
+	
+
+	@Override
+	public JSONTemp getInJT()
+	{
+		return null;
+	}
+
+	@Override
+	public JSONTemp getOutJT()
+	{
+		return null;
+	}
+
+	@Override
+	public int getOutNum()
+	{
+		return 1;
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#e7b686";
+		return "#debed7";
 	}
 
 	@Override
 	public String getIcon()
 	{
-		return "\\uf1c0";
+		return "\\\\uf1eb-90";
 	}
 
-	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
@@ -54,12 +70,4 @@ public class M_DBSql extends MNModule
 		
 	}
 
-	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 }

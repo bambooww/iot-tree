@@ -16,7 +16,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public class ConfNode
+public class ConfItem
 {
 	String tp = null ;
 	
@@ -28,7 +28,7 @@ public class ConfNode
 	
 	String doc_path = null ;
 	
-	ConfNode(JSONObject jo)
+	ConfItem(JSONObject jo)
 	{
 		this.tp = jo.optString("tp") ;
 		this.tpt = jo.optString("tpt") ;
@@ -68,14 +68,14 @@ public class ConfNode
 		return this.doc_path ;
 	}
 	
-	public static List<ConfNode> parseConfNodes(JSONObject msg_net_jo)
+	public static List<ConfItem> parseConfItems(JSONObject msg_net_jo)
 	{
-		ArrayList<ConfNode> nns = new ArrayList<>() ;
+		ArrayList<ConfItem> nns = new ArrayList<>() ;
 		
 		if(msg_net_jo==null)
 			return nns ;
 		
-		JSONArray jarr = msg_net_jo.optJSONArray("nodes") ;
+		JSONArray jarr = msg_net_jo.optJSONArray("items") ;
 		if(jarr==null || jarr.length()<=0)
 			return nns ;
 
@@ -83,7 +83,7 @@ public class ConfNode
 		for(int i = 0 ; i < n ; i ++)
 		{
 			JSONObject tmpjo = jarr.getJSONObject(i) ;
-			ConfNode nn = new ConfNode(tmpjo) ;
+			ConfItem nn = new ConfItem(tmpjo) ;
 			if(!nn.isValid())
 				continue ;
 			nns.add(nn) ;

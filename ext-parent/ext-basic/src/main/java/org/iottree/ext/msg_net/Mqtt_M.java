@@ -1,39 +1,37 @@
 package org.iottree.ext.msg_net;
 
-import org.iottree.core.msgnet.MNNodeStart;
-import org.iottree.core.util.jt.JSONTemp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.iottree.core.msgnet.MNModule;
+import org.iottree.core.msgnet.MNNode;
 import org.json.JSONObject;
 
-public class KafkaIn_NS extends MNNodeStart
+public class Mqtt_M extends MNModule
 {
+	static ArrayList<MNNode> supNodes = new ArrayList<>() ;
+	static
+	{
+		supNodes.add(new MqttIn_NS()) ;
+		supNodes.add(new MqttOut_NE()) ;
+	}
+	
+	@Override
+	protected List<MNNode> getSupportedNodes()
+	{
+		return supNodes;
+	}
+
 	@Override
 	public String getTP()
 	{
-		return "kafka_in";
+		return "mqtt";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "Kafka In";
-	}
-	
-	@Override
-	public JSONTemp getInJT()
-	{
-		return null;
-	}
-
-	@Override
-	public JSONTemp getOutJT()
-	{
-		return null;
-	}
-
-	@Override
-	public int getOutNum()
-	{
-		return 1;
+		return "MQTT";
 	}
 
 	@Override
@@ -45,7 +43,7 @@ public class KafkaIn_NS extends MNNodeStart
 	@Override
 	public String getIcon()
 	{
-		return "\\uf0ec";
+		return "\\uf1eb-270,\\uf1eb-90";
 	}
 
 	@Override
@@ -68,6 +66,5 @@ public class KafkaIn_NS extends MNNodeStart
 		// TODO Auto-generated method stub
 		
 	}
-
 
 }

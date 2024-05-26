@@ -1,7 +1,10 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.time.LocalTime;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import org.iottree.core.msgnet.IMNRunner;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNode;
@@ -13,11 +16,11 @@ import org.iottree.core.util.Lan;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class NS_Inject extends MNNodeStart implements ILang
+public class TimerTrigger_NS extends MNNodeStart implements IMNRunner
 {
 	long delayExecMS = -1 ;
 	
-	RepeatTP repectTp =RepeatTP.none ;
+	RepeatTP repectTp =RepeatTP.intv ;
 	
 	long intervalMS = 1000 ;
 	
@@ -30,32 +33,25 @@ public class NS_Inject extends MNNodeStart implements ILang
 	@Override
 	public String getTP()
 	{
-		return "inject";
+		return "timer";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("inject");
+		return g("timer");
 	}
-	
-	
+
 	@Override
 	public String getColor()
 	{
-		return "#9fbccf";
+		return "#b5b5b3";
 	}
-	
+
 	@Override
 	public String getIcon()
 	{
-		return "\\uf04b";
-	}
-	
-	@Override
-	public boolean supportInOnOff()
-	{
-		return true;
+		return "\\uf017" ;
 	}
 	
 	
@@ -134,7 +130,9 @@ public class NS_Inject extends MNNodeStart implements ILang
 	{
 		//this.bDelayExec = jo.optBoolean("b_delay",false) ;
 			this.delayExecMS = jo.optLong("delay_ms",-1) ;
-			this.repectTp = RepeatTP.valOfInt(jo.optInt("repeat_tp",0)) ;
+			this.repectTp = RepeatTP.valOfInt(jo.optInt("repeat_tp",RepeatTP.intv.getInt())) ;
+			if(this.repectTp==null)
+				this.repectTp = RepeatTP.intv ;
 			int ss = jo.optInt("between_s",-1) ;
 			if(ss>0)
 				this.betweenS = LocalTime.ofSecondOfDay(ss) ;
@@ -187,18 +185,67 @@ public class NS_Inject extends MNNodeStart implements ILang
 	//  --------------- 
 	
 
-	public boolean RT_trigger(StringBuilder failedr)
+	private Timer timer = null ;
+	private TimerTask task = null;
+	
+	private void onTaskRun()
 	{
-		if(!this.supportInOnOff())
-		{
-			failedr.append("not support") ;
-			return false;
-		}
-		
 		MNMsg msg = new MNMsg() ;
+		msg.asPayload(System.currentTimeMillis()) ;
 		RT_sendMsgOut(RTOut.ALL,msg) ;
+	}
+	
+	@Override
+	public boolean RT_init(StringBuilder failedr)
+	{
+		
 		return true;
 	}
 
-	
+	@Override
+	synchronized public boolean RT_start(StringBuilder failedr)
+	{
+		if(timer!=null)
+			return true ;
+		
+		timer = new Timer();
+        task =new TimerTask() {
+            @Override
+            public void run() {
+            	onTaskRun() ;
+            }
+        };
+        
+        switch(repectTp)
+        {
+        case intv_bt:
+        case intv:
+        default:
+        	timer.scheduleAtFixedRate(task, delayExecMS, this.intervalMS);
+        }
+		return true;
+	}
+
+	@Override
+	synchronized public void RT_stop()
+	{
+		if(timer==null)
+			return ;
+		try
+		{
+            task.cancel();
+            timer.purge(); // Remove cancelled tasks from the timer
+		}
+		finally
+		{
+			task=null;
+			timer=null ;
+		}
+	}
+
+	@Override
+	public boolean RT_isRunning()
+	{
+		return timer!=null;
+	}
 }

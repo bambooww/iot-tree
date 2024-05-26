@@ -24,6 +24,12 @@ public abstract class MNNodeEnd extends MNNode
 	{
 		return bOnOff ;
 	}
+	
+	@Override
+	public final int getOutNum()
+	{
+		return 0;
+	}
 
 	@Override
 	public JSONObject toJO()

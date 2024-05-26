@@ -1,9 +1,11 @@
 package org.iottree.core.msgnet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.UAServer;
+import org.iottree.core.msgnet.util.ConfItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 
@@ -21,6 +23,8 @@ public class MNCat implements ILang
 	ArrayList<MNModule> modules = new ArrayList<>() ;
 	
 	UAServer.WebItem webItem = null ;
+	
+	HashMap<String,ConfItem> item2conf = new HashMap<>() ;
 	
 	public MNCat(String name)
 	{
@@ -84,5 +88,31 @@ public class MNCat implements ILang
 				return m ;
 		}
 		return null ;
+	}
+	
+	public String getParamUrl(MNBase n)
+	{
+			if(this.webItem==null)
+			{
+				if(n instanceof MNModule)
+					return "./modules/"+n.getTPFull()+".pm.jsp";
+				return "./nodes/"+n.getTPFull()+".pm.jsp";
+			}
+
+			ConfItem ci = item2conf.get(n.getTPFull()) ;
+			if(ci==null)
+				return null ;
+			return "/"+webItem.getAppName()+"/"+ci.getPmUIPath() ;
+	}
+		
+	
+	public String getDocUrl(MNBase n)
+	{
+		if(this.webItem==null)
+			return "./nodes/"+n.getTPFull()+"_doc.html";
+		ConfItem ci = item2conf.get(n.getTPFull()) ;
+		if(ci==null)
+			return null ;
+		return "/"+webItem.getAppName()+"/"+ci.getDocPath() ;
 	}
 }

@@ -47,12 +47,6 @@ public class NE_Debug extends MNNodeEnd implements ILang
 		return null;
 	}
 
-	@Override
-	public int getOutNum()
-	{
-		return 0;
-	}
-
 //	@Override
 	public String getTP()
 	{

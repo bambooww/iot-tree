@@ -43,8 +43,10 @@
 	String tp = node.getTPFull() ;
 	String title = node.getTitle() ;
 
-	String pm_url = "./nodes/"+tp+"_pm.jsp" ;
-	System.out.println(pm_url);
+	String pm_url = node.getCat().getParamUrl(node);// "./nodes/"+tp+"_pm.jsp" ;
+	if(pm_url==null)
+		pm_url="" ;
+	//System.out.println(pm_url);
 	JSONObject jo = node.getParamJO() ;
 	String jstr = "{}" ;
 	if(jo!=null)
@@ -65,6 +67,9 @@ var form ;
 
 function init_pm()
 {
+	if(!pm_url)
+		return ;
+	
 	send_ajax(pm_url,{},(bsucc,ret)=>{
 		$("#pm_cont").html(ret) ;
 	}) ;

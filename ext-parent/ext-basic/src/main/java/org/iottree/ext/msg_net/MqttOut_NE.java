@@ -3,25 +3,25 @@ package org.iottree.ext.msg_net;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeEnd;
-import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class KafkaOut_NE extends MNNodeEnd
+public class MqttOut_NE extends MNNodeEnd
 {
 	@Override
 	public String getTP()
 	{
-		return "kafka_out";
+		return "mqtt_out";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "Kafka Out";
+		return "MQTT Out";
 	}
 	
+
 	@Override
 	public JSONTemp getInJT()
 	{
@@ -34,6 +34,8 @@ public class KafkaOut_NE extends MNNodeEnd
 		return null;
 	}
 
+
+
 	@Override
 	public String getColor()
 	{
@@ -43,7 +45,7 @@ public class KafkaOut_NE extends MNNodeEnd
 	@Override
 	public String getIcon()
 	{
-		return "\\uf0ec";
+		return "\\\\uf1eb-270";
 	}
 
 	@Override
@@ -73,5 +75,4 @@ public class KafkaOut_NE extends MNNodeEnd
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
