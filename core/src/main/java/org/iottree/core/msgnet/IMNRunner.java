@@ -8,11 +8,13 @@ package org.iottree.core.msgnet;
 public interface IMNRunner
 {
 
-	public boolean RT_init(StringBuilder failedr);
+	//public boolean RT_init(StringBuilder failedr);
 	
 	public boolean RT_start(StringBuilder failedr) ;
 	
 	public void RT_stop() ;
 	
 	public boolean RT_isRunning();
+	
+	public boolean RT_isSuspendedInRun(StringBuilder reson) ;
 }

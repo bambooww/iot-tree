@@ -68,34 +68,86 @@
 
 <script>
 
+function on_after_pm_show(form)
+{
+	form.on('select(sec_proto)', function(obj){
+		  update_fm();
+	  });
+	
+	update_fm();
+}
+
+
+function update_fm()
+{
+	let v = parseInt($("#sec_proto").val());
+	switch(v)
+	{
+	case 2: //SASL_PLAINTEXT(2
+		$(".sasl_mech").css("display","block") ;
+		$(".user_psw").css("display","block") ;
+		break;
+	default:
+		$(".sasl_mech").css("display","none") ;
+		$(".user_psw").css("display","none") ;
+		break ;
+	}
+	form.render();
+}
+
 function get_pm_jo()
 {
-	let bdelay = $("#b_delay").prop("checked") ;
-	let delay_ms = get_input_val("delay_ms",-1,true) ;
-	if(bdelay && delay_ms<=0)
+	var host = $('#host').val();
+	if(host==null||host=='')
 	{
-		return "<w:g>pls,input,delay</w:g>" ;
+		return '<w:g>pls,input,host</w:g>';
+	}
+	var port = $('#port').val();
+	if(port==null||port=='')
+	{
+		return '<w:g>pls,input,port</w:g>' ;
+	}
+	var vp = parseInt(port);
+	if(vp==NaN||vp<0)
+	{
+		return '<w:g>pls,input,valid,port</w:g>' ;
 	}
 	
-	let repeat_tp = get_input_val("repeat_tp",0,true);
-	return {delay_ms:delay_ms,repeat_tp:repeat_tp} ;
+	let send_to = get_input_val('send_to',1000,true) ;
+	let sec_proto= get_input_val('sec_proto',0,true) ;
+	let sec_sasl_mech= get_input_val('sec_sasl_mech',0,true) ;
+	var user = $('#user').val();
+	if(user==null||user=='')
+	{
+		user="";
+	}
+	
+	var psw = $('#psw').val();
+	if(psw==null||psw=='')
+	{
+		psw="";
+	}
+	
+	let js_ob={};
+	js_ob.host = host ;
+	js_ob.port = port ;
+	js_ob.sec_proto = sec_proto ;
+	js_ob.sec_sasl_mech = sec_sasl_mech;
+	js_ob.send_to=send_to;
+	js_ob.user = user ;
+	js_ob.psw = psw ;
+	return js_ob ;
 }
 
 function set_pm_jo(jo)
 {
-	let delay_ms = jo.delay_ms ;
-	if(delay_ms>0)
-	{
-		$("#b_delay").prop("checked",true) ;
-		$("#delay_ms").val(delay_ms) ;
-	}
-	else
-	{
-		$("#b_delay").prop("checked",false) ;
-		$("#delay_ms").val(100) ;
-	}
-		
-	$("#repeat_tp").val(jo.repeat_tp||0) ;
+	$('#host').val(jo.host||"");
+	$('#port').val(jo.port||9092);
+	$("#sec_proto").val(jo.sec_proto||0);
+	$("#send_to").val(jo.send_to||1000);
+	$("#sec_sasl_mech").val(jo.sec_sasl_mech||0);
+	$("#user").val(jo.user||"");
+	$("#psw").val(jo.psw||"");
 }
 
 function get_pm_size()
@@ -103,5 +155,5 @@ function get_pm_size()
 	return {w:700,h:350} ;
 }
 
-on_init_pm_ok() ;
+//on_init_pm_ok() ;
 </script>

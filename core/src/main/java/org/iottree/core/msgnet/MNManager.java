@@ -144,7 +144,10 @@ public class MNManager
 		
 		
 		cat = registerCat(new MNCat("_dev")) ;
-		registerItem(new TagRuntime(),cat) ;
+		registerItem(new NM_TagReader(),cat) ;
+		registerItem(new NM_TagWriter(),cat) ;
+		registerItem(new NM_TagFilter(),cat) ;
+		//registerItem(new TagRuntime(),cat) ;
 		
 		cat = registerCat(new MNCat("_net")) ;
 		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;

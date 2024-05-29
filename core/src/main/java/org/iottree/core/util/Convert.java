@@ -227,6 +227,24 @@ public class Convert
 		return cal;
 	}
 
+	public static String calcDateGapToNow(long dt)
+	{
+		Lan lan = Lan.getLangInPk(Convert.class) ;
+		long gap= (System.currentTimeMillis()-dt)/1000 ;
+		if(gap<60)
+			return gap+lan.g("sec_ago") ;
+
+		if(gap<3600)
+			return gap/60+lan.g("min_ago") ;
+
+		if(gap<86400)
+			return gap/3600+lan.g("hour_ago") ;
+		
+		if(gap<864000)
+			return gap/86400+lan.g("day_ago") ;
+		
+		return toYMD(new Date(dt)) ;
+	}
 	/**
 	 * 对输入的Plain文本转换成html文本,以适合页面输出展示的需要
 	 * 

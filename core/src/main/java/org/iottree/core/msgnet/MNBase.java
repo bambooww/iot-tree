@@ -1,6 +1,9 @@
 package org.iottree.core.msgnet;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Date;
 
 import org.iottree.core.UAServer;
 import org.iottree.core.util.Convert;
@@ -108,6 +111,11 @@ public abstract class MNBase implements ILang
 		return this.bShowRT ;
 	}
 	
+	public boolean isRunner()
+	{
+		return this instanceof IMNRunner;
+	}
+	
 	public String getTPFull()
 	{
 		String ownn = this.getOwnerTP() ;
@@ -177,8 +185,8 @@ public abstract class MNBase implements ILang
 		JSONObject jo = toJO() ;
 		jo.write(w) ; 
 	}
-
-	public JSONObject toJO()
+	
+	public JSONObject toListJO()
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id) ;
@@ -196,8 +204,14 @@ public abstract class MNBase implements ILang
 		jo.put("show_rt", this.bShowRT) ;
 		jo.put("color", this.getColor()) ;
 		jo.put("icon", this.getIcon()) ;
-		if(this instanceof IMNRunner)
-			jo.put("runner", true) ;
+
+		jo.put("runner", isRunner()) ;
+		return jo ;
+	}
+
+	public JSONObject toJO()
+	{
+		JSONObject jo = this.toListJO() ;
 		
 		JSONObject pmjo = this.getParamJO() ;
 		jo.putOpt("pm_jo", pmjo) ;
@@ -224,9 +238,11 @@ public abstract class MNBase implements ILang
 		this.bShowRT = jo.optBoolean("show_rt",false) ;
 		
 		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
-		long updt = this.belongTo.updateDT ;
-		this.setParamJO(pmjo,updt);
-		
+		if(pmjo!=null)
+		{
+			long updt = this.belongTo.updateDT ;
+			this.setParamJO(pmjo,updt);
+		}
 		return true;
 	}
 	
@@ -244,6 +260,160 @@ public abstract class MNBase implements ILang
 	
 	// -- RT
 	
-
+	RTDebugPrompt RT_pptInf = null ;
+	RTDebugPrompt RT_pptWarn = null ;
+	RTDebugPrompt RT_pptErr = null ;
 	
+	public final boolean RT_hasPromptWarn()
+	{
+		return RT_pptWarn!=null ;
+	}
+	
+	public final boolean RT_hasPromptErr()
+	{
+		return RT_pptErr!=null ;
+	}
+	
+	protected void RT_renderDiv(StringBuilder divsb)
+	{
+		if(isRunner())
+		{
+			IMNRunner rnr = (IMNRunner)this ;
+			if(rnr.RT_isRunning())
+			{
+				StringBuilder ssb = new StringBuilder() ;
+				if(rnr.RT_isSuspendedInRun(ssb))
+					divsb.append("<div class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+				else
+					divsb.append("<div class=\"rt_blk\"><span style=\"color:green\">Running</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+			}
+			else
+				divsb.append("<div  class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
+		}
+		
+		if(RT_pptErr!=null)
+		{
+			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(255,0,0,0.3)'>[Error] "+RT_pptErr.getDTGapToNow()+" "+RT_pptErr.getMsg()) ;
+			if(RT_pptErr.hasDetail())
+				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','err')\">Detail</button>") ;
+			divsb.append("</div>") ;
+		}
+		
+		if(RT_pptWarn!=null)
+		{
+			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(255,255,0,0.3)'>[Warn] "+RT_pptWarn.getDTGapToNow()+" "+RT_pptWarn.getMsg()) ;
+			if(RT_pptWarn.hasDetail())
+				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','warn')\">Detail</button>") ;
+			divsb.append("</div>") ;
+		}
+		
+		if(RT_pptInf!=null)
+		{
+			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(0,0,255,0.3)'>[Info] "+RT_pptInf.getDTGapToNow()+" "+RT_pptInf.getMsg()) ;
+			if(RT_pptInf.hasDetail())
+				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','info')\">Detail</button>") ;
+			divsb.append("</div>") ;
+		}
+
+		divsb.append("<div class=\"rt_blk\">Vars</div>") ;
+	}
+	
+	public JSONObject RT_toJO(boolean out_rt_div)
+	{
+		JSONObject jo = new JSONObject() ;
+		if(isRunner())
+		{
+			IMNRunner rnr = (IMNRunner)this ;
+			jo.put("runner", true) ;
+			jo.put("b_running",rnr.RT_isRunning()) ;
+			StringBuilder rsb = new StringBuilder() ;
+			boolean bsusp = rnr.RT_isSuspendedInRun(rsb) ;
+			jo.put("suspended", bsusp) ;
+			if(bsusp)
+				jo.put("suspend_reson", rsb.toString()) ;
+		}
+		if(out_rt_div)
+		{
+			StringBuilder divsb = new StringBuilder() ;
+			RT_renderDiv(divsb);
+			jo.put("div", divsb.toString()) ;
+		}
+		
+		jo.put("has_warn", this.RT_hasPromptWarn()) ;
+		jo.put("has_err", this.RT_hasPromptErr()) ;
+		return jo ;
+	}
+
+	protected final void RT_DEBUG_fireErr(String msg)
+	{
+		RT_DEBUG_fireErr(msg,null,null) ;
+	}
+	
+	protected final void RT_DEBUG_fireErr(String msg,String detail)
+	{
+		RT_DEBUG_fireErr(msg,detail,null) ;
+	}
+	
+	protected final void RT_DEBUG_fireErr(String msg,Throwable ee)
+	{
+		RT_DEBUG_fireErr(msg,null,ee) ;
+	}
+	
+	/**
+	 * called by overrider,to fire same err inf
+	 * if msg and ee are null,it will clear inf
+	 * @param msg
+	 * @param ee
+	 */
+	protected final void RT_DEBUG_fireErr(String msg,String content,Throwable ee)
+	{
+		this.RT_pptErr = new RTDebugPrompt(msg, content, ee) ;
+	}
+	
+	protected final void RT_DEBUG_fireWarn(String msg)
+	{
+		RT_DEBUG_fireWarn(msg,null,null) ;
+	}
+	
+	protected final void RT_DEBUG_fireWarn(String msg,String detail)
+	{
+		RT_DEBUG_fireWarn(msg,detail,null) ;
+	}
+	
+	protected final void RT_DEBUG_fireWarn(String msg,Throwable ee)
+	{
+		RT_DEBUG_fireWarn(msg,null,ee) ;
+	}
+	
+	protected final void RT_DEBUG_fireWarn(String msg,String content,Throwable ee)
+	{
+		this.RT_pptWarn = new RTDebugPrompt(msg, content, ee) ;
+	}
+	
+	protected final void RT_DEBUG_fireInfo(String msg)
+	{
+		RT_DEBUG_fireInfo(msg,null) ;
+	}
+	
+	protected final void RT_DEBUG_fireInfo(String msg,String content)
+	{
+		this.RT_pptInf = new RTDebugPrompt(msg, content, null) ;
+	}
+	
+	public final RTDebugPrompt RT_DEBUG_getPrompt(String lvl)
+	{
+		switch(lvl)
+		{
+		case "info":
+		case "inf":
+			return this.RT_pptInf;
+		case "err":
+		case "error":
+			return this.RT_pptErr ;
+		case "warn":
+			return this.RT_pptWarn ;
+		default:
+			return null ;
+		}
+	}
 }

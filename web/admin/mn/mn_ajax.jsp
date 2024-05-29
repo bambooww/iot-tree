@@ -19,6 +19,7 @@
 String op = request.getParameter("op");
 String prjid = request.getParameter("prjid");
 String netid = request.getParameter("netid") ;
+String itemid = request.getParameter("itemid") ;
 String nodeid = request.getParameter("nodeid") ;
 String moduleid= request.getParameter("moduleid") ;
 String name = request.getParameter("name") ;
@@ -41,6 +42,7 @@ MNManager mnm= MNManager.getInstance(prj) ;
 MNNet net = null;
 MNNode node=  null ;
 MNModule module = null ;
+MNBase item = null ;
 if(Convert.isNotNullEmpty(netid))
 {
 	net = mnm.getNetById(netid) ;
@@ -49,16 +51,23 @@ if(Convert.isNotNullEmpty(netid))
 		out.print("no net found") ;
 		return ;
 	}
+	if(Convert.isNotNullEmpty(itemid))
+	{
+		item = net.getItemById(itemid);
+		if(item==null)
+		{
+			out.print("no item found with id="+itemid) ;
+			return ;
+		}
+	}
 	if(Convert.isNotNullEmpty(nodeid))
 	{
-		
 		node = net.getNodeById(nodeid) ;
 		if(node==null)
 		{
 			out.print("no node found with id="+nodeid) ;
 			return ;
 		}
-		
 	}
 	
 	if(Convert.isNotNullEmpty(moduleid))
@@ -147,28 +156,19 @@ case "module_add_up":
 	out.print("succ") ;
 	return ;
 case "detail_set":
-	if(!Convert.checkReqEmpty(request, out,"netid", "jstr"))
+	if(!Convert.checkReqEmpty(request, out,"netid","itemid", "jstr"))
 		return ;
-	if(Convert.isNotNullEmpty(nodeid))
-		net.setDetailJO(nodeid,in_jo,true,true) ;
-	else if(Convert.isNotNullEmpty(moduleid))
-		net.setDetailJO(nodeid,in_jo,false,true) ;
-		
+	net.setDetailJO(itemid,in_jo,true) ;
 	out.print("succ") ;
 	return ;
-case "module_detail_set":
-	if(!Convert.checkReqEmpty(request, out,"netid", "moduleid","jstr"))
-		return ;
-	net.setDetailJO(nodeid,in_jo,false,true) ;
-	out.print("succ") ;
-	return ;
+
 case "module_list_nodes":
 	if(!Convert.checkReqEmpty(request, out,"netid","moduleid"))
 		return ;
 	JSONArray jarr = new JSONArray() ;
 	for(MNNode tmpn:module.listSupportedNodes())
 	{
-		jarr.put(tmpn.toJO()) ;
+		jarr.put(tmpn.toListJO()) ;
 	}
 	jarr.write(out) ;
 	return ;
@@ -205,6 +205,80 @@ case "node_start_trigger":
 	else
 		out.print(failedr.toString()) ;
 	return;
+case "rt_update":
+	if(!Convert.checkReqEmpty(request, out,"netid"))//, "div_ids"))
+		return ;
+	//	System.out.println("rt_update ----"+Convert.toFullYMDHMS(new Date())) ;
+	List<String> divids = Convert.splitStrWith(request.getParameter("div_ids"), ",") ;
+	JSONObject tmpjo = net.RT_getNetUpdate(divids) ;
+	tmpjo.write(out) ;
+	return ;
+case "rt_item_runner_start_stop":
+	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","start_stop"))
+		return ;
+	String ss = request.getParameter("start_stop") ;
+	boolean bstart = false;
+	if("true".equals(ss))
+		bstart = true ;
+	else if("false".equals(ss))
+		bstart=false;
+	else
+	{
+		out.print("unknown start_stop") ;
+		return ;
+	}
+	if(!net.RT_startOrStopRunner(itemid, bstart, failedr))
+		out.print(failedr.toString()) ;
+	else
+		out.print("succ") ;
+	return ;
+case "rt_flow_start":
+case "rt_flow_stop":
+	if(!Convert.checkReqEmpty(request, out,"netid"))
+		return ;
+	boolean b_start = "rt_flow_start".equals(op) ;
+	if(b_start)
+	{
+		net.RT_startNetFlow(failedr) ;
+		if(failedr.length()<=0)
+			out.print("succ") ;
+		else
+			out.print(failedr.toString()) ;
+	}
+	else
+	{
+		net.RT_stopNetFlow();
+		out.print("succ") ;
+	}
+	return ;
+case "rt_flow_runner_start_stop":
+	return ;
+case "rt_debug_msg":
+	if(!Convert.checkReqEmpty(request, out,"netid", "nodeid","outidx"))
+		return ;
+	//System.out.println("rt_debug_msg ----"+Convert.toFullYMDHMS(new Date())) ;
+	int outidx = Convert.parseToInt32(request.getParameter("outidx"), -1) ;
+	MNMsg m = null;
+	if(outidx<0)
+		m = node.RT_getLastMsgIn() ;
+	else
+		m = node.RT_getLastMsgOut(outidx) ;
+	if(m==null)
+		out.print("{}") ;
+	else
+		m.toJO().write(out) ;
+	return ;
+case "rt_debug_prompt":
+	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl"))
+		return ;
+	//System.out.println("rt_debug_prompt ----"+Convert.toFullYMDHMS(new Date())) ;
+	String lvl = request.getParameter("lvl") ;
+	RTDebugPrompt ppt = item.RT_DEBUG_getPrompt(lvl) ;
+	if(ppt==null)
+		out.print("{}") ;
+	else
+		ppt.toDetailJO().write(out) ;
+	return ;	
 default:
 	out.print("unknown op") ;
 	return ;

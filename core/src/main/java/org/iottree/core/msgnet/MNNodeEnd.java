@@ -30,16 +30,24 @@ public abstract class MNNodeEnd extends MNNode
 	{
 		return 0;
 	}
-
+	
 	@Override
-	public JSONObject toJO()
+	public JSONObject toListJO()
 	{
-		JSONObject jo = super.toJO();
+		JSONObject jo = super.toListJO();
 		jo.put("out_onoff_sup", this.supportOutOnOff()) ;
 		if(supportOutOnOff())
 			jo.put("out_onoff", this.bOnOff) ;
-		return jo;
+		return jo ;
 	}
+
+//	@Override
+//	public JSONObject toJO()
+//	{
+//		JSONObject jo = super.toJO();
+//		
+//		return jo;
+//	}
 	
 	@Override
 	public boolean fromJO(JSONObject jo)

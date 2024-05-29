@@ -162,7 +162,7 @@ for(MNCat cat:MNManager.listRegisteredCats())
 <%
 	for(MNNode n:nodes)
 	{
-		JSONObject tmpjo = n.toJO() ;
+		JSONObject tmpjo = n.toListJO() ;
 		jarr_ns.put(tmpjo) ;
 		String sty = "" ;
 		String fulltp = n.getTPFull() ;
@@ -174,7 +174,7 @@ for(MNCat cat:MNManager.listRegisteredCats())
 	}
 	for(MNModule m:modules)
 	{
-		JSONObject tmpjo = m.toJO() ;
+		JSONObject tmpjo = m.toListJO() ;
 		jarr_ms.put(tmpjo) ;
 		String fulltp = m.getTPFull() ;
 %><div class="nitem"  style="height:60px;" id="m_<%=fulltp%>"  tp_tp="module"  _tp="<%=fulltp%>" draggable='true' ondragstart='drag(event)'  title="<w:g>module</w:g> <%=m.getTPTitle()%>">
@@ -304,10 +304,14 @@ draw_nodes() ;
 function drag(ev)
 {
 	var tar = $(ev.target);
+	let x = ev.offsetX ;
+	let y = ev.offsetY ;
+	let w = tar.width() ;
+	let h = tar.height() ;
 	let tp = tar.attr("_tp") ;
 	let tptp = tar.attr("tp_tp") ;
 	let moduleid = tar.attr("moduleid") ||"";
-	var r = {_val:{tp:tp,moduleid:moduleid},_tp:tptp};
+	var r = {_val:{tp:tp,moduleid:moduleid,x_ratio:x/w,y_ratio:y/h,x_offset:x,y_offset:y},_tp:tptp};
 	mn.util.setDragEventData(ev,r);
 }
 

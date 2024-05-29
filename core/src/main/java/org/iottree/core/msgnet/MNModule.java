@@ -81,6 +81,21 @@ public abstract class MNModule extends MNBase
 		return this.nodeIdSet ;
 	}
 	
+	public List<MNNode> getRelatedNodes()
+	{
+		if(this.nodeIdSet==null||this.nodeIdSet.size()<=0)
+			return null ;
+		ArrayList<MNNode> rets = new ArrayList<>(this.nodeIdSet.size()) ;
+		for(String nid:this.nodeIdSet)
+		{
+			MNNode n = this.belongTo.getNodeById(nid) ;
+			if(n==null)
+				continue ;
+			rets.add(n) ;
+		}
+		return rets ;
+	}
+	
 	@Override
 	public boolean fromJO(JSONObject jo)
 	{
@@ -95,5 +110,18 @@ public abstract class MNModule extends MNBase
 				this.nodeIdSet.add(jarr.getString(i)) ;
 		}
 		return true;
+	}
+	
+	protected void RT_renderDiv(StringBuilder divsb)
+	{
+		super.RT_renderDiv(divsb);
+		
+	}
+	
+	public JSONObject RT_toJO(boolean out_rt_div)
+	{
+		JSONObject jo = super.RT_toJO(out_rt_div) ;
+		
+		return jo ;
 	}
 }

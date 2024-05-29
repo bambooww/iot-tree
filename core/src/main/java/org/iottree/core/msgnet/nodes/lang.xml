@@ -11,4 +11,22 @@
 	
 	<dd_node id="1" name="no_intv_ms" name_cn="没有设置时间间隔" name_en="No interval param set" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="tag_reader" name_cn="标签数据读取" name_en="Tags Reader" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_writer" name_cn="标签数据写入" name_en="Tags Writer" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_filter" name_cn="标签过滤器" name_en="Tags Filter" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
+  <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />
+  <dd_node id="1" name="tuesday" name_cn="星期二" name_en="Send" />
+  <dd_node id="1" name="wednesday" name_cn="星期三" name_en="Wednesday" />
+  <dd_node id="1" name="thursday" name_cn="星期四" name_en="Thursday" />
+  <dd_node id="1" name="friday" name_cn="星期五" name_en="Friday" />
+  <dd_node id="1" name="saturday" name_cn="星期六" name_en="Saturday" />
+  
+  <dd_node id="1" name="suspend_out" name_cn="挂起，不在时间段" name_en="suspended,out of" />
+  <dd_node id="1" name="suspend_notin" name_cn="挂起，不在" name_en="suspended,no in" />
+  <dd_node id="1" name="to_day" name_cn=" 到 " name_en=" to " />
+  <dd_node id="1" name="to_next_day" name_cn=" 到下一天 " name_en=" to next day" />
+  
+  
 </dd_class>

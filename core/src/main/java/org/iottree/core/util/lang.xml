@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="sec_ago" name_cn="秒前" name_en=" seconds ago" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="min_ago" name_cn="分钟前" name_en=" minutes ago" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="hour_ago" name_cn="小时前" name_en=" hours ago" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="day_ago" name_cn="天前" name_en=" days ago" desc_cn="" desc_en=""/>
+	
+	
+</dd_class>

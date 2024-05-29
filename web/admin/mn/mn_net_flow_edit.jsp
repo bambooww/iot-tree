@@ -28,7 +28,7 @@ if(net==null)
 	return ;
 }
 String net_tt = net.getTitle() ;
-		
+
 %><!DOCTYPE html>
 <html>
 <head>
@@ -41,189 +41,21 @@ String net_tt = net.getTitle() ;
 </jsp:include>
 <script type="text/javascript" src="../js/tab.js" ></script>
 <link rel="stylesheet" href="../js/tab.css" />
+<link rel="stylesheet" href="./inc/mn.css" />
 <style>
-
-.oper
+.rt_blk
 {
-position: absolute;width:45px;height:45px;right:50px;background-color:#67e0e3;top:10px;z-index: 60000
-}
-
-.oper i
-{
-margin-top:5px;
-}
-
-.top_title
-{
-	position: absolute;
-	top:20px;
-	left:250px;
-	z-index: 100;
-	color: #6fcf21;
-	font-size: medium;
-}
-
-
-.left {
-	position: fixed;
-	float: left;
-	left: 0;
-	top: 0px;
-	bottom: 0;
-	z-index: 999;
-	width: 45px;
-	overflow-x: hidden;
-	background-color:#aaaaaa;
-	
-}
-
-.left i:hover{
-color: #fdd000;
-}
-
-.right {
-	position: fixed;
-	float: right;
-	right: 0;
-	top: 0px;
-	bottom: 0;
-	z-index: 999;
-	width: 45px;
-	overflow-x: hidden;
-	background-color:#aaaaaa;
-	
-}
-
-.mid {
-	position: absolute;
-	left: 0px;
-	right: 0px;
-	top: 0px;
-	bottom: 0;
-	z-index: 998;
-	width: auto;
-	margin:0px;
-	overflow: hidden;
-	box-sizing: border-box
-}
-
-.right_panel_win
-{
-position:absolute;z-index:1000;right:0px;
-top:0px;height:100%;
-border: 1;
- font: 15;
-  width: 245px;
-  background-color: #f2f2f2;
-
-}
-
-
-.top_menu_close
-{
-	cursor: pointer;
-}
-
-
-
-.toolbox
-{
-position:absolute;
-top:30px;
-right:350px;
-width:120px;
-z-index:1000;
-border:1px solid;
-background: #555555;
-}
-.toolbox i
-{
-	border: 2px solid #000000;
-	margin: 2px;
-	background: #808080;
-}
-
-.toolleft
-{
-position:absolute;
-top:30px;
-left:5px;
-width:100px;
-z-index:1000;
-color:green;
-border:0px solid;
-}
-.toolleft i
-{
-position:absolute;
-left:0px;
-	border: 2px solid #000000;
-	margin: 2px;
-	background: #808080;
-}
-
-.sub_win
-{
-position:absolute;
-bottom:10px;
-right:1px;
-width:550px;
-height0:200px;
-z-index:1000;
-border:1px solid;
-}
-
-.sub_win .title
-{
+	position:relative;
 	width:100%;
-	background-color: #808080;
+	min-height:20px;
+	background-color: #92ccdf;
+	margin-bottom: 5px;
 }
-
-.bb_item
+.rt_sub
 {
-	width:60px;
-	height:60px;
-	background-color: #808080;
+	position0:absolute;
+	left:10px;
 }
-
-.node_err
-{
-color:red;
-}
-
-.left_panel_win
-{
-position:absolute;display:none;z-index:1000;left:0px;
-background-color: #ffffff;
-top:0px;bottom:0px;
-}
-
-
-
-.left_panel_bar
-{
-height:30px;
-background-color: #f2f2f2;
-border:1px solid #cccccc;
-color:#555555;
-}
-
-
-.show_hid_icon
-{
-position:absolute;top:0px;width:30px;height:23px;z-index:1001;color:#1e1e1e;cursor:pointer;
-border:1px solid #cccccc;background-color: #f2f2f2;padding-top:5px;text-align: center;
-}
-.right_panel_win
-{
-position:absolute;z-index:1000;right:0px;
-top:0px;height:100%;
-border: 1;
- font: 15;
-  width: 345px;
-  background-color: #ffffff;
-}
-
 </style>
 </head>
 <body style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; overflow: hidden;user-select:none;" >
@@ -240,7 +72,7 @@ border: 1;
 			</div>
 			
 			<div style="right:0px;" class="show_hid_icon" title="show or hide right panel" id="btn_prop_showhidden"><i class="fa fa-bars fa-lg"></i></div>
-	<div id='edit_panel'  class="right_panel_win" >
+	<div id='edit_panel'  class="right_panel_win" style0="display:none">
 		<div id="tab_title" style="position: absolute;left:10px;top:3px;width:145px;font-size: 18px;border:0px solid;color:#555555;"></div>
 	<div class="right_tab" >
       <ul style="white-space: nowrap;"><span style="left:5px;top:-10px;position:relative;border:0px solid;display: inline-block;width:156px"></span>
@@ -258,7 +90,10 @@ border: 1;
 	<i id="def_work_prop_showhidden" class="fa fa-align-justify fa-2x"  onclick="tool_prop_show_hidden()"></i>
 	<i id="conn_add" class="fa fa-arrow-right fa-2x"  onclick="tool_add_conn()"></i>
 	 --%>
-	<i id="net_save_basic" class="fa fa-save fa-2x" onclick="net_save_basic()" title="保存布局"></i>
+	<i id="net_save_basic" class="fa fa-save fa-2x" onclick="net_save_basic()" title="Save"></i>
+	<i id="rt_update" class="fa fa-refresh fa-2x" onclick="rt_update()" title="Runtime Update"></i>
+	<i id="rt_flow_start" class="fa fa-play fa-2x" onclick="rt_flow_start_stop(true)" title="Start Flow"></i>
+	<i id="rt_flow_stop" class="fa fa-stop fa-2x" style="color:red;" onclick="rt_flow_start_stop(false)" title="Stop Flow"></i>
 </div>
 
 <div id="p_info" style="display:none"></div>
@@ -394,10 +229,10 @@ function init_iottpanel()
 			on_del_items(sis) ;
 		},
 		onDINodeOpen:(node)=>{
-			on_node_module_open(true,node);
+			on_item_open(node);
 		},
 		onDIModuleOpen:(node)=>{
-			on_node_module_open(false,node);
+			on_item_open(node);
 		},
 		onNodeStartTrigger:(node)=>{
 			//console.log("start node trigger",node) ;
@@ -471,18 +306,12 @@ function on_item_sel_chg(items)
 		$("#right_info_iframe").attr("src",u1);
 }
 
-function on_node_module_open(b_node_module,mn)
+function on_item_open(mn)
 {
-	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&nodeid=\${mn.id}`;
-	let tt = "<wbt:lang>node,param</wbt:lang> - "+mn.title;
-	let pm={op:"detail_set",prjid:prjid,netid:netid,nodeid:mn.id};
-	if(!b_node_module)
-	{
-		url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&moduleid=\${mn.id}`;
-		tt = "<wbt:lang>module,param</wbt:lang> - "+mn.title;
-		let pm={op:"detail_set",prjid:prjid,netid:netid,moduleid:mn.id};
-	}
-		
+	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${mn.id}`;
+	let tt = "<wbt:lang>param</wbt:lang> - "+mn.title;
+	let pm={op:"detail_set",prjid:prjid,netid:netid,itemid:mn.id};
+
 	dlg.open(url,{title:tt,w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
@@ -703,7 +532,7 @@ function is_debuging()
 	return debug_intv!=null;
 }
 
-var b_prop_show=true;
+var b_prop_show=false;
 $('#btn_prop_showhidden').click(function(){
 	if(b_prop_show)
 	{
@@ -741,6 +570,10 @@ function init_right()
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<div id="debug_cont">debug</div>`});
 	$(".right_tab").tab('selectTab', 'lb_tab_i');
 	
+	$("#edit_panel").css("display","none");
+	$("#btn_prop_showhidden");//.css("color","#1e1e1e");
+	
+	b_prop_show=false;
 }
 
 init_right();
@@ -762,6 +595,108 @@ $(window).resize(function(){
 });
 
 resize_zz();
+
+// rt
+
+function rt_flow_start_stop(b_start)
+{
+	let op = "rt_flow_start" ;
+	if(!b_start)
+		op = "rt_flow_stop" ;
+	send_ajax("./mn_ajax.jsp",{op:op,prjid:prjid,netid:netid},
+            (bsucc,ret)=>{
+            	if(!bsucc||ret!="succ")
+            	{
+            		dlg.msg(ret) ;
+            		return ;
+            	}
+            	dlg.msg("done") ;
+            }) ;
+}
+
+
+function rt_update()
+{
+	let ids = hmiView.listShowRTDivItemIds();
+	send_ajax("./mn_ajax.jsp",{op:"rt_update",prjid:prjid,netid:netid,"div_ids":ids.join(",")},
+            (bsucc,ret)=>{
+            	if(!bsucc||ret.indexOf("{")!=0)
+            	{
+            		//dlg.msg(ret) ;
+            		console.log(ret) ;
+            		return ;
+            	}
+            	let ob = null ;
+            	eval("ob="+ret) ;
+            	hmiModel.on_rt_data(ob) ;
+            }) ;
+}
+            
+setInterval(rt_update,300) ;
+            
+function rt_item_runner_start_stop(itemid,b_start)
+{
+	send_ajax("./mn_ajax.jsp",{op:"rt_item_runner_start_stop",prjid:prjid,netid:netid,itemid:itemid,start_stop:b_start},
+            (bsucc,ret)=>{
+            	if(!bsucc||ret!='succ')
+            	{
+            		dlg.msg(ret) ;
+            		return ;
+            	}
+            	dlg.msg("cmd done") ;
+            }) ;
+}
+
+function debug_in_out_msg(nodeid,outidx)
+{
+	let op = "rt_debug_msg";
+
+	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,nodeid:nodeid,outidx:outidx},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		let pm;
+		eval("pm="+ret) ;
+		//console.log(pm) ;
+		dlg.open("./mn_debug_msg.jsp",
+				{title:'<wbt:g>debug,data</wbt:g>',pm:pm},
+				['<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	}) ;
+}
+
+function debug_prompt_detail(itemid,lvl) //err warn info
+{
+	let op = "rt_debug_prompt";
+
+	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,itemid:itemid,lvl:lvl},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		let pm;
+		eval("pm="+ret) ;
+		//console.log(pm) ;
+		dlg.open("./mn_debug_prompt.jsp",
+				{title:'<wbt:g>debug,data</wbt:g>',pm:pm},
+				['<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	}) ;
+}
+
 </script>
 
 </html>

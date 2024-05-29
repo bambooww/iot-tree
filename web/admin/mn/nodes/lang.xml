@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+  <dd_node id="1" name="producer" name_cn="生产者" name_en="Producer" />
+  <dd_node id="1" name="consumer" name_cn="消费者" name_en="Consumer" />
+  
+  <dd_node id="1" name="tag_inc_sys" name_cn="包含系统标签" name_en="Include System Tags" />
+  
+  <dd_node id="1" name="en_filter" name_cn="启用过滤" name_en="Enable Filter" />
+  <dd_node id="1" name="rootp" name_cn="根路径" name_en="Root Path" />
+  <dd_node id="1" name="cont_n" name_cn="容器节点" name_en="Container Node" />
+  <dd_node id="1" name="cont_n_p" name_cn="容器节点属性" name_en="Container Node Prop" />
+  
+  <dd_node id="1" name="sec_proto" name_cn="安全协议" name_en="Security Protocal" />
+  <dd_node id="1" name="sasl_mech" name_cn="SASL机制" name_en="SASL Mechanism" />
+  <dd_node id="1" name="send" name_cn="发送" name_en="Send" />
+  
+  <dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
+  <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />
+  <dd_node id="1" name="tuesday" name_cn="星期二" name_en="Send" />
+  <dd_node id="1" name="wednesday" name_cn="星期三" name_en="Wednesday" />
+  <dd_node id="1" name="thursday" name_cn="星期四" name_en="Thursday" />
+  <dd_node id="1" name="friday" name_cn="星期五" name_en="Friday" />
+  <dd_node id="1" name="saturday" name_cn="星期六" name_en="Saturday" />
+  
+</dd_class>

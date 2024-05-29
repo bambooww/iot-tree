@@ -258,7 +258,7 @@ public class SubFilteredTree
 	{
 		return this.tagExtSet;
 	}
-
+	
 	public JSONObject toDefJO()
 	{
 		JSONObject jo = new JSONObject();

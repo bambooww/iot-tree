@@ -50,5 +50,4 @@ function get_pm_size()
 	return {w:700,h:450} ;
 }
 
-on_init_pm_ok() ;// must be call when ready
 </script>

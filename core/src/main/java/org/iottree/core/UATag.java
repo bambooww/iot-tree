@@ -1925,7 +1925,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		jo.put("valid", bvalid) ;
 		jo.put("up_dt", dt) ;
 		jo.put("chg_dt", dt_chg) ;
-		//ValTP vtp = getValTp();
+		ValTP vtp = getValTp();
+		if(vtp!=null)
+			jo.put("vt", vtp.getStr());
 		if (bvalid)
 		{
 			jo.put("v", val.getObjVal()) ;

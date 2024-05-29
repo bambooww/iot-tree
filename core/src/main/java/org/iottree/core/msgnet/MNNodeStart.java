@@ -29,17 +29,25 @@ public abstract class MNNodeStart extends MNNode
 	{
 		return bOnOff ;
 	}
-
+	
 	@Override
-	public JSONObject toJO()
+	public JSONObject toListJO()
 	{
-		JSONObject jo = super.toJO();
-		
+		JSONObject jo = super.toListJO();
 		jo.put("in_onoff_sup", this.supportInOnOff()) ;
 		if(supportInOnOff())
 			jo.put("in_onoff", this.bOnOff) ;
-		return jo;
+		return jo ;
 	}
+
+//	@Override
+//	public JSONObject toJO()
+//	{
+//		JSONObject jo = super.toJO();
+//		
+//		
+//		return jo;
+//	}
 	
 	@Override
 	public boolean fromJO(JSONObject jo)

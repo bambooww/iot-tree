@@ -109,6 +109,16 @@ public class MNNet
 		this.desc = desc ;
 	}
 	
+	public MNManager getBelongTo()
+	{
+		return this.belongTo ;
+	}
+	
+	public UAPrj getPrj()
+	{
+		return this.prj ;
+	}
+	
 	
 	public String getId()
 	{
@@ -232,11 +242,11 @@ public class MNNet
 				failedr.append("node create failed") ;
 				return null ;
 			}
-			//newn.setNodeTP(n.getNodeTP(),n.getNodeTPTitle());
 			return newn ;
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			failedr.append(e.getMessage()) ;
 			return null ;
 		}
@@ -556,13 +566,9 @@ public class MNNet
 		return n ;
 	}
 	
-	public MNBase setDetailJO(String node_id,JSONObject detail_jo,boolean node_or_module,boolean bsave) throws IOException
+	public MNBase setDetailJO(String itemid,JSONObject detail_jo,boolean bsave) throws IOException
 	{
-		MNBase n = null ;
-		if(node_or_module)
-			n = this.getNodeById(node_id);
-		else
-			n = this.getModuleById(node_id);
+		MNBase n = this.getItemById(itemid) ;
 		if(n==null)
 			return null ;
 		n.setDetailJO(detail_jo);
@@ -712,6 +718,34 @@ public class MNNet
 	
 	// - 
 	
+	public JSONObject RT_getNetUpdate(List<String> div_ids)
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("id", this.getId()) ;
+		JSONObject id2node = new JSONObject() ;
+		jo.put("id2node", id2node) ;
+		JSONObject id2module = new JSONObject() ;
+		jo.put("id2module", id2module) ;
+		JSONObject global = new JSONObject() ;
+		jo.put("global", global) ;
+		
+		for(MNNode n:this.id2node.values())
+		{
+			String nid = n.getId() ;
+			boolean outdiv = div_ids!=null && div_ids.contains(nid) ;
+			JSONObject tmpjo = n.RT_toJO(outdiv) ;
+			id2node.put(nid,tmpjo) ;
+		}
+		
+		for(MNModule n:this.id2module.values())
+		{
+			String nid = n.getId() ;
+			boolean outdiv = div_ids!=null && div_ids.contains(nid) ;
+			JSONObject tmpjo = n.RT_toJO(outdiv) ;
+			id2module.put(nid,tmpjo) ;
+		}
+		return jo ;
+	}
 
 	/**
 	 * call by outer to run net in project
@@ -743,4 +777,75 @@ public class MNNet
 		return nstart.RT_triggerByOnOff(failedr) ;
 	}
 	
+	
+	public boolean RT_startOrStopRunner(String itemid,boolean start_or_stop,StringBuilder failedr)
+	{
+		MNBase item = this.getItemById(itemid) ;
+		if(item==null)
+		{
+			failedr.append("no item found") ;
+			return false;
+		}
+		if(!(item instanceof IMNRunner))
+		{
+			failedr.append("not Runner item") ;
+			return false;
+		}
+		IMNRunner rr = (IMNRunner)item ;
+		if(start_or_stop)
+			return rr.RT_start(failedr) ;
+		else
+		{
+			rr.RT_stop();
+			return true ;
+		}
+	}
+	
+	public void RT_startNetFlow(StringBuilder failedr)
+	{
+		for(MNModule m:this.id2module.values())
+		{
+			if(!(m instanceof IMNRunner))
+				continue ;
+			
+			IMNRunner mnr = (IMNRunner)m ;
+			if(!mnr.RT_start(failedr))
+			{
+				failedr.append("\r\n") ;
+			}
+		}
+		
+		for(MNNode n:this.id2node.values())
+		{
+			if(!(n instanceof IMNRunner))
+				continue ;
+			
+			IMNRunner mnr = (IMNRunner)n ;
+			if(!mnr.RT_start(failedr))
+			{
+				failedr.append("\r\n") ;
+			}
+		}
+	}
+	
+	public void RT_stopNetFlow()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			if(!(n instanceof IMNRunner))
+				continue ;
+			
+			IMNRunner mnr = (IMNRunner)n ;
+			mnr.RT_stop();
+		}
+		
+		for(MNModule m:this.id2module.values())
+		{
+			if(!(m instanceof IMNRunner))
+				continue ;
+			
+			IMNRunner mnr = (IMNRunner)m ;
+			mnr.RT_stop();
+		}
+	}
 }

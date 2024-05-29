@@ -3,6 +3,7 @@ package org.iottree.core.msgnet;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -225,28 +226,18 @@ public abstract class MNNode extends MNBase
 	
 	
 	
-	
+	public JSONObject toListJO()
+	{
+		JSONObject jo = super.toListJO() ;
+		jo.put("in", this.supportInConn()) ;
+		jo.put("out_num", getOutNum()) ;
+		return jo;
+	}
 	
 	public JSONObject toJO()
 	{
 		JSONObject jo = super.toJO();//new JSONObject() ;
-//		jo.put("id", this.id) ;
-//		String tt = this.title ;
-//		if(Convert.isNullOrEmpty(tt))
-//			tt = this.getNodeTPTitle() ;
-//		jo.putOpt("title", tt) ;
-//		jo.putOpt("desc", desc);
-//		jo.put("_tp", getNodeTP()) ;
-////		jo.put("uid", this.getUID());
-//		jo.put("x", this.x) ;
-//		jo.put("y", this.y) ;
-		
-		jo.put("in", this.supportInConn()) ;
-		jo.put("out_num", getOutNum()) ;
-		
-//		jo.put("w", this.w) ;
-//		jo.put("h", this.h) ;
-		
+
 		jo.putOpt("_node_st",_nodeState) ;
 		if(_nodeErr!=null)
 		{
@@ -259,17 +250,6 @@ public abstract class MNNode extends MNBase
 			jo.putOpt("out_conns", jarr) ;
 		}
 
-//		JSONObject pmjo = this.getParamJO() ;
-//		jo.putOpt("pm_jo", pmjo) ;
-//		//jo.put("pm_need", this.needParam()) ;
-//		StringBuilder sb = new StringBuilder() ;
-//		boolean br = this.isParamReady(sb);
-//		jo.put("pm_ready", br) ;
-//		if(!br)
-//			jo.put("pm_err", sb.toString()) ;
-//		else
-//			jo.put("pm_err", "") ;
-		
 		return jo;
 	}
 	
@@ -296,35 +276,68 @@ public abstract class MNNode extends MNBase
 	
 	// runtime 
 	
+	private MNMsg lastMsgIn = null ;
+	
+	private HashMap<Integer,MNMsg> lastMsgOutMap = null ;
+	
+	public final MNMsg RT_getLastMsgIn()
+	{
+		return this.lastMsgIn ;
+	}
+	
+	private synchronized void RT_setLastMsgOut(int idx,MNMsg m)
+	{
+		if(lastMsgOutMap==null)
+			lastMsgOutMap = new HashMap<>() ;
+		lastMsgOutMap.put(idx, m) ;
+	}
+	
+	public final MNMsg RT_getLastMsgOut(int idx)
+	{
+		if(this.lastMsgOutMap==null)
+			return null ;
+		return this.lastMsgOutMap.get(idx) ;
+	}
 	
 	
 	protected abstract RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg) ;
 	
 	final private void RT_onMsgInWithTrans(MNConn in_conn,MNMsg msg)
 	{
-		RTOut out = RT_onMsgIn(in_conn,msg) ;
 		msg = in_conn.RT_transMsg(msg) ;
 		if(msg==null)
 			return ; // stopped by conn
 		
-		this.RT_sendMsgOut(out,msg);
+		this.lastMsgIn = msg ;  //record
+		
+		//StringBuilder failedr = new StringBuilder() ;
+		RTOut out = RT_onMsgIn(in_conn,msg) ;
+		if(out==null)
+			return ; //may be processed later,
+		
+		this.RT_sendMsgOut(out);
 	}
 
-	protected final void RT_sendMsgOut(RTOut out,MNMsg msg)
+	protected final void RT_sendMsgOut(RTOut out) //,MNMsg msg)
 	{
-		if(out==null||!out.hasOut)
+		if(out==null) //||!out.hasOut)
 			return ;
 	
 		int outn = this.getOutNum() ;
 		if(outn<=0)
 			return ;
-		MNConnOut co = getConnOut() ;
-		if(co==null)
-			return ;
 		
+		MNConnOut co = getConnOut() ;
+
 		for(int i = 0 ; i < outn ; i ++)
 		{
-			if(out.outIdxs!=null && !out.outIdxs.contains(i))
+			MNMsg msg = out.getOutMsg(i) ;
+			if(msg==null)
+				continue ;
+			
+			RT_setLastMsgOut(i,msg);
+			
+			if(co==null)
 				continue ;
 			
 			List<MNConn> conns = co.getConns(i) ;
@@ -338,5 +351,52 @@ public abstract class MNNode extends MNBase
 				ton.RT_onMsgInWithTrans(conn, msg);
 			}
 		}
+	}
+	
+	protected void RT_renderDiv(StringBuilder divsb)
+	{
+		super.RT_renderDiv(divsb);
+		MNMsg msg = null ;
+		if(this.supportInConn())
+		{
+			divsb.append("<div class=\"rt_blk\">Msg In ") ;
+			
+			if((msg=this.RT_getLastMsgIn())!=null)
+			{
+				
+				divsb.append(Convert.calcDateGapToNow(msg.getMsgDT())+ " <button onclick=\"debug_in_out_msg(\'"+this.getId()+"\',-1)\">View</button>") ;
+			}
+			divsb.append("</div>") ;
+		}
+		if(this.getOutNum()>0)
+		{
+			divsb.append("<div class='rt_blk'>Msg Out") ;
+			for(int i = 0 ; i < this.getOutNum() ; i ++)
+			{
+				if((msg=this.RT_getLastMsgOut(i))!=null)
+					divsb.append("<div class='rt_sub'>"+Convert.calcDateGapToNow(msg.getMsgDT())+"<button onclick=\"debug_in_out_msg(\'"+this.getId()+"\',"+i+")\">Out "+(i+1)+"</button></div>") ;
+			}
+			divsb.append("</div>") ;
+		}
+	}
+	
+	public JSONObject RT_toJO(boolean out_rt_div)
+	{
+		JSONObject jo = super.RT_toJO(out_rt_div) ;
+		jo.put("msg_in_id",lastMsgIn!=null?lastMsgIn.getMsgId():"") ;
+		
+		int outn = this.getOutNum() ;
+		if(outn>0)
+		{
+			ArrayList<String> msg_outs = new ArrayList<>(outn) ;
+			for(int i = 0 ; i < outn ; i ++)
+			{
+				MNMsg m = RT_getLastMsgOut(i);
+				msg_outs.add(m!=null?m.getMsgId():"") ;
+			}
+			jo.put("msg_out_ids", msg_outs) ;
+		}
+		
+		return jo ;
 	}
 }

@@ -93,6 +93,6 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		return RTOut.ALL ;
+		return RTOut.createOutAll(msg) ;
 	}
 }

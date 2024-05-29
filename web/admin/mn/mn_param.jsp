@@ -13,8 +13,7 @@
 			return ;
 	String prjid = request.getParameter("prjid");
 	String netid = request.getParameter("netid") ;
-	String nodeid = request.getParameter("nodeid") ;
-	String moduleid = request.getParameter("moduleid") ;
+	String itemid = request.getParameter("itemid") ;
 	
 	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 	if(prj==null)
@@ -29,25 +28,30 @@
 		out.print("no net found") ;
 		return ;
 	}
-	MNBase node = null;
-	if(Convert.isNotNullEmpty(nodeid))
-		node = net.getNodeById(nodeid) ;
-	else
-		node = net.getModuleById(moduleid) ;
-	if(node==null)
+	MNBase item =net.getItemById(itemid) ;
+	if(item==null)
 	{
-		out.print("no node found") ;
+		out.print("no item found") ;
 		return ;
 	}
 	
-	String tp = node.getTPFull() ;
-	String title = node.getTitle() ;
+	String tp = item.getTPFull() ;
+	String title = item.getTitle() ;
 
-	String pm_url = node.getCat().getParamUrl(node);// "./nodes/"+tp+"_pm.jsp" ;
+	String pm_url = item.getCat().getParamUrl(item);// "./nodes/"+tp+"_pm.jsp" ;
 	if(pm_url==null)
 		pm_url="" ;
+	if(Convert.isNotNullEmpty(pm_url))
+	{
+		int k = pm_url.lastIndexOf('?') ;
+		if(k<=0)
+			pm_url+="?prjid="+prjid ;
+		else
+			pm_url+= "&prjid="+prjid ;
+		
+	}	
 	//System.out.println(pm_url);
-	JSONObject jo = node.getParamJO() ;
+	JSONObject jo = item.getParamJO() ;
 	String jstr = "{}" ;
 	if(jo!=null)
 		jstr = jo.toString() ;
@@ -70,8 +74,14 @@ function init_pm()
 	if(!pm_url)
 		return ;
 	
-	send_ajax(pm_url,{},(bsucc,ret)=>{
+	send_ajax(pm_url,{pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
 		$("#pm_cont").html(ret) ;
+		
+		on_init_pm_ok() ;
+		
+		if(typeof(on_after_pm_show)=="function")
+			on_after_pm_show(form);
+		
 	}) ;
 
 }
@@ -126,7 +136,8 @@ function do_submit(cb)
 		cb(false,pmjo) ;
 		return ;
 	}
-	cb(true,{title:tt,pm_jo:pmjo});
+	let rr = {title:tt,pm_jo:pmjo};
+	cb(true,rr);
 }
 </script>
 <style>

@@ -12,5 +12,7 @@
 	<dd_node id="1" name="no_intv_ms" name_cn="没有设置时间间隔" name_en="No interval param set" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="runner" name_cn="运行" name_en="Runner" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="content" name_cn="内容" name_en="Content" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="exception" name_cn="异常" name_en="Exception" desc_cn="" desc_en=""/>
 	
 </dd_class>

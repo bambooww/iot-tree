@@ -87,7 +87,7 @@ public class NE_Debug extends MNNodeEnd implements ILang
 	protected final RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg)
 	{
 		if(!this.getOutOnOff())
-			return RTOut.NONE;
+			return null;//
 		JSONObject jo = msg.toJO() ;
 		if(bOutConsole)
 		{
@@ -98,6 +98,6 @@ public class NE_Debug extends MNNodeEnd implements ILang
 		{//TODO send to client win
 			
 		}
-		return RTOut.NONE;
+		return null;//RTOut.NONE;
 	}
 }

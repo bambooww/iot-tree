@@ -81,7 +81,8 @@ public class ManualTrigger  extends MNNodeStart implements IMNOnOff
 		}
 		
 		MNMsg msg = new MNMsg() ;
-		RT_sendMsgOut(RTOut.ALL,msg) ;
+		
+		RT_sendMsgOut(RTOut.createOutAll(msg)) ;
 		return true;
 	}
 

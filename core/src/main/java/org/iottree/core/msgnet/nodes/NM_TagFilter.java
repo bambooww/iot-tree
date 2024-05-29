@@ -1,5 +1,6 @@
 package org.iottree.core.msgnet.nodes;
 
+import org.iottree.core.filter.SubFilteredTree;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
@@ -9,13 +10,14 @@ import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
 /**
- * 选择特定标签，然后配置特定名称进行对应。生成简单的JSON数据
+ * 在一个路径下，根据一定条件进行标签内容的过滤，形成一颗子树
  * 
  * @author jason.zhu
- *
  */
-public class NM_TagReader extends MNNodeMid implements ILang
+public class NM_TagFilter extends MNNodeMid implements ILang
 {
+	
+	
 	@Override
 	public String getColor()
 	{
@@ -49,13 +51,24 @@ public class NM_TagReader extends MNNodeMid implements ILang
 	@Override
 	public String getTP()
 	{
-		return "tag_reader";
+		return "tag_filter";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("tag_reader");
+		return g("tag_filter");
+	}
+	
+	private SubFilteredTree sft = null;
+	
+	private  SubFilteredTree getFilterTree()
+	{
+		if(sft!=null)
+			return sft ;
+		
+		sft = new SubFilteredTree(this.getBelongTo().getPrj());
+		return sft ;
 	}
 
 	@Override
@@ -67,13 +80,13 @@ public class NM_TagReader extends MNNodeMid implements ILang
 	@Override
 	public JSONObject getParamJO()
 	{
-		return null;
+		return getFilterTree().toDefJO();
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo, long up_dt)
 	{
-		
+		getFilterTree().fromDefJO(jo) ;
 	}
 	
 	// --------------
@@ -81,6 +94,9 @@ public class NM_TagReader extends MNNodeMid implements ILang
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		return RTOut.createOutAll(msg) ;
+		JSONObject jo = getFilterTree().RT_getFilteredJO() ;
+		//System.out.println(jo.toString(2)) ;
+		MNMsg outm = new MNMsg().asPayload(jo) ;
+		return RTOut.createOutAll(outm) ;
 	}
 }
