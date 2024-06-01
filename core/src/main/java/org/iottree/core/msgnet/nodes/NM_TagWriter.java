@@ -138,14 +138,14 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 		Object ob = msg.getPayload() ;
 		if(ob==null)
 		{
-			this.RT_DEBUG_fireWarn("msg payload is null");
+			this.RT_DEBUG_WARN.fire("on_msg_in","msg payload is null");
 			return null ;
 		}
 
 		JSONObject jo = msg.getPayloadJO(null) ;
 		if(jo==null)
 		{
-			this.RT_DEBUG_fireWarn("msg payload is not JSONObject");
+			this.RT_DEBUG_WARN.fire("on_msg_in","msg payload is not JSONObject");
 			return null ;
 		}
 		UATag wtag = RT_onInWriteTag(jo) ;
@@ -166,32 +166,32 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 			String path = recvjo.optString("tag") ;
 			if(Convert.isNullOrEmpty(path))
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: write_tag jo has not tag prop",recvjo.toString());
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has not tag prop",recvjo.toString());
 				return null;
 			}
 			Object objv = recvjo.opt("value") ;
 			if(objv==null)
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: write_tag jo has not value prop",recvjo.toString());
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has not value prop",recvjo.toString());
 				return null;
 			}
 			long dt = recvjo.optLong("dt",-1) ;
 			long timeout = recvjo.optLong("timeout",-1) ;
 			if(dt<=0 || timeout<=0)
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: write_tag jo has no dt or timeout value prop",recvjo.toString());
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has no dt or timeout value prop",recvjo.toString());
 				return null;
 			}
 			if(System.currentTimeMillis()>dt+timeout)
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: write_tag is timeout and discard",recvjo.toString());
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag is timeout and discard",recvjo.toString());
 				return null;
 			}
 			
 			UATag tag = this.getBelongTo().getPrj().getTagByPath(path) ;
 			if(tag==null)
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: not tag with path="+path);
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: not tag with path="+path);
 				return null;
 			}
 			UATag write_tag = null ;
@@ -205,7 +205,7 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 			}
 			if(write_tag==null)
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn: tag is not set to be write path="+path);
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: tag is not set to be write path="+path);
 				return null;
 			}
 			
@@ -213,13 +213,13 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 			log.warn("RT_onInWriteTag RT_writeVal path="+path+" val="+objv);
 			if(!write_tag.RT_writeVal(objv, failedr))
 			{
-				this.RT_DEBUG_fireErr("RT_onInWriteTag warn:"+failedr);
+				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn:"+failedr);
 				return null;
 			}
 			return write_tag;
 		}
 		
-		this.RT_DEBUG_fireErr("RT_onInWriteTag warn: unknown recved JSON",recvjo.toString());
+		this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: unknown recved JSON",recvjo.toString());
 		return null ;
 	}
 }

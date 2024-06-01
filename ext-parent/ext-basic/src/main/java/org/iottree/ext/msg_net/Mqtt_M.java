@@ -49,7 +49,6 @@ public class Mqtt_M extends MNModule
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

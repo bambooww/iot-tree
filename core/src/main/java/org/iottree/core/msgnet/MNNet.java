@@ -14,7 +14,9 @@ import java.util.Set;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
@@ -26,7 +28,7 @@ import org.json.JSONObject;
  * @author zzj
  *
  */
-public class MNNet
+public class MNNet extends MNCxtPk implements ILang,IMNRunner
 {
 	static ILogger log = LoggerManager.getLogger(MNNet.class) ;
 	
@@ -41,38 +43,18 @@ public class MNNet
 	
 	String desc = null ;
 	
+	float x = 0 ;
+	float y = 0 ;
+	boolean bShowRT = false;
 	
 	long updateDT = System.currentTimeMillis() ;
 	
 	// String tarId = null ;
-	
+	boolean bEnable = true ;
 	
 	LinkedHashMap<String,MNNode> id2node = new LinkedHashMap<>() ;
 	
 	LinkedHashMap<String,MNModule> id2module = new LinkedHashMap<>() ;
-	
-//	static MNNet loadFromFile(String id,File f) throws Exception
-//	{
-//		if(!f.exists())
-//			return null ;
-//		
-//		String txt = Convert.readFileTxt(f, "UTF-8") ;
-//		JSONObject jo = new JSONObject(txt) ;
-//		MNNet net = new MNNet(name) ;
-//		net.updateDT = f.lastModified() ;
-//		if(!net.fromJO(jo))
-//			throw new Exception("parse json error") ;
-//		return net ;
-//	}
-	
-	
-	
-//	public static String calNameByDirName(String dir_name)
-//	{
-//		if(!dir_name.startsWith(NET_DIR_PREFIX))
-//			return null ;
-//		return dir_name.substring(NET_DIR_PREFIX.length()) ;
-//	}
 	
 	MNManager belongTo = null ;
 	UAPrj prj = null ;
@@ -119,6 +101,10 @@ public class MNNet
 		return this.prj ;
 	}
 	
+	public boolean isEnable()
+	{
+		return this.bEnable ;
+	}
 	
 	public String getId()
 	{
@@ -577,6 +563,25 @@ public class MNNet
 		return n ;
 	}
 	
+	public MNCxtPk setCxtDefJO(String itemid,JSONObject cxtdef_jo,boolean bsave) throws IOException
+	{
+		MNCxtPk def = null ;
+		if(Convert.isNotNullEmpty(itemid))
+		{
+			def = this.getItemById(itemid) ;
+			if(def==null)
+				return null ;
+		}
+		else
+		{
+			def = this ;
+		}
+		def.CXT_setDefJO(cxtdef_jo);
+		if(bsave)
+			this.save();
+		return def ;
+	}
+	
 	/**
 	 * 根据前端返回的基本（布局）信息，对自身进行更新并保存
 	 * @param jo
@@ -584,6 +589,8 @@ public class MNNet
 	 */
 	public boolean updateBasicByJO(JSONObject jo,StringBuilder failedr) throws Exception
 	{
+		this.fromJOBasic(jo, failedr) ;
+		
 		JSONArray jarr = jo.optJSONArray("nodes") ;
 		if(jarr!=null)
 		{
@@ -629,6 +636,17 @@ public class MNNet
 	public boolean renderOut(Writer out) throws IOException
 	{
 		JSONObject jo = this.toJO() ;
+		
+		// fit for UI
+		jo.putOpt("_tp", "__net") ;
+		jo.putOpt("tpt", "Flow") ;
+		jo.putOpt("color", "#FFD700") ;
+		jo.putOpt("icon", "\\uf126-90") ;
+		jo.putOpt("show_rt", this.bShowRT) ;
+		jo.putOpt("runner",true) ;
+		jo.putOpt("pm_ready",true) ;
+		jo.putOpt("pm_err","") ;
+				
 		jo.write(out) ;
 		return true ;
 	}
@@ -639,17 +657,23 @@ public class MNNet
 		jo.putOpt("name", this.name) ;
 		jo.putOpt("id", this.getId()) ;
 		jo.putOpt("title", this.title) ;
+		jo.putOpt("x", this.x) ;
+		jo.putOpt("y", this.y) ;
+		jo.put("show_rt", this.bShowRT) ;
+		jo.putOpt("enable",this.bEnable) ;
+
 		return jo ;
 	}
 	
 	public JSONObject toJO()
 	{
-		JSONObject jo = new JSONObject() ;
-		jo.putOpt("name", this.name) ;
-		jo.putOpt("id", this.getId()) ;
-		//jo.putOpt("tar_id", this.tarId) ;
-		jo.putOpt("title", this.title) ;
+		JSONObject jo = toListJO();
+		//JSONObject jo = toListJO();
 		jo.putOpt("desc", this.desc) ;
+		
+		JSONObject cxtdefjo = this.CXT_getDefJO();
+		jo.putOpt("cxt_def", cxtdefjo) ;
+		
 		//jo.put("up_dt", updateDT.getTime()) ;
 		JSONArray jarr = new JSONArray() ;
 		for(MNNode n:id2node.values())
@@ -666,16 +690,34 @@ public class MNNet
 		return jo ;
 	}
 	
+
+	protected boolean fromJOBasic(JSONObject jo,StringBuilder failedr)
+	{
+		this.x = jo.optFloat("x", this.x) ;
+		this.y = jo.optFloat("y", this.y) ;
+		this.bShowRT = jo.optBoolean("show_rt",true) ;
+		return true ;
+	}
+	
+	
 	public boolean fromJO(JSONObject jo)
 	{
+		//super.fromJO(jo) ;
 		this.id = jo.getString("id") ;
 		this.name = jo.getString("name") ;
-		//this.tarId = jo.optString("tar_id") ;
 		this.title = jo.optString("title",this.title) ;
 		this.desc= jo.optString("desc",this.desc) ;
-		//long updt = jo.optLong("up_dt",System.currentTimeMillis()) ;
-		//updateDT = new Date(updt) ;
+		this.x = jo.optFloat("x", 0) ;
+		this.y = jo.optFloat("y", 0) ;
+		this.bEnable = jo.optBoolean("enable",true) ;
+		this.bShowRT = jo.optBoolean("show_rt",true) ;
 		
+		JSONObject cxt_def = jo.optJSONObject("cxt_def") ;
+		if(cxt_def!=null)
+		{
+			this.CXT_setDefJO(cxt_def) ;
+		}
+
 		JSONArray jarr = jo.optJSONArray("nodes") ;
 		if(jarr!=null)
 		{
@@ -720,8 +762,10 @@ public class MNNet
 	
 	public JSONObject RT_getNetUpdate(List<String> div_ids)
 	{
-		JSONObject jo = new JSONObject() ;
+		JSONObject jo = this.RT_toJO(true) ;//new JSONObject() ;
 		jo.put("id", this.getId()) ;
+		
+		
 		JSONObject id2node = new JSONObject() ;
 		jo.put("id2node", id2node) ;
 		JSONObject id2module = new JSONObject() ;
@@ -772,6 +816,13 @@ public class MNNet
 			failedr.append("no OnOff node") ;
 			return false;
 		}
+		
+		if(!this.bEnable)
+		{
+			Lan lan = Lan.getLangInPk(MNNet.class) ;
+			failedr.append(lan.g("not_enabled")) ;
+			return false;
+		}
 		IMNOnOff nstart = (IMNOnOff)n;
 		//return RT_triggerNodeStart(nstart,null,failedr) ;
 		return nstart.RT_triggerByOnOff(failedr) ;
@@ -793,7 +844,7 @@ public class MNNet
 		}
 		IMNRunner rr = (IMNRunner)item ;
 		if(start_or_stop)
-			return rr.RT_start(failedr) ;
+			return rr.RT_start_main(failedr) ;
 		else
 		{
 			rr.RT_stop();
@@ -803,13 +854,24 @@ public class MNNet
 	
 	public void RT_startNetFlow(StringBuilder failedr)
 	{
+		if(!this.bEnable)
+		{
+			Lan lan = Lan.getLangInPk(this.getClass()) ;
+			failedr.append(lan.g("not_enabled")) ;
+			return ;
+		}
+		
 		for(MNModule m:this.id2module.values())
 		{
+			
 			if(!(m instanceof IMNRunner))
 				continue ;
 			
+//			if(!m.bEnable)
+//				continue ;
+			
 			IMNRunner mnr = (IMNRunner)m ;
-			if(!mnr.RT_start(failedr))
+			if(!mnr.RT_start_main(failedr))
 			{
 				failedr.append("\r\n") ;
 			}
@@ -820,12 +882,17 @@ public class MNNet
 			if(!(n instanceof IMNRunner))
 				continue ;
 			
+//			if(!n.bEnable)
+//				continue ;
+			
 			IMNRunner mnr = (IMNRunner)n ;
-			if(!mnr.RT_start(failedr))
+			if(!mnr.RT_start_main(failedr))
 			{
 				failedr.append("\r\n") ;
 			}
 		}
+		
+		RT_running = true ;
 	}
 	
 	public void RT_stopNetFlow()
@@ -847,5 +914,160 @@ public class MNNet
 			IMNRunner mnr = (IMNRunner)m ;
 			mnr.RT_stop();
 		}
+		
+		RT_running = false ;
+	}
+
+	JSONObject RT_CXT_toSaveJO()
+	{
+		JSONObject jo = this.RT_CXT_extractValsForSave() ;
+		JSONObject jnodes = new JSONObject() ;
+		jo.put("__cxt_items", jnodes) ;
+		
+		for(MNNode n:this.id2node.values())
+		{
+			JSONObject tmpjo = n.RT_CXT_extractValsForSave() ;
+			jnodes.put(n.getId(),tmpjo) ;
+		}
+		
+		for(MNModule n:this.id2module.values())
+		{
+			JSONObject tmpjo = n.RT_CXT_extractValsForSave() ;
+			jnodes.put(n.getId(),tmpjo) ;
+		}
+		return jo ;
+	}
+	
+	
+	void RT_CXT_fromSavedJO(JSONObject jo)
+	{
+		this.RT_CXT_injectSavedVals(jo);
+		JSONObject jnodes = jo.optJSONObject("__cxt_items");
+		if(jnodes!=null)
+		{
+			for(String id:jnodes.keySet())
+			{
+				MNBase item = this.getItemById(id) ;
+				if(item==null)
+					continue;
+				JSONObject tmpjo=jnodes.getJSONObject(id);
+				item.RT_CXT_injectSavedVals(tmpjo);
+			}
+		}
+	}
+	
+	public boolean RT_CXT_isSelfOrSubDirty()
+	{
+		if(this.RT_CXT_isDirty())
+			return true;
+		
+		for(MNNode n:this.id2node.values())
+		{
+			if(n.RT_CXT_isDirty())
+				return true ;
+		}
+		
+		for(MNModule n:this.id2module.values())
+		{
+			if(n.RT_CXT_isDirty())
+				return true ;
+		}
+		
+		return false;
+	}
+	
+	void RT_CXT_clearSelfSubDirty()
+	{
+		this.RT_CXT_clearDirty();
+		for(MNNode n:this.id2node.values())
+		{
+			n.RT_CXT_clearDirty();
+		}
+		for(MNModule n:this.id2module.values())
+		{
+			n.RT_CXT_clearDirty();
+		}
+	}
+	
+	private boolean RT_running = false;
+
+	@Override
+	public boolean RT_start(StringBuilder failedr)
+	{
+		RT_startNetFlow(failedr) ;
+		
+		return true;
+	}
+
+	@Override
+	public void RT_stop()
+	{
+		this.RT_stopNetFlow();
+		
+	}
+
+	@Override
+	public boolean RT_isRunning()
+	{
+		return RT_running ;
+	}
+
+	@Override
+	public boolean RT_isSuspendedInRun(StringBuilder reson)
+	{
+		return false;
+	}
+	
+	public JSONObject RT_toJO(boolean out_rt_div)
+	{
+		JSONObject jo = new JSONObject() ;
+		
+		{
+			IMNRunner rnr = (IMNRunner)this ;
+			jo.put("runner", true) ;
+			jo.put("b_running",rnr.RT_isRunning()) ;
+			StringBuilder rsb = new StringBuilder() ;
+			boolean bsusp = rnr.RT_isSuspendedInRun(rsb) ;
+			jo.put("suspended", bsusp) ;
+			if(bsusp)
+				jo.put("suspend_reson", rsb.toString()) ;
+		}
+		if(out_rt_div)
+		{
+			StringBuilder divsb = new StringBuilder() ;
+			RT_renderDiv(divsb);
+			jo.put("div", divsb.toString()) ;
+		}
+		
+		//jo.put("has_warn", this.RT_DEBUG_WARN.hasPrompts()) ;
+		//jo.put("has_err", this.RT_DEBUG_ERR.hasPrompts()) ;
+		return jo ;
+	}
+
+	protected void RT_renderDiv(StringBuilder divsb)
+	{
+		//if(isRunner())
+		{
+			IMNRunner rnr = (IMNRunner)this ;
+			if(rnr.RT_isRunning())
+			{
+				StringBuilder ssb = new StringBuilder() ;
+				if(rnr.RT_isSuspendedInRun(ssb))
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+				else
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Running</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+			}
+			else
+				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
+		}
+//		
+//		RT_DEBUG_ERR.renderDiv(divsb);
+//		
+//		RT_DEBUG_WARN.renderDiv(divsb);
+//		
+//		RT_DEBUG_INF.renderDiv(divsb);
+
+		CXT_renderVarsDiv(divsb) ;
+		
 	}
 }

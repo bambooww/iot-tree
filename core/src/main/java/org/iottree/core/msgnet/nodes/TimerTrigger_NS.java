@@ -296,9 +296,9 @@ public class TimerTrigger_NS extends MNNodeStart implements IMNRunner, IMNOnOff
 					sleep(this.intervalMS);
 					continue ;
 				}
-				
-				pausedBT = null ;
 			}
+			
+			pausedBT = null ;
 			
 			synchronized (this)
 			{// in here cannot be interrupted
@@ -313,7 +313,7 @@ public class TimerTrigger_NS extends MNNodeStart implements IMNRunner, IMNOnOff
 				catch ( Exception ee)
 				{
 					ee.printStackTrace();
-					this.RT_DEBUG_fireErr("TimerTrigger sendMsgOut err:" + ee.getMessage(), ee);
+					this.RT_DEBUG_ERR.fire("send_out","TimerTrigger sendMsgOut err:" + ee.getMessage(), ee);
 				}
 				finally
 				{

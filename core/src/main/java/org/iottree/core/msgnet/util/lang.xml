@@ -6,6 +6,9 @@
 	<dd_node id="1" name="reptp_intv" name_cn="定时间隔" name_en="Interval" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="reptp_intv_bt" name_cn="在时间段之内定时间隔" name_en="Interval between times" desc_cn="" desc_en=""/>
 	
-	
+	<dd_node id="1" name="act_set" name_cn="设置值" name_en="Set" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="act_chg" name_cn="替换值" name_en="Change" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="act_del" name_cn="删除" name_en="Delete" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="act_move" name_cn="转移" name_en="Move" desc_cn="" desc_en=""/>
 	
 </dd_class>

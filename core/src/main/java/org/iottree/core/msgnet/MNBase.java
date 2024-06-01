@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.iottree.core.UAServer;
 import org.iottree.core.util.Convert;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public abstract class MNBase implements ILang
+public abstract class MNBase extends MNCxtPk implements ILang
 {
 	String id = IdCreator.newSeqId() ;
 	
@@ -175,6 +176,7 @@ public abstract class MNBase implements ILang
 	{
 		JSONObject pm_jo = jo.getJSONObject("pm_jo");
 		setParamJO(pm_jo);
+		this.bEnable = jo.optBoolean("enable",true) ;
 		this.title = jo.optString("title","") ;
 		this.desc = jo.optString("desc","") ;
 		//other may be icon color etc
@@ -211,7 +213,11 @@ public abstract class MNBase implements ILang
 
 	public JSONObject toJO()
 	{
+		
 		JSONObject jo = this.toListJO() ;
+		
+		JSONObject cxtdefjo = this.CXT_getDefJO();
+		jo.putOpt("cxt_def", cxtdefjo) ;
 		
 		JSONObject pmjo = this.getParamJO() ;
 		jo.putOpt("pm_jo", pmjo) ;
@@ -243,6 +249,13 @@ public abstract class MNBase implements ILang
 			long updt = this.belongTo.updateDT ;
 			this.setParamJO(pmjo,updt);
 		}
+		
+		JSONObject cxt_def = jo.optJSONObject("cxt_def") ;
+		if(cxt_def!=null)
+		{
+			this.CXT_setDefJO(cxt_def) ;
+		}
+		
 		return true;
 	}
 	
@@ -260,19 +273,23 @@ public abstract class MNBase implements ILang
 	
 	// -- RT
 	
-	RTDebugPrompt RT_pptInf = null ;
-	RTDebugPrompt RT_pptWarn = null ;
-	RTDebugPrompt RT_pptErr = null ;
+	protected RTDebug RT_DEBUG_INF = new RTDebug(this,"inf","rgba(0,0,255,0.3)") ;
+	protected RTDebug RT_DEBUG_WARN = new RTDebug(this,"warn","rgba(255,255,0,0.3)") ;
+	protected RTDebug RT_DEBUG_ERR = new RTDebug(this,"err","rgba(255,0,0,0.3)") ;
 	
-	public final boolean RT_hasPromptWarn()
-	{
-		return RT_pptWarn!=null ;
-	}
-	
-	public final boolean RT_hasPromptErr()
-	{
-		return RT_pptErr!=null ;
-	}
+//	HashMap<String,RTDebugPrompt> RT_tp2pptInf = new HashMap<>() ;
+//	HashMap<String,RTDebugPrompt> RT_tp2pptWarn = new HashMap<>() ;
+//	HashMap<String,RTDebugPrompt> RT_tp2pptErr = new HashMap<>() ;
+//	
+//	public final boolean RT_hasPromptWarn()
+//	{
+//		return RT_tp2pptWarn.size()>0 ;
+//	}
+//	
+//	public final boolean RT_hasPromptErr()
+//	{
+//		return RT_tp2pptErr.size()>0 ;
+//	}
 	
 	protected void RT_renderDiv(StringBuilder divsb)
 	{
@@ -283,40 +300,24 @@ public abstract class MNBase implements ILang
 			{
 				StringBuilder ssb = new StringBuilder() ;
 				if(rnr.RT_isSuspendedInRun(ssb))
-					divsb.append("<div class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
 				else
-					divsb.append("<div class=\"rt_blk\"><span style=\"color:green\">Running</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Running</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
 			}
 			else
-				divsb.append("<div  class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
+				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
 		}
 		
-		if(RT_pptErr!=null)
-		{
-			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(255,0,0,0.3)'>[Error] "+RT_pptErr.getDTGapToNow()+" "+RT_pptErr.getMsg()) ;
-			if(RT_pptErr.hasDetail())
-				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','err')\">Detail</button>") ;
-			divsb.append("</div>") ;
-		}
+		RT_DEBUG_ERR.renderDiv(divsb);
 		
-		if(RT_pptWarn!=null)
-		{
-			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(255,255,0,0.3)'>[Warn] "+RT_pptWarn.getDTGapToNow()+" "+RT_pptWarn.getMsg()) ;
-			if(RT_pptWarn.hasDetail())
-				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','warn')\">Detail</button>") ;
-			divsb.append("</div>") ;
-		}
+		RT_DEBUG_WARN.renderDiv(divsb);
 		
-		if(RT_pptInf!=null)
-		{
-			divsb.append("<div  class=\"rt_blk\" style='background-color:rgba(0,0,255,0.3)'>[Info] "+RT_pptInf.getDTGapToNow()+" "+RT_pptInf.getMsg()) ;
-			if(RT_pptInf.hasDetail())
-				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.getId()+"\','info')\">Detail</button>") ;
-			divsb.append("</div>") ;
-		}
+		RT_DEBUG_INF.renderDiv(divsb);
 
-		divsb.append("<div class=\"rt_blk\">Vars</div>") ;
+		CXT_renderVarsDiv(divsb) ;
+		
 	}
+
 	
 	public JSONObject RT_toJO(boolean out_rt_div)
 	{
@@ -339,81 +340,62 @@ public abstract class MNBase implements ILang
 			jo.put("div", divsb.toString()) ;
 		}
 		
-		jo.put("has_warn", this.RT_hasPromptWarn()) ;
-		jo.put("has_err", this.RT_hasPromptErr()) ;
+		jo.put("has_warn", this.RT_DEBUG_WARN.hasPrompts()) ;
+		jo.put("has_err", this.RT_DEBUG_ERR.hasPrompts()) ;
 		return jo ;
 	}
 
-	protected final void RT_DEBUG_fireErr(String msg)
-	{
-		RT_DEBUG_fireErr(msg,null,null) ;
-	}
 	
-	protected final void RT_DEBUG_fireErr(String msg,String detail)
-	{
-		RT_DEBUG_fireErr(msg,detail,null) ;
-	}
 	
-	protected final void RT_DEBUG_fireErr(String msg,Throwable ee)
-	{
-		RT_DEBUG_fireErr(msg,null,ee) ;
-	}
+//	protected final void RT_DEBUG_fireWarn(String tp,String msg)
+//	{
+//		RT_DEBUG_fireWarn(tp,msg,null,null) ;
+//	}
+//	
+//	protected final void RT_DEBUG_fireWarn(String tp,String msg,String detail)
+//	{
+//		RT_DEBUG_fireWarn(tp,msg,detail,null) ;
+//	}
+//	
+//	protected final void RT_DEBUG_fireWarn(String tp,String msg,Throwable ee)
+//	{
+//		RT_DEBUG_fireWarn(tp,msg,null,ee) ;
+//	}
+//	
+//	protected final void RT_DEBUG_fireWarn(String tp,String msg,String content,Throwable ee)
+//	{
+//		this.RT_tp2pptWarn.put(tp,new RTDebugPrompt(msg, content, ee)) ;
+//	}
+//	
+//	protected final void RT_DEBUG_clearWarn(String tp)
+//	{
+//		this.RT_tp2pptWarn.remove(tp) ;
+//	}
+//	
+//	protected final void RT_DEBUG_fireInfo(String msg)
+//	{
+//		RT_DEBUG_fireInfo(msg,null) ;
+//	}
+//	
+//	protected final void RT_DEBUG_fireInfo(String msg,String content)
+//	{
+//		this.RT_pptInf = new RTDebugPrompt(msg, content, null) ;
+//	}
 	
-	/**
-	 * called by overrider,to fire same err inf
-	 * if msg and ee are null,it will clear inf
-	 * @param msg
-	 * @param ee
-	 */
-	protected final void RT_DEBUG_fireErr(String msg,String content,Throwable ee)
-	{
-		this.RT_pptErr = new RTDebugPrompt(msg, content, ee) ;
-	}
-	
-	protected final void RT_DEBUG_fireWarn(String msg)
-	{
-		RT_DEBUG_fireWarn(msg,null,null) ;
-	}
-	
-	protected final void RT_DEBUG_fireWarn(String msg,String detail)
-	{
-		RT_DEBUG_fireWarn(msg,detail,null) ;
-	}
-	
-	protected final void RT_DEBUG_fireWarn(String msg,Throwable ee)
-	{
-		RT_DEBUG_fireWarn(msg,null,ee) ;
-	}
-	
-	protected final void RT_DEBUG_fireWarn(String msg,String content,Throwable ee)
-	{
-		this.RT_pptWarn = new RTDebugPrompt(msg, content, ee) ;
-	}
-	
-	protected final void RT_DEBUG_fireInfo(String msg)
-	{
-		RT_DEBUG_fireInfo(msg,null) ;
-	}
-	
-	protected final void RT_DEBUG_fireInfo(String msg,String content)
-	{
-		this.RT_pptInf = new RTDebugPrompt(msg, content, null) ;
-	}
-	
-	public final RTDebugPrompt RT_DEBUG_getPrompt(String lvl)
-	{
-		switch(lvl)
-		{
-		case "info":
-		case "inf":
-			return this.RT_pptInf;
-		case "err":
-		case "error":
-			return this.RT_pptErr ;
-		case "warn":
-			return this.RT_pptWarn ;
-		default:
-			return null ;
-		}
-	}
+//	public final RTDebugPrompt RT_DEBUG_getPrompt(String lvl)
+//	{
+//		switch(lvl)
+//		{
+//		case "info":
+//		case "inf":
+//			return this.RT_pptInf;
+//		case "err":
+//		case "error":
+//			return this.RT_pptErr ;
+//		case "warn":
+//			return this.RT_pptWarn ;
+//		default:
+//			return null ;
+//		}
+//	}
 }

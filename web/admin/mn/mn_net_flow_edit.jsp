@@ -49,7 +49,28 @@ String net_tt = net.getTitle() ;
 	width:100%;
 	min-height:20px;
 	background-color: #92ccdf;
-	margin-bottom: 5px;
+	margin-bottom: 2px;
+}
+
+.rt_blk table
+{
+	width:100%;
+}
+
+.rt_blk button
+{
+	border:1px solid #dddddd;
+	color:#aaaaaa;
+}
+.rt_blk button:hover
+{
+	background-color: #1bc6a3;
+	color:#000;
+}
+
+.rt_blk table td
+{
+	border:1px solid #555555;
 }
 .rt_sub
 {
@@ -306,6 +327,7 @@ function on_item_sel_chg(items)
 		$("#right_info_iframe").attr("src",u1);
 }
 
+
 function on_item_open(mn)
 {
 	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${mn.id}`;
@@ -372,6 +394,8 @@ function on_del_items(sis)
 	let ids = "" ;
 	for(let si of sis)
 	{
+		if(si.getClassName()=='mn.view.DINet')
+			continue ;
 		if(si.getUID)
 			ids+= ((ids!='')?",":"")+si.getUID(); 
 	}
@@ -565,7 +589,7 @@ function init_right()
 		$("#tab_title").html(title) ;
 	}});
 	
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<div id="help_cont">help</div>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<div id="debug_cont">debug</div>`});
 	$(".right_tab").tab('selectTab', 'lb_tab_i');
@@ -596,6 +620,17 @@ $(window).resize(function(){
 
 resize_zz();
 
+//cxt
+
+function cxt_add_var(n)
+{
+	
+}
+
+function cxt_set_var(n)
+{
+	
+}
 // rt
 
 function rt_flow_start_stop(b_start)

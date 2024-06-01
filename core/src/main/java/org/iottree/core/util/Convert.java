@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.iottree.core.IRelatedFile;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -2395,6 +2396,11 @@ public class Convert
 	{
 		writeFileTxt(f,txt,"UTF-8") ;
 	}
+	
+	public static void writeFileJO(File f,JSONObject jo) throws IOException
+	{
+		writeFileTxt(f,jo.toString()) ;
+	}
 	/**
 	 * 读取文件到字符串
 	 * 
@@ -2416,6 +2422,14 @@ public class Convert
 	public static String readFileTxt(File f) throws IOException
 	{
 		return readFileTxt(f,"UTF-8") ;
+	}
+	
+	public static JSONObject readFileJO(File f) throws IOException
+	{
+		String txt = readFileTxt(f) ;
+		if(Convert.isNullOrEmpty(txt))
+			return null ;
+		return new JSONObject(txt) ;
 	}
 
 	public static byte[] readFileBuf(File f) throws IOException

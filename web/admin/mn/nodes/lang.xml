@@ -23,4 +23,8 @@
   <dd_node id="1" name="friday" name_cn="星期五" name_en="Friday" />
   <dd_node id="1" name="saturday" name_cn="星期六" name_en="Saturday" />
   
+  <dd_node id="1" name="to_the_val" name_cn="值为" name_en="to the value" />
+  <dd_node id="1" name="to" name_cn="到" name_en="to" />
+  <dd_node id="1" name="deep_cp" name_cn="深度复制" name_en="Deep copy" />
+  
 </dd_class>

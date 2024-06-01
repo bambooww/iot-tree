@@ -55,6 +55,7 @@ public class QueueThread<T>
 				QueItem<T> qi = dequeue_qi() ;
 				if(qi==null)
 					continue ;
+				
 				qi.setProST(1) ;
 				try
 				{

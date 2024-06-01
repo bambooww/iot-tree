@@ -6,15 +6,18 @@ import java.io.StringWriter;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
-public class RTDebugPrompt
+public class RTDebugPrompt implements Comparable<RTDebugPrompt>
 {
 	private long dt = -1 ;
 	private String msg = null ;
 	private String content = null ;
 	private Throwable exception = null ;
 	
-	public RTDebugPrompt(String msg,String content,Throwable excep)
+	String tp = null ;
+	
+	public RTDebugPrompt(String tp,String msg,String content,Throwable excep)
 	{
+		this.tp = tp ;
 		this.dt = System.currentTimeMillis() ;
 		this.msg = msg ;
 		this.content = content ;
@@ -64,12 +67,18 @@ public class RTDebugPrompt
 		return Convert.isNotNullEmpty(this.content) || this.exception!=null ;
 	}
 	
-	public JSONObject toDetailJO()
+	public JSONObject toListJO()
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("dt", dt) ;
 		jo.put("gap_now", this.getDTGapToNow());
 		jo.put("msg", msg) ;
+		return jo ;
+	}
+	
+	public JSONObject toDetailJO()
+	{
+		JSONObject jo = toListJO() ;
 		jo.putOpt("content", content) ;
 		if(this.exception!=null)
 			jo.put("exception", transToStr(this.exception)) ;
@@ -87,6 +96,10 @@ public class RTDebugPrompt
 	     t.printStackTrace( new  PrintWriter(sw, true));
 	     return  sw.getBuffer().toString();
 	}
-	
-	
+
+	@Override
+	public int compareTo(RTDebugPrompt o)
+	{
+		return (int)(this.dt-o.dt);
+	}
 }

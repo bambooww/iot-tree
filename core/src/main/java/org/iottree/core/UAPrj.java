@@ -22,6 +22,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.filter.UANodeFilter;
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
@@ -1002,7 +1003,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				startStopTask(true) ;
 				
 				
-
+				MNManager.getInstance(UAPrj.this).RT_start();
+				
 				while (rtRun)
 				{
 					try
@@ -1045,6 +1047,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			}
 			finally
 			{
+				MNManager.getInstance(UAPrj.this).RT_stop();
+				
 				stopPrj();
 
 				RT_runFlush();
@@ -1062,6 +1066,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	private void stopPrj()
 	{
+		
+		
 		startStopTask(false);
 		startStopConn(false);
 		startStopCh(false);

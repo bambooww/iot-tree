@@ -91,7 +91,7 @@ public class KafkaOut_NE extends MNNodeEnd
 
 		
 		km.RT_send(this.topic,msg.getPayloadStr()) ;
-		this.RT_DEBUG_fireInfo("topic="+this.topic+" out ",msg.getPayloadStr());
+		this.RT_DEBUG_INF.fire("msg_in","topic="+this.topic+" out ",msg.getPayloadStr());
 		return null;
 	}
 

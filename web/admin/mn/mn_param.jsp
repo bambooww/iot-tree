@@ -55,6 +55,8 @@
 	String jstr = "{}" ;
 	if(jo!=null)
 		jstr = jo.toString() ;
+	
+	String ben_chked = item.isEnable()?"checked":"" ;
 %>
 <html>
 <head>
@@ -128,15 +130,15 @@ function do_submit(cb)
 		return ;
 	}
 	
-	var tt = $('#title').val();
-	
+	let tt = $('#title').val();
+	let ben = $("#enable").prop("checked") ;
 	let pmjo = get_pm_jo();
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;
 		return ;
 	}
-	let rr = {title:tt,pm_jo:pmjo};
+	let rr = {title:tt,enable:ben,pm_jo:pmjo};
 	cb(true,rr);
 }
 </script>
@@ -148,8 +150,11 @@ function do_submit(cb)
 <form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label">Title:</label>
-    <div class="layui-input-inline" style="width:66%;">
+    <div class="layui-input-inline" style="width:46%;">
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
+    </div>
+    <div class="layui-input-inline" style="width:20%;">
+      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> Enable
     </div>
   </div>
   <div id="pm_cont">

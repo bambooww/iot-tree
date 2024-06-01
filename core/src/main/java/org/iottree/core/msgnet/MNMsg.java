@@ -1,6 +1,10 @@
 package org.iottree.core.msgnet;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.iottree.core.util.IdCreator;
 import org.json.JSONArray;
@@ -11,7 +15,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public class MNMsg
+public class MNMsg implements IMNCxtPk
 {
 	private String _id ;
 	
@@ -183,4 +187,82 @@ public class MNMsg
 		ret.payload = jo.opt("payload") ;
 		return ret;
 	}
+
+	// CXT PK
+	static List<String> PK_SubNList = Arrays.asList("id","time_ms","topic","payload") ; //,"heads"
+	static List<String> PK_SubNListW = Arrays.asList("topic","payload") ; //,"heads"
+	static HashSet<String> PK_subNames = new HashSet<>() ;
+	static
+	{
+		PK_subNames.addAll(PK_SubNList) ;
+	}
+	
+	@Override
+	public List<String> CXT_PK_getSubNames()
+	{
+		return PK_SubNList;
+	}
+
+	@Override
+	public List<String> CXT_PK_getSubNamesW()
+	{
+		return PK_SubNListW;
+	}
+
+	@Override
+	public List<MNCxtValTP> CXT_PK_getSubLimit(String subname)
+	{
+		switch(subname)
+		{
+		case "topic":
+			return Arrays.asList(MNCxtValTP.vt_str) ;
+		default:
+			return null ;
+		}
+	}
+
+	@Override
+	public Object CXT_PK_getSubVal(String subname)
+	{
+		switch(subname)
+		{
+		case "id":
+			return this.getMsgId() ;
+		case "time_ms":
+			return this.getMsgDT();
+		case "topic":
+			return this.getTopic() ;
+		case "heads":
+			
+			break ;
+		case "payload":
+			return this.getPayload() ;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean CXT_PK_setSubVal(String subname,Object subv,StringBuilder failedr) 
+	{
+		switch(subname)
+		{
+		case "topic":
+			this.asTopic((String)subv) ;
+			return true ;
+		
+		case "payload":
+			this.asPayload(subv) ;
+			return true ;
+		case "heads":
+		default:
+			this.asHead(subname, subv) ;
+			return true ;
+		}
+
+		//failedr.append("sub "+subname+" is not supported") ;
+		//return false;
+	}
+	
+	
+	
 }

@@ -135,13 +135,15 @@ public class MNManager
 		registerItem(new ManualTrigger(),cat) ;
 		registerItem(new TimerTrigger_NS(),cat) ;
 		registerItem(new NE_Debug(),cat) ;
+		registerItem(new NM_MemQueue(),cat) ;
 		
 		
 		cat = registerCat(new MNCat("_func")) ;
 		registerItem(new NM_JsFunc(),cat) ;
-		registerItem(new NM_Switch(),cat) ;
+		registerItem(new NM_Template(),cat) ;
 		registerItem(new NM_Change(),cat) ;
-		
+		registerItem(new NM_Switch(),cat) ;
+		registerItem(new NM_Exec(),cat) ;
 		
 		cat = registerCat(new MNCat("_dev")) ;
 		registerItem(new NM_TagReader(),cat) ;
@@ -219,9 +221,13 @@ public class MNManager
 	
 	private ArrayList<MNNet> nets = null ; 
 	
+	
+	
 	private MNManager(UAPrj prj)
 	{
 		this.belongTo = prj ;
+		
+		
 	}
 	
 	public UAPrj getBelongTo()
@@ -380,5 +386,141 @@ public class MNManager
 		f.delete();
 		listNets().remove(rnn) ;
 		return rnn ;
+	}
+	
+	
+	// rt
+	
+	Thread rtTH = null ;
+	boolean rtRun = false;
+	
+	MNCxtPk rtCxtPrj = new MNCxtPk() ;
+	
+	public MNCxtPk RT_getCxtPk()
+	{
+		return rtCxtPrj ;
+	}
+
+	private Runnable rtCxtPrjRunner = new Runnable() {
+
+		@Override
+		public void run()
+		{
+			RT_run() ;
+		}
+	};
+	
+	private void RT_run()// throws Exception
+	{
+		try
+		{
+			RT_CXT_load() ;
+			
+			StringBuilder failedr = new StringBuilder() ;
+			for(MNNet net:this.listNets())
+			{
+				if(!net.isEnable())
+					continue ;
+				
+				net.RT_startNetFlow(failedr);
+			}
+		
+			while(rtRun)
+			{
+				Thread.sleep(300);
+				
+				synchronized(this) //cannot be stopped
+				{
+					RT_CXT_save(false);
+				}
+			}
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+		}
+		finally
+		{
+			//RT_stop() ;
+			rtTH = null ;
+			rtRun=false;
+		}
+	}
+	
+	public synchronized void RT_start()
+	{
+		if(rtRun)
+			return ;
+		
+		rtRun = true ;
+		rtTH  =new Thread(rtCxtPrjRunner);
+		rtTH.start();
+	}
+	
+	public synchronized void RT_stop()
+	{
+		if(!rtRun)
+			return ;
+
+		for(MNNet net:this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			net.RT_stopNetFlow();
+		}
+		
+		rtRun = false;
+	}
+	
+	public boolean RT_isRunning()
+	{
+		return rtRun ;
+	}
+	
+	// rt cxt
+
+	private File getRTCxtFilePrj()
+	{
+		return new File(this.belongTo.getPrjSubDir(), "./msg_net/prj.json");
+	}
+
+	private File getRTCxtFileNet(MNNet net)
+	{
+		return new File(this.belongTo.getPrjSubDir(), "./msg_net/net_" + net.getId() + ".json");
+	}
+
+	boolean RT_CXT_load() throws IOException
+	{
+		JSONObject jo = Convert.readFileJO(getRTCxtFilePrj());
+		rtCxtPrj.RT_CXT_injectSavedVals(jo);
+
+		for (MNNet net : this.listNets())
+		{
+			File cxtf = getRTCxtFileNet(net);
+			jo = Convert.readFileJO(cxtf);
+			net.RT_CXT_fromSavedJO(jo);
+		}
+		return true;
+	}
+
+	void RT_CXT_save(boolean b_all) throws IOException
+	{
+		if (b_all || rtCxtPrj.RT_CXT_isDirty())
+		{
+			JSONObject jo = rtCxtPrj.RT_CXT_extractValsForSave();
+			Convert.writeFileJO(this.getRTCxtFilePrj(), jo);
+			rtCxtPrj.RT_CXT_clearDirty();
+		}
+
+		for (MNNet net : this.listNets())
+		{
+			if (b_all || net.RT_CXT_isSelfOrSubDirty())
+			{
+				JSONObject jo = net.RT_CXT_toSaveJO();
+				File cxtf = getRTCxtFileNet(net);
+				Convert.writeFileJO(cxtf, jo);
+				net.RT_CXT_clearSelfSubDirty();
+			}
+		}
 	}
 }

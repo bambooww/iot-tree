@@ -401,20 +401,22 @@ public class Kafka_M extends MNModule implements IMNRunner
 	{
 		if(producer==null)
 		{
-			this.RT_DEBUG_fireWarn("not send msg : ["+topic+"] size="+msg.length()+",may be Module is not running.");
+			this.RT_DEBUG_WARN.fire("send","not send msg : ["+topic+"] size="+msg.length()+",may be Module is not running.");
 			return ;
 		}
 		
+		long st = System.currentTimeMillis() ;
 		try
 		{
+			this.RT_DEBUG_INF.fire("send","before send msg : ["+topic+"] size="+msg.length(),msg);
 			ProducerRecord<String, String> record  = new ProducerRecord<>(topic, msg) ;
-			producer.send(record).get(sendTo, TimeUnit.MILLISECONDS);
-			this.RT_DEBUG_fireInfo("send msg : ["+topic+"] size="+msg.length()+" ok");
+			producer.send(record);//.get(sendTo, TimeUnit.MILLISECONDS);
+			this.RT_DEBUG_INF.fire("send","send msg : ["+topic+"] size="+msg.length()+" cost="+(System.currentTimeMillis()-st)+"MS",msg);
 		}
 		catch(Exception ee)
 		{
 			ee.printStackTrace();
-			this.RT_DEBUG_fireErr("send msg : ["+topic+"] size="+msg.length(), ee);
+			this.RT_DEBUG_ERR.fire("send","send msg : ["+topic+"] size="+msg.length(), ee);
 		}
 	}
 	

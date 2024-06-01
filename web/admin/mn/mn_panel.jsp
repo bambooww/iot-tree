@@ -39,6 +39,7 @@
 		}
 	}
 	
+	String net_en_chk = net.isEnable()?"checked":"" ;
 	//String tp = item.getTPFull() ;
 	//String title = item.getTitle() ;
 
@@ -106,30 +107,29 @@ scrollbar-width0: none; /* firefox */
 <div class="cont">
 
 <%
-	if(item==null)
+	if(true)
 	{
 		String catn = "flow" ;
 %>
 <div class="citem"  id="cat_<%=catn%>"  onclick="show_hiddle(this)" cat_n="<%=catn%>"><span id="cat_i_<%=catn%>"><i class="fa fa-angle-down"></i></span> <w:g>flow</w:g></div>
 <div id="cat_list_<%=catn%>">
-	flow
+<form class="layui-form"  onsubmit="return false;">
+<div class="layui-form-item">
+    <label class="layui-form-label">Between:</label>
+    <div class="layui-input-inline" style="width:100px;">
+    	<input type="time" class="layui-input" id="between_s" />
+    </div>
+    <div class="layui-form-mid"> -- </div>
+    <div class="layui-input-inline" style="width:100px;">
+    	<input type="checkbox" class="layui-input" lay-skin="primary" id="flow_enable"  <%=net_en_chk %>/> Enable
+    </div>
+</div>
+</form>
 </div>
 <%
 	}
 
-	if(item!=null && (item instanceof IMNRunner))
-	{
-		String catn = "runner" ;
-		IMNRunner r = (IMNRunner)item ;
-		//String itemid = item.getId() ;
-%>
-<div class="citem"  id="cat_<%=catn%>"  onclick="show_hiddle(this)" cat_n="<%=catn%>"><span id="cat_i_<%=catn%>"><i class="fa fa-angle-down"></i></span> <w:g>runner</w:g></div>
-<div id="cat_list_<%=catn%>">
-	当前运行状态 <span><%=r.RT_isRunning() %></span>
-	<button onclick="on_item_runner_start()">start</button> <button on_item_rt_stop()>stop</button>
-</div>
-<%
-	}
+	
 
 if(item!=null)
 {
@@ -168,7 +168,13 @@ if(item!=null)
 
 </body>
 <script type="text/javascript">
+var form ;
 
+layui.use('form', function(){
+	  form = layui.form;
+	  form.render();
+	  
+});
 
 function show_hiddle(ele)
 {
