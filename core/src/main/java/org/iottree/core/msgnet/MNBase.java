@@ -207,7 +207,14 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.put("color", this.getColor()) ;
 		jo.put("icon", this.getIcon()) ;
 
-		jo.put("runner", isRunner()) ;
+		if(this instanceof IMNRunner)
+		{
+			IMNRunner rr = (IMNRunner)this;
+			jo.put("runner", isRunner()) ;
+			jo.put("runner_en", rr.RT_runnerEnabled()) ;
+			jo.put("runner_in", rr.RT_runnerStartInner()) ;
+			
+		}
 		return jo ;
 	}
 
@@ -273,6 +280,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	// -- RT
 	
+	public void RT_clean()
+	{
+		this.RT_CXT_clean();
+	}
+	
 	protected RTDebug RT_DEBUG_INF = new RTDebug(this,"inf","rgba(0,0,255,0.3)") ;
 	protected RTDebug RT_DEBUG_WARN = new RTDebug(this,"warn","rgba(255,255,0,0.3)") ;
 	protected RTDebug RT_DEBUG_ERR = new RTDebug(this,"err","rgba(255,0,0,0.3)") ;
@@ -300,12 +312,27 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			{
 				StringBuilder ssb = new StringBuilder() ;
 				if(rnr.RT_isSuspendedInRun(ssb))
-					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+				{
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span>");
+					if(!rnr.RT_runnerStartInner())
+						divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button>");
+					divsb.append("</div>") ;
+				}
 				else
-					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Running</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button></div>") ;
+				{
+					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Running</span>");
+					if(!rnr.RT_runnerStartInner())
+						divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button>");
+					divsb.append("</div>") ;
+				}
 			}
 			else
-				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
+			{
+				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span>");
+				if(!rnr.RT_runnerStartInner())
+					divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button>");
+				divsb.append("</div>") ;
+			}
 		}
 		
 		RT_DEBUG_ERR.renderDiv(divsb);

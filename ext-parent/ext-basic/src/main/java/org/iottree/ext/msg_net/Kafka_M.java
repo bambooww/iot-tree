@@ -397,6 +397,24 @@ public class Kafka_M extends MNModule implements IMNRunner
 		return false;
 	}
 	
+	/**
+	 * false will not support runner
+	 * @return
+	 */
+	public boolean RT_runnerEnabled()
+	{
+		return true ;
+	}
+	
+	/**
+	 * true will not support manual trigger to start
+	 * @return
+	 */
+	public boolean RT_runnerStartInner()
+	{
+		return false;
+	}
+	
 	void RT_send(String topic,String msg)
 	{
 		if(producer==null)

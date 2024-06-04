@@ -232,6 +232,7 @@ case "rt_item_runner_start_stop":
 	else
 		out.print("succ") ;
 	return ;
+
 case "rt_flow_start":
 case "rt_flow_stop":
 	if(!Convert.checkReqEmpty(request, out,"netid"))
@@ -250,6 +251,12 @@ case "rt_flow_stop":
 		net.RT_stopNetFlow();
 		out.print("succ") ;
 	}
+	return ;
+case "rt_flow_clear":
+	if(!Convert.checkReqEmpty(request, out,"netid"))
+		return ;
+	net.RT_clean() ;
+	out.print("succ") ;
 	return ;
 case "rt_flow_runner_start_stop":
 	return ;
@@ -271,14 +278,13 @@ case "rt_debug_msg":
 case "rt_debug_prompt":
 	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl"))
 		return ;
-	//System.out.println("rt_debug_prompt ----"+Convert.toFullYMDHMS(new Date())) ;
-	String lvl = request.getParameter("lvl") ;
-	RTDebugPrompt ppt = item.RT_DEBUG_getPrompt(lvl) ;
-	if(ppt==null)
-		out.print("{}") ;
-	else
-		ppt.toDetailJO().write(out) ;
-	return ;	
+	//String lvl = request.getParameter("lvl") ;
+	//RTDebugPrompt ppt = item.RT_DEBUG_getPrompt(lvl) ;
+	//if(ppt==null)
+	//	out.print("{}") ;
+	//else
+	//	ppt.toDetailJO().write(out) ;
+	//return ;	
 default:
 	out.print("unknown op") ;
 	return ;

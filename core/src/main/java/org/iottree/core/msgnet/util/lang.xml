@@ -11,4 +11,23 @@
 	<dd_node id="1" name="act_del" name_cn="删除" name_en="Delete" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="act_move" name_cn="转移" name_en="Move" desc_cn="" desc_en=""/>
 	
+	
+	<dd_node name="vo_eq" name_cn="==" name_en="==" />
+	<dd_node name="vo_n_eq" name_cn="!=" name_en="!=" />
+	<dd_node name="vo_lt" name_cn="&lt;" name_en="&lt;" />
+	<dd_node name="vo_lt_eq" name_cn="&lt;=" name_en="&lt;=" />
+	<dd_node name="vo_gt" name_cn="&gt;" name_en="&gt;" />
+	<dd_node name="vo_gt_eq" name_cn="&gt;=" name_en="&gt;=" />
+	<dd_node name="vo_has_key" name_cn="拥有键" name_en="has key" />
+	<dd_node name="vo_between" name_cn="在..之间" name_en="is between" />
+	<dd_node name="vo_contains" name_cn="包含" name_en="contains" />
+	<dd_node name="vo_regex" name_cn="正则表达式" name_en="regex" />
+	<dd_node name="vo_is_true" name_cn="为真" name_en="is true" />
+	<dd_node name="vo_is_false" name_cn="为假" name_en="is false" />
+	<dd_node name="vo_is_null" name_cn="为Null" name_en="is null" />
+	<dd_node name="vo_not_null" name_cn="非Null" name_en="not null" />
+	<dd_node name="vo_is_type" name_cn="类型是" name_en="is of type" />
+	<dd_node name="vo_is_empty" name_cn="为空" name_en="is empty" />
+	<dd_node name="vo_not_empty" name_cn="非空" name_en="not empty" />
+		
 </dd_class>

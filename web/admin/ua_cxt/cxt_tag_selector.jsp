@@ -131,6 +131,19 @@ function get_selected_tagids()
 	return ret ;
 }
 
+function get_selected_tagpaths()
+{
+	let ret=[] ;
+	$(".chk").each(function(){
+		if($(this).prop("checked"))
+		{
+			let tagid = $(this).attr('path') ;
+			ret.push(tagid) ;
+		}
+	});
+	return ret ;
+}
+
 function get_selected_tagtxt()
 {
 	let ret="" ;

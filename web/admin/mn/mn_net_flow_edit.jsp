@@ -48,7 +48,7 @@ String net_tt = net.getTitle() ;
 	position:relative;
 	width:100%;
 	min-height:20px;
-	background-color: #92ccdf;
+	background-color: #f3f3f3;
 	margin-bottom: 2px;
 }
 
@@ -59,8 +59,9 @@ String net_tt = net.getTitle() ;
 
 .rt_blk button
 {
-	border:1px solid #dddddd;
+	border:1px solid #0699f0;
 	color:#aaaaaa;
+	margin-left:10px;
 }
 .rt_blk button:hover
 {
@@ -77,6 +78,19 @@ String net_tt = net.getTitle() ;
 	position0:absolute;
 	left:10px;
 }
+
+.prompt_p
+{
+	position: absolute;
+	min-height: 40px;
+	min-width:100px;
+	bottom0: 10px;
+	border:1px solid;
+	display:none;
+	color:#00ffdd;
+	background-color: #003935;
+	z-index:1001;
+}
 </style>
 </head>
 <body style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; overflow: hidden;user-select:none;" >
@@ -89,7 +103,8 @@ String net_tt = net.getTitle() ;
 			<iframe id="left_pan_iframe" src="mn_node_list.jsp" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>
 		</div>
 <div id="mid" class="mid">
-			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" >
+			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" title="">
+				<div id="prompt_p" class="prompt_p"></div>
 			</div>
 			
 			<div style="right:0px;" class="show_hid_icon" title="show or hide right panel" id="btn_prop_showhidden"><i class="fa fa-bars fa-lg"></i></div>
@@ -112,7 +127,7 @@ String net_tt = net.getTitle() ;
 	<i id="conn_add" class="fa fa-arrow-right fa-2x"  onclick="tool_add_conn()"></i>
 	 --%>
 	<i id="net_save_basic" class="fa fa-save fa-2x" onclick="net_save_basic()" title="Save"></i>
-	<i id="rt_update" class="fa fa-refresh fa-2x" onclick="rt_update()" title="Runtime Update"></i>
+	<i id="rt_update" class="fa fa-refresh fa-2x" onclick="rt_flow_clear()" title="Clear Flow"></i>
 	<i id="rt_flow_start" class="fa fa-play fa-2x" onclick="rt_flow_start_stop(true)" title="Start Flow"></i>
 	<i id="rt_flow_stop" class="fa fa-stop fa-2x" style="color:red;" onclick="rt_flow_start_stop(false)" title="Stop Flow"></i>
 </div>
@@ -124,6 +139,7 @@ String net_tt = net.getTitle() ;
 		<div class="title">Properties</div>
 		<div id=edit_props style="height:97%;width:100%;border:0px;background-color: #ffffff"></div>
 	</div>
+	
 </body>
 
 <script>
@@ -295,7 +311,6 @@ function reload_net(reload,bfit)
 	});
 }
 
-init_iottpanel();
 
 function on_item_sel_chg(items)
 {
@@ -466,7 +481,8 @@ function show_hiddle_left()
 	p.css('width',w) ;
 	p.show();
 	b_left_show = true ;
-	panel.updatePixelSize() ;
+	if(panel)
+		panel.updatePixelSize() ;
 }
 
 show_hiddle_left();
@@ -481,7 +497,9 @@ function tool_prop_show_hidden()
 		
 }
 
-
+mn.load_res("mn_imgs_list.jsp",()=>{
+	init_iottpanel();
+}) ;
 
 // == debug
 var debug_intv = null ;
@@ -652,6 +670,8 @@ function rt_flow_start_stop(b_start)
 
 function rt_update()
 {
+	if(!hmiView) return ;
+	
 	let ids = hmiView.listShowRTDivItemIds();
 	send_ajax("./mn_ajax.jsp",{op:"rt_update",prjid:prjid,netid:netid,"div_ids":ids.join(",")},
             (bsucc,ret)=>{
@@ -679,6 +699,19 @@ function rt_item_runner_start_stop(itemid,b_start)
             		return ;
             	}
             	dlg.msg("cmd done") ;
+            }) ;
+}
+
+function rt_flow_clear()
+{
+	send_ajax("./mn_ajax.jsp",{op:"rt_flow_clear",prjid:prjid,netid:netid},
+            (bsucc,ret)=>{
+            	if(!bsucc||ret!='succ')
+            	{
+            		dlg.msg(ret) ;
+            		return ;
+            	}
+            	dlg.msg("done") ;
             }) ;
 }
 

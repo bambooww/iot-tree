@@ -298,8 +298,10 @@ function draw_module(m)
 	
 }
 
+mn.load_res("mn_imgs_list.jsp",()=>{
+	draw_nodes() ;
+}) ;
 
-draw_nodes() ;
 
 function drag(ev)
 {

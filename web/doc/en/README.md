@@ -171,9 +171,19 @@ IOT-Tree Server provides an independent UI element primitive library function, w
 
 <img src="./doc/img/readme_21.png">
 
-### 2.5 Flexible, intuitive, and powerful auxiliary support
+### 2.5 Flexible, intuitive, and powerful Message Flow/Net
 
-#### Alert triggering and handling
+
+
+Starting from version 1.7.0, IOT-Tree provides powerful message based flow processing capabilities. This function provides various functional nodes, allowing users to define flow online according to their needs and achieve the business functions they need.
+
+Starting from this version, IOT-Tree will not update and maintain previous modules such as task scheduling (including control implementation), alert function, data routing, and data storage. Because all of these can be implemented by message flow and can provide greater flexibility.
+
+
+<img src="./doc/img/msgnet/mn001.png">
+
+
+#### Alert triggering and handling(before ver 1.7.0)
 
 
 
@@ -182,7 +192,7 @@ IOT-Tree is based on an internally unified data tags definition, which allows fo
 
 <img src="./doc/img/readme_22.png">
 
-#### Store Output
+#### Store Output(before ver 1.7.0)
 
 
 

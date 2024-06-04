@@ -14,6 +14,8 @@ public enum MNCxtValSty
 	vt_jo,
 	vt_jarr;
 	
+	
+	
 	public String getTitle()
 	{
 		String n = this.name() ;
@@ -82,5 +84,13 @@ public enum MNCxtValSty
 		return pktp.RT_setValInCxt(val_str_or_subn,val,
 				net,item,msg,failedr);
 	}
+	
+	public static MNCxtValSty[] FOR_COMPARE_LIST = new  MNCxtValSty[] {
+			msg,node,flow,prj,
+			vt_int,
+			vt_float,
+			vt_str,
+			vt_date};
+	
 	
 }

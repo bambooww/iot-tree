@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.MNCxtVar.KeepTP;
+import org.iottree.core.util.Convert;
+import org.iottree.core.util.JsonUtil;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
@@ -184,6 +186,10 @@ public class MNCxtPk implements IMNCxtPk
 		return var2val.get(var_n) ;
 	}
 	
+	public void RT_CXT_clean()
+	{
+		this.var2val.clear();
+	}
 
 	protected void CXT_renderVarsDiv(StringBuilder divsb)
 	{
@@ -261,7 +267,25 @@ public class MNCxtPk implements IMNCxtPk
 	@Override
 	public Object CXT_PK_getSubVal(String subname)
 	{
-		return this.var2val.get(subname);
+		Object ov = this.var2val.get(subname);
+		if(ov!=null)
+			return ov ;
+		
+		List<String> ss = Convert.splitStrWith(subname, ".") ;
+		if(ss.size()<=1)
+			return ov ;
+		
+		ov = this.var2val.get(ss.get(0)) ;
+		if(ov==null)
+			return null ;
+		
+		if(ov instanceof JSONObject)
+		{
+			ss.remove(0) ;
+			return JsonUtil.getValByPath((JSONObject)ov, ss) ;
+		}
+		
+		return null ;
 	}
 
 	@Override

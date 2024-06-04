@@ -917,6 +917,19 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		
 		RT_running = false ;
 	}
+	
+	public void RT_clean()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			n.RT_clean() ;
+		}
+		
+		for(MNModule m:this.id2module.values())
+		{
+			m.RT_clean() ;
+		}
+	}
 
 	JSONObject RT_CXT_toSaveJO()
 	{
@@ -941,6 +954,8 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	
 	void RT_CXT_fromSavedJO(JSONObject jo)
 	{
+		if(jo==null)
+			return ;
 		this.RT_CXT_injectSavedVals(jo);
 		JSONObject jnodes = jo.optJSONObject("__cxt_items");
 		if(jnodes!=null)
@@ -1018,6 +1033,24 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return false;
 	}
 	
+	/**
+	 * false will not support runner
+	 * @return
+	 */
+	public boolean RT_runnerEnabled()
+	{
+		return true ;
+	}
+	
+	/**
+	 * true will not support manual trigger to start
+	 * @return
+	 */
+	public boolean RT_runnerStartInner()
+	{
+		return false;
+	}
+	
 	public JSONObject RT_toJO(boolean out_rt_div)
 	{
 		JSONObject jo = new JSONObject() ;
@@ -1026,6 +1059,8 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			IMNRunner rnr = (IMNRunner)this ;
 			jo.put("runner", true) ;
 			jo.put("b_running",rnr.RT_isRunning()) ;
+			jo.put("runner_en", this.RT_runnerEnabled()) ;
+			jo.put("runner_in", this.RT_runnerStartInner()) ;
 			StringBuilder rsb = new StringBuilder() ;
 			boolean bsusp = rnr.RT_isSuspendedInRun(rsb) ;
 			jo.put("suspended", bsusp) ;

@@ -1,14 +1,19 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
+import org.iottree.core.UAVal;
+import org.iottree.core.msgnet.IMNRunner;
 import org.iottree.core.msgnet.MNConn;
+import org.iottree.core.msgnet.MNCxtValSty;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.nodes.NM_TagReader.TagItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.jt.JSONTemp;
@@ -17,18 +22,103 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class NM_TagWriter extends MNNodeMid implements ILang
+/**
+ * 设置一个或多个具体的标签，写入特定的数据
+ * 触发的消息格式不限
+ * 
+ * @author jason.zhu
+ *
+ */
+public class NM_TagWriter extends MNNodeMid implements IMNRunner
 {
-	static ILogger log = LoggerManager.getLogger(NM_TagWriter.class) ;
+	public static class TagItem
+	{
+		String tagPath ;
+		
+		MNCxtValSty wValSty = MNCxtValSty.vt_bool;
+		
+		String wSubN = "" ;
+		
+		long wDelay = 0 ; //delay before do write
+		
+		private UATag tag = null ;
+		
+		public TagItem(String tagpath,MNCxtValSty w_valsty,String w_subn)
+		{
+			this.tagPath = tagpath ;
+			this.wValSty = w_valsty ;
+			this.wSubN = w_subn ;
+		}
+		
+		private TagItem()
+		{}
+		
+		
+		public boolean isValid(StringBuilder failedr)
+		{
+			if(Convert.isNullOrEmpty(this.tagPath))
+			{
+				failedr.append("tag path cannot be null or empty") ;
+				return false;
+			}
+			
+			if(tag==null)
+			{
+				failedr.append("not tag with path ="+this.tagPath) ;
+				return false;
+			}
+			
+			if(!tag.isCanWrite())
+			{
+				failedr.append("not writable tag with path ="+this.tagPath) ;
+				return false;
+			}
+			
+			if(Convert.isNullOrEmpty(this.wSubN))
+			{
+				failedr.append("write sub name is null or empty") ;
+				return false;
+			}
+			return true ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject jo = new JSONObject() ;
+			jo.putOpt("tag", this.tagPath) ;
+			jo.putOpt("w_valsty", this.wValSty.name()) ;
+			jo.putOpt("w_subn", this.wSubN) ;
+			jo.putOpt("w_delay", this.wDelay) ;
+			return jo ;
+		}
+		
+		public static TagItem fromJO(JSONObject jo)
+		{
+			TagItem ret = new TagItem() ;
+			ret.tagPath = jo.optString("tag") ;
+			ret.wValSty  = MNCxtValSty.valueOf(jo.getString("w_valsty")) ;
+			ret.wSubN = jo.optString("w_subn") ;
+			ret.wDelay = jo.optLong("w_delay",0) ;
+			return ret;
+		}
+	}
 	
-	ArrayList<UATag> writeTags = new ArrayList<>() ;
+	
+	ArrayList<TagItem> tagItems = new ArrayList<>() ;
+	
+	/**
+	 * Asynchronous run mode
+	 * true it's will run in thread after in msg. this will not block outer push thread.
+	 * but it will ignore all in msg when thread running
+	 */
+	boolean asynMode = true;
 	
 	@Override
 	public String getColor()
 	{
 		return "#a1cbde";
 	}
-	
+
 	@Override
 	public String getIcon()
 	{
@@ -54,6 +144,12 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 	}
 
 	@Override
+	public String getOutTitle(int idx)
+	{
+		return null ;
+	}
+
+	@Override
 	public String getTP()
 	{
 		return "tag_writer";
@@ -68,158 +164,210 @@ public class NM_TagWriter extends MNNodeMid implements ILang
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		if(this.writeTags==null||this.writeTags.size()<=0)
+		if(tagItems==null||tagItems.size()<=0)
+			return true ;
+		for(TagItem ti:this.tagItems)
 		{
-			failedr.append("no write tag set") ;
-			return false;
+			if(!ti.isValid(failedr))
+				return false;
 		}
-		return true ;
+		return true;
 	}
-	
-	private ArrayList<String> getTagIds()
-	{
-		ArrayList<String> rets = new ArrayList<>() ;
-		if(writeTags!=null)
-		{
-			for(UATag tag:this.writeTags)
-				rets.add(tag.getId()) ;
-		}
-		return rets ;
-	}
-	
+
 	@Override
 	public JSONObject getParamJO()
 	{
 		JSONObject jo = new JSONObject() ;
-		jo.put("tagids", getTagIds()) ;
+		jo.put("asyn", this.asynMode) ;
+		
+		JSONArray jarr = new JSONArray() ;
+		if(tagItems!=null)
+		{
+			for(TagItem ccr:this.tagItems)
+			{
+				JSONObject tmpjo = ccr.toJO() ;
+				jarr.put(tmpjo) ;
+			}
+		}
+		jo.put("tags",jarr) ;
 		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo, long up_dt)
 	{
-		if(jo==null)
-			return ;
-		JSONArray tagids_jarr = jo.optJSONArray("tagids") ;
-		ArrayList<String> tagids = new ArrayList<>() ;
-		if(tagids_jarr!=null)
+		this.asynMode = jo.optBoolean("asyn", false) ;
+		JSONArray jarr = jo.optJSONArray("tags") ;
+		ArrayList<TagItem> ccrs = new ArrayList<>() ;
+		if(jarr!=null)
 		{
-			int n = tagids_jarr.length() ;
+			int n = jarr.length() ;
 			for(int i = 0 ; i < n ; i ++)
 			{
-				String tid = tagids_jarr.getString(i) ;
-				tagids.add(tid) ;
+				JSONObject tmpjo = jarr.getJSONObject(i) ;
+				TagItem ccr = TagItem.fromJO(tmpjo);
+				if(ccr!=null)
+					ccrs.add(ccr) ;
+				
+				String tagpath = ccr.tagPath ;
+				if(Convert.isNotNullEmpty(tagpath))
+				{
+					UATag tag = this.getBelongTo().getPrj().getTagByPath(tagpath) ;
+					ccr.tag = tag ;
+				}
 			}
 		}
-		setTagsByIds(tagids) ;
+		this.tagItems = ccrs ;
 	}
-	
-	private void setTagsByIds(List<String> ids)
-	{
-		UAPrj prj = this.getBelongTo().getPrj();
-		ArrayList<UATag> tags = new ArrayList<>() ;
-		for(String id:ids)
-		{
-			UATag tag = prj.findTagById(id) ;
-			if(tag==null)
-				continue ;
-			if(!tag.isCanWrite())
-				continue ;
-			tags.add(tag) ;
-		}
-		this.writeTags = tags ;
-	}
-	
+
 	// --------------
+	
+	private transient boolean bAsynRun = false;
+	private transient AsynTh asynTh = null ;
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		Object ob = msg.getPayload() ;
-		if(ob==null)
-		{
-			this.RT_DEBUG_WARN.fire("on_msg_in","msg payload is null");
+		if(bAsynRun)
+			return null ; //ignore all in msg
+		
+		if(this.tagItems==null||this.tagItems.size()<=0)
 			return null ;
-		}
-
-		JSONObject jo = msg.getPayloadJO(null) ;
-		if(jo==null)
+		
+		StringBuilder failedr = new StringBuilder() ;
+		if(!isParamReady(failedr))
 		{
-			this.RT_DEBUG_WARN.fire("on_msg_in","msg payload is not JSONObject");
+			RT_DEBUG_ERR.fire("tag_w", failedr.toString());
 			return null ;
-		}
-		UATag wtag = RT_onInWriteTag(jo) ;
-		if(wtag==null)
-			return null;//RTOut.createOutAll(msg) ;
-		JSONObject tmpjo = new JSONObject() ;
-		tmpjo.put("tag_id", wtag.getId()) ;
-		tmpjo.put("tag_title", wtag.getTitle()) ;
-		tmpjo.put("cmd", ob) ;
-		return RTOut.createOutAll(new MNMsg().asPayload(tmpjo)) ;
-	}
-	
-	private UATag RT_onInWriteTag(JSONObject recvjo)
-	{
-		String cmd = recvjo.optString("cmd") ;
-		if("write_tag".equals(cmd))
-		{
-			String path = recvjo.optString("tag") ;
-			if(Convert.isNullOrEmpty(path))
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has not tag prop",recvjo.toString());
-				return null;
-			}
-			Object objv = recvjo.opt("value") ;
-			if(objv==null)
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has not value prop",recvjo.toString());
-				return null;
-			}
-			long dt = recvjo.optLong("dt",-1) ;
-			long timeout = recvjo.optLong("timeout",-1) ;
-			if(dt<=0 || timeout<=0)
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag jo has no dt or timeout value prop",recvjo.toString());
-				return null;
-			}
-			if(System.currentTimeMillis()>dt+timeout)
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: write_tag is timeout and discard",recvjo.toString());
-				return null;
-			}
-			
-			UATag tag = this.getBelongTo().getPrj().getTagByPath(path) ;
-			if(tag==null)
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: not tag with path="+path);
-				return null;
-			}
-			UATag write_tag = null ;
-			for(UATag wt : this.writeTags)
-			{
-				if(wt.getId().equals(tag.getId()))
-				{
-					write_tag = wt ;
-					break ;
-				}
-			}
-			if(write_tag==null)
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: tag is not set to be write path="+path);
-				return null;
-			}
-			
-			StringBuilder failedr = new StringBuilder() ;
-			log.warn("RT_onInWriteTag RT_writeVal path="+path+" val="+objv);
-			if(!write_tag.RT_writeVal(objv, failedr))
-			{
-				this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn:"+failedr);
-				return null;
-			}
-			return write_tag;
 		}
 		
-		this.RT_DEBUG_ERR.fire("write_tag","RT_onInWriteTag warn: unknown recved JSON",recvjo.toString());
+		HashMap<UATag,Object> tag2val = new HashMap<>() ;
+		for(TagItem ti:this.tagItems)
+		{
+			UATag tag = ti.tag ;
+			Object wval = ti.wValSty.RT_getValInCxt(ti.wSubN,this.getBelongTo(), this, msg) ;
+			if(wval==null)
+			{
+				RT_DEBUG_ERR.fire("tag_w",ti.wValSty.getTitle()+" "+ti.wSubN+" return null");
+				return null ;
+			}
+			tag2val.put(tag,wval) ;
+		}
+		
+		if(!this.asynMode)
+			return runSyn(msg,tag2val) ;
+		
+		//asyn
+		synchronized(this)
+		{
+			bAsynRun = true ;
+			asynTh = new AsynTh(msg,tag2val) ;
+			asynTh.start();
+		}
+		
 		return null ;
+	}
+	
+	
+	private RTOut runSyn(MNMsg msg,HashMap<UATag,Object> tag2val)
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		for(TagItem ti:this.tagItems)
+		{
+			if(ti.wDelay>0)
+			{
+				try
+				{
+					Thread.sleep(ti.wDelay);
+				}catch(Exception ee) {}
+			}
+			
+			UATag tag = ti.tag ;
+			Object wval = tag2val.get(tag) ;
+			if(!tag.RT_writeVal(wval, failedr))
+			{
+				RT_DEBUG_ERR.fire("tag_w", failedr.toString());
+				return null ;
+			}
+		}
+		
+		RT_DEBUG_ERR.clear("tag_w");
+		return RTOut.createOutAll(msg);
+	}
+	
+	private class AsynTh extends Thread
+	{
+		MNMsg msg ;
+		HashMap<UATag,Object> tag2val;
+		
+		public AsynTh(MNMsg msg,HashMap<UATag,Object> tag2val)
+		{
+			this.msg = msg ;
+			this.tag2val = tag2val ;
+		}
+		
+		public void run()
+		{
+			try
+			{
+				RTOut rout = runSyn(msg,tag2val) ;
+				if(rout!=null)
+				{
+					NM_TagWriter.this.RT_sendMsgOut(rout);
+				}
+			}
+			catch(Exception ee)
+			{
+				RT_DEBUG_ERR.fire("tag_w",ee.getMessage(),ee);
+			}
+			finally
+			{
+				asynTh = null ;
+				bAsynRun = false;
+			}
+		}
+	}
+
+	@Override
+	public boolean RT_start(StringBuilder failedr)
+	{
+		failedr.append("no support") ;
+		return false;
+	}
+
+	@Override
+	public synchronized void RT_stop()
+	{
+		
+	}
+
+	@Override
+	public boolean RT_isRunning()
+	{
+		return bAsynRun;
+	}
+
+	@Override
+	public boolean RT_isSuspendedInRun(StringBuilder reson)
+	{
+		return false;
+	}
+	
+	/**
+	 * false will not support runner
+	 * @return
+	 */
+	public boolean RT_runnerEnabled()
+	{
+		return this.asynMode ;
+	}
+	
+	/**
+	 * true will not support manual trigger to start
+	 * @return
+	 */
+	public boolean RT_runnerStartInner()
+	{
+		return true;
 	}
 }

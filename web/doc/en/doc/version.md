@@ -11,9 +11,15 @@ Add a main demo webapp. This webapp can provide you with reference for developin
 ### version 1.6.0
 
 
-Add support for writing values in the middle tag: trigger the corresponding JS script when writing, which can support specific data updates. This support simplifies the issuance of control commands when connecting with external systems.
+The middle tag adds support for writing values: triggering the corresponding JS script upon writing, enabling specific data updates. This support facilitates the integration with external systems by simplifying the issuance of control commands.
 
-Preliminary implementation of the Router Out basic framework, enabling IOT-Tree to support more upper level or external system data sharing based on messages.
+The basic framework of Router Out has been preliminarily implemented, enabling IOT-Tree to support more upper-level or external system data sharing based on messaging.
+
+The tag list supports moving multiple selections to another container node.
+
+The dictionary function has been improved, allowing tree organization and tags to support the selection or input of extended properties--this enables JSON-based data sharing to include extended properties content, with each properties name prefixed with "ext_".
+
+Various optimizations have been implemented, including multilingual support for some pages.
 
 
 ### version 2.0.0 (Plan)

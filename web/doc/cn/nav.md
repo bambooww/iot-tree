@@ -78,9 +78,12 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI客户端数据列表展示</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 记录数据展示</a>
 
-#### <a href="doc/router/index.md" >10 数据路由Data Router</a>
-##### <a href="doc/router/router_mqtt.md" >&nbsp;&nbsp;&nbsp;10.1 MQTT路由</a>
-##### <a href="doc/router/router_kafka.md">&nbsp;&nbsp;&nbsp;10.2 Kafka路由</a>
+#### <a href="doc/msgnet/index.md" >10 消息网络</a>
+##### <a href="doc/msgnet/demo_caseauto.md" >&nbsp;&nbsp;&nbsp;10.1 演示：自动控制实现</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;10.2 演示：自动数据记录</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;10.3 演示：报警发现与输出</a>
+##### <a href="doc/msgnet/nd_timer_trigger.md" >&nbsp;&nbsp;&nbsp;10.4 节点：定时触发器(Timer Trigger)</a>
+##### <a href="doc/msgnet/nd_mem_queue.md" >&nbsp;&nbsp;&nbsp;10.5 节点：内存队列(Mem Queue)</a>
 
 #### <a href="doc/advanced/index.md" >11 高级特性</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 插件开发</a>

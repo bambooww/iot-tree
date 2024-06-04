@@ -94,6 +94,11 @@ public abstract class MNNode extends MNBase
 
 	public abstract int getOutNum() ;
 	
+	public String getOutTitle(int idx)
+	{
+		return null ;
+	}
+	
 	public final MNConnOut getConnOut()
 	{
 		return this.connOut ;
@@ -230,7 +235,20 @@ public abstract class MNNode extends MNBase
 	{
 		JSONObject jo = super.toListJO() ;
 		jo.put("in", this.supportInConn()) ;
-		jo.put("out_num", getOutNum()) ;
+		int outn = getOutNum() ;
+		jo.put("out_num", outn) ;
+		if(outn>0)
+		{
+			JSONArray jarr = new JSONArray() ;
+			for(int i = 0 ; i < outn ; i ++)
+			{
+				String tt = this.getOutTitle(i) ;
+				if(Convert.isNullOrEmpty(tt))
+					tt = "" ;
+				jarr.put(tt) ;
+			}
+			jo.put("out_tts", jarr) ;
+		}
 		return jo;
 	}
 	
@@ -299,8 +317,14 @@ public abstract class MNNode extends MNBase
 		return this.lastMsgOutMap.get(idx) ;
 	}
 	
+	public synchronized void RT_clean()
+	{
+		super.RT_clean(); 
+		lastMsgIn = null ;
+		lastMsgOutMap = null ;
+	}
 	
-	protected abstract RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg) ;
+	protected abstract RTOut RT_onMsgIn(MNConn in_conn,MNMsg msg) throws Exception;
 	
 	final private void RT_onMsgInWithTrans(MNConn in_conn,MNMsg msg)
 	{
@@ -311,11 +335,22 @@ public abstract class MNNode extends MNBase
 		this.lastMsgIn = msg ;  //record
 		
 		//StringBuilder failedr = new StringBuilder() ;
-		RTOut out = RT_onMsgIn(in_conn,msg) ;
-		if(out==null)
-			return ; //may be processed later,
+		RTOut out = null ;
+		try
+		{
+			out = RT_onMsgIn(in_conn,msg) ;
+			if(out==null)
+				return ; //may be processed later,
+		}
+		catch(Throwable ee)
+		{
+			this.RT_DEBUG_ERR.fire("msg_in", ee.getMessage(),ee);
+			return ;
+		}
 		
-		this.RT_sendMsgOut(out);
+		this.RT_DEBUG_ERR.clear("msg_in");
+		if(out!=null)
+			this.RT_sendMsgOut(out);
 	}
 
 	protected final void RT_sendMsgOut(RTOut out) //,MNMsg msg)

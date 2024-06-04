@@ -34,4 +34,16 @@ public interface IMNRunner
 	public boolean RT_isRunning();
 	
 	public boolean RT_isSuspendedInRun(StringBuilder reson) ;
+	
+	/**
+	 * false will not support runner
+	 * @return
+	 */
+	public boolean RT_runnerEnabled() ;
+	
+	/**
+	 * true will not support manual trigger to start
+	 * @return
+	 */
+	public boolean RT_runnerStartInner() ;
 }

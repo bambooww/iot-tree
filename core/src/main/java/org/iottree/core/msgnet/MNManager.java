@@ -143,12 +143,14 @@ public class MNManager
 		registerItem(new NM_Template(),cat) ;
 		registerItem(new NM_Change(),cat) ;
 		registerItem(new NM_Switch(),cat) ;
+		registerItem(new NM_OnOff(),cat) ;
 		registerItem(new NM_Exec(),cat) ;
 		
 		cat = registerCat(new MNCat("_dev")) ;
 		registerItem(new NM_TagReader(),cat) ;
 		registerItem(new NM_TagWriter(),cat) ;
 		registerItem(new NM_TagFilter(),cat) ;
+		registerItem(new NM_TagFilterW(),cat) ;
 		//registerItem(new TagRuntime(),cat) ;
 		
 		cat = registerCat(new MNCat("_net")) ;

@@ -16,6 +16,7 @@ if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
 
+
 String val = request.getParameter("val") ;
 if(val==null)
 	val = "" ;

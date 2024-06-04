@@ -11,12 +11,12 @@
 	<dd_node id="1" name="change" name_cn="设置修改" name_en="Change" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="template" name_cn="模板" name_en="Template" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="exec" name_cn="执行系统命令" name_en="Exec Cmd" desc_cn="" desc_en=""/>
-	
-	<dd_node id="1" name="no_intv_ms" name_cn="没有设置时间间隔" name_en="No interval param set" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="onoff" name_cn="开关" name_en="On Off" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="tag_reader" name_cn="标签数据读取" name_en="Tags Reader" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tag_writer" name_cn="标签数据写入" name_en="Tags Writer" desc_cn="" desc_en=""/>
-	<dd_node id="1" name="tag_filter" name_cn="标签过滤器" name_en="Tags Filter" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_filter" name_cn="标签读取过滤器" name_en="Tags Read Filter" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_filter_w" name_cn="标签写入过滤器" name_en="Tags Write Filter" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="mem_que" name_cn="内存队列" name_en="Mem Queue" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
@@ -35,9 +35,13 @@
   <dd_node id="1" name="normal" name_cn="普通" name_en="Normal" />
   <dd_node id="1" name="combined_out" name_cn="组合输出" name_en="Combined Output" />
   <dd_node id="1" name="latest_priority" name_cn="最新优先" name_en="Latest Priority" />
+  <dd_node id="1" name="otherwise" name_cn="除此以外" name_en="Otherwise" />
   
   <dd_node id="1" name="issue_err" name_cn="产生错误" name_en="Issue Error" />
   <dd_node id="1" name="discard_old" name_cn="丢弃旧数据" name_en="Discard Old Message" />
   <dd_node id="1" name="discard_new" name_cn="丢弃新数据" name_en="Discard New Message" />
+  
+  <dd_node id="1" name="valid_data" name_cn="正常数据" name_en="Valid Data" />
+  <dd_node id="1" name="invalid_tags" name_cn="无效标签列表" name_en="Invalid Tags" />
   
 </dd_class>

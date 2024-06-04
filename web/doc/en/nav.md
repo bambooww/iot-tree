@@ -78,9 +78,12 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
 
-#### <a href="doc/router/index.md" >10 Data Router</a>
-##### <a href="doc/router/router_mqtt.md" >&nbsp;&nbsp;&nbsp;10.1 MQTT Router</a>
-##### <a href="doc/router/router_kafka.md">&nbsp;&nbsp;&nbsp;10.2 Kafka Router</a>
+#### <a href="doc/msgnet/index.md" >10 Message Flow</a>
+##### <a href="doc/msgnet/demo_caseauto.md" >&nbsp;&nbsp;&nbsp;10.1 Demo: Automatic control flow</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;10.2 Demo: Automatic data recorder flow</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;10.3 Demo: Alarm detection and output</a>
+##### <a href="doc/msgnet/nd_timer_trigger.md" >&nbsp;&nbsp;&nbsp;10.4 Node: Timer Trigger</a>
+##### <a href="doc/msgnet/nd_mem_queue.md" >&nbsp;&nbsp;&nbsp;10.5 Node: Mem Queue</a>
 
 #### <a href="doc/advanced/index.md" >11 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 Plugins Development</a>

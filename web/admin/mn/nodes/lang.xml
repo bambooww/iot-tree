@@ -26,5 +26,7 @@
   <dd_node id="1" name="to_the_val" name_cn="值为" name_en="to the value" />
   <dd_node id="1" name="to" name_cn="到" name_en="to" />
   <dd_node id="1" name="deep_cp" name_cn="深度复制" name_en="Deep copy" />
-  
+  <dd_node id="1" name="must_ok" name_cn="必须有效" name_en="Must be valid" />
+  <dd_node id="1" name="asyn_run" name_cn="异步运行" name_en="Asynchronous Run" />
+  <dd_node id="1" name="otherwise" name_cn="除此以外" name_en="Otherwise" />
 </dd_class>

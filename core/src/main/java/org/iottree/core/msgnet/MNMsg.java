@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -226,18 +227,26 @@ public class MNMsg implements IMNCxtPk
 	{
 		switch(subname)
 		{
-		case "id":
+		case "_id":
 			return this.getMsgId() ;
-		case "time_ms":
+		case "_time_ms":
 			return this.getMsgDT();
 		case "topic":
 			return this.getTopic() ;
 		case "heads":
-			
 			break ;
 		case "payload":
 			return this.getPayload() ;
 		}
+		if(subname.startsWith("payload."))
+		{
+			Object ob = this.getPayload() ;
+			if(ob==null)
+				return null ;
+			if(ob instanceof JSONObject)
+				return JsonUtil.getValByPath((JSONObject)ob, subname.substring(8)) ;
+		}
+		//may JSONPath
 		return null;
 	}
 

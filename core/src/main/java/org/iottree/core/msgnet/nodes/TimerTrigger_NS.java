@@ -428,4 +428,22 @@ public class TimerTrigger_NS extends MNNodeStart implements IMNRunner, IMNOnOff
 		}
 		return false;
 	}
+	
+	/**
+	 * false will not support runner
+	 * @return
+	 */
+	public boolean RT_runnerEnabled()
+	{
+		return true ;
+	}
+	
+	/**
+	 * true will not support manual trigger to start
+	 * @return
+	 */
+	public boolean RT_runnerStartInner()
+	{
+		return false;
+	}
 }
