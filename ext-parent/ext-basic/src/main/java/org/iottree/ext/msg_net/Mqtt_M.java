@@ -43,7 +43,7 @@ public class Mqtt_M extends MNModule
 	@Override
 	public String getIcon()
 	{
-		return "\\uf1eb-270,\\uf1eb-90";
+		return "PK_bridge";//"\\uf1eb-270,\\uf1eb-90";
 	}
 
 	@Override

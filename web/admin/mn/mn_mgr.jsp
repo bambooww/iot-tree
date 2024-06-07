@@ -47,6 +47,7 @@ visibility: visible;
  
 .lib_item
 {
+position:relative;
 	height:35px;
 	border:1px solid;
 	border-color: #499ef3;
@@ -74,10 +75,18 @@ for(MNNet net:nets)
 		String tmpid = "" ;
 		
 			tmpid = "net_"+net.getId() ;
-		
+		boolean ben = net.isEnable() ;
+		String borderc = "" ;
+		String tt = "" ;
+		if(!ben)
+		{
+			borderc = "border-color:#999999;";
+			//tt = "<w:g>flow_is_not_en</w:g>";
+		}
 %>
-	<span class="lib_item btn_sh_c" >
-		<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> &nbsp;<a class="text title" href="javascript:open_net('<%=net.getId()%>','<%=net.getTitle() %>')" data-id="8"><%=net.getTitle() %></a>
+	<span class="lib_item btn_sh_c"  style="<%=borderc%>" title="<%=tt%>">
+		<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> &nbsp;<a class="text title" href="javascript:open_net('<%=net.getId()%>','<%=net.getTitle() %>')" ><%=net.getTitle() %></a>
+		
 		<span class="btn_sh">
            <span class="bitem" onclick="add_or_edit_flow('<%=net.getId()%>')" title="<w:g>edit</w:g>">
               <span class="fa-stack fa-1x">
@@ -92,12 +101,12 @@ for(MNNet net:nets)
 							</span>
            </span>
            </span>
-           
+
 	</span>
 <%
 }
 %>
-	<span class="lib_item" onclick="add_or_edit_flow()"><i class="fa-solid fa-plus fa-lg"></i></span>
+	<span class="lib_item" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></span>
 </div>
 <script>
 

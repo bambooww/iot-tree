@@ -29,4 +29,9 @@
   <dd_node id="1" name="must_ok" name_cn="必须有效" name_en="Must be valid" />
   <dd_node id="1" name="asyn_run" name_cn="异步运行" name_en="Asynchronous Run" />
   <dd_node id="1" name="otherwise" name_cn="除此以外" name_en="Otherwise" />
+  
+  <dd_node id="1" name="highlight" name_cn="高亮" name_en="Highlight" />
+  <dd_node id="1" name="template" name_cn="模板" name_en="Template" />
+  <dd_node id="1" name="last_in_msg" name_cn="" name_en="Last In Message" />
+  
 </dd_class>

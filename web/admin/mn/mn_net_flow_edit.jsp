@@ -146,6 +146,7 @@ String net_tt = net.getTitle() ;
 var prjid = "<%=prjid%>" ;
 var netid = "<%=netid%>" ;
 
+var ulang = "<%=Lan.getUsingLang()%>" ;
 //toolbox_init("#toolbar_basic");
 //toolbox_init("#orders_not_assigned");
 var panel = null;
@@ -340,6 +341,26 @@ function on_item_sel_chg(items)
 	let u1 = `mn_panel.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${item.id}`;
 	if(u1!=$("#right_info_iframe").attr("src"))
 		$("#right_info_iframe").attr("src",u1);
+	
+	if(item.getClassName()==mn.view.DIModule.CN)
+	{
+		let tp = item.moduleItem._tp ;
+		show_help('m',tp) ;
+	}
+	else if(item.getClassName()==mn.view.DINode.CN)
+	{
+		let tp = item.nodeItem._tp ;
+		show_help('n',tp) ;
+	}
+	
+	
+}
+
+function show_help(mn,tp)
+{
+	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false' ;
+	if(u2!=$("#right_help_iframe").attr("src"))
+		$("#right_help_iframe").attr("src",u2);
 }
 
 
@@ -607,10 +628,10 @@ function init_right()
 		$("#tab_title").html(title) ;
 	}});
 	
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<div id="help_cont">help</div>`});
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<div id="debug_cont">debug</div>`});
-	$(".right_tab").tab('selectTab', 'lb_tab_i');
+	//$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<iframe id="right_help_iframe" src="" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<iframe id="right_debug_iframe" src="mn_debug_console.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	$(".right_tab").tab('selectTab', 'lb_tab_help');
 	
 	$("#edit_panel").css("display","none");
 	$("#btn_prop_showhidden");//.css("color","#1e1e1e");
@@ -625,6 +646,8 @@ function resize_zz()
 	var h = $(window).height();
 	$("#left_pan_iframe").css("height",(h-38)+"px");
 	$("#right_info_iframe").css("height",(h-38)+"px");
+	$("#right_help_iframe").css("height",(h-38)+"px");
+	$("#right_debug_iframe").css("height",(h-38)+"px");
 }
 
 var resize_cc = 0 ;
@@ -740,11 +763,11 @@ function debug_in_out_msg(nodeid,outidx)
 	}) ;
 }
 
-function debug_prompt_detail(itemid,lvl) //err warn info
+function debug_prompt_detail(itemid,lvl,ptp) //err warn info
 {
 	let op = "rt_debug_prompt";
 
-	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,itemid:itemid,lvl:lvl},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,itemid:itemid,lvl:lvl,ptp},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
 		{
 			dlg.msg(ret) ;

@@ -3,10 +3,26 @@ package org.iottree.core.msgnet;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.iottree.core.UACh;
+import org.iottree.core.UADev;
+import org.iottree.core.UANode;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsEnv;
+import org.iottree.core.cxt.JsMethod;
+import org.iottree.core.cxt.JsProp;
+import org.iottree.core.cxt.JsSub;
+import org.iottree.core.cxt.JsSubOb;
+import org.iottree.core.cxt.UAContext;
+import org.iottree.core.plugin.PlugJsApi;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
@@ -303,6 +319,21 @@ public abstract class MNBase extends MNCxtPk implements ILang
 //		return RT_tp2pptErr.size()>0 ;
 //	}
 	
+	public RTDebug RT_DEBUG_getByLvl(String lvl)
+	{
+		switch(lvl)
+		{
+		case "err":
+			return RT_DEBUG_ERR;
+		case "warn":
+			return RT_DEBUG_WARN ;
+		case "inf":
+			return RT_DEBUG_INF ;
+		default:
+			return null ;
+		}
+	}
+	
 	protected void RT_renderDiv(StringBuilder divsb)
 	{
 		if(isRunner())
@@ -373,56 +404,173 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	}
 
 	
+	// JS
 	
-//	protected final void RT_DEBUG_fireWarn(String tp,String msg)
-//	{
-//		RT_DEBUG_fireWarn(tp,msg,null,null) ;
-//	}
-//	
-//	protected final void RT_DEBUG_fireWarn(String tp,String msg,String detail)
-//	{
-//		RT_DEBUG_fireWarn(tp,msg,detail,null) ;
-//	}
-//	
-//	protected final void RT_DEBUG_fireWarn(String tp,String msg,Throwable ee)
-//	{
-//		RT_DEBUG_fireWarn(tp,msg,null,ee) ;
-//	}
-//	
-//	protected final void RT_DEBUG_fireWarn(String tp,String msg,String content,Throwable ee)
-//	{
-//		this.RT_tp2pptWarn.put(tp,new RTDebugPrompt(msg, content, ee)) ;
-//	}
-//	
-//	protected final void RT_DEBUG_clearWarn(String tp)
-//	{
-//		this.RT_tp2pptWarn.remove(tp) ;
-//	}
-//	
-//	protected final void RT_DEBUG_fireInfo(String msg)
-//	{
-//		RT_DEBUG_fireInfo(msg,null) ;
-//	}
-//	
-//	protected final void RT_DEBUG_fireInfo(String msg,String content)
-//	{
-//		this.RT_pptInf = new RTDebugPrompt(msg, content, null) ;
-//	}
+	public static List<JsProp> JS_getSysPropsCxt()
+	{
+		ArrayList<JsProp> jps = new ArrayList<>() ;
+		jps.add(new JsProp("$sys",UAContext.sys,null,true,"system","System support func")) ;
+		jps.add(new JsProp("$util",UAContext.util,null,true,"util","System util func")) ;
+		jps.add(new JsProp("$debug",UAContext.debug,null,true,"system","System debug func")) ;
+		HashMap<String,PlugJsApi> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		if(gvar2obj!=null)
+		{
+			for(Map.Entry<String, PlugJsApi> n2o:gvar2obj.entrySet())
+			{
+				String k = n2o.getKey();
+				PlugJsApi jsapi= n2o.getValue() ;
+				jps.add(new JsProp("$$"+k,jsapi,null,true,"plugin_"+k,jsapi.getDesc())) ;
+			}
+		}
+		return jps;
+	}
 	
-//	public final RTDebugPrompt RT_DEBUG_getPrompt(String lvl)
-//	{
-//		switch(lvl)
-//		{
-//		case "info":
-//		case "inf":
-//			return this.RT_pptInf;
-//		case "err":
-//		case "error":
-//			return this.RT_pptErr ;
-//		case "warn":
-//			return this.RT_pptWarn ;
-//		default:
-//			return null ;
-//		}
-//	}
+	private List<JsProp> globalPropsCxt = null ;
+	
+	protected List<JsProp> JS_getGlobalPropsCxt()
+	{
+		if(globalPropsCxt!=null)
+			return globalPropsCxt ;
+		
+		ArrayList<JsProp> jps = new ArrayList<>() ;
+		jps.addAll(JS_getSysPropsCxt()) ;
+		
+		MNNet net = this.getBelongTo() ;
+		
+		jps.add(new JsProp("flow",net,null,true,"Flow/Net","Flow obj in context").asTpTitle("Flow")) ;
+		jps.add(new JsProp("node",this,null,true,this.getTitle(),this.getDesc()).asTpTitle("Node")) ;
+		//jps.add(new JsProp("topic",null,String.class,false,"In Msg Topic","")) ;
+		//jps.add(new JsProp("heads",null,Map.class,true,"In Msg Heads","")) ;
+		//jps.add(new JsProp("payload",null,Object.class,true,"In Msg Payload","")) ;
+		globalPropsCxt = jps;
+		return jps ;
+	}
+	
+	private transient List<JsSub> js_cxt_root_subs = null ;
+	
+	public final List<JsSub> JS_CXT_get_root_subs()
+	{
+		if(js_cxt_root_subs==null)
+		{
+			List<JsSub> rets = new ArrayList<>() ;
+			List<JsProp> jps = JS_getGlobalPropsCxt();
+			rets.addAll(jps) ;
+			
+			List<JsSub> subs = this.JS_get_subs() ;
+			if(subs!=null)
+			{
+				for(JsSub sub:subs)
+				{
+					if(sub instanceof JsMethod || !sub.hasSub())
+						continue ;// root has no method
+					if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
+						continue ;
+					rets.add(sub);
+				}
+			}
+			js_cxt_root_subs = rets ;
+		}
+		
+		JsEnv env = JsEnv.getInThLoc() ;
+		if(env==null)
+			return js_cxt_root_subs ;
+		
+		ArrayList<JsSub> rets = new ArrayList<>(js_cxt_root_subs);
+		List<JsProp> jps = env.JS_get_props() ;
+		if(jps!=null)
+			rets.addAll(jps) ;
+		return rets ;
+	}
+	
+	public final JsSub JS_CXT_get_root_sub(String name)
+	{
+		for(JsSub jp: JS_CXT_get_root_subs())
+		{
+			if(jp.getName().equals(name))
+				return jp ;
+		}
+		return null ;
+	}
+	
+	public final JsSubOb JS_CXT_get_sub_by_id(String sub_id)
+	{
+		if(Convert.isNullOrEmpty(sub_id))
+			return null ;
+		
+		List<String> ss = Convert.splitStrWith(sub_id, ".") ;
+		String rootn = ss.get(0) ;
+		int n = ss.size() ;
+		JsSub jp1 = JS_CXT_get_root_sub(rootn) ;
+		if(jp1==null)
+			return null ;
+		Object pv = this.JS_get(rootn) ;
+		if(n==1)
+			return new JsSubOb(jp1,pv) ;
+
+		JsSub jss = null ;
+		for(int i = 1 ; i < n ; i ++)
+		{
+			if(pv==null || !(pv instanceof JSObMap))
+				return null ;
+			
+			JSObMap pv_ob = (JSObMap)pv ; 
+			
+			String name = ss.get(i) ;
+			jss = pv_ob.JS_get_sub(name) ;
+			if(jss==null)
+				return null ;
+			pv = pv_ob.JS_get(name) ;
+		}
+		return new JsSubOb(jss,pv) ;
+	}
+	
+	public Object JS_get(String key)
+	{
+		Object r = super.JS_get(key);
+		if (r != null)
+			return r;
+		
+		if(key.startsWith("$$"))
+		{//JsApi
+			String plug_n = key.substring(2) ;
+			HashMap<String,PlugJsApi> gvar2obj = PlugManager.getInstance().getJsApiAll();
+			if(gvar2obj==null)
+				return null ;
+			return gvar2obj.get(plug_n) ;
+		}
+		
+		if(key.startsWith("$"))
+		{
+			switch(key)
+			{
+			case "flow":
+				return this.getBelongTo() ;
+			case "node":
+				return this ;
+			case "$sys":
+				return UAContext.sys;
+			case "$debug":
+				return UAContext.debug;
+			case "$util":
+				return UAContext.util;
+			}
+			
+			//env
+			JsEnv env = JsEnv.getInThLoc();
+			if(env!=null)
+			{
+				return env.JS_get(key) ;
+			}
+		}
+		
+		switch(key)
+		{
+		case "flow":
+			return this.getBelongTo() ;
+		case "node":
+			return this ;
+		}
+		
+		return null ;
+	}
 }

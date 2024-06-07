@@ -17,6 +17,9 @@
   <dd_node id="1" name="auto_start" name_cn="自动启动" name_en="Auto Start" />
   <dd_node id="1" name="delay" name_cn="延迟" name_en="Delay" />
   
+  <dd_node id="1" name="init" name_cn="初始化" name_en="Init" />
+  <dd_node id="1" name="end" name_cn="结束" name_en="End" />
+  
   <dd_node id="1" name="modified_date" name_cn="修改时间" name_en="modified date" />
   <dd_node id="1" name="more_prjs" name_cn="更多项目" name_en="more projects" />
   <dd_node id="1" name="more" name_cn="更多" name_en="More" />

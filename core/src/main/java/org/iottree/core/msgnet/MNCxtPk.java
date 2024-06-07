@@ -1,5 +1,7 @@
 package org.iottree.core.msgnet;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +12,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.UAVal;
+import org.iottree.core.basic.ValAlert;
+import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsMethod;
+import org.iottree.core.cxt.JsProp;
+import org.iottree.core.cxt.JsSub;
+import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.msgnet.MNCxtVar.KeepTP;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.JsonUtil;
@@ -18,7 +27,7 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class MNCxtPk implements IMNCxtPk
+public class MNCxtPk extends JSObMap implements IMNCxtPk
 {
 	static ILogger log = LoggerManager.getLogger(MNCxtPk.class) ;
 	
@@ -65,6 +74,24 @@ public class MNCxtPk implements IMNCxtPk
 		}
 		
 		this.name2var.put(name, cv) ;
+	}
+	
+	
+	public Map<String,Object> CXT_PK_toMap()
+	{
+		HashMap<String,Object> rets = new HashMap<>() ;
+		for(Map.Entry<String, Object> n2o:this.var2val.entrySet())
+		{
+			String n = n2o.getKey() ;
+			Object o = n2o.getValue() ;
+			if(o instanceof JSONObject)
+				rets.put(n,((JSONObject)o).toMap()) ;
+			else if(o instanceof JSONArray)
+				rets.put(n,((JSONArray)o).toList()) ;
+			else
+				rets.put(n,o) ;
+		}
+		return rets ;
 	}
 	
 	public JSONObject CXT_getDefJO()
@@ -309,4 +336,122 @@ public class MNCxtPk implements IMNCxtPk
 		RT_CXT_setVarVal(subname,subv) ;
 		return true;
 	}
+	
+	//  cxt 
+	
+	public void CXT_PK__renderTree(Writer w) throws IOException
+	{
+		Map<String,Object> map = CXT_PK_toMap() ;
+		if(map==null)
+			return ;
+		CXT_PK_renderTree(w,map);
+	}
+	
+	public void CXT_PK_renderTree(Writer w,Map<String,Object> map) throws IOException
+	{
+		w.write("<ul>");
+		for(Map.Entry<String, Object> n2o:map.entrySet())
+		{
+			String n = Convert.plainToHtml(n2o.getKey()) ;
+			Object o = n2o.getValue() ;
+			w.write("<li >"+n) ;
+			CXT_PK_renderTreeObj(w, o) ;
+			w.write("</li>") ;
+		}
+		
+		List<JsSub> subs = this.JS_get_subs() ;
+		if(subs!=null)
+		{
+			for(JsSub sub:subs)
+			{
+				if(sub instanceof JsMethod) // || !sub.hasSub())
+				{
+					JsMethod jsm = (JsMethod)sub ;
+					w.write("<li data-jstree='{\"icon\":\"method\"}'>"+sub.getName()) ;
+					w.write(jsm.getParamsTitle()) ;
+					w.write("</li>") ;
+				}
+				
+				if(sub instanceof JsProp && ((JsProp)sub).isSysTag())
+				{
+					JsProp jsp = (JsProp)sub ;
+					w.write("<li >"+sub.getName()) ;
+					w.write(jsp.getSubTitle()) ;
+					w.write("</li>") ;
+				}
+			}
+		}
+		
+        w.write("</ul>");
+	}
+	
+	void CXT_PK_renderTreeObj(Writer w,Object o) throws IOException
+	{
+		if(o instanceof List)
+		{
+			w.write(":[]") ;
+			List<?> ll = (List<?>)o ;
+			if(ll.size()>=0)
+			{
+				Object ob = ll.get(0) ;
+				if(ob instanceof Map)
+					CXT_PK_renderTree(w,(Map<String,Object>)ob) ;
+				//else if(ob instanceof List)
+				//	CXT_PK_renderTreeObj(w,Object o)
+			}
+		}
+		else if(o instanceof Map)
+		{
+			CXT_PK_renderTree(w,(Map)o) ;
+		}
+		else
+		{
+			if(o!=null)
+			{
+				if(o instanceof Number)
+					w.write(":number") ;
+				else if(o instanceof String)
+					w.write(":string");
+				else if(o instanceof Boolean)
+					w.write(":boolean");
+				else
+					w.write(":obj");
+			}
+		}
+	}
+	
+	// js
+	
+	public Object JS_get(String  key)
+	{
+		Object obj  = super.JS_get(key) ;
+		if(obj!=null)
+			return obj ;
+		
+		if(this.var2val==null)
+			return null ;
+		return this.var2val.get(key) ;
+	}
+	
+	public List<JsProp> JS_props()
+	{
+		List<JsProp> rets = super.JS_props() ;
+		
+		if(this.var2val!=null)
+		{
+			for(Map.Entry<String, Object> n2o:this.var2val.entrySet())
+			{
+				String n = n2o.getKey() ;
+				Object v = n2o.getValue() ;
+				rets.add(new JsProp(n,v,null,false,"",""));
+			}
+		}
+		
+		return rets ;
+	}
+	
+//	public Class<?> JS_type(String key)
+//	{
+//		
+//	}
 }

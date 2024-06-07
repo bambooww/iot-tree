@@ -12,7 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.script.ScriptException;
+
 import org.iottree.core.UAPrj;
+import org.iottree.core.msgnet.cxt.MNContext;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
@@ -1104,5 +1107,23 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 
 		CXT_renderVarsDiv(divsb) ;
 		
+	}
+	
+	// js 
+	
+	private transient MNContext jsCxt = null ; 
+	
+	public MNContext RT_JS_getContext() throws ScriptException
+	{
+		if(jsCxt!=null)
+			return jsCxt ;
+		
+		synchronized(this)
+		{
+			if(jsCxt!=null)
+				return jsCxt ;
+			jsCxt = new MNContext(this) ;
+			return jsCxt ;
+		}
 	}
 }

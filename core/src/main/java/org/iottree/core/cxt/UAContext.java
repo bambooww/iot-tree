@@ -149,7 +149,7 @@ public class UAContext
 	
 	public UAContext asTask(Task task) throws ScriptException
 	{
-		scriptEng.put("$_task_", this);
+		scriptEng.put("$_task_", task);
 		scriptEng.eval("const $task=$_task_;Object.freeze($task);") ;
 		return this ;
 	}

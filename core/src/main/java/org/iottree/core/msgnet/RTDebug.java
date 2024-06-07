@@ -28,6 +28,11 @@ public class RTDebug
 		return rets ;
 	}
 	
+	public RTDebugPrompt getPrompt(String tp)
+	{
+		return this.tp2ppt.get(tp) ;
+	}
+	
 	public boolean hasPrompts()
 	{
 		return tp2ppt.size()>0 ;

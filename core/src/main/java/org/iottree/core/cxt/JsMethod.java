@@ -26,6 +26,8 @@ public class JsMethod extends JsSub implements ProxyExecutable
 	Object ob = null;
 
 	Method method = null;
+	
+	JsDef def = null ;
 
 	public JsMethod(Object ob, Method method)
 	{
@@ -39,7 +41,7 @@ public class JsMethod extends JsSub implements ProxyExecutable
 		if (this.name.startsWith(JS_PREFIX))
 			this.name = this.name.substring(3);
 
-		JsDef def = method.getAnnotation(JsDef.class);
+		def = method.getAnnotation(JsDef.class);
 		if (def != null)
 		{
 			String n = def.name();
@@ -126,6 +128,14 @@ public class JsMethod extends JsSub implements ProxyExecutable
 	
 	public String getParamsTitle()
 	{
+		if(def!=null && Convert.isNotNullEmpty(def.method_params_title()))
+		{
+			String s = def.method_params_title() ;
+			if(s.startsWith("("))
+				return s ;
+			else
+				return "("+s+")" ;
+		}
 		String ret = "(" ;
 		List<String> ptps = getParamTitles() ;
 		int n = 0 ;

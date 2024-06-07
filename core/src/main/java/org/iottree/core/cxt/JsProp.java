@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UATag;
+import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
 import com.sun.xml.bind.v2.schemagen.xmlschema.List;
@@ -17,6 +18,7 @@ public class JsProp extends JsSub
 	
 	Class<?> valTp = null ;
 	
+	String tpTitle = null ;
 	
 	boolean hSub = false;
 	
@@ -41,6 +43,12 @@ public class JsProp extends JsSub
 	{
 		this.bList = b ;
 		return this ;
+	}
+	
+	public JsProp asTpTitle(String t)
+	{
+		tpTitle = t ;
+		return this;
 	}
 //	public JsProp(String name,Class<?> valtp,String title,String desc)
 //	{
@@ -87,7 +95,7 @@ public class JsProp extends JsSub
 	@Override
 	public String getSubTitle()
 	{
-		return this.name+":"+getClassJsTitle(valTp) ;
+		return this.name+":"+(Convert.isNotNullEmpty(tpTitle)?tpTitle:getClassJsTitle(valTp)) ;
 	}
 	
 	@Override

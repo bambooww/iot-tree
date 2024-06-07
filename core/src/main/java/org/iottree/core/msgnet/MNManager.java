@@ -133,10 +133,9 @@ public class MNManager
 	{
 		MNCat cat = registerCat(new MNCat("_com")) ;
 		registerItem(new ManualTrigger(),cat) ;
-		registerItem(new TimerTrigger_NS(),cat) ;
+		registerItem(new NS_TimerTrigger(),cat) ;
 		registerItem(new NE_Debug(),cat) ;
 		registerItem(new NM_MemQueue(),cat) ;
-		
 		
 		cat = registerCat(new MNCat("_func")) ;
 		registerItem(new NM_JsFunc(),cat) ;
@@ -151,11 +150,15 @@ public class MNManager
 		registerItem(new NM_TagWriter(),cat) ;
 		registerItem(new NM_TagFilter(),cat) ;
 		registerItem(new NM_TagFilterW(),cat) ;
+		registerItem(new NS_TagTrigger(),cat) ;
+		registerItem(new NS_TagAlertTrigger(),cat) ;
+		
 		//registerItem(new TagRuntime(),cat) ;
 		
 		cat = registerCat(new MNCat("_net")) ;
 		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
 		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
+		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
 		
 		cat = registerCat(new MNCat("_storage")) ;
 		registerItem(new DBSql(),cat) ;
@@ -337,7 +340,7 @@ public class MNManager
 		return null ;
 	}
 	
-	public MNNet createNewNet(String name,String title,String desc) throws Exception
+	public MNNet createNewNet(String name,String title,String desc,boolean benable) throws Exception
 	{
 		StringBuilder failedr = new StringBuilder() ;
 		if(!Convert.checkVarName(name, failedr))
@@ -348,6 +351,7 @@ public class MNManager
 			throw new Exception("net with name "+name+ "existed") ;
 		
 		MNNet rnn = new MNNet(this,name,title,desc) ;
+		rnn.bEnable = benable ;
 		saveNet(rnn);
 		this.listNets().add(rnn) ;
 		return rnn ;
@@ -363,7 +367,7 @@ public class MNManager
 		return rnn ;
 	}
 	
-	public MNNet updateNet(String id,String name,String title,String desc) throws Exception
+	public MNNet updateNet(String id,String name,String title,String desc,boolean benable) throws Exception
 	{
 		MNNet rnn = this.getNetById(id) ;
 		if(rnn==null)
@@ -375,6 +379,7 @@ public class MNManager
 		rnn.name = name ;
 		rnn.title = title ;
 		rnn.desc = desc ;
+		rnn.bEnable = benable ;
 		this.saveNet(rnn);
 		return rnn ;
 	}

@@ -1,0 +1,9 @@
+## License
+
+This project uses the `BACnet4J` library, which is licensed under the GNU General Public License v3.0. You can find the license text in the `LICENSE` file.
+
+### Included GPL Library
+
+- `BACnet4J` (GPL 3.0): [Official repository link](https://github.com/MangoAutomation/BACnet4J)
+
+For more information on how to obtain the source code for `BACnet4J`, please refer to the official repository link above.

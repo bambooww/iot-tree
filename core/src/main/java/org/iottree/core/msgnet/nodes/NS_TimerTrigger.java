@@ -19,7 +19,7 @@ import org.iottree.core.util.Lan;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class TimerTrigger_NS extends MNNodeStart implements IMNRunner, IMNOnOff
+public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 {
 	boolean bDelayExec = false;
 

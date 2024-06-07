@@ -18,6 +18,9 @@
 	<dd_node id="1" name="tag_filter" name_cn="标签读取过滤器" name_en="Tags Read Filter" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tag_filter_w" name_cn="标签写入过滤器" name_en="Tags Write Filter" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="mem_que" name_cn="内存队列" name_en="Mem Queue" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_trigger" name_cn="标签触发器" name_en="Tags Trigger" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_alert_trigger" name_cn="标签报警触发器" name_en="Tags Alert Trigger" desc_cn="" desc_en=""/>
+	
 	
 	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
   <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />

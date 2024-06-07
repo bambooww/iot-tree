@@ -1,7 +1,12 @@
 package org.iottree.core.msgnet;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.iottree.core.util.Convert;
 
 public interface IMNCxtPk
 {
@@ -18,4 +23,13 @@ public interface IMNCxtPk
 	public Object CXT_PK_getSubVal(String subname);
 	
 	public boolean CXT_PK_setSubVal(String subname,Object subv,StringBuilder failedr) ;
+	
+	/**
+	 * trans to var to map
+	 * it will be used by Mustache {{ }} templete out
+	 * @return
+	 */
+	public Map<String,Object> CXT_PK_toMap() ;
+	
+	
 }

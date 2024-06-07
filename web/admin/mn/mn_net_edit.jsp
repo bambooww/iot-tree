@@ -26,6 +26,7 @@
 	
 	MNManager mnm = MNManager.getInstance(prj) ;
 	String id = request.getParameter("netid") ;
+	boolean benable = true ;
 	if(Convert.isNotNullEmpty(id))
 	{
 		MNNet net = mnm.getNetById(id) ;
@@ -37,12 +38,14 @@
 		name  = net.getName() ;
 		title =net.getTitle() ;
 		desc = net.getDesc() ;
+		benable = net.isEnable() ;
 		if(title==null)
 			title ="" ;
 		if(desc==null)
 			desc = "" ;
 	}
 	
+	String ben_chked = benable?"checked":"" ;
 %>
 <html>
 <head>
@@ -62,8 +65,11 @@ dlg.resize_to(600,400);
 <form class="layui-form" action="">
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
-    <div class0="layui-input-block" class="layui-input-inline">
+    <div class="layui-input-inline">
       <input type="text" name="name" id="name" value="<%=name %>"  class="layui-input"/>
+    </div>
+     <div class="layui-input-inline" style="width:20%;">
+      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> Enable
     </div>
   </div>
  <div class="layui-form-item">
@@ -108,7 +114,8 @@ function do_submit(cb)
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
-	cb(true,{name:n,title:tt,desc:desc});
+	let benable = $("#enable").prop("checked") ;
+	cb(true,{name:n,title:tt,desc:desc,enable:benable});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

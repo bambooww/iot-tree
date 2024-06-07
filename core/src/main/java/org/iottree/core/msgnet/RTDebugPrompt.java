@@ -37,6 +37,11 @@ public class RTDebugPrompt implements Comparable<RTDebugPrompt>
 		}
 	}
 	
+	public String getTP()
+	{
+		return this.tp ;
+	}
+	
 	public long getDT()
 	{
 		return dt ;
@@ -87,7 +92,7 @@ public class RTDebugPrompt implements Comparable<RTDebugPrompt>
 	
 	//public 
 
-	private static String transToStr(Throwable t)
+	public static String transToStr(Throwable t)
 	{
 		if(t==null)
 			return "" ;

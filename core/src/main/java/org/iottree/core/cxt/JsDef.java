@@ -13,4 +13,6 @@ public @interface JsDef {
 	String desc() default "";
 	
 	String icon() default "" ;
+	
+	String method_params_title() default "" ;
 }

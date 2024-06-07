@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.iottree.core.util.IdCreator;
@@ -77,11 +78,38 @@ public class MNMsg implements IMNCxtPk
 		return this;
 	}
 	
+	public MNMsg asHeads(Map<?,?> heads)
+	{
+		if(heads==null)
+			return this ;
+		
+		for(Map.Entry<?, ?> n2v:heads.entrySet())
+		{
+			Object k = n2v.getKey() ;
+			if(!(k instanceof String))
+				continue ;
+			Object v = n2v.getValue() ;
+			if(!v.getClass().isPrimitive() && !(v instanceof String))
+				continue ;
+			asHead((String)k,v) ;
+		}
+		return this ;
+	}
+	
 	public Object getHeadVal(String name)
 	{
 		if(heads==null)
 			return null ;
 		return heads.get(name) ;
+	}
+	
+	public Map<String,Object> getHeadsMap()
+	{
+		if(heads==null)
+		{
+			heads = new HashMap<>() ;
+		}
+		return heads ;
 	}
 	
 	public MNMsg asPayload(Object payload)
@@ -125,6 +153,7 @@ public class MNMsg implements IMNCxtPk
         
         return def_v ;
     }
+	
 	
 	public JSONObject getPayloadJO(JSONObject def_v)
 	{
@@ -272,6 +301,30 @@ public class MNMsg implements IMNCxtPk
 		//return false;
 	}
 	
-	
+	/**
+	 * trans to var to map
+	 * it will be used by Mustache {{ }} templete out
+	 * @return
+	 */
+	public Map<String,Object> CXT_PK_toMap()
+	{
+		HashMap<String,Object> rets = new HashMap<>() ;
+		rets.put("_id",this.getMsgId()) ;
+		rets.put("_time_ms",this.getMsgDT());
+		rets.put("topic",this.getTopic()) ;
+		rets.put("heads",this.heads!=null?this.heads:new HashMap<>()) ;
+		if(this.payload==null)
+			rets.put("payload","") ;
+		else
+		{
+			if(this.payload instanceof JSONObject)
+				rets.put("payload",((JSONObject)this.payload).toMap()) ;
+			else if(this.payload instanceof JSONArray)
+				rets.put("payload",((JSONArray)this.payload).toList()) ;
+			else
+				rets.put("payload",this.payload) ;
+		}
+		return rets ;
+	}
 	
 }

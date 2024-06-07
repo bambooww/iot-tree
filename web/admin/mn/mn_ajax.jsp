@@ -92,12 +92,13 @@ switch(op)
 case "add_edit_net":
 	if(!Convert.checkReqEmpty(request, out, "name"))
 		return ;
+	boolean benable = !"false".equals(request.getParameter("enable")) ;
 	try
 	{
 		if(Convert.isNullOrEmpty(netid))
-			mnm.createNewNet(name, title, desc) ;
+			mnm.createNewNet(name, title, desc,benable) ;
 		else
-			mnm.updateNet(netid, name, title, desc);
+			mnm.updateNet(netid, name, title, desc,benable);
 		out.print("succ") ;
 	}
 	catch(Exception e)
@@ -276,16 +277,23 @@ case "rt_debug_msg":
 		m.toJO().write(out) ;
 	return ;
 case "rt_debug_prompt":
-	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl"))
+	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl","ptp"))
 		return ;
-	//String lvl = request.getParameter("lvl") ;
-	//RTDebugPrompt ppt = item.RT_DEBUG_getPrompt(lvl) ;
-	//if(ppt==null)
-	//	out.print("{}") ;
-	//else
-	//	ppt.toDetailJO().write(out) ;
-	//return ;	
+	String lvl = request.getParameter("lvl") ;
+	String ptp= request.getParameter("ptp") ;
+	RTDebug rtd = item.RT_DEBUG_getByLvl(lvl) ;
+	if(rtd==null)
+	{
+		out.print("{}") ;
+		return ;
+	}
+	RTDebugPrompt ppt = rtd.getPrompt(ptp) ; 
+	if(ppt==null)
+		out.print("{}") ;
+	else
+		ppt.toDetailJO().write(out) ;
+	return ;
 default:
-	out.print("unknown op") ;
+	out.print("unknown op="+op) ;
 	return ;
 }%>

@@ -81,10 +81,7 @@ if(tree)
 <link type="text/css" href="/admin/inc/tree.css" rel="stylesheet" />
 <%
 }
-if(mn)
-{
-%><%
-}
+
 
 if(mn)
 {

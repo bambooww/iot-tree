@@ -63,20 +63,27 @@
 <title></title>
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
+	<jsp:param value="true" name="tree"/>
+
 </jsp:include>
 <script type="text/javascript">
+
+var prjid="<%=prjid%>";
+var netid="<%=netid%>";
+var itemid="<%=itemid%>";
 
 var pm_url="<%=pm_url%>" ;
 var pm_jo = <%=jstr%> ;
 
 var form ;
+var element;
 
 function init_pm()
 {
 	if(!pm_url)
 		return ;
-	
-	send_ajax(pm_url,{pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
+
+	send_ajax(pm_url,{prjid:prjid,netid:netid,itemid:itemid,pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
 		$("#pm_cont").html(ret) ;
 		
 		on_init_pm_ok() ;
@@ -168,6 +175,7 @@ function do_submit(cb)
 
 layui.use('form', function(){
 	  form = layui.form;
+	  element = layui.element;
 	  form.render();
 	  
 	  init_pm() ;
