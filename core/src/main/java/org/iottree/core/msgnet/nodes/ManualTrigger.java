@@ -91,7 +91,7 @@ public class ManualTrigger  extends MNNodeStart implements IMNOnOff
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		JSONArray jarr = jo.optJSONArray("rules") ;
 		ArrayList<MsgSetRule> ccrs = new ArrayList<>() ;

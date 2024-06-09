@@ -1,5 +1,6 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.modules;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.iottree.core.msgnet.IMNRunner;
@@ -7,68 +8,60 @@ import org.iottree.core.msgnet.MNModule;
 import org.iottree.core.msgnet.MNNode;
 import org.json.JSONObject;
 
-public class BACnet_M extends MNModule implements IMNRunner
+public class MemMultiQueue extends MNModule implements IMNRunner
 {
-
+	static List<MNNode> SUP_NS = Arrays.asList(new MemQueue_NM()) ;
 	@Override
 	protected List<MNNode> getSupportedNodes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return SUP_NS;
 	}
 
 	@Override
 	public String getTP()
 	{
-		return "bacnet";
+		return "mem_multi_que";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "BACnet";
+		return g("mem_multi_que");
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#e5bdd6";//"#007dbf";
+		return "#f0a566";
 	}
-
+	
 	@Override
 	public String getIcon()
 	{
-		return "PK_bacnet";//"\\uf1ad";
+		return "\\uf141";
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
 		
 	}
-
-	// rt
-	
 
 	@Override
 	public boolean RT_start(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -89,21 +82,18 @@ public class BACnet_M extends MNModule implements IMNRunner
 	@Override
 	public boolean RT_isSuspendedInRun(StringBuilder reson)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean RT_runnerEnabled()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean RT_runnerStartInner()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

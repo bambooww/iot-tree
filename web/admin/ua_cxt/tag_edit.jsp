@@ -326,7 +326,7 @@ if(!bmid)
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>alert</wbt:g><i class="fa-solid fa-bell"></i></label>
+    <label class="layui-form-label"><wbt:g>evt</wbt:g>/<wbt:g>alert</wbt:g></label>
     <div class="layui-input-inline"  style="width:500px;">
       <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
     </div>

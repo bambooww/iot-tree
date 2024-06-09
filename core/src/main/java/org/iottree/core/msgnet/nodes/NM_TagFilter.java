@@ -84,7 +84,7 @@ public class NM_TagFilter extends MNNodeMid implements ILang
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		getFilterTree().fromDefJO(jo) ;
 	}

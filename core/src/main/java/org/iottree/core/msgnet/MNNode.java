@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.jt.JSONTemp;
@@ -79,9 +80,7 @@ public abstract class MNNode extends MNBase
 		}
 		return null ;
 	}
-	
-	public abstract JSONTemp getInJT();
-	
+
 	public abstract boolean supportInConn() ;
 	
 	public boolean isEnd()
@@ -89,7 +88,15 @@ public abstract class MNNode extends MNBase
 		return false;
 	}
 	
-	public abstract JSONTemp getOutJT();
+	public JSONTemp getInJT()
+	{
+		return null;
+	}
+
+	public JSONTemp getOutJT()
+	{
+		return null;
+	}
 	
 
 	public abstract int getOutNum() ;
@@ -388,23 +395,29 @@ public abstract class MNNode extends MNBase
 		}
 	}
 	
-	protected void RT_renderDiv(StringBuilder divsb)
+	
+	
+	
+	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
-		super.RT_renderDiv(divsb);
+		super.RT_renderDiv(divblks);
 		MNMsg msg = null ;
 		if(this.supportInConn())
 		{
+			StringBuilder divsb = new StringBuilder() ;
 			divsb.append("<div class=\"rt_blk\">Msg In ") ;
 			
 			if((msg=this.RT_getLastMsgIn())!=null)
 			{
-				
 				divsb.append(Convert.calcDateGapToNow(msg.getMsgDT())+ " <button onclick=\"debug_in_out_msg(\'"+this.getId()+"\',-1)\">View</button>") ;
 			}
 			divsb.append("</div>") ;
+			divblks.add(new DivBlk("in_msg",divsb.toString())) ;
 		}
+		
 		if(this.getOutNum()>0)
 		{
+			StringBuilder divsb = new StringBuilder() ;
 			divsb.append("<div class='rt_blk'>Msg Out") ;
 			for(int i = 0 ; i < this.getOutNum() ; i ++)
 			{
@@ -412,6 +425,7 @@ public abstract class MNNode extends MNBase
 					divsb.append("<div class='rt_sub'>"+Convert.calcDateGapToNow(msg.getMsgDT())+"<button onclick=\"debug_in_out_msg(\'"+this.getId()+"\',"+i+")\">Out "+(i+1)+"</button></div>") ;
 			}
 			divsb.append("</div>") ;
+			divblks.add(new DivBlk("out_msgs",divsb.toString())) ;
 		}
 	}
 	

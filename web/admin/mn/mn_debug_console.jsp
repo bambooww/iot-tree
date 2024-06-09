@@ -95,13 +95,12 @@
             overrideConsoleMethod('error', 'error');
 
             // Example logs
-            console.log('This is a log message.');
-            console.warn('This is a warning message.');
-            console.error('This is an error message.');
+            //console.log('This is a log message.');
+           // console.warn('This is a warning message.');
+           // console.error('This is an error message.');
 
-            // Add some more logs to demonstrate scrolling
             for (let i = 0; i < 30; i++) {
-                console.log('Log message ' + (i + 1));
+               // console.log('Log message ' + (i + 1));
             }
         })();
     </script>

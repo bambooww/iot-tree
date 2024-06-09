@@ -41,6 +41,8 @@ String net_tt = net.getTitle() ;
 </jsp:include>
 <script type="text/javascript" src="../js/tab.js" ></script>
 <link rel="stylesheet" href="../js/tab.css" />
+<script type="text/javascript" src="/_js/bignumber.min.js"></script>
+<script type="text/javascript" src="/_js/jquery.json.js"></script>
 <link rel="stylesheet" href="./inc/mn.css" />
 <style>
 .rt_blk
@@ -91,6 +93,37 @@ String net_tt = net.getTitle() ;
 	background-color: #003935;
 	z-index:1001;
 }
+
+.rt_debug_list
+{
+	position:absolute;
+	left:0px;right:0px;
+	top:20px;
+	bottom:2px;
+	overflow-y:auto;
+}
+.debug_msg
+{
+	border-bottom: 1px solid #dddddd;
+	margin-left:2px;
+	margin-bottom:2px;
+}
+.debug_msg .msg_meta
+{
+	font-size: 12px;
+	margin-left:5px;
+	font-style: italic;
+}
+.debug_msg .msg_meta span
+{
+	white-space: nowrap;
+}
+.debug_msg .msg
+{
+	margin-left:10px;
+	color:green;
+}
+
 </style>
 </head>
 <body style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; overflow: hidden;user-select:none;" >
@@ -105,6 +138,7 @@ String net_tt = net.getTitle() ;
 <div id="mid" class="mid">
 			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" title="">
 				<div id="prompt_p" class="prompt_p"></div>
+				
 			</div>
 			
 			<div style="right:0px;" class="show_hid_icon" title="show or hide right panel" id="btn_prop_showhidden"><i class="fa fa-bars fa-lg"></i></div>
@@ -139,7 +173,6 @@ String net_tt = net.getTitle() ;
 		<div class="title">Properties</div>
 		<div id=edit_props style="height:97%;width:100%;border:0px;background-color: #ffffff"></div>
 	</div>
-	
 </body>
 
 <script>
@@ -356,8 +389,12 @@ function on_item_sel_chg(items)
 	
 }
 
-function show_help(mn,tp)
+function show_help(mn,tp,bforce_pop)
 {
+	if(bforce_pop)
+	{
+		show_hidden_prop(true) ;
+	}
 	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false' ;
 	if(u2!=$("#right_help_iframe").attr("src"))
 		$("#right_help_iframe").attr("src",u2);
@@ -599,18 +636,30 @@ var b_prop_show=false;
 $('#btn_prop_showhidden').click(function(){
 	if(b_prop_show)
 	{
-		$("#edit_panel").css("display","none");
-		$("#btn_prop_showhidden");//.css("color","#1e1e1e");
-		
-		b_prop_show=false;
+		show_hidden_prop(false)
 	}
 	else
+	{
+		show_hidden_prop(true) ;
+	}
+});
+
+function show_hidden_prop(bshow)
+{
+	if(bshow)
 	{
 		$("#edit_panel").css("display","");
 		$("#btn_prop_showhidden");//.css("color","#ebeef3");
 		b_prop_show=true;
 	}
-});
+	else
+	{
+		$("#edit_panel").css("display","none");
+		$("#btn_prop_showhidden");//.css("color","#1e1e1e");
+		
+		b_prop_show=false;
+	}
+}
 
 function init_right()
 {
@@ -787,6 +836,187 @@ function debug_prompt_detail(itemid,lvl,ptp) //err warn info
 				]);
 	}) ;
 }
+
+function on_debug_node(nid,dbg_item)
+{
+	let dbg = $("#debug_n_"+nid) ;
+	if(dbg.length<=0) return ;
+	
+	let maxlen = parseInt(dbg.attr('max_buf_num')) ;
+	
+	dbg.append($("1111")) ;
+}
+	/*
+function help_show_node_tip(ypos,txt)
+{
+	console.log(ypos,txt);
+	let ttip = $(".tooltip-content") ;
+	if(txt)
+	{
+		
+		ttip.text(txt);
+		ttip.css("top",ypos+"px") ;
+		ttip.css("left","50px") ;
+		ttip.addClass('visible');
+		ttip.data('loaded', true);
+	}
+	else
+	{
+		ttip.removeClass('visible');
+	}
+}*/
+
+
+var ws = null;
+var ws_last_chk = -1 ;
+var ws_opened = false;
+
+function log(str)
+{
+	console.log(str);
+}
+
+function push_debug_item(debug_nid,ditem)
+{
+	let dbgele = $("#debug_n_"+debug_nid) ;
+	if(dbgele.length<=0) return ;
+	if("1"==dbgele.attr("print_stopped"))
+		return;
+	
+	let max_n = parseInt(dbgele.attr("max_buf_num")) ;
+	let cur_nstr = dbgele.attr("cur_num") ;
+    let curn = cur_nstr?parseInt(cur_nstr):0 ;
+    
+    let tmps=`<div class="debug_msg">`;
+    let msg = ditem.msg ;
+    let cont = $(new JSONFormat(JSON.stringify(msg.payload), 4).toString());
+    let dtstr = new Date(ditem.dt).format_local("yyyy-MM-dd hh:mm:ss");
+    let dtss = new Date(ditem.dt).format_local("hh:mm:ss");
+    tmps += `<div class="msg_meta"><span class="msg-date" title="\${dtstr}">\${dtss}</span>
+	<span class="msg-from">from: \${ditem.from}-\${ditem.from_idx}</span><br>
+	<span >id: \${msg.id} topic:\${msg.topic||''} ts:\${msg.time_ms}</span>
+	</div>` ;
+    tmps += `<div class="msg">payload:<span class="pld"></span></div>`;
+    tmps += "</div>" ;
+    let newele = $(tmps) ;
+    newele.find(".pld").append(cont) ;
+    if(cont.attr("data-type")=='array' || cont.attr("data-type")=='object')
+    	hide(cont[0]) ;
+    dbgele.append(newele) ;
+    
+    if(curn<max_n)
+    {
+    	curn ++ ;
+    	dbgele.attr("cur_num",(curn++));
+    }
+    else
+    {
+    	dbgele.children().eq(0).remove() ;
+    }
+    dbgele[0].scrollTop = dbgele[0].scrollHeight;
+}
+
+function clear_debug_list(debug_nid)
+{
+	let dbgele = $("#debug_n_"+debug_nid) ;
+	if(dbgele.length<=0) return ;
+	dbgele.html("") ;
+	dbgele.attr("cur_num",0);
+}
+
+function start_stop_debug_list(ele,debug_nid)
+{
+	let dbgele = $("#debug_n_"+debug_nid) ;
+	if("1"==dbgele.attr("print_stopped"))
+	{
+		dbgele.attr("print_stopped","")
+		$(ele).html("stop") ;
+	}
+	else
+	{
+		dbgele.attr("print_stopped","1")
+		$(ele).html("start") ;
+	}
+	
+}
+
+function ws_conn()
+{
+    var url = 'ws://' + window.location.host + '/admin/_ws/net_msg/'+prjid+"/"+netid;
+    //console.log(url) ;
+    if ('WebSocket' in window) {
+        ws = new WebSocket(url);
+    } else if ('MozWebSocket' in window) {
+        ws = new MozWebSocket(url);
+    } else {
+        log('WebSocket is not supported by this browser.');
+        return false ;
+    }
+    
+    ws.onopen = function () {
+        //setConnected(true);
+        log('Info: WebSocket connection opened.');
+        ws_opened = true;
+    };
+    ws.onmessage = function (event) {
+
+    	let str = event.data ;
+    	let d ;
+    	eval("d="+str) ;
+  		let debug_nid = d.nodeid ;
+  		if(!debug_nid) return ;
+  		
+  		push_debug_item(debug_nid,d) ;
+    };
+    
+    ws.onclose = function (event) {
+    	ws_disconn();
+        log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
+    };
+    
+    return true;
+}	
+
+function ws_disconn() {
+	
+    if (ws != null) {
+        ws.close();
+        ws = null;
+    }
+    ws_opened = false;
+}
+
+
+function check_ws()
+{
+	if(ws!=null&&ws_opened)
+	{
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+
+	if(ws==null)
+	{
+		ws_disconn();
+		ws_conn();
+		ws_last_chk = new Date().getTime();
+		return ;
+	}
+	
+	//ws_opened==false;
+	var dt = new Date().getTime();
+	if(dt-ws_last_chk<20000)
+		return ;
+	//time out
+	ws_disconn();
+	ws_conn();
+	ws_last_chk = new Date().getTime();
+	return ;
+}
+
+check_ws();
+setInterval(check_ws,5000) ;
+
 
 </script>
 

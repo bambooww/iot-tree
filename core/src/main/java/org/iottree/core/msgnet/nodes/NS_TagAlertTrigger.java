@@ -62,7 +62,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		
 	}

@@ -34,4 +34,10 @@
   <dd_node id="1" name="template" name_cn="模板" name_en="Template" />
   <dd_node id="1" name="last_in_msg" name_cn="" name_en="Last In Message" />
   
+  <dd_node id="1" name="evt" name_cn="事件" name_en="Event" />
+  <dd_node id="1" name="mode" name_cn="模式" name_en="Mode" />
+  
+  <dd_node id="1" name="buf_len" name_cn="缓存个数" name_en="Buffer Num" />
+  <dd_node id="1" name="out_fmt" name_cn="输出格式" name_en="Output Format" />
+  
 </dd_class>

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.iottree.core.msgnet.MNBase.DivBlk;
+
 public class RTDebug
 {
 	HashMap<String,RTDebugPrompt> tp2ppt = new HashMap<>() ;
@@ -69,17 +71,19 @@ public class RTDebug
 		this.tp2ppt.remove(tp) ;
 	}
 	
-	public void renderDiv(StringBuilder divsb)
+	public void renderDiv(List<DivBlk> divblks)
 	{
 		if(this.tp2ppt.size()<=0)
 			return ;
 		
 		for(RTDebugPrompt ppt:listPrompts())
 		{
+			StringBuilder divsb = new StringBuilder() ;
 			divsb.append("<div  class=\"rt_blk\" style='background-color:"+this.bgcolor+"'>["+lvl+"] "+ppt.getDTGapToNow()+" "+ppt.getMsg()) ;
 			if(ppt.hasDetail())
 				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.belongTo.getId()+"\','"+lvl+"','"+ppt.tp+"')\">Detail</button>") ;
 			divsb.append("</div>") ;
+			divblks.add(new DivBlk("debug_"+lvl+"_"+ppt.tp,divsb.toString())) ;
 		}
 	}
 }

@@ -4,12 +4,7 @@ import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-/**
- * trigger by Tag value changing
- *  
- * @author jason.zhu
- */
-public class NS_TagTrigger  extends MNNodeStart 
+public class NS_ConnInMsgTrigger   extends MNNodeStart 
 {
 
 	@Override
@@ -33,31 +28,37 @@ public class NS_TagTrigger  extends MNNodeStart
 	@Override
 	public String getTP()
 	{
-		return "tag_trigger";
+		return "conn_in_msg_trigger";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("tag_trigger");
+		return g("conn_in_msg_trigger");
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#ff8566";
+		return "#007cb7";
+	}
+	
+	@Override
+	public String getTitleColor()
+	{
+		return "#dddddd" ;
 	}
 
 	@Override
 	public String getIcon()
 	{
-		return "PK_status";
+		return "\\uf0c1";
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		return false;
+		return true;
 	}
 
 	@Override
@@ -67,8 +68,9 @@ public class NS_TagTrigger  extends MNNodeStart
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		
 	}
+
 }

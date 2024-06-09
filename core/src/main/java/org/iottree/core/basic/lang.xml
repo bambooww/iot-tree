@@ -10,9 +10,9 @@
   <dd_node name="scaling" name_cn="缩放比例" name_en="Scaling" />
   
   <dd_node name="vatp_on_off" name_cn="开关量" name_en="On Off" 
-	  	trigger_cn="当前值==报警值(0/1)" trigger_en="The current value==Alarm value(0/1)"
-	  	release_cn="当前值!=报警值(0/1)" release_en="The current value!=Alarm value(0/1)" 
-	  	param1tt_cn="报警值(0/1)" param1tt_en="Alarm Value(0/1)"/>
+	  	trigger_cn="当前值==事件值(0/1)" trigger_en="The current Event value(0/1)"
+	  	release_cn="当前值!=事件值(0/1)" release_en="The current value!=Event value(0/1)" 
+	  	param1tt_cn="事件值(0/1)" param1tt_en="Event Value(0/1)"/>
   <dd_node name="vatp_neg_t" name_cn="负跳变" name_en="Negative Transition" 
 	  	trigger_cn="当前值由非0变化为0" trigger_en="The current value has changed from non-0 to 0"
 	  	release_cn="当前值由0变化为非0" release_en="The current value has changed from 0 to non-0" />
@@ -23,7 +23,7 @@
 	  	trigger_cn="当前数值指定位==指定值(0/1)" trigger_en="Current value of specified bit==specified value(0/1)"
 	  	release_cn="当前数值指定位!=指定值(0/1)" release_en="Current value of specified bit!=specified value(0/1)" 
 		param1tt_cn="指定位" param1tt_en="Bit Position"
-		param2tt_cn="指定值(0/1)" param2tt_en="Alarm Value(0/1)"
+		param2tt_cn="指定值(0/1)" param2tt_en="Event Value(0/1)"
 		/>
 	<dd_node name="vatp_bit_off_to_on" name_cn="位0-&gt;1" name_en="Bit 0-&gt;1" 
 	  	trigger_cn="当前数值指定位由0变1" trigger_en="The current value of the specified bit changes from 0 to 1"

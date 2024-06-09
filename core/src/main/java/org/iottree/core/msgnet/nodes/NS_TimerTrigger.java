@@ -134,7 +134,7 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		this.bDelayExec = jo.optBoolean("b_delay", false);
 		this.delayExecMS = jo.optLong("delay_ms", 0);
@@ -255,17 +255,6 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 		return true;
 	}
 
-	@Override
-	protected void RT_renderDiv(StringBuilder divsb)
-	{
-//		if(Convert.isNotNullEmpty(pausedBT))
-//			divsb.append("<div class=\"rt_blk\"><span style=\"color:rgba(255,0,0,0.5)\">"+pausedBT+"</div>") ;
-		super.RT_renderDiv(divsb);
-	}
-	// private Timer timer = null ;
-	// private TimerTask task = null;
-
-	
 
 	private void runInTh()
 	{

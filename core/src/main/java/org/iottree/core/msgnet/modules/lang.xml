@@ -5,5 +5,9 @@
 	<dd_node id="1" name="db_sql" name_cn="数据库SQL" name_en="DB SQL" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tag_rt" name_cn="实时标签Tag" name_en="Real-time Tag" desc_cn="" desc_en=""/>
 	
-	
+	<dd_node id="1" name="mem_multi_que" name_cn="内存多队列" name_en="Mem Multi Queue" 
+		desc_cn="多个消息队列共享一个处理线程。&#13;你可以使用此模块构建多个队列节点，这些节点接收输入消息放入各自的队列中，&#13;共享模块中的线程"
+		desc_en="Multiple message queues share a processing thread. &#13; You can use this module to build multiple queue nodes that receive input messages and place them in their respective queues,&#13; sharing the threads in the module"
+		/>
+
 </dd_class>

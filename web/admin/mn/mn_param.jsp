@@ -8,7 +8,7 @@
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
-	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	if(!Convert.checkReqEmpty(request, out, "prjid","netid"))
 			return ;
 	String prjid = request.getParameter("prjid");
@@ -156,12 +156,12 @@ function do_submit(cb)
 <body>
 <form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
-    <label class="layui-form-label">Title:</label>
+    <label class="layui-form-label"><w:g>title</w:g>:</label>
     <div class="layui-input-inline" style="width:46%;">
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
     </div>
     <div class="layui-input-inline" style="width:20%;">
-      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> Enable
+      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> <w:g>enable</w:g>
     </div>
   </div>
   <div id="pm_cont">

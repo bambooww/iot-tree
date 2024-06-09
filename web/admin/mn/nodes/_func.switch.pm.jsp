@@ -136,15 +136,18 @@
 <%
 	for(ValOper vo:ValOper.ALL)
 	{
+		boolean b_pm2 = vo.isNeedPm2() ;
+		boolean b_pm3 = vo.isNeedPm3() ;
 %>
-<option value="<%=vo.getName()%>"><%=vo.getTitle() %></option>
+<option value="<%=vo.getName()%>" pm2="<%=b_pm2%>" pm3="<%=b_pm3%>"><%=vo.getTitle() %></option>
 <%
 	}
 %>
     </select>
   </div>
   <div class="mid"> </div>
-  <div class="tar_pktp" style=""> 
+  <div id="pm2" >
+  <div class="tar_pktp" > 
     <select id="pm2_valsty"  class="layui-input" lay-filter="pm2_valsty" style="width:100px;border-right: 0px;">
 <%
 	for(MNCxtValSty pktp:MNCxtValSty.values())
@@ -159,14 +162,56 @@
   <div class="tar_subn">
     <input type="text" id="pm2_subn" class="layui-input" style="border-left: 0px;left:2px;"/>
   </div>
+  </div>
   <div id="outidx" class="outidx">
     
   </div>
   </div>
   
+  <div class="row" id="pm3"  style="display:none;margin-top:0px;">
+   <div class="msg"></div>
+  <div class="act" style="width:150px;">
+	
+  </div>
+
+  <div class="tar_pktp" style="visibility: visible;"> 
+    <select id="pm3_valsty"  class="layui-input" lay-filter="pm2_valsty" style="width:100px;border-right: 0px;">
+<%
+	for(MNCxtValSty pktp:MNCxtValSty.values())
+	{
+%>
+<option value="<%=pktp.name()%>"><%=pktp.getTitle() %><%=pktp.isCxtPk()?".":"" %></option>
+<%
+	}
+%>
+    </select>
+  </div>
+  <div class="tar_subn">
+    <input type="text" id="pm3_subn" class="layui-input" style="border-left: 0px;left:2px;"/>
+  </div>
+
+  </div>
+  
  </div>
  <button onclick="add_rule()" style="border-color:#dddddd">+Add</button>
 <script>
+
+
+function on_after_pm_show(form)
+{
+	 form.on("select(op)",function(obj){
+		 //console.log(obj);
+		 let opv = $("#op").val() ;
+		 let opt = $("#op").find("option:selected") ;
+		 let b_pm2 = opt.attr("pm2")=='true' ;
+		 let b_pm3 = opt.attr("pm3")=='true' ;
+		 
+		 $("#pm2_subn").css("visibility",opv=='is_type'?"hidden":"visible") ;
+		 $("#pm2").css("visibility",b_pm2?"visible":"hidden") ;
+		 $("#pm3").css("display",b_pm3?"block":"none") ;
+	 });
+}
+
 
 function add_rule(jo)
 {
@@ -186,6 +231,9 @@ function add_rule(jo)
 		if(jo.pm2_valsty)
 			ele.find("#pm2_valsty").val(jo.pm2_valsty) ;
 		ele.find("#pm2_subn").val(jo.pm2_subn||"") ;
+		if(jo.pm3_valsty)
+			ele.find("#pm3_valsty").val(jo.pm3_valsty) ;
+		ele.find("#pm3_subn").val(jo.pm3_subn||"") ;
 	}
 	
 	form.render() ;
@@ -224,12 +272,9 @@ function extract_rule_jo(ele)
 	ret.op = ele.find("#op").val()||"" ;
 	ret.pm2_valsty = ele.find("#pm2_valsty").val() ;
 	ret.pm2_subn = ele.find("#pm2_subn").val()||"" ;
+	ret.pm3_valsty = ele.find("#pm3_valsty").val() ;
+	ret.pm3_subn = ele.find("#pm3_subn").val()||"" ;
 	return ret ;
-}
-
-function on_after_pm_show(form)
-{
-	 
 }
 
 

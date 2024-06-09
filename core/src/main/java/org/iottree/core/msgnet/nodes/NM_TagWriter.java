@@ -194,7 +194,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		this.asynMode = jo.optBoolean("asyn", false) ;
 		JSONArray jarr = jo.optJSONArray("tags") ;

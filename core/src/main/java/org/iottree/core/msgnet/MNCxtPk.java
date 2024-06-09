@@ -19,6 +19,7 @@ import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.JsSub;
 import org.iottree.core.cxt.UACodeItem;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.MNCxtVar.KeepTP;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.JsonUtil;
@@ -218,8 +219,9 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 		this.var2val.clear();
 	}
 
-	protected void CXT_renderVarsDiv(StringBuilder divsb)
+	protected void CXT_renderVarsDiv(List<DivBlk> divblks)
 	{
+		StringBuilder divsb = new StringBuilder() ;
 		divsb.append("<div tp='vars' class=\"rt_blk\"><div style='background-color:#aaaaaa'>Vars<button onclick=\"cxt_add_var()\">add</button></div><table>");
 		divsb.append("<tr>");
 		divsb.append("<td>Name</td>");
@@ -263,6 +265,8 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 			divsb.append("</tr>");
 		}
 		divsb.append("</table></div>") ;
+		
+		divblks.add(new DivBlk("vars",divsb.toString())) ;
 	}
 	
 	// CXT_PK
@@ -385,6 +389,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
         w.write("</ul>");
 	}
 	
+	
 	void CXT_PK_renderTreeObj(Writer w,Object o) throws IOException
 	{
 		if(o instanceof List)
@@ -419,6 +424,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 			}
 		}
 	}
+	
 	
 	// js
 	

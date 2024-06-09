@@ -150,6 +150,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	public abstract String getTPTitle();
 	
+	public String getTPDesc()
+	{
+		return g(getTP(),"desc","") ;
+	}
+	
 	abstract MNBase createNewIns(MNNet net) throws Exception ;
 //	{
 //		if(Convert.isNotNullEmpty(this.nodeTpT))
@@ -170,7 +175,10 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	public abstract String getIcon() ;
 	
-	
+	public String getTitleColor()
+	{
+		return null ;
+	}
 	/**
 	 * 判断节点参数是否完备，只有完备之后的节点才可以运行
 	 * @return
@@ -180,13 +188,13 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	//to be override
 	public abstract JSONObject getParamJO();
 	
-	//to be override
-	final void setParamJO(JSONObject jo)
-	{
-		setParamJO(jo,System.currentTimeMillis()) ;
-	}
+//	//to be override
+//	final void setParamJO(JSONObject jo)
+//	{
+//		setParamJO(jo,System.currentTimeMillis()) ;
+//	}
 	
-	protected abstract void setParamJO(JSONObject jo,long up_dt);
+	protected abstract void setParamJO(JSONObject jo);
 	
 	final void setDetailJO(JSONObject jo)
 	{
@@ -221,6 +229,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.put("enable", this.bEnable) ;
 		jo.put("show_rt", this.bShowRT) ;
 		jo.put("color", this.getColor()) ;
+		jo.putOpt("tcolor", this.getTitleColor()) ;
 		jo.put("icon", this.getIcon()) ;
 
 		if(this instanceof IMNRunner)
@@ -269,8 +278,8 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
 		if(pmjo!=null)
 		{
-			long updt = this.belongTo.updateDT ;
-			this.setParamJO(pmjo,updt);
+			//long updt = this.belongTo.updateDT ;
+			this.setParamJO(pmjo);
 		}
 		
 		JSONObject cxt_def = jo.optJSONObject("cxt_def") ;
@@ -334,7 +343,28 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		}
 	}
 	
-	protected void RT_renderDiv(StringBuilder divsb)
+	public static class DivBlk
+	{
+		String blk ;
+		
+		String div ;
+		
+		public DivBlk(String blk,String div)
+		{
+			this.blk = blk ;
+			this.div = div ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject jo = new JSONObject() ;
+			jo.put("blk",this.blk) ;
+			jo.put("div", div) ;
+			return jo ;
+		}
+	}
+	
+	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
 		if(isRunner())
 		{
@@ -344,35 +374,44 @@ public abstract class MNBase extends MNCxtPk implements ILang
 				StringBuilder ssb = new StringBuilder() ;
 				if(rnr.RT_isSuspendedInRun(ssb))
 				{
+					StringBuilder divsb = new StringBuilder() ;
 					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:#dd7924\">Suspended:"+ssb.toString()+"</span>");
 					if(!rnr.RT_runnerStartInner())
 						divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button>");
 					divsb.append("</div>") ;
+					
+					divblks.add(new DivBlk("rt_run",divsb.toString())) ;
 				}
 				else
 				{
+					StringBuilder divsb = new StringBuilder() ;
 					divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Running</span>");
 					if(!rnr.RT_runnerStartInner())
 						divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',false)\">stop</button>");
 					divsb.append("</div>") ;
+					
+					divblks.add(new DivBlk("rt_run",divsb.toString())) ;
 				}
 			}
 			else
 			{
+				StringBuilder divsb = new StringBuilder() ;
 				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span>");
 				if(!rnr.RT_runnerStartInner())
 					divsb.append("<button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button>");
 				divsb.append("</div>") ;
+				
+				divblks.add(new DivBlk("rt_run",divsb.toString())) ;
 			}
 		}
 		
-		RT_DEBUG_ERR.renderDiv(divsb);
+		RT_DEBUG_ERR.renderDiv(divblks);
 		
-		RT_DEBUG_WARN.renderDiv(divsb);
+		RT_DEBUG_WARN.renderDiv(divblks);
 		
-		RT_DEBUG_INF.renderDiv(divsb);
+		RT_DEBUG_INF.renderDiv(divblks);
 
-		CXT_renderVarsDiv(divsb) ;
+		CXT_renderVarsDiv(divblks) ;
 		
 	}
 
@@ -393,9 +432,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		}
 		if(out_rt_div)
 		{
-			StringBuilder divsb = new StringBuilder() ;
-			RT_renderDiv(divsb);
-			jo.put("div", divsb.toString()) ;
+			ArrayList<DivBlk> divblks = new ArrayList<>() ;
+			RT_renderDiv(divblks);
+			JSONArray tmpjar = new JSONArray() ;
+			for(DivBlk db : divblks)
+				tmpjar.put(db.toJO()) ;
+			jo.put("divs", tmpjar) ;
 		}
 		
 		jo.put("has_warn", this.RT_DEBUG_WARN.hasPrompts()) ;

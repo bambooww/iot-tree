@@ -14,7 +14,7 @@
 	org.iottree.core.msgnet.util.*,
 	org.iottree.core.util.xmldata.*
 	"%><%!
-	public boolean checkJsObj(Class<?> c)
+public boolean checkJsObj(Class<?> c)
 	{
 		if(c.isPrimitive()) return false;
 		if(c == String.class) return false;
@@ -24,7 +24,7 @@
 		return true ;
 	}
 	%><%
-if(!Convert.checkReqEmpty(request, out, "op","prjid","netid","itemid"))
+if(!Convert.checkReqEmpty(request, out, "op"))
 	return ;
 String op = request.getParameter("op");
 
@@ -34,24 +34,40 @@ String itemid = request.getParameter("itemid") ;
 
 String sub_nid = request.getParameter("id");
 
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
+MNManager mnm= null;
+UAPrj prj = null;
+if(Convert.isNotNullEmpty(prjid))
 {
-	out.print("no prj found") ;
-	return ;
+	prj = UAManager.getInstance().getPrjById(prjid) ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
+	mnm= MNManager.getInstance(prj) ;
 }
-MNManager mnm= MNManager.getInstance(prj) ;
-MNNet net = mnm.getNetById(netid) ;
-if(net==null)
+
+MNNet net = null;
+if(Convert.isNotNullEmpty(netid))
 {
-	out.print("no net found") ;
-	return ;
+	net = mnm.getNetById(netid) ;
+	if(net==null)
+	{
+		out.print("no net found") ;
+		return ;
+	}
 }
-MNBase item =net.getItemById(itemid) ;
-if(item==null)
+
+MNBase item = null;
+
+if(Convert.isNotNullEmpty(itemid))
 {
-	out.print("no item found") ;
-	return ;
+	item = net.getItemById(itemid) ;
+	if(item==null)
+	{
+		out.print("no item found") ;
+		return ;
+	}
 }
 
 String pm_objs = request.getParameter("pm_objs") ;
@@ -91,6 +107,8 @@ try
 	switch(op)
 	{
 	case "sub_json":
+		if(!Convert.checkReqEmpty(request, out, "prjid","netid","itemid"))
+			return ;
 		if(sub_ob==null)
 		{
 			//out.write(",\"state\": {\"opened\": true}");
@@ -171,6 +189,26 @@ try
 			}
 		}
 		return ;
+	case "tp_help":
+		if(!Convert.checkReqEmpty(request, out, "tptp","tp"))
+			return ;
+		String tptp = request.getParameter("tptp") ;
+		String tp = request.getParameter("tp") ;
+		if("node".equals(tptp))
+		{
+			MNBase nnn = MNManager.getNodeByFullTP(tp) ;
+			String ss = nnn.getTPDesc() ;
+			//ss= Convert.plainToHtmlTitle(ss) ;
+			out.print(ss) ;
+		}
+		else if("module".equals(tptp))
+		{
+			MNBase nnn = MNManager.getModuleByFullTP(tp) ;
+			String ss = nnn.getTPDesc() ;
+			//ss= Convert.plainToHtmlTitle(ss) ;
+			out.print(Convert.plainToHtmlTitle(ss)) ;
+		}
+		break ;
 	default:
 		break ;
 	}

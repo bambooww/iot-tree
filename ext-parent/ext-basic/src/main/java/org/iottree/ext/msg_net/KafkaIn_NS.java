@@ -78,7 +78,7 @@ public class KafkaIn_NS extends MNNodeStart
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		this.topic = jo.optString("topic",null) ;
 	}

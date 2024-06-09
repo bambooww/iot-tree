@@ -60,7 +60,7 @@ public class Mqtt_M extends MNModule
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		// TODO Auto-generated method stub
 		

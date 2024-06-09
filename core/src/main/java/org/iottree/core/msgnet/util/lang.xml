@@ -21,7 +21,7 @@
 	<dd_node name="vo_has_key" name_cn="拥有键" name_en="has key" />
 	<dd_node name="vo_between" name_cn="在..之间" name_en="is between" />
 	<dd_node name="vo_contains" name_cn="包含" name_en="contains" />
-	<dd_node name="vo_regex" name_cn="正则表达式" name_en="regex" />
+	<dd_node name="vo_regex" name_cn="正则表达式" name_en="match regex" />
 	<dd_node name="vo_is_true" name_cn="为真" name_en="is true" />
 	<dd_node name="vo_is_false" name_cn="为假" name_en="is false" />
 	<dd_node name="vo_is_null" name_cn="为Null" name_en="is null" />

@@ -9,6 +9,7 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.util.RepeatTP;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
@@ -187,7 +188,7 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		this.mode = Mode.valOfInt(jo.optInt("mode", 0)) ;
 		if(this.mode==null)
@@ -391,15 +392,18 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 		return queMsgList.size() ;
 	}
 	
+		
 	@Override
-	protected void RT_renderDiv(StringBuilder divsb)
+	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
+		StringBuilder divsb = new StringBuilder() ;
 		divsb.append("<div class=\"rt_blk\">"+this.mode.getTitle()) ;
 		divsb.append(" queue length="+this.getQueLen()) ;
 		divsb.append("") ;
-		
 		divsb.append("</div>") ;
-		super.RT_renderDiv(divsb);
+		divblks.add(new DivBlk("memque",divsb.toString())) ;
+		
+		super.RT_renderDiv(divblks);
 	}
 	
 	@Override

@@ -10,6 +10,7 @@ import org.iottree.core.alert.AlertManager;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
@@ -339,7 +340,9 @@ public class ValAlert extends JSObMap
 		this.lastTriggedVal = cur_val ;
 		
 		//check handler
-		AlertManager.getInstance(getPrj().getId()).RT_fireAlert(this,cur_val) ;
+		UAPrj prj = this.getPrj() ;
+		AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
+		MNManager.getInstance(prj).RT_TAG_triggerEvt(this,cur_val);
 	}
 	
 	private void RT_release(Object cur_val)
@@ -348,6 +351,7 @@ public class ValAlert extends JSObMap
 		 this.lastReleasedDT = System.currentTimeMillis() ;
 		 //
 		 AlertManager.getInstance(getPrj().getId()).RT_fireAlert(this,cur_val) ;
+		 MNManager.getInstance(prj).RT_TAG_releaseEvt(this,cur_val);
 	}
 	
 	private transient Number lastV = null ;
@@ -433,7 +437,38 @@ public class ValAlert extends JSObMap
 			return null ;
 		
 		JSONObject jo = new JSONObject() ;
+		String evtid = RT_get_trigger_uid() ;
+		UATag tag = getBelongTo() ;
+		jo.put("evt_id", evtid) ;
+		jo.put("tag_id", tag.getId()) ;
+		jo.put("tag_path", tag.getNodeCxtPathInPrj()) ;
+		jo.put("trigger_dt", this.RT_last_trigger_dt()) ;
+		jo.put("evt_tp", this.getTpName()) ;
+		jo.put("evt_tpt", this.getTpTitle()) ;
+		jo.putOpt("evt_prompt", this.getAlertPrompt()) ;
+		boolean btri =  this.RT_is_triggered();
+		jo.put("triggered",btri) ;
+		return jo ;
+	}
+	
+	public JSONObject RT_get_release_jo()
+	{
+		if(this.bTrigged)
+			return null ;
 		
+		JSONObject jo = new JSONObject() ;
+		String evtid = RT_get_trigger_uid() ;
+		UATag tag = getBelongTo() ;
+		jo.put("evt_id", evtid) ;
+		jo.put("tag_id", tag.getId()) ;
+		jo.put("tag_path", tag.getNodeCxtPathInPrj()) ;
+		jo.put("trigger_dt", this.RT_last_trigger_dt()) ;
+		jo.put("release_dt", this.RT_last_released_dt()) ;
+		jo.put("evt_tp", this.getTpName()) ;
+		jo.put("evt_tpt", this.getTpTitle()) ;
+		jo.putOpt("evt_prompt", this.getAlertPrompt()) ;
+		boolean btri =  this.RT_is_triggered();
+		jo.put("released", !btri) ;
 		return jo ;
 	}
 }

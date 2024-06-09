@@ -112,11 +112,11 @@ public abstract class MNModule extends MNBase
 		return true;
 	}
 	
-	protected void RT_renderDiv(StringBuilder divsb)
-	{
-		super.RT_renderDiv(divsb);
-		
-	}
+//	protected void RT_renderDiv(StringBuilder divsb)
+//	{
+//		super.RT_renderDiv(divsb);
+//		
+//	}
 	
 	public JSONObject RT_toJO(boolean out_rt_div)
 	{

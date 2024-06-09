@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.script.ScriptException;
 
 import org.iottree.core.UAPrj;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.cxt.MNContext;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
@@ -1070,11 +1071,17 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			if(bsusp)
 				jo.put("suspend_reson", rsb.toString()) ;
 		}
+		
 		if(out_rt_div)
 		{
-			StringBuilder divsb = new StringBuilder() ;
-			RT_renderDiv(divsb);
-			jo.put("div", divsb.toString()) ;
+			ArrayList<DivBlk> divblks = new ArrayList<>() ;
+			RT_renderDiv(divblks);
+			JSONArray tmpjar = new JSONArray() ;
+			for(DivBlk db : divblks)
+				tmpjar.put(db.toJO()) ;
+			jo.put("divs", tmpjar) ;
+
+			//jo.put("div", divsb.toString()) ;
 		}
 		
 		//jo.put("has_warn", this.RT_DEBUG_WARN.hasPrompts()) ;
@@ -1082,11 +1089,12 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return jo ;
 	}
 
-	protected void RT_renderDiv(StringBuilder divsb)
+	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
 		//if(isRunner())
 		{
 			IMNRunner rnr = (IMNRunner)this ;
+			StringBuilder divsb = new StringBuilder() ;
 			if(rnr.RT_isRunning())
 			{
 				StringBuilder ssb = new StringBuilder() ;
@@ -1097,6 +1105,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			}
 			else
 				divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Stopped</span><button onclick=\"rt_item_runner_start_stop('"+this.getId()+"',true)\">start</button></div>") ;
+			divblks.add(new DivBlk("net_run",divsb.toString())) ;
 		}
 //		
 //		RT_DEBUG_ERR.renderDiv(divsb);
@@ -1105,7 +1114,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 //		
 //		RT_DEBUG_INF.renderDiv(divsb);
 
-		CXT_renderVarsDiv(divsb) ;
+		CXT_renderVarsDiv(divblks) ;
 		
 	}
 	

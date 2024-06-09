@@ -212,7 +212,7 @@ public class Kafka_M extends MNModule implements IMNRunner
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		brokerHost = jo.optString("host", "") ;
 		brokerPort = jo.optInt("port", 9092) ;

@@ -95,7 +95,7 @@ public class NM_TagFilterW  extends MNNodeMid
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		if(jo==null)
 			return ;

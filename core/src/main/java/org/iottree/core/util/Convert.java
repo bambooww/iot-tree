@@ -316,6 +316,55 @@ public class Convert
 		}
 		return buf.toString();
 	}
+	
+	public static String plainToHtmlTitle(String input)
+	{
+		if (input == null)
+		{
+			return "";
+		}
+
+		char[] array = input.toCharArray();
+
+		StringBuffer buf = new StringBuffer(array.length + array.length / 2);
+
+		for (int i = 0; i < array.length; i++)
+		{
+			// if ( (i != 0) && (i % 60 == 0))
+			// {
+			// buf.append("<br/>");
+			// }
+
+			switch (array[i])
+			{
+			case '<':
+				buf.append("&lt;");
+				break;
+			case '>':
+				buf.append("&gt;");
+				break;
+			case '&':
+				buf.append("&amp;");
+				break;
+			case '\r':
+				buf.append("&#10;");
+				break ;
+			case '\n':
+				buf.append("&#13;");
+				break ;
+			case '\"':
+				buf.append("&#34;");
+				break;
+			case '\'':
+				buf.append("&#39;");
+				break;
+			default:
+				buf.append(array[i]);
+				break;
+			}
+		}
+		return buf.toString();
+	}
 
 	/**
 	 * 

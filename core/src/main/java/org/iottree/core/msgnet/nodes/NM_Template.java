@@ -3,6 +3,7 @@ package org.iottree.core.msgnet.nodes;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
@@ -87,7 +88,7 @@ public class NM_Template extends MNNodeMid
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		this.tempTxt = jo.optString("temp") ;
 		this.outFmt = OutFmt.valueOf(jo.optString("out_fmt","txt")) ;
@@ -120,7 +121,12 @@ public class NM_Template extends MNNodeMid
 		if(this.tempTxt==null)
 			return null ;
 		HashMap<String, Object> scopes = new HashMap<>();
-	    scopes.put("msg", msg.CXT_PK_toMap());
+		if(Convert.isNotNullEmpty(msg.getTopic()))
+			scopes.put("topic", msg.getTopic());
+		Map<String,Object> hd = msg.getHeadsMap() ;
+		if(hd!=null)
+			scopes.put("heads", hd);
+		scopes.put("payload",msg.CXT_PK_getPayload());
 	    scopes.put("node", this.CXT_PK_toMap());
 	    scopes.put("flow", this.getBelongTo().CXT_PK_toMap());
 

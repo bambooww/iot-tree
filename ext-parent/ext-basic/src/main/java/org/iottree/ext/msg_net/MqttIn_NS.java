@@ -64,7 +64,7 @@ public class MqttIn_NS extends MNNodeStart
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		// TODO Auto-generated method stub
 		

@@ -64,7 +64,7 @@ public class NM_Exec extends MNNodeMid
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		
 	}

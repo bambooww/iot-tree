@@ -83,7 +83,7 @@ public class TagTrigger_NS extends MNNodeStart implements ILang
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		//this.bDelayExec = jo.optBoolean("b_delay",false) ;
 //			this.delayExecMS = jo.optLong("delay_ms",-1) ;

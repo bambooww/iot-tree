@@ -80,9 +80,11 @@
     	&nbsp;&nbsp;<i class="fa fa-question" aria-hidden="true" /></i> Help
     	<div id="help_tree">
 		    <ul>
-		      <li title="last in message">msg
+		       <li title="last in message">topic:str</li>
+		       <li title="last in message">heads:{}</li>
+		      <li title="last in message">payload
 <%
-	msg.CXT_PK__renderTree(out) ;
+	msg.CXT_PK__renderPayloadTree(out) ;
 %>
 		      </li>
 		      <li>node
@@ -224,13 +226,13 @@ function set_pm_jo(jo)
 	
 	$("#out_fmt").val(jo.out_fmt||txt);
 	editor.setValue(jo.temp||`{
-	"dd":"{{$msg.payload}}"
+	"dd":"{{payload}}"
 }`);
 }
 
 function get_pm_size()
 {
-	return {w:700,h:650} ;
+	return {w:750,h:650} ;
 }
 
 js_edit_init();

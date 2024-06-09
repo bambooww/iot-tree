@@ -263,7 +263,7 @@ visibility: hidden;
 </style>
 <body marginwidth="0" marginheight="0">
 <div class="left">
- <blockquote class="layui-elem-quote "><wbt:g>alert,sors</wbt:g></blockquote>
+ <blockquote class="layui-elem-quote "><wbt:g>evt,sors</wbt:g></blockquote>
  <div class="list">
 <%
 	for(UATag tag:prj.listTagsAll())

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
+import org.iottree.core.basic.ValAlert;
 import org.iottree.core.msgnet.nodes.*;
 import org.iottree.core.msgnet.modules.*;
 import org.iottree.core.msgnet.util.ConfItem;
@@ -136,6 +137,7 @@ public class MNManager
 		registerItem(new NS_TimerTrigger(),cat) ;
 		registerItem(new NE_Debug(),cat) ;
 		registerItem(new NM_MemQueue(),cat) ;
+		registerItem(new MemMultiQueue(),cat) ;
 		
 		cat = registerCat(new MNCat("_func")) ;
 		registerItem(new NM_JsFunc(),cat) ;
@@ -150,7 +152,8 @@ public class MNManager
 		registerItem(new NM_TagWriter(),cat) ;
 		registerItem(new NM_TagFilter(),cat) ;
 		registerItem(new NM_TagFilterW(),cat) ;
-		registerItem(new NS_TagTrigger(),cat) ;
+		registerItem(new NS_TagEvtTrigger(),cat) ;
+		registerItem(new NS_ConnInMsgTrigger(),cat) ;
 		registerItem(new NS_TagAlertTrigger(),cat) ;
 		
 		//registerItem(new TagRuntime(),cat) ;
@@ -527,6 +530,39 @@ public class MNManager
 				File cxtf = getRTCxtFileNet(net);
 				Convert.writeFileJO(cxtf, jo);
 				net.RT_CXT_clearSelfSubDirty();
+			}
+		}
+	}
+	
+	
+	public void RT_TAG_triggerEvt(ValAlert va,Object curval)
+	{
+		for(MNNet net :this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_TagEvtTrigger && node.isEnable())
+				{
+					((NS_TagEvtTrigger)node).RT_fireByEventTrigger(va,curval) ;
+				}
+			}
+		}
+	}
+	
+	public void RT_TAG_releaseEvt(ValAlert va,Object curval)
+	{
+		for(MNNet net :this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_TagEvtTrigger && node.isEnable())
+				{
+					((NS_TagEvtTrigger)node).RT_fireByEventRelease(va,curval) ;
+				}
 			}
 		}
 	}

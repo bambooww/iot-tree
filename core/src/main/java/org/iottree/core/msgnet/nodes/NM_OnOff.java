@@ -107,7 +107,7 @@ public class NM_OnOff extends MNNodeMid // implements ILang
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		propPk = MNCxtPkTP.valueOf(jo.optString("prop_pktp", MNCxtPkTP.msg.name())) ;
 		propSubN = jo.optString("prop_subn");

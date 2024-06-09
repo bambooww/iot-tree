@@ -166,7 +166,9 @@ for(MNCat cat:MNManager.listRegisteredCats())
 		jarr_ns.put(tmpjo) ;
 		String sty = "" ;
 		String fulltp = n.getTPFull() ;
-%><div class="nitem"  id="n_<%=fulltp%>" tp_tp="node"  _tp="<%=fulltp%>" draggable='true' ondragstart='drag(event)'  title="<w:g>node</w:g> <%=n.getTPTitle()%>">
+%><div class="nitem"  id="n_<%=fulltp%>" tp_tp="node" tptp="n" _tp="<%=fulltp%>" draggable='true' ondragstart='drag(event)'  
+		title="<w:g>node</w:g> <%=n.getTPTitle()%>&#13;&#13;<%=n.getTPDesc()%>&#13;&#13;<w:g>db_clk_detail</w:g>"
+		ondblclick="show_help_detail(this)">
 		<div class="draw" id="n_d_<%=fulltp%>"></div>
 		<div class="cov"></div>
 	</div>
@@ -177,7 +179,9 @@ for(MNCat cat:MNManager.listRegisteredCats())
 		JSONObject tmpjo = m.toListJO() ;
 		jarr_ms.put(tmpjo) ;
 		String fulltp = m.getTPFull() ;
-%><div class="nitem"  style="height:60px;" id="m_<%=fulltp%>"  tp_tp="module"  _tp="<%=fulltp%>" draggable='true' ondragstart='drag(event)'  title="<w:g>module</w:g> <%=m.getTPTitle()%>">
+%><div class="nitem"  style="height:60px;" id="m_<%=fulltp%>"  tp_tp="module"  tptp="m" _tp="<%=fulltp%>" draggable='true' ondragstart='drag(event)' 
+		 title="<w:g>module</w:g> <%=m.getTPTitle()%>&#13;&#13;<%=m.getTPDesc()%>&#13;&#13;<w:g>db_clk_detail</w:g>"
+		 ondblclick="show_help_detail(this)" >
 		<div class="draw" id="m_d_<%=fulltp%>"></div>
 		<div class="cov"></div>
 	</div>
@@ -409,5 +413,41 @@ function slide_toggle(obj,h)
 	}
 }
 
+function show_help_detail(ele)
+{
+	let ob = $(ele) ;
+	let tp_tp=ob.attr("tptp");
+	let tp = ob.attr("_tp");
+	parent.show_help(tp_tp,tp,true) ;
+}
+
+function init_tips()
+{
+	$(".nitem").hover(
+		function() {
+			let ob = $(this);
+			let tp_tp=ob.attr("tp_tp");
+			let tp = ob.attr("_tp");
+			
+			if("1"==ob.attr("tip_git"))
+				return ;
+			//console.log(tp_tp,tp) ;
+			ob.attr("tip_git","1") ;
+			send_ajax("mn_help_ajax.jsp",{op:"tp_help",tp:tp,tptp:tp_tp},(bsucc,ret)=>{
+				if(!bsucc)
+				{
+					console.log("help err:"+ret); 
+					return ;
+				}
+				ob.attr("title",ret) ;
+			}) ;
+	    },
+	    function() {
+	    	
+	    }
+  );
+}
+
+//init_tips();
 </script>
 </html>

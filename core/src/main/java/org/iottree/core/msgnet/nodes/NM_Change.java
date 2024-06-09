@@ -90,7 +90,7 @@ public class NM_Change extends MNNodeMid implements ILang
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		JSONArray jarr = jo.optJSONArray("rules") ;
 		ArrayList<CxtChgRule> ccrs = new ArrayList<>() ;

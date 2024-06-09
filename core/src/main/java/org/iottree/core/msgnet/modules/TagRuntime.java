@@ -52,7 +52,7 @@ public class TagRuntime extends MNModule
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		
 	}

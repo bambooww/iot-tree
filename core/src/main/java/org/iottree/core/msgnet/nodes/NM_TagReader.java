@@ -172,7 +172,7 @@ public class NM_TagReader extends MNNodeMid
 	}
 
 	@Override
-	protected void setParamJO(JSONObject jo, long up_dt)
+	protected void setParamJO(JSONObject jo)
 	{
 		JSONArray jarr = jo.optJSONArray("tags") ;
 		ArrayList<TagItem> ccrs = new ArrayList<>() ;

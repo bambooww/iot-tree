@@ -1,6 +1,8 @@
 package org.iottree.core.msgnet;
 
 import org.iottree.core.util.Convert;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public enum MNCxtValSty
 {
@@ -13,8 +15,6 @@ public enum MNCxtValSty
 	timestamp,
 	vt_jo,
 	vt_jarr;
-	
-	
 	
 	public String getTitle()
 	{
@@ -85,6 +85,30 @@ public enum MNCxtValSty
 				net,item,msg,failedr);
 	}
 	
+	public boolean checkObjFit(Object obj)
+	{
+		if(obj==null)
+			return false;
+		
+		switch(this)
+		{
+		case vt_int:
+			return obj instanceof Short || obj instanceof Integer || obj instanceof Long ;
+		case vt_float:
+			return obj instanceof Float || obj instanceof Double ;
+		case vt_bool:
+			return obj instanceof Boolean ;
+		case vt_str:
+			return obj instanceof String ;
+		case vt_jo:
+			return obj instanceof JSONObject ;
+		case vt_jarr:
+			return obj instanceof JSONArray ;
+		default:
+			return false;
+		}
+	}
+	
 	public static MNCxtValSty[] FOR_COMPARE_LIST = new  MNCxtValSty[] {
 			msg,node,flow,prj,
 			vt_int,
@@ -92,5 +116,13 @@ public enum MNCxtValSty
 			vt_str,
 			vt_date};
 	
+	public static MNCxtValSty[] FOR_TYPE_CHK_LIST = new  MNCxtValSty[] {
+			vt_int,
+			vt_float,
+			vt_str,
+			vt_date,
+			vt_jo,
+			vt_jarr
+			};
 	
 }

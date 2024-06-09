@@ -1,52 +1,48 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.modules;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
-import org.iottree.core.msgnet.MNNodeEnd;
+import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
-import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class MqttOut_NE extends MNNodeEnd
+/**
+ * 内存队列，
+ * @author jason.zhu
+ *
+ */
+public class MemQueue_NM extends MNNodeMid
 {
+	@Override
+	public int getOutNum()
+	{
+		return 1;
+	}
+
 	@Override
 	public String getTP()
 	{
-		return "mqtt_out";
+		return "mem_que";
+	}
+	
+	@Override
+	public String getColor()
+	{
+		return "#f0a566";
+	}
+	
+	@Override
+	public String getIcon()
+	{
+		return "\\uf141";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "MQTT Out";
-	}
-	
-
-	@Override
-	public JSONTemp getInJT()
-	{
-		return null;
+		return g("mem_que");
 	}
 
-	@Override
-	public JSONTemp getOutJT()
-	{
-		return null;
-	}
-
-
-
-	@Override
-	public String getColor()
-	{
-		return "#debed7";
-	}
-
-	@Override
-	public String getIcon()
-	{
-		return "\\\\uf1eb-270";
-	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
@@ -69,10 +65,11 @@ public class MqttOut_NE extends MNNodeEnd
 		
 	}
 
+
 	@Override
-	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
+	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

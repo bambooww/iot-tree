@@ -1,5 +1,7 @@
 package org.iottree.core.msgnet;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.JsonUtil;
 import org.json.JSONArray;
@@ -312,19 +315,80 @@ public class MNMsg implements IMNCxtPk
 		rets.put("_id",this.getMsgId()) ;
 		rets.put("_time_ms",this.getMsgDT());
 		rets.put("topic",this.getTopic()) ;
-		rets.put("heads",this.heads!=null?this.heads:new HashMap<>()) ;
-		if(this.payload==null)
-			rets.put("payload","") ;
-		else
-		{
-			if(this.payload instanceof JSONObject)
-				rets.put("payload",((JSONObject)this.payload).toMap()) ;
-			else if(this.payload instanceof JSONArray)
-				rets.put("payload",((JSONArray)this.payload).toList()) ;
-			else
-				rets.put("payload",this.payload) ;
-		}
+		rets.put("heads",this.getHeadsMap()) ;
+		rets.put("payload",CXT_PK_getPayload()) ;
 		return rets ;
 	}
 	
+	public Object CXT_PK_getPayload()
+	{
+		if(this.payload==null)
+			return "" ;
+		
+		if(this.payload instanceof JSONObject)
+			return ((JSONObject)this.payload).toMap() ;
+		if(this.payload instanceof JSONArray)
+			return ((JSONArray)this.payload).toList() ;
+		return this.payload ;
+	}
+	
+	public void CXT_PK__renderTree(Writer w)  throws IOException
+	{
+		CXT_PK_renderMapTree(w,CXT_PK_toMap()) ; 
+	}
+	
+	public void CXT_PK__renderPayloadTree(Writer w)  throws IOException
+	{
+		CXT_PK_renderObjTree(w,CXT_PK_getPayload()) ; 
+	}
+
+	public static void CXT_PK_renderMapTree(Writer w,Map<String,Object> map) throws IOException
+	{
+		w.write("<ul>");
+		for(Map.Entry<String, Object> n2o:map.entrySet())
+		{
+			String n = Convert.plainToHtml(n2o.getKey()) ;
+			Object o = n2o.getValue() ;
+			w.write("<li >"+n) ;
+			CXT_PK_renderObjTree(w, o) ;
+			w.write("</li>") ;
+		}
+        w.write("</ul>");
+	}
+	
+	
+	public static void CXT_PK_renderObjTree(Writer w,Object o) throws IOException
+	{
+		if(o instanceof List)
+		{
+			w.write(":[]") ;
+			List<?> ll = (List<?>)o ;
+			if(ll.size()>=0)
+			{
+				Object ob = ll.get(0) ;
+				if(ob instanceof Map)
+					CXT_PK_renderMapTree(w,(Map<String,Object>)ob) ;
+				//else if(ob instanceof List)
+				//	CXT_PK_renderTreeObj(w,Object o)
+			}
+		}
+		else if(o instanceof Map)
+		{
+			CXT_PK_renderMapTree(w,(Map)o) ;
+		}
+		else
+		{
+			if(o!=null)
+			{
+				if(o instanceof Number)
+					w.write(":number") ;
+				else if(o instanceof String)
+					w.write(":string");
+				else if(o instanceof Boolean)
+					w.write(":boolean");
+				else
+					w.write(":obj");
+			}
+		}
+	}
 }
