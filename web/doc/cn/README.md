@@ -2,25 +2,44 @@ IOT-Tree Server 是什么
 ==
 
 
-IOT-Tree Server是一个物联网接入、数据规整、人机交互展示的一个服务软件系统。
+IOT-Tree Server是一个物联网接入、数据规整、人机交互展示、调度控制和数据利用的一个服务软件系统。主要使用Java开发，其管理界面完全基于Web方式。
 
-她使用一套清晰明了的架构，内部包含通信接入、通道、设备驱动、数据标签等多个层次进行构建。使得物联网系统在各个方面统一以树状方式进行管理和组织。
+从主要功能上可以分为两大部分：
 
-在此树状管理基础之上，IOT-Tree Server提供了基于Web方式的在线组态界面（人机交互界面）的设计、配置和在线应用。
+1. 树根部分
 
-对外，IOT-Tree提供了各种对接适配器支持，可以根据用户需要提供数据推送(MQTT、Kafka、Mail)；数据输出(Excel、CSV)；数据存储(Database);设备模拟(Modbus Slave)等内容。
+这部分面向设备或其他系统的接入(物联)。使用一套清晰明了的架构，内部包含通信接入、通道、设备驱动、数据标签等多个层次进行构建，最后统一以树状方式进行管理和组织。
 
-IOT-Tree Server主要使用Java开发，其管理界面完全基于Web方式。
+在树状组织管理层次中，还可以建立人机交互节点，并提供了在线UI画面的制作支持，可以满足传统自动化监控软件的需要。
+
+2. 树上部分
+
+树上部分，IOT-Tree基于消息，实现了一个可视化消息流程运行机制。这个消息流程不仅可以让你轻松实现自动化现场的控制逻辑，还可以通过不断扩展的运行节点，满足各种数据调度和使用。
+
+如：可以基于树根部分的标签实时数据，定时或基于事件触发控制流程运行，实现现场复杂的控制需要。同时，也可以通过外部通信支持（MQTT、Kafka、Mail）、数据输出支持(Excel、CSV)、数据存储支持(Database)等内部自带消息处理节点，实现各种对接功能。还可以通过一些标准设备模拟节点（如Modbus Slave,BACnet）等节点，对外实现标准设备的模拟。
 
 
 
 
+<table style="background-color:#1e1e1e">
+ <tr>
+  <td width="50%" style="text-align:right;">
+<img src="./doc/img/tree.png" style="border:0px"/>
+  </td>
+  <td style="text-align:left;">
+  <img src="./doc/img/msgnet/mn003.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">
+  <br/><br/>
+  <img src="./doc/img/readme_18.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">
+  </td>
+</table>
 
 
-<img src="./doc/img/tree.png" />
 
+<span style="border:1px solid #dddddd;width:200px;height:40px;">
 
 [快速开始][quick_start]
+
+</span>
 
 [文档总目录][nav]
 
