@@ -5,15 +5,34 @@ What is IOT-Tree Server?
  <a href="./web/doc/jp/README.md" target="_blank">日本語</a>
  -->
 
-IOT-Tree Server is a service software system with Internet of things access, data normalization and human-computer interaction display.
 
-She uses a clear architecture, including communication connection, channel, device driver, data tag and other levels. The Internet of things system is managed and organized in a tree like manner in all aspects.
+IOT-Tree Server is a service software system designed for IoT access, data normalization, human-machine interaction display, scheduling control, and data utilization. It is primarily developed using Java, and its management interface is entirely web-based.
 
-Based on this tree management, IOT-Tree Server provides the design, configuration and online application of online configuration interface (Human-Computer Interaction Interface) based on Web.
+The main functionalities are divided into two major parts:
 
-IOT-Tree Server is an open source software developed using Java. It's admin ui is completely web-based.
+1. Root Part of the tree
 
-<img src="./web/doc/en/doc/img/tree.png" />
+This part focuses on the access (interconnection) of devices or other systems. Using a clear and structured architecture, it comprises multiple layers such as communication access, channels, device drivers, and data tags, which are ultimately managed and organized in a tree structure.
+
+Within this tree-structured organizational management, human-machine interaction nodes can also be established, providing support for online UI creation to meet the needs of traditional automation monitoring software.
+
+2. The upper part of the tree
+
+In the upper part of the tree, IOT-Tree implements a visual message flow running mechanism based on messages. This message flow allows you to easily implement control logic for automated environments and, through continuously expanding operational nodes, meet various data scheduling and utilization needs.
+
+For example, real-time data based on tags at the root of the tree can be used to trigger control processes on a scheduled or event basis, achieving complex control needs on site. At the same time, various docking functions can also be achieved through internal message processing nodes such as external communication support (MQTT, Kafka, Mail), data output support (Excel, CSV), and data storage support (Database). Standard device simulation nodes (such as Modbus Slave, BACnet) can also be used to simulate standard devices externally.
+
+<table style="background-color:#1e1e1e">
+ <tr>
+  <td width="50%" style="text-align:right;">
+<img src="./web/doc/en/doc/img/tree.png" style="border:0px"/>
+  </td>
+  <td style="text-align:left;">
+  <img src="./web/doc/en/doc/img/msgnet/mn003.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">
+  <br/><br/>
+  <img src="./web/doc/en/doc/img/readme_18.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">
+  </td>
+</table>
 
 [Quick Start][quick_start]
 
