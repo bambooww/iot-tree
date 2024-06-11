@@ -1,5 +1,21 @@
 # Versions
 
+### version 1.7.0
+
+
+Message flow/network support has been added, which can replace all functions such as task scheduling control, data output storage, data routing, etc. In future versions of IOT-Tree, the root part of the tree will mainly focus on channels, drivers, devices, and tags; Regarding data usage, control logic, and external system integration, message flow is the main focus.
+
+Please refer to:
+
+<a href="msgnet/index.md" >Message Flow</a>
+
+<a href="msgnet/mf_for_ctrl.md" >Using message flow to implement control logic</a>
+
+### version 2.0.0 (Plan)
+
+
+
+
 ### version 1.6.1
 
 
@@ -20,11 +36,6 @@ The tag list supports moving multiple selections to another container node.
 The dictionary function has been improved, allowing tree organization and tags to support the selection or input of extended properties--this enables JSON-based data sharing to include extended properties content, with each properties name prefixed with "ext_".
 
 Various optimizations have been implemented, including multilingual support for some pages.
-
-
-### version 2.0.0 (Plan)
-
-
 
 
 ### version 1.5.1
