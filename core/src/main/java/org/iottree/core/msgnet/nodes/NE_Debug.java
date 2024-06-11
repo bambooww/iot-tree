@@ -130,14 +130,14 @@ public class NE_Debug extends MNNodeEnd implements ILang
 	@Override
 	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
-		//super.RT_renderDiv(divblks);
-		
 		StringBuilder divsb = new StringBuilder() ;
 
-		divsb.append("<div class=\"rt_blk\" style='position:relative;height:98%;'><div style='background-color:#aaaaaa;white-space: nowrap;'>Debug Messages  <button onclick=\"clear_debug_list('"+this.getId()+"')\">clear</button> &nbsp; <button onclick=\"start_stop_debug_list(this,'"+this.getId()+"')\">stop</button></div>") ;
+		divsb.append("<div class=\"rt_blk\" style='position:relative;height:90%;'><div style='background-color:#aaaaaa;white-space: nowrap;'>Debug Messages  <button onclick=\"clear_debug_list('"+this.getId()+"')\">clear</button> &nbsp; <button onclick=\"start_stop_debug_list(this,'"+this.getId()+"')\">stop</button></div>") ;
 		divsb.append("<div class=\"rt_debug_list\" id=\"debug_n_"+this.getId()+"\" max_buf_num='"+this.maxBufferedMsnNum+"'></div>") ;
 		divsb.append("</div>") ;
 		
 		divblks.add(new DivBlk("node_debug",divsb.toString())) ;
+		
+		super.RT_renderDiv(divblks);
 	}
 }

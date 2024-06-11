@@ -39,5 +39,6 @@
   
   <dd_node id="1" name="buf_len" name_cn="缓存个数" name_en="Buffer Num" />
   <dd_node id="1" name="out_fmt" name_cn="输出格式" name_en="Output Format" />
-  
+  <dd_node id="1" name="out_min_intv" name_cn="输出最小时间间隔(毫秒)" name_en="Output minimum interval(MS)" />
+  <dd_node id="1" name="property" name_cn="属性" name_en="Property" />
 </dd_class>

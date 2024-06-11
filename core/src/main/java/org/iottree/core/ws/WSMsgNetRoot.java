@@ -65,7 +65,7 @@ public class WSMsgNetRoot
 			{
 				session.getBasicRemote().sendText(txt);
 			}
-			catch ( IOException ioe)
+			catch (Exception ioe)
 			{
 				CloseReason cr = new CloseReason(CloseCodes.CLOSED_ABNORMALLY, ioe.getMessage());
 				try

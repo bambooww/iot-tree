@@ -35,11 +35,7 @@ IOT-Tree Server是一个物联网接入、数据规整、人机交互展示、�
 
 
 
-<span style="border:1px solid #dddddd;width:200px;height:40px;">
-
 [快速开始][quick_start]
-
-</span>
 
 [文档总目录][nav]
 

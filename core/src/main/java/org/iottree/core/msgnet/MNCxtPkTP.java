@@ -6,7 +6,24 @@ public enum MNCxtPkTP
 	
 	public String getTitle()
 	{
-		return "$"+name();
+		return name();
+	}
+	
+	public String getIconTitle()
+	{
+		switch(this)
+		{
+		case msg:
+			return "<i class='fa fa-arrow-right'></i>"+name();
+		case node:
+			return "<i class='fa fa-square-o'></i>"+name();
+		case flow:
+			return "<i class='fa fa-fork fa-rotate-90'></i>"+name();
+		case prj:
+			return "<i class='fa fa-project-diagram'></i>"+name();
+		default:
+			return name() ;
+		}
 	}
 	
 	public IMNCxtPk getCxtPkInNode(MNNet net,MNBase mn_item,MNMsg m)

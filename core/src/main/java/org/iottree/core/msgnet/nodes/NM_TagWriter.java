@@ -196,7 +196,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		this.asynMode = jo.optBoolean("asyn", false) ;
+		this.asynMode = jo.optBoolean("asyn", true) ;
 		JSONArray jarr = jo.optJSONArray("tags") ;
 		ArrayList<TagItem> ccrs = new ArrayList<>() ;
 		if(jarr!=null)
@@ -229,7 +229,10 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
 		if(bAsynRun)
+		{
+			this.RT_DEBUG_WARN.fire("tag_w","node is running,ignore this msg",msg.toJO().toString());
 			return null ; //ignore all in msg
+		}
 		
 		if(this.tagItems==null||this.tagItems.size()<=0)
 			return null ;

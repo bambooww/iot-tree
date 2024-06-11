@@ -79,11 +79,23 @@
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
 
 #### <a href="doc/msgnet/index.md" >10 Message Flow</a>
-##### <a href="doc/msgnet/demo_caseauto.md" >&nbsp;&nbsp;&nbsp;10.1 Demo: Automatic control flow</a>
+##### <a href="doc/msgnet/mf_for_ctrl.md" >&nbsp;&nbsp;&nbsp;10.1 Using message flow to implement control logic</a>
 ##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;10.2 Demo: Automatic data recorder flow</a>
 ##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;10.3 Demo: Alarm detection and output</a>
-##### <a href="doc/msgnet/nd_timer_trigger.md" >&nbsp;&nbsp;&nbsp;10.4 Node: Timer Trigger</a>
-##### <a href="doc/msgnet/nd_mem_queue.md" >&nbsp;&nbsp;&nbsp;10.5 Node: Mem Queue</a>
+##### <a href="doc/msgnet/n__com.manual.md">&nbsp;&nbsp;&nbsp;10.4 Node:Manual Trigger</a>
+##### <a href="doc/msgnet/n__com.timer.md">&nbsp;&nbsp;&nbsp;10.5 Node:Timer Trigger</a>
+##### <a href="doc/msgnet/n__com.debug.md">&nbsp;&nbsp;&nbsp;10.6 Node:Debug</a>
+##### <a href="doc/msgnet/n__com.mem_que.md">&nbsp;&nbsp;&nbsp;10.7 Node:Mem Queue</a>
+##### <a href="doc/msgnet/n__func.js_func.md">&nbsp;&nbsp;&nbsp;10.8 Node:JS Function</a>
+##### <a href="doc/msgnet/n__func.template.md">&nbsp;&nbsp;&nbsp;10.9 Node:Template</a>
+##### <a href="doc/msgnet/n__func.change.md">&nbsp;&nbsp;&nbsp;10.10 Node:Change</a>
+##### <a href="doc/msgnet/n__func.switch.md">&nbsp;&nbsp;&nbsp;10.11 Node:Switch</a>
+##### <a href="doc/msgnet/n__func.onoff.md">&nbsp;&nbsp;&nbsp;10.12 Node:On Off</a>
+##### <a href="doc/msgnet/n__dev.tag_reader.md">&nbsp;&nbsp;&nbsp;10.13 Node:Tags Reader</a>
+##### <a href="doc/msgnet/n__dev.tag_writer.md">&nbsp;&nbsp;&nbsp;10.14 Node:Tags Writer</a>
+##### <a href="doc/msgnet/n__dev.tag_filter.md">&nbsp;&nbsp;&nbsp;10.15 Node:Tags Read Filter</a>
+##### <a href="doc/msgnet/n__dev.tag_filter_w.md">&nbsp;&nbsp;&nbsp;10.16 Node:Tags Write Filter</a>
+##### <a href="doc/msgnet/n__dev.tag_evt_trigger.md">&nbsp;&nbsp;&nbsp;10.17 Node:Tags Event Trigger</a>
 
 #### <a href="doc/advanced/index.md" >11 Extends Functions</a>
 ##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 Plugins Development</a>

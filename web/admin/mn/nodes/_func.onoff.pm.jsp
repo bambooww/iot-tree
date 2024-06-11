@@ -89,7 +89,7 @@
 </style>
 
 <div class="row" >
-   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Property</span></div>
+   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;<w:g>property</w:g></span></div>
   <div class="tar_pktp" style=""> 
     <select id="prop_pktp"  class="layui-input" lay-filter="sor_valsty" style="width:100px;border-right: 0px;">
 <%
@@ -148,7 +148,7 @@
  
 	<div class="layui-form-item">
     <label class="layui-form-label"></label>
-    <div class="layui-form-mid">Out Min Interval Ms</div>
+    <div class="layui-form-mid"><w:g>out_min_intv</w:g></div>
     <div class="layui-input-inline" style="width:100px;">
       <input type="number" id="out_min_intv" name="out_min_intv" value="0"  class="layui-input">
     </div>

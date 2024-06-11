@@ -22,12 +22,12 @@ In the upper part of the tree, IOT-Tree implements a visual message flow running
 
 For example, real-time data based on tags at the root of the tree can be used to trigger control processes on a scheduled or event basis, achieving complex control needs on site. At the same time, various docking functions can also be achieved through internal message processing nodes such as external communication support (MQTT, Kafka, Mail), data output support (Excel, CSV), and data storage support (Database). Standard device simulation nodes (such as Modbus Slave, BACnet) can also be used to simulate standard devices externally.
 
-<table style="background-color:#1e1e1e">
+<table style="background-color:#1e1e1e;border:1px solid #dddddd;">
  <tr>
-  <td width="50%" style="text-align:right;">
+  <td width="50%" style="text-align:right;background-color:#1e1e1e;border:0px">
 <img src="./web/doc/en/doc/img/tree.png" style="border:0px"/>
   </td>
-  <td style="text-align:left;">
+  <td style="text-align:left;background-color:#1e1e1e;border:0px">
   <img src="./web/doc/en/doc/img/msgnet/mn003.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">
   <br/><br/>
   <img src="./web/doc/en/doc/img/readme_18.png" style="width:auto;height:auto;max-width:100%；max-height:50%;">

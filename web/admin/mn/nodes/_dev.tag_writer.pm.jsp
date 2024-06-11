@@ -119,7 +119,7 @@ String prjpath = prj.getNodePath() ;
 </style>
 <div class="layui-form-item">
     <label class="layui-form-label"></label>
-    <div class="layui-input-inline" style="width:20%;">
+    <div class="layui-input-inline" style="width:50%;">
       <input type="checkbox" class="layui-input" lay-skin="primary" id="asyn" /> <w:g>asyn_run</w:g>
     </div>
   </div>
@@ -130,7 +130,7 @@ String prjpath = prj.getNodePath() ;
   
   <div class="row" >
   <div class="l1">
-    Delay
+    <w:g>delay</w:g>
   </div>
   <div class="l2">
     <input type="number" id="w_delay" class="layui-input" value="0"/>

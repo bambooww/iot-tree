@@ -785,6 +785,16 @@ At this point, the project you have completed can be manually controlled remotel
 Next, we need to finish the last step and write control scripts to enable the system to meet the initial requirements for automatic control. 
 
 
+<font color="green">
+
+
+Starting from version 1.7.0, IOT-Tree has added message flow support, and the following automatic controls can be implemented using visual flow. The document also aims to control this demonstration project, easily achieving automatic control. Please refer to:
+
+</font>
+
+<a href="../msgnet/mf_for_ctrl.md" >&nbsp;&nbsp;&nbsp;Using message flow to implement control logic</a>
+
+
 
 
 ## 2.6 Write automatic control script 

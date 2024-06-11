@@ -235,7 +235,6 @@ function draw_fit()
 
 function init_iottpanel()
 {
-	
 	mn.DrawLayer.RULE_SHOW=true;
 	mn.DrawLayer.GRID_SHOW=true;
 	

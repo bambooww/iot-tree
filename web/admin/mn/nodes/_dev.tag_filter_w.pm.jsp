@@ -42,9 +42,15 @@ if(tagids_jarr!=null)
 }
 %>
 <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline" style="width:60%;">
+      <input type="checkbox" class="layui-input" lay-skin="primary" id="asyn" /> <w:g>asyn_run</w:g>
+    </div>
+  </div>
+<div class="layui-form-item">
     <label class="layui-form-label"><w:g>write,tags</w:g></label>
     <div class="layui-input-inline" style="overflow: auto;width:350px;">
-      <textarea style="width:100%;height:50px;" id="tags"  readonly="readonly" onclick="sel_tags()" class="layui-input"><%=pss %></textarea>
+      <textarea style="width:100%;height:200px;" id="tags"  readonly="readonly" onclick="sel_tags()" class="layui-input"><%=pss %></textarea>
     </div>
     <div class="layui-form-mid"><button onclick="sel_tags()">...</button></div>
   </div>
@@ -86,12 +92,17 @@ function on_after_pm_show(form)
 
 function get_pm_jo()
 {
-	return {tagids:tagids} ;
+	let jo = {} ;
+	jo.asyn = $("#asyn").prop("checked") ;
+	jo.tagids = tagids ;
+	return jo ;
 }
 
 function set_pm_jo(jo)
 {// no path show
 	tagids = jo.tagids||[];
+	
+	$("#asyn").prop("checked",jo.asyn||false) ;
 }
 
 function get_pm_size()

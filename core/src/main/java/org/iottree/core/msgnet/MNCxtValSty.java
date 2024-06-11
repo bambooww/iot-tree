@@ -19,8 +19,8 @@ public enum MNCxtValSty
 	public String getTitle()
 	{
 		String n = this.name() ;
-		if(isCxtPk())
-			return "$"+n;
+		//if(isCxtPk())
+		//	return "$"+n;
 		if(n.startsWith("vt_"))
 		{
 			MNCxtValTP vtp = MNCxtValTP.parseFrom(n) ;

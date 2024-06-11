@@ -1,49 +1,239 @@
 Message Flow/Net
 ==
 
-在IOT-Tree 1.7.0之前，IOT-Tree尝试了多种方式使用/处理树根采集到的数据。比如，报警模块、任务调入功能、存储支持以及数据路由等。这些模块分别针对一些特定的方面提供了针对采集到的标签Tag数据进行二次处理和使用，但每个功能总是有限。可以想象，如果在后续使用过程中，IOT-Tree要能够提供更强大的树上功能，只会增加更多有限功能模块，这样会使得系统在树枝和树叶层面的应用越来越复杂。
 
-比如，为了使IOT-Tree能够直接支持ERP、MES等系统的数据推送；或者为生产线上的工位提供承上接生产任务，启下对接现场传感器等设备，那么现有的功能模块注定无法满足需要。唯一的实现方式是通过二次开发对接IOT-Tree的实时数据，然后对现场数据实现分析处理并整合到顶层系统中。这样，IOT-Tree在里面的角色仅仅是个OPC Server或IO数据接口，相关应用的实现也会变得很复杂。
 
-为解决以上问题，在1.7.0版本，IOT-Tree引入了重要功能：Message Flow/Net
+Before IOT-Tree 1.7.0, IOT-Tree attempted to use/process data collected from tree roots in various ways. For example, alert module, task scheduling, storage support, and data routing. These modules provide targeted data processing and usage for specific aspects, but each function is always limited. It can be imagined that if IOT-Tree is to provide more powerful upper tree functionality in the subsequent use process, it will only add more limited functional modules, which will make the application of the system at the branch and leaf levels increasingly complex.
 
-## 1 整体说明
+For example, in order to enable IOT-Tree to directly support data push for systems such as ERP and MES; Alternatively, providing workstations on the production line with support for production tasks, starting and connecting on-site sensors and other equipment, the existing functional modules are bound to be unable to meet the needs. The only implementation method is to interface with real-time data of IOT-Tree through secondary development, and then analyze and integrate on-site data into the top-level system. In this way, the role of IOT-Tree in it is only an OPC Server or IO data interface, and the implementation of related applications will become very complex.
 
-此功能能够替换前面版本实现的报警模块、任务调度功能、存储功能和数据路由所有功能。其整体思路参考了Node-Red：基于消息Message的方式，建立流程管理。里面的节点Node提供了基础功能，你可以根据需要建立各种消息处理流程/网络，达到顶层各种业务需要。
+To address the above issues, in version 1.7.0, IOT Tree introduced important features:
 
-消息流程以消息为基础，在流程/网络节点中进行传递和处理。这与传统的工作流不同，传统的工作流节点代表了处理过程或工作项，路径可以有上下文数据运行条件，可以自主决定流程走向。同时，这与PLC的梯形图也不同，PLC梯形图路径代表了信号线，节点的粒度可以非常小，基本就是为实现控制逻辑而存在。
 
-虽然，消息流/网络参考了Node-Red，但与之也不相同。Node-Red基于Node.js提供了各种基础节点，基本思路是基于消息替代消息处理代码编程。相关节点功能粒度也很细，但整体流程网络运行又偏向屏蔽复杂的底层。这造成了一点的矛盾——如果要实现简单功能问题不大，但如果要实现复杂的业务路径，可能会造成网络很庞大，失去了直观性（有可能还不如直接写代码，这是我个人观点，如果我理解不对请对我指出批评）。
+Message Flow/Net
 
-综合各种流程的利弊，IOT-Tree基于消息的流程提供如下策略：
+## 1 Overall
 
-1) 充分利用消息流程的直观性，简化开发。
 
-2) 避免流程太庞大，尽可能提供<font color=green>中粒度节点：节点功能尽可能独立但不划分太细</font>
 
-3) 支持现场控制，提供异步运行节点，并能够支持流程中直观观察运行状态。
+This feature can replace all the functions implemented in previous versions, including alert module, task scheduling, storage, and data routing. The overall approach is based on Message, establishing flow management through nodes. The nodes inside provide basic functions, and you can combine these nodes according to your needs, establish various message processing flows/networks, and achieve various top-level business needs.
 
-4) 支持上下文数据直观展示，使得用户可以对流程运行有着更好的把控
+This is different from the traditional workflow. The traditional workflow node represents the activities or work item. The path can have context data running conditions, and can decide the process direction independently. At the same time, this is different from the ladder diagram of PLC. The path of PLC ladder diagram represents the signal line, and the granularity of nodes can be very small, basically existing to achieve control logic.
 
-5) 支持标准的java webapp开发方式，提供业务节点插件，使得系统能够无限扩展，并且能够应付各种千变万化的需要。
+This is similar to "Node-Red",but very different. "Node-Red" provides various basic nodes based on Node.js, and the basic idea is to replace message processing code programming with message nodes. The functional granularity of related nodes is also very fine, but the overall flow operation tends to shield complex underlying layers. This creates a bit of contradiction - if you want to implement simple functions, it's not a big problem, but if you want to implement complex business paths, it may cause the network to be very large and lose its intuitiveness (it may be better to write code directly, this is my personal opinion. If I don't understand correctly, please criticize me).
 
-至此，IOT-Tree从架构上可以认为是两个功能：一个是树根功能接入各种设备传感器，并形成统一规整的数据；一个就是树上消息流程/网络，可以为各种复杂的业务功能提供强大高效率的支持，同时保持模块之间轻耦合。
+Taking into account the advantages and disadvantages of various flows, IOT-Tree provides the following strategies for this:
+
+1) Fully utilize the intuitiveness of the message flow to simplify development.
+
+2) To avoid a flow that is too large, try to provide <font color=green>medium granularity nodes as much as possible: node functions should be as independent as possible but not too finely divided</font>
+
+3) Support on-site control, provide asynchronous running nodes, and enable intuitive observation of running status in the flow. The Debug node can independently display a list of received messages.
+
+4) Supporting intuitive display of contextual data, allowing users to have better control over flow running.
+
+5) Support standard Java web-app deployment and provide business node plugins, allowing the system to expand infinitely and cope with various ever-changing needs.
+
+At this point, IOT-Tree can be considered as two functions in architecture: one is the root function that connects various device sensors and forms unified and organized data; One is the message flow/network on the upper tree, which can provide powerful and efficient support for various complex business functions while maintaining light coupling between modules.
+
 
 <img src="../img/msgnet/mn001.png">
 
-## 2 消息流/网络组成
+## 2 Message flow/network composition
 
-如果你对Node-Red有过了解，那么理解IOT-Tree的消息流/网络也会更容易。不过，虽然思路类似，但IOT-Tree提供的相关基础有着很大的差异。
-
-### 2.1 项目、流程、节点三个层次
-
-### 2.2 流程 Flow
-
-### 2.3 节点和路径
-
-### 2.3.1 节点类型
-
-### 2.3.2 路径
+### 2.1 Three levels of project, flow, and node
 
 
 
+The message flow in IOT-Tree is dependent on the project, and a project can define multiple message flow objects. Each flow can have multiple nodes, and message routing logic is established through connections.
+
+Therefore, for runtime context, the scope of use of relevant variables is as follows:
+
+1. Variables in the flow that can be used by all nodes
+
+2. Variables within a node can be used within the node
+
+The message object can be considered as dynamically generated memory, and after each triggered message runs through different nodes in the flow, it will disappear.
+
+
+### 2.2 Flow
+
+
+The flow established based on project, the data defined in the project can naturally be directly used. At the same time, the start and stop of the flow are also controlled by the start and stop of the project.
+
+In the flow, different types of nodes can be placed arbitrarily. You can place multiple starting nodes(that can trigger messages), intermediate nodes, and ending nodes. Intermediate nodes can also be used as end nodes.
+
+Therefore, in a sense, you can complete all the operational requirements of a project within only one flow.
+
+In the project management main page of IOT-Tree, the flows list management is located in the bottom left corner, where you can add, delete, and modify basic information about the flow. Click on a flow title, and the corresponding message flow editing UI will appear in the main content area on the right.
+
+<img src="../img/msgnet/mn004.png">
+
+#### 2.2.1 Basic operations in the flow editing area
+
+
+
+The message flow editing area displays the flow using infinite scaling, and you can use the mouse scroll wheel to zoom in and out of the image.
+
+Use the right mouse button to move and roam the editing area.
+
+Use the left mouse button to select, move, and modify nodes and paths.
+
+After selecting nodes or paths, click the "Del" button to delete the relevant node.
+
+When a node is moved, a modification circle will appear in the upper right corner of the node, indicating that the basic information such as the node's position has been changed. At this time, you need to click the save button above to synchronize to the server.
+
+
+### 2.3 Nodes and Paths
+
+
+
+The flow is mainly composed of nodes, and nodes can flexibly establish associated paths. Currently, the path only represents the message passing path between nodes and has no other functional significance. Therefore, the node capabilities related to the flow have become crucial.
+
+
+#### 2.3.1 Overall node description and basic operations
+
+
+The node of the IOT-Tree message flow is represented as a rectangular block, with input and output corresponding to the left and right sides. Among them, each node can only have a maximum of one input, and the output can be unlimited according to the needs of the node.
+
+1. Add nodes
+
+In the message flow editing UI, all nodes are displayed in the left list, and you can add nodes by clicking and dragging them to the content area.
+
+2. Modify node parameters
+
+After adding a node, to set parameters, double-click with the mouse to open the node parameter editing dialog box.
+
+3. Establish paths between nodes
+
+Input and output connection points on both sides of the node. After left clicking with the mouse, do not release it. When moving, a connection line will appear. When the mouse moves over another node (or the connection points on both sides of the node), release the left button. If conditions permit, a path will be established
+
+4. Delete node
+
+After selecting a node, press the "Del" key to delete the corresponding node
+
+
+#### 2.3.2 Module
+
+
+
+A module is a special node that does not have input/output connection points, but has an association point above or below. It represents a collection of functions and can carry its own supporting nodes.
+
+For example, a module that supports Kafka communication can represent a Kafka client link. Click and select on this module, and a list of matching nodes corresponding to the module will pop up in the node list on the left. You can also create supporting nodes by dragging and dropping them, and these nodes will have an associated line to the module block. The newly created supporting nodes will share resources within the module.
+
+
+<img src="../img/msgnet/mn005.png">
+
+We can double-click the module or supporting node in the same way to open the parameter editing dialog box for setting.
+
+#### 2.3.2 Asynchronous running node
+
+
+
+IOT-Tree also has clear time control over message flow. In general, message passing between nodes is essentially a function call - that is to say, during the message passing flow, the running time of the preceding nodes will be affected by the running time of the following nodes. If a node has a relatively long processing time, it will cause the previous node to receive and process messages, which is intolerable for situations with high time requirements.
+
+Therefore, when implementing a node, it can have its own internal processing thread, which is an asynchronous processing method. When a message is delivered, it is immediately received and returned, and then an internal asynchronous thread is used for specific processing. Asynchronous nodes will have a running status icon, as shown in the following figure:
+
+
+<img src="../img/msgnet/mn006.png">
+
+#### 2.3.4 Node runtime status information
+
+
+
+IOT-Tree provides strong support for debugging and observing the operation of message flows. After selecting each node, a running status display/hide button appears, and clicking this button can display or hide status information below the node. Especially for the "Debug" node, all received messages can be listed. As shown in the figure:
+
+
+<img src="../img/msgnet/mn007.png">
+
+#### 2.3.5 Common Nodes
+
+1. <a href="n__com.manual.md">Manual Trigger</a>
+
+
+
+Manually triggering messages, this node is generally used for testing
+
+
+2. <a href="n__com.timer.md">Timer Trigger</a>
+
+
+
+There is a timer inside this node that can trigger new messages based on certain strategies (such as time intervals)
+
+
+3. <a href="n__com.debug.md">Debug</a>
+
+
+
+Support printing a list of received messages, which can be used to track and debug the output message data of specific nodes in the message flow.
+
+
+4. <a href="n__com.mem_que.md">Mem Queue</a>
+
+
+There is a queue and queue listening thread inside the node,which allows input messages to be quickly received and avoids some subsequent nodes blocking the message processing of previous nodes.
+
+
+#### 2.3.6 Function Nodes
+
+1. <a href="n__func.js_func.md">JS Function</a>
+
+
+
+This node internally supports the running of server-side JS code,allowing you to flexibly handle input messages and control output messages
+
+2. <a href="n__func.template.md">Template</a>
+
+
+This node internally supports the running of server-side JS code,allowing you to flexibly handle input messages and control output messages
+
+3. <a href="n__func.change.md">Change</a>
+
+
+This node supports the setting or exchange of contextual data,such as saving the data in the message to variables in the node or flow
+
+4. <a href="n__func.switch.md">Switch</a>
+
+
+When there is an input message, determine which channel to output from based on certain conditions
+
+5. <a href="n__func.onoff.md">On Off</a>
+
+
+Determine whether the input message has passed or blocked based on certain conditions
+
+#### 2.3.7 Devices
+
+1. <a href="n__dev.tag_reader.md">Tags Reader</a>
+
+
+Based on the selected tags and variable names,read the tag values in the current running project to form JSON data output
+
+2. <a href="n__dev.tag_writer.md">Tags Writer</a>
+
+
+Write the Tag based on the selection and assignment method. Due to the potential involvement of underlying drivers and communication in tag writing,there may be some delay, so this node also supports asynchronous running
+
+3. <a href="n__dev.tag_filter.md">Tags Read Filter</a>
+
+
+According to certain filtering conditions (project tree root and node attributes), read device runtime data (JSON format tree structure)
+
+4. <a href="n__dev.tag_filter_w.md">Tags Write Filter</a>
+
+
+Nodes receive JSON data in a specific format and can be determined by the outside world which Tags to write to.Nodes can set the range of writable Tags
+
+5. <a href="n__dev.tag_evt_trigger.md">Tags Event Trigger</a>
+
+
+By selecting the event configuration item in the tag,listen for events generated by changes in the value of the relevant tag during runtime,and generate event message outputs based on certain strategies
+
+### 2.3.8 Network Nodes
+
+1. Kafka
+
+2. MQTT
+
+3. HTTP

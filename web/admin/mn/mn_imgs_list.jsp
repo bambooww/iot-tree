@@ -7,5 +7,6 @@
 	   ,{"n":"status"    ,   "fn":"status.svg"}
 	    ,{"n":"bridge"    ,   "fn":"bridge.svg"}
 	    ,{"n":"bacnet"    ,   "fn":"bacnet.png"}
+	    ,{"n":"pid"    ,   "fn":"pid.svg"}
 	]
 }

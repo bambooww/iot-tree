@@ -89,7 +89,7 @@ String prjpath = prj.getNodePath() ;
 {
 	position:absolute;
 	left:405px;top:20px;
-	width:100px;
+	width:150px;
 }
 </style>
 <button onclick="add_rule()" style="border-color:#dddddd">+Add</button>

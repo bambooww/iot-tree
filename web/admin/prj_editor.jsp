@@ -774,7 +774,7 @@ function resize_iframe_h()
 
 function resize_tree()
 {
-	var h = $(window).height()-90;
+	var h = $(window).height()-120;
 	$("#tree").css("height",h+"px");
 }
 

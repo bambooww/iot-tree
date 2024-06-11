@@ -100,7 +100,7 @@ Rule: <button onclick="add_rule()" style="border-color:#dddddd">+Add Rule</butto
 	for(MNCxtPkTP pktp:MNCxtPkTP.values())
 	{
 %>
-        <option value="<%=pktp.name()%>"><%=pktp.getTitle() %>.</option>
+        <option value="<%=pktp.name()%>"><%=pktp.getIconTitle() %>.</option>
 <%
 	}
 %>
@@ -143,7 +143,7 @@ Rule: <button onclick="add_rule()" style="border-color:#dddddd">+Add Rule</butto
 	for(MNCxtPkTP pktp:MNCxtPkTP.values())
 	{
 %>
-        <option value="<%=pktp.name()%>"><%=pktp.getTitle() %>.</option>
+        <option value="<%=pktp.name()%>"><%=pktp.getIconTitle() %>.</option>
 <%
 	}
 %>

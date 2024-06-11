@@ -15,6 +15,7 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UAVal;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.JsSub;
@@ -193,6 +194,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 		RT_bDirty = b;
 	}
 	
+	@JsDef(name = "setVarVal")
 	public void RT_CXT_setVarVal(String var_n,Object val)
 	{
 		if(val==null)
@@ -209,6 +211,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 		RT_CXT_fireDirty(true) ;
 	}
 	
+	@JsDef(name = "getVarVal")
 	public Object RT_CXT_getVarVal(String var_n)
 	{
 		return var2val.get(var_n) ;

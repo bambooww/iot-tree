@@ -11,7 +11,9 @@
 		desc_en="There is a timer inside this node that can trigger new messages&#13;   based on certain strategies (such as time intervals)"
 		/>
 	<dd_node id="1" name="inject" name_cn="注入" name_en="Inject" desc_cn="" desc_en=""/>
-	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug"
+		desc_cn="支持打印接收消息的列表，可以用来跟踪调试消息流特定节点的输出消息数据"
+		desc_en="Support printing a list of received messages, which can be used to track and debug the output message data of specific nodes in the message flow."/>
 	<dd_node id="1" name="switch" name_cn="路径切换" name_en="Switch" 
 		desc_cn="当有输入消息时，根据一定的条件判断从哪个通道输出"
 		desc_en="When there is an input message, determine which channel to output from based on certain conditions"
@@ -24,7 +26,9 @@
 		desc_cn="此节点	支持上下文数据的设置或交换，如你可以把消息中的数据保存到节点或流程中的变量中"
 		desc_en="This node supports the setting or exchange of contextual data,&#13;  such as saving the data in the message to variables in the node or flow"
 		/>
-	<dd_node id="1" name="template" name_cn="模板" name_en="Template" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="template" name_cn="模板" name_en="Template"
+		desc_cn="此节点内部支持带有{{}}的模板文本，配合消息、节点变量和流程变量进行组合，输出特定格式的消息负载数据。"
+		desc_en=""/>
 	<dd_node id="1" name="exec" name_cn="执行系统命令" name_en="Exec Cmd" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="onoff" name_cn="开关" name_en="On Off"
 		desc_cn="对输入的消息根据一定的条件判断是否通过或不通过"

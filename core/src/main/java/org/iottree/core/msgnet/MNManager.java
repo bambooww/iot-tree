@@ -145,6 +145,7 @@ public class MNManager
 		registerItem(new NM_Change(),cat) ;
 		registerItem(new NM_Switch(),cat) ;
 		registerItem(new NM_OnOff(),cat) ;
+		registerItem(new NM_PID(),cat) ;
 		registerItem(new NM_Exec(),cat) ;
 		
 		cat = registerCat(new MNCat("_dev")) ;
@@ -154,9 +155,8 @@ public class MNManager
 		registerItem(new NM_TagFilterW(),cat) ;
 		registerItem(new NS_TagEvtTrigger(),cat) ;
 		registerItem(new NS_ConnInMsgTrigger(),cat) ;
-		registerItem(new NS_TagAlertTrigger(),cat) ;
+		//registerItem(new NS_TagAlertTrigger(),cat) ;
 		
-		//registerItem(new TagRuntime(),cat) ;
 		
 		cat = registerCat(new MNCat("_net")) ;
 		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
