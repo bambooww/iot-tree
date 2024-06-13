@@ -112,6 +112,11 @@
 			<version>${graalvm.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.graalvm.truffle</groupId>
+			<artifactId>truffle-api</artifactId>
+			<version>${graalvm.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js-scriptengine</artifactId>
 			<version>${graalvm.version}</version>

@@ -58,33 +58,6 @@ public class NS_TagEvtTrigger  extends MNNodeStart
 	}
 	
 	@Override
-	public String getOutTitle(int idx)
-	{
-		switch(this.msgOutSty)
-		{
-		case triggered:
-			if(idx==0)
-				return g("triggered_out") ;
-			else
-				return null ;
-		case released:
-			if(idx==0)
-				return g("released_out") ;
-			else
-				return null ;
-		case both:
-			if(idx==0)
-				return g("triggered_out") ;
-			else if(idx==1)
-				return g("released_out") ;
-			else
-				return null ;
-		default:
-			return "" ;
-		}
-	}
-
-	@Override
 	public String getTP()
 	{
 		return "tag_evt_trigger";
@@ -201,4 +174,33 @@ public class NS_TagEvtTrigger  extends MNNodeStart
 			return false ;
 		}
 	}
+	
+
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		switch(this.msgOutSty)
+		{
+		case triggered:
+			if(idx==0)
+				return g("triggered_out") ;
+			else
+				return null ;
+		case released:
+			if(idx==0)
+				return g("released_out") ;
+			else
+				return null ;
+		case both:
+			if(idx==0)
+				return g("triggered_out") ;
+			else if(idx==1)
+				return g("released_out") ;
+			else
+				return null ;
+		default:
+			return "" ;
+		}
+	}
+
 }

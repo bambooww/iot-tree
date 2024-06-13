@@ -118,14 +118,14 @@ public class NM_TagReader extends MNNodeMid
 	{
 		return 2;
 	}
-
+	
 	@Override
-	public String getOutTitle(int idx)
+	public String getOutColor(int idx)
 	{
 		if(idx==0)
-			return g("valid_data");
+			return null;
 		if(idx==1)
-			return g("invalid_tags");
+			return "red";
 		return null ;
 	}
 
@@ -198,6 +198,9 @@ public class NM_TagReader extends MNNodeMid
 	}
 
 	// --------------
+	
+	private transient long RT_lastInvalidDT = -1 ;
+	private transient JSONArray RT_lastInvalidTags = null ;
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
@@ -236,7 +239,47 @@ public class NM_TagReader extends MNNodeMid
 			rto.asIdxMsg(0, new MNMsg().asPayload(tmpjo)) ;
 		}
 		if(errjarr.length()>0)
+		{
 			rto.asIdxMsg(1, new MNMsg().asPayload(errjarr)) ;
+			RT_lastInvalidDT = System.currentTimeMillis() ;
+			RT_lastInvalidTags = errjarr ;
+			
+		}
 		return rto;
 	}
+	
+
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if(idx==0)
+			return g("valid_data");
+		if(idx==1)
+		{
+			if(RT_lastInvalidTags==null || RT_lastInvalidDT<=0)
+				return g("invalid_tags");
+			else
+			{
+				return Convert.calcDateGapToNow(RT_lastInvalidDT)+"<br><pre>"+
+						Convert.plainToHtml(RT_lastInvalidTags.toString(2)) +"</pre>";
+			}
+		}
+		return null ;
+	}
+	
+	@Override
+	public String RT_getOutColor(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+		{
+			if(RT_lastInvalidTags==null || RT_lastInvalidDT<=0)
+				return null ;
+			return "red" ;
+		}
+			
+		return null ;
+	}
+
 }

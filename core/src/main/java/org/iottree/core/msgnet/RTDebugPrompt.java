@@ -81,6 +81,11 @@ public class RTDebugPrompt implements Comparable<RTDebugPrompt>
 		return jo ;
 	}
 	
+	public String getListTitle()
+	{
+		return this.getDTGapToNow()+" "+this.msg ;
+	}
+	
 	public JSONObject toDetailJO()
 	{
 		JSONObject jo = toListJO() ;

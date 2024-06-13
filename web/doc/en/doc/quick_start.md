@@ -201,15 +201,42 @@ After selection, click "Do Import" in the import project prompt, as shown below:
 
 
 
-After success, the demo project you just imported appears in the project list. Click this item to display the management configuration ui of this item in the pop-up new window. Here, you can see the connector part on the left, the browser part in the middle and the tab main content display area on the right:
+After success, the project list shows the demonstration project you just imported.
+This demonstration project still requires the simulation device to run properly. In the simulator area below, click on "Import Demo" and select "Simulator for case auto demo". As shown in the following figure:
 
 
 <img src="./img/imp_demo3.png" />
+
+
+
+After selecting the import, click on this emulator, and above the pop-up new window, click on Start
+
 <img src="./img/imp_demo4.png" />
 
 
 
-In the tree node expanded in the middle browser section, select a UI node, right-click, and select Edit UI in the pop-up menu to see a new UI editing sub window on the right. As shown below:
-
+Next, we return to the main page, click on the project title, open project management, and you can see that the connector is on the left, the browser tree is in the middle, and the main content tab area is on the right; The bottom left is a list of message flows.
 
 <img src="./img/imp_demo5.png" />
+
+
+
+In the tree node expanded in the middle browser section, select "u1" node, right-click, and select "Edit UI" in the pop-up menu to see a new UI editing sub tab on the right. As shown below:
+
+<img src="./img/imp_demo6.png" />
+
+
+
+Click on the message flow "Water Level Control" in the bottom left corner to see the control flow of this project in the main tab area. As shown in the following figure:
+
+<img src="./img/imp_demo7.png" />
+
+
+
+Click the start button at the top of the project management main page, and you will find that after waiting for some time, connector,channel under the browser tree, and message flow will start. At this time, right-click the "u1" node in the middle of the browsing tree and select "Access". The running monitoring UI will pop up.
+
+
+<img src="./img/imp_demo8.png" />
+
+<img src="./img/imp_demo9.png" />
+

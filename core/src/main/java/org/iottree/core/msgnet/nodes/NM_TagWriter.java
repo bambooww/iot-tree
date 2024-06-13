@@ -144,12 +144,6 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	}
 
 	@Override
-	public String getOutTitle(int idx)
-	{
-		return null ;
-	}
-
-	@Override
 	public String getTP()
 	{
 		return "tag_writer";

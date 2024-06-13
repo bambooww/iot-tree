@@ -191,16 +191,44 @@ http://localhost:9090/admin/
 <img src="./img/imp_demo2.png" />
 
 
-成功之后，项目列表出现了您刚刚导入的演示项目。点击此项目，在弹出的新窗口中，展示了此项目的管理配置界面。在此，你可以看到项目的左边Connector部分，中间的Browser部分和右边的Tab主内容显示区域：
+成功之后，项目列表出现了您刚刚导入的演示项目。
+
+此演示项目还需要运行模拟设备才能正常运行，在下方的模拟器区域，点击"Import Demo",选择"Simulator for case auto demo"。如下图：
 
 
 
 <img src="./img/imp_demo3.png" />
+
+
+选择导入之后，点击此模拟器，在弹出的新窗口上方，点击启动
+
+
 <img src="./img/imp_demo4.png" />
 
 
-在中间Browser部分展开的树节点，选中一个UI节点，鼠标右键，在弹出的菜单中选择"Edit UI"，可以看到在右边新增一个UI编辑子窗口。如下图：
-
+接着我们回到主界面，点击项目标题，打开项目管理，可以看到接入部分在左边，浏览树在中间，右边是主内容选项卡区域；左下方是消息流列表。
 
 
 <img src="./img/imp_demo5.png" />
+
+
+在中间Browser部分展开的树节点，选中一个"u1"节点，鼠标右键，在弹出的菜单中选择"Edit UI"，可以看到在右边新增一个UI编辑子窗口。如下图：
+
+
+<img src="./img/imp_demo6.png" />
+
+
+点击左下角消息流"Water Level Control",可以在主选项卡区看到此项目的控制流。如下图：
+
+
+<img src="./img/imp_demo7.png" />
+
+
+点击项目管理主界面上方启动按钮，你会发现等一些时间，接入、浏览树下面的通道，控制消息流都会启动，此时鼠标右键中间浏览树的"u1"节点，选择“Access”。就会弹出运行监控画面。
+
+
+
+<img src="./img/imp_demo8.png" />
+
+<img src="./img/imp_demo9.png" />
+

@@ -57,18 +57,16 @@ public class NM_Switch extends MNNodeMid // implements ILang
 		return rules.size()+(b_otherwise?1:0);
 	}
 	
-	public String getOutTitle(int idx)
+	@Override
+	public String getOutColor(int idx)
 	{
-		if(rules==null || idx<0 || idx>rules.size())
+		if(b_otherwise && idx==rules.size())
 		{
-			return null ;
+			return "#18807f" ;
 		}
-		if(idx<rules.size())
-			return propPk.getTitle()+"."+this.propSubN+rules.get(idx).getRuleTitle() ;
-		else
-			return g("otherwise") ;
+		return null ;
 	}
-
+	
 //	@Override
 	public String getTP()
 	{
@@ -198,5 +196,18 @@ public class NM_Switch extends MNNodeMid // implements ILang
 		return null ;
 	}
 
+
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if(rules==null || idx<0 || idx>rules.size())
+		{
+			return null ;
+		}
+		if(idx<rules.size())
+			return Convert.plainToHtml(propPk.getTitle()+"."+this.propSubN+rules.get(idx).getRuleTitle()) ;
+		else
+			return g("otherwise") ;
+	}
 
 }

@@ -454,6 +454,7 @@ public class UAManager //implements IResCxt
 		String prefix = "prj_"+id ;
 		for(String en:ens)
 		{
+			//System.out.println(" entry :"+en) ;
 			if(en.startsWith("prj_") && en.endsWith(".xml")&&en.indexOf('/')<0&&en.indexOf('\\')<0)
 			{
 				if(Convert.isNotNullEmpty(newid))

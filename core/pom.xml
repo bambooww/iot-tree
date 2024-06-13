@@ -76,6 +76,13 @@
 
 		</dependency>
 		
+
+		<dependency>
+		    <groupId>org.graalvm.truffle</groupId>
+		    <artifactId>truffle-api</artifactId>
+		</dependency>
+		
+		
 		<dependency>
 	    <groupId>tanukisoft</groupId>
 	    <artifactId>wrapper</artifactId>

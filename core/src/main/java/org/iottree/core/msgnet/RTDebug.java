@@ -3,13 +3,14 @@ package org.iottree.core.msgnet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.iottree.core.msgnet.MNBase.DivBlk;
 
 public class RTDebug
 {
-	HashMap<String,RTDebugPrompt> tp2ppt = new HashMap<>() ;
+	Hashtable<String,RTDebugPrompt> tp2ppt = new Hashtable<>() ;
 	
 	MNBase belongTo ;
 	String lvl ;
@@ -38,6 +39,16 @@ public class RTDebug
 	public boolean hasPrompts()
 	{
 		return tp2ppt.size()>0 ;
+	}
+	
+	public List<String> getPromptTitles()
+	{
+		ArrayList<String> ss = new ArrayList<>() ;
+		for(RTDebugPrompt ppt:this.tp2ppt.values())
+		{
+			ss.add(ppt.getListTitle()) ;
+		}
+		return ss ;
 	}
 	
 	public final void fire(String tp,String msg)

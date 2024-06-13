@@ -201,6 +201,7 @@ public class ZipUtil
 				String tar_en = entrys.get(en) ;
 				if(Convert.isNullOrEmpty(tar_en))
 					tar_en = en ;
+				tar_en = tar_en.replaceAll("\\\\", "/") ; // for linux bug
 				File outf = new File(outdir,tar_en) ;
 				
 				if(!outf.getParentFile().exists())

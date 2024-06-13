@@ -234,6 +234,8 @@ You can use the standard Java Webapp development method to implement your custom
 
 ## Know more
 
+<font color=red>Although IoT Tree is powerful and flexible, it cannot replace control situations with high real-time requirements. Please use mature and reliable PLC in these situations</font>
+
 [Quick Start][quick_start]
 
 [Document Menu][nav]
@@ -241,7 +243,6 @@ You can use the standard Java Webapp development method to implement your custom
 [Demo][demo_link]
 
 If you encounter problems with the system or have suggestions, you can send us email feedback: iottree@hotmail.com
-
 
 
 

@@ -446,15 +446,15 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 	{
 		List<JsProp> rets = super.JS_props() ;
 		
-		if(this.var2val!=null)
-		{
-			for(Map.Entry<String, Object> n2o:this.var2val.entrySet())
-			{
-				String n = n2o.getKey() ;
-				Object v = n2o.getValue() ;
-				rets.add(new JsProp(n,v,null,false,"",""));
-			}
-		}
+//		if(this.var2val!=null)
+//		{
+//			for(Map.Entry<String, Object> n2o:this.var2val.entrySet())
+//			{
+//				String n = n2o.getKey() ;
+//				Object v = n2o.getValue() ;
+//				rets.add(new JsProp(n,v,null,false,"",""));
+//			}
+//		}
 		
 		return rets ;
 	}

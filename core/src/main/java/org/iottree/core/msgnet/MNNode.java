@@ -101,7 +101,7 @@ public abstract class MNNode extends MNBase
 
 	public abstract int getOutNum() ;
 	
-	public String getOutTitle(int idx)
+	public String getOutColor(int idx)
 	{
 		return null ;
 	}
@@ -246,15 +246,17 @@ public abstract class MNNode extends MNBase
 		jo.put("out_num", outn) ;
 		if(outn>0)
 		{
-			JSONArray jarr = new JSONArray() ;
+			//JSONArray jarr = new JSONArray() ;
+			JSONArray jarr_c = new JSONArray() ;
 			for(int i = 0 ; i < outn ; i ++)
 			{
-				String tt = this.getOutTitle(i) ;
+				String tt  = this.getOutColor(i) ;
 				if(Convert.isNullOrEmpty(tt))
 					tt = "" ;
-				jarr.put(tt) ;
+				jarr_c.put(tt) ;
 			}
-			jo.put("out_tts", jarr) ;
+			//jo.put("out_tts", jarr) ;
+			jo.put("out_cs", jarr_c) ; //out color s
 		}
 		return jo;
 	}
@@ -438,14 +440,43 @@ public abstract class MNNode extends MNBase
 		if(outn>0)
 		{
 			ArrayList<String> msg_outs = new ArrayList<>(outn) ;
+			
+			JSONArray jarr = new JSONArray() ;
+			JSONArray jarr_c = new JSONArray() ;
+			
 			for(int i = 0 ; i < outn ; i ++)
 			{
 				MNMsg m = RT_getLastMsgOut(i);
 				msg_outs.add(m!=null?m.getMsgId():"") ;
+				
+				String tt = this.RT_getOutTitle(i) ;
+				if(Convert.isNullOrEmpty(tt))
+					tt = "" ;
+				jarr.put(tt) ;
+				
+				tt = this.RT_getOutColor(i) ;
+				if(Convert.isNullOrEmpty(tt))
+					tt = "" ;
+				jarr_c.put(tt) ;
 			}
+			
 			jo.put("msg_out_ids", msg_outs) ;
+			jo.put("rt_out_tts", jarr) ;
+			jo.put("rt_out_cs", jarr_c) ; //out color s
 		}
 		
 		return jo ;
 	}
+	
+
+	public String RT_getOutTitle(int idx)
+	{
+		return null ;
+	}
+	
+	public String RT_getOutColor(int idx)
+	{
+		return null ;
+	}
+	
 }

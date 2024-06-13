@@ -152,7 +152,17 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		return 2;
+	}
+	
+	@Override
+	public String getOutColor(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+			return "red";
+		return null ;
 	}
 
 //	@Override
@@ -254,7 +264,7 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 		{
 			try
 			{
-				this.RT_sendMsgOut(RTOut.createOutAll(qi));
+				this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(0, qi));
 				remove_first(1) ;
 			}
 			catch(Throwable tt)
@@ -281,7 +291,7 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 			MNMsg newmsg = new MNMsg().asPayload(jarr) ;
 			try
 			{
-				this.RT_sendMsgOut(RTOut.createOutAll(newmsg));
+				this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(0, newmsg));
 				remove_first(n) ;
 			}
 			catch(Throwable tt)
@@ -412,6 +422,8 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 		int len = this.getQueLen() ;
 		if(this.queMaxLen>0 && len>=this.queMaxLen)
 		{
+			RT_sendExceed(len) ;
+			
 			switch(exceedMaxH)
 			{
 			case discard_new:
@@ -430,10 +442,55 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 		this.enqueue(msg);
 		
 		if(this.queWarnLen>0 && len>=this.queWarnLen)
+		{
 			this.RT_DEBUG_WARN.fire("que_len_warn","queue length ="+len);
+			RT_sendWarn(len) ;
+		}
 		else
 			this.RT_DEBUG_WARN.clear("que_len_warn");
 		return null;//
+	}
+	
+	private transient long RT_lastWarnDT = -1 ;
+	
+	private transient long RT_lastErrDT = -1 ;
+	
+	private void RT_sendWarn(int len)
+	{
+		if(System.currentTimeMillis()-RT_lastWarnDT<5000)
+			return;
+		
+		try
+		{
+			JSONObject tmpjo = new JSONObject() ;
+			tmpjo.put("lvl", "warn") ;
+			tmpjo.put("que_len", len) ;
+			MNMsg m = new MNMsg().asPayload(tmpjo) ;
+			this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(1, m));
+		}
+		finally
+		{
+			RT_lastWarnDT = System.currentTimeMillis() ;
+		}
+	}
+	
+	private void RT_sendExceed(int len)
+	{
+		if(System.currentTimeMillis()-RT_lastErrDT<5000)
+			return;
+		
+		try
+		{
+			JSONObject tmpjo = new JSONObject() ;
+			tmpjo.put("lvl", "exceed") ;
+			tmpjo.put("que_len", len) ;
+			MNMsg m = new MNMsg().asPayload(tmpjo) ;
+			this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(1, m));
+		}
+		finally
+		{
+			RT_lastErrDT = System.currentTimeMillis() ;
+		}
 	}
 
 	@Override
@@ -487,4 +544,33 @@ public class NM_MemQueue  extends MNNodeMid implements IMNRunner
 	{
 		return false;
 	}
+	
+
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+			g("warn_or_exceed") ;
+		return null ;
+	}
+	
+	@Override
+	public String RT_getOutColor(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+		{
+			if(System.currentTimeMillis()-RT_lastErrDT<3000)
+				return "red";
+			
+			if(System.currentTimeMillis()-RT_lastWarnDT<3000)
+				return "yellow";
+			return null ;
+		}
+		return null ;
+	}
+
 }

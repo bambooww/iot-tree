@@ -440,8 +440,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			jo.put("divs", tmpjar) ;
 		}
 		
-		jo.put("has_warn", this.RT_DEBUG_WARN.hasPrompts()) ;
-		jo.put("has_err", this.RT_DEBUG_ERR.hasPrompts()) ;
+		List<String> ss = this.RT_DEBUG_WARN.getPromptTitles() ;
+		//jo.put("has_warn", warns.size()>0) ;
+		jo.put("warns", new JSONArray(ss)) ;
+		ss = this.RT_DEBUG_ERR.getPromptTitles() ;
+		jo.put("errs",  new JSONArray(ss)) ;
 		return jo ;
 	}
 
@@ -585,10 +588,10 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		{
 			switch(key)
 			{
-			case "flow":
-				return this.getBelongTo() ;
-			case "node":
-				return this ;
+//			case "flow":
+//				return this.getBelongTo() ;
+//			case "node":
+//				return this ;
 			case "$sys":
 				return UAContext.sys;
 			case "$debug":
