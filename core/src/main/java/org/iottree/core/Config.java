@@ -902,4 +902,35 @@ public class Config
        }
        return version;
    }
+    
+   public static class InnerComp
+   {
+	   String name = null ;
+	   
+	   boolean bEnable=true ;
+	   
+	   private InnerComp(String n,boolean ben)
+	   {
+		   this.name = n ;
+		   this.bEnable = ben ;
+	   }
+   }
+   
+    
+    public static InnerComp getInnerComp(String name)
+    {
+    	Element ele = Config.getConfElement("system") ;
+    	if(ele==null)
+    		return null ;
+    	for(Element ele0 :XmlHelper.getSubChildElement(ele, "inner_comp"))
+    	{
+    		String nn = ele0.getAttribute("name") ;
+    		if(!name.equals(nn))
+    			continue ;
+    		
+    		boolean ben = !"false".equals(ele0.getAttribute("enable")) ;
+    		return new InnerComp(nn,ben) ;
+    	}
+    	return null ;
+    }
 }

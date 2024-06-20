@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
+import org.iottree.core.UATag;
 import org.iottree.core.basic.ValAlert;
+import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.msgnet.nodes.*;
 import org.iottree.core.msgnet.modules.*;
 import org.iottree.core.msgnet.util.ConfItem;
@@ -138,6 +141,7 @@ public class MNManager
 		registerItem(new NE_Debug(),cat) ;
 		registerItem(new NM_MemQueue(),cat) ;
 		registerItem(new MemMultiQueue(),cat) ;
+		registerItem(new NS_OuterTrigger(),cat) ;
 		
 		cat = registerCat(new MNCat("_func")) ;
 		registerItem(new NM_JsFunc(),cat) ;
@@ -153,6 +157,7 @@ public class MNManager
 		registerItem(new NM_TagWriter(),cat) ;
 		registerItem(new NM_TagFilter(),cat) ;
 		registerItem(new NM_TagFilterW(),cat) ;
+		registerItem(new NS_TagValChgTrigger(),cat) ;
 		registerItem(new NS_TagEvtTrigger(),cat) ;
 		registerItem(new NS_ConnInMsgTrigger(),cat) ;
 		//registerItem(new NS_TagAlertTrigger(),cat) ;
@@ -161,6 +166,7 @@ public class MNManager
 		cat = registerCat(new MNCat("_net")) ;
 		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
 		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
+		registerItem(new NM_HttpClient(),cat) ;
 		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
 		
 		cat = registerCat(new MNCat("_storage")) ;
@@ -209,6 +215,14 @@ public class MNManager
 	public static MNModule getModuleByFullTP(String full_tp)
 	{
 		return TP2Module.get(full_tp) ;
+	}
+	
+	public static MNBase getItemByFullTP(String mn,String full_tp)
+	{
+		if("n".equals(mn))
+			return getNodeByFullTP(full_tp) ;
+		else
+			return getModuleByFullTP(full_tp) ;
 	}
 	
 	public static List<MNCat> listRegisteredCats()
@@ -563,6 +577,20 @@ public class MNManager
 				{
 					((NS_TagEvtTrigger)node).RT_fireByEventRelease(va,curval) ;
 				}
+			}
+		}
+	}
+	
+	public void RT_CONN_triggerConnMsg(ConnPtMSG cpt_msg,String json_xml_str,Map<UATag,Object> tag2obj)
+	{
+		for(MNNet net :this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_ConnInMsgTrigger && node.isEnable())
+					((NS_ConnInMsgTrigger)node).RT_fireByConnInMsg(cpt_msg,json_xml_str,tag2obj) ;
 			}
 		}
 	}

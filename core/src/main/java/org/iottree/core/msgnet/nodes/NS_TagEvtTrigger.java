@@ -17,7 +17,7 @@ import org.json.JSONObject;
  *  
  * @author jason.zhu
  */
-public class NS_TagEvtTrigger  extends MNNodeStart 
+public class NS_TagEvtTrigger extends MNNodeStart 
 {
 	public static enum MsgOutSty
 	{

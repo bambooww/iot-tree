@@ -31,6 +31,8 @@ String tp = request.getParameter("tp") ;
 float x = Convert.parseToFloat(request.getParameter("x"),0) ;
 float y = Convert.parseToFloat(request.getParameter("y"),0) ;
 
+String lib_item_id = request.getParameter("lib_item_id") ; 
+
 UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 if(prj==null)
 {
@@ -137,7 +139,7 @@ case "net_save_basic": //只保存布局信息
 case "node_add_up":
 	if(!Convert.checkReqEmpty(request, out,"netid", "tp","x","y"))
 		return ;
-	MNNode rnn = net.createNewNodeByFullTP(tp, x, y,moduleid) ;
+	MNNode rnn = net.createNewNodeByFullTP(tp, x, y,moduleid,lib_item_id) ;
 	if(rnn==null)
 	{
 		out.print("create new node error") ;
@@ -148,7 +150,7 @@ case "node_add_up":
 case "module_add_up":
 	if(!Convert.checkReqEmpty(request, out,"netid", "tp","x","y"))
 		return ;
-	MNModule mnn = net.createNewModuleByFullTP(tp, x, y) ;
+	MNModule mnn = net.createNewModuleByFullTP(tp, x, y,lib_item_id) ;
 	if(mnn==null)
 	{
 		out.print("create new module error") ;
@@ -190,11 +192,32 @@ case "del_by_ids":
 		return ;
 	String ids = request.getParameter("ids") ;
 	List<String> idlist = Convert.splitStrWith(ids, ",") ;
-	int r = net.delItemsByIds(idlist) ;
-	if(r>0)
+	try
+	{
+		int r = net.delItemsByIds(idlist) ;
+		if(r>0)
+			out.print("succ") ;
+		else
+			out.print("no_item_del") ;
+	}
+	catch(MNException e)
+	{
+		out.print(e.getMessage()) ;
+	}
+	return ;
+case "save_to_lib":
+	if(!Convert.checkReqEmpty(request, out,"mn","fulltp","jstr"))
+		return ;
+	String mn = request.getParameter("mn") ;
+	try
+	{
+		MNLib.saveTo(mn, fulltp, title, in_jo) ;
 		out.print("succ") ;
-	else
-		out.print("no_item_del") ;
+	}
+	catch(Exception ee)
+	{
+		out.print(ee.getMessage()) ;
+	}
 	return ;
 case "node_start_trigger":
 	if(!Convert.checkReqEmpty(request, out,"netid", "nodeid"))

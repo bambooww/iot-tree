@@ -17,6 +17,7 @@ import javax.script.ScriptException;
 import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.cxt.MNContext;
+import org.iottree.core.msgnet.nodes.NS_OuterTrigger;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
@@ -242,7 +243,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		}
 	}
 	
-	public MNNode createNewNodeByFullTP(String full_tp,float x,float y,String module_id)  throws Exception
+	public MNNode createNewNodeByFullTP(String full_tp,float x,float y,String module_id,String lib_item_id)  throws Exception
 	{
 		MNModule m = null ;
 		if(Convert.isNotNullEmpty(module_id))
@@ -252,10 +253,22 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 				throw new MNException("no module found with id="+module_id) ;
 		}
 		
+		
 		//m.getSupportedNodeByTP(tp) ;
 		MNNode n = MNManager.getNodeByFullTP(full_tp) ;
 		if(n==null)
 			return null ;
+		
+		MNLib.Item libitem = null ;
+		if(Convert.isNotNullEmpty(lib_item_id))
+		{
+			libitem = MNLib.getItemById("n", n.getTPFull(),lib_item_id) ;
+			if(libitem==null)
+			{
+				throw new MNException("no lib item found with id="+lib_item_id) ;
+			}
+		}
+		
 		MNModule tp_md = n.TP_getRelatedModule() ;
 		if(tp_md!=null && m==null)
 			throw new MNException("no related module input") ;
@@ -267,31 +280,60 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		new_n.y = y ;
 		String tpt = n.getTPTitle() ;
 		//new_n.setNodeTP(n.getNodeTP(),tpt);
-		new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		
+		if(libitem!=null)
+		{
+			new_n.setParamJO(libitem.getPmJO());
+			new_n.title = libitem.getTitle()+" "+calcNextTitleSuffix(libitem.getTitle()) ;
+		}
+		else
+		{
+			new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		}
 		id2node.put(new_n.id, new_n) ;
 		if(m!=null)
+		{
 			m.nodeIdSet.add(new_n.id) ;
+		}
 		
 		save() ;
 		return new_n ;
 	}
 	
-	public MNModule createNewModuleByFullTP(String full_tp,float x,float y)  throws Exception
+	public MNModule createNewModuleByFullTP(String full_tp,float x,float y,String lib_item_id)  throws Exception
 	{
 		MNModule m = MNManager.getModuleByFullTP(full_tp) ;
 		if(m==null)
 		{
 			return null ;
 		}
+		
+		MNLib.Item libitem = null ;
+		if(Convert.isNotNullEmpty(lib_item_id))
+		{
+			libitem = MNLib.getItemById("m", m.getTPFull(),lib_item_id) ;
+			if(libitem==null)
+			{
+				throw new MNException("no lib item found with id="+lib_item_id) ;
+			}
+		}
+		
 		MNModule new_n = m.createNewIns(this) ;
 		
 		new_n.x = x ;
 		new_n.y = y ;
 		String tpt = m.getTPTitle() ;
-		//new_n.setNodeTP(m.getNodeTP(),tpt);
-		new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
-		id2module.put(new_n.id, new_n) ;
+		if(libitem!=null)
+		{
+			new_n.setParamJO(libitem.getPmJO());
+			new_n.title = libitem.getTitle()+" "+calcNextTitleSuffix(libitem.getTitle()) ;
+		}
+		else
+		{
+			new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		}
 		
+		id2module.put(new_n.id, new_n) ;
 		save() ;
 		return new_n ;
 	}
@@ -430,6 +472,37 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		}
 	}
 	
+	private boolean checkItemHasRunning(MNBase item)
+	{
+		if(item instanceof IMNRunner)
+		{
+			if(((IMNRunner)item).RT_isRunning())
+				return true ;
+		}
+		
+		if(item instanceof MNNode)
+		{
+			return false;
+		}
+		
+		if(item instanceof MNModule)
+		{
+			MNModule m = (MNModule)item ;
+			List<MNNode> rns = m.getRelatedNodes() ;
+			if(rns==null||rns.size()<=0)
+				return false;
+			for(MNNode rn:rns)
+			{
+				if(rn instanceof IMNRunner)
+				{
+					if(((IMNRunner)rn).RT_isRunning())
+						return true ;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public MNBase delNodeModuleByID(String id,boolean bsave) throws Exception
 	{
 		MNNode n = this.getNodeById(id) ;
@@ -439,6 +512,9 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		MNBase ret = null ;
 		if(m!=null)
 		{
+			if(checkItemHasRunning(m))
+				throw new MNException("cannot del modules or nodes when running") ;
+			
 			Set<String> nids = m.getRelatedNodeIdSet() ;
 			for(String nid:nids)
 			{
@@ -535,6 +611,11 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		if(n==null)
 			return null ;
 		
+		if(checkItemHasRunning(n))
+		{
+			if(((IMNRunner)n).RT_isRunning())
+				throw new RuntimeException("node ["+n.getTitle()+"] is running") ;
+		}
 		this.id2node.remove(node_id) ;
 		
 		if(bsave)
@@ -1116,6 +1197,17 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 
 		CXT_renderVarsDiv(divblks) ;
 		
+	}
+	
+	public void RT_triggerByOuter(String triggername,JSONObject payload)
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			if(n instanceof NS_OuterTrigger)
+			{
+				((NS_OuterTrigger)n).RT_triggerByOuter(triggername,payload) ;
+			}
+		}
 	}
 	
 	// js 

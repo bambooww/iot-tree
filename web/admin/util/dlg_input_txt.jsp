@@ -73,6 +73,12 @@ if(opener_txt_id)
 		$("#txt").val(txtob.value) ;
 	}
 }
+else
+{
+	let txt =dlg.get_opener_opt("txt") ;
+	if(txt)
+		$('#txt').val(txt);
+}
 
 
 function get_input()

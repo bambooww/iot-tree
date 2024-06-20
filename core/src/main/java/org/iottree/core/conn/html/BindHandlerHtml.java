@@ -1,9 +1,11 @@
 package org.iottree.core.conn.html;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iottree.core.IJoinedNode;
 import org.iottree.core.UACh;
@@ -213,6 +215,27 @@ public class BindHandlerHtml extends BindHandler
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> listBindTagPathInCh()
+	{
+		if(ep2tags==null||ep2tags.size()<=0)
+			return null ;
+		
+		ArrayList<String> rets = new ArrayList<>() ;
+		for(Map.Entry<HtmlBlockLocator.ExtractPoint,List<String>> k2v:ep2tags.entrySet())
+		{
+			List<String> tagps = k2v.getValue() ;
+			for(String ps:tagps)
+			{
+				if(!rets.contains(ps))
+					tagps.add(ps) ;
+			}
+		}
+		
+		Collections.sort(rets) ;
+		return rets;
 	}
 	
 }

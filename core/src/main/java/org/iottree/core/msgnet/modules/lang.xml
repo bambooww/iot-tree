@@ -9,5 +9,10 @@
 		desc_cn="多个消息队列共享一个处理线程。&#13;你可以使用此模块构建多个队列节点，这些节点接收输入消息放入各自的队列中，&#13;共享模块中的线程"
 		desc_en="Multiple message queues share a processing thread. &#13; You can use this module to build multiple queue nodes that receive input messages and place them in their respective queues,&#13; sharing the threads in the module"
 		/>
-
+		
+	<dd_node id="1" name="mem_que_in_multi" name_cn="内存队列" name_en="Mem Queue" 
+		desc_cn="共用一个Module的消息队列，也即是共用一个消息处理线程的队列"
+		desc_en="Message queue sharing a module, that is, sharing one processing thread in related module"
+		/>
+	
 </dd_class>

@@ -179,6 +179,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 		return null ;
 	}
+	
+	protected boolean supportCxtVars()
+	{
+		return false ;
+	}
+	
 	/**
 	 * 判断节点参数是否完备，只有完备之后的节点才可以运行
 	 * @return
@@ -411,7 +417,8 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		
 		RT_DEBUG_INF.renderDiv(divblks);
 
-		CXT_renderVarsDiv(divblks) ;
+		if(supportCxtVars())
+			CXT_renderVarsDiv(divblks) ;
 		
 	}
 
@@ -617,5 +624,14 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		}
 		
 		return null ;
+	}
+	
+	
+	protected void UTIL_sleep(long t)
+	{
+		try
+		{
+			Thread.sleep(t);
+		}catch(Exception e) {}
 	}
 }

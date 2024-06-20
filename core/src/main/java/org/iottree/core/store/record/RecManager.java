@@ -672,7 +672,6 @@ public class RecManager implements ILang, IUIProvider
 	 */
 	public void RT_fireUATagChanged(UATag tag)
 	{
-
 		if (!tssAdpPrj.RT_isRunning())
 			return;
 		String tagp = tag.getNodeCxtPathInPrj();

@@ -39,7 +39,7 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	@Override
 	public String getIcon()
 	{
-		return "\\uf09a";
+		return "PK_function";//"\\uf09a";
 	}
 
 	@Override
@@ -72,6 +72,12 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		return g("js_func");
 	}
 
+	@Override
+	protected boolean supportCxtVars()
+	{
+		return true ;
+	}
+	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{

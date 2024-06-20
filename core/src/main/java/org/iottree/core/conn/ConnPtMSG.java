@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ import org.iottree.core.conn.ConnPtBinder.BindItem;
 import org.iottree.core.conn.html.BindHandlerHtml;
 import org.iottree.core.conn.mqtt.MqttEndPoint;
 import org.iottree.core.cxt.UAContext;
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.XmlHelper;
@@ -339,9 +342,29 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		
 		protected abstract boolean runBind(String topic,String txt) throws Exception;
 		
+		public abstract List<String> listBindTagPathInCh() ;
 		
-		
-		
+
+		public List<UATag> listBindTags()
+		{
+			
+			if(connPtMsg.joinedCh==null)
+				return null ;
+			
+			List<String> tagps = listBindTagPathInCh() ;
+			if(tagps==null)
+				return null ;
+			
+			ArrayList<UATag> tags = new ArrayList<>() ;
+			for(String tagp:tagps)
+			{
+				UATag t = connPtMsg.joinedCh.getTagByPath(tagp) ;
+				if(t==null)
+					continue ;
+				tags.add(t) ;
+			}
+			return tags ;
+		}
 		
 	}
 	
@@ -415,6 +438,23 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			}
 		}
 		
+		public List<String> listBindTagPathInCh()
+		{
+			if(this.tag2JsonPathItem==null||this.tag2JsonPathItem.size()<=0)
+				return null;
+			
+			ArrayList<String> tags = new ArrayList<>() ;
+			for(String tagp:this.tag2JsonPathItem.keySet())
+			{
+				tags.add(tagp) ;
+			}
+			
+			Collections.sort(tags) ;
+			return tags ;
+		}
+		
+
+		
 		protected boolean runBind(String topic,String json_xml_str)
 		{
 			if(ConnPtMSG.this.getSorTp()!=DataTp.json)
@@ -432,6 +472,8 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			        HashMap respjson = mapper.readValue(json_xml_str, HashMap.class );
 			        
 			        StringBuilder ressb = new StringBuilder() ;
+			        HashMap<UATag,Object> tag2v = new HashMap<>() ;
+			        
 					for(Map.Entry<String, PathItem<JsonPath>> tag2jp:this.tag2JsonPathItem.entrySet())
 					{
 						String tagp = tag2jp.getKey() ;
@@ -439,13 +481,12 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 						
 						try
 						{
-						Object v = pi.getProbeObj().read(respjson);
-						
-						ressb.append(pi.getPath()+" → "+tagp+"="+v+"\r\n") ;
-						if(v==null)
-							continue ;
-
-						
+							Object v = pi.getProbeObj().read(respjson);
+							
+							ressb.append(pi.getPath()+" → "+tagp+"="+v+"\r\n") ;
+							if(v==null)
+								continue ;
+	
 							if(joinedCh!=null)
 							{
 								UATag t = joinedCh.getTagByPath(tagp) ;
@@ -454,6 +495,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 									continue ;
 								}
 								t.RT_setValRaw(v);
+								tag2v.put(t, v) ;
 							}
 						}
 						catch(Exception e)
@@ -461,6 +503,10 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 							e.printStackTrace();
 						}
 					}
+					
+					//tag2v
+					MNManager mgr = MNManager.getInstance(ConnPtMSG.this.getConnProvider().getBelongTo()) ;
+					mgr.RT_CONN_triggerConnMsg(ConnPtMSG.this,json_xml_str,tag2v) ;
 					
 					bindRunRes = ressb.toString() ;
 					return true ;
@@ -475,7 +521,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		
 	}
 	
-	public static class BindHandlerXml extends BindHandler
+	public class BindHandlerXml extends BindHandler
 	{
 
 		private transient HashMap<String,PathItem<XPathExpression>> tag2XmlPathItem = null ;
@@ -558,6 +604,21 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 			{
 				bindRunErr = "no valid bind setup" ;
 			}
+		}
+		
+		public List<String> listBindTagPathInCh()
+		{
+			if(this.tag2XmlPathItem==null||this.tag2XmlPathItem.size()<=0)
+				return null;
+			
+			ArrayList<String> tags = new ArrayList<>() ;
+			for(String tagp:this.tag2XmlPathItem.keySet())
+			{
+				tags.add(tagp) ;
+			}
+			
+			Collections.sort(tags) ;
+			return tags ;
 		}
 		
 		protected boolean runBind(String topic,String txt)

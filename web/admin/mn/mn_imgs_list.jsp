@@ -8,5 +8,9 @@
 	    ,{"n":"bridge"    ,   "fn":"bridge.svg"}
 	    ,{"n":"bacnet"    ,   "fn":"bacnet.png"}
 	    ,{"n":"pid"    ,   "fn":"pid.svg"}
+	    ,{"n":"trigger"    ,   "fn":"trigger.svg"}
+	    ,{"n":"whiteg"    ,   "fn":"white-globe.svg"}
+	    ,{"n":"function"    ,   "fn":"function.svg"}
+	    ,{"n":"outer"    ,   "fn":"arrow-in.svg"}
 	]
 }

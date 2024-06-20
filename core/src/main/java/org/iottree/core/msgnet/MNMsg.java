@@ -391,4 +391,37 @@ public class MNMsg implements IMNCxtPk
 			}
 		}
 	}
+	
+	public static Object transStrJoJArr(String txt)
+	{
+		if(txt==null)
+			return null ;
+		String ss = txt.trim() ;
+		if(ss.startsWith("{"))
+		{
+			try
+			{
+				JSONObject tmpjo = new JSONObject(ss) ;
+				return tmpjo;
+			}
+			catch(Exception ee)
+			{
+				return txt ;
+			}
+		}
+		else if(ss.startsWith("["))
+		{
+			try
+			{
+				JSONArray tmpjarr = new JSONArray(ss) ;
+				return tmpjarr ;
+			}
+			catch(Exception ee)
+			{
+				return txt ;
+			}
+		}
+		
+		return txt;
+	}
 }

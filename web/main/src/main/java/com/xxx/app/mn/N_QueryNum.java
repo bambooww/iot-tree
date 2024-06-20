@@ -82,7 +82,4 @@ public class N_QueryNum extends MNNodeMid
 	{
 		
 	}
-
-	
-
 }

@@ -49,7 +49,12 @@
 		else
 			pm_url+= "&prjid="+prjid ;
 		
-	}	
+	}
+	
+	String mn ="n" ;
+	if(item instanceof MNModule)
+		mn = "m" ;
+	 
 	//System.out.println(pm_url);
 	JSONObject jo = item.getParamJO() ;
 	String jstr = "{}" ;
@@ -57,6 +62,15 @@
 		jstr = jo.toString() ;
 	
 	String ben_chked = item.isEnable()?"checked":"" ;
+	String fulltp = item.getTPFull() ;
+	
+	boolean can_save = true ;
+	if(item instanceof MNNode)
+	{
+		MNModule mmm = ((MNNode)item).getOwnRelatedModule() ;
+		if(mmm!=null)
+			can_save=false;
+	}
 %>
 <html>
 <head>
@@ -74,7 +88,8 @@ var itemid="<%=itemid%>";
 
 var pm_url="<%=pm_url%>" ;
 var pm_jo = <%=jstr%> ;
-
+var mn = "<%=mn%>";
+var fulltp = "<%=fulltp%>" ;
 var form ;
 var element;
 
@@ -97,13 +112,13 @@ function init_pm()
 
 function on_init_pm_ok()
 {// called by sub pm js
-	if(get_pm_size!=undefined && get_pm_size)
+	if(typeof(get_pm_size)=='function')
 	{
 		let wh = get_pm_size() ;
 		dlg.resize_to(wh.w,wh.h+100) ;
 	}
 	
-	if(set_pm_jo)
+	if(typeof(set_pm_jo)=='function')
 	{
 		set_pm_jo(pm_jo) ;
 	}
@@ -131,15 +146,17 @@ function get_input_val(id,defv,bnum)
 
 function do_submit(cb)
 {
-	if(!get_pm_jo)
+	let pmjo = {};
+	if(typeof (get_pm_jo)=='function')
 	{
-		cb(false,"no pm edit items found") ;
-		return ;
+		//cb(false,"no pm edit items found") ;
+		//return ;\
+		pmjo = get_pm_jo();
 	}
 	
 	let tt = $('#title').val();
 	let ben = $("#enable").prop("checked") ;
-	let pmjo = get_pm_jo();
+	
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;
@@ -148,12 +165,79 @@ function do_submit(cb)
 	let rr = {title:tt,enable:ben,pm_jo:pmjo};
 	cb(true,rr);
 }
+
+function save_to_lib()
+{
+	let pmjo = null;
+	if(typeof (get_pm_jo)=='function')
+	{
+		pmjo = get_pm_jo();
+	}
+	if(!pmjo)
+	{
+		dlg.msg("<w:g>no_pm_get</w:g>");
+		return ;
+	}
+	
+	if(typeof(pmjo) == "string")
+	{
+		dlg.msg(pmjo);
+		return ;
+	}
+	
+	let tt = $('#title').val()||"";
+	dlg.open("../util/dlg_input_txt.jsp?txt_title=<w:g>title</w:g>",
+			{title:'<w:g>pls_sure_lib_tt</w:g>',w:'500px',h:'400px',txt:tt},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					let txt = dlgw.get_input();
+					if(!txt)
+					{
+						dlg.msg("<w:g>pls,input,title</w:g>") ;
+						return ;
+					}
+					tt = txt ;
+					let rr = {op:"save_to_lib",prjid:prjid,netid:netid,mn:mn,title:tt,fulltp:fulltp,jstr:JSON.stringify(pmjo)};
+					send_ajax("mn_ajax.jsp",rr,(bsucc,ret)=>{
+						if(!bsucc||ret!='succ')
+						{
+							dlg.msg(ret) ;
+							return ;
+						}
+						dlg.msg("save ok") ;
+						dlg.close() ;
+					}) ;
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 </script>
 <style>
+.save_btn
+{
+	position: absolute;
+	right:5px;
+	top:5px;
+	color:#27ba7d;
+	
+}
 </style>
 </head>
 
 <body>
+<%
+if(can_save)
+{
+%>
+<button class="layui-btn layui-btn-sm layui-btn-primary save_btn"  title="<w:g>save_to_lib</w:g>" onclick="save_to_lib()"><i class="fa fa-arrow-right fa-lg"></i><i class="fa fa-book fa-lg"></i></button>
+<%
+}
+%>
 <form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label"><w:g>title</w:g>:</label>
@@ -168,6 +252,7 @@ function do_submit(cb)
   	
   </div>
  </form>
+
 </body>
 
 <script type="text/javascript">
@@ -181,6 +266,8 @@ layui.use('form', function(){
 	  init_pm() ;
 	 
 });
+
+
 </script>
 
 </html>                                                                                                                                                                                                                            

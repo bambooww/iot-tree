@@ -57,6 +57,12 @@ public class NM_Change extends MNNodeMid implements ILang
 	{
 		return g("change");
 	}
+	
+	@Override
+	protected boolean supportCxtVars()
+	{
+		return true ;
+	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)

@@ -13,6 +13,7 @@ import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.Config.InnerComp;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.PropGroup;
@@ -521,7 +522,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return f.lastModified();
 	}
 
-	public List<ConnProvider> getConnProviders() throws Exception
+	public List<ConnProvider> getConnProviders() //throws Exception
 	{
 		return ConnManager.getInstance().getConnProviders(this.getId());
 	}
@@ -976,6 +977,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	Runnable prjRunner = new Runnable() {
 		public void run()
 		{
+			InnerComp ic = Config.getInnerComp("rec") ;
+			boolean b_rec = ic==null||ic.bEnable ;
+			ic = Config.getInnerComp("store") ;
+			boolean b_store = ic==null||ic.bEnable ;
+			
 			try
 			{
 				RT_init(true, true) ;
@@ -983,11 +989,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				//old context with js env will rebuild
 				RT_reContext();
 				
-				RecManager.getInstance(UAPrj.this).RT_start() ;
+				if(b_rec)
+					RecManager.getInstance(UAPrj.this).RT_start() ;
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
-				StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+				if(b_store)
+					StoreManager.getInstance(UAPrj.this.getId()).RT_start();
 				
 				RouterManager.getInstance(UAPrj.this).RT_start();
 				// StringBuilder failedr = new StringBuilder() ;
@@ -998,10 +1006,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				// start connprovider
 				startStopConn(true);
 
-				
-				
 				startStopTask(true) ;
-				
 				
 				MNManager.getInstance(UAPrj.this).RT_start();
 				
@@ -1055,9 +1060,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
-				StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
+				if(b_store)
+					StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
-				RecManager.getInstance(UAPrj.this).RT_stop() ;
+				if(b_rec)
+					RecManager.getInstance(UAPrj.this).RT_stop() ;
 				
 				RouterManager.getInstance(UAPrj.this).RT_stop();
 			}

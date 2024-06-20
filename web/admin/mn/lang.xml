@@ -17,4 +17,9 @@
 	<dd_node id="1" name="flow_is_not_en" name_cn="流程未启用" name_en="Flow is not enabled" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="db_clk_detail" name_cn="双击查看详细说明" name_en="Double Click For Detail" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="save_to_lib" name_cn="保存到库中" name_en="Save To Library" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="no_pm_get" name_cn="没有获取参数" name_en="No Parameters" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="pls_sure_lib_tt" name_cn="请确定使用这个标题存入库中么？" name_en="Are you sure to use this title to save to library?" desc_cn="" desc_en=""/>
+	
 </dd_class>

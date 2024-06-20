@@ -96,6 +96,8 @@ public abstract class MNModule extends MNBase
 		return rets ;
 	}
 	
+	
+	
 	@Override
 	public boolean fromJO(JSONObject jo)
 	{
@@ -123,5 +125,10 @@ public abstract class MNModule extends MNBase
 		JSONObject jo = super.RT_toJO(out_rt_div) ;
 		
 		return jo ;
+	}
+	
+	protected void RT_sendMsgByRelatedNode(MNNode n,RTOut rtout)
+	{
+		n.RT_sendMsgOut(rtout);
 	}
 }

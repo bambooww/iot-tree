@@ -60,7 +60,7 @@ public abstract class MNNode extends MNBase
 			return this.TP_relatedM.getTP() ;
 	}
 	
-	final MNNode createNewIns(MNNet net) throws Exception
+	protected MNNode createNewIns(MNNet net) throws Exception
 	{
 		MNNode new_n = (MNNode)this.getClass().getConstructor().newInstance() ;
 		new_n.TP_relatedM = this.TP_relatedM ;
@@ -167,7 +167,7 @@ public abstract class MNNode extends MNBase
 	 * @param to_n
 	 * @return
 	 */
-	public boolean checkHasPath(MNNode to_n)
+	public final boolean checkHasPath(MNNode to_n)
 	{
 		if(this==to_n)
 			throw new IllegalArgumentException("same node") ;
@@ -207,7 +207,7 @@ public abstract class MNNode extends MNBase
 	}
 
 	
-	public List<MNConn> getInConns()
+	public final List<MNConn> getInConns()
 	{
 		if(!this.supportInConn())
 			return null ;

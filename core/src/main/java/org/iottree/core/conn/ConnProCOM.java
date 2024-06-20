@@ -4,62 +4,68 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.iottree.core.Config;
 import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
+import org.w3c.dom.Element;
+
+import com.fazecast.jSerialComm.SerialPort;
 
 import gnu.io.CommPortIdentifier;
 
 public class ConnProCOM extends ConnProvider
 {
-//	private static File getRXTXComLibFile()
-//	{
-//		//return new File(Config.getConfigFileBase()+"/lib/rxtx/win_x64/rxtxSerial.dll");
-//		return new File(Config.getConfigFileBase()+"/lib/rxtx/win_x86/rxtxSerial.dll");
-//	}
-//	
-//	private static boolean loadRXTX() throws Exception
-//	{
-//		File f = getRXTXComLibFile() ;
-//		if(!f.exists())
-//			return false;
-//		System.load(f.getCanonicalPath());
-//		return true ;
-//	}
-//	
-//	static
-//	{
-//		try
-//		{
-//			loadRXTX() ;
-//		}
-//		catch(Throwable e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
-	
+	private static Boolean bRxTx = null ;
+	public static boolean usingRxTx()
+	{
+		if(bRxTx!=null)
+			return bRxTx ;
+		
+		Element ele = Config.getConfElement("system");
+		if(ele==null)
+		{
+			bRxTx = false;
+			return false;
+		}
+		
+		bRxTx = "true".equalsIgnoreCase(ele.getAttribute("rxtx")) ;
+		return bRxTx ;
+	}
 	
 	public static List<String> listSysComs()
 	{
-		try
+		if(usingRxTx())
 		{
-			List<String> systemPorts = new ArrayList<>();
-	        //获得系统可用的端口
-	        Enumeration<CommPortIdentifier> portList = (Enumeration<CommPortIdentifier>)CommPortIdentifier.getPortIdentifiers();
-	        while (portList.hasMoreElements()) {
-	            String portName = portList.nextElement().getName();//获得端口的名字
-	            systemPorts.add(portName);
-	        }
-	        return systemPorts;
+			try
+			{
+				List<String> systemPorts = new ArrayList<>();
+		        //获得系统可用的端口
+		        Enumeration<CommPortIdentifier> portList = (Enumeration<CommPortIdentifier>)CommPortIdentifier.getPortIdentifiers();
+		        while (portList.hasMoreElements()) {
+		            String portName = portList.nextElement().getName();//获得端口的名字
+		            systemPorts.add(portName);
+		        }
+		        return systemPorts;
+			}
+			catch(Throwable e)
+			{
+				e.printStackTrace();
+				return new ArrayList<String>(0) ;
+			}
 		}
-		catch(Throwable e)
+		else
 		{
-			e.printStackTrace();
-			return new ArrayList<String>(0) ;
+			SerialPort[] serialPorts = SerialPort.getCommPorts();
+			List<String> portNameList = new ArrayList<String>();
+	        for(SerialPort serialPort:serialPorts) {
+	            portNameList.add(serialPort.getSystemPortName());
+	        }
+	        portNameList = portNameList.stream().distinct().collect(Collectors.toList());
+	        return portNameList;
 		}
 	}
 

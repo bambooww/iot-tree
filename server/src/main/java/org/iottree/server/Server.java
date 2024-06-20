@@ -222,11 +222,15 @@ public class Server
 	public static void main(String[] args) throws Exception
 	{
 		boolean bservice = false;
+		boolean blinux_nohup = false;
 		if (args.length > 0)
 		{
 			switch (args[0])
 			{
 			case "linux_nohup":
+				blinux_nohup = true;
+				bservice = true ;
+				break ;
 			case "service":
 				bservice = true ;
 				break;
@@ -236,7 +240,13 @@ public class Server
 		
 		startServer(bservice);
 		
-
+		if(blinux_nohup)
+		{
+			while(true)
+			{
+				Thread.sleep(60000);
+			}
+		}
 		// System.exit(0);
 	}
 }

@@ -16,7 +16,9 @@
 		"cat_title":"Test Demo",
 		"items":[
 			{
-				"tp":"que_num","tpt":"Query material quantity","class":"com.xxx.app.mn.N_QueryNum",
+				"tp":"que_num","tpt":"Query material quantity","is_start_node":false,"is_end_node":false,
+				"color":"#c4e2fb","icon":"/mn/ico1.png",
+				"class":"com.xxx.app.mn.N_QueryNum",
 				"pm_ui_path":"/mn/que_num.html","doc_path":"/mn/que_num_doc.html"
 			}
 		]

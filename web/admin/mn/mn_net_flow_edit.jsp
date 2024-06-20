@@ -155,13 +155,16 @@ String net_tt = net.getTitle() ;
 </div>
 <div id="toolbar_basic" class="toolbox" style="color:#a7cf28">
 
-	<i class="fa fa-crosshairs fa-2x" aria-hidden="true" onclick="draw_fit()"></i>
+	<i class="fa fa-crosshairs fa-2x" aria-hidden="true" onclick="draw_fit()" title="Fit show flow"></i>
 <%--
 	<i id="def_work_prop_showhidden" class="fa fa-align-justify fa-2x"  onclick="tool_prop_show_hidden()"></i>
 	<i id="conn_add" class="fa fa-arrow-right fa-2x"  onclick="tool_add_conn()"></i>
 	 --%>
 	<i id="net_save_basic" class="fa fa-save fa-2x" onclick="net_save_basic()" title="Save"></i>
 	<i id="rt_update" class="fa fa-refresh fa-2x" onclick="rt_flow_clear()" title="Clear Flow"></i>
+	<i id="hide_status_all" class="fa fa-angle-double-up fa-2x" onclick="rt_show_hide_status(false)" title="Hide all status"></i>
+	<i id="show_status_all" class="fa fa-angle-double-down fa-2x" onclick="rt_show_hide_status(true)" title="Show all status"></i>
+	&nbsp;&nbsp;
 	<i id="rt_flow_start" class="fa fa-play fa-2x" onclick="rt_flow_start_stop(true)" title="Start Flow"></i>
 	<i id="rt_flow_stop" class="fa fa-stop fa-2x" style="color:red;" onclick="rt_flow_start_stop(false)" title="Stop Flow"></i>
 </div>
@@ -259,8 +262,8 @@ function init_iottpanel()
 			setTimeout("draw_fit()",1000)
 			
 		},
-		onAddNode:(tp,x,y,moduleid)=>{
-			send_ajax("./mn_ajax.jsp",{op:"node_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||""},
+		onAddNode:(tp,x,y,moduleid,lib_item_id)=>{
+			send_ajax("./mn_ajax.jsp",{op:"node_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||"",lib_item_id:lib_item_id||""},
 	                (bsucc,ret)=>{
 	                	
 	                	if(!bsucc||ret!="succ")
@@ -271,8 +274,8 @@ function init_iottpanel()
 	                	reload_net();
 	                }) ;
 		},
-		onAddModule:(tp,x,y)=>{
-			send_ajax("./mn_ajax.jsp",{op:"module_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y},
+		onAddModule:(tp,x,y,lib_item_id)=>{
+			send_ajax("./mn_ajax.jsp",{op:"module_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,lib_item_id:lib_item_id||""},
 	                (bsucc,ret)=>{
 	                	
 	                	if(!bsucc||ret!="succ")
@@ -397,6 +400,9 @@ function show_help(mn,tp,bforce_pop)
 	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false' ;
 	if(u2!=$("#right_help_iframe").attr("src"))
 		$("#right_help_iframe").attr("src",u2);
+	u2 = `mn_node_lib.jsp?prjid=\${prjid}&netid=\${netid}&mn=\${mn}&tp=\${tp}` ;
+	//if(u2!=$("#right_lib_iframe").attr("src"))
+		$("#right_lib_iframe").attr("src",u2);
 }
 
 
@@ -670,15 +676,15 @@ function init_right()
 			title=`<i class="fa fa-info fa-lg"></i> Info` ;break ;
 		case 'lb_tab_help':
 			title=`<i class="fa fa-question fa-lg"></i> Help` ;break ;
-		case 'lb_tab_debug':
-			title=`<i class="fa fa-bug fa-lg"></i> Debug` ;break ;
+		case 'lb_tab_lib':
+			title=`<i class="fa fa-book fa-lg"></i> Library` ;break ;
 		}
 		$("#tab_title").html(title) ;
 	}});
 	
 	//$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<iframe id="right_help_iframe" src="" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
-	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-bug fa-lg"></i>`, 'id': 'lb_tab_debug', 'content': `<iframe id="right_debug_iframe" src="mn_debug_console.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-book fa-lg"></i>`, 'id': 'lb_tab_lib', 'content': `<iframe id="right_lib_iframe" src="" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$(".right_tab").tab('selectTab', 'lb_tab_help');
 	
 	$("#edit_panel").css("display","none");
@@ -695,7 +701,7 @@ function resize_zz()
 	$("#left_pan_iframe").css("height",(h-38)+"px");
 	$("#right_info_iframe").css("height",(h-38)+"px");
 	$("#right_help_iframe").css("height",(h-38)+"px");
-	$("#right_debug_iframe").css("height",(h-38)+"px");
+	$("#right_lib_iframe").css("height",(h-38)+"px");
 }
 
 var resize_cc = 0 ;
@@ -786,6 +792,13 @@ function rt_flow_clear()
             }) ;
 }
 
+function rt_show_hide_status(b_show)
+{
+	if(!hmiView) return ;
+	
+	hmiView.showOrHideRtWin(b_show) ;
+}
+
 function debug_in_out_msg(nodeid,outidx)
 {
 	let op = "rt_debug_msg";
@@ -869,10 +882,34 @@ function help_show_node_tip(ypos,txt)
 var ws = null;
 var ws_last_chk = -1 ;
 var ws_opened = false;
+var observerDebugItem = null ;
 
 function log(str)
 {
 	console.log(str);
+}
+
+function ob_debug_item()
+{
+	if(observerDebugItem!=null)
+		return ;
+
+	observerDebugItem = new MutationObserver(function(mutationsList, observer) {
+	    for (var mutation of mutationsList) {
+	        if (mutation.type === 'childList') {
+	            mutation.removedNodes.forEach(function(removedNode) {
+	                //if (removedNode.id === 'node-to-remove')
+	                {
+	                    //console.log("rm",removedNode);
+	                    removedNode.removeEventListener('click', show);
+	                    removedNode.removeEventListener('click', hide);
+	                }
+	            });
+	        }
+	    }
+	});
+
+	observerDebugItem.observe($("#panel_main")[0], { childList: true, subtree: true });
 }
 
 function push_debug_item(debug_nid,ditem)
@@ -888,7 +925,9 @@ function push_debug_item(debug_nid,ditem)
     
     let tmps=`<div class="debug_msg">`;
     let msg = ditem.msg ;
-    let cont = $(new JSONFormat(JSON.stringify(msg.payload), 4).toString());
+    let cont = "";
+    if(msg.payload)
+    	cont = $(new JSONFormat(JSON.stringify(msg.payload), 4).toString());
     let dtstr = new Date(ditem.dt).format_local("yyyy-MM-dd hh:mm:ss");
     let dtss = new Date(ditem.dt).format_local("hh:mm:ss");
     tmps += `<div class="msg_meta"><span class="msg-date" title="\${dtstr}">\${dtss}</span>
@@ -898,9 +937,13 @@ function push_debug_item(debug_nid,ditem)
     tmps += `<div class="msg">payload:<span class="pld"></span></div>`;
     tmps += "</div>" ;
     let newele = $(tmps) ;
-    newele.find(".pld").append(cont) ;
-    if(cont.attr("data-type")=='array' || cont.attr("data-type")=='object')
-    	hide(cont[0]) ;
+    if(cont)
+    {
+    	newele.find(".pld").append(cont) ;
+        if(cont.attr("data-type")=='array' || cont.attr("data-type")=='object')
+        	hide(cont[0]) ;
+    }
+    
     dbgele.append(newele) ;
     
     if(curn<max_n)
@@ -910,6 +953,7 @@ function push_debug_item(debug_nid,ditem)
     }
     else
     {
+    	ob_debug_item();
     	dbgele.children().eq(0).remove() ;
     }
     dbgele[0].scrollTop = dbgele[0].scrollHeight;

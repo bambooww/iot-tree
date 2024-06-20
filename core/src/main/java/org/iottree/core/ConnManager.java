@@ -49,7 +49,7 @@ public class ConnManager
 	private ConnManager()
 	{}
 	
-	public List<ConnProvider> getConnProviders(String repid) throws Exception
+	public List<ConnProvider> getConnProviders(String repid) // throws Exception
 	{
 		List<ConnProvider> cps = repid2cps.get(repid) ;
 		if(cps!=null)
@@ -59,12 +59,20 @@ public class ConnManager
 		{
 			UAPrj rep = UAManager.getInstance().getPrjById(repid) ;
 			if(rep==null)
-				throw new Exception("no rep found") ;
+				return null ;//throw new Exception("no rep found") ;
 			
-			File cf = getConnFile(rep) ;
-			cps = loadConnProviders(rep,cf) ;
-			repid2cps.put(repid,cps) ;
-			return cps ;
+			try
+			{
+				File cf = getConnFile(rep) ;
+				cps = loadConnProviders(rep,cf) ;
+				repid2cps.put(repid,cps) ;
+				return cps ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+				return null ;
+			}
 		}
 	}
 	

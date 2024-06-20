@@ -88,7 +88,6 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 				StringBuilder failedr = new StringBuilder();
 				while (bRun)
 				{
-					
 					try
 					{
 						Thread.sleep(drv_int);

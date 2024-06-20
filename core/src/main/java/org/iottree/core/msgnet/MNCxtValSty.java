@@ -125,4 +125,7 @@ public enum MNCxtValSty
 			vt_jarr
 			};
 	
+	public static MNCxtValSty[] FOR_STR_LIST = new  MNCxtValSty[] {
+			vt_str,msg,node,flow,prj,
+			};
 }
