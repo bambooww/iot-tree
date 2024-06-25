@@ -46,4 +46,6 @@
   <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer" />
   <dd_node id="1" name="inverser" name_cn="反向转换" name_en="Inverser" />
   
+  <dd_node id="1" name="unbind" name_cn="取消绑定" name_en="Unbind" />
+  
 </dd_class>

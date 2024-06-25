@@ -41,14 +41,19 @@
 	String pm_url = item.getCat().getParamUrl(item);// "./nodes/"+tp+"_pm.jsp" ;
 	if(pm_url==null)
 		pm_url="" ;
+	String pm_url_base = "" ;
+	
 	if(Convert.isNotNullEmpty(pm_url))
 	{
-		int k = pm_url.lastIndexOf('?') ;
+		int k = pm_url.lastIndexOf('/') ;
+		if(k>0)
+			pm_url_base = pm_url.substring(0,k) ;
+		
+		k = pm_url.lastIndexOf('?') ;
 		if(k<=0)
 			pm_url+="?prjid="+prjid ;
 		else
 			pm_url+= "&prjid="+prjid ;
-		
 	}
 	
 	String mn ="n" ;
@@ -71,6 +76,12 @@
 		if(mmm!=null)
 			can_save=false;
 	}
+	
+	boolean b_running= false;
+	if(item instanceof IMNRunner)
+	{
+		b_running = ((IMNRunner)item).RT_isRunning() ;
+	}
 %>
 <html>
 <head>
@@ -87,6 +98,7 @@ var netid="<%=netid%>";
 var itemid="<%=itemid%>";
 
 var pm_url="<%=pm_url%>" ;
+var PM_URL_BASE = "<%=pm_url_base%>" ;
 var pm_jo = <%=jstr%> ;
 var mn = "<%=mn%>";
 var fulltp = "<%=fulltp%>" ;
@@ -252,7 +264,13 @@ if(can_save)
   	
   </div>
  </form>
-
+<%
+if(b_running)
+{
+%><div style="border:1px solid red;color:red"><w:g>node_running_stop_first</w:g></div>
+<%
+}
+%>
 </body>
 
 <script type="text/javascript">

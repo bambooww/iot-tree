@@ -1491,7 +1491,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		UACh ch = this.getBelongToCh();
 		if(ch==null)
+		{
+			if(failedr!=null)
+				failedr.append("no ch") ;
 			return false;
+		}
 		try
 		{
 			if(ch.isConnVirtual())
@@ -1514,7 +1518,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 			else
 			{
-				return RT_writeValDriver(v);
+				boolean r = RT_writeValDriver(v);
+				if(!r && failedr!=null)
+					failedr.append("write to driver failed") ;
+				return r ;
 			}
 		}
 		catch(Exception e)

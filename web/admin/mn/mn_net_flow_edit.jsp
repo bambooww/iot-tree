@@ -124,6 +124,11 @@ String net_tt = net.getTitle() ;
 	color:green;
 }
 
+.sub_span_nowrap span
+{
+display: inline-block; 
+white-space: nowrap;
+}
 </style>
 </head>
 <body style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; overflow: hidden;user-select:none;" >

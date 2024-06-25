@@ -8,6 +8,8 @@ import org.iottree.driver.common.modbus.ModbusParserResp.RespRetReadBits;
 import org.iottree.driver.common.modbus.ModbusParserResp.RespRetReadInt16s;
 import org.w3c.dom.Element;
 
+import kotlin.NotImplementedError;
+
 public class ModbusCmdReadWords extends ModbusCmdRead
 {
 	static ModbusCmdReadWords createReqMC(byte[] bs,int[] pl)
@@ -58,7 +60,20 @@ public class ModbusCmdReadWords extends ModbusCmdRead
 		return 3 ;
 	}
 	
-	public static byte[] createResp(short addr,short req_fc,short[] wdata)
+	public static byte[] createResp(ModbusCmd mc,short addr,short req_fc,short[] wdata)
+	{
+		switch(mc.getProtocol())
+		{
+		case tcp:
+			return createRespTCP(mc.mbap4Tcp,addr,req_fc,wdata) ;
+		case ascii:
+			throw new NotImplementedError() ;
+		default:
+			return createRespRTU(addr,req_fc, wdata) ;
+		}
+	}
+	
+	private static byte[] createRespRTU(short addr,short req_fc,short[] wdata)
 	{
 		if(wdata==null||wdata.length>125)
 			return null ;
@@ -88,7 +103,36 @@ public class ModbusCmdReadWords extends ModbusCmdRead
 		return data ;
 	}
 	
+	private static byte[] createRespTCP(byte[] mbap,short addr,short req_fc,short[] wdata)
+	{
+		//if(wdata==null||wdata.length>125)
+		//	return null ;
+		
+		int dlen = wdata.length*2;//bdata.length/8 + ((bdata.length%8)>0?1:0);
 	
+		int rlen = 9+dlen ;
+		byte[] data = new byte[rlen] ;
+		rlen = dlen +3 ;
+		
+		data[0] = mbap[0] ;
+		data[1] = mbap[1] ;
+		data[2] = mbap[2] ;
+		data[3] = mbap[3] ;
+		data[4] = (byte)(rlen>>8) ;
+		data[5] = (byte)(rlen) ;
+		data[6] = (byte)addr ;
+		data[7] = (byte)(req_fc) ;
+		
+		data[8] = (byte)dlen ;//byte count
+		for(int i=0;i<wdata.length;i++)
+		{
+			short w = wdata[i] ;
+			data[9+i*2] = (byte)(0xFF & (w>>8)) ;
+			data[9+i*2+1] = (byte)(0xFF & w) ;
+		}
+
+		return data ;
+	}
 	
 	int regAddr = 0 ;
 	int regNum = 0 ;

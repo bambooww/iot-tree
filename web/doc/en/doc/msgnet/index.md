@@ -146,7 +146,7 @@ IOT-Tree provides strong support for debugging and observing the operation of me
 
 <img src="../img/msgnet/mn007.png">
 
-#### 2.3.5 Common Nodes
+#### 2.3.6 Common Nodes
 
 1. <a href="n__com.manual.md">Manual Trigger</a>
 
@@ -237,3 +237,18 @@ By selecting the event configuration item in the tag,listen for events generated
 2. MQTT
 
 3. HTTP
+
+### 2.3.8 Simulator Nodes
+
+1. Modbus Slave Bus
+
+## 2.4 Nodes Param Library
+
+
+
+When a node parameter is complex and needs to be reused in other flows, the parameter library function can be used. Double click on the node to open the parameter editing dialog, click on the "Save To Library" icon in the upper right corner, fill in the title, and then complete the parameter entry operation.
+
+When you double-click a node in the list on the left side of the flow, not only can you open the help for that node, but you can also switch to the parameter library to view the saved items related to the node. If there have the item you need, simply drag and drop it to the flow drawing area to complete the node addition - this node will automatically set the previously saved parameters.
+
+
+<img src="../img/msgnet/mn025.png">

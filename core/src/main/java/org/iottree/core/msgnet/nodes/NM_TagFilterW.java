@@ -213,11 +213,11 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 	private List<WTag> checkCmdValid(JSONObject pldjo,StringBuilder failedr)
 	{
 		String cmd = pldjo.optString("cmd") ;
-		if(Convert.isNullOrEmpty(cmd))
-		{
-			failedr.append("no cmd found") ;
-			return null ;
-		}
+//		if(Convert.isNullOrEmpty(cmd))
+//		{
+//			failedr.append("no cmd found") ;
+//			return null ;
+//		}
 		long ts = pldjo.optLong("cmd_ts", -1) ;
 		long to = pldjo.optLong("cmd_to",-1) ;
 		if(to>0)
@@ -229,14 +229,7 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 			}
 		}
 		
-		if("write_tag".equals(cmd))
-		{
-			WTag wtag = parseJoToWTag(pldjo,failedr) ;
-			if(wtag==null)
-				return  null ;
-			return Arrays.asList(wtag);
-		}
-		else if("write_tags".equals(cmd))
+		if("write_tags".equals(cmd))
 		{
 			JSONArray jarr = pldjo.optJSONArray("tags") ;
 			int n = 0 ;
@@ -256,8 +249,15 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 			}
 			return rets ;
 		}
+		else //("write_tag".equals(cmd))
+		{
+			WTag wtag = parseJoToWTag(pldjo,failedr) ;
+			if(wtag==null)
+				return  null ;
+			return Arrays.asList(wtag);
+		}
 		
-		return null ;
+		//return null ;
 	}
 	
 	private WTag parseJoToWTag(JSONObject pldjo,StringBuilder failedr)
@@ -320,7 +320,7 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 				return null;
 			}
 		}
-		
+		this.RT_DEBUG_ERR.clear("write_tag");
 		return RTOut.createOutAll(msg);
 	}
 	
@@ -419,5 +419,31 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 	public boolean RT_runnerStartInner()
 	{
 		return true;
+	}
+	
+	private static String IN_STR = "" ;
+	static
+	{
+		JSONObject tmpjo = new JSONObject() ;
+		tmpjo.put("tag", "ch1.gg1.tag11") ;
+		tmpjo.put("value", true) ;
+		tmpjo.put("cmd_ts", 1231244535) ;
+		tmpjo.put("cmd_to", 20000) ;
+		IN_STR += "<pre>"+tmpjo.toString(4)+"</pre><br>OR<br>" ;
+		
+		tmpjo = new JSONObject("{\r\n" + 
+				"    \"cmd\":\"write_tags\",\"cmd_ts\":12312445345,\"cmd_to\":20000,\r\n" + 
+				"    \"tags\":[\r\n" + 
+				"        {\"delay\":0,   \"tag\":\"ch1.gg1.tag11\",\"value\":true},\r\n" + 
+				"        {\"delay\":2000,\"tag\":\"ch1.gg1.tag11\",\"value\":false}\r\n" + 
+				"    ]\r\n" + 
+				"}") ;
+		IN_STR += "<pre>"+tmpjo.toString(4)+"</pre>" ;
+	}
+	
+	@Override
+	public String RT_getInTitle()
+	{
+		return IN_STR ;
 	}
 }

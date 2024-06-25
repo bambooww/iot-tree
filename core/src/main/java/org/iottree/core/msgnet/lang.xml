@@ -11,6 +11,7 @@
 	<dd_node id="1" name="_seq" name_cn="序列化" name_en="sequence" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_parser" name_cn="解析" name_en="parser" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_storage" name_cn="存储" name_en="storage" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_sim" name_cn="模拟器" name_en="Simulator" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="not_enabled" name_cn="未使能" name_en="Not Enabled" desc_cn="" desc_en=""/>
 	

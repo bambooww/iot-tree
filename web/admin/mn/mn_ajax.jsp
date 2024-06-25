@@ -161,8 +161,15 @@ case "module_add_up":
 case "detail_set":
 	if(!Convert.checkReqEmpty(request, out,"netid","itemid", "jstr"))
 		return ;
-	net.setDetailJO(itemid,in_jo,true) ;
-	out.print("succ") ;
+	try
+	{
+		net.setDetailJO(itemid,in_jo,true) ;
+		out.print("succ") ;
+	}
+	catch(MNException ee)
+	{
+		out.print(ee.getMessage()) ;
+	}
 	return ;
 
 case "module_list_nodes":

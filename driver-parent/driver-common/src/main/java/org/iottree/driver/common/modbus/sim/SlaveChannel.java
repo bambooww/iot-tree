@@ -28,7 +28,7 @@ import org.iottree.driver.common.modbus.ModbusCmdReadBits;
 import org.iottree.driver.common.modbus.ModbusCmdReadWords;
 import org.iottree.driver.common.modbus.ModbusCmdWriteBit;
 import org.iottree.driver.common.modbus.ModbusCmdWriteWord;
-import org.iottree.driver.common.modbus.ModbusParserReq;
+import org.iottree.driver.common.modbus.ModbusParserReqRTU;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.BoolDatas;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.Int16Datas;
 import org.iottree.driver.common.modbus.sim.SlaveDevSeg.SlaveData;
@@ -107,16 +107,16 @@ public class SlaveChannel extends SimChannel  implements Runnable
 	
 	protected void RT_runConnInLoop(SimConn sc) throws Exception
 	{
-		ModbusParserReq mp = (ModbusParserReq)sc.getRelatedOb() ;
+		ModbusParserReqRTU mp = (ModbusParserReqRTU)sc.getRelatedOb() ;
 		if(mp==null)
 		{
-			mp = new ModbusParserReq() ;
+			mp = new ModbusParserReqRTU() ;
 			mp.asLimitDevIds(limitIds);
 			sc.setRelatedOb(mp);
 		}
 		
 		PushbackInputStream inputs = sc.getPushbackInputStream();
-		ModbusCmd reqmc = mp.parseReqCmdInLoopRTU(inputs) ;
+		ModbusCmd reqmc = mp.parseReqCmdInLoop(inputs) ;
 		if(reqmc==null)
 			return ;
 		byte[] respbs = onReqAndResp(reqmc) ;
@@ -316,7 +316,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			}
 		}
 		
-		return ModbusCmdWriteBit.createResp(devid,req_idx,bv);
+		return ModbusCmdWriteBit.createResp(mcb,devid,req_idx,bv);
 	}
 	
 	
@@ -352,7 +352,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			}
 		}
 		
-		return ModbusCmdWriteWord.createResp(devid,(short)req_idx,(short)bv);
+		return ModbusCmdWriteWord.createResp(mcb,devid,req_idx,(short)bv);
 	}
 
 	private byte[] onReqAndRespReadBits(ModbusCmdReadBits mcb)
@@ -414,7 +414,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			}
 		}
 		
-		return ModbusCmdReadBits.createResp(devid,mcb.getFC(),resp);
+		return ModbusCmdReadBits.createResp(mcb,devid,mcb.getFC(),resp);
 	}
 	
 	
@@ -479,7 +479,7 @@ public class SlaveChannel extends SimChannel  implements Runnable
 			}
 		}
 		
-		return ModbusCmdReadWords.createResp(devid,mcb.getFC(),resp);
+		return ModbusCmdReadWords.createResp(mcb,devid,mcb.getFC(),resp);
 	}
 
 	@Override

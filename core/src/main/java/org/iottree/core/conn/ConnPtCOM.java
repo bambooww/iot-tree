@@ -247,12 +247,19 @@ public class ConnPtCOM extends ConnPtStream
 
 			// serialPort.enableReceiveTimeout(5000);
 
-			inputS = serialPortRxTx.getInputStream();
-			outputS = serialPortRxTx.getOutputStream();
+			inputS = serialPort.getInputStream();
+			outputS = serialPort.getOutputStream();
 			serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 5000, 5000);
-			this.fireConnReady();
-
-			return true;
+			if(serialPort.openPort())
+			{
+				this.fireConnReady();
+				return true;
+			}
+			else
+			{
+				disconnect();
+				return false;
+			}
 		}
 		catch ( Exception ee)
 		{
@@ -362,11 +369,15 @@ public class ConnPtCOM extends ConnPtStream
 
 	public void RT_checkConn() // throws Exception
 	{
+		if(!this.isEnable())
+			return ;
+		
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;
 
 		try
 		{
+			//System.out.println("com chk conn") ;
 			connect();
 		}
 		finally
@@ -383,19 +394,24 @@ public class ConnPtCOM extends ConnPtStream
 	@Override
 	public boolean isClosed()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (ConnProCOM.usingRxTx())
+			return serialPortRxTx ==null;
+		else
+			return serialPort ==null ;
 	}
 
 	@Override
 	public boolean isConnReady()
 	{
-		return serialPortRxTx != null;
+		if (ConnProCOM.usingRxTx())
+			return serialPortRxTx != null;
+		else
+			return serialPort!=null ;
 	}
 
 	public String getConnErrInfo()
 	{
-		if (serialPortRxTx == null)
+		if (!isConnReady())
 			return "no connection";
 		else
 			return null;

@@ -21,5 +21,5 @@
 	<dd_node id="1" name="no_pm_get" name_cn="没有获取参数" name_en="No Parameters" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="pls_sure_lib_tt" name_cn="请确定使用这个标题存入库中么？" name_en="Are you sure to use this title to save to library?" desc_cn="" desc_en=""/>
-	
+	<dd_node id="1" name="node_running_stop_first" name_cn="请先停止节点运行，才能修改参数!" name_en="Please stop the node first before modifying the parameters!" desc_cn="" desc_en=""/>
 </dd_class>

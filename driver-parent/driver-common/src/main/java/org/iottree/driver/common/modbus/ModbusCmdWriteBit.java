@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import kotlin.NotImplementedError;
+
 
 public class ModbusCmdWriteBit extends ModbusCmd
 {
@@ -295,11 +297,22 @@ public class ModbusCmdWriteBit extends ModbusCmd
 		return new ModbusCmdWriteBit(addr,reg_addr,bv) ;
 	}
 	
+	public static byte[] createResp(ModbusCmd mc,short addr,int reg_addr,boolean bdata)
+	{
+		switch(mc.getProtocol())
+		{
+		case tcp:
+			return createRespTCP(mc.mbap4Tcp,addr,reg_addr,bdata) ;
+		case ascii:
+			throw new NotImplementedError() ;
+		default:
+			return createRespRTU(addr,reg_addr, bdata) ;
+		}
+	}
 	
-	public static byte[] createResp(short addr,int reg_addr,boolean bdata)
+	public static byte[] createRespRTU(short addr,int reg_addr,boolean bdata)
 	{
 		byte[] data = new byte[8] ;
-		
 		
 		data[0] = (byte)addr ;
 		data[1] = MODBUS_FC_WRITE_SINGLE_COIL;
@@ -314,6 +327,30 @@ public class ModbusCmdWriteBit extends ModbusCmd
 		int crc = modbus_crc16_check(data,6);
 	    data[6] = (byte)((crc>>8) & 0xFF) ;
 	    data[7] = (byte)(crc & 0xFF) ;
+		
+		return data ;
+	}
+	
+	public static byte[] createRespTCP(byte[] mbap,short addr,int reg_addr,boolean bdata)
+	{
+		byte[] data = new byte[12] ;
+		
+		data[0] = mbap[0] ;
+		data[1] = mbap[1] ;
+		data[2] = mbap[2] ;
+		data[3] = mbap[3] ;
+		data[4] = (byte)(0) ;
+		data[5] = (byte)(6) ;
+		
+		data[6] = (byte)addr ;
+		data[7] = MODBUS_FC_WRITE_SINGLE_COIL;
+		data[8] = (byte)(reg_addr>>8) ;
+		data[9] = (byte)(reg_addr) ;
+		if(bdata)
+			data[10] = (byte)0xFF ;
+		else
+			data[10] = 0 ;
+		data[11] = 0 ;
 		
 		return data ;
 	}

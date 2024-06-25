@@ -3,6 +3,8 @@ package org.iottree.driver.common.modbus;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import kotlin.NotImplementedError;
+
 public class ModbusCmdWriteWords extends ModbusCmd
 {
 	int regAddr = 0 ;
@@ -63,7 +65,15 @@ public class ModbusCmdWriteWords extends ModbusCmd
 //		return new ModbusCmdWriteWords(addr,reg_addr,vals) ;
 //	}
 	
+	public int getRegAddr()
+	{
+		return regAddr ;
+	}
 	
+	public int[] getWriteVals()
+	{
+		return wVals ;
+	}
 	
 	public void setWriteVal(int[] vs)
 	{
@@ -281,4 +291,60 @@ public class ModbusCmdWriteWords extends ModbusCmd
 	    
 	    return 1 ;
 	}
+	
+
+	public static byte[] createResp(ModbusCmd mc,short addr,int reg_addr,int[] vdata)
+	{
+		switch(mc.getProtocol())
+		{
+		case tcp:
+			return createRespTCP(mc.mbap4Tcp,addr,reg_addr,vdata) ;
+		case ascii:
+			throw new NotImplementedError() ;
+		default:
+			return createRespRTU(addr,reg_addr, vdata) ;
+		}
+	}
+
+	public static byte[] createRespRTU(short addr,int reg_addr,int[] vdata)
+	{
+		byte[] data = new byte[8] ;
+		
+		
+		data[0] = (byte)addr ;
+		data[1] = MODBUS_FC_WRITE_MULTI_REG;
+		//data[2] = //byte count
+		data[2] = (byte)(reg_addr>>8) ;
+		data[3] = (byte)(reg_addr) ;
+		data[4] = (byte)(vdata.length>>8) ;
+		data[5] = (byte)vdata.length ;
+		
+		int crc = modbus_crc16_check(data,6);
+	    data[6] = (byte)((crc>>8) & 0xFF) ;
+	    data[7] = (byte)(crc & 0xFF) ;
+		
+		return data ;
+	}
+	
+	public static byte[] createRespTCP(byte[] mbap,short addr,int reg_addr,int[] vdata)
+	{
+		byte[] data = new byte[12] ;
+
+		data[0] = mbap[0] ;
+		data[1] = mbap[1] ;
+		data[2] = mbap[2] ;
+		data[3] = mbap[3] ;
+		data[4] = (byte)(0) ;
+		data[5] = (byte)(6) ;
+		
+		data[6] = (byte)addr ;
+		data[7] = MODBUS_FC_WRITE_MULTI_REG;
+		data[8] = (byte)(reg_addr>>8) ;
+		data[9] = (byte)(reg_addr) ;
+		data[10] = (byte)(vdata.length>>8) ;
+		data[11] = (byte)vdata.length ;
+		
+		return data ;
+	}
+	
 }

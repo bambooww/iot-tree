@@ -465,9 +465,19 @@ public abstract class MNNode extends MNBase
 			jo.put("rt_out_cs", jarr_c) ; //out color s
 		}
 		
+		if(this.supportInConn())
+		{
+			String intt = this.RT_getInTitle() ;
+			jo.putOpt("rt_in_tt",intt) ;
+		}
+		
 		return jo ;
 	}
 	
+	public String RT_getInTitle()
+	{
+		return null;
+	}
 
 	public String RT_getOutTitle(int idx)
 	{

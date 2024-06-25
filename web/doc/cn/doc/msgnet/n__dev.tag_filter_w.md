@@ -40,9 +40,9 @@
 
 ```
 "payload":{
-    "cmd":"write_tag","cmd_ts":12312445345,"cmd_to":20000,
     "tag":"ch1.gg1.tag11",
-    "value":true
+    "value":true,
+    "cmd_ts":12312445345,"cmd_to":20000
 }
 ```
 

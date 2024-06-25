@@ -1,5 +1,19 @@
 # Versions
 
+### version 1.7.1
+
+
+The basic nodes of the message flow are basically complete, including timed triggers, memory queues, JS functions, templates, path switching, and system internal Tags reading and writing. Exec node tested parameter modification in Linux environment - it has been basically improved.
+
+The message flow node supports more debugging information and asynchronous node operation control.
+
+Added Modbus Slave emulator module (Pro ver).
+
+Node parameter support library storage and usage.
+
+Handling project import bugs in Linux environment.
+
+
 ### version 1.7.0
 
 

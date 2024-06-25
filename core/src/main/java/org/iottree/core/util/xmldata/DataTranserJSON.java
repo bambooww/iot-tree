@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
@@ -210,14 +212,22 @@ public class DataTranserJSON
 		String n = f.getName();
 		if (!"".contentEquals(xmlv.param_name()))
 			n = xmlv.param_name();
-		Class dc = f.getType();
+		Class<?> dc = f.getType();
 		if (List.class.isAssignableFrom(dc))
 		{
 			JSONArray jos = tarxd.optJSONArray(n);
 			if(jos==null)
 				return false;
 			f.set(o, jos.toList());
-		} else
+		}
+		else if(Map.class.isAssignableFrom(dc))
+		{
+			JSONObject jos = tarxd.optJSONObject(n);
+			if(jos==null)
+				return false;
+			f.set(o, jos.toMap());
+		}
+		else
 		{
 			Object v = tarxd.opt(n);
 			if (v == null)
@@ -240,7 +250,7 @@ public class DataTranserJSON
 		Parameter[] ps = m.getParameters();
 		if(ps==null||ps.length!=1)
 			return false;
-		Class dc = ps[0].getType();
+		Class<?> dc = ps[0].getType();
 		
 		if (List.class.isAssignableFrom(dc))
 		{
@@ -248,7 +258,15 @@ public class DataTranserJSON
 			if(jos==null)
 				return false;
 			m.invoke(o, jos.toList());
-		} else
+		}
+		else if(Map.class.isAssignableFrom(dc))
+		{
+			JSONObject jos = tarxd.optJSONObject(n);
+			if(jos==null)
+				return false;
+			m.invoke(o, jos.toMap());
+		}
+		else
 		{
 			Object v = tarxd.opt(n);
 			if (v == null)
@@ -299,6 +317,21 @@ public class DataTranserJSON
 				JSONObject subjo = new JSONObject();
 				if(extractJSONFromObj(subo, subjo))
 					subarr.put(subjo) ;
+			}
+		}
+		else if (pv instanceof Map)
+		{
+			JSONObject subarr = new JSONObject() ;
+			tarxd.put(n, subarr) ;
+			Map<String,?> mm = (Map<String,?>) pv ;
+			
+			for (Map.Entry<String,?> n2v : mm.entrySet())
+			{
+				String kk = (String)n2v.getKey() ;
+				Object subo = n2v.getValue() ;
+				JSONObject subjo = new JSONObject();
+				if(extractJSONFromObj(subo, subjo))
+					subarr.put(kk,subjo) ;
 			}
 		}
 		else
@@ -353,6 +386,21 @@ public class DataTranserJSON
 				JSONObject subjo = new JSONObject();
 				if(extractJSONFromObj(subo, subjo))
 					subarr.put(subjo) ;
+			}
+		}
+		else if (pv instanceof Map)
+		{
+			JSONObject subarr = new JSONObject() ;
+			tarxd.put(n, subarr) ;
+			Map<String,?> mm = (Map<String,?>) pv ;
+			
+			for (Map.Entry<String,?> n2v : mm.entrySet())
+			{
+				String kk = (String)n2v.getKey() ;
+				Object subo = n2v.getValue() ;
+				JSONObject subjo = new JSONObject();
+				if(extractJSONFromObj(subo, subjo))
+					subarr.put(kk,subjo) ;
 			}
 		}
 		else

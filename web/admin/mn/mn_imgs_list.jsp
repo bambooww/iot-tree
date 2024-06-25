@@ -12,5 +12,6 @@
 	    ,{"n":"whiteg"    ,   "fn":"white-globe.svg"}
 	    ,{"n":"function"    ,   "fn":"function.svg"}
 	    ,{"n":"outer"    ,   "fn":"arrow-in.svg"}
+	    ,{"n":"bus"    ,   "fn":"bus.svg"}
 	]
 }

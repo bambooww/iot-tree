@@ -169,9 +169,12 @@ public class MNManager
 		registerItem(new NM_HttpClient(),cat) ;
 		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
 		
+		
 		cat = registerCat(new MNCat("_storage")) ;
 		registerItem(new DBSql(),cat) ;
 		
+		cat = registerCat(new MNCat("_sim")) ;
+		registerItem("org.iottree.pro.modbuss.MSBus_M",cat) ;
 //		registerCat(new MNNodeCat("network")) ;
 //		registerCat(new MNNodeCat("seq")) ;
 //		registerCat(new MNNodeCat("parser")) ;
@@ -215,6 +218,18 @@ public class MNManager
 	public static MNModule getModuleByFullTP(String full_tp)
 	{
 		return TP2Module.get(full_tp) ;
+	}
+	
+	public static MNNode getNodeByClass(Class<?> c)
+	{
+		//System.out.println("find c ="+ c.getCanonicalName()) ;
+		for(MNNode n:TP2NODE.values())
+		{
+			//System.out.println(n.getClass().getCanonicalName()) ;
+			if(n.getClass().equals(c))
+				return n ;
+		}
+		return null ;
 	}
 	
 	public static MNBase getItemByFullTP(String mn,String full_tp)

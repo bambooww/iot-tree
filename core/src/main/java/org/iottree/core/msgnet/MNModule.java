@@ -96,7 +96,11 @@ public abstract class MNModule extends MNBase
 		return rets ;
 	}
 	
-	
+	//for module,it can be impl to auto add related nodes
+	public void checkAfterSetParam()
+	{
+		
+	}
 	
 	@Override
 	public boolean fromJO(JSONObject jo)

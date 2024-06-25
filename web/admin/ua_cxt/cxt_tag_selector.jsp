@@ -106,12 +106,19 @@ var b_multi = <%=b_multi%>;
 var selected_tagids = dlg.get_opener_opt("sel_tagids") ;
 if(!selected_tagids)
 	selected_tagids=[] ;
+	
+var selected_tagpaths = dlg.get_opener_opt("sel_tagpaths") ;
+if(!selected_tagpaths)
+	selected_tagpaths=[] ;
 
 function init()
 {
 	$(".chk").each(function(){
 		let tagid = $(this).attr('tagid') ;
+		let tagp = $(this).attr('path') ;
 		if(selected_tagids.indexOf(tagid)>=0)
+			$(this).prop("checked",true) ;
+		else if(selected_tagpaths.indexOf(tagp)>=0)
 			$(this).prop("checked",true) ;
 	});
 }

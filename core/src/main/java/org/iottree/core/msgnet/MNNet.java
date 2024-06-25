@@ -300,6 +300,55 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return new_n ;
 	}
 	
+	public MNNode createNewNodeInModule(MNModule m,MNNode tempn,float x,float y,String lib_item_id,boolean bsave)  throws Exception
+	{
+		//m.getSupportedNodeByTP(tp) ;
+		MNNode n = tempn;
+		if(n==null)
+			return null ;
+		
+		MNLib.Item libitem = null ;
+		if(Convert.isNotNullEmpty(lib_item_id))
+		{
+			libitem = MNLib.getItemById("n", n.getTPFull(),lib_item_id) ;
+			if(libitem==null)
+			{
+				throw new MNException("no lib item found with id="+lib_item_id) ;
+			}
+		}
+		
+		MNModule tp_md = n.TP_getRelatedModule() ;
+		if(tp_md!=null && m==null)
+			throw new MNException("no related module input") ;
+		else if(tp_md==null && m!=null)
+			throw new MNException("node has no related module,but you set") ;
+		MNNode new_n = n.createNewIns(this) ;
+		
+		new_n.x = x ;
+		new_n.y = y ;
+		String tpt = n.getTPTitle() ;
+		//new_n.setNodeTP(n.getNodeTP(),tpt);
+		
+		if(libitem!=null)
+		{
+			new_n.setParamJO(libitem.getPmJO());
+			new_n.title = libitem.getTitle()+" "+calcNextTitleSuffix(libitem.getTitle()) ;
+		}
+		else
+		{
+			new_n.title = tpt+" "+calcNextTitleSuffix(tpt) ;
+		}
+		id2node.put(new_n.id, new_n) ;
+		if(m!=null)
+		{
+			m.nodeIdSet.add(new_n.id) ;
+		}
+		
+		if(bsave)
+			save() ;
+		return new_n ;
+	}
+	
 	public MNModule createNewModuleByFullTP(String full_tp,float x,float y,String lib_item_id)  throws Exception
 	{
 		MNModule m = MNManager.getModuleByFullTP(full_tp) ;
@@ -637,12 +686,22 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return n ;
 	}
 	
-	public MNBase setDetailJO(String itemid,JSONObject detail_jo,boolean bsave) throws IOException
+	public MNBase setDetailJO(String itemid,JSONObject detail_jo,boolean bsave) throws Exception
 	{
 		MNBase n = this.getItemById(itemid) ;
 		if(n==null)
 			return null ;
+		if(n instanceof IMNRunner)
+		{
+			IMNRunner run = (IMNRunner)n ;
+			if(run.RT_isRunning())
+				throw new MNException("node is running,please stop first") ;
+		}
 		n.setDetailJO(detail_jo);
+		
+		if(n instanceof MNModule)
+			((MNModule)n).checkAfterSetParam();
+		
 		if(bsave)
 			this.save();
 		return n ;
@@ -713,7 +772,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return true ;
 	}
 	
-	void save() throws IOException
+	public void save() throws IOException
 	{
 		this.belongTo.saveNet(this);
 	}

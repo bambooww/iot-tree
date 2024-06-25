@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -37,6 +37,11 @@
 	    <version>${project.version}</version>
 	</dependency>
   
+   <dependency>
+	    <groupId>org.iottree.ext</groupId>
+	    <artifactId>iottree-ext-pro</artifactId>
+	    <version>${project.version}</version>
+	</dependency>
 
     <dependency>
       <groupId>junit</groupId>

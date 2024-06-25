@@ -96,12 +96,17 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return title ;
 	}
 	
+	public void setTitle(String t)
+	{
+		this.title = t ;
+	}
+	
 	public String getDesc()
 	{
 		return desc ;
 	}
 	
-
+	
 	
 	public MNNet getBelongTo()
 	{

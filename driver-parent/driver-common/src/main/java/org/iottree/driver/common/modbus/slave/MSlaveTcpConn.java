@@ -240,7 +240,7 @@ public class MSlaveTcpConn implements Runnable
 			}
 		}
 		
-		return ModbusCmdReadBits.createResp(devid,mcb.getFC(),resp);
+		return ModbusCmdReadBits.createResp(mcb,devid,mcb.getFC(),resp);
 	}
 	
 	
@@ -296,7 +296,7 @@ public class MSlaveTcpConn implements Runnable
 			}
 		}
 		
-		return ModbusCmdReadWords.createResp(devid,mcb.getFC(),resp);
+		return ModbusCmdReadWords.createResp(mcb,devid,mcb.getFC(),resp);
 	}
 	
 	

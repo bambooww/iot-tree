@@ -3,6 +3,8 @@ package org.iottree.driver.common.modbus;
 import java.io.*;
 import java.util.*;
 
+import kotlin.NotImplementedError;
+
 
 /**
  * 
@@ -214,6 +216,8 @@ public abstract class ModbusCmd
 	protected int tryTimes = 0;
 
 	protected Protocol protocal = Protocol.rtu;
+	
+	protected byte[] mbap4Tcp = null ; 
 
 	transient protected byte[] mbuss_adu = new byte[300];
 
@@ -538,7 +542,6 @@ public abstract class ModbusCmd
 	{
 		return 0;
 	}
-	
 
 	protected void clearInputStream(InputStream inputs) throws IOException
 	{
@@ -655,4 +658,47 @@ public abstract class ModbusCmd
 		return "{dev:" + this.slaveAddr + ",recv_to:" + this.recvTimeout + ",recv_end_to:" + this.recvEndTimeout + "}";
 	}
 
+
+	public static byte[] createRespError(ModbusCmd mc,short addr,short req_fc)
+	{
+		switch(mc.getProtocol())
+		{
+		case tcp:
+			return createRespErrorTCP(mc.mbap4Tcp,addr,req_fc) ;
+		case ascii:
+			throw new NotImplementedError() ;
+		default:
+			return createRespErrorRTU(addr,req_fc) ;
+		}
+	}
+	
+	protected static byte[] createRespErrorTCP(byte[] mbap,short addr,short req_fc)
+	{
+		//[ Transaction ID | Protocol ID | Length | Unit ID | Error Code | Exception Code ]
+		byte[] bs = new byte[9] ;
+		bs[0] = mbap[0];
+		bs[1] = mbap[1];
+		bs[2] = mbap[2];
+		bs[3] = mbap[3];
+		bs[4] = 0 ;
+		bs[5] = 3 ;
+		bs[6] = (byte)addr ;
+		bs[7] = (byte)(req_fc + 0x80) ;
+		bs[8] = 0x04 ;// device error
+		return bs ;
+	}
+	
+	protected static byte[] createRespErrorRTU(short addr,short req_fc)
+	{
+		//[ Transaction ID | Protocol ID | Length | Unit ID | Error Code | Exception Code ]
+		byte[] bs = new byte[5] ;
+		bs[0] = (byte)addr ;
+		bs[1] = (byte)(req_fc + 0x80) ;
+		bs[2] = 0x04 ;// device error
+		int crc = modbus_crc16_check(bs,3);
+	    bs[3] = (byte)((crc>>8) & 0xFF) ;
+	    bs[4] = (byte)(crc & 0xFF) ;
+		return bs ;
+	}
+	
 }
