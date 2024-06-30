@@ -77,6 +77,19 @@
 		desc_en="External programs trigger flow execution based on message flow, trigger name (can be empty), and message content parameters"
 		/>
 	
+	<dd_node id="1" name="on_flow_evt" name_cn="流程事件触发" name_en="Flow Event Trigger"
+		desc_cn="流程启动、停止等事件触发相关消息。可用来流程启动前的初始化工作或流程停止时的收尾工作"
+		desc_en="Events such as flow start and stop trigger related messages. Can be used for initialization work before flow starting or closing work when flow stops"
+		/>
+	
+	<dd_node id="1" name="file_r" name_cn="文件读取" name_en="File Reader"
+		desc_cn="根据设定或输入的文件路径，读取文件内容"
+		desc_en="Read the file content based on the set or input file path"
+		/>
+	<dd_node id="1" name="file_w" name_cn="文件写入" name_en="File Writer"
+		desc_cn="根据设定或输入的文件路径，写入文件内容"
+		desc_en="Write to file based on the set or input file path"
+		/>
 	
 	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
   <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />
@@ -113,5 +126,9 @@
   <dd_node id="1" name="conn_in_msg_trigger" name_cn="接入消息触发器" name_en="Conn In Msg Trigger" />
   
   <dd_node id="1" name="warn_or_exceed" name_cn="报警或达到最大长度错误" name_en="Warn or Exceed Max Length" />
+  
+  <dd_node id="1" name="fr_txt" name_cn="Txt文本" name_en="a single text" />
+  <dd_node id="1" name="fr_json" name_cn="JSON数据" name_en="JSON Data" />
+  <dd_node id="1" name="fr_msg_per_ln" name_cn="每行字符串一条信息" name_en="a msg per text line" />
   
 </dd_class>

@@ -13,7 +13,6 @@
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	
 %>
-<div id="edit_mqtt">
      <div class="layui-form-item">
     <label class="layui-form-label">Broker <w:g>host</w:g>:</label>
     <div class="layui-input-inline">

@@ -13,5 +13,7 @@
 	    ,{"n":"function"    ,   "fn":"function.svg"}
 	    ,{"n":"outer"    ,   "fn":"arrow-in.svg"}
 	    ,{"n":"bus"    ,   "fn":"bus.svg"}
+	    ,{"n":"filer"    ,   "fn":"file_r.svg"}
+	    ,{"n":"filew"    ,   "fn":"file_w.svg"}
 	]
 }

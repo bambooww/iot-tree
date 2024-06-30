@@ -397,7 +397,7 @@ function do_submit(cb)
 	
 	js_ob.en= ben ;
 	js_ob.n = n ;
-	js_ob.t = t ;;
+	js_ob.t = t ;
 	js_ob.host = host ;
 	js_ob.port = port ;
 	js_ob.user = user ;

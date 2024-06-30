@@ -4,11 +4,14 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
 public class MqttOut_NE extends MNNodeEnd
 {
+	String sendId = null;
+	
 	@Override
 	public String getTP()
 	{
@@ -18,7 +21,7 @@ public class MqttOut_NE extends MNNodeEnd
 	@Override
 	public String getTPTitle()
 	{
-		return "MQTT Out";
+		return "MQTT Sender";
 	}
 	
 
@@ -45,34 +48,48 @@ public class MqttOut_NE extends MNNodeEnd
 	@Override
 	public String getIcon()
 	{
-		return "\\\\uf1eb-270";
+		return "PK_bridge";
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject jo = new JSONObject();
+		jo.putOpt("send_id", this.sendId);
+		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
-		
+		this.sendId = jo.optString("send_id");
 	}
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		// TODO Auto-generated method stub
+		if(Convert.isNullOrEmpty(this.sendId))
+			return null ;
+		Mqtt_M mm = (Mqtt_M)this.getOwnRelatedModule();
+		Mqtt_M.SendConf sc = mm.getSendConfById(this.sendId) ;
+		if(sc==null)
+			return null ;
+		
+		try
+		{
+			mm.publish(sc.topic, msg.getPayloadStr());
+			RT_DEBUG_ERR.clear("mqtt_send");
+		}
+		catch(Exception e)
+		{
+			RT_DEBUG_ERR.fire("mqtt_send", e.getMessage(),e);
+		}
 		return null;
 	}
 }

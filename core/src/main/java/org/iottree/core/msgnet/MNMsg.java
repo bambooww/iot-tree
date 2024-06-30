@@ -131,6 +131,34 @@ public class MNMsg implements IMNCxtPk
 		return this ;
 	}
 	
+	public MNMsg asPayloadJO(Object pld)
+	{
+		if(pld instanceof JSONObject || pld instanceof JSONArray)
+		{
+			this.payload = pld ;
+			return this ;
+		}
+		
+		if(pld instanceof String)
+		{
+			String pldstr = (String)pld ;
+			pldstr = pldstr.trim() ;
+			if(pldstr.startsWith("{"))
+			{
+				this.payload = new JSONObject(pldstr) ;
+				return this;
+			}
+			
+			if(pldstr.startsWith("["))
+			{
+				this.payload = new JSONArray(pldstr) ;
+				return this ;
+			}
+		}
+		
+		throw new RuntimeException("not JSON format input") ;
+	}
+	
 	public Object getPayload()
 	{
 		return payload ;
@@ -259,6 +287,8 @@ public class MNMsg implements IMNCxtPk
 	{
 		switch(subname)
 		{
+		case "payload":
+			return this.getPayload() ;
 		case "_id":
 			return this.getMsgId() ;
 		case "_time_ms":
@@ -266,10 +296,10 @@ public class MNMsg implements IMNCxtPk
 		case "topic":
 			return this.getTopic() ;
 		case "heads":
+		default:
 			break ;
-		case "payload":
-			return this.getPayload() ;
 		}
+		
 		if(subname.startsWith("payload."))
 		{
 			Object ob = this.getPayload() ;
@@ -277,6 +307,12 @@ public class MNMsg implements IMNCxtPk
 				return null ;
 			if(ob instanceof JSONObject)
 				return JsonUtil.getValByPath((JSONObject)ob, subname.substring(8)) ;
+		}
+		
+		//
+		if(this.heads!=null)
+		{
+			return this.heads.get(subname) ;
 		}
 		//may JSONPath
 		return null;

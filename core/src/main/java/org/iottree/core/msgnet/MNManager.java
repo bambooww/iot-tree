@@ -142,6 +142,7 @@ public class MNManager
 		registerItem(new NM_MemQueue(),cat) ;
 		registerItem(new MemMultiQueue(),cat) ;
 		registerItem(new NS_OuterTrigger(),cat) ;
+		registerItem(new NS_OnFlowEvt(),cat) ;
 		
 		cat = registerCat(new MNCat("_func")) ;
 		registerItem(new NM_JsFunc(),cat) ;
@@ -171,6 +172,8 @@ public class MNManager
 		
 		
 		cat = registerCat(new MNCat("_storage")) ;
+		registerItem(new NM_FileReader(),cat) ;
+		registerItem(new NM_FileWriter(),cat) ;
 		registerItem(new DBSql(),cat) ;
 		
 		cat = registerCat(new MNCat("_sim")) ;

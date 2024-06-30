@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 public class MqttIn_NS extends MNNodeStart
 {
+	String recvId = null;
+	
 	@Override
 	public String getTP()
 	{
@@ -15,7 +17,7 @@ public class MqttIn_NS extends MNNodeStart
 	@Override
 	public String getTPTitle()
 	{
-		return "MQTT In";
+		return "MQTT Receiver";
 	}
 	
 
@@ -46,28 +48,26 @@ public class MqttIn_NS extends MNNodeStart
 	@Override
 	public String getIcon()
 	{
-		return "\\\\uf1eb-90";
+		return "PK_bridge";
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
-
+	
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject jo = new JSONObject();
+		jo.putOpt("recv_id", this.recvId);
+		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
-		
+		this.recvId = jo.optString("recv_id");
 	}
-
 }

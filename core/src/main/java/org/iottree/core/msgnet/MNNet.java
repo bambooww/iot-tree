@@ -17,6 +17,7 @@ import javax.script.ScriptException;
 import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.cxt.MNContext;
+import org.iottree.core.msgnet.nodes.NS_OnFlowEvt;
 import org.iottree.core.msgnet.nodes.NS_OuterTrigger;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
@@ -1005,6 +1006,15 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			return ;
 		}
 		
+		List<MNNodeStart> ns = getStartNodes() ;
+		for(MNNodeStart n:ns)
+		{
+			if(n instanceof NS_OnFlowEvt)
+			{
+				((NS_OnFlowEvt)n).RT_fireFlowStart();
+			}
+		}
+		
 		for(MNModule m:this.id2module.values())
 		{
 			
@@ -1057,6 +1067,15 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			
 			IMNRunner mnr = (IMNRunner)m ;
 			mnr.RT_stop();
+		}
+		
+		List<MNNodeStart> ns = getStartNodes() ;
+		for(MNNodeStart n:ns)
+		{
+			if(n instanceof NS_OnFlowEvt)
+			{
+				((NS_OnFlowEvt)n).RT_fireFlowStop();
+			}
 		}
 		
 		RT_running = false ;
