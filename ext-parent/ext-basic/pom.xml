@@ -44,12 +44,19 @@
 </dependency>
 
 <!-- https://mvnrepository.com/artifact/com.infiniteautomation/bacnet4j -->
+<!-- 
 	<dependency>
 	    <groupId>com.infiniteautomation</groupId>
 	    <artifactId>bacnet4j</artifactId>
 	    <version>5.0.2</version>
 	</dependency>
-		
+		 -->
+		<!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
+<dependency>
+    <groupId>com.influxdb</groupId>
+    <artifactId>influxdb-client-java</artifactId>
+    <version>7.1.0</version>
+</dependency>
 		
   </dependencies>
 
@@ -100,6 +107,7 @@
   </build>
   
   <repositories>
+  <!-- 
     <repository>
         <releases>
             <enabled>false</enabled>
@@ -122,5 +130,7 @@
         <name>Infinite Automation Release Repository</name>
         <url>https://maven.mangoautomation.net/repository/ias-release/</url>
     </repository>
+     -->
 </repositories>
+
 </project>

@@ -7,7 +7,9 @@ public class Mime
 {
 	static HashMap<String,String> MIME = new HashMap<> () ;
 	
-	static final String DEFAULT = "application/octet-stream" ;
+	public static final String DEFAULT = "application/octet-stream" ;
+	
+	public static final String TXT_PLAIN = "text/plain" ;
 	
 	static 	
 	{

@@ -121,8 +121,6 @@ public class ResDir //Comparable<ResDir>
 		return null;
 	}
 	
-	
-	
 	public boolean containsResItem(String name)
 	{
 		return getResItem(name)!=null ;
@@ -140,10 +138,12 @@ public class ResDir //Comparable<ResDir>
 		String extn = n.substring(k+1).toLowerCase() ;
 		
 		File dirf = getResDir();
-		if(!dirf.exists())
-			dirf.mkdirs();
+		//if(!dirf.exists())
+		//	dirf.mkdirs();
 		
 		File tarf = new File(dirf,name+"."+extn) ;
+		if(!tarf.getParentFile().exists())
+			tarf.getParentFile().mkdirs() ;
 		f.write(tarf);
 		if(oldri!=null)
 		{

@@ -2610,7 +2610,8 @@ public class Convert
 			String pv = req.getParameter(pn);
 			if (isNullOrEmpty(pv))
 			{
-				out.write("input " + pn + " is empty");
+				if(out!=null)
+					out.write("input " + pn + " is empty");
 				return false;
 			}
 		}
@@ -2625,7 +2626,8 @@ public class Convert
 			String pv = req.getParameter(pn);
 			if (isNullOrEmpty(pv))
 			{
-				out.write(errinf);
+				if(out!=null)
+					out.write(errinf);
 				return false;
 			}
 		}

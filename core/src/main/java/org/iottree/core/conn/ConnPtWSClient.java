@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 public class ConnPtWSClient extends ConnPtMSG
 {
-	ILogger log = LoggerManager.getLogger(ConnPtWSClient.class) ;
+	static ILogger log = LoggerManager.getLogger(ConnPtWSClient.class) ;
 	
 	String url = null;
 

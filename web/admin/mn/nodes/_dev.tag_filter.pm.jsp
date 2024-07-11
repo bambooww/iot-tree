@@ -108,6 +108,12 @@ if(pds_tag != null)
 %>
     </div>
   </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"><w:g>output</w:g>:</label>
+    <div class="layui-input-inline" style="width:150px;">
+    <input type="checkbox" id="_b_flat_out" name="_b_flat_out"  lay-skin="primary"  lay-filter="_b_flat_out" class="layui-input" >List out
+    </div>
+  </div>
 <script>
 
 var prjid = "<%=prjid%>" ;
@@ -204,9 +210,9 @@ function get_pm_jo()
 	let c_exts = get_chk_vals("c_exts") ;
 	let tag_exts_en = $("#tag_exts_en").prop("checked") ;
 	let tag_exts = get_chk_vals("tag_exts") ;
-	
+	let _b_flat_out = $("#_b_flat_out").prop("checked");
 	return {sub_root_path:sub_root_path,c_tps_en:c_tps_en,c_tps:c_tps,c_exts_en:c_exts_en,c_exts:c_exts,
-			tag_exts_en:tag_exts_en,tag_exts:tag_exts,tag_inc_sys:tag_inc_sys} ;
+			tag_exts_en:tag_exts_en,tag_exts:tag_exts,tag_inc_sys:tag_inc_sys,_b_flat_out:_b_flat_out} ;
 }
 
 
@@ -221,6 +227,8 @@ function set_pm_jo(jo)
 	set_chk_vals("c_exts",jo.c_exts||[]) ;
 	$("#tag_exts_en").prop("checked",jo.tag_exts_en||false) ;
 	set_chk_vals("tag_exts",jo.tag_exts||[]) ;
+	
+	$("#_b_flat_out").prop("checked",jo._b_flat_out||false) ;
 }
 
 function get_pm_size()

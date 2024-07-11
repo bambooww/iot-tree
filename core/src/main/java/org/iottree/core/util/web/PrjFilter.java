@@ -56,6 +56,7 @@ public class PrjFilter implements Filter
 		//System.out.println("uri="+uri +"  qs="+qs);
 		if(uri.startsWith("/_ws"))
 		{
+			session.setAttribute("ClientIP", req.getRemoteAddr());
 			chain.doFilter(request, response);
 			return ;
 		}

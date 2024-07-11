@@ -69,6 +69,8 @@ public class Config
 	
 	static String dataDirBase = null ;
 	
+	static String libDirBase = null ;
+	
 	static
 	{
 		configFileBase = System.getProperties().getProperty("user.dir");
@@ -358,7 +360,11 @@ public class Config
 				return dataDirBase;
 			
 		return dataFileBase + "/data/";
-		
+	}
+	
+	public static String getLibDirBase()
+	{
+		return libDirBase ;
 	}
 	
 	public static File getDataBackupDir()
@@ -565,8 +571,34 @@ public class Config
 				{
 					dataFileBase = f.getParentFile().getCanonicalPath() +"/";
 				}
-				
+				System.out.println("Data Dir Base="+dataDirBase) ;
 				System.setProperty("iottree.data_dir",getDataDirBase());
+				
+				tdata = confRootEle.getAttribute("lib_dir") ;
+				if(Convert.isNotNullEmpty(tdata))
+				{
+					tdata = tdata.replace('\\', '/');
+					File fp = null ;
+					if(tdata.startsWith("/")||tdata.indexOf(':')>0)
+					{
+						fp = new File(tdata) ;
+					}
+					else
+					{
+						fp = new File(configFileBase+"/"+tdata) ;
+					}
+					
+					fp.mkdirs();
+					libDirBase = fp.getCanonicalPath()+"/" ;
+					libDirBase = libDirBase.replace('\\', '/');
+				}
+				else
+				{
+					libDirBase = f.getParentFile().getCanonicalPath() +"/lib/";
+					libDirBase = libDirBase.replace('\\', '/');
+				}
+				System.out.println("Lib Dir Base="+libDirBase) ;
+				
 				File tmpdir = new File(getDataDirBase()+"/tmp/") ;
 				if(!tmpdir.exists())
 					tmpdir.mkdirs() ;
@@ -575,7 +607,7 @@ public class Config
 				if(!javaiotemp.exists())
 					javaiotemp.mkdirs() ;
 				System.setProperty("java.io.tmpdir",javaiotemp.getCanonicalPath());
-				log.info("Data File Base="+dataFileBase) ;
+				System.out.println("Data File Base="+dataFileBase) ;
 				
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));
 				appTitle = confRootEle.getAttribute("title");

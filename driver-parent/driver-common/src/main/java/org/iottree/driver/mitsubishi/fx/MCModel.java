@@ -10,7 +10,7 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.DevAddr.IAddrDef;
 import org.iottree.core.UAVal.ValTP;
 
-public class FxModel extends DevDriver.Model
+public class MCModel extends DevDriver.Model
 {
 	public static final int TP_X_START = 0x80 ; //128
 	public static final int TP_S_START = 0x00 ; //S 为状态元件 
@@ -56,7 +56,7 @@ public class FxModel extends DevDriver.Model
 	
 	private LinkedHashMap<String,FxAddrDef> prefix2addrdef = new LinkedHashMap<>() ;
 	
-	public FxModel(String name, String t)
+	public MCModel(String name, String t)
 	{
 		super(name, t);
 	}
@@ -179,20 +179,20 @@ public class FxModel extends DevDriver.Model
 	}
 }
 
-class FxModel_FX3U extends FxModel
+class FxModel_FX3U extends MCModel
 {
 	// read write test ok
 	public FxModel_FX3U()
 	{
 		super("fx3u", "FX3U");
 
-		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(FxModel.TP_X_START,"Inputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},false).EXT_asBaseValStart(0x8CA0).asOctal(true).asValBit(true))) ;
+		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(MCModel.TP_X_START,"Inputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},false).EXT_asBaseValStart(0x8CA0).asOctal(true).asValBit(true))) ;
 		setAddrDef(new FxAddrDef("Y").asValTpSeg(new FxAddrSeg(TP_Y_START,"Outputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x8BC0).EXT_asBaseAddrForceOnOff(0x5E00).asOctal(true).asValBit(true).asBaseAddrForceOnOff(TP_Y_FORCE_ONOFF))) ;
 		setAddrDef(new FxAddrDef("M").asValTpSeg(new FxAddrSeg(TP_MC_START,"Auxiliary Relays",0,7679,4,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x8800).EXT_asBaseAddrForceOnOff(0x4000).asValBit(true).asBaseAddrForceOnOff(TP_M_FORCE_ONOFF))
 				.asValTpSeg(new FxAddrSeg(TP_MS_START,"Special Aux. Relays",8000,8511,4,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x8C00).EXT_asBaseAddrForceOnOff(0x6000).asValBit(true).asBaseValStart(8000).asBaseAddrForceOnOff(TP_MS_FORCE_ONOFF))
 				) ;
 		
-		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(FxModel.TP_S_START,"States",0,4095,4,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x8CE0).EXT_asBaseAddrForceOnOff(0x6700).asValBit(true)) 
+		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(MCModel.TP_S_START,"States",0,4095,4,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x8CE0).EXT_asBaseAddrForceOnOff(0x6700).asValBit(true)) 
 				) ;
 		
 		setAddrDef(new FxAddrDef("TS").asValTpSeg(new FxAddrSeg(TP_TC_START,"Timer Contacts",0,511,3,new ValTP[] {ValTP.vt_bool},false).EXT_asBaseValStart(0x8C60).asValBit(true))) ; 
@@ -220,17 +220,17 @@ class FxModel_FX3U extends FxModel
 }
 
 //not test
-class FxModel_FX2N extends FxModel
+class FxModel_FX2N extends MCModel
 {
 
 	public FxModel_FX2N()
 	{
 		super("fx2n","FX2N");
 		
-		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(FxModel.TP_S_START,"States",0,999,3,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x0280).EXT_asBaseAddrForceOnOff(0x1400).asValBit(true)) 
+		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(MCModel.TP_S_START,"States",0,999,3,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x0280).EXT_asBaseAddrForceOnOff(0x1400).asValBit(true)) 
 				) ;
 		
-		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(FxModel.TP_X_START,"Inputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},false).EXT_asBaseValStart(0x0240).asOctal(true).asValBit(true))) ;
+		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(MCModel.TP_X_START,"Inputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},false).EXT_asBaseValStart(0x0240).asOctal(true).asValBit(true))) ;
 		setAddrDef(new FxAddrDef("Y").asValTpSeg(new FxAddrSeg(TP_Y_START,"Outputs",0,0xff,3,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x0180).EXT_asBaseAddrForceOnOff(0x0C00).asOctal(true).asValBit(true).asBaseAddrForceOnOff(TP_Y_FORCE_ONOFF))) ;
 		
 		setAddrDef(new FxAddrDef("M").asValTpSeg(new FxAddrSeg(TP_MC_START,"Auxiliary Relays",0,3071,4,new ValTP[] {ValTP.vt_bool},true).EXT_asBaseValStart(0x0000).EXT_asBaseAddrForceOnOff(0x0000).asValBit(true).asBaseAddrForceOnOff(TP_M_FORCE_ONOFF))
@@ -260,7 +260,7 @@ class FxModel_FX2N extends FxModel
 }
 
 // not test
-class FxModel_FX0N extends FxModel
+class FxModel_FX0N extends MCModel
 {
 
 	public FxModel_FX0N()
@@ -268,10 +268,10 @@ class FxModel_FX0N extends FxModel
 		super("fx0n", "FX0N");
 		
 
-		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(FxModel.TP_S_START,"States",0,127,3,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
+		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(MCModel.TP_S_START,"States",0,127,3,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
 				) ;
 		
-		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(FxModel.TP_X_START,"Inputs",0,0x4f,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
+		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(MCModel.TP_X_START,"Inputs",0,0x4f,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
 		setAddrDef(new FxAddrDef("Y").asValTpSeg(new FxAddrSeg(TP_Y_START,"Outputs",0,0x4f,3,new ValTP[] {ValTP.vt_bool},true).asOctal(true).asValBit(true).asBaseAddrForceOnOff(TP_Y_FORCE_ONOFF))) ;
 		
 		setAddrDef(new FxAddrDef("M").asValTpSeg(new FxAddrSeg(TP_MC_START,"Auxiliary Relays",0,0511,4,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_M_FORCE_ONOFF))
@@ -304,7 +304,7 @@ class FxModel_FX0N extends FxModel
 	
 }
 
-class FxModel_FX0 extends FxModel
+class FxModel_FX0 extends MCModel
 {
 
 	public FxModel_FX0()
@@ -312,10 +312,10 @@ class FxModel_FX0 extends FxModel
 		super("fx0", "FX0");
 		
 
-		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(FxModel.TP_S_START,"States",0,63,2,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
+		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(MCModel.TP_S_START,"States",0,63,2,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
 				) ;
 		
-		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(FxModel.TP_X_START,"Inputs",0,0xF,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
+		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(MCModel.TP_X_START,"Inputs",0,0xF,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
 		setAddrDef(new FxAddrDef("Y").asValTpSeg(new FxAddrSeg(TP_Y_START,"Outputs",0,0xD,3,new ValTP[] {ValTP.vt_bool},true).asOctal(true).asValBit(true).asBaseAddrForceOnOff(TP_Y_FORCE_ONOFF))) ;
 		
 		setAddrDef(new FxAddrDef("M").asValTpSeg(new FxAddrSeg(TP_MC_START,"Auxiliary Relays",0,0511,4,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_M_FORCE_ONOFF))
@@ -351,7 +351,7 @@ class FxModel_FX0 extends FxModel
 }
 
 
-class FxModel_FX extends FxModel
+class FxModel_FX extends MCModel
 {
 
 	public FxModel_FX()
@@ -359,10 +359,10 @@ class FxModel_FX extends FxModel
 		super("fx","FX");
 		
 
-		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(FxModel.TP_S_START,"States",0,999,3,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
+		setAddrDef(new FxAddrDef("S").asValTpSeg(new FxAddrSeg(MCModel.TP_S_START,"States",0,999,3,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_S_FORCE_ONOFF)) 
 				) ;
 		
-		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(FxModel.TP_X_START,"Inputs",0,0xFF,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
+		setAddrDef(new FxAddrDef("X").asValTpSeg(new FxAddrSeg(MCModel.TP_X_START,"Inputs",0,0xFF,3,new ValTP[] {ValTP.vt_bool},false).asOctal(true).asValBit(true))) ;
 		setAddrDef(new FxAddrDef("Y").asValTpSeg(new FxAddrSeg(TP_Y_START,"Outputs",0,0xFF,3,new ValTP[] {ValTP.vt_bool},true).asOctal(true).asValBit(true).asBaseAddrForceOnOff(TP_Y_FORCE_ONOFF))) ;
 		
 		setAddrDef(new FxAddrDef("M").asValTpSeg(new FxAddrSeg(TP_MC_START,"Auxiliary Relays",0,1535,4,new ValTP[] {ValTP.vt_bool},true).asValBit(true).asBaseAddrForceOnOff(TP_M_FORCE_ONOFF))

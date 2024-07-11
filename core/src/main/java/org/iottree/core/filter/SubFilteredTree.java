@@ -443,6 +443,61 @@ public class SubFilteredTree
 			return null ;
 		return jarr;
 	}
+	
+	
+	public JSONArray RT_getFilteredJArrFlat()
+	{
+		UANodeOCTagsCxt rootn = getRootNode();
+		if(rootn==null)
+			return null ;
+		
+		JSONArray jarr = new JSONArray() ;
+		RT_renderToJOFlat(rootn.getNodePathCxt()+".",rootn,jarr);
+		return jarr ;
+	}
+
+	private void RT_renderToJOFlat(String rootp,UANodeOCTagsCxt node,JSONArray flat_jarr)
+	{
+		getTagsJarrFlat(rootp,node,flat_jarr);
+
+		List<UANodeOCTagsCxt> subtgs = node.getSubNodesCxt();
+		if (subtgs == null || subtgs.size() <= 0)
+			return ;
+
+		for (UANodeOCTagsCxt subtg : subtgs)
+		{
+			if(!checkContNodeFit(subtg))
+				continue ;
+			
+			RT_renderToJOFlat(rootp,subtg,flat_jarr) ;
+		}
+	}
+	
+	private void getTagsJarrFlat(String rootp,UANodeOCTagsCxt node,JSONArray flat_jarr)
+	{
+		List<UATag> tags = null;
+		
+		if(this.tagIncSys) //
+			tags = node.listTags();
+		else
+			tags = node.getNorTags() ;
+		if(tags==null||tags.size()<=0)
+			return ;
+
+		for (UATag tg : tags)
+		{
+			if(!checkTagFit(tg))
+				continue ;
+			JSONObject tmpjo = tg.RT_toJson(true, false, false);
+			String tagp = tg.getNodeCxtPathInPrj() ;
+			tmpjo.remove("uid") ;
+			//if(uid.startsWith(rootp))
+			//	uid = uid.substring(rootp.length()) ;
+			tmpjo.put("tag",tagp) ;
+			flat_jarr.put(tmpjo);	
+		}
+
+	}
 
 	static void UTIL_transExtPropsToJO(JSONObject tar, JSONObject ext_jo)
 	{

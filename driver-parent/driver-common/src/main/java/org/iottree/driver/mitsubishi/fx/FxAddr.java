@@ -21,7 +21,7 @@ import org.iottree.driver.mitsubishi.Addr;
  */
 public class FxAddr extends Addr
 {
-	FxModel fxModel ;
+	MCModel fxModel ;
 	
 	transient FxAddrDef addrDef = null ;
 	
@@ -30,7 +30,7 @@ public class FxAddr extends Addr
 	public FxAddr()
 	{}
 	
-	FxAddr(String addr_str,ValTP vtp,FxModel fx_m,String prefix,int addr_num,boolean b_valbit,int digit_num,boolean b_oct)
+	FxAddr(String addr_str,ValTP vtp,MCModel fx_m,String prefix,int addr_num,boolean b_valbit,int digit_num,boolean b_oct)
 	{
 		super(addr_str,vtp,prefix,addr_num,b_valbit,digit_num,b_oct) ;
 		this.fxModel = fx_m ;

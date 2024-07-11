@@ -1,10 +1,14 @@
 package org.iottree.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.*;
 import javax.servlet.ServletOutputStream;
@@ -12,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.web.Mime;
@@ -358,6 +363,22 @@ public class UAManager //implements IResCxt
 		return true;
 	}
 	
+	public boolean exportPrj(String prjid,OutputStream out) throws IOException
+	{
+		UAPrj p = this.getPrjById(prjid) ;
+		if(p==null)
+			return false;
+		
+		List<File> fs = Arrays.asList(UAManager.getPrjFile(prjid),UAManager.getPrjFileSubDir(prjid)) ;
+		HashMap<String,String> metam = new HashMap<>() ;
+		metam.put("tp", "prj") ;
+		metam.put("prjid", prjid) ;
+		String metatxt=  Convert.transMapToPropStr(metam) ;
+		
+		ZipUtil.zipOut(metatxt,fs,out) ;
+		return true;
+	}
+	
 	
 	public boolean backupPrj(String prjid) throws IOException
 	{
@@ -422,6 +443,49 @@ public class UAManager //implements IResCxt
 		
 		return rets ;
 	}
+	
+	private List<IdName> parsePrjZipFile(byte[] zipbs,String id) throws Exception
+	{
+		ArrayList<IdName> rets =new ArrayList<>() ;
+		
+		List<String> ens = ZipUtil.readZipEntrys(zipbs) ;
+		for(String en:ens)
+		{
+			if(!en.startsWith("prj_"))
+				continue ;
+			if(!en.endsWith(".xml"))
+				continue ;
+			if(en.indexOf("/")>0)
+				continue;
+			if(en.indexOf("\\")>0)
+				continue;
+			//find prj
+			String prjid = en.substring(4,en.length()-4) ;
+			if(Convert.isNotNullEmpty(id)&&!id.equals(prjid))
+				continue;
+			//chk id
+//			StringBuilder failedr = new StringBuilder() ;
+//			if(!Convert.checkVarName(prjid, true,failedr))
+//			{
+//				continue ;
+//			}
+			
+			String txt = ZipUtil.readZipTxt(new ByteArrayInputStream(zipbs), en, "UTF-8");
+			if(txt==null)
+				continue ;
+			
+			XmlData tmpxd = XmlData.parseFromReader(new StringReader(txt)) ;
+			UAPrj r = new UAPrj() ;
+			if(!DataTranserXml.injectXmDataToObj(r, tmpxd))
+				continue ;
+			String n = r.getName() ;
+			rets.add(new IdName(prjid,n).withTitle(r.getTitle())) ;
+		}
+		
+		return rets ;
+	}
+	
+	
 	
 	public boolean importPrjZipFile(File zipf,String id,String newid,String newname,String newtitle) throws Exception
 	{
@@ -501,6 +565,82 @@ public class UAManager //implements IResCxt
 			p.RT_init(true, true);
 			this.prjs.add(p) ;
 		}
+		this.updatePrjList();	
+		p.constructNodeTree();
+		return true;
+	}
+	
+	public boolean updateOrAddPrj(byte[] zipbs,String prjname,StringBuilder failedr) throws Exception
+	{
+		UAPrj np = this.getPrjByName(prjname) ;
+		String prjid =null;
+		if(np!=null)
+		{
+			if(np.RT_isRunning())
+			{
+				failedr.append("prj "+prjname+" is running") ;
+				return false;
+			}
+			this.backupPrj(np.getId()) ; //may do recover
+			this.delPrj(np.getId());
+			prjid = np.getId() ;
+		}
+		
+		List<IdName> tmpidns = parsePrjZipFile(zipbs,null) ;
+		if(tmpidns==null||tmpidns.size()<=0)
+		{
+			failedr.append("invalid zip fmt") ;
+			return false;
+		}
+		
+		String id = tmpidns.get(0).getId() ;
+		
+		if(Convert.isNullOrEmpty(prjid))
+			prjid = CompressUUID.createNewId(); 
+		
+		List<String> ens = ZipUtil.readZipEntrys(zipbs) ;
+		HashMap<String,String> outens = new HashMap<>() ;
+		boolean bvalid =false;
+		String prefix = "prj_"+id ;
+		for(String en:ens)
+		{
+			//System.out.println(" entry :"+en) ;
+			if(en.startsWith("prj_") && en.endsWith(".xml")&&en.indexOf('/')<0&&en.indexOf('\\')<0)
+			{
+				if(Convert.isNotNullEmpty(prjid))
+					outens.put(en,"prj_"+prjid+".xml") ;
+				else
+					outens.put("en","");
+				bvalid= true;
+				continue ;
+			}
+			
+			if(en.startsWith(prefix))
+			{
+				if(Convert.isNotNullEmpty(prjid))
+				{
+					String taren = "prj_"+prjid+en.substring(prefix.length()) ;
+					outens.put(en, taren) ;
+				}
+				else
+					outens.put(en,"") ;
+			}
+			//find prj
+		}
+		if(!bvalid)
+			return false;
+		
+		ZipUtil.readZipOut(new ByteArrayInputStream(zipbs), outens, UAManager.getPrjDataDir());
+		UAPrj p = loadPrj(prjid) ;
+		if(p==null)
+			return false;
+			
+		p.id = prjid ;
+		savePrj(p) ;
+		
+		p.RT_init(true, true);
+		this.prjs.add(p) ;
+		
 		this.updatePrjList();	
 		p.constructNodeTree();
 		return true;

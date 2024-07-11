@@ -121,11 +121,47 @@ public class ZipUtil
 		return rets ;
 	}
 	
+	public static List<String> readZipEntrys(InputStream in) throws IOException
+	{
+		ZipEntry ze;
+		ArrayList<String> rets = new ArrayList<>() ;
+
+		try (ZipInputStream zin = new ZipInputStream(in);)
+		{
+			while ((ze = zin.getNextEntry()) != null)
+			{
+				if (ze.isDirectory())
+				{
+					rets.add(ze.getName()) ;
+				}
+				else
+				{
+					rets.add(ze.getName()) ;
+				}
+			}
+		}
+		return rets ;
+	}
+	
+	public static List<String> readZipEntrys(byte[] bs) throws IOException
+	{
+		return readZipEntrys(new ByteArrayInputStream(bs)) ;
+	}
+	
 	
 	public static String readZipTxt(File file,String entryn,String encoding) throws IOException
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
 		if(!readZipOut(file,entryn,baos))
+			return null ;
+		byte[] bs = baos.toByteArray() ;
+		return new String(bs,encoding) ;
+	}
+	
+	public static String readZipTxt(InputStream inputs,String entryn,String encoding) throws IOException
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
+		if(!readZipOut(inputs,entryn,baos))
 			return null ;
 		byte[] bs = baos.toByteArray() ;
 		return new String(bs,encoding) ;
@@ -140,13 +176,20 @@ public class ZipUtil
 		return baos.toByteArray() ;
 	}
 	
-	
 	public static boolean readZipOut(File file,String entryn,OutputStream outs) throws IOException
+	{
+		try (ZipFile zf = new ZipFile(file);
+				InputStream in = new BufferedInputStream(new FileInputStream(file)))
+		{
+			return readZipOut(in,entryn,outs) ;
+		}
+	}
+	
+	public static boolean readZipOut(InputStream in,String entryn,OutputStream outs) throws IOException
 	{
 		ZipEntry ze;
 
-		try (ZipFile zf = new ZipFile(file);
-				InputStream in = new BufferedInputStream(new FileInputStream(file));
+		try (
 				ZipInputStream zin = new ZipInputStream(in);)
 		{
 			byte[] buf = new byte[1024] ;
@@ -161,10 +204,10 @@ public class ZipUtil
 					return false ;
 				}
 				
-				try(InputStream tmpins = zf.getInputStream(ze);)
+				//try(InputStream tmpins = // zf.getInputStream(ze);)
 				{
 					int rc ;
-					while((rc=tmpins.read(buf))>0)
+					while((rc=zin.read(buf))>0)
 					{
 						outs.write(buf, 0, rc);
 					}
@@ -179,12 +222,18 @@ public class ZipUtil
 	
 	public static void readZipOut(File file,Map<String,String> entrys,File outdir) throws IOException
 	{
-
+		try (//ZipFile zf = new ZipFile(file);
+				InputStream in = new BufferedInputStream(new FileInputStream(file)))
+				{
+					readZipOut(in,entrys,outdir) ;
+				}
+	}
+	
+	public static void readZipOut(InputStream in,Map<String,String> entrys,File outdir) throws IOException
+	{
 		ZipEntry ze;
 
-		try (ZipFile zf = new ZipFile(file);
-				InputStream in = new BufferedInputStream(new FileInputStream(file));
-				ZipInputStream zin = new ZipInputStream(in);)
+		try (ZipInputStream zin = new ZipInputStream(in);)
 		{
 			byte[] buf = new byte[1024] ;
 			while ((ze = zin.getNextEntry()) != null)
@@ -195,7 +244,6 @@ public class ZipUtil
 				
 				if (ze.isDirectory())
 				{
-					
 					continue ;
 				}
 				String tar_en = entrys.get(en) ;
@@ -206,19 +254,15 @@ public class ZipUtil
 				
 				if(!outf.getParentFile().exists())
 					outf.getParentFile().mkdirs(); 
-				
-				try(InputStream tmpins = zf.getInputStream(ze);
-						FileOutputStream fos = new FileOutputStream(outf) ;
-						)
+
+				try(FileOutputStream fos = new FileOutputStream(outf) ;)
 				{
 					int rc ;
-					while((rc=tmpins.read(buf))>0)
+					while((rc=zin.read(buf))>0)
 					{
 						fos.write(buf, 0, rc);
 					}
 				}
-				
-				
 			}
 		}
 		// zin.closeEntry();

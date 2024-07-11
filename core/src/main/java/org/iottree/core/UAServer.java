@@ -6,6 +6,7 @@ import java.util.List;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.service.ServiceManager;
 import org.iottree.core.sim.SimManager;
+import org.iottree.core.station.StationLocal;
 import org.iottree.core.ws.WSHelper;
 
 public class UAServer
@@ -60,10 +61,24 @@ public class UAServer
 		
 		System.out.println("**starting connection provider") ;
 		ConnProvider.getAllConnProviders();
+		
+		StationLocal sl = StationLocal.getInstance();
+		if(sl!=null)
+		{
+			System.out.println("**starting station local ["+sl.getStationId()+"]") ;
+			sl.RT_start();
+		}
 	}
 	
 	public static void beforeServerStop()
 	{
+		StationLocal sl = StationLocal.getInstance();
+		if(sl!=null)
+		{
+			System.out.println("**stopping station local ["+sl.getStationId()+"]") ;
+			sl.RT_stop();
+		}
+		
 		System.out.println("**stopping connection provider") ;
 		for(ConnProvider cp:ConnProvider.getAllConnProviders())
 		{

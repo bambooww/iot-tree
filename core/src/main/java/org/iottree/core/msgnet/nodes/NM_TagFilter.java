@@ -7,7 +7,9 @@ import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.jt.JSONTemp;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 /**
  * 在一个路径下，根据一定条件进行标签内容的过滤，形成一颗子树
@@ -16,7 +18,7 @@ import org.json.JSONObject;
  */
 public class NM_TagFilter extends MNNodeMid implements ILang
 {
-	
+	boolean bFlatOut = false;
 	
 	@Override
 	public String getColor()
@@ -80,13 +82,16 @@ public class NM_TagFilter extends MNNodeMid implements ILang
 	@Override
 	public JSONObject getParamJO()
 	{
-		return getFilterTree().toDefJO();
+		JSONObject jo = getFilterTree().toDefJO();
+		jo.put("_b_flat_out", this.bFlatOut) ;
+		return jo ;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
 		getFilterTree().fromDefJO(jo) ;
+		this.bFlatOut = jo.optBoolean("_b_flat_out",false) ;
 	}
 	
 	// --------------
@@ -94,9 +99,19 @@ public class NM_TagFilter extends MNNodeMid implements ILang
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		JSONObject jo = getFilterTree().RT_getFilteredJO() ;
-		//System.out.println(jo.toString(2)) ;
-		MNMsg outm = new MNMsg().asPayload(jo) ;
+		MNMsg outm = null ;
+		if(this.bFlatOut)
+		{
+			JSONArray jo = getFilterTree().RT_getFilteredJArrFlat() ;
+			//System.out.println(jo.toString(2)) ;
+			outm = new MNMsg().asPayload(jo) ;
+		}
+		else
+		{
+			JSONObject jo = getFilterTree().RT_getFilteredJO() ;
+			//System.out.println(jo.toString(2)) ;
+			outm = new MNMsg().asPayload(jo) ;
+		}
 		return RTOut.createOutAll(outm) ;
 	}
 }

@@ -54,8 +54,7 @@ public class WSHmiRT extends WSServer
 	static
 	{
 
-		// System.out.println(" hml ws class is loading
-		// ................>>>>>>>>>>>>>>>>>>>>>>") ;
+		//System.out.println(" hml ws class is loading................>>>>>>>>>>>>>>>>>>>>>>") ;
 	}
 
 	@OnOpen

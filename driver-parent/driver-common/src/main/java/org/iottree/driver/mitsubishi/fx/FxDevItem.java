@@ -80,7 +80,7 @@ public class FxDevItem
 		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;
 		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 100) ;
 		
-		FxModel fx_m = (FxModel)uaDev.getDrvDevModel() ;
+		MCModel fx_m = (MCModel)uaDev.getDrvDevModel() ;
 		
 		
 		//create cmd and address mapping

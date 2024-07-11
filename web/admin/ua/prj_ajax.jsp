@@ -85,10 +85,19 @@ case "stop":
 		return ;
 	}
 	if("start".equals(op))
-		dc.RT_start();
+		if(dc.RT_start())
+		{
+			out.print(op+" ok") ;
+		}
+		else
+		{
+			out.print(op+" failed,cannot start prj in platform") ;
+		}
 	else
+	{
 		dc.RT_stop();
-	out.print(op+" ok") ;
+		out.print(op+" ok") ;
+	}
 	break ;
 case "share":
 	XmlData tmpxd = XmlData.parseFromHttpRequest(request, "dx_") ;

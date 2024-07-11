@@ -11,7 +11,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
 import org.iottree.driver.mitsubishi.fx.FxAddrDef;
 import org.iottree.driver.mitsubishi.fx.FxAddrSeg;
-import org.iottree.driver.mitsubishi.fx.FxModel;
+import org.iottree.driver.mitsubishi.fx.MCModel;
 
 public abstract class Addr extends DevAddr implements Comparable<Addr>
 {
@@ -147,7 +147,7 @@ public abstract class Addr extends DevAddr implements Comparable<Addr>
 	{
 		if(dev==null)
 			throw new IllegalArgumentException("no UADev") ;
-		FxModel fx_m = (FxModel)dev.getDrvDevModel() ;
+		MCModel fx_m = (MCModel)dev.getDrvDevModel() ;
 		if(fx_m==null)
 			throw new IllegalArgumentException("no FxModel") ;
 		List<String> ss = splitPrefixNum(str,failedr) ;
@@ -165,7 +165,7 @@ public abstract class Addr extends DevAddr implements Comparable<Addr>
 		List<String> ss = splitPrefixNum(addr, failedr) ;
 		if(ss==null)
 			return new ChkRes(-1,addr,vtp,"Invalid FxAddr="+addr);
-		FxModel fxm = (FxModel)dev.getDrvDevModel() ;
+		MCModel fxm = (MCModel)dev.getDrvDevModel() ;
 		
 		FxAddrDef addrdef = fxm.getAddrDef(ss.get(0)) ;
 		if(addrdef==null)
@@ -196,7 +196,7 @@ public abstract class Addr extends DevAddr implements Comparable<Addr>
 	{
 		if(dev==null)
 			return null ;
-		FxModel fx_m = (FxModel)dev.getDrvDevModel() ;
+		MCModel fx_m = (MCModel)dev.getDrvDevModel() ;
 		if(fx_m==null)
 			return null ;
 		StringBuilder failedr = new StringBuilder() ;

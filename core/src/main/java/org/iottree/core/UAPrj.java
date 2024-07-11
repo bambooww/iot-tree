@@ -29,6 +29,7 @@ import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.router.RouterManager;
+import org.iottree.core.station.PlatformManager;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.record.RecManager;
 import org.iottree.core.task.Task;
@@ -890,6 +891,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@JsDef
 	synchronized public boolean RT_start()
 	{
+		if(PlatformManager.isInPlatform())
+			return false;
+		
 		if (rtTh != null)
 			return true;
 		// rtTh = new Thread(this::prjRun,"iottree-prj-"+this.getName());
@@ -1583,4 +1587,6 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		RecManager.getInstance(this).RT_fireUATagChanged(tag);
 	}
+	
+	
 }

@@ -175,6 +175,7 @@ public class MNManager
 		registerItem(new NM_FileReader(),cat) ;
 		registerItem(new NM_FileWriter(),cat) ;
 		registerItem(new DBSql(),cat) ;
+		registerItem("org.iottree.ext.msg_net.InfluxDB_M",cat) ;
 		
 		cat = registerCat(new MNCat("_sim")) ;
 		registerItem("org.iottree.pro.modbuss.MSBus_M",cat) ;

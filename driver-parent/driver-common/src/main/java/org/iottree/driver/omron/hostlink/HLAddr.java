@@ -10,7 +10,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.driver.mitsubishi.fx.FxAddr;
 import org.iottree.driver.mitsubishi.fx.FxAddrDef;
 import org.iottree.driver.mitsubishi.fx.FxAddrSeg;
-import org.iottree.driver.mitsubishi.fx.FxModel;
+import org.iottree.driver.mitsubishi.fx.MCModel;
 
 /**
  * like CIO00.00    W8

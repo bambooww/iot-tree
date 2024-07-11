@@ -200,7 +200,26 @@ public class MNMsg implements IMNCxtPk
 			 return tmpjo ;
 		 }
 		 
-		 throw new RuntimeException("not JSONObject payload") ;
+		 //throw new RuntimeException("not JSONObject payload") ;
+		 return null ;
+	}
+	
+	public JSONArray getPayloadJArr(JSONArray def_v)
+	{
+		 if(payload==null)
+	        	return def_v;
+		 if(payload instanceof JSONArray)
+			 return (JSONArray)payload ;
+		 
+		 if(payload instanceof String)
+		 {
+			 String pstr = (String)payload ;
+			 JSONArray tmpjo = new JSONArray(pstr) ;
+			 return tmpjo ;
+		 }
+		 
+		 //throw new RuntimeException("not JSONArray payload") ;
+		 return null ;
 	}
 	
 	public int getPayloadInt32()

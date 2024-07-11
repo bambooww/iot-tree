@@ -15,5 +15,6 @@
 	    ,{"n":"bus"    ,   "fn":"bus.svg"}
 	    ,{"n":"filer"    ,   "fn":"file_r.svg"}
 	    ,{"n":"filew"    ,   "fn":"file_w.svg"}
+	    ,{"n":"influxdb"    ,   "fn":"influxdb.svg"}
 	]
 }

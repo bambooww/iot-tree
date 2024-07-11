@@ -3,5 +3,6 @@
 
   <dd_node id="1" name="producer" name_cn="生产者" name_en="Producer" />
   <dd_node id="1" name="consumer" name_cn="消费者" name_en="Consumer" />
+  <dd_node id="1" name="keep_intv" name_cn="保持间隔" name_en="Keep Interval" />
   
 </dd_class>
