@@ -100,7 +100,8 @@ public class SourceJDBC extends Source
 			tmps = tmps.replace("{$port}", ""+port) ;
 			tmps = tmps.replace("{$db_name}", dbname) ;
 			
-			String fp =  Config.getDataDirBase()+"/db_sqlite/" ;
+			//String fp =  Config.getDataDirBase()+"db_sqlite/" ;
+			String fp =  Config.getDataDynDirBase()+"db_sqlite/" ;
 			File f = new File(fp) ;
 			if(!f.exists())
 				f.mkdirs() ;

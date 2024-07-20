@@ -50,7 +50,7 @@ String host = cpt.getHost() ;
 String port  = cpt.getPortStr() ;
 int connto = cpt.getConnTimeout();
 String cp_tp = cp.getProviderType() ;
-
+long read_no_to = cpt.getReadNoDataTimeout();
 %>
 <html>
 <head>
@@ -92,9 +92,13 @@ dlg.resize_to(800,500);
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>conn,timeout</wbt:g>:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width: 150px;">
       <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  class="layui-input">
     </div>
+    <div class="layui-form-mid">Read No Data <wbt:g>timeout</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width: 150px;">
+	    <input type="number" id="read_no_to" name="read_no_to" class="layui-input" value="<%=read_no_to%>">
+	  </div>
   </div>
     <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>

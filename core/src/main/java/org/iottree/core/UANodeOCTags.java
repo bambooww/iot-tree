@@ -950,6 +950,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		if(mv_c>0)
 		{
+			tar.constructNodeTree() ;
 			this.save();
 		}
 		return mv_c ;

@@ -14,6 +14,7 @@
 /.settings/
 /.vscode/
 /web/opencharts/
+/web/platform/
 /server/tomcat/
 /server/tomcat8/
 

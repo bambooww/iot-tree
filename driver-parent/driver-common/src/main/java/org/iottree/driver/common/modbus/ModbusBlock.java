@@ -462,6 +462,8 @@ public class ModbusBlock
 		return ;
 	}
 	
+	private transient long lastReadOkDT = -1; 
+	
 	private boolean runReadCmds(IConnEndPoint ep) throws Exception
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
@@ -498,6 +500,7 @@ public class ModbusBlock
 				transMem2Addrs(addrs);
 				
 				chkSuccessiveFailed(false) ;
+				lastReadOkDT = System.currentTimeMillis() ;
 			}
 			else if(mc instanceof ModbusCmdReadWords)
 			{
@@ -522,9 +525,15 @@ public class ModbusBlock
 				
 				transMem2Addrs(addrs);
 				chkSuccessiveFailed(false) ;
+				lastReadOkDT = System.currentTimeMillis() ;
 			}
 		}
 		return ret ;
+	}
+	
+	public long getLastReadOkDT()
+	{
+		return this.lastReadOkDT ;
 	}
 	
 	private boolean runReadCmdsErr() //throws Exception

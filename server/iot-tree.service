@@ -1,0 +1,15 @@
+[Unit]
+Description=IOT-Tree Server
+After=network.target
+
+[Service]
+ExecStart=/home/teamhd/iot-tree/iot-tree.sh linux_nohup 
+WorkingDirectory=/home/teamhd/iot-tree
+Restart=always
+StandardOutput=append:/home/teamhd/iot-tree/log/syslog.log
+StandardError=append:/home/teamhd/iot-tree/log/syslog.log
+SyslogIdentifier=iot-tree
+
+[Install]
+WantedBy=multi-user.target
+

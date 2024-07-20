@@ -380,6 +380,8 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	private transient long lastUsedDT = 0 ;
 	
+	
+	
 	transient private DevDriver bindedDrv = null ;
 	
 	/**

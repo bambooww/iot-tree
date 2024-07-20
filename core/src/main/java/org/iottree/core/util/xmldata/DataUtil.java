@@ -281,6 +281,11 @@ public class DataUtil
 		return intToBytes(Float.floatToIntBits(f),ByteOrder.LittleEndian);
 	}
 	
+	public final static byte[] floatToBytes(float f,ByteOrder bo)
+	{
+		return intToBytes(Float.floatToIntBits(f),bo);
+	}
+	
 	public final static void floatToBytes(float f,byte[] bs,int offset)
 	{
 		intToBytes(Float.floatToIntBits(f),bs,offset,ByteOrder.LittleEndian);

@@ -256,13 +256,17 @@ public abstract class DevAddr
 		tag.RT_setValRaw(v);
 	}
 	
+	public void RT_setValErr()
+	{
+		RT_setValErr("") ;
+	}
 	/**
 	 * 强制设置错误
 	 */
-	public void RT_setValErr()
+	public void RT_setValErr(String errinfo)
 	{
 		UATag tag = this.getBelongTo() ;
-		tag.RT_setValErr("", null) ;
+		tag.RT_setValErr(errinfo, null) ;
 	}
 	
 	public static interface IAddrDefSeg

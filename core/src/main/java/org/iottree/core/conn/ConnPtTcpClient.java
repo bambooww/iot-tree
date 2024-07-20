@@ -37,11 +37,14 @@ public class ConnPtTcpClient extends ConnPtStream
 
 	public ConnPtTcpClient()
 	{
+		readNoDataTimeout = 60000;
 	}
 
 	public ConnPtTcpClient(ConnProvider cp, String name, String title, String desc)
 	{
 		super(cp, name, title, desc);
+		
+		readNoDataTimeout = 60000;
 	}
 
 	public String getConnType()
@@ -66,6 +69,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		this.host = xd.getParamValueStr("host");
 		this.port = xd.getParamValueInt32("port", 8081);
 		this.connTimeoutMS = xd.getParamValueInt32("conn_to", 3000);
+		this.readNoDataTimeout = xd.getParamValueInt64("read_no_to", 60000);
 		return r;
 	}
 
@@ -76,6 +80,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		this.host = jo.getString("host");
 		this.port = jo.getInt("port");
 		this.connTimeoutMS = jo.getInt("conn_to");
+		this.readNoDataTimeout = jo.optLong("read_no_to",60000);
 	}
 
 	public String getHost()
@@ -145,7 +150,11 @@ public class ConnPtTcpClient extends ConnPtStream
 //			}
 			return true;
 		}
-
+		
+		
+		if(log.isTraceEnabled())
+			log.trace(" ConnPtTcpClient try connect to "+host+":"+port) ;
+		
 		try
 		{
 
@@ -160,7 +169,6 @@ public class ConnPtTcpClient extends ConnPtStream
 			outputS = sock.getOutputStream();
 
 			this.fireConnReady();
-
 			return true;
 		}
 		catch ( Exception ee)
@@ -223,6 +231,8 @@ public class ConnPtTcpClient extends ConnPtStream
 	}
 
 	private long lastChk = -1;
+	
+	private int chkSendUrgentCC = 0 ;
 
 	public synchronized void RT_checkConn()
 	{
@@ -231,7 +241,29 @@ public class ConnPtTcpClient extends ConnPtStream
 		try
 		{
 			connect();
+			
+//			chkSendUrgentCC ++ ;
+//			if(chkSendUrgentCC>=10)
+//			{
+//				if(log.isTraceEnabled())
+//					log.trace("sendUrgentData to check socket , sock="+sock +"  "+(this.sock!=null?"conn="+sock.isConnected()+" close="+sock.isClosed():""));
+//				
+//				if(this.sock!=null)
+//				{
+//					//this.sock.setOOBInline(on);
+//					if(log.isTraceEnabled())
+//						log.trace("sendUrgentData to check socket");
+//					this.sock.sendUrgentData(0);
+//				}
+//				chkSendUrgentCC = 0 ;
+//			}
 		}
+//		catch ( IOException e)
+//		{
+//			this.disconnect();
+//			if(log.isDebugEnabled())
+//				log.debug("sendUrgentData err - "+e.getMessage(), e);
+//		}
 		finally
 		{
 			lastChk = System.currentTimeMillis();
@@ -246,8 +278,7 @@ public class ConnPtTcpClient extends ConnPtStream
 	@Override
 	public boolean isClosed()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return !isConnReady() ;
 	}
 
 	@Override

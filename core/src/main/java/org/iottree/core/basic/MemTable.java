@@ -203,6 +203,12 @@ public class MemTable<T extends MemSeg>
 		ms.setValNumber(tp,idx, v,ByteOrder.LittleEndian);
 	}
 	
+	public void setValNumber(UAVal.ValTP tp,long idx,Number v,ByteOrder bo)
+	{
+		T ms = acquireMemSeg(tp,idx) ;
+		ms.setValNumber(tp,idx, v,bo);
+	}
+	
 //	public void setValNumber(UAVal.ValTP tp,long idx,Number v)
 //	{
 //		setValNumber(tp,idx,v,ByteOrder.LittleEndian);

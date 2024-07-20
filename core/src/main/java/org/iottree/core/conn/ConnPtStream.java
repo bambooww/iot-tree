@@ -15,6 +15,8 @@ import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.DesInputStream;
 import org.iottree.core.util.DesOutputStream;
+import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONObject;
 
 public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 {
@@ -31,6 +33,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 	
 	private String encKey = null ;
 	
+	protected long readNoDataTimeout = -1 ;
 	//private transient boolean 
 	
 	public ConnPtStream()
@@ -146,16 +149,49 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 	
 	protected abstract OutputStream getOutputStreamInner();
 	
+	public void setReadNoDataTimeout(long ms)
+	{
+		readNoDataTimeout = ms ;
+	}
 	
+	public long getReadNoDataTimeout()
+	{
+		return this.readNoDataTimeout ;
+	}
 	
 	public abstract boolean isClosed() ; 
 	
 	//public abstract String getConnST() ;
 	
+	@Override
+	public XmlData toXmlData()
+	{
+		XmlData xd = super.toXmlData();
+		xd.setParamValue("read_no_to", this.readNoDataTimeout);
+		return xd;
+	}
+
+	@Override
+	public boolean fromXmlData(XmlData xd, StringBuilder failedr)
+	{
+		boolean r = super.fromXmlData(xd, failedr);
+		this.readNoDataTimeout = xd.getParamValueInt64("read_no_to", -1);
+		return r;
+	}
+
+	protected void injectByJson(JSONObject jo) throws Exception
+	{
+		super.injectByJson(jo);
+
+		this.readNoDataTimeout = jo.optLong("read_no_to",-1);
+	}
+	
 	
 	public class MonInputStream extends InputStream
 	{
 		InputStream wrapperInputs = null ;
+		
+		//long lastHasDataDT = 0;//System.currentTimeMillis() ;
 		
 		MonInputStream(InputStream inputs)
 		{
@@ -170,6 +206,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		public void setWrapperInputStream(InputStream inputs)
 		{
 			this.wrapperInputs = inputs ;
+			//lastHasDataDT = System.currentTimeMillis() ;
 		}
 		
 
@@ -178,7 +215,15 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		{
 			try
 			{
-				return wrapperInputs.available();
+				int r = wrapperInputs.available();
+//				if(r>0)
+//					lastHasDataDT = System.currentTimeMillis() ;
+//				else
+//				{
+//					if(readNoDataTimeout>0 && System.currentTimeMillis()-lastHasDataDT>readNoDataTimeout)
+//						throw new ConnException("no data timeout "+readNoDataTimeout) ; 
+//				}
+				return r ;
 			}
 			catch(Exception e)
 			{
@@ -226,6 +271,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 				ConnPtStream.this.fireConnInvalid();
 				throw new ConnException(e) ; // it will be catched
 			}
+			
+			//lastHasDataDT = System.currentTimeMillis() ;
 			//onMonRecv(true,v) ;
 			byte[] bs = new byte[1] ;
 			bs[0] = (byte)v ;
@@ -259,6 +306,9 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			
 			if(r<=0)
 				return r ;
+			
+			//lastHasDataDT = System.currentTimeMillis() ;
+			
 			byte[] bs = new byte[r] ;
 			System.arraycopy(b, off, bs, 0, r);
 			//MonItemBS mibs = new MonItemBS(true,bs) ;

@@ -76,7 +76,7 @@ public class MemSeg8 extends MemSeg
 		case vt_uint16:
 			if(len<2)
 				throw new IllegalArgumentException("int16 must 2 bytes len") ;
-			DataUtil.shortToBytes(v.shortValue(),buf,sidx) ;
+			DataUtil.shortToBytes(v.shortValue(),buf,sidx,bo) ;
 			break ;
 		case vt_int32:
 		case vt_uint32:

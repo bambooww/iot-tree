@@ -328,6 +328,8 @@ public class ModbusDrvRTU extends DevDriver
 				{
 					mdi.doModbusCmd(cpt);
 				}
+				
+				checkConnBroken(cpt) ;
 			}
 		}
 		catch(ConnException se)
@@ -351,6 +353,35 @@ public class ModbusDrvRTU extends DevDriver
 				log.debug("RT_runInLoop err", e);
 		}
 		return true;
+	}
+	
+	
+	/**
+	 * linux 下拔网线可能需要很长时间才知道，因此使用这个读取失败时间作为连接断开依据
+	 * @param cpt
+	 * @throws Exception
+	 */
+	private void checkConnBroken(ConnPtStream cpt) throws Exception
+	{
+		long lastreadok = -1 ;
+		for(ModbusDevItem mdi:modbusDevItems)
+		{
+			long tmpdt = mdi.getLastReadOkDT() ;
+			if(tmpdt>0 && tmpdt>lastreadok)
+				lastreadok = tmpdt ;
+		}
+		
+		if(lastreadok>0)
+		{// linux 下拔网线可能需要很长时间才知道，因此使用这个读取失败时间作为连接断开依据
+			ConnPtStream cpts = (ConnPtStream)this.getBelongToCh().getConnPt() ;
+			long read_no_to = cpts.getReadNoDataTimeout() ;
+			if(read_no_to>0 && System.currentTimeMillis()-lastreadok>read_no_to)
+			{
+				if(log.isDebugEnabled())
+					log.debug("ModbusDrvRT last read ok timeout with "+read_no_to+",connpt ["+cpts.getTitle()+"] will be closed");
+				cpt.close();
+			}
+		}
 	}
 	
 	private ModbusDevItem getDevItem(UADev dev)

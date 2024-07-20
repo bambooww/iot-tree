@@ -32,13 +32,13 @@ PlatformManager platf = PlatformManager.getInstance() ;
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
     <title>IOT-Tree</title>
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
-<jsp:include page="head.jsp">
+<jsp:include page="../head.jsp">
 <jsp:param value="true" name="tab"/>
 </jsp:include>
-            <link href="./inc/common.css" rel="stylesheet" type="text/css">
-        <link href="./inc/index.css" rel="stylesheet" type="text/css">
-        <script type="text/javascript" src="./js/tab.js" ></script>
-<link rel="stylesheet" href="./js/tab.css" />
+            <link href="../inc/common.css" rel="stylesheet" type="text/css">
+        <link href="../inc/index.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="../js/tab.js" ></script>
+<link rel="stylesheet" href="../js/tab.css" />
  <style>
  .left
  {

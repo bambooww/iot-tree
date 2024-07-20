@@ -236,6 +236,37 @@ public class ModbusDevItem
 		return ret ;
 	}
 	
+	long getLastReadOkDT()
+	{
+		long ret = -1 ;
+		
+		if(mbCoilIn != null)
+		{
+			long tmpdt = mbCoilIn.getLastReadOkDT() ;
+			if(tmpdt>ret)
+				ret = tmpdt ;
+		}
+		if(mbCoilOut != null)
+		{
+			long tmpdt = mbCoilOut.getLastReadOkDT() ;
+			if(tmpdt>ret)
+				ret = tmpdt ;
+		}
+		if(mbRegIn != null)
+		{
+			long tmpdt = mbRegIn.getLastReadOkDT() ;
+			if(tmpdt>ret)
+				ret = tmpdt ;
+		}
+		if(mbRegHold != null)
+		{
+			long tmpdt = mbRegHold.getLastReadOkDT() ;
+			if(tmpdt>ret)
+				ret = tmpdt ;
+		}
+		return ret ;
+	}
+	
 	void onSnifferCmd(SnifferCmd sc)
 	{
 		ModbusCmdRead mcr = sc.getFindedCmd();

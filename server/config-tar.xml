@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<iottree debug="false" title="IOTTree Server" data_dir="./data/">
+<iottree debug="false" title="IOTTree Server" data_dir="./data/" data_dyn_dir="">
  	<webapps port="9090" ajp_port="" base_dir="./web">
  	 	<webapp name="admin" />
 		<webapp name="ROOT" />
@@ -12,11 +12,12 @@
 		 -->
 	</webapps>
 	
-	<!-- opc ua server support. 
+	
 	<system>
-		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServerComp"/>
+		<inner_comp name="rec" enable="false" />
+		<!-- server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServerComp" -->
 	</system>
-	 -->
+
 	<!-- 
 	<plug_auth name="auth_demo" 
 			login_url="http://abc.xx.com/login/login.jsp"

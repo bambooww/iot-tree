@@ -175,7 +175,7 @@ public abstract class Addr extends DevAddr implements Comparable<Addr>
 		FxAddrSeg seg = addrdef.findSeg(vtp,ss.get(1)) ;
 		if(seg==null)
 		{
-			return new ChkRes(-1,addr,vtp,"FxAddr ["+ss.get(0)+ss.get(1)+"] is invalid or not match "+vtp.getStr());
+			return new ChkRes(-1,addr,vtp,"FxAddr ["+ss.get(0)+ss.get(1)+"] is invalid or not match "+(vtp!=null?vtp.getStr():"vtp=null"));
 		}
 		
 		//if(vtp!=ValTP.vt_bool)

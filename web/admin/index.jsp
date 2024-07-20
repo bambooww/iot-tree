@@ -10,12 +10,15 @@
 	org.iottree.core.cxt.*,
 	org.iottree.core.ws.*,
 	org.iottree.core.sim.*,
-	org.iottree.pro.*,
+	org.iottree.pro.*,org.iottree.core.station.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 String using_lan = Lan.getUsingLang() ;
+String sname = "Server";
+if(PlatformManager.isInPlatform())
+	sname = "Platform" ;
 //UAContext.getOrLoadJsApi() ;
 %><!DOCTYPE html>
 <html class="">
@@ -122,7 +125,7 @@ background:#aaaaaa;
 		<div class="container">
 			<!-- start logo -->
 			<div class="iot-logo">
-				<a><img src="inc/logo1.png" width="40px" height="40px"/> IOT-Tree Server</a>
+				<a><img src="inc/logo1.png" width="40px" height="40px"/> IOT-Tree <%=sname %></a>
 			</div>
 			<div class="top_lan">
 	 <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>

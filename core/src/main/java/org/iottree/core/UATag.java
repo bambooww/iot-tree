@@ -1262,7 +1262,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.curVal!=null)
 		{
 			if(!this.curVal.isValid() && err.equals(this.curVal.getErr()))
+			{
+				this.curVal.setValUpDT(System.currentTimeMillis());
 				return this.curVal ;
+			}
 		}
 		UAVal uav = new UAVal(err,e) ;
 		//RT_setUAVal(uav);

@@ -69,6 +69,8 @@ public class Config
 	
 	static String dataDirBase = null ;
 	
+	static String dataDynDirBase = null ;
+	
 	static String libDirBase = null ;
 	
 	static
@@ -362,6 +364,14 @@ public class Config
 		return dataFileBase + "/data/";
 	}
 	
+	public static String getDataDynDirBase()
+	{
+		if(Convert.isNullOrEmpty(dataDynDirBase))
+			throw new RuntimeException("no data_dyn_dir found or dir is not existed in config.xml") ;
+		
+		return dataDynDirBase ;
+	}
+	
 	public static String getLibDirBase()
 	{
 		return libDirBase ;
@@ -571,8 +581,28 @@ public class Config
 				{
 					dataFileBase = f.getParentFile().getCanonicalPath() +"/";
 				}
+				
 				System.out.println("Data Dir Base="+dataDirBase) ;
 				System.setProperty("iottree.data_dir",getDataDirBase());
+				
+				dataDynDirBase = confRootEle.getAttribute("data_dyn_dir") ;
+				if(Convert.isNotNullEmpty(dataDynDirBase))
+				{
+					File tmpf = new File(dataDynDirBase) ;
+					if(!tmpf.exists())
+					{
+						System.out.println(" Warn: no dyn dir found="+dataDynDirBase) ;
+						dataDynDirBase = null ;
+					}
+					
+					dataDynDirBase = tmpf.getCanonicalPath()+File.separatorChar ;
+					
+				}
+				
+				if(Convert.isNotNullEmpty(dataDynDirBase))
+					System.out.println("  data_dyn_dir="+dataDynDirBase) ;
+				else
+					System.out.println("  data_dyn_dir is not set") ;
 				
 				tdata = confRootEle.getAttribute("lib_dir") ;
 				if(Convert.isNotNullEmpty(tdata))
