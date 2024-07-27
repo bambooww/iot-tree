@@ -232,7 +232,24 @@ case "station_prj_start_stop":
 		bautostart = "true".equals(auto_start) ;
 	try
 	{
-		station.RT_startStopPrj(prjname,bstart,bautostart) ;
+		station.RT_startStopPrj(prjname,bstart) ; //,bautostart) ;
+		out.print("succ") ;
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		out.print(e.getMessage()) ;
+	}
+	return ;
+case "station_prj_pm":
+	if(!Convert.checkReqEmpty(request, out, "prj","stationid","auto_start","data_syn_en","data_syn_intv"))
+		return ;
+	boolean b_auto_start = "true".equals(request.getParameter("auto_start")) ;
+	boolean data_syn_en = "true".equals(request.getParameter("data_syn_en")) ;
+	long data_syn_intv = Convert.parseToInt64(request.getParameter("data_syn_intv"),10000) ;
+	try
+	{
+		station.RT_setSynPM(prjname, b_auto_start, data_syn_en, data_syn_intv) ;
 		out.print("succ") ;
 	}
 	catch(Exception e)

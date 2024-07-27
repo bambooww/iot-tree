@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<iottree debug="true" title="IOTTree Server" copyright="" data_dir="../data/" lib_dir="../_output/lib/" >
+<iottree debug="true" title="IOTTree Server" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" >
 
  	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web">
  	 	<webapp name="admin" />

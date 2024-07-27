@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.iottree.core.basic.IdName;
+import org.iottree.core.msgnet.IMNContProvider;
+import org.iottree.core.msgnet.IMNContainer;
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
@@ -24,7 +27,7 @@ import org.iottree.core.util.xmldata.*;
 
 import com.google.common.eventbus.EventBus;
 
-public class UAManager //implements IResCxt
+public class UAManager implements IMNContProvider
 {
 	private static UAManager instance = null ;
 	
@@ -37,6 +40,7 @@ public class UAManager //implements IResCxt
 			if(instance!=null)
 				return instance ;
 			instance = new UAManager() ;
+			MNManager.setContProvider(instance);
 			return instance ;
 		}
 	}
@@ -755,6 +759,18 @@ public class UAManager //implements IResCxt
 		}
 		out.print("]");
 	}
+	
+//	@Override
+//	public String getMsgNetContName()
+//	{
+//		return "uamanager" ;
+//	}
+
+	@Override
+	public IMNContainer getMsgNetContainer(String container_id)
+	{
+		return this.getPrjById(container_id);
+	}
 
 	static
 	{
@@ -765,4 +781,5 @@ public class UAManager //implements IResCxt
 			}
 		});
 	}
+
 }

@@ -17,11 +17,11 @@ public class PSCmdPrjStartStop extends PSCmd
 		return CMD;
 	}
 
-	public PSCmdPrjStartStop asPrjStartStop(String prjname,boolean bstart_stop,Boolean b_auto_start)
+	public PSCmdPrjStartStop asPrjStartStop(String prjname,boolean bstart_stop) //,Boolean b_auto_start)
 	{
-		if(b_auto_start!=null)
-			this.asParams(Arrays.asList(prjname,""+bstart_stop,""+b_auto_start)) ;
-		else
+		//if(b_auto_start!=null)
+		//	this.asParams(Arrays.asList(prjname,""+bstart_stop,""+b_auto_start)) ;
+		//else
 			this.asParams(Arrays.asList(prjname,""+bstart_stop)) ;
 		return this ;
 	}
@@ -38,13 +38,13 @@ public class PSCmdPrjStartStop extends PSCmd
 		if(prj==null)
 			return ;
 		
-		String pmautostart = this.getParamByIdx(2) ;
-		if(Convert.isNotNullEmpty(pmautostart))
-		{
-			boolean bauto_start = "true".equals(pmautostart) ;
-			if(prj.isAutoStart()!=bauto_start)
-				prj.setAutoStart(bauto_start);
-		}
+//		String pmautostart = this.getParamByIdx(2) ;
+//		if(Convert.isNotNullEmpty(pmautostart))
+//		{
+//			boolean bauto_start = "true".equals(pmautostart) ;
+//			if(prj.isAutoStart()!=bauto_start)
+//				prj.setAutoStart(bauto_start);
+//		}
 		
 		if(bstart)
 			prj.RT_start() ;

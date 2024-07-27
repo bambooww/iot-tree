@@ -523,7 +523,6 @@ public class PSCmdDirSyn extends PSCmd
 						fos.write(buffer, 0, readlen);
 					}
 				}
-				
 				//
 				tmpf.renameTo(tarf) ;
 			}

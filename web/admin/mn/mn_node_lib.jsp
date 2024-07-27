@@ -9,19 +9,19 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid","netid","mn","tp"))
+	if(!Convert.checkReqEmpty(request, out, "container_id","netid","mn","tp"))
 			return ;
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String mn = request.getParameter("mn") ;
 	String tp = request.getParameter("tp") ;
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
+	MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+	if(mnm==null)
 	{
-		out.print("no prj found") ;
+		out.print("no MsgNet Manager with container_id="+container_id) ;
 		return ;
 	}
-	MNManager mnm= MNManager.getInstance(prj) ;
+
 	MNNet net = mnm.getNetById(netid) ;
 	if(net==null)
 	{

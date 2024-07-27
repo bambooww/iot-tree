@@ -6,6 +6,7 @@ import java.util.Map;
 import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.UAManager;
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtMSG.BindHandler;
@@ -78,7 +79,9 @@ public class NS_ConnInMsgTrigger   extends MNNodeStart
 		{
 			return null ;
 		}
-		for(ConnProvider cp:this.getBelongTo().getPrj().getConnProviders())
+		
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
+		for(ConnProvider cp:prj.getConnProviders())
 		{
 			ConnPt cpt = cp.getConnById(this.connPtMsgId) ;
 			if(cpt!=null)

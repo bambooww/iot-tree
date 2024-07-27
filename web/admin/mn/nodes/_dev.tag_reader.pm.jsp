@@ -10,11 +10,11 @@
 	org.iottree.core.msgnet.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "container_id"))
 		return ;
 	
-	String prjid = request.getParameter("prjid") ;
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	String container_id = request.getParameter("container_id") ;
+UAPrj prj = UAManager.getInstance().getPrjById(container_id) ;
 if(prj==null)
 {
 	out.print("no project node found");

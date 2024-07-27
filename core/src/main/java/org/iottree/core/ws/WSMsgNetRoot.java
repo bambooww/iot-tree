@@ -14,6 +14,7 @@ import javax.websocket.CloseReason.CloseCodes;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.util.web.LoginUtil;
 import org.json.JSONObject;
@@ -23,17 +24,20 @@ public class WSMsgNetRoot
 	protected static class SessionItem
 	{
 		private final Session session;
-		private final UAPrj prj;
+		private final IMNContainer container;
 		private final MNNet net;
 		EndpointConfig config = null;
 		private long lastDT = -1;
+		
+		IWSRight wsRight ;
 
-		public SessionItem(Session s, UAPrj rep, MNNet net, EndpointConfig config)
+		public SessionItem(Session s, IMNContainer cont, MNNet net, EndpointConfig config,IWSRight wsright)
 		{
 			this.session = s;
-			this.prj = rep;
+			this.container = cont;
 			this.net = net;
 			this.config = config;
+			this.wsRight = wsright ;
 		}
 
 		public Session getSession()
@@ -44,12 +48,13 @@ public class WSMsgNetRoot
 		public boolean checkRight()
 		{
 			HttpSession hs = WebSocketConfig.getHttpSession(config);
-			return LoginUtil.checkAdminLogin(hs);
+			//return LoginUtil.checkAdminLogin(hs);
+			return wsRight.checkWSRight(hs) ;
 		}
 
-		public UAPrj getPrj()
+		public IMNContainer getContainer()
 		{
-			return prj;
+			return container;
 		}
 
 		public MNNet getNet()

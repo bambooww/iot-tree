@@ -16,6 +16,7 @@ import javax.websocket.CloseReason.CloseCodes;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.station.PlatformManager;
 import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.ws.WSRoot.SessionItem;
 import org.json.JSONObject;
@@ -182,7 +183,7 @@ public abstract class WSRoot
 	private static void on_tick(SessionItem si)
 	{
 		UAPrj prj = si.getPrj() ;
-		if(!prj.RT_isRunning())
+		if(!prj.RT_isRunning() && !PlatformManager.isInPlatform())
 			return ;
 		
 		UANodeOCTagsCxt ntags = si.getNodeTagCxt();

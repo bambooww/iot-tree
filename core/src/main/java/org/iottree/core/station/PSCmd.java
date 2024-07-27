@@ -141,6 +141,9 @@ public abstract class PSCmd
 		PSCmd pscmd = null ;
 		switch(cmd)
 		{
+		case PSCmdPrjRtData.CMD:
+			pscmd = new PSCmdPrjRtData() ;
+			break ;
 		case PSCmdPrjStartStop.CMD:
 			pscmd = new PSCmdPrjStartStop() ;
 			break ;
@@ -161,6 +164,9 @@ public abstract class PSCmd
 			break ;
 		case PSCmdDirSynAck.CMD:
 			pscmd = new PSCmdDirSynAck() ;
+			break ;
+		case PSCmdPrjSynPM.CMD:
+			pscmd = new PSCmdPrjSynPM() ;
 			break ;
 		default:
 			return null ;

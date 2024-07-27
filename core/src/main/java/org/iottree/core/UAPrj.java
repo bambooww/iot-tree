@@ -23,6 +23,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.filter.UANodeFilter;
+import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
@@ -44,7 +45,7 @@ import org.json.JSONObject;
  */
 @data_class
 @JsDef(name="prj",title="Prj",desc="Project Node",icon="icon_prj")
-public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt //IJSOb
+public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt ,IMNContainer//IJSOb
 {
 	public static final String NODE_TP = "prj" ;
 	
@@ -504,6 +505,19 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		return UAManager.getPrjFileSubDir(this.getId());
 	}
+	
+	public String getMsgNetContainerId()
+	{
+		return this.getId() ;
+	}
+
+	@Override
+	public File getMsgNetDir()
+	{
+		return getPrjSubDir();
+	}
+	
+	
 
 	public File getSaverDir()
 	{
@@ -1535,8 +1549,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@HostAccess.Export
 	public String JS_get_rt_json_lastdt(Long lastdt) throws IOException
 	{
+		return JS_get_rt_json_lastdt(lastdt,false);
+	}
+	
+	public String JS_get_rt_json_lastdt(Long lastdt,boolean ignore_sys_tag) throws IOException
+	{
 		StringWriter sw = new StringWriter();
-		this.CXT_renderJson(sw, lastdt);
+		this.CXT_renderJson(sw, null,lastdt,null,ignore_sys_tag) ;
 		return sw.toString();
 	}
 	
@@ -1545,6 +1564,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	public String JS_get_rt_json() throws IOException
 	{
 		return JS_get_rt_json_lastdt(-1L) ;
+	}
+	
+	public String JS_get_rt_json(boolean ignore_sys_tag) throws IOException
+	{
+		return JS_get_rt_json_lastdt(-1L, ignore_sys_tag) ; 
 	}
 	
 	@HostAccess.Export
@@ -1587,6 +1611,5 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		RecManager.getInstance(this).RT_fireUATagChanged(tag);
 	}
-	
-	
+
 }

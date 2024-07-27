@@ -1,5 +1,10 @@
 {
 	"stations":[
-		{"id":"station1","t":"Station1","key":"12322131231"}
-	]
+		{"id":"station1","t":"Station1","key":"12322131231"},
+		{"id":"station2","t":"Station2","key":"12322131231"}
+	],
+	"prj_up_dir":"$data_dyn:/platform/prj_up/",
+	"rt_data_dir0":"$data_dyn:/platform/rt_data/",
+	"rt_data_db":{"db_host":"localhost","db_port":33306,"db_name":"iottree_recv","db_user":"tbs_db_user","db_psw":"tbs_db_user"}
+	
 }

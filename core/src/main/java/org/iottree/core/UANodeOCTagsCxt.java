@@ -475,8 +475,13 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	{
 		return CXT_renderJson(w, tag2lastdt, -1,extpms);
 	}
-
+	
 	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms) throws IOException
+	{
+		return CXT_renderJson(w, tag2lastdt, g_lastdt,extpms,false) ; 
+	}
+
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag) throws IOException
 	{
 		boolean bchg=false;
 		//long maxdt=-1 ;
@@ -505,7 +510,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 		
 		
-		if(renderJsonTags(w, tag2lastdt, g_lastdt))
+		if(renderJsonTags(w, tag2lastdt, g_lastdt,ignore_sys_tag))
 			bchg = true;
 		
 		if(renderJsonSubs(w, tag2lastdt))
@@ -546,12 +551,15 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return bchg;
 	}
 
-	private boolean renderJsonTags(Writer w, HashMap<UATag, Long> tag2lastdt, long g_lastdt) throws IOException
+	private boolean renderJsonTags(Writer w, HashMap<UATag, Long> tag2lastdt, long g_lastdt,boolean ignore_sys) throws IOException
 	{
 		boolean bchg=false;
 		w.write(",\"tags\":[");
 		boolean bfirst = true;
-		List<UATag> tags = this.listTags();
+		List<UATag> tags = this.tags;
+		if(!ignore_sys)
+			tags = this.listTags();
+		
 		for (UATag tg : tags)
 		{
 			UAVal val = tg.RT_getVal();

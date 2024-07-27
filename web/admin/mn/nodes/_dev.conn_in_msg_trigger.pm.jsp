@@ -11,11 +11,11 @@
 	org.iottree.core.msgnet.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	UAPrj prj = UAManager.getInstance().getPrjById(container_id) ;
 	if(prj==null)
 	{
 		out.print("no prj found") ;

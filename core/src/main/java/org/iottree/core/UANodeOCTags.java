@@ -182,6 +182,11 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		super.constructNodeTree();
 	}
+	
+	public void constructPrjTree()
+	{
+		constructNodeTree() ;
+	}
 
 	public List<UANodeOCTags> listSelfAndSubTagsNode()
 	{

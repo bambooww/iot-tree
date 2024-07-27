@@ -13,11 +13,11 @@
 	org.iottree.core.msgnet.*
 	"%><%!
 
-%><%if(!Convert.checkReqEmpty(request, out,"prjid","op"))
+%><%if(!Convert.checkReqEmpty(request, out,"container_id","op"))
 	return ;
 
 String op = request.getParameter("op");
-String prjid = request.getParameter("prjid");
+String container_id = request.getParameter("container_id");
 String netid = request.getParameter("netid") ;
 String itemid = request.getParameter("itemid") ;
 String nodeid = request.getParameter("nodeid") ;
@@ -32,15 +32,12 @@ float x = Convert.parseToFloat(request.getParameter("x"),0) ;
 float y = Convert.parseToFloat(request.getParameter("y"),0) ;
 
 String lib_item_id = request.getParameter("lib_item_id") ; 
-
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
+MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+if(mnm==null)
 {
-	out.print("no prj found") ;
+	out.print("no MsgNet Manager with container_id="+container_id) ;
 	return ;
 }
-
-MNManager mnm= MNManager.getInstance(prj) ;
 MNNet net = null;
 MNNode node=  null ;
 MNModule module = null ;

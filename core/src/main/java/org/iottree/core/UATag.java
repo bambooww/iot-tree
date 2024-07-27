@@ -249,11 +249,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	void setTagNor(String name,String title,String desc,String addr,UAVal.ValTP vt,int dec_digits,boolean canwrite,long srate)
 	{
 		StringBuilder sb = new StringBuilder() ;
-		if(this.checkParseAddr(addr, vt, sb)==null)
+		if(Convert.isNotNullEmpty(addr))
 		{
-			DevDriver dd = this.getRelatedDriver() ;
-			if(dd!=null && dd.getSupportAddr()!=null)
-				throw new IllegalArgumentException("invalid addr ,parse failedr:"+sb) ;
+			if(this.checkParseAddr(addr, vt, sb)==null)
+			{
+				DevDriver dd = this.getRelatedDriver() ;
+				if(dd!=null && dd.getSupportAddr()!=null)
+					throw new IllegalArgumentException("invalid addr ,parse failedr:"+sb) ;
+			}
 		}
 		
 		setNameTitle(name,title,desc) ;

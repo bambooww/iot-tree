@@ -17,6 +17,7 @@
 /web/platform/
 /server/tomcat/
 /server/tomcat8/
+/data_dyn/
 
 *.bat
 

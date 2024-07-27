@@ -1,5 +1,6 @@
 package org.iottree.core.msgnet.nodes;
 
+import org.iottree.core.UAPrj;
 import org.iottree.core.filter.SubFilteredTree;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
@@ -69,7 +70,8 @@ public class NM_TagFilter extends MNNodeMid implements ILang
 		if(sft!=null)
 			return sft ;
 		
-		sft = new SubFilteredTree(this.getBelongTo().getPrj());
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
+		sft = new SubFilteredTree(prj);
 		return sft ;
 	}
 

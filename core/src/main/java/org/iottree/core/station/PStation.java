@@ -11,6 +11,8 @@ import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.station.PlatformWSServer.SessionItem;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,12 +24,15 @@ import org.json.JSONObject;
  */
 public class PStation
 {
+	private static ILogger log=  LoggerManager.getLogger(PStation.class) ;
+	
 	String id = null ;
 	
 	String title = null ;
 	
 	String key = null ;
 	
+
 	public PStation()
 	{}
 	
@@ -46,12 +51,41 @@ public class PStation
 		return key ;
 	}
 	
+	/**
+	 * 获取接收端对应项目——项目名称=stationid_prjname
+	 * @return
+	 */
+	public List<UAPrj> getRelatedPrjs()
+	{
+		ArrayList<UAPrj> rets = new ArrayList<>() ;
+		String prefix = this.id+"_" ;
+		for(UAPrj prj:UAManager.getInstance().listPrjs())
+		{
+			String prjn = prj.getName() ;
+			if(prjn.startsWith(prefix))
+				rets.add(prj) ;
+		}
+		return rets ;
+	}
+	
+	public UAPrj getRelatedPrj(String prjname)
+	{
+		String prefix = this.id+"_" ;
+		if(!prjname.startsWith(prefix))
+			prjname = prefix+prjname ;
+		
+		return UAManager.getInstance().getPrjByName(prjname) ;
+	}
+	
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id) ;
 		jo.putOpt("t", title) ;
 		jo.putOpt("key", this.key) ;
+		//jo.putOpt("data_syn_en",this.dataSynEn) ;
+		//jo.putOpt("data_syn_intv",this.dataSynIntvMs) ;
+		
 		return jo ;
 	}
 	
@@ -64,6 +98,8 @@ public class PStation
 		ps.id = id ;
 		ps.title = jo.optString("t") ;
 		ps.key = jo.optString("key") ;
+		//ps.dataSynEn = jo.optBoolean("data_syn_en",false) ;
+		//ps.dataSynIntvMs = jo.optLong("data_syn_intv", 10000) ;
 		return ps ;
 	}
 	
@@ -77,11 +113,19 @@ public class PStation
 		
 		boolean bAutoStart ;
 		
-		public PrjST(String prjn,boolean b_run,boolean bautostart)
+		private boolean dataSynEn = false;
+		
+		private long dataSynIntvMs = 10000 ;
+		
+		
+		public PrjST(String prjn,boolean b_run,boolean bautostart,
+				boolean datasyn_en,long datasyn_intv)
 		{
 			this.prjName = prjn ;
 			this.bRun = b_run ;
 			this.bAutoStart = bautostart ;
+			this.dataSynEn = datasyn_en ;
+			this.dataSynIntvMs = datasyn_intv ;
 		}
 		
 		public String getPrjName()
@@ -98,6 +142,24 @@ public class PStation
 		{
 			return this.bAutoStart ;
 		}
+		
+
+		public void setDataSynIntv(boolean b_enable,long intv_ms)
+		{
+			this.dataSynEn = b_enable ;
+			this.dataSynIntvMs = intv_ms ;
+		}
+		
+		public boolean isDataSynEnable()
+		{
+			return this.dataSynEn ;
+		}
+		
+		public long getDataSynIntvMs()
+		{
+			return this.dataSynIntvMs ;
+		}
+		
 	}
 	
 	private PlatformWSServer.SessionItem sessionItem = null ;
@@ -106,7 +168,6 @@ public class PStation
 	
 	private List<PrjST> prjSTs = null ;
 	
-	
 	void RT_updateLocalState(PlatformWSServer.SessionItem si,List<PrjST> prjsts)
 	{
 		sessionItem = si ;
@@ -114,6 +175,9 @@ public class PStation
 		clientIP = si.getClientIP() ;
 		clientOpenDT = si.openDT ;
 	}
+	
+	
+	
 	
 	public List<PrjST> RT_getPrjSTs()
 	{
@@ -146,9 +210,19 @@ public class PStation
 
 	void RT_onMsg(SessionItem si,byte[] msg)
 	{
+		if(log.isTraceEnabled())
+		{
+			log.trace(" Station ["+this.id+"] RT_onMsg bs len="+msg.length);
+		}
+		
 		PSCmd cmd = PSCmd.parseFrom(msg) ;
 		if(cmd==null)
 			return ;
+		
+		if(log.isTraceEnabled())
+		{
+			log.trace(" Station ["+this.id+"] RT_onMsg cmd="+cmd);
+		}
 		
 		try
 		{
@@ -165,14 +239,14 @@ public class PStation
 		return sessionItem ;
 	}
 	
-	public boolean RT_startStopPrj(String prjname,boolean bstart,Boolean b_autostart)
+	public boolean RT_startStopPrj(String prjname,boolean bstart) //,Boolean b_autostart)
 	{
 		SessionItem si = this.getSessionItem() ;
 		if(si==null)
 			return false;
 		
 		PSCmdPrjStartStop cmd = new PSCmdPrjStartStop() ;
-		cmd.asPrjStartStop(prjname, bstart,b_autostart) ;
+		cmd.asPrjStartStop(prjname, bstart) ;//,b_autostart) ;
 		si.sendCmd(cmd);
 		return true ;
 	}
@@ -191,6 +265,21 @@ public class PStation
 		return true ;
 	}
 	
+	
+	public boolean RT_setSynPM(String prjname,boolean b_autostart,boolean datasyn_en,long datasyn_intv)
+	{
+		SessionItem si = this.getSessionItem() ;
+		if(si==null)
+		{
+			//failedr.append("no session found") ;
+			return false;
+		}
+		
+		PSCmdPrjSynPM cmd = new PSCmdPrjSynPM() ;
+		cmd.asPrjPM(prjname, b_autostart, datasyn_en, datasyn_intv) ;
+		si.sendCmd(cmd);
+		return true ;
+	}
 	
 	public boolean RT_updatePrj(String prjname,StringBuilder failedr) throws IOException
 	{

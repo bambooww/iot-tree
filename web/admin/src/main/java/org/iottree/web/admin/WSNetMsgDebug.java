@@ -17,11 +17,12 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.util.web.LoginUtil;
+import org.iottree.core.ws.IWSRight;
 import org.iottree.core.ws.WSMsgNetRoot;
 import org.iottree.core.ws.WSRoot;
 import org.iottree.core.ws.WebSocketConfig;
 
-@ServerEndpoint(value = "/_ws/net_msg/{prjid}/{netid}", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/_ws/net_msg/{container_id}/{netid}", configurator = WebSocketConfig.class)
 public class WSNetMsgDebug extends WSMsgNetRoot
 {
 	static
@@ -29,28 +30,36 @@ public class WSNetMsgDebug extends WSMsgNetRoot
 		//System.out.println(" cxt ws class is loading ................>>>>>>>>>>>>>>>>>>>>>>") ;
 	}
 	
-	
+	static IWSRight WS_R = new IWSRight()
+	{
+
+				@Override
+				public boolean checkWSRight(HttpSession session)
+				{
+return					LoginUtil.checkAdminLogin(session) ;
+				}
+	};
 	
 	@OnOpen
-	public void onOpen(Session session, @PathParam(value = "prjid") String prjid,
+	public void onOpen(Session session, @PathParam(value = "container_id") String container_id,
 			@PathParam(value = "netid") String netid,EndpointConfig config) throws Exception //
 	{
 		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
-		if(!LoginUtil.checkAdminLogin(hs))
+		if(!WS_R.checkWSRight(hs)) //LoginUtil.checkAdminLogin(hs))
 		{
 			session.close();
 			return ;
 		}
-		UAPrj rep = UAManager.getInstance().getPrjById(prjid) ;
-		if(rep==null)
+		
+		MNManager mnmgr = MNManager.getInstanceByContainerId(container_id);
+		if(mnmgr==null)
 		{
 			session.close();
 			return ;
 		}
-		MNManager mnmgr = MNManager.getInstance(rep) ;
 		MNNet net = mnmgr.getNetById(netid) ;
 
-		SessionItem si = new SessionItem(session,rep,net,config);
+		SessionItem si = new SessionItem(session,mnmgr.getBelongTo(),net,config,WS_R);
 		addSessionItem(si) ;
 		
 		//startTimer() ;

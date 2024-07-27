@@ -66,6 +66,14 @@ public class PlatformManager
 	
 	private HashMap<String,Long> unknownStation2DT = new HashMap<>() ;
 	
+	private File prjUpDir = new File(Config.getDataDynDirBase()+"prj_up/") ;//prj_up_dir
+	
+	private File rtDataDir = new File(Config.getDataDynDirBase()+"rt_data/") ;
+	
+	private JSONObject rtDataDB = null ;
+	
+	private HashMap<String,PlatformSaver> prj2saver = new HashMap<>() ;
+	
 	private PlatformManager()
 	{}
 	
@@ -105,8 +113,41 @@ public class PlatformManager
 					rets.put(ps.id,ps) ;
 				}
 			}
+			
+			String prjupdir=jo.optString("prj_up_dir") ;
+			if(Convert.isNotNullEmpty(prjupdir))
+			{
+				prjUpDir = Config.parseDir(prjupdir) ;
+				if(!prjUpDir.exists())
+					prjUpDir.mkdirs() ;
+			}
+			
+			String rtdatadir=jo.optString("rt_data_dir") ;
+			if(Convert.isNotNullEmpty(rtdatadir))
+			{
+				rtDataDir = Config.parseDir(rtdatadir) ;
+				if(!rtDataDir.exists())
+					rtDataDir.mkdirs() ;
+			}
+			
+			rtDataDB = jo.optJSONObject("rt_data_db") ;
 		}
 		return rets ;
+	}
+	
+	public File getPrjUpDir()
+	{
+		return this.prjUpDir ;
+	}
+	
+	public File getRTDataDir()
+	{
+		return this.rtDataDir ;
+	}
+	
+	public JSONObject getRTDataDB()
+	{
+		return this.rtDataDB ;
 	}
 	
 	public PStation getStationById(String stationid)
@@ -123,4 +164,58 @@ public class PlatformManager
 	{
 		return unknownStation2DT ;
 	}
+	
+	/**
+	 * 从Station中，接收到的项目打包内容。需要专门临时保存，并且通过特定的管理界面设定是否要加入到
+	 * 平台中，或者是替换平台中已经存在的项目——此时，会引起一系列的反应：
+	 * 
+	 * 1）如果顶层的很多应用和规则关联了之前的项目树，并且此项目树结构有所调整，那么就需要把相关应用和规则跟着调整
+	 * 2）如果涉及到数据储存，则新旧数据之间的关联如何处理等等
+	 *  
+	 * @param prjname
+	 * @param zipped_prj
+	 */
+	void onRecvedStationPrj(PStation pstation,String prjname,byte[] zipped_prj)
+	{
+		
+	}
+	
+	/**
+	 * 从Station接收到RTData，此函数会被调用
+	 * @param prjname
+	 * @param rt_jo
+	 * @throws Exception 
+	 */
+	void onRecvedRTData(PStation pstation,String prjname,JSONObject rt_jo) throws Exception
+	{
+		PlatformSaver ps = getSaver(pstation,prjname) ;
+		ps.storeJson(rt_jo.toString(), System.currentTimeMillis());
+	}
+	
+	private PlatformSaver getSaver(PStation pstation,String prjname) throws Exception
+	{
+		String n = pstation.getId()+"_"+prjname ;
+		PlatformSaver ps = prj2saver.get(n) ;
+		if(ps!=null)
+			return ps;
+		
+		synchronized(this)
+		{
+			ps = prj2saver.get(n) ;
+			if(ps!=null)
+				return ps;
+			
+			ps = new PlatformSaver(n) ;
+			prj2saver.put(n,ps) ;
+			return ps ;
+		}
+	}
+	
+//	public JSONObject transPrjTreeJO(String prjname)
+//	{
+//		UAPrj prj = 
+//		JSONObject jo = new JSONObject() ;
+//		
+//		return jo ;
+//	}
 }

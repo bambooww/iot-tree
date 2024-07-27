@@ -10,12 +10,12 @@
 	org.iottree.core.msgnet.util.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "container_id"))
 		return ;
 	
-	String prjid = request.getParameter("prjid") ;
+	String container_id = request.getParameter("container_id") ;
 	String id = request.getParameter("id") ;
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+UAPrj prj = UAManager.getInstance().getPrjById(container_id) ;
 if(prj==null)
 {
 	out.print("no project node found");
@@ -57,7 +57,7 @@ if(tagids_jarr!=null)
 
 <script>
 
-var prjid="<%=prjid%>";
+var prjid="<%=container_id%>";
 var prj_path="<%=prj_path%>";
 
 var tagids = [];

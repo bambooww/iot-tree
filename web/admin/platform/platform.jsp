@@ -136,14 +136,21 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 		for(PStation.PrjST prjst:prjsts)
 		{
 			String chked = prjst.isAutoStart()?"checked":"" ;
+			String syn_chked = prjst.isDataSynEnable()?"checked":"" ;
+			long syn_intv= prjst.getDataSynIntvMs() ;
 %>
 	<div class="prj_item">
 	<%=prjst.getPrjName() %>  running=<%=prjst.isRunning() %> auto start=<%=prjst.isAutoStart() %><br>
-		<input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start
+		
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',true)">start</button>
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',false)">stop</button>
 	 
-	 <button>up project</button>
+	 <button title="read prj from station">up project</button>
+	 <button title="write prj to station">down project</button> <br>
+	 <input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start
+	 <input type="checkbox" id="syn_en_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=syn_chked %>/>Data Syn 
+	 Interval <input type="number" id="syn_intv_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  value="<%=syn_intv %>" style="width:65px"/>
+	 <button title="set param" onclick="station_prj_set_pm('<%=ps.getId() %>','<%=prjst.getPrjName() %>')">Set PM</button>
 	 
 	 </div>
 <%
@@ -229,6 +236,18 @@ function station_prj_start_stop(stationid,prjname,b_start_stop)
 	let bautostart = $(`#autostart_\${stationid}_\${prjname}`).prop("checked") ;
 	send_ajax("platform_ajax.jsp",
 		{op:"station_prj_start_stop",stationid:stationid,prj:prjname,start_stop:b_start_stop,auto_start:bautostart},
+		(bsucc,ret)=>{
+		dlg.msg(ret) ;
+	});
+}
+
+function station_prj_set_pm(stationid,prjname)
+{
+	let bautostart = $(`#autostart_\${stationid}_\${prjname}`).prop("checked") ;
+	let data_syn_en = $(`#syn_en_\${stationid}_\${prjname}`).prop("checked") ;
+	let data_syn_intv = $(`#syn_intv_\${stationid}_\${prjname}`).val() ;
+	send_ajax("platform_ajax.jsp",
+		{op:"station_prj_pm",stationid:stationid,prj:prjname,auto_start:bautostart,data_syn_en:data_syn_en,data_syn_intv:data_syn_intv},
 		(bsucc,ret)=>{
 		dlg.msg(ret) ;
 	});

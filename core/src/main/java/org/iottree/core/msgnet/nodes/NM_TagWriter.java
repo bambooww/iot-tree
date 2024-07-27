@@ -193,6 +193,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 		this.asynMode = jo.optBoolean("asyn", true) ;
 		JSONArray jarr = jo.optJSONArray("tags") ;
 		ArrayList<TagItem> ccrs = new ArrayList<>() ;
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
 		if(jarr!=null)
 		{
 			int n = jarr.length() ;
@@ -206,7 +207,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 				String tagpath = ccr.tagPath ;
 				if(Convert.isNotNullEmpty(tagpath))
 				{
-					UATag tag = this.getBelongTo().getPrj().getTagByPath(tagpath) ;
+					UATag tag = prj.getTagByPath(tagpath) ;
 					ccr.tag = tag ;
 				}
 			}
@@ -328,8 +329,9 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	@Override
 	public boolean RT_start(StringBuilder failedr)
 	{
-		failedr.append("no support") ;
-		return false;
+		//failedr.append("no support") ;
+		//return false;
+		return true ;
 	}
 
 	@Override

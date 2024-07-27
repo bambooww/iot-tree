@@ -2317,7 +2317,7 @@ function init_left_btm()
 
     $(".left_btm_tab").tab();
     
-    let tmps = `<iframe src="./mn/mn_mgr.jsp?prjid=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
+    let tmps = `<iframe src="./mn/mn_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps});
 	tmps=`<div   style="height:100px;width:290px;font-size:30px;color:#57a9d0"><br>
 		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>

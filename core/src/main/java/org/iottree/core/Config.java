@@ -23,9 +23,7 @@ import org.w3c.dom.NodeList;
 
 
 public class Config
-{
-	protected static ILogger log = LoggerManager.getLogger(Config.class) ;
-	
+{	
 	public static class LangItem
 	{
 		String lang = null ;
@@ -137,7 +135,7 @@ public class Config
 			try
 			{
 				tmps = getRelatedFile(tmps).getCanonicalPath();
-				webappBase = tmps ;
+				webappBase = tmps+"/" ;
 			}
 			catch(Exception ee)
 			{
@@ -584,19 +582,27 @@ public class Config
 				
 				System.out.println("Data Dir Base="+dataDirBase) ;
 				System.setProperty("iottree.data_dir",getDataDirBase());
+				System.setProperty("iottree.msg_net",getDataDirBase()+"/msg_net/");
 				
-				dataDynDirBase = confRootEle.getAttribute("data_dyn_dir") ;
-				if(Convert.isNotNullEmpty(dataDynDirBase))
+				tdata = confRootEle.getAttribute("data_dyn_dir") ;
+				if(Convert.isNotNullEmpty(tdata))
 				{
-					File tmpf = new File(dataDynDirBase) ;
-					if(!tmpf.exists())
+					tdata = tdata.replace('\\', '/');
+					File fp = null ;
+					if(tdata.startsWith("/")||tdata.indexOf(':')>0)
 					{
-						System.out.println(" Warn: no dyn dir found="+dataDynDirBase) ;
-						dataDynDirBase = null ;
+						fp = new File(tdata) ;
+					}
+					else
+					{
+						fp = new File(configFileBase+"/"+tdata) ;
 					}
 					
-					dataDynDirBase = tmpf.getCanonicalPath()+File.separatorChar ;
-					
+					fp.mkdirs();
+					dataDynDirBase = fp.getCanonicalPath() ;
+					dataDynDirBase = dataDynDirBase.replace('\\', '/');
+					if(!dataDynDirBase.endsWith("/"))
+						dataDynDirBase += "/" ;
 				}
 				
 				if(Convert.isNotNullEmpty(dataDynDirBase))
@@ -994,5 +1000,39 @@ public class Config
     		return new InnerComp(nn,ben) ;
     	}
     	return null ;
+    }
+    
+    /**
+     * $data_dyn:/platform/prj_up/
+     * /xxx/
+     *  ./abcv/
+     * 
+     * @param dir_str
+     * @return
+     */
+    public static File parseDir(String dir_str)
+    {
+    	if(dir_str.startsWith("$"))
+    	{
+    		int k = dir_str.indexOf(":"); 
+    		if(k<=0)
+    			throw new IllegalArgumentException("invalid path "+dir_str+",it must be $xxx: head") ;
+    		String head = dir_str.substring(0,k) ;
+    		String subp = dir_str.substring(k+1) ;
+    		switch(head)
+    		{
+    		case "$data":
+    			return new File(getDataDirBase()+"/"+subp) ;
+    		case "$data_dyn":
+    			return new File(getDataDynDirBase()+"/"+subp) ;
+    		case "$webapps":
+    			return new File(getWebappBase()+"/"+subp) ;
+    		case "$":
+    		default:
+    			return new File(getConfigFileBase()+"/"+subp) ;
+    		}
+    	}
+    	
+    	return new File(dir_str) ;
     }
 }

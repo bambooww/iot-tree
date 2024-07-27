@@ -11,10 +11,10 @@
 	org.iottree.core.msgnet.nodes.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "container_id"))
 		return ;
 	
-	String prjid = request.getParameter("prjid") ;
+	String container_id = request.getParameter("container_id") ;
 UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 if(prj==null)
 {

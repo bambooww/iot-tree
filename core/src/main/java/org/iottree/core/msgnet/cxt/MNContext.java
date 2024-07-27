@@ -19,6 +19,7 @@ import javax.script.ScriptException;
 
 import org.graalvm.polyglot.Value;
 import org.iottree.core.UAPrj;
+import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.util.js.Debug;
@@ -37,19 +38,28 @@ private transient ScriptEngine scriptEng = null;
 	
 	public static GUtil util = new GUtil() ;
 	
-	UAPrj prj ;
+	//UAPrj prj ;
+	
+	IMNContainer container ;
 	
 	MNNet net ;
 
 	public MNContext(MNNet net) throws ScriptException
 	{
-		this.prj = net.getPrj() ;
+		//this.prj = net.getPrj() ;
+		
+		this.container = net.getContainer() ;
 		
 		this.net = net ;
 
 		scriptEng = createJSEngine();
 
 		scriptEng.put("$_net_", net);
+		
+		if(this.container instanceof UAPrj)
+		{
+			UAPrj prj = (UAPrj)this.container ;
+		
 		scriptEng.put("$_prj_", prj);//prj.getJSOb());
 		
 		String init_eval = "const $prj=$_prj_;Object.freeze($prj);";
@@ -82,7 +92,7 @@ private transient ScriptEngine scriptEng = null;
 		
 		
 		scriptEng.eval(init_eval);
-		
+		}
 	}
 	
 	public MNContext asCxtNameOb(String name,Object obj) throws ScriptException

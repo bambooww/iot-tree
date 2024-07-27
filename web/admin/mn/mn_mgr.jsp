@@ -10,17 +10,16 @@
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%!
 
 %><%
-if(!Convert.checkReqEmpty(request, out, "prjid"))
+if(!Convert.checkReqEmpty(request, out, "container_id"))
 	return ;
 
-String prjid = request.getParameter("prjid");
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
+String container_id = request.getParameter("container_id");
+MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+if(mnm==null)
 {
-	out.print("no prj found") ;
+	out.print("no MsgNet Manager with container_id="+container_id) ;
 	return ;
 }
-MNManager mnm= MNManager.getInstance(prj) ;
 List<MNNet> nets = mnm.listNets() ;
 JSONArray jarr = new JSONArray() ;
 for(MNNet n:nets)
@@ -110,12 +109,12 @@ for(MNNet net:nets)
 </div>
 <script>
 
-var prjid="<%=prjid%>" ;
+var container_id="<%=container_id%>" ;
 
 function open_net(netid,tt)
 {
 	parent.add_tab("___msgnet_"+netid,`<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> \${tt}`,
-			`./mn/mn_net_flow_edit.jsp?prjid=\${prjid}&netid=\${netid}`) ;
+			`./mn/mn_net_flow_edit.jsp?container_id=\${container_id}&netid=\${netid}`) ;
 }
 
 function add_or_edit_flow(id)
@@ -125,7 +124,7 @@ function add_or_edit_flow(id)
 		tt  ="<w:g>edit,flow</w:g>" ;
 	else
 		id=""
-	dlg.open("./mn_net_edit.jsp?prjid="+prjid+"&netid="+id,
+	dlg.open("./mn_net_edit.jsp?container_id="+container_id+"&netid="+id,
 			{title:tt},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -139,7 +138,7 @@ function add_or_edit_flow(id)
 						 }
 						 
 						 ret.op="add_edit_net" ;
-						 ret.prjid = prjid ;
+						 ret.container_id = container_id ;
 						 ret.netid=id ;
 						 send_ajax("mn_ajax.jsp",ret,(buscc,ret)=>{
 							 if(!bsucc||ret!='succ')
@@ -164,7 +163,7 @@ function flow_del(id)
 {
 	dlg.confirm('<w:g>del,this,flow</w:g>?',{btn:["<w:g>yes</w:g>","<w:g>cancel</w:g>"],title:"<w:g>del,confirm</w:g>"},function ()
     {
-		let op={op:"del_net",prjid:prjid,netid:id};
+		let op={op:"del_net",container_id:container_id,netid:id};
 		send_ajax("mn_ajax.jsp",op,(bsucc,ret)=>{
 			 if(!bsucc||ret!='succ')
 			 {

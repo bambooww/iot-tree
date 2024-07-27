@@ -39,7 +39,28 @@ public class PSCmdPrjUpdate extends PSCmd
 	
 	@Override
 	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si,PStation ps) throws Exception
-	{}
+	{
+		String prjname = this.getParamByIdx(0) ;
+		if(Convert.isNullOrEmpty(prjname))
+			return ;
+		
+		byte[] zipbs = this.getCmdData() ;
+		if(zipbs==null||zipbs.length<=0)
+			return ;
+		
+		String stationid =ps.getId() ;
+		if(!prjname.startsWith(stationid+"_"))
+			prjname = stationid+"_"+prjname ;
+//		UAManager ua = UAManager.getInstance() ;
+//		//UAPrj localprj = ua.getPrjByName(prjname) ;
+//		//ua.im
+//		StringBuilder failedr = new StringBuilder() ;
+//		if(!ua.updateOrAddPrj(zipbs, prjname, failedr))
+//			System.err.println(" RT_onRecvedInStationLocal err :"+failedr.toString()) ;
+		
+		// 不允许直接更新项目，动作太大
+		PlatformManager.getInstance().onRecvedStationPrj(ps,prjname, zipbs) ;
+	}
 	
 	@Override
 	public void RT_onRecvedInStationLocal(StationLocal sl) throws Exception
@@ -47,6 +68,9 @@ public class PSCmdPrjUpdate extends PSCmd
 		String prjname = this.getParamByIdx(0) ;
 		if(Convert.isNullOrEmpty(prjname))
 			return ;
+		String stationid = sl.getStationId() ;
+		if(prjname.startsWith(stationid+"_"))
+			prjname = prjname.substring(stationid.length()+1) ;
 		byte[] zipbs = this.getCmdData() ;
 		if(zipbs==null||zipbs.length<=0)
 			return ;

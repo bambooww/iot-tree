@@ -63,12 +63,12 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	LinkedHashMap<String,MNModule> id2module = new LinkedHashMap<>() ;
 	
 	MNManager belongTo = null ;
-	UAPrj prj = null ;
+	IMNContainer container = null ;
 
 	MNNet(MNManager mgr)
 	{
 		belongTo = mgr ;
-		this.prj = mgr.getBelongTo() ;
+		this.container = mgr.getBelongTo() ;
 		this.id = IdCreator.newSeqId() ;
 	}
 	
@@ -81,7 +81,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	MNNet(MNManager mgr,String name,String title,String desc)
 	{
 		belongTo = mgr ;
-		this.prj = mgr.getBelongTo() ;
+		this.container = mgr.getBelongTo() ;
 		
 		this.id = IdCreator.newSeqId() ;
 		
@@ -102,9 +102,9 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return this.belongTo ;
 	}
 	
-	public UAPrj getPrj()
+	public IMNContainer getContainer()
 	{
-		return this.prj ;
+		return this.container ;
 	}
 	
 	public boolean isEnable()

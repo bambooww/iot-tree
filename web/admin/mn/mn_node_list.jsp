@@ -345,7 +345,7 @@ document.addEventListener('visibilitychange', function() {
 
 var last_module_id = null ;
 
-function show_by_module(prjid,netid,moduleid,tt)
+function show_by_module(container_id,netid,moduleid,tt)
 {
 	//console.log(moduleid)
 	if(last_module_id==moduleid)
@@ -359,7 +359,7 @@ function show_by_module(prjid,netid,moduleid,tt)
 		m_panels=[];
 		return ;
 	}
-	send_ajax("mn_ajax.jsp",{op:"module_list_nodes",prjid:prjid,netid:netid,moduleid:moduleid},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:"module_list_nodes",container_id:container_id,netid:netid,moduleid:moduleid},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("[")!=0)
 		{
 			dlg.msg(ret) ;

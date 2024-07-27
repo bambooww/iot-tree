@@ -85,6 +85,9 @@ if(tree)
 
 if(mn)
 {
-%><script src="/_js/mn/mn.js"></script><%
+%><script src="/_js/mn/mn.js"></script>
+<script type="text/javascript" src="/_js/bignumber.min.js"></script>
+<script type="text/javascript" src="/_js/jquery.json.js"></script>
+<%
 }
 %>

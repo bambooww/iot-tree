@@ -163,7 +163,7 @@ public class SourceJDBC extends Source
 //		return name2driver.values();
 //	}
 	
-	private static LinkedHashMap<String,Drv> getName2Driver()
+	public static LinkedHashMap<String,Drv> getName2Driver()
 	{
 		if(name2driver!=null)
 			return name2driver;

@@ -11,10 +11,12 @@
 	org.iottree.core.msgnet.util.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	
+	String prjid = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
+	//IMNContainer
 	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
 	if(prj==null)
 	{
@@ -50,6 +52,7 @@
 			name2v.put(n,obj) ;
 		}
 	}
+	
 %>
 <div class="layui-form-item">
     <label class="layui-form-label">Measurement:</label>

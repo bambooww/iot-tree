@@ -197,7 +197,7 @@ text-overflow:ellipsis;
 if(b_tags)
 {
 %>
-<div style="position:absoluate;bottom:120px;top:110px;overflow: auto;">
+<div id="tb_tags" style="position:absoluate;bottom:120px;top:110px;height:300px;overflow-y: auto;">
 <table class="oc_div_list" style="margin-top:10px;width:99%" id="tb_cur" >
   <thead>
      <tr>
@@ -815,6 +815,7 @@ function ws_conn()
     ws.onmessage = function (event) {
 
     	var str = event.data ;
+    	//console.log(str) ;
     	var k = str.indexOf("\r\n") ;
     	if(k<=0)
     		return ;
@@ -1187,6 +1188,20 @@ function show_data_his(outtp,outid,tagp,title)
 			[],
 			[]);
 }
+
+function resize_taglist()
+{
+	var h = $(window).height()-110;
+	$("#tb_tags").css("height",h+"px");
+}
+
+resize_taglist();
+
+$(window).resize(function(){
+	resize_taglist();
+	});
+	
+
 
 </script>
 </html>

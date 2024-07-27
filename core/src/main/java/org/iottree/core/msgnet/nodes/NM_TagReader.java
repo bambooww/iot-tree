@@ -2,6 +2,7 @@ package org.iottree.core.msgnet.nodes;
 
 import java.util.ArrayList;
 
+import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.msgnet.MNConn;
@@ -176,6 +177,7 @@ public class NM_TagReader extends MNNodeMid
 	{
 		JSONArray jarr = jo.optJSONArray("tags") ;
 		ArrayList<TagItem> ccrs = new ArrayList<>() ;
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
 		if(jarr!=null)
 		{
 			int n = jarr.length() ;
@@ -189,7 +191,8 @@ public class NM_TagReader extends MNNodeMid
 				String tagpath = ccr.tagPath ;
 				if(Convert.isNotNullEmpty(tagpath))
 				{
-					UATag tag = this.getBelongTo().getPrj().getTagByPath(tagpath) ;
+					
+					UATag tag =prj.getTagByPath(tagpath) ;
 					ccr.tag = tag ;
 				}
 			}

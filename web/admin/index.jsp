@@ -14,6 +14,11 @@
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
+	//if(PlatformManager.isInPlatform())
+	//{
+	//	response.sendRedirect("platform.jsp");
+	//	return ;
+	//}
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 String using_lan = Lan.getUsingLang() ;
 String sname = "Server";
@@ -245,12 +250,9 @@ if(pros.size()>0)
        <a class="img aw-border-radius-5" >
          <i class="fa fa-sitemap fa-1x"></i>
        </a>
-       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8"><%=rep.getTitle() %></a>
+       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=rep.getTitle() %></a>
        <div class="inline-block pull-right text-left ">
-
-          
           <span class="btn_sh">
-          
           <span>
            <a class=" " href="javascript:window.open('/<%=rep.getName()%>?op=ui')" title="Access">
               <span class="fa-stack">
@@ -259,7 +261,6 @@ if(pros.size()>0)
 							</span>
            </a>
            </span>
-           
 <%
 if(!rep.isMainPrj())
 {
@@ -330,8 +331,8 @@ if(rep.isAutoStart())
        </div>
 
        <div class="text-color-999">
-           <span class="text-color-666">&nbsp;&nbsp;&nbsp;</span>
-           • <wbt:lang>modified_date</wbt:lang>:<span class="text-color-666"><%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
+           <span class="text-color-666">&nbsp;&nbsp;&nbsp;[<%=rep.getName() %>]</span>
+           <span class="text-color-666" style="left:200px;position: absolute;">•<wbt:lang>modified_date</wbt:lang>:<%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
        </div>
    </div>
 <%

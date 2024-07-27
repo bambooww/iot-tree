@@ -20,30 +20,57 @@ import org.iottree.core.msgnet.util.ConfItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MNManager
 {
 	private static ILogger log = LoggerManager.getLogger(MNManager.class) ;
 	
+	private static IMNContProvider contProvider = null ;
+	
+	public static boolean setContProvider(IMNContProvider contp)
+	{
+		if(contProvider!=null) //系统必须一开始就要设置
+			return false;
+		contProvider = contp ;
+		return true ;
+	}
+	
+	public static IMNContProvider getContProvider()
+	{
+		return contProvider ;
+	}
+	
 	private static HashMap<String,MNManager> prjid2mgr = new HashMap<>() ;
 	
-	public static MNManager getInstance(UAPrj prj)
+	public static MNManager getInstance(IMNContainer prj)
 	{
-		MNManager instance = prjid2mgr.get(prj.getId()) ;
+		MNManager instance = prjid2mgr.get(prj.getMsgNetContainerId()) ;
 		if(instance!=null)
 			return instance ;
 		
 		synchronized(MNManager.class)
 		{
-			instance = prjid2mgr.get(prj.getId()) ;
+			instance = prjid2mgr.get(prj.getMsgNetContainerId()) ;
 			if(instance!=null)
 				return instance ;
 			
 			instance = new MNManager(prj) ;
-			prjid2mgr.put(prj.getId(),instance) ;
+			prjid2mgr.put(prj.getMsgNetContainerId(),instance) ;
 			return instance ;
 		}
+	}
+	
+	public static MNManager getInstanceByContainerId(String container_id)
+	{
+		if(contProvider==null)
+			return null ;
+		IMNContainer cont = contProvider.getMsgNetContainer(container_id) ;
+		if(cont==null)
+			return null ;
+		
+		return getInstance(cont) ;
 	}
 	
 	private static LinkedHashMap<String,MNCat> NAME2CATS = new LinkedHashMap<>() ;
@@ -122,71 +149,112 @@ public class MNManager
 		try
 		{
 			Class<?> c = Class.forName(classname) ;
-			MNModule m = (MNModule)c.newInstance() ;
+			MNBase m = (MNBase)c.newInstance() ;
 			registerItem(m,cat);
 		}
-		catch(Exception ee)
+		catch(Throwable ee)
 		{
 			if(log.isDebugEnabled())
 				log.error(ee.getMessage(), ee);
-			log.warn(ee.getMessage());
+			log.warn("registerItem "+classname+" "+ee.getMessage());
+		}
+	}
+	
+//	private void loadNodesDefault()
+//	{
+//		MNCat cat = registerCat(new MNCat("_com")) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.ManualTrigger(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_TimerTrigger(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NE_Debug(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_MemQueue(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.modules.MemMultiQueue(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_OuterTrigger(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_OnFlowEvt(),cat) ;
+//		
+//		cat = registerCat(new MNCat("_func")) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_JsFunc(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_Template(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_Change(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_Switch(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_OnOff(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_PID(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_Exec(),cat) ;
+//		
+//		cat = registerCat(new MNCat("_dev")) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagReader(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagWriter(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagFilter(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagFilterW(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_TagValChgTrigger(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_TagEvtTrigger(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NS_ConnInMsgTrigger(),cat) ;
+//		//registerItem(new NS_TagAlertTrigger(),cat) ;
+//		
+//		
+//		cat = registerCat(new MNCat("_net")) ;
+//		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
+//		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_HttpClient(),cat) ;
+//		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
+//		
+//		
+//		cat = registerCat(new MNCat("_storage")) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_FileReader(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.nodes.NM_FileWriter(),cat) ;
+//		registerItem(new org.iottree.core.msgnet.modules.DBSql(),cat) ;
+//		registerItem("org.iottree.ext.msg_net.InfluxDB_M",cat) ;
+//		
+//		cat = registerCat(new MNCat("_sim")) ;
+//		registerItem("org.iottree.pro.modbuss.MSBus_M",cat) ;
+//
+//	}
+	
+	
+	private static void loadNodesFile(File f) throws IOException
+	{
+		JSONObject jo = Convert.readFileJO(f) ;
+		JSONArray catjarr = jo.optJSONArray("cats") ;
+		int n = catjarr.length() ;
+		for(int i =0 ; i < n ; i ++)
+		{
+			JSONObject catjo = catjarr.getJSONObject(i) ;
+			String cat = catjo.getString("cat") ;
+			String catt = catjo.optString("catt") ;
+			MNCat mncat = registerCat(new MNCat(cat,catt)) ;
+			JSONArray nodes = catjo.optJSONArray("nodes") ;
+			if(nodes!=null)
+			{
+				for(Object ob:nodes.toList())
+				{
+					String cn = (String)ob ;
+					registerItem(cn,mncat) ;
+				}
+			}
 		}
 	}
 
 	static
 	{
-		MNCat cat = registerCat(new MNCat("_com")) ;
-		registerItem(new ManualTrigger(),cat) ;
-		registerItem(new NS_TimerTrigger(),cat) ;
-		registerItem(new NE_Debug(),cat) ;
-		registerItem(new NM_MemQueue(),cat) ;
-		registerItem(new MemMultiQueue(),cat) ;
-		registerItem(new NS_OuterTrigger(),cat) ;
-		registerItem(new NS_OnFlowEvt(),cat) ;
+		String msgnetdir = System.getProperty("iottree.msg_net") ;
+		if(Convert.isNullOrEmpty(msgnetdir))
+			throw new RuntimeException("no [iottree.msg_net] env property found") ;
+		File nodesf = new File(msgnetdir+"nodes.json") ;
+		if(!nodesf.exists())
+			throw new RuntimeException("no nodes file found = "+nodesf.getAbsolutePath()) ;
 		
-		cat = registerCat(new MNCat("_func")) ;
-		registerItem(new NM_JsFunc(),cat) ;
-		registerItem(new NM_Template(),cat) ;
-		registerItem(new NM_Change(),cat) ;
-		registerItem(new NM_Switch(),cat) ;
-		registerItem(new NM_OnOff(),cat) ;
-		registerItem(new NM_PID(),cat) ;
-		registerItem(new NM_Exec(),cat) ;
-		
-		cat = registerCat(new MNCat("_dev")) ;
-		registerItem(new NM_TagReader(),cat) ;
-		registerItem(new NM_TagWriter(),cat) ;
-		registerItem(new NM_TagFilter(),cat) ;
-		registerItem(new NM_TagFilterW(),cat) ;
-		registerItem(new NS_TagValChgTrigger(),cat) ;
-		registerItem(new NS_TagEvtTrigger(),cat) ;
-		registerItem(new NS_ConnInMsgTrigger(),cat) ;
-		//registerItem(new NS_TagAlertTrigger(),cat) ;
-		
-		
-		cat = registerCat(new MNCat("_net")) ;
-		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
-		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
-		registerItem(new NM_HttpClient(),cat) ;
-		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
-		
-		
-		cat = registerCat(new MNCat("_storage")) ;
-		registerItem(new NM_FileReader(),cat) ;
-		registerItem(new NM_FileWriter(),cat) ;
-		registerItem(new DBSql(),cat) ;
-		registerItem("org.iottree.ext.msg_net.InfluxDB_M",cat) ;
-		
-		cat = registerCat(new MNCat("_sim")) ;
-		registerItem("org.iottree.pro.modbuss.MSBus_M",cat) ;
-//		registerCat(new MNNodeCat("network")) ;
-//		registerCat(new MNNodeCat("seq")) ;
-//		registerCat(new MNNodeCat("parser")) ;
-//		registerCat(new MNNodeCat("storage")) ;
-		
-		
+		try
+		{
+			loadNodesFile(nodesf) ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+		}
 		
 	}
+	
+	
+	
 	
 	public static MNCat getCatByName(String name)
 	{
@@ -258,20 +326,18 @@ public class MNManager
 		return rets ;
 	}
 	
-	UAPrj belongTo = null ;
+	IMNContainer belongTo = null ;
 	
 	private ArrayList<MNNet> nets = null ; 
 	
 	
 	
-	private MNManager(UAPrj prj)
+	private MNManager(IMNContainer prj)
 	{
 		this.belongTo = prj ;
-		
-		
 	}
 	
-	public UAPrj getBelongTo()
+	public IMNContainer getBelongTo()
 	{
 		return this.belongTo ;
 	}
@@ -313,7 +379,7 @@ public class MNManager
 			}};
 		ArrayList<MNNet> rets = new ArrayList<>() ;
 		
-		File prjdir = this.belongTo.getPrjSubDir() ;
+		File prjdir = this.belongTo.getMsgNetDir();//.getPrjSubDir() ;
 		for(File mnf:prjdir.listFiles(ff))
 		{
 			MNNet mnn = loadNet(mnf) ;
@@ -345,7 +411,7 @@ public class MNManager
 	
 	private File calNetFile(String id)
 	{
-		File prjdir = this.belongTo.getPrjSubDir() ;
+		File prjdir = this.belongTo.getMsgNetDir();//.getPrjSubDir() ;
 		return new File(prjdir,"mn_"+id+".json") ;
 	}
 	
@@ -524,12 +590,12 @@ public class MNManager
 
 	private File getRTCxtFilePrj()
 	{
-		return new File(this.belongTo.getPrjSubDir(), "./msg_net/prj.json");
+		return new File(this.belongTo.getMsgNetDir(), "./msg_net/prj.json"); //.getPrjSubDir()
 	}
 
 	private File getRTCxtFileNet(MNNet net)
 	{
-		return new File(this.belongTo.getPrjSubDir(), "./msg_net/net_" + net.getId() + ".json");
+		return new File(this.belongTo.getMsgNetDir(), "./msg_net/net_" + net.getId() + ".json");
 	}
 
 	boolean RT_CXT_load() throws IOException

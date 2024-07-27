@@ -9,22 +9,22 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid"))
+	if(!Convert.checkReqEmpty(request, out, "container_id"))
 		return ;
-
-	String prjid = request.getParameter("prjid");
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
-	{
-		out.print("no prj found") ;
-		return ;
-	}
+	String container_id = request.getParameter("container_id");
+	//String prjid = request.getParameter("prjid");
+	MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+if(mnm==null)
+{
+	out.print("no MsgNet Manager with container_id="+container_id) ;
+	return ;
+}
 	
 	String name="" ;
 	String title = "" ;
 	String desc="" ;
 	
-	MNManager mnm = MNManager.getInstance(prj) ;
+	//MNManager mnm = MNManager.getInstance(prj) ;
 	String id = request.getParameter("netid") ;
 	boolean benable = true ;
 	if(Convert.isNotNullEmpty(id))
@@ -50,11 +50,7 @@
 <html>
 <head>
 <title>net editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);
 </script>

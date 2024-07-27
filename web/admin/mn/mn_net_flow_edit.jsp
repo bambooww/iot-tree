@@ -8,20 +8,20 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-if(!Convert.checkReqEmpty(request, out, "prjid","netid"))
+if(!Convert.checkReqEmpty(request, out, "container_id","netid"))
 	return ;
 
-String prjid = request.getParameter("prjid");
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
+String container_id = request.getParameter("container_id");
+MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+if(mnm==null)
 {
-	out.print("no prj found") ;
+	out.print("no MsgNet Manager with container_id="+container_id) ;
 	return ;
 }
 
 String netid = request.getParameter("netid") ;
 
-MNNet net = MNManager.getInstance(prj).getNetById(netid) ;
+MNNet net = mnm.getNetById(netid) ;
 if(net==null)
 {
 	out.print("no net found") ;
@@ -41,8 +41,6 @@ String net_tt = net.getTitle() ;
 </jsp:include>
 <script type="text/javascript" src="../js/tab.js" ></script>
 <link rel="stylesheet" href="../js/tab.css" />
-<script type="text/javascript" src="/_js/bignumber.min.js"></script>
-<script type="text/javascript" src="/_js/jquery.json.js"></script>
 <link rel="stylesheet" href="./inc/mn.css" />
 <style>
 .rt_blk
@@ -184,7 +182,7 @@ white-space: nowrap;
 </body>
 
 <script>
-var prjid = "<%=prjid%>" ;
+var container_id = "<%=container_id%>" ;
 var netid = "<%=netid%>" ;
 
 var ulang = "<%=Lan.getUsingLang()%>" ;
@@ -268,7 +266,7 @@ function init_iottpanel()
 			
 		},
 		onAddNode:(tp,x,y,moduleid,lib_item_id)=>{
-			send_ajax("./mn_ajax.jsp",{op:"node_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||"",lib_item_id:lib_item_id||""},
+			send_ajax("./mn_ajax.jsp",{op:"node_add_up",container_id:container_id,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||"",lib_item_id:lib_item_id||""},
 	                (bsucc,ret)=>{
 	                	
 	                	if(!bsucc||ret!="succ")
@@ -280,7 +278,7 @@ function init_iottpanel()
 	                }) ;
 		},
 		onAddModule:(tp,x,y,lib_item_id)=>{
-			send_ajax("./mn_ajax.jsp",{op:"module_add_up",prjid:prjid,netid:netid,"tp":tp,x:x,y:y,lib_item_id:lib_item_id||""},
+			send_ajax("./mn_ajax.jsp",{op:"module_add_up",container_id:container_id,netid:netid,"tp":tp,x:x,y:y,lib_item_id:lib_item_id||""},
 	                (bsucc,ret)=>{
 	                	
 	                	if(!bsucc||ret!="succ")
@@ -292,7 +290,7 @@ function init_iottpanel()
 	                }) ;
 		},
 		onAddConn:(out_id,to_nid)=>{
-			send_ajax("./mn_ajax.jsp",{op:"conn_set",prjid:prjid,netid:netid,out_id:out_id,to_nid:to_nid},
+			send_ajax("./mn_ajax.jsp",{op:"conn_set",container_id:container_id,netid:netid,out_id:out_id,to_nid:to_nid},
 	                (bsucc,ret)=>{
 	                	if(!bsucc||ret!="succ")
 	                	{
@@ -314,7 +312,7 @@ function init_iottpanel()
 		},
 		onNodeStartTrigger:(node)=>{
 			//console.log("start node trigger",node) ;
-			send_ajax("./mn_ajax.jsp",{op:"node_start_trigger",prjid:prjid,netid:netid,"nodeid":node.id},
+			send_ajax("./mn_ajax.jsp",{op:"node_start_trigger",container_id:container_id,netid:netid,"nodeid":node.id},
 	                (bsucc,ret)=>{
 	                	if(!bsucc||ret!="succ")
 	                	{
@@ -336,7 +334,7 @@ function init_iottpanel()
 
 function reload_net(reload,bfit)
 {
-	send_ajax("mn_ajax.jsp",{op:"load_net",prjid:prjid,netid:netid},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:"load_net",container_id:container_id,netid:netid},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
 		{
 			dlg.msg(ret);
@@ -357,28 +355,28 @@ function on_item_sel_chg(items)
 {
 	if(!items||items.length<=0)
 	{
-		let u1 = `mn_panel.jsp?prjid=\${prjid}&netid=\${netid}`;
+		let u1 = `mn_panel.jsp?container_id=\${container_id}&netid=\${netid}`;
 		if(u1!=$("#right_info_iframe").attr("src"))
 			$("#right_info_iframe").attr("src",u1);
-		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(container_id,netid,null) ;
 		return ;
 	}
 	if(!items || items.length!=1)
 	{
-		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(container_id,netid,null) ;
 		return ;
 	}
 	let item = items[0] ;
 	if(item.getClassName()==mn.view.DIModule.CN)
 	{
-		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,item.id,item.title) ;
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(container_id,netid,item.id,item.title) ;
 	}
 	else
 	{
-		$("#left_pan_iframe")[0].contentWindow.show_by_module(prjid,netid,null) ;
+		$("#left_pan_iframe")[0].contentWindow.show_by_module(container_id,netid,null) ;
 	}
 	
-	let u1 = `mn_panel.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${item.id}`;
+	let u1 = `mn_panel.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${item.id}`;
 	if(u1!=$("#right_info_iframe").attr("src"))
 		$("#right_info_iframe").attr("src",u1);
 	
@@ -405,7 +403,7 @@ function show_help(mn,tp,bforce_pop)
 	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false' ;
 	if(u2!=$("#right_help_iframe").attr("src"))
 		$("#right_help_iframe").attr("src",u2);
-	u2 = `mn_node_lib.jsp?prjid=\${prjid}&netid=\${netid}&mn=\${mn}&tp=\${tp}` ;
+	u2 = `mn_node_lib.jsp?container_id=\${container_id}&netid=\${netid}&mn=\${mn}&tp=\${tp}` ;
 	//if(u2!=$("#right_lib_iframe").attr("src"))
 		$("#right_lib_iframe").attr("src",u2);
 }
@@ -413,9 +411,9 @@ function show_help(mn,tp,bforce_pop)
 
 function on_item_open(mn)
 {
-	let url = `mn_param.jsp?prjid=\${prjid}&netid=\${netid}&itemid=\${mn.id}`;
+	let url = `mn_param.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${mn.id}`;
 	let tt = "<wbt:lang>param</wbt:lang> - "+mn.title;
-	let pm={op:"detail_set",prjid:prjid,netid:netid,itemid:mn.id};
+	let pm={op:"detail_set",container_id:container_id,netid:netid,itemid:mn.id};
 
 	dlg.open(url,{title:tt,w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
@@ -458,7 +456,7 @@ function on_editor_prompt(m)
 function net_save_basic()
 {
 	let ob = hmiView.extractNetBasic();
-	send_ajax("mn_ajax.jsp",{op:"net_save_basic",prjid:prjid,netid:netid,jstr:JSON.stringify(ob)},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:"net_save_basic",container_id:container_id,netid:netid,jstr:JSON.stringify(ob)},(bsucc,ret)=>{
 		if(!bsucc||ret!='succ')
 		{
 			dlg.msg(ret);
@@ -486,7 +484,7 @@ function on_del_items(sis)
 		return ;
 	dlg.confirm("Are you sure to delete selected items?",{btn:["Sure","Cancel"],title:"Warn"},()=>
     {
-		send_ajax("./mn_ajax.jsp",{op:"del_by_ids",prjid:prjid,netid:netid,"ids":ids},
+		send_ajax("./mn_ajax.jsp",{op:"del_by_ids",container_id:container_id,netid:netid,"ids":ids},
                 (bsucc,ret)=>{
                 	if(!bsucc||ret!="succ")
                 	{
@@ -687,7 +685,7 @@ function init_right()
 		$("#tab_title").html(title) ;
 	}});
 	
-	//$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?prjid=\${prjid}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
+	//$('.right_tab').tab('addTab', {'title':`<i class="fa fa-info fa-lg"></i>`, 'id': 'lb_tab_i', 'content': `<iframe id="right_info_iframe" src="mn_panel.jsp?container_id=\${container_id}&netid=\${netid}" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-question fa-lg"></i>`, 'id': 'lb_tab_help', 'content': `<iframe id="right_help_iframe" src="" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$('.right_tab').tab('addTab', {'title':`<i class="fa fa-book fa-lg"></i>`, 'id': 'lb_tab_lib', 'content': `<iframe id="right_lib_iframe" src="" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>`});
 	$(".right_tab").tab('selectTab', 'lb_tab_help');
@@ -738,7 +736,7 @@ function rt_flow_start_stop(b_start)
 	let op = "rt_flow_start" ;
 	if(!b_start)
 		op = "rt_flow_stop" ;
-	send_ajax("./mn_ajax.jsp",{op:op,prjid:prjid,netid:netid},
+	send_ajax("./mn_ajax.jsp",{op:op,container_id:container_id,netid:netid},
             (bsucc,ret)=>{
             	if(!bsucc||ret!="succ")
             	{
@@ -755,7 +753,7 @@ function rt_update()
 	if(!hmiView) return ;
 	
 	let ids = hmiView.listShowRTDivItemIds();
-	send_ajax("./mn_ajax.jsp",{op:"rt_update",prjid:prjid,netid:netid,"div_ids":ids.join(",")},
+	send_ajax("./mn_ajax.jsp",{op:"rt_update",container_id:container_id,netid:netid,"div_ids":ids.join(",")},
             (bsucc,ret)=>{
             	if(!bsucc||ret.indexOf("{")!=0)
             	{
@@ -773,7 +771,7 @@ setInterval(rt_update,300) ;
             
 function rt_item_runner_start_stop(itemid,b_start)
 {
-	send_ajax("./mn_ajax.jsp",{op:"rt_item_runner_start_stop",prjid:prjid,netid:netid,itemid:itemid,start_stop:b_start},
+	send_ajax("./mn_ajax.jsp",{op:"rt_item_runner_start_stop",container_id:container_id,netid:netid,itemid:itemid,start_stop:b_start},
             (bsucc,ret)=>{
             	if(!bsucc||ret!='succ')
             	{
@@ -786,7 +784,7 @@ function rt_item_runner_start_stop(itemid,b_start)
 
 function rt_flow_clear()
 {
-	send_ajax("./mn_ajax.jsp",{op:"rt_flow_clear",prjid:prjid,netid:netid},
+	send_ajax("./mn_ajax.jsp",{op:"rt_flow_clear",container_id:container_id,netid:netid},
             (bsucc,ret)=>{
             	if(!bsucc||ret!='succ')
             	{
@@ -808,7 +806,7 @@ function debug_in_out_msg(nodeid,outidx)
 {
 	let op = "rt_debug_msg";
 
-	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,nodeid:nodeid,outidx:outidx},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:op,container_id:container_id,netid:netid,nodeid:nodeid,outidx:outidx},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
 		{
 			dlg.msg(ret) ;
@@ -833,7 +831,7 @@ function debug_prompt_detail(itemid,lvl,ptp) //err warn info
 {
 	let op = "rt_debug_prompt";
 
-	send_ajax("mn_ajax.jsp",{op:op,prjid:prjid,netid:netid,itemid:itemid,lvl:lvl,ptp},(bsucc,ret)=>{
+	send_ajax("mn_ajax.jsp",{op:op,container_id:container_id,netid:netid,itemid:itemid,lvl:lvl,ptp},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
 		{
 			dlg.msg(ret) ;
@@ -990,7 +988,7 @@ function start_stop_debug_list(ele,debug_nid)
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/admin/_ws/net_msg/'+prjid+"/"+netid;
+    var url = 'ws://' + window.location.host + '/admin/_ws/net_msg/'+container_id+"/"+netid;
     //console.log(url) ;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);

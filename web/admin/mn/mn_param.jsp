@@ -9,19 +9,19 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid","netid"))
+	if(!Convert.checkReqEmpty(request, out, "container_id","netid"))
 			return ;
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
+	MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+	if(mnm==null)
 	{
-		out.print("no prj found") ;
+		out.print("no MsgNet Manager with container_id="+container_id) ;
 		return ;
 	}
-	MNManager mnm= MNManager.getInstance(prj) ;
+
 	MNNet net = mnm.getNetById(netid) ;
 	if(net==null)
 	{
@@ -51,9 +51,9 @@
 		
 		k = pm_url.lastIndexOf('?') ;
 		if(k<=0)
-			pm_url+="?prjid="+prjid ;
+			pm_url+="?container_id="+container_id ;
 		else
-			pm_url+= "&prjid="+prjid ;
+			pm_url+= "&container_id="+container_id ;
 	}
 	
 	String mn ="n" ;
@@ -93,7 +93,7 @@
 </jsp:include>
 <script type="text/javascript">
 
-var prjid="<%=prjid%>";
+var container_id="<%=container_id%>";
 var netid="<%=netid%>";
 var itemid="<%=itemid%>";
 
@@ -110,7 +110,7 @@ function init_pm()
 	if(!pm_url)
 		return ;
 
-	send_ajax(pm_url,{prjid:prjid,netid:netid,itemid:itemid,pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
+	send_ajax(pm_url,{container_id:container_id,netid:netid,itemid:itemid,pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
 		$("#pm_cont").html(ret) ;
 		
 		on_init_pm_ok() ;
@@ -211,7 +211,7 @@ function save_to_lib()
 						return ;
 					}
 					tt = txt ;
-					let rr = {op:"save_to_lib",prjid:prjid,netid:netid,mn:mn,title:tt,fulltp:fulltp,jstr:JSON.stringify(pmjo)};
+					let rr = {op:"save_to_lib",container_id:container_id,netid:netid,mn:mn,title:tt,fulltp:fulltp,jstr:JSON.stringify(pmjo)};
 					send_ajax("mn_ajax.jsp",rr,(bsucc,ret)=>{
 						if(!bsucc||ret!='succ')
 						{

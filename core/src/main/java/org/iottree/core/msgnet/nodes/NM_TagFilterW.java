@@ -127,7 +127,8 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 	
 	private void setTagsByIds(List<String> ids)
 	{
-		UAPrj prj = this.getBelongTo().getPrj();
+		//UAPrj prj = this.getBelongTo().getPrj();
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
 		ArrayList<UATag> tags = new ArrayList<>() ;
 		for(String id:ids)
 		{
@@ -275,7 +276,8 @@ public class NM_TagFilterW  extends MNNodeMid implements IMNRunner
 			return null;
 		}
 		
-		UATag tag = this.getBelongTo().getPrj().getTagByPath(path) ;
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
+		UATag tag = prj.getTagByPath(path) ;
 		if(tag==null)
 		{
 			failedr.append("not tag with path="+path);

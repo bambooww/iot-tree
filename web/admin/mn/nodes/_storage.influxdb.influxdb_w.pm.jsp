@@ -11,6 +11,7 @@
 	org.iottree.core.msgnet.util.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
+	/*
 	String prjid = request.getParameter("prjid");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
@@ -50,7 +51,7 @@
 			Object obj = pld.get(n) ;
 			name2v.put(n,obj) ;
 		}
-	}
+	}*/
 %>
 <div class="layui-form-item">
     <label class="layui-form-label"><w:g>topic</w:g>:</label>

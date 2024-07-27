@@ -28,23 +28,22 @@ if(!Convert.checkReqEmpty(request, out, "op"))
 	return ;
 String op = request.getParameter("op");
 
-String prjid = request.getParameter("prjid");
+String container_id = request.getParameter("container_id");
 String netid = request.getParameter("netid") ;
 String itemid = request.getParameter("itemid") ;
 
 String sub_nid = request.getParameter("id");
 
 MNManager mnm= null;
-UAPrj prj = null;
-if(Convert.isNotNullEmpty(prjid))
+IMNContainer prj = null;
+if(Convert.isNotNullEmpty(container_id))
 {
-	prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
+	mnm= MNManager.getInstanceByContainerId(container_id) ;
+	if(mnm==null)
 	{
-		out.print("no prj found") ;
+		out.print("no MsgNet Manager with container_id="+container_id) ;
 		return ;
 	}
-	mnm= MNManager.getInstance(prj) ;
 }
 
 MNNet net = null;
