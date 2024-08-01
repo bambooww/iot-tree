@@ -606,9 +606,9 @@ public class Config
 				}
 				
 				if(Convert.isNotNullEmpty(dataDynDirBase))
-					System.out.println("  data_dyn_dir="+dataDynDirBase) ;
+					System.out.println("data_dyn_dir="+dataDynDirBase) ;
 				else
-					System.out.println("  data_dyn_dir is not set") ;
+					System.err.println("data_dyn_dir is not set") ;
 				
 				tdata = confRootEle.getAttribute("lib_dir") ;
 				if(Convert.isNotNullEmpty(tdata))

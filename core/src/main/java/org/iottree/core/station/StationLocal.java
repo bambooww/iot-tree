@@ -380,6 +380,8 @@ public class StationLocal
 			String url = "ws://"+this.platformHost+":"+this.platformPort+"/_ws/station/"+id ;
 			System.out.println(" station local to platform ->"+url) ;
 			this.wsClient = new WebSockClient(new URI(url)) ;
+			
+			
 		}
 		
 		return this.wsClient.checkAndConn() ;
@@ -429,13 +431,11 @@ public class StationLocal
 			{
 				if(notSendST_CC>=12 || _lastStationST==null || _lastStationST.chkChg(this) || System.currentTimeMillis()-lastReConnDT<10000)
 				{
-					if(log.isTraceEnabled())
-						log.trace("send PSCmdStationST");
 					PSCmdStationST cmd_st = new PSCmdStationST() ;
 					cmd_st.asStationLocal(this) ;
-					byte[] bs = cmd_st.packTo() ;
-					wsClient.send(bs);
 					
+					StringBuilder failedr = new StringBuilder() ;
+					RT_sendCmd(cmd_st,failedr) ;
 					_lastStationST = cmd_st ;
 					notSendST_CC = 0 ;
 				}
@@ -566,6 +566,10 @@ public class StationLocal
 			failedr.append("connection is not open") ;
 			return false;
 		}
+		
+		if(log.isTraceEnabled())
+			log.trace("RT_sendCmd "+cmd.toString()) ;
+		
 		wsClient.send(cmd.packTo());
 		return true;
 	}

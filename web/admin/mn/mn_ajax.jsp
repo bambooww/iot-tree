@@ -320,6 +320,23 @@ case "rt_debug_prompt":
 	else
 		ppt.toDetailJO().write(out) ;
 	return ;
+case "rt_debug_close":
+	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl","ptp"))
+		return ;
+	lvl = request.getParameter("lvl") ;
+	ptp= request.getParameter("ptp") ;
+	rtd = item.RT_DEBUG_getByLvl(lvl) ;
+	if(rtd==null)
+	{
+		out.print("no rtd") ;
+		return ;
+	}
+	ppt = rtd.delPrompt(ptp) ; 
+	if(ppt==null)
+		out.print("no prompt") ;
+	else
+		out.print("succ") ;
+	return ;
 default:
 	out.print("unknown op="+op) ;
 	return ;

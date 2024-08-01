@@ -281,7 +281,7 @@ public class PStation
 		return true ;
 	}
 	
-	public boolean RT_updatePrj(String prjname,StringBuilder failedr) throws IOException
+	public boolean RT_downPrj(String prjname,StringBuilder failedr) throws IOException
 	{
 		SessionItem si = this.getSessionItem() ;
 		if(si==null)
@@ -306,6 +306,21 @@ public class PStation
 		
 		PSCmdPrjUpdate cmd = new PSCmdPrjUpdate() ;
 		cmd.asToBePackPrj(prj) ;
+		si.sendCmd(cmd);
+		return true ;
+	}
+	
+	public boolean triggerUploadPrj(String prjname,StringBuilder failedr)
+	{
+		SessionItem si = this.getSessionItem() ;
+		if(si==null)
+		{
+			failedr.append("no session found") ;
+			return false;
+		}
+		
+		PSCmdPrjUpTrigger cmd = new PSCmdPrjUpTrigger() ;
+		cmd.asUpPrjname(prjname) ;
 		si.sendCmd(cmd);
 		return true ;
 	}

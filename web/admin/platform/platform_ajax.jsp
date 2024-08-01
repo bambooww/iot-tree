@@ -274,10 +274,18 @@ case "station_reboot":
 		out.print(e.getMessage()) ;
 	}
 	break ;
-case "station_prj_update":
+case "station_prj_down":
 	if(!Convert.checkReqEmpty(request, out, "prj","stationid"))
 		return ;
-	if(station.RT_updatePrj(prjname, failedr))
+	if(station.RT_downPrj(prjname, failedr))
+		out.print("succ") ;
+	else
+		out.print(failedr.toString()) ;
+	break ;
+case "station_prj_up":
+	if(!Convert.checkReqEmpty(request, out, "prj","stationid"))
+		return ;
+	if(station.triggerUploadPrj(prjname, failedr))
 		out.print("succ") ;
 	else
 		out.print(failedr.toString()) ;

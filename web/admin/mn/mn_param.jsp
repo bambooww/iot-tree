@@ -99,25 +99,31 @@ var itemid="<%=itemid%>";
 
 var pm_url="<%=pm_url%>" ;
 var PM_URL_BASE = "<%=pm_url_base%>" ;
-var pm_jo = <%=jstr%> ;
+var __pm_jo = <%=jstr%> ;
 var mn = "<%=mn%>";
 var fulltp = "<%=fulltp%>" ;
 var form ;
 var element;
+
+function get_page_url_base()
+{
+	let p = window.location.pathname;
+	let k = p.lastIndexOf("/") ;
+	return p.substring(0,k+1);
+}
 
 function init_pm()
 {
 	if(!pm_url)
 		return ;
 
-	send_ajax(pm_url,{container_id:container_id,netid:netid,itemid:itemid,pm_jo:JSON.stringify(pm_jo)},(bsucc,ret)=>{
+	send_ajax(pm_url,{container_id:container_id,netid:netid,itemid:itemid,pm_jo:JSON.stringify(__pm_jo)},(bsucc,ret)=>{
 		$("#pm_cont").html(ret) ;
 		
 		on_init_pm_ok() ;
 		
 		if(typeof(on_after_pm_show)=="function")
 			on_after_pm_show(form);
-		
 	}) ;
 
 }
@@ -132,7 +138,7 @@ function on_init_pm_ok()
 	
 	if(typeof(set_pm_jo)=='function')
 	{
-		set_pm_jo(pm_jo) ;
+		set_pm_jo(__pm_jo) ;
 	}
 	
 	 form.render();

@@ -106,7 +106,7 @@ try
 	switch(op)
 	{
 	case "sub_json":
-		if(!Convert.checkReqEmpty(request, out, "prjid","netid","itemid"))
+		if(!Convert.checkReqEmpty(request, out, "container_id","netid","itemid"))
 			return ;
 		if(sub_ob==null)
 		{

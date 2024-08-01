@@ -27,7 +27,7 @@ public abstract class MNNode extends MNBase
 	
 	protected transient Exception _nodeErr = null ;
 	//boolean bStart = false;
-	
+	private long lastInMsgCost = -1 ;
 	
 	MNConnOut connOut = null ;
 //	/**
@@ -345,9 +345,11 @@ public abstract class MNNode extends MNBase
 		
 		//StringBuilder failedr = new StringBuilder() ;
 		RTOut out = null ;
+		long st = System.currentTimeMillis() ;
 		try
 		{
 			out = RT_onMsgIn(in_conn,msg) ;
+			lastInMsgCost = System.currentTimeMillis() - st ;
 			if(out==null)
 				return ; //may be processed later,
 		}
@@ -407,7 +409,7 @@ public abstract class MNNode extends MNBase
 		if(this.supportInConn())
 		{
 			StringBuilder divsb = new StringBuilder() ;
-			divsb.append("<div class=\"rt_blk\">Msg In ") ;
+			divsb.append("<div class=\"rt_blk\">Msg In [cost="+lastInMsgCost+"ms]") ;
 			
 			if((msg=this.RT_getLastMsgIn())!=null)
 			{

@@ -49,8 +49,8 @@ public class PSCmdPrjUpdate extends PSCmd
 			return ;
 		
 		String stationid =ps.getId() ;
-		if(!prjname.startsWith(stationid+"_"))
-			prjname = stationid+"_"+prjname ;
+		//if(!prjname.startsWith(stationid+"_"))
+		//	prjname = stationid+"_"+prjname ;
 //		UAManager ua = UAManager.getInstance() ;
 //		//UAPrj localprj = ua.getPrjByName(prjname) ;
 //		//ua.im

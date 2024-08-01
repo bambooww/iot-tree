@@ -6,6 +6,14 @@
         <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
     </listener>
  
+	 <context-param>
+	    <param-name>org.apache.tomcat.websocket.textBufferSize</param-name>
+	    <param-value>5242800</param-value>
+	</context-param>
+	<context-param>
+	    <param-name>org.apache.tomcat.websocket.binaryBufferSize</param-name>
+	    <param-value>5242800</param-value>
+	</context-param>
     <filter>
         <filter-name>PrjFilter</filter-name>
         <filter-class>org.iottree.core.util.web.PrjFilter</filter-class>

@@ -14,13 +14,14 @@ import javax.websocket.server.ServerEndpointConfig;
 import org.iottree.core.util.Convert;
 
 
-public class WebSocketConfig extends ServerEndpointConfig.Configurator{
-	
+public class WebSocketConfig extends ServerEndpointConfig.Configurator
+{
 	/**
 	 * 握手加入客户端验证信息
 	 */
 	@Override
-    public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
+    public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response)
+	{
         HttpSession httpSession = (HttpSession)request.getHttpSession();
         if (Objects.isNull(httpSession)){
             return ;

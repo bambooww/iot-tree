@@ -16,6 +16,8 @@ import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.Config.InnerComp;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.alert.AlertManager;
+import org.iottree.core.basic.NameTitle;
+import org.iottree.core.basic.NameTitleVal;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -23,6 +25,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
 import org.iottree.core.filter.UANodeFilter;
+import org.iottree.core.msgnet.IMNContTagListMapper;
 import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.node.PrjShareManager;
@@ -45,7 +48,7 @@ import org.json.JSONObject;
  */
 @data_class
 @JsDef(name="prj",title="Prj",desc="Project Node",icon="icon_prj")
-public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt ,IMNContainer//IJSOb
+public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt ,IMNContainer,IMNContTagListMapper//IJSOb
 {
 	public static final String NODE_TP = "prj" ;
 	
@@ -490,6 +493,13 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 		UAManager.getInstance().savePrj(this);
 	}
+	
+	public void setPrjName(String prjn)
+	{
+		Convert.checkVarName(prjn, true) ;
+		//	throw new IllegalArgumentException("invalid prj name="+prjn) ;
+		this.setNameTitle(prjn, null, null) ;
+	}
 
 	public boolean isMainPrj() throws IOException
 	{
@@ -517,6 +527,40 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return getPrjSubDir();
 	}
 	
+	
+
+	@Override
+	public List<NameTitle> getMNContTagListCatTitles()
+	{
+		ArrayList<NameTitle> rets = new ArrayList<>() ;
+		String prjnp = this.getNodePath() ;
+		rets.add(new NameTitle(prjnp,prjnp)) ;
+		for(UANodeOCTagsCxt subn:this.getSubNodesCxt())
+		{
+			String np = subn.getNodePath() ;
+			rets.add(new NameTitle(np,np)) ;
+		}
+		return rets;
+	}
+
+	@Override
+	public List<NameTitle> getMNContTagList(String cat)
+	{
+		UANodeOCTagsCxt subn = (UANodeOCTagsCxt)UAUtil.findNodeByPath(cat) ;
+		List<UANodeOCTags>  tns = subn.listSelfAndSubTagsNode() ;
+		ArrayList<NameTitle> rets = new ArrayList<>() ;
+		for(UANodeOCTags tn:tns)
+		{
+			List<UATag> tags = tn.getNorTags() ;
+			for(UATag tag:tags)
+			{
+				String np = tag.getNodeCxtPathIn(subn,".") ;
+				String npt = tag.getNodeCxtPathTitleIn(subn) ;
+				rets.add(new NameTitle(np,npt)) ;
+			}
+		}
+		return rets ;
+	}
 	
 
 	public File getSaverDir()

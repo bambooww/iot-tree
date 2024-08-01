@@ -1,6 +1,8 @@
 package org.iottree.core.station;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -174,10 +176,17 @@ public class PlatformManager
 	 *  
 	 * @param prjname
 	 * @param zipped_prj
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	void onRecvedStationPrj(PStation pstation,String prjname,byte[] zipped_prj)
+	void onRecvedStationPrj(PStation pstation,String prjname,byte[] zipped_prj) throws FileNotFoundException, IOException
 	{
-		
+		String fn = pstation.getId()+"."+prjname+"_"+System.currentTimeMillis()+".zip" ;
+		File outf = new File(prjUpDir,fn) ;
+		try(FileOutputStream fos = new FileOutputStream(outf);)
+		{
+			fos.write(zipped_prj);
+		}
 	}
 	
 	/**

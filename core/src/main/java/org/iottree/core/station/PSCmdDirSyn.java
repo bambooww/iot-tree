@@ -378,7 +378,6 @@ public class PSCmdDirSyn extends PSCmd
 		// subf2chk.put(n, subf) ;
 		// }
 		DirDiff dd = calLocalDirDiff(localdir, dcs);
-
 		if (dd == null)
 			return;
 
@@ -562,7 +561,8 @@ public class PSCmdDirSyn extends PSCmd
 		{
 			if (subf.isDirectory())
 				continue;
-
+			if(!subf.exists())
+				continue ; // linux file name may has ���� and not existed
 			String fn = subf.getName();
 
 			r_fns.remove(fn);

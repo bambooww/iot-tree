@@ -145,8 +145,17 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',true)">start</button>
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',false)">stop</button>
 	 
-	 <button title="read prj from station">up project</button>
-	 <button title="write prj to station">down project</button> <br>
+	 <button title="read prj from station" onclick="station_up_prj('<%=ps.getId() %>','<%=prjst.getPrjName() %>')">up project</button>
+<%
+	String p_station_prj = ps.getId()+"_"+prjst.getPrjName() ;
+	UAPrj p_prj = UAManager.getInstance().getPrjByName(p_station_prj) ;
+	if(p_prj!=null)
+	{
+%>
+		 <button title="write prj to station">down project</button> <br>
+<%
+	}
+%>
 	 <input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start
 	 <input type="checkbox" id="syn_en_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=syn_chked %>/>Data Syn 
 	 Interval <input type="number" id="syn_intv_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  value="<%=syn_intv %>" style="width:65px"/>
@@ -284,11 +293,22 @@ function station_down_prj(stationid)
 {
 	let prjname = $("#prjlist_"+stationid).val();
 	send_ajax("platform_ajax.jsp",
-			{op:"station_prj_update",stationid:stationid,prj:prjname},
+			{op:"station_prj_down",stationid:stationid,prj:prjname},
 			(bsucc,ret)=>{
 			dlg.msg(ret) ;
 		});
 }
+
+function station_up_prj(stationid,prjname)
+{
+	send_ajax("platform_ajax.jsp",
+			{op:"station_prj_up",stationid:stationid,prj:prjname},
+			(bsucc,ret)=>{
+			dlg.msg(ret) ;
+		});
+}
+
+
 
 function station_syn_dir(stationid)
 {

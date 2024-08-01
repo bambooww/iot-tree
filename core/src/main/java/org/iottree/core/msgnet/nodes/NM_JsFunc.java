@@ -245,7 +245,8 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		
 		sb.append("\r\n})("+name_sp+" || ("+name_sp+" = {}));\r\n") ;
 		
-		sb.append("function fn_msgin_"+name_sp+"(topic,heads,payload,node,flow){\r\n") ;
+		sb.append("function fn_msgin_"+name_sp+"(topic,heads,bjson,payload,node,flow){\r\n") ;
+		sb.append("\r\n  if(bjson) eval('payload='+payload); \r\n");
 		sb.append("\r\n return "+name_sp+".___on_msg_in(topic,heads,payload,node,flow);\r\n");
 		sb.append("\r\n}\r\n");
 		
@@ -318,7 +319,13 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		String name_sp = JS_getJsNameSp();
 		String fn = "fn_msgin_"+name_sp ;
 		Object pld = msg.getPayload() ;
-		Object obj = cxt.scriptInvoke(fn,msg.getTopic(), msg.getHeadsMap(),pld,this,this.getBelongTo()) ;
+		boolean bjson = false;
+		if(pld instanceof JSONObject || pld instanceof JSONArray)
+		{
+			bjson = true ;
+			pld = pld.toString() ;
+		}
+		Object obj = cxt.scriptInvoke(fn,msg.getTopic(), msg.getHeadsMap(),bjson,pld,this,this.getBelongTo()) ;
 		if(obj==null)
 			return null ;
 

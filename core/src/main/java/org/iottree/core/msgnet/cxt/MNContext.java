@@ -151,8 +151,12 @@ private transient ScriptEngine scriptEng = null;
 	{
 		GraalJSScriptEngine se = (GraalJSScriptEngine)getScriptEngine() ;
 		//se.getContext();
+		//long st = System.currentTimeMillis() ;
 		Value func = se.getPolyglotContext().getBindings("js").getMember(fn) ;
+		long et1= System.currentTimeMillis() ;
+		//System.out.println("c1="+(et1-st)) ;
 		Value res = func.execute(paramvals) ;
+		//System.out.println("c2="+(System.currentTimeMillis()-et1)) ;
 		//Invocable inv = (Invocable)getScriptEngine() ;
 		//inv.
 		//return inv.invokeFunction(fn, paramvals) ;

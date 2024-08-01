@@ -10,17 +10,17 @@
 	org.iottree.core.msgnet.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	String prjid = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
-	{
-		out.print("no prj found") ;
-		return ;
-	}
-	MNManager mnm= MNManager.getInstance(prj) ;
+	//UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	//if(prj==null)
+	//{
+	//	out.print("no prj found") ;
+	//	return ;
+	//}
+	MNManager mnm= MNManager.getInstanceByContainerId(prjid);//.getInstance(prj) ;
 	MNNet net = mnm.getNetById(netid) ;
 	if(net==null)
 	{
@@ -142,7 +142,7 @@ $('#help_tree').jstree(
 		{
 			'core' : {
 				'data' : {
-					'url' :`./mn_help_ajax.jsp?op=sub_json&prjid=\${prjid}&netid=\${netid}&itemid=\${itemid}`,
+					'url' :`./mn_help_ajax.jsp?op=sub_json&container_id=\${container_id}&netid=\${netid}&itemid=\${itemid}`,
 					"dataType" : "json",
 					"data":function(node){
                         return {"id" : node.id};

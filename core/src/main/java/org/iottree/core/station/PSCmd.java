@@ -156,6 +156,9 @@ public abstract class PSCmd
 		case PSCmdPrjUpdate.CMD:
 			pscmd = new PSCmdPrjUpdate() ;
 			break ;
+		case PSCmdPrjUpTrigger.CMD:
+			pscmd = new PSCmdPrjUpTrigger() ;
+			break ;
 		case PSCmdReboot.CMD:
 			pscmd = new PSCmdReboot() ;
 			break ;
@@ -195,7 +198,7 @@ public abstract class PSCmd
 		if(params!=null&&params.size()>0)
 			ret += " "+ Convert.combineStrWith(params, " ") ;
 		if(this.cmdData!=null)
-			ret += "[data_len="+this.cmdData.length+"]" ;
+			ret += " [data_len="+this.cmdData.length+"]" ;
 		return ret ;
 	}
 }

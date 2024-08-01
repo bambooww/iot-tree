@@ -16,8 +16,9 @@ public class InfluxDB_M extends MNModule // implements IMNRunner
 {
 	private static InfluxDB_Writer SUP_W = new InfluxDB_Writer() ;
 	private static InfluxDB_Tag2Point SUP_TAG2PT = new InfluxDB_Tag2Point() ;
+	private static InfluxDB_JO2Point SUP_JO2PT = new InfluxDB_JO2Point() ;
 	
-	private static List<MNNode> SUPS = Arrays.asList(SUP_W,SUP_TAG2PT) ;
+	private static List<MNNode> SUPS = Arrays.asList(SUP_W,SUP_TAG2PT,SUP_JO2PT) ;
 	
 	String url = "http://localhost:8086" ;
 	

@@ -224,43 +224,77 @@ public class InfluxDB_Writer extends MNNodeEnd
 		point.time(ts,WritePrecision.MS);
 		
 		JSONArray tagsjarr = pld.optJSONArray("tags") ;
-		if(tagsjarr==null)
-			return null ;
-		int n = tagsjarr.length() ;
-		for(int i = 0 ; i < n ; i ++)
+		if(tagsjarr!=null)
 		{
-			JSONObject tmpjo = tagsjarr.getJSONObject(i) ;
-			String tagn = tmpjo.optString("n") ;
-			if(Convert.isNullOrEmpty(tagn))
-				continue ;
-			String v = tmpjo.optString("v") ;
-			if(Convert.isNullOrEmpty(v))
-				continue ;
-			point.addTag(tagn, v) ;
+			int n = tagsjarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = tagsjarr.getJSONObject(i) ;
+				String tagn = tmpjo.optString("n") ;
+				if(Convert.isNullOrEmpty(tagn))
+					continue ;
+				String v = tmpjo.optString("v") ;
+				if(Convert.isNullOrEmpty(v))
+					continue ;
+				point.addTag(tagn, v) ;
+			}
+		}
+		
+		JSONObject tagob = pld.optJSONObject("tagob") ;
+		if(tagob!=null)
+		{
+			for(String n:tagob.keySet())
+			{
+				String v = tagob.optString(n) ;
+				if(Convert.isNullOrEmpty(v))
+					continue ;
+				point.addTag(n, v) ;
+			}
 		}
 		
 		JSONArray fjarr = pld.optJSONArray("fields") ;
-		if(fjarr==null)
-			return null ;
-		n = fjarr.length() ;
-		for(int i = 0 ; i < n ; i ++)
+		if(fjarr!=null)
 		{
-			JSONObject tmpjo = fjarr.getJSONObject(i) ;
-			String fn = tmpjo.optString("n") ;
-			if(Convert.isNullOrEmpty(fn))
-				continue ;
-			Object v = tmpjo.opt("v") ;
-			if(v==null)
-				continue ;
-			
-			if(v instanceof Number)
-				point.addField(fn,(Number)v) ;
-			else if(v instanceof String)
-				point.addField(fn,(String)v) ;
-			else if(v instanceof Boolean)
-				point.addField(fn,(Boolean)v) ;
-			else // if(v==null)
-				point.addField(fn, (Number)null) ;
+			int n = fjarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = fjarr.getJSONObject(i) ;
+				String fn = tmpjo.optString("n") ;
+				if(Convert.isNullOrEmpty(fn))
+					continue ;
+				Object v = tmpjo.opt("v") ;
+				if(v==null)
+					continue ;
+				
+				if(v instanceof Number)
+					point.addField(fn,(Number)v) ;
+				else if(v instanceof String)
+					point.addField(fn,(String)v) ;
+				else if(v instanceof Boolean)
+					point.addField(fn,(Boolean)v) ;
+				else // if(v==null)
+					point.addField(fn, (Number)null) ;
+			}
+		}
+		
+		JSONObject fieldob = pld.optJSONObject("fieldob") ;
+		if(fieldob!=null)
+		{
+			for(String fn:fieldob.keySet())
+			{
+				Object v = fieldob.opt(fn) ;
+				if(v==null)
+					continue ;
+				
+				if(v instanceof Number)
+					point.addField(fn,(Number)v) ;
+				else if(v instanceof String)
+					point.addField(fn,(String)v) ;
+				else if(v instanceof Boolean)
+					point.addField(fn,(Boolean)v) ;
+				else // if(v==null)
+					point.addField(fn, (Number)null) ;
+			}
 		}
 		
 		return point ;
@@ -288,11 +322,17 @@ public class InfluxDB_Writer extends MNNodeEnd
 			"        {\"n\":\"tag1\",\"v\":\"ttt1\"},\r\n" + 
 			"        {\"n\":\"tag2\",\"v\":\"ttt2\"}\r\n" + 
 			"    ],\r\n" + 
+			"   \"tagob\":{\r\n" +
+			"		\"tag1\":\"ttt1\",\"tag2\":\"ttt2\"" +
+			"    },\r\n" + 
 			"   \"fields\":[\r\n" + 
 			"         {\"n\":\"f1\",\"v\",true},\r\n" + 
 			"         {\"n\":\"ff2.xx\",\"v\":3.14},\r\n" + 
 			"         {\"n\":\"ff2.yy\",valid:false}\r\n" + 
-			"    ]\r\n" + 
+			"    ],\r\n" +
+			"   \"fieldob\":{\r\n" +
+			"		\"f1\":\"ffff1\",\"f2\":3.14" +
+			"    },\r\n" + 
 			"}"
 			+ "</pre>" ; 
 

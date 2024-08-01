@@ -95,7 +95,7 @@ public abstract class Source
 		case "jdbc":
 			return new SourceJDBC() ;
 		case "influxdb":
-			return new SourceInfluxDB();
+			return null;//new SourceInfluxDB();
 		case "iotdb":
 			return new SourceIoTDB() ;
 		default:

@@ -260,12 +260,11 @@
 		     
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
 		<dependency>
-		    <groupId>org.influxdb</groupId>
-		    <artifactId>influxdb-java</artifactId>
-		    <version>2.23</version>
-		</dependency>
+    <groupId>com.influxdb</groupId>
+    <artifactId>influxdb-client-java</artifactId>
+    <version>7.1.0</version>
+</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 		    <groupId>org.xerial</groupId>

@@ -68,9 +68,43 @@ public class JSONTemp implements Comparable<JSONTemp>
 				return strv ;
 			}
 		}
+		
+		public Object tranObjVal(Object objv)
+		{
+			if(objv==null)
+				return objv ;
+			switch(val)
+			{
+			case 1: //number
+				if(objv instanceof Number)
+					return objv ;
+				if(objv instanceof Boolean)
+					return ((Boolean)objv)?1:0 ;
+				String strv = objv.toString() ;
+				int k = strv.indexOf('.');
+				if(k>=0)
+					return Double.parseDouble(strv) ;
+				else
+					return Long.parseLong(strv) ;
+			case 2: //bool
+				if(objv instanceof Boolean)
+					return objv ;
+				if(objv instanceof Number)
+					return ((Number)objv).intValue()>0 ;
+					
+				return "true".equalsIgnoreCase(objv.toString()) ;
+			default:
+				return objv.toString() ;
+			}
+		}
+		
+		public static ValTp valueOfInt(int i)
+		{
+			return JSONTemp.valueOfInt(i) ;
+		}
 	}
 
-	static ValTp valueOfInt(int i)
+	public static ValTp valueOfInt(int i)
 	{
 		switch (i)
 		{

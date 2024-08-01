@@ -851,6 +851,20 @@ function debug_prompt_detail(itemid,lvl,ptp) //err warn info
 				]);
 	}) ;
 }
+	
+function debug_prompt_close(itemid,lvl,ptp) //err warn info
+{
+	let op = "rt_debug_close";
+
+	send_ajax("mn_ajax.jsp",{op:op,container_id:container_id,netid:netid,itemid:itemid,lvl:lvl,ptp},(bsucc,ret)=>{
+		if(!bsucc || ret!='succ')
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		dlg.msg("done")
+	}) ;
+}
 
 function on_debug_node(nid,dbg_item)
 {

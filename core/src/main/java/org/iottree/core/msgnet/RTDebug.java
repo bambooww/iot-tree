@@ -36,6 +36,11 @@ public class RTDebug
 		return this.tp2ppt.get(tp) ;
 	}
 	
+	public RTDebugPrompt delPrompt(String tp)
+	{
+		return this.tp2ppt.remove(tp) ;
+	}
+	
 	public boolean hasPrompts()
 	{
 		return tp2ppt.size()>0 ;
@@ -93,6 +98,7 @@ public class RTDebug
 			divsb.append("<div  class=\"rt_blk\" style='background-color:"+this.bgcolor+"'>["+lvl+"] "+ppt.getDTGapToNow()+" "+ppt.getMsg()) ;
 			if(ppt.hasDetail())
 				divsb.append("<button onclick=\"debug_prompt_detail(\'"+this.belongTo.getId()+"\','"+lvl+"','"+ppt.tp+"')\">Detail</button>") ;
+			divsb.append("<button onclick=\"debug_prompt_close(\'"+this.belongTo.getId()+"\','"+lvl+"','"+ppt.tp+"')\">Close</button>") ;
 			divsb.append("</div>") ;
 			divblks.add(new DivBlk("debug_"+lvl+"_"+ppt.tp,divsb.toString())) ;
 		}

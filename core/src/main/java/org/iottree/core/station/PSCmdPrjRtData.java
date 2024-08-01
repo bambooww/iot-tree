@@ -49,7 +49,8 @@ public class PSCmdPrjRtData extends PSCmd
 		if (Convert.isNullOrEmpty(prjname))
 			return;
 
-		UAPrj platform_prj = UAManager.getInstance().getPrjByName(prjname);
+		String p_prjname = ps.getId()+"_"+prjname ;
+		UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
 		if (platform_prj == null)
 			return;
 

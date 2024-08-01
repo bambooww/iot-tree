@@ -15,7 +15,7 @@
 	String prjname = request.getParameter("prjname") ;
 	UAPrj prj = null ;
 	String prjid = null ;
-	if(Convert.isNullOrEmpty(stationid) && Convert.isNotNullEmpty(prjname))
+	if(Convert.isNotNullEmpty(stationid) && Convert.isNotNullEmpty(prjname))
 	{
 		prj = UAManager.getInstance().getPrjByName(stationid+"_"+prjname) ;
 		if(prj==null)
