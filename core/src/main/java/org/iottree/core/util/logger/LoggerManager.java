@@ -192,7 +192,7 @@ public class LoggerManager
 			if(logger!=null)
 				return logger ;
 			
-			logger = new IOTTLogger(id);//LoggerObj(id);
+			logger = createNewLogIns(id) ;// new IOTTLogger(id);//LoggerObj(id);
 			id2log.put(id, logger);
 			
 			if(bInCtrl&&ctrlEnableIds!=null)
@@ -210,6 +210,24 @@ public class LoggerManager
 		}
 	}
 	
+	protected static Class<?> LOG_CLASS = null ;
+	
+	private static ILogger createNewLogIns(String n)
+	{
+		if(LOG_CLASS!=null)
+		{
+			try
+			{
+				return (ILogger)LOG_CLASS.getConstructor(String.class).newInstance(n) ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+				return null ;
+			}
+		}
+		return new IOTTLogger(n);
+	}
 	/**
 	 * @param c
 	 * @return

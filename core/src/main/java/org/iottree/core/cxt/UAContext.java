@@ -257,6 +257,7 @@ public class UAContext
 	{
 		StringWriter sw =new StringWriter() ;
 		PrintWriter pw = new PrintWriter(sw) ;
+		
 		try
 		{
 			this.debug.setOutPipe(pw);

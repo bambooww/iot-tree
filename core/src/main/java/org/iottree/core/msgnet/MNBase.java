@@ -52,6 +52,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	boolean bEnable = true ;
 	
 	boolean bShowRT = false;
+	
+	/**
+	 * 如果节点实现接口IMNNodeRes,此变量才会起作用
+	 */
+	String resName = null ;
 //	private String nodeTp = null ;
 //	
 //	private String nodeTpT = null ;
@@ -207,6 +212,15 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	protected abstract void setParamJO(JSONObject jo);
 	
+	/**
+	 * Node impl IMNNodeRes ,it will be used
+	 * @return
+	 */
+	public String getMNResName()
+	{
+		return this.resName ;
+	}
+	
 	final void setDetailJO(JSONObject jo)
 	{
 		JSONObject pm_jo = jo.getJSONObject("pm_jo");
@@ -214,6 +228,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.bEnable = jo.optBoolean("enable",true) ;
 		this.title = jo.optString("title","") ;
 		this.desc = jo.optString("desc","") ;
+		this.resName = jo.optString("res_name") ;
 		//other may be icon color etc
 	}
 	
@@ -227,7 +242,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", this.id) ;
-		String tt = this.title ;
+		String tt = this.getTitle() ;
 		if(Convert.isNullOrEmpty(tt))
 			tt = this.getTPTitle() ;
 		jo.putOpt("title", tt) ;
@@ -273,6 +288,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		else
 			jo.put("pm_err", "") ;
 		
+		jo.putOpt("res_name", resName) ;
 		return jo;
 	}
 	
@@ -285,6 +301,8 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.y = jo.optFloat("y",0) ;
 		this.bEnable = jo.optBoolean("enable",true) ;
 		this.bShowRT = jo.optBoolean("show_rt",false) ;
+		
+		this.resName = jo.optString("res_name") ;
 		
 		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
 		if(pmjo!=null)

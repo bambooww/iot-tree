@@ -850,6 +850,10 @@ public class Config
 		return appLang ;
 	}
 	
+	public static void setAppLang(String ln)
+	{
+		appLang = ln ;
+	}
 
 	public static boolean isAuthDefaultLogin()
 	{

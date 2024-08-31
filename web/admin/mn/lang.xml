@@ -4,6 +4,9 @@
 	<dd_node id="1" name="node" name_cn="节点" name_en="Node" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="module" name_cn="模块" name_en="Module" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="param" name_cn="参数" name_en="Parameter" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="res_name" name_cn="资源名称" name_en="Res Name" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="res_name_ppt" name_cn="资源名称填写后，外界程序可以通过此名称直接查询定位到此节点，接着就可以使用这个节点提供的资源" 
+		name_en="After filling in the resource name, external programs can directly query and locate this node through this name, and then use the resources provided by this node" desc_cn="" desc_en=""/>
 
 	<dd_node id="1" name="inject" name_cn="注入" name_en="Inject" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="debug" name_cn="调试" name_en="Debug" desc_cn="" desc_en=""/>

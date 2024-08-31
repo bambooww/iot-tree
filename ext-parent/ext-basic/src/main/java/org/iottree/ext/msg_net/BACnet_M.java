@@ -10,13 +10,7 @@ import org.json.JSONObject;
 public class BACnet_M extends MNModule implements IMNRunner
 {
 
-	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public String getTP()
 	{

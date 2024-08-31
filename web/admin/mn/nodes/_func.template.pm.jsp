@@ -11,33 +11,27 @@
 	org.iottree.core.msgnet.nodes.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
-	{
-		out.print("no prj found") ;
-		return ;
-	}
-	MNManager mnm= MNManager.getInstance(prj) ;
+	MNManager mnm = MNManager.getInstanceByContainerId(container_id) ;
 	MNNet net = mnm.getNetById(netid) ;
 	if(net==null)
 	{
 		out.print("no net found") ;
 		return ;
 	}
-	MNBase item =net.getItemById(itemid) ;
-	if(item==null)
+	
+	MNNode node = net.getNodeById(itemid) ;
+	if(node==null)
 	{
-		out.print("no item found") ;
+		out.print("no node item found") ;
 		return ;
 	}
 	
-	MNMsg msg = null;
-	if(item instanceof MNNode)
-		msg = ((MNNode)item).RT_getLastMsgIn() ;
+	
+	MNMsg msg = node.RT_getLastMsgIn() ;
 	if(msg==null)
 		msg = new MNMsg() ;
 %>
@@ -89,7 +83,7 @@
 		      </li>
 		      <li>node
 <%
-	item.CXT_PK__renderTree(out) ;
+	node.CXT_PK__renderTree(out) ;
 %>
 			</li>
 		      <li>flow

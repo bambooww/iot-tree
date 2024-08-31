@@ -247,9 +247,11 @@ case "station_prj_pm":
 	boolean b_auto_start = "true".equals(request.getParameter("auto_start")) ;
 	boolean data_syn_en = "true".equals(request.getParameter("data_syn_en")) ;
 	long data_syn_intv = Convert.parseToInt64(request.getParameter("data_syn_intv"),10000) ;
+	boolean b_failed_keep = "true".equals(request.getParameter("failed_keep")) ;
+	long keep_max_len = Convert.parseToInt64(request.getParameter("keep_max_len"),3153600) ;
 	try
 	{
-		station.RT_setSynPM(prjname, b_auto_start, data_syn_en, data_syn_intv) ;
+		station.RT_setSynPM(prjname, b_auto_start, data_syn_en, data_syn_intv,b_failed_keep,keep_max_len) ;
 		out.print("succ") ;
 	}
 	catch(Exception e)

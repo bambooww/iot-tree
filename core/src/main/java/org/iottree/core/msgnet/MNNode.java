@@ -60,6 +60,7 @@ public abstract class MNNode extends MNBase
 			return this.TP_relatedM.getTP() ;
 	}
 	
+	@Override
 	protected MNNode createNewIns(MNNet net) throws Exception
 	{
 		MNNode new_n = (MNNode)this.getClass().getConstructor().newInstance() ;

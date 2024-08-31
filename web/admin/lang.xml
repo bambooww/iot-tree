@@ -74,6 +74,7 @@
   <dd_node id="1" name="g_dict" name_cn="全局字典" name_en="Global Dict" />
   <dd_node id="1" name="others" name_cn="其他" name_en="Others" />
   <dd_node id="1" name="log_ctrl" name_cn="日志控制" name_en="Log controller" />
+  <dd_node id="1" name="conn_platform" name_cn="对接平台" name_en="Log controller" />
   <dd_node id="1" name="debug" name_cn="调试" name_en="Debug" />
   <dd_node id="1" name="clear" name_cn="清除" name_en="Clear" />
   <dd_node id="1" name="search" name_cn="搜索" name_en="Search" />

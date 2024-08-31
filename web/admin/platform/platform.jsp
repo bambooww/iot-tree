@@ -138,6 +138,9 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 			String chked = prjst.isAutoStart()?"checked":"" ;
 			String syn_chked = prjst.isDataSynEnable()?"checked":"" ;
 			long syn_intv= prjst.getDataSynIntvMs() ;
+			
+			String failed_keep_chked = prjst.isFailedKeep()?"checked":"" ;
+			long keep_max_len = prjst.getKeepMaxLen() ;
 %>
 	<div class="prj_item">
 	<%=prjst.getPrjName() %>  running=<%=prjst.isRunning() %> auto start=<%=prjst.isAutoStart() %><br>
@@ -159,6 +162,8 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 	 <input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start
 	 <input type="checkbox" id="syn_en_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=syn_chked %>/>Data Syn 
 	 Interval <input type="number" id="syn_intv_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  value="<%=syn_intv %>" style="width:65px"/>
+	 <br>Failed Keep <input type="checkbox" id="failed_keep_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  <%=failed_keep_chked %> style="width:65px"/>
+	 Max Len <input type="number" id="keep_max_len_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  value="<%=keep_max_len %>" style="width:65px"/>
 	 <button title="set param" onclick="station_prj_set_pm('<%=ps.getId() %>','<%=prjst.getPrjName() %>')">Set PM</button>
 	 
 	 </div>
@@ -255,8 +260,11 @@ function station_prj_set_pm(stationid,prjname)
 	let bautostart = $(`#autostart_\${stationid}_\${prjname}`).prop("checked") ;
 	let data_syn_en = $(`#syn_en_\${stationid}_\${prjname}`).prop("checked") ;
 	let data_syn_intv = $(`#syn_intv_\${stationid}_\${prjname}`).val() ;
+	let bfailed_keep = $(`#failed_keep_\${stationid}_\${prjname}`).prop("checked") ;
+	let keep_max_len  = $(`#keep_max_len_\${stationid}_\${prjname}`).val() ;
 	send_ajax("platform_ajax.jsp",
-		{op:"station_prj_pm",stationid:stationid,prj:prjname,auto_start:bautostart,data_syn_en:data_syn_en,data_syn_intv:data_syn_intv},
+		{op:"station_prj_pm",stationid:stationid,prj:prjname,auto_start:bautostart,data_syn_en:data_syn_en,data_syn_intv:data_syn_intv,
+			failed_keep:bfailed_keep,keep_max_len:keep_max_len},
 		(bsucc,ret)=>{
 		dlg.msg(ret) ;
 	});

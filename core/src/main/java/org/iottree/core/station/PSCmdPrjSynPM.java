@@ -16,9 +16,9 @@ public class PSCmdPrjSynPM extends PSCmd
 		return CMD;
 	}
 
-	public PSCmdPrjSynPM asPrjPM(String prjname,boolean b_auto_start,boolean datasyn_en,long datasyn_intv)
+	public PSCmdPrjSynPM asPrjPM(String prjname,boolean b_auto_start,boolean datasyn_en,long datasyn_intv, boolean failed_keep,long keep_max_len)
 	{
-		this.asParams(Arrays.asList(prjname,""+b_auto_start,""+datasyn_en,""+datasyn_intv)) ;
+		this.asParams(Arrays.asList(prjname,""+b_auto_start,""+datasyn_en,""+datasyn_intv,""+failed_keep,""+keep_max_len)) ;
 		return this ;
 	}
 	
@@ -40,6 +40,8 @@ public class PSCmdPrjSynPM extends PSCmd
 		
 		boolean datasyn_en = "true".equals(this.getParamByIdx(2)) ;
 		long datasyn_intv = Convert.parseToInt64(this.getParamByIdx(3), 10000) ;
-		sl.setPrjSynPM(prjname, datasyn_en, datasyn_intv);
+		boolean failed_keep = "true".equals(this.getParamByIdx(4)) ;
+		long keep_max_len = Convert.parseToInt64(this.getParamByIdx(5), 3153600) ;
+		sl.setPrjSynPM(prjname, datasyn_en, datasyn_intv, failed_keep,keep_max_len);
 	}
 }

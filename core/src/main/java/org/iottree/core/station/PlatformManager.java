@@ -195,10 +195,24 @@ public class PlatformManager
 	 * @param rt_jo
 	 * @throws Exception 
 	 */
-	void onRecvedRTData(PStation pstation,String prjname,JSONObject rt_jo) throws Exception
+	void onRecvedRTData(PStation pstation,String prjname,String key,JSONObject rt_jo,boolean b_his) throws Exception
+	{
+		if(!b_his)
+			pstation	.RT_onRecvedRTData(prjname,key,rt_jo,b_his) ;
+		
+		PlatformSaver ps = getSaver(pstation,prjname) ;
+		ps.storeJson(rt_jo.toString(), key);
+	}
+	
+	void onRecvedHisRTDatas(PStation pstation,String prjname,HashMap<String,JSONObject> key2rt_jo) throws Exception
 	{
 		PlatformSaver ps = getSaver(pstation,prjname) ;
-		ps.storeJson(rt_jo.toString(), System.currentTimeMillis());
+		HashMap<String,String> k2txt = new HashMap<>() ;
+		for(Map.Entry<String, JSONObject> k2j:key2rt_jo.entrySet())
+		{
+			k2txt.put(k2j.getKey(),k2j.getValue().toString()) ;
+		}
+		ps.storeJsonMulti(k2txt);
 	}
 	
 	private PlatformSaver getSaver(PStation pstation,String prjname) throws Exception
@@ -227,4 +241,19 @@ public class PlatformManager
 //		
 //		return jo ;
 //	}
+	
+	public JSONObject RT_toStatusJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		
+		JSONArray jarr = new JSONArray() ;
+		for(PStation st:getPStationMap().values())
+		{
+			JSONObject tmpjo = st.RT_toStatusJO() ;
+			jarr.put(tmpjo) ;
+		}
+		jo.put("stations", jarr) ;
+		
+		return jo ;
+	}
 }

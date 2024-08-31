@@ -567,12 +567,14 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			
 			if (val != null)
 				dt_chg = val.getValChgDT();
-				
+			
 			if(tag2lastdt!=null)
 			{
 				Long lastdt = tag2lastdt.get(tg) ;
-				if (lastdt!=null && lastdt > 0 && dt_chg <= lastdt)
+				if (lastdt!=null && lastdt > 0 && dt_chg>0 && dt_chg <= lastdt)
 					continue;
+				if(dt_chg<0 && lastdt!=null && lastdt<0)
+					continue ;
 				
 				lastdt = dt_chg ;
 				tag2lastdt.put(tg, lastdt);

@@ -4,6 +4,7 @@
 				java.io.*,
 				java.net.*,
 				org.iottree.core.*,
+				org.iottree.core.station.*,
 				org.iottree.core.util.*
 				"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
@@ -532,11 +533,18 @@ function open_doc()
 				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
 				 --%>
 		</div>
+<%
+if(!PlatformManager.isInPlatform())
+{
+%>
 		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
 		</div>
+<%
+}
+%>
      <div class="top_toolbox"  style="right:10px;width:180px;color:#fff5e2;">
      <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
 	 <button class="layui-btn layui-btn-primary layui-btn-xs <%=("cn".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('cn')">CN</button>

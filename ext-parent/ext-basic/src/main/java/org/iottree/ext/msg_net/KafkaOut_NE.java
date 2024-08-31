@@ -11,12 +11,13 @@ import org.json.JSONObject;
 
 public class KafkaOut_NE extends MNNodeEnd
 {
+	public static final String TP = "kafka_out" ;
 	String topic = null ;
 	
 	@Override
 	public String getTP()
 	{
-		return "kafka_out";
+		return TP;
 	}
 
 	@Override

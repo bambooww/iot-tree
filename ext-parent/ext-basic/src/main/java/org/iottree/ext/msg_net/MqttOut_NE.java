@@ -10,12 +10,14 @@ import org.json.JSONObject;
 
 public class MqttOut_NE extends MNNodeEnd
 {
+	public static final String TP = "mqtt_out" ;
+	
 	String sendId = null;
 	
 	@Override
 	public String getTP()
 	{
-		return "mqtt_out";
+		return TP;
 	}
 
 	@Override
@@ -23,21 +25,6 @@ public class MqttOut_NE extends MNNodeEnd
 	{
 		return "MQTT Sender";
 	}
-	
-
-	@Override
-	public JSONTemp getInJT()
-	{
-		return null;
-	}
-
-	@Override
-	public JSONTemp getOutJT()
-	{
-		return null;
-	}
-
-
 
 	@Override
 	public String getColor()

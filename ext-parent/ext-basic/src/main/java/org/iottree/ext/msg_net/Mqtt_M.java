@@ -1,15 +1,15 @@
 package org.iottree.ext.msg_net;
 
-import java.time.Duration;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
@@ -20,20 +20,17 @@ import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.MNNode;
 import org.iottree.core.msgnet.RTOut;
-import org.iottree.core.msgnet.MNBase.DivBlk;
-import org.iottree.core.router.JoinOut;
-import org.iottree.core.router.RouterObj;
-import org.iottree.core.router.roa.ROAMqtt.RecvConf;
-import org.iottree.core.router.roa.ROAMqtt.SendConf;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Mqtt_M extends MNModule implements IMNRunner
+public class Mqtt_M extends MNModule implements IMNRunner,ILogable
 {
-	private static MqttIn_NS SUP_MQTT_IN = new MqttIn_NS() ;
-	private static MqttOut_NE SUP_MQTT_OUT = new MqttOut_NE() ;
-	static List<MNNode> supNodes = Arrays.asList(SUP_MQTT_IN,SUP_MQTT_OUT) ;
+	//private static MqttIn_NS SUP_MQTT_IN = new MqttIn_NS() ;
+	//private static MqttOut_NE SUP_MQTT_OUT = new MqttOut_NE() ;
+
+	//	static List<MNNode> supNodes = Arrays.asList(SUP_MQTT_IN,SUP_MQTT_OUT) ;
 
 	public static enum OutFmt
 	{
@@ -144,7 +141,7 @@ public class Mqtt_M extends MNModule implements IMNRunner
 
 	int connTimeoutSec = 30 ;
 	
-	int connKeepAliveInterval = -1;
+	int connKeepAliveInterval = 60;
 	
 	ArrayList<SendConf> sendConfs = new ArrayList<>() ;
 	
@@ -171,11 +168,11 @@ public class Mqtt_M extends MNModule implements IMNRunner
 		return null ;
 	}
 	
-	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		return supNodes;
-	}
+//	@Override
+//	protected List<MNNode> getSupportedNodes()
+//	{
+//		return supNodes;
+//	}
 
 	@Override
 	public String getTP()
@@ -204,6 +201,11 @@ public class Mqtt_M extends MNModule implements IMNRunner
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
+		if(Convert.isNullOrEmpty(this.brokerHost))
+		{
+			failedr.append("no broker host") ;
+			return false;
+		}
 		return true;
 	}
 
@@ -348,12 +350,15 @@ public class Mqtt_M extends MNModule implements IMNRunner
 			}
 		}
 		
+		MNNode sup_in = this.getSupportedNodeByTP(MqttIn_NS.TP);
+		MNNode sup_out = this.getSupportedNodeByTP(MqttOut_NE.TP);
+		
 		int newcc = 0 ;
 		for(String addid :sendmids)
 		{
 			newcc ++ ;
 			SendConf dev = this.getSendConfById(addid) ;
-			MqttOut_NE newn = (MqttOut_NE)net.createNewNodeInModule(this,SUP_MQTT_OUT,me_x-100, me_y-20-33*newcc,null,false) ;
+			MqttOut_NE newn = (MqttOut_NE)net.createNewNodeInModule(this,sup_out,me_x-100, me_y-20-33*newcc,null,false) ;
 			newn.sendId = addid ;
 			newn.setTitle(dev.getShowTitle()+"["+dev.topic+"]") ;
 			bdirty = true ;
@@ -364,7 +369,7 @@ public class Mqtt_M extends MNModule implements IMNRunner
 		{
 			newcc ++ ;
 			RecvConf dev = this.getRecvConfById(addid) ;
-			MqttIn_NS newn = (MqttIn_NS)net.createNewNodeInModule(this,SUP_MQTT_IN,me_x+200, me_y-20-53*newcc,null,false) ;
+			MqttIn_NS newn = (MqttIn_NS)net.createNewNodeInModule(this,sup_in,me_x+200, me_y-20-53*newcc,null,false) ;
 			newn.recvId = addid ;
 			newn.setTitle(dev.getShowTitle()+"["+dev.topic+"]") ;
 			bdirty = true ;
@@ -376,14 +381,15 @@ public class Mqtt_M extends MNModule implements IMNRunner
 	// mqtt
 	
 
-	public void publish(String topic, byte[] data) throws MqttPersistenceException, MqttException
+	public void publish(String topic, byte[] data) throws Exception
 	{
 		publish(topic, data, 0);
 	}
 
-	public void publish(String topic, byte[] data, int qos) throws MqttPersistenceException, MqttException
+	public void publish(String topic, byte[] data, int qos) throws Exception
 	{
-		getMqttEP().publish(topic, data, qos);
+		//getMqttEP().publish(topic, data, qos);
+		getMqttClient().publish(topic, data, qos, false);
 	}
 
 	public void publish(String topic, String txt) throws Exception
@@ -393,24 +399,74 @@ public class Mqtt_M extends MNModule implements IMNRunner
 	
 	// rt
 	
+	private Mqtt_SQLitePersistence sqlitePsersis = null ;
 
 	private transient MqttEndPoint mqttEP = null;
 	
-
+	MqttClient mqttClient = null ;
+	
+	MqttConnectOptions options = null ;
+	
 	private boolean bRTInitOk = false;
 	
 	Thread RT_th = null ;
 	
 	boolean RT_bRun = false;
 	
-	
-	protected MqttEndPoint getMqttEP()
+	public Mqtt_SQLitePersistence getPersistence() //throws SQLException
 	{
-		if (mqttEP != null)
-			return mqttEP;
-		mqttEP = new MqttEndPoint("iottree_mn_mqtt" + this.getId()).withCallback(this.RT_mqttCB);
-		return mqttEP;
+		if(sqlitePsersis!=null)
+			return sqlitePsersis ;
+		try
+		{
+		String client_id = "mn_"+this.getId() ;
+		sqlitePsersis = new Mqtt_SQLitePersistence(client_id) ;
+		return sqlitePsersis;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			return null ;
+		}
 	}
+	
+	protected MqttClient getMqttClient() throws MqttException, SQLException
+	{
+		if(mqttClient!=null)
+			return mqttClient ;
+		
+		String broker_url = "tcp://"+this.brokerHost +":"+ this.brokerPort ;
+		String client_id = "mn_"+this.getId() ;
+		MqttClient mc = new MqttClient(broker_url, client_id, getPersistence());
+		
+		options = new MqttConnectOptions();
+        options.setAutomaticReconnect(true);
+        options.setCleanSession(false);
+        options.setUserName(this.user);
+        options.setPassword(this.psw.toCharArray());
+        options.setConnectionTimeout(connTimeoutSec);
+        if(connKeepAliveInterval>=0)
+        	options.setKeepAliveInterval(connKeepAliveInterval);
+        
+       // options.set
+        mc.setCallback(RT_mqttCB);
+        //options.
+        mqttClient = mc ;
+        
+        //mc.con
+		return mqttClient ;
+	}
+	
+	
+//	protected MqttEndPoint getMqttEP()
+//	{
+//		MqttClient client = null ;
+//		
+//		if (mqttEP != null)
+//			return mqttEP;
+//		mqttEP = new MqttEndPoint("iottree_mn_mqtt" + this.getId()).withCallback(this.RT_mqttCB);
+//		return mqttEP;
+//	}
 	
 	protected boolean RT_init(StringBuilder failedr)
 	{
@@ -424,9 +480,11 @@ public class Mqtt_M extends MNModule implements IMNRunner
 
 		try
 		{
-			MqttEndPoint ep = getMqttEP();
-			ep.withMqttServer(this.brokerHost, this.brokerPort, user, psw);
-			ep.withTime(connTimeoutSec, connKeepAliveInterval) ;
+//			MqttEndPoint ep = getMqttEP();
+//			ep.withMqttServer(this.brokerHost, this.brokerPort, user, psw);
+//			ep.withTime(connTimeoutSec, connKeepAliveInterval) ;
+			
+			MqttClient mc = getMqttClient() ;
 			
 			ArrayList<String> recv_tps = new ArrayList<>() ;
 			if(this.recvConfs!=null&&this.recvConfs.size()>0)
@@ -442,7 +500,11 @@ public class Mqtt_M extends MNModule implements IMNRunner
 			
 			if(recv_tps.size()>0)
 			{
-				ep.setListenTopics(recv_tps) ;
+				//ep.setListenTopics(recv_tps) ;
+				for(String topic:recv_tps)
+				{
+					mc.subscribe(topic); //缺省qos = 1  (0-最多一次 即发既弃  1 - 最少一次，存储发送信息直到ack 2 - 只发一次最复杂最慢)
+				}
 			}
 			bRTInitOk = true ;
 			return true ;
@@ -464,10 +526,30 @@ public class Mqtt_M extends MNModule implements IMNRunner
 		catch(Exception ee)
 		{}
 		
-		MqttEndPoint ep = getMqttEP();
-		ep.checkConn();
+//		MqttEndPoint ep = getMqttEP();
+//		ep.checkConn();
+		try
+		{
+			MqttClient mc = getMqttClient() ;
+			if(mc.isConnected())
+				return ;
+			mc.connect(this.options);
+		}
+		catch(Exception ee)
+		{
+			//ee.printStackTrace();
+			LOG_warn_debug("Mqtt_M checkConn err", ee);
+		}
 	}
 	
+//	private IMqttMessageListener RT_msglist0 = new IMqttMessageListener() {
+//
+//		@Override
+//		public void messageArrived(String topic, MqttMessage message) throws Exception
+//		{
+//			RT_onRecvedMsg(topic, message.getPayload());
+//		}};
+//	
 
 	private MqttCallback RT_mqttCB = new MqttCallback() {
 
@@ -627,12 +709,24 @@ public class Mqtt_M extends MNModule implements IMNRunner
 	@Override
 	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
-		MqttEndPoint ep = mqttEP ;
-		if(ep!=null&&ep.isConnReady())
+		//MqttEndPoint ep = mqttEP ;
+		boolean b_conned = false;
+		try
+		{
+			MqttClient mc = getMqttClient() ;
+			b_conned = (mc!=null&&mc.isConnected());
+		}
+		catch(Exception ee)
+		{
+			
+		}
+		
+		if(b_conned)
 		{
 			StringBuilder divsb = new StringBuilder() ;
 			divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:green\">Connected :</span>")
 				.append(brokerHost).append(":").append(brokerPort)
+				.append("Psersist Num=").append(this.getPersistence().getSavedNum())
 				.append("</div>") ;
 			
 			divblks.add(new DivBlk("mqtt_m",divsb.toString())) ;
@@ -640,8 +734,9 @@ public class Mqtt_M extends MNModule implements IMNRunner
 		else
 		{
 			StringBuilder divsb = new StringBuilder() ;
-			divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:red\">Not Connect to ").append("</span>")
+			divsb.append("<div tp='run' class=\"rt_blk\"><span style=\"color:red\">Not Connect to :").append("</span>")
 				.append(brokerHost).append(":").append(brokerPort)
+				.append("<br>Psersist Num=").append(this.getPersistence().getSavedNum())
 				.append("</div>") ;
 			
 			divblks.add(new DivBlk("mqtt_m",divsb.toString())) ;

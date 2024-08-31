@@ -5,14 +5,19 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.station.StationLocSaver.Item;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.queue.QueTickThread;
+import org.iottree.core.util.queue.QueueThread;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
@@ -64,23 +69,46 @@ public class StationLocal
 		
 		long dataSynIntv = 10000 ;
 		
+		boolean failedKeep = false;
+		
+		long keepMaxLen = 3153600 ;
 		
 		private transient long lastSynDT = -1 ;
 		
-		public PrjSynPm(String prjname,boolean data_syn_en,long data_syn_intv)
+		private transient UAPrj prj ;
+		
+		public PrjSynPm(String prjname,boolean data_syn_en,long data_syn_intv,boolean failed_keep,long keep_max_len)
 		{
 			this.prjName = prjname ;
 			this.dataSynEn = data_syn_en ;
 			this.dataSynIntv = data_syn_intv ;
+			this.failedKeep = failed_keep ;
+			this.keepMaxLen = keep_max_len ;
+			this.prj = UAManager.getInstance().getPrjByName(prjname) ;
 		}
 		
-		public boolean setPm(boolean data_syn_en,long data_syn_intv)
+		public boolean setPm(boolean data_syn_en,long data_syn_intv,boolean failed_keep,long keep_max_len)
 		{
-			if(this.dataSynEn==data_syn_en && data_syn_intv==this.dataSynIntv)
+			if(this.dataSynEn==data_syn_en && data_syn_intv==this.dataSynIntv
+					&& this.failedKeep == failed_keep && this.keepMaxLen==keep_max_len)
 				return false;
 			this.dataSynEn = data_syn_en ;
 			this.dataSynIntv = data_syn_intv ;
+			this.failedKeep = failed_keep ;
+			this.keepMaxLen = keep_max_len ;
 			return true ;
+		}
+		
+		boolean isPrjRunning()
+		{
+			if(this.prj==null)
+				return false;
+			return this.prj.RT_isRunning() ;
+		}
+		
+		UAPrj getPrj()
+		{
+			return this.prj ;
 		}
 		
 		public JSONObject toJO()
@@ -89,6 +117,8 @@ public class StationLocal
 			jo.put("prjname", this.prjName) ;
 			jo.put("data_syn_en", this.dataSynEn) ;
 			jo.putOpt("data_syn_intv",this.dataSynIntv) ;
+			jo.putOpt("failed_keep",this.failedKeep) ;
+			jo.putOpt("keep_max_len", this.keepMaxLen) ;
 			return jo ;
 		}
 		
@@ -99,7 +129,9 @@ public class StationLocal
 				return null;
 			boolean en = jo.optBoolean("data_syn_en",false) ;
 			long intv = jo.optLong("data_syn_intv",10000) ;
-			return new PrjSynPm(n,en,intv) ;
+			boolean  failed_keep = jo.optBoolean("failed_keep",false) ;
+			long keep_max_len = jo.optLong("keep_max_len", 3153600) ;
+			return new PrjSynPm(n,en,intv,failed_keep,keep_max_len) ;
 		}
 	}
 	
@@ -158,21 +190,12 @@ public class StationLocal
 					reconnectBlocking();
 				else
 					connectBlocking();
-				//Thread.sleep(5000);
 				return 2;
 			case OPEN:
-//				if(wsLis.hasSendData())
-//				{
-//					byte[] bs = wsLis.getNextSendData();
-//					WSClient.this.sendByRandomKey(bs) ;
-//				}
-				//send("hello from pro");
-				//Thread.sleep(checkSendIntv);
 				return 1;
 			
 			case CLOSED:
 				reconnectBlocking() ;
-				//Thread.sleep(5000);
 				return 2;
 			default:
 				return 0;
@@ -191,6 +214,9 @@ public class StationLocal
 	int platformPort = 9090 ;
 	
 	String key = null ;
+	
+//	boolean rt_data_failed_keep = false ;
+//	long rt_data_keep_len = 3153600 ;
 	
 	private boolean bValid = false;
 	
@@ -214,6 +240,9 @@ public class StationLocal
 			this.platformHost = jo.getString("platform_host") ;
 			this.platformPort = jo.optInt("platform_port",9090) ;
 			this.key = jo.getString("key") ;
+			this.bValid = jo.optBoolean("valid",false) ;
+//			this.rt_data_failed_keep = jo.optBoolean("rt_data_failed_keep",false) ;
+//			this.rt_data_keep_len = jo.optLong("rt_data_keep_len", 3153600) ;
 			return true ;
 		}
 		catch(Exception ee)
@@ -308,17 +337,17 @@ public class StationLocal
 		return null ;
 	}
 	
-	public void setPrjSynPM(String prjname,boolean datasyn_en,long syn_intv) throws IOException
+	public void setPrjSynPM(String prjname,boolean datasyn_en,long syn_intv,boolean failed_keep,long keep_max_len) throws IOException
 	{
 		PrjSynPm psp = getPrjSynPM(prjname) ;
 		if(psp==null)
 		{
-			psp = new PrjSynPm(prjname,datasyn_en,syn_intv) ;
+			psp = new PrjSynPm(prjname,datasyn_en,syn_intv, failed_keep,keep_max_len) ;
 			getPrjSynPMs().add(psp) ;
 		}
 		else
 		{
-			if(!psp.setPm(datasyn_en, syn_intv))
+			if(!psp.setPm(datasyn_en, syn_intv, failed_keep,keep_max_len))
 				return ;
 		}
 		
@@ -326,9 +355,55 @@ public class StationLocal
 	}
 	// rt
 	
+	static class QItem
+	{
+		PrjSynPm prjpm ;
+		
+		String key ;
+		
+		PSCmdPrjRtData rtd ;
+		
+		public QItem(PrjSynPm prjpm,String key, PSCmdPrjRtData rtd)
+		{
+			this.prjpm = prjpm ;
+			this.key = key ;
+			this.rtd = rtd ;
+		}
+	}
+	
 	WebSockClient wsClient =null;
 	
 	private Thread th = null ;
+	
+	QueTickThread.Handler<QItem> qttH = new QueTickThread.Handler<QItem>() {
+
+		/**
+		 * 发送或存储，或测试链接
+		 */
+		@Override
+		public void onQueObj(QItem qi)
+		{
+			//send or save
+			RT_chkSendOrSave(qi) ;
+			// check on tick
+			this.onTick();
+		}
+
+		
+		@Override
+		public void onTick()
+		{
+			RT_checkConn() ;
+			
+			RT_checkStationST();
+			
+			RT_checkHisReSend() ;
+		}};
+	//private Thread rtDataTh = null ;
+	/**
+	 * 使用队列保证数据采集精度
+	 */
+	private QueTickThread<QItem> queTh =new QueTickThread<>(qttH,200) ;
 	
 	public boolean isConnReady()
 	{
@@ -380,8 +455,6 @@ public class StationLocal
 			String url = "ws://"+this.platformHost+":"+this.platformPort+"/_ws/station/"+id ;
 			System.out.println(" station local to platform ->"+url) ;
 			this.wsClient = new WebSockClient(new URI(url)) ;
-			
-			
 		}
 		
 		return this.wsClient.checkAndConn() ;
@@ -456,59 +529,170 @@ public class StationLocal
 		}
 	}
 	
-	private void RT_chkSendRTData()
+	private void RT_chkSendOrSave(QItem qi)
 	{
-		if(wsClient.getReadyState()!=ReadyState.OPEN)
+		boolean bconnok = false;
+		if(wsClient!=null)
+			bconnok = wsClient.getReadyState()==ReadyState.OPEN ;
+		
+		PrjSynPm prjsyn = qi.prjpm ;
+		//PSCmdPrjRtData rtd = qi.rtd ;
+		try
 		{
-			return ;
+			if(bconnok)
+			{
+				byte[] bs = qi.rtd.packTo() ;
+				wsClient.send(bs);
+				
+				if(log.isTraceEnabled())
+				{
+					long dt =  IdCreator.extractTimeInMillInSeqId(qi.key) ;
+					String dtstr = Convert.toFullYMDHMS(new Date(dt)) ;
+					log.trace(" ["+this.id+"] send "+prjsyn.prjName+" RTData:["+dtstr+"] key="+qi.key+" size="+bs.length+" qlen="+queTh.getQueLen());
+				}
+				return ;
+			}
 		}
+		catch(Exception e)
+		{
+			if(log.isDebugEnabled())
+				log.debug("RT_chkSendRTData "+e.getMessage(),e);
+		}
+		finally
+		{
+			prjsyn.lastSynDT = System.currentTimeMillis() ;
+		}
+		
+		if(!prjsyn.failedKeep)
+			return ;
+		//saver
+		StationLocSaver locsaver = StationLocSaver.getSaver(prjsyn.prjName) ;
+		if(locsaver==null)
+			return ;
+		
+		qi.rtd.asHisData(true) ;
+		locsaver.RT_putItemBuffered(qi.key, qi.rtd.packTo(),prjsyn.keepMaxLen);
+		if(log.isTraceEnabled())
+		{
+			long dt =  IdCreator.extractTimeInMillInSeqId(qi.key) ;
+			String dtstr = Convert.toFullYMDHMS(new Date(dt)) ;
+			log.trace(" ["+this.id+"] save local ["+dtstr+"]  "+prjsyn.prjName+" loc_num="+locsaver.RT_getSavedBufferedNum()+" qlen="+queTh.getQueLen());
+		}
+	}
+	
+	private void RT_checkHisReSend()
+	{
+		boolean bconnok = false;
+		if(wsClient!=null)
+			bconnok = wsClient.getReadyState()==ReadyState.OPEN ;
+		
+		if(!bconnok)
+			return ;
+		
+		for(PrjSynPm prjsyn:this.getPrjSynPMs())
+		{
+			if(!prjsyn.dataSynEn || !prjsyn.failedKeep)
+				continue ;
+			StationLocSaver locsaver = StationLocSaver.getSaver(prjsyn.prjName) ;
+			if(locsaver==null)
+				continue ;
+			
+			if(locsaver.RT_getSavedBufferedNum()<=0)
+				continue ;
 
+			try
+			{
+				locsaver.RT_flushBuffered(prjsyn.keepMaxLen) ;
+								
+				List<Item> his_items = locsaver.getLastItems(3) ;
+				if(his_items.size()>0)
+				{
+					for(Item item:his_items)
+					{
+						if(log.isTraceEnabled())
+						{
+							log.trace(" Station ["+this.id+"] send Prj His RTData key="+item.getKey());
+						}
+						
+						wsClient.send(item.msg);
+					}
+					locsaver.deleteBatchByItems(his_items) ;
+					
+					if(log.isTraceEnabled())
+					{
+						log.trace(" Station ["+this.id+"] send Prj His RTData:"+prjsyn.prjName+" num="+his_items.size()+" local saved left num="+locsaver.RT_getSavedBufferedNum());
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				if(log.isDebugEnabled())
+					log.debug("RT_checkHisReSend "+e.getMessage(),e);
+			}
+		}
+	}
+	
+	/**
+	 * 尽可能在准确的时间间隔内，获取数据
+	 */
+	private void RT_collRTData()
+	{
 		for(PrjSynPm prjsyn:this.getPrjSynPMs())
 		{
 			if(!prjsyn.dataSynEn)
 				continue ;
 			
+//			UAPrj prj = UAManager.getInstance().getPrjByName(prjsyn.prjName) ;
+//			if(prj==null)
+//				continue;
+			
+			if(!prjsyn.isPrjRunning())
+				continue ; ;
+			
 			if(System.currentTimeMillis() - prjsyn.lastSynDT < prjsyn.dataSynIntv)
 				continue ;
-			UAPrj prj = UAManager.getInstance().getPrjByName(prjsyn.prjName) ;
-			if(prj==null)
-				continue ;
 			
+			//byte[] bs = null;
+			String keyid = IdCreator.newSeqId() ;//用来唯一标识数据key
+			prjsyn.lastSynDT = System.currentTimeMillis() ;
 			try
 			{
-				PSCmdPrjRtData cmd_st = new PSCmdPrjRtData() ;
-				cmd_st.asStationLocalPrj(prj);
-				byte[] bs = cmd_st.packTo() ;
-				wsClient.send(bs);
+				PSCmdPrjRtData cmd_rd = new PSCmdPrjRtData() ;
+				cmd_rd.asStationLocalPrj(keyid,prjsyn.getPrj());
+				//bs = cmd_st.packTo() ;
+				
+				QItem qi = new QItem(prjsyn,keyid,cmd_rd) ;
+				//直接加入队列
+				queTh.enqueue(qi);
 			}
-			catch(Exception e)
+			catch(Exception eee)
 			{
-				if(log.isDebugEnabled())
-					log.debug("RT_chkSendRTData "+e.getMessage(),e);
+				eee.printStackTrace();
+				return ;
 			}
 			finally
 			{
-				prjsyn.lastSynDT = System.currentTimeMillis() ;
+				
 			}
 		}
 	}
-	
+
+
+	/**
+	 * run collection rt data
+	 */
 	private void RT_run()
 	{
 		while(th!=null)
 		{
 			try
 			{
-				Thread.sleep(100);
+				Thread.sleep(10);
 			}
 			catch(Exception ee)
 			{}
 
-			RT_checkConn() ;
-			
-			RT_checkStationST();
-			
-			RT_chkSendRTData() ;
+			RT_collRTData();
 		}
 	}
 	
@@ -536,7 +720,8 @@ public class StationLocal
 			return ;
 		
 		th = new Thread(runner) ;
-		th.start(); 
+		th.start();
+		queTh.RT_start();
 	}
 	
 	public synchronized void RT_stop()
@@ -546,6 +731,7 @@ public class StationLocal
 			return ;
 		t.interrupt(); 
 		th = null ;
+		queTh.RT_stop();
 		disconnect();
 	}
 	

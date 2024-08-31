@@ -16,5 +16,8 @@
 	    ,{"n":"filer"    ,   "fn":"file_r.svg"}
 	    ,{"n":"filew"    ,   "fn":"file_w.svg"}
 	    ,{"n":"influxdb"    ,   "fn":"influxdb.svg"}
+	    ,{"n":"db"    ,   "fn":"db.svg"}
+	    ,{"n":"call_in"    ,   "fn":"call_in.svg"}
+	    ,{"n":"call_out"    ,   "fn":"call_out.svg"}
 	]
 }

@@ -246,6 +246,7 @@ public class JsMethod extends JsSub implements ProxyExecutable
 		}
 		catch ( Exception ee)
 		{
+			ee.printStackTrace();
 			throw new RuntimeException(ee);
 		}
 	}

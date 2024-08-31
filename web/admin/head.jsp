@@ -50,7 +50,6 @@ if(oc)
 <script src="/_js/oc/oc.js?v=<%=ver%>"></script>
 <script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
-
 <%
 }
 if(oc_min)
@@ -81,7 +80,6 @@ if(tree)
 <link type="text/css" href="/admin/inc/tree.css" rel="stylesheet" />
 <%
 }
-
 
 if(mn)
 {

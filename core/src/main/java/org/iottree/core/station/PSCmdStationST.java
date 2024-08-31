@@ -47,6 +47,16 @@ public class PSCmdStationST extends PSCmd
 			{
 				tmpjo.put("data_syn_en",synpm.dataSynEn);
 				tmpjo.put("data_syn_intv",synpm.dataSynIntv);
+				tmpjo.put("failed_keep", synpm.failedKeep) ;
+				tmpjo.put("keep_max_len", synpm.keepMaxLen) ;
+				if(synpm.failedKeep)
+				{
+					StationLocSaver pls = StationLocSaver.getSaver(prjn) ;
+					if(pls!=null)
+					{
+						tmpjo.put("cur_keep_len", pls.getSavedNum()) ;
+					}
+				}
 			}
 			prjst.put(tmpjo) ;
 			n2prjst.put(prjn,tmpjo) ;
@@ -113,7 +123,9 @@ public class PSCmdStationST extends PSCmd
 					continue ;
 				boolean datasyn_en = tmpjo.optBoolean("data_syn_en", false) ;
 				long datasyn_intv = tmpjo.optLong("data_syn_intv", 10000) ;
-				PStation.PrjST prjst = new PStation.PrjST(prjn,brun,bautostart,datasyn_en,datasyn_intv) ;
+				boolean failed_keep = tmpjo.optBoolean("failed_keep",false) ;
+				long keep_max_len = tmpjo.optLong("keep_max_len",3153600) ;
+				PStation.PrjST prjst = new PStation.PrjST(prjn,brun,bautostart,datasyn_en,datasyn_intv,failed_keep,keep_max_len) ;
 				prjsts.add(prjst) ;
 			}
 		}

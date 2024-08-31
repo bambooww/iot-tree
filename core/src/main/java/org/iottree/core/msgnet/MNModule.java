@@ -3,6 +3,7 @@ package org.iottree.core.msgnet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +15,9 @@ public abstract class MNModule extends MNBase
 	
 	HashSet<String> nodeIdSet = new HashSet<>() ;
 	
-	private HashMap<String,MNNode> supTp2Node = null ;
+	
+	
+	private LinkedHashMap<String,MNNode> supTp2Node = new LinkedHashMap<>() ;
 	
 	public MNModule()
 	{
@@ -26,33 +29,42 @@ public abstract class MNModule extends MNBase
 		return null ;
 	}
 	
+	@Override
 	final MNModule createNewIns(MNNet net) throws Exception
 	{
 		MNModule new_n = (MNModule)this.getClass().getConstructor().newInstance() ;
 		new_n.belongTo = net;
 		new_n.cat = this.cat ;
+		new_n.supTp2Node = this.supTp2Node ;
 		return new_n ;
 	}
 	
-	protected abstract List<MNNode> getSupportedNodes() ;
+	//protected abstract List<MNNode> getSupportedNodes() ;
+	final void registerSubTpNode(MNNode subn)
+	{
+		subn.TP_setRelatedModule(this);
+		supTp2Node.put(subn.getTP(), subn) ;
+	}
 	
 	
 	private HashMap<String,MNNode> getSupTp2Node()
 	{
-		if(supTp2Node!=null)
-			return supTp2Node;
-		HashMap<String,MNNode> tp2n = new HashMap<>() ;
-		List<MNNode> ns = this.getSupportedNodes() ;
-		if(ns!=null)
-		{
-			for(MNNode n:ns)
-			{
-				n.TP_setRelatedModule(this);
-				tp2n.put(n.getTP(), n) ;
-			}
-		}
-		supTp2Node = tp2n ;
-		return tp2n ;
+		return supTp2Node;
+		
+//		if(supTp2Node!=null)
+//			return supTp2Node;
+//		HashMap<String,MNNode> tp2n = new HashMap<>() ;
+//		List<MNNode> ns = this.getSupportedNodes() ;
+//		if(ns!=null)
+//		{
+//			for(MNNode n:ns)
+//			{
+//				n.TP_setRelatedModule(this);
+//				tp2n.put(n.getTP(), n) ;
+//			}
+//		}
+//		supTp2Node = tp2n ;
+//		return tp2n ;
 	}
 	
 	public final List<MNNode> listSupportedNodes()

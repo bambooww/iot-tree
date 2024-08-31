@@ -2,8 +2,10 @@
 				java.io.*,
 				java.net.*,
 				java.util.*,
+				org.json.*,
 				org.iottree.core.*,
 				org.iottree.core.util.*,
+				org.iottree.core.station.*,
 				java.net.*"%><%!
 				
 %><%
@@ -26,15 +28,20 @@
 		prjid = prj.getId() ;
 	}
 	
+	PlatformManager pmgr= PlatformManager.getInstance() ;
+	
 	switch(op)
 	{
 	case "prj_xml": //read prj xml
 		if(Convert.isNullOrEmpty(stationid) ||Convert.isNullOrEmpty(prjname))
 			return ;
-			
 		File prjf = UAManager.getPrjFile(prjid) ;
 		String txt=  Convert.readFileTxt(prjf) ;
 		out.print(txt) ;
+		return ;
+	case "stations_rt_st": //station实时状态
+		JSONObject tmpjo = pmgr.RT_toStatusJO() ;
+		tmpjo.write(out) ;
 		return ;
 	default:
 		out.print("unknown op="+op) ;

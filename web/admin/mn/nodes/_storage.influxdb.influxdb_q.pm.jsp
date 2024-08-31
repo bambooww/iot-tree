@@ -54,9 +54,9 @@
 	}*/
 %>
 <div class="layui-form-item">
-    <label class="layui-form-label">Batch Buf Len:</label>
-    <div class="layui-input-inline" style="width: 250px;">
-      <input type="text" id="batch_w_buflen" name="batch_w_buflen" value="100"  autocomplete="off"  class="layui-input" >
+    <label class="layui-form-label">Flux:</label>
+    <div class="layui-input-inline" style="width: 450px;height:300px">
+      <textarea id="flux" style="width:100%;height:100%;"></textarea>
     </div>
    
  </div>
@@ -72,19 +72,19 @@ function on_after_pm_show(form)
 
 function get_pm_jo()
 {
-	let batch_w_buflen = get_input_val('batch_w_buflen',true,10);
+	let flux = $("#flux").val() ;
 	
-	return {batch_w_buflen:batch_w_buflen} ;
+	return {flux:flux} ;
 }
 
 function set_pm_jo(jo)
 {
-	$('#batch_w_buflen').val(jo.batch_w_buflen||100);
+	$('#flux').val(jo.flux||"");
 }
 
 function get_pm_size()
 {
-	return {w:500,h:350} ;
+	return {w:600,h:450} ;
 }
 
 //on_init_pm_ok() ;

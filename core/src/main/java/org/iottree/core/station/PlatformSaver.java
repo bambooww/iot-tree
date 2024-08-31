@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 
 import org.iottree.core.Config;
 import org.iottree.core.UAPrj;
@@ -71,7 +72,7 @@ public class PlatformSaver
 			{
 				//stmt.executeUpdate("CREATE TABLE IF NOT EXISTS "+getTableName()+" (timestamp INTEGER PRIMARY KEY, json TEXT)");
 				 String createTableSQL = "CREATE TABLE IF NOT EXISTS "+tableName+" (" +
-                          "timestamp BIGINT NOT NULL  PRIMARY KEY, " +
+                          "keyid varchar(30)  PRIMARY KEY, " +
                          "json TEXT NOT NULL)";
 				 stmt.executeUpdate(createTableSQL);
 			}
@@ -82,16 +83,16 @@ public class PlatformSaver
 		}
 	}
 	
-	void storeJson(String json, long timestamp) throws Exception
+	void storeJson(String json, String keyid) throws Exception
 	{
 		Connection connection = null;
 		try
 		{
 			connection = getConnPool().getConnection() ;
-			String sql = "INSERT INTO "+tableName+" (timestamp, json) VALUES (?, ?)";
+			String sql = "INSERT INTO "+tableName+" (keyid, json) VALUES (?, ?)";
 			try (PreparedStatement pstmt = connection.prepareStatement(sql))
 			{
-	            pstmt.setLong(1, timestamp);
+	            pstmt.setString(1, keyid);
 	            pstmt.setString(2, json);
 	            pstmt.executeUpdate();
 	        }
@@ -102,11 +103,40 @@ public class PlatformSaver
 		}
 		
 	}
+	
+	void storeJsonMulti(Map<String,String> keyid2json) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			connection = getConnPool().getConnection() ;
+			connection.setAutoCommit(false);
+			String sql = "INSERT INTO "+tableName+" (keyid, json) VALUES (?, ?)";
+			try (PreparedStatement pstmt = connection.prepareStatement(sql))
+			{
+				for(Map.Entry<String, String> k2j:keyid2json.entrySet())
+				{
+		            pstmt.setString(1, k2j.getKey());
+		            pstmt.setString(2, k2j.getValue());
+		            pstmt.executeUpdate();
+				}
+	        }
+		}
+		finally
+		{
+			if(connection!=null)
+			{
+				connection.setAutoCommit(true);
+				getConnPool().free(connection);
+			}
+		}
+		
+	}
 
 	public String retrieveAndDeleteJson() throws Exception
 	{
-		String selectSql = "SELECT timestamp, json FROM "+tableName+" ORDER BY timestamp LIMIT 1";
-		String deleteSql = "DELETE FROM "+tableName+" WHERE timestamp = ?";
+		String selectSql = "SELECT keyid, json FROM "+tableName+" ORDER BY keyid LIMIT 1";
+		String deleteSql = "DELETE FROM "+tableName+" WHERE keyid = ?";
 		String json = null;
 
 		Connection connection = null;
@@ -118,12 +148,12 @@ public class PlatformSaver
 	
 				if (rs.next())
 				{
-					long timestamp = rs.getLong("timestamp");
+					String keyid = rs.getString("keyid");
 					json = rs.getString("json");
 	
 					try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql))
 					{
-						deleteStmt.setLong(1, timestamp);
+						deleteStmt.setString(1, keyid);
 						deleteStmt.executeUpdate();
 					}
 				}

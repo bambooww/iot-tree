@@ -9,11 +9,12 @@
 				org.iottree.core.res.*,
 				org.iottree.core.store.*,
 				org.iottree.core.plugin.*,
-	org.iottree.core.util.*,
+	org.iottree.core.util.*,org.iottree.core.station.*,
 	org.iottree.core.comp.*,
 				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
+   boolean b_inplat = PlatformManager.isInPlatform() ;
    String user = request.getParameter("user") ;
    if(Convert.isNullOrEmpty(user))
 	   user="" ;
@@ -497,6 +498,7 @@ position:relative;
 <script type="text/javascript">
 dlg.dlg_top=true;
 
+var b_platform = <%=b_inplat%>;
 </script>
 <body class="layout-body">
 <div style="z-index: 60000"><button onclick="cxt_rt()" >cxtrt</button></div>
@@ -1213,7 +1215,7 @@ function ws_conn()
     	}
     		
     	
-    	if(d.prj_run)
+    	if(d.prj_run || b_platform)
     		show_overlay(false);
     	else
     		show_overlay(true,not_run_prompt);

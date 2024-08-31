@@ -4,6 +4,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.net.*;
 
@@ -93,6 +96,26 @@ public class Convert
 		// return HM.format(d);
 		return new SimpleDateFormat("HH:mm:ss").format(d);
 	}
+	
+	/**
+	 * 获得0时区RFC3339格式（influxdb使用）
+	 * @param dt
+	 * @return
+	 */
+	public static String toUTCFormat(Date dt)
+	{
+		Instant instant = dt.toInstant();
+
+        // 将 Instant 转换为 UTC (0 时区) 的 ZonedDateTime
+        ZonedDateTime utcDateTime = instant.atZone(ZoneOffset.UTC);
+
+        // 定义 RFC 3339 格式的 DateTimeFormatter
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+        // 将 ZonedDateTime 格式化为 RFC 3339 字符串
+        return utcDateTime.format(formatter);
+	}
+	
 
 	static SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 

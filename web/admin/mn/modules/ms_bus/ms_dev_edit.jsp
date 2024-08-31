@@ -10,11 +10,11 @@
 	org.iottree.pro.modbuss.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	UAPrj prj = UAManager.getInstance().getPrjById(container_id) ;
 	if(prj==null)
 	{
 		out.print("no prj found") ;
@@ -141,7 +141,7 @@ background-color: #eeeeee;
 </body>
 
 <script type="text/javascript">
-var prjid="<%=prjid%>";
+var prjid="<%=container_id%>";
 var prjpath = "<%=prjpath%>";
 
 var FC2TT = <%=fc2ttjo%> ;

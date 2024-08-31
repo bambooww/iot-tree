@@ -712,7 +712,7 @@ if(ins.isAutoStart())
 					    </div>
 					    <div class="mod-body fz">
 					       <a href="javascript:log_ctrl()" ><wbt:lang>log_ctrl</wbt:lang></a>
-					       
+					       <a href="javascript:conn_platform()" ><wbt:lang>conn_platform</wbt:lang></a>
 					     </div>
 					</div>
 				</div>
@@ -1492,6 +1492,20 @@ function log_ctrl()
 {
 	dlg.open("util/log_mgr.jsp",
 			{title:"Log Controller",w:'700px',h:'600px'},
+			['Close'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+function conn_platform()
+{
+	dlg.open("util/station_mgr.jsp",
+			{title:"Station Configuration to Platform",w:'700px',h:'600px'},
 			['Close'],
 			[
 				function(dlgw)

@@ -2,12 +2,14 @@ package org.iottree.ext.msg_net;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNCxtValSty;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,15 +55,18 @@ public class InfluxDB_Writer extends MNNodeEnd
 		}
 	}
 	
-	String measurement = null ;
+//	String measurement = null ;
+//	
+//	MNCxtValSty tsSty = MNCxtValSty.timestamp ;
+//	
+//	String tsSubN ;
+//	
+//	ArrayList<WDef> tagWDefs = new ArrayList<>() ;
+//	
+//	ArrayList<WDef> fieldWDefs = new ArrayList<>() ;
 	
-	MNCxtValSty tsSty = MNCxtValSty.timestamp ;
 	
-	String tsSubN ;
-	
-	ArrayList<WDef> tagWDefs = new ArrayList<>() ;
-	
-	ArrayList<WDef> fieldWDefs = new ArrayList<>() ;
+	int batchWriterBufLen = 100 ;
 	
 	@Override
 	public String getTP()
@@ -113,99 +118,100 @@ public class InfluxDB_Writer extends MNNodeEnd
 	public JSONObject getParamJO()
 	{
 		JSONObject jo = new JSONObject() ;
-		jo.putOpt("measurement", this.measurement) ;
-		jo.putOpt("ts_sty", this.tsSty.name()) ;
-		jo.putOpt("ts_subn", this.tsSubN) ;
-
-		JSONArray jarr = new JSONArray() ;
-		for(WDef wd:this.tagWDefs)
-		{
-			jarr.put(wd.toJO()) ;
-		}
-		jo.put("tags",jarr) ;
-		
-		jarr = new JSONArray() ;
-		for(WDef wd:this.fieldWDefs)
-		{
-			jarr.put(wd.toJO()) ;
-		}
-		jo.put("fields",jarr) ;
+//		jo.putOpt("measurement", this.measurement) ;
+//		jo.putOpt("ts_sty", this.tsSty.name()) ;
+//		jo.putOpt("ts_subn", this.tsSubN) ;
+//
+//		JSONArray jarr = new JSONArray() ;
+//		for(WDef wd:this.tagWDefs)
+//		{
+//			jarr.put(wd.toJO()) ;
+//		}
+//		jo.put("tags",jarr) ;
+//		
+//		jarr = new JSONArray() ;
+//		for(WDef wd:this.fieldWDefs)
+//		{
+//			jarr.put(wd.toJO()) ;
+//		}
+//		jo.put("fields",jarr) ;
+		jo.put("batch_w_buflen", this.batchWriterBufLen) ;
 		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		this.measurement = jo.optString("measurement","") ;
-
-		this.tsSty = MNCxtValSty.valueOf(jo.optString("ts_sty","timestamp")) ;
-		if(this.tsSty==null)
-			this.tsSty = MNCxtValSty.timestamp ;
-		this.tsSubN = jo.optString("ts_subn","") ;
+//		this.measurement = jo.optString("measurement","") ;
+//
+//		this.tsSty = MNCxtValSty.valueOf(jo.optString("ts_sty","timestamp")) ;
+//		if(this.tsSty==null)
+//			this.tsSty = MNCxtValSty.timestamp ;
+//		this.tsSubN = jo.optString("ts_subn","") ;
+//		
+//		JSONArray jarr = jo.optJSONArray("tags") ;
+//		ArrayList<WDef> defs = new ArrayList<>() ;
+//		if(jarr!=null)
+//		{
+//			int n = jarr.length() ;
+//			for(int i = 0 ; i < n ; i ++)
+//			{
+//				JSONObject tmpjo = jarr.getJSONObject(i) ;
+//				WDef wd = new WDef() ;
+//				wd.fromJO(tmpjo);
+//				defs.add(wd) ;
+//			}
+//		}
+//		this.tagWDefs = defs ;
+//		
+//		jarr = jo.optJSONArray("fields") ;
+//		defs = new ArrayList<>() ;
+//		if(jarr!=null)
+//		{
+//			int n = jarr.length() ;
+//			for(int i = 0 ; i < n ; i ++)
+//			{
+//				JSONObject tmpjo = jarr.getJSONObject(i) ;
+//				WDef wd = new WDef() ;
+//				wd.fromJO(tmpjo);
+//				defs.add(wd) ;
+//			}
+//		}
+//		this.fieldWDefs = defs ;
 		
-		JSONArray jarr = jo.optJSONArray("tags") ;
-		ArrayList<WDef> defs = new ArrayList<>() ;
-		if(jarr!=null)
-		{
-			int n = jarr.length() ;
-			for(int i = 0 ; i < n ; i ++)
-			{
-				JSONObject tmpjo = jarr.getJSONObject(i) ;
-				WDef wd = new WDef() ;
-				wd.fromJO(tmpjo);
-				defs.add(wd) ;
-			}
-		}
-		this.tagWDefs = defs ;
-		
-		jarr = jo.optJSONArray("fields") ;
-		defs = new ArrayList<>() ;
-		if(jarr!=null)
-		{
-			int n = jarr.length() ;
-			for(int i = 0 ; i < n ; i ++)
-			{
-				JSONObject tmpjo = jarr.getJSONObject(i) ;
-				WDef wd = new WDef() ;
-				wd.fromJO(tmpjo);
-				defs.add(wd) ;
-			}
-		}
-		this.fieldWDefs = defs ;
+		batchWriterBufLen = jo.optInt("batch_w_buflen",100) ;
+		if(batchWriterBufLen<=0)
+			batchWriterBufLen = 100 ;
 	}
 	
 	
-	private Point calPoint(MNMsg msg)
-	{
-		Point point = Point.measurement(this.measurement);
-		
-		Long ts = (Long)this.tsSty.RT_getValInCxt(this.tsSubN, this.getBelongTo(), this, msg) ;
-		point.time(ts,WritePrecision.MS);
-		
-		for(WDef tag:this.tagWDefs)
-		{
-			String tagn = tag.name ;
-			String tagv = (String)tag.valSty.RT_getValInCxt(tag.valSubN, this.getBelongTo(), this, msg) ;
-			point.addTag(tagn, tagv) ;
-		}
-		for(WDef f:this.fieldWDefs)
-		{
-			String n = f.name ;
-			Object v = f.valSty.RT_getValInCxt(f.valSubN, this.getBelongTo(), this, msg) ;
-			if(v instanceof Number)
-				point.addField(n,(Number)v) ;
-			else if(v instanceof String)
-				point.addField(n,(String)v) ;
-			else if(v instanceof Boolean)
-				point.addField(n,(Boolean)v) ;
-		}
-		
-		//		.addField("value", 55D)
-		//		.time(Instant.now(), WritePrecision.MS);
-				
-		//		JSONObject jo,
-		return point ;
-	}
+//	private Point calPoint(MNMsg msg)
+//	{
+//		Point point = Point.measurement(this.measurement);
+//		
+//		Long ts = (Long)this.tsSty.RT_getValInCxt(this.tsSubN, this.getBelongTo(), this, msg) ;
+//		point.time(ts,WritePrecision.MS);
+//		
+//		for(WDef tag:this.tagWDefs)
+//		{
+//			String tagn = tag.name ;
+//			String tagv = (String)tag.valSty.RT_getValInCxt(tag.valSubN, this.getBelongTo(), this, msg) ;
+//			point.addTag(tagn, tagv) ;
+//		}
+//		for(WDef f:this.fieldWDefs)
+//		{
+//			String n = f.name ;
+//			Object v = f.valSty.RT_getValInCxt(f.valSubN, this.getBelongTo(), this, msg) ;
+//			if(v instanceof Number)
+//				point.addField(n,(Number)v) ;
+//			else if(v instanceof String)
+//				point.addField(n,(String)v) ;
+//			else if(v instanceof Boolean)
+//				point.addField(n,(Boolean)v) ;
+//		}
+//
+//		return point ;
+//	}
 	
 	private Point calPointFmt(MNMsg msg)
 	{
@@ -213,7 +219,7 @@ public class InfluxDB_Writer extends MNNodeEnd
 		if(pld==null)
 			return null ;
 		
-		String m = pld.optString("measurement",this.measurement) ;
+		String m = pld.optString("measurement") ;//,this.measurement) ;
 		if(Convert.isNullOrEmpty(m))
 			return null ;
 		Point point = Point.measurement(m);
@@ -299,6 +305,14 @@ public class InfluxDB_Writer extends MNNodeEnd
 		
 		return point ;
 	}
+	
+	private transient long lastPtIn = -1 ;
+	
+	private transient ArrayList<Point> ptBuf = new ArrayList<>() ;
+	
+	private transient long lastWNum = -1 ;
+	
+	private transient long lastWCostMS = -1 ;
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
@@ -307,11 +321,58 @@ public class InfluxDB_Writer extends MNNodeEnd
 		if(pt==null)
 			return null;
 		
+		lastPtIn = System.currentTimeMillis() ;
+		
+		synchronized(this)
+		{
+			ptBuf.add(pt) ;
+		}
+		
+		InfluxDB_M m = (InfluxDB_M)this.getOwnRelatedModule() ;
+		m.RT_start(null) ;//in msg ,start module
+		
+		if(ptBuf.size()>=this.batchWriterBufLen)
+			RT_doWriter() ;
+		
+		return null;
+	}
+	
+	
+	private void RT_doWriter()
+	{
+		ArrayList<Point> pts = ptBuf ;
+		
+		synchronized(this)
+		{
+			ptBuf = new ArrayList<>() ;
+		}
+		
+		if(pts==null||pts.size()<=0)
+			return ;
+		
 		InfluxDB_M dbm = (InfluxDB_M)this.getOwnRelatedModule() ;
 		InfluxDBClient client = dbm.RT_getClient() ;
 		WriteApiBlocking wapi = client.getWriteApiBlocking() ;
-		wapi.writePoint(pt);
-		return null;
+		long st = System.currentTimeMillis() ;
+		wapi.writePoints(pts);
+		lastWCostMS = System.currentTimeMillis()-st ;
+		this.lastWNum = pts.size() ;
+	}
+	
+	/**
+	 * called by module,no msg in after 1s -- will write left points in buffer
+	 * @return
+	 */
+	boolean onMonByModule()
+	{
+		if(System.currentTimeMillis()-lastPtIn<1000)
+			return true ;
+		
+		if(ptBuf.size()<=0)
+			return false; //may couse module stop
+		
+		RT_doWriter() ;
+		return true ;
 	}
 	
 	private static String inTitle = "<pre>"
@@ -340,5 +401,17 @@ public class InfluxDB_Writer extends MNNodeEnd
 	public String RT_getInTitle()
 	{
 		return inTitle ;
+	}
+	
+	protected void RT_renderDiv(List<DivBlk> divblks)
+	{
+		if(this.lastWCostMS>0)
+		{
+			StringBuilder divsb = new StringBuilder() ;
+			divsb.append("<div class=\"rt_blk\">BufLen="+this.ptBuf.size()+"<br>Write Pt Num="+this.lastWNum+" [cost="+lastWCostMS+"ms]") ;
+			divsb.append("</div>") ;
+			divblks.add(new DivBlk("influxdb_w",divsb.toString())) ;
+		}
+		super.RT_renderDiv(divblks);
 	}
 }

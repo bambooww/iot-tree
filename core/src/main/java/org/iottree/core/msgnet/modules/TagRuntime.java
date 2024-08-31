@@ -10,12 +10,6 @@ public class TagRuntime extends MNModule
 {
 
 	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		return null;
-	}
-
-	@Override
 	public String getTP()
 	{
 		return "tag_rt";

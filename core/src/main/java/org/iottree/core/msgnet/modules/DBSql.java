@@ -54,12 +54,6 @@ public class DBSql extends MNModule
 		
 	}
 
-	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	
 }

@@ -11,17 +11,12 @@
 	org.iottree.core.msgnet.util.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	String prjid = request.getParameter("prjid");
+	String container_id = request.getParameter("container_id");
 	String netid = request.getParameter("netid") ;
 	String itemid = request.getParameter("itemid") ;
 	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
-	{
-		out.print("no prj found") ;
-		return ;
-	}
-	MNManager mnm= MNManager.getInstance(prj) ;
+	MNManager mnm = MNManager.getInstanceByContainerId(container_id) ;
+
 	MNNet net = mnm.getNetById(netid) ;
 	if(net==null)
 	{
@@ -82,7 +77,7 @@ Connector <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="add_
 </div>
 <script>
 
-var prjid="<%=prjid%>";
+var container_id="<%=container_id%>";
 var devs = [] ;
 var cps = [] ;
 
@@ -127,7 +122,7 @@ function add_edit_dev(id)
 		dev_idx = devs.indexOf(dev) ;
 	}
 	
-	dlg.open(`\${PM_URL_BASE}/ms_bus/ms_dev_edit.jsp?prjid=\${prjid}`,{title:tt,dev:dev},
+	dlg.open(`\${PM_URL_BASE}/ms_bus/ms_dev_edit.jsp?container_id=\${container_id}`,{title:tt,dev:dev},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)

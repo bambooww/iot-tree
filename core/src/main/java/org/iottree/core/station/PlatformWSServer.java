@@ -32,6 +32,8 @@ public class PlatformWSServer
 
 		long openDT = -1 ;
 		// private boolean bFirstTick=true ;
+		
+		long closeDT = -1 ;
 
 		public SessionItem(Session s, PStation ps,String clientip)
 		{
@@ -44,6 +46,13 @@ public class PlatformWSServer
 		public Session getSession()
 		{
 			return session;
+		}
+		
+		public boolean isConnOk()
+		{
+			if(session==null)
+				return false;
+			return session.isOpen() ;
 		}
 
 		public PStation getPStation()
@@ -66,6 +75,10 @@ public class PlatformWSServer
 			catch ( IOException ioe2)
 			{
 				// Ignore
+			}
+			finally
+			{
+				
 			}
 		}
 
@@ -104,9 +117,9 @@ public class PlatformWSServer
 
 		void onTick() throws IOException
 		{
-			//PSCmdPlatformST cmdst = new PSCmdPlatformST() ;
-			//cmdst.asPlatform(PlatformManager.getInstance()) ;
-			//sendBytes(cmdst.packTo()) ;
+			PSCmdPlatformST cmdst = new PSCmdPlatformST() ;
+			cmdst.asPlatform(PlatformManager.getInstance()) ;
+			sendBytes(cmdst.packTo()) ;
 		}
 		
 		public void sendCmd(PSCmd cmd)
@@ -146,7 +159,7 @@ public class PlatformWSServer
 		return sess2item.get(ss) ;
 	}
 
-	private static final long TICK_DELAY = 5000;
+	private static final long TICK_DELAY = 60000;
 
 	private static Thread th = null;
 
@@ -259,11 +272,19 @@ public class PlatformWSServer
 	public void onClose(Session session,
 			@PathParam(value = "stationid") String stationid)
 	{
+		doClose(session) ;
+	}
+
+	private void doClose(Session session)
+	{
+		SessionItem si = getSessionItem(session) ;
+		if(si!=null)
+			si.closeDT = System.currentTimeMillis() ;
+		
 		removeSessionItem(session);
 		if (getSessionNum() <= 0)
 			stopTimer(false);
 	}
-
 	
 	@OnMessage
 	public void onMessage(Session session, byte[] msg) throws Exception
@@ -321,9 +342,6 @@ public class PlatformWSServer
 	@OnError
 	public void onError(Session session, Throwable t, @PathParam(value = "connid") String connid)
 	{
-		// getAgentServer().onSessionErr(connid, t);
-		removeSessionItem(session);
-		if(getSessionNum()<=0)
-			stopTimer(false) ;
+		doClose(session) ;
 	}
 }

@@ -38,6 +38,9 @@
 	String tp = item.getTPFull() ;
 	String title = item.getTitle() ;
 
+	String res_name = item.getMNResName() ;
+	if(res_name==null)
+		res_name="" ;
 	String pm_url = item.getCat().getParamUrl(item);// "./nodes/"+tp+"_pm.jsp" ;
 	if(pm_url==null)
 		pm_url="" ;
@@ -174,13 +177,13 @@ function do_submit(cb)
 	
 	let tt = $('#title').val();
 	let ben = $("#enable").prop("checked") ;
-	
+	let res_name = $("#res_name").val() ;
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;
 		return ;
 	}
-	let rr = {title:tt,enable:ben,pm_jo:pmjo};
+	let rr = {title:tt,enable:ben,pm_jo:pmjo,res_name:res_name};
 	cb(true,rr);
 }
 
@@ -266,6 +269,20 @@ if(can_save)
       <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> <w:g>enable</w:g>
     </div>
   </div>
+<%
+if(item instanceof IMNNodeRes)
+{
+%>
+<div class="layui-form-item">
+    <label class="layui-form-label"><w:g>res_name</w:g>:</label>
+    <div class="layui-input-inline" style="width:46%;" title="<w:g>res_name_ppt</w:g>">
+      <input type="text" id="res_name" name="res_name" value="<%=res_name %>"  class="layui-input">
+    </div>
+    
+  </div>
+<%
+}
+%>
   <div id="pm_cont">
   	
   </div>

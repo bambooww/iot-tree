@@ -71,22 +71,55 @@ public interface ILogger
 	public void error(String msg);
 	
 	public void error(String msg,Throwable t);
+	
+	public default void error(Throwable t)
+	{
+		error("",t);
+	}
 
 	public void warn(String msg);
 	
 	public void warn(String msg,Throwable t);
+	
+	public default void warn(Throwable t)
+	{
+		warn("",t);
+	}
 
 	public void info(String msg);
 	
 	public void info(String msg,Throwable t);
+	
+	public default void info(Throwable t)
+	{
+		info("",t);
+	}
 
 	public void debug(String msg);
 	
 	public void debug(String msg,Throwable t);
 	
+	public default void debug(Throwable t)
+	{
+		debug("",t);
+	}
+	
+	public default void warn_debug(String msg,Throwable t)
+	{
+		if(isDebugEnabled())
+			debug(msg, t);
+		else if(isWarnEnabled())
+			warn(msg);
+	}
+	
 	public void trace(String msg);
 	
 	public void trace(String msg,Throwable t);
+	
+	public default void trace(Throwable t)
+	{
+		trace("",t);
+	}
 
 	public boolean isTraceEnabled() ;
 	
@@ -98,7 +131,9 @@ public interface ILogger
 	
 	public boolean isErrorEnabled();
 	
+	public void println(String s) ;
 	
+	public void print(String s) ;
 	
 //	public void setTraceEnabled(boolean b) ;
 //	

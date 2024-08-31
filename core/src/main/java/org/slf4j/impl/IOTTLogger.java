@@ -348,6 +348,18 @@ public class IOTTLogger extends MarkerIgnoringBase implements ILogger
         log(LOG_LEVEL_ERROR, msg, t);
     }
 
+	@Override
+	public void println(String s)
+	{
+		System.out.println(s) ; 
+	}
+
+	@Override
+	public void print(String s)
+	{
+		System.out.print(s) ;
+	}
+
 
 //	@Override
 //	public boolean isStackTrace()

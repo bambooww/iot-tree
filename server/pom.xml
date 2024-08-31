@@ -225,6 +225,7 @@
 			                            <include>data/plugins/auth_demo/</include>
 			                            <include>data/plugins/inner/</include>
 			                            <include>data/plugins/_libs/</include>
+			                            <include>data/msg_net/nodes.json</include>
 			                        </includes>
 			                    </resource>
 			                </resources>

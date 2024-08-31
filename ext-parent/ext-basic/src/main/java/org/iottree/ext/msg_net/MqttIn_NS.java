@@ -6,12 +6,14 @@ import org.json.JSONObject;
 
 public class MqttIn_NS extends MNNodeStart
 {
+	public static final String TP = "mqtt_in" ;
+	
 	String recvId = null;
 	
 	@Override
 	public String getTP()
 	{
-		return "mqtt_in";
+		return TP;
 	}
 
 	@Override

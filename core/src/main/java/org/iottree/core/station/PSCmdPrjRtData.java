@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -26,28 +28,62 @@ public class PSCmdPrjRtData extends PSCmd
 {
 	public final static String CMD = "prj_rtdata";
 
+	private String key = null ;
+	
+	private UAPrj prj = null ;
+	
 	@Override
 	public String getCmd()
 	{
 		return CMD;
 	}
 
-	public PSCmdPrjRtData asStationLocalPrj(UAPrj prj) throws IOException
+	public PSCmdPrjRtData asStationLocalPrj(String key,UAPrj prj) throws IOException
 	{
-		this.asParams(Arrays.asList(prj.getName()));
+		this.key = key ;
+		this.prj = prj ;
+		
+		this.asParams(Arrays.asList(prj.getName(),key));
 
 		String rtjson = prj.JS_get_rt_json(true);
 		byte[] bs = zipString(rtjson);
 		this.asCmdData(bs);// (rtjson.getBytes("utf-8")) ;
 		return this;
 	}
+	
+	public PSCmdPrjRtData asHisData(boolean b_his)
+	{
+		this.asParams(Arrays.asList(prj.getName(),key,"his"));
+		return this ;
+	}
+	
+	public boolean isHis()
+	{
+		return "his".equals(this.getParamByIdx(2)) ;
+	}
+	
+	//private static HashMap<String,Integer> prj2hiscc = new HashMap<>() ;
 
 	@Override
 	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si, PStation ps) throws Exception
 	{
 		String prjname = this.getParamByIdx(0);
-		if (Convert.isNullOrEmpty(prjname))
+		String key = this.getParamByIdx(1) ;
+		if (Convert.isNullOrEmpty(prjname) || Convert.isNullOrEmpty(key))
 			return;
+		
+		boolean bhis = "his".equals(this.getParamByIdx(2)) ;
+		
+//		if(bhis)
+//		{
+//			Integer cc = prj2hiscc.get(prjname) ;
+//			int c =0;
+//			if(cc!=null)
+//				c = cc ;
+//			c ++ ;
+//			prj2hiscc.put(prjname,c) ;
+//			System.out.println("recved his prj="+prjname+" cc="+c) ;
+//		}
 
 		String p_prjname = ps.getId()+"_"+prjname ;
 		UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
@@ -59,11 +95,61 @@ public class PSCmdPrjRtData extends PSCmd
 		JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
 
 		// platform_prj.RT_platform_RTSet(rt_jo) ;
-		if (rt_jo != null)
+		if (rt_jo != null && !bhis)
 			updateCxtDyn(platform_prj, rt_jo);
 		
 		//如何发送的Platform后端进行后续的使用？
-		PlatformManager.getInstance().onRecvedRTData(ps,prjname,rt_jo) ;
+		PlatformManager.getInstance().onRecvedRTData(ps,prjname,key,rt_jo,bhis) ;
+	}
+	
+	/**
+	 * 专门支持批量处理历史数据的函数，主要是写数据库批处理，以提升性能
+	 * @param rds
+	 * @param ps
+	 * @throws Exception 
+	 */
+	public static void onRecvedMultiHisInPlatform(List<PSCmdPrjRtData> rds,PStation ps) throws Exception
+	{
+		HashMap<String,HashMap<String,JSONObject>> prj_k2jo = new HashMap<>() ;
+		//分表处理
+		for(PSCmdPrjRtData rd:rds)
+		{
+			String prjname = rd.getParamByIdx(0);
+			String key = rd.getParamByIdx(1) ;
+			if (Convert.isNullOrEmpty(prjname) || Convert.isNullOrEmpty(key))
+				return;
+			String p_prjname = ps.getId()+"_"+prjname ;
+			UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
+			if (platform_prj == null)
+				return;
+
+			byte[] bs = rd.getCmdData();
+			
+			try
+			{
+				String jostr = unzip(bs);
+				JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
+				
+				HashMap<String,JSONObject> k2jo = prj_k2jo.get(prjname) ;
+				if(k2jo==null)
+				{
+					k2jo = new HashMap<>() ;
+					prj_k2jo.put(prjname,k2jo) ;
+				}
+				k2jo.put(key,rt_jo) ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
+		}
+		
+		for(Map.Entry<String, HashMap<String,JSONObject>> prj2kjo:prj_k2jo.entrySet())
+		{
+			String prjname = prj2kjo.getKey() ;
+			HashMap<String,JSONObject> k2jo = prj2kjo.getValue() ;
+			PlatformManager.getInstance().onRecvedHisRTDatas(ps, prjname, k2jo);
+		}
 	}
 
 	static byte[] zipString(String unzipString) throws UnsupportedEncodingException

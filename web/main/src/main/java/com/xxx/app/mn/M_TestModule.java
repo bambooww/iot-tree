@@ -10,12 +10,6 @@ public class M_TestModule extends MNModule
 {
 	
 	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		return null;
-	}
-
-	@Override
 	public String getTP()
 	{
 		return null;

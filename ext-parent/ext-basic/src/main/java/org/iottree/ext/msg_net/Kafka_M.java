@@ -35,12 +35,12 @@ public class Kafka_M extends MNModule implements IMNRunner
 {
 	static ILogger log = LoggerManager.getLogger(Kafka_M.class) ;
 	
-	static ArrayList<MNNode> supNodes = new ArrayList<>() ;
-	static
-	{
-		supNodes.add(new KafkaIn_NS()) ;
-		supNodes.add(new KafkaOut_NE()) ;
-	}
+//	static ArrayList<MNNode> supNodes = new ArrayList<>() ;
+//	static
+//	{
+//		supNodes.add(new KafkaIn_NS()) ;
+//		supNodes.add(new KafkaOut_NE()) ;
+//	}
 	
 
 	public static enum SecurityProto {
@@ -176,10 +176,10 @@ public class Kafka_M extends MNModule implements IMNRunner
 		return "\\uf0ec";
 	}
 	
-	protected List<MNNode> getSupportedNodes() 
-	{
-		return supNodes;
-	}
+//	protected List<MNNode> getSupportedNodes() 
+//	{
+//		return supNodes;
+//	}
 	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)

@@ -43,7 +43,6 @@ public abstract class ModbusDrv extends DevDriver
 		
 		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
 		
-		
 		gp = new PropGroup("timing",lan);//"Timing");
 		//gp.addPropItem(new PropItem("conn_to","Connect Timeout(second)","",PValTP.vt_int,false,null,null,3));
 		gp.addPropItem(new PropItem("conn_tryc",lan,PValTP.vt_int,false,null,null,3)); //"Fail Retry times",""

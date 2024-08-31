@@ -107,6 +107,8 @@ public class MNManager
 		}
 	}
 	
+	
+	
 	public static void registerByWebItem(UAServer.WebItem wi,JSONObject msg_net_jo)
 	{
 		String catn = wi.getAppName() ;
@@ -144,19 +146,39 @@ public class MNManager
 //		cat.modules.add(mnn) ;
 //	}
 	
-	public static void registerItem(String classname,MNCat cat)
+	public static MNBase registerItem(String classname,MNCat cat)
 	{
 		try
 		{
 			Class<?> c = Class.forName(classname) ;
 			MNBase m = (MNBase)c.newInstance() ;
 			registerItem(m,cat);
+			return m ;
 		}
 		catch(Throwable ee)
 		{
 			if(log.isDebugEnabled())
 				log.error(ee.getMessage(), ee);
 			log.warn("registerItem "+classname+" "+ee.getMessage());
+			return null ;
+		}
+	}
+	
+	public static MNBase registerNodeToModule(String classname,MNModule m)
+	{
+		try
+		{
+			Class<?> c = Class.forName(classname) ;
+			MNNode n = (MNNode)c.newInstance() ;
+			m.registerSubTpNode(n);
+			return n ;
+		}
+		catch(Throwable ee)
+		{
+			if(log.isDebugEnabled())
+				log.error(ee.getMessage(), ee);
+			log.warn("registerItem "+classname+" "+ee.getMessage());
+			return null ;
 		}
 	}
 	
@@ -229,6 +251,26 @@ public class MNManager
 					String cn = (String)ob ;
 					registerItem(cn,mncat) ;
 				}
+			}
+			JSONArray modules =  catjo.optJSONArray("modules") ;
+			if(modules!=null)
+			{
+				int nn = modules.length() ;
+				for(int j = 0 ; j < nn ; j ++)
+				{
+					JSONObject mjo = modules.getJSONObject(j) ;
+					String mcn = mjo.getString("cn") ;
+					MNModule md = (MNModule)registerItem(mcn,mncat) ;
+					if(md==null)
+						continue ;
+					JSONArray m_nodes = mjo.getJSONArray("nodes") ;
+					for(Object ob:m_nodes.toList())
+					{
+						String cn = (String)ob ;
+						registerNodeToModule(cn,md) ;
+					}
+				}
+				
 			}
 		}
 	}
@@ -497,7 +539,88 @@ public class MNManager
 		return rnn ;
 	}
 	
+	/**
+	 * 在Manager范围内，根据资源名称定位对应的节点
+	 * @param res_name
+	 * @return
+	 */
+	public MNBase findNodeByResName(String full_tp,String res_name)
+	{
+		List<MNNet> nets = this.listNets() ;
+		if(nets==null)
+			return null ;
+		for(MNNet net:nets)
+		{
+			Map<String,MNModule> n2m = net.getModuleMapAll() ;
+			if(n2m!=null)
+			{
+				for(MNModule m:n2m.values())
+				{
+					if(!full_tp.equals(m.getTPFull()))
+						continue ;
+					
+					if(m instanceof IMNNodeRes)
+					{
+						if(res_name.equals(m.getMNResName()))
+							return m ;
+					}
+				}
+			}
+			
+			Map<String,MNNode> n2n = net.getNodeMapAll() ;
+			if(n2n!=null)
+			{
+				for(MNNode m:n2n.values())
+				{
+					if(!full_tp.equals(m.getTPFull()))
+						continue ;
+					
+					if(m instanceof IMNNodeRes)
+					{
+						if(res_name.equals(m.getMNResName()))
+							return m ;
+					}
+				}
+			}
+		}
+		
+		return null ;
+	}
 	
+	public List<String> listResNames(String full_tp)
+	{
+		ArrayList<String> rets = new ArrayList<>() ;
+		List<MNNet> nets = this.listNets() ;
+		if(nets==null)
+			return rets ;
+		for(MNNet net:nets)
+		{
+			Map<String,MNModule> n2m = net.getModuleMapAll() ;
+			for(MNModule m:n2m.values())
+			{
+				if(!full_tp.equals(m.getTPFull()))
+					continue ;
+				
+				if(m instanceof IMNNodeRes)
+				{
+					rets.add(m.getMNResName()) ;
+				}
+			}
+			
+			Map<String,MNNode> n2n = net.getNodeMapAll() ;
+			for(MNNode m:n2n.values())
+			{
+				if(!full_tp.equals(m.getTPFull()))
+					continue ;
+				
+				if(m instanceof IMNNodeRes)
+				{
+					rets.add(m.getMNResName()) ;
+				}
+			}
+		}
+		return rets ;
+	}
 	// rt
 	
 	Thread rtTH = null ;
@@ -678,5 +801,34 @@ public class MNManager
 					((NS_ConnInMsgTrigger)node).RT_fireByConnInMsg(cpt_msg,json_xml_str,tag2obj) ;
 			}
 		}
+	}
+	
+	
+	public OutCallFunc getOutCallFunc(String net_name,String func)
+	{
+		MNNet net = this.getNetByName(net_name) ;
+		if(net==null)
+			return null ;
+		
+		for(MNNode n : net.getNodeMapAll().values())
+		{
+			if(n instanceof OutCallFunc)
+			{
+				OutCallFunc ocf = (OutCallFunc)n ;
+				if(func.equals(ocf.getFuncName()))
+					return ocf ;
+			}
+		}
+		return null ;
+	}
+	
+	public MNMsg RT_callNetFunc(String net_name,String func,MNMsg input)
+	{
+		OutCallFunc ocf = getOutCallFunc(net_name,func) ;
+		//MNNet net = this.getNetByName(net_name) ;
+		if(ocf==null)
+			throw new IllegalArgumentException("no OutCallFunc node with name="+net_name+" found in net="+net_name) ;
+		
+		return ocf.RT_callByOutter(input) ;
 	}
 }

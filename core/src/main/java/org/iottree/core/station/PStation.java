@@ -13,6 +13,7 @@ import org.iottree.core.station.PlatformWSServer.SessionItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.queue.QueTriggerThread;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -117,15 +118,24 @@ public class PStation
 		
 		private long dataSynIntvMs = 10000 ;
 		
+		boolean bFailedKeep = false;
+		
+		long keepMaxLen = -1 ;
+		
+		private long lastRecvedDT = -1 ;
+		
+		private JSONObject lastRecvedData = null ;
 		
 		public PrjST(String prjn,boolean b_run,boolean bautostart,
-				boolean datasyn_en,long datasyn_intv)
+				boolean datasyn_en,long datasyn_intv,boolean failed_keep,long keep_max_len)
 		{
 			this.prjName = prjn ;
 			this.bRun = b_run ;
 			this.bAutoStart = bautostart ;
 			this.dataSynEn = datasyn_en ;
 			this.dataSynIntvMs = datasyn_intv ;
+			this.bFailedKeep = failed_keep ;
+			this.keepMaxLen = keep_max_len ;
 		}
 		
 		public String getPrjName()
@@ -160,19 +170,57 @@ public class PStation
 			return this.dataSynIntvMs ;
 		}
 		
+		public boolean isFailedKeep()
+		{
+			return this.bFailedKeep ;
+		}
+		
+		public long getKeepMaxLen()
+		{
+			return this.keepMaxLen ;
+		}
+		
+		public void setFailedKeep(boolean b_failed_keep,long keep_max_len)
+		{
+			this.bFailedKeep = b_failed_keep ;
+			this.keepMaxLen = keep_max_len ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject jo = new JSONObject() ;
+			jo.put("prj_name", this.prjName) ;
+			jo.put("run", this.bRun) ;
+			jo.put("data_syn_en", this.dataSynEn) ;
+			jo.put("data_syn_intv", this.dataSynIntvMs) ;
+			jo.put("last_recved_dt", this.lastRecvedDT) ;
+			
+			jo.put("failed_keep", this.bFailedKeep) ;
+			jo.put("keep_max_len", this.keepMaxLen) ;
+			return jo ;
+		}
 	}
 	
+	private PlatformWSServer.SessionItem lastSessionItem = null ;
+	
 	private PlatformWSServer.SessionItem sessionItem = null ;
+	
 	private String clientIP = null ;
+	//private int clientPort = -1 ; 
 	private long clientOpenDT =-1 ;
 	
 	private List<PrjST> prjSTs = null ;
 	
 	void RT_updateLocalState(PlatformWSServer.SessionItem si,List<PrjST> prjsts)
 	{
-		sessionItem = si ;
+		if(sessionItem!=si)
+		{
+			lastSessionItem = this.sessionItem ;
+			sessionItem = si ;
+		}
 		prjSTs = prjsts ;
 		clientIP = si.getClientIP() ;
+		//clientPort = si.
 		clientOpenDT = si.openDT ;
 	}
 	
@@ -207,6 +255,51 @@ public class PStation
 	{
 		return this.clientOpenDT ;
 	}
+	
+	
+	private QueTriggerThread.Handler<PSCmdPrjRtData> qttH = new QueTriggerThread.Handler<PSCmdPrjRtData>() {
+
+		public int getQueMultiMum()
+		{
+			return 50 ;//0 - single
+		}
+		
+		@Override
+		public void onQueObj(PSCmdPrjRtData t)
+		{
+			try
+			{
+				t.RT_onRecvedInPlatform(null,PStation.this);
+				if(log.isTraceEnabled())
+				{
+					log.trace(" Station ["+id+"] his rt handled que len="+queTT.getQueLen());
+				}
+			}
+			catch(Exception eee)
+			{
+				eee.printStackTrace();
+			}
+		}
+
+		@Override
+		public void onQueObjs(List<PSCmdPrjRtData> ts)
+		{
+			try
+			{
+				PSCmdPrjRtData.onRecvedMultiHisInPlatform(ts,PStation.this);
+				if(log.isTraceEnabled())
+				{
+					log.trace(" Station ["+id+"] his handled multi "+ts.size()+" que len="+queTT.getQueLen());
+				}
+			}
+			catch(Exception eee)
+			{
+				eee.printStackTrace();
+			}
+		}};
+
+	private QueTriggerThread<PSCmdPrjRtData> queTT = new QueTriggerThread<>(qttH,10000) ;
+	
 
 	void RT_onMsg(SessionItem si,byte[] msg)
 	{
@@ -218,6 +311,20 @@ public class PStation
 		PSCmd cmd = PSCmd.parseFrom(msg) ;
 		if(cmd==null)
 			return ;
+		
+		if(cmd instanceof PSCmdPrjRtData)
+		{
+			PSCmdPrjRtData cmdrt = (PSCmdPrjRtData)cmd;
+			if(cmdrt.isHis())
+			{//历史数据异步处理
+				queTT.enqueue(cmdrt);
+				if(log.isTraceEnabled())
+				{
+					log.trace(" Station ["+this.id+"] his rt que len="+queTT.getQueLen());
+				}
+				return ;
+			}
+		}
 		
 		if(log.isTraceEnabled())
 		{
@@ -233,6 +340,8 @@ public class PStation
 			eee.printStackTrace();
 		}
 	}
+	
+	
 	
 	private SessionItem getSessionItem()
 	{
@@ -266,7 +375,7 @@ public class PStation
 	}
 	
 	
-	public boolean RT_setSynPM(String prjname,boolean b_autostart,boolean datasyn_en,long datasyn_intv)
+	public boolean RT_setSynPM(String prjname,boolean b_autostart,boolean datasyn_en,long datasyn_intv,boolean failed_keep,long keep_max_len)
 	{
 		SessionItem si = this.getSessionItem() ;
 		if(si==null)
@@ -276,7 +385,7 @@ public class PStation
 		}
 		
 		PSCmdPrjSynPM cmd = new PSCmdPrjSynPM() ;
-		cmd.asPrjPM(prjname, b_autostart, datasyn_en, datasyn_intv) ;
+		cmd.asPrjPM(prjname, b_autostart, datasyn_en, datasyn_intv,failed_keep,keep_max_len) ;
 		si.sendCmd(cmd);
 		return true ;
 	}
@@ -435,5 +544,52 @@ public class PStation
 			}
 		}
 		return null ;
+	}
+	
+	void RT_onRecvedRTData(String prjname,String key,JSONObject rt_jo,boolean b_his) throws Exception
+	{
+		if(b_his)
+			return ;
+		
+		PrjST pst = this.RT_getPrjST(prjname) ;
+		if(pst==null)
+			return ;
+		
+		pst.lastRecvedDT = System.currentTimeMillis() ;
+		pst.lastRecvedData = rt_jo ;
+	}
+	
+	/**
+	 * 获得对应站点实时状态
+	 * @return
+	 */
+	public JSONObject RT_toStatusJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("station_id", this.id) ;
+		jo.put("client_connok",this.sessionItem!=null&&this.sessionItem.isConnOk()) ;
+		if(this.lastSessionItem!=null)
+		{
+			jo.putOpt("client_last_opendt", lastSessionItem.openDT) ;
+			jo.putOpt("client_last_closedt", lastSessionItem.closeDT) ;
+		}
+		jo.putOpt("client_ip", this.clientIP) ;
+		//jo.putOpt("client_port", this.clientIP) ;
+		if(this.sessionItem!=null)
+		{
+			jo.putOpt("client_opendt", this.sessionItem.openDT) ;
+			jo.putOpt("client_closedt", this.sessionItem.closeDT) ;
+		}
+		JSONArray jarr = new JSONArray() ;
+		List<PrjST> psts = this.RT_getPrjSTs() ;
+		if(psts!=null)
+		{
+			for(PrjST pst:psts)
+			{
+				jarr.put(pst.toJO()) ;
+			}
+		}
+		jo.put("prjs_st",jarr) ;
+		return jo ;
 	}
 }

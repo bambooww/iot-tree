@@ -15,7 +15,9 @@
 		return ;
 	
 	String container_id = request.getParameter("container_id") ;
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	MNManager mnm = MNManager.getInstanceByContainerId(container_id) ;
+	
+UAPrj prj =  UAManager.getInstance().getPrjById(container_id) ;
 if(prj==null)
 {
 	out.print("no project node found");

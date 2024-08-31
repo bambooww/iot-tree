@@ -12,12 +12,12 @@ import org.json.JSONObject;
 
 public class MemMultiQueue extends MNModule implements IMNRunner
 {
-	static List<MNNode> SUP_NS = Arrays.asList(new MemQueue_NM()) ;
-	@Override
-	protected List<MNNode> getSupportedNodes()
-	{
-		return SUP_NS;
-	}
+//	static List<MNNode> SUP_NS = Arrays.asList(new MemQueue_NM()) ;
+//	@Override
+//	protected List<MNNode> getSupportedNodes()
+//	{
+//		return SUP_NS;
+//	}
 
 	@Override
 	public String getTP()

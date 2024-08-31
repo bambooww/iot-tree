@@ -412,7 +412,12 @@ function show_help(mn,tp,bforce_pop)
 function on_item_open(mn)
 {
 	let url = `mn_param.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${mn.id}`;
-	let tt = "<wbt:lang>param</wbt:lang> - "+mn.title;
+	let ftp = "";
+	if(mn.nodeItem)
+		ftp = mn.nodeItem._tp;
+	else if(mn.moduleItem)
+		ftp = mn.moduleItem._tp;
+	let tt = "<wbt:lang>param</wbt:lang> - "+mn.title +"&nbsp;&nbsp;&nbsp;"+ftp;
 	let pm={op:"detail_set",container_id:container_id,netid:netid,itemid:mn.id};
 
 	dlg.open(url,{title:tt,w:'500px',h:'400px'},
@@ -1002,8 +1007,10 @@ function start_stop_debug_list(ele,debug_nid)
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/admin/_ws/net_msg/'+container_id+"/"+netid;
-    //console.log(url) ;
+	let pn = window.location.pathname ;
+	let k = pn.indexOf("/",1) ;
+	pn = pn.substring(0,k) ;
+    var url = 'ws://' + window.location.host + pn+'/_ws/net_msg/'+container_id+"/"+netid;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {
