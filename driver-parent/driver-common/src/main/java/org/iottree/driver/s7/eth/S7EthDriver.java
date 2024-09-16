@@ -201,7 +201,7 @@ public class S7EthDriver extends DevDriver
 		return pgs ;
 	}
 	
-	private static S7Addr s7addr = new S7Addr() ;
+	private static S7Addr s7addr = new S7Addr("",null) ;
 
 	@Override
 	public DevAddr getSupportAddr()

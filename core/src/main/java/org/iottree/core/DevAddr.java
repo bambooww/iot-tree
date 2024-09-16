@@ -19,7 +19,7 @@ import org.iottree.core.util.Lan;
  */
 public abstract class DevAddr
 {
-	String addr = null ;
+	protected String addr = null ;
 	protected ValTP valTP = null ;
 	
 	

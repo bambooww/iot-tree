@@ -35,8 +35,10 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	int bytesNum ;
 	
 	
-	public S7Addr()
-	{}
+	public S7Addr(String addr,ValTP vtp)
+	{
+		super(addr,vtp) ;
+	}
 
 //	public S7Addr(String addr,ValTP vtp) throws Exception
 //	{
@@ -391,12 +393,13 @@ DB<num>,<S7 data type><address><[row][col]>
 			failedr.append("DB address may be like DB200,D2 no [,] found") ;
 			return null ;
 		}
+		String fulladdr = addr ;
 		String dbstr = addr.substring(0,k) ;
-		S7Addr ret = new S7Addr() ;
+		
 		try
 		{
-			ret.memTp = S7MemTp.DB;
-			ret.dbNum = Integer.parseInt(dbstr.substring(2)) ;
+			S7MemTp ret_memTp = S7MemTp.DB;
+			int ret_dbNum = Integer.parseInt(dbstr.substring(2)) ;
 			addr = addr.substring(k+1) ;
 			if(addr.startsWith("DB"))
 				addr = addr.substring(2) ;
@@ -422,6 +425,9 @@ DB<num>,<S7 data type><address><[row][col]>
 				return null ;
 			}
 			
+			S7Addr ret = new S7Addr(fulladdr,vtp.getValTP()) ;
+			ret.memTp = ret_memTp ;
+			ret.dbNum = ret_dbNum ;
 			ret.memValTp = vtp ;
 			addr = addr.substring(k) ;
 			k=  addr.indexOf('.') ;
@@ -434,13 +440,14 @@ DB<num>,<S7 data type><address><[row][col]>
 			{
 				ret.offsetBytes = Integer.parseInt(addr) ;
 			}
+			return ret ;
 		}
 		catch(Exception e)
 		{
 			failedr.append(e.getMessage()) ;
 			return null ;
 		}
-		return ret ;
+		
 	}
 	/**
 	 * parse from string
@@ -524,10 +531,9 @@ DB<num>,<S7 data type><address><[row][col]>
 			}
 		}
 		
-		S7Addr ret = new S7Addr() ;
+		S7Addr ret = new S7Addr(addr,vt.getValTP()) ;
 		ret.memTp = mt ;
 		ret.memValTp = vt ;
-
 		try
 		{
 			k = addr.indexOf('.') ;
