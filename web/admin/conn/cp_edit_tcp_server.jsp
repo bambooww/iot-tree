@@ -46,6 +46,12 @@ List<ConnProTcpServer.AcceptedSockHandler> ashs = ConnProTcpServer.getAcceptedSo
 <head>
 <title>tcp client cp editor</title>
 <jsp:include page="../head.jsp"></jsp:include>
+<style type="text/css">
+.layui-form-label
+{
+	width:120px;
+}
+</style>
 <script>
 dlg.resize_to(600,400);
 </script>
@@ -116,7 +122,7 @@ for(ConnProTcpServer.AcceptedSockHandler ash:ashs)
   </div>
       <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:70%">
       <textarea  id="desc"  name="desc"  required lay-verify="required" placeholder="" class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>

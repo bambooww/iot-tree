@@ -55,6 +55,39 @@
 		return ret ;
 	}
 	
+	private static List<UATag> impTag(UANode n,String txt,boolean has_addr,StringBuilder failedr) throws Exception
+	{
+		if(!(n instanceof UANodeOCTags))
+			return null ;
+		UANodeOCTags nt = (UANodeOCTags)n;
+		BufferedReader br = new BufferedReader(new StringReader(txt)) ;
+		String ln = null ;
+		ArrayList<UATag> rets = new ArrayList<>() ;
+		while((ln=br.readLine())!=null)
+		{
+			ln=ln.trim() ;
+			if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
+				continue ;
+			List<String> ss = Convert.splitStrWith(ln, " \t") ;
+			if(ss.size()<3)
+				continue ;
+			String name= ss.remove(0) ;
+			String tpstr = ss.remove(0) ;
+			UAVal.ValTP dt = UAVal.getValTp(tpstr) ;
+			if(dt==null)
+				continue ;
+			String addr = null ;
+			if(has_addr)
+				addr = ss.remove(0) ;
+			
+			String title = Convert.combineStrWith(ss, " ") ;
+			UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, "",addr,dt,-1,null,100,null,null) ;
+			rets.add(ret) ;
+		}
+		nt.save();
+		return rets ;
+	}
+	
 	private static UATag renameTag(UANode n,HttpServletRequest request) throws Exception
 	{
 		if(!(n instanceof UANodeOCTags))
@@ -145,6 +178,14 @@ case "edit_tag":
 		return ;
 	}
 	break ;
+case "imp_tag":
+	if(!Convert.checkReqEmpty(request, out, "txt"))
+		return;
+	String txt = request.getParameter("txt") ;
+	StringBuilder failedr = new StringBuilder() ;
+	List<UATag> newtags = impTag(n,txt,true,failedr) ;
+	out.print("succ="+newtags.size()) ;
+	return ;
 case "chk_alert":
 	try
 	{

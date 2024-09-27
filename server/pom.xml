@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.7.1</version>
+    <version>1.7.2</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -301,7 +301,7 @@
 				                <delete dir="../_output/web/ROOT/target/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/.settings/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
-			                    <!-- 
+			                    
 			                    <echo message="package zip file" />
 			                    
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
@@ -333,7 +333,7 @@
 					                  </fileset>
                 				</zip>
 			                        
-                				 -->
+                				 
 							</tasks>
 						</configuration>
 					</execution>

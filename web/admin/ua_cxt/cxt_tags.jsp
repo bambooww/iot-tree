@@ -180,6 +180,7 @@ text-overflow:ellipsis;
  	{
  %>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="imp_tag()"><wbt:g>imp,tag</wbt:g></button>&nbsp;&nbsp;
 <%
  	}
 %>
@@ -621,6 +622,41 @@ function add_or_modify_tag(id,bmid)
 						dlg.close();
 					}
 				]);
+}
+
+function imp_tag()
+{
+	dlg.open("tag_imp.jsp",{title:"Import Tag",w:'500px',h:'400px'},
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlgw.do_submit(function(bsucc,ret){
+							 if(!bsucc)
+							 {
+								 dlg.msg(ret) ;
+								 return;
+							 }
+							 
+							 let pm={op:"imp_tag",txt:ret,path:path};
+							 send_ajax('./tag_ajax.jsp',pm,function(bsucc,ret)
+								{
+									if(!bsucc || ret.indexOf('succ=')<0)
+									{
+										dlg.msg(ret);
+										return ;
+									}
+									dlg.msg("Imported tags number is "+ret.substring(5)) ;
+									dlg.close();
+									refresh_tags();
+								},false);
+					 	});
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+	]);
 }
 
 function rename_tag(p,id)
