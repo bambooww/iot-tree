@@ -729,8 +729,16 @@ public class MNManager
 		for (MNNet net : this.listNets())
 		{
 			File cxtf = getRTCxtFileNet(net);
-			jo = Convert.readFileJO(cxtf);
-			net.RT_CXT_fromSavedJO(jo);
+			try
+			{
+				jo = Convert.readFileJO(cxtf);
+				net.RT_CXT_fromSavedJO(jo);
+			}
+			catch(Exception ee)
+			{
+				log.warn("MNManager in ["+belongTo.getMsgNetContainerId()+"] load net failed:"+cxtf.getCanonicalPath());
+				//ee.printStackTrace();
+			}
 		}
 		return true;
 	}

@@ -180,6 +180,11 @@ public class PStation
 			return this.keepMaxLen ;
 		}
 		
+		public long getLastRecvDT()
+		{
+			return this.lastRecvedDT ;
+		}
+		
 		public void setFailedKeep(boolean b_failed_keep,long keep_max_len)
 		{
 			this.bFailedKeep = b_failed_keep ;
@@ -456,7 +461,6 @@ public class PStation
 		
 		return (PSCmdDirSyn.DirDiff)recvob ;
 	}
-	
 	
 	private JSONObject RT_synDirSynRecved = null;
 	

@@ -191,7 +191,7 @@ public class ConnPtCOM extends ConnPtStream
 		try
 		{
 			serialPort = SerialPort.getCommPort(comId); // 替换为你的串口
-			serialPort.setBaudRate(9600);
+			//serialPort.setBaudRate(9600);
 
 			// static final public int ONE_STOP_BIT = 1;
 			// static final public int ONE_POINT_FIVE_STOP_BITS = 2;

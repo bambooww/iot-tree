@@ -141,9 +141,15 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 			
 			String failed_keep_chked = prjst.isFailedKeep()?"checked":"" ;
 			long keep_max_len = prjst.getKeepMaxLen() ;
+			long last_recv_dt = prjst.getLastRecvDT() ;
+			String lastrdt = "" ;
+			if(last_recv_dt>0)
+				lastrdt = Convert.toFullYMDHMS(new Date(last_recv_dt)) ;
 %>
 	<div class="prj_item">
-	<%=prjst.getPrjName() %>  running=<%=prjst.isRunning() %> auto start=<%=prjst.isAutoStart() %><br>
+	<%=prjst.getPrjName() %>  running=<%=prjst.isRunning() %> auto start=<%=prjst.isAutoStart() %>
+	  -&gt;[<%=lastrdt%>]
+	<br>
 		
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',true)">start</button>
 	 	<button onclick="station_prj_start_stop('<%=ps.getId() %>','<%=prjst.getPrjName() %>',false)">stop</button>
@@ -159,7 +165,7 @@ for(Map.Entry<String,PStation> id2s:id2station.entrySet())
 <%
 	}
 %>
-	 <input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start
+	 <input type="checkbox" id="autostart_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=chked %>/>Auto Start <br>
 	 <input type="checkbox" id="syn_en_<%=ps.getId() %>_<%=prjst.getPrjName() %>" <%=syn_chked %>/>Data Syn 
 	 Interval <input type="number" id="syn_intv_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  value="<%=syn_intv %>" style="width:65px"/>
 	 <br>Failed Keep <input type="checkbox" id="failed_keep_<%=ps.getId() %>_<%=prjst.getPrjName() %>"  <%=failed_keep_chked %> style="width:65px"/>

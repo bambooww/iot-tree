@@ -10,6 +10,7 @@ import org.iottree.core.Config;
 import org.iottree.core.ConnProvider;
 import org.iottree.core.ConnPt;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Env;
 import org.iottree.core.util.xmldata.XmlData;
 import org.w3c.dom.Element;
 
@@ -26,14 +27,20 @@ public class ConnProCOM extends ConnProvider
 			return bRxTx ;
 		
 		Element ele = Config.getConfElement("system");
-		if(ele==null)
+		if(ele!=null && "true".equalsIgnoreCase(ele.getAttribute("rxtx")) )
 		{
-			bRxTx = false;
-			return false;
+			bRxTx = true ;
+			return true ;
 		}
 		
-		bRxTx = "true".equalsIgnoreCase(ele.getAttribute("rxtx")) ;
+		bRxTx = Env.isJVM_Win32();
 		return bRxTx ;
+//		if(bRxTx!=null)
+//			return bRxTx ;
+//		
+		
+		
+		
 	}
 	
 	public static List<String> listSysComs()

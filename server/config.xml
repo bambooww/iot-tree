@@ -19,7 +19,7 @@
 		
 	</webapps>
 	
-	<system >
+	<system>
 		<inner_comp name="rec" enable="false" />
 	<!-- 
 		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServer"/>

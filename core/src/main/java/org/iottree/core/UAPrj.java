@@ -1034,6 +1034,16 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 	
+	private static void RT_initContext(UANodeOCTagsCxt cxt)
+	{
+		//old context with js env will rebuild
+		for(UANodeOCTagsCxt subcxt :cxt.getSubNodesCxt())
+		{
+			RT_initContext(subcxt) ;
+		}
+		cxt.RT_reContext();
+	}
+	
 	private static long PRJ_RUN_INTERVAL = 5 ;
 
 	Runnable prjRunner = new Runnable() {
@@ -1048,8 +1058,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			{
 				RT_init(true, true) ;
 				
-				//old context with js env will rebuild
-				RT_reContext();
+				RT_initContext(UAPrj.this) ;
 				
 				if(b_rec)
 					RecManager.getInstance(UAPrj.this).RT_start() ;

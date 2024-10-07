@@ -165,6 +165,16 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		{
 			return null ;
 		}
+		
+//		/**
+//		 * impl will provider special prop for devive in ch
+//		 * @param dev
+//		 * @return
+//		 */
+//		public HashMap<String,String> getPropMapForDevInCh(UADev dev)
+//		{
+//			return null ;
+//		}
 	}
 	// ---------------------dev cat and device
 

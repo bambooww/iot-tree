@@ -1,6 +1,6 @@
 {
 	"stations":[
-		{"id":"station1","t":"Station1","key":"12322131231"},
+		{"id":"atom","t":"Atom","key":"12322131231"},
 		{"id":"station2","t":"Station2","key":"12322131231"}
 	],
 	"prj_up_dir":"$data_dyn:/platform/prj_up/",

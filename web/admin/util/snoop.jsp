@@ -5,6 +5,7 @@
   URL tmpu = new URL(u.toString()) ;
 
 %>
+ms=<%=System.currentTimeMillis() %><br>;
 tbs_data=<%=Config.getDataDirBase() %><br/>
 conf_dir=<%=Config.getConfigFileBase()%><br/>
 webapp_dir=<%=Config.getWebappBase() %><br/>
