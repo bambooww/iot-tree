@@ -12,7 +12,6 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
 import org.iottree.core.UATag;
-import org.iottree.core.DevDriver.Model;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.ValChker;
@@ -62,13 +61,29 @@ public class S7EthDriver extends DevDriver
 	}
 	
 	private final static String M_S7_200 = "s7-200";
+	private final static String M_S7_200_SMART = "s7-200-smart";
 	private final static String M_S7_300 = "s7-300";
 	private final static String M_S7_400 = "s7-400";
 	private final static String M_S7_1200 = "s7-1200";
 	private final static String M_S7_1500 = "s7-1500";
 	
+//	static HashMap<String,String> s7_smart_pm = new HashMap<>() ;
+//	static
+//	{
+//		s7_smart_pm.put("s7_comm_pm.tsap_local","201") ;
+//		s7_smart_pm.put("s7_comm_pm.tsap_remote","201") ;
+//	}
+//	static Model S7_200_smart = new Model(M_S7_200_SMART,"S7-200 SMART") {
+//		@Override
+//		public HashMap<String, String> getPropMapForDevInCh(UADev dev)
+//		{
+//			return s7_smart_pm ;
+//		}
+//	} ;
+	
 	final private static List<Model> devms = Arrays.asList(
 			new Model(M_S7_200,"S7-200") ,
+			new Model(M_S7_200_SMART,"S7-200 SMART") , //S7_200_smart,
 			new Model(M_S7_300,"S7-300") ,
 			new Model(M_S7_400,"S7-400") ,
 			new Model(M_S7_1200,"S7-1200") ,
@@ -113,12 +128,12 @@ public class S7EthDriver extends DevDriver
 			failedr.append("TSAP cannot be null") ;
 			return -1;
 		}
-		int len = v.length() ;
-		if(len!=4)
-		{
-			failedr.append("TSAP must be hex string with length 4 like 4D57") ;
-			return -1;
-		}
+//		int len = v.length() ;
+//		if(len!=4)
+//		{
+//			failedr.append("TSAP must be hex string with length 4 like 4D57") ;
+//			return -1;
+//		}
 		
 		try
 		{
@@ -126,7 +141,7 @@ public class S7EthDriver extends DevDriver
 		}
 		catch(Exception e)
 		{
-			failedr.append("TSAP must be hex string with length 4 like 4D57") ;
+			failedr.append("TSAP must be hex string with like 4D57") ;
 			return -1 ;
 		}
 		
@@ -190,6 +205,11 @@ public class S7EthDriver extends DevDriver
 		case M_S7_200:
 			pgs.add(gp_tsap) ;
 			break;
+		case M_S7_200_SMART:
+			pgs.add(gp_tsap) ;
+			pi_local_tsap.setDefaultVal("201");
+			pi_remote_tsap.setDefaultVal("201");
+			break ;
 		case M_S7_300:
 			pi_slot.setDefaultVal(2);
 		case M_S7_400:
@@ -252,6 +272,15 @@ public class S7EthDriver extends DevDriver
 		{
 			String tsap_l = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_local","4D57") ;
 			String tsap_r = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_remote","4D57") ;
+			StringBuilder failedr = new StringBuilder() ;
+			int tsap_loc = transStr2TSAP(tsap_l,failedr) ;
+			int tsap_rrr = transStr2TSAP(tsap_r,failedr) ;
+			conn.withTSAP(tsap_loc, tsap_rrr);
+		}
+		else if(M_S7_200_SMART.equals(dev.getDevModel()))
+		{
+			String tsap_l = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_local","201") ;
+			String tsap_r = dev.getOrDefaultPropValueStr("s7_comm_pm", "tsap_remote","201") ;
 			StringBuilder failedr = new StringBuilder() ;
 			int tsap_loc = transStr2TSAP(tsap_l,failedr) ;
 			int tsap_rrr = transStr2TSAP(tsap_r,failedr) ;

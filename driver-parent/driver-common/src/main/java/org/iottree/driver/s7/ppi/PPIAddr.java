@@ -6,6 +6,7 @@ import org.iottree.core.DevAddr;
 import org.iottree.core.UADev;
 import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.driver.s7.eth.S7ValTp;
 
 public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 {
@@ -45,6 +46,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		{
 			return inBit>=0 ;
 		}
+		
 		
 		public String toString()
 		{
@@ -128,6 +130,9 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		if(apt==null)
 			return null ;
 		
+		if(vtp==null && apt.getMemTp()!=null)
+			vtp = apt.getMemTp().getFitValTPs()[0] ;
+		
 		if(!checkFit(addr,apt,vtp,failedr))
 			return null ;
 		
@@ -206,13 +211,17 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	@Override
 	public boolean isSupportGuessAddr()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
-		return null;
+		StringBuilder failedr = new StringBuilder() ;
+		PPIAddr ppiaddr = parsePPIAddr(str,vtp,failedr) ;
+		if(ppiaddr==null)
+			return null ;
+		return ppiaddr;
 	}
 
 	@Override
@@ -230,13 +239,15 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 	@Override
 	public boolean canRead()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canWrite()
 	{
-		return false;
+		if(this.addrPt==null)
+			return false;
+		return this.addrPt.memTp.canWrite();
 	}
 	
 	public int getOffsetBytes()

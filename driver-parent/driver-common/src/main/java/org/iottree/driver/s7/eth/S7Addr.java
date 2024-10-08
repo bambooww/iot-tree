@@ -249,13 +249,17 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	@Override
 	public boolean isSupportGuessAddr()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public DevAddr guessAddr(UADev dev,String str,ValTP vtp)
 	{
-		return null;
+		StringBuilder failedr = new StringBuilder() ;
+		S7Addr addr = parseS7Addr(str,vtp,failedr) ;
+		if(addr==null)
+			return null ;
+		return addr;
 	}
 
 	@Override
@@ -273,35 +277,15 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	@Override
 	public boolean canRead()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canWrite()
 	{
-		return false;
+		return memTp.canWrite();
 	}
 	
-//	public int getOffsetBytes()
-//	{
-//		return this.addrPt.getOffsetBytes() ;
-//	}
-	
-//	public int getInBits()
-//	{
-//		return this.addrPt.getInBit() ;
-//	}
-//	
-//	
-//	public int getOffsetBits()
-//	{
-//		return this.addrPt.getOffsetBits() ;
-//	}
-//	
-//	public boolean isBitAddr()
-//	{
-//		return this.addrPt.isBitAddr();
-//	}
 	
 	public int getRegEnd()
 	{
@@ -360,12 +344,19 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 			ret +=this.dbNum+",";
 		}
 		
-		ret += this.memValTp.name() ;
+		//if(memTp.getDefaultS7ValTp()!=this.memValTp)
+		//	ret += this.memValTp.name() ;
 		
-		if(inBit>0 && memTp.hasBit())
+		if(inBit>=0 && memTp.hasBit())
+		{
 			ret += offsetBytes+"."+inBit;
+		}
 		else
+		{
+			ret += this.memValTp.name() ;
 			ret += offsetBytes ;
+			
+		}
 		return ret;
 	}
 	
@@ -454,39 +445,46 @@ DB<num>,<S7 data type><address><[row][col]>
 	 * @param addr
 	 * @return
 	 */
-	private static S7Addr parseAddrPt(String addr,StringBuilder failedr)
+	private static S7Addr parseAddrPt(String addr0,StringBuilder failedr)
 	{
-		addr = addr.toUpperCase();
+		addr0 = addr0.toUpperCase();
+		String addr = addr0 ;
 		if(addr.startsWith("DB"))
 		{//parse DB
 			return parseAddrDB(addr,failedr) ;
 		}
 		
 		// parse mem
-		S7MemTp mt = null;
-		char fc = addr.charAt(0);
-		switch(fc)
+		S7MemTp mt = S7MemTp.parseStrHead(addr);
+//		char fc = addr.charAt(0);
+//		switch(fc)
+//		{
+//		case 'I':
+//			mt = S7MemTp.I;
+//			break;
+//		case 'Q':
+//			mt = S7MemTp.Q;
+//			break;
+//		case 'M':
+//			mt = S7MemTp.M;
+//			break;
+//		case 'C':
+//			mt = S7MemTp.C;
+//			break;
+//		case 'T':
+//			mt = S7MemTp.T;
+//			break;
+//		default:
+//			failedr.append("unknown mem tp:"+addr);
+//			return null ;
+//		}
+		if(mt==null)
 		{
-		case 'I':
-			mt = S7MemTp.I;
-			break;
-		case 'Q':
-			mt = S7MemTp.Q;
-			break;
-		case 'M':
-			mt = S7MemTp.M;
-			break;
-		case 'C':
-			mt = S7MemTp.C;
-			break;
-		case 'T':
-			mt = S7MemTp.T;
-			break;
-		default:
+			failedr.append("unknown mem tp:"+addr);
 			return null ;
 		}
 		
-		addr = addr.substring(1);
+		addr = addr.substring(mt.name().length());
 		
 		int k = 0 ;
 		int addrlen = addr.length() ;
@@ -512,28 +510,31 @@ DB<num>,<S7 data type><address><[row][col]>
 		
 		if(vt==null)
 		{// use default valtp
-			switch(mt)
-			{
-			case I:
-			case Q:
-			case M:
-				vt = S7ValTp.B;
-				break;
-			case C:
-				vt = S7ValTp.W;
-				break ;
-			case T:
-				vt = S7ValTp.D;
-				break ;
-			default:
-				vt = S7ValTp.B;
-				break;
-			}
+//			switch(mt)
+//			{
+//			case I:
+//			case Q:
+//			case M:
+//				vt = S7ValTp.B;
+//				break;
+//			case C:
+//				vt = S7ValTp.W;
+//				break ;
+//			case T:
+//				vt = S7ValTp.D;
+//				break ;
+//			default:
+//				vt = S7ValTp.B;
+//				break;
+//			}
+			
+			vt = mt.getDefaultS7ValTp() ;
 		}
 		
-		S7Addr ret = new S7Addr(addr,vt.getValTP()) ;
+		S7Addr ret = new S7Addr(addr0,vt.getValTP()) ;
 		ret.memTp = mt ;
 		ret.memValTp = vt ;
+		ret.bytesNum = vt.getByteNum() ;
 		try
 		{
 			k = addr.indexOf('.') ;

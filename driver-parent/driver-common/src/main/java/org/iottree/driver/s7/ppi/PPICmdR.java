@@ -107,6 +107,7 @@ public class PPICmdR extends PPICmd
 		}
 		
 		outputs.write(bs1);
+		//Thread.sleep(5) ;
 		int c = PPIMsg.readCharTimeout(inputs, ppiDrv.getReadTimeout()) ;
 		if(c!=0xE5 && c!=0xF9)
 		{

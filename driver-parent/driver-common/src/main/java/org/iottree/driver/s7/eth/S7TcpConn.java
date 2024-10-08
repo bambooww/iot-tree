@@ -92,10 +92,10 @@ public final class S7TcpConn
 		return this.cpTcp;
 	}
 
-	void recv(byte[] buf, int Start, int Size) throws IOException
+	void recv(byte[] buf, int start, int size) throws IOException
 	{
-		checkStreamLenTimeout(Size, recvTO);
-		inputS.read(buf, Start, Size);
+		checkStreamLenTimeout(size, recvTO);
+		inputS.read(buf, start, size);
 	}
 
 	void clearInputStream(long timeout) //throws IOException
