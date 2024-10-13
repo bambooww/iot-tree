@@ -38,6 +38,9 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	public S7Addr(String addr,ValTP vtp)
 	{
 		super(addr,vtp) ;
+		
+		if(vtp!=null)
+			this.bytesNum = vtp.getValByteLen() ;
 	}
 
 //	public S7Addr(String addr,ValTP vtp) throws Exception
@@ -97,7 +100,11 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 			return null ;
 		
 		if(vtp==null)
-			vtp = apt.getFitMemValTp().getValTP() ;
+		{
+			vtp = apt.getValTP() ;
+			if(vtp==null)
+				vtp = apt.getFitMemValTp().getValTP() ;
+		}
 		
 		if(!checkFit(addr,apt,vtp,failedr))
 			return null ;
@@ -349,6 +356,8 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		
 		if(inBit>=0 && memTp.hasBit())
 		{
+			if(memTp==S7MemTp.DB || memTp.getDefaultS7ValTp()!=this.memValTp)
+				ret += this.memValTp.name() ;
 			ret += offsetBytes+"."+inBit;
 		}
 		else

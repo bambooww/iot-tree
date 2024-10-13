@@ -725,6 +725,9 @@ var connpro_menu = [
 	{content:'WebSocket <wbt:g>client</wbt:g>',callback:function(){
 		edit_cpt("ws_client","","");
 	}},
+	{content:'Multi Tcp Msg',callback:function(){
+		edit_cpt("multi_tcp_msg","","");
+	}},
 	{content:'sm_divider'},
 	{content:'<wbt:g>oths_conn</wbt:g>',header: true},
 	{content:'IOTTree Node',callback:function(){
@@ -994,8 +997,9 @@ var cxt_menu = {
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
-		{op_name:"new_dev",op_title:"<wbt:lang>new_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_new_dev},
-		{op_name:"edit_ch",op_title:"<wbt:lang>edit_ch</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_ch},
+		{op_name:"new_dev",op_title:"<wbt:lang>new_dev</wbt:lang>",op_icon:"fa fa-plus",op_action:act_ch_new_dev},
+		{op_name:"find_up_dev",op_title:"<wbt:lang>find_up_dev</wbt:lang>",op_icon:"fa-solid fa-magnifying-glass",op_action:act_ch_find_dev},
+		{op_name:"edit_ch",op_title:"<wbt:lang>edit_ch</wbt:lang>",op_icon:"fa fa-pencil",op_action:act_edit_ch},
 		{op_name:"del_ch",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_ch},
 		
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
@@ -1003,7 +1007,7 @@ var cxt_menu = {
 		
 		{op_name:"cp_ch",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
 		
-		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
+		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-play",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return !tn.run;
 		}},
 		{op_name:"ch_stop",op_title:"<wbt:lang>stop</wbt:lang>",op_icon:"fa fa-times",op_action:act_ch_start_stop,op_chk:(tn)=>{
@@ -1855,6 +1859,22 @@ function act_ch_new_dev(n,op)
 	add_or_edit_dev(n.path,null) ;
 }
 
+function act_ch_find_dev(n,op)
+{
+	var ret={} ;
+	 ret.ch_path = n.path;
+	 ret.op="find_update_dev" ;
+	 send_ajax('ua/ch_ajax.jsp',ret,function(bsucc,ret)
+		{
+			if(!bsucc || ret.indexOf('succ')<0)
+			{
+				dlg.msg(ret);
+				return ;
+			}
+			refresh_ui() ;
+		},false);
+}
+
 function act_edit_dev(n,op)
 {
 	add_or_edit_dev(null,n.path) ;
@@ -2462,6 +2482,10 @@ function prj_rt()
 				var cid = conn.conn_id;
 				var bready = conn.ready ;
 				var connerr = conn.conn_err;
+				var conninf = conn.conn_inf ;
+				
+				if(!conninf)
+					conninf = "connection is ready" ;
 				var benable = conn.enable;
 				var bnewdev = conn.new_devs;
 				var color = "grey";
@@ -2471,7 +2495,7 @@ function prj_rt()
 				}
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link'></i>":"<i class='fa fa-chain-broken'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",color);
-				$("#conn_st_"+cid).attr("title",bready?"connection is ready":connerr);
+				//$("#conn_st_"+cid).attr("title",bready?conninf:connerr);
 				/*
 				if(bnewdev)
 				{
@@ -2503,7 +2527,7 @@ function prj_rt()
 				var tt = conn.static_txt ;
 				if(tt==null||tt=="")
 					if(benable)
-						tt = bready?"connection is ready":connerr ;
+						tt = bready?conninf:connerr ;
 					else
 						tt = "not enabled";
 				$("#conn_"+cid).attr("title",tt) ;

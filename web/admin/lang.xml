@@ -91,6 +91,7 @@
   <dd_node id="1" name="new_tag_mid" name_cn="新增标签（中间）" name_en="New Tag Middle" />
   <dd_node id="1" name="delete" name_cn="删除" name_en="Delete" />
   <dd_node id="1" name="new_dev" name_cn="新增设备" name_en="New Device" />
+  <dd_node id="1" name="find_up_dev" name_cn="查找更新设备" name_en="Find Update Device" />
   <dd_node id="1" name="add_dev" name_cn="新增设备" name_en="Add Device" />
   <dd_node id="1" name="edit_dev" name_cn="编辑设备" name_en="Edit Device" />
   <dd_node id="1" name="refresh_dev" name_cn="刷新设备" name_en="Refresh Device" />

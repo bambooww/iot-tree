@@ -73,6 +73,8 @@ public enum S7ValTp
 		case "I":
 		case "INT":
 			return I;
+		case "REAL":
+			return REAL ;
 		case "T":
 		case "TIME":
 			return T;

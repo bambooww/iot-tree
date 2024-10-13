@@ -421,16 +421,19 @@ public class MNManager
 			}};
 		ArrayList<MNNet> rets = new ArrayList<>() ;
 		
-		File prjdir = this.belongTo.getMsgNetDir();//.getPrjSubDir() ;
-		for(File mnf:prjdir.listFiles(ff))
+		File dir = this.belongTo.getMsgNetDir();//.getPrjSubDir() ;
+		if(dir.exists())
 		{
-			MNNet mnn = loadNet(mnf) ;
-			if(mnn==null)
+			for(File mnf:dir.listFiles(ff))
 			{
-				log.warn("load MNNet failed :"+mnf.getCanonicalPath());
-				continue ;
+				MNNet mnn = loadNet(mnf) ;
+				if(mnn==null)
+				{
+					log.warn("load MNNet failed :"+mnf.getCanonicalPath());
+					continue ;
+				}
+				rets.add(mnn) ;
 			}
-			rets.add(mnn) ;
 		}
 		return rets ;
 	}
@@ -441,8 +444,6 @@ public class MNManager
 		if(Convert.isNullOrEmpty(txt))
 			return null ;
 		JSONObject jo = new JSONObject(txt)  ;
-		
-		
 		MNNet ret = new MNNet(this) ;
 		if(!ret.fromJO(jo))
 		{

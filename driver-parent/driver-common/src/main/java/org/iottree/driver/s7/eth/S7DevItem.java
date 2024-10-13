@@ -120,7 +120,7 @@ public class S7DevItem
 			return ;
 		
 		String areakey = addrs.get(0).getAreaKey();
-		S7Block blk = new S7Block(addrs,32,100l);
+		S7Block blk = new S7Block(addrs,32,200l);
 		//blk.setTimingParam(reqto, recvto, inter_ms);
 		if(blk.initCmds(s7Drv))
 			tp2block.put(areakey,blk) ;

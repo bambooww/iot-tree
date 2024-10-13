@@ -1009,8 +1009,6 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		switch (this.sorTp)
 		{
 		case bytes:
-			
-			
 			mds = new MonData[] {new MonData("sor",bs),null} ;
 			return;
 		case str:

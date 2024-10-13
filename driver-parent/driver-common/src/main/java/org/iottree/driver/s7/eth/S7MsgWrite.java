@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.DataUtil;
 /**
  *                                                                                                                                                                         WR area
  *                       0   1   2   3   4  5   6   7   8   9  10 11 12 13 14 15 16 17 18 19 20 21  22 23  24  25  26  27 28 29 30  31 32 33 34 35 36 --
@@ -102,6 +103,8 @@ public class S7MsgWrite extends S7Msg
 			conn.PDU[27] = (byte) area_memtp.getVal();
 			if (area_memtp == S7MemTp.DB)
 				S7Util.setUInt16(conn.PDU, 25, db_num);
+			else if(area_memtp == S7MemTp.V)
+				S7Util.setUInt16(conn.PDU, 25, 1);
 
 			if ((area_memtp == S7MemTp.C) || (area_memtp == S7MemTp.T))
 			{
@@ -213,6 +216,8 @@ public class S7MsgWrite extends S7Msg
 			conn.PDU[27] = (byte) area_memtp.getVal();
 			if (area_memtp == S7MemTp.DB)
 				S7Util.setUInt16(conn.PDU, 25, db_num);
+			else if(area_memtp == S7MemTp.V)
+				S7Util.setUInt16(conn.PDU, 25, 1);
 
 			conn.PDU[22] = 0x01;
 			if ((area_memtp == S7MemTp.C) || (area_memtp == S7MemTp.T))
@@ -331,7 +336,8 @@ public class S7MsgWrite extends S7Msg
 			Number num = (Number)v;
 			if(vtp.isNumberFloat())
 			{
-				
+				//byte[] bs = new byte[4] ;
+				return DataUtil.floatToBytes(num.floatValue());
 			}
 			else
 			{

@@ -48,7 +48,7 @@ public class S7Block
 	
 	private long recvTO = 100 ;
 	
-	private long interReqMs = 0 ;
+	private long interReqMs = 20 ;
 	
 	transient int failedCount = 0 ;
 	
@@ -90,14 +90,13 @@ public class S7Block
 	{
 		this.reqTO = req_to ;
 		this.recvTO = recv_to ;
-		this.interReqMs = inter_reqms ;
+		this.interReqMs = inter_reqms>20?inter_reqms:20 ;
 	}
 		
 	public S7MemTp getMemTp()
 	{
 		return memTp ;
 	}
-	
 	
 	public List<S7Addr> getAddrs()
 	{
@@ -241,8 +240,9 @@ public class S7Block
 	public boolean runCmds(S7TcpConn conn) throws Exception
 	{
 		this.runWriteCmdAndClear(conn);
-		return runReadCmds(conn) ;
-		
+		boolean r = runReadCmds(conn) ;
+		Thread.sleep(this.interReqMs); 
+		return r ;
 	}
 	
 	public void runCmdsErr()
@@ -393,6 +393,7 @@ public class S7Block
 			conn.clearInputStream(50);
 			mc.processByConn(conn);
 		}
+		Thread.sleep(this.interReqMs); // to make read not too fast issue err 
 	}
 	
 	public boolean setWriteCmdAsyn(S7Addr addr, Object v)

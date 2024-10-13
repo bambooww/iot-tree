@@ -30,9 +30,13 @@ public class S7EthDriver extends DevDriver
 	
 	private HashMap<UADev,S7DevItem> dev2item = new HashMap<>() ;
 	
+	public S7EthDriver()
+	{}
+	
 	@Override
 	public boolean checkPropValue(String groupn, String itemn, String strv, StringBuilder failedr)
 	{
+		//System.out.println("1") ;
 		return true;
 	}
 

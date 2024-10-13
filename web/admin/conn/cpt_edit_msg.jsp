@@ -112,7 +112,7 @@ if(Convert.isNullOrEmpty(bind_map_str))
 }
 </style>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label" >Format</label>
     <div class="layui-input-inline" style="width:90px">

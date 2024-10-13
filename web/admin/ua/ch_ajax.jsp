@@ -126,7 +126,41 @@
 			out.print("succ") ;
 			return ;
 		}
-	}%><%
+	}
+	
+	private static void findUpdateDevInCh(HttpServletRequest request,JspWriter out)throws Exception
+	{
+		if(!Convert.checkReqEmpty(request, out, "ch_path"))
+			return;
+		String chpath = request.getParameter("ch_path") ;
+		UACh ch  = (UACh)UAUtil.findNodeByPath(chpath) ;
+		if(ch==null)
+		{
+			out.print("no ch node found");
+			return ;
+		}
+	
+		StringBuilder failedr = new StringBuilder() ;
+		DevDriver dd = ch.getDriver() ;
+		if(dd==null)
+		{
+			out.print("no driver found") ;
+			return ;
+		}
+		if(!dd.supportDevFinder())
+		{
+			out.print("ch driver not support device finding") ;
+			return ;
+		}
+		if(!dd.updateFindedDevs(failedr))
+		{
+			out.print(failedr) ;
+			return ;
+		}
+		out.print("succ") ;
+	}
+
+%><%
 if(!Convert.checkReqEmpty(request, out, "op"))
 	return;
 String op = request.getParameter("op") ;
@@ -138,6 +172,9 @@ case "edit":
 	break ;
 case "start_stop":
 	startStopCh(request,out) ;
+	break ;
+case "find_update_dev":
+	findUpdateDevInCh(request,out) ;
 	break ;
 case "del":
 	delCh(request,out);

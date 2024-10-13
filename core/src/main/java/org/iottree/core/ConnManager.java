@@ -600,13 +600,16 @@ public class ConnManager
 				String connerr = conn.getConnErrInfo() ;
 				if(connerr==null)
 					connerr = "" ;
+				String conninf = conn.RT_getConnRunInfo() ;
+				if(conninf==null)
+					conninf = "" ;
 //				boolean fnewdev = false;
 //				if(conn instanceof ConnPtDevFinder)
 //				{
 //					Map<String,ConnDev> n2dev = ((ConnDevFindable)conn).getFoundConnDevs() ;
 //					fnewdev = (n2dev!=null&&n2dev.size()>0) ;
-//				}
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"msgs\":[");
+//				} 
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"conn_inf\":\""+conninf+"\",\"msgs\":[");
 				List<ConnMsg> cpt_msgs = conn.getConnMsgs() ;
 				if(cpt_msgs!=null)
 				{

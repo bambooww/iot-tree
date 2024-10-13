@@ -192,6 +192,14 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		return super.getPropValue(groupn, itemn);
 	}
 	
+	public Object getPropValue(String groupn,String itemn,Object defv)
+	{
+		Object ret = getPropValue(groupn,itemn) ;
+		if(ret==null)
+			return defv ;
+		return ret ;
+	}
+	
 	
 	public List<UATagG> getSubTagGs()
 	{

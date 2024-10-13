@@ -263,6 +263,16 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 * @return
 	 */
 	public abstract boolean supportDevFinder();
+	
+	/**
+	 * @see supportDevFinder return true,this func may be override to update devices under ch
+	 * @return
+	 */
+	public boolean updateFindedDevs(StringBuilder failedr)
+	{
+		failedr.append("no impl") ;
+		return false;
+	}
 
 	// ----
 	// prop definitions that driver must provide.

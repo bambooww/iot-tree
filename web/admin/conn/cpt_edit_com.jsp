@@ -69,7 +69,7 @@ dlg.resize_to(800,430);
 </script>
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline">

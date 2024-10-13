@@ -16,7 +16,6 @@ OpcUAServer ser = (OpcUAServer)ServiceManager.getInstance().getService(OpcUAServ
 	HashMap<String,String> pms = ser.getConfPMS() ;
 	boolean enable = ser.isEnable();//ser.isMqttEn();
 	//boolean tcp_en = false;//ser.isTcpEn();
-	
 	String port =  "4840";// ser.getMqttPortStr();
 	
 	String chked_en = "" ;

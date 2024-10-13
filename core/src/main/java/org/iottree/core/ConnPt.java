@@ -674,6 +674,11 @@ public abstract class ConnPt implements IXmlDataValidator
 	
 	public abstract String getConnErrInfo() ;
 	
+	public String RT_getConnRunInfo()
+	{
+		return "" ;
+	}
+	
 	public boolean hasJoinedNode() throws Exception
 	{
 		return getJoinedNode()!=null ;
