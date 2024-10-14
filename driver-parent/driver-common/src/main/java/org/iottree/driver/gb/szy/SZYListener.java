@@ -48,7 +48,6 @@ public class SZYListener
 		}
 		
 		int buflen ;//= sniBuf.getBufLen() ;
-		
 		while((buflen = sniBuf.getBufLen())>0)
 		{
 			//baos.

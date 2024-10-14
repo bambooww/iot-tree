@@ -63,12 +63,29 @@ public abstract class SZYMsg
 				{
 					crc ^= dxs;
 				}
-
 			}
 		}
-		// String code = Integer.toHexString(crc & 0xff).toUpperCase();
-		// return code;
 		return (byte)crc;
 	}
 
+	
+	static String transBCD2Str(byte[] bcd,int offset,int len)
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		for (int i = offset; i < len; i++)
+		{
+			sb.append((bcd[i] & 0XF0) >> 4);
+			sb.append(bcd[i] & 0X0F);
+		}
+		
+//		// 如果转化后的字符串首字母为0，那么去掉
+//		if (sb.charAt(0) == '0') {
+//			decStr = sb.substring(1);
+//		}else {
+//			decStr = sb.toString();
+//		}
+		
+		return sb.toString();
+	}
 }

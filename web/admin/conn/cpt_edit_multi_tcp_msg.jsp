@@ -102,6 +102,7 @@ ConnPtMultiTcpMSG.TcpDataProStrLine dataProLN = null ;
 
 if(dataPro!=null)
 {
+	data_pro_tp=dataPro.getTP() ;
 	max_len = dataPro.getMaxLen();
 	
 	if(dataPro instanceof ConnPtMultiTcpMSG.TcpDataProSpliter)
@@ -228,6 +229,7 @@ dlg.resize_to(800,500);
     </div>
   
   </div>
+  </div>
   
   <div class="layui-form-item">
     <label class="layui-form-label">
@@ -235,8 +237,15 @@ dlg.resize_to(800,500);
     </label>
     <div class="layui-input-inline" style="width:150px">
       <select id="data_pro_tp" lay-filter="data_pro_tp" >
-    		<option value="sp">Bytes Spliter</option>
-    		<option value="ln">Str Line</option>
+<%
+for(ConnPtMultiTcpMSG.TcpDataPro tdp:ConnPtMultiTcpMSG.ALL_DATAPROS)
+{
+%>
+    		<option value="<%=tdp.getTP()%>"><%=tdp.getTPT() %></option>
+<%
+} //<option value="ln">Str Line</option>
+%>
+    		
     	</select>
 	</div>
 	<div class="layui-form-mid">Max Length</div>
@@ -271,6 +280,7 @@ dlg.resize_to(800,500);
       <textarea  id="desc"  name="desc"  class="layui-textarea" rows="2"><%=desc%></textarea>
     </div>
   </div>
+  
  </form>
 </body>
 <script type="text/javascript">
@@ -549,12 +559,20 @@ function do_submit(cb)
 	
 	let data_pro_tp = $("#data_pro_tp").val() ;
 	let data_pro = null ;
-	data_pro = get_data_pro_sp_input(cb) ;
-	if(data_pro==null)
+	if(data_pro_tp=='sp')
 	{
-		cb(false,"no data pro found") ;
-		return ;
+		data_pro = get_data_pro_sp_input(cb) ;
+		if(data_pro==null)
+		{
+			cb(false,"no data pro found") ;
+			return ;
+		}
 	}
+	else
+	{
+		data_pro = {_tp:data_pro_tp} ;
+	}
+	
 	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
 		tcp_run:tcp_run,data_pro:data_pro});
 }

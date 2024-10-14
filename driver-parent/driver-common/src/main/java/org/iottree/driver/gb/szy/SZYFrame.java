@@ -39,7 +39,6 @@ public class SZYFrame extends SZYMsg
 		,flow(3,"FL","FLOW")
 		,flow_rate(4,"FR","FLOW Rate")
 		,gate_pos(5,"GP","Gate Pos")
-		
 		;
 		
 		private final int val ;
@@ -91,10 +90,17 @@ public class SZYFrame extends SZYMsg
 		
 		short afn ;
 		
+		long createDT = System.currentTimeMillis() ;
+		
 		UserData(byte[] ud)
 		{
 			this.userBS = ud ;
 			this.afn = (short)(ud[0] & 0xFF) ;
+		}
+		
+		public long getCreateDT()
+		{
+			return this.createDT; 
 		}
 	}
 	
@@ -126,7 +132,7 @@ public class SZYFrame extends SZYMsg
 			System.arraycopy(ud, 1, this.df, 0, dlen-5);
 		}
 		
-		protected abstract boolean parseDataField() ;  
+		protected abstract boolean parseDataField() ;
 	}
 	
 	public static class UDTermUpFlow extends SZYFrame.UDTerminalUp
@@ -170,6 +176,20 @@ public class SZYFrame extends SZYMsg
 			return Float.parseFloat(sb.toString())/1000 ;
 		}
 		
+		public Float getFlow()
+		{
+			if(this.vals==null || this.vals.size()<1)
+				return null ;
+			return this.vals.get(0) ;
+		}
+		
+		public Float getFlowT()
+		{
+			if(this.vals==null || this.vals.size()<2)
+				return null ;
+			return this.vals.get(1) ;
+		}
+		
 		public String toString()
 		{
 			return "flow "+Convert.combineWith(vals, ' ') ;
@@ -181,6 +201,8 @@ public class SZYFrame extends SZYMsg
 	boolean dir = true ; //D7 true 1-终端发出上行  false 0 - 中心发出下行
 	
 	boolean div = false;  //D6
+	
+	short divs = 0 ; // 0-表示没有  255-1表示拆分帧 div=1时有效 
 	
 	short fcb = 3 ; //D5-D4 帧计数位
 	
@@ -224,14 +246,34 @@ public class SZYFrame extends SZYMsg
 		return a ;
 	}
 	
-	public String getAddrA1()
+	/**
+	 * 行政区代码
+	 * @return
+	 */
+	public int getAddrA1()
 	{
-		return null ;
+		if(a==null || a.length<3)
+			return -1 ;
+		return  Integer.parseInt(transBCD2Str(a,0,3));
 	}
 	
-	public String getAddrA2()
+	/**
+	 * 测站地址 1-60000
+	 * @return
+	 */
+	public int getAddrA2()
 	{
-		return null ;
+		if(a==null || a.length<5)
+			return -1 ;
+		int r = a[3] &0xFF ;
+		r<<=8 ;
+		r += (a[4]&0xFF) ;
+		return  r;
+	}
+	
+	public String getAddrHex()
+	{
+		return Convert.byteArray2HexStr(a) ;
 	}
 
 	boolean parseData()
@@ -261,6 +303,7 @@ public class SZYFrame extends SZYMsg
 		case 0xC0:
 			ret = new UDTermUpFlow(ud) ;
 			break;
+		//case 0x
 		default:
 			return null ;
 		}
@@ -275,6 +318,7 @@ public class SZYFrame extends SZYMsg
 	{
 		return this.userData ;
 	}
+	
 }
 
 

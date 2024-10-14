@@ -160,7 +160,7 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 					while(th!=null)
 					{
 						dataPro.RT_runInLoop(SockItem.this);
-						sleep(1) ;
+						sleep(3) ;
 					}
 				}
 				catch(Exception ee)
@@ -614,7 +614,10 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 	public static class TcpDataProStrLine extends TcpDataPro
 	{
 		
-		String encod = "UTF-8" ;
+		private transient byte[] readBuf = null;
+		private transient int RT_st = 0 ;
+		private transient int RT_rlen = 0 ;
+		//String encod = "UTF-8" ;
 		
 		public TcpDataProStrLine(ConnPtMultiTcpMSG belongto,TcpRunner tcp_run)
 		{
@@ -635,30 +638,179 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		public TcpDataPro copyMe(TcpRunner tcp_run)
 		{
 			TcpDataProStrLine ret = new TcpDataProStrLine(this.belongTo,tcp_run) ;
-			ret.encod = this.encod ;
+			//ret.encod = this.encod ;
+			ret.maxLen = this.maxLen ;
+			ret.readBuf = new byte[this.maxLen] ;
 			return ret ;
 		}
 		
+		@Override
+		public void RT_runInLoop(SockItem si) throws Exception
+		{
+			PushbackInputStream inputs = si.getInputStream() ;
+			if(inputs==null)
+				throw new Exception("conn may be broken") ;
+
+			switch(RT_st)
+			{
+			case 0:
+				int len = RT_chkAvailableTO(inputs) ;
+				if(len<=0)
+					return ;
+				
+				int cc = inputs.read() ;
+				if(cc=='\r' || cc=='\n')
+				{
+					RT_st = 1 ;
+					RT_rlen = 0 ;
+				}
+				break ;
+			case 1: //in reading
+				len = RT_chkAvailableTO(inputs) ;
+				if(len<=0)
+					return ;
+				cc = inputs.read();
+				
+				if(RT_rlen==0)
+				{
+					if(cc=='\r' || cc=='\n')
+						return ;
+				}
+				
+				readBuf[RT_rlen] = (byte)cc ;
+				RT_rlen ++ ;
+				byte[] ret = readToEnd(inputs) ;
+				if(ret==null)
+				{
+					RT_st = 0 ;
+					RT_rlen =0 ; //丢弃
+					return ;
+				}
+				this.belongTo.RT_onMsgGit(ret) ;
+				//RT_st = 1 ;
+				//System.out.println(new String(ret)) ;
+				RT_rlen =0 ;
+				return ;
+			default:
+				break ;
+			}
+		}
+		
+		private byte[] readToEnd(PushbackInputStream inputs) throws IOException
+		{
+			int cc ;
+			do
+			{
+				cc = inputs.read();
+				if(cc=='\r'||cc=='\n')
+				{
+					byte[] ret = new byte[RT_rlen] ;
+					System.arraycopy(readBuf, 0, ret, 0, ret.length);
+					return ret;
+				}
+				readBuf[RT_rlen] = (byte)cc ;
+				RT_rlen ++ ;
+				if(RT_rlen>=readBuf.length)
+				{
+					return null ;
+				}
+			}while(cc>0) ;
+			return null ;
+		}
+		
+//		public JSONObject toJO()
+//		{
+//			JSONObject jo = super.toJO() ;
+//			jo.put("enc", encod) ;
+//			return jo ;
+//		}
+//		
+//		public void fromJO(JSONObject jo)
+//		{
+//			super.fromJO(jo);
+//			this.encod = jo.optString("enc","UTF-8") ;
+//		}
+
+	}
+	
+	public static class TcpDataProSzy extends TcpDataPro
+	{
+		
+		public TcpDataProSzy(ConnPtMultiTcpMSG belongto,TcpRunner tcp_run)
+		{
+			super(belongto,tcp_run);
+		}
+
+		
+		public String getTP()
+		{
+			return "szy" ;
+		}
+		
+		public String getTPT()
+		{
+			return "SZY206-2016" ;
+		}
+		
+		public TcpDataPro copyMe(TcpRunner tcp_run)
+		{
+			TcpDataProSzy ret = new TcpDataProSzy(this.belongTo,tcp_run) ;
+			ret.maxLen = this.maxLen ;
+			return ret ;
+		}
+		
+		private int RT_st = 0 ;
+		
+		private transient int readLen = -1 ;
+		
+		private transient byte[] readBuf = new byte[256] ;
 
 		@Override
-		public void RT_runInLoop(SockItem si)
+		public void RT_runInLoop(SockItem si) throws Exception
 		{
-			
-		}
-		
-		public JSONObject toJO()
-		{
-			JSONObject jo = super.toJO() ;
-			jo.put("enc", encod) ;
-			return jo ;
-		}
-		
-		public void fromJO(JSONObject jo)
-		{
-			super.fromJO(jo);
-			this.encod = jo.optString("enc","UTF-8") ;
-		}
+			PushbackInputStream inputs = si.getInputStream() ;
+			if(inputs==null)
+				throw new Exception("conn may be broken") ;
 
+			switch(RT_st)
+			{
+			case 0:
+				int len = RT_chkAvailableTO(inputs) ;
+				if(len<=3)
+					return ;
+				
+				inputs.read(readBuf,0,3) ;
+				if(readBuf[0]==0x68 && readBuf[2]==0x68)
+				{//get head
+					readLen = readBuf[1] & 0xFF ;
+					RT_st = 1 ;
+				}
+				else
+				{
+					inputs.unread(readBuf ,1, 2);
+				}
+				break ;
+			case 1:
+				len = RT_chkAvailableTO(inputs) ;
+				if(len<readLen+2)
+					return ;
+				inputs.read(readBuf,3,readLen+2) ;
+				if(readBuf[readLen+4]==0x16)
+				{
+					byte[] ret = new byte[readLen+5] ;
+					System.arraycopy(readBuf, 0, ret, 0, ret.length);
+					this.belongTo.RT_onMsgGit(ret) ;
+					RT_st = 0 ;
+				}
+				else
+				{//discard
+					RT_st = 0 ;
+				}
+				break ;
+			default:
+				break ;
+			}
+		}
 	}
 	
 	private TcpDataPro transXD2Pro(XmlData xd)
@@ -677,6 +829,8 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		case "ln":
 			tr = new TcpDataProStrLine(this,null) ;
 			break ;
+		case "szy":
+			tr = new TcpDataProSzy(this,null) ;
 		}
 		if(tr==null)
 			return null ;
@@ -700,6 +854,8 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		case "ln":
 			tr = new TcpDataProStrLine(this,null) ;
 			break ;
+		case "szy":
+			tr = new TcpDataProSzy(this,null) ;
 		}
 		if(tr==null)
 			return null ;
@@ -707,7 +863,7 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		return tr ;
 	}
 	
-	//public static TcpDataPro[] ALL_DATAPROS = new TcpDataPro[] {new TcpDataProSpliter(null),new TcpDataProStrLine(null)} ;
+	public static TcpDataPro[] ALL_DATAPROS = new TcpDataPro[] {new TcpDataProSpliter(null,null),new TcpDataProStrLine(null,null),new TcpDataProSzy(null,null)} ;
 	
 	public static abstract class TcpRunner
 	{
