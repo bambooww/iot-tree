@@ -45,7 +45,7 @@ dlg.resize_to(600,400);
   <div class="layui-form-item">
     <label class="layui-form-label">Local Port:</label>
     <div class="layui-input-inline">
-      <input type="text" id="server_port" name="server_port" value=""  class="layui-input">
+      <input type="number" id="server_port" name="server_port" value=""  class="layui-input">
     </div>
     <div class="layui-form-mid">Local IP:</div>
 	  <div class="layui-input-inline" style="width: 150px;">

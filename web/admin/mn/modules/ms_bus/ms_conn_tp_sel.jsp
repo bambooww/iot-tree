@@ -39,7 +39,7 @@
 		<button class="layui-btn " style="width:80%" onclick="go_to('com','COM')">COM</button>
 	</div>
 	<div class="sel_item">
-		<button class="layui-btn layui-btn-disabled" style="width:80%" onclick0="go_to('tcpc','Tcp Client')">Tcp Client</button>
+		<button class="layui-btn" style="width:80%" onclick="go_to('tcpc','Tcp Client')">Tcp Client</button>
 	</div>
 <script>
 function go_to(tp,tt)

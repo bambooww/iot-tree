@@ -11,6 +11,7 @@
   <dd_node id="1" name="en_anti_interf" name_cn="使能抗干扰" name_en="Enable anti-interference" />
   
   <dd_node id="1" name="alt_evt" name_cn="报警/事件" name_en="Alert/Event" />
+  <dd_node id="1" name="sub" name_cn="子" name_en="Sub" />
   
   <dd_node id="1" name="edit_mid_tag_js" name_cn="编辑中间标签JS表达式" name_en="Edit Middle Tag JS Express" />
   

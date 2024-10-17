@@ -8,6 +8,7 @@
   
   
   <dd_node name="scaling" name_cn="缩放比例" name_en="Scaling" />
+  <dd_node name="calc" name_cn="简单计算" name_en="Simple Calc" />
   
   <dd_node name="vatp_on_off" name_cn="开关量" name_en="On Off" 
 	  	trigger_cn="当前值==事件值(0/1)" trigger_en="The current Event value(0/1)"

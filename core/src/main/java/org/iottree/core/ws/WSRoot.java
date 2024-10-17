@@ -2,8 +2,12 @@ package org.iottree.core.ws;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +20,7 @@ import javax.websocket.CloseReason.CloseCodes;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
+import org.iottree.core.UATag;
 import org.iottree.core.station.PlatformManager;
 import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.ws.WSRoot.SessionItem;
@@ -37,6 +42,9 @@ public abstract class WSRoot
 		private final UANodeOCTagsCxt nodecxt;
 		EndpointConfig config = null;
 		private long lastDT = -1;
+		
+		private boolean bSys = true ;
+		private boolean bSub = false;
 
 		public SessionItem(Session s, UAPrj rep, UANodeOCTagsCxt nodecxt, EndpointConfig config)
 		{
@@ -44,6 +52,24 @@ public abstract class WSRoot
 			this.prj = rep;
 			this.nodecxt = nodecxt;
 			this.config = config;
+			
+			Map<String,List<String>> ppm = s.getRequestParameterMap();//.getPathParameters() ;
+			if(ppm!=null)
+			{
+				bSys = !"false".equals(getReqPm(s,"sys")) ;
+				bSub = "true".equals(getReqPm(s,"sub")) ;
+			}
+		}
+		
+		private static String getReqPm(Session s,String pn)
+		{
+			Map<String,List<String>> ppm = s.getRequestParameterMap();
+			if(ppm==null)
+				return null ;
+			List<String> ss = ppm.get(pn) ;
+			if(ss==null||ss.size()<=0)
+				return null ;
+			return ss.get(0) ;
 		}
 
 		public Session getSession()
@@ -194,7 +220,11 @@ public abstract class WSRoot
 			//first line is server global inf
 			sw.append("{\"dt\":"+System.currentTimeMillis()+"}\r\n");
 			
-			ntags.CXT_renderJson(sw);
+			//ntags.CXT_renderJson(sw);
+			ntags.CXT_renderJson(sw, null, -1,null,
+					!si.bSys,//boolean ignore_sys_tag,
+					si.bSub //boolean inc_sub
+					) ;
 			txt = sw.toString();
 		}
 		catch ( Exception e)

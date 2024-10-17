@@ -54,6 +54,7 @@ String sortby = request.getParameter("sortby") ;
 if(sortby==null)
 	sortby="" ;
 boolean bsys = "true".equals(request.getParameter("sys")) ;
+boolean bsub = "true".equals(request.getParameter("sub")) ;
 String path = request.getParameter("path") ;
 UANode node = UAUtil.findNodeByPath(path) ;
 if(node==null)
@@ -102,7 +103,11 @@ UANodeOCTags node_tags = (UANodeOCTags)node;
 
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
 List<UATag> cur_tags = node_tags.getNorTags() ;
-List<UANodeOCTags>  tns = node_tags.listSelfAndSubTagsNode() ;
+List<UANodeOCTags>  tns = null;
+if(bsub)
+	tns = node_tags.listSelfAndSubTagsNode() ;
+else
+	tns = Arrays.asList(node_tags) ;
 boolean brefowner = node_tags.isRefOwner();
 boolean brefed = node_tags.isRefedNode() ;
 

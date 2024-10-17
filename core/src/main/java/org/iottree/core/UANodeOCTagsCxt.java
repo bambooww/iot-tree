@@ -480,8 +480,13 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	{
 		return CXT_renderJson(w, tag2lastdt, g_lastdt,extpms,false) ; 
 	}
-
+	
 	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag) throws IOException
+	{
+		return CXT_renderJson(w, tag2lastdt, g_lastdt,extpms,ignore_sys_tag,true) ;
+	}
+
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag,boolean inc_sub) throws IOException
 	{
 		boolean bchg=false;
 		//long maxdt=-1 ;
@@ -513,8 +518,11 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		if(renderJsonTags(w, tag2lastdt, g_lastdt,ignore_sys_tag))
 			bchg = true;
 		
-		if(renderJsonSubs(w, tag2lastdt))
-			bchg = true ;
+		if(inc_sub)
+		{
+			if(renderJsonSubs(w, tag2lastdt))
+				bchg = true ;
+		}
 		
 		JSONArray jarr = this.CXT_getAlertsJArr() ;
 		if(jarr!=null && jarr.length()>0)

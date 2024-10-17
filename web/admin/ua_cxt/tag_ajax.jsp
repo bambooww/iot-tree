@@ -181,10 +181,19 @@ case "edit_tag":
 case "imp_tag":
 	if(!Convert.checkReqEmpty(request, out, "txt"))
 		return;
-	String txt = request.getParameter("txt") ;
-	StringBuilder failedr = new StringBuilder() ;
-	List<UATag> newtags = impTag(n,txt,true,failedr) ;
-	out.print("succ="+newtags.size()) ;
+	try
+	{
+		String txt = request.getParameter("txt") ;
+		StringBuilder failedr = new StringBuilder() ;
+		List<UATag> newtags = impTag(n,txt,true,failedr) ;
+		out.print("succ="+newtags.size()) ;
+	}
+	catch(Exception e)
+	{
+		//e.printStackTrace();
+		out.print(e.getMessage());
+		return ;
+	}
 	return ;
 case "chk_alert":
 	try

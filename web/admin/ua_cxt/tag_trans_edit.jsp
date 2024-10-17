@@ -38,7 +38,6 @@ for(ValTranser vt: ValTranser.listValTransers())
 %> <input lay-filter="name" type="radio" name="name" value="<%=vt.getName() %>" title="<%=vt.getTitle() %>"  onchange="show_card()"/><%
 }
 %>
-     
     </div>
    </div>
    
@@ -130,6 +129,28 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
   </div>
   \ -->
 </div>
+
+<div class="layui-card" id="card_calc" style="display:none">
+    <div class="layui-form-item">
+    <label class="layui-form-label">OP<wbt:g>type</wbt:g></label>
+    <div class="layui-input-block">
+      <input type="radio" name="op" value="1" title="Add"  >
+      <input type="radio" name="op" value="2" title="Subtract" >
+      <input type="radio" name="op" value="3" title="Multiplay" checked="checked" >
+      <input type="radio" name="op" value="4" title="Divide" >
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">op<wbt:g>val</wbt:g></label>
+    <div class="layui-input-block">
+      
+	<div class="layui-input-inline" style="width: 150px;">
+	    <input type="text" id="op_v" name="op_v" value="" class="layui-input"/>
+	  </div>
+    </div>
+  </div>
+  </div>
+  
   <div class="layui-card" id="card_js" style="display:none">
 <!-- 
   <div class="layui-card-header">JS</div>
@@ -194,6 +215,7 @@ function show_card()
 	$("#dt_tp").css("display","none") ;
 	$("#card_none").css("display","none") ;
 	$("#card_scaling").css("display","none") ;
+	$("#card_calc").css("display","none") ;
 	$("#card_js").css("display","none") ;
 	
 	var n = $("input[name='name']:checked").val();
@@ -218,16 +240,17 @@ function show_card()
 			$("#scaled_high_c").attr("checked",true);
 		if(transdd.scaled_low_c)
 			$("#scaled_low_c").attr("checked",true);
-		
-		
-		
 		break;
 	case "js":
 		$("#dt_tp").css("display","") ;
 		$("#js_txt").val(get_val("js",""));
 		$("#inverse_js_txt").val(get_val("inverse_js",""));
-		
 		break;
+	case "calc":
+		$("#dt_tp").css("display","") ;
+		$("input[type=radio][name=op][value="+transdd.op+"]").attr("checked",true);
+		$("#op_v").val(get_val("op_v",1.0)) ;
+		break ;
 	}
 	form.render();
 }
@@ -242,7 +265,7 @@ function get_input_val(id,defv,bnum)
 		return defv ;
 	}
 	if(bnum)
-		return parseInt(n);
+		return parseFloat(n);
 	return n;
 }
 
@@ -270,6 +293,10 @@ function do_submit(cb)
 		break;
 	case "js":
 		if(!get_js(n,vt,cb))
+			return ;
+		break;
+	case "calc":
+		if(!get_calc(n,vt,cb))
 			return ;
 		break;
 	case "none":
@@ -348,6 +375,31 @@ function get_js(n,vt,cb)
 	transdd.js = jstxt ;
 	transdd.inverse_js = inverse_jstxt;
 	return true;
+}
+
+function get_calc(n,vt,cb)
+{
+	var op = $("input[name='op']:checked").val();
+	if(!op)
+	{
+		cb(false,"<wbt:g>pls,select</wbt:g>,<wbt:g>type</wbt:g>") ;
+		return false;
+	}
+	op = parseInt(op) ;
+	var op_tt = $("input[name='op']:checked").attr("title") ;
+	var op_v = get_input_val("op_v",null,true) ;
+	console.log(op_v) ;
+	if(op==4 && (op_v==0||op_v==0.0))
+	{
+		cb(false,"cannot divide zero!") ;
+		return false;
+	}
+	transdd._n = n ;
+	transdd._t = op_tt +" "+op_v;
+	transdd._vt = vt ;
+	transdd.op = op ;
+	transdd.op_v = op_v;
+	return true ;
 }
 
 function on_js_edit()

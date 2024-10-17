@@ -41,6 +41,9 @@ public abstract class ValTranser
 		case ValTransJS.NAME:
 			vt = new ValTransJS() ;
 			break;
+		case ValTransCalc.NAME:
+			vt = new ValTransCalc() ;
+			break ;
 		default:
 			break;
 			
@@ -62,6 +65,7 @@ public abstract class ValTranser
 		if(TRANSERS!=null)
 			return TRANSERS;
 		ArrayList<ValTranser> ss = new ArrayList<>() ;
+		ss.add(new ValTransCalc()) ;
 		ss.add(new ValTransScaling()) ;
 		ss.add(new ValTransJS()) ;
 		TRANSERS = ss ;

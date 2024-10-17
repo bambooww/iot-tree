@@ -37,7 +37,6 @@ public abstract class PSCmd
 		return this.cmdData ;
 	}
 	
-	
 	protected boolean asParamsAndData(List<String> pms,byte[] data_buf,int offset)
 	{
 		this.params = pms ;

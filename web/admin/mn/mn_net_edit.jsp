@@ -61,22 +61,24 @@ dlg.resize_to(600,400);
 <form class="layui-form" action="">
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width:200px;">
       <input type="text" name="name" id="name" value="<%=name %>"  class="layui-input"/>
     </div>
-     <div class="layui-input-inline" style="width:20%;">
-      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> Enable
+    
+     <div class="layui-input-inline" style="width:30px;">
+      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> />
     </div>
+    <div class="layui-form-mid" style="width:50px;">Enable</div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:60%;">
       <input type="text" name="title" id="title" value="<%=title %>"  class="layui-input"/>
     </div>
   </div>
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:60%;">
       <textarea name="desc" id="desc" class="layui-textarea"><%=desc %></textarea>
     </div>
   </div>

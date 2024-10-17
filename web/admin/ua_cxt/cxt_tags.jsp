@@ -13,6 +13,7 @@ if(!Convert.checkReqEmpty(request, out, "path"))
 //boolean bdev = "true".equals(request.getParameter("bdev")) ;
 //boolean bmgr ="true".equals(request.getParameter("mgr")) ;
 boolean bsys = "true".equals(request.getParameter("sys")) ;
+boolean bsub = "true".equals(request.getParameter("sub")) ;
 String path = request.getParameter("path") ;
 UANode node = UAUtil.findNodeByPath(path) ;
 
@@ -189,6 +190,10 @@ text-overflow:ellipsis;
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
   <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="<wbt:g>hide,system,tags</wbt:g>|<wbt:g>show,system,tags</wbt:g>" />
+  <input type="checkbox" id="show_sub"  name="show_sub" lay-filter="show_sub" lay-skin="switch" lay-text="<wbt:g>hide,sub,tags</wbt:g>|<wbt:g>show,sub,tags</wbt:g>" />
+  
+  &nbsp;&nbsp;<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="to_excel()"><i class="fa fa-arrow-right"></i>Excel</button>
+  
 <%
    }
 %>
@@ -252,9 +257,10 @@ var cxt_path= "<%=node_cxtpath%>";
 var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
+var b_sub = <%=bsub%>;
 var sort_by=null ;
 
-var tags_num = 0;//<%=0%>;
+var tags_num = 0;
 $("#tags_num").html(tags_num);
 var form = null;
 layui.use('form', function(){
@@ -262,6 +268,8 @@ layui.use('form', function(){
 	  
 	  if(b_sys)
 	  	$("#show_sys").attr('checked', 'checked');
+	  if(b_sub)
+		$("#show_sub").attr('checked', 'checked');
 	  
 	  form.on('checkbox(chkall)', function(obj){
 		  var bshow = obj.elem.checked ;
@@ -270,7 +278,11 @@ layui.use('form', function(){
 	  
 	  form.on('switch(show_sys)', function(obj){
 		  var bshow = obj.elem.checked ;
-          document.location.href="cxt_tags.jsp?path="+path+"&sys="+bshow ;
+          document.location.href="cxt_tags.jsp?path="+path+"&sys="+bshow+"&sub="+b_sub ;
+      });
+	  form.on('switch(show_sub)', function(obj){
+		  var bsub = obj.elem.checked ;
+          document.location.href="cxt_tags.jsp?path="+path+"&sys="+b_sys+"&sub="+bsub ;
       });
 	  
 	  form.render();
@@ -317,6 +329,14 @@ function init_right_menu()
 	        	rightClick : true,
 	        	data : ()=>{
 					var d = [
+						
+						{ content : '<wbt:g>add,tag</wbt:g>', callback:()=>{
+	        				add_or_modify_tag("");
+						}},
+						{ content : '<wbt:g>add,middle,tag</wbt:g>', callback:()=>{
+	        				add_or_modify_tag("",true);
+						}},
+	        			
 						{ content : '<wbt:g>paste,tag</wbt:g>', callback:()=>{
 							paste_tag();
 						}}
@@ -328,7 +348,6 @@ function init_right_menu()
 					return d;
 				}
 	        });
-	    	
 	    }
 	})
 	
@@ -434,8 +453,8 @@ function init_tr()
 								del_tag(get_selected_tagids());
 							}});
 	        			}
-							
-							
+						
+	        			
 	        			r.push({ content : '<wbt:g>paste,tag</wbt:g>', callback:()=>{
 								paste_tag();
 							}});
@@ -832,7 +851,8 @@ var ws_opened = false;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id;
+    var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id+
+    	"?sys="+b_sys+"&sub="+b_sub;
     //console.log(url) ;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
@@ -955,7 +975,7 @@ function refresh_tags()
 {
 	if(!b_tags)
 		return ;
-	send_ajax("cxt_tags_tb_ajax.jsp",'path='+cxt_path+'&sys='+b_sys+"&sortby="+sort_by,function(bsucc,ret){
+	send_ajax("cxt_tags_tb_ajax.jsp",{path:cxt_path,sys:b_sys,sub:b_sub,sortby:sort_by},function(bsucc,ret){
 		$("#div_list_bd").html(ret);
 		init_tr();
 		
@@ -1237,7 +1257,19 @@ $(window).resize(function(){
 	resize_taglist();
 	});
 	
-
+function to_excel()
+{
+    var exportFileContent = document.getElementById("tb_cur").outerHTML;                
+    var blob = new Blob([exportFileContent], {type: "text/plain;charset=utf-8"});
+    blob =  new Blob([String.fromCharCode(0xFEFF), blob], {type: blob.type});
+   var link = window.URL.createObjectURL(blob); 
+    var a = document.createElement("a"); 
+    a.download = "tags.xls"; 
+    a.href = link;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
 </script>
 </html>
