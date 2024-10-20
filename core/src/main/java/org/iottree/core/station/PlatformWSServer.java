@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
@@ -18,10 +20,16 @@ import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.PathParam;
 
 import org.iottree.core.station.PlatformWSServer.SessionItem;
+import org.iottree.core.util.Convert;
+import org.iottree.core.util.encrypt.DES;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONObject;
 
 public class PlatformWSServer
 {
+	private static ILogger log = LoggerManager.getLogger(PlatformWSServer.class) ;
+	
 	public static class SessionItem
 	{
 		private final Session session;
@@ -261,11 +269,48 @@ public class PlatformWSServer
 			return;
 		}
 		
+		String key = pss.getKey() ;
+		if(Convert.isNotNullEmpty(key))
+		{
+			String dt = getReqPm(session,"dt") ;
+			String tk = getReqPm(session,"tk") ;
+			if(Convert.isNullOrEmpty(dt) || Convert.isNullOrEmpty(tk))
+			{
+				if(log.isWarnEnabled())
+					log.warn("station ["+stationid+"] no tk and dt input");
+				PlatformManager.getInstance().fireUnknownStation(stationid) ;
+				session.close();
+				return ;
+			}
+			
+			String decss = DES.decode(tk, key) ;
+			if(!dt.equals(decss))
+			{
+				if(log.isWarnEnabled())
+					log.warn("station ["+stationid+"] tk check failed ,may be key is not match");
+				PlatformManager.getInstance().fireUnknownStation(stationid) ;
+				session.close();
+				return ;
+			}
+		}
+		
 		SessionItem si = new SessionItem(session, pss,clientip);
 		addSessionItem(si);
 
 		startTimer();
 	}
+	
+	private static String getReqPm(Session s,String pn)
+	{
+		Map<String,List<String>> ppm = s.getRequestParameterMap();
+		if(ppm==null)
+			return null ;
+		List<String> ss = ppm.get(pn) ;
+		if(ss==null||ss.size()<=0)
+			return null ;
+		return ss.get(0) ;
+	}
+
 
 	// 关闭连接时调用
 	@OnClose

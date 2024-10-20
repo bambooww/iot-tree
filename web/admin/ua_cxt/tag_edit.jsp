@@ -476,7 +476,7 @@ function update_alert_s()
 	{
 		let d = alerts_dd[i];
 		tmps += `<div id="alert_\${i}" class="alert_item" >
-			<span onclick="edit_alert(\${i})" class="tt">\${d.tpt} \${d.param1}(\${d.prompt})</span><span class="oper">&nbsp;&nbsp;<i class="fa fa-times fa-lg" onclick="del_alert(\${i})"></i></span>
+			<span onclick="edit_alert(\${i})" class="tt">L\${d.lvl} \${d.tpt} \${d.param1}(\${d.prompt})</span><span class="oper">&nbsp;&nbsp;<i class="fa fa-times fa-lg" onclick="del_alert(\${i})"></i></span>
 			</div>`;
 	}
 	

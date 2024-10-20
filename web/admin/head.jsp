@@ -42,7 +42,7 @@ String ver = Config.getVersion() ;
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
  --%>
 <%
-	}
+}
 if(oc)
 {
 %>

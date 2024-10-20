@@ -13,6 +13,7 @@ import org.iottree.core.alert.AlertItem;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsEnv;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
@@ -924,4 +925,19 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	}
 	
 	
+	//
+	@JsDef
+	public List<UATag> RT_filterTagsSelf(Object val)
+	{
+		ArrayList<UATag> rets = new ArrayList<>() ;
+		for(UATag tag : this.getNorTags())
+		{
+			UAVal v = tag.RT_getVal() ;
+			if(v==null||!v.isValid())
+				continue ;
+			if(val.equals(v.getObjVal()))
+				rets.add(tag) ;
+		}
+		return rets ;
+	}
 }

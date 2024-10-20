@@ -340,7 +340,7 @@ public class PStation
 		{
 			cmd.RT_onRecvedInPlatform(si,this);
 		}
-		catch(Exception eee)
+		catch(Throwable eee)
 		{
 			eee.printStackTrace();
 		}

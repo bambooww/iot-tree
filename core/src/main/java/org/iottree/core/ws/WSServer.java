@@ -164,12 +164,23 @@ public abstract class WSServer// extends ConnServer
 					jarr.write(sw) ;
 				}
 
-//				List<ValAlert> vas = ntags.CXT_listAlerts();
-//				if(vas!=null&&vas.size()>0)
-//				{
-//					sw.write("");
-//				}
+				List<ValAlert> vas = ntags.CXT_listAlerts();
+				if(vas!=null&&vas.size()>0)
+				{
+					sw.write(",\"has_tag_alert\":true,\"tag_alerts\":");
+					
+					jarr = new JSONArray() ;
+					for(ValAlert va:vas)
+					{
+						JSONObject jo = va.RT_get_triggered_jo() ;
+						if(jo==null)
+							continue ;
+						jarr.put(jo) ;
+					}
+					jarr.write(sw) ;
+				}
 			}
+			
 			sw.write("}");
 
 			String txt = sw.toString();

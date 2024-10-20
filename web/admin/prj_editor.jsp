@@ -524,7 +524,7 @@ function open_doc()
 		<div class="top_toolbox top_tool"  style="left:40%;width:120px">
 		 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 				  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-				  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+				  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
 				  <%--
 				  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
 				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
@@ -2293,6 +2293,12 @@ function clk_alert()
 	add_tab("___alert","<i class='fa fa-bell'></i><wbt:g>alert</wbt:g>","./util/prj_alert.jsp?prjid="+prjid) ;
 }
 
+function clk_alert_mgr()
+{
+	let u = "./util/prj_alert_mgr.jsp?prjid="+prjid ;
+	dlg.open(u,{title:"Alert Setup",w:'500px',h:'400px'});
+}
+
 function clk_dd()
 {
 	event.stopPropagation();
@@ -2353,6 +2359,7 @@ function init_left_btm()
 		  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
+		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
 		  </div>
 		  `;
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>extends</wbt:g>', 'id': 'lb_tab_extend', 'content': tmps});

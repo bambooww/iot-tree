@@ -7,6 +7,7 @@
 				org.iottree.core.store.record.*,
 				org.iottree.core.ui.*,
 				org.iottree.core.res.*,
+				org.iottree.core.alert.*,
 				org.iottree.core.store.*,
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,org.iottree.core.station.*,
@@ -77,9 +78,13 @@
 		resid = owner_dev.getId();
 	}
 	
+	AlertDef alert_def = null;
+	JSONObject alert_def_lvl_jo =null;
 	if(prj!=null)
 	{
 		rec_mgr = RecManager.getInstance(prj) ;
+		alert_def = AlertManager.getInstance(prjid).getAlertDef();
+		alert_def_lvl_jo = alert_def.LVL_toJO() ;
 	}
 	
 	PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
@@ -97,6 +102,8 @@
 	if(Convert.isNullOrEmpty(not_run_prompt))
 		not_run_prompt = "Project is not running." ;
 	//String repname = rep.getName() ;
+	
+	
 %><!DOCTYPE html>
 <html>
 <head>
@@ -606,12 +613,11 @@ if(path2tt!=null && path2tt.size()>0)
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
+                  <th><lan:g>lvl</lan:g></th>
                 	<th><lan:g>time</lan:g></th>
-                	<th><lan:g>handler</lan:g></th>
                     <th><lan:g>tag</lan:g></th>
                     <th><lan:g>type</lan:g></th>
                     <th><lan:g>val</lan:g></th>
-                    <th><lan:g>lvl</lan:g></th>
                     <th><lan:g>prompt</lan:g></th>
                 </tr>
             </thead>
@@ -632,7 +638,6 @@ if(path2tt!=null && path2tt.size()>0)
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
-                	
                 	<th><lan:g>title</lan:g></th>
                 	<th><lan:g>up_dt</lan:g></th>
                     <th><lan:g>chg_dt</lan:g></th>
@@ -786,6 +791,28 @@ var no_write_p = "<%=n_w_p%>" ;
 var conn_brk_prompt = "<%=conn_brk_prompt%>" ;
 var not_run_prompt = "<%=not_run_prompt%>" ;
 //$util.hmi_can_write = can_write;
+
+var alert_def_lvl_jo = <%=alert_def_lvl_jo%> ;
+
+function get_alert_lvl(lv)
+{
+	if(!alert_def_lvl_jo) return null ;
+	if(lv<=0||lv>5)
+		lv = alert_def_lvl_jo.def_lvl ;
+	for(let lvl of alert_def_lvl_jo.lvls)
+	{
+		if(lvl.lvl==lv)
+			return lvl ;
+	}
+	return null ;
+}
+
+function get_alert_lvl_color(lv)
+{
+	let lvl = get_alert_lvl(lv) ;
+	if(!lvl || !lvl.color) return "yellow";
+	return lvl.color;
+}
 
 layui.use('element', function(){
 	layuiEle = layui.element;
@@ -1208,10 +1235,29 @@ function ws_conn()
     			update_alert_list(d.alerts);
     		}
     	}
+    	else if(d.has_tag_alert)
+    	{
+    		iob.css("color","red") ;
+    		let ms = new Date().getTime();
+    		if(ms-last_blink>500)
+    		{
+        		if("none"==iob.css("display"))
+        			iob.css("display","");
+        		else
+        			iob.css("display","none");
+    			last_blink = ms ;
+    		}
+    		
+    		if(d.tag_alerts)
+    		{
+    			update_tag_alert_list(d.tag_alerts);
+    		}
+    	}
     	else
     	{
     		iob.css("color","#494949").css("display","") ;
     		update_alert_list(null);
+    		update_tag_alert_list(null);
     	}
     		
     	
@@ -1252,18 +1298,51 @@ function update_alert_list(alerts)
 		{
 			let dt = new Date(item.t_dt).toShortGapNow();
 			tmps += `<tr style="\${trigger_c};">
+				<td>\${alert.lvl}</td>
 	            <td>\${dt}</td>
 	            <td>\${alert.t}</td>
 	            <td>\${item.tt}</td>
 	            <td>\${item.tp}</td>
 	            <td>\${item.val}</td>
-	            <td>\${alert.lvl}</td>
+	            
 	            <td>\${item.prompt}</td>
 	        </tr>
 			` ;
 		}
 	}
 	
+	$("#alert_list").html(tmps) ;
+}
+
+function update_tag_alert_list(alerts)
+{
+	if(!alerts)
+	{
+		$("#alert_list").html("") ;
+		return ;
+	}
+	
+	
+	let tmps = "" ;
+	for(let alert of alerts)
+	{
+		let trigger_c = true?("color:"+alert.trigger_c):"" ;
+		let lv = alert.lvl ;
+		let color = get_alert_lvl_color(lv) ;
+		//console.log(lv,color) ;
+		let item = alert ;
+
+		let dt = new Date(item.trigger_dt).toShortGapNow();
+		tmps += `<tr style="color:\${color};">
+			<td style="text-align:center">L\${alert.lvl}</td>
+            <td>\${dt}</td>
+            <td title="\${alert.tag_path}\r\n\${alert.tag_tpath}">\${alert.tag_t}</td>
+            <td>\${item.evt_tpt}</td>
+            <td>\${item.trigger_v}</td>
+            <td>\${item.evt_prompt}</td>
+        </tr>
+		` ;
+	}
 	$("#alert_list").html(tmps) ;
 }
 

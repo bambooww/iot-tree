@@ -40,7 +40,7 @@ if(n==null)
 <script src="/_js/oc/oc.js"></script>
 <link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
 <script>
-dlg.resize_to(600,650);
+dlg.resize_to(600,710);
 </script>
 </head>
 <body>
@@ -63,16 +63,24 @@ dlg.resize_to(600,650);
       	  <option value="number">number</option>
       	  <option value="bool">bool</option>
       	  <option value="str">string</option>
+      	  <option value="str_m">string multi</option>
       	  <option value="color">color</option>
       </select>
     </div>
     <label class="layui-form-label">Editor assist:</label>
     <div class="layui-input-inline" style="width:100px">
-      <select id="edit_plug" name="edit_plug" class="layui-input" title="with string input">
+      <select id="edit_plug" name="edit_plug" lay-filter="edit_plug" title="with string input">
       	  <option value=""> --- </option>
       	  <option value="color">color</option>
       	  <option value="fill">fill</option>
+      	  <option value="opt">option</option>
       </select>
+    </div>
+  </div>
+  <div class="layui-form-item" id="c_limit_diss">
+    <label class="layui-form-label">Limit Diss</label>
+    <div class="layui-input-block" style="text-align: left;color:green;">
+    	<input type="text" id="limit_diss" name="limit_diss" value=""   autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
@@ -109,11 +117,23 @@ if(ctrl_n!="")
 		$("#edit_plug").val(ctrlitem.editplug) ;
 		$("#onGetJS").val(ctrlitem.onGetJS) ;
 		$("#onSetJS").val(ctrlitem.onSetJS) ;
+		$("#limit_diss").val(ctrlitem.getLimitDissStr())
 	}
 }
+
+function update_ui()
+{
+	 let v = $("#edit_plug").val() ;
+	  $("#c_limit_diss").css("display",(v=='opt')?"":"none") ;
+}
+
 layui.use('form', function(){
 	  var form = layui.form;
+	  form.on("select(edit_plug)",function(obj){
+		  update_ui();
+	  }) ;
 	  
+	  update_ui();
 	  form.render();
 });
 	
@@ -136,7 +156,10 @@ function do_submit(cb)
 		cb(false,'please input name') ;
 		return ;
 	}
-	cb(true,{n:n,t:tt,tp:tp,editplug:editplug,onGetJS:gjs,onSetJS:sjs});
+	let limit_diss = $("#limit_diss").val() ;
+	if(limit_diss)
+		limit_diss = limit_diss.split(",") ;
+	cb(true,{n:n,t:tt,tp:tp,editplug:editplug,onGetJS:gjs,onSetJS:sjs,limit_diss:limit_diss});
 }
 
 function on_client_get_js_edit()

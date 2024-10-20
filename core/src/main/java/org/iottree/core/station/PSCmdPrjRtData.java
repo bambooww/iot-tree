@@ -45,7 +45,7 @@ public class PSCmdPrjRtData extends PSCmd
 		
 		this.asParams(Arrays.asList(prj.getName(),key));
 
-		String rtjson = prj.JS_get_rt_json(true);
+		String rtjson = prj.JS_get_rt_json(false);
 		byte[] bs = zipString(rtjson);
 		this.asCmdData(bs);// (rtjson.getBytes("utf-8")) ;
 		return this;
@@ -321,7 +321,7 @@ public class PSCmdPrjRtData extends PSCmd
 				JSONObject tg = jos.getJSONObject(i);
 				String name = tg.getString("n");
 				UATag tag = p.getTagByName(name);
-				if (tag == null || tag.isSysTag())
+				if (tag == null) // || tag.isSysTag())
 					continue;
 				// var tagp =p+n ;
 				boolean bvalid = tg.optBoolean("valid", false);

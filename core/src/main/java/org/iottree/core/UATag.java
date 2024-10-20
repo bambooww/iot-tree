@@ -1334,6 +1334,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.curVal!=null&&!bval_chg)
 		{
 			this.curVal.setValUpDT(updt);//.setVal(true,v,cdt);
+			if(this.curVal.isValid()) // && bval_chg)
+			{
+				RT_chkAlerts() ;
+			}
 			return curVal;
 		}
 		//uaVal.setVal(false, null, System.currentTimeMillis());
@@ -1345,10 +1349,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		RT_setUAVal(uav);
 		
-		if(uav.isValid() && bval_chg)
-		{
-			RT_chkAlerts() ;
-		}
+		
 		
 		//RT_chkStore() ;
 		return uav ;
@@ -1406,6 +1407,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		UAPrj prj = this.getBelongToPrj() ;
 		if(prj!=null)
 			prj.RT_onTagValSet(this);
+		
+		if(uav.isValid()) // && bval_chg)
+		{
+			RT_chkAlerts() ;
+		}
 	}
 	
 	/**

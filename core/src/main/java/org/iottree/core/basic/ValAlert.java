@@ -6,6 +6,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.alert.AlertDef;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
@@ -63,7 +64,11 @@ public class ValAlert extends JSObMap
 	@data_val
 	private String name = null ;
 	
+	
 	ValAlertTp alertTp = null;//ValAlertTp.on_off;
+	
+	//private boolean bAlertInit=false;
+	
 	
 	@data_val(param_name = "tp")
 	private int get_TP()
@@ -115,6 +120,11 @@ public class ValAlert extends JSObMap
 	@data_val(param_name = "prompt")
 	String alertPrompt = null ;
 	
+	/**
+	 * 1-5
+	 */
+	@data_val(param_name = "lvl")
+	private int alertLvl = 5 ;
 	
 	private transient boolean bTrigged = false;
 	
@@ -244,26 +254,6 @@ public class ValAlert extends JSObMap
 		return this.alertEnable ;
 	}
 
-//	public int getAlertGroup()
-//	{
-//		return alertGroup;
-//	}
-//
-//	public void setAlertGroup(int alertGroup)
-//	{
-//		this.alertGroup = alertGroup;
-//	}
-//
-//	public int getAlertLvl()
-//	{
-//		return alertLvl;
-//	}
-//
-//	public void setAlertLvl(int alertLvl)
-//	{
-//		this.alertLvl = alertLvl;
-//	}
-
 	public String getParamStr1()
 	{
 		return paramStr1;
@@ -303,6 +293,11 @@ public class ValAlert extends JSObMap
 	public void setAlertPrompt(String s)
 	{
 		this.alertPrompt = s;
+	}
+	
+	public int getAlertLvl()
+	{
+		return this.alertLvl ;
 	}
 	
 	public String toTitleStr()
@@ -442,6 +437,11 @@ public class ValAlert extends JSObMap
 		jo.put("evt_id", evtid) ;
 		jo.put("tag_id", tag.getId()) ;
 		jo.put("tag_path", tag.getNodeCxtPathInPrj()) ;
+		jo.put("tag_tpath", tag.getNodeCxtPathTitleIn(this.prj)) ;
+		jo.put("tag_t", tag.getTitle()) ;
+		jo.putOpt("name", this.name) ;
+		jo.put("lvl", this.alertLvl) ;
+		jo.put("trigger_v", ""+this.RT_last_trigger_val()) ;
 		jo.put("trigger_dt", this.RT_last_trigger_dt()) ;
 		jo.put("evt_tp", this.getTpName()) ;
 		jo.put("evt_tpt", this.getTpTitle()) ;

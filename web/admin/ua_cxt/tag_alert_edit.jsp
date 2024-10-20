@@ -25,7 +25,7 @@
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <script>
-dlg.resize_to(590,500);
+dlg.resize_to(650,500);
 </script>
 <style type="text/css">
 .layui-form-label
@@ -72,8 +72,19 @@ for(ValAlertTp tp:ValAlertTp.ALL)
 %>
       </select>
     </div>
+    <div class="layui-form-mid"><wbt:g>lvl</wbt:g></div>
+	  <div class="layui-input-inline" style="width: 50px;">
+	     <select  id="lvl"  name="lvl"  class="layui-input" placeholder="" lay-filter="lvl">
+<%
+for(int k = 1 ; k <= 5 ; k ++)
+{
+%><option value="<%=k%>"><%=k %></option><%
+}
+%>
+	     </select>
+	  </div>
     <div class="layui-form-mid"><wbt:g>enable</wbt:g></div>
-	  <div class="layui-input-inline" style="width: 150px;">
+	  <div class="layui-input-inline" style="width: 100px;">
 	    <input type="checkbox" id="en" name="en"  title="Enable or Not" lay-skin="switch"> 
 	  </div>
 </div>
@@ -136,7 +147,7 @@ var alertdd = dlg.get_opener_opt("dd");
 var alertid = null ;
 var node_path=ow.node_path;
 if(alertdd==null||alertdd==undefined)
-	alertdd={tp:1,group:0,lvl:0,param1:"0",en:true};
+	alertdd={tp:1,group:0,lvl:3,param1:"0",en:true};
 else
 	alertid = alertdd.id ;
 var path=node_path ;
@@ -155,7 +166,7 @@ layui.use('form', function(){
 		  if(alertdd.en!=false)
 				$("#en").prop("checked","checked") ;
 		  $("#tp").val(alertdd.tp) ;
-		  //$("#group").val(alertdd.group) ;
+		  $("#lvl").val(alertdd.lvl) ;
 		  $("#name").val(alertdd.name) ;
 		  $("#param1").val(alertdd.param1) ;
 		  $("#param2").val(alertdd.param2) ;
@@ -239,6 +250,7 @@ function do_submit(cb)
     	cb(false,"name must a-z A-z first 0-9 first and followed a-z A-z _") ;
     	return ;
     }
+    ret.lvl = get_input_val("lvl",3,true);
     ret.param1 = $("#param1").val() ;
     ret.param2  =$("#param2").val() ;
     ret.param3 = $("#param3").val() ;

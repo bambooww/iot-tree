@@ -58,6 +58,8 @@ public class AlertManager  extends JSObMap
 	
 	File prjDir = null ;
 	
+	AlertDef alertDef = null ;
+	
 	private LinkedHashMap<String,AlertHandler> alertHandlers = null ;
 	
 	private LinkedHashMap<String,AlertOut> alertOuts = null ;
@@ -71,6 +73,8 @@ public class AlertManager  extends JSObMap
 		
 		try
 		{
+			alertDef = loadAlertDef() ;
+			
 			alertHandlers =  loadHandlers();
 			alertOuts = loadOuts() ;
 		}
@@ -86,6 +90,44 @@ public class AlertManager  extends JSObMap
 		return prj ;
 	}
 	
+	
+	// alert def
+	
+	private AlertDef loadAlertDef() throws Exception
+	{
+		AlertDef ret = new AlertDef() ;
+		File f = new File(prjDir, "alert_def.xml");
+		if (!f.exists())
+			return ret ;
+
+		JSONObject jo = Convert.readFileJO(f) ;
+		if(jo==null)
+			return ret ;
+		ret.LVL_fromJO(jo) ;
+		return ret;
+	}
+	
+	private void saveAlertDef() throws Exception
+	{
+		JSONObject jo = this.alertDef.LVL_toJO() ;
+		File f = new File(prjDir, "alert_def.xml");
+		Convert.writeFileJO(f, jo);
+	}
+	
+	public AlertDef getAlertDef()
+	{
+		return this.alertDef ;
+	}
+	
+	public AlertDef setAlertDefByJO(JSONObject jo) throws Exception
+	{
+		this.alertDef.LVL_fromJO(jo) ;
+		this.saveAlertDef();
+		return this.alertDef ;
+	}
+	
+	// ---------------------  handler -------------- replaced by msg net
+	@Deprecated
 	public LinkedHashMap<String,AlertHandler> getHandlers()
 	{
 		return alertHandlers ;

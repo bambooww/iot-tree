@@ -625,12 +625,22 @@ function inter_refresh()
 {
 	var compinter = loadLayer.getCompInter() ;
 	var tmps = "" ;
-	for(var ci of compinter.getInterProps())
+	let ips = compinter.getInterProps() ;
+	for(let i = 0 ; i < ips.length ; i ++)
 	{
+		let ci = ips[i] ;
 		if(ci.isInnerItemMap())
 			tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a></div>";
 		else
-			tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_edit(\""+ci.n+"\")'>edit</a> <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a> <a href='javascript:inter_prop_copy(\""+ci.n+"\")'>copy</a></div>";
+		{
+			tmps += "<div>"+ci.t+"["+ci.n+"] <a href='javascript:inter_prop_edit(\""+ci.n+"\")'>edit</a> <a href='javascript:inter_prop_del(\""+ci.n+"\")'>del</a> <a href='javascript:inter_prop_copy(\""+ci.n+"\")'>copy</a>";
+			if(i>0)
+				tmps += " <a href='javascript:updown_prop_edit(\""+ci.n+"\",true)'><i class='fa-solid fa-arrow-up'></i></a>";
+			if(i<ips.length-1)
+				tmps += " <a href='javascript:updown_prop_edit(\""+ci.n+"\",false)'><i class='fa-solid fa-arrow-down'></i></a>";
+			tmps += "</div>" ;
+		}
+			
 	}
 	$("#inter_prop_list").html(tmps);
 	
@@ -746,6 +756,13 @@ function inter_event_del(n)
 {
 	loadLayer.getCompInter().setInterEvent(n,null);
 	inter_refresh();
+}
+
+function updown_prop_edit(n,b_up)
+{
+	let b = loadLayer.getCompInter().upOrDownInterProp(n,b_up);
+	if(b)
+		inter_refresh();
 }
 
 function inter_prop_edit(n)

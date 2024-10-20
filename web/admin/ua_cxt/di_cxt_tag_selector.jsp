@@ -68,7 +68,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-	
+	dlg.resize_to(900,500) ;
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">

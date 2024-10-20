@@ -36,7 +36,7 @@ dlg.resize_to(600,580);
   <div class="layui-form-item">
     <label class="layui-form-label">Client JS:</label>
     <div class="layui-input-inline" style="text-align: left;color:green;width:400px;">
-    ($server,$util,$this)=&gt;{
+    ($server,$parent,$util,$this)=&gt;{
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="6" ondblclick="on_client_js_edit()" title="double click to open js editor"></textarea>
      }
      </div>

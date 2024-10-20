@@ -14,6 +14,7 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.station.StationLocSaver.Item;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.encrypt.DES;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.queue.QueTickThread;
@@ -23,6 +24,8 @@ import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.oracle.truffle.js.runtime.objects.DefaultESModuleLoader;
 
 /**
  * for station local manager
@@ -452,7 +455,9 @@ public class StationLocal
 	{
 		if(this.wsClient==null)
 		{
-			String url = "ws://"+this.platformHost+":"+this.platformPort+"/_ws/station/"+id ;
+			String dt = ""+System.currentTimeMillis() ;
+			String tk = DES.encode(dt, this.key) ;
+			String url = "ws://"+this.platformHost+":"+this.platformPort+"/_ws/station/"+id+"?dt="+dt+"&tk="+tk ;
 			System.out.println(" station local to platform ->"+url) ;
 			this.wsClient = new WebSockClient(new URI(url)) ;
 		}

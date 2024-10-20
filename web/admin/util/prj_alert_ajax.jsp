@@ -29,14 +29,29 @@ if(prj==null)
 	return ;
 }
 AlertManager amgr= AlertManager.getInstance(prjid) ;
-
+String jstr = request.getParameter("jstr") ;
+JSONObject tmpjo = null ;
 switch(op)
 {
+case "alert_def_set":
+	try
+	{
+		if(!Convert.checkReqEmpty(request, out, "jstr"))
+			return ;
+		tmpjo = new JSONObject(jstr) ;
+		amgr.setAlertDefByJO(tmpjo) ;
+		out.print("succ") ;
+	}
+	catch(Exception e)
+	{
+		out.print(e.getMessage()) ;
+	}
+	return ;
 case "list_h":
 	JSONArray jarr = new JSONArray() ;
 	for(AlertHandler ao:amgr.getHandlers().values())
 	{
-		JSONObject tmpjo = ao.toJO() ;
+		tmpjo = ao.toJO() ;
 		jarr.put(tmpjo) ;
 	}
 	jarr.write(out) ;
@@ -47,7 +62,6 @@ case "add_h":
 	{
 		if(!Convert.checkReqEmpty(request, out,  "jstr"))
 			return ;
-		String jstr = request.getParameter("jstr") ;
 		JSONObject jo = new JSONObject(jstr) ;
 		amgr.setHandlerByJSON(jo) ;
 		out.print("succ") ;
@@ -75,7 +89,6 @@ case "save_h_ids":
 	{
 		if(!Convert.checkReqEmpty(request, out,  "jstr"))
 			return ;
-		String jstr = request.getParameter("jstr") ;
 		
 		jarr = new JSONArray(jstr) ;
 		amgr.setHandlerInOutIds(jarr) ;
@@ -91,7 +104,7 @@ case "list_o":
 	jarr = new JSONArray() ;
 	for(AlertOut ao:amgr.getOuts().values())
 	{
-		JSONObject tmpjo = ao.toJO() ;
+		tmpjo = ao.toJO() ;
 		jarr.put(tmpjo) ;
 	}
 	jarr.write(out) ;
@@ -103,7 +116,6 @@ case "add_o":
 	{
 		if(!Convert.checkReqEmpty(request, out,  "jstr"))
 			return ;
-		String jstr = request.getParameter("jstr") ;
 		JSONObject jo = new JSONObject(jstr) ;
 		amgr.setOutByJSON(jo) ;
 		out.print("succ") ;
