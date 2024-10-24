@@ -239,6 +239,7 @@ if(prj!=null)
 
     </tbody>
 </table>
+<div style="height:180px;"></div>
 </div>
 <%
 }
@@ -975,7 +976,9 @@ function refresh_tags()
 {
 	if(!b_tags)
 		return ;
+	dlg.loading(true);
 	send_ajax("cxt_tags_tb_ajax.jsp",{path:cxt_path,sys:b_sys,sub:b_sub,sortby:sort_by},function(bsucc,ret){
+		dlg.loading(false);
 		$("#div_list_bd").html(ret);
 		init_tr();
 		

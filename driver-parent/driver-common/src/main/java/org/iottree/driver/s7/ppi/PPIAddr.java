@@ -50,7 +50,7 @@ public class PPIAddr extends DevAddr implements Comparable<PPIAddr>
 		
 		public String toString()
 		{
-			if(inBit>0 && memTp.hasBit())
+			if(inBit>=0 && memTp.hasBit())
 				return memTp.name()+offsetBytes+"."+inBit;
 			
 			String ret = memTp.name() ;
