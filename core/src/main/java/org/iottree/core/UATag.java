@@ -1414,6 +1414,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 	}
 	
+	private void RT_setUAValOnly(UAVal uav)
+	{
+		HIS_setVal(uav) ;
+		this.curVal = uav ;
+	}
+	
 	/**
 	 * driver get value,may has transfer
 	 * @param v
@@ -2006,5 +2012,39 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		JSONObject ejo = getExtAttrJO() ;
 		jo.putOpt("ext",ejo);
 		return jo ;
+	}
+	
+	
+
+	public JSONObject toSnapValJO()
+	{
+		UAVal uav = this.RT_getVal() ;
+		if(uav==null)
+			return null ;
+		
+		JSONObject jo = new JSONObject() ;
+		
+		jo.put("valid", uav.isValid());
+		jo.put("updt", uav.getValDT());
+		jo.put("chgdt", uav.getValChgDT()) ;
+		jo.putOpt("err", uav.getErr()) ;
+		jo.putOpt("val", uav.getStrVal(this.decDigits)) ;
+		return jo ;
+	}
+	
+	public boolean fromSnapValJO(JSONObject jo)
+	{
+		if(!jo.has("valid") || !jo.has("updt") || !jo.has("chgdt"))
+			return false;
+		UAVal uav = new UAVal();
+		uav.bValid = jo.optBoolean("valid");
+		uav.valDT = jo.getLong("updt") ;
+		uav.valChgDT = jo.getLong("chgdt") ;
+		uav.valErr = jo.optString("err") ;
+		String strv = jo.optString("val",null) ;
+		if(strv!=null)
+			uav.objVal = UAVal.transStr2ObjVal(this.getValTp(), strv);
+		this.RT_setUAValOnly(uav);
+		return true ;
 	}
 }

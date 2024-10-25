@@ -13,6 +13,8 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @data_class
 public abstract class UANodeOCTags extends UANodeOC
@@ -1054,5 +1056,102 @@ public abstract class UANodeOCTags extends UANodeOC
 	public static final String getContainerNodeTitle(String tp)
 	{
 		return lan.g("ntp_"+tp) ;
+	}
+	
+	/**
+	 * snap current rt data
+	 * @param ignore_invalid
+	 * @param ignore_sys
+	 * @return
+	 */
+	private void RT_snapCurData(JSONObject curjo,boolean ignore_invalid,boolean ignore_sys)
+	{
+		JSONArray snaptags = new JSONArray() ;
+		List<UATag> tags = null;
+		if(ignore_sys)
+			tags = this.getNorTags() ;
+		else
+			tags = this.listTags();
+		if(tags!=null)
+		{
+			for(UATag t:tags)
+			{
+				UAVal val = t.RT_getVal();
+				if(val==null)
+					continue ;
+				if(ignore_invalid && !val.isValid())
+					continue ;
+				JSONObject tmpjo = t.toSnapValJO() ;
+				tmpjo.put("_t", t.getName()) ;
+				snaptags.put(tmpjo) ;
+			}
+		}
+		curjo.put("tags",snaptags);
+		
+		// subs
+		List<UANode> ns = this.getSubNodes();
+		if (ns == null)
+			return;
+		
+		JSONArray subjarr = new JSONArray() ; 
+		for (UANode n : ns)
+		{
+			if (!(n instanceof UANodeOCTags))
+				continue ;
+			
+			UANodeOCTags subn = (UANodeOCTags)n;
+			JSONObject subjo = new JSONObject() ;
+			subjo.put("_n",n.getName()) ;
+			subjarr.put(subjo) ;
+			
+			subn.RT_snapCurData(subjo,ignore_invalid,ignore_sys);
+		}
+		curjo.put("subs", subjarr) ;
+	}
+	
+	protected final void RT_injectSnapCurData(JSONObject curjo)
+	{
+		JSONArray snaptags = curjo.optJSONArray("tags");
+		
+		if(snaptags!=null)
+		{
+			int n = snaptags.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject jo = snaptags.getJSONObject(i) ;
+				String _t = jo.optString("_t") ;
+				if(Convert.isNullOrEmpty(_t))
+					continue ;
+				UATag tag = this.getTagByName(_t) ;
+				if(tag==null)
+					continue ;
+				tag.fromSnapValJO(jo) ;
+			}
+		}
+		// subs
+		JSONArray subjarr = curjo.optJSONArray("subs") ;
+		if(subjarr==null)
+			return ;
+		
+		int nn = subjarr.length() ;
+		for(int i = 0 ; i < nn ; i ++)
+		{
+			JSONObject jo = subjarr.getJSONObject(i) ;
+			String _n = jo.optString("_n") ;
+			if(Convert.isNullOrEmpty(_n))
+				continue ;
+			UANode n = this.getSubNodeByName(_n) ;
+			if(n==null|| !(n instanceof UANodeOCTags))
+				continue ;
+			UANodeOCTags subn = (UANodeOCTags)n;
+			subn.RT_injectSnapCurData(jo) ;
+		}
+	}
+	
+	protected final JSONObject RT_snapCurData(boolean ignore_invalid,boolean ignore_sys)
+	{
+		JSONObject jo = new JSONObject() ;
+		RT_snapCurData(jo,ignore_invalid,ignore_sys);
+		return jo ;
 	}
 }

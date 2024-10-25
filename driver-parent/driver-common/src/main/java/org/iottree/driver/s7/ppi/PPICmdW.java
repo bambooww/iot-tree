@@ -3,7 +3,9 @@ package org.iottree.driver.s7.ppi;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.DataUtil;
 
 public class PPICmdW extends PPICmd
 {
@@ -21,7 +23,17 @@ public class PPICmdW extends PPICmd
 		//if(addr.getBytesNum())
 		
 		if(wval instanceof Number)
-			this.wVal = ((Number)wval).intValue() ;
+		{
+			if(wval instanceof Float)
+			{
+				byte[] bs = DataUtil.floatToBytes((Float)wval);
+				this.wVal = DataUtil.bytesToInt(bs, ByteOrder.LittleEndian) ;
+			}
+			else
+			{
+				this.wVal = ((Number)wval).intValue() ;
+			}
+		}
 		else if(wval instanceof Boolean)
 			this.wVal = (((Boolean)wval).booleanValue())?1:0;
 		else

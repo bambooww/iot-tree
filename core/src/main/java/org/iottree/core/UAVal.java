@@ -1,6 +1,7 @@
 package org.iottree.core;
 
 import org.iottree.core.util.Convert;
+import org.json.JSONObject;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.cxt.JSObMap;
 
@@ -199,19 +200,19 @@ public class UAVal //extends JSObMap
 	}
 	
 	
-	private Object objVal = null ;
+	Object objVal = null ;
 	
-	private boolean bValid = false;
+	boolean bValid = false;
 	
-	private long valDT = System.currentTimeMillis() ;
+	long valDT = System.currentTimeMillis() ;
 	
-	private long valChgDT = System.currentTimeMillis() ;
+	long valChgDT = System.currentTimeMillis() ;
 	/**
 	 * 
 	 */
-	private String valErr = null;
+	String valErr = null;
 	
-	private Exception valErrOb = null ;
+	Exception valErrOb = null ;
 	
 	public UAVal()
 	{
@@ -397,4 +398,5 @@ public class UAVal //extends JSObMap
 //		}
 //		return null ;
 //	}
+	
 }

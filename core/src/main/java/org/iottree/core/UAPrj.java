@@ -8,6 +8,7 @@ import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
+import org.iottree.core.util.SQLiteSaver;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -113,6 +114,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	private transient String jsRunError = null;
 	
 	private transient UAContext context = null ;
+	
+	private transient SQLiteSaver sqliteSaver = null ;
 
 	public UAPrj()
 	{
@@ -407,6 +410,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		repPGS = pgs;
 		return pgs;
 	}
+	
+	static final String PI_SAVE_SNAPSHOT = "save_snapshot" ;
+	static final String PI_SAVE_SNAPSHOT_INTV = "save_snapshot_intv" ;
 
 	private PropGroup getPrjPropGroup()
 	{
@@ -427,6 +433,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				"300")); // "Permission duration In seconds","Duration of authority after operator authentication."
 		
 		r.addPropItem(new PropItem("client_hmis", lan, PValTP.vt_str, false, null, null,"").withPop(PropItem.POP_N_CLIENT_HMIS)); 
+		
+		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT, lan, PValTP.vt_bool, false, null, null,false)); 
+		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT_INTV, lan, PValTP.vt_int, false, null, null,5000)); 
 		
 		return r;
 	}
@@ -739,25 +748,70 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		return this.id;
 	}
-
-	private File getLocalTagsValFile()
-	{
-		return new File(this.getSaverDir(),"local_tags_val.xml") ;
-	}
 	
+	/**
+	 * used for local tags value and tags values snapshot
+	 * @return
+	 * @throws Exception 
+	 */
+	public SQLiteSaver getSQLiteSaver() throws Exception
+	{
+		if(sqliteSaver!=null)
+			return sqliteSaver;
+		
+		synchronized(this)
+		{
+			if(sqliteSaver!=null)
+				return sqliteSaver;
+			
+			File dbf = new File(this.getSaverDir(),"_prj_store.db");
+			sqliteSaver = new SQLiteSaver(dbf) ;
+			return sqliteSaver;
+		}
+	}
+
+//	private File getLocalTagsValFile()
+//	{
+//		return new File(this.getSaverDir(),"local_tags_val.xml") ;
+//	}
+	
+	static final String LOCAL_TAG_VALS = "local_tag_vals" ;
 
 	private transient XmlData localTagVals = null ;
 	
 	private transient long localTagsLastRun = -1 ;
 	
+	private List<UATag> listTagsLocalAutoSaveAll()
+	{
+		List<UATag> rets = listTagsLocalAll() ;
+		for(int i = 0 ; i < rets.size() ; )
+		{
+			UATag tag = rets.get(i) ;
+			if(tag.isLocalAutoSave())
+			{
+				i ++ ;
+				continue ;
+			}
+			
+			rets.remove(i) ;
+		}
+		return rets ;
+	}
+	
 	private void loadLocalTagsValue() throws Exception
 	{
-		File f = getLocalTagsValFile() ;
-		localTagVals = XmlData.readFromFile(f) ;
-		List<UATag> localtags = listTagsLocalAll() ;
+		List<UATag> localtags = listTagsLocalAutoSaveAll() ;
+		if(localtags==null||localtags.size()<=0)
+			return ;
+		
+		SQLiteSaver sqls = getSQLiteSaver() ;
+		String ss = sqls.getValByKey(LOCAL_TAG_VALS) ;
+		if(Convert.isNotNullEmpty(ss))
+			localTagVals = XmlData.parseFromReader(new StringReader(ss)) ;
+		
 		for(UATag tag:localtags)
 		{
-			if(tag.isLocalAutoSave() && localTagVals!=null)
+			if(localTagVals!=null)
 			{
 				String pn = tag.getNodePathCxt();
 				Object objv = localTagVals.getParamValue(pn) ;
@@ -771,23 +825,22 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			String strv = tag.getLocalDefaultVal() ;
 			if(strv!=null)
 				tag.RT_setValStr(strv);
-			
 		}
 	}
 	
 	
 	private void saveLocalTagsValue() throws Exception
 	{
-		File f = getLocalTagsValFile() ;
+		//File f = getLocalTagsValFile() ;
+		
+		List<UATag> localtags = listTagsLocalAutoSaveAll() ;
+		if(localtags==null || localtags.size()<=0)
+			return ;
 		XmlData xd = new XmlData() ;
-		List<UATag> localtags = listTagsLocalAll() ;
 		boolean bchged = false;
 		
 		for(UATag tag:localtags)
 		{
-			if(!tag.isLocalAutoSave())
-				continue ;
-			
 			UAVal uav = tag.RT_getVal() ;
 			if(uav==null||!uav.isValid())
 				continue ;
@@ -819,7 +872,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		
 		if(bchged)
 		{//chged will save
-			XmlData.writeToFile(xd, f);
+//			Convert.writeFileSafe(f, (tmpf)->{
+//				XmlData.writeToFile(xd, tmpf);
+//			});
+			SQLiteSaver sqls = getSQLiteSaver() ;
+			sqls.setKeyVal(LOCAL_TAG_VALS,xd.toXmlString()) ;
 			localTagVals = xd ;
 		}
 	}
@@ -844,6 +901,58 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 	
+	//private transient boolean enableSnapshotSave = false;
+	private transient int snapshotSaveIntv = -1 ;
+	private transient long lastTagsSnapshotSave = System.currentTimeMillis() ;
+	
+	private static final String TAGS_SNAPSHOT = "tags_snapshot" ;
+	
+	private void loadlTagsSnapshot() throws Exception
+	{
+		if(snapshotSaveIntv<=0)
+			return ;
+		
+		SQLiteSaver sqls = getSQLiteSaver() ;
+		String ss = sqls.getValByKey(TAGS_SNAPSHOT) ;
+		if(Convert.isNullOrEmpty(ss))
+			return ;
+		
+		JSONObject jo = new JSONObject(ss) ;
+		this.RT_injectSnapCurData(jo) ;
+	}
+	
+	private void saveTagsSnapshot() throws Exception
+	{
+		if(snapshotSaveIntv<=0)
+			return ;
+		
+		JSONObject jo = RT_snapCurData(true,true);
+		SQLiteSaver sqls = getSQLiteSaver() ;
+		sqls.setKeyVal(TAGS_SNAPSHOT,jo.toString()) ;
+	}
+	
+	private void runTagsValSnapshot()
+	{
+		if(snapshotSaveIntv<=0)
+			return ;
+		
+		if(System.currentTimeMillis()-lastTagsSnapshotSave<snapshotSaveIntv)
+			return ;
+		
+		try
+		{
+			saveTagsSnapshot();
+		}
+		catch(Exception e)
+		{
+			if(log.isDebugEnabled())
+				log.debug("save local tags value snapshot err", e);
+		}
+		finally
+		{
+			lastTagsSnapshotSave = System.currentTimeMillis();
+		}
+	}
 	// @Override
 	// public List<ResDir> getResCxts()
 	// {
@@ -903,6 +1012,21 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		catch(Exception e)
 		{
 			e.printStackTrace();
+		}
+		
+		boolean pv = this.getOrDefaultPropValueBool("prj", PI_SAVE_SNAPSHOT,false);
+		int intv = this.getOrDefaultPropValueInt("prj", PI_SAVE_SNAPSHOT_INTV, -1) ;
+		if(pv && intv>0)
+		{
+			snapshotSaveIntv = intv ;
+			try
+			{
+				loadlTagsSnapshot();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -1115,6 +1239,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 //					System.out.println("run flush cost="+(et-st));
 					
 					runLocalTagsSave();
+					
+					runTagsValSnapshot();
 				}
 			}
 			catch ( Exception e)
@@ -1123,6 +1249,15 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			}
 			finally
 			{
+				try
+				{// stop normal save snapshot
+					saveTagsSnapshot() ;
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				
 				MNManager.getInstance(UAPrj.this).RT_stop();
 				
 				stopPrj();
@@ -1665,4 +1800,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		RecManager.getInstance(this).RT_fireUATagChanged(tag);
 	}
 
+	
+	
+	
 }

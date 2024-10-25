@@ -2696,6 +2696,19 @@ public class Convert
 		return instant.toEpochMilli()/1000*1000_000_000 + tt;
 	}
 
+	
+	public static interface W
+	{
+		public void onWriteTemp(File tmpf) throws Exception;
+	}
+	
+	public static void writeFileSafe(File f, W wcb) throws Exception
+	{
+		File f_temp = new File(f.getAbsoluteFile()+".w_tmp");
+		wcb.onWriteTemp(f_temp);
+		boolean b = f_temp.renameTo(f) ;
+		//System.out.println("rename ="+b) ;
+	}
 
 	public static void main(String[] args) throws Exception
 	{

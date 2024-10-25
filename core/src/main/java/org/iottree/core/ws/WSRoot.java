@@ -209,8 +209,9 @@ public abstract class WSRoot
 	private static void on_tick(SessionItem si)
 	{
 		UAPrj prj = si.getPrj() ;
-		if(!prj.RT_isRunning() && !PlatformManager.isInPlatform())
-			return ;
+		//if(!prj.RT_isRunning() && !PlatformManager.isInPlatform())
+		//if(!PlatformManager.isInPlatform())
+		//	return ;
 		
 		UANodeOCTagsCxt ntags = si.getNodeTagCxt();
 		StringWriter sw = new StringWriter();

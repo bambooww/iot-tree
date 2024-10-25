@@ -180,14 +180,14 @@ public class SZYFrame extends SZYMsg
 		{
 			if(this.vals==null || this.vals.size()<1)
 				return null ;
-			return this.vals.get(0) ;
+			return this.vals.get(1) ;
 		}
 		
 		public Float getFlowT()
 		{
 			if(this.vals==null || this.vals.size()<2)
 				return null ;
-			return this.vals.get(1) ;
+			return this.vals.get(0) ;
 		}
 		
 		public String toString()
