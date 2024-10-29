@@ -99,7 +99,7 @@ public class PSCmdPrjRtData extends PSCmd
 			updateCxtDyn(platform_prj, rt_jo);
 		
 		//如何发送的Platform后端进行后续的使用？
-		PlatformManager.getInstance().onRecvedRTData(ps,prjname,key,rt_jo,bhis) ;
+		PlatformManager.getInstance().onRecvedRTData(ps,prjname,key,bs,rt_jo,bhis) ;
 	}
 	
 	/**
@@ -110,7 +110,7 @@ public class PSCmdPrjRtData extends PSCmd
 	 */
 	public static void onRecvedMultiHisInPlatform(List<PSCmdPrjRtData> rds,PStation ps) throws Exception
 	{
-		HashMap<String,HashMap<String,JSONObject>> prj_k2jo = new HashMap<>() ;
+		HashMap<String,HashMap<String,byte[]>> prj_k2jo = new HashMap<>() ;
 		//分表处理
 		for(PSCmdPrjRtData rd:rds)
 		{
@@ -127,16 +127,16 @@ public class PSCmdPrjRtData extends PSCmd
 			
 			try
 			{
-				String jostr = unzip(bs);
-				JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
+				//String jostr = unzip(bs);
+				//JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
 				
-				HashMap<String,JSONObject> k2jo = prj_k2jo.get(prjname) ;
+				HashMap<String,byte[]> k2jo = prj_k2jo.get(prjname) ;
 				if(k2jo==null)
 				{
 					k2jo = new HashMap<>() ;
 					prj_k2jo.put(prjname,k2jo) ;
 				}
-				k2jo.put(key,rt_jo) ;
+				k2jo.put(key,bs) ;
 			}
 			catch(Exception ee)
 			{
@@ -144,10 +144,10 @@ public class PSCmdPrjRtData extends PSCmd
 			}
 		}
 		
-		for(Map.Entry<String, HashMap<String,JSONObject>> prj2kjo:prj_k2jo.entrySet())
+		for(Map.Entry<String, HashMap<String,byte[]>> prj2kjo:prj_k2jo.entrySet())
 		{
 			String prjname = prj2kjo.getKey() ;
-			HashMap<String,JSONObject> k2jo = prj2kjo.getValue() ;
+			HashMap<String,byte[]> k2jo = prj2kjo.getValue() ;
 			PlatformManager.getInstance().onRecvedHisRTDatas(ps, prjname, k2jo);
 		}
 	}

@@ -28,10 +28,18 @@ public class PropGroup
 	
 	DataNode lanDN = null ;
 	
+	
+	String helpUrl = null ;
+	
 //	public PropGroup()
 //	{}
 	
 	public PropGroup(String n,Lan prop_lan) //String t)
+	{
+		this(n,prop_lan,null) ;
+	}
+	
+	public PropGroup(String n,Lan prop_lan,String help_url) //String t)
 	{
 		this.name = n ;
 //		this.title = t ;
@@ -39,6 +47,7 @@ public class PropGroup
 		lanDN = prop_lan.gn("pg_"+n) ;
 		if(lanDN==null)
 			throw new IllegalArgumentException("no pg_"+n+" found in prop_lang") ;
+		this.helpUrl = help_url ;
 	}
 	
 	//private transient 
@@ -73,5 +82,10 @@ public class PropGroup
 	{
 		return lanDN.getNameByLang(Lan.getUsingLang());//.g(this.name) ;
 		//return title ;
+	}
+	
+	public String getHelpUrl()
+	{
+		return this.helpUrl ;
 	}
 }

@@ -1767,10 +1767,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			dt_chg = System.currentTimeMillis();
 		}
 
-
-
-
-		w.write("{\"p\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\"");
+		w.write("{\"id\":\""+this.getId()+"\",\"n\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\"");
 
 		ValTP vtp = this.getValTp();
 		if (bvalid)
@@ -1866,6 +1863,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			w.write(this.getNodeCxtPathIn(innode));
 		}
 		ValTP vtp = getValTp();
+		w.write("\",\"vt\":\"");
+		w.write(vtp.name());
 		if (bvalid)
 		{
 			if (vtp.isNumberVT() || vtp == ValTP.vt_bool)

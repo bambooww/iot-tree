@@ -492,7 +492,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		boolean bchg=false;
 		//long maxdt=-1 ;
 		
-		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"tp\":\""+this.getNodeTp()+"\"");
+		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"t\":\""+this.getTitle()+"\",\"tp\":\""+this.getNodeTp()+"\"");
 		if (extpms != null)
 		{
 			for (Map.Entry<String, Object> n2v : extpms.entrySet())

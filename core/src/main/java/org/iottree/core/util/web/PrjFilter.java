@@ -24,9 +24,14 @@ import org.iottree.core.UAUtil;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
+import org.json.JSONObject;
 
 public class PrjFilter implements Filter
 {
+	private static ILogger log = LoggerManager.getLogger(PrjFilter.class) ;
+	
 	private static final String METHOD_DELETE = "DELETE";
     private static final String METHOD_HEAD = "HEAD";
     private static final String METHOD_GET = "GET";
@@ -41,6 +46,28 @@ public class PrjFilter implements Filter
 		
 	}
 
+	private boolean checkRestfulApiRight(HttpServletRequest req,UANode node,UAPrj prj)
+	{
+		
+		PrjRestful restful = prj.getEnabledRestfulToken() ;
+		if(restful==null)
+			return true ;
+		
+		try
+		{
+			return restful.checkRequest(req) ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			return false;
+		}
+	}
+	
+	private boolean isWriteTagCutoff(UAPrj prj)
+	{
+		return prj.getOrDefaultPropValueBool("prj_restful", "wtag_cutoff", false) ;
+	}
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -126,79 +153,108 @@ public class PrjFilter implements Filter
 			req.getRequestDispatcher("/hmi.jsp?path="+uri).forward(req, resp);
 			return ;
 		}
-		else
+	
+		//restful api
+		UANode topn = node.getTopNode() ;
+		if(topn==null || !(topn instanceof UAPrj))
+			return ;
+		
+		UAPrj prj = (UAPrj)topn ;
+		
+		if(!checkRestfulApiRight(req,node,prj))
 		{
-			String op = req.getParameter("op");
-			String tp = req.getParameter("tp") ;
-			if(tp==null)
-				tp = "" ;
-			if(op==null)
-				op="" ;
-			String method = req.getMethod();
-
-			if(node instanceof UATag)
-			{
-				if (method.equals(METHOD_POST)||method.equals(METHOD_PUT))
-				{
-					if(pa!=null)
-					{
-						try
-						{
-							if(!pa.checkWriteRight(node.getNodePath(), req))
-							{//no right
-								resp.getWriter().write(pa.getNoWriteRightPrompt());
-								return ;
-							}
-						}
-						catch(Exception e)
-						{
-							//e.printStackTrace();
-							PrintWriter w = resp.getWriter();
-							w.write("check write right exception:");
-							e.printStackTrace(w);
-							//w.write(e.getMessage());
-							return ;
-						}
-					}
-					doPut(req, resp);
-				    return ;
-				}
-			}
-			switch(op)
-			{
-			case "cxt":
-				req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
-				break ;
-			case "list":
-				req.getRequestDispatcher("/node_list.jsp?path="+uri+"&tp="+tp).forward(req, resp);
-				break ;
-			case "ui":
-				if(node instanceof UAPrj)
-				{
-					UAPrj prj = (UAPrj)node ;
-					UAHmi tmphmi = prj.getHmiMain() ;
-					if(tmphmi==null)
-					{
-						List<UAHmi> hmis = prj.getHmis() ;
-						if(hmis==null||hmis.size()<=0)
-							return ;
-						tmphmi = hmis.get(0) ;
-					}
-					req.getRequestDispatcher("/hmi.jsp?path="+tmphmi.getNodePath()).forward(req, resp);
-					return ;
-				}
-				break;
-			default:
-				req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
-				break ;
-			}
-			
+			JSONObject jo = new JSONObject() ;
+			jo.put("result",false) ;
+			jo.put("err", "no right to access restful api");
+			jo.write(resp.getWriter());
 			return ;
 		}
+		
+		String op = req.getParameter("op");
+		String tp = req.getParameter("tp") ;
+		if(tp==null)
+			tp = "" ;
+		if(op==null)
+			op="" ;
+		String method = req.getMethod();
+
+		if(node instanceof UATag)
+		{
+			if (method.equals(METHOD_POST)||method.equals(METHOD_PUT))
+			{//tag write
+				if(pa!=null)
+				{
+					try
+					{
+						if(!pa.checkWriteRight(node.getNodePath(), req))
+						{//no right
+							JSONObject jo = new JSONObject() ;
+							jo.put("result",false) ;
+							jo.put("err", pa.getNoWriteRightPrompt());
+							jo.write(resp.getWriter()); //.write(pa.getNoWriteRightPrompt());
+							
+							if(log.isTraceEnabled())
+								log.trace("PlugAuth ["+pa.getClass().getCanonicalName()+"] checkWriteRight Tag=["+node.getNodePath()+"] failed");
+							
+							return ;
+						}
+					}
+					catch(Exception e)
+					{
+						//w.write("check write right exception:");
+						JSONObject jo = new JSONObject() ;
+						jo.put("result",false) ;
+						jo.put("err", "check write right exception:"+e.getMessage());
+						jo.write(resp.getWriter());
+						
+						if(log.isDebugEnabled())
+							log.debug(e);
+						return ;
+					}
+				}
+				
+				boolean bres = doPut(req, resp,(UATag)node,prj) ;
+				resp.getWriter().write("{\"result\":"+bres+"}");
+			    return ;
+			}
+		}
+		
+		
+		switch(op)
+		{
+		case "cxt":
+			req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
+			break ;
+		case "list":
+			req.getRequestDispatcher("/node_list.jsp?path="+uri+"&tp="+tp).forward(req, resp);
+			break ;
+		case "ui":
+			if(node instanceof UAPrj)
+			{
+				prj = (UAPrj)node ;
+				UAHmi tmphmi = prj.getHmiMain() ;
+				if(tmphmi==null)
+				{
+					List<UAHmi> hmis = prj.getHmis() ;
+					if(hmis==null||hmis.size()<=0)
+						return ;
+					tmphmi = hmis.get(0) ;
+				}
+				req.getRequestDispatcher("/hmi.jsp?path="+tmphmi.getNodePath()).forward(req, resp);
+				return ;
+			}
+			break;
+		default:
+			req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
+			break ;
+		}
+		
+		return ;
+	
 	}
 	
 	
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+	protected boolean doPut(HttpServletRequest req, HttpServletResponse resp,UATag tag,UAPrj prj) throws ServletException, IOException
 	{
 		//super.doPut(req, resp);
 		//update restful api
@@ -211,20 +267,30 @@ public class PrjFilter implements Filter
 		
 		UANode node = UAUtil.findNodeByPath(uri) ;
 		if(node==null)
-			return ;
+			return false;
 		
 		if(!(node instanceof UATag))
-			return ;
+			return false;
 		
-		UATag tag = (UATag)node ;
+		boolean cutoff = isWriteTagCutoff(prj);
+		
 		//String pv0 = req.getParameter("_pv") ;
 		for(Enumeration<String> ens = req.getParameterNames() ;ens.hasMoreElements();)
 		{
 			String pn = ens.nextElement() ;
 			String pv = req.getParameter(pn) ;
-			tag.JS_set(pn, pv);
+			if(cutoff)
+			{
+				log.warn("cut off write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
+			}
+			else
+			{
+				if(log.isDebugEnabled())
+					log.debug("write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
+				tag.JS_set(pn, pv);
+			}
 		}
-		
+		return true;
 	}
 
 	@Override

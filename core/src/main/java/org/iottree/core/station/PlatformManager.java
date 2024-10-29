@@ -195,29 +195,31 @@ public class PlatformManager
 	 * @param rt_jo
 	 * @throws Exception 
 	 */
-	void onRecvedRTData(PStation pstation,String prjname,String key,JSONObject rt_jo,boolean b_his) throws Exception
+	void onRecvedRTData(PStation pstation,String prjname,String key,byte[] zipdata,JSONObject rt_jo,boolean b_his) throws Exception
 	{
 		if(!b_his)
 			pstation	.RT_onRecvedRTData(prjname,key,rt_jo,b_his) ;
 		
-		PlatformSaver ps = getSaver(pstation,prjname) ;
-		ps.storeJson(rt_jo.toString(), key);
+		PlatformSaver ps = getSaver(pstation,prjname,true) ;
+		ps.BLOB_storeJson(zipdata, key);
 	}
 	
-	void onRecvedHisRTDatas(PStation pstation,String prjname,HashMap<String,JSONObject> key2rt_jo) throws Exception
+	void onRecvedHisRTDatas(PStation pstation,String prjname,HashMap<String,byte[]> key2rt_jo) throws Exception
 	{
-		PlatformSaver ps = getSaver(pstation,prjname) ;
-		HashMap<String,String> k2txt = new HashMap<>() ;
-		for(Map.Entry<String, JSONObject> k2j:key2rt_jo.entrySet())
+		PlatformSaver ps = getSaver(pstation,prjname,true) ;
+		HashMap<String,byte[]> k2txt = new HashMap<>() ;
+		for(Map.Entry<String, byte[]> k2j:key2rt_jo.entrySet())
 		{
-			k2txt.put(k2j.getKey(),k2j.getValue().toString()) ;
+			k2txt.put(k2j.getKey(),k2j.getValue()) ;
 		}
-		ps.storeJsonMulti(k2txt);
+		ps.BLOB_storeJsonMulti(k2txt);
 	}
 	
-	private PlatformSaver getSaver(PStation pstation,String prjname) throws Exception
+	private PlatformSaver getSaver(PStation pstation,String prjname,boolean blob) throws Exception
 	{
 		String n = pstation.getId()+"_"+prjname ;
+		if(blob)
+			n += "_b" ;
 		PlatformSaver ps = prj2saver.get(n) ;
 		if(ps!=null)
 			return ps;

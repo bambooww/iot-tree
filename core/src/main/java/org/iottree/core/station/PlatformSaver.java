@@ -70,10 +70,20 @@ public class PlatformSaver
 			connection = getConnPool().getConnection() ;
 			try (Statement stmt = connection.createStatement())
 			{
-				//stmt.executeUpdate("CREATE TABLE IF NOT EXISTS "+getTableName()+" (timestamp INTEGER PRIMARY KEY, json TEXT)");
-				 String createTableSQL = "CREATE TABLE IF NOT EXISTS "+tableName+" (" +
-                          "keyid varchar(30)  PRIMARY KEY, " +
-                         "json TEXT NOT NULL)";
+				String createTableSQL = null;
+				if(tablename.endsWith("_b"))
+				{
+					//stmt.executeUpdate("CREATE TABLE IF NOT EXISTS "+getTableName()+" (timestamp INTEGER PRIMARY KEY, json TEXT)");
+					createTableSQL = "CREATE TABLE IF NOT EXISTS "+tableName+" (" +
+	                          "keyid varchar(30)  PRIMARY KEY, " +
+	                         "json BLOB NOT NULL)";
+				}
+				else
+				{
+					createTableSQL = "CREATE TABLE IF NOT EXISTS "+tableName+" (" +
+	                          "keyid varchar(30)  PRIMARY KEY, " +
+	                         "json TEXT NOT NULL)";
+				}
 				 stmt.executeUpdate(createTableSQL);
 			}
 		}
@@ -167,15 +177,90 @@ public class PlatformSaver
 		}
 	}
 
-//	/**
-//	 * 存放到数据库中。
-//	 * 
-//	 * @param prj
-//	 * @param jo
-//	 * @throws Exception 
-//	 */
-//	void onPrjRtDataRecved(UAPrj prj, JSONObject jo) throws Exception
-//	{
-//		storeJson(jo.toString(), System.currentTimeMillis()) ; 
-//	}
+
+	// blob
+	
+	void BLOB_storeJson(byte[] json, String keyid) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			connection = getConnPool().getConnection() ;
+			String sql = "INSERT INTO "+tableName+" (keyid, json) VALUES (?, ?)";
+			try (PreparedStatement pstmt = connection.prepareStatement(sql))
+			{
+	            pstmt.setString(1, keyid);
+	            pstmt.setBytes(2, json);
+	            pstmt.executeUpdate();
+	        }
+		}
+		finally
+		{
+			getConnPool().free(connection);
+		}
+		
+	}
+	
+	void BLOB_storeJsonMulti(Map<String,byte[]> keyid2json) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			connection = getConnPool().getConnection() ;
+			connection.setAutoCommit(false);
+			String sql = "INSERT INTO "+tableName+" (keyid, json) VALUES (?, ?)";
+			try (PreparedStatement pstmt = connection.prepareStatement(sql))
+			{
+				for(Map.Entry<String, byte[]> k2j:keyid2json.entrySet())
+				{
+		            pstmt.setString(1, k2j.getKey());
+		            pstmt.setBytes(2, k2j.getValue());
+		            pstmt.executeUpdate();
+				}
+	        }
+		}
+		finally
+		{
+			if(connection!=null)
+			{
+				connection.setAutoCommit(true);
+				getConnPool().free(connection);
+			}
+		}
+		
+	}
+
+	public byte[] BLOB_retrieveAndDeleteJson() throws Exception
+	{
+		String selectSql = "SELECT keyid, json FROM "+tableName+" ORDER BY keyid LIMIT 1";
+		String deleteSql = "DELETE FROM "+tableName+" WHERE keyid = ?";
+		byte[] json = null;
+
+		Connection connection = null;
+		try
+		{
+			connection = getConnPool().getConnection() ;
+			try (Statement selectStmt = connection.createStatement(); ResultSet rs = selectStmt.executeQuery(selectSql))
+			{
+	
+				if (rs.next())
+				{
+					String keyid = rs.getString("keyid");
+					json = rs.getBytes("json");
+	
+					try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql))
+					{
+						deleteStmt.setString(1, keyid);
+						deleteStmt.executeUpdate();
+					}
+				}
+			}
+			
+			return json ;
+		}
+		finally
+		{
+			getConnPool().free(connection);
+		}
+	}
 }

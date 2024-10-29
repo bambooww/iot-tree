@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.SQLiteSaver;
+import org.iottree.core.util.web.PrjRestful;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -405,6 +406,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		if (lpgs != null)
 			pgs.addAll(lpgs);
 		pgs.add(this.getPrjPropGroup());
+		pgs.add(this.getPrjRestfulApiGroup());
+		
 		//
 
 		repPGS = pgs;
@@ -435,11 +438,50 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		r.addPropItem(new PropItem("client_hmis", lan, PValTP.vt_str, false, null, null,"").withPop(PropItem.POP_N_CLIENT_HMIS)); 
 		
 		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT, lan, PValTP.vt_bool, false, null, null,false)); 
-		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT_INTV, lan, PValTP.vt_int, false, null, null,5000)); 
+		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT_INTV, lan, PValTP.vt_int, false, null, null,5000));
 		
 		return r;
 	}
+	
+	private transient PrjRestful restful = null ;
+	private transient boolean bRestfulGit = false;
 
+	private PropGroup getPrjRestfulApiGroup()
+	{
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("prj_restful", lan,"/doc/"+Lan.getUsingLang()+"/doc/advanced/adv_restful_out.md");//"Project");
+
+		r.addPropItem(new PropItem("token_en", lan, PValTP.vt_bool, false, null, null,false));
+		r.addPropItem(new PropItem("token_users",lan, PValTP.vt_str, false, null, null,"").withTxtMultiLine(true));
+		r.addPropItem(new PropItem("wtag_cutoff", lan, PValTP.vt_bool, false, null, null,false));
+		
+		return r;
+	}
+	
+	public PrjRestful getEnabledRestfulToken()
+	{
+		if(bRestfulGit)
+			return this.restful ;
+		
+		try
+		{
+			boolean b = this.getOrDefaultPropValueBool("prj_restful", "token_en", false) ;
+			if(!b)
+			{
+				restful = null;
+				return null;
+			}
+			
+			restful = new PrjRestful(this) ;
+			return restful ;
+		}
+		finally
+		{
+			bRestfulGit = true ;
+		}
+	}
+	
 	public Object getPropValue(String groupn, String itemn)
 	{
 		if ("prj".contentEquals(groupn))
@@ -487,6 +529,22 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 		return super.setPropValue(groupn, itemn, strv);
 	}
+	
+
+	@Override
+	protected void onPropNodeValueChged()
+	{
+		bRestfulGit = false;
+		try
+		{
+			setupJsScript();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 
 	public void save() throws Exception
 	{
@@ -682,19 +740,6 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		JSONObject r = new JSONObject();
 		r.put("brun", this.RT_isRunning());
 		return r;
-	}
-
-	@Override
-	protected void onPropNodeValueChged()
-	{
-		try
-		{
-			setupJsScript();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	@Override
