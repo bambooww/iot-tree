@@ -450,7 +450,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
 		
-		PropGroup r = new PropGroup("prj_restful", lan,"/doc/"+Lan.getUsingLang()+"/doc/advanced/adv_restful_out.md");//"Project");
+		PropGroup r = new PropGroup("prj_restful", lan,"/doc/advanced/adv_restful_out.md");//"Project");
 
 		r.addPropItem(new PropItem("token_en", lan, PValTP.vt_bool, false, null, null,false));
 		r.addPropItem(new PropItem("token_users",lan, PValTP.vt_str, false, null, null,"").withTxtMultiLine(true));

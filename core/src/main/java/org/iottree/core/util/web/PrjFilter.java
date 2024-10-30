@@ -213,8 +213,12 @@ public class PrjFilter implements Filter
 					}
 				}
 				
-				boolean bres = doPut(req, resp,(UATag)node,prj) ;
-				resp.getWriter().write("{\"result\":"+bres+"}");
+				StringBuilder failedr = new StringBuilder() ;
+				boolean bres = doPut(req, resp,(UATag)node,prj,failedr) ;
+				if(bres)
+					resp.getWriter().write("{\"result\":true}");
+				else
+					resp.getWriter().write("{\"result\":false,\"err\":\""+failedr.toString()+"\"}");
 			    return ;
 			}
 		}
@@ -254,7 +258,7 @@ public class PrjFilter implements Filter
 	}
 	
 	
-	protected boolean doPut(HttpServletRequest req, HttpServletResponse resp,UATag tag,UAPrj prj) throws ServletException, IOException
+	protected boolean doPut(HttpServletRequest req, HttpServletResponse resp,UATag tag,UAPrj prj,StringBuilder failedr) throws ServletException, IOException
 	{
 		//super.doPut(req, resp);
 		//update restful api
@@ -274,23 +278,36 @@ public class PrjFilter implements Filter
 		
 		boolean cutoff = isWriteTagCutoff(prj);
 		
-		//String pv0 = req.getParameter("_pv") ;
-		for(Enumeration<String> ens = req.getParameterNames() ;ens.hasMoreElements();)
+		try
 		{
-			String pn = ens.nextElement() ;
-			String pv = req.getParameter(pn) ;
-			if(cutoff)
+			//String pv0 = req.getParameter("_pv") ;
+			for(Enumeration<String> ens = req.getParameterNames() ;ens.hasMoreElements();)
 			{
-				log.warn("cut off write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
+				String pn = ens.nextElement() ;
+				String pv = req.getParameter(pn) ;
+				if(cutoff)
+				{
+					log.warn("cut off write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
+				}
+				else
+				{
+					if(log.isDebugEnabled())
+						log.debug("write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
+					tag.JS_set(pn, pv);
+				}
 			}
-			else
-			{
-				if(log.isDebugEnabled())
-					log.debug("write tag ["+tag.getNodePath()+"] with "+pn+"="+pv);
-				tag.JS_set(pn, pv);
-			}
+			
+			return true;
 		}
-		return true;
+		catch(Exception ee)
+		{
+			if(log.isDebugEnabled())
+				log.debug(ee);
+			
+			failedr.append(ee.getMessage()) ;
+			return false;
+		}
+		
 	}
 
 	@Override

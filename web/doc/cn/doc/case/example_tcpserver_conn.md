@@ -143,6 +143,8 @@ IOT-Tree考虑到这种情况了，专门在TcpServer Provider上面增加了一
 
 
 
+<a href="../advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;对外提供RESTFul接口</a>
+
 [qn_devdef]:./quick_know_device_definition.md
 [qn_hmi]:./quick_know_hmi.md
 [qn_hmi_w]:./quick_know_hmi_edit.md

@@ -109,6 +109,7 @@
 <head>
 <meta charset="utf-8">
 <title><%=hmitt %></title>
+<%--
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
@@ -119,6 +120,11 @@
 <script src="/_js/oc/oc.min.js?v=<%=Config.getVersion()%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
 <link href="/_js/font6/css/all.css" rel="stylesheet">
+ --%>
+ <jsp:include page="head.jsp">
+ 	<jsp:param value="true" name="oc_min"/>
+ </jsp:include>
+ <script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
 <style>
 body {
 	margin: 0px;

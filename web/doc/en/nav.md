@@ -102,9 +102,10 @@
 ##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 Plugin Development - JsApi</a>
 ##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 Plugin Development - Authority</a>
 ##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;11.4 Custom Project Management (Webapp)</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.5 Outer OPC UA Support</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.6 Center-substation remote monitoring</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.7 Device simulators</a>
+##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;11.5 Provide RESTFul Api externally</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.6 Outer OPC UA Support</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.7 Center-substation remote monitoring</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.8 Device simulators</a>
 
 #### <a href="doc/version.md" >12 Version</a>
 

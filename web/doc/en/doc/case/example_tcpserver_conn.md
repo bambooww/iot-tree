@@ -142,6 +142,8 @@ Through restful interface, you can regularly read all label real-time data of th
 You can view all HTTP restful APIs and corresponding data formats in the project through the accessibility tab in the main content area of the project.
 
 
+<a href="../advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;Provide RESTFul Api externally</a>
+
 [qn_devdef]:./quick_know_device_definition.md
 [qn_hmi]:./quick_know_hmi.md
 [qn_hmi_w]:./quick_know_hmi_edit.md

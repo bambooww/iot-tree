@@ -18,6 +18,7 @@
 		return ;
 	}
 
+	String usingln = Lan.getUsingLang() ;
 	/*
 	String repid = request.getParameter("repid") ;
 	String id = request.getParameter("id") ;
@@ -52,17 +53,10 @@
 <head>
 <meta charset="utf-8">
 <title>Properties Editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
-<link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="oc"/>
+	<jsp:param value="false" name="simple"/>
+</jsp:include>
 <style>
 body {
 	margin: 0px;
@@ -256,9 +250,19 @@ for(PropGroup pg:pgs)
 {
 	String pgn = pg.getName() ;
 	List<PropItem> pis = pg.getPropItems() ;
+	String help_url = pg.getHelpUrl() ;
 %>
 <table id="tb_pg_<%=pgn %>" class="pi_edit_table">
-    <tr><td colspan="2" class="td_left" style="font-weight: bold;color: #000000;background-color: #f0f0f0"><%=pg.getTitle() %></td></tr>
+    <tr>
+    	<td colspan="2" class="td_left" style="font-weight: bold;color: #000000;background-color: #f0f0f0"><%=pg.getTitle() %>
+<%
+	if(Convert.isNotNullEmpty(help_url))
+	{
+%><span onclick="open_help('<%=help_url %>')" style="color:#1d89f0"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;<wbt:g>help</wbt:g></span><%
+	}
+%>
+    	</td>
+   </tr>
 <%
 	for(PropItem pi:pis)
 	{
@@ -378,7 +382,7 @@ if(!bdlg)
 //var repid="";
 var path = "<%=path%>" ;
 var nodeid="<%=n.getId()%>";
-
+var lan = "<%=usingln%>" ;
 var bdirty=false;
 function sel_pg(pgn)
 {
@@ -550,6 +554,11 @@ function get_prop_vals()
 		r[id] = v ;
 	});
 	return JSON.stringify(r);
+}
+
+function open_help(u)
+{
+	window.open("/doc/"+lan+u);
 }
 </script>
 </html>

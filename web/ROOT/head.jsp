@@ -41,9 +41,14 @@ String ver = Config.getVersion() ;
 	}
 if(oc)
 {
+	File f = new File(Config.getWebappBase()+"/_js/oc/oc.js") ;
+	long dt = 0 ;
+	if(f.exists())
+		dt = f.lastModified() ;
+	//System.out.println("dt="+dt) ;
 %>
 <script src="/_js/oc/hmi_util.js?v=<%=ver%>"></script>
-<script src="/_js/oc/oc.js?v=<%=ver%>"></script>
+<script src="/_js/oc/oc.js?v=<%=dt%>"></script>
 <script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
 
@@ -51,8 +56,13 @@ if(oc)
 }
 if(oc_min)
 {
+	File f = new File(Config.getWebappBase()+"/_js/oc/oc.min.js") ;
+	long dt = 0 ;
+	if(f.exists())
+		dt = f.lastModified() ;
+	//System.out.println("dt="+dt) ;
 %>
-<script src="/_js/oc/oc.min.js?v=<%=ver%>"></script>
+<script src="/_js/oc/oc.min.js?v=<%=dt%>"></script>
 <script src="/_js/oc/oc_util.js?v=<%=ver%>"></script>
 <link type="text/css" href="/_js/oc/oc.css?v=<%=ver%>" rel="stylesheet" />
 <%

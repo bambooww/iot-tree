@@ -14,7 +14,7 @@ import javax.crypto.spec.DESKeySpec;
 /**
  * Token token = Token(user,psw) ;
  * 
- * Restful 每次请求，http头token属性都必须生成一个新的
+ * Every time it is called, a new Restful HTTP header token attribute must be create new one
  * 
  * String newtoken = token.createNew() ;
  * 
@@ -64,7 +64,7 @@ public class Token
 	{
 		String uuid = UUID.randomUUID().toString();
 		//System.out.println("new uuid=" + uuid);
-		String dd = uuid;
+		String dd = user+"="+uuid;
 
 		byte[] bs = dd.getBytes("UTF-8");
 		int blen = 0;
@@ -103,7 +103,14 @@ public class Token
 			if (bs[last - 1] != 0)
 				break;
 		}
-		String uuid = new String(bs, 0, last, "UTF-8");
+		String user_uuid = new String(bs, 0, last, "UTF-8");
+		k = user_uuid.indexOf('=') ;
+		if(k<=0)
+			return null ;
+		String retuser = user_uuid.substring(0,k) ;
+		String uuid = user_uuid.substring(k+1) ;
+		if(!retuser.equals(user))
+			return null;
 		//System.out.println("token uuid=" + uuid);
 		return new String[] { usr, uuid };
 	}
@@ -197,6 +204,6 @@ public class Token
 		String newtk = tk.createNew();
 		System.out.println("new token=" + newtk);
 		String[] ret = tk.parseToken(newtk);
-		System.out.println("parsed ret=" + ret);
+		System.out.println("parsed ret=" + ret+" uuid="+ret[1]);
 	}
 }

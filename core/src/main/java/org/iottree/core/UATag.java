@@ -1456,6 +1456,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(dd==null)
 			return false;
 
+		if(!dd.RT_isRunning())
+			return false;
+		
 		ValTranser vtrans = this.getValTranserObj() ;
 		if(vtrans!=null)
 		{

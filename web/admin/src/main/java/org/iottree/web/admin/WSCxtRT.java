@@ -45,8 +45,6 @@ public class WSCxtRT extends WSRoot
 		//System.out.println(" cxt ws class is loading ................>>>>>>>>>>>>>>>>>>>>>>") ;
 	}
 	
-	
-	
 	@OnOpen
 	public void onOpen(Session session, @PathParam(value = "prjname") String prjname,
 			@PathParam(value = "nodeid") String nodeid,EndpointConfig config) throws Exception //
