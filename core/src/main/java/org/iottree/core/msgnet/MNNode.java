@@ -21,6 +21,30 @@ import org.json.JSONObject;
  */
 public abstract class MNNode extends MNBase
 {
+	public static class OutResDef<T extends MNNodeRes>
+	{
+		Class<T> resClass = null ;
+		
+		boolean bNeed = false;
+		
+		public  OutResDef(Class<T> c,boolean need)
+		{
+			this.resClass = c ;
+			this.bNeed = need ;
+		}
+		
+		public Class<T> getResClass()
+		{
+			return this.resClass ;
+		}
+		
+		public boolean isNeeded()
+		{
+			return bNeed ;
+		}
+	}
+
+	
 	private MNModule TP_relatedM = null ;
 	
 	protected transient String _nodeState = null ;
@@ -105,6 +129,31 @@ public abstract class MNNode extends MNBase
 	public String getOutColor(int idx)
 	{
 		return null ;
+	}
+	
+	public Map<Integer,OutResDef> getOut2Res()
+	{
+		return null ;
+	}
+	
+	public final OutResDef getOutRes(int outidx)
+	{
+		Map<Integer,OutResDef> idx2res = getOut2Res();
+		if(idx2res==null)
+			return null ;
+		return idx2res.get(outidx) ;
+	}
+	
+	public final MNNodeRes getOutResNode(int outidx)
+	{
+		List<MNConn> cons = this.getOutConns(outidx) ;
+		if(cons==null||cons.size()<=0)
+			return null ;
+		MNConn c = cons.get(0) ;
+		MNNode node = c.getToNode() ;
+		if(node==null || !(node instanceof MNNodeRes))
+			return null ;
+		return (MNNodeRes)node ;
 	}
 	
 	public final MNConnOut getConnOut()
@@ -258,6 +307,14 @@ public abstract class MNNode extends MNBase
 			}
 			//jo.put("out_tts", jarr) ;
 			jo.put("out_cs", jarr_c) ; //out color s
+			Map<Integer,OutResDef> out2res = this.getOut2Res() ;
+			if(out2res!=null&&out2res.size()>0)
+			{
+				JSONArray tmpjarr = new JSONArray() ;
+				for(Integer outi:out2res.keySet())
+					tmpjarr.put(outi) ;
+				jo.put("out_res", tmpjarr) ;
+			}
 		}
 		return jo;
 	}

@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.SQLiteSaver;
+import org.iottree.core.util.web.PrjNavTree;
 import org.iottree.core.util.web.PrjRestful;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
@@ -407,7 +408,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			pgs.addAll(lpgs);
 		pgs.add(this.getPrjPropGroup());
 		pgs.add(this.getPrjRestfulApiGroup());
-		
+		pgs.add(this.getPrjHmiNavGroup());
 		//
 
 		repPGS = pgs;
@@ -482,6 +483,69 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 	
+	private PropGroup getPrjHmiNavGroup()
+	{
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("prj_hmi_nav", lan,"/doc/hmi/hmi_nav.md");//"Project");
+
+		r.addPropItem(new PropItem("hmi_nav1_en", lan, PValTP.vt_bool, false, null, null,false));
+		r.addPropItem(new PropItem("hmi_nav1_jo",lan, PValTP.vt_str, false, null, null,"").withTxtMultiLine(true));
+		
+		r.addPropItem(new PropItem("hmi_nav2_en", lan, PValTP.vt_bool, false, null, null,false));
+		r.addPropItem(new PropItem("hmi_nav2_jo",lan, PValTP.vt_str, false, null, null,"").withTxtMultiLine(true));
+		
+		return r;
+	}
+	
+	private transient HashMap<String,PrjNavTree> nav2tree = null ;
+	
+	public synchronized PrjNavTree getPrjNavTree(String nav)
+	{
+		if(nav2tree!=null)
+		{
+			return nav2tree.get(nav) ;
+		}
+		
+		try
+		{
+			HashMap<String,PrjNavTree> rr = new HashMap<>() ;
+			PrjNavTree pnt = loadPrjNavTree("nav1") ;
+			if(pnt!=null)
+				rr.put("nav1",pnt) ;
+			pnt = loadPrjNavTree("nav2") ;
+			if(pnt!=null)
+				rr.put("nav2",pnt) ;
+			nav2tree = rr ;
+			return nav2tree.get(nav) ;
+		}
+		finally
+		{
+			
+		}
+	}
+	
+	private PrjNavTree loadPrjNavTree(String nav)
+	{
+		boolean b = this.getOrDefaultPropValueBool("prj_hmi_nav", "hmi_"+nav+"_en", false) ;
+		if(!b) return null;
+		String jostr = this.getOrDefaultPropValueStr("prj_hmi_nav", "hmi_"+nav+"_jo", "") ;
+		if(Convert.isNullOrEmpty(jostr))
+			return null ;
+		try
+		{
+			JSONObject jo = new JSONObject(jostr) ;
+			PrjNavTree pnt = new PrjNavTree() ;
+			if(pnt.fromJO(jo))
+				return pnt ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+		}
+		return null ;
+	}
+	
 	public Object getPropValue(String groupn, String itemn)
 	{
 		if ("prj".contentEquals(groupn))
@@ -534,7 +598,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@Override
 	protected void onPropNodeValueChged()
 	{
-		bRestfulGit = false;
+		synchronized(this)
+		{
+			bRestfulGit = false;
+			nav2tree = null ;
+		}
 		try
 		{
 			setupJsScript();

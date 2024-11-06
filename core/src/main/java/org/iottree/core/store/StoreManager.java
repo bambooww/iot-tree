@@ -101,6 +101,18 @@ public class StoreManager
 		rets.addAll(getName2Source().values());
 		return rets;
 	}
+	
+	public static List<SourceJDBC> listSourcesJDBC()
+	{
+		ArrayList<SourceJDBC> rets = new ArrayList<>();
+		for(Source sor:getName2Source().values())
+		{
+			if(!(sor instanceof SourceJDBC))
+				continue ;
+			rets.add((SourceJDBC)sor) ;
+		}
+		return rets ;
+	}
 
 	public static Source getSourceById(String id)
 	{

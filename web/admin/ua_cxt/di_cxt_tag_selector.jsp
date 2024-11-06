@@ -68,7 +68,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-	dlg.resize_to(900,500) ;
+	dlg.resize_to(900,600) ;
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
@@ -78,15 +78,17 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 %>
 <span id="updt"></span><span id="log_inf"></span>
 <div style="float:left;overflow: auto;height: 90%;width:70%">
-Tags
+Tags  <input id="search_txt" style="width:20%;" /> <button>Search</button>
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <td width='2%'></td>
   <td width='15%'>Path Name</td>
+  <td width='5%'>Address</td>
   <td width='15%'>Title</td>
 
   <td width='6%'>Value Type</td>
  </tr>
+ <tbody id="tag_list">
 <%
 	for(UATag tg : tags)
 	{
@@ -96,18 +98,19 @@ Tags
 		String chked = "" ;
 		if(pathn.equals(val))
 			chked = "checked='checked'" ;
-		
+		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" height0='1' style0="height:5" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
   <td><input type="checkbox" id="cb_<%=pathn %>"  <%=chked %>/></td>
   <td><%=pathn %></td>
+  <td><%=addr %></td>
   <td><%=patht %></td>
-  
   <td><%=tg.getValTp() %></td>
   </tr>
 <%
 	}
 %>
+</tbody>
 </table>
 </div>
 <%

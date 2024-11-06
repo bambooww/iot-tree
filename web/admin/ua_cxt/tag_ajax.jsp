@@ -367,6 +367,8 @@ case "chk_addr":
 		return ;
 	}
 	return ;
+case "list_for_sel":
+	return ;
 }
 
 %>

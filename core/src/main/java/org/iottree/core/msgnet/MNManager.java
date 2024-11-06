@@ -772,12 +772,16 @@ public class MNManager
 		{
 			if(!net.isEnable())
 				continue ;
+			
 			for(MNNode node:net.getNodeMapAll().values())
 			{
 				if(node instanceof NS_TagEvtTrigger && node.isEnable())
 				{
 					((NS_TagEvtTrigger)node).RT_fireByEventTrigger(va,curval) ;
 				}
+				
+				if(node instanceof NS_TagAlertTrigger && node.isEnable())
+					((NS_TagAlertTrigger)node).RT_fireByEventTrigger(va,curval) ;
 			}
 		}
 	}
@@ -794,6 +798,9 @@ public class MNManager
 				{
 					((NS_TagEvtTrigger)node).RT_fireByEventRelease(va,curval) ;
 				}
+				
+				if(node instanceof NS_TagAlertTrigger && node.isEnable())
+					((NS_TagAlertTrigger)node).RT_fireByEventRelease(va,curval) ;
 			}
 		}
 	}

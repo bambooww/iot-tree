@@ -195,6 +195,10 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return false ;
 	}
 	
+	public String getPmTitle()
+	{
+		return null ;
+	}
 	/**
 	 * 判断节点参数是否完备，只有完备之后的节点才可以运行
 	 * @return
@@ -283,6 +287,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		StringBuilder sb = new StringBuilder() ;
 		boolean br = this.isParamReady(sb);
 		jo.put("pm_ready", br) ;
+		jo.putOpt("pm_title", this.getPmTitle()) ;
 		if(!br)
 			jo.put("pm_err", sb.toString()) ;
 		else
@@ -445,6 +450,13 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		
 	}
 
+
+	/**
+	 * override to impl div fired event
+	 * @param evtn
+	 */
+	public void RT_onRenderDivEvent(String evtn,StringBuilder retmsg)
+	{}
 	
 	public JSONObject RT_toJO(boolean out_rt_div)
 	{
@@ -657,4 +669,5 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			Thread.sleep(t);
 		}catch(Exception e) {}
 	}
+	
 }

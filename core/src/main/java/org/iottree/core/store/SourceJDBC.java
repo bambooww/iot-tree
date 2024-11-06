@@ -293,6 +293,17 @@ public class SourceJDBC extends Source
 		return this.dbPsw ;
 	}
 	
+	public String getJDBCUrl()
+	{
+		Drv drv = getName2Driver().get(this.drvName) ;
+		return drv.calJdbcUrl(this.dbHost, this.dbPort, this.dbName) ;
+	}
+	
+	public String getDBInf()
+	{
+		return drvName+":"+this.dbHost+":"+this.dbPort+":"+this.dbName ;
+	}
+	
 	public boolean checkValid(StringBuilder failedr)
 	{
 		if(!Convert.checkVarName(this.dbName, "DB Name", false, failedr))

@@ -2,7 +2,7 @@
 <dd_class id="1" name="ua_lang"  name_jp=""  >
 
 
-	<dd_node id="1" name="db_sql" name_cn="数据库SQL" name_en="DB SQL" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="r_db" name_cn="关系数据库" name_en="Relational DB" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tag_rt" name_cn="实时标签Tag" name_en="Real-time Tag" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="mem_multi_que" name_cn="内存多队列" name_en="Mem Multi Queue" 
@@ -15,4 +15,9 @@
 		desc_en="Message queue sharing a module, that is, sharing one processing thread in related module"
 		/>
 	
+	<dd_node id="1" name="sql_que_msg_per_row_jo" name_cn="每行一个消息JSONObject输出" name_en="A message per row-JONSObject" />
+	<dd_node id="1" name="sql_que_msg_firstrow_jo" name_cn="第一行单个消息JSONObject输出" name_en="Single message for first row-JONSObject" />
+ 	<dd_node id="1" name="sql_que_multi_row_jarr" name_cn="多行一个消息JSONArray输出" name_en="A message for multi row-JSONArray" />
+  	<dd_node id="1" name="sql_que_multi_row_page" name_cn="多行一个消息带分页输出JO(内含JArr)" name_en="Page message for multi row-JSONObject include rows array" />
+  
 </dd_class>

@@ -54,4 +54,11 @@
 	<dd_node id="1" name="pi_token_users" name_cn="用户密码" name_en="User And Password" desc_cn=""/>
 	<dd_node id="1" name="pi_wtag_cutoff" name_cn="写标签截断" name_en="Cut off writing tags"
 		desc_cn="通过Restful Api写标签时，会被截断，并且会打印警告信息，可以支持远程安全调试" desc_en="When writing tags through Restful API, they will be truncated and warning messages will be printed, which can support remote secure debugging"/>
+		
+	<dd_node id="1" name="pg_prj_hmi_nav" name_cn="项目HMI导航" name_en="Project HMI Navigater" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_hmi_nav1_en" name_cn="启用Nav1" name_en="Enable Nav1" desc_cn=""/>
+	<dd_node id="1" name="pi_hmi_nav1_jo" name_cn="Nav1 菜单JSON内容" name_en="Nav1 JSON Menu" desc_cn=""/>
+	<dd_node id="1" name="pi_hmi_nav2_en" name_cn="启用Nav2" name_en="Enable Nav1" desc_cn=""/>
+	<dd_node id="1" name="pi_hmi_nav2_jo" name_cn="Nav2菜单JSON内容" name_en="Nav2 JSON Menu" desc_cn=""/>
+
 </dd_class>

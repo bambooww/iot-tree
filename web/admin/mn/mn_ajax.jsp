@@ -337,6 +337,13 @@ case "rt_debug_close":
 	else
 		out.print("succ") ;
 	return ;
+case "rt_fire_node_evt":
+	if(!Convert.checkReqEmpty(request, out,"netid", "itemid","evtn"))
+		return ;
+	String evtn = request.getParameter("evtn") ;
+	item.RT_onRenderDivEvent(evtn,failedr) ;
+	out.print(failedr) ;
+	return ;
 default:
 	out.print("unknown op="+op) ;
 	return ;

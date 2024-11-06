@@ -228,7 +228,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 		
@@ -242,7 +243,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 		
@@ -269,7 +271,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			
 			//lastHasDataDT = System.currentTimeMillis() ;
@@ -301,7 +304,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			
 			if(r<=0)
@@ -327,7 +331,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 		
@@ -341,7 +346,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 	}
@@ -375,7 +381,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			byte[] bs = new byte[1] ;
 			bs[0] = (byte)b ;
@@ -396,7 +403,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			byte[] bs = new byte[len] ;
 			System.arraycopy(b, off, bs, 0, len);
@@ -415,7 +423,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 		
@@ -429,7 +438,8 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			catch(Exception e)
 			{
 				ConnPtStream.this.fireConnInvalid();
-				throw new ConnException(e) ; // it will be catched
+				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 		}
 	}

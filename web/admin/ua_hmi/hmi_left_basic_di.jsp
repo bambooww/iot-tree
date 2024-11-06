@@ -38,6 +38,8 @@
 			new BtnItem("pic/pipe.png","Pipe","parent.do_add_pts('pipe',{})"),
 			new BtnItem("pic/dial.png","Dial","parent.do_add_di('oc.di.DIDial')"),
 			new BtnItem("pic/wave.png","Wave","parent.do_add_di('oc.di.DIWave')"),
+			//new BtnItem("pic/wave.png","HTML","parent.do_add_di('oc.iott.DIHtml')"),
+			new BtnItem("pic/tb.png","DIDraw","parent.do_add_di('oc.di.DIDraw')"),
 			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
 			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
 	} ;

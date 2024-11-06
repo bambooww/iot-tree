@@ -41,14 +41,12 @@ public class AlertItem extends JSObMap implements IJsProp
 
 	public AlertItem(ValAlert va,Object curv)
 	{
-		//this.ah = ah ;
 		this.vA = va ;
 		this.tag = va.getBelongTo() ;
 		this.triggerDT = va.RT_last_trigger_dt() ;
 		if(va.RT_is_triggered())
 		{
 			this.bTriggerd = true ;
-			//this.dt = va.RT_last_trigged_dt() ;
 		}
 		else
 		{

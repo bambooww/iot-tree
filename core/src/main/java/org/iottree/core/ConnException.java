@@ -27,4 +27,9 @@ public class ConnException extends IOException
 	{
 		super(t) ;
 	}
+	
+	public ConnException(String msg,Throwable t)
+	{
+		super(msg,t) ;
+	}
 }

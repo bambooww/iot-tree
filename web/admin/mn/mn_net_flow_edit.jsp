@@ -1002,7 +1002,13 @@ function start_stop_debug_list(ele,debug_nid)
 		dbgele.attr("print_stopped","1")
 		$(ele).html("start") ;
 	}
-	
+}
+
+function mn_fire_node_evt(itemid,evtn)
+{
+	send_ajax("mn_ajax.jsp",{op:"rt_fire_node_evt",container_id:container_id,netid:netid,itemid:itemid,evtn:evtn},(bsucc,ret)=>{
+		dlg.msg(ret) ;
+	});
 }
 
 function ws_conn()

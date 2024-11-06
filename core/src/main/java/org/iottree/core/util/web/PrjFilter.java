@@ -248,6 +248,16 @@ public class PrjFilter implements Filter
 				return ;
 			}
 			break;
+		case "nav":
+			if(node instanceof UAPrj)
+			{
+				req.getRequestDispatcher("/hmi_nav.jsp?path="+node.getNodePath()+"&tp="+tp).forward(req, resp);
+			}
+			else
+			{
+				resp.getWriter().write("not prj node");
+			}
+			break ;
 		default:
 			req.getRequestDispatcher("/node_cxt.jsp?path="+uri+"&tp="+tp).forward(req, resp);
 			break ;

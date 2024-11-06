@@ -15,26 +15,42 @@ if(catid==null)
 	catid= "" ; 
 String libtitle ="" ;
 String cattitle ="" ;
+List<DevLib> libs = DevManager.getInstance().getDevLibs() ;
+
+DevLib lib = null ;
+
 if(Convert.isNotNullEmpty(libid))
 {
-	DevLib lib = DevManager.getInstance().getDevLibById(libid) ;
+	lib = DevManager.getInstance().getDevLibById(libid) ;
 	if(lib==null)
 	{
 		out.print("no lib found") ;
 		return ;
 	}
-	libtitle = lib.getTitle() ;
-	
-	if(Convert.isNotNullEmpty(catid))
+}
+else if(libs!=null&&libs.size()>0)
+{
+	lib = libs.get(0) ;
+}
+
+if(lib==null)
+{
+	out.print("no lib found") ;
+	return ;
+}
+
+libid = lib.getId() ;
+libtitle = lib.getTitle() ;
+
+if(Convert.isNotNullEmpty(catid))
+{
+	DevCat cat = lib.getDevCatById(catid) ;
+	if(cat==null)
 	{
-		DevCat cat = lib.getDevCatById(catid) ;
-		if(cat==null)
-		{
-			out.print("no cat found") ;
-			return ;
-		}
-		cattitle = cat.getTitle() ;
+		out.print("no cat found") ;
+		return ;
 	}
+	cattitle = cat.getTitle() ;
 }
 boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
 %><!DOCTYPE html>
@@ -66,51 +82,38 @@ boolean bedit = "true".equalsIgnoreCase(request.getParameter("edit")) ;
 </head>
 <body>
     <div style="float:left;margin-left:8px;margin-top:4px;">
-      <table id="top_oper" style="width:100%;">
+      <table id="top_oper">
           <tr>
-          <td style="padding-left: 5px;">
-           <wbt:g>lib</wbt:g>: <%=libtitle %>
-              </td>
-<%--
-              <td>
-              <form class="layui-form" action="">
-                 <select id="lib_ids" name="lib_ids" lay-filter="lib_ids" style="width:50px" lay-ignore>
-        <%
- for(DevLib dl:DevManager.getInstance().getDevLibs())
- {
-	 String sel = (libid.equals(dl.getId())?"selected=selected":"");
-	 
-%>
-<option value="<%=dl.getId()%>" <%=sel %>><%=dl.getTitle() %></option>
+          <td style="padding-left: 5px;"><wbt:g>lib</wbt:g>:</td>
+          <td style0="width:115px;">
+          <form class="layui-form" action="" onsubmit="return false;">
+           <select id="lib_ids" lay-filter="lib_ids" lay-ignore0 style="width:100px;">
 <%
- }
+for(DevLib lib0:libs)
+{
+	String seled = lib0.getId().equals(libid)?"selected":"" ;
 %>
-      </select>
-      </form>
+<option value="<%=lib0.getId()%>" <%=seled %>><%=lib0.getTitle() %></option>
+<%
+}
+%>
+           </select>
+             </form>
               </td>
-              
-              <td style="padding-left: 1px;">
+              <td style="padding-left: 15px;">
 <%
 if(bedit)
 {
 %>
-<div class="btn-group open"  id="btn_menu_lib" style="border:0px solid;border-color: #c9c9c9">
-				  <a class="btn" href="#">---</a>
-				  <a class="btn" href="#">
-				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
-				  </a>
-				 </div>
+              <button id="top_oper_add_cat" type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i><wbt:g>cat</wbt:g></button>
 <%
 }
 %>
               </td>
-               --%>
-              <td style="padding-left: 15px;">
-              <button id="top_oper_add_cat" type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add_cat"><i class="fa fa-plus"></i><wbt:g>cat</wbt:g></button>
-              </td>
           </tr>
       </table>
   </div>
+<br>
 <table id="lib_list"  lay-filter="lib_list"  lay-size="sm" lay-even="true">
 
 </table>
@@ -125,6 +128,7 @@ if(bedit)
 <script>
 
 var bedit = <%=bedit%>
+var form;
 var table ;
 var table_cur_page = 1 ;
 
@@ -149,90 +153,86 @@ $('#btn_menu_lib').click(function(){
 
 $("#top_oper").on("click","#top_oper_add_cat",lib_add_cat);
 
-layui.use('form', function(){
-	  var form = layui.form;
-	  
+layui.use(['form','table'], function(){
+	  form = layui.form;
 	  form.on('select(lib_ids)', function(obj){
-		       refresh_table()
-		  });
+		   refresh_table()
+	   });
 	  
 	  form.render();
 	  
+	  table = layui.table;
 	  
-	});
-layui.use('table', function()
-{
-  table = layui.table;
-  
-  let cols = [];
- if(bedit)
- {
-	 cols.push({field: 'n', title: '<wbt:g>name</wbt:g>', width:'25%'}) ;
-	 cols.push({field: 't', title: '<wbt:g>title</wbt:g>', width:'55%'});
-	 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"20%" ,toolbar: '#row_toolbar'}) ;
- }
- else
- {
-	 cols.push({field: 'n', title: '<wbt:g>name</wbt:g>', width:'35%'}) ;
-	 cols.push({field: 't', title: '<wbt:g>title</wbt:g>', width:'65%'});
- }
-  table.render({
-    elem: '#lib_list'
-    ,height: "full-60"
-   // ,url: 'lib_ajax.jsp?op=list&libid=' //data ajax
-    //,page: {layout:['prev', 'page', 'next'],limit:18,theme:"#c00"} //open page
-    ,cols: [cols]
-  ,parseData:function(res){
-		if(res.data.length==0){
-			return{
-				'code':'201',
-				'msg':'<wbt:g>no,category,list</wbt:g>'
+	  let cols = [];
+	 if(bedit)
+	 {
+		 cols.push({field: 'n', title: '<wbt:g>name</wbt:g>', width:'25%'}) ;
+		 cols.push({field: 't', title: '<wbt:g>title</wbt:g>', width:'55%'});
+		 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"20%" ,toolbar: '#row_toolbar'}) ;
+	 }
+	 else
+	 {
+		 cols.push({field: 'n', title: '<wbt:g>name</wbt:g>', width:'35%'}) ;
+		 cols.push({field: 't', title: '<wbt:g>title</wbt:g>', width:'65%'});
+	 }
+	  table.render({
+	    elem: '#lib_list'
+	    ,height: "full-60"
+	   // ,url: 'lib_ajax.jsp?op=list&libid=' //data ajax
+	    //,page: {layout:['prev', 'page', 'next'],limit:18,theme:"#c00"} //open page
+	    ,cols: [cols]
+	  ,parseData:function(res){
+			if(res.data.length==0){
+				return{
+					'code':'201',
+					'msg':'<wbt:g>no,category,list</wbt:g>'
+				};
 			};
-		};
-	}
-    ,done:function(res, curr, count){
-   	 table_cur_page = curr ;
-   	 var trs = $(".layui-table-body.layui-table-main tr");
-   	 if(res && res.data)
-   	 {
-   		for(var i = 0 ; i < res.data.length;i++)
-  		 {
-  		    if(i%2==1)
-	    		 trs.eq(i).css("background-color","#f2f2f2");
-	     }
-   	 }
-   	 
-   	 
-   	 }
-  });
-  
-  table.on('tool(lib_list)', function(obj){ // lay-filter="mc_acc_list"
-	  var data = obj.data; //cur d
-	  var lay_evt = obj.event; // lay-event
-	  var tr = obj.tr; //tr DOM
-	 
-	  if(lay_evt === 'detail'){ //
-	    //do somehing
-	    
-	  }
-	  else if(lay_evt === 'del')
-	  {
-		  lib_del_cat(data.id);
-	  }
-	  else if(lay_evt === 'edit')
-	  { 
-		  lib_add_edit_cat(data.id) ;
-	  }
+		}
+	    ,done:function(res, curr, count){
+	   	 table_cur_page = curr ;
+	   	 var trs = $(".layui-table-body.layui-table-main tr");
+	   	 if(res && res.data)
+	   	 {
+	   		for(var i = 0 ; i < res.data.length;i++)
+	  		 {
+	  		    if(i%2==1)
+		    		 trs.eq(i).css("background-color","#f2f2f2");
+		     }
+	   	 }
+	   	 
+	   	 
+	   	 }
+	  });
 	  
-	});
-  
-  table.on('row(lib_list)', function(obj)
+	  table.on('tool(lib_list)', function(obj){ // lay-filter="mc_acc_list"
+		  var data = obj.data; //cur d
+		  var lay_evt = obj.event; // lay-event
+		  var tr = obj.tr; //tr DOM
+		 
+		  if(lay_evt === 'detail'){ //
+		    //do somehing
+		    
+		  }
+		  else if(lay_evt === 'del')
 		  {
-	  var libid = $("#lib_ids").val() ;
-			  var data = obj.data; //cur d
-			  on_sel_cat(data.id,data.t)
-		  });
+			  lib_del_cat(data.id);
+		  }
+		  else if(lay_evt === 'edit')
+		  { 
+			  lib_add_edit_cat(data.id) ;
+		  }
+		  
+		});
+	  
+	  table.on('row(lib_list)', function(obj)
+			  {
+		  var libid = $("#lib_ids").val() ;
+				  var data = obj.data; //cur d
+				  on_sel_cat(data.id,data.t)
+			  });
 });
+
 
 function on_sel_cat(id,tt)
 {
@@ -250,8 +250,10 @@ function on_sel_cat(id,tt)
 
 function refresh_table(bfirst)
 {
-	//libid = $("#lib_ids").val() ;
-	//libtitle =$('#lib_ids option:selected').html();
+	
+	libid = $("#lib_ids").val() ;
+	libtitle =$('#lib_ids option:selected').html();
+	console.log(libid)
 	table.reload("lib_list",{url:"lib_ajax.jsp?op=list&libid="+libid});
 	if(!bfirst)
 	{

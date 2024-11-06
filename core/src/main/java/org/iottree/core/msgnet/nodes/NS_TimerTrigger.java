@@ -89,6 +89,15 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	// {
 	// return g("inject");
 	// }
+	
+	@Override
+	public String getPmTitle()
+	{
+		if(this.intervalMS<=0)
+			return "[]" ;
+		else
+			return "["+this.intervalMS+"MS]" ;
+	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)

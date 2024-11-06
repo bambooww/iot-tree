@@ -10,6 +10,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.XmlVal;
+import org.json.JSONObject;
 
 public class DataRow extends HashMap<String,Object> implements IXmlDataable
 {
@@ -561,6 +562,48 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 		}
 		sb.append("}") ;
 		return sb.toString();
+	}
+	
+	
+	public JSONObject toJO(boolean ignore_null,boolean date2ms,boolean col_lower_case)
+	{
+		JSONObject jo = new JSONObject() ;
+		for(DataColumn dc:belongToDT.getColumns())
+		{
+			
+			String n = dc.getName() ;
+			Object o = this.getValue(n) ;
+			if(o==null && ignore_null)
+			{
+				continue ;
+			}
+			if(col_lower_case)
+				n = n.toLowerCase() ;
+			
+			
+			if(o==null)
+			{
+				jo.putOpt(n, JSONObject.NULL) ;
+			}
+			else
+			{
+				if(o instanceof java.util.Date)
+				{
+					if(date2ms)
+					{
+						jo.put(n,((java.util.Date)o).getTime()) ;
+					}
+					else
+					{
+						String dstr = XmlVal.transDateToDetailShowStr(((java.util.Date)o)) ;
+						jo.put(n,dstr) ;
+					}
+				}
+				else
+					jo.put(n, o) ;
+			}
+		}
+		return jo ;
 	}
 	/**
 	 * �������ݿ����Ӻͱ������У������ݿ�Ĳ������
