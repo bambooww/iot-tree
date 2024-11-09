@@ -13,17 +13,12 @@
 	org.iottree.pro.*,
 	org.iottree.core.station.*,
 	org.iottree.core.util.xmldata.*
-"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-//Platfrom may has many prj in it . which is created by msg in and admin
-if(!PlatformManager.isInPlatform())
-{
-	out.println("not platform") ;
-	return ;
-}
+"%><%@ taglib uri="wb_tag" prefix="wbt"%><%//Platfrom may has many prj in it . which is created by msg in and admin
+
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 String using_lan = Lan.getUsingLang() ;
 
-PlatformManager platf = PlatformManager.getInstance() ;
+PlatInsManager platf = PlatInsManager.getInstance() ;
 %><!DOCTYPE html>
 <html class="">
 <head>

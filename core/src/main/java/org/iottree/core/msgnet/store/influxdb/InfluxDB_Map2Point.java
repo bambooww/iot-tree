@@ -1,4 +1,4 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.store.influxdb;
 
 import java.util.ArrayList;
 

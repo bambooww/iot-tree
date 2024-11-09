@@ -184,7 +184,7 @@ public abstract class PSCmd
 	
 	// RT -
 	
-	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si,PStation ps) throws Exception
+	public void RT_onRecvedInPlatform(PlatInsWSServer.SessionItem si,PStation ps) throws Exception
 	{}
 	
 	public void RT_onRecvedInStationLocal(StationLocal sl) throws Exception

@@ -1,6 +1,6 @@
 package org.iottree.core.ws;
 
-import org.iottree.core.station.PlatformWSServer;
+import org.iottree.core.station.PlatInsWSServer;
 
 public class WSHelper
 {
@@ -8,6 +8,6 @@ public class WSHelper
 	{
 		WSRoot.stopTimer(false);
 		WSServer.stopTimer(false);
-		PlatformWSServer.stopTimer(false);
+		PlatInsWSServer.stopTimer(false);
 	}
 }

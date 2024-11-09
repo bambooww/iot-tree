@@ -19,16 +19,16 @@ import javax.websocket.Session;
 import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.PathParam;
 
-import org.iottree.core.station.PlatformWSServer.SessionItem;
+import org.iottree.core.station.PlatInsWSServer.SessionItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.encrypt.DES;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONObject;
 
-public class PlatformWSServer
+public class PlatInsWSServer
 {
-	private static ILogger log = LoggerManager.getLogger(PlatformWSServer.class) ;
+	private static ILogger log = LoggerManager.getLogger(PlatInsWSServer.class) ;
 	
 	public static class SessionItem
 	{
@@ -126,7 +126,7 @@ public class PlatformWSServer
 		void onTick() throws IOException
 		{
 			PSCmdPlatformST cmdst = new PSCmdPlatformST() ;
-			cmdst.asPlatform(PlatformManager.getInstance()) ;
+			cmdst.asPlatform(PlatInsManager.getInstance()) ;
 			sendBytes(cmdst.packTo()) ;
 		}
 		
@@ -222,7 +222,7 @@ public class PlatformWSServer
 					th = null ;
 				}
 			}
-		},PlatformWSServer.class.getSimpleName() + " Timer") ;
+		},PlatInsWSServer.class.getSimpleName() + " Timer") ;
 		
 		th.start();
 	}
@@ -260,11 +260,11 @@ public class PlatformWSServer
 		HttpSession httpSession = (HttpSession) session.getUserProperties().get(HttpSession.class.getName());
 		String clientip = (String)httpSession.getAttribute("ClientIP");
         
-		PStation pss = PlatformManager.getInstance().getStationById(stationid) ;
+		PStation pss = PlatInsManager.getInstance().getStationById(stationid) ;
 		
 		if (pss == null)
 		{
-			PlatformManager.getInstance().fireUnknownStation(stationid) ;
+			PlatInsManager.getInstance().fireUnknownStation(stationid) ;
 			session.close();
 			return;
 		}
@@ -278,7 +278,7 @@ public class PlatformWSServer
 			{
 				if(log.isWarnEnabled())
 					log.warn("station ["+stationid+"] no tk and dt input");
-				PlatformManager.getInstance().fireUnknownStation(stationid) ;
+				PlatInsManager.getInstance().fireUnknownStation(stationid) ;
 				session.close();
 				return ;
 			}
@@ -288,7 +288,7 @@ public class PlatformWSServer
 			{
 				if(log.isWarnEnabled())
 					log.warn("station ["+stationid+"] tk check failed ,may be key is not match");
-				PlatformManager.getInstance().fireUnknownStation(stationid) ;
+				PlatInsManager.getInstance().fireUnknownStation(stationid) ;
 				session.close();
 				return ;
 			}

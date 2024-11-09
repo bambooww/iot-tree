@@ -9,7 +9,7 @@ import org.iottree.core.IOCBox;
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
-import org.iottree.core.station.PlatformWSServer.SessionItem;
+import org.iottree.core.station.PlatInsWSServer.SessionItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -34,8 +34,17 @@ public class PStation
 	String key = null ;
 	
 
-	public PStation()
-	{}
+//	public PStation() //(String id,String title,String key)
+//	{
+//
+//	}
+	
+	PStation(String id,String title,String key)
+	{
+		this.id = id ;
+		this.title = title ;
+		this.key = key ;
+	}
 	
 	public String getId()
 	{
@@ -44,38 +53,70 @@ public class PStation
 	
 	public String getTitle()
 	{
+		if(this.title==null)
+			return "" ;
 		return this.title ;
 	}
 	
 	public String getKey()
 	{
+		if(this.key==null)
+			return "" ;
+		
 		return key ;
 	}
 	
+	
+	private transient ArrayList<UAPrj> relatedPrjs = null ;
 	/**
 	 * 获取接收端对应项目——项目名称=stationid_prjname
 	 * @return
 	 */
 	public List<UAPrj> getRelatedPrjs()
 	{
-		ArrayList<UAPrj> rets = new ArrayList<>() ;
-		String prefix = this.id+"_" ;
-		for(UAPrj prj:UAManager.getInstance().listPrjs())
+		if(relatedPrjs!=null)
+			return relatedPrjs; 
+		
+		synchronized(this)
 		{
-			String prjn = prj.getName() ;
-			if(prjn.startsWith(prefix))
-				rets.add(prj) ;
+			ArrayList<UAPrj> rets = new ArrayList<>() ;
+			//String prefix = this.id+"_" ;
+			for(UAPrj prj:UAManager.getInstance().listPrjs())
+			{
+				PStation ps = prj.getPrjPStationInsDef() ;
+				if(ps==null)
+					continue ;
+				if(this.id.equals(ps.getId()))
+					rets.add(prj) ;
+	//			String prjn = prj.getName() ;
+	//			if(prjn.startsWith(prefix))
+	//				rets.add(prj) ;
+			}
+			
+			relatedPrjs = rets ;
+			return rets ;
 		}
-		return rets ;
 	}
 	
-	public UAPrj getRelatedPrj(String prjname)
+	public UAPrj getRelatedPrjByRStationPrjN(String prjname)
 	{
-		String prefix = this.id+"_" ;
-		if(!prjname.startsWith(prefix))
-			prjname = prefix+prjname ;
-		
-		return UAManager.getInstance().getPrjByName(prjname) ;
+		List<UAPrj> rprjs = this.getRelatedPrjs() ;
+		if(rprjs.size()<=0)
+			return null ;
+		for(UAPrj prj:rprjs)
+		{
+			String rprjn = prj.getPrjRStationPrjName();
+			if(Convert.isNullOrEmpty(rprjn))
+				rprjn = prj.getName() ;
+			if(prjname.equals(rprjn))
+				return prj ;
+		}
+//		String prefix = this.id+"_" ;
+//		if(!prjname.startsWith(prefix))
+//			prjname = prefix+prjname ;
+//		
+//		return UAManager.getInstance().getPrjByName(prjname) ;
+		return null ;
 	}
 	
 	public JSONObject toJO()
@@ -84,8 +125,6 @@ public class PStation
 		jo.put("id", this.id) ;
 		jo.putOpt("t", title) ;
 		jo.putOpt("key", this.key) ;
-		//jo.putOpt("data_syn_en",this.dataSynEn) ;
-		//jo.putOpt("data_syn_intv",this.dataSynIntvMs) ;
 		
 		return jo ;
 	}
@@ -95,12 +134,10 @@ public class PStation
 		String id = jo.optString("id") ;
 		if(Convert.isNullOrEmpty(id))
 			return null ;
-		PStation ps = new PStation() ;
-		ps.id = id ;
-		ps.title = jo.optString("t") ;
-		ps.key = jo.optString("key") ;
-		//ps.dataSynEn = jo.optBoolean("data_syn_en",false) ;
-		//ps.dataSynIntvMs = jo.optLong("data_syn_intv", 10000) ;
+		PStation ps = new PStation(id,jo.optString("t"),jo.optString("key")) ;
+//		ps.id = id ;
+//		ps.title = jo.optString("t") ;
+//		ps.key = jo.optString("key") ;
 		return ps ;
 	}
 	
@@ -206,9 +243,9 @@ public class PStation
 		}
 	}
 	
-	private PlatformWSServer.SessionItem lastSessionItem = null ;
+	private PlatInsWSServer.SessionItem lastSessionItem = null ;
 	
-	private PlatformWSServer.SessionItem sessionItem = null ;
+	private PlatInsWSServer.SessionItem sessionItem = null ;
 	
 	private String clientIP = null ;
 	//private int clientPort = -1 ; 
@@ -216,7 +253,7 @@ public class PStation
 	
 	private List<PrjST> prjSTs = null ;
 	
-	void RT_updateLocalState(PlatformWSServer.SessionItem si,List<PrjST> prjsts)
+	void RT_updateLocalState(PlatInsWSServer.SessionItem si,List<PrjST> prjsts)
 	{
 		if(sessionItem!=si)
 		{
@@ -550,12 +587,12 @@ public class PStation
 		return null ;
 	}
 	
-	void RT_onRecvedRTData(String prjname,String key,JSONObject rt_jo,boolean b_his) throws Exception
+	void RT_onRecvedRTData(UAPrj prj,String key,JSONObject rt_jo,boolean b_his) throws Exception
 	{
 		if(b_his)
 			return ;
 		
-		PrjST pst = this.RT_getPrjST(prjname) ;
+		PrjST pst = this.RT_getPrjST(prj.getName()) ;
 		if(pst==null)
 			return ;
 		

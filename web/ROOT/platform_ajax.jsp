@@ -8,8 +8,7 @@
 				org.iottree.core.station.*,
 				java.net.*"%><%!
 				
-%><%
-	if(!Convert.checkReqEmpty(request, out, "op"))
+%><%if(!Convert.checkReqEmpty(request, out, "op"))
 		return;
 	
 	String op = request.getParameter("op") ;
@@ -28,7 +27,7 @@
 		prjid = prj.getId() ;
 	}
 	
-	PlatformManager pmgr= PlatformManager.getInstance() ;
+	PlatInsManager pmgr= PlatInsManager.getInstance() ;
 	
 	switch(op)
 	{
@@ -45,5 +44,4 @@
 		return ;
 	default:
 		out.print("unknown op="+op) ;
-	}
-%>
+	}%>

@@ -94,9 +94,17 @@ public class MNCat implements ILang
 	{
 			if(this.webItem==null)
 			{
-				if(n instanceof MNModule)
-					return "./modules/"+n.getTPFull()+".pm.jsp";
-				return "./nodes/"+n.getTPFull()+".pm.jsp";
+				String tpf = n.getTPFull() ;
+				if(tpf.startsWith("_platform."))
+				{
+					return "./plat/"+n.getTPFull()+".pm.jsp";
+				}
+				else
+				{
+					if(n instanceof MNModule)
+						return "./modules/"+n.getTPFull()+".pm.jsp";
+					return "./nodes/"+n.getTPFull()+".pm.jsp";
+				}
 			}
 
 			ConfItem ci = item2conf.get(n.getTPFull()) ;
@@ -104,7 +112,6 @@ public class MNCat implements ILang
 				return null ;
 			return "/"+webItem.getAppName()+"/"+ci.getPmUIPath() ;
 	}
-		
 	
 	public String getDocUrl(MNBase n)
 	{

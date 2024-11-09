@@ -19,9 +19,10 @@ public  abstract class MNNodeRes extends MNNodeEnd
 		return null;
 	}
 
-	public JSONObject toJO()
+	
+	public JSONObject toListJO()
 	{
-		JSONObject jo = super.toJO() ;
+		JSONObject jo = super.toListJO() ;
 		jo.put("node_res",true) ;
 		return jo ;
 	}

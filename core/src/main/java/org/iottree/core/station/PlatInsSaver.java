@@ -12,9 +12,12 @@ import java.util.Map;
 
 import org.iottree.core.Config;
 import org.iottree.core.UAPrj;
+import org.iottree.core.store.Source;
 import org.iottree.core.store.SourceJDBC;
+import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.store.gdb.connpool.DBType;
+import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
 /**
@@ -23,51 +26,65 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public class PlatformSaver
+public class PlatInsSaver
 {
 	
-	static DBConnPool connPool = null ;
+//	static DBConnPool connPool = null ;
+//	
+//
+//	private static DBConnPool getConnPool0() throws IOException
+//	{
+//		if(connPool!=null)
+//			return connPool ;
+//		
+//		JSONObject dbjo = PlatInsManager.getInstance().getRTDataDB() ;
+//		if(dbjo==null)
+//			throw new IOException("no rt_data_db config found in platform.json") ;
+//		// "rt_data_db":{"db_host":"localhost","db_port":33306,"db_name":"iottree_recved_data","db_user":"user1","tbs_db_user":"tbs_db_user"}
+//		String db_host = dbjo.getString("db_host") ;
+//		int db_port = dbjo.getInt("db_port") ;
+//		String db_name = dbjo.getString("db_name") ;
+//		String db_user = dbjo.getString("db_user") ;
+//		String db_psw = dbjo.optString("db_psw") ;
+//		String url = "jdbc:mysql://"+db_host+":"+db_port+"/"+db_name+"?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8" ;//"jdbc:sqlite:{$$data_db_sqlite}recved_rt.db";
+//		SourceJDBC.Drv drv = SourceJDBC.getJDBCDriver("mysql8");
+//		connPool = new DBConnPool(DBType.mysql, "", "com.mysql.cj.jdbc.Driver", url,db_name, db_user,db_psw, "0", "10",drv.getPlugDir().getOrLoadCL());
+//		return connPool ;
+//	}
+//	
+//	private static DBConnPool getConnPool() throws Exception
+//	{
+//		//MNManager
+//		return null ;
+//	}
 	
-
-	private static DBConnPool getConnPool() throws IOException
+	static PlatInsSaver createFromPrjTable(UAPrj prj,String tablename) throws Exception
 	{
-		if(connPool!=null)
-			return connPool ;
+		String sorn = prj.getPrjPStationSaverSor() ;
+		if(Convert.isNullOrEmpty(sorn))
+			return null ;
+		Source sor = StoreManager.getSourceByName(sorn) ;
+		if(sor==null || !(sor instanceof SourceJDBC))
+			return null ;
+		SourceJDBC sorj = (SourceJDBC)sor ;
+		DBConnPool cp = sorj.getConnPool() ;
 		
-		JSONObject dbjo = PlatformManager.getInstance().getRTDataDB() ;
-		if(dbjo==null)
-			throw new IOException("no rt_data_db config found in platform.json") ;
-		// "rt_data_db":{"db_host":"localhost","db_port":33306,"db_name":"iottree_recved_data","db_user":"user1","tbs_db_user":"tbs_db_user"}
-		String db_host = dbjo.getString("db_host") ;
-		int db_port = dbjo.getInt("db_port") ;
-		String db_name = dbjo.getString("db_name") ;
-		String db_user = dbjo.getString("db_user") ;
-		String db_psw = dbjo.optString("db_psw") ;
-		String url = "jdbc:mysql://"+db_host+":"+db_port+"/"+db_name+"?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8" ;//"jdbc:sqlite:{$$data_db_sqlite}recved_rt.db";
-		//File f = PlatformManager.getInstance().getRTDataDir() ;
-		//if(!f.exists())
-		//	f.mkdirs() ;
-		//String fp = f.getCanonicalPath().replaceAll("\\\\", "/") ;
-		//if(!fp.endsWith("/"))
-		//	fp += "/" ;
-		//url = url.replace("{$$data_db_sqlite}",fp) ;
-		//System.out.println("db url="+url) ;
-		SourceJDBC.Drv drv = SourceJDBC.getJDBCDriver("mysql8");
-		connPool = new DBConnPool(DBType.mysql, "", "com.mysql.cj.jdbc.Driver", url,db_name, db_user,db_psw, "0", "10",drv.getPlugDir().getOrLoadCL());
-		return connPool ;
+		return new PlatInsSaver(cp,tablename) ;
 	}
 	
+	DBConnPool connPool = null ;
 	
 	String tableName ;
 
-	public PlatformSaver(String tablename) throws Exception
+	private PlatInsSaver(DBConnPool cp,String tablename) throws Exception
 	{
+		this.connPool = cp ;
 		this.tableName = tablename ;
 		
 		Connection connection = null;
 		try
 		{
-			connection = getConnPool().getConnection() ;
+			connection = cp.getConnection() ;
 			try (Statement stmt = connection.createStatement())
 			{
 				String createTableSQL = null;
@@ -91,6 +108,11 @@ public class PlatformSaver
 		{
 			getConnPool().free(connection);
 		}
+	}
+	
+	private DBConnPool getConnPool()
+	{
+		return this.connPool ;
 	}
 	
 	void storeJson(String json, String keyid) throws Exception

@@ -21,7 +21,7 @@ import javax.websocket.CloseReason.CloseCodes;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.station.PlatformManager;
+import org.iottree.core.station.PlatInsManager;
 import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.ws.WSRoot.SessionItem;
 import org.json.JSONObject;

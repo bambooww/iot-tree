@@ -14,18 +14,12 @@
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
 //String un = up.getUserInfo().getFullName();
-	//if(PlatformManager.isInPlatform())
-	//{
-	//	response.sendRedirect("platform.jsp");
-	//	return ;
-	//}
+
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 String using_lan = Lan.getUsingLang() ;
 String sname = "Server";
-if(PlatformManager.isInPlatform())
-	sname = "Platform" ;
-//UAContext.getOrLoadJsApi() ;
-%><!DOCTYPE html>
+
+//UAContext.getOrLoadJsApi() ;%><!DOCTYPE html>
 <html class="">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -93,7 +87,7 @@ background:#aaaaaa;
 	position:relative;
 	left:2%;
 	width:95%;
-	height:50px;
+	height:40px;
 	border:1px solid;
 	border-color: #499ef3;
 	color:#0061aa;
@@ -102,14 +96,14 @@ background:#aaaaaa;
 .sor_item .n
 {
 	position:absolute;
-	font-size: 16px;
+	font-size: 14px;
 	left:5px;
 }
 .sor_item .tp
 {
 	position:absolute;
-	font-size: 15px;
-	bottom:3px;
+	font-size: 13px;
+	bottom:0px;
 	left:10px;
 }
 .sor_item .oper
@@ -332,7 +326,17 @@ if(rep.isAutoStart())
 
        <div class="text-color-999">
            <span class="text-color-666">&nbsp;&nbsp;&nbsp;[<%=rep.getName() %>]</span>
-           <span class="text-color-666" style="left:200px;position: absolute;">•<wbt:lang>modified_date</wbt:lang>:<%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %></span>
+           <span class="text-color-666" style="left:200px;position: absolute;">•<wbt:lang>modified_date</wbt:lang>:<%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %>
+           &nbsp;&nbsp;
+<%
+	PStation pstation = rep.getPrjPStationInsDef() ;
+	if(pstation!=null)
+	{
+%><span style="color:blue;"> • Remote Station [<%=pstation.getId() %>] </span><%
+	}
+%>
+           </span>
+           
        </div>
    </div>
 <%
@@ -664,6 +668,20 @@ if(ins.isAutoStart())
 				</div>
 				<!--right side -->
 				<div class="iot-side-bar">
+				
+					<div class="iot-mod iot-text-align-justify">
+						    <div class="mod-head">
+						        <span class="tt"><wbt:lang>remote_station</wbt:lang></span>
+						        
+						        <span class="op" onclick="mgr_pstation()" style="right:50px;" title="manage remote station"><i class="fa-solid fa-satellite-dish" ></i></span>
+					        <span class="op" onclick="add_pstation()"><i class="fa-solid fa-plus fa-lg"></i></span>
+						    </div>
+						    <div class="mod-body fz" id="pstation_list">
+						        
+						    </div>
+						</div>
+					
+					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
 					        <h3><wbt:lang>services</wbt:lang></h3>
@@ -1561,7 +1579,7 @@ function update_sors()
 	});
 }
 
-update_sors();
+
 
 function del_sor(id)
 {
@@ -1659,6 +1677,124 @@ function add_or_edit_source(tp,t,id)
 								dlg.msg(err);
 							});
 				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
+function mgr_pstation()
+{
+	if(event)
+		event.stopPropagation();
+	dlg.open("./util/pstation_mgr.jsp",{title:"Remote Station Management"},['<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function show_pstations(objs)
+{
+	//console.log(objs);
+	let tmps="" ;
+	for(let ob of objs)
+	{//console.log(ob) ;
+		tmps += `<div id="pstation_\${ob.id}" class="sor_item"  t="\${ob.t}" station_id="\${ob.id}">
+					<span class="n">[\${ob.id}]</span>
+					<span class="tp">\${ob.t}</span>
+					<span class="oper">
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_pstation('\${ob.id}')"><i class="fa fa-pencil"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_pstation('\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+					</span>
+					</div>` ;
+	}
+	$("#pstation_list").html(tmps) ;
+}
+
+function update_pstations(cb)
+{
+	send_ajax("./util/pstation_ajax.jsp",{op:"list_pstation"},(bsucc,ret)=>{
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			dlg.msg(ret);
+			return;
+		}
+		let objs =null;
+		eval("objs="+ret) ;
+		show_pstations(objs)
+		
+		if(cb)
+			cb() ;
+	});
+}
+
+update_pstations(()=>{
+	update_sors();
+}) ;
+
+function del_pstation(id)
+{
+	let ob = $("#pstation_"+id);
+	event.stopPropagation();
+	dlg.confirm('<wbt:g>del,this,</wbt:g>'+ob.attr('t')+' ['+ob.attr('station_id')+'] ?', {btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
+	{
+		send_ajax("./util/pstation_ajax.jsp",{op:"del_pstation",id:id},(bsucc,ret)=>{
+    		if(!bsucc||ret!="succ")
+    		{
+    			dlg.msg(ret);
+    			return ;
+    		}
+    		update_pstations();
+    	}) ;
+	});
+}
+
+function add_pstation()
+{
+	add_or_edit_pstation("") ;
+}
+
+function add_or_edit_pstation(id)
+{
+	if(event)
+		event.stopPropagation();
+	tt = "<wbt:g>add</wbt:g> Station ";
+	if(id)
+	{
+		tt = "<wbt:g>edit</wbt:g> Station - "+id;
+	}
+	if(!id)
+		id = "" ;
+	dlg.open("./util/pstation_edit.jsp?id="+id,
+			{title:tt},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 ret.op="set_pstation" ;
+						 if(id)
+						 	ret.id = id ;
+						 send_ajax("./util/pstation_ajax.jsp",ret,(bsucc,ret)=>{
+							 if(!bsucc || ret!="succ")
+							{
+								 dlg.msg(ret);return ;
+							}
+							 dlg.close();
+								update_pstations();
+						 }) ;
+					})
 				},
 				function(dlgw)
 				{

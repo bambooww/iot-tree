@@ -3,7 +3,7 @@
   <parent>
     <artifactId>ext-parent</artifactId>
     <groupId>org.iottree.ext</groupId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>iottree-ext-basic</artifactId>
@@ -21,7 +21,7 @@
          <dependency>
 	    <groupId>org.iottree</groupId>
 	    <artifactId>iottree-core</artifactId>
-	    <version>1.7.2</version>
+	    <version>1.7.3</version>
 	</dependency>
 	
     <dependency>
@@ -52,11 +52,7 @@
 	</dependency>
 		 -->
 		<!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
-<dependency>
-    <groupId>com.influxdb</groupId>
-    <artifactId>influxdb-client-java</artifactId>
-    <version>7.1.0</version>
-</dependency>
+
 		
   </dependencies>
 

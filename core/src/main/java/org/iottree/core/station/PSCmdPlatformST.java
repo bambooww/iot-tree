@@ -13,7 +13,7 @@ public class PSCmdPlatformST extends PSCmd
 		return CMD;
 	}
 
-	public PSCmdPlatformST asPlatform(PlatformManager pm)
+	public PSCmdPlatformST asPlatform(PlatInsManager pm)
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("ts", System.currentTimeMillis()) ;

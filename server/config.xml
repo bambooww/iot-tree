@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <iottree debug="true" title="IOTTree Server" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" >
 
- 	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web">
+ 	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web" >
  	 	<webapp name="admin" />
 		<webapp name="ROOT" />
 		<webapp name="doc" />
@@ -15,6 +15,7 @@
 		<!-- 
 		
 		<webapp name="main" path="main/main.war" /> 
+		
 		 -->
 		
 	</webapps>
@@ -29,6 +30,12 @@
 	<log>
 		<ctrl name="xx.xx" default_level="trace" />
 	</log>
+	
+	<access_limit enable="true">
+	    <ip_prefix ip="127.0.0.1"/>
+	    <ip_prefix ip="192.168.1."/>
+	</access_limit>
+		
 	<!-- 
 	<plug_auth name="auth_demo" 
 			login_url="http://abc.xx.com/login/login.jsp"
@@ -45,7 +52,9 @@
 			>
 	</plug_auth>
 	
-	 -->
 	
+	<run_as_station enabled="true" station_id="demo_station" station_title="Demo Station"
+		platform="192.168.0.18" port="9090"  key="1232213123" />
+	 -->
 	
 </iottree>

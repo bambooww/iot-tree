@@ -15,7 +15,7 @@
 				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
-   boolean b_inplat = PlatformManager.isInPlatform() ;
+   
    String user = request.getParameter("user") ;
    if(Convert.isNullOrEmpty(user))
 	   user="" ;
@@ -34,12 +34,14 @@
 	String prjname = "" ;
 	String hmiid = uahmi.getId() ;
 	String path_in_prj = null ;
+	boolean b_station_ins=false;
 	if(topn instanceof UAPrj)
 	{
 		prj = (UAPrj)topn ;
 		prjid = prj.getId() ;
 		prjname = prj.getName() ;
 		path_in_prj = uahmi.getNodeCxtPathInPrj() ;
+		b_station_ins = prj.isPrjPStationIns() ;
 	}
 	
 	String res_ref_id="" ;
@@ -101,10 +103,7 @@
 	String not_run_prompt = uahmi.getNotRunPrompt() ;
 	if(Convert.isNullOrEmpty(not_run_prompt))
 		not_run_prompt = "Project is not running." ;
-	//String repname = rep.getName() ;
-	
-	
-%><!DOCTYPE html>
+	//String repname = rep.getName() ;%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -511,7 +510,7 @@ position:relative;
 <script type="text/javascript">
 dlg.dlg_top=true;
 
-var b_platform = <%=b_inplat%>;
+var b_station_ins = <%=b_station_ins%>;
 </script>
 <body class="layout-body">
 <div style="z-index: 60000"><button onclick="cxt_rt()" >cxtrt</button></div>
@@ -1267,7 +1266,7 @@ function ws_conn()
     	}
     		
     	
-    	if(d.prj_run || b_platform)
+    	if(d.prj_run || b_station_ins)
     		show_overlay(false);
     	else
     		show_overlay(true,not_run_prompt);

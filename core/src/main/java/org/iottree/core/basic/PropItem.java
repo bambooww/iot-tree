@@ -152,6 +152,11 @@ public class PropItem
 		}
 	}
 	
+	public static interface IValOpts
+	{
+		public ValOpts getValOpts() ;
+	}
+	
 	static ValOpts BOOL_DEF_OPTS = new ValOpts();
 	static
 	{
@@ -300,6 +305,8 @@ public class PropItem
 	
 	DataNode lanDN = null ;
 	
+	IValOpts dynValOpts = null ;
+	
 	public PropItem(String n,Lan prop_lan,PValTP vt,boolean breadonly,
 			String[] valopt_ts,Object[] valopt_vals,Object def_val)
 	{
@@ -373,7 +380,16 @@ public class PropItem
 	
 	public ValOpts getValOpts()
 	{
+		if(dynValOpts!=null)
+			return dynValOpts.getValOpts() ;
+		
 		return valOpts; 
+	}
+	
+	public PropItem withDynValOpts(IValOpts dyn)
+	{
+		dynValOpts = dyn ;
+		return this ;
 	}
 	
 	public Object getDefaultVal()

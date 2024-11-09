@@ -33,7 +33,7 @@ public class PSCmdDirSynAck extends PSCmd
 	}
 	
 	@Override
-	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si,PStation ps) throws Exception
+	public void RT_onRecvedInPlatform(PlatInsWSServer.SessionItem si,PStation ps) throws Exception
 	{
 		String tp = this.getParamByIdx(0) ;
 		if(tp==null)

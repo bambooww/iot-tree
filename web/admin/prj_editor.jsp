@@ -534,14 +534,21 @@ function open_doc()
 				 --%>
 		</div>
 <%
-if(!PlatformManager.isInPlatform())
+if(!rep.isPrjPStationIns())
 {
 %>
-		 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
+<div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
-		</div>
+</div>
+<%
+}
+else
+{
+%><div class="top_toolbox top_tool" style="left:60%;width:210px;">
+<span id="show_remote_station"  style="color:#76d170" title="manager remote station" onclick="show_remote_station()">Remote Station <i class="fa-solid fa-satellite-dish fa-lg" ></i></span>
+</div>
 <%
 }
 %>
@@ -2589,6 +2596,18 @@ function rt_cp_start_stop(cp_id)
 	},false) ;
 }
 
+function show_remote_station()
+{
+	dlg.open("util/pstation_mgr.jsp?prjid="+prjid,
+			{title:"<wbt:g>remote_station</wbt:g>",w:'450px',h:'500px'},
+			['<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
 
 var layuiEle ;
 
@@ -2619,11 +2638,6 @@ layui.use('element', function(){
 	
 	layuiEle.render();
 	
-
-
-	//if(hmi_main.path!=null&&hmi_main.path!="")
-	//	add_tab(hmi_main.id,hmi_main.title,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+hmi_main.id+"&path="+hmi_main.path) ;
-
 });
 
 setInterval(prj_rt,3000) ;

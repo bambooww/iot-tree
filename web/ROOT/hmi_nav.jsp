@@ -14,9 +14,10 @@
 	org.iottree.core.util.*,org.iottree.core.station.*,
 	org.iottree.core.comp.*,
 				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
+
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
-   boolean b_inplat = PlatformManager.isInPlatform() ;
+   
    String user = request.getParameter("user") ;
    String tp = request.getParameter("tp") ;
    if(Convert.isNullOrEmpty(user))
@@ -47,8 +48,7 @@
 	}
 	
 	int maxDeep = navtree.getMaxDeep() ;
-	JSONObject treejo = navtree.toJO() ;
-%><!DOCTYPE html>
+	JSONObject treejo = navtree.toJO() ;%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -151,8 +151,6 @@ th
 </head>
 <script type="text/javascript">
 dlg.dlg_top=true;
-
-var b_platform = <%=b_inplat%>;
 </script>
 <body class="layout-body">
 <div class="top" id="top_nav1">

@@ -1,4 +1,4 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.store.influxdb;
 
 /**
  * 直接根据树形组织和标签，提取需要的数据并进行存储。

@@ -12,11 +12,6 @@
 	"%><%!
 
 %><%
-if(!PlatformManager.isInPlatform())
-{
-	out.println("not platform") ;
-	return ;
-}
 
 if(!Convert.checkReqEmpty(request, null, "stationid","module","path","subf"))
 {
@@ -30,7 +25,7 @@ String stationid = request.getParameter("stationid") ;
 String module = request.getParameter("module") ;
 String path = request.getParameter("path") ;
 String subf = request.getParameter("subf") ;
-PStation pstat = PlatformManager.getInstance().getStationById(stationid) ;
+PStation pstat = PlatInsManager.getInstance().getStationById(stationid) ;
 if(pstat==null)
 	throw new Exception("no station found") ;
 if(!pstat.RT_synDirCheckDownloadToken(token))
@@ -50,5 +45,4 @@ try(FileInputStream fis = new FileInputStream(plat_f))
 		outos.write(bs, 0, rlen) ;
 	}
 	outos.flush() ;
-}
-%>
+}%>

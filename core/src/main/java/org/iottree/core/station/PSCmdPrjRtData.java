@@ -65,7 +65,7 @@ public class PSCmdPrjRtData extends PSCmd
 	//private static HashMap<String,Integer> prj2hiscc = new HashMap<>() ;
 
 	@Override
-	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si, PStation ps) throws Exception
+	public void RT_onRecvedInPlatform(PlatInsWSServer.SessionItem si, PStation ps) throws Exception
 	{
 		String prjname = this.getParamByIdx(0);
 		String key = this.getParamByIdx(1) ;
@@ -85,8 +85,8 @@ public class PSCmdPrjRtData extends PSCmd
 //			System.out.println("recved his prj="+prjname+" cc="+c) ;
 //		}
 
-		String p_prjname = ps.getId()+"_"+prjname ;
-		UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
+		//String p_prjname = ps.getId()+"_"+prjname ;
+		UAPrj platform_prj = ps.getRelatedPrjByRStationPrjN(prjname); //UAManager.getInstance().getPrjByName(p_prjname);
 		if (platform_prj == null)
 			return;
 
@@ -95,22 +95,21 @@ public class PSCmdPrjRtData extends PSCmd
 		JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
 
 		// platform_prj.RT_platform_RTSet(rt_jo) ;
-		if (rt_jo != null && !bhis)
-			updateCxtDyn(platform_prj, rt_jo);
 		
-		//如何发送的Platform后端进行后续的使用？
-		PlatformManager.getInstance().onRecvedRTData(ps,prjname,key,bs,rt_jo,bhis) ;
+		
+		PlatInsManager.getInstance().onRecvedRTData(ps,platform_prj,key,bs,rt_jo,bhis) ;
 	}
 	
 	/**
 	 * 专门支持批量处理历史数据的函数，主要是写数据库批处理，以提升性能
+	 * 输入数据通过队列获取
 	 * @param rds
 	 * @param ps
 	 * @throws Exception 
 	 */
 	public static void onRecvedMultiHisInPlatform(List<PSCmdPrjRtData> rds,PStation ps) throws Exception
 	{
-		HashMap<String,HashMap<String,byte[]>> prj_k2jo = new HashMap<>() ;
+		HashMap<UAPrj,HashMap<String,byte[]>> prj_k2jo = new HashMap<>() ;
 		//分表处理
 		for(PSCmdPrjRtData rd:rds)
 		{
@@ -118,8 +117,11 @@ public class PSCmdPrjRtData extends PSCmd
 			String key = rd.getParamByIdx(1) ;
 			if (Convert.isNullOrEmpty(prjname) || Convert.isNullOrEmpty(key))
 				return;
-			String p_prjname = ps.getId()+"_"+prjname ;
-			UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
+			
+			UAPrj platform_prj = ps.getRelatedPrjByRStationPrjN(prjname);
+			
+//			String p_prjname = ps.getId()+"_"+prjname ;
+//			UAPrj platform_prj = UAManager.getInstance().getPrjByName(p_prjname);
 			if (platform_prj == null)
 				return;
 
@@ -134,7 +136,7 @@ public class PSCmdPrjRtData extends PSCmd
 				if(k2jo==null)
 				{
 					k2jo = new HashMap<>() ;
-					prj_k2jo.put(prjname,k2jo) ;
+					prj_k2jo.put(platform_prj,k2jo) ;
 				}
 				k2jo.put(key,bs) ;
 			}
@@ -144,11 +146,11 @@ public class PSCmdPrjRtData extends PSCmd
 			}
 		}
 		
-		for(Map.Entry<String, HashMap<String,byte[]>> prj2kjo:prj_k2jo.entrySet())
+		for(Map.Entry<UAPrj, HashMap<String,byte[]>> prj2kjo:prj_k2jo.entrySet())
 		{
-			String prjname = prj2kjo.getKey() ;
+			UAPrj prj = prj2kjo.getKey() ;
 			HashMap<String,byte[]> k2jo = prj2kjo.getValue() ;
-			PlatformManager.getInstance().onRecvedHisRTDatas(ps, prjname, k2jo);
+			PlatInsManager.getInstance().onRecvedHisRTDatas(ps, prj, k2jo);
 		}
 	}
 
@@ -219,146 +221,73 @@ public class PSCmdPrjRtData extends PSCmd
 		return new String(outputStream.toByteArray(), "UTF-8");
 	}
 
-	// private void onNodeSharePush(String jsonstr) throws Exception
-	// {
-	// try
-	// {
-	// if(log.isDebugEnabled())
-	// log.debug("onNodeSharePush="+jsonstr);
-	// UACh ch = this.getJoinedCh();
-	// if(ch==null)
-	// return ;
-	//
-	// if(Convert.isNullOrEmpty(jsonstr))
-	// return ;
-	// JSONObject jo = new JSONObject(jsonstr);
-	// shareWritable = jo.optBoolean("share_writable", false) ;
-	// shareDT = jo.optLong("share_dt", -1) ;
-	// //if(log.isDebugEnabled())
-	// // log.debug("onNodeSharePush before updateChCxtDyn");
-	// updateChCxtDyn(ch,jo);
-	// }
-	// finally
-	// {
-	// lastPushDT = System.currentTimeMillis();
-	// }
-	// }
 
-	private static final int MAX_NUM = 5;
+//	private static final int MAX_NUM = 5;
+//
+//	/**
+//	 * record tag update info for later timeout checking
+//	 * 
+//	 * @author jason.zhu
+//	 *
+//	 */
+//	private static class Tag2Up
+//	{
+//		UATag tag;
+//
+//		LinkedList<UAVal> prevVals = new LinkedList<>();
+//
+//		public Tag2Up(UATag tag, UAVal val)
+//		{
+//			this.tag = tag;
+//			this.prevVals.addLast(val);
+//		}
+//
+//		public void putVal(UAVal v)
+//		{
+//			prevVals.addLast(v);
+//
+//			if (prevVals.size() > MAX_NUM)
+//				prevVals.removeFirst();
+//		}
+//
+//		public UAVal getLastVal()
+//		{
+//			return prevVals.getLast();
+//		}
+//	}
+//
+//	private transient HashMap<String, Tag2Up> tagp2upMap = new HashMap<>();
+//
+//	private void setToBuf(UATag tag, UAVal val)
+//	{
+//		String tagp = tag.getNodeCxtPathInPrj();
+//		Tag2Up t2u = tagp2upMap.get(tagp);
+//		if (t2u != null)
+//		{
+//			t2u.putVal(val);
+//			return;
+//		}
+//
+//		t2u = new Tag2Up(tag, val);
+//		tagp2upMap.put(tagp, t2u);
+//		return;
+//	}
+//
+//	private void setTagErrInBuf(long dt)
+//	{
+//		for (Tag2Up t2u : tagp2upMap.values())
+//		{
+//			UAVal lastv = t2u.getLastVal();
+//			if (!lastv.isValid())
+//				continue; //
+//			UATag tag = t2u.tag;
+//
+//			UAVal uav = new UAVal(false, null, dt, dt);
+//			tag.RT_setUAVal(uav);
+//
+//			setToBuf(tag, uav);
+//		}
+//	}
 
-	/**
-	 * record tag update info for later timeout checking
-	 * 
-	 * @author jason.zhu
-	 *
-	 */
-	private static class Tag2Up
-	{
-		UATag tag;
-
-		LinkedList<UAVal> prevVals = new LinkedList<>();
-
-		public Tag2Up(UATag tag, UAVal val)
-		{
-			this.tag = tag;
-			this.prevVals.addLast(val);
-		}
-
-		public void putVal(UAVal v)
-		{
-			prevVals.addLast(v);
-
-			if (prevVals.size() > MAX_NUM)
-				prevVals.removeFirst();
-		}
-
-		public UAVal getLastVal()
-		{
-			return prevVals.getLast();
-		}
-	}
-
-	private transient HashMap<String, Tag2Up> tagp2upMap = new HashMap<>();
-
-	private void setToBuf(UATag tag, UAVal val)
-	{
-		String tagp = tag.getNodeCxtPathInPrj();
-		Tag2Up t2u = tagp2upMap.get(tagp);
-		if (t2u != null)
-		{
-			t2u.putVal(val);
-			return;
-		}
-
-		t2u = new Tag2Up(tag, val);
-		tagp2upMap.put(tagp, t2u);
-		return;
-	}
-
-	private void setTagErrInBuf(long dt)
-	{
-		for (Tag2Up t2u : tagp2upMap.values())
-		{
-			UAVal lastv = t2u.getLastVal();
-			if (!lastv.isValid())
-				continue; //
-			UATag tag = t2u.tag;
-
-			UAVal uav = new UAVal(false, null, dt, dt);
-			tag.RT_setUAVal(uav);
-
-			setToBuf(tag, uav);
-		}
-	}
-
-	private void updateCxtDyn(UANodeOCTagsCxt p, JSONObject curcxt)
-	{
-		JSONArray jos = curcxt.optJSONArray("tags");
-		if (jos != null)
-		{
-			for (int i = 0, n = jos.length(); i < n; i++)
-			{
-				JSONObject tg = jos.getJSONObject(i);
-				String name = tg.getString("n");
-				UATag tag = p.getTagByName(name);
-				if (tag == null) // || tag.isSysTag())
-					continue;
-				// var tagp =p+n ;
-				boolean bvalid = tg.optBoolean("valid", false);
-				long dt = tg.optLong("dt", -1);
-				long chgdt = tg.optLong("chgdt", -1);
-
-				Object ov = tg.opt("v");
-				String strv = "";
-				if (ov != null && ov != JSONObject.NULL)
-					strv = "" + ov;
-				// set to cxt
-				ov = UAVal.transStr2ObjVal(tag.getValTp(), strv);
-				UAVal uav = new UAVal(bvalid, ov, dt, chgdt);
-				// tag.RT_setValStr(strv, true);
-				tag.RT_setUAVal(uav);
-
-				setToBuf(tag, uav);
-			}
-		}
-
-		JSONArray subs = curcxt.optJSONArray("subs");
-		if (subs != null)
-		{
-			for (int i = 0, n = subs.length(); i < n; i++)
-			{
-				JSONObject sub = subs.getJSONObject(i);
-
-				String subn = sub.getString("n");
-
-				UANode uan = p.getSubNodeByName(subn);
-				if (uan == null)
-					continue;
-				if (!(uan instanceof UANodeOCTagsCxt))
-					continue;
-
-				updateCxtDyn((UANodeOCTagsCxt) uan, sub);
-			}
-		}
-	}
+	
 }

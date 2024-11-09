@@ -171,11 +171,7 @@ public static List<String> scanDir(File basedir,long modify_after,FileFilter fil
 		return rets ;
 	}
 %><%
-if(!PlatformManager.isInPlatform())
-{
-	out.println("not platform") ;
-	return ;
-}
+
 if(!Convert.checkReqEmpty(request, out,"op"))
 	return ;
 
@@ -186,7 +182,7 @@ String stationid = request.getParameter("stationid") ;
 PStation station = null;
 if(Convert.isNotNullEmpty(stationid))
 {
-	station = PlatformManager.getInstance().getStationById(stationid) ;
+	station = PlatInsManager.getInstance().getStationById(stationid) ;
 	if(station==null)
 	{
 		out.print("no station found") ;

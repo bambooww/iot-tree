@@ -61,4 +61,10 @@
 	<dd_node id="1" name="pi_hmi_nav2_en" name_cn="启用Nav2" name_en="Enable Nav1" desc_cn=""/>
 	<dd_node id="1" name="pi_hmi_nav2_jo" name_cn="Nav2菜单JSON内容" name_en="Nav2 JSON Menu" desc_cn=""/>
 
+	<dd_node id="1" name="pg_pstation_ins" name_cn="远端站点实例" name_en="Remote station instance" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_pstation_ins_en" name_cn="启用作为远端站点实例运行" name_en="Enable running as a remote station instance" desc_cn=""/>
+	<dd_node id="1" name="pi_station_id" name_cn="远端站点ID" name_en="Remote Station ID" desc_cn=""/>
+	<dd_node id="1" name="pi_station_prjn" name_cn="远端站点项目名称" name_en="Remote Station Project Name" desc_cn="空表示和本项目同名" desc_en="Empty represents the same name as this project"/>
+	<dd_node id="1" name="pi_syn_data_saver_sor" name_cn="远端站点同步数据保存数据源" name_en="Remote Station synchronization data saving jdbc source" desc_cn="空表示同步数据不做保存" desc_en="Empty means synchronous data is not saved"/>
+
 </dd_class>

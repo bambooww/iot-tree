@@ -22,7 +22,7 @@ import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.basic.ValAlert;
-import org.iottree.core.station.PlatformManager;
+import org.iottree.core.station.PlatInsManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WSRoot.SessionItem;
 import org.json.JSONArray;
@@ -140,7 +140,7 @@ public abstract class WSServer// extends ConnServer
 			sw.append("{\"dt\":"+System.currentTimeMillis()+"}\r\n");
 			sw.write("{\"prj_id\":\"" + prj.getId() + "\",\"cxt_path\":\"" + ntags.getNodePathCxt() + "\",\"prj_run\":"
 					+ prj.RT_isRunning());
-			if (prj.RT_isRunning() || PlatformManager.isInPlatform())
+			if (prj.RT_isRunning() || prj.isPrjPStationIns()) //PlatInsManager.isInPlatform())
 			{
 				StringWriter sw_rt = new StringWriter();
 

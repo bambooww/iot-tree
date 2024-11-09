@@ -38,7 +38,7 @@ public class PSCmdPrjUpdate extends PSCmd
 	}
 	
 	@Override
-	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si,PStation ps) throws Exception
+	public void RT_onRecvedInPlatform(PlatInsWSServer.SessionItem si,PStation ps) throws Exception
 	{
 		String prjname = this.getParamByIdx(0) ;
 		if(Convert.isNullOrEmpty(prjname))
@@ -59,7 +59,7 @@ public class PSCmdPrjUpdate extends PSCmd
 //			System.err.println(" RT_onRecvedInStationLocal err :"+failedr.toString()) ;
 		
 		// 不允许直接更新项目，动作太大
-		PlatformManager.getInstance().onRecvedStationPrj(ps,prjname, zipbs) ;
+		PlatInsManager.getInstance().onRecvedStationPrj(ps,prjname, zipbs) ;
 	}
 	
 	@Override

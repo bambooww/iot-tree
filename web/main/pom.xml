@@ -3,11 +3,13 @@
   <parent>
     <groupId>org.iottree.web</groupId>
     <artifactId>web-parent</artifactId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
   </parent>
   <artifactId>main</artifactId>
+  <!-- 
   <packaging>war</packaging>
-  
+   -->
+   
     <properties>
 	<output.directory>../../_output</output.directory>
   </properties>

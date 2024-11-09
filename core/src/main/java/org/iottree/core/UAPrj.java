@@ -24,6 +24,7 @@ import org.iottree.core.basic.NameTitleVal;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.basic.PropItem.ValOpt;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
@@ -36,7 +37,9 @@ import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.router.RouterManager;
-import org.iottree.core.station.PlatformManager;
+import org.iottree.core.station.PStation;
+import org.iottree.core.station.PlatInsManager;
+import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.record.RecManager;
 import org.iottree.core.task.Task;
@@ -409,6 +412,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		pgs.add(this.getPrjPropGroup());
 		pgs.add(this.getPrjRestfulApiGroup());
 		pgs.add(this.getPrjHmiNavGroup());
+		pgs.add(this.getPrjPStationGroup());
 		//
 
 		repPGS = pgs;
@@ -546,6 +550,97 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return null ;
 	}
 	
+	// PStation for remote station supported
+	
+	PStation pstationInsDef = null ;
+	
+	private PropGroup getPrjPStationGroup()
+	{
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("pstation_ins", lan);//"Project");
+
+		r.addPropItem(new PropItem("pstation_ins_en", lan, PValTP.vt_bool, false, null, null,false));
+		r.addPropItem(new PropItem("station_id",lan, PValTP.vt_str, false, new String[] {}, new Object[] {},"").withDynValOpts(new PropItem.IValOpts() {
+			
+			@Override
+			public PropItem.ValOpts getValOpts()
+			{
+				List<PStation> pss = PlatInsManager.getInstance().listStations() ;
+				ArrayList<ValOpt> vopt = new ArrayList<>(pss.size()) ;
+				for(PStation ps:pss)
+				{
+					vopt.add(new ValOpt("["+ps.getId()+"] "+ps.getTitle(),ps.getId())) ;
+				}
+				return new PropItem.ValOpts(vopt);
+			}
+		}));
+		
+		r.addPropItem(new PropItem("syn_data_saver_sor",lan, PValTP.vt_str, false, new String[] {}, new Object[] {},"").withDynValOpts(new PropItem.IValOpts() {
+			
+			@Override
+			public PropItem.ValOpts getValOpts()
+			{
+				List<SourceJDBC> sors = StoreManager.listSourcesJDBC() ;
+				
+				ArrayList<ValOpt> vopt = new ArrayList<>(sors.size()) ;
+				vopt.add(new ValOpt(" --- ","")) ;
+				for(SourceJDBC sor:sors)
+				{
+					vopt.add(new ValOpt(sor.getDBInf(),sor.getName())) ;
+				}
+				return new PropItem.ValOpts(vopt);
+			}
+		}));
+		
+		r.addPropItem(new PropItem("station_prjn",lan, PValTP.vt_str, false, null, null,""));
+		//r.addPropItem(new PropItem("station_key",lan, PValTP.vt_str, false, null, null,""));
+		
+		return r;
+	}
+		
+	public synchronized PStation getPrjPStationInsDef()
+	{
+		if(pstationInsDef!=null)
+			return pstationInsDef ;
+		
+		boolean ben = this.getOrDefaultPropValueBool("pstation_ins", "pstation_ins_en", false) ;
+		if(!ben)
+		{
+			return null ;
+		}
+		
+		String id = this.getOrDefaultPropValueStr("pstation_ins", "station_id", "") ;
+		if(Convert.isNullOrEmpty(id))
+			return null ;
+		pstationInsDef = PlatInsManager.getInstance().getStationById(id) ;
+		return pstationInsDef ;
+	}
+	
+	public String getPrjPStationSaverSor()
+	{
+		return this.getOrDefaultPropValueStr("pstation_ins", "syn_data_saver_sor", "") ;
+	}
+	
+	/**
+	 * remote station prj name
+	 * @return
+	 */
+	public String getPrjRStationPrjName()
+	{
+		return this.getOrDefaultPropValueStr("pstation_ins", "station_prjn", "") ;
+	}
+	
+	/**
+	 * prj is station instance for remote station
+	 * @return
+	 */
+	public boolean isPrjPStationIns()
+	{
+		PStation def = getPrjPStationInsDef() ;
+		return def!=null ;
+	}
+	
 	public Object getPropValue(String groupn, String itemn)
 	{
 		if ("prj".contentEquals(groupn))
@@ -602,6 +697,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		{
 			bRestfulGit = false;
 			nav2tree = null ;
+			this.pstationInsDef = null ;
 		}
 		try
 		{
@@ -1186,7 +1282,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@JsDef
 	synchronized public boolean RT_start()
 	{
-		if(PlatformManager.isInPlatform())
+		if(this.isPrjPStationIns()) //PlatInsManager.isInPlatform())
 			return false;
 		
 		if (rtTh != null)

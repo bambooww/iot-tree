@@ -104,7 +104,7 @@ public class PSCmdStationST extends PSCmd
 	
 	//
 	@Override
-	public void RT_onRecvedInPlatform(PlatformWSServer.SessionItem si,PStation ps) throws Exception
+	public void RT_onRecvedInPlatform(PlatInsWSServer.SessionItem si,PStation ps) throws Exception
 	{
 		JSONObject jo = this.getCmdDataJO() ;
 		//System.out.println(" recv station "+ps.getId()+" "+jo) ;

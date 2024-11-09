@@ -1,14 +1,11 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.store.influxdb;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
-import org.iottree.ext.msg_net.InfluxDB_Writer.WDef;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

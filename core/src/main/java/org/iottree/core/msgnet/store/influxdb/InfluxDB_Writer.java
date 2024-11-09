@@ -1,6 +1,5 @@
-package org.iottree.ext.msg_net;
+package org.iottree.core.msgnet.store.influxdb;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.iottree.core.msgnet.MNCxtValSty;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.RTOut;
-import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;

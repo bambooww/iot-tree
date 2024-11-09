@@ -293,6 +293,20 @@ public class MNManager
 			ee.printStackTrace();
 		}
 		
+		
+		// for platform
+		nodesf = new File(msgnetdir+"nodes_platform.json") ;
+		if(nodesf.exists())
+		{
+			try
+			{
+				loadNodesFile(nodesf) ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
+		}
 	}
 	
 	
