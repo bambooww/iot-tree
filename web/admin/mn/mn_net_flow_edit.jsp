@@ -136,7 +136,7 @@ white-space: nowrap;
 				<span id="left_panel_title" style="font-size: 18px;left:35px;position: relative;top:5px;">Nodes</span>
 			</div>
 			 
-			<iframe id="left_pan_iframe" src="mn_node_list.jsp" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>
+			<iframe id="left_pan_iframe" src="mn_node_list.jsp?container_id=<%=container_id %>" style="width:100%;top:0px;height:300px;overflow:hidden;margin: 0px;border:0px solid;padding: 0px;" ></iframe>
 		</div>
 <div id="mid" class="mid">
 			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" title="">

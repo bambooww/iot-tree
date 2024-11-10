@@ -1420,6 +1420,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.curVal = uav ;
 	}
 	
+	public void RT_setUAValOnlyAlert(UAVal uav)
+	{
+		HIS_setVal(uav) ;
+		this.curVal = uav ;
+		
+		if(uav.isValid()) // && bval_chg)
+		{
+			RT_chkAlerts() ;
+		}
+	}
 	/**
 	 * driver get value,may has transfer
 	 * @param v

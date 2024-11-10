@@ -533,20 +533,15 @@ function open_doc()
 				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
 				 --%>
 		</div>
-<%
-if(!rep.isPrjPStationIns())
-{
-%>
 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
 </div>
 <%
-}
-else
+if(rep.isPrjPStationIns())
 {
-%><div class="top_toolbox top_tool" style="left:60%;width:210px;">
+%><div class="top_toolbox top_tool" style="left:70%;width:210px;">
 <span id="show_remote_station"  style="color:#76d170" title="manager remote station" onclick="show_remote_station()">Remote Station <i class="fa-solid fa-satellite-dish fa-lg" ></i></span>
 </div>
 <%

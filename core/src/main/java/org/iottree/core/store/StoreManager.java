@@ -113,6 +113,18 @@ public class StoreManager
 		}
 		return rets ;
 	}
+	
+	public static List<SourceInfluxDB> listSourcesInfluxDB()
+	{
+		ArrayList<SourceInfluxDB> rets = new ArrayList<>();
+		for(Source sor:getName2Source().values())
+		{
+			if(!(sor instanceof SourceInfluxDB))
+				continue ;
+			rets.add((SourceInfluxDB)sor) ;
+		}
+		return rets ;
+	}
 
 	public static Source getSourceById(String id)
 	{
@@ -127,6 +139,22 @@ public class StoreManager
 	public static Source getSourceByName(String name)
 	{
 		return getName2Source().get(name);
+	}
+	
+	public static SourceJDBC getSourceJDBC(String name)
+	{
+		 Source sor = getSourceByName(name) ;
+		 if(sor==null || !(sor instanceof SourceJDBC))
+			 return null ;
+		 return (SourceJDBC)sor ;
+	}
+	
+	public static SourceInfluxDB getSourceInfluxDB(String name)
+	{
+		 Source sor = getSourceByName(name) ;
+		 if(sor==null || !(sor instanceof SourceInfluxDB))
+			 return null ;
+		 return (SourceInfluxDB)sor ;
 	}
 
 	public static void setSource(Source st, boolean bsave) throws Exception

@@ -8,7 +8,10 @@
   
   <dd_node id="1001" name="user" name_cn="用户" name_en="User" />
   <dd_node id="1001" name="psw" name_cn="密码" name_en="Password" />
-  <dd_node id="1001" name="repsw" name_cn="重复密码" name_en="Re Password" />
+  
+  <dd_node id="1001" name="oldpsw" name_cn="旧密码" name_en="Old Password" />
+  <dd_node id="1001" name="newpsw" name_cn="新密码" name_en="New Password" />
+  
   
   <dd_node id="1001" name="set_psw_login" name_cn="设置密码并登录" name_en="Set Password and Login" />
   <dd_node id="1001" name="reset" name_cn="重置" name_en="Reset" />

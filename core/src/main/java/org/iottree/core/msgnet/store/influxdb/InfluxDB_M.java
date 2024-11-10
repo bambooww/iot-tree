@@ -6,6 +6,8 @@ import org.iottree.core.msgnet.IMNNodeRes;
 import org.iottree.core.msgnet.IMNRunner;
 import org.iottree.core.msgnet.MNModule;
 import org.iottree.core.msgnet.MNNode;
+import org.iottree.core.store.SourceInfluxDB;
+import org.iottree.core.store.StoreManager;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
@@ -19,6 +21,10 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 //	private static InfluxDB_JO2Point SUP_JO2PT = new InfluxDB_JO2Point() ;
 	
 //	private static List<MNNode> SUPS = Arrays.asList(SUP_W,SUP_TAG2PT,SUP_JO2PT) ;
+	
+	boolean usingSource = true ;
+	
+	String sourceName = null ;
 	
 	String url = "http://localhost:8086" ;
 	
@@ -61,10 +67,29 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		if(Convert.isNullOrEmpty(this.url))
+		if(this.usingSource)
 		{
-			failedr.append("no url str") ;
-			return false;
+			if(Convert.isNullOrEmpty(this.sourceName))
+			{
+				failedr.append("no source name") ;
+				return false;
+			}
+			SourceInfluxDB sor = StoreManager.getSourceInfluxDB(this.sourceName) ;
+			if(sor==null)
+			{
+				failedr.append("no source found with name="+this.sourceName) ;
+				return false;
+			}
+			if(!sor.checkValid(failedr))
+				return false ;
+		}
+		else
+		{
+			if(Convert.isNullOrEmpty(this.url))
+			{
+				failedr.append("no url str") ;
+				return false;
+			}
 		}
 		return true;
 	}
@@ -73,6 +98,8 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 	public JSONObject getParamJO()
 	{
 		JSONObject jo = new JSONObject() ;
+		jo.putOpt("using_sor", this.usingSource) ;
+		jo.putOpt("sor_name", this.sourceName) ;
 		jo.putOpt("url", this.url) ;
 		jo.putOpt("token", token) ;
 		jo.putOpt("org", this.org) ;
@@ -83,6 +110,8 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
+		this.usingSource = jo.optBoolean("using_sor",true) ;
+		this.sourceName = jo.optString("sor_name") ;
 		this.url = jo.optString("url") ;
 		this.token = jo.optString("token") ;
 		this.org = jo.optString("org") ;
@@ -90,6 +119,17 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 		
 		RT_close();
 	}
+	
+	public boolean isUsingSource()
+	{
+		return this.usingSource ;
+	}
+	
+	public String getSourceName()
+	{
+		return this.sourceName ;
+	}
+	
 
 	public String getInfluxUrl()
 	{
@@ -137,8 +177,24 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 		if(rtClient!=null)
 			return rtClient ;
 		
-		rtClient =  InfluxDBClientFactory.create(this.url,
-				this.token.toCharArray(),org,bucket);
+		if(this.usingSource)
+		{
+			if(Convert.isNullOrEmpty(this.sourceName))
+				return null ;
+			SourceInfluxDB sor = StoreManager.getSourceInfluxDB(this.sourceName) ;
+			if(sor==null)
+				return null ;
+			StringBuilder failedr = new StringBuilder() ;
+			if(!sor.checkValid(failedr))
+				return null ;
+			rtClient =  InfluxDBClientFactory.create(sor.getUrl(),
+					sor.getToken().toCharArray(),sor.getOrg(),sor.getBucket());
+		}
+		else
+		{
+			rtClient =  InfluxDBClientFactory.create(this.url,
+					this.token.toCharArray(),org,bucket);
+		}
 		return rtClient ;
 	}
 	

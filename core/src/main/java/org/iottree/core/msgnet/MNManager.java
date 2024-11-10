@@ -398,6 +398,13 @@ public class MNManager
 		return this.belongTo ;
 	}
 	
+	public UAPrj getBelongToPrj()
+	{
+		if(this.belongTo==null || !(this.belongTo instanceof UAPrj))
+			return null ;
+		return (UAPrj)this.belongTo ;
+	}
+	
 	public List<MNNet> listNets()
 	{
 		if(nets!=null)

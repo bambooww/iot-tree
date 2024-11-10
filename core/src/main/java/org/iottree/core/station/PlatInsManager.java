@@ -363,7 +363,7 @@ public class PlatInsManager
 				ov = UAVal.transStr2ObjVal(tag.getValTp(), strv);
 				UAVal uav = new UAVal(bvalid, ov, dt, chgdt);
 				// tag.RT_setValStr(strv, true);
-				tag.RT_setUAVal(uav);
+				tag.RT_setUAValOnlyAlert(uav);
 
 				//setToBuf(tag, uav);
 			}

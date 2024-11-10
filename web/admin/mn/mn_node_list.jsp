@@ -9,9 +9,23 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	
+	if(!Convert.checkReqEmpty(request, out, "container_id"))
+		return ;
 // List<MNNode> nodes = MNManager.listRegisteredNodes() ;
-
+	String container_id = request.getParameter("container_id") ;
+	MNManager mnm= MNManager.getInstanceByContainerId(container_id) ;
+	if(mnm==null)
+	{
+		out.print("no MsgNet Manager with container_id="+container_id) ;
+		return ;
+	}
+	
+	UAPrj prj = mnm.getBelongToPrj() ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
 %>
 <html>
 <head>
@@ -156,6 +170,12 @@ for(MNCat cat:MNManager.listRegisteredCats())
 {
 	List<MNNode> nodes = cat.getNodes() ;
 	List<MNModule> modules = cat.getModules() ;
+	String catn = cat.getName() ;
+	if("_station".equals(catn))
+	{
+		if(!prj.isPrjPStationIns())
+			continue ;
+	}
 %>
 <div class="citem"  id="cat_<%=cat.getName()%>"  onclick="show_hiddle(this)" cat_n="<%=cat.getName()%>"><span id="cat_i_<%=cat.getName()%>"><i class="fa fa-angle-down"></i></span>  <%=cat.getTitle() %>	</div>
 <div id="cat_list_<%=cat.getName()%>">

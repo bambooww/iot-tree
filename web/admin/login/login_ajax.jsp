@@ -29,6 +29,20 @@
 		LoginUtil.doLogout(request) ;
 		out.print("ok") ;
 		break ;
+	case "chg_psw":
+		if(!LoginUtil.checkAdminLogin(request))
+		{
+			out.print("no current login inf") ;
+			return ;
+		}
+		String oldpsw = request.getParameter("oldpsw") ;
+		String newpsw = request.getParameter("newpsw") ;
+		StringBuilder failedr = new StringBuilder() ;
+		if(LoginUtil.chgPsw("admin",oldpsw, newpsw, failedr))
+			out.print("succ") ;
+		else
+			out.print(failedr.toString()) ;
+		break ;
 	case "set_lan":
 		if(!Convert.checkReqEmpty(request,  out, "lan"))
 			return ;

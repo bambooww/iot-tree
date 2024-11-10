@@ -568,6 +568,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			{
 				List<PStation> pss = PlatInsManager.getInstance().listStations() ;
 				ArrayList<ValOpt> vopt = new ArrayList<>(pss.size()) ;
+				vopt.add(new ValOpt(" --- ","")) ;
 				for(PStation ps:pss)
 				{
 					vopt.add(new ValOpt("["+ps.getId()+"] "+ps.getTitle(),ps.getId())) ;
@@ -637,8 +638,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	 */
 	public boolean isPrjPStationIns()
 	{
-		PStation def = getPrjPStationInsDef() ;
-		return def!=null ;
+		return this.getOrDefaultPropValueBool("pstation_ins", "pstation_ins_en", false) ;
+//		PStation def = getPrjPStationInsDef() ;
+//		return def!=null ;
 	}
 	
 	public Object getPropValue(String groupn, String itemn)
@@ -1282,8 +1284,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	@JsDef
 	synchronized public boolean RT_start()
 	{
-		if(this.isPrjPStationIns()) //PlatInsManager.isInPlatform())
-			return false;
+		//if(this.isPrjPStationIns()) //PlatInsManager.isInPlatform())
+		//	return false;
 		
 		if (rtTh != null)
 			return true;
@@ -1387,30 +1389,36 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			ic = Config.getInnerComp("store") ;
 			boolean b_store = ic==null||ic.bEnable ;
 			
+			boolean b_station_ins = UAPrj.this.isPrjPStationIns() ;
 			try
 			{
 				RT_init(true, true) ;
 				
 				RT_initContext(UAPrj.this) ;
 				
-				if(b_rec)
-					RecManager.getInstance(UAPrj.this).RT_start() ;
 				
-				AlertManager.getInstance(UAPrj.this.getId()).RT_start();
 				
-				if(b_store)
-					StoreManager.getInstance(UAPrj.this.getId()).RT_start();
-				
-				RouterManager.getInstance(UAPrj.this).RT_start();
 				// StringBuilder failedr = new StringBuilder() ;
 				
-				// start channel drivers
-				startStopCh(true);
-				
-				// start connprovider
-				startStopConn(true);
-
-				startStopTask(true) ;
+				if(!b_station_ins)
+				{
+					if(b_rec)
+						RecManager.getInstance(UAPrj.this).RT_start() ;
+					
+					AlertManager.getInstance(UAPrj.this.getId()).RT_start();
+					
+					if(b_store)
+						StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+					
+					RouterManager.getInstance(UAPrj.this).RT_start();
+					// start channel drivers
+					startStopCh(true);
+					
+					// start connprovider
+					startStopConn(true);
+	
+					startStopTask(true) ;
+				}
 				
 				MNManager.getInstance(UAPrj.this).RT_start();
 				
@@ -1426,24 +1434,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 					if(!rtRun)
 						break ;
-//					long st = System.currentTimeMillis() ;
-//					long et = System.currentTimeMillis() ;
-					RT_runFlush();
 					
-//					et = System.currentTimeMillis() ;
-//					System.out.println("run flush cost="+(et-st));
-//					st = System.currentTimeMillis() ;
-					
-					runMidTagsScript();
-
-//					et = System.currentTimeMillis() ;
-//					System.out.println("run flush cost="+(et-st));
-					runScriptInterval();
-					
-//					st = System.currentTimeMillis() ;
-
-					runShareInterval();
-					
+					if(!b_station_ins)
+					{
+						RT_runFlush();
+						runMidTagsScript();
+						runScriptInterval();
+						runShareInterval();
+					}
 //					et = System.currentTimeMillis() ;
 //					System.out.println("run flush cost="+(et-st));
 					

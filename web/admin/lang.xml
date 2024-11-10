@@ -5,7 +5,9 @@
   <dd_node id="1" name="helper" name_cn="帮助" name_en="Helper" />
   <dd_node id="1" name="feedback" name_cn="反馈" name_en="Feedback" />
   <dd_node id="1" name="logout" name_cn="退出登录" name_en="Logout" />
+  <dd_node id="1" name="chg_psw" name_cn="修改密码" name_en="Change Password" />
   <dd_node id="1" name="reset" name_cn="重置" name_en="Reset" />
+  <dd_node id="1001" name="psw_chged" name_cn="密码修改成功" name_en="Password Changed" />
   
   <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
   <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />

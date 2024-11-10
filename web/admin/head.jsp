@@ -13,6 +13,7 @@ String ver = Config.getVersion() ;
 				boolean tab = "true".equals(request.getParameter("tab"));
 				boolean mn = "true".equals(request.getParameter("mn"));
 				boolean cm = "true".equals(request.getParameter("cm"));
+				boolean sel_menu = "true".equals(request.getParameter("sel_menu")) ;
 	if(bsimple)
 	{
 %>
@@ -80,7 +81,13 @@ if(tree)
 <link type="text/css" href="/admin/inc/tree.css" rel="stylesheet" />
 <%
 }
-
+if(sel_menu)
+{
+%>
+<link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
+<script src="/_js/selectmenu/selectmenu.min.js"></script>
+<%
+}
 if(mn)
 {
 %><script src="/_js/mn/mn.js"></script>

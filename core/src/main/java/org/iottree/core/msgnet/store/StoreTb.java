@@ -76,13 +76,15 @@ public class StoreTb
 		return 0 ; // TODO
 	}
 	
+	UAPrj prj ;
+	
 	String tbName = null ;
 	
 	String tbTitle = null ;
 	
-	String stationId = null ;
+	//String stationId = null ;
 	
-	String prjName = null ;
+	//String prjName = null ;
 	
 	/**
 	 * path prefix - under prj 
@@ -104,19 +106,20 @@ public class StoreTb
 	 */
 	String storeSorName = null ;
 	
-	public StoreTb()
+	public StoreTb(UAPrj prj)
 	{
+		this.prj = prj ;
 	}
 	
-	public String getStationId()
-	{
-		return this.stationId ;
-	}
-	
-	public String getPrjName()
-	{
-		return this.prjName ;
-	}
+//	public String getStationId()
+//	{
+//		return this.stationId ;
+//	}
+//	
+//	public String getPrjName()
+//	{
+//		return this.prjName ;
+//	}
 	
 	public String getTbName()
 	{
@@ -138,16 +141,16 @@ public class StoreTb
 	
 	public boolean isValid(StringBuilder failedr)
 	{
-		if(Convert.isNullOrEmpty(stationId))
-		{
-			failedr.append("no station id set") ;
-			return false;
-		}
-		if(Convert.isNullOrEmpty(prjName))
-		{
-			failedr.append("no Prj Name set") ;
-			return false;
-		}
+//		if(Convert.isNullOrEmpty(stationId))
+//		{
+//			failedr.append("no station id set") ;
+//			return false;
+//		}
+//		if(Convert.isNullOrEmpty(prjName))
+//		{
+//			failedr.append("no Prj Name set") ;
+//			return false;
+//		}
 		if(Convert.isNullOrEmpty(this.cxtNodePath))
 		{
 			failedr.append("no Context Node Path set") ;
@@ -171,8 +174,8 @@ public class StoreTb
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
-		jo.putOpt("station_id", stationId) ;
-		jo.putOpt("prj_name", this.prjName) ;
+//		jo.putOpt("station_id", stationId) ;
+//		jo.putOpt("prj_name", this.prjName) ;
 		jo.putOpt("tablen", this.tbName) ;
 		jo.putOpt("tablet", this.tbTitle) ;
 		jo.putOpt("cxt_nodep", this.cxtNodePath) ;
@@ -184,8 +187,8 @@ public class StoreTb
 	
 	public void fromJO(JSONObject jo)
 	{
-		this.stationId = jo.optString("station_id") ;
-		this.prjName = jo.optString("prj_name") ;
+//		this.stationId = jo.optString("station_id") ;
+//		this.prjName = jo.optString("prj_name") ;
 		this.tbName = jo.optString("tablen") ;
 		this.tbTitle = jo.optString("tablet") ;
 		this.cxtNodePath = jo.optString("cxt_nodep") ;
@@ -201,28 +204,11 @@ public class StoreTb
 		}
 	}
 	
-//	private IOTTreePrj getIOTTreePrj()
-//	{
-//		return IOTPlatformManager.getInstance().getIOTTreePrj(this.stationId,this.prjName) ;
-//	}
-//	
-	public UAPrj getUAPrj()
-	{
-//		IOTTreePrj iotprj = getIOTTreePrj() ;
-//		if(iotprj==null)
-//			return null;
-//		
-//		return iotprj.getPrj() ;
-		return null ;
-	}
-	
 	public UANodeOCTagsCxt getCxtNode()
 	{
 		List<String> nps = Convert.splitStrWith(this.cxtNodePath, "/");
 		if(nps==null||nps.size()<=0)
 			return null ;
-		
-		UAPrj prj = getUAPrj() ;
 		
 		nps.remove(0) ;
 		if(nps.size()==0)
@@ -400,37 +386,37 @@ public class StoreTb
 	
 	
 
-	private StoreTbWriter_NE getStoreTbWriter(String tablen)
-	{
-		MNManager mnm = null ;// IOTPlatformManager.getInstance().getMNManager();
-		for(MNNet net:mnm.listNets())
-		{
-			for(MNNode n:net.getNodeMapAll().values())
-			{
-				if(n instanceof StoreTbWriter_NE)
-				{
-					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
-					StoreTb st = ne.getStoreTb() ;
-					if(st==null)
-						continue ;
-					if(tablen.equals(st.getTbName()))
-						return ne ;
-				}
-			}
-		}
-		return null ;
-	}
+//	private StoreTbWriter_NE getStoreTbWriter(String tablen)
+//	{
+//		MNManager mnm = null ;// IOTPlatformManager.getInstance().getMNManager();
+//		for(MNNet net:mnm.listNets())
+//		{
+//			for(MNNode n:net.getNodeMapAll().values())
+//			{
+//				if(n instanceof StoreTbWriter_NE)
+//				{
+//					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
+//					StoreTb st = ne.getStoreTb() ;
+//					if(st==null)
+//						continue ;
+//					if(tablen.equals(st.getTbName()))
+//						return ne ;
+//				}
+//			}
+//		}
+//		return null ;
+//	}
 	
-	public TagVal queryTagLastVal(List<String> tag_subps)
+	public TagVal queryTagLastVal(InfluxDB_M dbm,List<String> tag_subps)
 	{
-		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
-		if(stb_w==null)
-			return null ;
-		
-		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
-		if(dbm==null)
-			return null ;
-		
+//		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
+//		if(stb_w==null)
+//			return null ;
+//		
+//		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
+//		if(dbm==null)
+//			return null ;
+//		
 		InfluxDBClient dbc = dbm.RT_getClient() ;
 		if(dbc==null)
 			return null ;
@@ -465,7 +451,7 @@ public class StoreTb
 		return tv ;
 	}
 	
-	public Long queryDurSecondsFrom(List<String> tag_subps,long fromdt,Double num_min,Double num_max,Boolean bool_v)
+	public Long queryDurSecondsFrom(InfluxDB_M dbm,List<String> tag_subps,long fromdt,Double num_min,Double num_max,Boolean bool_v)
 	{
 		UATag tag = this.getUATagBySubPath(tag_subps) ;
 		if(tag==null)
@@ -498,13 +484,13 @@ public class StoreTb
 			throw new IllegalArgumentException("tag valtp="+vtp+" no support queryDurSecondsFrom") ;
 		}
 		
-		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
-		if(stb_w==null)
-			return null ;
-		
-		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
-		if(dbm==null)
-			return null ;
+//		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
+//		if(stb_w==null)
+//			return null ;
+//		
+//		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
+//		if(dbm==null)
+//			return null ;
 		
 		InfluxDBClient dbc = dbm.RT_getClient() ;
 		if(dbc==null)
@@ -538,15 +524,15 @@ public class StoreTb
 		return val ;
 	}
 	
-	public TagsVals queryTagVals(List<String> tagpaths,long start_dt,long end_dt)
+	public TagsVals queryTagVals(InfluxDB_M dbm,List<String> tagpaths,long start_dt,long end_dt)
 	{
-		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
-		if(stb_w==null)
-			return null ;
-		
-		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
-		if(dbm==null)
-			return null ;
+//		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
+//		if(stb_w==null)
+//			return null ;
+//		
+//		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
+//		if(dbm==null)
+//			return null ;
 		
 		InfluxDBClient dbc = dbm.RT_getClient() ;
 		if(dbc==null)
@@ -560,23 +546,23 @@ public class StoreTb
 		return null ;
 	}
 	
-	public JSONArray queryMaxMeanMinIntv(String tag_subpath,long start_dt,long end_dt,
+	public JSONArray queryMaxMeanMinIntv(InfluxDB_M dbm,String tag_subpath,long start_dt,long end_dt,
 			int aggrn,AggrUnit au)
 	{
 		List<String> tag_subps = Convert.splitStrWith(tag_subpath, "/.") ;
-		return queryMaxMeanMinIntv(tag_subps,start_dt,end_dt,aggrn,au) ;
+		return queryMaxMeanMinIntv(dbm,tag_subps,start_dt,end_dt,aggrn,au) ;
 	}
 
-	public JSONArray queryMaxMeanMinIntv(List<String> tag_subps,long start_dt,long end_dt,
+	public JSONArray queryMaxMeanMinIntv(InfluxDB_M dbm,List<String> tag_subps,long start_dt,long end_dt,
 			int aggrn,AggrUnit au)
 	{
-		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
-		if(stb_w==null)
-			return null ;
-		
-		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
-		if(dbm==null)
-			return null ;
+//		StoreTbWriter_NE stb_w = getStoreTbWriter(this.tbName) ;
+//		if(stb_w==null)
+//			return null ;
+//		
+//		InfluxDB_M dbm = (InfluxDB_M)stb_w.getOwnRelatedModule() ;
+//		if(dbm==null)
+//			return null ;
 		
 		InfluxDBClient dbc = dbm.RT_getClient() ;
 		if(dbc==null)

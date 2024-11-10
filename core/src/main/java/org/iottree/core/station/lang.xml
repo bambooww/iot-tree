@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="recved_get" name_cn="获取接收到的站点数据" name_en="Get Recved Data" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="recved_filter_save" name_cn="过滤保存接收站点数据" name_en="Filter Save Recved Data" desc_cn="" desc_en=""/>
+	
+	
+</dd_class>

@@ -27,10 +27,18 @@ if(prj==null)
 %>
 <style>
 
+table{border-collapse:collapse;}
+body,td{font-size:12px;cursor:default;}
+thead td {font-size:14px;font-weight: bold;}
+tbody td {border:1px solid #cccccc}
+
+tr:hover {background-color: #666666;}
+
 .list
 {
 	position:relative;
 	overflow:-y:auto;
+	width:100%;
 }
 .tag_item
 {
@@ -85,8 +93,18 @@ position:absolute;
 
 <div class="layui-form-item"  id="">
     <label class="layui-form-label"><wbt:g>tag,evt</wbt:g></label>
-    <div class="layui-input-inline" style="width: 450px;">
+    <div class="layui-input-inline" style="width: 750px;">
  <div class="list">
+ 	<table style="width:100%;">
+ 		<thead>
+ 			<tr>
+ 			<td><input id="chk_all" type="checkbox" lay-ignore onclick="chk_all_or_null()" lay-skin="primary" /></td>
+ 			<td>Tag Path</td>
+ 			<td>Title</td>
+ 			<td >Alert/Event</td>
+ 			</tr>
+ 		</thead>
+ 		<tbody>
 <%
 	for(UATag tag:prj.listTagsAll())
 	{
@@ -94,7 +112,34 @@ position:absolute;
 		if(vas==null||vas.size()<=0)
 			continue ;
 		String np = tag.getNodeCxtPathInPrj() ;
-		String npt = tag.getNodeCxtPathTitleIn(prj) ;
+		String npt = tag.getTitle() ;
+		for(ValAlert va:vas)
+		{
+			String id = va.getUid() ;
+			String tt = Convert.plainToHtml(va.toTitleStr()) ;
+			String en_c = va.isEnable()?"green":"gray" ;
+			String en_t = va.isEnable()?"enabled":"disabled" ;
+%>
+ 		<tr onclick="on_chk_alert('<%=id%>')" >
+ 		   <td><input type="checkbox" id="<%=id %>"  class="chk_alert" lay-ignore lay-skin="primary" /></td>
+ 			<td><%=np %></td>
+ 			<td><%=npt %></td>
+ 			<td style="color:<%=en_c%>" title="<wbt:g><%=en_t%></wbt:g>"><%=tt %></td>
+ 		</tr>
+<%
+		}
+	}
+%>
+		</tbody>
+ 	</table>
+<%--
+	for(UATag tag:prj.listTagsAll())
+	{
+		List<ValAlert> vas = tag.getValAlerts() ;
+		if(vas==null||vas.size()<=0)
+			continue ;
+		String np = tag.getNodeCxtPathInPrj() ;
+		String npt = tag.getTitle();//.getNodeCxtPathTitleIn(prj) ;
 %>
 <div class="tag_item" id="np"><span style="font-weight: bold;">Tag:[<%=np %>] <%=npt %></span>  
 <%
@@ -117,11 +162,24 @@ position:absolute;
 </div>
 <%
 	}
-%>
+--%>
  </div>
     </div>
 </div>    
 <script>
+
+function chk_all_or_null()
+{
+	let chked = $("#chk_all").prop("checked") ;
+	$(".chk_alert").prop("checked",chked) ;
+}
+
+function on_chk_alert(id)
+{
+	let ele = $(document.getElementById(id)) ;
+	let chked = ele.prop("checked");
+	ele.prop("checked",!chked) ;
+}
 
 function on_after_pm_show(form)
 {
@@ -167,7 +225,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:700,h:450} ;
+	return {w:900,h:550} ;
 }
 
 //on_init_pm_ok() ;

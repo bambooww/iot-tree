@@ -22,6 +22,8 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
+import org.iottree.core.plugin.PlugJsApi;
+import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.js.GUtil;
@@ -90,7 +92,6 @@ private transient ScriptEngine scriptEng = null;
 //				scriptEng.put(n, v);
 //		}
 		
-		
 		scriptEng.eval(init_eval);
 		}
 	}
@@ -130,6 +131,16 @@ private transient ScriptEngine scriptEng = null;
 				//+ "const $dict=$_dict_;Object.freeze($dict);"
 				+ "const $util=$_util_;Object.freeze($util);";
 		
+		HashMap<String,PlugJsApi> gvar2obj = PlugManager.getInstance().getJsApiAll();
+		if(gvar2obj!=null)
+		{
+			for(Map.Entry<String, PlugJsApi> n2o:gvar2obj.entrySet())
+			{
+				String k = n2o.getKey();
+				engine.put("$$_"+k+"_", n2o.getValue());
+				init_eval += "const $$"+k+"=$$_"+k+"_;Object.freeze($$"+k+");";
+			}
+		}
 		
 		engine.eval(init_eval);
 		

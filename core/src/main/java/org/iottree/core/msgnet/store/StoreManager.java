@@ -63,82 +63,49 @@ public class StoreManager
 		return idb ;
 	}
 	
-	public List<StoreTb> listStoreTbs()
-	{
-		ArrayList<StoreTb> rets = new ArrayList<>() ;
-		MNManager mnm = null; // IOTPlatformManager.getInstance().getMNManager();
-		
-		if(mnm==null)
-			return null ;
-		
-		for(MNNet net:mnm.listNets())
-		{
-			for(MNNode n:net.getNodeMapAll().values())
-			{
-				if(n instanceof StoreTbWriter_NE)
-				{
-					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
-					StoreTb st = ne.getStoreTb() ;
-					if(st==null)
-						continue ;
-					rets.add(st) ;
-				}
-			}
-		}
-		return rets ;
-	}
-	
-	public StoreTb getStoreByName(String name)
-	{
-		MNManager mnm = null; //IOTPlatformManager.getInstance().getMNManager();
-		for(MNNet net:mnm.listNets())
-		{
-			for(MNNode n:net.getNodeMapAll().values())
-			{
-				if(n instanceof StoreTbWriter_NE)
-				{
-					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
-					StoreTb st = ne.getStoreTb() ;
-					if(st!=null && name.equals(st.getTbName()))
-						return st;
-				}
-			}
-		}
-		return null ;
-	}
-	
-	
-//	private void loadConf()
+//	public List<StoreTb> listStoreTbs()
 //	{
-//		Element ele = AppConfig.getConfElement("stores") ;
+//		ArrayList<StoreTb> rets = new ArrayList<>() ;
+//		MNManager mnm = null; // IOTPlatformManager.getInstance().getMNManager();
 //		
-//		if(ele==null)
-//			return ;
+//		if(mnm==null)
+//			return null ;
 //		
-//		for(Element sele:XmlHelper.getSubChildElementList(ele, "store"))
+//		for(MNNet net:mnm.listNets())
 //		{
-//			String tp = sele.getAttribute("_tp") ;
-//			if(Convert.isNullOrEmpty(tp))
-//				continue ;
-//			StoreSor news = null ;
-//			switch(tp)
+//			for(MNNode n:net.getNodeMapAll().values())
 //			{
-//			case StoreSorInfluxDB.TP:
-//				news = new StoreSorInfluxDB() ;
-//				break ;
-//			default:
-//				break ;
+//				if(n instanceof StoreTbWriter_NE)
+//				{
+//					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
+//					StoreTb st = ne.getStoreTb() ;
+//					if(st==null)
+//						continue ;
+//					rets.add(st) ;
+//				}
 //			}
-//			if(news==null)
-//				continue ;
-//			if(!news.fromEle(sele))
-//				continue ;
-//			name2store.put(news.getName(),news) ;
 //		}
+//		return rets ;
 //	}
-
-//	public StoreSor getStoreSor(String n)
+//	
+//	public StoreTb getStoreByName(String name)
 //	{
-//		return name2store.get(n) ;
+//		MNManager mnm = null; //IOTPlatformManager.getInstance().getMNManager();
+//		for(MNNet net:mnm.listNets())
+//		{
+//			for(MNNode n:net.getNodeMapAll().values())
+//			{
+//				if(n instanceof StoreTbWriter_NE)
+//				{
+//					StoreTbWriter_NE ne = (StoreTbWriter_NE)n ;
+//					StoreTb st = ne.getStoreTb() ;
+//					if(st!=null && name.equals(st.getTbName()))
+//						return st;
+//				}
+//			}
+//		}
+//		return null ;
 //	}
+	
+	
 }

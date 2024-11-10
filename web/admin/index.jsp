@@ -27,7 +27,9 @@ String sname = "Server";
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
     <title>IOT-Tree</title>
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
-<jsp:include page="head.jsp"/>
+<jsp:include page="head.jsp">
+	<jsp:param value="true" name="sel_menu"/>
+</jsp:include>
             <link href="./inc/common.css" rel="stylesheet" type="text/css">
         <link href="./inc/index.css" rel="stylesheet" type="text/css">
  <style>
@@ -50,7 +52,7 @@ background:#aaaaaa;
 .top_lan
 {
 	position: absolute;
-	right:10px;
+	right:200px;
 	top:15px;
 	width:100px;
 }
@@ -159,18 +161,24 @@ background:#aaaaaa;
 			</div>
 			end search -->
 
-			<div class="iot-user-nav">
-					<div class="iot-top-user"><a class="login" href="javascript:logout()"><wbt:lang>logout</wbt:lang></a>
+			<div class="iot-user-nav" style="right:70px;position: absolute;">
+					<div class="iot-top-user"  style="right:150px;">
 					
 <%
 List<IPro> pros = ProManager.getInstance().listPros() ;
 if(pros.size()>0)
 {
 %>
-&nbsp;&nbsp;&nbsp;<a class="login" href="javascript:pro_mgr()">Pro</a>
+<a class="login" href="javascript:pro_mgr()">Pro</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <%
 }
-%></div>
+%>
+<button class="layui-btn layui-btn-primary layui-btn-xs" class0="list" id="SysSetting" style="cursor:pointer;">
+                          admin&nbsp;<i class="fa-solid fa-angle-down"></i>
+                        </button>
+                        
+
+		</div>
 			</div>
 
 			
@@ -681,6 +689,16 @@ if(ins.isAutoStart())
 						    </div>
 						</div>
 					
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <span class="tt"><wbt:lang>data_sor</wbt:lang></span>
+					        <span class="op" onclick="add_sor_sel()"><i class="fa-solid fa-plus fa-lg"></i></span>
+					    </div>
+					    <div class="mod-body fz" id="data_sor_list">
+					        
+					    </div>
+					    
+					</div>
 					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
@@ -702,16 +720,7 @@ if(ins.isAutoStart())
 					    </div>
 					</div>
 
-					<div class="iot-mod iot-text-align-justify">
-					    <div class="mod-head">
-					        <span class="tt"><wbt:lang>data_sor</wbt:lang></span>
-					        <span class="op" onclick="add_sor_sel()"><i class="fa-solid fa-plus fa-lg"></i></span>
-					    </div>
-					    <div class="mod-body fz" id="data_sor_list">
-					        
-					    </div>
-					    
-					</div>
+					
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
@@ -1814,5 +1823,51 @@ function chg_lan(ln)
 		location.reload();
 	});
 }
+
+function chg_psw()
+{
+	dlg.open("./login/chg_psw.jsp",
+			{title:"<wbt:g>chg_psw</wbt:g>"},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 ret.op="chg_psw" ;
+						 send_ajax("./login/login_ajax.jsp",ret,(bsucc,ret)=>{
+							 if(!bsucc || ret!="succ")
+							{
+								 dlg.msg(ret);return ;
+							}
+							dlg.msg("<wbt:g>psw_chged</wbt:g>!") ;
+							dlg.close();
+							
+						 }) ;
+					})
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+var sys_menu = [];
+
+sys_menu.push({content:'<i class="fa-solid fa-user-large"></i> <wbt:lang>user</wbt:lang>',header: true})
+sys_menu.push({content:'<wbt:lang>chg_psw</wbt:lang>',callback:chg_psw});
+sys_menu.push({content:'<wbt:lang>logout</wbt:lang>',callback:logout});
+$('#SysSetting').click(function(){
+	$(this).selectMenu({
+		regular : true,
+		data : sys_menu,
+		position: { my: "left-100 center", at: "left-100 top",collision :"fit" }
+	});
+});
 </script>
 </html>

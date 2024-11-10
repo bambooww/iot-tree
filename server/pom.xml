@@ -303,7 +303,7 @@
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
 			                    
 			                    <echo message="package zip file" />
-			                    <!-- 
+			                    
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
@@ -312,7 +312,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				-->
+                				
                 				
                 				<delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
 
@@ -325,7 +325,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				<!-- 
+                				
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre8_x86/"/>
@@ -334,7 +334,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                         -->
+			                       
                 				 
 							</tasks>
 						</configuration>

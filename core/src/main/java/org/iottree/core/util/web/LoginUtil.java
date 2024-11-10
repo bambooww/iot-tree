@@ -134,6 +134,33 @@ public class LoginUtil
 		return null!= loadUserAuthItem("admin") ;
 	}
 	
+	public static boolean chgPsw(String username,String oldpsw,String newpsw,StringBuilder failedr) throws Exception
+	{
+		if(!"admin".equals(username))
+			return false;
+		
+		if(Convert.isNullOrEmpty(oldpsw) || Convert.isNullOrEmpty(newpsw))
+		{
+			failedr.append("illegal input") ;
+			return false;
+		}
+		UserAuthItem uai = loadUserAuthItem(username) ;
+		if(uai==null)
+		{
+			failedr.append("no auth inf") ;
+			return false;
+		}
+		
+		boolean r = SecureUtil.checkPsw(oldpsw, uai.encPsw, uai.salt) ;
+		if(!r)
+		{
+			failedr.append("check old failed") ;
+			return false;
+		}
+		
+		saveUserAuthItem(username,newpsw) ;
+		return true;
+	}
 	/**
 	 * check admin login or not 
 	 * @param req
