@@ -1,7 +1,5 @@
 package org.iottree.core;
 
-import java.util.LinkedList;
-
 import org.iottree.core.util.Convert;
 
 public class UAUtil

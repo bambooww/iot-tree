@@ -13,7 +13,6 @@ import javax.script.ScriptException;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
-import org.iottree.core.util.xmldata.XmlVal.*;
 import org.graalvm.polyglot.*;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
@@ -28,7 +27,7 @@ import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.UACodeItem;
 import org.iottree.core.cxt.UAContext;
-import org.iottree.core.store.StoreManager;
+import org.iottree.core.station.PStation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -1278,6 +1277,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return uav ;
 	}
 	
+	public Object RT_getCurRawVal()
+	{
+		return this.curRawVal ;
+	}
+	
 	//@JsDef
 	public synchronized UAVal RT_setValRaw(Object v,boolean ignore_nochg,Long updt,Long chgdt)
 	{
@@ -1503,7 +1507,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return RT_writeVal(v,failedr) ;
 	}
 	
-	public boolean RT_writeVal(Object v,StringBuilder failedr) //throws Exception
+	private boolean RT_writeValNor(Object v,StringBuilder failedr)
 	{
 		if(this.isLocalTag())
 		{
@@ -1514,7 +1518,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			if(!this.bCanWrite)
 			{
-				failedr.append("no writable tag") ;
+				failedr.append("not writable tag") ;
 				return false;
 			}
 			return CXT_writeMidVal(v,failedr) ;
@@ -1565,6 +1569,31 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 	}
 	
+	private boolean RT_writeValPStation(UAPrj prj,Object v,StringBuilder failedr)
+	{
+		if(!this.bCanWrite)
+		{
+			failedr.append("not writable tag") ;
+			return false;
+		}
+		PStation ps = prj.getPrjPStationInsDef() ;
+		if(ps==null)
+		{
+			failedr.append("no pstation found") ;
+			return false;
+		}
+		return ps.RT_writeTag(prj.getName(), this.getNodeCxtPathInPrj(), ""+v, false,failedr) ;
+	}
+	
+	public boolean RT_writeVal(Object v,StringBuilder failedr) //throws Exception
+	{
+		UAPrj prj = this.getBelongToPrj() ;
+		if(prj!=null&& prj.isPrjPStationIns())
+			return RT_writeValPStation(prj,v,failedr) ;
+		else
+			return RT_writeValNor(v,failedr) ;
+	}
+	
 	public boolean RT_writeValStr(String strv) // throws Exception
 	{
 		return RT_writeValStr(strv,null) ;
@@ -1589,7 +1618,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				return false;
 			}
 		
-		return RT_writeVal(v,failedr) ;
+			return RT_writeVal(v,failedr) ;
 		}
 		catch(Exception ee)
 		{
@@ -1711,7 +1740,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			else
 				r = RT_writeVal(v,failedr) ;
 			if(!r)
-				throw new RuntimeException("JS_set _pv="+v+" err in tag "+this.getNodePath()+" err:"+failedr) ;
+			{
+				if(log.isWarnEnabled())
+					log.warn("JS_set _pv="+v+" err in tag "+this.getNodePath()+" err:"+failedr);
+				//throw new RuntimeException("JS_set _pv="+v+" err in tag "+this.getNodePath()+" err:"+failedr) ;
+			}
 			return ;
 		case "_value":
 			if(v instanceof String)
@@ -1750,8 +1783,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		long dt_chg = -1;
 		
-		//String cxtpath = this.getNodeCxtPathIn(this);
-		boolean bloc = this.getParentNode() == this;
+		//boolean bloc = this.getParentNode() == this;
 
 		UAVal val = this.RT_getVal();
 
@@ -1914,7 +1946,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		w.write("}");
-		//bchged = true;
 	}
 	
 	public JSONObject RT_toFlatJson()
@@ -1929,7 +1960,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		// continue ;
 
 		boolean bvalid = false;
-		String strv = "";
+		//String strv = "";
 		long dt = -1;
 		long dt_chg = -1;
 		String str_err = "";
@@ -1937,8 +1968,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if (val != null)
 		{
 			bvalid = val.isValid();
-			//Object v = val.getObjVal();
-			strv = val.getStrVal(getDecDigits());
+			//strv = val.getStrVal(getDecDigits());
 			dt = val.getValDT();// Convert.toFullYMDHMS(new
 								// Date(val.getValDT())) ;
 			dt_chg = val.getValChgDT();// Convert.toFullYMDHMS(new

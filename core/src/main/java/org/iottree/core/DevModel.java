@@ -1,10 +1,5 @@
 package org.iottree.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.iottree.core.UAVal.ValTP;
-
 /**
  * driver support's model which may limit device addresses
  * and some other's param to limit device driver

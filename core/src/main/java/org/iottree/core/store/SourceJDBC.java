@@ -2,16 +2,13 @@ package org.iottree.core.store;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.plugin.PlugDir;
 import org.iottree.core.plugin.PlugManager;
-import org.iottree.core.store.gdb.ConnPoolMgr;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.store.gdb.connpool.DBType;
 import org.iottree.core.util.Convert;
@@ -101,7 +98,14 @@ public class SourceJDBC extends Source
 			tmps = tmps.replace("{$db_name}", dbname) ;
 			
 			//String fp =  Config.getDataDirBase()+"db_sqlite/" ;
-			String fp =  Config.getDataDynDirBase()+"db_sqlite/" ;
+			
+			
+			String data_dyn_dir = System.getProperty("iottree.data_dyn_dir") ;
+			if(Convert.isNullOrEmpty(data_dyn_dir))
+				throw new RuntimeException("no [iottree.data_dyn_dir] env property found") ;
+			
+			//String fp =  Config.getDataDynDirBase()+"db_sqlite/" ;
+			String fp =  data_dyn_dir+"db_sqlite/" ;
 			File f = new File(fp) ;
 			if(!f.exists())
 				f.mkdirs() ;
@@ -367,6 +371,39 @@ public class SourceJDBC extends Source
 			if(conn!=null)
 				dbc.free(conn);
 		}
+	}
+
+	public static final String EXCHG_TP ="source_jdbc" ;
+
+	@Override
+	public String getExchgTP()
+	{
+		return EXCHG_TP;
+	}
+
+	@Override
+	protected JSONObject toExchgPmJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.put("drv_name",this.drvName);
+		jo.put("db_host",this.dbHost);
+		jo.put("db_port",this.dbPort);
+		jo.put("db_name",this.dbName);
+		jo.put("db_user",this.dbUser);
+		jo.put("db_psw",this.dbPsw);
+		return jo ;
+	}
+
+	@Override
+	protected boolean fromExchgPmJO(JSONObject pmjo)
+	{
+		this.drvName = pmjo.optString("drv_name");
+		this.dbHost = pmjo.optString("db_host");
+		this.dbPort = pmjo.optInt("db_port",3306);
+		this.dbName = pmjo.optString("db_name");
+		this.dbUser = pmjo.optString("db_user");
+		this.dbPsw = pmjo.optString("db_psw");
+		return true;
 	}
 	
 //	public Connection DB_getConn()

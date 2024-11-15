@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
-import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -17,8 +15,6 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_val;
-
-import kotlin.NotImplementedError;
 
 public class DevLib implements Comparable<DevLib>,IResCxt
 {

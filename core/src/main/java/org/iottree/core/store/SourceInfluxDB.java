@@ -3,6 +3,7 @@ package org.iottree.core.store;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
+import org.json.JSONObject;
 
 @data_class
 public class SourceInfluxDB extends Source //implements Closeable
@@ -18,6 +19,7 @@ public class SourceInfluxDB extends Source //implements Closeable
 	
 	@data_val
 	String bucket = null ;
+	
 	
 //	private InfluxDBClient influxDB = null ;
 	
@@ -99,6 +101,26 @@ public class SourceInfluxDB extends Source //implements Closeable
 	public boolean checkConn(StringBuilder failedr)
 	{
 		throw new RuntimeException("no impl") ;
+	}
+
+	public static final String EXCHG_TP ="source_influxdb" ;
+
+	@Override
+	public String getExchgTP()
+	{
+		return EXCHG_TP;
+	}
+
+	@Override
+	protected JSONObject toExchgPmJO()
+	{
+		return null;
+	}
+
+	@Override
+	protected boolean fromExchgPmJO(JSONObject pmjo)
+	{
+		return false;
 	}
 	
 //	

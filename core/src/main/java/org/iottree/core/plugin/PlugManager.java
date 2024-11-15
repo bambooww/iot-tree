@@ -56,7 +56,11 @@ public class PlugManager
 	
 	private void findPlugs()
 	{
-		File plugdir = new File(Config.getDataDirBase()+"/plugins/");
+		String lib_plugins_dir = System.getProperty("iottree.lib_plugins.dir") ;
+		if(Convert.isNullOrEmpty(lib_plugins_dir))
+			throw new RuntimeException("no [iottree.lib_plugins.dir] env property found") ;
+		
+		File plugdir = new File(lib_plugins_dir) ;//new File(Config.getDataDirBase()+"/plugins/");
 		if(!plugdir.exists())
 			return ;//new ArrayList<>(0) ;
 		
@@ -251,7 +255,11 @@ public class PlugManager
 		if(pds!=null)
 			return pds ;
 		
-		File plugdir = new File(Config.getDataDirBase()+"/plugins/_libs/"+lib_name+"/");
+		String lib_plugins_dir = System.getProperty("iottree.lib_plugins.dir") ;
+		if(Convert.isNullOrEmpty(lib_plugins_dir))
+			throw new RuntimeException("no [iottree.lib_plugins.dir] env property found") ;
+		
+		File plugdir = new File(lib_plugins_dir+"/_libs/"+lib_name+"/");
 		if(!plugdir.exists())
 			return null ;//new ArrayList<>(0) ;
 		

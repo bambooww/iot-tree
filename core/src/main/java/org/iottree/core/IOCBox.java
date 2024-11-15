@@ -291,13 +291,9 @@ public interface IOCBox extends IOC
 	
 	public static void transJSONToOCUnit(IOCBox u,JSONObject jobj)
 	{
-		//String uid = u.OCUnit_getId();
-		
-		//jobj.put("_cn", u.OCUnit_getUnitClass());
 		u.OC_setPropsJSON(jobj);
-		String n= jobj.optString("name", "");
-		String t = jobj.optString("title", "");
-		//u.OC_setBaseVal(n, t);
+//		String n= jobj.optString("name", "");
+//		String t = jobj.optString("title", "");
 		
 		if(!u.OC_supportSub())
 			return;

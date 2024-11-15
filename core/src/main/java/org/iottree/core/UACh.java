@@ -10,17 +10,14 @@ import org.iottree.core.util.xmldata.*;
 import org.iottree.core.util.xmldata.XmlDataFilesMem.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.graalvm.polyglot.HostAccess;
-import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
-import org.iottree.core.basic.ValAlert;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.res.ResDir;
 import org.json.JSONObject;
 
@@ -416,7 +413,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			throw new IllegalArgumentException("dev with name="+name+" existed") ;
 		}
 		
-		DevDriver drv = this.getDriver() ;
+		//DevDriver drv = this.getDriver() ;
 		DevDef dd = null;
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
 		if(Convert.isNotNullEmpty(libid) && Convert.isNotNullEmpty(devdef_id))
@@ -899,7 +896,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		}
 		this.save();
 		
-		List<XmlDataFilesMem.FileItem> fis = xdf.getFileItems() ;
+		//List<XmlDataFilesMem.FileItem> fis = xdf.getFileItems() ;
 		
 	}
 	

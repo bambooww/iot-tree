@@ -9,14 +9,12 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
-import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
 

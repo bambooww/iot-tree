@@ -3,10 +3,6 @@ package org.iottree.core;
 import java.io.*;
 import java.util.*;
 
-import org.iottree.core.basic.IdName;
-import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.IResNode;
-import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
@@ -259,7 +255,7 @@ public class DevManager // implements IResCxt
 	
 	public DevLib addDevLib(String title) throws Exception
 	{
-		StringBuilder failedr = new StringBuilder();
+		//StringBuilder failedr = new StringBuilder();
 		DevLib lib = new DevLib(title);
 		this.saveLib(lib);
 		this.getDevLibs().add(lib);

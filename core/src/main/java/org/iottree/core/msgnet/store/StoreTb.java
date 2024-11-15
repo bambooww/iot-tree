@@ -379,12 +379,6 @@ public class StoreTb
 	}
 	//
 	
-	public TagsVals RT_readVals()
-	{
-		return null ;
-	}
-	
-	
 
 //	private StoreTbWriter_NE getStoreTbWriter(String tablen)
 //	{

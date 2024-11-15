@@ -5,8 +5,6 @@ import java.io.FileFilter;
 import java.util.*;
 
 import org.apache.commons.io.FileUtils;
-import org.iottree.core.res.IResCxt;
-import org.iottree.core.res.IResNode;
 import org.iottree.core.res.ResDir;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;

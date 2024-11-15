@@ -1,23 +1,17 @@
 package org.iottree.core;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
-import org.iottree.core.basic.PropNode;
-import org.iottree.core.res.IResCxt;
 import org.iottree.core.res.IResNode;
-import org.iottree.core.res.ResDir;
-import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.DataTranserXml;
 import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
-import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
 

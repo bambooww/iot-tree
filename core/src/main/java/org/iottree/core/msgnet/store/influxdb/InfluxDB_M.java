@@ -242,6 +242,13 @@ public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 				if(bv)
 					b_has_w = true ;
 			}
+			
+			if(n instanceof InfluxDB_Measurement)
+			{
+				boolean bv = ((InfluxDB_Measurement)n).onMonByModule() ;
+				if(bv)
+					b_has_w = true ;
+			}
 		}
 		return b_has_w ;//还在写动作中
 	}

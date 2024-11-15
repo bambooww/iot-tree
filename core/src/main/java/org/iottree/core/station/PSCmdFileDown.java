@@ -45,8 +45,4 @@ public class PSCmdFileDown extends PSCmd
 		//String 
 	}
 	
-	private void RT_downloadFiles(List<String> fs)
-	{
-		
-	}
 }

@@ -3,13 +3,7 @@ package org.iottree.core;
 import java.util.*;
 
 import org.iottree.core.util.xmldata.data_class;
-import org.iottree.core.util.xmldata.data_obj;
-import org.iottree.core.basic.PropGroup;
 import org.iottree.core.cxt.JsDef;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 
 /**
  * Tag Group

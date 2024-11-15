@@ -1,6 +1,5 @@
 package org.iottree.core.station;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ public class PSCmdStationST extends PSCmd
 		JSONObject jo = new JSONObject() ;
 		jo.put("id", sl.id) ;
 		jo.put("local_ts", System.currentTimeMillis()) ;
+		jo.put("can_write", sl.isCanPlatformWrite()) ;
 		List<UAPrj> prjs = UAManager.getInstance().listPrjs() ;
 		JSONArray prjst = new JSONArray() ;
 		HashMap<String,JSONObject> n2prjst = new HashMap<>() ;
@@ -42,6 +42,7 @@ public class PSCmdStationST extends PSCmd
 			//tmpjo.put(", value)
 			tmpjo.put("run", brun) ;
 			tmpjo.put("auto_start", prj.isAutoStart()) ;
+			
 			StationLocal.PrjSynPm synpm = sl.getPrjSynPM(prjn) ;
 			if(synpm!=null)
 			{

@@ -35,7 +35,7 @@ if(Convert.isNotNullEmpty(id))
 %>
 <html>
 <head>
-<title>jdbc editor</title>
+<title>remote station editor</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <script src="/_js/layui/layui.all.js"></script>

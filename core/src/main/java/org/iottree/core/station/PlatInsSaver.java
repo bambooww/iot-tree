@@ -1,24 +1,17 @@
 package org.iottree.core.station;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import org.iottree.core.Config;
 import org.iottree.core.UAPrj;
 import org.iottree.core.store.Source;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
-import org.iottree.core.store.gdb.connpool.DBType;
 import org.iottree.core.util.Convert;
-import org.json.JSONObject;
 
 /**
  * 支持station发送的数据进行存储的支持

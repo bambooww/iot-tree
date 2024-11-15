@@ -473,7 +473,7 @@ public class MNManager
 		return ret ;
 	}
 	
-	private File calNetFile(String id)
+	File calNetFile(String id)
 	{
 		File prjdir = this.belongTo.getMsgNetDir();//.getPrjSubDir() ;
 		return new File(prjdir,"mn_"+id+".json") ;

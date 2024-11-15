@@ -1,11 +1,8 @@
 package org.iottree.core;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.iottree.core.conn.ConnPtBinder;
 
 public abstract class ConnPtDevFinder extends ConnPtBinder implements IConnPtDevFinder

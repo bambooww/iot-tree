@@ -1,5 +1,6 @@
 package org.iottree.core.store;
 
+import org.iottree.core.basic.ce.ExchgObj;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
@@ -11,7 +12,7 @@ import org.json.JSONObject;
  *
  */
 @data_class
-public abstract class Source
+public abstract class Source extends ExchgObj
 {
 	@data_val(param_name = "id")
 	String id = null ;
@@ -101,5 +102,26 @@ public abstract class Source
 		default:
 			return null ;
 		}
+	}
+	
+
+	@Override
+	public String getExchgName()
+	{
+		return this.getName();
+	}
+	
+
+	@Override
+	public String getExchgTitle()
+	{
+		return this.getTitle();
+	}
+
+	@Override
+	protected void setExchgBasic(String tp,String name,String title)
+	{
+		this.name = name ;
+		this.title = title ;
 	}
 }

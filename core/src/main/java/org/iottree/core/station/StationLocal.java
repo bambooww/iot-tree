@@ -18,14 +18,11 @@ import org.iottree.core.util.encrypt.DES;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.queue.QueTickThread;
-import org.iottree.core.util.queue.QueueThread;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.oracle.truffle.js.runtime.objects.DefaultESModuleLoader;
 
 /**
  * for station local manager
@@ -223,6 +220,8 @@ public class StationLocal
 	
 	private boolean bValid = false;
 	
+	private boolean canWrite = false;
+	
 	private List<PrjSynPm> prjSynPMs = null ;
 	
 	private StationLocal()
@@ -244,6 +243,7 @@ public class StationLocal
 			this.platformPort = jo.optInt("platform_port",9090) ;
 			this.key = jo.getString("key") ;
 			this.bValid = jo.optBoolean("valid",false) ;
+			this.canWrite = jo.optBoolean("can_write",false) ;
 //			this.rt_data_failed_keep = jo.optBoolean("rt_data_failed_keep",false) ;
 //			this.rt_data_keep_len = jo.optLong("rt_data_keep_len", 3153600) ;
 			return true ;
@@ -321,6 +321,11 @@ public class StationLocal
 	public String getStationKey()
 	{
 		return this.key ;
+	}
+	
+	public boolean isCanPlatformWrite()
+	{
+		return canWrite;
 	}
 	
 	public List<PrjSynPm> getPrjSynPMs()

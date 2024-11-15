@@ -95,6 +95,10 @@ public class RelationalDB_Table extends MNNodeRes
 		super.RT_renderDiv(divblks);
 	}
 	
+	public RelationalDB_M getOwnerRDB_M()
+	{
+		return (RelationalDB_M)this.getOwnRelatedModule();
+	}
 	
 	public DBConnPool RT_getConnPool()
 	{

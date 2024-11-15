@@ -20,12 +20,13 @@ public class PSCmdTagW extends PSCmd
 		return CMD;
 	}
 	
-	public PSCmdTagW asPrjWriteTag(String prjname,String tagpath,String strv)
+	public PSCmdTagW asPrjWriteTag(String prjname,String tagpath,String strv,boolean need_ack)
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("prjn", prjname) ;
 		jo.put("tagp", tagpath) ;
 		jo.put("strv", strv) ;
+		jo.put("ack",need_ack) ;
 		this.asCmdDataJO(jo) ;
 		return this ;
 	}
@@ -33,12 +34,16 @@ public class PSCmdTagW extends PSCmd
 	@Override
 	public void RT_onRecvedInStationLocal(StationLocal sl) throws Exception
 	{
+		if(!sl.isCanPlatformWrite())
+			return ;
+		
 		JSONObject jo = this.getCmdDataJO() ;
 		if(jo==null)
 			return ;
 		String prjn = jo.optString("prjn") ;
 		String tagp = jo.optString("tagp") ;
 		String strv = jo.optString("strv") ;
+		boolean need_ack = jo.optBoolean("ack") ;
 		if(Convert.isNullOrEmpty(prjn) || Convert.isNullOrEmpty(tagp) || Convert.isNullOrEmpty(strv))
 			return ;
 		boolean bw = false;
@@ -63,7 +68,8 @@ public class PSCmdTagW extends PSCmd
 		}
 		finally
 		{
-			sendAck(sl, prjn, tagp,strv,bw,err) ;
+			if(need_ack)
+				sendAck(sl, prjn, tagp,strv,bw,err) ;
 		}
 	}
 	

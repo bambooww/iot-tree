@@ -19,7 +19,6 @@ import javax.websocket.Session;
 import javax.websocket.CloseReason.CloseCodes;
 import javax.websocket.server.PathParam;
 
-import org.iottree.core.station.PlatInsWSServer.SessionItem;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.encrypt.DES;
 import org.iottree.core.util.logger.ILogger;
@@ -170,6 +169,8 @@ public class PlatInsWSServer
 	private static final long TICK_DELAY = 60000;
 
 	private static Thread th = null;
+	
+	private static boolean bStopExit = false;
 
 	protected static void tick()
 	{
@@ -192,6 +193,9 @@ public class PlatInsWSServer
 
 	public synchronized static void startTimer()
 	{
+		if(bStopExit)
+			return ;
+		
 		if (th != null)
 			return;
 
@@ -247,6 +251,11 @@ public class PlatInsWSServer
 		}
 	}
 	
+	public static void stopBeforeSysExit()
+	{
+		bStopExit = true ;
+		stopTimer(true) ;
+	}
 //	public void onMessage(Session session, byte[] msg) throws Exception
 //	{
 //		
@@ -257,6 +266,12 @@ public class PlatInsWSServer
 	public void onOpen(Session session,
 			@PathParam(value = "stationid") String stationid,EndpointConfig config) throws Exception //
 	{
+		if(bStopExit)
+		{
+			session.close();
+			return;
+		}
+		
 		HttpSession httpSession = (HttpSession) session.getUserProperties().get(HttpSession.class.getName());
 		String clientip = (String)httpSession.getAttribute("ClientIP");
         

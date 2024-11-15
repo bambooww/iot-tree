@@ -1,7 +1,5 @@
 package org.iottree.core;
 
-import java.io.Writer;
-
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 

@@ -102,8 +102,15 @@
   <div class="nor_sel" style=""> 
    <input type="text" id="mt" class="layui-input" />
   </div>
-  
   </div>
+ 
+  <div class="row" >
+   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Batch Buf Len</span></div>
+  <div class="nor_sel" style=""> 
+   <input type="text" id="batch_w_buflen" name="batch_w_buflen" value="100"  autocomplete="off"  class="layui-input" >
+  </div>
+  </div>
+  
 <script>
 
 
@@ -118,12 +125,15 @@ function get_pm_jo()
 	let jo = {} ;
 	let mt = $("#mt").val();
 	
-	return {mt:mt} ;
+	let batch_w_buflen = get_input_val('batch_w_buflen',true,10);
+	
+	return {mt:mt,batch_w_buflen:batch_w_buflen} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#mt").val(jo.mt||"") ;
+	$('#batch_w_buflen').val(jo.batch_w_buflen||100);
 
 }
 

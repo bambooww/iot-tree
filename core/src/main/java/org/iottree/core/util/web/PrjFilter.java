@@ -118,6 +118,18 @@ public class PrjFilter implements Filter
 			return ;
 		}
 		
+		if(uri.startsWith("/_open"))
+		{//res_node_id="+resnodeid+"&name="+name
+			java.util.List<String> ss = Convert.splitStrWith(uri.substring(6), "/") ;
+			if(ss.size()<=1)
+				return ;
+			String tmpu = "/open.jsp?resnodeid="+ss.get(0)+"&name="+ss.get(1);
+			if(qs!=null)
+				tmpu += "?"+qs ;
+			req.getRequestDispatcher(tmpu).forward(req, resp);
+			return ;
+		}
+		
 		UANode node = UAUtil.findNodeByPath(uri) ;
 		if(node==null)
 		{

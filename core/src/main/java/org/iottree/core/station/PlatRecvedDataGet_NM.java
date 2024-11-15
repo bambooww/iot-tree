@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-
 import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNConn;
@@ -16,7 +14,6 @@ import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.store.gdb.connpool.IConnPool;
 import org.iottree.core.util.Convert;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PlatRecvedDataGet_NM extends MNNodeMid
@@ -74,13 +71,13 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 		return (UAPrj) mnc;
 	}
 	
-	private PStation getPrjStation()
-	{
-		UAPrj prj = getPrj() ;
-		if(prj==null)
-			return null ;
-		return prj.getPrjPStationInsDef() ;
-	}
+//	private PStation getPrjStation()
+//	{
+//		UAPrj prj = getPrj() ;
+//		if(prj==null)
+//			return null ;
+//		return prj.getPrjPStationInsDef() ;
+//	}
 	
 	private SourceJDBC getSourceJDBC()
 	{

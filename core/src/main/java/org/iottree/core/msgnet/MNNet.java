@@ -65,10 +65,12 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	MNManager belongTo = null ;
 	IMNContainer container = null ;
 
-	MNNet(MNManager mgr)
+	public MNNet(MNManager mgr)
 	{
 		belongTo = mgr ;
-		this.container = mgr.getBelongTo() ;
+		if(mgr!=null)
+			this.container = mgr.getBelongTo() ;
+		
 		this.id = IdCreator.newSeqId() ;
 	}
 	
@@ -78,7 +80,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	 * @param title
 	 * @return
 	 */
-	MNNet(MNManager mgr,String name,String title,String desc)
+	public MNNet(MNManager mgr,String name,String title,String desc)
 	{
 		belongTo = mgr ;
 		this.container = mgr.getBelongTo() ;
@@ -105,6 +107,11 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	public IMNContainer getContainer()
 	{
 		return this.container ;
+	}
+	
+	public File getNetFile()
+	{
+		return this.belongTo.calNetFile(this.id) ;
 	}
 	
 	public boolean isEnable()

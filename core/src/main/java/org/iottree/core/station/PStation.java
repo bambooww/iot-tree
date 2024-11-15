@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.iottree.core.IOCBox;
 import org.iottree.core.UAManager;
-import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.station.PlatInsWSServer.SessionItem;
 import org.iottree.core.util.Convert;
@@ -222,6 +220,11 @@ public class PStation
 			return this.lastRecvedDT ;
 		}
 		
+		public JSONObject getLastRecvedData()
+		{
+			return lastRecvedData;
+		}
+		
 		public void setFailedKeep(boolean b_failed_keep,long keep_max_len)
 		{
 			this.bFailedKeep = b_failed_keep ;
@@ -416,6 +419,20 @@ public class PStation
 		return true ;
 	}
 	
+	public boolean RT_writeTag(String prjname,String tagpath,String strv,boolean need_ack,StringBuilder failedr)
+	{
+		SessionItem si = this.getSessionItem() ;
+		if(si==null)
+		{
+			failedr.append("no session found") ;
+			return false;
+		}
+		
+		PSCmdTagW cmd = new PSCmdTagW().asPrjWriteTag(prjname, tagpath, strv,need_ack) ;
+		si.sendCmd(cmd);
+		return true ;
+	}
+	
 	
 	public boolean RT_setSynPM(String prjname,boolean b_autostart,boolean datasyn_en,long datasyn_intv,boolean failed_keep,long keep_max_len)
 	{
@@ -599,6 +616,7 @@ public class PStation
 		pst.lastRecvedDT = System.currentTimeMillis() ;
 		pst.lastRecvedData = rt_jo ;
 	}
+	
 	
 	/**
 	 * 获得对应站点实时状态

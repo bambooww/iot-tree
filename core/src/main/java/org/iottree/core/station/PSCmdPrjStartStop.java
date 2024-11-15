@@ -1,8 +1,6 @@
 package org.iottree.core.station;
 
 import java.util.Arrays;
-import java.util.List;
-
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;

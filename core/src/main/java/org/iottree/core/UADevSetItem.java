@@ -1,7 +1,5 @@
 package org.iottree.core;
 
-import org.iottree.core.util.Convert;
-
 /**
  * if a UADev is device set. then it will represent multi devices related it
  * every device name UADevSetItem.

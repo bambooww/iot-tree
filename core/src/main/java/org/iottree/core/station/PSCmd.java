@@ -143,6 +143,12 @@ public abstract class PSCmd
 		case PSCmdPrjRtData.CMD:
 			pscmd = new PSCmdPrjRtData() ;
 			break ;
+		case PSCmdTagW.CMD:
+			pscmd = new PSCmdTagW() ;
+			break ;
+		case PSCmdTagWAck.CMD:
+			pscmd = new  PSCmdTagWAck();
+			break ;
 		case PSCmdPrjStartStop.CMD:
 			pscmd = new PSCmdPrjStartStop() ;
 			break ;

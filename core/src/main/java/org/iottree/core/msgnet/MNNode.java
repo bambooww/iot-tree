@@ -1,15 +1,11 @@
 package org.iottree.core.msgnet;
 
-import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,19 +17,19 @@ import org.json.JSONObject;
  */
 public abstract class MNNode extends MNBase
 {
-	public static class OutResDef<T extends MNNodeRes>
+	public static class OutResDef
 	{
-		Class<T> resClass = null ;
+		Class<?> resClass = null ;
 		
 		boolean bNeed = false;
 		
-		public  OutResDef(Class<T> c,boolean need)
+		public  OutResDef(Class<?> c,boolean need)
 		{
 			this.resClass = c ;
 			this.bNeed = need ;
 		}
 		
-		public Class<T> getResClass()
+		public Class<?> getResClass()
 		{
 			return this.resClass ;
 		}

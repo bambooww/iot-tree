@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.iottree.core.IRelatedFile;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -2709,6 +2710,30 @@ public class Convert
 		boolean b = f_temp.renameTo(f) ;
 		//System.out.println("rename ="+b) ;
 	}
+	
+	public static ArrayList<String> optJOStrList(JSONObject jo,String key)
+	{
+		JSONArray jarr = jo.optJSONArray(key) ;
+		if(jarr==null)
+			return null ;
+		int n = jarr.length() ;
+		ArrayList<String> rets = new ArrayList<>(n) ;
+		for(int i = 0 ; i < n ;  i ++)
+			rets.add(jarr.getString(i)) ;
+		return rets ;
+	}
+	
+//	public static ArrayList<String> optJOIntList(JSONObject jo,String key)
+//	{
+//		JSONArray jarr = jo.optJSONArray(key) ;
+//		if(jarr==null)
+//			return null ;
+//		int n = jarr.length() ;
+//		ArrayList<String> rets = new ArrayList<>(n) ;
+//		for(int i = 0 ; i < n ;  i ++)
+//			rets.add(jarr.getString(i)) ;
+//		return rets ;
+//	}
 
 	public static void main(String[] args) throws Exception
 	{

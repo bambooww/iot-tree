@@ -4,7 +4,6 @@ import java.util.*;
 
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
-import org.iottree.core.basic.PropGroup;
 import org.json.*;
 
 /**

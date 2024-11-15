@@ -21,12 +21,15 @@ String path=request.getParameter("path");
 boolean w_only = "true".equalsIgnoreCase(request.getParameter("w_only")) ;
 	//String repname = rep.getName() ;
 	
-UANode n = UAUtil.findNodeByPath(path);//rep.findNodeById(id) ;
-if(n==null)
-{
-	out.print("no node found") ;
-	return ;
-}
+UANode n = null;
+	n = UAUtil.findNodeByPath(path);//rep.findNodeById(id) ;
+	if(n==null)
+	{
+		out.print("no node found") ;
+		return ;
+	}
+
+
 if(n instanceof UAHmi)
 	n = n.getParentNode() ;
 if(!(n instanceof UANodeOCTags))
@@ -66,8 +69,9 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <th width='2%'></th>
-  <th width='30%'><wbt:g>tag</wbt:g></th>
-  <th width='40%'><wbt:g>title</wbt:g></th>
+  <th width='20%'><wbt:g>tag</wbt:g></th>
+  <th width='20%'><wbt:g>addr</wbt:g></th>
+  <th width='30%'><wbt:g>title</wbt:g></th>
 
   <th width='6%'><wbt:g>val,type</wbt:g></th>
   <th width='5%'><wbt:g>write</wbt:g></th>
@@ -82,11 +86,12 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		String patht =  tg.getNodeCxtPathTitleIn(ntags) ;
 		//pathn = pathn.substring(parent_p.length()) ;
 		String chked = "" ;
-		
+		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" tagid="<%=tagid %>" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
   <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>"  <%=chked %>/></td>
   <td><%=pathn %></td>
+  <td><%=addr %></td>
   <td><%=patht %></td>
   
   <td><%=tg.getValTp() %></td>
@@ -150,6 +155,8 @@ function get_selected_tagpaths()
 	});
 	return ret ;
 }
+
+//function get_sel_tagpaths()
 
 function get_selected_tagtxt()
 {

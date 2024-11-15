@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.alert.AlertItem;
 import org.iottree.core.basic.ValAlert;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeRes;
@@ -28,7 +27,6 @@ import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
 import org.iottree.core.store.gdb.autofit.JavaForeignKeyInfo;
 import org.iottree.core.store.gdb.autofit.JavaTableInfo;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
-import org.iottree.core.store.gdb.connpool.IConnPool;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.jt.JSONTemp;
 import org.iottree.core.util.xmldata.XmlVal;
@@ -60,7 +58,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
 	static
 	{
-		OUT2RES.put(2,new OutResDef<RelationalDB_Table>(RelationalDB_Table.class,false)) ;
+		OUT2RES.put(2,new OutResDef(RelationalDB_Table.class,false)) ;
 	}
 	
 	@Override
@@ -145,7 +143,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	}
 	
 	
-	private RelationalDB_Table getUsingRDBTable()
+	public RelationalDB_Table getUsingRDBTable()
 	{
 		MNNodeRes noderes = this.getOutResNode(2) ;
 		if(noderes==null || !(noderes instanceof RelationalDB_Table))
@@ -280,7 +278,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	
 	// ----  db ---
 	private static final String[] COL_NAMES_INSERT = new String[] {
-			"AutoId","TriggerDT","Tag","AlertTP","Value","Level","Prompt"
+			"AutoId","TriggerDT","PrjName","Tag","AlertTP","Value","Level","Prompt"
 		} ;
 
 	private JavaTableInfo tableInfo = null ;
@@ -345,8 +343,8 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		norcols.add(new JavaColumnInfo("ReleaseDT",false, XmlVal.XmlValType.vt_date, -1,
 				false, false,"", false,-1, "",false,false));
 		
-//		norcols.add(new JavaColumnInfo("Handler",false, XmlVal.XmlValType.vt_string, 40,
-//				false, false,"", false,-1, "",false,false));
+		norcols.add(new JavaColumnInfo("PrjName",false, XmlVal.XmlValType.vt_string, 40,
+				true, false,"PrjName_idx", false,-1, "",false,false));
 
 		int tag_maxlen = 200 ;
 		for(UATag tag:prj.listTagsAll())
@@ -403,12 +401,16 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		JavaTableInfo jti = getAlertsTableInfo(failedr) ;
 		if(jti==null)
 			return false;
-		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
 		
 		DBConnPool cp = this.RT_getConnPool(failedr) ;
 		DataTable dt = this.RT_getDataTable(failedr) ;
 		if(cp==null||dt==null)
 			return false;
+		
+		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
+		String prjname = "" ;
+		if(prj!=null)
+			prjname = prj.getName() ;
 		
 		DataRow dr = dt.createNewRow() ;
 		//ValAlert va = ai.getValAlert() ;
@@ -418,6 +420,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		if(b_triggered_or_release)
 		{
 			dr.putValue("AutoId",row_id) ;
+			dr.putValue("PrjName", prjname);
 			dr.putValue("Tag", tag.getNodePathCxt());
 			dr.putValue("TriggerDT", new Date(va.RT_last_trigger_dt()));
 			//dr.putValue("Handler", this.getName());
@@ -463,6 +466,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	
 	//private long lastDelDT = -1 ;
 	
+	@SuppressWarnings("unused")
 	private boolean delOld(Connection conn,String tabename,String dt_col,int keep_days,long last_del_dt) throws SQLException
 	{
 		final long DAY_MS = 24*3600000 ;

@@ -1,7 +1,6 @@
 package org.iottree.core.store;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -237,14 +236,28 @@ public class StoreManager
 		File f = new File(getSorDir(), "store_sors.xml");
 		XmlData.writeToFile(xd, f);
 	}
+	
+	public static File getStoreSourcesFile()
+	{
+		return new File(getSorDir(), "store_sors.xml");
+	}
 
 	private static LinkedHashMap<String, Source> loadSors() throws Exception
 	{
+		File f = getStoreSourcesFile();//new File(getSorDir(), "store_sors.xml");
+		LinkedHashMap<String, Source> n2st =loadSorsFromFile(f) ;
+		if(n2st==null)
+			n2st = new LinkedHashMap<>();
+		return n2st ;
+	}
+	
+	public static LinkedHashMap<String, Source> loadSorsFromFile(File f) throws Exception
+	{
+		if(!f.exists())
+			return null ;
+		
 		LinkedHashMap<String, Source> n2st = new LinkedHashMap<>();
 		
-		File f = new File(getSorDir(), "store_sors.xml");
-		if (!f.exists())
-			return n2st ;
 		
 		XmlData xd = XmlData.readFromFile(f);
 		List<XmlData> xds = xd.getSubDataArray("sources");
@@ -265,8 +278,6 @@ public class StoreManager
 		}
 		return n2st;
 	}
-	
-	
 
 
 	UAPrj prj = null;
@@ -553,4 +564,5 @@ public class StoreManager
 		}
 		return jo ;
 	}
+
 }

@@ -1,8 +1,6 @@
 package org.iottree.core;
 
 import java.io.Closeable;
-import java.io.File;
-import java.io.FileFilter;
 import java.util.*;
 
 import org.iottree.core.DevAddr.ChkRes;
@@ -11,11 +9,8 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
-import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
-import org.iottree.core.util.xmldata.DataTranserXml;
-import org.iottree.core.util.xmldata.XmlData;
 
 /**
  * belong to channel and may limit devices in channel 1)driver self may has some
@@ -50,7 +45,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		}
 	}
 
-	private final class SubDevThread extends Thread
+	final class SubDevThread extends Thread
 	{
 		UADev subDev = null;
 

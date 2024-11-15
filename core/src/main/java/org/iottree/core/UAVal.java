@@ -1,11 +1,6 @@
 package org.iottree.core;
 
 import org.iottree.core.util.Convert;
-import org.json.JSONObject;
-import org.iottree.core.UAVal.ValTP;
-import org.iottree.core.cxt.JSObMap;
-
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 

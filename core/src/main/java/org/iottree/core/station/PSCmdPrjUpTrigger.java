@@ -1,14 +1,9 @@
 package org.iottree.core.station;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * platform 触发 station上载本地项目到platform的指令

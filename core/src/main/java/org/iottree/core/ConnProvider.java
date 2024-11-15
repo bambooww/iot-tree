@@ -5,14 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.IXmlDataValidator;
-import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -390,13 +387,14 @@ public abstract class ConnProvider implements IXmlDataValidator
 	{
 		String id = jo.getString("id") ;
 		ConnPt cpt = this.getConnById(id) ;
-		boolean badd = false;
+		//boolean badd = false;
 		if(cpt==null)
 		{
 			cpt = this.createEmptyConnPt() ;
 			cpt.belongTo = this ;
-			badd = true ;
+			//badd = true ;
 		}
+		
 		//check name
 		String name = jo.getString("name") ;
 		if(Convert.isNullOrEmpty(name))

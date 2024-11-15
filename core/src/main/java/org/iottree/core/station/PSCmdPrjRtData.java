@@ -5,23 +5,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.iottree.core.UACh;
-import org.iottree.core.UAManager;
-import org.iottree.core.UANode;
-import org.iottree.core.UANodeOCTagsCxt;
-import org.iottree.core.UANodeOCTagsGCxt;
 import org.iottree.core.UAPrj;
-import org.iottree.core.UATag;
-import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PSCmdPrjRtData extends PSCmd
@@ -132,7 +123,7 @@ public class PSCmdPrjRtData extends PSCmd
 				//String jostr = unzip(bs);
 				//JSONObject rt_jo = new JSONObject(jostr);// this.getCmdDataJO() ;
 				
-				HashMap<String,byte[]> k2jo = prj_k2jo.get(prjname) ;
+				HashMap<String,byte[]> k2jo = prj_k2jo.get(platform_prj) ;
 				if(k2jo==null)
 				{
 					k2jo = new HashMap<>() ;

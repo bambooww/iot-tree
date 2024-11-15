@@ -368,9 +368,17 @@ public class InfluxDB_Writer extends MNNodeEnd
 		
 		if(ptBuf.size()<=0)
 			return false; //may couse module stop
-		
-		RT_doWriter() ;
-		return true ;
+
+		try
+		{
+			RT_doWriter() ;
+			return true ;
+		}
+		catch(Exception ee)
+		{
+			RT_DEBUG_WARN.fire("influx_mt", "RT_doWriter error", ee);
+			return false;
+		}
 	}
 	
 	private static String inTitle = "<pre>"

@@ -2,7 +2,6 @@ package org.iottree.core;
 
 import java.util.List;
 
-import org.iottree.core.basic.PropGroup;
 import org.iottree.core.util.xmldata.*;
 import org.json.JSONObject;
 

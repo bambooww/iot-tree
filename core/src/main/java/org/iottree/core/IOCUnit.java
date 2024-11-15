@@ -1,8 +1,5 @@
 package org.iottree.core;
 
-import org.json.*;
-import java.util.*;
-
 public interface IOCUnit extends IOCBox
 {
 	

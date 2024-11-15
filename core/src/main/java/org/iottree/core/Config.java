@@ -14,8 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.logger.ILogger;
-import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -364,8 +362,8 @@ public class Config
 	
 	public static String getDataDynDirBase()
 	{
-		if(Convert.isNullOrEmpty(dataDynDirBase))
-			throw new RuntimeException("no data_dyn_dir found or dir is not existed in config.xml") ;
+//		if(Convert.isNullOrEmpty(dataDynDirBase))
+//			throw new RuntimeException("no data_dyn_dir found or dir is not existed in config.xml") ;
 		
 		return dataDynDirBase ;
 	}
@@ -583,7 +581,9 @@ public class Config
 				System.out.println("Data Dir Base="+dataDirBase) ;
 				System.setProperty("iottree.data_dir",getDataDirBase());
 				System.setProperty("iottree.msg_net",getDataDirBase()+"/msg_net/");
+				System.setProperty("iottree.lib_plugins.dir",getDataDirBase()+"/plugins/");
 				
+				dataDynDirBase = dataFileBase + "/data_dyn/"; //default dyn data
 				tdata = confRootEle.getAttribute("data_dyn_dir") ;
 				if(Convert.isNotNullEmpty(tdata))
 				{
@@ -605,10 +605,8 @@ public class Config
 						dataDynDirBase += "/" ;
 				}
 				
-				if(Convert.isNotNullEmpty(dataDynDirBase))
-					System.out.println("data_dyn_dir="+dataDynDirBase) ;
-				else
-					System.err.println("data_dyn_dir is not set") ;
+				System.out.println("data_dyn_dir="+dataDynDirBase) ;
+				System.setProperty("iottree.data_dyn_dir",dataDynDirBase);
 				
 				tdata = confRootEle.getAttribute("lib_dir") ;
 				if(Convert.isNotNullEmpty(tdata))

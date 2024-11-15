@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import org.iottree.core.ConnDev;
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
-import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 
 public interface IConnPtDevFinder
@@ -29,7 +28,7 @@ public interface IConnPtDevFinder
 			UAVal.ValTP vt = UAVal.getValTp(vtstr) ;
 			if(vt==null)
 				continue ;
-			UATag nt = ndev.addTagWithGroupByPath(d.getPath(),vt,false) ;
+			//UATag nt = ndev.addTagWithGroupByPath(d.getPath(),vt,false) ;
 		}
 		ndev.save();
 		return true ;

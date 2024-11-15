@@ -1,6 +1,5 @@
 package org.iottree.core.station;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.iottree.core.station.PSCmdDirSyn.DirDiff;

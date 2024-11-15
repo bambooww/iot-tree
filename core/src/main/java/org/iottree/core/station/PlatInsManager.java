@@ -6,13 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.iottree.core.Config;
-import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;

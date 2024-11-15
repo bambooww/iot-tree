@@ -77,6 +77,11 @@ public class RelationalDB_M extends MNModule
 	{
 		this.sourceName = jo.optString("sor_name") ;
 	}
+	
+	public String getSourceName()
+	{
+		return this.sourceName ;
+	}
 
 	public SourceJDBC getSourceJDBC()
 	{

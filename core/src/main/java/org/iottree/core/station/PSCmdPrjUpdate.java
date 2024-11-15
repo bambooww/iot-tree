@@ -48,16 +48,8 @@ public class PSCmdPrjUpdate extends PSCmd
 		if(zipbs==null||zipbs.length<=0)
 			return ;
 		
-		String stationid =ps.getId() ;
-		//if(!prjname.startsWith(stationid+"_"))
-		//	prjname = stationid+"_"+prjname ;
-//		UAManager ua = UAManager.getInstance() ;
-//		//UAPrj localprj = ua.getPrjByName(prjname) ;
-//		//ua.im
-//		StringBuilder failedr = new StringBuilder() ;
-//		if(!ua.updateOrAddPrj(zipbs, prjname, failedr))
-//			System.err.println(" RT_onRecvedInStationLocal err :"+failedr.toString()) ;
-		
+//		String stationid =ps.getId() ;
+	
 		// 不允许直接更新项目，动作太大
 		PlatInsManager.getInstance().onRecvedStationPrj(ps,prjname, zipbs) ;
 	}
