@@ -17,6 +17,7 @@ import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.store.influxdb.InfluxDB_M;
 import org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement;
 import org.iottree.core.util.Convert;
@@ -87,6 +88,14 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 	public String getIcon()
 	{
 		return "\\uf148";
+	}
+	
+	@Override
+	public boolean isFitForPrj(UAPrj prj)
+	{
+		if(prj==null)
+			return false;
+		return prj.isPrjPStationIns() ;
 	}
 
 	@Override
@@ -167,6 +176,7 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 		return (InfluxDB_M)mt.getOwnRelatedModule() ;
 	}
 
+	private transient List<Point> lastWritePts = null ;
 	
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
@@ -198,6 +208,7 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 		if(pts==null||pts.size()<=0)
 			return null ;
 		
+		lastWritePts = pts;
 		mt.RT_writePoints(pts) ;
 //		InfluxDBClient client = dbm.RT_getClient() ;
 //		WriteApiBlocking wapi = client.getWriteApiBlocking() ;
@@ -313,5 +324,18 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 			point.addField(fn, (Number)null) ;
 		
 		return point ;
+	}
+	
+	@Override
+	protected void RT_renderDiv(List<DivBlk> divblks)
+	{
+		StringBuilder divsb = new StringBuilder() ;
+		divsb.append("<div class='rt_blk'>") ;
+		if(lastWritePts!=null)
+			divsb.append(" last write influxdb pts="+lastWritePts.size()) ;
+		divsb.append("</div>") ;
+		divblks.add(new DivBlk("station_recved_fsave",divsb.toString())) ;
+		
+		super.RT_renderDiv(divblks);
 	}
 }

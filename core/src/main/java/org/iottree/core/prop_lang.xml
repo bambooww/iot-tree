@@ -67,4 +67,7 @@
 	<dd_node id="1" name="pi_station_prjn" name_cn="远端站点项目名称" name_en="Remote Station Project Name" desc_cn="空表示和本项目同名" desc_en="Empty represents the same name as this project"/>
 	<dd_node id="1" name="pi_syn_data_saver_sor" name_cn="远端站点同步数据保存数据源" name_en="Remote Station synchronization data saving jdbc source" desc_cn="空表示同步数据不做保存" desc_en="Empty means synchronous data is not saved"/>
 
+	<dd_node id="1" name="pg_ch_drv_spc_conf" name_cn="驱动特殊配置" name_en="Driver specific configation" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_ch_drv_conf" name_cn="驱动配置" name_en="Driver configation" desc_cn=""/>
+	
 </dd_class>

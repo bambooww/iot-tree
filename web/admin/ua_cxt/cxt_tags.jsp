@@ -217,8 +217,10 @@ if(b_tags)
     	<th sort_by="title"><wbt:g>title</wbt:g></th>
         <th sort_by="addr"><wbt:g>addr</wbt:g></th>
         <th sort_by="valtp"><wbt:g>val,type</wbt:g></th>
-        <th ><wbt:g>alert</wbt:g></th>
+        <th ><wbt:g>indicator</wbt:g></th>
         <th><wbt:g>val</wbt:g></th>
+        <th><wbt:g>unit</wbt:g></th>
+        <th ><wbt:g>alert</wbt:g></th>
         <th><wbt:g>update,time</wbt:g></th>
         <th><wbt:g>change,time</wbt:g></th>
         <th><wbt:g>valid</wbt:g></th>
@@ -249,6 +251,7 @@ if(prj!=null)
 <br><br>
 </body>
 <script>
+
 var prjid = "<%=prjid%>" ;
 var prj_name = "<%=prj_name%>" ;
 var node_id = "<%=node_id%>" ;
@@ -279,11 +282,15 @@ layui.use('form', function(){
 	  
 	  form.on('switch(show_sys)', function(obj){
 		  var bshow = obj.elem.checked ;
-          document.location.href="cxt_tags.jsp?path="+path+"&sys="+bshow+"&sub="+b_sub ;
+		  b_sys = bshow ;
+          //document.location.href="cxt_tags.jsp?path="+path+"&sys="+bshow+"&sub="+b_sub ;
+          refresh_tags();
       });
 	  form.on('switch(show_sub)', function(obj){
 		  var bsub = obj.elem.checked ;
-          document.location.href="cxt_tags.jsp?path="+path+"&sys="+b_sys+"&sub="+bsub ;
+		  b_sub = bsub ;
+          //document.location.href="cxt_tags.jsp?path="+path+"&sys="+b_sys+"&sub="+bsub ;
+		  refresh_tags();
       });
 	  
 	  form.render();
@@ -929,6 +936,13 @@ function check_ws()
 	return ;
 }
 
+function reconn_ws()
+{
+	ws_disconn();
+	ws_conn();
+	ws_last_chk = new Date().getTime();
+}
+
 if(!b_devdef)
 {
 	check_ws();
@@ -985,6 +999,7 @@ function refresh_tags()
 		var tn = $('#tb_cur tr[id*="ctag_"]:last-child').attr("tag_num");
 		$("#tags_num").html(tn);
 		 form.render();
+		 reconn_ws();
 	},false);
 }
 

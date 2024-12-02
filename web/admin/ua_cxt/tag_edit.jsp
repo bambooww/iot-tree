@@ -34,6 +34,8 @@
 	String valtp_str = "" ;
 	long srate = 200;
 	int dec_digits = -1 ;
+	String unit="" ;
+	String indicator = "" ;
 	String canw = "";
 	String desc = "" ;
 	String trans = null ;
@@ -97,6 +99,8 @@
  		dec_digits = tag.getDecDigits() ;
  		srate = tag.getScanRate() ;
  		canw = ""+tag.isCanWrite();
+ 		unit = tag.getUnit() ;
+ 		indicator = tag.getIndicator() ;
  		trans = tag.getValTranser() ;
  		if(Convert.isNullOrEmpty(trans))
  			trans = null ;
@@ -151,7 +155,7 @@ top:5px;
 }
 </style>
 <script>
-dlg.resize_to(850,600);
+dlg.resize_to(1050,600);
 </script>
 
 </head>
@@ -170,11 +174,8 @@ dlg.resize_to(850,600);
 	  <div class="layui-input-inline" style="width: 300px;">
 	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
 	  </div>
-	  
-  </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>data,type</wbt:g></label>
-    <div class="layui-input-inline" style="width: 100px;">
+	  <div class="layui-form-mid"><wbt:g>data,type</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width: 100px;">
       <select  id="vt"  name="vt"  class="layui-input" lay-filter="vt" >
         <option value="">---</option>
 <%
@@ -186,18 +187,67 @@ for(UAVal.ValTP vt:vtps)
 %>
       </select>
     </div>
-    <div class="layui-form-mid"><wbt:g>dec_digit</wbt:g>:</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"><wbt:g>dec_digit</wbt:g>:</label>
     <div class="layui-input-inline" style="width: 50px;">
       <input type="text" id="dec_digits" name="dec_digits" class="layui-input">
     </div>
     <div class="layui-form-mid"><wbt:g>r_or_w</wbt:g>:</div>
-    <div class="layui-input-inline" style="width: 150px;">
+    <div class="layui-input-inline" style="width: 120px;">
       <select id="canw"  name="canw" class="layui-input" lay-filter="canw">
         <option value="">---</option>
         <option value="false"><wbt:g>r</wbt:g></option>
         <option value="true"><wbt:g>rw</wbt:g></option>
       </select>
     </div>
+    
+    <div class="layui-form-mid"><wbt:g>indicator</wbt:g>:</div>
+    <div class="layui-input-inline" style="width:180px;">
+      <select id="indicator"  name="indicator" class="layui-input" lay-filter="indicator">
+        <option value="">---</option>
+<%
+	for(ValIndicator vi:ValIndicator.values())
+	{
+		List<ValUnit> vus = vi.getUnits() ;
+		String vusstr = "";
+		if(vus!=null && vus.size()>0)
+		{
+			StringBuilder vussb = new StringBuilder() ;
+			boolean bfirst = true;
+			for(ValUnit vu:vus)
+			{
+				if(bfirst) bfirst=false;
+				else vussb.append(",") ;
+				vussb.append(vu.name()) ;
+			}
+			vusstr = vussb.toString() ;
+		}
+%>
+        <option value="<%=vi.name()%>" units="<%=vusstr%>"><%=vi.getTitle() %></option>
+<%
+	}
+%>
+      </select>
+    </div>
+    <div class="layui-form-mid"><wbt:g>unit</wbt:g>:</div>
+    <div class="layui-input-inline" style="width: 210px;">
+      <select id="unit"  name="unit" class="layui-input" lay-filter="unit">
+      </select>
+      <span style="display:none" ><select id="unit_hid"  name="unit_hid" lay-ignore>
+        <option value="">---</option>
+<%
+	for(ValUnit vu:ValUnit.values())
+	{
+		
+%>
+        <option value="<%=vu.name()%>">[<%=vu.getUnit() %>] <%=vu.getTitle() %></option>
+<%
+	}
+%>
+      </select></span>
+    </div>
+    
   </div>
 <%
 
@@ -272,7 +322,7 @@ if(bmid)
 %>
   <div class="layui-form-item" id="w_js_setting">
     <label class="layui-form-label"><wbt:g>exp_wjs</wbt:g>:</label>
-    <div class="layui-input-inline" style="width:500px;color:#c1c1c1;font-size: 12px;">
+    <div class="layui-input-inline" style="width:800px;color:#c1c1c1;font-size: 12px;">
     ($tag,$input)=>{
 	<textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;"  id="mid_w_js"  name="mid_w_js"   class="layui-input" ondblclick="on_wjs_edit()" title="<wbt:g>dbclk_open_jse</wbt:g>"></textarea>
 	}
@@ -367,6 +417,8 @@ var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
 var canw = "<%=canw%>";
+var unit = "<%=unit%>" ;
+var indicator = "<%=indicator%>" ;
 var mid_w_js = "<%=html_str(mid_w_js)%>" ;
 var trans_dd = <%=trans%>;
 var bloc=<%=blocal%>
@@ -426,6 +478,7 @@ layui.use('form', function(){
 	  $("#vt").val(vt) ;
 	  $("#srate").val(srate) ;
 	  $("#canw").val(canw) ;
+	  
 	  $("#local_defval").val(loc_devf) ;
 	  $("#min_val_str").val(min_val_str) ;
 	  $("#max_val_str").val(max_val_str) ;
@@ -444,7 +497,16 @@ layui.use('form', function(){
 		  //      var b = obj.elem.checked ;
 		  update_form();
 		  });
+	  form.on("select(indicator)",function(obj){
+		  //      var b = obj.elem.checked ;
+		  update_indicator();
+		  });
 	  update_form();
+	  
+	  $("#indicator").val(indicator) ;
+	  update_indicator();
+	  $("#unit").val(unit) ;
+	  
 	  form.render();
 	  
 	  if(!tag_id)
@@ -467,6 +529,51 @@ function update_transfer_s()
 		return ;
 	}
 	$("#transfer_s").val(trans_dd._t) ;
+}
+
+function update_indicator()
+{
+	let indoptele = $("#indicator").find("option:selected") ;
+	let units = indoptele.attr("units") ;
+	let uss = null ;
+	if(units)
+	{
+		uss = units.split(",") ;
+	}
+	
+	let unitele =$("#unit");
+	let oldv = unitele.val() ;
+	unitele.find('option').remove();
+	
+	let opts = $("#unit_hid").children('option') ;
+	
+	let first_unit_v = null ;
+	for(let i = 0 ; i < opts.length; i ++)
+	{
+		let opt = $(opts[i]) ;
+		if(i==0 || uss==null)
+		{
+			unitele.append(opt.clone()) ;
+			continue ;
+		}
+		
+		let v = opt.attr("value") ;
+		if(uss.indexOf(v)<0)
+			continue ;
+		
+		if(!first_unit_v)
+			first_unit_v = v ;
+		unitele.append(opt.clone()) ;
+	}
+	unitele.val(oldv) ;
+	
+	let ind_curv = $("#indicator").val() ;
+	let unit_curv = unitele.val() ;
+	if(ind_curv && !unit_curv && first_unit_v)
+	{
+		unitele.val(first_unit_v)
+	}
+	form.render();
 }
 
 function update_alert_s()
@@ -628,12 +735,14 @@ function do_submit(cb)
 			return ;
 		}
 	}
+	let unit = $("#unit").val() ;
+	let indicator = $("#indicator").val() ;
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
 		vt:get_input_val("vt",""),
 		dec_digits:get_input_val("dec_digits",-1,true),
 		srate:get_input_val("srate",100,true),
-		canw:canw,
+		canw:canw,unit:unit,indicator:indicator,
 		trans:JSON.stringify(trans_dd),
 		b_val_filter:b_val_filter,
 		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,mid_w_js:mid_w_js,

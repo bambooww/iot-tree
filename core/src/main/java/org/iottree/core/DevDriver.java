@@ -510,6 +510,10 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		return true;
 	}
 
+	public boolean hasDriverConfigPage()
+	{
+		return false;
+	}
 	/**
 	 * when >= 0,it will override DriverIntMS in channel
 	 * 

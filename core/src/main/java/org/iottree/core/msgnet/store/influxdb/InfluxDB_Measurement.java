@@ -7,6 +7,7 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
@@ -86,24 +87,11 @@ public class InfluxDB_Measurement extends MNNodeRes
 
 	// rt lines
 	
-	@Override
-	protected void RT_renderDiv(List<DivBlk> divblks)
-	{
-//		if(outTP==OutTP.msg_per_ln)
-//		{
-//			StringBuilder divsb = new StringBuilder() ;
-//			divsb.append("<div class=\"rt_blk\">Read Line CC= "+LINE_CC) ;
-//			divsb.append("</div>") ;
-//			divblks.add(new DivBlk("file_r_line_cc",divsb.toString())) ;
-//		}
-		
-		super.RT_renderDiv(divblks);
-	}
-	
 	private transient long lastPtIn = -1 ;
 	
 	private transient ArrayList<Point> ptBuf = new ArrayList<>() ;
 	
+	private transient long lastWDT = -1 ;
 	private transient long lastWNum = -1 ;
 	
 	private transient long lastWCostMS = -1 ;
@@ -153,11 +141,26 @@ public class InfluxDB_Measurement extends MNNodeRes
 		InfluxDB_M dbm = (InfluxDB_M)this.getOwnRelatedModule() ;
 		InfluxDBClient client = dbm.RT_getClient() ;
 		WriteApiBlocking wapi = client.getWriteApiBlocking() ;
-		long st = System.currentTimeMillis() ;
+		lastWDT = System.currentTimeMillis() ;
 		wapi.writePoints(pts);
-		lastWCostMS = System.currentTimeMillis()-st ;
+		lastWCostMS = System.currentTimeMillis()-lastWDT ;
 		this.lastWNum = pts.size() ;
 	}
+	
+	@Override
+	protected void RT_renderDiv(List<DivBlk> divblks)
+	{
+		StringBuilder divsb = new StringBuilder() ;
+		divsb.append("<div class='rt_blk'>Write to InfluxDB --") ;
+		divsb.append(Convert.calcDateGapToNow(lastWDT)+ " Num="+lastWNum+" Cost "+lastWCostMS+"ms") ;
+		divsb.append("</div>") ;
+		divblks.add(new DivBlk("influx_m_w",divsb.toString())) ;
+		
+		super.RT_renderDiv(divblks);
+	}
+	
+
+	
 	
 	/**
 	 * called by module,no msg in after 1s -- will write left points in buffer

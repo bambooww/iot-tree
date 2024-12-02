@@ -23,14 +23,14 @@ public class ConnProUDP extends ConnProvider
 	@Override
 	public boolean isSingleProvider()
 	{
-		return false;
+		return true;
 	}
 
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return null;
+		return ConnPtUDPMsg.class;
 	}
 
 
@@ -40,11 +40,9 @@ public class ConnProUDP extends ConnProvider
 		return 0;
 	}
 
-
 	@Override
 	protected void connpRunInLoop() throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

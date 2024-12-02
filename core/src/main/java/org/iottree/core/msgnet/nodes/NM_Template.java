@@ -75,6 +75,11 @@ public class NM_Template extends MNNodeMid
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
+		if(this.tempTxt==null)
+		{
+			failedr.append("no template txt set") ;
+			return false ;
+		}
 		return true;
 	}
 

@@ -115,7 +115,7 @@ public class DevManager // implements IResCxt
 				}
 				catch(Exception e)
 				{
-					//e.printStackTrace();
+					e.printStackTrace();
 					log.warn("load driver ["+ln+"] failed!") ;
 				}
 				}

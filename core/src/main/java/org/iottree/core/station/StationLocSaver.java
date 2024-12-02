@@ -38,11 +38,11 @@ public class StationLocSaver
 		}
 	}
 	
-	private static HashMap<String,Object> prj2saver = new HashMap<>() ;
+	private static HashMap<String,Object> name2saver = new HashMap<>() ;
 	
-	public static StationLocSaver getSaver(String prjname)
+	public static StationLocSaver getSaver(String name)
 	{
-		Object s = prj2saver.get(prjname) ;
+		Object s = name2saver.get(name) ;
 		if(s!=null)
 		{
 			if(s instanceof String)
@@ -53,7 +53,7 @@ public class StationLocSaver
 		
 		synchronized(StationLocSaver.class)
 		{
-			s = prj2saver.get(prjname) ;
+			s = name2saver.get(name) ;
 			if(s!=null)
 			{
 				if(s instanceof String)
@@ -64,17 +64,57 @@ public class StationLocSaver
 			
 			try
 			{
-				StationLocSaver sver = new StationLocSaver(prjname) ;
-				prj2saver.put(prjname,sver) ;
+				StationLocSaver sver = new StationLocSaver(name) ;
+				name2saver.put(name,sver) ;
 				return sver ;
 			}
 			catch(Exception ee)
 			{
 				ee.printStackTrace();
-				prj2saver.put(prjname,"") ;
+				name2saver.put(name,"") ;
 				return null ;
 			}
 			
+		}
+	}
+	
+	
+	private static HashMap<String,Object> nor_name2saver = new HashMap<>() ;
+	
+	static StationLocSaver getSaverNor(String name)
+	{
+		Object s = nor_name2saver.get(name) ;
+		if(s!=null)
+		{
+			if(s instanceof String)
+				return null ;
+			
+			return (StationLocSaver)s ;
+		}
+		
+		synchronized(StationLocSaver.class)
+		{
+			s = nor_name2saver.get(name) ;
+			if(s!=null)
+			{
+				if(s instanceof String)
+					return null ;
+				
+				return (StationLocSaver)s ;
+			}
+			
+			try
+			{
+				StationLocSaver sver = new StationLocSaver("nor",name) ;
+				nor_name2saver.put(name,sver) ;
+				return sver ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+				nor_name2saver.put(name,"") ;
+				return null ;
+			}
 		}
 	}
 
@@ -111,6 +151,28 @@ public class StationLocSaver
 		}
 	}
 	
+	private StationLocSaver(String tp,String name) throws SQLException
+	{
+		String fp = null;
+		if(forTest)
+			fp = "../data_dyn/station/"+tp+"_test/db_" + name + ".db";
+		else
+			fp = Config.getDataDynDirBase() + "station/"+tp+"/db_" + name + ".db";
+		File f = new File(fp);
+		if (!f.getParentFile().exists())
+			f.getParentFile().mkdirs();
+
+		dbUrl = "jdbc:sqlite:" + fp;
+		tableName = tp+"_" + name;
+
+		conn = DriverManager.getConnection(dbUrl);
+		String createTableSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + "key TEXT PRIMARY KEY,"
+				+ "message BLOB)";
+		try (Statement stmt = conn.createStatement())
+		{
+			stmt.execute(createTableSQL);
+		}
+	}
 
 	public String getTableName()
 	{
@@ -128,6 +190,8 @@ public class StationLocSaver
 	public int putBatch(List<Item> items,long max_len) throws SQLException
 	{
 		int n = items.size() ;
+		if(n<=0)
+			return 0;
 		
 		try
 		{
@@ -140,7 +204,7 @@ public class StationLocSaver
 			}
 			
 			saven += n ;
-			if(saven>max_len)
+			if(max_len>0 && saven>max_len)
 			{
 				long deln = saven-max_len ;
 				if(deln>n)
@@ -408,6 +472,8 @@ public class StationLocSaver
 	
 	private ArrayList<Item> bufferedItems = new ArrayList<>() ;
 	
+	private long lastPutDT = System.currentTimeMillis() ;
+	
 	public long RT_getSavedBufferedNum()
 	{
 		return this.getSavedNum() + bufferedItems.size() ;
@@ -422,6 +488,8 @@ public class StationLocSaver
 	{
 		this.bufferedItems.add(new Item(key,bs)) ;
 		
+		this.lastPutDT = System.currentTimeMillis() ;
+		
 		if(this.bufferedItems.size()>=MAX_BUF_LEN)
 		{
 			try
@@ -433,6 +501,18 @@ public class StationLocSaver
 				sqle.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * @param timeout
+	 */
+	public void RT_checkFlush(long timeout) throws SQLException
+	{
+		if(System.currentTimeMillis()-this.lastPutDT<timeout)
+			return ;
+		
+		RT_flushBuffered(-1) ; 
 	}
 	
 	synchronized void RT_flushBuffered(long keep_max_len) throws SQLException

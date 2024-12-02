@@ -3,6 +3,7 @@
 
   <dd_node name="pi_pop_seltags" name_cn="标签选择" name_en="Select Tags" />
   <dd_node name="pi_pop_client_hmis" name_cn="客户端HMI(UI)列表" name_en="Client HMI(UI) list" />
+  <dd_node name="pi_pop_drv_spc" name_cn="驱动特殊配置" name_en="Driver specific configuration" />
   
   <dd_node name="invalid_pm" name_cn="无效参数" name_en="Invalid Param" />
   
@@ -80,4 +81,141 @@
 		param3tt_cn="解除误差" param3tt_en="Release Error"
 		/>
 
+
+	<dd_node name="vu_C" name_cn="摄氏度" name_en="Celsius" unit="°C" />
+	<dd_node name="vu_F" name_cn="华氏度" name_en="Fahrenheit" unit="°F" />
+	<dd_node name="vu_K" name_cn="开尔文" name_en="Kelvin" unit="K" />
+	
+	<dd_node name="vu_m" name_cn="米" name_en="Meter" unit="m" />
+	<dd_node name="vu_km" name_cn="千米" name_en="Kilometer" unit="km" />
+	<dd_node name="vu_ft" name_cn="英尺" name_en="Foot" unit="ft" />
+	<dd_node name="vu_in" name_cn="英寸" name_en="Inch" unit="in" />
+	<dd_node name="vu_yd" name_cn="码" name_en="Yard" unit="yd" />
+	<dd_node name="vu_mi" name_cn="英里" name_en="Mile" unit="mi" />
+	
+	<dd_node name="vu_mps" name_cn="米/秒" name_en="Meter per second" unit="m/s" />
+	<dd_node name="vu_kmph" name_cn="千米/小时" name_en="Kilometer per hour" unit="km/h" />
+	<dd_node name="vu_mph" name_cn="英里/小时" name_en="Mile per hour" unit="mph" />
+
+	<dd_node name="vu_Pa" name_cn="帕斯卡" name_en="Pascal" unit="Pa" />
+	<dd_node name="vu_mb" name_cn="毫巴" name_en="Millibar" unit="mb" />
+	<dd_node name="vu_mmHg" name_cn="毫米汞柱" name_en="Millimeter of mercury" unit="mmHg" />
+	<dd_node name="vu_inHg" name_cn="英寸汞柱" name_en="Inch of mercury" unit="inHg" />
+	<dd_node name="vu_Bar" name_cn="巴" name_en="Bar" unit="Bar" />
+	<dd_node name="vu_MPa" name_cn="兆帕" name_en="Megapascal" unit="MPa" />
+	<dd_node name="vu_kPa" name_cn="千帕" name_en="Kilopascal" unit="kPa" />
+	
+	
+	
+	<dd_node name="vu_g" name_cn="克" name_en="Gram" unit="g" />
+	<dd_node name="vu_kg" name_cn="千克" name_en="Kilogram" unit="kg" />
+	<dd_node name="vu_t" name_cn="吨" name_en="Ton" unit="t" />
+	<dd_node name="vu_oz" name_cn="盎司" name_en="Ounce" unit="oz" />
+	<dd_node name="vu_lb" name_cn="磅" name_en="Pound" unit="lb" />
+	
+	<dd_node name="vu_L" name_cn="升" name_en="Liter" unit="L" />
+	<dd_node name="vu_gal" name_cn="加仑" name_en="Gallon" unit="gal" />
+	<dd_node name="vu_m3" name_cn="立方米" name_en="Cubic meter" unit="m³" />
+	<dd_node name="vu_ft3" name_cn="立方英尺" name_en="Cubic foot" unit="ft³" />
+	
+	
+	
+	<dd_node name="vu_m3ps" name_cn="立方米每秒" name_en="Cubic meters per second" unit="m³/s" />
+	<dd_node name="vu_m3ph" name_cn="立方米每小时" name_en="Cubic meters per hour" unit="m³/h" />
+	<dd_node name="vu_Lpmin" name_cn="升每分钟" name_en="Liters per minute" unit="L/min" />
+	<dd_node name="vu_Lps" name_cn="升每秒" name_en="Liters per second" unit="L/s" />
+	<dd_node name="vu_gpm" name_cn="加仑每分钟(US)" name_en="Gallons per minute (US)" unit="GPM" />
+	<dd_node name="vu_gph" name_cn="加仑每小时(US)" name_en="Gallons per hour (US)" unit="GPH" />
+	<dd_node name="vu_cfm" name_cn="立方英尺每分钟" name_en="Cubic feet per minute" unit="CFM" />
+	<dd_node name="vu_cim" name_cn="立方英寸每分钟" name_en="Cubic inches per minute" unit="CIM" />
+
+	<dd_node name="vu_g_pm3" name_cn="克每立方米" name_en="Gram per Cubic meter" unit="g/m³" />
+	<dd_node name="vu_percent" name_cn="百分比" name_en="Percent" unit="%" />
+	
+	<dd_node name="vu_A" name_cn="安培" name_en="Ampere" unit="A" />
+	<dd_node name="vu_mA" name_cn="毫安" name_en="Milliampere" unit="mA" />
+	<dd_node name="vu_uA" name_cn="微安" name_en="Microampere" unit="μA" />
+	
+	<dd_node name="vu_V" name_cn="伏特" name_en="Volt" unit="V" />
+	<dd_node name="vu_mV" name_cn="毫伏" name_en="Millivolt" unit="mV" />
+	<dd_node name="vu_uV" name_cn="微伏" name_en="Microvolt" unit="μV" />
+	
+	<dd_node name="vu_R" name_cn="欧姆" name_en="Ohm" unit=" Ω" />
+	<dd_node name="vu_kR" name_cn="千欧姆" name_en="Kilo Ohm" unit="kΩ" />
+	<dd_node name="vu_MR" name_cn="兆欧姆" name_en="Mega Ohm" unit="MΩ" />
+	
+	<dd_node name="vu_Fr" name_cn="法拉" name_en="Farad" unit="F" />
+	<dd_node name="vu_mFr" name_cn="毫法" name_en="Milli Farad" unit="mF" />
+	<dd_node name="vu_uFr" name_cn="微法" name_en="Micro Farad" unit="μF" />
+	<dd_node name="vu_nFr" name_cn="纳法" name_en="Nano Farad" unit="nF" />
+	<dd_node name="vu_pFr" name_cn="皮法" name_en="Pico Farad" unit="pF" />
+	
+	<dd_node name="vu_H" name_cn="亨利" name_en="Henry" unit="H" />
+	<dd_node name="vu_mH" name_cn="毫亨" name_en="Milli Henry" unit="mH" />
+	<dd_node name="vu_uH" name_cn="微亨" name_en="Micro Henry" unit="μH" />
+	
+	<dd_node name="vu_W" name_cn="瓦特" name_en="Watt" unit=" W" />
+	<dd_node name="vu_kW" name_cn="千瓦" name_en="Kilo Watt" unit="kW" />
+	<dd_node name="vu_MW" name_cn="兆瓦" name_en="Mega Watt" unit="MW" />
+	
+	<dd_node name="vu_J" name_cn="焦耳" name_en="Joule" unit=" J" />
+	<dd_node name="vu_kJ" name_cn="千焦" name_en="Kilo Joule" unit="kJ" />
+	<dd_node name="vu_Wh" name_cn="瓦时" name_en="Watt-hour" unit="Wh" />
+	<dd_node name="vu_kWh" name_cn="千瓦时" name_en="Kilo watt-hour" unit="kWh" />
+
+	<dd_node name="vu_Hz" name_cn="赫兹" name_en="Hertz" unit="Hz" />
+	<dd_node name="vu_kHz" name_cn="千赫兹" name_en="Kilo Hertz" unit="kHz" />
+	<dd_node name="vu_MHz" name_cn="兆赫兹" name_en="Mega Hertz" unit="MHz" />
+	<dd_node name="vu_GHz" name_cn="吉赫兹" name_en="Giga Hertz" unit="GHz" />
+	
+	<dd_node name="vu_col" name_cn="库仑" name_en="Coulomb" unit="C" />
+	<dd_node name="vu_mcol" name_cn="毫库仑" name_en="Milli Coulomb" unit="mC" />
+	<dd_node name="vu_ucol" name_cn="微库仑" name_en="Micro Coulomb" unit="μC" />
+	
+	<dd_node name="vu_S" name_cn="西门子" name_en="Siemens" unit="S" />
+	<dd_node name="vu_mS" name_cn="毫西门子" name_en="Milli Siemens" unit="mS" />
+	<dd_node name="vu_uS" name_cn="微西门子" name_en="Micro Siemens" unit="μS" />
+	
+	<dd_node name="vu_spm" name_cn="西门子每米" name_en="Siemens per meter" unit="S/m" />
+	<dd_node name="vu_mspcm" name_cn="毫西门子每厘米" name_en="Milli Siemens per centimeter" unit="mS/cm" />
+	
+	<!-- 1JTU=19NTU=2.5mg/l -->
+	<dd_node name="vu_ntu" name_cn="NTU/FTU" name_en="NTU/FTU" unit="NTU" />
+	<dd_node name="vu_jtu" name_cn="JTU度" name_en="NTU" unit="JTU" />
+	<dd_node name="vu_mgpl" name_cn="毫克每升" name_en="Milli Gram per Liter" unit="mg/L" />
+	
+	<dd_node name="vu_ppm" name_cn="百万分之一" name_en="Parts per million" unit="ppm" />
+	
+	<dd_node name="vu_s" name_cn="秒" name_en="Second" unit="s" />
+	<dd_node name="vu_min" name_cn="分钟" name_en="Minute" unit="min" />
+	<dd_node name="vu_hr" name_cn="小时" name_en="Hour" unit="hr" />
+	<dd_node name="vu_d" name_cn="天" name_en="Day" unit="d" />
+	<dd_node name="vu_wk" name_cn="周" name_en="Week" unit="wk" />
+	<dd_node name="vu_yr" name_cn="年" name_en="Year" unit="yr" />
+	
+	
+	
+	<dd_node name="vi_temp" name_cn="温度" name_en="Temperature" units="C,F,K" />
+	<dd_node name="vi_pres" name_cn="压力" name_en="Pressure" units="Pa,mb,mmHg,inHg,Bar,MPa,kPa" />
+	<dd_node name="vi_flow" name_cn="流速" name_en="Flow Speed" units="m3ps,m3ph,Lpmin,Lps,gpm,gph,cfm,cim" />
+	<dd_node name="vi_flowa" name_cn="累积流量" name_en="Flow Accumulation" units="L,gal,m3,ft3" />
+	<dd_node name="vi_rh" name_cn="相对湿度" name_en="Relative Humidity" units="percent" />
+	<dd_node name="vi_ah" name_cn="绝对湿度" name_en="Absolute Humidity" units="g_pm3" />
+	<dd_node name="vi_ph" name_cn="pH" name_en="pH" units="" />
+	
+	<dd_node name="vi_i" name_cn="电流" name_en="Current" units="A,mA,uA" />
+	<dd_node name="vi_v" name_cn="电压" name_en="Voltage" units="V,mV,uV" />
+	<dd_node name="vi_r" name_cn="电阻" name_en="Resistance" units="R,kR,MR" />
+	<dd_node name="vi_c" name_cn="电容" name_en="Capacitance" units="Fr,mFr,uFr,nFr,pFr" />
+	<dd_node name="vi_l" name_cn="电感" name_en="Inductance" units="H,mH,uH" />
+	<dd_node name="vi_p" name_cn="功率" name_en="Power" units="W,kW,MW" />
+	<dd_node name="vi_e" name_cn="能量" name_en="Energy" units="J,kJ,Wh,kWh" />
+	<dd_node name="vi_f" name_cn="频率" name_en="Frequency" units="Hz,kHz,MHz,GHz" />
+	<dd_node name="vi_q" name_cn="电荷" name_en="Charge" units="col,mcol,ucol" />
+	<dd_node name="vi_cond" name_cn="电导" name_en="Conductance" units="S,mS,uS" />
+	<dd_node name="vi_condm" name_cn="电导率" name_en="Conductivity" units="spm,mspcm" />
+	<dd_node name="vi_turb" name_cn="浊度" name_en="Turbidity" units="ntu,jtu,mgpl" />
+	<dd_node name="vi_DO" name_cn="含氧量" name_en="Dissolved Oxygen" units="mgpl,ppm" />
+	
+	<dd_node name="vi_tmdur" name_cn="时间长度" name_en="Time duration" units="s,min,hr,d,wk,yr" />
 </dd_class>

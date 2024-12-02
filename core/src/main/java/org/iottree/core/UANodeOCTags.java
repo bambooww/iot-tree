@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.graalvm.polyglot.HostAccess;
+import org.iottree.core.basic.ValUnit;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
@@ -759,6 +760,43 @@ public abstract class UANodeOCTags extends UANodeOC
 				((UANodeOCTags) n).iteratorAllTags(action);
 			}
 		}
+	}
+	
+	
+	public List<UATag> filterTagsAllByUnit(ValUnit vu)
+	{
+		if(vu==null)
+			return null ;
+		ArrayList<UATag> tts = new ArrayList<>();
+		listTagsAll(tts, true, false,false);
+		ArrayList<UATag> rets = new ArrayList<>();
+		for(UATag tt:tts)
+		{
+			if(vu==tt.getValUnit())
+				rets.add(tt) ;
+		}
+		return rets ;
+	}
+	
+	public HashMap<ValUnit,List<UATag>> filterTagsAllByUnit()
+	{
+		HashMap<ValUnit,List<UATag>> rets = new HashMap<>() ;
+		ArrayList<UATag> tts = new ArrayList<>();
+		listTagsAll(tts, true, false,false);
+		for(UATag tt:tts)
+		{
+			ValUnit vu = tt.getValUnit() ;
+			if(vu==null)
+				continue ;
+			List<UATag> tags = rets.get(vu) ;
+			if(tags==null)
+			{
+				tags = new ArrayList<>() ;
+				rets.put(vu,tags) ;
+			}
+			tags.add(tt) ;
+		}
+		return rets ;
 	}
 	
 	// {

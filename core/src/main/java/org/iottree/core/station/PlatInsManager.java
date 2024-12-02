@@ -16,6 +16,10 @@ import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.msgnet.MNManager;
+import org.iottree.core.msgnet.MNNet;
+import org.iottree.core.msgnet.MNNodeStart;
+import org.iottree.core.msgnet.util.ValPack;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -288,6 +292,8 @@ public class PlatInsManager
 			pstation	.RT_onRecvedRTData(prj,key,rt_jo,b_his) ;
 		}
 		
+		prj.RT_onStationRecved(pstation,key,zipdata,rt_jo,b_his) ;
+		
 		PlatInsSaver ps = getSaver(pstation,prj,true) ;
 		if(ps!=null)
 		{
@@ -304,6 +310,50 @@ public class PlatInsManager
 			k2txt.put(k2j.getKey(),k2j.getValue()) ;
 		}
 		ps.BLOB_storeJsonMulti(k2txt);
+	}
+	
+	void onRecvedRTMsg(PStation pstation,UAPrj prj,String key,String topic,byte[] payload,boolean b_his) throws Exception
+	{
+//		if(!b_his)
+//		{
+//			if (rt_jo != null)
+//				RT_updateCxtDyn(prj, rt_jo);
+//			pstation	.RT_onRecvedRTData(prj,key,rt_jo,b_his) ;
+//		}
+//		
+		ValPack vp = ValPack.parseFrom(payload) ;
+		if(vp==null)
+			return ;
+		
+		MNManager mnm = MNManager.getInstance(prj) ;
+		List<MNNet> nets = mnm.listNets() ;
+		if(nets==null||nets.size()<=0)
+			return ;
+		for(MNNet net:nets)
+		{
+			List<MNNodeStart> sns = net.getStartNodes() ;
+			if(sns==null)
+				continue ;
+			for(MNNodeStart sn:sns)
+			{
+				if(!(sn instanceof PlatMsgRecv_NS))
+					continue ;
+				PlatMsgRecv_NS recvns = (PlatMsgRecv_NS)sn ;
+				recvns.RT_onRecvedMsg(key,topic,vp,b_his) ;
+			}
+		}
+		//prj.RT_onStationMsgRecved(pstation,key,topic,vp) ;
+//		
+//		PlatInsSaver ps = getSaver(pstation,prj,true) ;
+//		if(ps!=null)
+//		{
+//			ps.BLOB_storeJson(zipdata, key);
+//		}
+	}
+	
+	void onRecvedHisMsgs(PStation pstation,UAPrj prj,HashMap<String,byte[]> key2pld) throws Exception
+	{
+		
 	}
 	
 	private PlatInsSaver getSaver(PStation pstation,UAPrj prj,boolean blob) throws Exception

@@ -13,6 +13,8 @@
   <dd_node id="1" name="alt_evt" name_cn="报警/事件" name_en="Alert/Event" />
   <dd_node id="1" name="sub" name_cn="子" name_en="Sub" />
   <dd_node id="1" name="lvl" name_cn="级别" name_en="Level" />
+  <dd_node id="1" name="unit" name_cn="单位" name_en="Unit" />
+  <dd_node id="1" name="indicator" name_cn="指标" name_en="Indicator" />
   
   <dd_node id="1" name="edit_mid_tag_js" name_cn="编辑中间标签JS表达式" name_en="Edit Middle Tag JS Express" />
   

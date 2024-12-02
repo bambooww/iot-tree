@@ -19,7 +19,9 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValIndicator;
 import org.iottree.core.basic.ValTranser;
+import org.iottree.core.basic.ValUnit;
 import org.iottree.core.conn.ConnPtBinder;
 import org.iottree.core.conn.ConnPtMSG;
 import org.iottree.core.conn.ConnPtVirtual;
@@ -157,6 +159,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="max_val_str")
 	String maxValStr = null;
 	
+	@data_val
+	String indicator = null;
+	
+	@data_val
+	String unit = null ;
+	
 //	@data_val(param_name="alert_low")
 //	String alertLowVal = null ;
 //	
@@ -179,6 +187,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	//for value not chg check,when tag is inited or 
 	// reload,not chg check will ignore
 	//private transient boolean bInitLoaded = true ;
+	
+	transient boolean bNetMon = false;
 	
 	public UATag()
 	{
@@ -209,6 +219,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		else
 			this.addr = t.addr;
 		this.midWriterJS = t.midWriterJS ;
+		this.bLocal = t.bLocal ;
+		this.localDefaultVal = t.localDefaultVal ;
+		this.bLocalAutoSave = t.bLocalAutoSave ;
 		this.valTp = t.valTp;
 		this.decDigits = t.decDigits ;
 
@@ -217,6 +230,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		this.valTranser=t.valTranser;
 		this.valChgedCacheLen = t.valChgedCacheLen ;
+		
+		this.bValFilter = t.bValFilter ;
+		this.valFilter = t.valFilter ; 
+		this.minValStr = t.minValStr ;
+		this.maxValStr =t.maxValStr ;
+		this.indicator = t.indicator ;
+		this.unit = t.unit ;
+		
 		if(t.valAlerts!=null)
 		{
 			ArrayList<ValAlert> vas = new ArrayList<>() ;
@@ -858,6 +879,48 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return maxVal ;
 	}
 	
+	public String getIndicator()
+	{
+		if(this.indicator==null)
+			return "" ;
+		return this.indicator ;
+	}
+	
+	public UATag asIndicator(String indicator)
+	{
+		this.indicator = indicator ;
+		return this ;
+	}
+	
+	public ValIndicator getValIndicator()
+	{
+		if(Convert.isNullOrEmpty(this.indicator))
+			return null ;
+		
+		return ValIndicator.valueOf(this.indicator) ;
+	}
+	
+	public String getUnit()
+	{
+		if(this.unit==null)
+			return "" ;
+		return this.unit ;
+	}
+	
+	public UATag asUnit(String unit)
+	{
+		this.unit = unit ;
+		return this ;
+	}
+	
+	public ValUnit getValUnit()
+	{
+		if(Convert.isNullOrEmpty(this.unit))
+			return null ;
+		
+		return ValUnit.valueOf(this.unit) ;
+	}
+	
 	public boolean delFromParent() throws Exception
 	{
 		if( this.belongToNode==null)
@@ -1416,12 +1479,18 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			RT_chkAlerts() ;
 		}
+		
+		if(bNetMon)
+			RT_fireNetMon(uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	private void RT_setUAValOnly(UAVal uav)
 	{
 		HIS_setVal(uav) ;
 		this.curVal = uav ;
+		
+		if(bNetMon)
+			RT_fireNetMon(uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	public void RT_setUAValOnlyAlert(UAVal uav)
@@ -1429,10 +1498,21 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		HIS_setVal(uav) ;
 		this.curVal = uav ;
 		
-		if(uav.isValid()) // && bval_chg)
+		boolean bvalid = uav.isValid() ;
+		if(bvalid) // && bval_chg)
 		{
 			RT_chkAlerts() ;
 		}
+		
+		if(bNetMon)
+			RT_fireNetMon(bvalid,uav.getObjVal()) ;
+	}
+	
+	private void RT_fireNetMon(boolean bvalid,Object curv)
+	{
+		UAPrj prj = this.getBelongToPrj() ;
+		if(prj!=null)
+			prj.RT_onTagNetMon(this,bvalid,curv);
 	}
 	/**
 	 * driver get value,may has transfer
@@ -1812,7 +1892,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			dt_chg = System.currentTimeMillis();
 		}
 
-		w.write("{\"id\":\""+this.getId()+"\",\"n\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\"");
+		w.write("{\"id\":\""+this.getId()+"\",\"n\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\",\"u\":\""+this.getUnit()+"\"");
 
 		ValTP vtp = this.getValTp();
 		if (bvalid)
@@ -1908,7 +1988,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			w.write(this.getNodeCxtPathIn(innode));
 		}
 		ValTP vtp = getValTp();
-		w.write("\",\"vt\":\"");
+		w.write("\",\"u\":\""+this.getUnit()+"\",\"vt\":\"");
 		w.write(vtp.name());
 		if (bvalid)
 		{
@@ -1989,6 +2069,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			jo.put("n", this.getName()) ;
 		if(show_t)
 			jo.put("t", this.getTitle()) ;
+		jo.putOpt("u",this.unit) ;
 		jo.put("valid", bvalid) ;
 		jo.put("up_dt", dt) ;
 		jo.put("chg_dt", dt_chg) ;
@@ -2051,6 +2132,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		ValTP vtp = getValTp();
 		jo.putOpt("tp",vtp.getStr());
 		jo.put("w", this.bCanWrite) ;
+		jo.putOpt("u", this.unit) ;
 		JSONObject ejo = getExtAttrJO() ;
 		jo.putOpt("ext",ejo);
 		return jo ;

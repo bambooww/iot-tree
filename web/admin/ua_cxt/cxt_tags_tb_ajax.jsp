@@ -165,6 +165,18 @@ for(UANodeOCTags tn:tns)
 		if(tag.getValTranserObj()!=null)
 			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
 		
+		String indicator_t = "" ;
+		ValIndicator vi = tag.getValIndicator() ;
+		if(vi!=null)
+			indicator_t = vi.getTitle();
+		
+		ValUnit vu = tag.getValUnit();
+		String unit_t = "",unit_tt="" ;
+		if(vu!=null)
+		{
+			unit_t = vu.getUnit() ;
+			unit_tt = vu.getTitle() ;
+		}
 		String alert_str = "" ;
 		List<ValAlert> alerts = tag.getValAlerts() ;
 		if(alerts!=null&&alerts.size()>0)
@@ -215,8 +227,10 @@ if(bloc&&!tag.isSysTag())
 		<td><%=tag.getTitle() %></td>
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
-        <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
+        <td><%=indicator_t %></td>
         <td style="width:80px" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
+        <td title="<%=unit_tt%>"><%=unit_t %></td>
+        <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_chgdt_<%=cxtpath%>"></td>
         <td id="ctag_q_<%=cxtpath%>"></td>

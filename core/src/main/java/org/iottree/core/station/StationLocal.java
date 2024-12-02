@@ -766,7 +766,17 @@ public class StationLocal
 		if(log.isTraceEnabled())
 			log.trace("RT_sendCmd "+cmd.toString()) ;
 		
-		wsClient.send(cmd.packTo());
+		try
+		{
+			wsClient.send(cmd.packTo());
+		}
+		catch(Exception ee)
+		{
+			if(log.isDebugEnabled())
+				log.debug(ee);
+			failedr.append(ee.getMessage());
+			return false;
+		}
 		return true;
 	}
 }

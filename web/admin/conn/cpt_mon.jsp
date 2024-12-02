@@ -86,14 +86,14 @@ text-overflow:ellipsis;
 </div>
 <table style="width:100%">
 	<tr>
-	  <td style="width:40%;">
+	  <td style="width:60%;">
 	  	<div id="mon_mtb_c" style="overflow: auto;height:500px">
 	    <table id="mon_mtb" style="width:99%" border="1">
 
         </table>
         </div>
 	  </td>
-	  <td style="width:60%;">
+	  <td style="width:40%;">
 	  	<div id="r_detail" style="height:700;width:100%">
 
 	  	</div>
@@ -194,9 +194,9 @@ function ob2tr(ob)
 	
 	//{\"dt\":"+stDT+",\"bin\":"+bInput+",\"n\":\""+this.monName+"\",\"len\":"+getMonDataLen()+",\"txt\":\"
 	return "<tr id='"+ob.id+"' onclick='show_detail(this)'>"+
-		"<td  width='40%' style='background-color:"+bcolor+"'>"+
+		"<td  width='300px' style='background-color:"+bcolor+";white-space: nowrap;'>"+
 		dir+" "+st +
-		"</td><td>"+ob.n+"</td><td width='60%'>"+strt+"</td></tr>";
+		"</td><td>"+ob.n+"</td><td width='90%'>"+strt+"</td></tr>";
 }
 	
 function show_detail(tr)

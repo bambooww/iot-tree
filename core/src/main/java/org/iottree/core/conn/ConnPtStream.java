@@ -260,6 +260,12 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			return wrapperInputs.markSupported();
 		}
 		
+		private final static int MON_BUF_LEN = 1024 ;
+		
+		private transient byte[] monBuf = new byte[MON_BUF_LEN] ;
+		private transient int monLen = 0 ;
+		private transient long lastRead = -1 ;
+		
 		@Override
 		public int read() throws IOException
 		{
@@ -275,12 +281,33 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			
-			//lastHasDataDT = System.currentTimeMillis() ;
-			//onMonRecv(true,v) ;
-			byte[] bs = new byte[1] ;
-			bs[0] = (byte)v ;
-			MonItem mibs = new MonItem(true,"",new MonData[] {new MonData("read",bs)}) ;
-			onMonDataRecv(mibs);
+//			byte[] bs = new byte[1] ;
+//			bs[0] = (byte)v ;
+//			MonItem mibs = new MonItem(true,"",new MonData[] {new MonData("read",bs)}) ;
+//			onMonDataRecv(mibs);
+//			return v ;
+			
+			if(monLen>0)
+			{
+				if(System.currentTimeMillis()-lastRead>20 || monLen>=MON_BUF_LEN)
+				{
+					byte[] bs = new byte[monLen] ;
+					System.arraycopy(monBuf, 0, bs, 0, monLen);
+					MonItem mibs = new MonItem(true,"",new MonData[] {new MonData("read",bs)}) ;
+					onMonDataRecv(mibs);
+					monLen = 0 ;
+				}
+			}
+			
+			try
+			{
+				monBuf[monLen] = (byte)v ;
+				monLen ++ ;
+			}
+			finally
+			{
+				lastRead = System.currentTimeMillis();
+			}
 			return v ;
 		}
 		

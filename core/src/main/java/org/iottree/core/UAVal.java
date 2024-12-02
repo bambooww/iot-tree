@@ -1,5 +1,7 @@
 package org.iottree.core;
 
+import java.sql.Date;
+
 import org.iottree.core.util.Convert;
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
@@ -110,7 +112,47 @@ public class UAVal //extends JSObMap
 			tpstr= "str" ;
 		if(!tpstr.startsWith("vt_"))
 			tpstr = "vt_"+tpstr ;
-		return ValTP.valueOf(tpstr);
+		//return UAVal.getValTp(tpstr) ;
+		try
+		{
+			return ValTP.valueOf(tpstr);
+		}
+		catch(Exception ee)
+		{
+			return null ;
+		}
+	}
+	
+	public static ValTP checkValTPByObj(Object obj)
+	{
+		if(obj==null)
+			return ValTP.vt_none ;
+		if(obj instanceof String)
+			return ValTP.vt_str ;
+		Class<?> c = obj.getClass() ;
+		if(c==Integer.class)
+			return ValTP.vt_int32;
+		if(c==Long.class)
+			return ValTP.vt_int64;
+		if(c==Short.class)
+			return ValTP.vt_int16 ;
+		if(c==Float.class)
+			return ValTP.vt_float ;
+		if(c==Double.class)
+			return ValTP.vt_double ;
+		if(c==Character.class)
+			return ValTP.vt_char ;
+		if(c==Byte.class)
+			return ValTP.vt_byte ;
+		if(c==Boolean.class)
+			return ValTP.vt_bool ;
+		if(Date.class.isAssignableFrom(c))
+			return ValTP.vt_date;
+		if(c==UnsignedInteger.class)
+			return ValTP.vt_uint32 ;
+		if(c==UnsignedLong.class)
+			return ValTP.vt_uint64 ;
+		return null ;
 	}
 	
 	public static ValTP getValTp(int iv)
@@ -189,6 +231,8 @@ public class UAVal //extends JSObMap
 			return ulong ;
 		case vt_str:
 			return strv ;
+		case vt_none:
+			return null ;
 		default:
 			throw new RuntimeException("unknow valtp="+tp) ;
 		}

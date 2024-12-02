@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="java.util.*,
 	java.io.*,org.json.*,
 	org.iottree.core.*,
 	org.iottree.core.basic.*,
@@ -7,74 +8,84 @@
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*,
-	org.iottree.core.msgnet.util.*,
-	org.iottree.ext.msg_net.*
-	"%><%@ taglib uri="wb_tag" prefix="w"%><%
-	if(!Convert.checkReqEmpty(request, out, "container_id"))
-		return ;
 	
-	String prjid = request.getParameter("container_id") ;
-	String id = request.getParameter("id") ;
-UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-if(prj==null)
-{
-	out.print("no project node found");
-	return ;
-}
-String prj_path = prj.getNodePath() ;
-String pm_jo_str = request.getParameter("pm_jo") ;
-JSONObject pm_jo = new JSONObject(pm_jo_str) ; //{"tagids":["r5","r6"]}
-//System.out.println(pm_jo) ;
-JSONArray tagids_jarr = pm_jo.optJSONArray("tagids") ;
-// get path to show
-StringBuilder pss = new StringBuilder() ;
-if(tagids_jarr!=null)
-{
-	int n = tagids_jarr.length() ;
-	for(int i = 0 ; i < n ; i ++)
+	org.iottree.core.msgnet.util.*,
+	org.iottree.core.msgnet.nodes.*,
+	org.iottree.core.station.*
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%
+	
+	String container_id = request.getParameter("container_id");
+	String netid = request.getParameter("netid") ;
+	String itemid = request.getParameter("itemid") ;
+	MNManager mnm = MNManager.getInstanceByContainerId(container_id) ;
+	MNNet net = mnm.getNetById(netid) ;
+	if(net==null)
 	{
-		String tagid = tagids_jarr.getString(i) ;
-		UATag tag= prj.findTagById(tagid) ;
-		if(tag==null)
-			continue ;
-		pss.append(tag.getNodeCxtPathInPrj()).append("\r\n") ;
+		out.print("no net found") ;
+		return ;
 	}
-}
+	IMNContainer mnc = net.getBelongTo().getBelongTo() ;
+	if(mnc==null || !(mnc instanceof UAPrj))
+	{
+		out.print("no in prj") ;
+		return ;
+	}
+	UAPrj prj = (UAPrj)mnc ;
+	String prj_path = "/"+prj.getName() ;
+	MNBase item =net.getItemById(itemid) ;
+	if(item==null || !(item instanceof NS_TagValChgTrigger))
+	{
+		out.print("no item found") ;
+		return ;
+	}
+	
+	NS_TagValChgTrigger stb_node= (NS_TagValChgTrigger)item ;
+	
+	boolean ignore_invalid = stb_node.isIgnoreInvalid() ;
+	List<String> tagpaths = stb_node.getTagPaths() ;
+	JSONArray tagsubpaths_jarr = new JSONArray(tagpaths) ;
 %>
-<div class="layui-form-item">
-    <label class="layui-form-label"></label>
-    <div class="layui-input-inline" style="width:60%;">
-      <input type="checkbox" class="layui-input" lay-skin="primary" id="asyn" /> <w:g>asyn_run</w:g>
+ <div class="layui-form-item">
+    <div class="layui-form-label"><span style="white-space: nowrap;">Ignore Invalid:</span>
     </div>
-  </div>
-<div class="layui-form-item">
-    <label class="layui-form-label"><w:g>write,tags</w:g></label>
-    <div class="layui-input-inline" style="overflow: auto;width:350px;">
-      <textarea style="width:100%;height:200px;" id="tags"  readonly="readonly" onclick="sel_tags()" class="layui-input"><%=pss %></textarea>
+	  <div class="layui-input-inline" style="width: 75%;">
+	    <input type="checkbox" id="ignore_invalid" class="layui-input" lay-skin="primary" />
+	    </div>
+	  </div>
+ </div>
+ 
+ <div class="layui-form-item">
+    <div class="layui-form-label"><span style="white-space: nowrap;">Project Tags:</span>
     </div>
-    <div class="layui-form-mid"><button onclick="sel_tags()">...</button></div>
-  </div>
-
+	  <div class="layui-input-inline" style="width: 75%;">
+	    <div id="tag_paths" onclick="sel_tags()" style="border:1px solid #ececec;width:100%;height:220px;overflow:auto">
+	    </div>
+	  </div>
+ </div>
+ 
 <script>
+var prj_path = "<%=prj_path%>";
+var container_id="<%=container_id%>";
+var netid="<%=netid%>";
 
-var prjid="<%=prjid%>";
-var prj_path="<%=prj_path%>";
-
-var tagids = [];
+var ignore_invalid = <%=ignore_invalid%>;
+var tag_paths = <%=tagsubpaths_jarr%>;
 
 function sel_tags()
 {	
-	dlg.open("../ua_cxt/cxt_tag_selector.jsp?w_only="+true+"&multi=true&path="+prj_path,//+"&val="+tmpv,
-			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagids:tagids},
+	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/cxt_tag_selector.jsp?path=\${prj_path}&multi=true&bind_tag_only=true`,
+			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:tag_paths},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
 				{
-					let ret = dlgw.get_selected_tagids();
-					let txt = dlgw.get_selected_tagtxt();
-
-					tagids = ret ;
-					$("#tags").val(txt);
+					let ret = dlgw.get_selected_tagpaths() ;
+					if(!ret || ret.length<=0)
+					{
+						dlg.msg("please select tags");return ;
+					}
+					tag_paths = ret ;
+					update_ui();
 					dlg.close();
 				},
 				function(dlgw)
@@ -84,30 +95,45 @@ function sel_tags()
 			]);
 }
 
+function update_ui()
+{
+	let tmps = "" ;
+	
+	//if(store_tb.b_all_subt)
+	//	tmps += `<span style="color:green">Using all sub tags</span>`;
+	
+	if(tag_paths)
+	{
+		for(let subt of tag_paths)
+		{
+			tmps += `<br>&nbsp;&nbsp;\${subt}` ;
+		}
+	}
+	$("#tag_paths").html(tmps) ;
+}
+
 function on_after_pm_show(form)
 {
-	
+	update_ui();
 }
 
 
 function get_pm_jo()
 {
-	let jo = {} ;
-	jo.asyn = $("#asyn").prop("checked") ;
-	jo.tagids = tagids ;
-	return jo ;
+	let ret = {tag_paths:tag_paths} ;
+	ret.ignore_invalid = $("#ignore_invalid").prop("checked") ;
+	return ret ;
 }
 
 function set_pm_jo(jo)
-{// no path show
-	tagids = jo.tagids||[];
-	
-	$("#asyn").prop("checked",jo.asyn||false) ;
+{
+	tag_paths = jo.tag_paths;
+	$("#ignore_invalid").prop("checked",jo.ignore_invalid||true) ;
 }
 
 function get_pm_size()
 {
-	return {w:500,h:350} ;
+	return {w:600,h:450} ;
 }
 
 //on_init_pm_ok() ;

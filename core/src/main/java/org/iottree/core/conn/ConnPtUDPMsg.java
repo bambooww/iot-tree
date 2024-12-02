@@ -7,9 +7,9 @@ import org.iottree.core.UATag;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
-public class ConnPtUDP extends ConnPtMSG
+public class ConnPtUDPMsg extends ConnPtMSG
 {
-	static ILogger log = LoggerManager.getLogger(ConnPtUDP.class) ;
+	static ILogger log = LoggerManager.getLogger(ConnPtUDPMsg.class) ;
 	
 	DatagramSocket dgSock = null ;
 	
@@ -38,15 +38,13 @@ public class ConnPtUDP extends ConnPtMSG
 	@Override
 	protected boolean readMsgToFile(File f) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public String getConnType()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "udp_msg";
 	}
 
 	@Override

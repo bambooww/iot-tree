@@ -678,8 +678,12 @@ public class UAManager implements IMNContProvider
 				@Override
 				public void run()
 				{
-					for(UAPrj prj:UAManager.this.listPrjs())
+					ArrayList<UAPrj> ppps = new ArrayList<>() ;
+					ppps.addAll(UAManager.this.listPrjs()) ;
+					for(UAPrj prj:ppps)
 					{
+						prj.RT_onMonInit() ;
+						
 						if(prj.isAutoStart())
 							prj.RT_start();
 					}

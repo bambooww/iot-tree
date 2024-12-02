@@ -32,6 +32,11 @@ import org.iottree.core.filter.UANodeFilter;
 import org.iottree.core.msgnet.IMNContTagListMapper;
 import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
+import org.iottree.core.msgnet.MNNet;
+import org.iottree.core.msgnet.MNNode;
+import org.iottree.core.msgnet.MNNodeStart;
+import org.iottree.core.msgnet.nodes.NS_TagValChgTrigger;
+import org.iottree.core.msgnet.util.ValPack;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
@@ -121,6 +126,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	private transient UAContext context = null ;
 	
 	private transient SQLiteSaver sqliteSaver = null ;
+	
+	private transient long stationUpDT = System.currentTimeMillis() ;
+	
+	private transient UATag tagStationUpDT = null ;
+	private transient UATag tagStationUpGAP = null ;
 
 	public UAPrj()
 	{
@@ -188,6 +198,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		//this.getResDir();
 
 		this.RT_init(true, true);
+		
+		
 	}
 
 	public List<UANode> getSubNodes()
@@ -1197,6 +1209,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		this.setSysTag("_hour", "current hour0-23 int16 value", "", ValTP.vt_int16);
 		this.setSysTag("_minute", "current minute 0-59 int16 value", "", ValTP.vt_int16);
 		this.setSysTag("_second", "current second 0-59 int16 value", "", ValTP.vt_int16);
+		
+		
 
 		this.RT_setSysTagVal("_name", this.getName(), true);
 		this.RT_setSysTagVal("_title", this.getTitle(), true);
@@ -1240,6 +1254,24 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			}
 		}
 	}
+	
+	void RT_onMonInit()
+	{
+		if(this.isPrjPStationIns())
+		{
+			try
+			{
+				tagStationUpDT = this.getOrAddTag("station_up_dt","pstation update dt from remote station (ms)","",ValTP.vt_int64, true) ;
+				tagStationUpGAP = this.getOrAddTag("station_up_gap", "The interval between the pstation update time and now (second)","",ValTP.vt_int64, true) ;
+				//this.setSysTag("_station_up_dt", "pstation update dt from remote station (ms)","",ValTP.vt_int64) ;
+				//this.setSysTag("_station_up_gap", "The interval between the pstation update time and now (second)","",ValTP.vt_int64) ;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@Override
 	protected void RT_flush()
@@ -1263,6 +1295,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		this.RT_setSysTagVal("_hour", hour, true);
 		this.RT_setSysTagVal("_minute", min, true);
 		this.RT_setSysTagVal("_second", sec, true);
+		
+		
+		//else
+		//	this.RT_setSysTagVal("_station_up_gap", -1, true);
 		
 		List<Task> jsts = TaskManager.getInstance().getTasks(this.getId());
 		if (jsts != null)
@@ -1380,6 +1416,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	}
 	
 	private static long PRJ_RUN_INTERVAL = 5 ;
+	
+	private static long __lastGap = -1 ;
 
 	Runnable prjRunner = new Runnable() {
 		public void run()
@@ -1396,7 +1434,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				
 				RT_initContext(UAPrj.this) ;
 				
-				
+				RT_initByNet();
 				
 				// StringBuilder failedr = new StringBuilder() ;
 				
@@ -1441,6 +1479,19 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 						runMidTagsScript();
 						runScriptInterval();
 						runShareInterval();
+					}
+					else
+					{
+						if(stationUpDT>0 && tagStationUpGAP!=null)
+						{
+							long tmpt = System.currentTimeMillis() ;
+							if(tmpt-__lastGap>1000)
+							{
+								//RT_setSysTagVal("_station_up_gap", (tmpt-stationUpDT)/1000, true);
+								tagStationUpGAP.RT_setVal( (tmpt-stationUpDT)/1000);
+								__lastGap = tmpt ;
+							}
+						}
 					}
 //					et = System.currentTimeMillis() ;
 //					System.out.println("run flush cost="+(et-st));
@@ -2006,8 +2057,51 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		RecManager.getInstance(this).RT_fireUATagChanged(tag);
 	}
+	
+	private void RT_initByNet()
+	{
+		List<UATag> alltags = this.listTagsAll();
+		for(UATag tag:alltags)
+		{
+			tag.bNetMon=false;
+		}
+		
+		for(MNNet net :MNManager.getInstance(this).listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_TagValChgTrigger && node.isEnable())
+				{
+					NS_TagValChgTrigger nnn = (NS_TagValChgTrigger)node;
+					List<String> ps = nnn.getTagPaths() ;
+					if(ps==null||ps.size()<=0)
+						continue ;
+					
+					for(String p:ps)
+					{
+						UATag tag = this.getTagByPath(p);
+						if(tag==null)
+							continue ;
+						tag.bNetMon = true ;
+					}
+				}
+			}
+		}
+	}
+	
+	void RT_onTagNetMon(UATag tag,boolean cur_valid,Object curv)
+	{
+		MNManager.getInstance(this).RT_TAG_chged(tag,cur_valid, curv);
+	}
 
-	
-	
+	public void RT_onStationRecved(PStation pstation,String key,byte[] zipdata,JSONObject rt_jo,boolean b_his)
+	{
+		stationUpDT = System.currentTimeMillis() ;
+		//this.RT_setSysTagVal("_station_up_dt", stationUpDT, true);
+		if(tagStationUpDT!=null)
+			tagStationUpDT.RT_setVal(stationUpDT);
+	}
 	
 }

@@ -340,7 +340,7 @@ if(rep.isAutoStart())
 	PStation pstation = rep.getPrjPStationInsDef() ;
 	if(pstation!=null)
 	{
-%><span style="color:blue;"> • Remote Station [<%=pstation.getId() %>] </span><%
+%><span style="color:blue;"> &lt;-&gt; <wbt:lang>remote_station</wbt:lang> [<%=pstation.getId() %>] </span><%
 	}
 %>
            </span>

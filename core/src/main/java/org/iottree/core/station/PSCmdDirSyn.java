@@ -89,6 +89,33 @@ public class PSCmdDirSyn extends PSCmd
 			this.module = m;
 			this.path = p;
 		}
+		
+		public SubDirChksum getSubDirChksum(String curbase)
+		{
+			return subDir2filechks.get(curbase) ;
+		}
+		
+		public HashMap<String,SubDirChksum> listSubDirChksum(String curbase,HashSet<String> ignore_subn)
+		{
+			HashMap<String,SubDirChksum> rets = new HashMap<>() ;
+			for(Map.Entry<String,SubDirChksum> n2p:this.subDir2filechks.entrySet())
+			{
+				String p = n2p.getKey() ;
+				if(p.startsWith(curbase) && !p.equals(curbase))
+				{
+					String subp = p.substring(curbase.length()) ;
+					int k = subp.indexOf("/");
+					if(k<=0)
+						continue ;
+					String subn = subp.substring(0,k) ;
+					if(ignore_subn.contains(subn))
+						continue ;
+					//if(subp.indexOf("/")<0)
+					rets.put(p,n2p.getValue()) ;
+				}
+			}
+			return rets ;
+		}
 
 		public JSONObject toJO()
 		{
@@ -547,7 +574,9 @@ public class PSCmdDirSyn extends PSCmd
 			throws Exception
 	{
 		SubDirChksum r_dircs = remote_dcs.subDir2filechks.get(curbase);
-		File[] localfs = curdir.listFiles();
+		File[] localfs = null;
+		if(curdir.exists())
+			localfs = curdir.listFiles();
 
 		// diff cur dir files
 		HashSet<String> r_fns = null;
@@ -556,42 +585,69 @@ public class PSCmdDirSyn extends PSCmd
 		if (r_fns == null)
 			r_fns = new HashSet<>();
 
-		for (File subf : localfs)
+		if(localfs!=null)
 		{
-			if (subf.isDirectory())
-				continue;
-			if(!subf.exists())
-				continue ; // linux file name may has ���� and not existed
-			String fn = subf.getName();
-
-			r_fns.remove(fn);
-
-			String chksum = UpdateUtil.getHashByFile(subf);
-			String r_chksum = null;
-			if (r_dircs == null || (r_chksum = r_dircs.getChksumByFn(fn)) == null)
+			for (File subf : localfs)
 			{
-				diff.delSubFs.add(curbase + fn);
-				continue;
+				if (subf.isDirectory())
+					continue;
+				if(!subf.exists())
+					continue ; // linux file name may has ���� and not existed
+				String fn = subf.getName();
+	
+				r_fns.remove(fn);
+	
+				String chksum = UpdateUtil.getHashByFile(subf);
+				String r_chksum = null;
+				if (r_dircs == null || (r_chksum = r_dircs.getChksumByFn(fn)) == null)
+				{
+					diff.delSubFs.add(curbase + fn);
+					continue;
+				}
+	
+				if (chksum.equals(r_chksum))
+					continue;// same
+	
+				diff.updateSubFs.add(curbase + fn);
 			}
-
-			if (chksum.equals(r_chksum))
-				continue;// same
-
-			diff.updateSubFs.add(curbase + fn);
 		}
 
 		for (String tmpf : r_fns)
 			diff.addSubFs.add(curbase + tmpf);
 
 		// more dir
-		for (File subf : localfs)
+		
+		HashSet<String> exist_dirn = new HashSet<>() ;
+		if(localfs!=null)
 		{
-			if (!subf.isDirectory())
+			for (File subf : localfs)
 			{
-				continue;
+				if (!subf.isDirectory())
+				{
+					continue;
+				}
+	
+				String subdir = curbase + subf.getName() + "/" ;
+				//exist_dir.add(subdir) ;
+				exist_dirn.add(subf.getName()) ;
+				calSubFileDirDiff(subf, subdir, remote_dcs, diff);
 			}
-
-			calSubFileDirDiff(subf, curbase + subf.getName() + "/", remote_dcs, diff);
+		}
+		//may add dir and sub files
+		HashMap<String,SubDirChksum> subp2chks = remote_dcs.listSubDirChksum(curbase,exist_dirn) ;
+		for(Map.Entry<String, SubDirChksum> subp2chk:subp2chks.entrySet())
+		{
+			String subp = subp2chk.getKey() ;
+			if(!subp.startsWith(curbase))
+				continue ;
+			//String subdir = subp.substring(curbase.length()) ;
+			HashSet<String> fns = subp2chk.getValue().getFileNameSet() ;
+			//File subf = new File(curdir,subdir) ;
+			//calSubFileDirDiff(subf, subdir, remote_dcs, diff);
+			for(String fn:fns)
+			{
+				diff.addSubFs.add(subp+fn) ;
+			}
 		}
 	}
 }

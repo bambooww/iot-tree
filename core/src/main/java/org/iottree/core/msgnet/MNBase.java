@@ -165,6 +165,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return g(getTP(),"desc","") ;
 	}
 	
+	public boolean isFitForPrj(UAPrj prj)
+	{
+		return true ;
+	}
+	
 	abstract MNBase createNewIns(MNNet net) throws Exception ;
 //	{
 //		if(Convert.isNotNullEmpty(this.nodeTpT))

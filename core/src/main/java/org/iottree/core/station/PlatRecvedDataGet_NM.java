@@ -126,6 +126,14 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 	{
 		
 	}
+	
+	@Override
+	public boolean isFitForPrj(UAPrj prj)
+	{
+		if(prj==null)
+			return false;
+		return prj.isPrjPStationIns() ;
+	}
 
 	// rt
 
@@ -151,7 +159,11 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 		RTOut rto = RTOut.createOutIdx();
 		String jstr = RT_retrieveAndDeleteJson(prj,cp);
 		if (Convert.isNullOrEmpty(jstr))
+		{
+//			jstr = RT_retrieveAndDeleteJsonOld(prj,cp) ;
+//			if(Convert.isNullOrEmpty(jstr))
 			return null;
+		}
 		MNMsg m = new MNMsg();
 		m.asPayload(jstr);
 		m.asTopic(prj.getName());
@@ -164,7 +176,7 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 		String prjname = prj.getName();
 
 		String tablename = prjname + "_b";
-		String selectSql = "SELECT keyid, json FROM " + tablename + " ORDER BY keyid LIMIT 1";
+		String selectSql = "SELECT keyid, json FROM " + tablename + " ORDER BY keyid desc LIMIT 1";
 		String deleteSql = "DELETE FROM " + tablename + " WHERE keyid = ?";
 		String json = null;
 
@@ -181,6 +193,43 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 					if(bs==null||bs.length<=0)
 						return null ;
 					json = PSCmdPrjRtData.unzip(bs) ;
+					try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql))
+					{
+						deleteStmt.setString(1, keyid);
+						deleteStmt.executeUpdate();
+					}
+				}
+			}
+
+			return json;
+		}
+		finally
+		{
+			cp.free(connection);
+		}
+	}
+	
+	private String RT_retrieveAndDeleteJsonOld(UAPrj prj,IConnPool cp) throws Exception
+	{
+		String prjname = prj.getName();
+
+		String tablename = prjname;
+		String selectSql = "SELECT keyid, json FROM " + tablename + " ORDER BY keyid LIMIT 1";
+		String deleteSql = "DELETE FROM " + tablename + " WHERE keyid = ?";
+		String json = null;
+
+		Connection connection = null;
+		try
+		{
+			connection = cp.getConnection();
+			try (Statement selectStmt = connection.createStatement(); ResultSet rs = selectStmt.executeQuery(selectSql))
+			{
+				if (rs.next())
+				{
+					String keyid = rs.getString("keyid");
+					json = rs.getString("json");
+					if(Convert.isNullOrEmpty(json))
+						return null ;
 					try (PreparedStatement deleteStmt = connection.prepareStatement(deleteSql))
 					{
 						deleteStmt.setString(1, keyid);

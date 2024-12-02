@@ -171,17 +171,14 @@ for(MNCat cat:MNManager.listRegisteredCats())
 	List<MNNode> nodes = cat.getNodes() ;
 	List<MNModule> modules = cat.getModules() ;
 	String catn = cat.getName() ;
-	if("_station".equals(catn))
-	{
-		if(!prj.isPrjPStationIns())
-			continue ;
-	}
 %>
 <div class="citem"  id="cat_<%=cat.getName()%>"  onclick="show_hiddle(this)" cat_n="<%=cat.getName()%>"><span id="cat_i_<%=cat.getName()%>"><i class="fa fa-angle-down"></i></span>  <%=cat.getTitle() %>	</div>
 <div id="cat_list_<%=cat.getName()%>">
 <%
 	for(MNNode n:nodes)
 	{
+		//if(!n.isFitForPrj(prj))
+		//	continue ;
 		JSONObject tmpjo = n.toListJO() ;
 		jarr_ns.put(tmpjo) ;
 		String sty = "" ;
@@ -196,6 +193,9 @@ for(MNCat cat:MNManager.listRegisteredCats())
 	}
 	for(MNModule m:modules)
 	{
+		if(!m.isFitForPrj(prj))
+			continue ;
+		
 		JSONObject tmpjo = m.toListJO() ;
 		jarr_ms.put(tmpjo) ;
 		String fulltp = m.getTPFull() ;

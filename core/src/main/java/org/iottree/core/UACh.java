@@ -606,6 +606,15 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		DevDriver uad = this.getDriver() ;
 		if(uad!=null)
 		{//add driver prop used in this channel
+			if(uad.hasDriverConfigPage())
+			{
+				Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+				PropGroup gp = new PropGroup("ch_drv_spc_conf",lan);//"Timing");;
+				gp.addPropItem(new PropItem("ch_drv_conf",lan,PValTP.vt_str,false,null,null,"")
+						.withPop("drv_spc")
+						);
+				pgs.add(gp) ;
+			}
 			List<PropGroup> drvpgs = uad.getPropGroupsForCh(this) ;
 			if(drvpgs!=null)
 				pgs.addAll(drvpgs);

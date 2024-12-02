@@ -133,7 +133,7 @@ body {
 -moz-user-select : none;
 -webkit-user-select: none;
 }
-
+.hd {font-size:16px;top:6px;}
 th
 {
 	border:1px solid;
@@ -504,6 +504,8 @@ position:relative;
 	border:1px solid;
 	
 }
+
+#ws_updt {z-index:65534;position: absolute;right:10px;bottom: 10px;color:#95ec28;}
 </style>
 
 </head>
@@ -608,12 +610,12 @@ if(path2tt!=null && path2tt.size()>0)
 	<div id="oper_data" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
 	<div id="oper_ui" class="oper" style="top:280px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
 	
-	<div id="alert_list_c" style="display:none" class="pwin">
+	<div id="alert_list_c" style="display:none;width:700px" class="pwin">
  		<span class="op">
  		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History"><lan:g>history_d</lan:g></button>
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" ><i class="fa fa-times"></i></button>
 		</span>
-		<h3><lan:g>alerts,list</lan:g></h3>
+		<div class="hd"><lan:g>alerts,list</lan:g></div>
  		<div class="" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
@@ -638,7 +640,7 @@ if(path2tt!=null && path2tt.size()>0)
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_datas()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<h3><lan:g>data,list</lan:g></h3>
+		<div class="hd"><lan:g>data,list</lan:g></div>
  		<div class="data_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
@@ -716,7 +718,7 @@ if(b_his)
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_uis()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<h3><lan:g>dlg_ui,list</lan:g></h3>
+		<div class="hd"><lan:g>dlg_ui,list</lan:g></div>
  		<div class="ui_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
 <%
 	for(UIItem uii:UIManager.getInstance(prj).getId2Items().values())
@@ -763,6 +765,8 @@ if(b_his)
  		</div>
  	</div>
 </div>
+
+<div id="ws_updt"></div>
 	<%-- 
 <script src="/_iottree/di_div_comps/echarts.min.js"></script>
 <script src="/_iottree/di_div_comps/switchs/comp_button.js"></script>
@@ -940,6 +944,7 @@ function init_iottpanel()
 	
 	loadLayer = hmiView.getLayer();
 	intedit = hmiView.getInteract();
+	
 }
 
 
@@ -1004,26 +1009,6 @@ layui.use('form', function(){
 });
 
 
-//////////edit panel
-$(document).ready(function()
-{
-	$('#edit_panel_btn').click(function()
-	{
-		$('#edit_panel').slideToggle();
-		$(this).toggleClass("cerrar");
-   	});
- 		
-	$('#lr_btn_fitwin').click(function()
-	{
-		draw_fit();
-   	});
-	
-	//init_prop_evt_tab();
-
- 	init_iottpanel();
- 	
- 	//init_top_menu();
-});
 
 function slide_toggle(obj,w)
 {
@@ -1202,6 +1187,7 @@ function ws_conn()
 
     	//console.log(event.data) ;
     	//hmiModel.fireModelPropBindData(event.data) ;
+    	$("#ws_updt").html(new Date().format_local('yyyy-MM-dd hh:mm:ss.SSS')) ;
     	var str = event.data ;
     	var k = str.indexOf("\r\n") ;
     	if(k<=0)
@@ -1392,8 +1378,26 @@ function check_ws()
 }
 
 
-check_ws();
-setInterval(check_ws,5000) ;
+
+//////////edit panel
+$(document).ready(function()
+{
+	$('#edit_panel_btn').click(function()
+	{
+	$('#edit_panel').slideToggle();
+	$(this).toggleClass("cerrar");
+	});
+	
+	$('#lr_btn_fitwin').click(function()
+	{
+	draw_fit();
+	});
+
+	init_iottpanel();
+	
+	check_ws();
+	setInterval(check_ws,5000) ;
+});
 
 //if(prj_name!=null&&prj_name!="")
 //	ws_conn();

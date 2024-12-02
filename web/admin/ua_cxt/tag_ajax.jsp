@@ -30,6 +30,8 @@
 		UAVal.ValTP dt = UAVal.getValTp(vt) ;
 		long srate = Convert.parseToInt64(request.getParameter("srate"),100);
 		String strcanw = request.getParameter("canw") ;
+		String indicator = request.getParameter("indicator") ;
+		String unit = request.getParameter("unit") ;
 		//boolean canw = "true".equalsIgnoreCase(strcanw);
 
 		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
@@ -47,6 +49,7 @@
 
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans,mid_w_js) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
+		ret.asUnit(unit).asIndicator(indicator) ;
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
 		//ret.asAlertLowHigh(alert_low, alert_high) ;

@@ -7,6 +7,7 @@
 	java.util.*,
 	org.iottree.*,
 	org.iottree.core.*,
+	org.iottree.core.basic.*,
 	org.iottree.core.util.*,
 	org.iottree.core.util.xmldata.*
 	"%>
@@ -37,10 +38,11 @@ if(!(n instanceof UANodeOCTags))
 	out.print("not node oc tags") ;
 	return ;
 }
-UANodeOCTags ntags = (UANodeOCTags)n ;
-List<UATag> tags = ntags.listTagsAll() ;
+UANodeOCTags r_ntags = (UANodeOCTags)n ;
+List<UANodeOCTags> ntags_list = r_ntags.listSelfAndSubTagsNode();
+//List<UATag> tags = r_ntags.listTagsAll() ;
 
-String parent_p = ntags.getNodePathName() ;
+String parent_p = r_ntags.getNodePathName() ;
 if(Convert.isNotNullEmpty(parent_p))
 	parent_p +="." ;
 boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
@@ -57,48 +59,77 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script>
-	dlg.resize_to(700,500) ;
+	dlg.resize_to(800,600) ;
 </script>
+<style type="text/css">
+.row_ntags {background-color: #03a8bf;}
+</style>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
 <%
 
 %>
 <span id="updt"></span><span id="log_inf"></span>
+<input  id="search_txt"/> 
+<select id="search_unit">
+	<option value=""> --- </option>
+<%
+	for(ValUnit vu:ValUnit.values())
+	{
+		String vun = vu.name() ;
+%><option value="<%=vun%>"><%=vu.getUnit()%> <%=vu.getTitle() %></option><%
+	}
+%>
+</select> <button>Search</button>
+
 <div style="float:left;overflow: auto;height: 90%;width:99%">
+
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <th width='2%'></th>
   <th width='20%'><wbt:g>tag</wbt:g></th>
   <th width='20%'><wbt:g>addr</wbt:g></th>
   <th width='30%'><wbt:g>title</wbt:g></th>
-
   <th width='6%'><wbt:g>val,type</wbt:g></th>
+  <th width='6%'><wbt:g>unit</wbt:g></th>
   <th width='5%'><wbt:g>write</wbt:g></th>
  </tr>
 <%
+for(UANodeOCTags ntags:ntags_list)
+{
+	String subpath = ntags.getNodeCxtPathIn(r_ntags) ;
+%>
+<tr class="row_ntags">
+  <td colspan="8">&nbsp;<%=subpath%>
+  <button id="btn_<%=subpath %>" subpath="<%=subpath %>"  onclick="sel_all_or_not(this,'<%=subpath %>',false)">All children</button>
+  <button id="btn_<%=subpath %>" subpath="<%=subpath %>"  onclick="sel_all_or_not(this,'<%=subpath %>',true)">All offspring</button> 
+  </td>
+  </tr>
+<%
+	List<UATag> tags = ntags.listTags() ;
 	for(UATag tg : tags)
 	{
 		if(w_only && !tg.isCanWrite())
 			continue ;
 		String tagid = tg.getId() ;
-		String pathn = tg.getNodeCxtPathIn(ntags) ;
-		String patht =  tg.getNodeCxtPathTitleIn(ntags) ;
+		String pathn = tg.getNodeCxtPathIn(r_ntags) ;
+		String patht =  tg.getNodeCxtPathTitleIn(r_ntags) ;
 		//pathn = pathn.substring(parent_p.length()) ;
 		String chked = "" ;
 		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" tagid="<%=tagid %>" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
-  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>"  <%=chked %>/></td>
+  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>"  sub="<%=subpath %>" <%=chked %>/></td>
   <td><%=pathn %></td>
   <td><%=addr %></td>
   <td><%=patht %></td>
-  
   <td><%=tg.getValTp() %></td>
+  <td><%=tg.getUnit() %></td>
   <td><%=tg.isCanWrite()?"✔":"" %></td>
   </tr>
 <%
 	}
+}
 %>
 </table>
 </div>
@@ -129,6 +160,28 @@ function init()
 }
 
 init();
+
+function sel_all_or_not(btnele,subpath,b_offspring)
+{
+	let bsel_all = !($(btnele).attr("seled")||false) ;
+	$(btnele).attr("seled",bsel_all) ;
+	if(!b_offspring)
+	{
+		$(".chk").each(function(){
+			let ob = $(this) ;
+			if(ob.attr("sub")==subpath)
+				ob.prop("checked",bsel_all) ;
+		}) ;
+		return ;
+	}
+	//
+	$(".chk").each(function(){
+		let ob = $(this) ;
+		let sub = ob.attr("sub") ;
+		if(sub==subpath || sub.indexOf(subpath+".")==0 ||subpath==".")
+			ob.prop("checked",bsel_all) ;
+	}) ;
+}
 
 function get_selected_tagids()
 {
