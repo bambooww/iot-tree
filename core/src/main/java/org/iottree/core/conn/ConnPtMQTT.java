@@ -29,7 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
 
-public class ConnPtMQTT extends ConnPtMSG // implements ConnDevFindable
+public class ConnPtMQTT extends ConnPtMSGNor // implements ConnDevFindable
 {
 	private List<String> topics = null;
 

@@ -23,7 +23,7 @@ if(cp==null)
 	out.print("no provider found ");
 	return ;
 }
-ConnPtMSG cpt = (ConnPtMSG)cp.getConnById(cid) ;
+ConnPtMSGNor cpt = (ConnPtMSGNor)cp.getConnById(cid) ;
 if(cpt==null)
 {
 	out.print("no connection found") ;

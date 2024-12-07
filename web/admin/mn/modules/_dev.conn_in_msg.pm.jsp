@@ -27,19 +27,22 @@
   <div class="layui-form-item">
     <label class="layui-form-label">Conn In:</label>
     <div class="layui-input-inline" style="width:250px;">
-		<select id="conn_pt_id"  name="conn_pt_id" class="layui-input" lay-filter="repeat_tp">
+		<select id="conn_pt_id"  name="conn_pt_id" class="layui-input" lay-filter="conn_pt_id">
+		<option value=""> --- </option>
 <%
 	List<ConnProvider> cps = prj.getConnProviders() ;
 	for(ConnProvider cp:cps)
 	{
+		String cptt = cp.getTitle()+"["+cp.getProviderTpt()+"]" ;
+		
 		List<ConnPt> cpts = cp.listConns() ;
 		for(ConnPt cpt:cpts)
 		{
-			if(!(cpt instanceof ConnPtMSG))
-				continue ;
-			ConnPtMSG cptm = (ConnPtMSG)cpt ;
+	if(!(cpt instanceof ConnPtMsg))
+		continue ;
+	ConnPtMsg cptm = (ConnPtMsg)cpt ;
 %>
-        <option value="<%=cptm.getId()%>"><%=cp.getTitle() %> - <%=cptm.getTitle() %></option>
+        <option value="<%=cptm.getId()%>"><%=cptt %> - <%=cptm.getTitle() %></option>
 <%
 		}
 	}

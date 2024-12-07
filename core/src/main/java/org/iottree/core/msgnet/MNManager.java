@@ -13,7 +13,8 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.UATag;
 import org.iottree.core.basic.ValAlert;
-import org.iottree.core.conn.ConnPtMSG;
+import org.iottree.core.conn.ConnPtMSGNor;
+import org.iottree.core.conn.ConnPtMsg;
 import org.iottree.core.msgnet.nodes.*;
 import org.iottree.core.msgnet.modules.*;
 import org.iottree.core.msgnet.util.ConfItem;
@@ -418,6 +419,11 @@ public class MNManager
 			try
 			{
 				nets = this.loadNets() ;
+				if(nets!=null)
+				{
+					for(MNNet net:nets)
+						net.onAfterLoaded() ;
+				}
 				return nets ;
 			}
 			catch(Exception ee)
@@ -826,7 +832,7 @@ public class MNManager
 		}
 	}
 	
-	public void RT_CONN_triggerConnMsg(ConnPtMSG cpt_msg,String json_xml_str,Map<UATag,Object> tag2obj)
+	public void RT_CONN_triggerConnMsg(ConnPtMSGNor cpt_msg,String json_xml_str,Map<UATag,Object> tag2obj)
 	{
 		for(MNNet net :this.listNets())
 		{
@@ -834,8 +840,8 @@ public class MNManager
 				continue ;
 			for(MNNode node:net.getNodeMapAll().values())
 			{
-				if(node instanceof NS_ConnInMsgTrigger && node.isEnable())
-					((NS_ConnInMsgTrigger)node).RT_fireByConnInMsg(cpt_msg,json_xml_str,tag2obj) ;
+				if(node instanceof ConnMsgIn_NS && node.isEnable())
+					((ConnMsgIn_NS)node).RT_fireByConnInMsg(cpt_msg,json_xml_str,tag2obj) ;
 			}
 		}
 	}
@@ -882,4 +888,34 @@ public class MNManager
 		
 		return ocf.RT_callByOutter(input) ;
 	}
+	
+	/**
+	 * call by ConnPtMsg
+	 * @param topic
+	 * @param msgob
+	 */
+	public void RT_onConnPtMsgRecved(ConnPtMsg cpmsg,String topic,Object msgob)
+	{
+		String connptid = cpmsg.getId() ;
+		
+		for(MNNet net:this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			
+			for(MNModule m:net.getModuleMapAll().values())
+			{
+				if(!(m instanceof ConnInMsg_M))
+					continue ;
+				ConnInMsg_M cim = (ConnInMsg_M)m ;
+				if(!connptid.equals(cim.getConnPtMsgId()))
+					continue ;
+				
+				ConnMsgIn_NS nmsgin = cim.getNodeMsgIn() ;
+				if(nmsgin!=null)
+					nmsgin.RT_fireByConnInMsg(cpmsg,topic,msgob) ;
+			}
+		}
+	}
+	
 }

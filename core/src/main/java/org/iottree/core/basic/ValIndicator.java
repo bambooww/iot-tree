@@ -16,7 +16,7 @@ import org.iottree.core.util.Lan;
  */
 public enum ValIndicator
 {
-	temp,pres,flow,flowa,rh,ah,ph,i,v,r,c,l,p,e,f,q,cond,condm,
+	temp,pres,flow,flowa,rot_rate,rh,ah,ph,i,v,r,c,l,p,e,f,q,cond,condm,
 	turb,DO,tmdur 
 	;
 	

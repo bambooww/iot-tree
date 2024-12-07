@@ -32,6 +32,8 @@ public enum ValUnit
 	S, mS, uS,spm,mspcm,
 	
 	ntu,jtu,mgpl,  ppm,
+	
+	rpm,rps,rph,dps,radps,cpm,
 
 	s, min, hr, d, wk, yr;
 

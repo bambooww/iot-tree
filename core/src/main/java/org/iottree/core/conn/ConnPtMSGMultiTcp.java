@@ -5,21 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.iottree.core.ConnDev;
-import org.iottree.core.ConnPt;
 import org.iottree.core.DevDriver;
 import org.iottree.core.DevDriverMsgOnly;
-import org.iottree.core.IConnPtDevFinder;
 import org.iottree.core.UACh;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -41,9 +35,9 @@ import io.reactivex.rxjava3.disposables.Disposable;
  * @author jason.zhu
  *
  */
-public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
+public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 {
-	private static ILogger log = LoggerManager.getLogger(ConnPtMultiTcpMSG.class) ;
+	private static ILogger log = LoggerManager.getLogger(ConnPtMSGMultiTcp.class) ;
 	
 	private static void sleep(long ms)
 	{
@@ -247,14 +241,14 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 	 */
 	public static abstract class TcpDataPro
 	{
-		ConnPtMultiTcpMSG belongTo ;
+		ConnPtMSGMultiTcp belongTo ;
 		
 		TcpRunner tcpRunner ;
 
 		int maxLen = 1024 ;
 		
 		
-		public TcpDataPro(ConnPtMultiTcpMSG belongto,TcpRunner tcp_runner)
+		public TcpDataPro(ConnPtMSGMultiTcp belongto,TcpRunner tcp_runner)
 		{
 			this.belongTo = belongto ;
 			this.tcpRunner = tcp_runner ;
@@ -343,7 +337,7 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		
 		boolean keepEnd = false;//切分之后，是否要保留结束数据
 		
-		public TcpDataProSpliter(ConnPtMultiTcpMSG belongto,TcpRunner tcp_run)
+		public TcpDataProSpliter(ConnPtMSGMultiTcp belongto,TcpRunner tcp_run)
 		{
 			super(belongto,tcp_run);
 		}
@@ -619,7 +613,7 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		private transient int RT_rlen = 0 ;
 		//String encod = "UTF-8" ;
 		
-		public TcpDataProStrLine(ConnPtMultiTcpMSG belongto,TcpRunner tcp_run)
+		public TcpDataProStrLine(ConnPtMSGMultiTcp belongto,TcpRunner tcp_run)
 		{
 			super(belongto,tcp_run);
 		}
@@ -733,10 +727,120 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 
 	}
 	
+	
+	public static class TcpDataProTO extends TcpDataPro
+	{
+		
+		//private transient byte[] readBuf = null;
+		private long timeOutMS = 20 ;
+		
+		private transient int RT_st = 0 ;
+		private transient int RT_rlen = 0 ;
+		private transient long RT_lastDT = -1 ;
+		
+		public TcpDataProTO(ConnPtMSGMultiTcp belongto,TcpRunner tcp_run)
+		{
+			super(belongto,tcp_run);
+		}
+
+		
+		public String getTP()
+		{
+			return "to" ;
+		}
+		
+		public String getTPT()
+		{
+			return "Time out" ;
+		}
+		
+		public long getTimeoutMS()
+		{
+			return this.timeOutMS ;
+		}
+		
+		public TcpDataPro copyMe(TcpRunner tcp_run)
+		{
+			TcpDataProTO ret = new TcpDataProTO(this.belongTo,tcp_run) ;
+			//ret.encod = this.encod ;
+			ret.maxLen = this.maxLen ;
+			//ret.readBuf = new byte[this.maxLen] ;
+			ret.timeOutMS = this.timeOutMS ;
+			return ret ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject jo = super.toJO() ;
+			jo.put("to_ms", timeOutMS) ;
+			return jo ;
+		}
+		
+		public void fromJO(JSONObject jo)
+		{
+			super.fromJO(jo);
+			timeOutMS = jo.optLong("to_ms",20);
+		}
+		
+		public XmlData toXmlData()
+		{
+			XmlData xd = super.toXmlData() ;
+			xd.setParamValue("to_ms", timeOutMS) ;
+			return xd ;
+		}
+		
+		public void fromXmlData(XmlData xd)
+		{
+			super.fromXmlData(xd);
+			
+			this.timeOutMS = xd.getParamValueInt64("to_ms",20l) ;
+		}
+		
+		@Override
+		public void RT_runInLoop(SockItem si) throws Exception
+		{
+			PushbackInputStream inputs = si.getInputStream() ;
+			if(inputs==null)
+				throw new Exception("conn may be broken") ;
+
+			switch(RT_st)
+			{
+			case 0:
+				int len = inputs.available() ;
+				if(len<=0)
+					return ;
+				RT_lastDT = System.currentTimeMillis() ;
+				RT_rlen = len ;
+				RT_st = 1 ;
+				break ;
+			case 1: //in reading
+				len = inputs.available() ;
+				
+				if(len>RT_rlen)
+				{
+					RT_rlen = len ;
+					RT_lastDT = System.currentTimeMillis() ;
+					break ;
+				}
+				
+				if(System.currentTimeMillis()-RT_lastDT>this.timeOutMS)
+				{
+					byte[] ret = new byte[RT_rlen] ;
+					inputs.read(ret) ;
+					RT_st = 0 ;
+					this.belongTo.RT_onMsgGit(ret) ;
+				}
+				return ;
+			default:
+				break ;
+			}
+		}
+	}
+	
 	public static class TcpDataProSzy extends TcpDataPro
 	{
 		
-		public TcpDataProSzy(ConnPtMultiTcpMSG belongto,TcpRunner tcp_run)
+		public TcpDataProSzy(ConnPtMSGMultiTcp belongto,TcpRunner tcp_run)
 		{
 			super(belongto,tcp_run);
 		}
@@ -829,8 +933,12 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		case "ln":
 			tr = new TcpDataProStrLine(this,null) ;
 			break ;
+		case "to":
+			tr = new TcpDataProTO(this,null) ;
+			break ;
 		case "szy":
 			tr = new TcpDataProSzy(this,null) ;
+			break ;
 		}
 		if(tr==null)
 			return null ;
@@ -854,8 +962,12 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		case "ln":
 			tr = new TcpDataProStrLine(this,null) ;
 			break ;
+		case "to":
+			tr = new TcpDataProTO(this,null) ;
+			break ;
 		case "szy":
 			tr = new TcpDataProSzy(this,null) ;
+			break ;
 		}
 		if(tr==null)
 			return null ;
@@ -863,7 +975,7 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		return tr ;
 	}
 	
-	public static TcpDataPro[] ALL_DATAPROS = new TcpDataPro[] {new TcpDataProSpliter(null,null),new TcpDataProStrLine(null,null),new TcpDataProSzy(null,null)} ;
+	public static TcpDataPro[] ALL_DATAPROS = new TcpDataPro[] {new TcpDataProSpliter(null,null),new TcpDataProStrLine(null,null),new TcpDataProTO(null,null),new TcpDataProSzy(null,null)} ;
 	
 	public static abstract class TcpRunner
 	{
@@ -953,6 +1065,39 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 		protected void RT_clearSockItems()
 		{
 			this.socks = new ArrayList<>() ;
+		}
+		
+		boolean RT_sendOut(byte[] bs,StringBuilder failedr)
+		{
+			int s;
+			if(this.socks==null || (s = this.socks.size())<=0)
+			{
+				failedr.append("no socket") ;
+				return false;
+			}
+			int s_ok_cc = 0 ;
+			for(int i = 0 ; i < s ; i ++)
+			{
+				SockItem si = this.socks.get(i) ;
+				try
+				{
+					OutputStream outputs = si.getOutputStream() ;
+					if(outputs==null)
+						continue ;
+					outputs.write(bs);
+					outputs.flush();
+					s_ok_cc ++ ;
+				}
+				catch(Exception ee)
+				{
+					failedr.append(ee.getMessage()) ;
+					if(log.isDebugEnabled())
+						log.debug(ee);
+					return false;
+				}
+			}
+			
+			return s_ok_cc>0 ;
 		}
 	}
 	
@@ -1533,11 +1678,11 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 	
 
 
-	@Override
-	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
-	{
-		return null;
-	}
+//	@Override
+//	public LinkedHashMap<String, ConnDev> getFoundConnDevs()
+//	{
+//		return null;
+//	}
 	
 	
 	private transient boolean drvMsgOnlyGotten = false;
@@ -1576,10 +1721,31 @@ public class ConnPtMultiTcpMSG extends ConnPt implements IConnPtDevFinder
 	
 	private void RT_onMsgGit(byte[] msg)
 	{
+		this.RT_onMsgRecved(null,msg);
+		
 		DevDriverMsgOnly drv = getDriverMsgOnly() ;
 		if(drv==null)
 			return ;
 		drv.RT_onConnMsgIn(msg);
+	}
+	
+	@Override
+	public boolean RT_supportSendMsgOut()
+	{
+		
+		return true;
+	}
+	
+	@Override
+	public boolean RT_sendMsgOut(String topic,byte[] msg,StringBuilder failedr) throws Exception
+	{
+		if(this.tcpRunner==null)
+		{
+			failedr.append("no tcp runner") ;
+			return false;
+		}
+		
+		return this.tcpRunner.RT_sendOut(msg,failedr) ;
 	}
 	
 	public synchronized boolean RT_start()

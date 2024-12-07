@@ -14,7 +14,7 @@
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
-String cptp = ConnPtMultiTcpMSG.TP;//request.getParameter("cptp") ;
+String cptp = ConnPtMSGMultiTcp.TP;//request.getParameter("cptp") ;
 ConnProMultiTcpMsg cp = (ConnProMultiTcpMsg)ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp);
 if(cp==null)
 {
@@ -25,15 +25,15 @@ if(cp==null)
 String cpid = cp.getId();//.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
 //ConnProTcpClient cp = (ConnProTcpClient)ConnManager.getInstance().getConnProviderById(repid, cpid) ;
-ConnPtMultiTcpMSG cpt = null ;
+ConnPtMSGMultiTcp cpt = null ;
 if(Convert.isNullOrEmpty(connid))
 {
-	cpt = new ConnPtMultiTcpMSG() ;
+	cpt = new ConnPtMSGMultiTcp() ;
 	connid = cpt.getId() ;
 }
 else
 {
-	cpt = (ConnPtMultiTcpMSG)cp.getConnById(connid) ;
+	cpt = (ConnPtMSGMultiTcp)cp.getConnById(connid) ;
 	if(cpt==null)
 	{
 		out.print("no connection found") ;
@@ -51,9 +51,9 @@ int connto = -1;//cpt.getConnTimeout();
 String cp_tp = cp.getProviderType() ;
 
 
-ConnPtMultiTcpMSG.TcpRunner tcpRun = cpt.getTcpRunner() ;
-ConnPtMultiTcpMSG.TcpServerRun tcpServerRun = null ;
-ConnPtMultiTcpMSG.TcpClientsRun tcpClientsRun = null ;
+ConnPtMSGMultiTcp.TcpRunner tcpRun = cpt.getTcpRunner() ;
+ConnPtMSGMultiTcp.TcpServerRun tcpServerRun = null ;
+ConnPtMSGMultiTcp.TcpClientsRun tcpClientsRun = null ;
 
 String loc_ip = "" ;
 int loc_port = 26000 ;
@@ -71,18 +71,18 @@ JSONObject tcp_run_c = null ;
 if(tcpRun!=null)
 {
 	recv_broken_to = tcpRun.getRecvBrokenTO() ;
-	if(tcpRun instanceof ConnPtMultiTcpMSG.TcpServerRun)
+	if(tcpRun instanceof ConnPtMSGMultiTcp.TcpServerRun)
 	{
-		tcpServerRun = (ConnPtMultiTcpMSG.TcpServerRun)tcpRun ;
+		tcpServerRun = (ConnPtMSGMultiTcp.TcpServerRun)tcpRun ;
 		loc_ip = tcpServerRun.getLocalIP() ;
 		loc_port = tcpServerRun.getLocalPort() ;
 		max_c = tcpServerRun.getMaxConn() ;
 		tcp_run_tp = tcpServerRun.getTP() ;
 	}
 	
-	if(tcpRun instanceof ConnPtMultiTcpMSG.TcpClientsRun)
+	if(tcpRun instanceof ConnPtMSGMultiTcp.TcpClientsRun)
 	{
-		tcpClientsRun = (ConnPtMultiTcpMSG.TcpClientsRun)tcpRun ;
+		tcpClientsRun = (ConnPtMSGMultiTcp.TcpClientsRun)tcpRun ;
 		conn_to = tcpClientsRun.getConnTimeout() ;
 		tcp_run_c = tcpClientsRun.toJO() ;
 	}
@@ -94,20 +94,23 @@ String hex_e="" ;
 boolean keep_e = false;
 int max_len = 1024 ;
 
+long to_ms =20 ;
+
 String data_pro_tp="sp" ;
 
-ConnPtMultiTcpMSG.TcpDataPro dataPro = cpt.getTcpDataPro() ;
-ConnPtMultiTcpMSG.TcpDataProSpliter dataProSP = null ;
-ConnPtMultiTcpMSG.TcpDataProStrLine dataProLN = null ;
+ConnPtMSGMultiTcp.TcpDataPro dataPro = cpt.getTcpDataPro() ;
+ConnPtMSGMultiTcp.TcpDataProSpliter dataProSP = null ;
+ConnPtMSGMultiTcp.TcpDataProStrLine dataProLN = null ;
+ConnPtMSGMultiTcp.TcpDataProTO dataProTO = null ;
 
 if(dataPro!=null)
 {
 	data_pro_tp=dataPro.getTP() ;
 	max_len = dataPro.getMaxLen();
 	
-	if(dataPro instanceof ConnPtMultiTcpMSG.TcpDataProSpliter)
+	if(dataPro instanceof ConnPtMSGMultiTcp.TcpDataProSpliter)
 	{
-		dataProSP = (ConnPtMultiTcpMSG.TcpDataProSpliter)dataPro ;
+		dataProSP = (ConnPtMSGMultiTcp.TcpDataProSpliter)dataPro ;
 		hex_s = dataProSP.getStartHex() ;
 		keep_s = dataProSP.isKeepStart() ;
 		hex_e = dataProSP.getEndHex() ;
@@ -115,10 +118,17 @@ if(dataPro!=null)
 		data_pro_tp = "sp" ;
 	}
 	
-	if(dataPro instanceof ConnPtMultiTcpMSG.TcpDataProStrLine)
+	if(dataPro instanceof ConnPtMSGMultiTcp.TcpDataProStrLine)
 	{
-		dataProLN = (ConnPtMultiTcpMSG.TcpDataProStrLine)dataPro ;
+		dataProLN = (ConnPtMSGMultiTcp.TcpDataProStrLine)dataPro ;
 		data_pro_tp = "ln" ;
+	}
+	
+	if(dataPro instanceof ConnPtMSGMultiTcp.TcpDataProTO)
+	{
+		dataProTO = (ConnPtMSGMultiTcp.TcpDataProTO)dataPro ;
+		data_pro_tp = "to";
+		to_ms = dataProTO.getTimeoutMS() ;
 	}
 }
 %>
@@ -191,7 +201,7 @@ dlg.resize_to(800,500);
 	for(NetUtil.Adapter adp:NetUtil.listAdapters())
 	{
 %>
-	<option value="<%=adp.getIp4()%>"><%=adp.getIp4() %></option>
+	<option value="<%=adp.getIp4()%>"><%=adp.getIp4()%></option>
 <%
 	}
 %>	  
@@ -225,7 +235,7 @@ dlg.resize_to(800,500);
     <label class="layui-form-label"></label>
     <div class="layui-form-mid" >Connect Timeout</div>
     <div class="layui-input-inline" style="width:100px">
-    	<input type="number" id="conn_to" name="conn_to" value="<%=conn_to %>"  class="layui-input">
+    	<input type="number" id="conn_to" name="conn_to" value="<%=conn_to%>"  class="layui-input">
     </div>
   
   </div>
@@ -238,7 +248,7 @@ dlg.resize_to(800,500);
     <div class="layui-input-inline" style="width:150px">
       <select id="data_pro_tp" lay-filter="data_pro_tp" >
 <%
-for(ConnPtMultiTcpMSG.TcpDataPro tdp:ConnPtMultiTcpMSG.ALL_DATAPROS)
+	for(ConnPtMSGMultiTcp.TcpDataPro tdp:ConnPtMSGMultiTcp.ALL_DATAPROS)
 {
 %>
     		<option value="<%=tdp.getTP()%>"><%=tdp.getTPT() %></option>
@@ -271,6 +281,14 @@ for(ConnPtMultiTcpMSG.TcpDataPro tdp:ConnPtMultiTcpMSG.ALL_DATAPROS)
     <div class="layui-form-mid">Keep</div>
     <div class="layui-input-inline" style="width:30px;">
       <input type="checkbox" id="keep_e" name="keep_e" <%=(keep_e?"checked":"") %> class="layui-input" lay-skin="primary">
+    </div>
+  </div>
+  
+  <div class="layui-form-item" id="data_pro_tp_to">
+    <label class="layui-form-label"></label>
+    <div class="layui-form-mid">Receive Timeout</div>
+    <div class="layui-input-inline" style="width:120px">
+      <input type="text" id="to_ms" name="to_ms" value="<%=to_ms%>"  class="layui-input">
     </div>
   </div>
   
@@ -429,12 +447,19 @@ function update_data_pro()
 	if(tp=='sp')
 	{
 		$("#data_pro_tp_sp").css("display","") ;
-		
+		$("#data_pro_tp_to").css("display","none") ;
+	}
+	else if(tp=='to')
+	{
+		$("#data_pro_tp_sp").css("display","none") ;
+		$("#data_pro_tp_to").css("display","") ;
 	}
 	else
 	{
 		$("#data_pro_tp_sp").css("display","none") ;
+		$("#data_pro_tp_to").css("display","none") ;
 	}
+	
 	//form.render(); 
 }
 
@@ -524,6 +549,17 @@ function get_data_pro_sp_input(cb)
 	return {_tp:"sp",hex_s:hex_s,keep_s:keep_s,hex_e:hex_e,keep_e:keep_e,max_len:max_len} ;
 }
 
+function get_data_pro_to_input(cb)
+{
+	let to_ms = get_input_val("to_ms",20,true);
+	if(to_ms<=0)
+	{
+		cb(false,'<wbt:g>pls,input</wbt:g> Timeout') ;
+		return ;
+	}
+	return {_tp:"to",to_ms:to_ms} ;
+}
+
 function do_submit(cb)
 {
 	var n = $('#name').val();
@@ -562,6 +598,15 @@ function do_submit(cb)
 	if(data_pro_tp=='sp')
 	{
 		data_pro = get_data_pro_sp_input(cb) ;
+		if(data_pro==null)
+		{
+			cb(false,"no data pro found") ;
+			return ;
+		}
+	}
+	else if(data_pro_tp=='to')
+	{
+		data_pro = get_data_pro_to_input(cb) ;
 		if(data_pro==null)
 		{
 			cb(false,"no data pro found") ;

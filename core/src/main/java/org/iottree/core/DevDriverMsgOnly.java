@@ -15,7 +15,7 @@ public abstract class DevDriverMsgOnly extends DevDriver
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return org.iottree.core.conn.ConnPtMultiTcpMSG.class;
+		return org.iottree.core.conn.ConnPtMSGMultiTcp.class;
 	}
 
 }

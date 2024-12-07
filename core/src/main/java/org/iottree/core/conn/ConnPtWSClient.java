@@ -27,7 +27,7 @@ import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
 
-public class ConnPtWSClient extends ConnPtMSG
+public class ConnPtWSClient extends ConnPtMSGNor
 {
 	static ILogger log = LoggerManager.getLogger(ConnPtWSClient.class) ;
 	

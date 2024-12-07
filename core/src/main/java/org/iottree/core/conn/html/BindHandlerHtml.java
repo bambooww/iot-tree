@@ -10,9 +10,9 @@ import java.util.Map;
 import org.iottree.core.IJoinedNode;
 import org.iottree.core.UACh;
 import org.iottree.core.UATag;
-import org.iottree.core.conn.ConnPtMSG;
-import org.iottree.core.conn.ConnPtMSG.BindHandler;
-import org.iottree.core.conn.ConnPtMSG.PathItem;
+import org.iottree.core.conn.ConnPtMSGNor;
+import org.iottree.core.conn.ConnPtMSGNor.BindHandler;
+import org.iottree.core.conn.ConnPtMSGNor.PathItem;
 import org.iottree.core.conn.html.HtmlBlockLocator.ExtractPoint;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -32,7 +32,7 @@ public class BindHandlerHtml extends BindHandler
 	
 	private transient HashMap<HtmlBlockLocator.ExtractPoint,List<String>> ep2tags = null ;
 			
-	public BindHandlerHtml(ConnPtMSG cpm)
+	public BindHandlerHtml(ConnPtMSGNor cpm)
 	{
 		super(cpm) ;
 	}

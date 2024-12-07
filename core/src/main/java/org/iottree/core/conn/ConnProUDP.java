@@ -37,7 +37,7 @@ public class ConnProUDP extends ConnProvider
 	@Override
 	protected long connpRunInterval()
 	{
-		return 0;
+		return 1000;
 	}
 
 	@Override
@@ -45,6 +45,4 @@ public class ConnProUDP extends ConnProvider
 	{
 		
 	}
-
-
 }

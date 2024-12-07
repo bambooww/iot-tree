@@ -193,12 +193,19 @@
 	<dd_node name="vu_wk" name_cn="周" name_en="Week" unit="wk" />
 	<dd_node name="vu_yr" name_cn="年" name_en="Year" unit="yr" />
 	
+	<dd_node name="vu_rpm" name_cn="转每分钟" name_en="Revolutions per Minute" unit="RPM" />
+	<dd_node name="vu_rps" name_cn="转每秒" name_en="Revolutions per Second" unit="RPS" />
+	<dd_node name="vu_rph" name_cn="转每小时" name_en="Revolutions per Hour" unit="RPH" />
+	<dd_node name="vu_dps" name_cn="度每秒" name_en="Degrees per Second" unit="DPS" />
+	<dd_node name="vu_radps" name_cn="弧度每秒" name_en="Radians per Second" unit="rad/s" />
+	<dd_node name="vu_cpm" name_cn="周每分钟" name_en="Cycles per Minute" unit="CPM" />
 	
 	
 	<dd_node name="vi_temp" name_cn="温度" name_en="Temperature" units="C,F,K" />
 	<dd_node name="vi_pres" name_cn="压力" name_en="Pressure" units="Pa,mb,mmHg,inHg,Bar,MPa,kPa" />
 	<dd_node name="vi_flow" name_cn="流速" name_en="Flow Speed" units="m3ps,m3ph,Lpmin,Lps,gpm,gph,cfm,cim" />
 	<dd_node name="vi_flowa" name_cn="累积流量" name_en="Flow Accumulation" units="L,gal,m3,ft3" />
+	<dd_node name="vi_rot_rate" name_cn="转速" name_en="Rotation Rate" units="rpm,rps,rph,dps,radps,cpm,Hz" />
 	<dd_node name="vi_rh" name_cn="相对湿度" name_en="Relative Humidity" units="percent" />
 	<dd_node name="vi_ah" name_cn="绝对湿度" name_en="Absolute Humidity" units="g_pm3" />
 	<dd_node name="vi_ph" name_cn="pH" name_en="pH" units="" />

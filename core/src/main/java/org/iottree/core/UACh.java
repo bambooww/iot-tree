@@ -15,7 +15,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.conn.ConnPtBinder;
-import org.iottree.core.conn.ConnPtMSG;
+import org.iottree.core.conn.ConnPtMSGNor;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.res.ResDir;
@@ -275,7 +275,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	public boolean isConnMsg() throws Exception
 	{
 		ConnPt cpt = this.getConnPt() ;
-		return cpt!=null&&cpt instanceof ConnPtMSG ;
+		return cpt!=null&&cpt instanceof ConnPtMSGNor ;
 	}
 	
 	public boolean isConnBind() throws Exception

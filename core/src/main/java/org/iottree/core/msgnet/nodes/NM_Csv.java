@@ -2,7 +2,6 @@ package org.iottree.core.msgnet.nodes;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.iottree.core.msgnet.MNConn;
@@ -10,6 +9,7 @@ import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.CsvUtil;
 import org.iottree.core.util.Lan;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -123,7 +123,7 @@ public class NM_Csv extends MNNodeMid
 				if(this.skipFirstLines>0 && cc<=this.skipFirstLines)
 					continue ;
 				
-				List<Object> ss = parseCSVLine(ln) ;
+				List<Object> ss = CsvUtil.parseCSVLine(ln,parseNum) ;
 				MNMsg outm = new MNMsg() ;
 				if(this.outTP==OutTP.msg_per_row_jo)
 				{
@@ -155,7 +155,7 @@ public class NM_Csv extends MNNodeMid
 			if(this.skipFirstLines>0 && cc<=this.skipFirstLines)
 				continue ;
 			
-			List<Object> ss = parseCSVLine(ln) ;
+			List<Object> ss = CsvUtil.parseCSVLine(ln,parseNum) ;
 			JSONArray jarr = new JSONArray(ss) ;
 			pld.put(jarr) ;
 		}
@@ -166,98 +166,4 @@ public class NM_Csv extends MNNodeMid
 	}
 
 
-	private List<Object> parseCSVLine(String line)
-	{
-		List<Object> result = new ArrayList<>();
-		if (line == null || line.isEmpty())
-		{
-			return result;
-		}
-
-		StringBuilder currentField = new StringBuilder();
-		boolean inQuotes = false;
-		boolean lastInQuo = false;
-		for (int i = 0; i < line.length(); i++)
-		{
-			char c = line.charAt(i);
-			if (inQuotes)
-			{
-				if (c == '"')
-				{
-					if (i + 1 < line.length() && line.charAt(i + 1) == '"')
-					{
-						// Double quote inside quoted field
-						currentField.append('"');
-						i++;
-					}
-					else
-					{
-						// End of quoted field
-						inQuotes = false;
-						lastInQuo = true ;
-					}
-				}
-				else
-				{
-					currentField.append(c);
-				}
-			}
-			else
-			{
-				if (c == '"')
-				{
-					// Beginning of quoted field
-					inQuotes = true;
-				}
-				else if (c == ',')
-				{
-					// End of field
-					Object objv = parseCurStr(lastInQuo,currentField.toString()) ;
-					result.add(objv);
-						
-					currentField.setLength(0);
-				}
-				else
-				{
-					currentField.append(c);
-				}
-			}
-		}
-		// Add the last field
-		result.add(parseCurStr(lastInQuo,currentField.toString()));
-
-		return result;
-	}
-
-	
-	private Object parseCurStr(boolean lastInQuo,String tmps)
-	{
-		if(lastInQuo)
-		{
-			lastInQuo = false;
-			return tmps ;
-		}
-
-			tmps = tmps.trim() ;
-			if(parseNum)
-			{
-				int k = tmps.indexOf('.') ;
-				try
-				{
-					if(k>=0)
-					{
-						double dval = Double.parseDouble(tmps) ;
-						return dval ;
-					}
-					else
-					{
-						long ival = Long.parseLong(tmps) ;
-						return ival ;
-					}
-				}
-				catch(Exception e)
-				{}
-			}
-		return tmps ;
-	}
 }

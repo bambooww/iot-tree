@@ -910,6 +910,18 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	}
 	
 	
+	void onAfterLoaded()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			n.onAfterLoaded();
+		}
+		for(MNModule m:this.id2module.values())
+		{
+			m.onAfterLoaded();
+		}
+	}
+	
 	// - 
 	
 	public JSONObject RT_getNetUpdate(List<String> div_ids)

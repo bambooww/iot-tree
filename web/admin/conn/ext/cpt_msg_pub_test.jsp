@@ -32,7 +32,7 @@ if(cp==null)
 
 String cpid = cp.getId();//.getParameter("cpid") ;
 String connid = request.getParameter("connid") ;
-ConnPtMSG cpt = null ;
+ConnPtMSGNor cpt = null ;
 
 
 if(Convert.isNullOrEmpty(connid))
@@ -41,7 +41,7 @@ if(Convert.isNullOrEmpty(connid))
 	return;
 }
 
-cpt = (ConnPtMSG)cp.getConnById(connid) ;
+cpt = (ConnPtMSGNor)cp.getConnById(connid) ;
 if(cpt==null)
 {
 	out.print("no connection found") ;

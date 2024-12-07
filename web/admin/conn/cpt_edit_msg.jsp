@@ -26,7 +26,7 @@ if(cp==null)
 String connid = request.getParameter("connid") ;
 if(connid==null)
 	connid = "" ;
-ConnPtMSG cpt = null ;
+ConnPtMSGNor cpt = null ;
 
 ConnPt.DataTp sor_tp = ConnPt.DataTp.json;
 String init_js = "" ;
@@ -42,7 +42,7 @@ long run_js_to = 30000 ;
 
 if(Convert.isNotNullEmpty(connid))
 {
-	cpt = (ConnPtMSG)cp.getConnById(connid) ;
+	cpt = (ConnPtMSGNor)cp.getConnById(connid) ;
 	if(cpt==null)
 	{
 		out.print("no ConnPtMSG found") ;
@@ -50,8 +50,8 @@ if(Convert.isNotNullEmpty(connid))
 	}
 	
 	sor_tp = cpt.getSorTp();
-	ConnPtMSG.TransHandler th = cpt.getTransHandler();
-	ConnPtMSG.BindHandler bh = cpt.getBindHandler();
+	ConnPtMSGNor.TransHandler th = cpt.getTransHandler();
+	ConnPtMSGNor.BindHandler bh = cpt.getBindHandler();
 	
 	
 	init_js = th.getInitJS() ;
@@ -118,11 +118,11 @@ if(Convert.isNullOrEmpty(bind_map_str))
     <div class="layui-input-inline" style="width:90px">
     	<select id="sor_tp" lay-filter="sor_tp" >
 <%
-for(ConnPt.DataTp stp:ConnPt.DataTp.values())
+	for(ConnPt.DataTp stp:ConnPt.DataTp.values())
 {
-%><option value="<%=stp.toString()%>"><%=stp.getTitle() %></option>
+%><option value="<%=stp.toString()%>"><%=stp.getTitle()%></option>
 <%
-}
+	}
 %>
     	</select>
     </div>
@@ -130,10 +130,10 @@ for(ConnPt.DataTp stp:ConnPt.DataTp.values())
     <div class="layui-input-inline" style="width:90px">
     <select id="encod" lay-filter="encod" >
 <%
-for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
+	for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
 {
-%><option value="<%=chartset%>"><%=chartset %></option><%
-}
+%><option value="<%=chartset%>"><%=chartset%></option><%
+	}
 %>
     </select>
     </div>
@@ -141,7 +141,7 @@ for(String chartset:java.nio.charset.Charset.availableCharsets().keySet())
     <div class="layui-input-inline" style="width:150px;white-space: nowrap;">
     	<select id="handle" lay-filter="handle" >
 <%
-for(ConnPtMSG.HandleSty st:ConnPtMSG.HandleSty.values())
+	for(ConnPtMSGNor.HandleSty st:ConnPtMSGNor.HandleSty.values())
 {
 %><option value="<%=st.toString() %>" ><%=st.getTitle() %></option>
 <%

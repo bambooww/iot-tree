@@ -1279,4 +1279,15 @@ public class ConnPtOPCUA extends ConnPtBinder
 		}
 
 	}
+	
+	public boolean RT_supportSendMsgOut()
+	{
+		return false;
+	}
+
+	@Override
+	public boolean RT_sendMsgOut(String topic,byte[] msg,StringBuilder failedr) throws Exception
+	{
+		return false;
+	}
 }

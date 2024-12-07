@@ -26,7 +26,7 @@ public class ConnProMultiTcpMsg  extends ConnProvider
 	@Override
 	public String getProviderTpt()
 	{
-		return "Multi Tcp Msg";
+		return "Tcp Msg";
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ConnProMultiTcpMsg  extends ConnProvider
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return ConnPtMultiTcpMSG.class;
+		return ConnPtMSGMultiTcp.class;
 	}
 
 	@Override
@@ -65,9 +65,11 @@ public class ConnProMultiTcpMsg  extends ConnProvider
 		
 		for(ConnPt ci:pts)
 		{
+			if(!ci.isEnable())
+				continue ;
 			try
 			{
-				ConnPtMultiTcpMSG conn = (ConnPtMultiTcpMSG)ci ;
+				ConnPtMSGMultiTcp conn = (ConnPtMSGMultiTcp)ci ;
 				conn.RT_start() ;
 			}
 			catch(Exception e)
@@ -85,7 +87,7 @@ public class ConnProMultiTcpMsg  extends ConnProvider
 		{
 			try
 			{
-				ConnPtMultiTcpMSG conn = (ConnPtMultiTcpMSG)ci ;
+				ConnPtMSGMultiTcp conn = (ConnPtMSGMultiTcp)ci ;
 				conn.RT_stop();
 			}
 			catch(Exception e)

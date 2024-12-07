@@ -128,7 +128,8 @@
   <dd_node id="1" name="outsty_released" name_cn="释放输出" name_en="Release output" />
   <dd_node id="1" name="outsty_both" name_cn="触发释放都输出" name_en="Both trigger and release outputs" />
   
-  <dd_node id="1" name="conn_in_msg_trigger" name_cn="接入消息触发器" name_en="Conn In Msg Trigger" />
+  <dd_node id="1" name="conn_in_msg_trigger" name_cn="接入消息输入" name_en="Conn Msg In Trigger" />
+  <dd_node id="1" name="conn_in_msg_out" name_cn="接入消息输出" name_en="Conn Msg Out" />
   
   <dd_node id="1" name="warn_or_exceed" name_cn="报警或达到最大长度错误" name_en="Warn or Exceed Max Length" />
   

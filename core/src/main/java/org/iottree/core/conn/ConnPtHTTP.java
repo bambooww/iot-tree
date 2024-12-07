@@ -38,7 +38,7 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class ConnPtHTTP extends ConnPtMSG
+public class ConnPtHTTP extends ConnPtMSGNor
 {
 	static ILogger log = LoggerManager.getLogger(ConnPtHTTP.class);
 

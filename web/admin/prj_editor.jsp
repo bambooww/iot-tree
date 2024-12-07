@@ -727,8 +727,11 @@ var connpro_menu = [
 	{content:'WebSocket <wbt:g>client</wbt:g>',callback:function(){
 		edit_cpt("ws_client","","");
 	}},
-	{content:'Multi Tcp Msg',callback:function(){
+	{content:'TCP Msg',callback:function(){
 		edit_cpt("multi_tcp_msg","","");
+	}},
+	{content:'UDP Msg',callback:function(){
+		edit_cpt("udp_msg","","");
 	}},
 	{content:'sm_divider'},
 	{content:'<wbt:g>oths_conn</wbt:g>',header: true},

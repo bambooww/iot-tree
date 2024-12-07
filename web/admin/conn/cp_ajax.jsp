@@ -65,8 +65,7 @@ case "list":
 	}
 %>
 ]}
-<%
-	break ;
+<%break ;
 case "cp_set":
 	String json = request.getParameter("json");
 	//System.out.println("json="+json) ;
@@ -224,12 +223,12 @@ case "conn_dev_new_add":
 		out.print("{\"res\":false,\"err\":\"no conn found\"}");
 		return ;
 	}
-	if(!(cpt instanceof ConnPtMSG))
+	if(!(cpt instanceof ConnPtMSGNor))
 	{
 		out.print("{\"res\":false,\"err\":\"conn is msg findable\"}");
 		return ;
 	}
-	ConnPtMSG cdf = (ConnPtMSG)cpt ;
+	ConnPtMSGNor cdf = (ConnPtMSGNor)cpt ;
 	ConnDev cd = cdf.getFoundConnDevs().get(name) ;
 	if(cd==null)
 	{
@@ -244,6 +243,4 @@ case "conn_dev_new_add":
 	}
 	out.print("{\"res\":true}") ;
 	break ;
-}
-
-%>
+}%>

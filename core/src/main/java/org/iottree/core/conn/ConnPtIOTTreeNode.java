@@ -34,7 +34,7 @@ import org.iottree.core.util.xmldata.XmlDataWithFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ConnPtIOTTreeNode  extends ConnPtMSG
+public class ConnPtIOTTreeNode  extends ConnPtMSGNor
 {
 	static ILogger log = LoggerManager.getLogger("ConnPtIOTTreeNode") ; 
 //	private String mqttHost = null;

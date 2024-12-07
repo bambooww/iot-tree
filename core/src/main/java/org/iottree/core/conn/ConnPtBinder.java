@@ -27,7 +27,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public abstract class ConnPtBinder extends ConnPt //implements IConnPtBinder
+public abstract class ConnPtBinder extends ConnPtMsg //implements IConnPtBinder
 {
 	public static class BindItem
 	{

@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
-public abstract class ConnPtMSG  extends ConnPtDevFinder
+public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 {
 
 	public static final int RUN_ST_NOTRUN = 0;
@@ -310,9 +310,9 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		
 		transient protected String bindRunRes = null ;
 		
-		transient protected ConnPtMSG connPtMsg = null ;
+		transient protected ConnPtMSGNor connPtMsg = null ;
 		
-		public BindHandler(ConnPtMSG cpm)
+		public BindHandler(ConnPtMSGNor cpm)
 		{
 			connPtMsg = cpm ;
 		}
@@ -372,7 +372,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	{
 		private transient HashMap<String,PathItem<JsonPath>> tag2JsonPathItem = null ;
 		
-		public BindHandlerJson(ConnPtMSG cpm)
+		public BindHandlerJson(ConnPtMSGNor cpm)
 		{
 			super(cpm) ;
 		}
@@ -457,7 +457,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 		
 		protected boolean runBind(String topic,String json_xml_str)
 		{
-			if(ConnPtMSG.this.getSorTp()!=DataTp.json)
+			if(ConnPtMSGNor.this.getSorTp()!=DataTp.json)
 				return false;
 				
 			try
@@ -505,8 +505,8 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 					}
 					
 					//tag2v
-					MNManager mgr = MNManager.getInstance(ConnPtMSG.this.getConnProvider().getBelongTo()) ;
-					mgr.RT_CONN_triggerConnMsg(ConnPtMSG.this,json_xml_str,tag2v) ;
+					MNManager mgr = MNManager.getInstance(ConnPtMSGNor.this.getConnProvider().getBelongTo()) ;
+					mgr.RT_CONN_triggerConnMsg(ConnPtMSGNor.this,json_xml_str,tag2v) ;
 					
 					bindRunRes = ressb.toString() ;
 					return true ;
@@ -526,7 +526,7 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 
 		private transient HashMap<String,PathItem<XPathExpression>> tag2XmlPathItem = null ;
 		
-		public BindHandlerXml(ConnPtMSG cpm)
+		public BindHandlerXml(ConnPtMSGNor cpm)
 		{
 			super(cpm) ;
 		}
@@ -1003,6 +1003,8 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 
 	protected void onRecvedMsg(String topic, byte[] bs) throws Exception
 	{
+		super.RT_onMsgRecved(topic, bs);
+		
 		String str = null ;
 		MonData[] mds = null ;
 		boolean canbind = false;
@@ -1109,7 +1111,17 @@ public abstract class ConnPtMSG  extends ConnPtDevFinder
 	
 	public abstract void runOnWrite(UATag tag,Object val) throws Exception;
 	
+	@Override
+	public boolean RT_supportSendMsgOut()
+	{
+		return true;
+	}
 	
+	@Override
+	public boolean RT_sendMsgOut(String topic,byte[] msg,StringBuilder failedr) throws Exception
+	{
+		return sendMsg(topic,msg) ;
+	}
 	/**
 	 * judge msg is received in passive mode,if true {@see readMsgToFile}will not to be used
 	 * {@see getMsgTxtFromTmpBuf}will not to be used.

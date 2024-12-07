@@ -1,13 +1,11 @@
 package org.iottree.core.conn;
 
-import java.io.File;
 import java.net.DatagramSocket;
 
-import org.iottree.core.UATag;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
-public class ConnPtUDPMsg extends ConnPtMSG
+public class ConnPtUDPMsg extends ConnPtMsg
 {
 	static ILogger log = LoggerManager.getLogger(ConnPtUDPMsg.class) ;
 	
@@ -21,25 +19,6 @@ public class ConnPtUDPMsg extends ConnPtMSG
 		
 	}
 	
-	@Override
-	public boolean sendMsg(String topic, byte[] bs) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void runOnWrite(UATag tag, Object val) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected boolean readMsgToFile(File f) throws Exception
-	{
-		return false;
-	}
 
 	@Override
 	public String getConnType()
@@ -59,12 +38,6 @@ public class ConnPtUDPMsg extends ConnPtMSG
 	{
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	@Override
-	public boolean isPassiveRecv() 
-	{
-		return true;
 	}
 	
 	private long lastChk = -1 ;

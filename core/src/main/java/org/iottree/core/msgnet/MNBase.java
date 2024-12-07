@@ -341,6 +341,8 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return true ;
 	}
 	
+	protected void onAfterLoaded()
+	{}
 	
 	// -- RT
 	
