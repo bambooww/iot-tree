@@ -102,7 +102,13 @@
   <div class="nor_sel" style=""> 
    <input type="text" id="table" class="layui-input" />
   </div>
-  
+  </div>
+   <div class="row" >
+   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Create Table SQL</span></div>
+  <div class="nor_sel" style=""> 
+   <textarea id="create_sql" class="layui-input" style="width:520px;height:200px;" >
+   </textarea>
+  </div>
   </div>
 <script>
 
@@ -117,19 +123,19 @@ function get_pm_jo()
 {
 	let jo = {} ;
 	let table = $("#table").val();
-	
-	return {table:table} ;
+	let csql = $("#create_sql").val() ;
+	return {table:table,create_sql:csql} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#table").val(jo.table||"") ;
-
+	$("#create_sql").val(jo.create_sql||"") ;
 }
 
 function get_pm_size()
 {
-	return {w:600,h:550} ;
+	return {w:700,h:350} ;
 }
 
 //on_init_pm_ok() ;

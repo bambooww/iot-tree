@@ -592,6 +592,15 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	 * 1��node��s self prop group
 	 * 2) driver's group
 	 */
+	
+	public static final String PG_DRV_SPC_CONF = "ch_drv_spc_conf" ;
+	public static final String PI_DRV_CONF = "ch_drv_conf" ;
+	
+	public String getDrvSpcConfigTxt()
+	{
+		return (String)getPropValue(PG_DRV_SPC_CONF,PI_DRV_CONF);
+	}
+	
 	@Override
 	public List<PropGroup> listPropGroups()
 	{
@@ -609,8 +618,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			if(uad.hasDriverConfigPage())
 			{
 				Lan lan = Lan.getPropLangInPk(this.getClass()) ;
-				PropGroup gp = new PropGroup("ch_drv_spc_conf",lan);//"Timing");;
-				gp.addPropItem(new PropItem("ch_drv_conf",lan,PValTP.vt_str,false,null,null,"")
+				PropGroup gp = new PropGroup(PG_DRV_SPC_CONF,lan);//"Timing");;
+				gp.addPropItem(new PropItem(PI_DRV_CONF,lan,PValTP.vt_str,false,null,null,"")
 						.withPop("drv_spc")
 						);
 				pgs.add(gp) ;
@@ -824,7 +833,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		}
 		
 		//finally
-		return drv.RT_start(failedr) ;
+		boolean ret = drv.RT_start(failedr) ;
+		if(!ret)
+		{
+			
+		}
+		return ret ;
 	}
 	
 	public boolean RT_stopDriver(boolean bforce)

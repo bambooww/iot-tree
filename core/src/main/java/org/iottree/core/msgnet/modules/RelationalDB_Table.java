@@ -1,9 +1,12 @@
 package org.iottree.core.msgnet.modules;
 
+import java.sql.Connection;
+import java.util.Arrays;
 import java.util.List;
 
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.store.SourceJDBC;
+import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.store.gdb.connpool.IConnPool;
 import org.iottree.core.util.Convert;
@@ -13,6 +16,7 @@ public class RelationalDB_Table extends MNNodeRes
 {
 	String tableName = null ;
 	
+	String createSql = null ;
 //	@Override
 //	public int getOutNum()
 //	{
@@ -53,6 +57,11 @@ public class RelationalDB_Table extends MNNodeRes
 	{
 		return this.tableName ;
 	}
+	
+	public String getCreateSql()
+	{
+		return createSql ;
+	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
@@ -70,6 +79,7 @@ public class RelationalDB_Table extends MNNodeRes
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.putOpt("table", this.tableName) ;
+		jo.putOpt("create_sql", this.createSql) ;
 		return jo;
 	}
 
@@ -77,6 +87,7 @@ public class RelationalDB_Table extends MNNodeRes
 	protected void setParamJO(JSONObject jo)
 	{
 		this.tableName = jo.optString("table") ;
+		this.createSql = jo.optString("create_sql") ;
 	}
 
 	// rt lines
@@ -109,5 +120,47 @@ public class RelationalDB_Table extends MNNodeRes
 		if(sorjdbc==null)
 			return null ;
 		return sorjdbc.getConnPool() ;
+	}
+
+	protected void RT_onBeforeNetRun()
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		createNoExistedTable(failedr) ;
+	}
+	
+	private boolean createNoExistedTable(StringBuilder failedr)
+	{
+		if(Convert.isNullOrEmpty(this.createSql))
+		{
+			failedr.append("no create sql found") ;
+			return false;
+		}
+		DBConnPool cp = RT_getConnPool() ;
+		if(cp==null)
+		{
+			failedr.append("no conn pool found") ;
+			return false;
+		}
+		Connection conn = null ;
+		try
+		{
+			conn = cp.getConnection() ;
+			if(DBUtil.tableExists(conn, cp.getDatabase(), this.tableName))
+				return true ;
+			
+			DBUtil.runSqls(conn, Arrays.asList(this.createSql));
+			return true ;
+		}
+		catch(Exception ee)
+		{
+			failedr.append(ee.getMessage()) ;
+			RT_DEBUG_ERR.fire("RDB_table", ee.getMessage(), ee);
+			return false;
+		}
+		finally
+		{
+			if(conn!=null)
+				cp.free(conn);
+		}
 	}
 }

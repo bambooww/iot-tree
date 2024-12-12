@@ -49,7 +49,7 @@
 <style>
 .layui-form-label
 {
-	width:150px;
+	width:250px;
 }
 .help_tree
 {
@@ -74,9 +74,11 @@
     	&nbsp;&nbsp;<i class="fa fa-question" aria-hidden="true" /></i> Help
     	<div id="help_tree">
 		    <ul>
-		       <li title="last in message">topic:str</li>
-		       <li title="last in message">heads:{}</li>
-		      <li title="last in message">payload
+		       <li title="msg topic">topic:str</li>
+		       <li title="msg heads">heads:{}</li>
+		       <li title="msg uid">msg_id:str</li>
+		       <li title="msg timestamp ms">msg_dt:int64</li>
+		      <li title="msg payload">payload
 <%
 	msg.CXT_PK__renderPayloadTree(out) ;
 %>
@@ -95,7 +97,7 @@
   </div>
     </div>
     </div>
-    <div class="layui-input-inline" style="width:500px;">
+    <div class="layui-input-inline" style="width:600px;">
     
     	<div id='temp'  style="overflow: scroll;width:100%;height:480px;border:1px solid #e6e6e6;"></div>
     	
@@ -103,7 +105,7 @@
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label"><w:g>out_fmt</w:g></label>
-    <div class="layui-input-inline" style="width:250px;">
+    <div class="layui-input-inline" style="width:350px;">
     	<select id="out_fmt" lay-skin="primary" lay-filter="out_fmt"  >
 <%
 for(NM_Template.OutFmt outf:NM_Template.OutFmt.values())
@@ -226,7 +228,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:750,h:650} ;
+	return {w:950,h:650} ;
 }
 
 js_edit_init();

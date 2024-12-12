@@ -43,7 +43,7 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		return org.iottree.core.conn.ConnPtMSG.class;
+		return org.iottree.core.conn.ConnPtMSGNor.class;
 	}
 
 	@Override

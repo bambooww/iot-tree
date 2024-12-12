@@ -1472,7 +1472,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					
 					if(!b_station_ins)
 					{
-						RT_runFlush();
+						runFlush();
 						runMidTagsScript();
 						runScriptInterval();
 						runShareInterval();
@@ -1517,7 +1517,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				
 				stopPrj();
 
-				RT_runFlush();
+				runFlush();
 				
 				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
 				
@@ -1562,6 +1562,31 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		return PrjShareManager.getInstance().getSharer(this.getId());
 	}
+	
+	private transient long lastRunFlush = -1 ;
+
+	final void runFlush()
+	{
+		if(System.currentTimeMillis()-lastRunFlush<500)
+			return ;
+		
+		try
+		{
+			this.RT_runFlush();
+			for (UANode subn : this.getSubNodes())
+			{
+				if (subn instanceof UANodeOCTags)
+				{
+					((UANodeOCTags) subn).RT_runFlush();
+				}
+			}
+		}
+		finally
+		{
+			lastRunFlush = System.currentTimeMillis() ;
+		}
+	}
+
 
 	private void runShareInterval()
 	{

@@ -29,7 +29,7 @@ public class PrjShareManager
 		}
 	}
 	
-	private HashMap<String,PrjSharer> id2share = new HashMap<>() ;
+	private HashMap<String,Object> id2share = new HashMap<>() ;
 	
 	private PrjShareManager()
 	{}
@@ -63,10 +63,15 @@ public class PrjShareManager
 	
 	public PrjSharer getSharer(String prjid)// throws Exception
 	{
-		PrjSharer ps = id2share.get(prjid);
-		if(ps!=null)
-			return ps ;
+		Object obj = id2share.get(prjid);
+		if(obj!=null)
+		{
+			if(obj instanceof PrjSharer)
+				return (PrjSharer)obj ;
+			return null ;
+		}
 		
+		PrjSharer ps = null;
 		try
 		{
 			ps = loadSharer(prjid);
@@ -74,10 +79,15 @@ public class PrjShareManager
 			{
 				id2share.put(prjid, ps) ;
 			}
+			else
+			{
+				id2share.put(prjid,"") ;	
+			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			id2share.put(prjid,"") ;	
 		}
 		return ps ;
 	}

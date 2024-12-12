@@ -580,6 +580,8 @@ function do_submit(cb)
 	if(desc==null)
 		desc ='' ;
 	
+	let recv_broken_to = get_input_val("recv_broken_to",60000,true) ;
+	
 	let tcp_run_tp = $("#tcp_run_tp").val() ;
 	let tcp_run = null ;
 	if(tcp_run_tp=='s')
@@ -618,7 +620,7 @@ function do_submit(cb)
 		data_pro = {_tp:data_pro_tp} ;
 	}
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,recv_broken_to:recv_broken_to,
 		tcp_run:tcp_run,data_pro:data_pro});
 }
 

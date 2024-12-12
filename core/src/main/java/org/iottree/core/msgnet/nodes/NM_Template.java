@@ -132,6 +132,8 @@ public class NM_Template extends MNNodeMid
 		if(hd!=null)
 			scopes.put("heads", hd);
 		scopes.put("payload",msg.CXT_PK_getPayload());
+		scopes.put("msg_dt",msg.getMsgDT());
+		scopes.put("msg_id",msg.getMsgId());
 	    scopes.put("node", this.CXT_PK_toMap());
 	    scopes.put("flow", this.getBelongTo().CXT_PK_toMap());
 

@@ -273,6 +273,10 @@ function init()
 			$("#script_test").val(jsstr) ;
 		}
 	}
+	else
+	{
+		jsstr = dlg.get_opener_opt("js_txt")||"";
+	}
 	
 	js_edit_init(jsstr);
 	//editor=CodeMirror.fromTextArea(document.getElementById("script_test"),{

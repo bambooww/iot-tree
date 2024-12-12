@@ -186,7 +186,7 @@ var transdd = ow.trans_dd ;
 if(transdd==null)
 	transdd={} ;
 var path=node_path ;
-console.log(transdd);
+//console.log(transdd);
 	
 layui.use('form', function(){
 	  form = layui.form;

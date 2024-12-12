@@ -1192,7 +1192,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				//this.RT_set
 				return null;
 			}
+			//long st = System.currentTimeMillis() ;
+			//long stn = System.nanoTime() ;
 			Object ob = ci.runCode() ;
+			//System.out.println("cost="+(System.currentTimeMillis()-st)+" nano="+(System.nanoTime()-stn)) ;
 			return this.RT_setValRaw(ob);
 			//v.setVal(true, ob, System.currentTimeMillis());
 			
@@ -1537,8 +1540,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
-		if(da==null)
-			return false;
+		//if(da==null)
+		//	return false;
+			
 		UACh ch = this.getBelongToCh() ;
 		if(ch==null)
 			return false; //must has channel

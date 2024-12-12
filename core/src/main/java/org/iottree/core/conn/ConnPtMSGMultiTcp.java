@@ -806,9 +806,10 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 			switch(RT_st)
 			{
 			case 0:
-				int len = inputs.available() ;
+				int len = RT_chkAvailableTO(inputs) ;
 				if(len<=0)
 					return ;
+				
 				RT_lastDT = System.currentTimeMillis() ;
 				RT_rlen = len ;
 				RT_st = 1 ;
@@ -1093,6 +1094,7 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 					failedr.append(ee.getMessage()) ;
 					if(log.isDebugEnabled())
 						log.debug(ee);
+					si.dispose();
 					return false;
 				}
 			}
@@ -1598,6 +1600,8 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 	
 	public static final String TP = "multi_tcp_msg" ;
 	
+	//long recv_broken_to = 60000 ;
+	
 	TcpRunner tcpRunner = null ;
 	
 	TcpDataPro dataPro = null ;
@@ -1614,6 +1618,15 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 	{
 		return null;
 	}
+	
+//	/**
+//	 * will tcp broken ,when recv no data during this to
+//	 * @return
+//	 */
+//	public long getRecvBrokenTO()
+//	{
+//		return recv_broken_to;
+//	}
 
 	@Override
 	public void RT_checkConn()
@@ -1647,6 +1660,7 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 	public XmlData toXmlData()
 	{
 		XmlData xd = super.toXmlData() ;
+		//xd.setParamValue("recv_broken_to", recv_broken_to);
 		if(tcpRunner!=null)
 			xd.setSubDataSingle("tcp_run", tcpRunner.toXmlData());
 		if(dataPro!=null)
@@ -1658,6 +1672,10 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 	{
 		if(!super.fromXmlData(xd, failedr))
 			return false;
+//		recv_broken_to = xd.getParamValueInt64("recv_broken_to", 60000) ;
+//		if(recv_broken_to<=0)
+//			recv_broken_to = 60000 ;
+		
 		XmlData tmpxd = xd.getSubDataSingle("tcp_run") ;
 		this.tcpRunner = transXD2Runner(tmpxd) ;
 		tmpxd = xd.getSubDataSingle("data_pro") ;
@@ -1670,6 +1688,9 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 		if(this.RT_isRunning())
 			throw new Exception("cannot set while in running") ;
 		super.injectByJson(jo);
+//		recv_broken_to = jo.optLong("recv_broken_to",60000) ;
+//		if(recv_broken_to<=0)
+//			recv_broken_to = 60000 ;
 		JSONObject tmpjo = jo.optJSONObject("tcp_run") ;
 		this.tcpRunner = transJO2Runner(tmpjo) ;
 		tmpjo =  jo.optJSONObject("data_pro") ;
@@ -1685,39 +1706,39 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 //	}
 	
 	
-	private transient boolean drvMsgOnlyGotten = false;
-	private transient DevDriverMsgOnly drvMsgOnly = null ;
-	
-	private DevDriverMsgOnly getDriverMsgOnly()
-	{
-		if(drvMsgOnlyGotten)
-			return drvMsgOnly ;
-		
-		try
-		{
-			UACh ch = this.getJoinedCh() ;
-			if(ch==null)
-				return null;
-			DevDriver dd = ch.getDriver() ;
-			if(dd==null)
-				return null;
-			
-			if(dd instanceof DevDriverMsgOnly)
-			{
-				drvMsgOnly = (DevDriverMsgOnly)dd ;
-			}
-			return drvMsgOnly ;
-		}
-		catch(Exception e)
-		{
-			log.warn(e);
-			return null ;
-		}
-		finally
-		{
-			drvMsgOnlyGotten = true ;
-		}
-	}
+//	private transient boolean drvMsgOnlyGotten = false;
+//	private transient DevDriverMsgOnly drvMsgOnly = null ;
+//	
+//	private DevDriverMsgOnly getDriverMsgOnly()
+//	{
+//		if(drvMsgOnlyGotten)
+//			return drvMsgOnly ;
+//		
+//		try
+//		{
+//			UACh ch = this.getJoinedCh() ;
+//			if(ch==null)
+//				return null;
+//			DevDriver dd = ch.getDriver() ;
+//			if(dd==null)
+//				return null;
+//			
+//			if(dd instanceof DevDriverMsgOnly)
+//			{
+//				drvMsgOnly = (DevDriverMsgOnly)dd ;
+//			}
+//			return drvMsgOnly ;
+//		}
+//		catch(Exception e)
+//		{
+//			log.warn(e);
+//			return null ;
+//		}
+//		finally
+//		{
+//			drvMsgOnlyGotten = true ;
+//		}
+//	}
 	
 	private void RT_onMsgGit(byte[] msg)
 	{
@@ -1732,7 +1753,6 @@ public class ConnPtMSGMultiTcp extends ConnPtMsg //implements IConnPtDevFinder
 	@Override
 	public boolean RT_supportSendMsgOut()
 	{
-		
 		return true;
 	}
 	

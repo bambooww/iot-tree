@@ -569,6 +569,11 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	public UATag addTag(String name,String title,String desc,UAVal.ValTP vt,boolean bsave) throws Exception
 	{
+		return addTag(name,title,desc,vt,false,bsave);
+	}
+	
+	public UATag addTag(String name,String title,String desc,UAVal.ValTP vt,boolean canwrite,boolean bsave) throws Exception
+	{
 		UAUtil.assertUAName(name);
 		UANode tmpn = getSubNodeByName(name);
 		// UATagG tgg = this.getSubTagGByName(name) ;
@@ -581,15 +586,22 @@ public abstract class UANodeOCTags extends UANodeOC
 		
 		UATag d = new UATag(name,title,desc,null,vt,0,false,200);
 		d.id = this.getNextIdByRoot();
+		d.bCanWrite = canwrite;
 		tags.add(d);
 		constructNodeTree();
 		this.bDirty = true ;
+		this.clearJsNames();
 		if(bsave)
 			save();
 		return d;
 	}
 	
 	public UATag getOrAddTag(String name,String title,String desc,UAVal.ValTP vt,boolean bsave) throws Exception
+	{
+		return getOrAddTag(name,title,desc,vt,false,bsave) ;
+	}
+	
+	public UATag getOrAddTag(String name,String title,String desc,UAVal.ValTP vt,boolean canwrite,boolean bsave) throws Exception
 	{
 		UANode tmpn = this.getSubNodeByName(name) ;
 		if(tmpn!=null)
@@ -600,16 +612,16 @@ public abstract class UANodeOCTags extends UANodeOC
 				 return (UATag)tmpn ;
 		}
 		
-		return addTag(name,title,desc,vt,bsave) ;
+		return addTag(name,title,desc,vt,canwrite,bsave) ;
 	}
 	
-	@JsDef
-	private UATag get_add_tag(String name,String title,String desc,String vtstr,boolean bsave) throws Exception
+	@JsDef(method_params_title="name,title,description,val tp str,canwrite,bsave")
+	private UATag get_add_tag(String name,String title,String desc,String vtstr,boolean canwrite,boolean bsave) throws Exception
 	{
 		UAVal.ValTP vt = UAVal.getValTp(vtstr) ;
 		if(vt==null)
 			throw new IllegalArgumentException("unknown vt "+vtstr) ;
-		return getOrAddTag(name,title,desc, vt,bsave) ; 
+		return getOrAddTag(name,title,desc, vt,canwrite,bsave) ; 
 	}
 
 	public boolean delTag(UATag t) throws Exception
@@ -1032,7 +1044,7 @@ public abstract class UANodeOCTags extends UANodeOC
 	{
 
 	}
-
+	
 	final void RT_runFlush()
 	{
 		this.RT_flush();

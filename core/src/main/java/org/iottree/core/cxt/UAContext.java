@@ -37,6 +37,8 @@ import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.js.GUtil;
 
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
+
 public class UAContext
 {
 //	private static HashMap<String,Object> GVAR2OBJ = null ; 
@@ -211,8 +213,13 @@ public class UAContext
 	
 	public synchronized Object scriptInvoke(String fn,Object... paramvals) throws NoSuchMethodException, ScriptException
 	{
-		Invocable inv = (Invocable)getScriptEngine() ;
-		return inv.invokeFunction(fn, paramvals) ;
+		GraalJSScriptEngine se = (GraalJSScriptEngine)getScriptEngine() ;
+		Value func = se.getPolyglotContext().getBindings("js").getMember(fn) ;
+		Value res = func.execute(paramvals) ;
+		return res.as(Object.class) ; 
+		
+//		Invocable inv = (Invocable)getScriptEngine() ;
+//		return inv.invokeFunction(fn, paramvals) ;
 	}
 	
 	public  CompiledScript scriptCompile(boolean bblock,String jstxt) throws ScriptException

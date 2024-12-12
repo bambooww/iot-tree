@@ -2,6 +2,7 @@ package org.iottree.core.sim;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.graalvm.polyglot.Value;
 import org.iottree.core.cxt.IJSOb;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.dict.DictManager;
@@ -23,6 +25,8 @@ import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.js.Debug;
 import org.iottree.core.util.js.GSys;
 import org.iottree.core.util.js.GUtil;
+
+import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 
 public class SimContext
 {
@@ -109,8 +113,79 @@ public class SimContext
 	
 	public synchronized Object scriptInvoke(String fn,Object... paramvals) throws NoSuchMethodException, ScriptException
 	{
-		Invocable inv = (Invocable)getScriptEngine() ;
-		return inv.invokeFunction(fn, paramvals) ;
+		//long st = System.currentTimeMillis() ;
+		//long stn = System.nanoTime() ;
+		try
+		{
+			GraalJSScriptEngine se = (GraalJSScriptEngine)getScriptEngine() ;
+			Value func = se.getPolyglotContext().getBindings("js").getMember(fn) ;
+			Value res = func.execute(paramvals) ;
+			return res.as(Object.class) ; 
+			//return transGraalValueToMapListObj(res) ;
+		
+		
+//			Invocable inv = (Invocable)getScriptEngine() ;
+//			return inv.invokeFunction(fn, paramvals) ;
+		}
+		finally
+		{
+			//System.out.println("cost="+(System.currentTimeMillis()-st)+" nano="+(System.nanoTime()-stn)) ;
+		}
+	}
+	
+	public static Object transGraalValueToMapListObj(Value res)
+	{
+		if(res.isNull())
+			return null ;
+		
+		if(res.hasArrayElements())
+		{
+			ArrayList<Object> ret = new ArrayList<>() ;
+			long sz = res.getArraySize() ;
+			for(int i = 0 ; i < sz ; i ++)
+			{
+				Value tmpv = res.getArrayElement(i);//.as(Object.class) ;
+				Object obj = transGraalValueToMapListObj(tmpv) ;
+				ret.add(obj) ;
+			}
+			return ret ;
+		}
+		
+		if(res.hasMembers())
+		{
+			HashMap<String,Object> tmpm = new HashMap<>();
+			for(String mkey:res.getMemberKeys())
+			{
+				 Value val = res.getMember(mkey);
+				 Object obj = transGraalValueToMapListObj(val) ;
+				 if(obj==null)
+					 continue ;
+				 tmpm.put(mkey, obj) ;
+			}
+			return tmpm ;
+		}
+		
+		return res.as(Object.class) ;
+	}
+	
+	public static Map<String,?>  transGraalParamToMapListObj(Map<String,?> pm)
+	{
+		HashMap<String,Object> tmpm = new HashMap<>();
+		for(String mkey:pm.keySet())
+		{
+			 Object val = pm.get(mkey) ;
+			 if(val instanceof Value)
+				 val = transGraalValueToMapListObj((Value)val) ;
+			 else if(val instanceof Map)
+			 {
+				 //PolyglotMap polymm ;
+				 val = transGraalParamToMapListObj((Map<String,?>)val) ;
+			 }
+			 if(val==null)
+				 continue ;
+			 tmpm.put(mkey, val) ;
+		}
+		return tmpm ;
 	}
 	
 	public  CompiledScript scriptCompile(boolean bblock,String jstxt) throws ScriptException

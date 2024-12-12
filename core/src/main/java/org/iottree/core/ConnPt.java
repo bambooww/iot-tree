@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.IXmlDataValidator;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public abstract class ConnPt implements IXmlDataValidator
+public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 {
 	private static int cc = 0 ;
 	private static long last_id_dt = -1 ;

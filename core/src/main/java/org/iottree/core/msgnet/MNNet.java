@@ -924,6 +924,18 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	
 	// - 
 	
+	void RT_onBeforeNetRun()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			n.RT_onBeforeNetRun();
+		}
+		for(MNModule m:this.id2module.values())
+		{
+			m.RT_onBeforeNetRun();
+		}
+	}
+	
 	public JSONObject RT_getNetUpdate(List<String> div_ids)
 	{
 		JSONObject jo = this.RT_toJO(true) ;//new JSONObject() ;
@@ -1024,6 +1036,8 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			failedr.append(lan.g("not_enabled")) ;
 			return ;
 		}
+		
+		RT_onBeforeNetRun() ;
 		
 		List<MNNodeStart> ns = getStartNodes() ;
 		for(MNNodeStart n:ns)

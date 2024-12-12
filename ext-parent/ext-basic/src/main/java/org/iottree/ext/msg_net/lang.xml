@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="never" name_cn="保持链接" name_en="never - keep conneciton open" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="aft_fixed_to" name_cn="在固定时间之后" name_en="after a fixed timeout of" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="recv_char" name_cn="当接收到特定字符" name_en="when character received is" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="recv_char_num" name_cn="在接收到固定长度字符之后" name_en="after a fixed number of characters" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="immediately" name_cn="立刻-不需要等待应答" name_en="immediately - don't wait for reply" desc_cn="" desc_en=""/>
+	
+	
+	<dd_node id="1" name="buf" name_cn="byte[]" name_en="bytes数组" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="str" name_cn="字符串" name_en="String" desc_cn="" desc_en=""/>
+</dd_class>

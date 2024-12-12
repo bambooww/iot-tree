@@ -346,6 +346,9 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	// -- RT
 	
+	protected void RT_onBeforeNetRun()
+	{}
+	
 	public void RT_clean()
 	{
 		this.RT_CXT_clean();
