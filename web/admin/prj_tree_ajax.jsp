@@ -67,7 +67,7 @@
 						else out.write(",") ;
 						
 						boolean ref = hmi.isRefedNode();
-						out.write("{\"text\": \""+hmi.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle())+"\"},\"ref\":"+ref) ;
+						out.write("{\"text\": \""+hmi.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
 						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_hmi\",\"state\": {\"opened\": true}}") ;
 					}

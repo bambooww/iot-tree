@@ -501,6 +501,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		}
 	}
 	
+	
 	public static DataTable selectRecords(DBConnPool cp,String tablename,Date start_dt,Date end_dt,String handler_name,int pageidx,int pagesize) throws Exception
 	{
 		if(pageidx<0||pagesize<=0)

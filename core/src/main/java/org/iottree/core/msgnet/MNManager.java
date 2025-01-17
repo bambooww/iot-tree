@@ -16,6 +16,7 @@ import org.iottree.core.basic.ValAlert;
 import org.iottree.core.conn.ConnPtMSGNor;
 import org.iottree.core.conn.ConnPtMsg;
 import org.iottree.core.msgnet.nodes.*;
+import org.iottree.core.msgnet.store.evt_alert.EvtAlertTb;
 import org.iottree.core.msgnet.modules.*;
 import org.iottree.core.msgnet.util.ConfItem;
 import org.iottree.core.util.Convert;
@@ -526,6 +527,7 @@ public class MNManager
 		rnn.bEnable = benable ;
 		saveNet(rnn);
 		this.listNets().add(rnn) ;
+		clearCache();
 		return rnn ;
 	}
 	
@@ -536,6 +538,7 @@ public class MNManager
 			throw new Exception("no net found with id="+id) ;
 		rnn.fromJO(jo) ;
 		this.saveNet(rnn);
+		clearCache();
 		return rnn ;
 	}
 	
@@ -553,6 +556,7 @@ public class MNManager
 		rnn.desc = desc ;
 		rnn.bEnable = benable ;
 		this.saveNet(rnn);
+		clearCache();
 		return rnn ;
 	}
 	
@@ -564,6 +568,8 @@ public class MNManager
 		File f = calNetFile(id) ;
 		f.delete();
 		listNets().remove(rnn) ;
+		
+		clearCache();
 		return rnn ;
 	}
 	
@@ -649,6 +655,85 @@ public class MNManager
 		}
 		return rets ;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends MNBase> List<T> findNodeByTP(Class<T> tp,boolean ignore_disable)
+	{
+		ArrayList<T> rets = new ArrayList<>() ;
+		List<MNNet> nets = this.listNets() ;
+		if(nets==null)
+			return rets ;
+		for(MNNet net:nets)
+		{
+			Map<String,MNModule> n2m = net.getModuleMapAll() ;
+			for(MNModule m:n2m.values())
+			{
+				if(ignore_disable && !m.isEnable())
+					continue ;
+				if(tp.isInstance(m))
+					rets.add((T)m) ;
+				continue ;
+			}
+			
+			Map<String,MNNode> n2n = net.getNodeMapAll() ;
+			for(MNNode m:n2n.values())
+			{
+				if(ignore_disable && !m.isEnable())
+					continue ;
+				if(tp.isInstance(m))
+					rets.add((T)m) ;
+				continue ;
+			}
+		}
+		return rets ;
+	}
+	
+	
+
+	private transient List<EvtAlertTb> evtAlertTbs = null ;
+	
+	private synchronized void clearCache()
+	{
+		evtAlertTbs = null ;
+	}
+
+
+	public synchronized List<EvtAlertTb> listEvtAlertTb()
+	{
+		if(evtAlertTbs!=null)
+			return evtAlertTbs ;
+		
+		ArrayList<EvtAlertTb> rets = new ArrayList<>() ;
+		for(MNNet net:this.listNets())
+		{
+			for(MNNode n:net.getNodeMapAll().values())
+			{
+				if(n instanceof NS_TagAlertTrigger)
+				{
+					NS_TagAlertTrigger atn = (NS_TagAlertTrigger)n ;
+					RelationalDB_Table rdbtb = atn.getUsingRDBTable() ;
+					if(rdbtb==null)
+						continue ;
+					EvtAlertTb ans = new EvtAlertTb(net,atn,rdbtb) ;
+					rets.add(ans) ;
+				}
+			}
+		}
+		
+		this.evtAlertTbs = rets ;
+		return rets ;
+	}
+
+	public EvtAlertTb getEvtAlertTbByUID(String uid)
+	{
+		for(EvtAlertTb tb:listEvtAlertTb())
+		{
+			if(uid.equals(tb.getUID()))
+				return tb ;
+		}
+		return null ;
+	}
+	
 	// rt
 	
 	Thread rtTH = null ;

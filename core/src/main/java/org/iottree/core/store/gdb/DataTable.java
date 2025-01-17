@@ -549,4 +549,38 @@ public class DataTable implements IXmlDataable
 			}
 		}
 	}
+	
+	//util
+	
+	public DataRow getFirstRow()
+	{
+		if (this.getRowNum() <= 0)
+			return null;
+		return this.getRow(0);
+	}
+	
+	public Number getFirstColOfFirstRowNumber()
+	{
+		Object o = getFirstColumnOfFirstRow();
+		if (o == null)
+			return null;
+
+		if (o instanceof Number)
+			return (Number) o;
+
+		if(o instanceof String)
+		{//mysql sum() 的返回竟然是varchar
+			try
+			{
+				long lv = Long.parseLong((String)o) ;
+				return (Long)lv ;
+			}
+			catch(Exception ee)
+			{
+				return null ;
+			}
+		}
+		
+		return null;
+	}
 }

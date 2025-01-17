@@ -1432,8 +1432,8 @@ function hide_alerts()
 function show_alerts_his()
 {
 	event.stopPropagation();
-	dlg.open("/prj_alert_his.jsp?prjid="+prjid,
-			{title:"<lan:g>alert,his</lan:g>"},
+	let u = "/prj_evt_alert_sel.jsp?prjid="+prjid;//"/prj_alert_his.jsp?prjid="+prjid;
+	dlg.open(u,{title:"<lan:g>alert,his</lan:g>"},
 			['<lan:g>close</lan:g>'],
 			[
 				function(dlgw)

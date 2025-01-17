@@ -31,7 +31,6 @@
     </script>
 </head>
 <body>
-
 	<div class="sel_item">
 		<button class="layui-btn " style="width:80%" onclick="go_to('jdbc','JDBC')">JDBC(MySql,Sql Server..)</button>
 	</div>

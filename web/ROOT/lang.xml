@@ -55,4 +55,11 @@
 	
 	<dd_node id="1" name="trigger_dt" name_cn="触发时间" name_en="Trigger Time"/>
 	<dd_node id="1" name="release_dt" name_cn="释放时间" name_en="Release Time"/>
+	
+	<dd_node id="1" name="evt_alert" name_cn="事件/报警" name_en="Event/Alert"/>
+	<dd_node id="1" name="trigger_dt" name_cn="触发时间" name_en="Event/Alert"/>
+	<dd_node id="1" name="release_dt" name_cn="解除时间" name_en="Event/Alert"/>
+	<dd_node id="1" name="no_evt_alert" name_cn="无事件/报警信息" name_en="No Event/Alert Data"/>
+	<dd_node id="1" name="dur_tm" name_cn="持续时间" name_en="Duration"/>
+	
 </dd_class>

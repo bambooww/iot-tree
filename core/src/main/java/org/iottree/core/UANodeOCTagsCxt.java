@@ -3,6 +3,7 @@ package org.iottree.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -211,6 +212,17 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
 		nt.id = this.getNextIdByRoot() ;
 		hmi.copyTreeWithNewSelf((IRoot)this.getTopNode(),nt, null, false, true, rf2new);
+		String oldn = nt.getName() ;
+		UAHmi oldhmi = null ;
+		do
+		{
+			oldhmi = this.getHmiByName(oldn) ;
+			if(oldhmi!=null)
+			{
+				String newn = this.calNextSubNameAuto(oldn);
+				nt.setNameTitle(newn, nt.getTitle(), nt.getDesc()) ;
+			}
+		}while(oldhmi!=null) ;
 		hmis.add(nt);
 		this.constructNodeTree();
 		save();
