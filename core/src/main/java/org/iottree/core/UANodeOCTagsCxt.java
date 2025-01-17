@@ -213,16 +213,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		nt.id = this.getNextIdByRoot() ;
 		hmi.copyTreeWithNewSelf((IRoot)this.getTopNode(),nt, null, false, true, rf2new);
 		String oldn = nt.getName() ;
-		UAHmi oldhmi = null ;
-		do
+		UAHmi oldhmi = this.getHmiByName(oldn) ;
+		if(oldhmi!=null)
 		{
-			oldhmi = this.getHmiByName(oldn) ;
-			if(oldhmi!=null)
-			{
-				String newn = this.calNextSubNameAuto(oldn);
-				nt.setNameTitle(newn, nt.getTitle(), nt.getDesc()) ;
-			}
-		}while(oldhmi!=null) ;
+			String newn = this.calNextSubNameAuto(oldn);
+			nt.setNameTitle(newn, nt.getTitle(), nt.getDesc()) ;
+		}
 		hmis.add(nt);
 		this.constructNodeTree();
 		save();
