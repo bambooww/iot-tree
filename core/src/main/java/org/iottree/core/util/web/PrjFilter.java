@@ -162,7 +162,11 @@ public class PrjFilter implements Filter
 		if(node instanceof UAHmi)
 		{
 			//UAHmi hmi = (UAHmi)node ;
-			req.getRequestDispatcher("/hmi.jsp?path="+uri).forward(req, resp);
+			if(qs==null)
+				qs = "" ;
+			else
+				qs = "&"+qs ;
+			req.getRequestDispatcher("/hmi.jsp?path="+uri+qs).forward(req, resp);
 			return ;
 		}
 	

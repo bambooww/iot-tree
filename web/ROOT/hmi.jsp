@@ -15,7 +15,9 @@
 				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
-   
+   String bkc = request.getParameter("bkc") ;
+   if(Convert.isNullOrEmpty(bkc))
+	   bkc = "#1e1e1e";
    String user = request.getParameter("user") ;
    if(Convert.isNullOrEmpty(user))
 	   user="" ;
@@ -514,7 +516,7 @@ dlg.dlg_top=true;
 
 var b_station_ins = <%=b_station_ins%>;
 </script>
-<body class="layout-body">
+<body class="layout-body" >
 <div style="z-index: 60000"><button onclick="cxt_rt()" >cxtrt</button></div>
 <%--
 		<div class="left " style="background-color: #aaaaaa;overflow: hidden;">
@@ -534,7 +536,7 @@ var b_station_ins = <%=b_station_ins%>;
 		 --%>
 		 
 		<div class="mid">
-			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color: #1e1e1e">
+			<div id="main_panel" style="border: 0px solid #000; width: 100%; height: 100%; background-color:<%=bkc%>">
 			<%-- 
 				<div id="win_act_store" style="position: absolute; display0: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">

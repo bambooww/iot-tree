@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,6 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.MNNodeRes;
-import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
 import org.iottree.core.store.gdb.DBResult;
@@ -36,7 +34,6 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.jt.JSONTemp;
 import org.iottree.core.util.xmldata.XmlVal;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -55,7 +52,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 	/**
 	 * when tag is delete,keepDeleted=true will keep old tag row,false will delete tag.
 	 */
-	private boolean keepDeleted = true ;
+	//private boolean keepDeleted = true ;
 	
 	@Override
 	public JSONTemp getInJT()
@@ -344,75 +341,6 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		return dataTable ;
 	}
 	
-	private boolean RT_recordAlertItem(ValAlert va,String curval,boolean b_triggered_or_release,StringBuilder failedr) //,int keep_days,boolean b_outer)
-		throws Exception
-	{
-		JavaTableInfo jti = getPrjTableInfo(failedr) ;
-		if(jti==null)
-			return false;
-		
-		DBConnPool cp = this.RT_getConnPool(failedr) ;
-		DataTable dt = this.RT_getDataTable(failedr) ;
-		if(cp==null||dt==null)
-			return false;
-		
-		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
-		String prjname = "" ;
-		if(prj!=null)
-			prjname = prj.getName() ;
-		
-		DataRow dr = dt.createNewRow() ;
-		//ValAlert va = ai.getValAlert() ;
-		//AlertHandler ah = ai.getHandler() ;
-		UATag tag = va.getBelongTo() ;
-		String row_id = va.RT_get_trigger_uid();//.getId() ;
-		if(b_triggered_or_release)
-		{
-			dr.putValue("AutoId",row_id) ;
-			dr.putValue("PrjName", prjname);
-			dr.putValue("Tag", tag.getNodePathCxt());
-			dr.putValue("TriggerDT", new Date(va.RT_last_trigger_dt()));
-			//dr.putValue("Handler", this.getName());
-			dr.putValue("AlertTP", va.getAlertTitle());
-			dr.putValue("Value",curval);
-			dr.putValue("Level", va.getAlertLvl());
-			dr.putValue("Prompt",va.getAlertPrompt());
-			
-			Connection conn =null;
-			try
-			{
-				conn = cp.getConnection() ;
-				//System.out.println(" insert id=="+row_id) ;
-				dr.doInsertDB(conn, jti.getTableName(), COL_NAMES_INSERT) ;
-				
-//				if(delOld(conn,jti.getTableName(),"TriggerDT",keep_days,outerLastDelDT))
-//					outerLastDelDT = System.currentTimeMillis() ;
-			}
-			finally
-			{
-				if(conn!=null)
-					cp.free(conn);
-			}
-		}
-		else // release
-		{
-			dr.putValue("AutoId",row_id) ;
-			dr.putValue("ReleaseDT", new Date(va.RT_last_released_dt()));
-			Connection conn =null;
-			try
-			{
-				conn = cp.getConnection() ;
-				dr.doUpdateDB(conn, jti.getTableName(), "AutoId", new String[] {"ReleaseDT"});
-			}
-			finally
-			{
-				if(conn!=null)
-					cp.free(conn);
-			}
-		}
-		return true;
-	}
-	
 	//private long lastDelDT = -1 ;
 	
 	@SuppressWarnings("unused")
@@ -542,16 +470,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		}
 	}
 	
-	//do update only
-	private void RT_doSynUpdate()
-	{
-		UAPrj prj= this.getBelongTo().getBelongTo().getBelongToPrj() ;
-		List<UATag> tags = prj.listTagsAll() ;
-		for(UATag tag:tags)
-		{
-			
-		}
-	}
+	
 	
 	private List<TagRow> loadPrjRows(DBConnPool cp) throws Exception
 	{
@@ -561,38 +480,9 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		JavaTableInfo jti = getPrjTableInfo(failedr) ;
 		if(jti==null)
 			return null ;
-		String sql = "select * from "+jti.getTableName()+" where PrjName=?" ;
-		Connection conn = null ;
-		boolean b_autocommit = true ;
-		try
-		{
-			conn = cp.getConnection() ;
-			b_autocommit = conn.getAutoCommit() ;
-			ArrayList<TagRow> rets = new ArrayList<>() ;
-			try(PreparedStatement ps = conn.prepareStatement(sql) ;)
-			{
-				ps.setString(1, prjn);
-				try(ResultSet rs = ps.executeQuery();)
-				{
-					DataTable dtb = DBResult.transResultSetToDataTable(rs,jti.getTableName(),0, -1) ;
-					for(DataRow dr:dtb.getRows())
-					{
-						TagRow tr = DBResult.transDataRow2XORMObj(TagRow.class, dr);
-						rets.add(tr) ;
-					}
-				}
-			}
-			return rets ;
-		}
-		finally
-		{
-			if(conn!=null)
-			{
-				conn.setAutoCommit(b_autocommit);
-				cp.free(conn);
-			}
-		}
+		return loadPrjRows(cp,jti.getTableName(),prjn) ;
 	}
+	
 	
 	private boolean loadAndSynTable(StringBuilder failedr) throws Exception
 	{
@@ -804,13 +694,15 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		try
 		{
 			StringBuilder failedr = new StringBuilder() ;
+			long st = System.currentTimeMillis() ;
 			int resn = updateRtVal(failedr);
+			long cost = System.currentTimeMillis()-st ;
 			if(resn<0)
 			{
 				this.RT_DEBUG_WARN.fire("RT_TagRT2RDB_UP_RT_VAL",failedr.toString(),null,null);
 				return RTOut.createOutIdx().asIdxMsg(1, new MNMsg().asPayload(failedr.toString())) ;
 			}
-			this.RT_DEBUG_INF.fire("RT_TagRT2RDB_UP_RT_VAL", "update changed tags num="+resn);
+			this.RT_DEBUG_INF.fire("RT_TagRT2RDB_UP_RT_VAL", "update changed tags num="+resn+" cost="+cost+"ms");
 			return RTOut.createOutIdx().asIdxMsg(0, new MNMsg().asPayload(resn)) ;
 		}
 		catch(Exception ee)
@@ -878,9 +770,9 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		return ret ;
 	}
 	
-	private static final String[] COL_NAMES_INSERT = new String[] {
-			"AutoId","PrjName","TagPath","TagTitle","ValTP","Indicator","StrVal","Unit","UpDT","ChgDT","Valid","HasAlert","AlertInf"
-		} ;
+//	private static final String[] COL_NAMES_INSERT = new String[] {
+//			"AutoId","PrjName","TagPath","TagTitle","ValTP","Indicator","StrVal","Unit","UpDT","ChgDT","Valid","HasAlert","AlertInf"
+//		} ;
 	
 	public JavaTableInfo getPrjTableInfo(StringBuilder failedr) //throws Exception
 	{
@@ -897,7 +789,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 //		if(connPool==null)
 //			return null ;
 		
-		UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
+		//UAPrj prj = (UAPrj)this.getBelongTo().getContainer() ;
 		
 		String tablename = tb.getTableName() ;
 		if(Convert.isNullOrEmpty(tablename))
@@ -1181,4 +1073,42 @@ public class NM_TagRT2RDB  extends MNNodeMid
 			return ps ;
 		}
 	}
+	
+	
+	public static List<TagRow> loadPrjRows(DBConnPool cp,String tablen,String prjn) throws Exception
+	{
+		
+		String sql = "select * from "+tablen+" where PrjName=?" ;
+		Connection conn = null ;
+		boolean b_autocommit = true ;
+		try
+		{
+			conn = cp.getConnection() ;
+			b_autocommit = conn.getAutoCommit() ;
+			ArrayList<TagRow> rets = new ArrayList<>() ;
+			try(PreparedStatement ps = conn.prepareStatement(sql) ;)
+			{
+				ps.setString(1, prjn);
+				try(ResultSet rs = ps.executeQuery();)
+				{
+					DataTable dtb = DBResult.transResultSetToDataTable(rs,tablen,0, -1) ;
+					for(DataRow dr:dtb.getRows())
+					{
+						TagRow tr = DBResult.transDataRow2XORMObj(TagRow.class, dr);
+						rets.add(tr) ;
+					}
+				}
+			}
+			return rets ;
+		}
+		finally
+		{
+			if(conn!=null)
+			{
+				conn.setAutoCommit(b_autocommit);
+				cp.free(conn);
+			}
+		}
+	}
+	
 }

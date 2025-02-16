@@ -186,11 +186,17 @@ public class UAVal //extends JSObMap
 		if(strv==null||"".contentEquals(strv))
 			return null ;
 	
-		if(tp.isNumberVT() && !tp.isNumberFloat())
+		if(tp.isNumberVT())
 		{
-			int k = strv.indexOf('.') ;
-			if(k>=0)
-				strv = strv.substring(0,k) ;
+			if("-∞".equals(strv)||"∞".equals(strv))
+				return null ;
+			
+			if(!tp.isNumberFloat())
+			{
+				int k = strv.indexOf('.') ;
+				if(k>=0)
+					strv = strv.substring(0,k) ;
+			}
 		}
 		
 		switch(tp)

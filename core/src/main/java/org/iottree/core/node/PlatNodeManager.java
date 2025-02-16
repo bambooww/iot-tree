@@ -52,6 +52,8 @@ public class PlatNodeManager
 			this.platNode = loadNode() ;
 			if(this.platNode==null)
 				throw new Exception("load PlatNode failedr") ;
+			
+			System.out.println("load plat node config succ") ;
 		}
 		catch(Exception ee)
 		{

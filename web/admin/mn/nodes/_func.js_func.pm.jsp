@@ -56,12 +56,20 @@
 {
 	position:absolute;
 	left:5px;top:0px;
-	width:200px;
+	width:300px;
 	height:400px;
 	overflow: auto;
 	text-align: left;
 }
-
+.help_lb
+{
+	position:absolute;
+	left:5px;top:400px;
+	width:300px;
+	height:200px;
+	overflow: auto;
+	text-align: left;
+}
 .layui-tab-title li
 {
 	line-height0:30px;
@@ -74,14 +82,14 @@ color:#2f2f2f;
 
 
 </style>
-<div class="layui-form-item">
+<div class="layui-form-item" style="position: absolute;right:60px;z-index:1000;">
     <label class="layui-form-label">Outputs:</label>
-    <div class="layui-input-inline" style="width:250px;">
+    <div class="layui-input-inline" style="width:150px;">
     	<input type="number" class="layui-input" id="out_num" value="1" min="1"/>
     </div>
   </div>
   <div class="layui-form-item">
-    <div class="layui-form-label" style="width:200px;text-align: left;">
+    <div class="layui-form-label" style="width:300px;text-align: left;">
     <div  class="help_tree">
     	&nbsp;&nbsp;<i class="fa fa-question" aria-hidden="true" /></i> Help
     	<div id="help_tree"  class="tree">
@@ -102,8 +110,10 @@ color:#2f2f2f;
 		    </ul>
   </div>
     </div>
+    <div class="help_lb" id="help_lb">
     </div>
-    <div class="layui-input-inline" style="width:620px;border:0px solid;">
+    </div>
+    <div class="layui-input-inline" style="width:720px;border:0px solid;">
      
 	    <div class="layui-tab" lay-filter="js_tabs" style="width:100%;margin:0px;">
   <ul class="layui-tab-title" style0="height:30px;">
@@ -115,17 +125,17 @@ color:#2f2f2f;
   <div class="layui-tab-content" style="padding:0px;">
     <div class="layui-tab-item" id="tab_init_js">
     	
-		<div id='init_js'  style="overflow: scroll;width:100%;height:470px;border:0px solid #e6e6e6;margin-top:2px;" ></div>
+		<div id='init_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;" ></div>
 		
 	</div>
     <div class="layui-tab-item  layui-show" >
     	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_msg_in</span>(<span class="pm" title="In Msg's Topic">topic</span>,<span class="pm" title="In Msg's Heads">heads</span>,<span class="pm" title="In Msg's Payload">payload</span>,<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
-		<div id='run_js'  style="overflow: scroll;width:100%;height:460px;border:0px solid #e6e6e6;margin-top:2px;"></div>
+		<div id='run_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;"></div>
 		<span style="color:#901f1f">}</span>
 	</div>
     <div class="layui-tab-item">
     	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_end</span>(<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
-		<div id='end_js'  style="overflow: scroll;width:100%;height:460px;border:0px solid #e6e6e6;margin-top:2px;"></div>
+		<div id='end_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;"></div>
 		<span style="color:#901f1f">}</span>
     </div>
   
@@ -137,8 +147,11 @@ color:#2f2f2f;
   </div>
   
 <script>
+var jsfunc_prjid="<%=prjid%>";
+var jsfunc_netid="<%=netid%>";
+var jsfunc_itemid="<%=itemid%>";
 
-$('#help_tree').jstree(
+var jsTree = $('#help_tree').jstree(
 		{
 			'core' : {
 				'data' : {
@@ -167,6 +180,24 @@ $('#help_tree').jstree(
 			'plugins' : ['types','unique'] //'state',','contextmenu' 'dnd',
 		}
 );
+jsTree.on('activate_node.jstree',(e,data)=>{
+	on_tree_node_sel(data.node.original)
+})
+
+function on_tree_node_sel(n)
+{
+	let id = n.id ;
+	send_ajax("mn_help_ajax.jsp",{op:"sub_detail",container_id:container_id,netid:netid,itemid:itemid,id:id},(bsucc,ret)=>{
+		$("#help_lb").html(ret) ;
+	}) ;
+}
+
+function open_help_ob(cn)
+{
+	dlg.open_win("./mn_help_ob.jsp?cn="+cn,
+			{title:"JS Object Helper",w:'400px',h:'300px'},
+			[],[]);
+}
 
 var init_editor = null;
 var run_editor = null;
@@ -260,7 +291,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:900,h:660} ;
+	return {w:1100,h:660} ;
 }
 
 
