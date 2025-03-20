@@ -504,9 +504,6 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 			rtTh = new Thread(runner, "iottree-devdriver-" + this.getBelongToCh().getName() + " " + this.getName());
 			rtTh.start();
 		}
-
-		
-
 		return true;
 	}
 
@@ -672,7 +669,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 
 	public boolean RT_isRunning()
 	{
-		return rtTh != null;
+		return bRun;// rtTh != null; 
 	}
 
 	public State getDriverState()

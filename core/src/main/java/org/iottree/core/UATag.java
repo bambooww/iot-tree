@@ -1533,10 +1533,13 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this.RT_setValRaw(v,true,updt,chgdt);
 	}
 	
-	private boolean RT_writeValDriver(Object v)
+	private boolean RT_writeValDriver(Object v,StringBuilder failedr)
 	{
 		if(this.isMidExpress())
+		{
+			failedr.append("mid express tag cannot be written") ;
 			return false;
+		}
 		
 		StringBuilder sb = new StringBuilder() ;
 		DevAddr da = this.getDevAddr(sb);
@@ -1545,17 +1548,24 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			
 		UACh ch = this.getBelongToCh() ;
 		if(ch==null)
+		{
+			failedr.append("no belong to ch found") ;
 			return false; //must has channel
+		}
 		UADev dev = this.getBelongToDev();
 		//if(dev==null)
 		//	return false;
-		
 		DevDriver dd = ch.getDriver() ;
 		if(dd==null)
+		{
+			failedr.append("no driver found") ;
 			return false;
-
+		}
 		if(!dd.RT_isRunning())
+		{
+			failedr.append("driver is not running") ;
 			return false;
+		}
 		
 		ValTranser vtrans = this.getValTranserObj() ;
 		if(vtrans!=null)
@@ -1564,13 +1574,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			{
 				v = vtrans.inverseTransVal(v) ;
 				if(v==null)
+				{
+					failedr.append("inverseTransVal is null") ;
 					return false;
+				}
 				v = UAVal.transStr2ObjVal(this.getValTpRaw(),v.toString()) ;
 			}
 			catch(Exception ee)
 			{
 				//if(Log.isDebugging())
 				ee.printStackTrace();
+				failedr.append("RT_writeValDriver err:"+ee.getMessage()) ;
 				return false;
 			}
 		}
@@ -1637,9 +1651,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 			else
 			{
-				boolean r = RT_writeValDriver(v);
-				if(!r && failedr!=null)
-					failedr.append("write to driver failed") ;
+				boolean r = RT_writeValDriver(v,failedr);
+				//if(!r && failedr!=null)
+				//	failedr.append("write to driver failed") ;
 				return r ;
 			}
 		}

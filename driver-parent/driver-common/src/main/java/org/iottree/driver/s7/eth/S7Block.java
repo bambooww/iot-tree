@@ -400,8 +400,6 @@ public class S7Block
 	{
 		S7MsgWrite mc = new S7MsgWrite().withParam(memTp, this.dbNum, addr,v);
 		mc.init(ppiDrv);
-
-		
 		synchronized(writeCmds)
 		{
 			writeCmds.addLast(mc);
