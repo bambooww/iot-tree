@@ -20,6 +20,12 @@
 		<output.directory>../_output</output.directory>
 	  </properties>
 
+<build>
+        <finalName>iottree-core</finalName>
+        <plugins>
+        </plugins>
+    </build>
+    
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dd_class id="1" name="ua_lang"  name_jp=""  >
 
-
+	<dd_node id="1" name="file_dir" name_cn="文件目录读写" name_en="File Dir Read Write" desc_cn="基于某个目录下的文件创建读写操作" desc_en=""/>
+	<dd_node id="1" name="file_dir_open" name_cn="打开目录下文件" name_en="Open File In Dir" desc_cn="根据策略打开或新建目录下的文件" desc_en=""/>
+	<dd_node id="1" name="file_dir_write" name_cn="写数据到当前文件" name_en="Write To Current File" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_close" name_cn="关闭当前文件" name_en="Close Current File" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_o_auto_yyyy_mm" name_cn="自动新文件(yyyy/MM/autoid.ext)" name_en="Auto New File(yyyy/MM/autoid.ext)" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_o_auto_yyyy_mm_dd" name_cn="自动新文件(yyyy/MM/dd/autoid.ext)" name_en="Auto New File(yyyy/MM/dd/autoid.ext)" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_o_msg_in" name_cn="消息提供新文件名" name_en="New File By In Msg" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_w_payload" name_cn="写入消息Payload" name_en="Write Payload to File" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="file_dir_w_bytearray" name_cn="写入消息bytearray" name_en="Write Bytearray to File" desc_cn="" desc_en=""/>
+	
 	<dd_node id="1" name="r_db" name_cn="关系数据库" name_en="Relational DB" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tag_rt" name_cn="实时标签Tag" name_en="Real-time Tag" desc_cn="" desc_en=""/>
 	

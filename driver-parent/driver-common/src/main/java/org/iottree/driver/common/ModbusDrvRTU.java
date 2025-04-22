@@ -328,29 +328,34 @@ public class ModbusDrvRTU extends DevDriver
 				{
 					mdi.doModbusCmd(cpt);
 				}
-				
 				checkConnBroken(cpt) ;
 			}
 		}
 		catch(ConnException se)
 		{
 			//System.out.println("errdt==="+Convert.toFullYMDHMS(new Date()));
-			se.printStackTrace();
-			if(log.isDebugEnabled())
-				log.debug("RT_runInLoop err", se);
+//			if(log.isDebugEnabled())
+//				log.debug("RT_runInLoop err", se);
+			if(log.isWarnEnabled())
+			{
+				log.warn("RT_runInLoop err with cpt close", se);
+			}
 			cpt.close();
-			
+			//se.printStackTrace();
 			for(ModbusDevItem mdi:modbusDevItems)
 			{
 				mdi.doModbusCmdErr();
 			}
-			
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-			if(log.isErrorEnabled())
-				log.debug("RT_runInLoop err", e);
+			if(log.isWarnEnabled())
+			{
+				log.warn("RT_runInLoop err not cpt close", e);
+			}
+			//e.printStackTrace();
+			//if(log.isErrorEnabled())
+			//	log.debug("RT_runInLoop err", e);
 		}
 		return true;
 	}

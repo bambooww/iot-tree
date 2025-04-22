@@ -95,12 +95,12 @@ Rule: <button onclick="add_rule()" style="border-color:#dddddd">+Add Rule</butto
     </select>
    </div>
    <div class="tar_pktp" style="">
-    <select id="tar_pktp"  class="layui-input" lay-filter="tar_pktp" style="width:80px;border-right: 0px;">
+    <select id="tar_pktp"  class0="layui-input" lay-filter="tar_pktp" style="width:80px;border-right: 0px;">
 <%
 	for(MNCxtPkTP pktp:MNCxtPkTP.values())
 	{
 %>
-        <option value="<%=pktp.name()%>"><%=pktp.getIconTitle() %>.</option>
+        <option value="<%=pktp.name()%>"><%=pktp.getTitle() %>.</option>
 <%
 	}
 %>
@@ -143,7 +143,7 @@ Rule: <button onclick="add_rule()" style="border-color:#dddddd">+Add Rule</butto
 	for(MNCxtPkTP pktp:MNCxtPkTP.values())
 	{
 %>
-        <option value="<%=pktp.name()%>"><%=pktp.getIconTitle() %>.</option>
+        <option value="<%=pktp.name()%>"><%=pktp.getTitle() %>.</option>
 <%
 	}
 %>

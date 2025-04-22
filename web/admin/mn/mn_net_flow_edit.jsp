@@ -954,7 +954,7 @@ function push_debug_item(debug_nid,ditem)
     let dtss = new Date(ditem.dt).format_local("hh:mm:ss");
     tmps += `<div class="msg_meta"><span class="msg-date" title="\${dtstr}">\${dtss}</span>
 	<span class="msg-from">from: \${ditem.from}-\${ditem.from_idx}</span><br>
-	<span >id: \${msg.id} topic:\${msg.topic||''} ts:\${msg.time_ms}</span>
+	<span >id: \${msg.id} topic:\${msg.topic||''} ts:\${msg.time_ms} bs:\${msg.bytes_len||""}</span>
 	</div>` ;
     tmps += `<div class="msg">payload:<span class="pld"></span></div>`;
     tmps += "</div>" ;

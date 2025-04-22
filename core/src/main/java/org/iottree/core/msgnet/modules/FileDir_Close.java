@@ -1,4 +1,4 @@
-package org.iottree.core.msgnet.nodes;
+package org.iottree.core.msgnet.modules;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
@@ -6,9 +6,9 @@ import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.json.JSONObject;
 
-public class NM_FileWriter extends MNNodeMid
+public class FileDir_Close  extends MNNodeMid
 {
-
+	
 	@Override
 	public int getOutNum()
 	{
@@ -18,13 +18,13 @@ public class NM_FileWriter extends MNNodeMid
 	@Override
 	public String getTP()
 	{
-		return "file_w";
+		return "file_dir_close";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("file_w");
+		return g("file_dir_close");
 	}
 
 	@Override
@@ -36,13 +36,13 @@ public class NM_FileWriter extends MNNodeMid
 	@Override
 	public String getIcon()
 	{
-		return "PK_filew";
+		return "\\uf1c3";
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		return false;
+		return true;
 	}
 
 	@Override
@@ -54,20 +54,17 @@ public class NM_FileWriter extends MNNodeMid
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		
 	}
 
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
-		msg.getHeadVal("create_file") ;
-		return null;
-	}
-
-	@Override
-	public String RT_getInTitle()
-	{
-		return "In Msg Payload";
+		FileDir_M mnm = (FileDir_M)this.getOwnRelatedModule() ;
+		FileDir_M.FileItem fi = mnm.getOpenedFile() ;
+		if(fi==null)
+			return null ;
+		mnm.RT_closeFile();
+		return RTOut.createOutAll(new MNMsg().asPayload(fi.file.getAbsoluteFile())) ;
 	}
 }

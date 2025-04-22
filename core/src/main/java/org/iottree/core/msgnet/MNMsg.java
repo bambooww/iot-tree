@@ -28,7 +28,13 @@ public class MNMsg implements IMNCxtPk
 	
 	private String topic = null ;
 	
-	private Object payload = null ; 
+	private Object payload = null ;
+	
+	/**
+	 * byte[] is special, it will not be packed into JSON
+	 * it is be used only for one connection call,
+	 */
+	private byte[] bytesArray = null ;
 	
 	public MNMsg()
 	{
@@ -114,6 +120,7 @@ public class MNMsg implements IMNCxtPk
 		}
 		return heads ;
 	}
+	
 	
 	public MNMsg asPayload(Object payload)
 	{
@@ -236,6 +243,21 @@ public class MNMsg implements IMNCxtPk
 		return this.payload.toString() ;
 	}
 	
+	
+	
+	public MNMsg asBytesArray(byte[] bs)
+	{
+		this.bytesArray = bs ;
+		return this ;
+	}
+	
+	public byte[] getBytesArray()
+	{
+		return this.bytesArray ;
+	}
+	
+	
+	
 	public JSONObject toJO()
 	{
 		JSONObject jo = new JSONObject() ;
@@ -248,6 +270,11 @@ public class MNMsg implements IMNCxtPk
 		}
 		
 		jo.putOpt("payload", payload) ;
+		
+		
+		if(this.bytesArray!=null)
+			jo.put("bytes_len",this.bytesArray.length) ;
+		
 		return jo ;
 	}
 	

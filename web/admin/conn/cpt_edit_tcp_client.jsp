@@ -91,12 +91,12 @@ dlg.resize_to(800,500);
 	  
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>conn,timeout</wbt:g>:</label>
-    <div class="layui-input-inline" style="width: 150px;">
-      <input type="text" id="conn_to" name="conn_to" value="<%=connto%>"  class="layui-input">
+    <label class="layui-form-label"><wbt:g>conn,timeout</wbt:g>(ms):</label>
+    <div class="layui-input-inline" style="width: 120px;">
+      <input type="number" id="conn_to" name="conn_to" value="<%=connto%>"  class="layui-input">
     </div>
-    <div class="layui-form-mid">Read No Data <wbt:g>timeout</wbt:g>:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
+    <div class="layui-form-mid">Read No Data <wbt:g>timeout</wbt:g>(ms):</div>
+	  <div class="layui-input-inline" style="width: 120px;">
 	    <input type="number" id="read_no_to" name="read_no_to" class="layui-input" value="<%=read_no_to%>">
 	  </div>
   </div>
@@ -123,6 +123,9 @@ layui.use('form', function(){
 		  setDirty();
 		  });
 	  $("#conn_to").on("input",function(e){
+		  setDirty();
+		  });
+	  $("#read_no_to").on("input",function(e){
 		  setDirty();
 		  });
 	  form.on('switch(enable)', function(obj){
@@ -206,13 +209,16 @@ function do_submit(cb)
 	{
 		cb(false,'<wbt:g>pls,input,valid,port</wbt:g>') ;
 	}
-	var connto = $("#conn_to").val() ;
+	var connto = parseInt($("#conn_to").val()) ;
 	if(connto==NaN)
 	{
 		cb(false,'<wbt:g>pls,input,valid,conn,timeout</wbt:g>') ;
 	}
+	let read_no_to = parseInt($("#read_no_to").val()) ;
+	if(read_no_to==NaN||read_no_to==null||read_no_to==undefined)
+		read_no_to = 60000 ;
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto,read_no_to:read_no_to});
 }
 
 </script>
