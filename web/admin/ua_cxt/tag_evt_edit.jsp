@@ -46,15 +46,17 @@ dlg.resize_to(650,500);
     <div class="layui-input-inline" style="width: 180px;">
       <select  id="tp"  name="tp"  class="layui-input" placeholder="" lay-filter="tp">
 <%
-boolean bfirst = true ;
-for(ValAlertTp tp:ValAlertTp.ALL)
+	boolean bfirst = true ;
+for(ValEventTp tp:ValEventTp.ALL)
 {
 	int tpv = tp.getTpVal();
+	String tpn = tp.getName() ;
 	String tpt = tp.getTitle() ;
 	String param1_t = tp.getParam1Title() ;
 	String param2_t = tp.getParam2Title() ;
 	String param3_t = tp.getParam3Title() ;
 	
+	boolean b_jo_config = tp.isSelfJOConfig() ;
 	String trigger_cond = Convert.plainToHtml(tp.getTriggerCond(),false) ;
 	String release_cond = Convert.plainToHtml(tp.getReleaseCond(),false) ;
 	
@@ -64,9 +66,8 @@ for(ValAlertTp tp:ValAlertTp.ALL)
 		chk = "selected";
 		bfirst = false;
 	}
-	
-	 %><option value="<%=tpv%>" <%=chk %> param1_t="<%=param1_t%>" param2_t="<%=param2_t%>" param3_t="<%=param3_t%>"
-	 	trigger_cond="<%=trigger_cond %>" release_cond="<%=release_cond %>"
+%><option value="<%=tpv%>" <%=chk %> tp_n="<%=tpn %>" param1_t="<%=param1_t%>" param2_t="<%=param2_t%>" param3_t="<%=param3_t%>"
+	 	trigger_cond="<%=trigger_cond %>" release_cond="<%=release_cond %>" jo_config="<%=b_jo_config %>"
 	 ><%=Convert.plainToHtml(tpt) %></option><%
 }
 %>
@@ -89,6 +90,13 @@ for(int k = 1 ; k <= 5 ; k ++)
 	  </div>
 </div>
 
+<div class="layui-form-item">
+    <label class="layui-form-label"><wbt:g>name</wbt:g></label>
+		<div class="layui-input-inline" style="width: 250px;">
+	    <input type="text" id="name" name="name" class="layui-input" value=""/>
+	  </div>
+	</div>
+	
   <div class="layui-card" id="card_scaling" >
 <%--
   <div class="layui-form-item">
@@ -102,12 +110,7 @@ for(int k = 1 ; k <= 5 ; k ++)
 	  </div>
   </div>
    --%>
-   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>name</wbt:g></label>
-		<div class="layui-input-inline" style="width: 250px;">
-	    <input type="text" id="name" name="name" class="layui-input" value=""/>
-	  </div>
-	</div>
+   
    <div class="layui-form-item" id="param1_c">
     <label class="layui-form-label" id="param1_t"><wbt:g>ref_val</wbt:g></label>
 	 <div class="layui-input-inline" style="width: 250px;" id="param1_d">
@@ -135,9 +138,14 @@ for(int k = 1 ; k <= 5 ; k ++)
 	    <input type="text" id="prompt" name="prompt" value="" class="layui-input"/> 
 	  </div>
   </div>
-</div>
   <div id="tp_ppt" class="prompt">
   </div>
+</div>
+
+<div class="layui-card" id="param_jo_config"  style="display:none;">
+</div>
+
+  
  </form>
 </body>
 <script type="text/javascript">
@@ -188,6 +196,16 @@ function get_val(n,defv)
 function update_ui()
 {
 	let opt = $('#tp option:selected') ;
+	if("true"==opt.attr("jo_config"))
+	{
+		$("#card_scaling").css("display","none");
+		$("#param_jo_config").css("display","");
+		update_ui_jo(opt);return;
+	}
+	
+	$("#card_scaling").css("display","");
+	$("#param_jo_config").css("display","none");
+	
 	let pt1 = opt.attr("param1_t") ;
 	let pt2 = opt.attr("param2_t") ;
 	let pt3 = opt.attr("param3_t") ;
@@ -209,6 +227,30 @@ function update_ui()
 	form.render();
 }
 
+function update_ui_jo(opt)
+{
+	let tp_n = opt.attr("tp_n") ;
+	if(!tp_n) return ;
+	
+	send_ajax("tag_evt_tp_"+tp_n+".jsp",{},(bsucc,ret)=>{
+		if(!bsucc)
+		{
+			dlg.msg(ret);return;
+		}
+		$("#param_jo_config").html(ret) ;
+		
+		//console.log(alertdd) ;
+		if(alertdd && alertdd.param_jo)
+		{
+			let pmjo = null ;
+			eval("pmjo="+alertdd.param_jo);
+			set_param_jo(pmjo);
+		}
+		form.render();
+	}) ;
+	
+}
+
 function convertHTML(str)
 {
 	  var characters = [/&/g, /</g, />/g, /\"/g, /\'/g];
@@ -222,14 +264,16 @@ function convertHTML(str)
 }
 update_ui();
 
-function get_input_val(id,defv,bnum)
+function get_input_val(id,defv,bfloat)
 {
 	var n = $('#'+id).val();
 	if(n==null||n=='')
 	{
 		return defv ;
 	}
-	if(bnum)
+	if(bfloat)
+		return parseFloat(n);
+	else
 		return parseInt(n);
 	return n;
 }
@@ -237,13 +281,13 @@ function get_input_val(id,defv,bnum)
 function do_submit(cb)
 {
 	var vt = $("#tp").val() ;
+	
 	let ret = {};
 	if(alertid)
 		ret.id = alertid ;
 	ret.en = $("#en").prop("checked") ;
     ret.tp = parseInt($("#tp").val()) ;
     ret.tpt =$("#tp option:selected").text();
-
     ret.name = $("#name").val() ;
     if(ret.name && !chk_name(ret.name))
     {
@@ -251,10 +295,22 @@ function do_submit(cb)
     	return ;
     }
     ret.lvl = get_input_val("lvl",3,true);
-    ret.param1 = $("#param1").val() ;
-    ret.param2  =$("#param2").val() ;
-    ret.param3 = $("#param3").val() ;
-    ret.prompt = $("#prompt").val() ;
+    
+	let opt = $('#tp option:selected') ;
+	if("true"==opt.attr("jo_config"))
+	{
+		let pm_jo = get_param_jo() ;
+		ret.param_jo = JSON.stringify(pm_jo) ;
+		ret.pm_tt = get_param_tt() ;
+	}
+	else
+	{
+		ret.param1 = $("#param1").val() ;
+	    ret.param2  =$("#param2").val() ;
+	    ret.param3 = $("#param3").val() ;
+	    ret.prompt = $("#prompt").val() ;
+	    ret.pm_tt = ret.param1 ;
+	}
 	cb(true,ret);
 	return ;
 }

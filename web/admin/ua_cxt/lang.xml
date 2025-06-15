@@ -52,4 +52,7 @@
   
   <dd_node id="1" name="unbind" name_cn="取消绑定" name_en="Unbind" />
   
+  <dd_node id="1" name="data_num" name_cn="计算点位数据" name_en="Data Num" />
+  <dd_node id="1" name="trigger_tp" name_cn="触发类型" name_en="Trigger Type" />
+  
 </dd_class>

@@ -12,7 +12,7 @@ import java.util.Map;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.UATag;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.conn.ConnPtMSGNor;
 import org.iottree.core.conn.ConnPtMsg;
 import org.iottree.core.msgnet.nodes.*;
@@ -878,7 +878,7 @@ public class MNManager
 	}
 	
 	
-	public void RT_TAG_triggerEvt(ValAlert va,Object curval)
+	public void RT_TAG_triggerEvt(ValEvent va,Object curval)
 	{
 		for(MNNet net :this.listNets())
 		{
@@ -898,7 +898,7 @@ public class MNManager
 		}
 	}
 	
-	public void RT_TAG_releaseEvt(ValAlert va,Object curval)
+	public void RT_TAG_releaseEvt(ValEvent va,Object curval)
 	{
 		for(MNNet net :this.listNets())
 		{

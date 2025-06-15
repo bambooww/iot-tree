@@ -108,17 +108,17 @@ position:absolute;
 <%
 	for(UATag tag:prj.listTagsAll())
 	{
-		List<ValAlert> vas = tag.getValAlerts() ;
+		List<ValEvent> vas = tag.getValAlerts() ;
 		if(vas==null||vas.size()<=0)
-			continue ;
+	continue ;
 		String np = tag.getNodeCxtPathInPrj() ;
 		String npt = tag.getTitle() ;
-		for(ValAlert va:vas)
+		for(ValEvent va:vas)
 		{
-			String id = va.getUid() ;
-			String tt = Convert.plainToHtml(va.toTitleStr()) ;
-			String en_c = va.isEnable()?"green":"gray" ;
-			String en_t = va.isEnable()?"enabled":"disabled" ;
+	String id = va.getUid() ;
+	String tt = Convert.plainToHtml(va.toTitleStr()) ;
+	String en_c = va.isEnable()?"green":"gray" ;
+	String en_t = va.isEnable()?"enabled":"disabled" ;
 %>
  		<tr onclick="on_chk_alert('<%=id%>')" >
  		   <td><input type="checkbox" id="<%=id %>"  class="chk_alert" lay-ignore lay-skin="primary" /></td>

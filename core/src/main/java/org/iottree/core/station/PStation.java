@@ -123,7 +123,6 @@ public class PStation
 		jo.put("id", this.id) ;
 		jo.putOpt("t", title) ;
 		jo.putOpt("key", this.key) ;
-		
 		return jo ;
 	}
 	

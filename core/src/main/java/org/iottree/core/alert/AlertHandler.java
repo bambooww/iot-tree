@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.iottree.core.UAPrj;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsProp;
 import org.iottree.core.store.SourceJDBC;
@@ -220,7 +220,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 		return this.alertUids.contains(alert_uid);
 	}
 	
-	public boolean checkValAlertRelated(ValAlert va)
+	public boolean checkValAlertRelated(ValEvent va)
 	{
 		return this.checkAlertUid(va.getUid()) ;
 	}
@@ -304,7 +304,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 	
 	synchronized void RT_processSelfSyn(AlertItem ai)
 	{
-		ValAlert va = ai.getValAlert() ;
+		ValEvent va = ai.getValAlert() ;
 		String vaid = va.getId() ;
 		if(ai.bReleased)
 			rt_vaId2ai.remove(vaid) ;
@@ -388,7 +388,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 		throws Exception
 	{
 		DataRow dr = dt.createNewRow() ;
-		ValAlert va = ai.getValAlert() ;
+		ValEvent va = ai.getValAlert() ;
 		//AlertHandler ah = ai.getHandler() ;
 		String row_id = va.RT_get_trigger_uid();//.getId() ;
 		if(ai.bTriggerd)
@@ -397,10 +397,10 @@ public class AlertHandler extends JSObMap //implements IJsProp
 			dr.putValue("Tag", ai.getTag().getNodePathCxt());
 			dr.putValue("TriggerDT", new Date(ai.getTriggerDT()));
 			dr.putValue("Handler", this.getName());
-			dr.putValue("Type", va.getAlertTitle());
+			dr.putValue("Type", va.getEventTitle());
 			dr.putValue("Value", ai.getCurVal());
 			dr.putValue("Level", this.getLevel());
-			dr.putValue("Prompt",va.getAlertPrompt());
+			dr.putValue("Prompt",va.getEventPrompt());
 			
 			Connection conn =null;
 			try

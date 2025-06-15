@@ -1,7 +1,7 @@
 package org.iottree.core.util.cpd;
 
-import org.iottree.core.basic.ValAlert;
-import org.iottree.core.basic.ValAlertTp;
+import org.iottree.core.basic.ValEvent;
+import org.iottree.core.basic.ValEventTp;
 
 /**
  * 滑动窗口方法 - 阈值法和滑动窗口方法适用于简单变化的检测

@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateBuilder;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateGenerator;
+import org.iottree.core.conn.ConnPtOPCUA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +50,12 @@ public class KeyStoreLoader
 			String hostn = InetAddress.getLocalHost().getHostName();
 			SelfSignedCertificateBuilder builder = new SelfSignedCertificateBuilder(keyPair)
 					.setCommonName("IOTTree OPCUA Client").setOrganization("iottree")
-					//.setOrganizationalUnit("dev")
-					//.setLocalityName("Beijing").setStateName("CA").setCountryCode("CN")
-					.setApplicationUri("urn:iottree:client")
-					.addDnsName(hostn).setValidityPeriod(Period.ofYears(10))
-					//.addIpAddress("127.0.0.1")
-					;
+					// .setOrganizationalUnit("dev")
+					// .setLocalityName("Beijing").setStateName("CA").setCountryCode("CN")
+					//.setApplicationUri("urn:iottree:client")
+					.setApplicationUri(ConnPtOPCUA.CLIENT_APP_URI)
+					.addDnsName(hostn).setValidityPeriod(Period.ofYears(10));
+			// .addIpAddress("127.0.0.1")
 			
 
 			// Get as many hostnames and IP addresses as we can listed in the
@@ -64,7 +65,8 @@ public class KeyStoreLoader
 				if (IP_ADDR_PATTERN.matcher(hostname).matches())
 				{
 					builder.addIpAddress(hostname);
-				} else
+				}
+				else
 				{
 					builder.addDnsName(hostname);
 				}
@@ -73,12 +75,13 @@ public class KeyStoreLoader
 			X509Certificate certificate = builder.build();
 
 			keyStore.setKeyEntry(CLIENT_ALIAS, keyPair.getPrivate(), PASSWORD, new X509Certificate[] { certificate });
-			
+
 			try (OutputStream out = Files.newOutputStream(serverKeyStore))
 			{
 				keyStore.store(out, PASSWORD);
 			}
-		} else
+		}
+		else
 		{
 			try (InputStream in = Files.newInputStream(serverKeyStore))
 			{

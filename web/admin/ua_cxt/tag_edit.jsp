@@ -583,7 +583,7 @@ function update_alert_s()
 	{
 		let d = alerts_dd[i];
 		tmps += `<div id="alert_\${i}" class="alert_item" >
-			<span onclick="edit_alert(\${i})" class="tt">L\${d.lvl} \${d.tpt} \${d.param1}(\${d.prompt})</span><span class="oper">&nbsp;&nbsp;<i class="fa fa-times fa-lg" onclick="del_alert(\${i})"></i></span>
+			<span onclick="edit_alert(\${i})" class="tt">L\${d.lvl} \${d.tpt} \${d.pm_tt}(\${d.prompt||""})</span><span class="oper">&nbsp;&nbsp;<i class="fa fa-times fa-lg" onclick="del_alert(\${i})"></i></span>
 			</div>`;
 	}
 	
@@ -650,7 +650,7 @@ function edit_alert(idx)
 	let dd = null;
 	if(idx>=0)
 		dd = alerts_dd[idx] ;
-	dlg.open("./tag_alert_edit.jsp",	{title:tt,w:'600px',h:'400px',dd:dd},
+	dlg.open("./tag_evt_edit.jsp",	{title:tt,w:'600px',h:'400px',dd:dd},
 			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)

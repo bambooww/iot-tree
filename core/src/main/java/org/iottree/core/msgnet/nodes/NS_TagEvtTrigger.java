@@ -3,7 +3,7 @@ package org.iottree.core.msgnet.nodes;
 import java.util.HashSet;
 
 import org.iottree.core.UATag;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
@@ -117,7 +117,7 @@ public class NS_TagEvtTrigger extends MNNodeStart
 		this.msgOutSty = MsgOutSty.values()[od] ;
 	}
 	
-	public boolean RT_fireByEventTrigger(ValAlert va,Object curval)
+	public boolean RT_fireByEventTrigger(ValEvent va,Object curval)
 	{
 		if(this.msgOutSty==MsgOutSty.released)
 			return false;
@@ -146,7 +146,7 @@ public class NS_TagEvtTrigger extends MNNodeStart
 		
 	}
 	
-	public boolean RT_fireByEventRelease(ValAlert va,Object curval)
+	public boolean RT_fireByEventRelease(ValEvent va,Object curval)
 	{
 		if(this.msgOutSty==MsgOutSty.triggered)
 			return false;

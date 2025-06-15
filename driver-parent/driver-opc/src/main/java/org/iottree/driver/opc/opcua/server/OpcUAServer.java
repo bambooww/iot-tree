@@ -6,7 +6,7 @@ import org.iottree.core.util.IServerBootComp;
 public class OpcUAServer extends AbstractService implements IServerBootComp
 {
 	public static final String NAME = "opcua_server" ;
-	DrvServer server = null;
+	ExampleServer server = null;
 	
 	@Override
 	public String getBootCompName()
@@ -20,7 +20,7 @@ public class OpcUAServer extends AbstractService implements IServerBootComp
 		if(server!=null)
 			return ;
 		
-		server = new DrvServer();
+		server = new ExampleServer();
 		server.startup();
 	}
 

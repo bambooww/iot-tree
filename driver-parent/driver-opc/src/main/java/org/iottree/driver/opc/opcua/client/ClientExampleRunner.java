@@ -1,6 +1,5 @@
 package org.iottree.driver.opc.opcua.client;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,141 +7,176 @@ import java.security.Security;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-//import org.eclipse.milo.examples.server.ExampleServer;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.Stack;
+import org.eclipse.milo.opcua.stack.core.security.CertificateManager;
+import org.eclipse.milo.opcua.stack.core.security.DefaultClientCertificateValidator;
+import org.eclipse.milo.opcua.stack.core.security.FileBasedTrustListManager;
+import org.eclipse.milo.opcua.stack.core.security.MemoryCertificateQuarantine;
+import org.eclipse.milo.opcua.stack.core.security.TrustListManager;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
-import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
-import org.iottree.driver.opc.opcua.server.DrvServer;
+import org.iottree.driver.opc.opcua.server.ExampleServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
+public class ClientExampleRunner {
 
-public class ClientExampleRunner
-{
+  static {
+    // Required for SecurityPolicy.Aes256_Sha256_RsaPss
+    Security.addProvider(new BouncyCastleProvider());
+  }
 
-	static
-	{
-		// Required for SecurityPolicy.Aes256_Sha256_RsaPss
-		Security.addProvider(new BouncyCastleProvider());
-	}
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+  private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
 
-	private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
+  private ExampleServer exampleServer;
 
-	// private DrvServer exampleServer;
+  private TrustListManager clientTrustListManager;
 
-	private final ClientExample clientExample;
-	private final boolean serverRequired;
+  private final ClientExample clientExample;
+  private final boolean serverRequired;
 
-	public ClientExampleRunner(ClientExample clientExample) throws Exception
-	{
-		this(clientExample, true);
-	}
+  public ClientExampleRunner(ClientExample clientExample) throws Exception {
+    this(clientExample, true);
+  }
 
-	public ClientExampleRunner(ClientExample clientExample, boolean serverRequired) throws Exception
-	{
-		this.clientExample = clientExample;
-		this.serverRequired = serverRequired;
+  public ClientExampleRunner(ClientExample clientExample, boolean serverRequired) throws Exception {
+    this.clientExample = clientExample;
+    this.serverRequired = serverRequired;
 
-		// if (serverRequired) {
-		// exampleServer = new DrvServer();
-		// exampleServer.startup().get();
-		// }
-	}
+    if (serverRequired) {
+      exampleServer = new ExampleServer();
+      exampleServer.startup().get();
+    }
+  }
 
-	private OpcUaClient createClient() throws Exception
-	{
-		Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
-		Files.createDirectories(securityTempDir);
-		if (!Files.exists(securityTempDir))
-		{
-			throw new Exception("unable to create security dir: " + securityTempDir);
-		}
+  private OpcUaClient createClient() throws Exception {
+    Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "client", "security");
+    Files.createDirectories(securityTempDir);
+    if (!Files.exists(securityTempDir)) {
+      throw new Exception("unable to create security dir: " + securityTempDir);
+    }
 
-		LoggerFactory.getLogger(getClass()).info("security temp dir: {}", securityTempDir.toAbsolutePath());
+    Path pkiDir = securityTempDir.resolve("pki");
 
-		KeyStoreLoader loader = new KeyStoreLoader().load(securityTempDir);
+    LoggerFactory.getLogger(getClass()).info("security dir: {}", securityTempDir.toAbsolutePath());
+    LoggerFactory.getLogger(getClass()).info("security pki dir: {}", pkiDir.toAbsolutePath());
 
-		return OpcUaClient.create(clientExample.getEndpointUrl(),
-				endpoints -> endpoints.stream().filter(clientExample.endpointFilter()).findFirst(),
-				configBuilder -> configBuilder.setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
-						.setApplicationUri("urn:eclipse:milo:examples:client")
-						.setCertificate(loader.getClientCertificate()).setKeyPair(loader.getClientKeyPair())
-						.setIdentityProvider(clientExample.getIdentityProvider()).setRequestTimeout(uint(5000))
-						.build());
-	}
+    KeyStoreLoader loader = new KeyStoreLoader().load(securityTempDir);
 
-	public void run()
-	{
-		try
-		{
-			OpcUaClient client = createClient();
+    clientTrustListManager = FileBasedTrustListManager.createAndInitialize(pkiDir);
 
-			future.whenCompleteAsync((c, ex) -> {
-				if (ex != null)
-				{
-					logger.error("Error running example: {}", ex.getMessage(), ex);
-				}
+    var certificateValidator =
+        new DefaultClientCertificateValidator(
+            clientTrustListManager, new MemoryCertificateQuarantine());
 
-				try
-				{
-					client.disconnect().get();
-					// if (serverRequired && exampleServer != null) {
-					// exampleServer.shutdown().get();
-					// }
-					Stack.releaseSharedResources();
-				} catch (InterruptedException | ExecutionException e)
-				{
-					logger.error("Error disconnecting: {}", e.getMessage(), e);
-				}
+    return OpcUaClient.create(
+        clientExample.getEndpointUrl(),
+        endpoints -> endpoints.stream().filter(clientExample.endpointFilter()).findFirst(),
+        transportConfigBuilder -> {},
+        clientConfigBuilder ->
+            clientConfigBuilder
+                .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
+                .setApplicationUri("urn:eclipse:milo:examples:client")
+                .setKeyPair(loader.getClientKeyPair())
+                .setCertificate(loader.getClientCertificate())
+                .setCertificateChain(loader.getClientCertificateChain())
+                .setCertificateValidator(certificateValidator)
+                .setIdentityProvider(clientExample.getIdentityProvider()));
+  }
 
-				try
-				{
-					Thread.sleep(1000);
-					System.exit(0);
-				} catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			});
+  public void run() {
+    try {
+      OpcUaClient client = createClient();
 
-			try
-			{
-				clientExample.run(client, future);
-				future.get(15, TimeUnit.SECONDS);
-			} catch (Throwable t)
-			{
-				logger.error("Error running client example: {}", t.getMessage(), t);
-				future.completeExceptionally(t);
-			}
-		} catch (Throwable t)
-		{
-			logger.error("Error getting client: {}", t.getMessage(), t);
+      // For the sake of the examples we will create mutual trust between the client and
+      // server, so we can run them with security enabled by default.
+      // If the client example is pointed at another server then the rejected certificate
+      // will need to be moved from the security "pki/rejected" directory to the
+      // "pki/trusted/certs" directory.
 
-			future.completeExceptionally(t);
+      if (serverRequired && exampleServer != null) {
+        CertificateManager certificateManager =
+            exampleServer.getServer().getConfig().getCertificateManager();
 
-			try
-			{
-				Thread.sleep(1000);
-				System.exit(0);
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
+        // Make the example server trust the example client certificate by default.
+        client
+            .getConfig()
+            .getCertificate()
+            .ifPresent(
+                certificate ->
+                    certificateManager
+                        .getCertificateGroups()
+                        .forEach(
+                            group ->
+                                group.getTrustListManager().addTrustedCertificate(certificate)));
 
-		try
-		{
-			Thread.sleep(999_999_999);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
+        // Make the example client trust the example server certificate by default.
+        exampleServer
+            .getServer()
+            .getConfig()
+            .getCertificateManager()
+            .getCertificateGroups()
+            .forEach(
+                certificateGroup ->
+                    certificateGroup
+                        .getCertificateEntries()
+                        .forEach(
+                            entry ->
+                                clientTrustListManager.addTrustedCertificate(
+                                    entry.certificateChain[0])));
+      }
 
+      future.whenCompleteAsync(
+          (c, ex) -> {
+            if (ex != null) {
+              logger.error("Error running example: {}", ex.getMessage(), ex);
+            }
+
+            try {
+              client.disconnectAsync().get();
+              if (serverRequired && exampleServer != null) {
+                exampleServer.shutdown().get();
+              }
+              Stack.releaseSharedResources();
+            } catch (InterruptedException | ExecutionException e) {
+              logger.error("Error disconnecting: {}", e.getMessage(), e);
+            }
+
+            try {
+              Thread.sleep(1000);
+              System.exit(0);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          });
+
+      try {
+        clientExample.run(client, future);
+        future.get(15, TimeUnit.SECONDS);
+      } catch (Throwable t) {
+        logger.error("Error running client example: {}", t.getMessage(), t);
+        future.completeExceptionally(t);
+      }
+    } catch (Throwable t) {
+      logger.error("Error getting client: {}", t.getMessage(), t);
+
+      future.completeExceptionally(t);
+
+      try {
+        Thread.sleep(1000);
+        System.exit(0);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+
+    try {
+      Thread.sleep(999_999_999);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
 }

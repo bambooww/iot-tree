@@ -9,11 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.iottree.core.Config;
+import org.iottree.core.node.PlatNode;
+import org.iottree.core.node.PlatNodeManager;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugAuthUser;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.SecureUtil;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 
 /**
  * 1,admin user login support
@@ -23,6 +27,8 @@ import org.iottree.core.util.SecureUtil;
  */
 public class LoginUtil
 {
+	static ILogger log = LoggerManager.getLogger(LoginUtil.class) ;
+	
 	static class UserAuthItem
 	{
 		String username ;
@@ -41,12 +47,14 @@ public class LoginUtil
 	
 	public static class SessionItem
 	{
+		public String usern = null ; 
 		public String lan = null ;
 		
 		public long loginDT  =System.currentTimeMillis();
 		
-		public SessionItem(String lang)
+		public SessionItem(String usern,String lang)
 		{
+			this.usern = usern ;
 			this.lan = lang ;
 		}
 	}
@@ -97,7 +105,7 @@ public class LoginUtil
 			PlugAuthUser u = pa.checkAdminUser(username, password);
 			if(u==null)
 				return false;
-			req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem(lang));
+			req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem("admin",lang));
 			return true ;
 		}
 		
@@ -116,7 +124,7 @@ public class LoginUtil
 				return false;
 		}
 		
-		req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem(lang));
+		req.getSession().setAttribute(ADMIN_LOGIN, new SessionItem("admin",lang));
 		return true ;
 	}
 	
@@ -169,7 +177,11 @@ public class LoginUtil
 	 */
 	public static boolean checkAdminLogin(HttpServletRequest req)
 	{
-		return checkAdminLogin(req.getSession());
+		boolean ret = checkAdminLogin(req.getSession());
+		if(ret)
+			return true ;
+		
+		return checkPlatAdmin(req) ;
 	}
 	
 	public static boolean checkAdminLogin(HttpSession hs)
@@ -183,5 +195,57 @@ public class LoginUtil
 		if(hs==null)
 			return null;
 		return (SessionItem)hs.getAttribute(ADMIN_LOGIN);
+	}
+	
+	
+	/**
+	 * 判断
+	 * @return
+	 */
+	private static boolean checkPlatAdmin(HttpServletRequest request)
+	{
+		if(!PlatNodeManager.isPlatNode())
+			return false;
+		
+		PlatNode pn = PlatNodeManager.getInstance().getNode() ;
+		if(pn==null)
+			return false;
+		
+		String _plat_token_ = request.getParameter(PlatNode.PN_TOKEN) ;
+		if(Convert.isNotNullEmpty(_plat_token_))
+		{//
+			PlatNode.UserRight ur = pn.getRightByToken(_plat_token_) ;
+			if(log.isDebugEnabled())
+				log.debug("token="+_plat_token_);
+			//System.out.println("token="+_plat_token_+" ur="+ur) ;
+			if(ur!=null)
+			{
+				HttpSession hs = request.getSession();
+				hs.setAttribute(ADMIN_LOGIN, new SessionItem(ur.userName,ur.lan));
+				hs.setAttribute(PlatNode.PN_TOKEN, _plat_token_);
+				if(log.isDebugEnabled())
+					log.debug(" set session id="+hs.getId()+" token="+_plat_token_) ;
+				//System.out.println("set session="+hs+"   ssid="+hs.getId()  );
+				return true ;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		HttpSession hs = request.getSession() ;
+		
+		SessionItem si = (SessionItem)hs.getAttribute(ADMIN_LOGIN);
+		//System.out.println("si=="+si) ;
+		if(log.isDebugEnabled())
+			log.debug("chk session id="+hs.getId()+" si="+si);
+		return si!=null ;
+		//_plat_token_ = (String)request.getSession().getAttribute(PlatNode.PN_TOKEN) ;
+//		if(Convert.isNullOrEmpty(_plat_token_))
+//			return false;
+//		
+//		PlatNode.UserRight ur = pn.getRightByToken(_plat_token_) ;
+//		return ur!=null ;
 	}
 }

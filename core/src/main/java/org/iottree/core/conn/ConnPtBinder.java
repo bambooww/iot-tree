@@ -31,16 +31,24 @@ public abstract class ConnPtBinder extends ConnPtMsg //implements IConnPtBinder
 {
 	public static class BindItem
 	{
+		String id ;
+		
 		String path ;
 		
 		String vt ;
 		
 		Object val ;
 		
-		public BindItem(String p,String vt)
+		public BindItem(String id,String p,String vt)
 		{
+			this.id = id ;
 			this.path = p ;
 			this.vt = vt ;
+		}
+		
+		public String getId()
+		{
+			return this.id ;
 		}
 		
 		public String getPath()
@@ -63,6 +71,8 @@ public abstract class ConnPtBinder extends ConnPtMsg //implements IConnPtBinder
 			this.val = ov ;
 		}
 	}
+	
+	
 	private HashMap<String,String> bindParams = new HashMap<>() ;
 	
 	/**
@@ -511,7 +521,7 @@ public abstract class ConnPtBinder extends ConnPtMsg //implements IConnPtBinder
 			if(bfirst) bfirst=false;
 			else w.write(",");
 			BindItem did = dis.get(i) ;
-			w.write("{\"path\":\"" + did.getPath() + "\"");
+			w.write("{\"id\":\""+did.id+"\",\"path\":\"" + did.getPath() + "\"");
 			w.write(",\"vt\":\""+did.getValTp()+"\"}");
 			ret ++ ;
 		}

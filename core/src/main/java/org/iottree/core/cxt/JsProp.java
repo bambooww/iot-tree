@@ -8,7 +8,6 @@ import org.iottree.core.UATag;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
 
 public class JsProp extends JsSub
 {

@@ -21,7 +21,7 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.station.PlatInsManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WSRoot.SessionItem;
@@ -164,13 +164,13 @@ public abstract class WSServer// extends ConnServer
 					jarr.write(sw) ;
 				}
 
-				List<ValAlert> vas = ntags.CXT_listAlerts();
+				List<ValEvent> vas = ntags.CXT_listAlerts();
 				if(vas!=null&&vas.size()>0)
 				{
 					sw.write(",\"has_tag_alert\":true,\"tag_alerts\":");
 					
 					jarr = new JSONArray() ;
-					for(ValAlert va:vas)
+					for(ValEvent va:vas)
 					{
 						JSONObject jo = va.RT_get_triggered_jo() ;
 						if(jo==null)

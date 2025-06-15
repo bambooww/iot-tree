@@ -5,8 +5,6 @@ import java.io.Writer;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.util.Convert;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
-
 /**
  * js sub abstract def
  * 

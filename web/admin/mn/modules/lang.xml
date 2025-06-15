@@ -5,4 +5,16 @@
   <dd_node id="1" name="consumer" name_cn="消费者" name_en="Consumer" />
   <dd_node id="1" name="keep_intv" name_cn="保持间隔" name_en="Keep Interval" />
   
+    <dd_node id="1" name="baud" name_cn="波特率" name_en="Baud Rate" />
+  <dd_node id="1" name="data_bits" name_cn="数据位" name_en="Data Bits" />
+  <dd_node id="1" name="stop_bits" name_cn="停止位" name_en="Stop Bits" />
+  <dd_node id="1" name="parity" name_cn="奇偶校验" name_en="Parity" />
+  <dd_node id="1" name="parity_none" name_cn="无校验" name_en="None" />
+<dd_node id="1" name="parity_odd" name_cn="奇校验" name_en="Odd" />
+  <dd_node id="1" name="parity_even" name_cn="偶校验" name_en="Even" />
+  <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
+  <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
+  
+  <dd_node id="1" name="unbind" name_cn="取消绑定" name_en="Unbind" />
+  
 </dd_class>

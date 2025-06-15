@@ -48,38 +48,48 @@ if(idnames==null||idnames.size()<=0)
 	return ;
 }
 
-for(IdName idn:idnames)
+try
 {
-	String pv = pms.get(idn.getId()) ;
-	if(pv==null)
-		continue ;
-	String newid =  CompressUUID.createNewId();
-	if(pv.startsWith("rename_"))
+	
+	for(IdName idn:idnames)
 	{
-		String newn = pv.substring(7) ;
-		String newtt = pms.get(idn.getId()+"_title");
-		UAPrj oldp = UAManager.getInstance().getPrjByName(newn) ;
-		if(oldp!=null)
+		String pv = pms.get(idn.getId()) ;
+		if(pv==null)
+			continue ;
+		String newid =  CompressUUID.createNewId();
+		if(pv.startsWith("rename_"))
 		{
-			out.print("project with name ["+newn+"] already existed") ;
-			return ;
+			String newn = pv.substring(7) ;
+			String newtt = pms.get(idn.getId()+"_title");
+			UAPrj oldp = UAManager.getInstance().getPrjByName(newn) ;
+			if(oldp!=null)
+			{
+				out.print("project with name ["+newn+"] already existed") ;
+				return ;
+			}
+			UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, newn,newtt);
 		}
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, newn,newtt);
-	}
-	else if(pv.equals("replace"))
-	{
-		UAPrj oldp = UAManager.getInstance().getPrjById(idn.getId()) ;
-		if(oldp==null)
+		else if(pv.equals("replace"))
 		{
-			out.print("project with id="+idn.getId()+" is no existed,so it cannot be replaced") ;
-			return ;
+			UAPrj oldp = UAManager.getInstance().getPrjById(idn.getId()) ;
+			if(oldp==null)
+			{
+				out.print("project with id="+idn.getId()+" is no existed,so it cannot be replaced") ;
+				return ;
+			}
+			//do replace
+			UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
 		}
-		//do replace
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
+		else
+		{//new
+			UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
+		}
 	}
-	else
-	{//new
-		UAManager.getInstance().importPrjZipFile(tmpf, idn.getId(), newid, null,null);
-	}
+}
+catch(Exception ee)
+{
+	ee.printStackTrace() ;
+	out.print(ee.getMessage()) ;
+	return ;
 }
 %>succ

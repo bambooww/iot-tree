@@ -26,7 +26,7 @@ String sname = "Server";
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
     <title>IOT-Tree</title>
-    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="./inc/favicon.ico?v=0" rel="shortcut icon" type="image/x-icon">
 <jsp:include page="head.jsp">
 	<jsp:param value="true" name="sel_menu"/>
 </jsp:include>
@@ -121,12 +121,12 @@ background:#aaaaaa;
 }
  </style>
 </head>
-<body aria-hidden="false">
-	<div class="iot-top-menu-wrap">
+<body aria-hidden="false" style="background-color:#ddd">
+	<div class="iot-top-menu-wrap" style="background-color:#ddd">
 		<div class="container">
 			<!-- start logo -->
 			<div class="iot-logo">
-				<a><img src="inc/logo1.png" width="40px" height="40px"/> IOT-Tree <%=sname %></a>
+				<a><img src="inc/logo1.png?v=0" width="40px" height="40px"/> IOT-Tree <%=sname %></a>
 			</div>
 			<div class="top_lan">
 	 <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
@@ -147,6 +147,13 @@ background:#aaaaaa;
 					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i><wbt:lang>home</wbt:lang></a></li>
 					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i><wbt:lang>helper</wbt:lang></a></li>
 					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i><wbt:lang>feedback</wbt:lang></a></li>
+<%
+if("cn".equals(using_lan))
+{
+%><li><a href="http://www.iot-tree.top"  target="_blank"><i class="icon icon-topic"></i>官网技术支持</a></li>
+<%
+}
+%>
 				  </ul>
 				</nav>
 			</div>
@@ -187,7 +194,7 @@ if(pros.size()>0)
 	
 	
 
-<div class="iot-container-wrap" style="height: auto !important;">
+<div class="iot-container-wrap" style="height: auto !important;background-color:#ddd">
 		<div class="container" style="height: auto !important;">
 		<div class="row" style="height: auto !important;">
 			<div class="iot-content-wrap clearfix" style="height: auto !important;">
@@ -720,25 +727,28 @@ if(ins.isAutoStart())
 					    </div>
 					</div>
 
-					
+					<%--
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
 					        <h3><wbt:lang>plugins_dict</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
-					    	<a href="javascript:open_plugins()" ><wbt:lang>plugins</wbt:lang></a>&nbsp;
-					    	<a href="javascript:open_ext_prop()" ><wbt:lang>g_dict</wbt:lang></a>
+					    	
 					    	
 					    </div>
 					</div>
-
+ --%>
+ 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
 					        <h3><wbt:lang>others</wbt:lang></h3>
 					    </div>
 					    <div class="mod-body fz">
-					       <a href="javascript:log_ctrl()" ><wbt:lang>log_ctrl</wbt:lang></a>
+					    	<a href="javascript:open_plugins()" ><wbt:lang>plugins</wbt:lang></a>&nbsp;
+					    	<a href="javascript:open_ext_prop()" ><wbt:lang>g_dict</wbt:lang></a>&nbsp;
+					       <a href="javascript:log_ctrl()" ><wbt:lang>log_ctrl</wbt:lang></a>&nbsp;
+					       <a href="javascript:cer_mgr()" ><wbt:lang>cer</wbt:lang></a>&nbsp;
 					       <a href="javascript:conn_platform()" ><wbt:lang>conn_platform</wbt:lang></a>
 					     </div>
 					</div>
@@ -751,7 +761,7 @@ if(ins.isAutoStart())
 
 <div class="iot-footer-wrap">
 	<div class="iot-footer">
-		Copyright:  Version:<%=Config.getVersion() %>
+		IOT-Tree  Version:<%=Config.getVersion() %>
 
 	</div>
 </div>
@@ -1850,6 +1860,19 @@ function chg_psw()
 						 }) ;
 					})
 				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function cer_mgr()
+{
+	if(event)
+		event.stopPropagation();
+	dlg.open("./util/cer_mgr.jsp",{title:"Certificate Management"},['<wbt:g>cancel</wbt:g>'],
+			[
 				function(dlgw)
 				{
 					dlg.close();

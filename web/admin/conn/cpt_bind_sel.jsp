@@ -292,7 +292,7 @@ if(support_tree)
 if(support_tree)
 {
 %>
-	<div id="list_tree" class="prop_edit_cat" style="height:560px;display:none;width:400px">
+	<div id="list_tree" class="prop_edit_cat" style="height:560px;display:none;width:100%">
 	</div>
 <%
 }
@@ -635,7 +635,6 @@ function bind_import()
 <jsp:include page="cpt_bind_left_tree.jsp"></jsp:include>
 
 <script type="text/javascript">
-
 var b_tb = true  ;
 
 function set_tree_or_tb()
@@ -661,7 +660,8 @@ function set_tree_or_tb()
 	
 }
 
-//set_tree_or_tb();//show tree
+if(support_tree)
+	set_tree_or_tb();//show tree
 
 function map_or_not(b)
 {

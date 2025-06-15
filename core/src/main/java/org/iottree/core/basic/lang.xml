@@ -81,6 +81,17 @@
 		param3tt_cn="解除误差" param3tt_en="Release Error"
 		/>
 
+<dd_node name="vatp_val_gradient" name_cn="值变化率(斜率)" name_en="Value Gradient" 
+	  	trigger_cn="当前值&lt;=基准值+触发误差" trigger_en="Current value&lt;=reference value + trigger error"
+	  	release_cn="当前值&gt;基准值+解除误差" release_en="Current value&gt;reference value + release error" 
+		param1tt_cn="基准值" param1tt_en="Reference Value"
+		param2tt_cn="触发误差" param2tt_en="Trigger Error"
+		param3tt_cn="解除误差" param3tt_en="Release Error"
+		/>
+		
+	<dd_node id="1" name="trigger_tp_up" name_cn="上升" name_en="Up" />
+  <dd_node id="1" name="trigger_tp_down" name_cn="下降" name_en="Down" />
+  <dd_node id="1" name="trigger_tp_updown" name_cn="上升下降" name_en="Up and Down " />
 
 	<dd_node name="vu_C" name_cn="摄氏度" name_en="Celsius" unit="°C" />
 	<dd_node name="vu_F" name_cn="华氏度" name_en="Fahrenheit" unit="°F" />

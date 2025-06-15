@@ -167,13 +167,13 @@ public final class UnsignedShort extends Number implements Comparable<UnsignedSh
    */
   @Override
   public int intValue() {
-    return value;
+    return value & SHORT_MASK;
   }
 
   /** Returns the value of this {@code UnsignedShort} as a {@code long}. */
   @Override
   public long longValue() {
-    return UnsignedInts.toLong(value);
+    return intValue();// UnsignedInts.toLong(value);
   }
 
   /**

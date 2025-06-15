@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.7.4</version>
+    <version>1.7.5</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -101,6 +101,7 @@
   </dependencies>
 
   <build>
+  <finalName>iottree-server</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
          
@@ -276,12 +277,18 @@
 								<copy file="./iot-tree.service" tofile="../_output/iot-tree.service" />
 								<copy file="./iot-tree-service-start.sh.txt" tofile="../_output/iot-tree-service-start.sh" />
 								<copy file="./iot-tree-service-stop.sh.txt" tofile="../_output/iot-tree-service-stop.sh" />
-								<copy file="../core/target/iottree-core-${project.version}.jar" tofile="../_output/lib/iottree-core-${project.version}.jar" />
-								<copy file="../server/target/iottree-server-${project.version}.jar" tofile="../_output/lib/iottree-server-${project.version}.jar" />
-								<copy file="../driver-parent/driver-common/target/iottree-driver-common-${project.version}.jar"
-								        tofile="../_output/lib/iottree-driver-common-${project.version}.jar" />
-								<copy file="../driver-parent/driver-opc/target/iottree-driver-opc-${project.version}.jar"
-								        tofile="../_output/lib/iottree-driver-opc-${project.version}.jar" />
+								
+								<copy file="../core/target/iottree-core.jar" tofile="../_output/lib/iottree-core.jar" />
+								<copy file="../server/target/iottree-server.jar" tofile="../_output/lib/iottree-server.jar" />
+								<copy file="../driver-parent/driver-common/target/iottree-driver-common.jar"
+								        tofile="../_output/lib/iottree-driver-common.jar" />
+								<copy file="../driver-parent/driver-opc/target/iottree-driver-opc.jar"
+								        tofile="../_output/lib/iottree-driver-opc.jar" />
+								        
+								<copy file="../ext-parent/ext-basic/target/iottree-ext-basic.jar"  tofile="../_output/lib/iottree-ext-basic.jar" />
+								<copy file="../ext-parent/ext-opcda/target/iottree-ext-opcda.jar"  tofile="../_output/lib/iottree-ext-opcda.jar" />
+								<copy file="../ext-parent/ext-pro/target/iottree-ext-pro.jar"  tofile="../_output/lib/iottree-ext-pro.jar" />
+								        
 								<delete file="../_output/lib/jsp-api-2.2.jar" />
 			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
 			                    <delete file="../_output/lib/servlet-api-2.5.jar" />
@@ -301,9 +308,16 @@
 				                <delete dir="../_output/web/ROOT/target/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/.settings/" includeemptydirs="true"/>
 				                <delete dir="../_output/web/ROOT/src/" includeemptydirs="true"/>
-			                    <!-- 
-			                    <echo message="package zip file" />
+				                
+				                <delete file="../_output/lib/iottree-core-${project.version}.jar" />
+				                <delete file="../_output/lib/iottree-driver-common-${project.version}.jar" />
+				                <delete file="../_output/lib/iottree-driver-opc-${project.version}.jar" />
+				                <delete file="../_output/lib/iottree-ext-basic-${project.version}.jar" />
+			                    <delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
+			                    <delete file="../_output/lib/iottree-ext-pro-${project.version}.jar" />
 			                    
+			                    <echo message="package zip file" />
+			                    <!-- 
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
@@ -314,7 +328,7 @@
                 				</zip>
                 				
                 				
-                				<delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
+                				<delete file="../_output/lib/iottree-ext-opcda.jar" />
 
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
 					                  <fileset dir="../_output/">
@@ -334,8 +348,18 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                        -->
-                				 
+			                         -->
+                				 <delete file="../_output/lib/iottree-ext-opcda.jar" />
+
+			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
+					                  <fileset dir="../_output/">
+					                    <exclude name="jre8_x86/"/>
+					                    <exclude name="jre/"/>
+					                    <exclude name="iot-tree-${project.version}.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                  </fileset>
+                				</zip>
 							</tasks>
 						</configuration>
 					</execution>

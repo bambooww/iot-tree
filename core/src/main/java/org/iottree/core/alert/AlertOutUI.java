@@ -1,6 +1,6 @@
 package org.iottree.core.alert;
 
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.util.xmldata.data_class;
 
 @data_class

@@ -30,7 +30,7 @@ dlg.resize_to(850,600);
 </head>
 <body>
 
-<textarea id="txt" style="width:800px;height:470px;margin-left:25px;" placeholder="[tagname] [value type] [address] [title]"></textarea>
+<textarea id="txt" style="width:800px;height:470px;margin-left:25px;" placeholder="[tagname] [value type] [address] [title] or [...]"></textarea>
 </body>
 <script type="text/javascript">
 function do_submit(cb)

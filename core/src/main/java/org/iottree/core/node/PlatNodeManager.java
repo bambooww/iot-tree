@@ -8,7 +8,7 @@ import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
 /**
- * run as a platform node - plat_node.json config file exists,it will supported
+ * run as a platform node (Agent) - plat_node.json config file exists,it will supported
  * 
  *  
  * @author jason.zhu
@@ -16,10 +16,17 @@ import org.json.JSONObject;
  */
 public class PlatNodeManager
 {
-	public static boolean isPlatNode()
+	private static boolean b_platnode = false;
+	
+	static
 	{
 		File f = Config.getConfFile("plat_node.json") ;
-		return f.exists() ;
+		b_platnode = f.exists() ;
+	}
+	
+	public static boolean isPlatNode()
+	{
+		return b_platnode;
 	}
 	
 	private static PlatNodeManager instance = null ;

@@ -12,7 +12,7 @@ import java.util.Map;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.alert.AlertItem;
 import org.iottree.core.alert.AlertManager;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsEnv;
@@ -667,14 +667,14 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return true;
 	}
 	
-	public List<ValAlert> CXT_listAlerts()
+	public List<ValEvent> CXT_listAlerts()
 	{
-		ArrayList<ValAlert> rets = new ArrayList<>() ;
+		ArrayList<ValEvent> rets = new ArrayList<>() ;
 		this.iteratorAllTags((tg)->{
-			List<ValAlert> vas = tg.getValAlerts() ;
+			List<ValEvent> vas = tg.getValAlerts() ;
 			if(vas==null)
 				return ;
-			for(ValAlert va:vas)
+			for(ValEvent va:vas)
 			{
 				if(va.RT_is_triggered())
 					rets.add(va) ;

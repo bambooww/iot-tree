@@ -5,8 +5,8 @@
   <dd_node id="1" name="stop_bits" name_cn="停止位" name_en="Stop Bits" />
   <dd_node id="1" name="parity" name_cn="奇偶校验" name_en="Parity" />
   <dd_node id="1" name="parity_none" name_cn="无校验" name_en="None" />
-  <dd_node id="1" name="parity_odd" name_cn="偶校验" name_en="Odd" />
-  <dd_node id="1" name="parity_even" name_cn="奇校验" name_en="Even" />
+  <dd_node id="1" name="parity_odd" name_cn="奇校验" name_en="Odd" />
+  <dd_node id="1" name="parity_even" name_cn="偶校验" name_en="Even" />
   <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
   <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
   
@@ -15,6 +15,20 @@
   <dd_node id="1" name="add_tag_in_ch" name_cn="通道中新增标签" name_en="Add Tag In Channel" />
   <dd_node id="1" name="under_ch" name_cn="通道下" name_en="Under Channel" />
   <dd_node id="1" name="txt" name_cn="文本" name_en="Text" />
+  
+  <dd_node id="1" name="endpoint" name_cn="端点" name_en="Endpoint" />
+  <dd_node id="1" name="security" name_cn="安全" name_en="Security" />
+  <dd_node id="1" name="mode" name_cn="模式" name_en="Mode" />
+  <dd_node id="1" name="policy" name_cn="策略" name_en="Policy" />
+  <dd_node id="1" name="request" name_cn="请求" name_en="Request" />
+  <dd_node id="1" name="sign" name_cn="签名" name_en="Sign" />
+  <dd_node id="1" name="sign_encrypt" name_cn="签名且加密" name_en="Sign &amp; Encrypt" />
+  <dd_node id="1" name="signandencrypt" name_cn="签名且加密" name_en="Sign &amp; Encrypt" />
+  <dd_node id="1" name="none" name_cn="无" name_en="None" />
+  <dd_node id="1" name="none" name_cn="无" name_en="None" />
+  <dd_node id="1" name="auth" name_cn="验证" name_en="Authentication" />
+  <dd_node id="1" name="anony" name_cn="匿名" name_en="Anonymous" />
+  <dd_node id="1" name="user_psw" name_cn="用户验证密码" name_en="User Password" />
   
   <dd_node id="1" name="ign_not_exist" name_cn="忽略不存在" name_en="Ingore Not Existed" />
   <dd_node id="1" name="auto_c_tag" name_cn="自动创建标签" name_en="Auto Create Tag" />

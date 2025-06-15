@@ -11,7 +11,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
 	
 %>
 <html>
@@ -91,7 +91,7 @@ for(int dbit:SlaveCPCom.DATABITS)
 for(int i = 0 ; i < SlaveCPCom.PARITY.length ; i ++)
 {
 	int pri = SlaveCPCom.PARITY[i] ;
-	String tt =  SlaveCPCom.PARITY_TITLE[i] ;
+	String tt =  "parity_"+SlaveCPCom.PARITY_NAME[i];//.toLowerCase() ;
 %><option value="<%=pri%>"><wbt:g><%=tt %></wbt:g></option>
 <%
 }

@@ -99,14 +99,13 @@ function tb_get_left_vals()
 	for(var tr of cur_lefts_trs)
 	{
 		var tn = $(tr) ;
-		var p = tn.attr("path");
+		var p = tn.attr("nid");
 		var t = tn.attr("title") ;
 		var v = p + ":"+tn.attr("vt") ;
 		
 		ret.push(v) ;
 	}
 	return ret ;
-	
 }
 
 /*
@@ -268,7 +267,7 @@ function ob2tr_row(ob)
 	var tt = ob.tt ;
 	if(!tt)
 		tt = "" ;
-	var ret = "<tr title='"+tt+"' path='"+ob.path+"' vt='"+ob.vt+"' onclick='on_left(this)'>" ;
+	var ret = `<tr title='\${tt}' nid='\${ob.id}' path='\${ob.path}' vt='\${ob.vt}' onclick='on_left(this)'>` ;
 	var txt = ob.path ;
 	var txtlen = txt.length ;
 	if(false) //(txtlen>ROW_MAX_LEN)

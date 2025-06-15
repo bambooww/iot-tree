@@ -182,6 +182,7 @@ text-overflow:ellipsis;
  %>
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>&nbsp;&nbsp;
  	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="imp_tag()"><wbt:g>imp,tag</wbt:g></button>&nbsp;&nbsp;
+ 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="exp_tag()"><wbt:g>export,tag</wbt:g></button>&nbsp;&nbsp;
 <%
  	}
 %>
@@ -683,6 +684,38 @@ function imp_tag()
 					{
 						dlg.close();
 					}
+	]);
+}
+
+function exp_tag()
+{
+	
+	let tags=[];
+	let chk_tag_ns = [] ;
+	$(".tag_row").each(function(){
+		let ob = $(this) ;
+		if("true"==ob.attr("tag_loc"))
+		{
+			let tag_id = ob.attr("tag_id") ;
+			let tag_n = ob.attr("tag_n") ;
+			let chked = $("#chk_"+tag_id).prop("checked") ;
+			if(chked)
+				chk_tag_ns.push(tag_n) ;
+			
+			let val_tp = ob.attr("val_tp") ;
+			let addr = ob.attr("addr") ||"";
+			let tt = ob.attr("tag_t") ;
+			tags.push({n:tag_n,tp:val_tp,addr:addr,t:tt}) ;
+		}
+	});
+	
+	dlg.open("tag_export.jsp?cxt_path="+cxt_path,{title:"Export Tag",w:'500px',h:'400px',chk_tag_ns:chk_tag_ns}, //tags:tags,cxt_path:cxt_path
+			['<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
 	]);
 }
 

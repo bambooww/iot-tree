@@ -1,6 +1,8 @@
 {
-	"id":"station2",
+	"id":"station2" ,"desc":"现场设备配置指向平台Agent Host",
+	
 	"platform_host":"192.168.3.18",
+	
 	"platform_port":9090,
 	"key":"12322131231"
 }

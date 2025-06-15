@@ -109,6 +109,7 @@ public class UrlUtil
 					else sb.append("&") ;
 					sb.append(n2v.getKey()).append("=").append(URLEncoder.encode(n2v.getValue(),"UTF-8")) ;
 				}
+				urlpm = sb.toString() ;
 			}
 
 			http_conn.setRequestMethod("POST");

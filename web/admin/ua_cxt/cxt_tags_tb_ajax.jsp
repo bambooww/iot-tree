@@ -46,7 +46,7 @@
 		}
 	}
 %><%
-if(!Convert.checkReqEmpty(request, out, "path"))
+	if(!Convert.checkReqEmpty(request, out, "path"))
 	return ;
 //boolean bdev = "true".equals(request.getParameter("bdev")) ;
 //boolean bmgr ="true".equals(request.getParameter("mgr")) ;
@@ -138,65 +138,65 @@ for(UANodeOCTags tn:tns)
 	{
 		tags_num ++ ;
 		String tagpath = tag.getNodePath();//.getNodePathCxt() ;
+		String tagname = tag.getName();
+		String tag_tt = tag.getTitle() ;
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 		String tagp = tag.getNodePathCxt();
 		boolean bloc = tag.getParentNode()==node_tags;
 		String cssstr="" ;
 		if(tag.isSysTag())
-			cssstr="color:grey";
+	cssstr="color:grey";
 		else if(bloc)
-			cssstr="color:blue;cursor:hand";
+	cssstr="color:blue;cursor:hand";
 	
 		String tt = "" ;
 		if(tag.getDesc()!=null)
-			tt += tag.getDesc() ;
+	tt += tag.getDesc() ;
 		if(tag.getNameSor()!=null)
-			tt += "&#10;sor name:"+tag.getNameSor();
+	tt += "&#10;sor name:"+tag.getNameSor();
 		if(tag.getTitleSor()!=null)
-			tt += "&#10;sor title:"+tag.getTitleSor();
+	tt += "&#10;sor title:"+tag.getTitleSor();
 		if(tag.getDescSor()!=null)
-			tt += "&#10;sor desc:"+tag.getDescSor();
+	tt += "&#10;sor desc:"+tag.getDescSor();
 		
 		String addr = tag.getAddress() ;
+		String addr_sor = addr ;
 		if(addr.length()>10)
-			addr = addr.substring(0,10)+"..." ;
+	addr = addr.substring(0,10)+"..." ;
 		
 		String valtp_str = tag.getValTp().getStr();
 		if(tag.getValTranserObj()!=null)
-			valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
+	valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
 		
 		String indicator_t = "" ;
 		ValIndicator vi = tag.getValIndicator() ;
 		if(vi!=null)
-			indicator_t = vi.getTitle();
+	indicator_t = vi.getTitle();
 		
 		ValUnit vu = tag.getValUnit();
 		String unit_t = "",unit_tt="" ;
 		if(vu!=null)
 		{
-			unit_t = vu.getUnit() ;
-			unit_tt = vu.getTitle() ;
+	unit_t = vu.getUnit() ;
+	unit_tt = vu.getTitle() ;
 		}
 		String alert_str = "" ;
-		List<ValAlert> alerts = tag.getValAlerts() ;
+		List<ValEvent> alerts = tag.getValAlerts() ;
 		if(alerts!=null&&alerts.size()>0)
-			alert_str = "<i class='fa-solid fa-bell'></i>" ;
+	alert_str = "<i class='fa-solid fa-bell'></i>" ;
 %>
-   <tr id="ctag_<%=tag.getId() %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
-   	tag_path="<%=tn_path %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
+   <tr id="ctag_<%=tag.getId() %>" tag_n="<%=tagname %>" tag_t="<%=tag_tt %>" tag_loc="<%=bloc %>"  tag_sys="<%=tag.isSysTag() %>" 
+   	tag_path="<%=tn_path %>" val_tp="<%=valtp_str %>"  addr="<%=addr_sor %>" tag_id="<%=tag.getId()%>" cxt_path="<%=cxtpath%>"
    	title="<%=tt%>" tag_num="<%=tags_num %>" class="tag_row"
 <%
 if(bloc&&!tag.isSysTag())
 {
 %>
    	 ondblclick="add_or_modify_tag('<%=tag.getId()%>')"
-   	
 <%
 }
-%>
-   	 >
-   <td >
-   <%
+%> ><td>
+<%
 	if(bloc)
 	{
 		//String ss = "✔";
@@ -228,7 +228,7 @@ if(bloc&&!tag.isSysTag())
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
         <td><%=indicator_t %></td>
-        <td style="width:80px" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
+        <td style="width:80px;text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
         <td title="<%=unit_tt%>"><%=unit_t %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>

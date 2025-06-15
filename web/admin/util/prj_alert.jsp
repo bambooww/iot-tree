@@ -268,20 +268,19 @@ visibility: hidden;
 <%
 	for(UATag tag:prj.listTagsAll())
 	{
-		List<ValAlert> vas = tag.getValAlerts() ;
+		List<ValEvent> vas = tag.getValAlerts() ;
 		if(vas==null||vas.size()<=0)
-			continue ;
+	continue ;
 		String np = tag.getNodePath() ;
-		
 %>
-<div class="tag_item" id="np"><%=np %>
+<div class="tag_item" id="np"><%=np%>
 <%
-		for(ValAlert va:vas)
+	for(ValEvent va:vas)
 		{
-			String id = va.getUid() ;
-			String tt = Convert.plainToHtml(va.toTitleStr()) ;
-			String en_c = va.isEnable()?"green":"gray" ;
-			String en_t = va.isEnable()?"enabled":"disabled" ;
+	String id = va.getUid() ;
+	String tt = Convert.plainToHtml(va.toTitleStr()) ;
+	String en_c = va.isEnable()?"green":"gray" ;
+	String en_t = va.isEnable()?"enabled":"disabled" ;
 %><div class="alert_item" title="<%=tt%>"><i class="fa fa-square en" style="color:<%=en_c%>" title="<wbt:g><%=en_t%></wbt:g>"></i>
 	<span class="tt"><%=tt %></span><span class="chk_alert_c"><input type="checkbox" id="<%=id %>"  class="chk_alert" onclick="on_chk_alert('<%=id%>')"/></span>
 	</div>

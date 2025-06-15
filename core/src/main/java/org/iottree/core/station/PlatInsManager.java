@@ -412,8 +412,6 @@ public class PlatInsManager
 				UAVal uav = new UAVal(bvalid, ov, dt, chgdt);
 				// tag.RT_setValStr(strv, true);
 				tag.RT_setUAValOnlyAlert(uav);
-
-				//setToBuf(tag, uav);
 			}
 		}
 

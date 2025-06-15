@@ -1,5 +1,6 @@
 package org.iottree.core.basic;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.iottree.core.cxt.JSObMap;
@@ -7,23 +8,65 @@ import org.iottree.core.cxt.JsProp;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.Lan;
+import org.json.JSONObject;
 
-public abstract class ValAlertTp extends JSObMap implements ILang
+public abstract class ValEventTp extends JSObMap implements ILang
 {
-	public static final ValAlertTp[] ALL = new ValAlertTp[] { new VAT_OnOff(), new VAT_NegT(), new VAT_PosT(),
-			new VAT_BitEqu(), new VAT_BitOffToOn(), new VAT_BitOnToOff(), new VAT_ValEqu(), new VAT_ValNotEqu(),
-			new VAT_ValGt(), new VAT_ValGtEqu(), new VAT_ValLt(), new VAT_ValLtEqu() };
-
-	public static ValAlertTp getTp(int v)
+	static Lan lan = Lan.getLangInPk(ValEventTp.class) ;
+	
+	public static enum GradientTP
 	{
-		if (v < 1 || v > 12)
+		up(0),
+		down(1),
+		updown(2);
+		
+		private final int val ;
+		
+		GradientTP(int v)
+		{
+			val = v ;
+		}
+		
+		public int getInt()
+		{
+			return val ;
+		}
+		
+		public String getTitle()
+		{
+			return lan.g("trigger_tp_"+this.name()) ;
+		}
+		
+		public static GradientTP fromInt(int val)
+		{
+			switch(val)
+			{
+			
+			case 1:
+				return down;
+			case 2:
+				return updown;
+			case 0:
+			default:
+				return up;
+			}
+		}
+	}
+	
+	public static final ValEventTp[] ALL = new ValEventTp[] { new VAT_OnOff(), new VAT_NegT(), new VAT_PosT(),
+			new VAT_BitEqu(), new VAT_BitOffToOn(), new VAT_BitOnToOff(), new VAT_ValEqu(), new VAT_ValNotEqu(),
+			new VAT_ValGt(), new VAT_ValGtEqu(), new VAT_ValLt(), new VAT_ValLtEqu() ,new VAT_Gradient()};
+
+	public static ValEventTp getTp(int v)
+	{
+		if (v < 1 || v > 13)
 			return null;
 		return ALL[v - 1];
 	}
 
-	public static ValAlertTp createTp(ValAlert va, int tp_v)
+	public static ValEventTp createTp(ValEvent va, int tp_v)
 	{
-		ValAlertTp tp = getTp(tp_v);
+		ValEventTp tp = getTp(tp_v);
 		if (tp == null)
 			return null;
 		tp = tp.copyMe(va);
@@ -53,20 +96,20 @@ public abstract class ValAlertTp extends JSObMap implements ILang
 //	protected String param3TitleCn = "";
 //	protected String param3TitleEn = "";
 
-	ValAlert valAlert = null;
+	ValEvent valEvent = null;
 
 	boolean bValid = false;
 
 	String invalidReson = null;
 
-	public ValAlertTp()
+	public ValEventTp()
 	{
 		// asVA(va);
 	}
 
-	public ValAlertTp asVA(ValAlert va)
+	public ValEventTp asVA(ValEvent va)
 	{
-		this.valAlert = va;
+		this.valEvent = va;
 		if (va != null)
 		{
 			StringBuilder failedr = new StringBuilder();
@@ -80,7 +123,12 @@ public abstract class ValAlertTp extends JSObMap implements ILang
 
 	public abstract String getName();
 
-	protected abstract ValAlertTp newIns();
+	protected abstract ValEventTp newIns();
+	
+	public boolean isSelfJOConfig()
+	{//check jo config self ui
+		return false;
+	}
 	
 	public boolean isNeedLastVal()
 	{
@@ -92,9 +140,9 @@ public abstract class ValAlertTp extends JSObMap implements ILang
 		return false;
 	}
 
-	public final ValAlertTp copyMe(ValAlert va)
+	public final ValEventTp copyMe(ValEvent va)
 	{
-		ValAlertTp newins = newIns();
+		ValEventTp newins = newIns();
 //		newins.titleEn = this.titleEn;
 //		newins.titleCn = this.titleCn;
 //		newins.descEn = this.descEn;
@@ -314,13 +362,29 @@ public abstract class ValAlertTp extends JSObMap implements ILang
 		return this.invalidReson;
 	}
 
-	abstract boolean initVA(ValAlert va, StringBuilder failedr);
+	abstract boolean initVA(ValEvent va, StringBuilder failedr);
 
 	public abstract boolean checkTrigger(Number lastv, Number val);
 
 	public abstract boolean checkRelease(Number lastv, Number val);
 	
-	public abstract String calValAlertTitle(ValAlert va) ;
+	
+	public boolean checkByUpdate()
+	{
+		return false;
+	}
+	
+	public boolean checkReleaseByUpdate(Number val)
+	{
+		return false;
+	}
+	
+	public boolean checkTriggerByUpdate(Number val)
+	{
+		return false;
+	}
+	
+	public abstract String calValEventTitle(ValEvent va) ;
 	
 	@Override
 	public Object JS_get(String  key)
@@ -343,14 +407,14 @@ public abstract class ValAlertTp extends JSObMap implements ILang
 	public List<JsProp> JS_props()
 	{
 		List<JsProp> ss = super.JS_props() ;
-		ss.add(new JsProp("name",null,String.class,false,"Alert Type Name","unique name as Alert Type")) ;
-		ss.add(new JsProp("title",null,String.class,false,"Alert Type Title","")) ;
+		ss.add(new JsProp("name",null,String.class,false,"Event Type Name","unique name as Event Type")) ;
+		ss.add(new JsProp("title",null,String.class,false,"Event Type Title","")) ;
 		return ss ;
 	}
 	
 }
 
-class VAT_OnOff extends ValAlertTp
+class VAT_OnOff extends ValEventTp
 {
 	int p1 = 0;
 
@@ -363,7 +427,7 @@ class VAT_OnOff extends ValAlertTp
 //				.asParam1Title("Alarm Value(0/1)", "报警值(0/1)");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_OnOff();
 	}
@@ -379,13 +443,13 @@ class VAT_OnOff extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "On=="+va.getParamStr1() ;
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String pstr1 = va.getParamStr1();
 
@@ -414,7 +478,7 @@ class VAT_OnOff extends ValAlertTp
 	}
 }
 
-class VAT_NegT extends ValAlertTp
+class VAT_NegT extends ValEventTp
 {
 	public VAT_NegT()// ValAlert va)
 	{
@@ -423,7 +487,7 @@ class VAT_NegT extends ValAlertTp
 //				.asRelease("The current value has changed from 0 to non-0", "当前值由0变化为非0");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_NegT();
 	}
@@ -444,13 +508,13 @@ class VAT_NegT extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "non-0 to 0";
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		return true;
 	}
@@ -468,7 +532,7 @@ class VAT_NegT extends ValAlertTp
 	}
 }
 
-class VAT_PosT extends ValAlertTp
+class VAT_PosT extends ValEventTp
 {
 	public VAT_PosT() // (ValAlert va)
 	{
@@ -479,7 +543,7 @@ class VAT_PosT extends ValAlertTp
 
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_PosT();
 	}
@@ -500,13 +564,13 @@ class VAT_PosT extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "0 to non-0";
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		return true;
 	}
@@ -524,7 +588,7 @@ class VAT_PosT extends ValAlertTp
 	}
 }
 
-class VAT_BitEqu extends ValAlertTp
+class VAT_BitEqu extends ValEventTp
 {
 	int bitPos = 0;
 	int refV = 0;
@@ -539,7 +603,7 @@ class VAT_BitEqu extends ValAlertTp
 //				.asParam1Title("Bit Position", "指定位").asParam2Title("Alarm Value(0/1)", "指定值(0/1)");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_BitEqu();
 	}
@@ -555,13 +619,13 @@ class VAT_BitEqu extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Bit("+va.getParamStr1()+")=="+va.getParamStr2();
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -601,7 +665,7 @@ class VAT_BitEqu extends ValAlertTp
 	}
 }
 
-class VAT_BitOffToOn extends ValAlertTp
+class VAT_BitOffToOn extends ValEventTp
 {
 	int bitPos = 0;
 
@@ -615,7 +679,7 @@ class VAT_BitOffToOn extends ValAlertTp
 //				.asParam1Title("Bit Position", "指定位");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_BitOffToOn();
 	}
@@ -631,13 +695,13 @@ class VAT_BitOffToOn extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Bit("+va.getParamStr1()+") 0 to 1";
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		bitPos = Convert.parseToInt32(p1, -1);
@@ -671,7 +735,7 @@ class VAT_BitOffToOn extends ValAlertTp
 	}
 }
 
-class VAT_BitOnToOff extends ValAlertTp
+class VAT_BitOnToOff extends ValEventTp
 {
 	int bitPos = 0;
 
@@ -685,7 +749,7 @@ class VAT_BitOnToOff extends ValAlertTp
 //				.asParam1Title("Bit Position", "指定位");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_BitOnToOff();
 	}
@@ -701,13 +765,13 @@ class VAT_BitOnToOff extends ValAlertTp
 	}
 
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Bit("+va.getParamStr1()+") 1 to 0";
 	}
 	
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		bitPos = Convert.parseToInt32(p1, -1);
@@ -741,7 +805,7 @@ class VAT_BitOnToOff extends ValAlertTp
 	}
 }
 
-class VAT_ValEqu extends ValAlertTp
+class VAT_ValEqu extends ValEventTp
 {
 	double refV;
 
@@ -761,7 +825,7 @@ class VAT_ValEqu extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValEqu();
 	}
@@ -777,13 +841,13 @@ class VAT_ValEqu extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val>="+va.getParamStr1()+"-"+va.getParamStr2() +"&& Val<="+va.getParamStr1()+"+"+va.getParamStr2();
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -831,7 +895,7 @@ class VAT_ValEqu extends ValAlertTp
 	}
 }
 
-class VAT_ValNotEqu extends ValAlertTp
+class VAT_ValNotEqu extends ValEventTp
 {
 	double refV;
 
@@ -852,7 +916,7 @@ class VAT_ValNotEqu extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValNotEqu();
 	}
@@ -868,13 +932,13 @@ class VAT_ValNotEqu extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val<"+va.getParamStr1()+"-"+va.getParamStr2() +"||Val>"+va.getParamStr1()+"+"+va.getParamStr2();
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -922,7 +986,7 @@ class VAT_ValNotEqu extends ValAlertTp
 	}
 }
 
-class VAT_ValGt extends ValAlertTp
+class VAT_ValGt extends ValEventTp
 {
 	double refV;
 
@@ -938,7 +1002,7 @@ class VAT_ValGt extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValGt();
 	}
@@ -959,13 +1023,13 @@ class VAT_ValGt extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val>"+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -1008,7 +1072,7 @@ class VAT_ValGt extends ValAlertTp
 	}
 }
 
-class VAT_ValGtEqu extends ValAlertTp
+class VAT_ValGtEqu extends ValEventTp
 {
 	double refV;
 
@@ -1024,7 +1088,7 @@ class VAT_ValGtEqu extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValGtEqu();
 	}
@@ -1045,13 +1109,13 @@ class VAT_ValGtEqu extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val>="+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -1094,7 +1158,7 @@ class VAT_ValGtEqu extends ValAlertTp
 	}
 }
 
-class VAT_ValLt extends ValAlertTp
+class VAT_ValLt extends ValEventTp
 {
 	double refV;
 
@@ -1110,7 +1174,7 @@ class VAT_ValLt extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValLt();
 	}
@@ -1131,13 +1195,13 @@ class VAT_ValLt extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val<"+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 	
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -1180,7 +1244,7 @@ class VAT_ValLt extends ValAlertTp
 	}
 }
 
-class VAT_ValLtEqu extends ValAlertTp
+class VAT_ValLtEqu extends ValEventTp
 {
 	double refV;
 
@@ -1196,7 +1260,7 @@ class VAT_ValLtEqu extends ValAlertTp
 //				.asParam3Title("Release Error", "解除误差");
 	}
 
-	protected ValAlertTp newIns()
+	protected ValEventTp newIns()
 	{
 		return new VAT_ValLtEqu();
 	}
@@ -1217,13 +1281,13 @@ class VAT_ValLtEqu extends ValAlertTp
 	}
 	
 	@Override
-	public String calValAlertTitle(ValAlert va)
+	public String calValEventTitle(ValEvent va)
 	{
 		return "Val<="+va.getParamStr1()+"+"+va.getParamStr2() ;
 	}
 	
 	@Override
-	boolean initVA(ValAlert va, StringBuilder failedr)
+	boolean initVA(ValEvent va, StringBuilder failedr)
 	{
 		String p1 = va.getParamStr1();
 		String p2 = va.getParamStr2();
@@ -1263,5 +1327,123 @@ class VAT_ValLtEqu extends ValAlertTp
 	{
 		double cv = val.doubleValue();
 		return cv > this.refV + this.releaseErr;
+	}
+}
+
+class VAT_Gradient extends ValEventTp
+{
+	
+	LinkedList<Double> win_vals = new LinkedList<>() ;
+	
+	GradientTP trigger_tp = GradientTP.up ;
+	
+	int data_len = 20 ;
+	
+	double refV; //参考值
+	
+
+	public VAT_Gradient() // (ValAlert va)
+	{
+
+//		this.asTitle("Value >=", "值>=").asTrigger("Current value>=reference value + trigger error", "当前值>=基准值+触发误差")
+//				.asRelease("Current value<reference value + release error", "当前值<基准值+解除误差")
+//				.asParam1Title("Reference Value", "基准值").asParam2Title("Trigger Error", "触发误差")
+//				.asParam3Title("Release Error", "解除误差");
+	}
+
+	protected ValEventTp newIns()
+	{
+		return new VAT_Gradient();
+	}
+
+	public int getTpVal()
+	{
+		return 13;
+	}
+
+	public String getName()
+	{
+		return "val_gradient";
+	}
+	
+	@Override
+	public boolean isFloatVal()
+	{
+		return true;
+	}
+	
+	@Override
+	public String calValEventTitle(ValEvent va)
+	{
+		return this.trigger_tp.getTitle()+" - "+this.refV;
+	}
+	
+	@Override
+	public boolean isSelfJOConfig()
+	{//check jo config self ui
+		return true;
+	}
+
+	@Override
+	boolean initVA(ValEvent va, StringBuilder failedr)
+	{
+		JSONObject jo = va.getParamJO() ;
+		if(jo==null)
+			jo = new JSONObject() ;
+		this.refV = jo.optDouble("ref_val",1.0);
+		this.trigger_tp = GradientTP.fromInt(jo.optInt("trigger_tp", 0)) ;
+		this.data_len = jo.optInt("data_len", 10) ;
+		return true;
+	}
+	
+	private void putVal(double v)
+	{
+		win_vals.addLast(v);
+		if(win_vals.size()>this.data_len)
+			win_vals.removeFirst() ;
+	}
+	
+	private double calGradientVal()
+	{
+		return 0 ;
+	}
+
+	@Override
+	public boolean checkTrigger(Number lastv, Number val)
+	{
+		return false;
+	}
+
+	@Override
+	public boolean checkRelease(Number lastv, Number val)
+	{
+		return false;
+	}
+	
+	@Override
+	public boolean checkByUpdate()
+	{
+		return true;
+	}
+	
+	public boolean checkReleaseByUpdate(Number val)
+	{
+		double cv = val.doubleValue();
+		//return cv >= this.refV + this.triggerErr;
+		putVal(cv) ;
+		double gd = calGradientVal() ;
+		return gd<this.refV ;
+		
+	}
+	
+	public boolean checkTriggerByUpdate(Number val)
+	{
+
+		// double lv = lastv.doubleValue() ;
+				double cv = val.doubleValue();
+				//return cv >= this.refV + this.triggerErr;
+				putVal(cv) ;
+				double gd = calGradientVal() ;
+				return gd>=this.refV ;
 	}
 }

@@ -28,9 +28,9 @@ import org.json.JSONObject;
  * @author jason.zhu
  */
 @data_class
-public class ValAlert extends JSObMap
+public class ValEvent extends JSObMap
 {
-	public static ValAlert parseValAlert(UATag tag,String str) throws Exception
+	public static ValEvent parseValAlert(UATag tag,String str) throws Exception
 	{
 		if(Convert.isNullOrEmpty(str))
 			return null ;
@@ -39,12 +39,12 @@ public class ValAlert extends JSObMap
 		return parseValAlert(tag,jo) ;
 	}
 	
-	public static ValAlert parseValAlert(UATag tag,JSONObject jo) throws Exception
+	public static ValEvent parseValAlert(UATag tag,JSONObject jo) throws Exception
 	{
 		if(jo==null)
 			return null ;
 		
-		ValAlert vt = new ValAlert() ;
+		ValEvent vt = new ValEvent() ;
 		//vt.tag = tag ;
 		vt.setBelongTo(tag) ;
 		DataTranserJSON.injectJSONToObj(vt, jo) ;
@@ -65,24 +65,26 @@ public class ValAlert extends JSObMap
 	private String name = null ;
 	
 	
-	ValAlertTp alertTp = null;//ValAlertTp.on_off;
+	private ValEventTp eventTp = null;//ValAlertTp.on_off;
 	
 	//private boolean bAlertInit=false;
-	
-	
 	@data_val(param_name = "tp")
-	private int get_TP()
-	{
-		if(alertTp==null)
-			return 0 ;
-		
-		return alertTp.getTpVal() ;
-	}
-	@data_val(param_name = "tp")
-	private void set_TP(int v)
-	{
-		alertTp = ValAlertTp.createTp(this,v);
-	}
+	private int eventTpV = 0 ;
+	
+//	@data_val(param_name = "tp")
+//	private int get_TP()
+//	{
+//		if(eventTp==null)
+//			return 0 ;
+//		
+//		return eventTp.getTpVal() ;
+//	}
+//	@data_val(param_name = "tp")
+//	private void set_TP(int v)
+//	{
+//		eventTpV = v ;
+//		//
+//	}
 	
 	@data_val(param_name="en")
 	boolean alertEnable = true ;
@@ -117,6 +119,26 @@ public class ValAlert extends JSObMap
 	@data_val(param_name = "param3")
 	String paramStr3 = null ;
 	
+	private JSONObject paramJO = null ;
+	
+	@data_val(param_name = "param_jo")
+	private String get_ParamJOStr()
+	{
+		if(paramJO==null)
+			return null ;
+		return paramJO.toString() ;
+	}
+	@data_val(param_name = "param_jo")
+	private void set_ParamJOStr(String pmjo)
+	{
+		if(Convert.isNullOrEmpty(pmjo))
+		{
+			this.paramJO = null ;
+			return ;
+		}
+		this.paramJO = new JSONObject(pmjo) ;
+	}
+	
 	@data_val(param_name = "prompt")
 	String alertPrompt = null ;
 	
@@ -141,21 +163,22 @@ public class ValAlert extends JSObMap
 	private transient long lastReleasedDT = -1 ;
 	
 	
-	public ValAlert()
+	public ValEvent()
 	{
 		//this.tag = tag ;
 		this.id = CompressUUID.createNewId();
 	}
 	
-	public ValAlert copyMe(UATag tag,boolean b_cp_id)
+	public ValEvent copyMe(UATag tag,boolean b_cp_id)
 	{
-		ValAlert r = new ValAlert() ;
+		ValEvent r = new ValEvent() ;
 		r.setBelongTo(tag);
 		
 		if(b_cp_id)
 			r.id = this.id ;
 		r.name = this.name ;
-		r.alertTp = this.alertTp ;
+		r.eventTp = this.eventTp ;
+		r.eventTpV = this.eventTpV ;
 //		r.alertGroup = this.alertGroup ;
 //		r.alertLvl = this.alertLvl ;
 		r.paramStr1 = this.paramStr1 ;
@@ -201,7 +224,7 @@ public class ValAlert extends JSObMap
 	}
 	
 
-	public static ValAlert getAlertByUID(UAPrj prj,String alert_uid)
+	public static ValEvent getEventByUID(UAPrj prj,String alert_uid)
 	{
 		int k = alert_uid.indexOf('-') ;
 		if(k<=0)
@@ -221,31 +244,43 @@ public class ValAlert extends JSObMap
 		return this.name ;
 	}
 
-	public ValAlertTp getAlertTp()
+	public ValEventTp getEventTp()
 	{
-		return alertTp;
+		if(eventTp!=null)
+			return this.eventTp ;
+		
+		return eventTp = ValEventTp.createTp(this,this.eventTpV);
 	}
 	
-	public String getAlertTitle()
+	public String getEventTitle()
 	{
-		return alertTp.calValAlertTitle(this) ;
+		return getEventTp().calValEventTitle(this) ;
 	}
 
-	public void setAlertTp(ValAlertTp tp)
+	public void setEventTp(ValEventTp tp)
 	{
-		this.alertTp= tp ;
+		if(tp!=null)
+		{
+			this.eventTp= tp ;
+			this.eventTpV = tp.getTpVal() ;
+		}
+		else
+		{
+			this.eventTp = null ;
+			this.eventTpV = 0 ;
+		}
 	}
 	
 	@JsDef
 	public String getTpName()
 	{
-		return alertTp.getName() ;
+		return getEventTp().getName() ;
 	}
 	
 	@JsDef
 	public String getTpTitle()
 	{
-		return alertTp.getTitle() ;
+		return getEventTp().getTitle() ;
 	}
 	
 	@JsDef
@@ -283,33 +318,45 @@ public class ValAlert extends JSObMap
 	{
 		this.paramStr3 = paramStr3;
 	}
+	
+	public JSONObject getParamJO()
+	{
+		return this.paramJO ;
+	}
+	
+	public void setParamJO(JSONObject pjo)
+	{
+		this.paramJO = pjo ;
+	}
 
 	@JsDef
-	public String getAlertPrompt()
+	public String getEventPrompt()
 	{
 		return alertPrompt;
 	}
 
-	public void setAlertPrompt(String s)
+	public void setEventPrompt(String s)
 	{
 		this.alertPrompt = s;
 	}
 	
-	public int getAlertLvl()
+	public int getEventLvl()
 	{
 		return this.alertLvl ;
 	}
 	
 	public String toTitleStr()
 	{
-		return this.getAlertTitle()+"("+this.alertPrompt+")" ;
+		return this.getEventTitle()+"("+this.alertPrompt+")" ;
 	}
 	
 	public JSONObject toJO() throws Exception
 	{
 		JSONObject jo = DataTranserJSON.extractJSONFromObj(this) ;
-		String tpt = this.getAlertTp().getTitle() ;
+		String tpt = this.getEventTp().getTitle() ;
 		jo.put("tpt", tpt) ;
+		//String pm_tt = this.getEventTp().calValEventTitle(this) ;
+		jo.putOpt("pm_tt", getEventTitle());
 		return jo ;
 	}
 	
@@ -369,7 +416,8 @@ public class ValAlert extends JSObMap
 			return ;//do nothing
 		}
 		
-		if(alertTp.isNeedLastVal())
+		ValEventTp tp = this.getEventTp() ;
+		if(tp.isNeedLastVal())
 		{
 			if(lastV==null)
 			{
@@ -382,12 +430,12 @@ public class ValAlert extends JSObMap
 		{
 			if(this.bTrigged)
 			{
-				if(alertTp.checkRelease(lastV, curv))
+				if(tp.checkRelease(lastV, curv))
 					RT_release(inputv);
 			}
 			else
 			{
-				if(alertTp.checkTrigger(lastV, curv))
+				if(tp.checkTrigger(lastV, curv))
 					RT_trigger(inputv) ;
 			}
 		}
@@ -396,6 +444,46 @@ public class ValAlert extends JSObMap
 			lastV = curv ;
 		}
 	}
+	
+
+	public void RT_fireValUpdated(Object inputv)
+	{
+		if(!this.alertEnable)
+			return ;
+		Number curv = null ;
+		if(inputv instanceof Number)
+		{
+			curv = (Number)inputv ;
+		}
+		else if(inputv instanceof Boolean)
+		{
+			curv = ((Boolean)inputv).booleanValue()?1:0;
+		}
+		else
+		{
+			return ;//do nothing
+		}
+		
+		ValEventTp tp = this.getEventTp() ;
+		
+		try
+		{
+			if(this.bTrigged)
+			{
+				if(tp.checkReleaseByUpdate(curv))
+					RT_release(inputv);
+			}
+			else
+			{
+				if(tp.checkTriggerByUpdate(curv))
+					RT_trigger(inputv) ;
+			}
+		}
+		finally
+		{
+		}
+	}
+	
 
 	@JsDef
 	public boolean RT_is_triggered()
@@ -445,7 +533,7 @@ public class ValAlert extends JSObMap
 		jo.put("trigger_dt", this.RT_last_trigger_dt()) ;
 		jo.put("evt_tp", this.getTpName()) ;
 		jo.put("evt_tpt", this.getTpTitle()) ;
-		jo.putOpt("evt_prompt", this.getAlertPrompt()) ;
+		jo.putOpt("evt_prompt", this.getEventPrompt()) ;
 		boolean btri =  this.RT_is_triggered();
 		jo.put("triggered",btri) ;
 		return jo ;
@@ -466,7 +554,7 @@ public class ValAlert extends JSObMap
 		jo.put("release_dt", this.RT_last_released_dt()) ;
 		jo.put("evt_tp", this.getTpName()) ;
 		jo.put("evt_tpt", this.getTpTitle()) ;
-		jo.putOpt("evt_prompt", this.getAlertPrompt()) ;
+		jo.putOpt("evt_prompt", this.getEventPrompt()) ;
 		boolean btri =  this.RT_is_triggered();
 		jo.put("released", !btri) ;
 		return jo ;

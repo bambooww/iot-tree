@@ -775,7 +775,7 @@ if(b_his)
 <script src="/_iottree/di_div_comps/meters/comp_gauge2.js"></script>
  --%>
 <script>
-
+var show_tick = false;
 var prjid = "<%=prjid%>" ;
 document.addEventListener('touchmove', function (event) {
 	    event.preventDefault();
@@ -1188,8 +1188,8 @@ function ws_conn()
     ws.onmessage = function (event) {
 
     	//console.log(event.data) ;
-    	//hmiModel.fireModelPropBindData(event.data) ;
-    	$("#ws_updt").html(new Date().format_local('yyyy-MM-dd hh:mm:ss.SSS')) ;
+    	if(show_tick)
+    		$("#ws_updt").html(new Date().format_local('yyyy-MM-dd hh:mm:ss.SSS')) ;
     	var str = event.data ;
     	var k = str.indexOf("\r\n") ;
     	if(k<=0)

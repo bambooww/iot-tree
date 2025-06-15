@@ -58,11 +58,54 @@
 		return ret ;
 	}
 	
+	private static List<UATag> importTagJarr(UANodeOCTags nt ,JSONArray jarr) throws Exception
+	{
+		ArrayList<UATag> rets = new ArrayList<>() ;
+		int n = jarr.length() ;
+		for(int i = 0 ; i < n ; i ++)
+		{
+			JSONObject jo = jarr.getJSONObject(i) ;
+			String name = jo.optString("n") ;
+			if(Convert.isNullOrEmpty(name))
+				continue ;
+			String tpstr = jo.optString("tp") ;
+			UAVal.ValTP dt = UAVal.getValTp(tpstr) ;
+			if(dt==null)
+				continue ;
+			String title = jo.optString("t") ;
+			String desc = jo.optString("d") ;
+			String addr = jo.optString("addr","") ;
+			int digist = jo.optInt("dec_digits",-1) ;
+			long srate = jo.optLong("srate",100) ;
+			String canw_str = jo.optString("canw") ;
+			String trans = jo.optString("trans") ;
+			String unit = jo.optString("unit") ;
+			String ind = jo.optString("ind") ;
+			//String tagid, boolean bmid, String name, String title, String desc, String addr,
+			// UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans,String mid_w_js
+			UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, desc,addr,dt,digist,canw_str,srate,trans,null) ;
+			ret.asUnit(unit).asIndicator(ind) ;
+			
+			rets.add(ret) ;
+		}
+		return rets ;
+	}
+	
 	private static List<UATag> impTag(UANode n,String txt,boolean has_addr,StringBuilder failedr) throws Exception
 	{
 		if(!(n instanceof UANodeOCTags))
 			return null ;
+		if(txt==null)
+			return null ;
+		txt=txt.trim() ;
+		if(Convert.isNullOrEmpty(txt))
+			return null ;
 		UANodeOCTags nt = (UANodeOCTags)n;
+		if(txt.startsWith("["))
+		{
+			JSONArray jarr = new JSONArray(txt) ;
+			return importTagJarr(nt,jarr) ;
+		}
 		BufferedReader br = new BufferedReader(new StringReader(txt)) ;
 		String ln = null ;
 		ArrayList<UATag> rets = new ArrayList<>() ;
@@ -176,7 +219,7 @@ case "edit_tag":
 	}
 	catch(Exception e)
 	{
-		//e.printStackTrace();
+		e.printStackTrace();
 		out.print(e.getMessage());
 		return ;
 	}

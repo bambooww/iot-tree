@@ -13,7 +13,7 @@ import java.util.Map;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.MNNodeStart;
@@ -175,7 +175,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 //		}
 //	}
 	
-	public boolean RT_fireByEventTrigger(ValAlert va,Object curval)// throws Exception
+	public boolean RT_fireByEventTrigger(ValEvent va,Object curval)// throws Exception
 	{
 		if(this.evt_ids==null||!evt_ids.contains(va.getUid()))
 			return false ;
@@ -204,7 +204,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	
 	
 
-	public boolean RT_fireByEventRelease(ValAlert va,Object curval) //throws Exception
+	public boolean RT_fireByEventRelease(ValEvent va,Object curval) //throws Exception
 	{
 		if(this.evt_ids==null||!evt_ids.contains(va.getUid()))
 			return false ;
@@ -395,7 +395,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		return dataTable ;
 	}
 	
-	private boolean RT_recordAlertItem(ValAlert va,String curval,boolean b_triggered_or_release,StringBuilder failedr) //,int keep_days,boolean b_outer)
+	private boolean RT_recordAlertItem(ValEvent va,String curval,boolean b_triggered_or_release,StringBuilder failedr) //,int keep_days,boolean b_outer)
 		throws Exception
 	{
 		JavaTableInfo jti = getAlertsTableInfo(failedr) ;
@@ -424,10 +424,10 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 			dr.putValue("Tag", tag.getNodePathCxt());
 			dr.putValue("TriggerDT", new Date(va.RT_last_trigger_dt()));
 			//dr.putValue("Handler", this.getName());
-			dr.putValue("AlertTP", va.getAlertTitle());
+			dr.putValue("AlertTP", va.getEventTitle());
 			dr.putValue("Value",curval);
-			dr.putValue("Level", va.getAlertLvl());
-			dr.putValue("Prompt",va.getAlertPrompt());
+			dr.putValue("Level", va.getEventLvl());
+			dr.putValue("Prompt",va.getEventPrompt());
 			
 			Connection conn =null;
 			try

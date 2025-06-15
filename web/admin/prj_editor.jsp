@@ -1356,6 +1356,10 @@ function del_cpt(cpid,connid)
 
 function edit_bind_setup(cptp,cpid,connid,tt)
 {
+	if($("#conn_st_"+connid).attr("b_ready")!='true')
+	{
+		dlg.msg("please make conn ready by start prj or start connection");return ;
+	}
 	var u = "./conn/cpt_bind_sel.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
 	//if(cptp=='opc_ua')
 	//	u = "./conn/cpt_bind_sel_tree.jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid;
@@ -2027,54 +2031,6 @@ function act_hmi_edit_ui(n,op)
 	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
-/*
-function act_new_hmi(n,op)
-{
-	dlg.open("ua/hmi_edit.jsp",
-			{title:"Add HMI",w:'500px',h:'400px'},
-			['Ok','Cancel'],
-			[
-				function(dlgw)
-				{
-					dlgw.do_submit(function(bsucc,ret){
-						 if(!bsucc)
-						 {
-							 dlg.msg(ret) ;
-							 return;
-						 }
-						 
-						 ret.op='add';//repid=repid ;
-						 ret.path = n.path;
-						 send_ajax('ua/hmi_ajax.jsp',ret,function(bsucc,ret)
-							{
-								if(!bsucc || ret.indexOf('succ')<0)
-								{
-									dlg.msg(ret);
-									return ;
-								}
-								//dlg.msg(ret);
-								dlg.close();
-								ua_panel.redraw(false,false,true) ;
-							},false);
-							
-						 
-						 //location.reload();
-				 	});
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
-function act_hmi_edit_ui(n,op)
-{
-	//window.open("ua_hmi/hmi_editor.jsp?repid="+repid+"&id="+u.getId()) ;
-	add_tab(n.id,n.title,"ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
-}
-*/
-
 function act_open_cxt_script(n,op)
 {
 	dlg.open_win("ua_cxt/cxt_script.jsp?path="+n.path,
@@ -2159,41 +2115,6 @@ function draw_fit()
 	if(curTabIF.contentWindow.draw_fit)
 		curTabIF.contentWindow.draw_fit() ;
 }
-/*
-function list_comps()
-{
-	dlg.open_win("ua_hmi/hmi_left_comp.jsp?edit=true",
-			{title:"Components List",w:'800',h:'535'},
-			[{title:'Close',style:"primary"},{title:'Help',style:"primary"}],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				},
-				function(dlgw)
-				{
-					dlg.msg("help is under dev");
-				}
-			]);
-}
-
-function dev_lib()
-{
-	dlg.open_win("dev/dev_lib_lister.jsp?mgr=true",
-			{title:"<wbt:g>dev,lib</wbt:g>",w:'1000',h:'560'},
-			[{title:'<wbt:g>close</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				},
-				function(dlgw)
-				{
-					dlg.msg("help is under dev");
-				}
-			]);
-}
-*/
 //////////edit panel
 
 function slide_toggle(obj,w)
@@ -2217,8 +2138,6 @@ function hide_toggle(obj)
 	obj.hide();
 	obj.attr('topm_show',"0") ;
 }
-
-
 
 var left_cur = null ;
 
@@ -2250,11 +2169,7 @@ function leftcat_sel(n,t,w)
 	else
 		document.getElementById("left_pan_iframe").src="hmi_left_"+n+".jsp" ;
 	
-	//top_menu_hide_other('filter');
-	//$('#left_panel').hide();
-	//$('#topm_filter_panel').slideToggle();
 	var r = slide_toggle($('#left_panel'),w);
-	//$(this).toggleClass("top_menu_tog");
 }
 
 function leftcat_close()
@@ -2263,7 +2178,6 @@ function leftcat_close()
 	left_cur=null ;
 	slide_toggle($('#left_panel'));
 }
-
 
 var resize_cc = 0 ;
 $(window).resize(function(){
@@ -2371,7 +2285,6 @@ function init_left_btm()
 	
 	$(".left_btm_tab").tab('selectTab', 'lb_tab_msg_net');
 }
-
 
 $(document).ready(function()
 {
@@ -2507,6 +2420,7 @@ function prj_rt()
 				}
 				$("#conn_st_"+cid).html(bready?"<i class='fa fa-link'></i>":"<i class='fa fa-chain-broken'></i>");//.css("background-color",bready?"green":"red");
 				$("#conn_st_"+cid).css("color",color);
+				$("#conn_st_"+cid).attr("b_ready",bready);
 				//$("#conn_st_"+cid).attr("title",bready?conninf:connerr);
 				/*
 				if(bnewdev)

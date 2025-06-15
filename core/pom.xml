@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>1.7.4</version>
+		<version>1.7.5</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -42,16 +42,16 @@
 		<!-- https://mvnrepository.com/artifact/org.eclipse.milo/sdk-client -->
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
-			<artifactId>sdk-client</artifactId>
+			<artifactId>milo-sdk-client</artifactId>
 			
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.milo/sdk-server -->
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
-			<artifactId>sdk-server</artifactId>
+			<artifactId>milo-sdk-server</artifactId>
 		</dependency>
-		
+		<!-- 
 		<dependency>
 		    <groupId>org.eclipse.milo</groupId>
 		    <artifactId>stack-client</artifactId>
@@ -66,6 +66,7 @@
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>dictionary-manager</artifactId>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js</artifactId>

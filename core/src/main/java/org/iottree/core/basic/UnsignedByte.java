@@ -167,13 +167,13 @@ public final class UnsignedByte extends Number implements Comparable<UnsignedByt
    */
   @Override
   public int intValue() {
-    return value;
+    return value & BYTE_MASK;
   }
 
   /** Returns the value of this {@code UnsignedByte} as a {@code long}. */
   @Override
   public long longValue() {
-    return UnsignedInts.toLong(value);
+    return intValue();
   }
 
   /**

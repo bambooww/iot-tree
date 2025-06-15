@@ -5,6 +5,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.iottree.core.Config;
+import org.iottree.core.node.PlatNode;
+import org.iottree.core.node.PlatNodeManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.Lan;
@@ -109,7 +111,7 @@ public class AdminFilter implements Filter,ILang
 			log.debug("sp="+sp) ;
 		}
 		
-		if(!LoginUtil.checkAdminLogin(req))
+		if(!LoginUtil.checkAdminLogin(req)) //. && !checkPlatAdmin())
 		{
 			if(sp.endsWith("_ajax.jsp"))
 			{
@@ -130,6 +132,8 @@ public class AdminFilter implements Filter,ILang
 		
 		fc.doFilter(req, resp);
 	}
+	
+	
 
 	public void destroy()
 	{

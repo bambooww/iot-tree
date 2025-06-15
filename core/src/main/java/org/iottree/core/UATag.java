@@ -18,7 +18,7 @@ import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.basic.ValIndicator;
 import org.iottree.core.basic.ValTranser;
 import org.iottree.core.basic.ValUnit;
@@ -171,8 +171,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //	@data_val(param_name="alert_high")
 //	String alertHighVal = null ;
 	
-	@data_obj(param_name = "alert",obj_c = ValAlert.class)
-	List<ValAlert> valAlerts = null ;
+	@data_obj(param_name = "alert",obj_c = ValEvent.class)
+	List<ValEvent> valAlerts = null ;
 	/**
 	 * save val his, to support 
 	 */
@@ -240,8 +240,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		if(t.valAlerts!=null)
 		{
-			ArrayList<ValAlert> vas = new ArrayList<>() ;
-			for(ValAlert va:t.valAlerts)
+			ArrayList<ValEvent> vas = new ArrayList<>() ;
+			for(ValEvent va:t.valAlerts)
 			{
 				vas.add(va.copyMe(this, false)) ;
 			}
@@ -253,7 +253,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(this.valAlerts!=null)
 		{
-			for(ValAlert va:this.valAlerts)
+			for(ValEvent va:this.valAlerts)
 			{
 				va.setBelongTo(this);
 			}
@@ -472,7 +472,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(this.valAlerts!=null&&this.valAlerts.size()>0)
 		{
 			nt.valAlerts = new ArrayList<>();
-			for(ValAlert va : this.valAlerts)
+			for(ValEvent va : this.valAlerts)
 				nt.valAlerts.add(va.copyMe(nt,false)) ;
 		}
 	}
@@ -692,6 +692,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public void setValTranser(String valtstr)
 	{
+		if("null".equals(valtstr))
+			valtstr = null ;
+		
 		this.valTranser = valtstr ;
 		valTransObj = null ;
 	}
@@ -730,11 +733,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			this.valAlerts = null;
 			return true;
 		}
-		ArrayList<ValAlert> vas = new ArrayList<>(len) ;
+		ArrayList<ValEvent> vas = new ArrayList<>(len) ;
 		for(int i = 0 ; i < len ; i ++)
 		{
 			JSONObject jo = jarr.getJSONObject(i) ;
-			ValAlert va = ValAlert.parseValAlert(this, jo) ;
+			ValEvent va = ValEvent.parseValAlert(this, jo) ;
 			if(va==null)
 				return false;
 			String n = va.getName() ;
@@ -744,7 +747,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				if(!Convert.checkVarName(n, true, invr))
 					throw new Exception(invr.toString()) ;
 				
-				for(ValAlert tmpva:vas)
+				for(ValEvent tmpva:vas)
 				{
 					if(n.equals(tmpva.getName()))
 						throw new Exception("alert name="+n+" is repleated") ;
@@ -756,17 +759,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return true;
 	}
 	
-	public List<ValAlert> getValAlerts()
+	public List<ValEvent> getValAlerts()
 	{
 		return this.valAlerts ;
 	}
 	
-	void setValAlerts(List<ValAlert> vas)
+	void setValAlerts(List<ValEvent> vas)
 	{
 		this.valAlerts = vas ;
 		if(vas!=null)
 		{
-			for(ValAlert va:vas)
+			for(ValEvent va:vas)
 				va.setBelongTo(this);
 		}
 	}
@@ -776,7 +779,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		JSONArray rets = new JSONArray() ;
 		if(this.valAlerts!=null)
 		{
-			for(ValAlert va : this.valAlerts)
+			for(ValEvent va : this.valAlerts)
 			{
 				rets.put(va.toJO());
 			}
@@ -789,11 +792,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this.valAlerts!=null && this.valAlerts.size()>0 ;
 	}
 	
-	public ValAlert getValAlertByName(String name)
+	public ValEvent getValAlertByName(String name)
 	{
 		if(this.valAlerts==null)
 			return null ;
-		for(ValAlert va:this.valAlerts)
+		for(ValEvent va:this.valAlerts)
 		{
 			if(name.equals(va.getName()))
 				return va ;
@@ -801,11 +804,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return null ;
 	}
 	
-	public ValAlert getValAlertById(String id)
+	public ValEvent getValAlertById(String id)
 	{
 		if(this.valAlerts==null)
 			return null ;
-		for(ValAlert va:this.valAlerts)
+		for(ValEvent va:this.valAlerts)
 		{
 			if(id.equals(va.getId()))
 				return va ;
@@ -1406,7 +1409,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			this.curVal.setValUpDT(updt);//.setVal(true,v,cdt);
 			if(this.curVal.isValid()) // && bval_chg)
 			{
-				RT_chkAlerts() ;
+				RT_chkEvent(true) ;
 			}
 			return curVal;
 		}
@@ -1425,15 +1428,25 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return uav ;
 	}
 	
-	private void RT_chkAlerts()
+	private void RT_chkEvent(boolean b_val_chg)
 	{
 		if(this.valAlerts==null)
 			return ;
 		Object objv = this.curVal.getObjVal() ;
 
-		for(ValAlert va:this.valAlerts)
+		if(b_val_chg)
 		{
-			va.RT_fireValChged(objv);
+			for(ValEvent va:this.valAlerts)
+			{
+				va.RT_fireValChged(objv);
+			}
+		}
+		else
+		{
+			for(ValEvent va:this.valAlerts)
+			{
+				va.RT_fireValUpdated(objv);
+			}
 		}
 	}
 	
@@ -1480,7 +1493,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		if(uav.isValid()) // && bval_chg)
 		{
-			RT_chkAlerts() ;
+			RT_chkEvent(true) ;
 		}
 		
 		if(bNetMon)
@@ -1504,7 +1517,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		boolean bvalid = uav.isValid() ;
 		if(bvalid) // && bval_chg)
 		{
-			RT_chkAlerts() ;
+			RT_chkEvent(true) ;
 		}
 		
 		if(bNetMon)
@@ -1736,7 +1749,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	{
 		if(this.valAlerts==null)
 			return false;
-		for(ValAlert va:this.valAlerts)
+		for(ValEvent va:this.valAlerts)
 		{
 			if(va.RT_is_triggered())
 				return true ;
@@ -1799,12 +1812,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		rets.add(new JsProp("_value",null,vt,false,"Tag Value","Tag Value,get value is same as _pv,bug set this prop will not trigger device write(only set in memory)"));
 		if(this.valAlerts!=null)
 		{
-			for(ValAlert va:this.valAlerts)
+			for(ValEvent va:this.valAlerts)
 			{
 				String n = va.getName() ;
 				if(Convert.isNullOrEmpty(n))
 					continue ;
-				rets.add(new JsProp("_alert_"+n,null,ValAlert.class,true,"Val Alert",""));
+				rets.add(new JsProp("_alert_"+n,null,ValEvent.class,true,"Val Alert",""));
 			}
 		}
 		return rets ;
@@ -1925,7 +1938,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			boolean bfirst = true;
 			if(this.valAlerts!=null)
 			{
-				for(ValAlert va:this.valAlerts)
+				for(ValEvent va:this.valAlerts)
 				{
 					if(va.RT_is_triggered())
 					{

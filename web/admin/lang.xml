@@ -333,4 +333,6 @@
   
   <dd_node id="1" name="topic" name_cn="主题" name_en="Topic"/>
   
+  <dd_node id="1" name="cer" name_cn="证书" name_en="Certificate"/>
+  
 </dd_class>

@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.store.gdb.DBResult;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
@@ -390,19 +390,19 @@ public class StoreOutTb extends StoreOut
 			short valid = (short)(uav.isValid()?1:0);
 			String valstr = uav.getStrVal(tag.getDecDigits());
 			String valtp = tag.getValTp().getStr() ;
-			List<ValAlert> vas = tag.getValAlerts();
+			List<ValEvent> vas = tag.getValAlerts();
 			short alert_n = 0 ;
 			String alert_inf = "" ;
 			if(vas!=null&&vas.size()>0)
 			{
-				for(ValAlert va:vas)
+				for(ValEvent va:vas)
 				{
 					if(va.RT_is_triggered())
 					{
 						alert_n ++ ;
 						if(alert_n>1)
 							alert_inf+=",";
-						alert_inf += va.getAlertTitle() ;
+						alert_inf += va.getEventTitle() ;
 					}
 				}
 				if(alert_inf.length()>MAX_ALERT_INF_LEN)

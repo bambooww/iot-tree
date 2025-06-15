@@ -15,7 +15,16 @@
 	if(!PlatNodeManager.isPlatNode())
 		return ;
 
+//查看请求是否来自于 limit_plat_ip
+	String req_ip = request.getRemoteAddr() ;
+	
 	PlatNode pn = PlatNodeManager.getInstance().getNode() ;
+	
+	if(!pn.checkIPInLimit(req_ip))
+	{
+		System.out.println("req ip="+req_ip+" is no in limit config") ;
+		return ;//
+	}
 	
 	if(!Convert.checkReqEmpty(request, out, "op"))
 		return;
@@ -91,6 +100,14 @@
 	case "stations_rt_st": //station实时状态
 		tmpjo = pmgr.RT_toStatusJO() ;
 		tmpjo.write(out) ;
+		return ;
+	case "platform_users": //同步平台用户验证数据
+		if(!Convert.checkReqEmpty(request, out, "users_jarr"))
+			return;
+		JSONArray users_jarr = new JSONArray(request.getParameter("users_jarr")) ;
+		//
+		pn.updateUserRight(users_jarr) ;
+		out.print("succ") ;
 		return ;
 	default:
 		out.print("unknown op="+op) ;

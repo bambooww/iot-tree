@@ -116,9 +116,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
     <None Include="Resources\ui_close.png" />
     <None Include="Resources\multi_screen.png" />
+    <Content Include="favicon.ico" />
     <Content Include="res\accept.png" />
     <None Include="res\logo.png" />
     <None Include="res\refresh_16x16.gif" />

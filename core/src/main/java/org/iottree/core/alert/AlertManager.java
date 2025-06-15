@@ -10,7 +10,7 @@ import java.util.List;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.store.SourceJDBC;
 import org.iottree.core.store.StoreManager;
@@ -418,7 +418,7 @@ public class AlertManager  extends JSObMap
 	{
 		if(this.alertHandlers==null)
 			return ;
-		ValAlert va = ai.getValAlert() ;
+		ValEvent va = ai.getValAlert() ;
 		this.alertHandlers.forEach((id,ah)->{
 			if(!ah.isEnable())
 				return ;
@@ -430,7 +430,7 @@ public class AlertManager  extends JSObMap
 		});
 	}
 	
-	public void RT_fireAlert(ValAlert va,Object cur_val)
+	public void RT_fireAlert(ValEvent va,Object cur_val)
 	{
 		if(!queTh.isRunning())
 			return ; //discard

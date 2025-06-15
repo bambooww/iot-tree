@@ -1194,7 +1194,7 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 	@Override
 	public List<BindItem> getBindBeSelectedItems() throws Exception
 	{
-		return Arrays.asList(new BindItem("$.xx.xx[1].xy@a=2","int32"));
+		return Arrays.asList(new BindItem("$.xx.xx[1].xy@a=2","$.xx.xx[1].xy@a=2","int32"));
 	}
 
 	@Override

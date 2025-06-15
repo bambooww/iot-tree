@@ -40,6 +40,7 @@ if(uprj!=null)
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title></title>
+  <link href="./inc/favicon.ico?v=0" rel="shortcut icon" type="image/x-icon">
   <jsp:include page="head.jsp"></jsp:include>
   <style type="text/css">
   .overlay

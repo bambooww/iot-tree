@@ -14,7 +14,7 @@ import java.util.Map;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
-import org.iottree.core.basic.ValAlert;
+import org.iottree.core.basic.ValEvent;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
@@ -679,10 +679,10 @@ public class NM_TagRT2RDB  extends MNNodeMid
 	{
 		if(!RT_bInitOk)
 		{
-			if(!RT_netStartInit)
-			{
-				RT_onBeforeNetRun() ;
-			}
+			//if(!RT_netStartInit)
+			//{
+			RT_onBeforeNetRun() ;
+			//}
 			
 			if(!RT_bInitOk)
 			{
@@ -752,7 +752,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		ret.hasAlert = tag.hasAlerts() ;
 		if(ret.hasAlert)
 		{
-			List<ValAlert> alerts = tag.getValAlerts() ;
+			List<ValEvent> alerts = tag.getValAlerts() ;
 			StringBuilder alertstr = new StringBuilder() ;
 			if(alerts!=null && alerts.size()>0)
 			{

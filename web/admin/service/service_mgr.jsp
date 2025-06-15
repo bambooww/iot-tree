@@ -15,7 +15,7 @@
 %>
 <html>
 <head>
-<title>channel editor</title>
+<title></title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(700,400);
