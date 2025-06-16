@@ -228,7 +228,7 @@ if(bloc&&!tag.isSysTag())
         <td><%=addr%></td>
         <td><%=valtp_str %></td>
         <td><%=indicator_t %></td>
-        <td style="width:80px;text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
+        <td style="text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
         <td title="<%=unit_tt%>"><%=unit_t %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
@@ -239,7 +239,7 @@ if(bloc&&!tag.isSysTag())
 	if(tag.isCanWrite())
 	{
 %>
-        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" size="8" style="color:#999999"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" style="color:#999999;width:90px"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
 <%
 	}
 %>

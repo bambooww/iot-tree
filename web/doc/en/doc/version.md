@@ -1,5 +1,22 @@
 # Versions
 
+### version 1.8.0 (Plan)
+
+
+Starting from version 1.8, IOT Tree will not support JDK8 and 32-bit systems
+
+
+### version 1.7.5
+
+
+Implemented OPC UA client access again using milo1.0 library.
+
+Tag management supports import and export to facilitate the quick creation and migration of a large number of tag points.
+
+Some bug handling.
+
+
+
 ### version 1.7.1
 
 
@@ -24,10 +41,6 @@ Please refer to:
 <a href="msgnet/index.md" >Message Flow</a>
 
 <a href="msgnet/mf_for_ctrl.md" >Using message flow to implement control logic</a>
-
-### version 2.0.0 (Plan)
-
-
 
 
 ### version 1.6.1

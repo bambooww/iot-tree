@@ -217,15 +217,15 @@ if(b_tags)
     	<th sort_by="name"><wbt:g>tag</wbt:g></th>
     	<th sort_by="title"><wbt:g>title</wbt:g></th>
         <th sort_by="addr"><wbt:g>addr</wbt:g></th>
-        <th sort_by="valtp"><wbt:g>val,type</wbt:g></th>
+        <th sort_by="valtp" style="width:80px;"><wbt:g>val,type</wbt:g></th>
         <th ><wbt:g>indicator</wbt:g></th>
-        <th><wbt:g>val</wbt:g></th>
+        <th style="min-width:120px;"><wbt:g>val</wbt:g></th>
         <th><wbt:g>unit</wbt:g></th>
         <th ><wbt:g>alert</wbt:g></th>
         <th><wbt:g>update,time</wbt:g></th>
         <th><wbt:g>change,time</wbt:g></th>
         <th><wbt:g>valid</wbt:g></th>
-        <th><wbt:g>write</wbt:g></th>
+        <th style="width:110px;"><wbt:g>write</wbt:g></th>
         <th><wbt:g>oper</wbt:g></th>
 <%
 if(prj!=null)

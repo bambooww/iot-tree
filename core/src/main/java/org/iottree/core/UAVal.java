@@ -244,6 +244,27 @@ public class UAVal //extends JSObMap
 		}
 	}
 	
+	public static String transObj2StrVal(Object objv,int dec_digits)
+	{
+		if(objv==null)
+			return "" ;
+		
+		if(dec_digits>0)
+		{
+			if(objv instanceof Float || objv instanceof Double)
+			{
+				return Convert.toDecimalDigitsStr(((Number)objv).doubleValue(), dec_digits,false) ;
+			}
+		}
+//		//System.out.println(objVal.getClass()) ;
+		if(objv instanceof java.util.Date)
+		{
+			return Convert.toFullYMDHMS((java.util.Date)objv) ;
+			//return Convert.toShortYMD(d)
+		}
+		return objv.toString() ;
+	}
+	
 	
 	Object objVal = null ;
 	
@@ -408,6 +429,12 @@ public class UAVal //extends JSObMap
 			{
 				return Convert.toDecimalDigitsStr(((Number)objVal).doubleValue(), dec_digits,false) ;
 			}
+		}
+//		//System.out.println(objVal.getClass()) ;
+		if(objVal instanceof java.util.Date)
+		{
+			return Convert.toFullYMDHMS((java.util.Date)objVal) ;
+			//return Convert.toShortYMD(d)
 		}
 		return objVal.toString() ;
 	}

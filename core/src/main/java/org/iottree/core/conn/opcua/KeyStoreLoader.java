@@ -56,7 +56,6 @@ public class KeyStoreLoader
 					.setApplicationUri(ConnPtOPCUA.CLIENT_APP_URI)
 					.addDnsName(hostn).setValidityPeriod(Period.ofYears(10));
 			// .addIpAddress("127.0.0.1")
-			
 
 			// Get as many hostnames and IP addresses as we can listed in the
 			// certificate.

@@ -1659,7 +1659,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			else if(ch.isConnBind())
 			{
 				ConnPtBinder cpt = (ConnPtBinder)ch.getConnPt();
-				cpt.RT_writeValByBind(this.getNodeCxtPathIn(ch), v.toString());
+				
+				//ValTP tp = this.getValTp();
+				String sssv = UAVal.transObj2StrVal(v,-1) ;
+				//Object strv = UAVal..transStr2ObjVal(tp, strv);
+				cpt.RT_writeValByBind(this.getNodeCxtPathIn(ch), sssv);//v.toString());
 				return true;
 			}
 			else

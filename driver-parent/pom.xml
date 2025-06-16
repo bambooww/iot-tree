@@ -24,7 +24,7 @@
   </properties>
   
   <modules>
-    <module>driver-opc</module>
+    <!-- <module>driver-opc</module> -->
     <module>driver-common</module>
   </modules>
   

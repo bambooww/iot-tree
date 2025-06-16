@@ -5,7 +5,6 @@ import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
@@ -28,25 +27,25 @@ import org.eclipse.milo.opcua.sdk.client.nodes.UaDataTypeNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableTypeNode;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.OpcUaDataType;
 import org.eclipse.milo.opcua.stack.core.UaException;
-import org.eclipse.milo.opcua.stack.core.security.FileBasedTrustListManager;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
-import org.eclipse.milo.opcua.stack.core.security.TrustListManager;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.ULong;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 import org.eclipse.milo.opcua.stack.core.types.structured.ApplicationDescription;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
-import org.eclipse.milo.opcua.stack.core.types.structured.WriteValue;
 import org.iottree.core.Config;
 import org.iottree.core.UACh;
 import org.iottree.core.UANode;
@@ -804,7 +803,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 	{
 		NodeId pnid = null;
 		if (Convert.isNullOrEmpty(pnode_id))
-			pnid = Identifiers.RootFolder;
+			pnid = NodeIds.RootFolder;
 		else
 			pnid = NodeId.parse(pnode_id);
 		if (pnid == null)
@@ -963,7 +962,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 	public static UaNode findUaNodeByPath(OpcUaClient client, String[] path) throws UaException
 	{
-		NodeId nid = Identifiers.RootFolder;
+		NodeId nid = NodeIds.RootFolder;
 
 		UaNode pn = client.getAddressSpace().getNode(nid);
 		if (pn == null)
@@ -995,7 +994,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 	{
 		NodeId nid = null;
 		if (Convert.isNullOrEmpty(nodeid))
-			nid = Identifiers.RootFolder;
+			nid = NodeIds.RootFolder;
 		else
 			nid = NodeId.parse(nodeid);
 		if (nid == null)
@@ -1019,7 +1018,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 		boolean bvar = n instanceof UaVariableNode;
 
-		System.out.println(nid.toParseableString()) ;
+		//System.out.println(nid.toParseableString()) ;
 		w.write("{\"id\":\"" + nid.toParseableString() + "\"");
 		w.write(",\"nc\":" + n.getNodeClass().getValue());
 		if (bvar)
@@ -1381,8 +1380,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 				UShort us = nodeid.getNamespaceIndex();
 				Object id = nodeid.getIdentifier();
 				//DataValue v = uaClient.readValue(maxAge, timestampsToReturn, nodeId)
-				DataValue v = uaClient.readValue(0.0, TimestampsToReturn.Both, nodeid);//.get();
-
+				DataValue v = uaClient.readValue(0.0, TimestampsToReturn.Both, nodeid);//.get()
 				updateTagVal(ch, tag2n.getKey(), v);
 			}
 		}
@@ -1395,6 +1393,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 			lastReadData = System.currentTimeMillis();
 		}
 	}
+	
+	private transient HashMap<String,DataValue> lastTagP2GoodDV = new HashMap<>() ;
 
 	private void updateTagVal(UACh ch, String tagpath, DataValue v) throws Exception
 	{
@@ -1415,22 +1415,22 @@ public class ConnPtOPCUA extends ConnPtBinder
 		// itemval.getValue().
 		if (sc.isGood())
 		{
+			lastTagP2GoodDV.put(tagpath,v) ;
 			long chgdt = v.getServerTime().getJavaTime();
 			// itemval.
 			// UAVal uav =
 			// UAVal.createByStrVal(tag.getValTp(),itemval.getLastValueStr(),chgdt,chgdt);
 			// tag.RT_setUAVal(uav);
-//			if(objv instanceof DateTime)
-//			{
-//				
-//			}
+			if(objv instanceof DateTime)
+			{
+				
+			}
 			String strv = objv.toString() ;
 			OpcUaDataType dtp = vvt.getDataType().get() ;
 			if("DateTime".equals(dtp.name()))
 			{
-				return;
-				//DateTime dt = (DateTime) vvt.getValue();
-				//dt.getJavaDate() ;
+				DateTime dt = (DateTime) vvt.getValue();
+				strv = Convert.toFullYMDHMS(dt.getJavaDate()) ;
 			}
 			
 			tag.RT_setValRawStr(strv, true, chgdt);
@@ -1495,6 +1495,46 @@ public class ConnPtOPCUA extends ConnPtBinder
 			uaClient = null;
 		}
 	}
+	
+	private static Object transStr2Obj(OpcUaDataType dt,String strv)
+	{
+		switch(dt)
+		{
+		case Boolean://(1, Boolean.class),
+			return "true".equalsIgnoreCase(strv) || "1".equals(strv) ;
+		case SByte://(2, Byte.class),
+			return Byte.parseByte(strv) ;
+		case Byte://(3, UByte.class),
+			return UByte.valueOf(strv) ;
+		case Int16://(4, Short.class),
+			return Short.parseShort(strv) ;
+		case UInt16://(5, UShort.class),
+			return UShort.valueOf(strv) ;
+		case Int32://(6, Integer.class),
+			return Integer.parseInt(strv) ;
+		case UInt32://(7, UInteger.class),
+			return UInteger.valueOf(strv) ;
+		case Int64://(8, Long.class),
+			return Long.parseLong(strv) ;
+		case UInt64://(9, ULong.class),
+			return ULong.valueOf(strv) ;
+		case Float://(10, Float.class),
+			return Float.parseFloat(strv) ;
+		case Double://(11, Double.class),
+			return Double.parseDouble(strv) ;
+		case String://(12, String.class),
+			return strv ;
+		case DateTime://(13, ),
+			return new DateTime(Convert.toCalendar(strv).toInstant()) ;
+		case Guid://(14, UUID.class),
+			return UUID.fromString(strv) ;
+		case ByteString://(15, ByteString.class),
+			byte[] bs = Convert.hexStr2ByteArray(strv) ;
+			return ByteString.of(bs) ;
+		default:
+			return null ;
+		}
+	}
 
 	public void RT_writeValByBind(String tagpath, String strv)
 	{
@@ -1506,16 +1546,35 @@ public class ConnPtOPCUA extends ConnPtBinder
 		NodeId nid = tag2nodeid.get(tagpath);
 		if (nid == null)
 			return;
-
-		Variant v = new Variant(Integer.parseInt(strv));
-		DataValue dataValue = new DataValue(v, null, null);
-		WriteValue wv = new WriteValue(nid,null,"",dataValue);
+		DataValue lastdv = lastTagP2GoodDV.get(tagpath) ;
+		if(lastdv==null)
+			return ;
+		
+		OpcUaDataType dt = lastdv.getValue().getDataType().get() ;
+		if(dt==null)
+			return ;
+		Object objv = transStr2Obj(dt,strv) ;
+		if(objv==null)
+			return ;
+		
+		Variant v = new Variant(objv);
+		DataValue dataValue = new DataValue(v,StatusCode.GOOD,null); //timestamp may not allowed
+		//WriteValue wv = new WriteValue(nid,null,"",dataValue);
 		try
 		{
 			//StatusCode statusCode = uaClient.write(Arrays.asList(wv)).getResults()[0] ;
-			StatusCode statusCode = uaClient.writeValues(Arrays.asList(nid), Arrays.asList(dataValue)).get(0);
-			boolean r = statusCode.isGood();
-			System.out.println("w result=" + r);
+			List<StatusCode> scs = uaClient.writeValues(Arrays.asList(nid), Arrays.asList(dataValue)) ;
+			if(scs!=null && scs.size()>0)
+			{
+				StatusCode statusCode = scs.get(0);
+				boolean r = statusCode.isGood();
+				if(log.isDebugEnabled())
+				{
+					log.debug("w result=" + r+" status value="+statusCode.getValue()+" wstr="+strv+" objv="+objv+" objvt="+objv.getClass().getCanonicalName());
+					if(!r)
+						log.debug(" status code="+statusCode.toString());
+				}
+			}
 		}
 		catch ( Exception e)
 		{
