@@ -75,6 +75,20 @@ public class ConnManager
 	
 	public ConnProvider getOrCreateConnProviderSingle(String prjid,String tp) throws Exception
 	{
+		ConnProvider rcp = getConnProviderSingle(prjid,tp) ; 
+		if(rcp!=null)
+			return rcp ;
+		//create
+		rcp = ConnProvider.newInstance(tp);
+		if(!rcp.isSingleProvider())
+			return null ;
+		rcp.setName(tp);
+		rcp = setConnProvider(prjid,rcp);
+		return rcp ;
+	}
+	
+	public ConnProvider getConnProviderSingle(String prjid,String tp)
+	{
 		List<ConnProvider> cps = getConnProviders(prjid) ;
 		ConnProvider rcp = null ; 
 		for(ConnProvider cp:cps)
@@ -92,13 +106,7 @@ public class ConnManager
 				return null ;
 			return rcp ;
 		}
-		//create
-		rcp = ConnProvider.newInstance(tp);
-		if(!rcp.isSingleProvider())
-			return null ;
-		rcp.setName(tp);
-		rcp = setConnProvider(prjid,rcp);
-		return rcp ;
+		return null ;
 	}
 	
 	public ConnProvider getConnProviderById(String repid,String cpid) throws Exception
@@ -137,6 +145,8 @@ public class ConnManager
 		}
 		return null ;
 	}
+	
+	
 	
 	/**
 	 * get connproviders config file

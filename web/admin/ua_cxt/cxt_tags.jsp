@@ -119,7 +119,7 @@ width:40px;height:40px;margin: 5px;
 font-size: 13px;
 background-color: #eeeeee
 }
-
+.layui-elem-quote {height:50px;}
 .rmenu_item:hover {
 	background-color: #373737;
 }
@@ -166,13 +166,16 @@ text-overflow:ellipsis;
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
  <blockquote class="layui-elem-quote ">&nbsp;
- <div style="left:20px;top:5px;position:absolute;font:bold;font-size: 17"><span title=""><%=node.getNodePath() %></span>  <span>[<wbt:g>tags_num</wbt:g>:</span><span id="tags_num"></span>]
+ <div style="left:20px;top:2px;position:absolute;font-weight:bold;font-size:14px;"><span title=""><%=node.getNodePath() %></span>  <span>[<wbt:g>tags_num</wbt:g>:</span><span id="tags_num"></span>]
  <a href="javascript:bind_ext('<%=node.getNodePath() %>')" id="node_ext_<%=node.getId() %>"  title="Set extended properties" style="<%=ext_color%>"><i class="fa fa fa-paperclip" aria-hidden="true"></i></a>
  <a href="javascript:node_access('<%=node.getNodePath() %>')" id="node_access_<%=node.getId() %>"  title="Access" ><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
  
  </div>
-  <div style="left:20px;top:25px;position:absolute;font-size: 15px;"><%=node.getNodePathTitle() %></div>
-   <div style="float: right;margin-right:10px;font: 15px solid;color:#fff5e2">
+  <div style="left:20px;top:22px;position:absolute;font-size:13px;">
+  <%=node.getNodePathTitle() %>
+  &nbsp;<input id="search_txt" style="width:100px;height:25px;border:1px solid #ccc;" onkeydown="on_search_key()"/><button style="color:#333;border:1px solid #ccc;height:25px;width:25px;" onclick="on_search()"><i class="fa fa-search"></i></button>
+  </div>
+  <div style="float: right;margin-right:10px;font:15px solid;color:#fff5e2;top:10px;margin-top:8px;border:0px solid;">
    
    <%
    if(b_tags)
@@ -180,35 +183,38 @@ text-overflow:ellipsis;
  	if(true) //(bdevdef||!ref_locked)
  	{
  %>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>&nbsp;&nbsp;
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="imp_tag()"><wbt:g>imp,tag</wbt:g></button>&nbsp;&nbsp;
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="exp_tag()"><wbt:g>export,tag</wbt:g></button>&nbsp;&nbsp;
+
 <%
  	}
 %>
- 	<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="add_or_modify_tag('',true)">+<wbt:g>add,middle,tag</wbt:g></button>&nbsp;&nbsp;
+<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>
+ 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="add_or_modify_tag('',true)">+<wbt:g>add,middle,tag</wbt:g></button>
+ 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="imp_tag()"><wbt:g>imp,tag</wbt:g></button>
+ 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="exp_tag()"><wbt:g>export,tag</wbt:g></button>
  	<%--
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
-  <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="<wbt:g>hide,system,tags</wbt:g>|<wbt:g>show,system,tags</wbt:g>" />
-  <input type="checkbox" id="show_sub"  name="show_sub" lay-filter="show_sub" lay-skin="switch" lay-text="<wbt:g>hide,sub,tags</wbt:g>|<wbt:g>show,sub,tags</wbt:g>" />
   
-  &nbsp;&nbsp;<button type="button" class="layui-btn layui-btn-sm layui-border-blue" onclick="to_excel()"><i class="fa fa-arrow-right"></i>Excel</button>
+  <button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="to_excel()"><i class="fa fa-arrow-right"></i>Excel</button>
   
+
 <%
    }
 %>
  </div>
 </blockquote>
+<div style="position: absolute;right:1px;top:-8px;">
+  <input type="checkbox" id="show_sys"  name="show_sys" lay-filter="show_sys" lay-skin="switch" lay-text="<wbt:g>hide,system,tags</wbt:g>|<wbt:g>show,system,tags</wbt:g>" />
+  <input type="checkbox" id="show_sub"  name="show_sub" lay-filter="show_sub" lay-skin="switch" lay-text="<wbt:g>hide,sub,tags</wbt:g>|<wbt:g>show,sub,tags</wbt:g>" />
+</div>
 <%
 if(b_tags)
 {
 %>
-<div id="tb_tags" style="position:absoluate;bottom:120px;top:110px;height:300px;overflow-y: auto;">
-<table class="oc_div_list" style="margin-top:10px;width:99%" id="tb_cur" >
+<div id="tb_tags" style="position:absoluate;bottom:120px;top:100px;height:300px;overflow-y: auto;">
+<table class="oc_div_list" style="margin-top:0px;width:99%" id="tb_cur" >
   <thead>
      <tr>
-
      <th style="width:20px;text-align: center;">
         <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
 </th>
@@ -219,7 +225,7 @@ if(b_tags)
         <th sort_by="addr"><wbt:g>addr</wbt:g></th>
         <th sort_by="valtp" style="width:80px;"><wbt:g>val,type</wbt:g></th>
         <th ><wbt:g>indicator</wbt:g></th>
-        <th style="min-width:120px;"><wbt:g>val</wbt:g></th>
+        <th style="min-width:120px;text-align:right;"><wbt:g>val</wbt:g></th>
         <th><wbt:g>unit</wbt:g></th>
         <th ><wbt:g>alert</wbt:g></th>
         <th><wbt:g>update,time</wbt:g></th>
@@ -265,6 +271,8 @@ var b_sys = <%=bsys%>;
 var b_sub = <%=bsub%>;
 var sort_by=null ;
 
+var search_txt = null ;
+
 var tags_num = 0;
 $("#tags_num").html(tags_num);
 var form = null;
@@ -301,6 +309,17 @@ document.oncontextmenu = function() {
     return false;
 }
 
+function on_search()
+{
+	search_txt = $("#search_txt").val()||"" ;
+	refresh_tags();
+}
+
+function on_search_key()
+{
+	if(event.keyCode==13)
+		on_search();
+}
 
 var b_ctrl_down = false;
 var b_shift_down=false;
@@ -993,9 +1012,9 @@ function show_ele_html(n,v,chklen,title)
 	var ele = document.getElementById(n) ;
 	if(ele==null||ele==undefined)
 		return ;
-	if(chklen&&v!=null&&v.length>20)
+	if(chklen&&v!=null&&v.length>40)
 	{
-		ele.innerHTML = "<span title='"+title+"'>"+v.substr(0,20)+"...</span>";
+		ele.innerHTML = "<span title='"+title+"'>"+v.substr(0,40)+"...</span>";
 	}
 	else if(title)
 	{
@@ -1024,7 +1043,7 @@ function refresh_tags()
 	if(!b_tags)
 		return ;
 	dlg.loading(true);
-	send_ajax("cxt_tags_tb_ajax.jsp",{path:cxt_path,sys:b_sys,sub:b_sub,sortby:sort_by},function(bsucc,ret){
+	send_ajax("cxt_tags_tb_ajax.jsp",{path:cxt_path,sys:b_sys,sub:b_sub,sortby:sort_by,search_txt:search_txt},function(bsucc,ret){
 		dlg.loading(false);
 		$("#div_list_bd").html(ret);
 		init_tr();

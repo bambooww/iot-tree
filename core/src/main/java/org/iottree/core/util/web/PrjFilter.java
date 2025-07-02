@@ -1,6 +1,8 @@
 package org.iottree.core.util.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.List;
@@ -16,11 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.iottree.core.ConnManager;
+import org.iottree.core.ConnPt;
 import org.iottree.core.UAHmi;
+import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
+import org.iottree.core.conn.ConnPtHTTPSer;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -67,6 +73,37 @@ public class PrjFilter implements Filter
 	private boolean isWriteTagCutoff(UAPrj prj)
 	{
 		return prj.getOrDefaultPropValueBool("prj_restful", "wtag_cutoff", false) ;
+	}
+	
+	public static final String CONN_HTTPSER = "_conn_httpser" ;
+	
+	private boolean doConnHttpSer(String path,HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException
+	{
+		List<String> ss = Convert.splitStrWith(path, "/") ;
+		if(ss.size()!=3)
+			return false;
+		if(!CONN_HTTPSER.contentEquals(ss.get(1)))
+			return false;
+		String prjn = ss.get(0);
+		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
+		if(prj==null)
+			return false;
+		String connptn = ss.get(2) ;
+		ConnPtHTTPSer cpt_hs = prj.getConnPtHTTPSerByName(connptn);
+		if(cpt_hs==null)
+			return false;
+		
+		byte[] bs = readPostBS(request, response) ;
+		try
+		{
+			cpt_hs.onRecvedFromConn(null, bs);
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+		}
+		return true;
 	}
 	
 	@Override
@@ -127,6 +164,11 @@ public class PrjFilter implements Filter
 			if(qs!=null)
 				tmpu += "?"+qs ;
 			req.getRequestDispatcher(tmpu).forward(req, resp);
+			return ;
+		}
+		
+		if(doConnHttpSer(uri, req, resp))
+		{
 			return ;
 		}
 		
@@ -283,6 +325,36 @@ public class PrjFilter implements Filter
 	
 	}
 	
+	
+	protected byte[] readPostBS(HttpServletRequest request, HttpServletResponse response) 
+	        throws ServletException, IOException {
+	    
+	    // 使用ByteArrayOutputStream动态接收数据
+	    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	    
+	    // 设置最大允许大小（例如10MB）
+	    final int MAX_SIZE = 5 * 1024 * 1024;
+	    
+	    try (InputStream inputStream = request.getInputStream()) {
+	        byte[] tempBuffer = new byte[4096]; // 4KB缓冲区
+	        int bytesRead;
+	        int totalBytes = 0;
+	        
+	        while ((bytesRead = inputStream.read(tempBuffer)) != -1) {
+	            totalBytes += bytesRead;
+	            
+	            // 检查大小限制
+	            if (totalBytes > MAX_SIZE) {
+	                response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, 
+	                                 "Request payload exceeds 10MB limit");
+	                return null;
+	            }
+	            
+	            buffer.write(tempBuffer, 0, bytesRead);
+	        }
+	    }
+	    return buffer.toByteArray();
+	}
 	
 	protected boolean doPut(HttpServletRequest req, HttpServletResponse resp,UATag tag,UAPrj prj,StringBuilder failedr) throws ServletException, IOException
 	{

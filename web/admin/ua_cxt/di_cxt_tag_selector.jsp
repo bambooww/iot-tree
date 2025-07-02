@@ -63,12 +63,12 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		table{border-collapse:collapse;}
 		body,td{font-size:12px;cursor:default;}
 </style>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
+
 <script>
-	dlg.resize_to(900,600) ;
+	dlg.resize_to(1000,600) ;
 </script>
 </head>
 <body marginwidth="0" marginheight="0" margin="0">
@@ -78,7 +78,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 %>
 <span id="updt"></span><span id="log_inf"></span>
 <div style="float:left;overflow: auto;height: 90%;width:70%">
-Tags  <input id="search_txt" style="width:20%;" /> <button>Search</button>
+Tags  <input id="search_txt" style="width:20%;"  onkeydown="on_search_key()"/> <button onclick="on_search()"><i class="fa fa-search"></i></button>
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <td width='2%'></td>
@@ -89,7 +89,7 @@ Tags  <input id="search_txt" style="width:20%;" /> <button>Search</button>
   <td width='6%'>Value Type</td>
  </tr>
  <tbody id="tag_list">
-<%
+<%--
 	for(UATag tg : tags)
 	{
 		String pathn = tg.getNodeCxtPathIn(ntags) ;
@@ -109,7 +109,8 @@ Tags  <input id="search_txt" style="width:20%;" /> <button>Search</button>
   </tr>
 <%
 	}
-%>
+--%>
+
 </tbody>
 </table>
 </div>
@@ -149,6 +150,7 @@ var path="<%=path%>" ;
 var rowbgcolor = '#ffffff';
 var selVal = "<%=val%>" ;
 var bind_tag_only = <%=bind_tag_only%>;
+var search_txt = "" ;
 
 function mouseover(sel)
 {
@@ -158,6 +160,30 @@ function mouseover(sel)
 function mouseout(sel)
 {
  sel.style.backgroundColor=rowbgcolor;
+}
+
+function update_list()
+{
+	dlg.loading(true);
+	send_ajax("di_cxt_tag_ajax.jsp",{path:path,val:selVal,search_txt:search_txt},(bsucc,ret)=>{
+		dlg.loading(false);
+		$("#tag_list").html(ret) ;
+	}) ;
+}
+
+update_list();
+
+function on_search()
+{
+	search_txt = $("#search_txt").val()||"" ;
+	update_list();
+}
+
+function on_search_key()
+{
+	if(event.keyCode==13)
+		on_search();
+		
 }
 
 function clk_sel(sel)

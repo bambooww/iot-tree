@@ -32,6 +32,8 @@ String using_lan = Lan.getUsingLang() ;
 		hmi_main_path = hmi_main.getNodePath();
 	}
 	String path = rep.getNodePath() ;
+	
+	boolean hide_top = "true".equalsIgnoreCase(request.getParameter("hide_top")) ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -521,25 +523,30 @@ function open_doc()
 		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
 		[<%=rep.getTitle()%>]
 		</div>
-		<div class="top_toolbox top_tool"  style="left:40%;width:120px">
-		 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
-				  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-				  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-				  <%--
-				  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
-				  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
-				  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
-				  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
-				  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
-				 --%>
-		</div>
+<%
+if(!hide_top)
+{
+%>
+	<div class="top_toolbox top_tool"  style="left:40%;width:120px">
+	  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+	  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+	  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+	</div>
+<%
+}
+
+if(!hide_top)
+{
+%>
 <div class="top_toolbox top_tool" style="left:60%;width:110px;">
 		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
 		 	&nbsp;&nbsp;&nbsp;
 		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
 </div>
 <%
-if(rep.isPrjPStationIns())
+}
+
+if(!hide_top && rep.isPrjPStationIns())
 {
 %><div class="top_toolbox top_tool" style="left:70%;width:210px;">
 <span id="show_remote_station"  style="color:#76d170" title="manager remote station" onclick="show_remote_station()">Remote Station <i class="fa-solid fa-satellite-dish fa-lg" ></i></span>
@@ -691,6 +698,7 @@ if(rep.isPrjPStationIns())
     
     
 <script>
+dlg.dlg_top=true;
 var repid="<%=prjid%>";
 var prjid="<%=prjid%>";
 var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
@@ -706,6 +714,7 @@ var connpro_menu = [
 	{content:'Tcp <wbt:g>server_e</wbt:g>',callback:function(){edit_cp("tcp_server","");}},
 	{content:'<i class="fa fa-link"></i> <wbt:g>bind_conn</wbt:g>',header: true},
 //	{content:'OPC UA Client',callback:function(){edit_cpt("opc_ua","","");}},
+{content:'OPC UA <wbt:g>client</wbt:g>',callback:function(){edit_cpt("opc_ua","","");}},
 <%
 	if(ConnProvider.hasConnProvider("opc_da"))
 	{
@@ -714,12 +723,14 @@ var connpro_menu = [
 <%
 	}
 %>
-{content:'OPC UA <wbt:g>client</wbt:g>',callback:function(){edit_cpt("opc_ua","","");}},
+
 //	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'<i class="fa fa-link"></i> <wbt:g>msg_conn</wbt:g>',header: true},
-	{content:'HTTP Url',callback:function(){
+	{content:'HTTP Client',callback:function(){
 		edit_cp("http","");
-		//dlg.msg("support later")
+	}},
+	{content:'HTTP Server',callback:function(){
+		edit_cpt("http_ser","","");
 	}},
 	{content:'MQTT',callback:function(){
 		edit_cp("mqtt","","");

@@ -24,6 +24,8 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.PropItem.ValOpt;
+import org.iottree.core.conn.ConnProHTTPSer;
+import org.iottree.core.conn.ConnPtHTTPSer;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
@@ -33,7 +35,7 @@ import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.MNNode;
-import org.iottree.core.msgnet.nodes.NS_TagValChgTrigger;
+import org.iottree.core.msgnet.nodes.NS_TagChgTrigger;
 import org.iottree.core.node.PrjShareManager;
 import org.iottree.core.node.PrjSharer;
 import org.iottree.core.res.IResCxt;
@@ -826,6 +828,15 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	public List<ConnProvider> getConnProviders() //throws Exception
 	{
 		return ConnManager.getInstance().getConnProviders(this.getId());
+	}
+	
+	
+	public ConnPtHTTPSer getConnPtHTTPSerByName(String conn_ptn)
+	{
+		ConnProvider cp = ConnManager.getInstance().getConnProviderSingle(this.getId(), ConnProHTTPSer.TP) ;
+		if(cp==null)
+			return null ;
+		return (ConnPtHTTPSer)cp.getConnByName(conn_ptn) ;
 	}
 
 	public UAHmi findHmiById(String id)
@@ -2094,9 +2105,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				continue ;
 			for(MNNode node:net.getNodeMapAll().values())
 			{
-				if(node instanceof NS_TagValChgTrigger && node.isEnable())
+				if(node instanceof NS_TagChgTrigger && node.isEnable())
 				{
-					NS_TagValChgTrigger nnn = (NS_TagValChgTrigger)node;
+					NS_TagChgTrigger nnn = (NS_TagChgTrigger)node;
 					List<String> ps = nnn.getTagPaths() ;
 					if(ps==null||ps.size()<=0)
 						continue ;
@@ -2113,9 +2124,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 	
-	void RT_onTagNetMon(UATag tag,boolean cur_valid,Object curv)
-	{
-		MNManager.getInstance(this).RT_TAG_chged(tag,cur_valid, curv);
+	void RT_onTagValChgedNetMon(UATag tag,boolean cur_valid,Object curv)
+	{//RT_TAG_updt_valnotchg
+		MNManager.getInstance(this).RT_TAG_valchged(tag,cur_valid, curv);
+	}
+	
+	void RT_onTagValNotChgUpdateNetMon(UATag tag)
+	{//RT_TAG_updt_valnotchg
+		MNManager.getInstance(this).RT_TAG_updt_valnotchg(tag);
 	}
 
 	public void RT_onStationRecved(PStation pstation,String key,byte[] zipdata,JSONObject rt_jo,boolean b_his)

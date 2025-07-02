@@ -33,13 +33,13 @@
 	UAPrj prj = (UAPrj)mnc ;
 	String prj_path = "/"+prj.getName() ;
 	MNBase item =net.getItemById(itemid) ;
-	if(item==null || !(item instanceof NS_TagValChgTrigger))
+	if(item==null || !(item instanceof NS_TagChgTrigger))
 	{
 		out.print("no item found") ;
 		return ;
 	}
 	
-	NS_TagValChgTrigger stb_node= (NS_TagValChgTrigger)item ;
+	NS_TagChgTrigger stb_node= (NS_TagChgTrigger)item ;
 	
 	boolean ignore_invalid = stb_node.isIgnoreInvalid() ;
 	List<String> tagpaths = stb_node.getTagPaths() ;
@@ -48,11 +48,15 @@
  <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">Ignore Invalid:</span>
     </div>
-	  <div class="layui-input-inline" style="width: 75%;">
+	  <div class="layui-input-inline" style="width: 50px;">
 	    <input type="checkbox" id="ignore_invalid" class="layui-input" lay-skin="primary" />
-	    </div>
 	  </div>
- </div>
+	  <div class="layui-form-mid"><span style="white-space: nowrap;">Ignore Update (Value Not Changed):</span>
+    </div>
+	  <div class="layui-input-inline" style="width: 50px;">
+	    <input type="checkbox" id="ignore_update" class="layui-input" lay-skin="primary" />
+	  </div>
+</div>
  
  <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">Project Tags:</span>
@@ -122,6 +126,7 @@ function get_pm_jo()
 {
 	let ret = {tag_paths:tag_paths} ;
 	ret.ignore_invalid = $("#ignore_invalid").prop("checked") ;
+	ret.ignore_update = $("#ignore_update").prop("checked") ;
 	return ret ;
 }
 
@@ -129,6 +134,7 @@ function set_pm_jo(jo)
 {
 	tag_paths = jo.tag_paths;
 	$("#ignore_invalid").prop("checked",jo.ignore_invalid||true) ;
+	$("#ignore_update").prop("checked",jo.ignore_update||false) ;
 }
 
 function get_pm_size()

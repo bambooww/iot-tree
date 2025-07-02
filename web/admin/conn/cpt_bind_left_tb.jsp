@@ -27,9 +27,7 @@ function set_or_add_bind_item(bpath,tpath)
 	map_set_to_tr(tr,bpath);
 }
 
-
 var cur_lefts_trs = [] ;
-
 
 function on_left(tr)
 {
@@ -99,7 +97,8 @@ function tb_get_left_vals()
 	for(var tr of cur_lefts_trs)
 	{
 		var tn = $(tr) ;
-		var p = tn.attr("nid");
+		var p = tn.attr("nid")||tn.attr("path");
+		//var p = tn.attr("path");
 		var t = tn.attr("title") ;
 		var v = p + ":"+tn.attr("vt") ;
 		
@@ -255,10 +254,7 @@ function show_parent_no_ajax()
 		for(var ob of mbs)
 			set_or_add_bind_item(ob.bindp,ob.tagp)
 	}
-	
-	
 }
-
 
 var ROW_MAX_LEN = 30 ;
 

@@ -678,6 +678,7 @@ function map_or_not(b)
 			vs = tb_get_left_vals() ;
 		else
 			vs = tree_get_left_vals() ;
+		//console.log(vs) ;
 		if(vs.length<=0)
 		{
 			dlg.msg("<w:g>pls,select,item,left</w:g>") ;

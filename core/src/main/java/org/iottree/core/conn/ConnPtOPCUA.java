@@ -1594,6 +1594,3 @@ public class ConnPtOPCUA extends ConnPtBinder
 		return false;
 	}
 }
-
-
-

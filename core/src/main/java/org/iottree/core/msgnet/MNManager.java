@@ -931,7 +931,7 @@ public class MNManager
 		}
 	}
 	
-	public void RT_TAG_chged(UATag tag,boolean cur_valid,Object curv)
+	public void RT_TAG_valchged(UATag tag,boolean cur_valid,Object curv)
 	{
 		for(MNNet net :this.listNets())
 		{
@@ -939,12 +939,25 @@ public class MNManager
 				continue ;
 			for(MNNode node:net.getNodeMapAll().values())
 			{
-				if(node instanceof NS_TagValChgTrigger && node.isEnable())
-					((NS_TagValChgTrigger)node).RT_fireByChgValTrigger(tag,cur_valid,curv) ;
+				if(node instanceof NS_TagChgTrigger && node.isEnable())
+					((NS_TagChgTrigger)node).RT_fireValChg(tag,cur_valid,curv) ;
 			}
 		}
 	}
 	
+	public void RT_TAG_updt_valnotchg(UATag tag)
+	{
+		for(MNNet net :this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_TagChgTrigger && node.isEnable())
+					((NS_TagChgTrigger)node).RT_fireDtUpValNotChg(tag) ;
+			}
+		}
+	}
 	
 	public OutCallFunc getOutCallFunc(String net_name,String func)
 	{

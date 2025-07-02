@@ -21,14 +21,14 @@
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/oc/oc.js"></script>
 <script>
-dlg.resize_to(500,500);
+dlg.resize_to(600,500);
 </script>
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" action="" onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label">Item:</label>
-    <div  class="layui-input-block">
+    <div class="layui-input-inline" style="width:400px;">
       <input type="text" id="binded_id" name="binded_id" readonly="readonly" lay-verify="required" autocomplete="off" class="layui-input" >
     </div>
   </div>
@@ -50,9 +50,10 @@ if(!bind_tag_only)
   </div>
    <div class="layui-form-item" id="divtag">
     <label class="layui-form-label">Tag:</label>
-    <div class="layui-input-inline">
-      <input type="text" id="tag" name="tag" required  lay-verify="required" autocomplete="off" class="layui-input" onclick="sel_tag()">
+    <div class="layui-input-inline" style="width:400px;">
+      <input type="text" id="tag" name="tag" lay-verify="required" autocomplete="off" class="layui-input" >
     </div>
+    <div class="layui-form-mid"><button onclick="sel_tag()" class="layui-btn layui-btn-sm layui-btn-primary">...</button></div>
   </div>
   <div class="layui-form-item" id="divtjs" style="display:none;">
     <label class="layui-form-label">Client Script:</label>

@@ -1313,6 +1313,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			if(this.curVal.isValid()&&v.equals(this.curVal.getObjVal()))
 			{
 				this.curVal.setValUpDT(cdt);//.setVal(true, v, cdt);
+				
+				if(bNetMon)
+					RT_fireValNotChgUpdateNetMon();
 				return ;
 			}
 		}
@@ -1335,6 +1338,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			if(!this.curVal.isValid() && err.equals(this.curVal.getErr()))
 			{
 				this.curVal.setValUpDT(System.currentTimeMillis());
+				
+				if(bNetMon)
+					RT_fireValNotChgUpdateNetMon();
+				
 				return this.curVal ;
 			}
 		}
@@ -1411,6 +1418,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			{
 				RT_chkEvent(true) ;
 			}
+			
+			if(bNetMon)
+				RT_fireValNotChgUpdateNetMon();
+			
 			return curVal;
 		}
 		//uaVal.setVal(false, null, System.currentTimeMillis());
@@ -1421,9 +1432,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			uav = new UAVal(false,null,updt,chgdt) ;
 		
 		RT_setUAVal(uav);
-		
-		
-		
 		//RT_chkStore() ;
 		return uav ;
 	}
@@ -1497,7 +1505,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		if(bNetMon)
-			RT_fireNetMon(uav.isValid(),uav.getObjVal()) ;
+			RT_fireValChgedNetMon(uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	private void RT_setUAValOnly(UAVal uav)
@@ -1506,7 +1514,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.curVal = uav ;
 		
 		if(bNetMon)
-			RT_fireNetMon(uav.isValid(),uav.getObjVal()) ;
+			RT_fireValChgedNetMon(uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	public void RT_setUAValOnlyAlert(UAVal uav)
@@ -1521,14 +1529,21 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		if(bNetMon)
-			RT_fireNetMon(bvalid,uav.getObjVal()) ;
+			RT_fireValChgedNetMon(bvalid,uav.getObjVal()) ;
 	}
 	
-	private void RT_fireNetMon(boolean bvalid,Object curv)
+	private void RT_fireValChgedNetMon(boolean bvalid,Object curv)
 	{
 		UAPrj prj = this.getBelongToPrj() ;
 		if(prj!=null)
-			prj.RT_onTagNetMon(this,bvalid,curv);
+			prj.RT_onTagValChgedNetMon(this,bvalid,curv);
+	}
+	
+	private void RT_fireValNotChgUpdateNetMon()
+	{
+		UAPrj prj = this.getBelongToPrj() ;
+		if(prj!=null)
+			prj.RT_onTagValNotChgUpdateNetMon(this);
 	}
 	/**
 	 * driver get value,may has transfer

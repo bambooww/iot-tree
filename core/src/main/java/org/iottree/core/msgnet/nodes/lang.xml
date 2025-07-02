@@ -66,9 +66,9 @@
 		/>
 		
 	
-	<dd_node id="1" name="tag_valchg" name_cn="标签值变化触发器" name_en="Tag Value Change Trigger"
-		desc_cn="通过选择的标签，监听标签在运行过程中值变化，并根据一定策略产生消息输出"
-		desc_en="By selecting a tag, listen for changes in the value of the tag during runtime, and generate message output based on a certain strategy"
+	<dd_node id="1" name="tag_chg" name_cn="标签变化触发器" name_en="Tag Change Trigger"
+		desc_cn="通过选择的标签，监听标签在运行过程中更新变化，并根据一定策略产生消息输出"
+		desc_en="By selecting a tag, listen for updating in the tag during runtime, and generate message output based on a certain strategy"
 		/>
 
 	<dd_node id="1" name="tag_alert_trigger" name_cn="标签事件/报警触发器" name_en="Tags Event/Alert Trigger" desc_cn="" desc_en=""/>
@@ -77,7 +77,7 @@
 		desc_cn="通过特定的URL，基于Http协议访问提交请求并获取应答"
 		desc_en="Submit requests and obtain responses based on the HTTP protocol through specific URLs"
 		/>
-		
+	
 	<dd_node id="1" name="outer" name_cn="外部调用触发" name_en="Outer Trigger"
 		desc_cn="外部程序根据消息流、触发名称(可为空)和消息内容参数，触发流程运行"
 		desc_en="External programs trigger flow execution based on message flow, trigger name (can be empty), and message content parameters"

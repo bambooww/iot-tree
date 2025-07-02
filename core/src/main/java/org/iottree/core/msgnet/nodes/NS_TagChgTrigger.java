@@ -17,11 +17,16 @@ import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class NS_TagValChgTrigger extends MNNodeStart 
+public class NS_TagChgTrigger extends MNNodeStart 
 {
 	//String tagId = null ;
 	
 	boolean ignoreInvalid = true ;
+	
+	/**
+	 * Tag value is not changed ,only updated date
+	 */
+	boolean ignoreUpOnly = false;
 	
 	ArrayList<String> tagPaths = null ;
 	
@@ -39,13 +44,13 @@ public class NS_TagValChgTrigger extends MNNodeStart
 	@Override
 	public String getTP()
 	{
-		return "tag_valchg";
+		return "tag_chg";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("tag_valchg");
+		return g("tag_chg");
 	}
 
 	@Override
@@ -83,11 +88,11 @@ public class NS_TagValChgTrigger extends MNNodeStart
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("ignore_invalid",ignoreInvalid) ;
+		jo.put("ignore_update",ignoreUpOnly) ;
 		jo.putOpt("tag_paths", this.tagPaths) ;
 		return jo ;
 	}
 	
-
 	private UAPrj getPrj()
 	{
 		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
@@ -96,7 +101,6 @@ public class NS_TagValChgTrigger extends MNNodeStart
 
 		return (UAPrj) mnc;
 	}
-	
 
 	@Override
 	protected void setParamJO(JSONObject jo)
@@ -111,13 +115,15 @@ public class NS_TagValChgTrigger extends MNNodeStart
 			this.tagPaths = subts ;
 		}
 		ignoreInvalid = jo.optBoolean("ignore_invalid",true) ;
-		
+		this.ignoreUpOnly = jo.optBoolean("ignore_update",false) ;
 		synchronized(this)
 		{
 			tagIdSet = null ;
 			//tags = null;
 		}
 	}
+	
+	
 	
 	public boolean isIgnoreInvalid()
 	{
@@ -168,8 +174,29 @@ public class NS_TagValChgTrigger extends MNNodeStart
 		return rets ;
 	}
 	
+	public boolean RT_fireDtUpValNotChg(UATag tag)
+	{
+		if(ignoreUpOnly)
+			return false;
+		
+		HashSet<String> idset = getTagIdSet() ;
+		if(idset==null)
+			return false;
+		if(!idset.contains(tag.getId()))
+			return false;
+		
+		UAVal v = tag.RT_getVal() ;
+		if(!v.isValid())
+		{
+			if(this.ignoreInvalid)
+				return false;
+		}
+
+		sendTagOut(tag,v) ;
+		return true; 
+	}
 	
-	public boolean RT_fireByChgValTrigger(UATag tag,boolean cur_valid,Object curval)
+	public boolean RT_fireValChg(UATag tag,boolean cur_valid,Object curval)
 	{
 		HashSet<String> idset = getTagIdSet() ;
 		if(idset==null)
@@ -184,14 +211,32 @@ public class NS_TagValChgTrigger extends MNNodeStart
 				return false;
 		}
 		
+		sendTagOut(tag,v) ;
+		return true ;
+	}
+	
+	private void sendTagOut(UATag tag,UAVal v)
+	{
+		if(v==null)
+			return ;
+		
+		boolean valid = v.isValid() ;
 		MNMsg msg = new MNMsg();
 		JSONObject jo = new JSONObject() ;
 		jo.put("tag_id", tag.getId()) ;
 		jo.put("tag_path", tag.getNodeCxtPathInPrj()) ;
-		jo.put("valid", cur_valid) ;
-		jo.putOpt("tag_val", curval) ;
+		jo.putOpt("tag_title", tag.getTitle()) ;
+		jo.put("updt", v.getValDT()) ;
+		jo.put("chgdt", v.getValChgDT()) ;
+		UAVal.ValTP vt = tag.getValTp() ;
+		if(vt!=null)
+			jo.put("vt", vt.getStr());
+		jo.put("valid", valid) ;
+		if(valid)
+			jo.putOpt("tag_val", v.getObjVal()) ;
+		else
+			jo.putOpt("tag_err",v.getErr()) ;
 		msg.asPayload(jo);
 		RT_sendMsgOut(RTOut.createOutAll(msg));
-		return true ;
 	}
 }

@@ -469,7 +469,7 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 					
 					 
 					ObjectMapper mapper = new ObjectMapper ( );
-			        HashMap respjson = mapper.readValue(json_xml_str, HashMap.class );
+			        HashMap<?,?> respjson = mapper.readValue(json_xml_str, HashMap.class );
 			        
 			        StringBuilder ressb = new StringBuilder() ;
 			        HashMap<UATag,Object> tag2v = new HashMap<>() ;
@@ -478,7 +478,7 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 					{
 						String tagp = tag2jp.getKey() ;
 						PathItem<JsonPath> pi = tag2jp.getValue() ;
-						
+						//System.out.println("ms="+System.currentTimeMillis()) ;
 						try
 						{
 							Object v = pi.getProbeObj().read(respjson);
@@ -1100,8 +1100,6 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 			
 			break;
 		}
-
-		
 		
 		MonItem mis = new MonItem(true,topic,mds) ;
 		this.onMonDataRecv(mis);

@@ -31,7 +31,7 @@
 <title>Simple Tag Edit</title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(500,300);
+dlg.resize_to(600,500);
 </script>
 </head>
 <style>
@@ -47,8 +47,22 @@ dlg.resize_to(500,300);
     <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="path" name="path" value="<%=path%>"  class="layui-input">
     </div>
+	<div class="layui-form-mid"><w:g>val,type</w:g></div>
+	<div class="layui-input-inline" style="width:80px">
+          	<select id="vt" lay-filter="vt" >
+<%
 
+for(UAVal.ValTP vtp:UAVal.ValTP.values())
+{
+	String vttp = vtp.getStr();
+%><option value="<%=vttp%>"><%=vttp %></option>
+<%
+}
+%>
+    	</select>
+    </div>
   </div>
+  <%-- 
   <div class="layui-form-item">
     <label class="layui-form-label"><w:g>val,type</w:g></label>
     <div class="layui-input-inline" style="width:80px">
@@ -67,6 +81,7 @@ for(UAVal.ValTP vtp:UAVal.ValTP.values())
 	<div class="layui-form-mid"></div>
     
   </div>
+  --%>
 <div class="layui-form-item">
     <label class="layui-form-label"><w:g>title</w:g></label>
     <div class="layui-input-inline" style="width:300px">

@@ -39,7 +39,7 @@ String bind_map_str =null;
 
 boolean run_js_page = false;
 long run_js_to = 30000 ;
-
+UACh joined_ch = null;
 if(Convert.isNotNullEmpty(connid))
 {
 	cpt = (ConnPtMSGNor)cp.getConnById(connid) ;
@@ -52,7 +52,6 @@ if(Convert.isNotNullEmpty(connid))
 	sor_tp = cpt.getSorTp();
 	ConnPtMSGNor.TransHandler th = cpt.getTransHandler();
 	ConnPtMSGNor.BindHandler bh = cpt.getBindHandler();
-	
 	
 	init_js = th.getInitJS() ;
 	trans_js = th.getTransJS();
@@ -70,8 +69,13 @@ if(Convert.isNotNullEmpty(connid))
 		run_js_page = cpth.isRunJsPage() ;
 		run_js_to = cpth.getRunJsTO();
 	}
+	
+	joined_ch = cpt.getJoinedCh() ;
 }
 
+String path = "/"  ;
+if(joined_ch!=null)
+	path = joined_ch.getNodePath();
 
 if(Convert.isNullOrEmpty(encod))
 	encod = "UTF-8";
@@ -200,8 +204,6 @@ if(cpt!=null)
 	    	<div class="layui-input-inline" style="width: 150px;" id="read_to_buf_inf">
 		     &nbsp;<%=dtstr %>
 	    	</div>
-	   
-	    
 	  </div>
 <%
 	}
@@ -302,6 +304,8 @@ var run_js_page = <%=run_js_page%>;
 var run_js_to =  <%=run_js_to%>;
 
 var tmpbuf_fp = "<%=tmpbuf_fp%>" ;
+
+var path = "<%=path%>" ;
 
 layui.use('form', function(){
 	  form = layui.form;
@@ -425,7 +429,7 @@ function edit_js_init()
 function edit_js(taid,tt,funcp,sample_id)
 {
 	event.preventDefault();
-	dlg.open("../ua_cxt/cxt_script.jsp?opener_txt_id="+taid+"&sample_txt_id="+sample_id+"&func_params="+funcp,
+	dlg.open("../ua_cxt/cxt_script.jsp?path="+path+"&opener_txt_id="+taid+"&sample_txt_id="+sample_id+"&func_params="+funcp,
 			{title:tt},['Ok','Cancel'],
 			[
 				function(dlgw)
@@ -454,7 +458,6 @@ function get_bind_list()
 	//console.log(probe_ob,sor_tp);
 	if(sor_tp=='html')
 	{
-		
 		var ret = [] ;
 		for(var blk of probe_ob)
 		{

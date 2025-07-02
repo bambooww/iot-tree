@@ -56,6 +56,7 @@ if(sortby==null)
 boolean bsys = "true".equals(request.getParameter("sys")) ;
 boolean bsub = "true".equals(request.getParameter("sub")) ;
 String path = request.getParameter("path") ;
+String search_txt = request.getParameter("search_txt") ;
 UANode node = UAUtil.findNodeByPath(path) ;
 if(node==null)
 {
@@ -104,7 +105,7 @@ UANodeOCTags node_tags = (UANodeOCTags)node;
 boolean bdevdef = UAUtil.isDevDefPath(path) ;
 List<UATag> cur_tags = node_tags.getNorTags() ;
 List<UANodeOCTags>  tns = null;
-if(bsub)
+if(bsub || Convert.isNotNullEmpty(search_txt))
 	tns = node_tags.listSelfAndSubTagsNode() ;
 else
 	tns = Arrays.asList(node_tags) ;
@@ -136,18 +137,31 @@ for(UANodeOCTags tn:tns)
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
 	{
-		tags_num ++ ;
+		
+		
 		String tagpath = tag.getNodePath();//.getNodePathCxt() ;
 		String tagname = tag.getName();
 		String tag_tt = tag.getTitle() ;
 		String cxtpath=  tag.getNodeCxtPathIn(node_tags) ;
 		String tagp = tag.getNodePathCxt();
 		boolean bloc = tag.getParentNode()==node_tags;
+		String addr = tag.getAddress() ;
+		if(addr==null)
+			addr = "" ;
+		if(Convert.isNotNullEmpty(search_txt))
+		{
+			if(!tagpath.contains(search_txt)
+					&& ! tag_tt.contains(search_txt)
+					&& ! (addr.contains(search_txt)))
+				continue ;
+		}
+		
+		tags_num ++ ;
 		String cssstr="" ;
 		if(tag.isSysTag())
-	cssstr="color:grey";
+			cssstr="color:grey";
 		else if(bloc)
-	cssstr="color:blue;cursor:hand";
+			cssstr="cursor:hand";
 	
 		String tt = "" ;
 		if(tag.getDesc()!=null)
@@ -159,7 +173,7 @@ for(UANodeOCTags tn:tns)
 		if(tag.getDescSor()!=null)
 	tt += "&#10;sor desc:"+tag.getDescSor();
 		
-		String addr = tag.getAddress() ;
+		
 		String addr_sor = addr ;
 		if(addr.length()>10)
 	addr = addr.substring(0,10)+"..." ;
@@ -229,7 +243,7 @@ if(bloc&&!tag.isSysTag())
         <td><%=valtp_str %></td>
         <td><%=indicator_t %></td>
         <td style="text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
-        <td title="<%=unit_tt%>"><%=unit_t %></td>
+        <td title="<%=unit_tt%>">&nbsp;<%=unit_t %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>
         <td id="ctag_chgdt_<%=cxtpath%>"></td>
