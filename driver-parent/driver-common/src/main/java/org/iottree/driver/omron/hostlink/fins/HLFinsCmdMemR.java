@@ -66,7 +66,6 @@ public class HLFinsCmdMemR extends HLCmd
 	@Override
 	protected void initCmd(HLFinsDriver drv,HLBlock block)
 	{
-		
 		super.initCmd(drv,block);
 		
 		HLDevItem devitem = block.devItem ;
@@ -78,15 +77,20 @@ public class HLFinsCmdMemR extends HLCmd
 		
 		crr.asReqR(block.prefix,bReadBit, startAddr,0,readNum) ;
 		
-		if(!devitem.bNetOrSerial)
+		if(devitem.isNetTcp())
 		{
-			crr.asFinsHeaderSerial() ;
-			// TODO
+			HLFinsDriverNet fdn = (HLFinsDriverNet)drv ;
+			//crr.asFinsHeaderTcp(icf, gct, dna, da1, da2, sna, sa1, sa2, sid)
+		}
+		else if(devitem.isNetUdp())
+		{
+			throw new NotImplementedError() ;
 		}
 		else
 		{
 			//crr.asFinsHeaderNet(icf, gct, dna, da1, da2, sna, sa1, sa2, sid) TODO
-			throw new NotImplementedError() ;
+			//
+			crr.asFinsHeaderSerial() ;
 		}
 		
 		req = crr ;

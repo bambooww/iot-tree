@@ -1,7 +1,6 @@
 package org.iottree.driver.omron.hostlink.fins;
 
 import org.iottree.core.util.IBSOutput;
-import org.iottree.driver.omron.fins.FinsCmdReqR;
 import org.iottree.driver.omron.fins.FinsMode;
 import org.iottree.driver.omron.hostlink.HLMsgResp;
 

@@ -52,9 +52,9 @@ dlg.resize_to(600,400);
       	    <select id="comid" lay-filter="comid">
       	    <option value="">---</option>
 <%
-for(String cid:SlaveCPCom.listSysComs())
+for(ConnProCOM.COMItem cid:SlaveCPCom.listSysComs())
 {
-%><option value="<%=cid%>"><%=cid %></option>
+%><option value="<%=cid.name%>"><%=cid.getShowTitle() %></option>
 <%
 }
 %>   </select>

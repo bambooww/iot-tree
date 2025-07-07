@@ -123,7 +123,7 @@ public abstract class HLFinsDriver extends HLDriver
 		//create modbus cmds
 		for(UADev dev:devs)
 		{
-			HLDevItem fdi = new HLDevItem(this,dev,false) ;
+			HLDevItem fdi = new HLDevItem(this,dev) ;
 			StringBuilder devfr = new StringBuilder() ;
 			if(!fdi.init(devfr))
 				continue ;

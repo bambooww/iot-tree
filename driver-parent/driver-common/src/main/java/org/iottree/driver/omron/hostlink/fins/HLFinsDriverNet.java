@@ -93,5 +93,12 @@ public class HLFinsDriverNet extends HLFinsDriver
 	}
 
 	
-	
+	@Override
+	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev) throws Exception
+	{
+		super.RT_onConnReady(cp, ch, dev);
+		//do fins shake hand
+		
+		
+	}
 }

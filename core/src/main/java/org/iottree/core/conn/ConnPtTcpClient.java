@@ -3,6 +3,7 @@ package org.iottree.core.conn;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import org.iottree.core.ConnProvider;
@@ -34,6 +35,8 @@ public class ConnPtTcpClient extends ConnPtStream
 	InputStream inputS = null;
 
 	OutputStream outputS = null;
+	
+	String localIP = null;
 
 	public ConnPtTcpClient()
 	{
@@ -59,6 +62,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		xd.setParamValue("host", host);
 		xd.setParamValue("port", port);
 		xd.setParamValue("conn_to", connTimeoutMS);
+		xd.setParamValue("local_ip", this.localIP);
 		return xd;
 	}
 
@@ -70,6 +74,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		this.port = xd.getParamValueInt32("port", 8081);
 		this.connTimeoutMS = xd.getParamValueInt32("conn_to", 3000);
 		this.readNoDataTimeout = xd.getParamValueInt64("read_no_to", 60000);
+		this.localIP = xd.getParamValueStr("local_ip","") ;
 		return r;
 	}
 
@@ -81,6 +86,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		this.port = jo.getInt("port");
 		this.connTimeoutMS = jo.getInt("conn_to");
 		this.readNoDataTimeout = jo.optLong("read_no_to",60000);
+		this.localIP = jo.optString("local_ip","") ;
 	}
 
 	public String getHost()
@@ -100,6 +106,13 @@ public class ConnPtTcpClient extends ConnPtStream
 		if (port <= 0)
 			return "";
 		return "" + port;
+	}
+	
+	public String getLocalIP()
+	{
+		if(localIP==null)
+			return "" ;
+		return this.localIP ;
 	}
 
 	public int getConnTimeout()
@@ -157,8 +170,16 @@ public class ConnPtTcpClient extends ConnPtStream
 		
 		try
 		{
-
-			sock = new Socket(host, port);
+			
+			if(Convert.isNotNullEmpty(this.localIP))
+			{
+				InetAddress locaddr = InetAddress.getByName(this.localIP) ;
+				sock = new Socket(host,port,locaddr,0);
+			}
+			else
+			{
+				sock = new Socket(host, port);
+			}
 			
 			//set recv timeout,it will make read waiting throw timeout
 			//sock.setSoTimeout(connTimeoutMS);

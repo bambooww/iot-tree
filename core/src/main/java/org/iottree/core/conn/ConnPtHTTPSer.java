@@ -44,6 +44,12 @@ import org.json.JSONObject;
 public class ConnPtHTTPSer  extends ConnPtMSGNor
 {
 	static ILogger log = LoggerManager.getLogger(ConnPtHTTPSer.class);
+	
+	String respOk = null ;
+	
+	String respErr = null ;
+	
+	String limit_ip = null ;
 
 	@Override
 	public String getConnType()
@@ -63,12 +69,34 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		return true;
 	}
 
+	public String getRespOk()
+	{
+		if(this.respOk==null)
+			return "" ;
+		return this.respOk ;
+	}
+	
+	public String getRespErr()
+	{
+		if(this.respErr==null)
+			return "" ;
+		return this.respErr ;
+	}
+	
+	public String getLimitIP()
+	{
+		if(this.limit_ip==null)
+			return "" ;
+		return this.limit_ip ;
+	}
+	
 	@Override
 	public XmlData toXmlData()
 	{
 		XmlData xd = super.toXmlData();
-		//xd.setParamValue("url", this.url);
-		
+		xd.setParamValue("resp_ok", this.respOk);
+		xd.setParamValue("resp_err", this.respErr);
+		xd.setParamValue("limit_ip", this.limit_ip);
 		return xd;
 	}
 
@@ -76,8 +104,9 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 	public boolean fromXmlData(XmlData xd, StringBuilder failedr)
 	{
 		boolean r = super.fromXmlData(xd, failedr);
-
-		
+		this.respOk = xd.getParamValueStr("resp_ok") ;
+		this.respErr = xd.getParamValueStr("resp_err") ;
+		this.limit_ip = xd.getParamValueStr("limit_ip") ;
 		return r;
 	}
 
@@ -102,7 +131,9 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		super.injectByJson(jo);
 
 		// this.appName =optJSONString(jo,"opc_app_name",getOpcAppNameDef()) ;
-		
+		this.respOk = jo.optString("resp_ok") ;
+		this.respErr = jo.optString("resp_err") ;
+		this.limit_ip = jo.optString("limit_ip") ;
 	}
 
 	//private boolean bConnOk = false;
@@ -147,9 +178,18 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 	 * @param bs
 	 * @throws Exception
 	 */
-	public void onRecvedFromConn(String topic,byte[] bs) throws Exception
+	public String onRecvedFromConn(String topic,byte[] bs) //throws Exception
 	{
-		this.onRecvedMsg(topic, bs);
+		try
+		{
+			this.onRecvedMsg(topic, bs);
+			return this.respOk ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			return this.respErr ;
+		}
 	}
 	/**
 	 * will be run interval in loop

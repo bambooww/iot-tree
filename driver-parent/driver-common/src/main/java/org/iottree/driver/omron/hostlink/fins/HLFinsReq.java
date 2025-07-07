@@ -14,7 +14,7 @@ public abstract class HLFinsReq extends HLMsgReq
 	 */
 	short respWaitTime =0;
 	
-	boolean bHeaderNet = false;
+	boolean bHeaderTcp = false;
 	
 	short icf = -1 ;
 	
@@ -66,7 +66,7 @@ public abstract class HLFinsReq extends HLMsgReq
 	 */
 	public HLFinsReq asFinsHeaderSerial(int da2,int sa2,int sid)
 	{
-		bHeaderNet=false;
+		bHeaderTcp=false;
 		this.icf = 0 ;
 		this.da2 = (short)da2 ;
 		this.sa2 = (short)sa2 ;
@@ -84,10 +84,10 @@ public abstract class HLFinsReq extends HLMsgReq
 	 * 
 	 * @return
 	 */
-	public HLFinsReq asFinsHeaderNet(int icf,int gct,int dna,int da1,int da2,
+	public HLFinsReq asFinsHeaderTcp(int icf,int gct,int dna,int da1,int da2,
 			int sna,int sa1,int sa2,int sid)
 	{
-		bHeaderNet = true;
+		bHeaderTcp = true;
 		this.icf = (short)icf ;
 		this.gct = (short)gct ;
 		this.dna = (short)dna ;
@@ -99,12 +99,28 @@ public abstract class HLFinsReq extends HLMsgReq
 		this.sid = (short)sid ;
 		return this ;
 	}
+	
+	public HLFinsReq asFinsHeaderUDP(int icf,int gct,int dna,int da1,int da2,
+			int sna,int sa1,int sa2,int sid)
+	{
+		bHeaderTcp = false;
+		this.icf = (short)icf ;
+		this.gct = (short)gct ;
+		this.dna = (short)dna ;
+		this.da1 = (short)da1 ;
+		this.da2 = (short)da2 ;
+		this.sna = (short)sna ;
+		this.sa1 = (short)sa1 ;
+		this.sa2 = (short)sa2 ;
+		this.sid = (short)sid ;
+		return this ;
+	} 
 
 	@Override
 	protected final void packContent(StringBuilder sb)
 	{
 		sb.append(byte2hex(this.respWaitTime,false)) ;
-		if(!bHeaderNet)
+		if(!bHeaderTcp)
 		{
 			sb.append(byte2hex(this.icf,true)) ;
 			sb.append(byte2hex(this.da2,true)) ;

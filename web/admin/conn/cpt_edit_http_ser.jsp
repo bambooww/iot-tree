@@ -32,6 +32,7 @@ String cid = connid ;
 if(cid==null)
 	cid = "" ;
 ConnPtHTTPSer cpt = null ;
+
 if(Convert.isNullOrEmpty(connid))
 {
 	cpt = new ConnPtHTTPSer() ;
@@ -58,6 +59,10 @@ String desc = cpt.getDesc();
 String cp_tp = cp.getProviderType() ;
 
 ConnPt.DataTp sor_tp = cpt.getSorTp();
+
+String resp_ok = cpt.getRespOk() ;
+String resp_err = cpt.getRespErr() ;
+String limit_ip = cpt.getLimitIP() ;
 //String init_js = cpt.getInitJS() ;
 //String trans_js = cpt.getTransJS();
 
@@ -70,8 +75,7 @@ if(Convert.isNullOrEmpty(encod))
 <title></title>
 <jsp:include page="../head.jsp"></jsp:include>
 <script>
-dlg.resize_to(800,750);
-
+dlg.resize_to(1500,900);
 </script>
 <style type="text/css">
 .layui-form-item
@@ -85,7 +89,7 @@ dlg.resize_to(800,750);
 .layui-form-label {
 
     padding: 9px 15px;
-    line-height: 15px;
+    line-height: 15px;width:120px;
 }
 .layui-form-mid {
     padding: 9px 0!important;
@@ -116,16 +120,35 @@ dlg.resize_to(800,750);
   </div>
    
   <div class="layui-form-item">
-    <label class="layui-form-label">Recv Bind</label>
+    <label class="layui-form-label">Msg Handle</label>
     <div class="layui-input-inline" style="width:650px;">
   <iframe id="if_msg" src="cpt_edit_msg.jsp?prjid=<%=repid%>&cpid=<%=cpid%>&connid=<%=cid%>" style="width:100%;height:310px;border:1px solid;border-color:#e6e6e6"></iframe>
   </div>
   </div>
+  <%--
    <div class="layui-form-item">
     <label class="layui-form-label">Description:</label>
     <div class="layui-input-inline" style="width:600px">
       <textarea  id="desc"  name="desc"  style="height:30px;width:100%;border-color: #e6e6e6"><%=desc%></textarea>
     </div>
+  </div>
+   --%>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Response Ok:</label>
+    <div class="layui-input-inline" style="width:300px">
+      <textarea  id="resp_ok"  name="resp_ok"  style="height:30px;width:100%;border-color: #e6e6e6"><%=resp_ok%></textarea>
+    </div>
+    <div class="layui-form-mid">Error:</div>
+    <div class="layui-input-inline" style="width:300px">
+      <textarea  id="resp_err"  name="resp_err"  style="height:30px;width:100%;border-color: #e6e6e6"><%=resp_err%></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Limit IP:</label>
+    <div class="layui-input-inline" style="width:600px">
+      <input  id="limit_ip"  name="limit_ip"  class="layui-input" value="<%=limit_ip%>">
+    </div>
+    
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Post URL:</label>
@@ -290,7 +313,7 @@ function do_submit(cb)
 		tt = n;
 	}
 	var ben = $("#enable").prop("checked") ;
-	var desc = document.getElementById('desc').value;
+	var desc = null;//document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
 	
@@ -303,8 +326,12 @@ function do_submit(cb)
 		}
 		msgob = ret ;
 	})
+	
+	let resp_ok = $("#resp_ok").val();
+	let resp_err = $("#resp_err").val();
+	let limit_ip = $("#limit_ip").val();
 
-	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben},msgob);
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,resp_ok:resp_ok,resp_err:resp_err,limit_ip:limit_ip},msgob);
 	cb(true,oball) ;
 }
 

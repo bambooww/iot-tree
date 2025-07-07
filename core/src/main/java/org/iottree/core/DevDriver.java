@@ -44,6 +44,14 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 			return val == 2 || val == 1;
 		}
 	}
+	
+	public static void sleep(long ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}catch(Exception e) {}
+	}
 
 	final class SubDevThread extends Thread
 	{
@@ -85,7 +93,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 				{
 					try
 					{
-						Thread.sleep(drv_int);
+						sleep(drv_int);
 						
 						if(!this.connPt.isConnReady())
 							this.connPt.RT_checkConn();
@@ -567,12 +575,12 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 							if (!RT_runInLoopNoWait(ch, null, failedr))
 								break;
 							
-							Thread.sleep(1);
+							sleep(1);
 							continue ;
 						}
 						else
 						{
-							Thread.sleep(drv_int);
+							sleep(drv_int);
 							
 							if(!DevDriver.this.isConnPtToDev())
 							{
@@ -586,9 +594,11 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 								break;
 						}
 					}
-					catch ( InterruptedException ie)
+					catch(InterruptedException ie)
 					{
-
+						ie.printStackTrace();
+						if(log.isDebugEnabled())
+							log.debug(ie.getMessage());
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
@@ -603,10 +613,12 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 					}
 				}
 			}
-			catch ( Exception e)
+			catch (Exception e)
 			{
-				System.err.println(e.getMessage());
-				e.printStackTrace();
+				if(log.isWarnEnabled())
+					log.warn(e.getMessage());
+				if(log.isDebugEnabled())
+					log.debug(e);
 			}
 			finally
 			{

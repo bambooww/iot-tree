@@ -1,4 +1,4 @@
-HTTP Url HTML format connector
+HTTP Client HTML format connector
 ==
 
 

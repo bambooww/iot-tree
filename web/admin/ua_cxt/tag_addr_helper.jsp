@@ -73,7 +73,7 @@ if(defs==null)
   </colgroup>
   <thead>
     <tr>
-      <th width="30%"><lan:g>dev,type</lan:g></th>
+      <th width="30%"><lan:g>type</lan:g></th>
       <th width="25%"><lan:g>range</lan:g></th>
       <th width="15%"><lan:g>data,type</lan:g></th>
       <th width="10%"><lan:g>access</lan:g></th>

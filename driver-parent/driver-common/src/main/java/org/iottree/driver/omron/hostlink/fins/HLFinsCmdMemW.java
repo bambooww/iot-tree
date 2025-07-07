@@ -99,7 +99,7 @@ public class HLFinsCmdMemW extends HLCmd
 		else
 			reqw.asReqWWord(block.prefix ,startAddr,wordVals.size(),wordVals) ;
 		
-		if(!devitem.bNetOrSerial)
+		if(!devitem.isNetTcp())
 		{
 			reqw.asFinsHeaderSerial() ;
 			// TODO

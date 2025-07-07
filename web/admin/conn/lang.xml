@@ -30,6 +30,8 @@
   <dd_node id="1" name="anony" name_cn="匿名" name_en="Anonymous" />
   <dd_node id="1" name="user_psw" name_cn="用户验证密码" name_en="User Password" />
   
+  <dd_node id="1" name="net_interface" name_cn="网络接口" name_en="Network Interface" />
+  
   <dd_node id="1" name="ign_not_exist" name_cn="忽略不存在" name_en="Ingore Not Existed" />
   <dd_node id="1" name="auto_c_tag" name_cn="自动创建标签" name_en="Auto Create Tag" />
   <dd_node id="1" name="syn_tt" name_cn="与接入的子站进行组织树的同步" name_en="Synchronize the tree with sub station" />

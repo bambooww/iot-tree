@@ -1,4 +1,4 @@
-IOTTree Message Connector - HTTP URL
+IOTTree Message Connector - HTTP Client
 ==
 
 

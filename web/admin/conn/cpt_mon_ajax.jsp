@@ -78,17 +78,28 @@ case "lastitem":
 	lastmi.writeJsonOut(out,true) ;
 	break ;
 case "last_sor_txt":
-	lastmi = cpt.getMonItemLast() ;
-	if(lastmi==null)
+	ConnPt.MonData md = null;
+	if(cpt instanceof ConnPtMSGNor)
 	{
-		out.print("no Mon Item found") ;
-		return ;
+		ConnPtMSGNor cpt_msgn = (ConnPtMSGNor)cpt;
+		if(cpt_msgn.isPassiveRecv())
+			md = cpt_msgn.getMonDataLastSor() ;
 	}
-	ConnPt.MonData md = lastmi.getMonDataSource();//.writeJsonOut(out,true) ;
+	
 	if(md==null)
 	{
-		out.print("no Mon Data found") ;
-		return ;
+		lastmi = cpt.getMonItemLast() ;
+		if(lastmi==null)
+		{
+			out.print("no Mon Item found") ;
+			return ;
+		}
+		md = lastmi.getMonDataSource();//.writeJsonOut(out,true) ;
+		if(md==null)
+		{
+			out.print("no Mon Data found") ;
+			return ;
+		}
 	}
 	//if(md.getDataTp()!=ConnPt.DataTp.json)
 	//{

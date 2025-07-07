@@ -21,4 +21,18 @@
 	<dd_node id="1" name="encode_A4" name_cn="" name_en="Aborted due to format error in transmission data" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="encode_A5" name_cn="" name_en="Aborted due to entry number data error in transmission data" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="encode_A8" name_cn="" name_en="Aborted due to frame length error in transmission data" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="deftp_A" name_cn="辅助继电器Auxiliary Relay" name_en="Auxiliary Relay" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_CIO" name_cn="CIO区" name_en="CIO" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_C" name_cn="计数器Counter" name_en="Counter" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_CS" name_cn="计数器状态Counter Status" name_en="Counter Status" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_D" name_cn="数据区Data Memory" name_en="Data Memory" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_DR" name_cn="数据寄存器Data Register" name_en="Data Register" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_H" name_cn="保持继电器Holding Relay" name_en="Holding Relay" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_IR" name_cn="索引寄存器Index Register" name_en="Index Register" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_TK" name_cn="任务标记Task Flag" name_en="Task Flag" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_T" name_cn="定时器Timer" name_en="Timer" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_TS" name_cn="定时器状态Timer Status" name_en="Timer Status" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="deftp_W" name_cn="工作继电器Working Relay" name_en="Working Relay" desc_cn="" desc_en=""/>
+	
 </dd_class>

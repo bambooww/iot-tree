@@ -15,7 +15,6 @@ import org.iottree.core.basic.MemTable;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.DataUtil;
-import org.iottree.driver.omron.fins.FinsMode;
 import org.iottree.driver.omron.hostlink.HLAddr;
 import org.iottree.driver.omron.hostlink.HLAddrSeg;
 import org.iottree.driver.omron.hostlink.HLDriver;

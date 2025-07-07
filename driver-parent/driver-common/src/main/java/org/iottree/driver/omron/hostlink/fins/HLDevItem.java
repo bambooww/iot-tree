@@ -32,16 +32,26 @@ public class HLDevItem
 	
 	private transient List<HLAddr> fxAddrs = new ArrayList<>() ;
 	
-	/**
-	 * true = net false=serial
-	 */
-	boolean bNetOrSerial = true ; 
+//	/**
+//	 * true = net false=serial
+//	 */
+//	boolean bNetTcp = true ; 
 	
-	public HLDevItem(HLFinsDriver drv,UADev dev,boolean b_net_or_serial)
+	public HLDevItem(HLFinsDriver drv,UADev dev) //,boolean b_net_tcp)
 	{
 		driver = drv ;
 		uaDev = dev ;
-		bNetOrSerial = b_net_or_serial ;
+		//bNetTcp =drv instanceof b_net_tcp ;
+	}
+	
+	public boolean isNetTcp()
+	{
+		return this.driver instanceof HLFinsDriverNet ;
+	}
+	
+	public boolean isNetUdp()
+	{
+		return this.driver instanceof HLFinsDriverUDP ;
 	}
 	
 	UADev getUADev()

@@ -1,6 +1,7 @@
 package org.iottree.core.msgnet;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,7 @@ public class MNLib
 			this.id = id ;
 			this.title = tt ;
 			this.pmjo = pmjo ;
+			this.dt = System.currentTimeMillis() ;
 		}
 		
 		private Item()
@@ -125,7 +127,15 @@ public class MNLib
 			return null ;
 		
 		ArrayList<Item> rets  = new ArrayList<>() ;
-		for(File f:tpdir.listFiles())
+		
+		FileFilter ff = new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
+			{
+				return f.getName().endsWith(".json") ;
+			}} ;
+		for(File f:tpdir.listFiles(ff))
 		{
 			try
 			{

@@ -16,6 +16,8 @@
 ##### <a href="doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.4 监听RS485 Modbus 总线数据</a>
 ##### <a href="doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 整合HMI画面到你的系统中（含权限插件开发）</a>
 ##### <a href="doc/case/case_s7200_smart.md" target="main">&nbsp;&nbsp;&nbsp;3.6 连接西门子PLC S7-200 Smart</a>
+##### <a href="doc/case/case_w_tag_to_rdb.md" target="main">&nbsp;&nbsp;&nbsp;3.7 写标签数据到关系数据库中</a>
+##### <a href="doc/case/case_w_tag_to_influxdb.md" target="main">&nbsp;&nbsp;&nbsp;3.8 写标签数据到时序数据库InfluxDB中</a>
 
 
 #### <a href="doc/main/index.md" >4 总体说明和项目组成</a>
@@ -40,11 +42,12 @@
 ##### <a href="doc/conn/bind_opcda.md" target="main">&nbsp;&nbsp;&nbsp;5.4 绑定 - OPC DA</a>
 ##### <a href="doc/conn/bind_opcua.md" target="main">&nbsp;&nbsp;&nbsp;5.5 绑定 - OPC UA</a>
 ##### <a href="doc/conn/msg_mqtt.md" target="main">&nbsp;&nbsp;&nbsp;5.6 消息 - MQTT</a>
-##### <a href="doc/conn/msg_http_url.md" target="main">&nbsp;&nbsp;&nbsp;5.7 消息 - HTTP URL</a>
-##### <a href="doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;5.8 消息 - HTTP URL HTML</a>
-##### <a href="doc/conn/msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;5.9 消息 - WebSocket Client</a>
-##### <a href="doc/conn/oth_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.10 其他 - IOTTree Node</a>
-##### <a href="doc/conn/oth_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.11 其他 - Virtual</a>
+##### <a href="doc/conn/msg_http_url.md" target="main">&nbsp;&nbsp;&nbsp;5.7 消息 - HTTP Client</a>
+##### <a href="doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;5.8 消息 - HTTP Client HTML</a>
+##### <a href="doc/conn/msg_http_server.md" target="main">&nbsp;&nbsp;&nbsp;5.9 消息 - HTTP Server URL</a>
+##### <a href="doc/conn/msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;5.10 消息 - WebSocket Client</a>
+##### <a href="doc/conn/oth_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.11 其他 - IOTTree Node</a>
+##### <a href="doc/conn/oth_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.12 其他 - Virtual</a>
 
 #### <a href="doc/device/index.md" >6 设备、设备库和驱动</a>
 ##### <a href="doc/device/dev_lib.md" target="main">&nbsp;&nbsp;&nbsp;6.1 设备库</a>
@@ -52,9 +55,10 @@
 ##### <a href="doc/device/drv_modbus.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Modbus协议驱动</a>
 ##### <a href="doc/device/drv_ppi.md" target="main">&nbsp;&nbsp;&nbsp;6.4 PPI协议驱动</a>
 ##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 西门子以太网</a>
-##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 三菱FX</a>
-##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 三菱FX Net</a>
-##### <a href="doc/device/drv_omron_hl_fins_serial.md" target="main">&nbsp;&nbsp;&nbsp;6.8 欧姆龙 HostLink FINS Serial</a>
+##### <a href="doc/device/drv_mc_tcp.md" target="main">&nbsp;&nbsp;&nbsp;6.6 三菱MC Ethernet TCP</a>
+##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.7 三菱FX</a>
+##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.8 三菱FX Net</a>
+##### <a href="doc/device/drv_omron_hl_fins_serial.md" target="main">&nbsp;&nbsp;&nbsp;6.9 欧姆龙 HostLink FINS Serial</a>
 
 #### <a href="doc/js/index.md"> 7 JS脚本支持</a>
 

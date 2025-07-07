@@ -175,7 +175,6 @@ if(cpt!=null)
 }
 %>
   <div id="run_page_cont" class="layui-form-item" style="display:none">
-
     <label class="layui-form-label" style="width:150px">Run Page JS</label>
     	<div class="layui-input-inline" style="width: 50px;">
 	    <input type="checkbox" id=run_js_page name="run_js_page" <%=run_js_page_chk%> lay-skin="switch"  lay-filter="enable" class="layui-input">
@@ -201,7 +200,7 @@ if(cpt!=null)
 %>
 	    <div id="run_page_cont" class="layui-form-item" >
 	    <label class="layui-form-label" style="width:150px">Recved data</label>
-	    	<div class="layui-input-inline" style="width: 150px;" id="read_to_buf_inf">
+	    	<div class="layui-input-inline" style="width: 150px;color:blue;" id="read_to_buf_inf">
 		     &nbsp;<%=dtstr %>
 	    	</div>
 	  </div>

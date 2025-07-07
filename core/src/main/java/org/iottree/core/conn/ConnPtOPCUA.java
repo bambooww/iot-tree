@@ -1384,9 +1384,12 @@ public class ConnPtOPCUA extends ConnPtBinder
 				updateTagVal(ch, tag2n.getKey(), v);
 			}
 		}
-		catch ( Exception e)
+		catch(Exception e)
 		{
-			System.out.println("read data err=" + e.getMessage());
+			if(log.isDebugEnabled())
+				log.debug(e);
+			//System.out.println("read data err=" + e.getMessage());
+			e.printStackTrace();
 		}
 		finally
 		{

@@ -70,7 +70,7 @@ short icf = -1 ;
 		short main ;
 		short sub  ;
 		String fins_txt ;
-		if(!this.hlFinsReq.bHeaderNet)
+		if(!this.hlFinsReq.bHeaderTcp)
 		{
 			this.icf = hex2byte(hl_txt.substring(0,2)) ;
 			this.da2 = hex2byte(hl_txt.substring(2,4)) ;

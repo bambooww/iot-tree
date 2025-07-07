@@ -729,7 +729,7 @@ var connpro_menu = [
 	{content:'HTTP Client',callback:function(){
 		edit_cp("http","");
 	}},
-	{content:'HTTP Server',callback:function(){
+	{content:'HTTP Server URL',callback:function(){
 		edit_cpt("http_ser","","");
 	}},
 	{content:'MQTT',callback:function(){

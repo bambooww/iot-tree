@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -234,6 +235,18 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 			if(monDatas==null||monDatas.length<=0)
 				return null ;
 			return monDatas[0] ;
+		}
+		
+		public MonData getMonDataByName(String name)
+		{
+			if(monDatas==null||monDatas.length<=0)
+				return null ;
+			for(MonData md:this.monDatas)
+			{
+				if(name.equals(md.name))
+					return md ;
+			}
+			return null ;
 		}
 		
 		public boolean isInput()
@@ -864,6 +877,34 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 				return mi ;
 		}
 		return null ;
+	}
+	
+	public MonData getMonDataLastByName(String name)
+	{
+		//Iterator<MonItem> iterator = monItemList.descendingIterator();
+		//while (iterator.hasNext())
+		for(MonItem mi:this.monItemList)
+		{
+			//MonItem mi = iterator.next();
+			MonData md = mi.getMonDataByName(name) ;
+			if(md!=null)
+				return md ;
+			//if(name.equals(mi.monName))
+			//	return mi ;
+		}
+		return null ;
+	}
+	
+
+	public static final String MON_NAME_SOR = "sor" ;
+	
+	public static final String MON_NAME_RESULT = "result" ;
+	
+
+	
+	public MonData getMonDataLastSor()
+	{
+		return getMonDataLastByName(MON_NAME_SOR) ;
 	}
 
 	public String toString()

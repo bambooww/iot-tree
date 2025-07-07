@@ -276,6 +276,7 @@ var left_ob = null ;
 
 function set_left_str(txt)
 {
+	//console.log(txt) ;
 	if(!txt)
 		return false;
 	if("xml"==sor_tp)

@@ -6,7 +6,7 @@
 	org.iottree.core.task.*,
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
-	org.iottree.core.comp.*,
+	org.iottree.core.comp.*,org.iottree.core.util.jt.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	if(!Convert.checkReqEmpty(request, out, "container_id","netid"))
@@ -34,6 +34,7 @@
 		out.print("no item found") ;
 		return ;
 	}
+	
 	
 	String tp = item.getTPFull() ;
 	String title = item.getTitle() ;
@@ -73,9 +74,17 @@
 	String fulltp = item.getTPFull() ;
 	
 	boolean can_save = true ;
+	//JSONTemp in_jt = null ;
+	String in_title = "" ;
 	if(item instanceof MNNode)
 	{
-		MNModule mmm = ((MNNode)item).getOwnRelatedModule() ;
+		MNNode mnnode = (MNNode)item;
+		in_title =mnnode.RT_getInTitle();// Convert.plainToJsStr(mnnode.RT_getInTitle()) ;
+		if(in_title==null)
+			in_title="" ;
+		//if(in_jt!=null)
+		//	in_title = Convert.plainToJsStr(in_jt.toJSONStr()) ;
+		MNModule mmm = mnnode.getOwnRelatedModule() ;
 		if(mmm!=null)
 			can_save=false;
 	}
@@ -99,6 +108,7 @@
 var container_id="<%=container_id%>";
 var netid="<%=netid%>";
 var itemid="<%=itemid%>";
+
 
 var pm_url="<%=pm_url%>" ;
 var PM_URL_BASE = "<%=pm_url_base%>" ;
@@ -247,6 +257,9 @@ function save_to_lib()
 	color:#27ba7d;
 	
 }
+
+.in_title {position: absolute;left:2px;top:50px;border:1px solid #ccc;background-color: #003a36;color:#00ffe2;cursor: pointer;}
+.in_title:hover ~ .child  {display: block;}
 </style>
 </head>
 
@@ -293,7 +306,33 @@ if(b_running)
 %><div style="border:1px solid red;color:red"><w:g>node_running_stop_first</w:g></div>
 <%
 }
+if(Convert.isNotNullEmpty(in_title))
+{
 %>
+	<button class="in_title" onclick="show_in_title()" onblur="show_in_title(false)" title="input data format"><i class="fa fa-arrow-right"></i></button>
+	<span id="intitle_txt" class="in_title child" style="display:none;top:65px;"><%=in_title %></span>
+<script type="text/javascript">
+function show_in_title(b)
+{
+	if(b===true)
+	{
+		$("#intitle_txt").css("display","") ;return;
+	}
+	if(b===false)
+	{
+		$("#intitle_txt").css("display","none") ;return;
+	}
+	if($("#intitle_txt").css("display")=="none")
+		$("#intitle_txt").css("display","") ;
+	else
+		$("#intitle_txt").css("display","none") ;
+}
+</script>
+<%
+}
+
+%>
+
 </body>
 
 <script type="text/javascript">

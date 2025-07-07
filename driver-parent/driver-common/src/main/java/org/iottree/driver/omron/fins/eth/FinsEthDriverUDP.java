@@ -1,6 +1,6 @@
 package org.iottree.driver.omron.fins.eth;
 
-public class FinsEthDriver
+public class FinsEthDriverUDP
 {
 
 }

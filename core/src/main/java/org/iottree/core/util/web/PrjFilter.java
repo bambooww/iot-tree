@@ -95,14 +95,10 @@ public class PrjFilter implements Filter
 			return false;
 		
 		byte[] bs = readPostBS(request, response) ;
-		try
-		{
-			cpt_hs.onRecvedFromConn(null, bs);
-		}
-		catch(Exception ee)
-		{
-			ee.printStackTrace();
-		}
+		String resptxt = cpt_hs.onRecvedFromConn(null, bs);
+		
+		if(Convert.isNotNullEmpty(resptxt))
+			response.getOutputStream().write(resptxt.getBytes(cpt_hs.getEncod()));
 		return true;
 	}
 	

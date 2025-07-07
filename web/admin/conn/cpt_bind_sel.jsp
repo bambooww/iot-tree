@@ -72,9 +72,13 @@ if(nodes==null)
 */
 
 UACh joined_ch = cpt.getJoinedCh() ;
+String ch_path ="" ;
 List<UATag> ch_tags = null ;
 if(joined_ch!=null)
+{
 	ch_tags = joined_ch.listTagsNorAll();
+	ch_path = joined_ch.getNodePath() ;
+}
 if(ch_tags==null)
 	ch_tags = new ArrayList<>(0);
 %>
@@ -396,7 +400,7 @@ var connid = "<%=connid%>";
 var support_tree = <%=support_tree%>
 var map_show_len = <%=map_show_len%> ;
 
-
+var ch_path = "<%=ch_path%>" ;
 
 var b_ctrl_down = false;
 var b_shift_down=false;
@@ -442,14 +446,16 @@ function on_filter_prefix_chg(ele)
 	search() ;
 }
 
-function add_bind_item(bpath,tpath)
+function add_bind_item(bpath,tpath,tagt)
 {
+	
 	var k = tpath.indexOf(':') ;
 	if(k<0)
 	{
 		dlg.msg("tag path must end with value type like :int16") ;
 		return false;
 	}
+	tagt=tagt||"";
 	var vt = tpath.substring(k+1) ;
 	var tagp = tpath.substring(0,k) ;
 	if(!chk_var_path(tagp,true))
@@ -460,7 +466,7 @@ function add_bind_item(bpath,tpath)
 	if(bpath==null||bpath==undefined)
 		bpath ="" ;
 	var tmpid =new_id();
-	var tmps = "<tr id='ntag_"+tmpid+"' tagp='"+tpath+"' bindp='"+bpath+"' onclick='on_right(this)'>";
+	var tmps = `<tr id='ntag_\${tmpid}' tagt="\${tagt}" tagp='\${tpath}' bindp='\${bpath}' onclick='on_right(this)'>`;
 	
 		//if(tagp.length>map_show_len)
 		//	tagp = "..."+tagp.substring(tagp.length-map_show_len) ;
@@ -468,9 +474,8 @@ function add_bind_item(bpath,tpath)
 		//	bpath = "..."+bpath.substring(bpath.length-map_show_len) ;
 
 	 tmps += "<td>"+bpath+"</td>";
-	 tmps += "<td>"+tagp+":"+vt+"</td>";
+	 tmps += `<td>\${tagp}:\${vt}</td>`;
 	 tmps += "<td onclick=\"ntag_del('"+tmpid+"')\">X</td></tr>";
-	 
 	 $("#tb_bind_map").append(tmps) ;
 	 return true;
 }
@@ -490,8 +495,17 @@ function add_tag()
 							 dlg.msg(ret) ;
 							 return;
 						 }
-						 if(add_bind_item("",ret.path+":"+ret.vt))
-							 dlg.close() ;
+						 
+						// console.log(ret) ;
+						 send_ajax("../ua_cxt/tag_ajax.jsp",{op:"add_tag_simple",path:ch_path,n:ret.path,vt:ret.vt,t:ret.title},(bsucc,rr)=>{
+							 if(!bsucc || rr.indexOf("succ=")!=0)
+							 {
+								 dlg.msg(rr);return;
+							 }
+							if(add_bind_item("",ret.path+":"+ret.vt))
+								dlg.close() ;
+						 });
+						 
 				 	});
 				},
 				function(dlgw)
@@ -673,7 +687,7 @@ function map_or_not(b)
 	
 	if(b)
 	{
-		var vs ;
+		let vs ;
 		if(b_tb)
 			vs = tb_get_left_vals() ;
 		else

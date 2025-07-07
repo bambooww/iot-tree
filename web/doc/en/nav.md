@@ -16,6 +16,8 @@
 ##### <a href="doc/case/case_rs485_sniffer.md" target="main">&nbsp;&nbsp;&nbsp;3.4 Sniff RS485 MODBUS bus data</a>
 ##### <a href="doc/case/case_ref_hmi_auth.md" target="main">&nbsp;&nbsp;&nbsp;3.5 Integrate HMI into your system (including permission plug-in development)</a>
 ##### <a href="doc/case/case_s7200_smart.md" target="main">&nbsp;&nbsp;&nbsp;3.6 Connecting Siemens PLC S7-200 Smart</a>
+##### <a href="doc/case/case_w_tag_to_rdb.md" target="main">&nbsp;&nbsp;&nbsp;3.7 Write tags data to the relational database</a>
+##### <a href="doc/case/case_w_tag_to_influxdb.md" target="main">&nbsp;&nbsp;&nbsp;3.8 Write tags data to the time series database InfluxDB</a>
 
 
 #### <a href="doc/main/index.md" >4 Overall and Project Composition</a>
@@ -42,9 +44,10 @@
 ##### <a href="doc/conn/msg_mqtt.md" target="main">&nbsp;&nbsp;&nbsp;5.6 Message - MQTT</a>
 ##### <a href="doc/conn/msg_http_url.md" target="main">&nbsp;&nbsp;&nbsp;5.7 Message - HTTP URL</a>
 ##### <a href="doc/conn/msg_http_url_html.md" target="main">&nbsp;&nbsp;&nbsp;5.8 Message - HTTP URL HTML</a>
-##### <a href="doc/conn/msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;5.9 Message - WebSocket Client</a>
-##### <a href="doc/conn/oth_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.10 Others - IOTTree Node</a>
-##### <a href="doc/conn/oth_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.11 Others - Virtual</a>
+##### <a href="doc/conn/msg_http_server.md" target="main">&nbsp;&nbsp;&nbsp;5.9 Message - HTTP Server URL</a>
+##### <a href="doc/conn/msg_websocket.md" target="main">&nbsp;&nbsp;&nbsp;5.10 Message - WebSocket Client</a>
+##### <a href="doc/conn/oth_iottree_node.md" target="main">&nbsp;&nbsp;&nbsp;5.11 Others - IOTTree Node</a>
+##### <a href="doc/conn/oth_virtual.md" target="main">&nbsp;&nbsp;&nbsp;5.12 Others - Virtual</a>
 
 #### <a href="doc/device/index.md" >6 Device,Device Library and Drivers</a>
 ##### <a href="doc/device/dev_lib.md" target="main">&nbsp;&nbsp;&nbsp;6.1 Device Library</a>
@@ -52,9 +55,10 @@
 ##### <a href="doc/device/drv_modbus.md" target="main">&nbsp;&nbsp;&nbsp;6.3 Modbus RTU</a>
 ##### <a href="doc/device/drv_ppi.md" target="main">&nbsp;&nbsp;&nbsp;6.4 PPI (Simens S7-200)</a>
 ##### <a href="doc/device/drv_siemens_eth.md" target="main">&nbsp;&nbsp;&nbsp;6.5 Simens Ethernet</a>
-##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.6 Mitsubishi FX</a>
-##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.7 Mitsubishi FX Net</a>
-##### <a href="doc/device/drv_omron_hl_fins_serial.md" target="main">&nbsp;&nbsp;&nbsp;6.8 Omron HostLink FINS Serial</a>
+##### <a href="doc/device/drv_mc_tcp.md" target="main">&nbsp;&nbsp;&nbsp;6.6 Mitsubishi MC Ethernet TCP</a>
+##### <a href="doc/device/drv_fx.md" target="main">&nbsp;&nbsp;&nbsp;6.7 Mitsubishi FX</a>
+##### <a href="doc/device/drv_fx_net.md" target="main">&nbsp;&nbsp;&nbsp;6.8 Mitsubishi FX Net</a>
+##### <a href="doc/device/drv_omron_hl_fins_serial.md" target="main">&nbsp;&nbsp;&nbsp;6.9 Omron HostLink FINS Serial</a>
 
 #### <a href="doc/js/index.md"> 7 JS Script Usage</a>
 

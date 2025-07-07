@@ -162,7 +162,7 @@ public class HLAddr extends DevAddr implements Comparable<HLAddr>
 				sb.append('0') ;
 		}
 		sb.append(nstr) ;
-		if(bit_num>0)
+		if(bit_num>=0)
 		{
 			if(bit_num<9)
 				sb.append(".0"+bit_num) ;

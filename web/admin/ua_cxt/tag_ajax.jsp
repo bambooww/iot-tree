@@ -8,6 +8,16 @@
 	org.json.*,
 	java.net.*,
 	java.util.*"%><%!
+	private static UATag addTagSimple(UANode n,String tagn,String tagt,String vt_str)
+		throws Exception
+	{
+		if(!(n instanceof UANodeOCTags))
+			return null ;
+		UANodeOCTags nt = (UANodeOCTags)n;
+		UAVal.ValTP vt = UAVal.getValTp(vt_str) ;
+		return nt.addTag(tagn, tagt, "", vt, true) ;
+	}
+	
 	private static UATag addOrEditTag(UANode n,HttpServletRequest request) throws Exception
 	{
 		if(!(n instanceof UANodeOCTags))
@@ -207,7 +217,13 @@ if(n==null)
 	return ;
 }
 
+String tagn = request.getParameter("n") ;
+String tagt = request.getParameter("t") ;
+String vt_str = request.getParameter("vt") ;
+
 UATag tag = null;
+try
+{
 switch(op)
 {
 case "add_tag":
@@ -223,7 +239,16 @@ case "edit_tag":
 		out.print(e.getMessage());
 		return ;
 	}
-	break ;
+	return ;
+case "add_tag_simple":// n t vt path
+	if(!Convert.checkReqEmpty(request, out, "n","t","vt"))
+		return;
+	UATag newstag = addTagSimple(n,tagn,tagt,vt_str) ;
+	if(newstag!=null)
+		out.print("succ="+newstag.getId()) ;
+	else
+		out.print("add tag failed") ;
+	return ;
 case "imp_tag":
 	if(!Convert.checkReqEmpty(request, out, "txt"))
 		return;
@@ -416,5 +441,10 @@ case "chk_addr":
 case "list_for_sel":
 	return ;
 }
-
+}
+catch(Exception ee)
+{
+	ee.printStackTrace();
+	out.print(ee.getMessage()) ;
+}
 %>

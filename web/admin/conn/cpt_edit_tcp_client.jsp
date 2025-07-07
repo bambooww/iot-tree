@@ -48,6 +48,7 @@ if(cpt.isEnable())
 String desc = cpt.getDesc();
 String host = cpt.getHost() ;
 String port  = cpt.getPortStr() ;
+String local_ip = cpt.getLocalIP() ;
 int connto = cpt.getConnTimeout();
 String cp_tp = cp.getProviderType() ;
 long read_no_to = cpt.getReadNoDataTimeout();
@@ -100,6 +101,39 @@ dlg.resize_to(800,500);
 	    <input type="number" id="read_no_to" name="read_no_to" class="layui-input" value="<%=read_no_to%>">
 	  </div>
   </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"><wbt:g>net_interface</wbt:g>:</label>
+    <div class="layui-input-inline" style="width:80%;">
+      <select id="local_ip" name="local_ip" lay-filter="local_ip">
+      	<option value="" > --- </option>
+<%
+for(Enumeration<NetworkInterface> nis=NetworkInterface.getNetworkInterfaces();nis.hasMoreElements();)
+{
+	NetworkInterface ni = nis.nextElement() ;
+	Inet4Address ip4 = null ;
+	for(Enumeration<InetAddress> addrs = ni.getInetAddresses();addrs.hasMoreElements();)
+	{
+		InetAddress addr = addrs.nextElement() ;
+		if(addr.isLoopbackAddress())
+			continue ;
+		if(!(addr instanceof Inet4Address))
+			continue ;
+		ip4 = (Inet4Address)addr ;
+	
+	
+	String tmpip = ip4.getHostAddress();
+	String seled = tmpip.equals(local_ip)?"selected":"" ;
+	
+%><option value="<%=tmpip %>" <%=seled %>>[<%=tmpip %>]  -  <%=ni.getDisplayName() %></option>
+<%
+	}
+}
+%>
+	</select>
+    </div>
+    
+  </div>
+  
     <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-inline" style="width:80%">
@@ -131,7 +165,9 @@ layui.use('form', function(){
 	  form.on('switch(enable)', function(obj){
 		       setDirty();
 		  });
-		  
+	  form.on("select(local_ip)",function(obj){
+		  setDirty();
+	  });
 	  form.render(); 
 });
 
@@ -214,11 +250,12 @@ function do_submit(cb)
 	{
 		cb(false,'<wbt:g>pls,input,valid,conn,timeout</wbt:g>') ;
 	}
+	let local_ip = $("#local_ip").val() ;
 	let read_no_to = parseInt($("#read_no_to").val()) ;
 	if(read_no_to==NaN||read_no_to==null||read_no_to==undefined)
 		read_no_to = 60000 ;
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto,read_no_to:read_no_to});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto,read_no_to:read_no_to,local_ip:local_ip});
 }
 
 </script>

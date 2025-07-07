@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.iottree.core.util.BSOutputBuf;
 import org.iottree.driver.common.modbus.ModbusCmd;
-import org.iottree.driver.omron.fins.FinsCmdReqR;
 import org.iottree.driver.omron.fins.FinsEndCode;
 import org.iottree.driver.omron.fins.FinsMode;
 import org.iottree.driver.omron.hostlink.HLMsg;

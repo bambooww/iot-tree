@@ -263,7 +263,8 @@ function ob2tr_row(ob)
 	var tt = ob.tt ;
 	if(!tt)
 		tt = "" ;
-	var ret = `<tr title='\${tt}' nid='\${ob.id}' path='\${ob.path}' vt='\${ob.vt}' onclick='on_left(this)'>` ;
+	//console.log(ob) ;
+	var ret = `<tr title='\${tt}' nid='\${ob.id||""}' path='\${ob.path}' vt='\${ob.vt}' onclick='on_left(this)'>` ;
 	var txt = ob.path ;
 	var txtlen = txt.length ;
 	if(false) //(txtlen>ROW_MAX_LEN)
@@ -289,8 +290,6 @@ function read_tmp_paths_vals()
 	for(var i = 1 ; i < cur_lefts_trs.length;i++)
 		pstr += ","+$(cur_lefts_trs[i]).attr("path") ;
 	send_ajax("cpt_bind_ajax.jsp",{prjid:prjid,op:"tmp_paths_vals",cpid:cpid,cptp:cptp,connid:connid,paths:pstr},function(bsucc,ret){
-		
-	//	console.log("ret len="+ret.length) ;
 		if(!bsucc||ret.indexOf("{")!=0)
 		{
 			console.log(ret) ;
@@ -305,9 +304,7 @@ function read_tmp_paths_vals()
 			var tr = tbb.find("tr[path$='"+n+"']") ;
 			tr.children('td').eq(2).html(v);
 		}
-		
 	});
-	
 }
 
 //setInterval(read_tmp_paths_vals,2000) ;
@@ -331,8 +328,6 @@ $("#list_table").scroll(()=>{
 				allshow=true;
 				return;
 			}
-				
-			//console.log("show more");
 			show_tb_list();
 		    $("list_table").scroll(scrollTop);
 	 }

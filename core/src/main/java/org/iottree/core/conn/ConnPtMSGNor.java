@@ -1000,7 +1000,7 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 	}
 	
 	//transient private MsgItem lastMsgItem = null ;
-
+	
 	protected void onRecvedMsg(String topic, byte[] bs) throws Exception
 	{
 		super.RT_onMsgRecved(topic, bs);
@@ -1011,12 +1011,12 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 		switch (this.sorTp)
 		{
 		case bytes:
-			mds = new MonData[] {new MonData("sor",bs),null} ;
+			mds = new MonData[] {new MonData(MON_NAME_SOR,bs),null} ;
 			return;
 		case str:
 			
 			str = new String(bs, encod);
-			mds = new MonData[] {new MonData("sor",DataTp.str,str),null} ;
+			mds = new MonData[] {new MonData(MON_NAME_SOR,DataTp.str,str),null} ;
 			break;
 		case xml:
 			canbind = true ;
@@ -1027,28 +1027,28 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 				str=  new String(bs,encod) ;
 				//Document doc = XmlHelper.byteArrayToDoc(bs) ;
 				
-				mds = new MonData[] {new MonData("sor",DataTp.xml,bs,this.encod),null} ;
+				mds = new MonData[] {new MonData(MON_NAME_SOR,DataTp.xml,bs,this.encod),null} ;
 				if(bindH.runBind(topic, str))
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,bindH.getBindRunRes()) ;
 				}
 				else
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
 				}
 			}
 			else
 			{
 				Element ele = XmlHelper.byteArrayToElement(bs) ;
 				str = XmlHelper.transElement2JSONStr(ele,true,true,false) ;
-				mds = new MonData[] {new MonData("sor",DataTp.xml,bs,this.encod),new MonData("xml-json",DataTp.json,str),null} ;
+				mds = new MonData[] {new MonData(MON_NAME_SOR,DataTp.xml,bs,this.encod),new MonData("xml-json",DataTp.json,str),null} ;
 				if(transH.runTransJS(topic, str))
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.json,transH.getTransRunRes()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.json,transH.getTransRunRes()) ;
 				}
 				else
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,"transfer error:"+transH.getTransRunErr()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,"transfer error:"+transH.getTransRunErr()) ;
 				}
 			}
 			break;
@@ -1058,14 +1058,14 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 				str=  new String(bs,encod) ;
 				//Document doc = XmlHelper.byteArrayToDoc(bs) ;
 				
-				mds = new MonData[] {new MonData("sor",DataTp.xml,bs,this.encod),null} ;
+				mds = new MonData[] {new MonData(MON_NAME_SOR,DataTp.xml,bs,this.encod),null} ;
 				if(bindH.runBind(topic, str))
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,bindH.getBindRunRes()) ;
 				}
 				else
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
 				}
 			}
 			break ;
@@ -1073,28 +1073,28 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 		default:
 			canbind = true ;
 			str = new String(bs, encod);
-			mds = new MonData[] {new MonData("sor",DataTp.json,str),null} ;
+			mds = new MonData[] {new MonData(MON_NAME_SOR,DataTp.json,str),null} ;
 			
 			if(handleSty==HandleSty.bind)
 			{
 				if(bindH.runBind(topic, str))
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,bindH.getBindRunRes()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,bindH.getBindRunRes()) ;
 				}
 				else
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,"bind error:"+bindH.getBindRunErr()) ;
 				}
 			}
 			else
 			{
 				if(transH.runTransJS(topic, str))
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.json,transH.getTransRunRes()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.json,transH.getTransRunRes()) ;
 				}
 				else
 				{
-					mds[mds.length-1] = new MonData("result",DataTp.str,"transfer error:"+transH.getTransRunErr()) ;
+					mds[mds.length-1] = new MonData(MON_NAME_RESULT,DataTp.str,"transfer error:"+transH.getTransRunErr()) ;
 				}
 			}
 			

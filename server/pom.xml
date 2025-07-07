@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.7.5</version>
+    <version>1.7.6</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -227,6 +227,7 @@
 			                            <include>data/plugins/inner/</include>
 			                            <include>data/plugins/_libs/</include>
 			                            <include>data/msg_net/nodes.json</include>
+			                            <include>data/msg_net/lib/**/pp-*.json</include>
 			                        </includes>
 			                    </resource>
 			                </resources>
@@ -317,7 +318,7 @@
 			                    <delete file="../_output/lib/iottree-ext-pro-${project.version}.jar" />
 			                    
 			                    <echo message="package zip file" />
-			                    
+			                    <!--
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
@@ -348,7 +349,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                         
+			                        -->
 							</tasks>
 						</configuration>
 					</execution>
