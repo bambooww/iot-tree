@@ -78,7 +78,7 @@ public class ConnProWSClient extends ConnProvider
 	{
 		for(ConnPt ci:this.listConns())
 		{
-			if(!ci.isEnable())
+			if(!ci.canRun())
 				continue ;
 			
 			ConnPtWSClient citc = (ConnPtWSClient)ci ;

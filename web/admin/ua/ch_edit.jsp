@@ -45,12 +45,14 @@ String drv_tt="" ;
 String name = "" ;
 String title = "" ;
 String desc = "" ;
+boolean drv_en_at_ps = false;
 
 if(ch!=null)
 {
 	name = ch.getName() ;
 	title = ch.getTitle() ;
 	desc = ch.getDesc() ;
+	drv_en_at_ps = ch.isDriverEnabledAtPStation() ;
 	if(desc==null)
 		desc="" ;
 	DevDriver dd = ch.getDriver() ;
@@ -61,6 +63,7 @@ if(ch!=null)
 	}
 }
 
+String drv_en_at_ps_chked = drv_en_at_ps?"checked":"";
 	List<DevDriver> dds = DevManager.getInstance().getDrivers() ;
 %>
 <html>
@@ -72,7 +75,7 @@ if(ch!=null)
 <script src="/_js/dlg_layer.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(600,400);
+dlg.resize_to(700,400);
 </script>
 <style>
 </style>
@@ -87,16 +90,27 @@ dlg.resize_to(600,400);
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:250px;">
       <input type="text" name="title" id="title" value="<%=title %>"  class="layui-input"/>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>driver</wbt:lang></label>
-    <div class0="layui-input-block" class="layui-input-inline">
+    <div class="layui-input-inline" style="width:200px;">
       <input type="text" name="drv_title" id="drv_title" value="<%=drv_tt %>" onclick="select_drv()"  class="layui-input" autocomplete="off"/>
       <input type="hidden" name="drv" id="drv" value="<%=drv_name %>" />
     </div>
+<%
+if(rep.isPrjPStationIns())
+{
+%>    
+     <div class="layui-form-mid"><wbt:g>drv_en_at_ps</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width: 200px;">
+	    <input type="checkbox" id="drv_en_at_ps" name="drv_en_at_ps" <%=drv_en_at_ps_chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
+	  </div>
+<%
+}
+%>
   </div>
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
@@ -175,10 +189,11 @@ function do_submit(cb)
 		cb(false,'<wbt:g>pls,sel,driver</wbt:g>') ;
 		return ;
 	}
+	let drv_en_at_ps = $("#drv_en_at_ps").prop("checked") ;
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
-	cb(true,{drv:drv,name:n,title:tt,desc:desc});
+	cb(true,{drv:drv,name:n,title:tt,drv_en_at_ps:drv_en_at_ps,desc:desc});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

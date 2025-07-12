@@ -101,6 +101,16 @@ public abstract class MNNode extends MNBase
 		}
 		return null ;
 	}
+	
+	/**
+	 * when this node has own related module,it can limit node instance num in
+	 * module. 
+	 * @return <=0 will not limit
+	 */
+	public int getMaxNumInModule()
+	{
+		return -1 ;
+	}
 
 	public abstract boolean supportInConn() ;
 	

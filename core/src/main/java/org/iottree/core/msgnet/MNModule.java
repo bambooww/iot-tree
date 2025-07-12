@@ -108,6 +108,50 @@ public abstract class MNModule extends MNBase
 		return rets ;
 	}
 	
+	public List<MNNode> getRelatedNodes(Class<? extends MNNode> c)
+	{
+		ArrayList<MNNode> rets = new ArrayList<>(this.nodeIdSet.size()) ;
+//		for(MNNode n:this.belongTo.id2node.values())
+//		{
+//			if(n.getOwnRelatedModule()!=this)
+//				continue ;
+//			if(!c.isInstance(n))
+//				continue ;
+//			rets.add(n) ;
+//		}
+//		return rets ;
+		if(this.nodeIdSet==null||this.nodeIdSet.size()<=0)
+			return null ;
+		
+		for(String nid:this.nodeIdSet)
+		{
+			MNNode n = this.belongTo.getNodeById(nid) ;
+			if(n==null)
+				continue ;
+			if(!c.isInstance(n))
+				continue ;
+			rets.add(n) ;
+		}
+		return rets ;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends MNNode> T getRelatedNodeFirst(Class<T> c)
+	{
+		if(this.nodeIdSet==null||this.nodeIdSet.size()<=0)
+			return null ;
+		for(String nid:this.nodeIdSet)
+		{
+			MNNode n = this.belongTo.getNodeById(nid) ;
+			if(n==null)
+				continue ;
+			if(!c.isInstance(n))
+				continue ;
+			return (T)n;
+		}
+		return null ;
+	}
+	
 	//for module,it can be impl to auto add related nodes
 	public void checkAfterSetParam()
 	{

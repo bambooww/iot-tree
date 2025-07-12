@@ -383,6 +383,8 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 	
 	private boolean bEnable = true ;
 	
+	boolean bEnAtPStation = false;
+	
 	//private String staticTxt = "" ;
 
 	transient ConnProvider belongTo = null ;
@@ -463,6 +465,7 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 			this.title = this.name;
 		this.desc = jo.optString("desc") ;
 		this.bEnable = jo.optBoolean("enable") ;
+		this.bEnAtPStation = jo.optBoolean("en_at_ps",false) ;
 		if(Convert.isNullOrEmpty(name))
 			throw new Exception("input json must has name param") ;
 		StringBuilder sb = new StringBuilder() ;
@@ -556,7 +559,22 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 		return bEnable;
 	}
 	
+	public boolean isEnabledAtPStation()
+	{
+		return this.bEnAtPStation;
+	}
 	
+	public boolean canRun()
+	{
+		if(!bEnable)
+			return false ;
+		
+		boolean b_pstat = this.belongTo.belongTo.isPrjPStationIns() ;
+		if(!b_pstat)
+			return true ;
+		
+		return bEnAtPStation;
+	}
 	
 	public boolean isValid()
 	{

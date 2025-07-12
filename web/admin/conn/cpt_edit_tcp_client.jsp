@@ -13,6 +13,13 @@
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
+UAPrj prj = UAManager.getInstance().getPrjById(repid) ;
+if(prj==null)
+{
+	out.print("no prj foudn") ;
+	return ;
+}
+
 String cptp = ConnPtTcpClient.TP;//request.getParameter("cptp") ;
 ConnProTcpClient cp = (ConnProTcpClient)ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp);
 if(cp==null)
@@ -52,6 +59,9 @@ String local_ip = cpt.getLocalIP() ;
 int connto = cpt.getConnTimeout();
 String cp_tp = cp.getProviderType() ;
 long read_no_to = cpt.getReadNoDataTimeout();
+
+boolean en_at_ps = cpt.isEnabledAtPStation() ;
+String en_at_ps_chked =  en_at_ps?"checked":"";
 %>
 <html>
 <head>
@@ -79,6 +89,20 @@ dlg.resize_to(800,500);
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
+  <%
+  if(prj.isPrjPStationIns())
+  {
+  %>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+	  <div class="layui-form-mid"><wbt:g>en_at_ps</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width: 200px;">
+	    <input type="checkbox" id="en_at_ps" name="en_at_ps" <%=en_at_ps_chked%> lay-skin="switch"  lay-filter="en_at_ps" class="layui-input">
+	  </div>
+  </div>
+  <%
+  }
+  %>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>host</wbt:g>:</label>
     <div class="layui-input-inline">
@@ -165,6 +189,9 @@ layui.use('form', function(){
 	  form.on('switch(enable)', function(obj){
 		       setDirty();
 		  });
+	  form.on('switch(en_at_ps)', function(obj){
+		       setDirty();
+		  });
 	  form.on("select(local_ip)",function(obj){
 		  setDirty();
 	  });
@@ -224,6 +251,8 @@ function do_submit(cb)
 		tt = n;
 	}
 	var ben = $("#enable").prop("checked") ;
+	
+	let en_at_ps = $("#en_at_ps").prop("checked") ;
 	var desc = document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
@@ -255,7 +284,7 @@ function do_submit(cb)
 	if(read_no_to==NaN||read_no_to==null||read_no_to==undefined)
 		read_no_to = 60000 ;
 	
-	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,host:host,port:vp,conn_to:connto,read_no_to:read_no_to,local_ip:local_ip});
+	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,en_at_ps:en_at_ps,host:host,port:vp,conn_to:connto,read_no_to:read_no_to,local_ip:local_ip});
 }
 
 </script>

@@ -1,23 +1,24 @@
-package org.iottree.core.msgnet.nodes;
+package org.iottree.core.msgnet.modules;
 
 import org.iottree.core.msgnet.MNConn;
-import org.iottree.core.msgnet.MNCxtPkTP;
 import org.iottree.core.msgnet.MNMsg;
-import org.iottree.core.msgnet.MNNodeMid;
+import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.RTOut;
-import org.iottree.core.msgnet.util.CxtValRule;
-import org.iottree.core.util.Convert;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONObject;
 
-public class NM_PID extends MNNodeMid // implements ILang
+public class PID_ManualOutput extends MNNodeEnd
 {
+public static final String TP = "pid_manual_o" ;
+	
+	double kp, ki, kd, sampleTime;
+	
 	@Override
 	public String getColor()
 	{
 		return "#e6d970";
 	}
-	
+
 	@Override
 	public String getIcon()
 	{
@@ -35,60 +36,63 @@ public class NM_PID extends MNNodeMid // implements ILang
 	{
 		return null;
 	}
-
-	@Override
-	public int getOutNum()
-	{
-		return 1;
-	}
 	
-//	@Override
+	// @Override
 	public String getTP()
 	{
-		return "pid";
+		return TP;
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return "PID (Todo)";
+		return "Manual Output";
 	}
 
 	@Override
+	public int getMaxNumInModule()
+	{
+		return 1 ;// limit one
+	}
+	
+	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		failedr.append("TODO") ;
-		return false;
+		return true;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		JSONObject jo = new JSONObject() ;
-		
+		JSONObject jo = new JSONObject();
+
 		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
+		this.kp = jo.optDouble("kp") ;
 		
 	}
-	
+
 	// --------------
 	
-	private transient long lastMsgOutMS = -1 ;
+
+	private transient long lastMsgOutMS = -1;
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
-		StringBuilder failedr = new StringBuilder() ;
-		if(!this.isParamReady(failedr))
+		StringBuilder failedr = new StringBuilder();
+		if (!this.isParamReady(failedr))
 		{
-			return null ;
+			return null;
 		}
-		
+
 		return null;
 	}
+
+	
 
 }

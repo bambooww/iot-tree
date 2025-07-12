@@ -41,4 +41,14 @@
   <dd_node id="1" name="out_fmt" name_cn="输出格式" name_en="Output Format" />
   <dd_node id="1" name="out_min_intv" name_cn="输出最小时间间隔(毫秒)" name_en="Output minimum interval(MS)" />
   <dd_node id="1" name="property" name_cn="属性" name_en="Property" />
+  
+  <dd_node id="1" name="ambient_t" name_cn="环境温度" name_en="Ambient Temperature" />
+  <dd_node id="1" name="init_t" name_cn="初始温度" name_en="Initial Temperature" />
+  <dd_node id="1" name="heat_pow" name_cn="加热功率" name_en="Heating Power" />
+  
+  <dd_node id="1" name="signal" name_cn="信号" name_en="Signal" />
+  <dd_node id="1" name="temp" name_cn="温度" name_en="Temperature" />
+  <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
+  <dd_node id="1" name="high" name_cn="上限" name_en="High" />
+  <dd_node id="1" name="out_intv" name_cn="输出信号间隔" name_en="Output Signal Interval" />
 </dd_class>

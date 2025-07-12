@@ -30,6 +30,8 @@
   <dd_node id="1" name="anony" name_cn="匿名" name_en="Anonymous" />
   <dd_node id="1" name="user_psw" name_cn="用户验证密码" name_en="User Password" />
   
+  <dd_node id="1" name="en_at_ps" name_cn="远程站点实例也运行" name_en="Run At Remote PStation"/>
+  
   <dd_node id="1" name="net_interface" name_cn="网络接口" name_en="Network Interface" />
   
   <dd_node id="1" name="ign_not_exist" name_cn="忽略不存在" name_en="Ingore Not Existed" />

@@ -947,7 +947,6 @@ function ws_conn()
     	ws_disconn();
         log('Info: WebSocket connection closed, Code: ' + event.code + (event.reason == "" ? "" : ", Reason: " + event.reason));
     };
-    
     return true;
 }	
 
@@ -997,13 +996,10 @@ function reconn_ws()
 
 if(!b_devdef)
 {
-	check_ws();
-	setInterval(check_ws,5000) ;
+	//check_ws();
+	setInterval(check_ws,2000) ;
 	//setInterval(cxt_rt,3000) ;
 }
-
-
-
 
 var MAX_VAL_SHOWLEN = 20 ;
 
@@ -1024,8 +1020,6 @@ function show_ele_html(n,v,chklen,title)
 		ele.innerHTML=v||"" ;
 }
 
-
-	
 function run_script_test(fn)
 {
 	var scode = document.getElementById('script_test').value ;

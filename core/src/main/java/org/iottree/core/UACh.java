@@ -32,6 +32,14 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	
 	@data_val(param_name = "drv_int")
 	long drvIntMS = 1000 ;
+	
+	/**
+	 * normal prj run as pstation instance,all driver in channel will disable
+	 * you can enable it with this prop
+	 */
+	@data_val(param_name = "drv_en_at_ps")
+	boolean bDrvEnAtPStation = false;
+	
 //	/**
 //	 * javascript run with interval
 //	 */
@@ -67,6 +75,7 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	//UARep belongTo = null ;
 	
 	private transient DevDriver devDrv = null ;
+	
 	
 	@data_obj(obj_c=UADev.class)
 	List<UADev> devs = new ArrayList<>();
@@ -158,6 +167,20 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	public long getDriverIntMS()
 	{
 		return this.drvIntMS;
+	}
+	
+	public boolean isDriverEnabledAtPStation()
+	{
+		return this.bDrvEnAtPStation;
+	}
+	
+	boolean canRun()
+	{
+		boolean b_station_ins = this.getBelongTo().isPrjPStationIns() ;
+		if(!b_station_ins)
+			return true ;
+		
+		return this.isDriverEnabledAtPStation() ;
 	}
 	
 	public DevDriver getDriver()

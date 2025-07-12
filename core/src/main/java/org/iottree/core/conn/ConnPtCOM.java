@@ -369,7 +369,7 @@ public class ConnPtCOM extends ConnPtStream
 
 	public void RT_checkConn() // throws Exception
 	{
-		if(!this.isEnable())
+		if(!this.canRun())
 			return ;
 		
 		if (System.currentTimeMillis() - lastChk < 5000)

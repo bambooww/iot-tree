@@ -1,9 +1,16 @@
 package org.iottree.core.store;
 
+import java.util.List;
+
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
 import org.json.JSONObject;
+
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.domain.Bucket;
+import com.influxdb.client.domain.Organization;
 
 @data_class
 public class SourceInfluxDB extends Source //implements Closeable
@@ -100,7 +107,28 @@ public class SourceInfluxDB extends Source //implements Closeable
 	
 	public boolean checkConn(StringBuilder failedr)
 	{
-		throw new RuntimeException("no impl") ;
+		//throw new RuntimeException("no impl") ;
+		if(!this.checkValid(failedr))
+			return false ;
+		
+		try(InfluxDBClient dbc=  InfluxDBClientFactory.create(getUrl(),
+					getToken().toCharArray(),getOrg(),getBucket()))
+		{
+			List<Organization> orgs = dbc.getOrganizationsApi().findOrganizations();
+			System.out.println("find orgs num="+orgs.size()) ;
+			orgs.forEach(o -> System.out.println("    "+o.getName()));
+			
+			List<Bucket> buckets = dbc.getBucketsApi().findBuckets();
+			System.out.println("find buckets num="+buckets.size()) ;
+			buckets.forEach(b -> System.out.println("   "+b.getName()));
+		}
+		catch(Exception ee)
+		{
+			failedr.append(ee.getMessage()) ;
+			ee.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 	public static final String EXCHG_TP ="source_influxdb" ;

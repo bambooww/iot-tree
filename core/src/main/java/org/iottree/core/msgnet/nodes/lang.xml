@@ -106,6 +106,12 @@
 		desc_cn="根据设定或输入的文件路径，监视文件"
 		desc_en="Monitor the file in dir"
 		/>
+		
+	
+	<dd_node id="1" name="heating_furn_sim" name_cn="模拟加热炉" name_en="Simulated Heating Furnace"
+		desc_cn="支持加热信号的输入，控制加热功率，并且能够定时输出当前温度信号"
+		desc_en="Supports input of heating signals, controls heating power, and can output current temperature signals at regular intervals"
+		/>
 	
 	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
   <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />

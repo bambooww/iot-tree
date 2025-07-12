@@ -65,7 +65,7 @@ public class ConnProMultiTcpMsg  extends ConnProvider
 		
 		for(ConnPt ci:pts)
 		{
-			if(!ci.isEnable())
+			if(!ci.canRun())
 				continue ;
 			try
 			{

@@ -139,7 +139,7 @@ public class ConnProTcpClient extends ConnProvider
 	{
 		for(ConnPt ci:this.listConns())
 		{
-			if(!ci.isEnable())
+			if(!ci.canRun())
 				continue ;
 			
 			//if(ci.hasJoinedCh() || ci.hasJoinedDev())

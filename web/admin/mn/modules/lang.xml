@@ -17,4 +17,20 @@
   
   <dd_node id="1" name="unbind" name_cn="取消绑定" name_en="Unbind" />
   
+  <dd_node id="1" name="gain" name_cn="增益" name_en="Gain" />
+  <dd_node id="1" name="integral" name_cn="积分" name_en="Integral" />
+  <dd_node id="1" name="derivative" name_cn="微分" name_en="Derivative" />
+  <dd_node id="1" name="sample_t" name_cn="采样时间" name_en="Sample Time" />
+  
+  <dd_node id="1" name="ctrl" name_cn="控制" name_en="Control" />
+  <dd_node id="1" name="in_rg" name_cn="输入范围" name_en="Input Range" />
+  <dd_node id="1" name="out_rg" name_cn="输出范围" name_en="Output Range" />
+  
+  <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
+  <dd_node id="1" name="high" name_cn="上限" name_en="High" />
+  
+  <dd_node id="1" name="st_desc" name_cn="PID计算输出控制时间间隔" name_en="PID calculation output control time interval" />
+  <dd_node id="1" name="in_range" name_cn="采样输入物理量范围" name_en="Sampling input physical quantity range" />
+  <dd_node id="1" name="out_range" name_cn="物理量控制需要的输出数值范围" name_en="The range of output values required for physical quantity control" />
+  
 </dd_class>

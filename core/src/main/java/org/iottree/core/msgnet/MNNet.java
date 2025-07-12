@@ -284,6 +284,17 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			throw new MNException("node has no related module,but you set") ;
 		MNNode new_n = n.createNewIns(this) ;
 		
+		if(tp_md!=null)
+		{
+			int max_n = new_n.getMaxNumInModule() ;
+			if(max_n>0)
+			{
+				List<MNNode> oldns = m.getRelatedNodes(new_n.getClass()) ;
+				if(oldns!=null&&oldns.size()>=max_n)
+					throw new MNException("node has limit num ["+max_n+"] in module") ;
+			}
+		}
+		
 		new_n.x = x ;
 		new_n.y = y ;
 		String tpt = n.getTPTitle() ;
@@ -331,7 +342,13 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		else if(tp_md==null && m!=null)
 			throw new MNException("node has no related module,but you set") ;
 		MNNode new_n = n.createNewIns(this) ;
-		
+		int max_n = new_n.getMaxNumInModule() ;
+		if(max_n>0)
+		{
+			List<MNNode> oldns = m.getRelatedNodes(tempn.getClass()) ;
+			if(oldns!=null&&oldns.size()>=max_n)
+				throw new MNException("node has limit num ["+max_n+"] in module") ;
+		}
 		new_n.x = x ;
 		new_n.y = y ;
 		String tpt = n.getTPTitle() ;

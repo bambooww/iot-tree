@@ -1435,7 +1435,7 @@ function iottree_node_syn_tree(cptp,cpid,connid)
 function edit_cpt(cptp,cpid,connid)
 {
 	dlg.open_win("conn/cpt_edit_"+cptp+".jsp?prjid="+repid+"&cptp="+cptp+"&cpid="+cpid+"&connid="+connid,
-			{title:cptp+" <wbt:g>conn,editor</wbt:g>",w:'800',h:'600'},
+			{title:cptp+" <wbt:g>conn,editor</wbt:g>",w:'800',h:'650'},
 			//['Ok','Apply','Cancel','Help'],//
 			['<wbt:g>ok</wbt:g>',{title:'<wbt:g>apply</wbt:g>',style:"warm",enable:false},{title:'<wbt:g>cancel</wbt:g>',style:"primary"},{title:'<wbt:g>help</wbt:g>',style:"primary"}],
 			

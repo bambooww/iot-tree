@@ -70,7 +70,7 @@ for(int i = 0 ; i < nts_num ; i ++)
 	ConnPt cpt = cp.setConnPtByJson(tmpjo) ;
 	
 	//add ch
-	UACh ch = prj.addCh(drv, name, title, "", null) ;
+	UACh ch = prj.addCh(drv,true, name, title, "", null) ;
 	//add dev
 	for(int j = 0 ; j < dev_num ; j ++)
 	{

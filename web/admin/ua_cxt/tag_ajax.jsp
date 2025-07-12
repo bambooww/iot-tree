@@ -110,37 +110,43 @@
 		txt=txt.trim() ;
 		if(Convert.isNullOrEmpty(txt))
 			return null ;
+		List<UATag> rets = null;
 		UANodeOCTags nt = (UANodeOCTags)n;
 		if(txt.startsWith("["))
 		{
 			JSONArray jarr = new JSONArray(txt) ;
-			return importTagJarr(nt,jarr) ;
+			rets = importTagJarr(nt,jarr) ;
 		}
-		BufferedReader br = new BufferedReader(new StringReader(txt)) ;
-		String ln = null ;
-		ArrayList<UATag> rets = new ArrayList<>() ;
-		while((ln=br.readLine())!=null)
+		else
 		{
-			ln=ln.trim() ;
-			if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
-				continue ;
-			List<String> ss = Convert.splitStrWith(ln, " \t") ;
-			if(ss.size()<3)
-				continue ;
-			String name= ss.remove(0) ;
-			String tpstr = ss.remove(0) ;
-			UAVal.ValTP dt = UAVal.getValTp(tpstr) ;
-			if(dt==null)
-				continue ;
-			String addr = null ;
-			if(has_addr)
-				addr = ss.remove(0) ;
-			
-			String title = Convert.combineStrWith(ss, " ") ;
-			UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, "",addr,dt,-1,null,100,null,null) ;
-			rets.add(ret) ;
+			BufferedReader br = new BufferedReader(new StringReader(txt)) ;
+			String ln = null ;
+			rets = new ArrayList<>() ;
+			while((ln=br.readLine())!=null)
+			{
+				ln=ln.trim() ;
+				if(Convert.isNullOrEmpty(ln) || ln.startsWith("#"))
+					continue ;
+				List<String> ss = Convert.splitStrWith(ln, " \t") ;
+				if(ss.size()<3)
+					continue ;
+				String name= ss.remove(0) ;
+				String tpstr = ss.remove(0) ;
+				UAVal.ValTP dt = UAVal.getValTp(tpstr) ;
+				if(dt==null)
+					continue ;
+				String addr = null ;
+				if(has_addr)
+					addr = ss.remove(0) ;
+				
+				String title = Convert.combineStrWith(ss, " ") ;
+				UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, "",addr,dt,-1,null,100,null,null) ;
+				rets.add(ret) ;
+			}
 		}
-		nt.save();
+		
+		if(rets!=null && rets.size()>0)
+			nt.save();
 		return rets ;
 	}
 	

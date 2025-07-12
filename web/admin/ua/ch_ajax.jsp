@@ -7,7 +7,9 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%!private static void addOrEditCh(HttpServletRequest request,JspWriter out) throws Exception
+	java.util.*"%><%!
+	
+	private static void addOrEditCh(HttpServletRequest request,JspWriter out) throws Exception
 	{
 		String reppath = request.getParameter("rep_path") ;
 		String chpath = request.getParameter("ch_path") ;
@@ -42,6 +44,7 @@
 		if(!Convert.checkReqEmpty(request, out, "name"))
 			return;
 		String drv = request.getParameter("drv");
+		boolean drv_en_at_ps = "true".equals(request.getParameter("drv_en_at_ps")) ;
 		String name=request.getParameter("name");
 		String title = request.getParameter("title");
 		String desc = request.getParameter("desc");
@@ -49,11 +52,11 @@
 		try
 		{
 			if(ch==null)
-				ch = rep.addCh(drv,name, title, desc,null) ;
+				ch = rep.addCh(drv,drv_en_at_ps,name, title, desc,null) ;
 			else
 			{
 				UAPrj rep0 = ch.getBelongTo() ;
-				rep0.updateCh(ch,drv,name,title,desc);
+				rep0.updateCh(ch,drv,drv_en_at_ps,name,title,desc);
 			}
 			out.print("succ="+ch.getId()) ;
 			return ;

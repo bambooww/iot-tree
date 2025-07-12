@@ -15,6 +15,8 @@
 <dd_node id="1" name="one" name_cn="一个" name_en="One"/>
 
 <dd_node id="1" name="edit_txt" name_cn="文本编辑" name_en="Txt Editor"/>
+<dd_node id="1" name="drv_en_at_ps" name_cn="远程站点实例也运行" name_en="Run At Remote PStation"/>
+
 
 	<dd_node id="1" name="new_prj_will_imp" name_cn="新项目将被导入" name_en="New project will import"/>
 	<dd_node id="1" name="prj_existed" name_cn="新项目将被导入" name_en="Project is already existed"/>

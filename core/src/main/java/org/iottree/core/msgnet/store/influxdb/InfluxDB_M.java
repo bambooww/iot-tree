@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.domain.Organization;
 
 public class InfluxDB_M extends MNModule  implements IMNRunner,IMNNodeRes
 {

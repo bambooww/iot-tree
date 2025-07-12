@@ -256,7 +256,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return null;
 	}
 
-	public UACh addCh(String drvname, String name, String title, String desc, HashMap<String, Object> uiprops)
+	public UACh addCh(String drvname,boolean drv_en_at_ps, String name, String title, String desc, HashMap<String, Object> uiprops)
 			throws Exception
 	{
 		UAUtil.assertUAName(name);
@@ -267,6 +267,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			throw new IllegalArgumentException("ch with name=" + name + " existed");
 		}
 		ch = new UACh(name, title, desc, drvname);
+		ch.bDrvEnAtPStation = drv_en_at_ps;
 		if (uiprops != null)
 		{
 			for (Map.Entry<String, Object> n2v : uiprops.entrySet())
@@ -283,7 +284,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return ch;
 	}
 
-	public UACh updateCh(UACh ch, String drvname, String name, String title, String desc) throws Exception
+	public UACh updateCh(UACh ch, String drvname, boolean drv_en_at_ps,String name, String title, String desc) throws Exception
 	{
 		UAUtil.assertUAName(name);
 
@@ -291,6 +292,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		if (tmpch != null && tmpch != ch)
 			throw new IllegalArgumentException("ch with name=" + name + " existed");
 		ch.setNameTitle(name, title, desc);
+		ch.bDrvEnAtPStation = drv_en_at_ps ;
 
 		if (drvname != null && drvname.equals(ch.getDriverName()))
 		{
@@ -573,7 +575,6 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 		r.addPropItem(new PropItem("pstation_ins_en", lan, PValTP.vt_bool, false, null, null,false));
 		r.addPropItem(new PropItem("station_id",lan, PValTP.vt_str, false, new String[] {}, new Object[] {},"").withDynValOpts(new PropItem.IValOpts() {
-			
 			@Override
 			public PropItem.ValOpts getValOpts()
 			{
@@ -606,7 +607,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}));
 		
 		r.addPropItem(new PropItem("station_prjn",lan, PValTP.vt_str, false, null, null,""));
-		//r.addPropItem(new PropItem("station_key",lan, PValTP.vt_str, false, null, null,""));
+		
+		
+//		r.addPropItem(new PropItem("pstation_ins_run_chs",lan, PValTP.vt_str, false, null, null,""));
+//		
+//		r.addPropItem(new PropItem("pstation_ins_run_conns",lan, PValTP.vt_str, false, null, null,""));
 		
 		return r;
 	}
@@ -653,6 +658,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 //		PStation def = getPrjPStationInsDef() ;
 //		return def!=null ;
 	}
+	
+//	public List<String> getPrjPStationInsEnChs()
+//	{
+//		String str = this.getOrDefaultPropValueStr("pstation_ins", "pstation_ins_run_chs", "").trim();
+//		return Convert.splitStrWith(str, ",|");
+//	}
+//	
+//	public List<String> getPrjPStationInsEnConns()
+//	{
+//		String str = this.getOrDefaultPropValueStr("pstation_ins", "pstation_ins_run_conns", "").trim();
+//		return Convert.splitStrWith(str, ",|");
+//	}
 	
 	public Object getPropValue(String groupn, String itemn)
 	{
@@ -1396,8 +1413,17 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	private void startStopCh(boolean b)
 	{
+		//boolean b_station_ins = this.isPrjPStationIns() ;
+		//List<String> pstation_en_chs = this.getPrjPStationInsEnChs();
+		
 		for (UACh ch : this.getChs())
 		{
+			if(!ch.canRun())
+				continue ;
+//			String chn = ch.getName() ;
+//			if(b_station_ins && (pstation_en_chs==null || !pstation_en_chs.contains(chn)))
+//				continue;
+			
 			try
 			{
 				StringBuilder sb = new StringBuilder();
@@ -1465,6 +1491,14 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 					startStopTask(true) ;
 				}
+				else
+				{// station ins- agent  ,it can config conn or ch to be run. so in agent ,you can disable conn or driver
+					// and keep agent special conn and ch to run as normal. that's make agent can has some data or device add
+					//if(b_)
+					startStopCh(true); //you can set run at pstation
+					
+					startStopConn(true); //you can disabled conn at pstation
+				}
 				
 				MNManager.getInstance(UAPrj.this).RT_start();
 				
@@ -1490,6 +1524,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					}
 					else
 					{
+						runFlush();
+						runMidTagsScript();
+						
 						if(stationUpDT>0 && tagStationUpGAP!=null)
 						{
 							long tmpt = System.currentTimeMillis() ;
@@ -1576,21 +1613,36 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	private transient long lastRunFlush = -1 ;
 
-	final void runFlush()
+	private final void runFlush()
 	{
 		if(System.currentTimeMillis()-lastRunFlush<500)
 			return ;
 		
 		try
 		{
-			this.RT_runFlush();
-			for (UANode subn : this.getSubNodes())
+			boolean b_pstation = this.isPrjPStationIns() ;
+			if(b_pstation)
 			{
-				if (subn instanceof UANodeOCTags)
+				//run only channel enable at pstation and prj root mid tags
+				for(UACh ch:this.chs)
 				{
-					((UANodeOCTags) subn).RT_runFlush();
+					if(!ch.canRun())
+						continue ;
+					ch.RT_runFlush(); 
 				}
 			}
+			else
+			{
+				this.RT_runFlush();
+			}
+			
+//			for (UANode subn : this.getSubNodes())
+//			{
+//				if (subn instanceof UANodeOCTags)
+//				{
+//					((UANodeOCTags) subn).RT_runFlush();
+//				}
+//			}
 		}
 		finally
 		{
@@ -1756,9 +1808,25 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		if (System.currentTimeMillis() - this.midTagScriptRunDT < this.midTagScriptInt)
 			return;// no run
 
+		boolean b_pstation = this.isPrjPStationIns() ;
 		try
 		{
-			CXT_calMidTagsVal();
+			if(b_pstation)
+			{
+				//run only channel enable at pstation and prj root mid tags
+				for(UACh ch:this.chs)
+				{
+					if(!ch.canRun())
+						continue ;
+					ch.CXT_calMidTagsVal();
+				}
+				//run prj local mid tags
+				this.CXT_calMidTagsValLocal();
+			}
+			else
+			{
+				CXT_calMidTagsVal();
+			}
 		}
 		finally
 		{

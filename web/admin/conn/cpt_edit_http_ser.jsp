@@ -14,7 +14,13 @@
 	if(!Convert.checkReqEmpty(request, out, "prjid"))
 	return;
 String repid = request.getParameter("prjid") ;
-//String cpid =  request.getParameter("cpid") ;
+UAPrj prj = UAManager.getInstance().getPrjById(repid) ;
+if(prj==null)
+{
+	out.print("no prj foudn") ;
+	return ;
+}
+
 String cptp = ConnProHTTPSer.TP;//request.getParameter("cptp") ;
 ConnProHTTPSer cp = (ConnProHTTPSer)ConnManager.getInstance().getOrCreateConnProviderSingle(repid, cptp);
 if(cp==null)
@@ -24,7 +30,6 @@ if(cp==null)
 }
 
 String cpid= cp.getId() ;
-UAPrj prj = UAManager.getInstance().getPrjById(repid) ;
 String prjn = prj.getName() ;
 int  web_port = Config.getWebapps().getPort();
 String connid = request.getParameter("connid") ;
@@ -69,6 +74,9 @@ String limit_ip = cpt.getLimitIP() ;
 String encod = cpt.getEncod() ;
 if(Convert.isNullOrEmpty(encod))
 	encod = "UTF-8";
+
+boolean en_at_ps = cpt.isEnabledAtPStation() ;
+String en_at_ps_chked =  en_at_ps?"checked":"";
 %>
 <html>
 <head>
@@ -118,7 +126,20 @@ dlg.resize_to(1500,900);
 	    <input type="checkbox" id="enable" name="enable" <%=chked%> lay-skin="switch"  lay-filter="enable" class="layui-input">
 	  </div>
   </div>
-   
+  <%
+  if(prj.isPrjPStationIns())
+  {
+  %>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+	  <div class="layui-form-mid"><wbt:g>en_at_ps</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width: 200px;">
+	    <input type="checkbox" id="en_at_ps" name="en_at_ps" <%=en_at_ps_chked%> lay-skin="switch"  lay-filter="en_at_ps" class="layui-input">
+	  </div>
+  </div>
+  <%
+  }
+  %>
   <div class="layui-form-item">
     <label class="layui-form-label">Msg Handle</label>
     <div class="layui-input-inline" style="width:650px;">
@@ -181,6 +202,9 @@ layui.use('form', function(){
 	  
 	  form.on('switch(enable)', function(obj){
 		  setDirty(true);
+		  });
+	  form.on('switch(en_at_ps)', function(obj){
+		       setDirty();
 		  });
 	  form.on('select(method)', function(obj){
 		  setDirty(true);
@@ -313,6 +337,7 @@ function do_submit(cb)
 		tt = n;
 	}
 	var ben = $("#enable").prop("checked") ;
+	let en_at_ps = $("#en_at_ps").prop("checked") ;
 	var desc = null;//document.getElementById('desc').value;
 	if(desc==null)
 		desc ='' ;
@@ -331,7 +356,7 @@ function do_submit(cb)
 	let resp_err = $("#resp_err").val();
 	let limit_ip = $("#limit_ip").val();
 
-	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,resp_ok:resp_ok,resp_err:resp_err,limit_ip:limit_ip},msgob);
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,en_at_ps:en_at_ps,resp_ok:resp_ok,resp_err:resp_err,limit_ip:limit_ip},msgob);
 	cb(true,oball) ;
 }
 
