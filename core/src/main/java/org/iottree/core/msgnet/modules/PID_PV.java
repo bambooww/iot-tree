@@ -55,7 +55,7 @@ public class PID_PV extends MNNodeEnd // implements ILang
 	@Override
 	public String getTPTitle()
 	{
-		return "PV";
+		return g(TP);//"PV";
 	}
 	
 	@Override

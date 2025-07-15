@@ -49,7 +49,7 @@ public class PID_SP extends MNNodeEnd // implements ILang
 	@Override
 	public String getTPTitle()
 	{
-		return "Setpoint";
+		return g(TP);// "Setpoint";
 	}
 	
 	@Override
@@ -112,6 +112,16 @@ public class PID_SP extends MNNodeEnd // implements ILang
 	{
 		if(!rtReady)
 			return null ;
+		Object obj = msg.getPayload() ;
+		if(obj==null)
+			return null ;
+		if(obj instanceof Boolean)
+		{
+			boolean b = (Boolean)obj ;
+			if(!b)
+				ownerPID_M.RT_setSetpoint(Double.NaN) ;
+			return null;
+		}
 		Number n = msg.getPayloadNumber() ;
 		if(n==null)
 			return null;

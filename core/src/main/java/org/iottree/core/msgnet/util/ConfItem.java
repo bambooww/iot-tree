@@ -11,7 +11,7 @@ import org.json.JSONObject;
  * plug conf for node
  * 
  * "tp":"que_num","tpt":"Query material quantity","class":"com.xxx.app.mn.N_QueryNum",
-				"pm_ui_path":"../que_num.jsp","doc_path":"../que_num_doc.html"
+				"pm_ui_path":"../que_num.jsp","rt_panel_path":"","doc_path":"../que_num_doc.html"
 				
  * @author jason.zhu
  *
@@ -26,6 +26,8 @@ public class ConfItem
 	
 	String pm_ui_path = null ;
 	
+	String rt_panel_path = null ;
+	
 	String doc_path = null ;
 	
 	ConfItem(JSONObject jo)
@@ -34,6 +36,7 @@ public class ConfItem
 		this.tpt = jo.optString("tpt") ;
 		this.classn = jo.optString("class") ;
 		this.pm_ui_path = jo.optString("pm_ui_path") ;
+		this.rt_panel_path = jo.optString("rt_panel_path") ;
 		this.doc_path = jo.optString("doc_path") ;
 	}
 	
@@ -61,6 +64,11 @@ public class ConfItem
 	public String getPmUIPath()
 	{
 		return pm_ui_path ;
+	}
+	
+	public String getRTPanelPath()
+	{
+		return rt_panel_path;
 	}
 	
 	public String getDocPath()

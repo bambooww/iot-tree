@@ -12,8 +12,6 @@ public class PID_Output extends MNNodeStart
 {
 	public static final String TP = "pid_output" ;
 	
-	double kp, ki, kd, sampleTime;
-	
 	@Override
 	public String getColor()
 	{
@@ -47,13 +45,13 @@ public class PID_Output extends MNNodeStart
 	@Override
 	public String getTPTitle()
 	{
-		return "Output";
+		return g(TP);//"Output";
 	}
 	
 	@Override
 	public int getOutNum()
 	{
-		return 4;
+		return 1;
 	}
 	
 	@Override

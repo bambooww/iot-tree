@@ -68,6 +68,10 @@ ConnPt.DataTp sor_tp = cpt.getSorTp();
 String resp_ok = cpt.getRespOk() ;
 String resp_err = cpt.getRespErr() ;
 String limit_ip = cpt.getLimitIP() ;
+String auth_head = cpt.getAuthHead() ;
+if(Convert.isNullOrEmpty(auth_head))
+	auth_head = "token" ;
+String auth_val = cpt.getAuthVal() ;
 //String init_js = cpt.getInitJS() ;
 //String trans_js = cpt.getTransJS();
 
@@ -160,16 +164,23 @@ dlg.resize_to(1500,900);
       <textarea  id="resp_ok"  name="resp_ok"  style="height:30px;width:100%;border-color: #e6e6e6"><%=resp_ok%></textarea>
     </div>
     <div class="layui-form-mid">Error:</div>
-    <div class="layui-input-inline" style="width:300px">
+    <div class="layui-input-inline" style="width:295px">
       <textarea  id="resp_err"  name="resp_err"  style="height:30px;width:100%;border-color: #e6e6e6"><%=resp_err%></textarea>
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Limit IP:</label>
-    <div class="layui-input-inline" style="width:600px">
+    <div class="layui-input-inline" style="width:125px">
       <input  id="limit_ip"  name="limit_ip"  class="layui-input" value="<%=limit_ip%>">
     </div>
-    
+    <div class="layui-form-mid">Auth Head:</div>
+    <div class="layui-input-inline" style="width:100px">
+      <input  id="auth_head"  name="auth_head"  class="layui-input" value="<%=auth_head%>">
+    </div>
+    <div class="layui-form-mid">=</div>
+    <div class="layui-input-inline" style="width:307px">
+      <input  id="auth_val"  name="auth_val"  class="layui-input" value="<%=auth_val%>">
+    </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">Post URL:</label>
@@ -355,8 +366,11 @@ function do_submit(cb)
 	let resp_ok = $("#resp_ok").val();
 	let resp_err = $("#resp_err").val();
 	let limit_ip = $("#limit_ip").val();
+	let auth_head = $("#auth_head").val();
+	let auth_val = $("#auth_val").val();
 
-	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,en_at_ps:en_at_ps,resp_ok:resp_ok,resp_err:resp_err,limit_ip:limit_ip},msgob);
+	var oball = Object.assign({id:conn_id,name:n,title:tt,desc:desc,enable:ben,en_at_ps:en_at_ps,
+		resp_ok:resp_ok,resp_err:resp_err,limit_ip:limit_ip,auth_head:auth_head,auth_val:auth_val},msgob);
 	cb(true,oball) ;
 }
 

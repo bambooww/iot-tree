@@ -29,13 +29,62 @@ import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class MNCxtPk extends JSObMap implements IMNCxtPk
+public abstract class MNCxtPk extends JSObMap implements IMNCxtPk
 {
 	static ILogger log = LoggerManager.getLogger(MNCxtPk.class) ;
+	
+	public static MNCxtPk getCxtPkByUID(String cxt_uid)
+	{
+		List<String> ids = Convert.splitStrWith(cxt_uid, "-") ;
+		int id_n = ids.size() ;
+		if(id_n==1)
+		{
+			MNManager mnmgr = MNManager.getInstanceByContainerId(ids.get(0));
+			if(mnmgr==null)
+				return null ;
+			return mnmgr.RT_getCxtPk() ;
+		}
+		else if(id_n==2)
+		{
+			MNManager mnmgr = MNManager.getInstanceByContainerId(ids.get(0));
+			if(mnmgr==null)
+				return null ;
+			return mnmgr.getNetById(ids.get(1));
+		}
+		else if(id_n==3)
+		{
+			MNManager mnmgr = MNManager.getInstanceByContainerId(ids.get(0));
+			if(mnmgr==null)
+				return null ;
+			MNNet net = mnmgr.getNetById(ids.get(1));
+			if(net==null)
+				return null ;
+			return net.getItemById(ids.get(2)) ;
+		}
+		
+		return null ;
+	}
+	
+	public static MNNet getNetByCxtUID(String cxt_uid)
+	{
+		List<String> ids = Convert.splitStrWith(cxt_uid, "-") ;
+		int id_n = ids.size() ;
+		if(id_n<=1)
+		{
+			return null ;
+		}
+		
+		MNManager mnmgr = MNManager.getInstanceByContainerId(ids.get(0));
+		if(mnmgr==null)
+			return null ;
+		return mnmgr.getNetById(ids.get(1));
+	}
 	
 	private LinkedHashMap<String,MNCxtVar> name2var = new LinkedHashMap<>() ;
 	
 	private HashMap<String,Object> var2val = new HashMap<>() ;
+	
+	public abstract String CXT_getUID() ;
 	
 	public LinkedHashMap<String,MNCxtVar> CXT_getVarsAll()
 	{
@@ -225,11 +274,11 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 	protected void CXT_renderVarsDiv(List<DivBlk> divblks)
 	{
 		StringBuilder divsb = new StringBuilder() ;
-		divsb.append("<div tp='vars' class=\"rt_blk\"><div style='background-color:#aaaaaa'>Vars<button onclick=\"cxt_add_var()\">add</button></div><table>");
-		divsb.append("<tr>");
+		divsb.append("<div tp='vars' class=\"rt_blk\" style='font-size:12px;'><div style='background-color:#aaaaaa;height:20px;'>Vars<button onclick=\"cxt_edit_var('"+this.CXT_getUID()+"')\" style='float:right'>&nbsp;&nbsp;<i class='fa fa-plus'></i>&nbsp;&nbsp;</button></div><table>");
+		divsb.append("<tr style='font-weight:bold'>");
 		divsb.append("<td>Name</td>");
 		divsb.append("<td>Type</td>");
-		divsb.append("<td>Keep In</td>");
+		divsb.append("<td>Keep TP</td>");
 		divsb.append("<td>Default</td>");
 		divsb.append("<td>Current</td>");
 		divsb.append("<td></td>");
@@ -246,7 +295,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 			if(ov!=null)
 				curv = ov.toString() ;
 			divsb.append("<td>").append(curv).append("</td>");
-			divsb.append("<td><button onclick=\"\">set</button></td>");
+			divsb.append("<td><button onclick=\"cxt_edit_var('"+this.CXT_getUID()+"','"+vv.getName()+"')\">&nbsp;&nbsp;<i class='fa fa-pencil'></i>&nbsp;&nbsp;</button></td>");
 			divsb.append("</tr>");
 		}
 		for(Map.Entry<String, Object> v2v:var2val.entrySet())
@@ -264,7 +313,7 @@ public class MNCxtPk extends JSObMap implements IMNCxtPk
 			if(ov!=null)
 				curv = ov.toString() ;
 			divsb.append("<td>").append(curv).append("</td>");
-			divsb.append("<td><button onclick=\"cxt_add_var('"+varn+"')\">add</button></td>");
+			divsb.append("<td><button onclick=\"cxt_edit_var('"+this.CXT_getUID()+"','"+varn+"')\">&nbsp;&nbsp;<i class='fa fa-pencil'></i>&nbsp;&nbsp;</button></td>");
 			divsb.append("</tr>");
 		}
 		divsb.append("</table></div>") ;

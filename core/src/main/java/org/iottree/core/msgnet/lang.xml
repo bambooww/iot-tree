@@ -17,5 +17,7 @@
 	
 	<dd_node id="1" name="not_enabled" name_cn="未使能" name_en="Not Enabled" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="ktp_mem" name_cn="内存" name_en="Mem" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ktp_save" name_cn="保存" name_en="Save" desc_cn="" desc_en=""/>
 	
 </dd_class>

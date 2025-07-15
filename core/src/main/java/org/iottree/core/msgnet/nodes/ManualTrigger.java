@@ -1,6 +1,7 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.iottree.core.msgnet.IMNOnOff;
 import org.iottree.core.msgnet.IMNRunner;
@@ -9,6 +10,7 @@ import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.util.CxtChgRule;
 import org.iottree.core.msgnet.util.MsgSetRule;
 import org.iottree.core.util.jt.JSONTemp;
@@ -59,6 +61,16 @@ public class ManualTrigger  extends MNNodeStart implements IMNOnOff
 	public String getIcon()
 	{
 		return "\\uf0a4";
+	}
+	
+	public MsgSetRule getSinglePldRule()
+	{
+		if(this.rules==null||this.rules.size()!=1)
+			return null;
+		MsgSetRule rule = this.rules.get(0) ;
+		if(rule.isPayloadConstantRule())
+			return rule ;
+		return null;
 	}
 
 	@Override
@@ -132,5 +144,20 @@ public class ManualTrigger  extends MNNodeStart implements IMNOnOff
 		return true;
 	}
 
-
+//	@Override
+//	protected void RT_renderDiv(List<DivBlk> divblks)
+//	{
+//		
+//		super.RT_renderDiv(divblks);
+//	}
+	
+	@Override
+	public int RT_hasPanel()
+	{
+		MsgSetRule msr = getSinglePldRule() ;
+		if(msr!=null)
+			return 30;// only single constant input can support rt panel trigger
+		else
+			return 0 ;
+	}
 }

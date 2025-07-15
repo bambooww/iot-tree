@@ -26,6 +26,16 @@ public class MsgSetRule
 		return this.msgSubN ;
 	}
 	
+	public boolean isMsgSubPayload()
+	{
+		return "payload".equals(this.msgSubN) ;
+	}
+	
+	public boolean isPayloadConstantRule()
+	{
+		return "payload".equals(this.msgSubN) && sorValSty.isConstant();
+	}
+	
 	public MNCxtValSty getSorValSty()
 	{
 		return this.sorValSty ;

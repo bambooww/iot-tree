@@ -725,14 +725,38 @@ resize_zz();
 
 //cxt
 
-function cxt_add_var(n)
+function cxt_edit_var(cxt_uid,n)
 {
-	
+	//console.log(cxt_uid,n) ;
+	let u = "mn_var_edit.jsp?cxt_uid="+cxt_uid+"&n="+(n||"");
+	let t = n?"Edit Var":"Add Var";
+	let op = n?"cxt_set_var":"cxt_add_var";
+	dlg.open(u,{title:t},['Ok','Cancel'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bok,ret)=>{
+						if(!bok) {dlg.msg(ret);return;}
+						send_ajax("mn_ajax.jsp",{op:op,container_id:container_id,cxt_uid:cxt_uid,jstr:JSON.stringify(ret)},(bsucc,rr)=>{
+							if(!bsucc || rr!='succ')
+							{
+								dlg.msg(rr);return;
+							}
+							dlg.msg("set ok");
+							dlg.close();
+						});
+					});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
-function cxt_set_var(n)
+function cxt_set_var(cxt_uid,n)
 {
-	
+	console.log(cxt_uid,n) ;
 }
 // rt
 

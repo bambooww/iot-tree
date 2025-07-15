@@ -109,6 +109,13 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return this.container ;
 	}
 	
+	@Override
+	public String CXT_getUID()
+	{
+		IMNContainer cont = this.getContainer() ;
+		return cont.getMsgNetContainerId()+"-"+this.id ;
+	}
+	
 	public File getNetFile()
 	{
 		return this.belongTo.calNetFile(this.id) ;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.jt.JSONTemp;
 import org.json.JSONArray;
@@ -428,7 +429,7 @@ public abstract class MNNode extends MNBase
 			this.RT_sendMsgOut(out);
 	}
 
-	protected final void RT_sendMsgOut(RTOut out) //,MNMsg msg)
+	public final void RT_sendMsgOut(RTOut out) //,MNMsg msg)
 	{
 		if(out==null) //||!out.hasOut)
 			return ;
@@ -469,6 +470,7 @@ public abstract class MNNode extends MNBase
 	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
 		super.RT_renderDiv(divblks);
+		
 		MNMsg msg = null ;
 		if(this.supportInConn())
 		{

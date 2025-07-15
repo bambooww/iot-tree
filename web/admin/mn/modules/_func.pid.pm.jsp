@@ -51,7 +51,7 @@
 </div>
 
 <div class="layui-form-item">
-    <label class="layui-form-label"><w:g>ctrl,out_rg</w:g>:</label>
+    <label class="layui-form-label"><w:g>ctrl,out</w:g>:</label>
     <div class="layui-form-mid"><w:g>low</w:g>:</div>
     <div class="layui-input-inline" style="width: 100px;">
       <input type="number" id="output_min" name="output_min"  lay-filter="output_min" min="200.0"  autocomplete="off" class="layui-input" />
@@ -61,6 +61,24 @@
       <input type="number" id="output_max" name="output_max"  lay-filter="output_max" min="10000.0"  autocomplete="off" class="layui-input" />
     </div>
     <div class="layui-form-mid" style="color:blue"><w:g>out_range</w:g></div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-form-mid"><w:g>output_stop_v</w:g>:</div>
+    <div class="layui-input-inline" style="width: 100px;">
+      <input type="number" id="output_stop_v" name="output_stop_v"  lay-filter="output_stop_v" min="200.0"  autocomplete="off" class="layui-input" />
+    </div>
+    <div class="layui-form-mid" style="color:#e3b267"><w:g>output_stop_v_d</w:g></div>
+</div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-form-mid"><w:g>output_err_v</w:g></div>
+    <div class="layui-input-inline" style="width: 100px;">
+      <input type="number" id="output_err_v" name="output_err_v"  lay-filter="output_err_v" min="10000.0"  autocomplete="off" class="layui-input" />
+    </div>
+    <div class="layui-form-mid" style="color:red"><w:g>output_err_v_d</w:g></div>
 </div>
 
 <script>
@@ -126,6 +144,10 @@ function get_pm_jo()
 	//console.log(js_ob);
 	if(js_ob.output_min>=js_ob.output_max)
 		return "<w:g>low</w:g> &gt;= <w:g>high</w:g>" ;
+	
+	js_ob.output_stop_v = get_input_fval("output_stop_v",0.0,true) ;
+	js_ob.output_err_v = get_input_fval("output_err_v",0.0,true) ;
+	
 	return js_ob ;
 }
 
@@ -139,6 +161,8 @@ function set_pm_jo(jo)
 	$("#input_max").val(get_jo_val(jo,'input_max',100.0)) ;//.val(jo.input_max||100.0) ;
 	$("#output_min").val(get_jo_val(jo,'output_min',0.0)) ;//.val(jo.output_min||0.0) ;
 	$("#output_max").val(get_jo_val(jo,'output_max',10.0)) ;//.val(jo.output_max||10.0) ;
+	$("#output_stop_v").val(get_jo_val(jo,'output_stop_v',0.0)) ;
+	$("#output_err_v").val(get_jo_val(jo,'output_err_v',0.0)) ;
 	update_ui() ;
 }
 

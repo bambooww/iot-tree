@@ -113,6 +113,29 @@ public class MNCat implements ILang
 			return "/"+webItem.getAppName()+"/"+ci.getPmUIPath() ;
 	}
 	
+	public String getRTPanelUrl(MNBase n)
+	{
+			if(this.webItem==null)
+			{
+				String tpf = n.getTPFull() ;
+				if(tpf.startsWith("_platform."))
+				{
+					return "./plat/"+n.getTPFull()+".rt.jsp";
+				}
+				else
+				{
+					if(n instanceof MNModule)
+						return "./modules/"+n.getTPFull()+".rt.jsp";
+					return "./nodes/"+n.getTPFull()+".rt.jsp";
+				}
+			}
+
+			ConfItem ci = item2conf.get(n.getTPFull()) ;
+			if(ci==null)
+				return null ;
+			return "/"+webItem.getAppName()+"/"+ci.getRTPanelPath() ;
+	}
+	
 	public String getDocUrl(MNBase n)
 	{
 		if(this.webItem==null)

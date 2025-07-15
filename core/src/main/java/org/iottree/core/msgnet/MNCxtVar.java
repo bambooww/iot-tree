@@ -29,7 +29,7 @@ public class MNCxtVar
 		public String getTitle()
 		{
 			Lan lan = Lan.getLangInPk(MNCxtVar.class);
-			return lan.g(name());
+			return lan.g("ktp_"+name());
 		}
 
 		public static KeepTP valOfInt(int i)
@@ -132,12 +132,12 @@ public class MNCxtVar
 			failedr.append("name cannot be null or empty") ;
 			return null ;
 		}
-		StringBuilder sb = new StringBuilder() ;
+		//StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(n, true, failedr))
 			return null ;
 		String vt = jo.optString("vt") ;
 		MNCxtValTP vtp = MNCxtValTP.parseFrom(vt) ;
-		Object defv = jo.opt("devf") ;
+		Object defv = jo.opt("defv") ;
 		KeepTP ktp = KeepTP.valOfInt(jo.optInt("ktp",0)) ;
 		if(ktp==null)
 			ktp = KeepTP.mem ;

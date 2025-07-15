@@ -34,6 +34,11 @@ public enum MNCxtValSty
 		return name().startsWith("vt_") ;
 	}
 	
+	public boolean isNumber()
+	{
+		return this==vt_int || this==vt_float;
+	}
+	
 	public MNCxtPkTP getCxtPkTP()
 	{
 		if(!isCxtPk())

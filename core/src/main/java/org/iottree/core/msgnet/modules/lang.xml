@@ -33,4 +33,8 @@
  	<dd_node id="1" name="sql_que_multi_row_jarr" name_cn="多行一个消息JSONArray输出" name_en="A message for multi row-JSONArray" />
   	<dd_node id="1" name="sql_que_multi_row_page" name_cn="多行一个消息带分页输出JO(内含JArr)" name_en="Page message for multi row-JSONObject include rows array" />
   
+  	<dd_node id="1" name="pid_sp" name_cn="设定值" name_en="Setpoint" />
+  	<dd_node id="1" name="pid_pv" name_cn="实际值(测量反馈)" name_en="PV(Measure feedback)" />
+  	<dd_node id="1" name="pid_output" name_cn="控制输出" name_en="Control Output" />
+  	<dd_node id="1" name="pid_err" name_cn="异常输出" name_en="Error Output" />
 </dd_class>

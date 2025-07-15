@@ -50,6 +50,10 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 	String respErr = null ;
 	
 	String limit_ip = null ;
+	
+	String auth_head = null ;
+	
+	String auth_val = null ;
 
 	@Override
 	public String getConnType()
@@ -90,6 +94,20 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		return this.limit_ip ;
 	}
 	
+	public String getAuthHead()
+	{
+		if(this.auth_head==null)
+			return "" ;
+		return this.auth_head ;
+	}
+	
+	public String getAuthVal()
+	{
+		if(this.auth_val==null)
+			return "" ;
+		return this.auth_val ;
+	}
+	
 	@Override
 	public XmlData toXmlData()
 	{
@@ -97,6 +115,8 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		xd.setParamValue("resp_ok", this.respOk);
 		xd.setParamValue("resp_err", this.respErr);
 		xd.setParamValue("limit_ip", this.limit_ip);
+		xd.setParamValue("auth_head", this.auth_head);
+		xd.setParamValue("auth_val", this.auth_val);
 		return xd;
 	}
 
@@ -107,6 +127,8 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		this.respOk = xd.getParamValueStr("resp_ok") ;
 		this.respErr = xd.getParamValueStr("resp_err") ;
 		this.limit_ip = xd.getParamValueStr("limit_ip") ;
+		this.auth_head = xd.getParamValueStr("auth_head") ;
+		this.auth_val = xd.getParamValueStr("auth_val") ;
 		return r;
 	}
 
@@ -134,6 +156,8 @@ public class ConnPtHTTPSer  extends ConnPtMSGNor
 		this.respOk = jo.optString("resp_ok") ;
 		this.respErr = jo.optString("resp_err") ;
 		this.limit_ip = jo.optString("limit_ip") ;
+		this.auth_head = jo.optString("auth_head") ;
+		this.auth_val = jo.optString("auth_val") ;
 	}
 
 	//private boolean bConnOk = false;

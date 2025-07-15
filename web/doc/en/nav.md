@@ -67,11 +67,62 @@
 ##### <a href="doc/js/js_in_ui_event.md">&nbsp;&nbsp;&nbsp;7.3 JS In UI Event Handling</a>
 ##### <a href="doc/js/js_inner_plugin_http.md">&nbsp;&nbsp;&nbsp;7.4 Js Api Inner Plugin - \$$http
 
-#### <a href="doc/store/index.md" >8 Data storage, processing, and presentation</a>
-##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;8.1 Simple storage and output of Tag data</a>
-##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;8.2 Internal timing segment recorder (TSSDB)</a>
-##### <a href="doc/store/inner_recpro.md" target="main">&nbsp;&nbsp;&nbsp;8.3 Secondary processing of recorded data</a>
+#### <a href="doc/msgnet/index.md" >8 Message Flow</a>
+##### <a href="doc/msgnet/mf_for_ctrl.md" >&nbsp;&nbsp;&nbsp;8.1 Using message flow to implement control logic</a>
 
+##### <a href="doc/msgnet/msgnet_overall.md" >&nbsp;&nbsp;&nbsp;8.2 Overall description of message flow</a>
+
+##### &nbsp;&nbsp;&nbsp;8.3 Common Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__func.js_func.md" style="border:1px solid;">JS Function</a>
+    <a href="doc/msgnet/n__com.manual.md" style="border:1px solid;">Manual Trigger</a>
+    <a href="doc/msgnet/n__com.timer.md" style="border:1px solid;">Timer Trigger</a>
+    <a href="doc/msgnet/n__com.debug.md" style="border:1px solid;">Debug</a>
+    <a href="doc/msgnet/n__com.mem_que.md" style="border:1px solid;">Mem Queue</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.4 Function Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__func.js_func.md" style="border:1px solid;">JS Function</a>
+    <a href="doc/msgnet/n__func.template.md" style="border:1px solid;">Template</a>
+    <a href="doc/msgnet/n__func.change.md" style="border:1px solid;">Change</a>
+    <a href="doc/msgnet/n__func.switch.md" style="border:1px solid;">Switch</a>
+    <a href="doc/msgnet/n__func.onoff.md" style="border:1px solid;">On Off</a>
+    <a href="doc/msgnet/m__func.pid.md" style="border:1px solid;">PID</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.5 Transfer Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__trans.csv.md" style="border:1px solid;">CSV</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.6 Devices Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__dev.tag_reader.md" style="border:1px solid;">Tags Reader</a>
+    <a href="doc/msgnet/n__dev.tag_writer.md" style="border:1px solid;">Tags Writer</a>
+    <a href="doc/msgnet/n__dev.tag_filter.md" style="border:1px solid;">Tags Read Filter</a>
+    <a href="doc/msgnet/n__dev.tag_filter_w.md" style="border:1px solid;">Tags Write Filter</a>
+    <a href="doc/msgnet/n__dev.tag_evt_trigger.md" style="border:1px solid;">Tags Event Trigger</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.7 Network Nodes
+<p style="margin-left:2em;">
+    
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.8 Storage Nodes
+<p style="margin-left:2em;">
+    
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.9 Simulator Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__sim.heating_furn_sim.md" style="border:1px solid;">Simulated Heating Furnace</a>
+    <a href="doc/msgnet/m__sim.modbus_slave_bus.md" style="border:1px solid;">Modbus Slave Simulator</a>
+</p>
+
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.10 Demo: Automatic data recorder flow</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.11 Demo: Alarm detection and output</a>
 
 #### <a href="doc/hmi/index.md" >9 HMI and Dialog</a>
 ##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 HMI (UI) Node
@@ -82,37 +133,26 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
 
-#### <a href="doc/msgnet/index.md" >10 Message Flow</a>
-##### <a href="doc/msgnet/mf_for_ctrl.md" >&nbsp;&nbsp;&nbsp;10.1 Using message flow to implement control logic</a>
-##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;10.2 Demo: Automatic data recorder flow</a>
-##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;10.3 Demo: Alarm detection and output</a>
-##### <a href="doc/msgnet/n__com.manual.md">&nbsp;&nbsp;&nbsp;10.4 Node:Manual Trigger</a>
-##### <a href="doc/msgnet/n__com.timer.md">&nbsp;&nbsp;&nbsp;10.5 Node:Timer Trigger</a>
-##### <a href="doc/msgnet/n__com.debug.md">&nbsp;&nbsp;&nbsp;10.6 Node:Debug</a>
-##### <a href="doc/msgnet/n__com.mem_que.md">&nbsp;&nbsp;&nbsp;10.7 Node:Mem Queue</a>
-##### <a href="doc/msgnet/n__func.js_func.md">&nbsp;&nbsp;&nbsp;10.8 Node:JS Function</a>
-##### <a href="doc/msgnet/n__func.template.md">&nbsp;&nbsp;&nbsp;10.9 Node:Template</a>
-##### <a href="doc/msgnet/n__func.change.md">&nbsp;&nbsp;&nbsp;10.10 Node:Change</a>
-##### <a href="doc/msgnet/n__func.switch.md">&nbsp;&nbsp;&nbsp;10.11 Node:Switch</a>
-##### <a href="doc/msgnet/n__func.onoff.md">&nbsp;&nbsp;&nbsp;10.12 Node:On Off</a>
-##### <a href="doc/msgnet/n__dev.tag_reader.md">&nbsp;&nbsp;&nbsp;10.13 Node:Tags Reader</a>
-##### <a href="doc/msgnet/n__dev.tag_writer.md">&nbsp;&nbsp;&nbsp;10.14 Node:Tags Writer</a>
-##### <a href="doc/msgnet/n__dev.tag_filter.md">&nbsp;&nbsp;&nbsp;10.15 Node:Tags Read Filter</a>
-##### <a href="doc/msgnet/n__dev.tag_filter_w.md">&nbsp;&nbsp;&nbsp;10.16 Node:Tags Write Filter</a>
-##### <a href="doc/msgnet/n__dev.tag_evt_trigger.md">&nbsp;&nbsp;&nbsp;10.17 Node:Tags Event Trigger</a>
 
-#### <a href="doc/advanced/index.md" >11 Extends Functions</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 Plugin Development - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 Plugin Development - Authority</a>
-##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;11.4 Custom Project Management (Webapp)</a>
-##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;11.5 Provide RESTFul Api externally</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.6 Outer OPC UA Support</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.7 Center-substation remote monitoring</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.8 Device simulators</a>
 
-#### <a href="doc/version.md" >12 Version</a>
+#### <a href="doc/advanced/index.md" >10 Extends Functions</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 Plugins Development</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 Plugin Development - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 Plugin Development - Authority</a>
+##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;10.4 Custom Project Management (Webapp)</a>
+##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;10.5 Provide RESTFul Api externally</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.6 Outer OPC UA Support</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.7 Center-substation remote monitoring</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.8 Device simulators</a>
 
+#### <a href="doc/version.md" >11 Version</a>
+
+<!--
+#### <a href="doc/store/index.md" >8 Data storage, processing, and presentation</a>
+##### <a href="doc/store/store.md" >&nbsp;&nbsp;&nbsp;8.1 Simple storage and output of Tag data</a>
+##### <a href="doc/store/inner_tssdb.md" target="main">&nbsp;&nbsp;&nbsp;8.2 Internal timing segment recorder (TSSDB)</a>
+##### <a href="doc/store/inner_recpro.md" target="main">&nbsp;&nbsp;&nbsp;8.3 Secondary processing of recorded data</a>
+-->
 
 <script>
 <!--

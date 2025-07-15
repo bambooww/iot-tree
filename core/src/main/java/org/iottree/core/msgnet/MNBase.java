@@ -21,6 +21,7 @@ import org.iottree.core.cxt.JsProp;
 import org.iottree.core.cxt.JsSub;
 import org.iottree.core.cxt.JsSubOb;
 import org.iottree.core.cxt.UAContext;
+import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -91,10 +92,13 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return this.id ;
 	}
 	
-//	public String getUID()
-//	{
-//		return belongTo.getUid()+"."+this.id ;
-//	}
+	@Override
+	public String CXT_getUID()
+	{
+		MNNet net = this.getBelongTo() ;
+		IMNContainer cont = net.getContainer() ;
+		return cont.getMsgNetContainerId()+"-"+ net.getId()+"-"+this.id ;
+	}
 	
 	public String getTitle()
 	{
@@ -110,7 +114,6 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 		return desc ;
 	}
-	
 	
 	
 	public MNNet getBelongTo()
@@ -408,8 +411,46 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		}
 	}
 	
+	/**
+	 * has panel = true will make node detail has iframe xxx.xxx.rt.jsp.
+	 * it can support special runtime display or control send output msg etc. 
+	 * @return height% in div blk
+	 */
+	public int RT_hasPanel()
+	{
+		return 0;
+	}
+	
 	protected void RT_renderDiv(List<DivBlk> divblks)
 	{
+		//check rt
+		int panel_h = this.RT_hasPanel() ;
+		if(panel_h>0)
+		{
+			String rt_panel_url = this.getCat().getRTPanelUrl(this) ;
+			if(Convert.isNotNullEmpty(rt_panel_url))
+			{
+				int k = rt_panel_url.lastIndexOf('/') ;
+				String url_base = null ;
+				if(k>0)
+					url_base = rt_panel_url.substring(0,k) ;
+				
+				k = rt_panel_url.lastIndexOf('?') ;
+				String itemid = this.getId() ;
+				String netid = this.getBelongTo().getId() ;
+				String cid = this.getBelongTo().getContainer().getMsgNetContainerId() ;
+				if(k<=0)
+					rt_panel_url+="?container_id="+cid+"&netid="+netid+"&itemid="+itemid ;
+				else
+					rt_panel_url+= "&container_id="+cid+"&netid="+netid+"&itemid="+itemid ;
+				
+				StringBuilder divsb = new StringBuilder() ;
+				divsb.append("<div class=\"rt_blk\" style='position:relative;height:"+panel_h+"%;'><iframe id='rt_panel_"+this.getId()+"' style='width:100%;height:100%;' src='"+rt_panel_url+"'></iframe>") ;
+				divsb.append("</div>") ;
+				divblks.add(new DivBlk("rt_panel",divsb.toString())) ;
+			}
+		}
+				
 		if(isRunner())
 		{
 			IMNRunner rnr = (IMNRunner)this ;

@@ -228,7 +228,7 @@ if(cpt!=null)
   <div class="layui-form-item">
     <label class="layui-form-label">Initial JS:</label>
     <div class="layui-input-inline" style="width:500px">
-      <textarea  id="init_js"  name="init_js"  style="height:30px;width:100%;border-color: #e6e6e6"><%=init_js%></textarea>
+      <textarea  id="init_js"  name="init_js"  style="height:30px;width:100%;border-color: #e6e6e6" ondblclick="edit_js_init()"><%=init_js%></textarea>
     </div>
     <button onclick="edit_js_init()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>
   </div>
@@ -236,7 +236,7 @@ if(cpt!=null)
     <label class="layui-form-label">Transfer JS:</label>
     <div class="layui-input-inline" style="width:500px">
     ($topic,$msg)=>{
-      <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:50px"><%=trans_js%></textarea>
+      <textarea  id="trans_js"  name="trans_js"  class="layui-textarea" style="height:50px" ondblclick="edit_js_trans()"><%=trans_js%></textarea>
       }
     </div>
     <button onclick="edit_js_trans()" class="layui-btn layui-btn-<%=(true?"normal":"primary") %> layui-border-blue layui-btn-sm">...</button>

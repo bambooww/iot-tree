@@ -2,7 +2,11 @@ Module: Modbus Slave Simulator
 ==
 
 
-Modbus slave device simulator can simulate Modbus slave devices based on message flow, so that the external (Modbus master) can use this simple protocol to obtain data or issue control instructions. Of course, specialized message flows can also be defined to simulate an on-site operating condition and be used to test other devices or software systems.
+Modbus slave device simulator can simulate Modbus slave devices based on message flow, so that the external (Modbus master) can use this simple protocol to obtain data or issue control instructions.
+
+<b style="color:blue">Through this feature, you can turn your computer or edge device running IOT-Tree into a slave device that supports Modbus protocol. Based on this simulator, IOT-Tree can serve as a protocol conversion gateway, supporting various connector and device drivers that can be converted to Modbus protocol output through intermediate tag organization.</b>
+
+Of course, specialized message flows can also be defined to simulate an on-site operating condition and be used to test other devices or software systems.
 
 A module node represents a bus, on which there can be one or more devices; Each device can define different internal address segments as needed, and each address segment can set corresponding function codes (including data types) and memory space.
 

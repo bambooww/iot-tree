@@ -145,8 +145,9 @@ background:#aaaaaa;
 				<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 				  <ul class="nav navbar-nav">
 					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i><wbt:lang>home</wbt:lang></a></li>
-					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i><wbt:lang>helper</wbt:lang></a></li>
+					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i><wbt:lang>doc</wbt:lang></a></li>
 					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i><wbt:lang>feedback</wbt:lang></a></li>
+					  <li><a href="/util/biz_helper.jsp" target="_blank"><i class="icon icon-topic"></i><wbt:lang>tech_sup</wbt:lang></a></li>
 <%
 if("cn".equals(using_lan))
 {

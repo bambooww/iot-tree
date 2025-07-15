@@ -24,7 +24,15 @@
   
   <dd_node id="1" name="ctrl" name_cn="控制" name_en="Control" />
   <dd_node id="1" name="in_rg" name_cn="输入范围" name_en="Input Range" />
+  <dd_node id="1" name="out" name_cn="输出" name_en="Output Range" />
   <dd_node id="1" name="out_rg" name_cn="输出范围" name_en="Output Range" />
+  <dd_node id="1" name="output_stop_v" name_cn="停止时输出值" name_en="Stopping Output Value" />
+  <dd_node id="1" name="output_err_v" name_cn="异常时输出值" name_en="Error Output Value" />
+  
+  <dd_node id="1" name="output_stop_v_d" name_cn="设定值节点输入布尔值false代表停止PID" name_en="Setpoint input boolean value false,make pid stopped"  />
+  <dd_node id="1" name="output_err_v_d" name_cn=" 实际值(测量反馈)没有更新输入等异常" name_en="PV(Measure feedback) has not input. etc" />
+  
+  
   
   <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
   <dd_node id="1" name="high" name_cn="上限" name_en="High" />

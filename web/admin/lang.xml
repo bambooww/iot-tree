@@ -3,6 +3,8 @@
 
   <dd_node id="1" name="home" name_cn="首页" name_en="Home" />
   <dd_node id="1" name="helper" name_cn="帮助" name_en="Helper" />
+  <dd_node id="1" name="tech_sup" name_cn="技术援助" name_en="Technical Support" />
+  <dd_node id="1" name="doc" name_cn="文档资料" name_en="Document" />
   <dd_node id="1" name="feedback" name_cn="反馈" name_en="Feedback" />
   <dd_node id="1" name="logout" name_cn="退出登录" name_en="Logout" />
   <dd_node id="1" name="chg_psw" name_cn="修改密码" name_en="Change Password" />

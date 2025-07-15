@@ -27,6 +27,17 @@ String title = request.getParameter("title") ;
 String desc = request.getParameter("desc") ;
 String fulltp = request.getParameter("fulltp") ;
 
+String cxt_uid = request.getParameter("cxt_uid") ;
+MNCxtPk cxt_pk = null ;
+if(Convert.isNotNullEmpty(cxt_uid))
+{
+	cxt_pk = MNCxtPk.getCxtPkByUID(cxt_uid);
+	if(cxt_pk==null)
+	{
+		out.print("no MNCxtPk found") ;
+		return ;
+	}
+}
 String tp = request.getParameter("tp") ;
 float x = Convert.parseToFloat(request.getParameter("x"),0) ;
 float y = Convert.parseToFloat(request.getParameter("y"),0) ;
@@ -218,6 +229,29 @@ try
 		{
 			out.print(ee.getMessage()) ;
 		}
+		return ;
+	case "cxt_add_var":
+	case "cxt_set_var":
+		if(!Convert.checkReqEmpty(request, out,"cxt_uid","jstr"))
+			return ;
+		MNCxtVar cxt_vv = MNCxtVar.fromJO(in_jo, failedr) ;
+		if(cxt_vv==null)
+		{
+			out.print(failedr.toString()) ;
+			return;
+		}
+		if("cxt_add_var".equals(op))
+		{
+			if(cxt_pk.CXT_getVar(cxt_vv.getName())!=null)
+			{
+				out.print(cxt_vv.getName()+" is already existed") ;
+				return ;
+			}
+		}
+		cxt_pk.CXT_setVar(cxt_vv.getName(), cxt_vv) ;
+		MNNet cxt_net = MNCxtPk.getNetByCxtUID(cxt_uid) ;
+		cxt_net.save();
+		out.print("succ") ;
 		return ;
 	case "node_start_trigger":
 		if(!Convert.checkReqEmpty(request, out,"netid", "nodeid"))

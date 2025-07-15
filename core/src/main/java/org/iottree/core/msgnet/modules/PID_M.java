@@ -31,6 +31,10 @@ public class PID_M  extends MNModule implements IMNRunner
 	double outputMin = 0.0 ;
 	double outputMax = 10.0 ;
 	
+	double stopOutputV = 0.0 ; //when PID is not in loop,it will output default ctrl value
+	
+	double errOutputV = 0.0 ;  //when PID is err ,it will output default ctrl value
+	
 	@Override
 	public String getTP()
 	{
@@ -74,6 +78,11 @@ public class PID_M  extends MNModule implements IMNRunner
 	public PID_Output getOutput()
 	{
 		return this.getRelatedNodeFirst(PID_Output.class) ;
+	}
+	
+	public PID_Err getErr()
+	{
+		return this.getRelatedNodeFirst(PID_Err.class) ;
 	}
 	
 	public PID_AutoManual getAutoManual()
@@ -120,6 +129,8 @@ public class PID_M  extends MNModule implements IMNRunner
 		jo.put("input_max", this.inputMax);
 		jo.put("output_min", this.outputMin);
 		jo.put("output_max", this.outputMax);
+		jo.put("output_stop_v", this.stopOutputV) ;
+		jo.put("output_err_v", this.errOutputV) ;
 		return jo;
 	}
 
@@ -134,6 +145,9 @@ public class PID_M  extends MNModule implements IMNRunner
 		this.inputMax = jo.optDouble("input_max",100.0) ;
 		this.outputMin = jo.optDouble("output_min",0.0) ;
 		this.outputMax = jo.optDouble("output_max",10.0) ;
+		
+		this.stopOutputV = jo.optDouble("output_stop_v",0.0) ;
+		this.errOutputV = jo.optDouble("output_err_v",0.0) ;
 	}
 	
 	public String getPmTitle()
@@ -190,20 +204,10 @@ public class PID_M  extends MNModule implements IMNRunner
 	
 	private transient PIDController RT_pid_ctrl = null ;
 	
-	private transient PID_Output RT_output_n = null ; 
+	private transient PID_Output RT_output_n = null ;
+	private transient PID_Err RT_err_n = null ; 
 	
-	void RT_setSetpoint(double v)
-	{
-		this.RT_sp = v ;
-		this.RT_sp_ms = System.currentTimeMillis() ;
-	}
-	
-	void RT_setPV(double v)
-	{
-		this.RT_pv = v ;
-		this.RT_pv_ms = System.currentTimeMillis() ;
-	}
-	
+
 	@Override
 	protected void RT_onBeforeNetRun()
 	{
@@ -214,28 +218,74 @@ public class PID_M  extends MNModule implements IMNRunner
 			return ;
 		}
 		RT_output_n = this.getOutput() ;
+		RT_err_n = this.getErr() ;
 		RT_pid_ctrl = new PIDController(kp, ki, kd, inputMin, inputMax, outputMin, outputMax);
+		
+		if(stopOutputV<outputMin)
+			stopOutputV = outputMin ;
+		else if(stopOutputV>outputMax)
+			stopOutputV = outputMax ;
+		
+		if(errOutputV<outputMin)
+			errOutputV = outputMin ;
+		else if(errOutputV>outputMax)
+			errOutputV = outputMax ;
 	}
 
+	
+	synchronized void RT_setSetpoint(double v)
+	{
+		if(Double.isNaN(v) && !Double.isNaN(this.RT_sp))
+		{
+			RT_sendCtrlOut(this.stopOutputV) ;
+		}
+		this.RT_sp = v ;
+		this.RT_sp_ms = System.currentTimeMillis() ;
+	}
+	
+	synchronized void RT_setPV(double v)
+	{
+		this.RT_pv = v ;
+		this.RT_pv_ms = System.currentTimeMillis() ;
+		
+	}
+	
 	/**
 	 * 一次根据输入的值，计算PID并输出控制消息
 	 */
-	private void RT_runPID()
+	private synchronized void RT_runPID()
 	{
 		if(Double.isNaN(RT_sp) || RT_pid_ctrl==null || Double.isNaN(RT_pv))
 			return ;//
+		
+		if(System.currentTimeMillis() - this.RT_pv_ms>this.sampleTime*3000)
+		{//
+			if(RT_err_n!=null)
+			{
+				JSONObject err_jo = new JSONObject() ;
+				err_jo.put("tp",1);
+				err_jo.put("err","PV is timeout") ;
+				MNMsg msg = new MNMsg().asPayload(err_jo);
+				RTOut out = RTOut.createOutIdx().asIdxMsg(0, msg);
+				this.RT_sendMsgByRelatedNode(RT_err_n,out) ;
+				
+				RT_sendCtrlOut(errOutputV) ;
+			}
+			return ;
+		}
 		RT_pid_ctrl.setSetpoint(RT_sp);
 		
 		double out_v = RT_pid_ctrl.compute(this.RT_pv, RT_lastMS = System.currentTimeMillis()) ;
 		RT_lastOut = out_v ;
 		
+		RT_sendCtrlOut(out_v) ;
+	}
+	
+	private void RT_sendCtrlOut(double out_v)
+	{
 		MNMsg msg = new MNMsg().asPayload(out_v);
 		RTOut out = RTOut.createOutIdx().asIdxMsg(0, msg);
 		this.RT_sendMsgByRelatedNode(RT_output_n,out) ;
-		//this.RT_
-//		public double getNorSetpoint() { return rtNorSetpoint; }
-//	    public double getNorInput() { return rtNorInput; }
-//	    public double getNorOutput() { return rtNorOutput; }
 	}
 	
 	@Override

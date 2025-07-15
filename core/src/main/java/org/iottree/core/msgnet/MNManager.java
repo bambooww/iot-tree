@@ -739,7 +739,13 @@ public class MNManager
 	Thread rtTH = null ;
 	boolean rtRun = false;
 	
-	MNCxtPk rtCxtPrj = new MNCxtPk() ;
+	MNCxtPk rtCxtPrj = new MNCxtPk() {
+
+		@Override
+		public String CXT_getUID()
+		{
+			return belongTo.getMsgNetContainerId();
+		}} ;
 	
 	public MNCxtPk RT_getCxtPk()
 	{

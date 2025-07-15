@@ -94,6 +94,22 @@ public class PrjFilter implements Filter
 		if(cpt_hs==null)
 			return false;
 		
+		String limit_ip = cpt_hs.getLimitIP() ;
+		if(Convert.isNotNullEmpty(limit_ip))
+		{
+			if(!limit_ip.equals(request.getRemoteHost()))
+				return false;
+		}
+		
+		String auth_h = cpt_hs.getAuthHead();
+		String auth_v = cpt_hs.getAuthVal() ;
+		if(Convert.isNotNullEmpty(auth_h) && Convert.isNotNullEmpty(auth_v))
+		{
+			String vv = request.getHeader(auth_h) ;
+			if(!auth_v.equals(vv))
+				return false;
+		}
+		
 		byte[] bs = readPostBS(request, response) ;
 		String resptxt = cpt_hs.onRecvedFromConn(null, bs);
 		
