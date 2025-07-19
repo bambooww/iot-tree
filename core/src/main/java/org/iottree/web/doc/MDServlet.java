@@ -105,6 +105,7 @@ public class MDServlet extends HttpServlet
 		if(uri.endsWith(".md"))
 		{
 			boolean boutline = !"false".equals(req.getParameter("outline")) ;
+			boolean bopen="true".equals(req.getParameter("open")) ;
 			if(uri.endsWith("/nav.md"))
 				boutline=false;
 			String txt = getMdHtml(req,uri) ;
@@ -133,6 +134,20 @@ public class MDServlet extends HttpServlet
 						"</ul></div><span class=\"layui-layer-setwin\"></span><span class=\"layui-layer-resize\"></span></div>"+
 						"</body><script src=\"/doc/doc.js\"></script></html>");
 			}
+			
+			if(bopen)
+			{
+				w.write("<div style='position: fixed;right: 5px;top:5px;width: 22px;height:22px;border: 1px solid;border-radius: 6px;background-color: #555555;opacity:0.5;font-size:13px;color: #ffd438;text-align: center;cursor: pointer' onclick='open_neww()' title='open in new win'>\r\n" + 
+						"⬜" + 
+						"</div><script>function open_neww()\r\n" + 
+						"{\r\n" + 
+						"	let u = window.location.href;\r\n" + 
+						"	let k = u.lastIndexOf(\"?\") ;\r\n" + 
+						"	if(k>0)\r\n" + 
+						"		u = u.substring(0,k) ;\r\n" + 
+						"    window.open(u, '_blank');\r\n" + 
+						"}</script>");
+			}
 			return ;
 		}
 
@@ -140,4 +155,5 @@ public class MDServlet extends HttpServlet
 		return ;
 	}
 	
-}  
+} 
+

@@ -72,8 +72,6 @@
 <title></title>
 <jsp:include page="../../head.jsp">
 	<jsp:param value="true" name="simple"/>
-	<jsp:param value="true" name="tree"/>
-
 </jsp:include>
 <script type="text/javascript">
 
@@ -84,10 +82,13 @@
 </head>
 
 <body>
+<table style="width:100%;height:100%;border:0px;">
+<tr>
+ <td style="width:80%">
 <%
 if(val_sty.isNumber())
 {
-%><input type="number" id="strv" style="width:50%;" value="<%=val_str %>" />
+%><input type="number" id="strv" style="width:100%;" value="<%=val_str %>" />
 <%
 }
 else if(val_sty==MNCxtValSty.vt_bool)
@@ -99,15 +100,25 @@ else if(val_sty==MNCxtValSty.vt_bool)
 </select>
 <%
 }
+else if(val_sty==MNCxtValSty.vt_jo || val_sty==MNCxtValSty.vt_jarr)
+{
+%>
+	<textarea id="strv" style="width:100%;height:100%;" ><%=Convert.plainToHtml(val_str) %></textarea>
+<%
+}
 else
 {
 %>
-	<input type="text" id="strv" style="width:50%;" value="<%=val_str %>" />
+	<input type="text" id="strv" style="width:100%;" value="<%=val_str %>" />
 <%
 }
 %>
+</td>
+<td style="width:20%">
 <button onclick="on_rt_panel_btn()">send</button>
-
+</td>
+</tr>
+</table>
 </body>
 
 <script type="text/javascript">

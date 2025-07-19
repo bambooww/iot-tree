@@ -352,6 +352,9 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	protected void RT_onBeforeNetRun()
 	{}
 	
+	protected void RT_onAfterNetStop()
+	{}
+	
 	public void RT_clean()
 	{
 		this.RT_CXT_clean();
@@ -445,7 +448,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 					rt_panel_url+= "&container_id="+cid+"&netid="+netid+"&itemid="+itemid ;
 				
 				StringBuilder divsb = new StringBuilder() ;
-				divsb.append("<div class=\"rt_blk\" style='position:relative;height:"+panel_h+"%;'><iframe id='rt_panel_"+this.getId()+"' style='width:100%;height:100%;' src='"+rt_panel_url+"'></iframe>") ;
+				divsb.append("<div class=\"rt_blk\" style='position:relative;height:"+panel_h+"%;'><iframe id='rt_panel_"+this.getId()+"' style='width:100%;height:100%;border:0px;' src='"+rt_panel_url+"'></iframe>") ;
 				divsb.append("</div>") ;
 				divblks.add(new DivBlk("rt_panel",divsb.toString())) ;
 			}

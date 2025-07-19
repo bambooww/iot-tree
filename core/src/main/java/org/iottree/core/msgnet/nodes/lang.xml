@@ -113,6 +113,9 @@
 		desc_en="Supports input of heating signals, controls heating power, and can output current temperature signals at regular intervals"
 		/>
 	
+	<dd_node id="1" name="ok_out" name_cn="成功输出" name_en="Ok Output" />
+	<dd_node id="1" name="failed_out" name_cn="失败输出" name_en="Failed Output" />
+	
 	<dd_node id="1" name="sunday" name_cn="星期日" name_en="Sunday" />
   <dd_node id="1" name="monday" name_cn="星期一" name_en="Send" />
   <dd_node id="1" name="tuesday" name_cn="星期二" name_en="Send" />

@@ -92,7 +92,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		if(idx==1)
 			return g("failed_out") ;
 		if(idx==2)
-			return "Relational DB Out" ;
+			return "Relational DB Table Out" ;
 		
 		return null ;
 	}

@@ -25,21 +25,22 @@
 	
 %>
   <div class="layui-form-item">
-    <label class="layui-form-label">Trans To Str:</label>
-    <div class="layui-input-inline" style="width:150px;">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline" style="width:10px;">
 		<input type="checkbox" id="trans_str"  class="layui-input " lay-skin="primary"/>
+		
     </div>
-	<label class="layui-form-mid">Encoding:</label>
+	<label class="layui-form-mid">Transfer To Str &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Encoding:</label>
     <div class="layui-input-inline" style="width:150px;">
 		<input type="text" id="trans_str_enc"  value="UTF-8" class="layui-input" lay-skin="primary"/>
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">JSON Out:</label>
-    <div class="layui-input-inline" style="width:150px;">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline" style="width:10px;">
 		<input type="checkbox" id="b_json" class="layui-input" lay-skin="primary"/>
     </div>
-	
+	<label class="layui-form-mid">JSON Format</label>
   </div>
 <script>
 

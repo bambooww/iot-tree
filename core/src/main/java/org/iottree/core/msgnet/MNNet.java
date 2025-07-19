@@ -948,7 +948,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	
 	// - 
 	
-	void RT_onBeforeNetRun()
+	private void RT_onBeforeNetRun()
 	{
 		for(MNNode n:this.id2node.values())
 		{
@@ -957,6 +957,18 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		for(MNModule m:this.id2module.values())
 		{
 			m.RT_onBeforeNetRun();
+		}
+	}
+	
+	private void RT_onAfterNetStop()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			n.RT_onAfterNetStop();
+		}
+		for(MNModule m:this.id2module.values())
+		{
+			m.RT_onAfterNetStop();
 		}
 	}
 	
@@ -1134,6 +1146,8 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 				((NS_OnFlowEvt)n).RT_fireFlowStop();
 			}
 		}
+		
+		RT_onAfterNetStop() ;
 		
 		RT_running = false ;
 	}

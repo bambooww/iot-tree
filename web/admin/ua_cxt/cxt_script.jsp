@@ -25,7 +25,7 @@ if(Convert.isNotNullEmpty(path))
 	n = UAUtil.findNodeByPath(path) ;
 	if(n==null)
 	{
-		out.print("no node found") ;
+		out.print("no node found or has no context node setup") ;
 		return ;
 	}
 	

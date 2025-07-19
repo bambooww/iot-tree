@@ -1,10 +1,13 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,11 +53,17 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 		}
 	}
 	
+	String workDir = null ;
+	
 	String cmd = null ;
 	
 	ArrayList<CmdSeg> cmdSegs = new ArrayList<>() ;
 	
 	long timeOut = -1 ;
+	
+	String outEncod = null;// "UTF-8" ;
+	
+	private File workDirF = null ;
 	
 	@Override
 	public String getColor()
@@ -108,13 +117,15 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.putOpt("cmd", this.cmd) ;
+		jo.putOpt("work_dir", this.workDir) ;
 		JSONArray segs = new JSONArray() ;
 		for(CmdSeg seg:this.cmdSegs)
 		{
 			segs.put(seg.toJO()) ;
 		}
 		jo.putOpt("segs", segs) ;
-		jo.put("tmeout", this.timeOut) ;
+		jo.put("timeout", this.timeOut) ;
+		jo.putOpt("out_enc", this.outEncod) ;
 		return jo;
 	}
 
@@ -122,6 +133,7 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 	protected void setParamJO(JSONObject jo)
 	{
 		this.cmd = jo.optString("cmd") ;
+		this.workDir = jo.optString("work_dir") ;
 		JSONArray jarr = jo.optJSONArray("segs") ;
 		ArrayList<CmdSeg> csegs= new ArrayList<>() ;
 		if(jarr!=null)
@@ -136,7 +148,8 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 			}
 		}
 		this.cmdSegs = csegs ;
-		this.timeOut = jo.optLong("tmeout", -1) ;
+		this.timeOut = jo.optLong("timeout", -1) ;
+		this.outEncod = jo.optString("out_enc") ;
 	}
 	
 	
@@ -144,7 +157,17 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 	
 	boolean bRun = false;
 	
-	
+	@Override
+	protected void onAfterLoaded()
+	{
+		if(Convert.isNotNullEmpty(this.workDir))
+			this.workDirF = new File(this.workDir) ;
+		else
+			this.workDirF = null ;
+		
+		if(Convert.isNullOrEmpty(this.outEncod))
+			this.outEncod = Charset.defaultCharset().name();
+	}
 
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
@@ -178,7 +201,7 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 				return null ;
 			}
 			
-			RTOut rto = RT_runCmd(sb.toString()) ;
+			RTOut rto = RT_runCmd(sb.toString(),this.workDirF,this.outEncod,this.timeOut) ;
 			this.RT_DEBUG_ERR.clear("exec");
 			return rto ;
 		}
@@ -193,26 +216,32 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
 		}
 	}
 	
-	private RTOut RT_runCmd(String cmd) throws Exception
+	public final static RTOut RT_runCmd(String cmd,File work_dir,String out_enc,long time_out) throws Exception
 	{
 		//System.out.println("cmd="+cmd) ;
-		ProcessBuilder processBuilder = new ProcessBuilder(splitCommand(cmd));
+		List<String> ccs = splitCommand(cmd);
+		ProcessBuilder processBuilder = new ProcessBuilder(ccs);
         processBuilder.redirectErrorStream(true);  // Combine stdout and stderr
+        if(work_dir!=null)
+        {
+        	processBuilder.directory(work_dir);
+        }
+        
 
         Process process = processBuilder.start();
 
         // Create threads to read stdout and stderr
         ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-        Future<String> stdoutFuture = executorService.submit(() -> readStream(process.getInputStream()));
-        Future<String> stderrFuture = executorService.submit(() -> readStream(process.getErrorStream()));
+        Future<String> stdoutFuture = executorService.submit(() -> readStream(process.getInputStream(),out_enc));
+        Future<String> stderrFuture = executorService.submit(() -> readStream(process.getErrorStream(),out_enc));
 
         // Wait for the process to complete or timeout
         
          
-        if(this.timeOut>0)
+        if(time_out>0)
         {
-	        boolean finished = process.waitFor(timeOut,TimeUnit.MILLISECONDS);
+	        boolean finished = process.waitFor(time_out,TimeUnit.MILLISECONDS);
 	        if (!finished)
 	        {
 	            process.destroy();
@@ -224,7 +253,7 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
         }
         else
         {
-        	process.waitFor() ;
+        	//process.waitFor() ;
         }
 
         // Get the results
@@ -253,8 +282,8 @@ public class NM_Exec extends MNNodeMid implements IMNRunner
         return rto ;
 	}
 	
-    private static String readStream(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+    private static String readStream(InputStream inputStream,String encd) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,encd));
         StringBuilder output = new StringBuilder();
         String line;
 

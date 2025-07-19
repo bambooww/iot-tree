@@ -29,7 +29,7 @@ goto run_server
 
 @REM echo CLASSPATH=%CLASSPATH%
 
-"%JAVA_HOME%\bin\java" -cp "%CLASSPATH%" %MAIN_CLASS% %1
+"%JAVA_HOME%\bin\java" -Dfile.encoding=UTF-8 -cp "%CLASSPATH%" %MAIN_CLASS% %1
 goto finally
 
 :no_java_home

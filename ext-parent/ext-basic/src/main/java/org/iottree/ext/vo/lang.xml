@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="vo_reco" name_cn="语音识别" name_en="Voice Recognizer" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="mic_in" name_cn="麦克风输入" name_en="MIC IN" desc_cn="" desc_en=""/>
+	
+</dd_class>

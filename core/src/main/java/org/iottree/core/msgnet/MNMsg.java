@@ -251,6 +251,13 @@ public class MNMsg implements IMNCxtPk
 		return this ;
 	}
 	
+	public MNMsg asBytesArray(byte[] bs,int offset,int len)
+	{
+		this.bytesArray = new byte[len];
+		System.arraycopy(bs, offset, this.bytesArray, 0, len);
+		return this ;
+	}
+	
 	public byte[] getBytesArray()
 	{
 		return this.bytesArray ;

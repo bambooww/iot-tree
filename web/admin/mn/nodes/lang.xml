@@ -11,6 +11,16 @@
   <dd_node id="1" name="cont_n" name_cn="容器节点" name_en="Container Node" />
   <dd_node id="1" name="cont_n_p" name_cn="容器节点属性" name_en="Container Node Prop" />
   
+  <dd_node id="1" name="sup_ana" name_cn="支持图形分析" name_en="Support graphic analysis" />
+  <dd_node id="1" name="limit" name_cn="限制" name_en="Limit" />
+  <dd_node id="1" name="cmd" name_cn="指令" name_en="Cmd" />
+  <dd_node id="1" name="lang" name_cn="语言" name_en="Language" />
+  
+  <dd_node id="1" name="vo_no_word" name_cn="以下单词不在语言模型中存在，不起作用可删除，或者使用空格切分单词为单词组合"
+  	name_en="The following words do not exist in the language model and can be deleted.Or use spaces to divide words into word combinations" />
+  	<dd_node id="1" name="rm_vo_no_words" name_cn="删除这些单词"
+  	name_en="Delete these words" />
+  
   <dd_node id="1" name="sec_proto" name_cn="安全协议" name_en="Security Protocal" />
   <dd_node id="1" name="sasl_mech" name_cn="SASL机制" name_en="SASL Mechanism" />
   <dd_node id="1" name="send" name_cn="发送" name_en="Send" />

@@ -1,10 +1,20 @@
 package org.iottree.server;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
 import org.tanukisoftware.wrapper.*;
 
 
 public class ServiceWrapperMain implements WrapperListener
 {
+	static {
+	    System.setProperty("file.encoding", "UTF-8");
+	    try {
+	        System.setOut(new PrintStream(System.out, true, "UTF-8"));
+	    } catch (UnsupportedEncodingException ignored) {}
+	}
+	
 	private ServiceWrapperMain()
 	{}
 	

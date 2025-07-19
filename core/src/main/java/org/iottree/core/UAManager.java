@@ -651,6 +651,9 @@ public class UAManager implements IMNContProvider
 	
 	public UANode findNodeByPath(String path)
 	{
+		if("/".equals(path))
+			return null ;
+		
 		LinkedList<String> ss = Convert.splitStrWithLinkedList(path, "/\\.") ;
 		String n = ss.removeFirst() ;
 		UAPrj rep = this.getPrjByName(n) ;

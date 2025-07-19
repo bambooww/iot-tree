@@ -103,6 +103,7 @@
     <a href="doc/msgnet/n__dev.tag_filter.md" style="border:1px solid;">标签读取过滤器</a>
     <a href="doc/msgnet/n__dev.tag_filter_w.md" style="border:1px solid;">标签写入过滤器</a>
     <a href="doc/msgnet/n__dev.tag_evt_trigger.md" style="border:1px solid;">标签事件触发器</a>
+    <a href="doc/msgnet/m__dev.conn_in_msg.md" style="border:1px solid;">接入消息处理</a>
 </p>
 
 ##### &nbsp;&nbsp;&nbsp;8.7 网络与通信节点
@@ -110,19 +111,25 @@
     
 </p>
 
-##### &nbsp;&nbsp;&nbsp;8.8 存储节点
+##### &nbsp;&nbsp;&nbsp;8.8 音频节点
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__vo.mic_in.md" style="border:1px solid;">麦克风输入</a>
+    <a href="doc/msgnet/n__vo.vo_reco.md" style="border:1px solid;">语音识别</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.9 存储节点
 <p style="margin-left:2em;">
     
 </p>
 
-##### &nbsp;&nbsp;&nbsp;8.9 模拟节点
+##### &nbsp;&nbsp;&nbsp;8.10 模拟节点
 <p style="margin-left:2em;">
     <a href="doc/msgnet/n__sim.heating_furn_sim.md" style="border:1px solid;">模拟加热炉</a>
     <a href="doc/msgnet/m__sim.modbus_slave_bus.md" style="border:1px solid;">Modbus Slave(从设备)模拟器</a>
 </p>
 
-##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.10 演示：自动数据记录</a>
-##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.11 演示：报警发现与输出</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.11 演示：自动数据记录</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.12 演示：报警发现与输出</a>
 
 #### <a href="doc/hmi/index.md" >9 人机交互(HMI)和对话框(Dialog)</a>
 ##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 界面HMI（UI）节点

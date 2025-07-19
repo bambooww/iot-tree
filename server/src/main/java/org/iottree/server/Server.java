@@ -218,6 +218,13 @@ public class Server
 			e.printStackTrace();
 		}
 	}
+	
+	static {
+	    System.setProperty("file.encoding", "UTF-8");
+	    try {
+	        System.setOut(new PrintStream(System.out, true, "UTF-8"));
+	    } catch (UnsupportedEncodingException ignored) {}
+	}
 
 	public static void main(String[] args) throws Exception
 	{

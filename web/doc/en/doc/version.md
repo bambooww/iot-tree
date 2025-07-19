@@ -6,6 +6,20 @@
 Starting from version 1.8, IOT Tree will not support JDK8 and 32-bit systems
 
 
+### version 1.7.6
+
+
+Msg flow: Complete relevant documents with a detailed and comprehensive explanation; The panel now has support for runtime customization, such as manually triggering nodes that can be input and then sent commands in the panel. Added PID control nodes and heating furnace simulator, and added PID Demo project.
+
+Added HTTP Server URL connector, which can passively provide push notifications for receiving JSON messages.
+
+Added microphone voice input node and voice recognition node, which can support text conversion of voice commands and provide basic support for voice control.
+
+Improve the Omron Eth PLC driver and pass the CP2E Nxxx series PLC test.
+
+Some bug handling.
+
+
 ### version 1.7.5
 
 

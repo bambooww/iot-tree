@@ -29,15 +29,29 @@
 	
 }
 </style>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">Work Dir:</label>
+
+    <div class="layui-input-inline" style="width:350px;">
+    	<input type="text" class="layui-input" id="work_dir" />
+    </div>
+    <div class="layui-form-mid">
+    <button onclick="on_dir_sel()" style="border-color:#dddddd">...</button>
+    </div>
+     <div class="layui-form-mid">&nbsp;</div>
+</div>
+ 	
  <div class="layui-form-item">
     <label class="layui-form-label">Cmd:</label>
-    <div class="layui-form-mid">&nbsp;</div>
+
     <div class="layui-input-inline" style="width:350px;">
     	<input type="text" class="layui-input" id="cmd" onchange="update_bt()"/>
     </div>
     <div class="layui-form-mid">
     <button onclick="add_rule()" style="border-color:#dddddd">+Add Cmd Segment</button>
     </div>
+     <div class="layui-form-mid">&nbsp;</div>
 </div>
 <div id="cmd_segs">
 </div>
@@ -47,6 +61,10 @@
     <label class="layui-form-label">Timeout:</label>
     <div class="layui-input-inline" style="width:150px;">
     	<input type="number" class="layui-input" id="timeout" />
+    </div>
+    <div class="layui-form-mid">MS  Output Encoding</div>
+    <div class="layui-input-inline" style="width:150px;">
+    	<input type="text" class="layui-input" id="out_enc" />
     </div>
 </div>
  <div class="layui-form-item">
@@ -88,6 +106,30 @@
     
 </div>
 <script>
+
+
+function on_dir_sel()
+{
+	dlg.open("/admin/util/dir_selector.jsp",{title:"Select Dir",w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					let seldir = dlgw.get_sel_dir();
+					if(!seldir)
+					{
+						dlg.msg("no dir selected");return;
+					}
+					$("#work_dir").val(seldir) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 
 
 function add_rule(jo)
@@ -163,11 +205,12 @@ function update_bt()
 function get_pm_jo()
 {
 	let cmd = $("#cmd").val();
+	let work_dir= $("#work_dir").val();
 	let mid_sty  = $("#mid_sty").val();
 	let mid_sub = $("#mid_sub").val();
 	let cmd_tail = $("#cmd_tail").val();
-	let tmeout = get_input_val("tmeout",-1,true) ;
-	
+	let timeout = get_input_val("timeout",-1,true) ;
+	let out_enc =  $("#out_enc").val();
 	let segs = [] ;
 	
 	$("#cmd_segs").find(".seg").each(function(){
@@ -176,13 +219,15 @@ function get_pm_jo()
 		segs.push(tmpjo) ;
 	}) ;
 	
-	return {cmd:cmd,timeout:timeout,segs:segs} ;
+	return {cmd:cmd,work_dir:work_dir,timeout:timeout,out_enc:out_enc,segs:segs} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#cmd").val(jo.cmd||"") ;
-	$("#tmeout").val(jo.tmeout||"") ;
+	$("#work_dir").val(jo.work_dir||"");
+	$("#timeout").val(jo.timeout||"") ;
+	$("#out_enc").val(jo.out_enc||"");
 	if(jo.mid_sty)
 		$("#mid_sty").val(jo.mid_sty) ;
 	$("#mid_sub").val(jo.mid_sub||"") ;

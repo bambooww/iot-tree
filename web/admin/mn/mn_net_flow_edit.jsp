@@ -400,7 +400,7 @@ function show_help(mn,tp,bforce_pop)
 	{
 		show_hidden_prop(true) ;
 	}
-	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false' ;
+	let u2 = '/doc/'+ulang+'/doc/msgnet/'+mn+'_'+tp+'.md?outline=false&open=true' ;
 	if(u2!=$("#right_help_iframe").attr("src"))
 		$("#right_help_iframe").attr("src",u2);
 	u2 = `mn_node_lib.jsp?container_id=\${container_id}&netid=\${netid}&mn=\${mn}&tp=\${tp}` ;
@@ -441,6 +441,7 @@ function on_item_open(mn)
 									return ;
 								}
 								dlg.msg("<wbt:g>done</wbt:g>");
+								clear_cache();
 								dlg.close();
 								reload_net();
 							},false);
@@ -628,6 +629,7 @@ function node_param_apply(node_id,dlgw,cb_ok)
 			 //eval("ret="+ret) ;
 			 dlg.msg("set param ok") ;
 			 reload_rn();
+			 clear_cache();
 			 if(cb_ok)
 				 cb_ok();
 		 });
@@ -958,12 +960,46 @@ function ob_debug_item()
 	observerDebugItem.observe($("#panel_main")[0], { childList: true, subtree: true });
 }
 
+var debug_nid2panel_f = {} ;
+
+function clear_cache()
+{
+	debug_nid2panel_f = {} ;
+}
+
+function push_debug_to_rt_panel(debug_nid,ditem)
+{//console.log(debug_nid)
+	let ff =  debug_nid2panel_f[debug_nid] ;
+	//if(ff=='n') return ;
+	
+	if(!ff)
+	{
+		let ifrm = $("#rt_panel_"+debug_nid) ;
+		if(ifrm.length<=0)
+		{
+			//debug_nid2panel_f[debug_nid]="n";return;
+			return ;
+		}
+		let ifwin = ifrm[0].contentWindow ;
+		if(!ifwin || !ifwin.on_debug_pushed)
+		{
+			//debug_nid2panel_f[debug_nid]="n";return;
+			return ;
+		}
+		debug_nid2panel_f[debug_nid] = ff = ifwin.on_debug_pushed ;
+	}
+	
+	ff(ditem) ;
+}
+
 function push_debug_item(debug_nid,ditem)
 {
 	let dbgele = $("#debug_n_"+debug_nid) ;
 	if(dbgele.length<=0) return ;
 	if("1"==dbgele.attr("print_stopped"))
 		return;
+	
+	push_debug_to_rt_panel(debug_nid,ditem);
 	
 	let max_n = parseInt(dbgele.attr("max_buf_num")) ;
 	let cur_nstr = dbgele.attr("cur_num") ;

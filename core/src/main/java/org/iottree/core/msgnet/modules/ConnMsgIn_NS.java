@@ -146,6 +146,19 @@ public class ConnMsgIn_NS   extends MNNodeStart
 		
 		if(bJSON)
 		{
+			if(msgob instanceof byte[])
+			{
+				try
+				{
+					pld = new String((byte[])msgob,"UTF-8") ;
+				}
+				catch(Exception ee)
+				{
+					RT_DEBUG_WARN.fire("conn_msg_in", ee.getMessage());
+					return false;
+				}
+			}
+			
 			if(pld instanceof String)
 			{
 				String tmps = ((String)pld).trim() ;
@@ -165,7 +178,7 @@ public class ConnMsgIn_NS   extends MNNodeStart
 			
 			if(pld instanceof JSONObject || pld instanceof JSONArray)
 			{
-				
+				RT_DEBUG_WARN.clear("conn_msg_in") ;
 			}
 			else
 			{

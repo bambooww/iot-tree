@@ -103,6 +103,7 @@
     <a href="doc/msgnet/n__dev.tag_filter.md" style="border:1px solid;">Tags Read Filter</a>
     <a href="doc/msgnet/n__dev.tag_filter_w.md" style="border:1px solid;">Tags Write Filter</a>
     <a href="doc/msgnet/n__dev.tag_evt_trigger.md" style="border:1px solid;">Tags Event Trigger</a>
+    <a href="doc/msgnet/m__dev.conn_in_msg.md" style="border:1px solid;">Conn In Msg Handler</a>
 </p>
 
 ##### &nbsp;&nbsp;&nbsp;8.7 Network Nodes
@@ -110,19 +111,25 @@
     
 </p>
 
-##### &nbsp;&nbsp;&nbsp;8.8 Storage Nodes
+##### &nbsp;&nbsp;&nbsp;8.8 Audio Nodes
+<p style="margin-left:2em;">
+    <a href="doc/msgnet/n__vo.mic_in.md" style="border:1px solid;">MIC IN</a>
+    <a href="doc/msgnet/n__vo.vo_reco.md" style="border:1px solid;">Voice Recognizer</a>
+</p>
+
+##### &nbsp;&nbsp;&nbsp;8.9 Storage Nodes
 <p style="margin-left:2em;">
     
 </p>
 
-##### &nbsp;&nbsp;&nbsp;8.9 Simulator Nodes
+##### &nbsp;&nbsp;&nbsp;8.10 Simulator Nodes
 <p style="margin-left:2em;">
     <a href="doc/msgnet/n__sim.heating_furn_sim.md" style="border:1px solid;">Simulated Heating Furnace</a>
     <a href="doc/msgnet/m__sim.modbus_slave_bus.md" style="border:1px solid;">Modbus Slave Simulator</a>
 </p>
 
-##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.10 Demo: Automatic data recorder flow</a>
-##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.11 Demo: Alarm detection and output</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.11 Demo: Automatic data recorder flow</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.12 Demo: Alarm detection and output</a>
 
 #### <a href="doc/hmi/index.md" >9 HMI and Dialog</a>
 ##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 HMI (UI) Node

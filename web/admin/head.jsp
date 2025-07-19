@@ -14,6 +14,7 @@ String ver = Config.getVersion() ;
 				boolean mn = "true".equals(request.getParameter("mn"));
 				boolean cm = "true".equals(request.getParameter("cm"));
 				boolean sel_menu = "true".equals(request.getParameter("sel_menu")) ;
+				boolean echarts = "true".equals(request.getParameter("echarts"));
 	if(bsimple)
 	{
 %>
@@ -86,6 +87,12 @@ if(sel_menu)
 %>
 <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 <script src="/_js/selectmenu/selectmenu.min.js"></script>
+<%
+}
+if(echarts)
+{
+%>
+<script type="text/javascript" src="/_js/echarts/echarts.min.js"></script>
 <%
 }
 if(mn)

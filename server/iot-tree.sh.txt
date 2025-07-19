@@ -27,7 +27,7 @@ done
 
 
 #echo "${JAVA_HOME}/bin/java" -cp "$CLASSPATH" "$MAIN_CLASS" $1
-"${JAVA_HOME}/bin/java" -cp "$CLASSPATH" "$MAIN_CLASS" $1
+"${JAVA_HOME}/bin/java" -Dfile.encoding=UTF-8 -cp "$CLASSPATH" "$MAIN_CLASS" $1
 
 
 exit $?

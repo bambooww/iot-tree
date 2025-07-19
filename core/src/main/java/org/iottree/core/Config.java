@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import javax.servlet.jsp.PageContext;
@@ -19,406 +22,404 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 public class Config
-{	
+{
 	public static class LangItem
 	{
-		String lang = null ;
-		
-		String icon = null ;
-		
-		boolean bDefault=false ;
-		
-		public LangItem(String ln,String icon)
+		String lang = null;
+
+		String icon = null;
+
+		boolean bDefault = false;
+
+		public LangItem(String ln, String icon)
 		{
-			this.lang = ln ;
-			this.icon = icon ;
+			this.lang = ln;
+			this.icon = icon;
 		}
-		
+
 		public String getLang()
 		{
-			return lang ;
+			return lang;
 		}
-		
+
 		public String getIcon()
 		{
-			return icon ;
+			return icon;
 		}
-		
+
 		public boolean isDefault()
 		{
-			return bDefault ;
+			return bDefault;
 		}
 	}
-	
-	static String configFileBase = null ;
-	
-	
-	static String dataFileBase = null ;
 
-	static String appConfigInitError = "" ;
-	
-	static String lastConfigError = "" ;
-	
-	//static boolean appConfigInitSucc = false;
-	
-	static String dataDirBase = null ;
-	
-	static String dataDynDirBase = null ;
-	
-	static String libDirBase = null ;
-	
+	static String configFileBase = null;
+
+	static String dataFileBase = null;
+
+	static String appConfigInitError = "";
+
+	static String lastConfigError = "";
+
+	// static boolean appConfigInitSucc = false;
+
+	static String dataDirBase = null;
+
+	static String dataDynDirBase = null;
+
+	static String libDirBase = null;
+
 	static
 	{
 		configFileBase = System.getProperties().getProperty("user.dir");
 		try
 		{
-			configFileBase = new File(configFileBase).getCanonicalPath() ;
+			configFileBase = new File(configFileBase).getCanonicalPath();
 		}
-		catch(Exception e)
+		catch ( Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
 
-	
 	public static String getAppConfigInitError()
 	{
 		return appConfigInitError;
 	}
-	
+
 	public static String getConfigFileBase()
 	{
-		return configFileBase ;
+		return configFileBase;
 	}
-	
-	
+
 	public static File getConfFile(String conffn)
 	{
-		String sysconffn = configFileBase
-		+ "/"+conffn;
+		String sysconffn = configFileBase + "/" + conffn;
 		return new File(sysconffn);
 	}
-	
+
 	public static File getRelatedFile(String path)
 	{
-		if(!path.startsWith("."))
-			return new File(path) ;
-		
-		String sysconffn = configFileBase
-		+ "/"+path;
+		if (!path.startsWith("."))
+			return new File(path);
+
+		String sysconffn = configFileBase + "/" + path;
 		return new File(sysconffn);
 	}
-	
-	
-	private static String webappBase = null ;
+
+	private static String webappBase = null;
+
 	/**
 	 * getWebappBase
+	 * 
 	 * @return
 	 */
 	public static String getWebappBase()
 	{
-		if(webappBase!=null)
+		if (webappBase != null)
 			return webappBase;
-		
-		Element wappsele = getConfElement("webapps") ;
-		if(wappsele==null)
-			throw new RuntimeException("no webapps config element found") ;
-		
+
+		Element wappsele = getConfElement("webapps");
+		if (wappsele == null)
+			throw new RuntimeException("no webapps config element found");
+
 		String tmps = wappsele.getAttribute("base_dir");
-		if(tmps!=null&&!tmps.equals(""))
+		if (tmps != null && !tmps.equals(""))
 		{
 			try
 			{
 				tmps = getRelatedFile(tmps).getCanonicalPath();
-				webappBase = tmps+"/" ;
+				webappBase = tmps + "/";
 			}
-			catch(Exception ee)
+			catch ( Exception ee)
 			{
 				throw new RuntimeException(ee.getMessage());
 			}
 		}
 		else
 		{
-			webappBase= configFileBase + "/web/";
+			webappBase = configFileBase + "/web/";
 		}
-		
+
 		return webappBase;
 	}
-	
+
 	public static class Webapp
 	{
-		String appName = null ;
-		
-		String path = null ;
-		
-		boolean bMain=false;
-		
-		private Webapp(String appn,String path,boolean b_main)
+		String appName = null;
+
+		String path = null;
+
+		boolean bMain = false;
+
+		private Webapp(String appn, String path, boolean b_main)
 		{
-			this.appName = appn ;
-			this.path = path ;
-			this.bMain = b_main ;
+			this.appName = appn;
+			this.path = path;
+			this.bMain = b_main;
 		}
-		
+
 		public String getAppName()
 		{
-			return appName ;
+			return appName;
 		}
-		
+
 		public String getPath()
 		{
-			return this.path ;
+			return this.path;
 		}
-		
+
 		public boolean isMain()
 		{
-			return this.bMain ;
+			return this.bMain;
 		}
 	}
-	
+
 	public static class Webapps
 	{
-		int port = 80 ;
-		
-		int ajpPort = -1 ;
-		
-		int sslPort = -1 ;
-		
-		ArrayList<Webapp> webapps = new ArrayList<Webapp>() ;
-		
+		int port = 80;
+
+		int ajpPort = -1;
+
+		int sslPort = -1;
+
+		ArrayList<Webapp> webapps = new ArrayList<Webapp>();
+
 		public Webapps()
 		{
-			
+
 		}
-		
+
 		public int getPort()
 		{
-			return port ;
+			return port;
 		}
-		
+
 		public int getAjpPort()
 		{
-			return ajpPort ;
+			return ajpPort;
 		}
-		
+
 		public int getSslPort()
 		{
-			return sslPort; 
+			return sslPort;
 		}
-		
+
 		public List<Webapp> getAppList()
 		{
-			return webapps ;
+			return webapps;
 		}
-		
+
 		public Webapp getApp(String name)
 		{
-			for(Webapp w:this.webapps)
+			for (Webapp w : this.webapps)
 			{
-				if(name.equals(w.appName))
-					return w ;
+				if (name.equals(w.appName))
+					return w;
 			}
-			return null ;
+			return null;
 		}
-		
+
 		public Webapp getMainApp()
 		{
-			for(Webapp w:this.webapps)
+			for (Webapp w : this.webapps)
 			{
-				if(w.bMain)
-					return w ;
+				if (w.bMain)
+					return w;
 			}
-			return null ;
+			return null;
 		}
 	}
-	
+
 	public static Webapps getWebapps()
 	{
-		Element wappsele = getConfElement("webapps") ;
-		if(wappsele==null)
-			return null ;
-		
-		Webapps r = new Webapps() ;
-		r.port = Convert.parseToInt32(wappsele.getAttribute("port"),80) ;
-		r.ajpPort = Convert.parseToInt32(wappsele.getAttribute("ajp_port"),-1) ;
-		r.sslPort = Convert.parseToInt32(wappsele.getAttribute("ssl_port"),-1) ;
-		
-		Element[] weles = XmlHelper.getSubChildElement(wappsele, "webapp") ;
-		if(weles!=null)
+		Element wappsele = getConfElement("webapps");
+		if (wappsele == null)
+			return null;
+
+		Webapps r = new Webapps();
+		r.port = Convert.parseToInt32(wappsele.getAttribute("port"), 80);
+		r.ajpPort = Convert.parseToInt32(wappsele.getAttribute("ajp_port"), -1);
+		r.sslPort = Convert.parseToInt32(wappsele.getAttribute("ssl_port"), -1);
+
+		Element[] weles = XmlHelper.getSubChildElement(wappsele, "webapp");
+		if (weles != null)
 		{
-			for(Element wele:weles)
+			for (Element wele : weles)
 			{
-				String appn = wele.getAttribute("name") ;
-				String path = wele.getAttribute("path") ;
-				boolean bload = !"false".equalsIgnoreCase(wele.getAttribute("load")) ;
-				if(!bload)
-					continue ;
-				boolean bmain = "true".equals(wele.getAttribute("main")) ;
-				r.webapps.add(new Webapp(appn,path,bmain)) ;
+				String appn = wele.getAttribute("name");
+				String path = wele.getAttribute("path");
+				boolean bload = !"false".equalsIgnoreCase(wele.getAttribute("load"));
+				if (!bload)
+					continue;
+				boolean bmain = "true".equals(wele.getAttribute("main"));
+				r.webapps.add(new Webapp(appn, path, bmain));
 			}
 		}
-		return r ;
+		return r;
 	}
-	
+
 	public static Webapp getWebappMain()
 	{
-		Webapps ws = getWebapps() ;
-		if(ws==null)
-			return null ;
-		return ws.getMainApp() ;
+		Webapps ws = getWebapps();
+		if (ws == null)
+			return null;
+		return ws.getMainApp();
 	}
+
 	/**
 	 * ������е�ģ������
+	 * 
 	 * @return
 	 */
 	public static ArrayList<String> getWebappModules()
 	{
-		ArrayList<String> rets = new ArrayList<String>() ;
-		String twb = getWebappBase() ;
-		if(Convert.isNullOrEmpty(twb))
-			return rets ;
-		File f = new File(twb) ;
-		if(!f.exists())
-			return rets ;
-		Webapps w = getWebapps() ;
-		for(File tmpf:f.listFiles())
+		ArrayList<String> rets = new ArrayList<String>();
+		String twb = getWebappBase();
+		if (Convert.isNullOrEmpty(twb))
+			return rets;
+		File f = new File(twb);
+		if (!f.exists())
+			return rets;
+		Webapps w = getWebapps();
+		for (File tmpf : f.listFiles())
 		{
-			if(!tmpf.isDirectory())
-				continue ;
-			String n = tmpf.getName() ;
-			if(w!=null && w.getApp(n)==null)
-				continue ;
-				
-			rets.add(tmpf.getName()) ;
+			if (!tmpf.isDirectory())
+				continue;
+			String n = tmpf.getName();
+			if (w != null && w.getApp(n) == null)
+				continue;
+
+			rets.add(tmpf.getName());
 		}
-		return rets ;
+		return rets;
 	}
-	
+
 	/**
 	 * ��ϵͳ�ڲ�����server�����ipͳһ����
+	 * 
 	 * @return
 	 */
 	public static String getBindIP()
 	{
-		Element tmpe = loadConf() ;
+		Element tmpe = loadConf();
 		return tmpe.getAttribute("bind_ip");
 	}
-	
-	
-//	public static int getTomatoServerPort()
-//	{
-//		Element tmpe = loadConf() ;
-//		String tmps = tmpe.getAttribute("tomato_port");
-//		if(tmps!=null&&!tmps.equals(""))
-//		{
-//			return Integer.parseInt(tmps);
-//		}
-//		
-//		return -1 ;
-//	}
-	
-	
-//	public static int getTomatoServerCtrlPort()
-//	{
-//		if(isSole())
-//			throw new RuntimeException("app is running in sole mode!");
-//		
-//		Element tmpe = loadConf() ;
-//		String tmps = tmpe.getAttribute("tomato_ctrl_port");
-//		if(tmps!=null&&!tmps.equals(""))
-//		{
-//			return Integer.parseInt(tmps);
-//		}
-//		
-//		return -1 ;
-//	}
-//	
-//	
-//	public static int getGridServerPort()
-//	{
-//		if(isSole())
-//			throw new RuntimeException("app is running in sole mode!");
-//		
-//		Element tmpe = loadConf() ;
-//		String tmps = tmpe.getAttribute("grid_port");
-//		if(tmps!=null&&!tmps.equals(""))
-//		{
-//			return Integer.parseInt(tmps);
-//		}
-//		
-//		return -1 ;
-//	}
-	
+
+	// public static int getTomatoServerPort()
+	// {
+	// Element tmpe = loadConf() ;
+	// String tmps = tmpe.getAttribute("tomato_port");
+	// if(tmps!=null&&!tmps.equals(""))
+	// {
+	// return Integer.parseInt(tmps);
+	// }
+	//
+	// return -1 ;
+	// }
+
+	// public static int getTomatoServerCtrlPort()
+	// {
+	// if(isSole())
+	// throw new RuntimeException("app is running in sole mode!");
+	//
+	// Element tmpe = loadConf() ;
+	// String tmps = tmpe.getAttribute("tomato_ctrl_port");
+	// if(tmps!=null&&!tmps.equals(""))
+	// {
+	// return Integer.parseInt(tmps);
+	// }
+	//
+	// return -1 ;
+	// }
+	//
+	//
+	// public static int getGridServerPort()
+	// {
+	// if(isSole())
+	// throw new RuntimeException("app is running in sole mode!");
+	//
+	// Element tmpe = loadConf() ;
+	// String tmps = tmpe.getAttribute("grid_port");
+	// if(tmps!=null&&!tmps.equals(""))
+	// {
+	// return Integer.parseInt(tmps);
+	// }
+	//
+	// return -1 ;
+	// }
+
 	public static String getDataDirBase()
 	{
-		if(dataDirBase!=null)
-				return dataDirBase;
-			
+		if (dataDirBase != null)
+			return dataDirBase;
+
 		return dataFileBase + "/data/";
 	}
-	
+
 	public static String getDataDynDirBase()
 	{
-//		if(Convert.isNullOrEmpty(dataDynDirBase))
-//			throw new RuntimeException("no data_dyn_dir found or dir is not existed in config.xml") ;
-		
-		return dataDynDirBase ;
+		// if(Convert.isNullOrEmpty(dataDynDirBase))
+		// throw new RuntimeException("no data_dyn_dir found or dir is not
+		// existed in config.xml") ;
+
+		return dataDynDirBase;
 	}
-	
+
 	public static String getLibDirBase()
 	{
-		return libDirBase ;
+		return libDirBase;
 	}
-	
+
 	public static File getDataBackupDir()
 	{
-		String dir = getDataDirBase()+"backup/" ;
-		File r= new File(dir) ;
-		return r ;
+		String dir = getDataDirBase() + "backup/";
+		File r = new File(dir);
+		return r;
 	}
-	
+
 	public static String getDataTmpDir()
 	{
-		return getDataDirBase()+"tmp/" ;
+		return getDataDirBase() + "tmp/";
 	}
-	
+
 	public static String getDataOthersDir()
 	{
-		return getDataDirBase()+"others/" ;
+		return getDataDirBase() + "others/";
 	}
+
 	/**
 	 * ����ҳ��������,���ĳһ��·������ʵ�ļ�·��
+	 * 
 	 * @param pc
 	 * @param p
 	 * @return
 	 */
-	public static File getWebPageContextRealPath(PageContext pc,String p)
+	public static File getWebPageContextRealPath(PageContext pc, String p)
 	{
 		File realp = null;
-		if(pc==null)
-		{//����ʹ��tomatoƽ̨��Ϣ
+		if (pc == null)
+		{// ����ʹ��tomatoƽ̨��Ϣ
 
-			String tmpp = getWebappBase()+p ;
-			realp = new File(tmpp) ;
-			if(realp.exists())
-				return realp ;
-			
-			return realp ;
+			String tmpp = getWebappBase() + p;
+			realp = new File(tmpp);
+			if (realp.exists())
+				return realp;
+
+			return realp;
 		}
 		// ����ͨ����webapp�����Ļ�ȡ����·��
-		//HttpServletRequest hsr = (HttpServletRequest) pc.getRequest();
+		// HttpServletRequest hsr = (HttpServletRequest) pc.getRequest();
 
 		String tmpp = pc.getServletContext().getRealPath(p);
 		File f = new File(tmpp);
 		if (f.exists())
 		{
 			realp = f;
-//			cxtRoot = WebRes
-//					.getContextRootPath((HttpServletRequest) this.pageContext
-//							.getRequest());
+			// cxtRoot = WebRes
+			// .getContextRootPath((HttpServletRequest) this.pageContext
+			// .getRequest());
 		}
 
 		if (realp == null && p.startsWith("/"))
@@ -428,98 +429,98 @@ public class Config
 			if (tmpf.exists())
 			{
 				realp = tmpf;
-//				cxtRoot = "/";
+				// cxtRoot = "/";
 			}
 		}
 
 		if (realp == null)
 			throw new RuntimeException("no template found with path input=" + p);
 
-		return realp ;
+		return realp;
 	}
-	
+
 	/**
 	 * ��ȡһ��ҳ��·���е��ı�����
+	 * 
 	 * @param pc
 	 * @param p
 	 * @param enc
 	 * @return
 	 */
-	public static String readWebPageTxtByPath(PageContext pc,String p,String enc)
+	public static String readWebPageTxtByPath(PageContext pc, String p, String enc)
 	{
-		File f = getWebPageContextRealPath(pc,p) ;
-		if(f==null)
-			return null ;
-		
-		if(!f.exists())
-			return null ;
-		
-			FileInputStream fis = null;
-			if (enc == null || enc.equals(""))
-				enc = "UTF-8";
+		File f = getWebPageContextRealPath(pc, p);
+		if (f == null)
+			return null;
 
+		if (!f.exists())
+			return null;
+
+		FileInputStream fis = null;
+		if (enc == null || enc.equals(""))
+			enc = "UTF-8";
+
+		try
+		{
+			fis = new FileInputStream(f);
+			byte[] buf = new byte[(int) f.length()];
+			fis.read(buf);
+			String s = new String(buf, enc);
+			// s = s.replaceAll("\\[\\$CXT_ROOT\\]", cxt_root);
+			return s;
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+		finally
+		{
 			try
 			{
-				fis = new FileInputStream(f);
-				byte[] buf = new byte[(int) f.length()];
-				fis.read(buf);
-				String s = new String(buf, enc);
-				//s = s.replaceAll("\\[\\$CXT_ROOT\\]", cxt_root);
-				return s ;
+				if (fis != null)
+					fis.close();
 			}
-			catch (Exception e)
+			catch ( IOException ioe)
 			{
-				e.printStackTrace();
-				return null;
 			}
-			finally
-			{
-				try
-				{
-					if (fis != null)
-						fis.close();
-				}
-				catch (IOException ioe)
-				{
-				}
-			}
-		
+		}
+
 	}
-	
+
 	private static Object locker = new Object();
 
 	private static Element confRootEle = null;
-	
+
 	private static boolean bDebug = false;
-	
+
 	/**
 	 * 
 	 */
 	private static boolean bAuthDefaultAllow = true;
-	
+
 	/**
 	 * �ж�ҳ��ȱʡ������Ƿ���Ҫ��½
 	 */
 	private static boolean bAuthDefaultLogin = false;
-	
-	private static String appTitle = "IOT-Tree Server" ;
-	
-	private static String serverId = "" ;
+
+	private static String appTitle = "IOT-Tree Server";
+
+	private static String serverId = "";
 	/**
-	 * һЩ����£���������Ҫ֪���Լ�����α������ʵ�
-	 * ����Ϣ���Ǵ洢����������ķ���ǰ׺
+	 * һЩ����£���������Ҫ֪���Լ�����α������ʵ� ����Ϣ���Ǵ洢����������ķ���ǰ׺
 	 */
-	private static ArrayList<String> httpBases = new ArrayList<String>() ;
-	
+	private static ArrayList<String> httpBases = new ArrayList<String>();
+
 	private static String appLang = "en";
-	
+
 	/**
 	 * ������֧��
 	 */
-	private static ArrayList<LangItem> multiLangItems = new ArrayList<>() ;
-	
-	private static String appCopyRight = "" ;
-	
+	private static ArrayList<LangItem> multiLangItems = new ArrayList<>();
+
+	private static String appCopyRight = "";
+
 	public static Element loadConf()
 	{
 		if (confRootEle != null)
@@ -537,7 +538,7 @@ public class Config
 				{
 					throw new RuntimeException("no config.xml file found!");
 				}
-				
+
 				DocumentBuilderFactory docBuilderFactory = null;
 				DocumentBuilder docBuilder = null;
 				Document doc = null;
@@ -550,273 +551,270 @@ public class Config
 				doc = docBuilder.parse(f);
 
 				confRootEle = doc.getDocumentElement();
-				
-				String tdata = confRootEle.getAttribute("data_dir") ;
-				if(Convert.isNotNullEmpty(tdata))
+
+				String tdata = confRootEle.getAttribute("data_dir");
+				if (Convert.isNotNullEmpty(tdata))
 				{
 					tdata = tdata.replace('\\', '/');
-					File fp = null ;
-					if(tdata.startsWith("/")||tdata.indexOf(':')>0)
+					File fp = null;
+					if (tdata.startsWith("/") || tdata.indexOf(':') > 0)
 					{
-						fp = new File(tdata) ;
+						fp = new File(tdata);
 					}
 					else
 					{
-						fp = new File(configFileBase+"/"+tdata) ;
+						fp = new File(configFileBase + "/" + tdata);
 					}
-					
+
 					fp.mkdirs();
-					dataDirBase = fp.getCanonicalPath() ;
+					dataDirBase = fp.getCanonicalPath();
 					dataDirBase = dataDirBase.replace('\\', '/');
-					if(!dataDirBase.endsWith("/"))
-						dataDirBase += "/" ;
-					
-					dataFileBase = fp.getParentFile().getCanonicalPath() +"/";
+					if (!dataDirBase.endsWith("/"))
+						dataDirBase += "/";
+
+					dataFileBase = fp.getParentFile().getCanonicalPath() + "/";
 				}
 				else
 				{
-					dataFileBase = f.getParentFile().getCanonicalPath() +"/";
+					dataFileBase = f.getParentFile().getCanonicalPath() + "/";
 				}
-				
-				System.out.println("Data Dir Base="+dataDirBase) ;
-				System.setProperty("iottree.data_dir",getDataDirBase());
-				System.setProperty("iottree.msg_net",getDataDirBase()+"/msg_net/");
-				System.setProperty("iottree.lib_plugins.dir",getDataDirBase()+"/plugins/");
-				
-				dataDynDirBase = dataFileBase + "/data_dyn/"; //default dyn data
-				tdata = confRootEle.getAttribute("data_dyn_dir") ;
-				if(Convert.isNotNullEmpty(tdata))
+
+				System.out.println("Data Dir Base=" + dataDirBase);
+				System.setProperty("iottree.data_dir", getDataDirBase());
+				System.setProperty("iottree.msg_net", getDataDirBase() + "/msg_net/");
+				System.setProperty("iottree.lib_plugins.dir", getDataDirBase() + "/plugins/");
+
+				dataDynDirBase = dataFileBase + "/data_dyn/"; // default dyn
+																// data
+				tdata = confRootEle.getAttribute("data_dyn_dir");
+				if (Convert.isNotNullEmpty(tdata))
 				{
 					tdata = tdata.replace('\\', '/');
-					File fp = null ;
-					if(tdata.startsWith("/")||tdata.indexOf(':')>0)
+					File fp = null;
+					if (tdata.startsWith("/") || tdata.indexOf(':') > 0)
 					{
-						fp = new File(tdata) ;
+						fp = new File(tdata);
 					}
 					else
 					{
-						fp = new File(configFileBase+"/"+tdata) ;
+						fp = new File(configFileBase + "/" + tdata);
 					}
-					
+
 					fp.mkdirs();
-					dataDynDirBase = fp.getCanonicalPath() ;
+					dataDynDirBase = fp.getCanonicalPath();
 					dataDynDirBase = dataDynDirBase.replace('\\', '/');
-					if(!dataDynDirBase.endsWith("/"))
-						dataDynDirBase += "/" ;
+					if (!dataDynDirBase.endsWith("/"))
+						dataDynDirBase += "/";
 				}
-				
-				System.out.println("data_dyn_dir="+dataDynDirBase) ;
-				System.setProperty("iottree.data_dyn_dir",dataDynDirBase);
-				
-				tdata = confRootEle.getAttribute("lib_dir") ;
-				if(Convert.isNotNullEmpty(tdata))
+
+				System.out.println("data_dyn_dir=" + dataDynDirBase);
+				System.setProperty("iottree.data_dyn_dir", dataDynDirBase);
+
+				tdata = confRootEle.getAttribute("lib_dir");
+				if (Convert.isNotNullEmpty(tdata))
 				{
 					tdata = tdata.replace('\\', '/');
-					File fp = null ;
-					if(tdata.startsWith("/")||tdata.indexOf(':')>0)
+					File fp = null;
+					if (tdata.startsWith("/") || tdata.indexOf(':') > 0)
 					{
-						fp = new File(tdata) ;
+						fp = new File(tdata);
 					}
 					else
 					{
-						fp = new File(configFileBase+"/"+tdata) ;
+						fp = new File(configFileBase + "/" + tdata);
 					}
-					
+
 					fp.mkdirs();
-					libDirBase = fp.getCanonicalPath()+"/" ;
+					libDirBase = fp.getCanonicalPath() + "/";
 					libDirBase = libDirBase.replace('\\', '/');
 				}
 				else
 				{
-					libDirBase = f.getParentFile().getCanonicalPath() +"/lib/";
+					libDirBase = f.getParentFile().getCanonicalPath() + "/lib/";
 					libDirBase = libDirBase.replace('\\', '/');
 				}
-				System.out.println("Lib Dir Base="+libDirBase) ;
-				
-				File tmpdir = new File(getDataDirBase()+"/tmp/") ;
-				if(!tmpdir.exists())
-					tmpdir.mkdirs() ;
-				System.setProperty("iottree.tmp_dir",getDataDirBase()+"/tmp/");
-				File javaiotemp = new File(getDataDirBase()+"/tmp_java_io/") ;
-				if(!javaiotemp.exists())
-					javaiotemp.mkdirs() ;
-				System.setProperty("java.io.tmpdir",javaiotemp.getCanonicalPath());
-				System.out.println("Data File Base="+dataFileBase) ;
-				
+				System.out.println("Lib Dir Base=" + libDirBase);
+
+				File tmpdir = new File(getDataDirBase() + "/tmp/");
+				if (!tmpdir.exists())
+					tmpdir.mkdirs();
+				System.setProperty("iottree.tmp_dir", getDataDirBase() + "/tmp/");
+				File javaiotemp = new File(getDataDirBase() + "/tmp_java_io/");
+				if (!javaiotemp.exists())
+					javaiotemp.mkdirs();
+				System.setProperty("java.io.tmpdir", javaiotemp.getCanonicalPath());
+				System.out.println("Data File Base=" + dataFileBase);
+
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));
 				appTitle = confRootEle.getAttribute("title");
-				if(appTitle==null||appTitle.equals(""))
-					appTitle = "IOT-Tree Server" ;
-				
+				if (appTitle == null || appTitle.equals(""))
+					appTitle = "IOT-Tree Server";
+
 				appCopyRight = confRootEle.getAttribute("copyright");
-				if(appCopyRight==null)
-					appCopyRight = "" ;
-				
-				
+				if (appCopyRight == null)
+					appCopyRight = "";
+
 				appLang = confRootEle.getAttribute("lang");
-				if(Convert.isNullOrEmpty(appLang))
+				if (Convert.isNullOrEmpty(appLang))
 					appLang = "en";
-				
-				
-				 loadLangsConfig();
-				
+
+				loadLangsConfig();
+
 				Element userele = getConfElement("user");
-				if(userele!=null)
+				if (userele != null)
 				{
-					bAuthDefaultAllow = true;//!AppWebConfig.ATTRV_DENY.equalsIgnoreCase(userele.getAttribute("authorization_default"));
+					bAuthDefaultAllow = true;// !AppWebConfig.ATTRV_DENY.equalsIgnoreCase(userele.getAttribute("authorization_default"));
 					bAuthDefaultLogin = "true".equalsIgnoreCase(userele.getAttribute("authorization_is_login"));
 				}
-				
+
 				loadSystemConfig();
-				
+
 				return confRootEle;
 			}
-			catch (Exception e)
+			catch ( Exception e)
 			{
 				e.printStackTrace();
-				
+
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 				e.printStackTrace(pw);
-				lastConfigError = e.getMessage()+"\r\n"+sw.toString();
+				lastConfigError = e.getMessage() + "\r\n" + sw.toString();
 				return null;
 			}
 		}
 	}
-	
-	
+
 	private static void loadLangsConfig()
 	{
 		Element langsele = getConfElement("langs");
-		if(langsele==null)
-			return ;
-		Element[] leles = Convert.getSubChildElement(langsele, "lang") ;
-		for(Element ele:leles)
+		if (langsele == null)
+			return;
+		Element[] leles = Convert.getSubChildElement(langsele, "lang");
+		for (Element ele : leles)
 		{
-			String n = ele.getAttribute("name") ;
-			String icon = ele.getAttribute("icon") ;
-			boolean bdefault = "true".equalsIgnoreCase(ele.getAttribute("default")) ;
-			LangItem li = new LangItem(n,icon) ;
-			if(bdefault)
-				li.bDefault = true ;
-			multiLangItems.add(li) ;
+			String n = ele.getAttribute("name");
+			String icon = ele.getAttribute("icon");
+			boolean bdefault = "true".equalsIgnoreCase(ele.getAttribute("default"));
+			LangItem li = new LangItem(n, icon);
+			if (bdefault)
+				li.bDefault = true;
+			multiLangItems.add(li);
 		}
 	}
-	
+
 	private static void loadSystemConfig() throws IOException
 	{
 		Element sysele = getConfElement("system");
-		
-		
-		Element[] hbdoms = Convert.getSubChildElement(sysele, "http_base") ;
-		if(hbdoms!=null)
+
+		Element[] hbdoms = Convert.getSubChildElement(sysele, "http_base");
+		if (hbdoms != null)
 		{
-			for(Element hbd:hbdoms)
+			for (Element hbd : hbdoms)
 			{
-				String u = hbd.getAttribute("url") ;
-				if(Convert.isNotNullEmpty(u))
+				String u = hbd.getAttribute("url");
+				if (Convert.isNotNullEmpty(u))
 				{
-					httpBases.add(u) ;
+					httpBases.add(u);
 				}
 			}
 		}
 
-		Element[] envs = Convert.getSubChildElement(sysele, "env") ;
-		if(envs!=null)
+		Element[] envs = Convert.getSubChildElement(sysele, "env");
+		if (envs != null)
 		{
-			for(Element env:envs)
+			for (Element env : envs)
 			{
-				String n = env.getAttribute("name") ;
-				if(Convert.isNullOrEmpty(n))
-					continue ;
-				
+				String n = env.getAttribute("name");
+				if (Convert.isNullOrEmpty(n))
+					continue;
+
 				String v = env.getAttribute("value");
-				if(v==null)
-					v = "" ;
-				
+				if (v == null)
+					v = "";
+
 				System.setProperty(n, v);
 			}
 		}
-		
-//		Element[] libdirs = Convert.getSubChildElement(sysele, "lib") ;
-//		StringBuilder sb = new StringBuilder() ;
-//		String pathsep = System.getProperty("path.separator") ;
-//		if(Convert.isNullOrEmpty(pathsep))
-//			pathsep = ";" ;
-//		
-//		if(libdirs!=null)
-//		{
-//			for(Element libd:libdirs)
-//			{
-//				String dir = libd.getAttribute("dir") ;
-//				if(Convert.isNullOrEmpty(dir))
-//					continue ;
-//				
-//				File f = new File(dir) ;
-//				if(!f.exists())
-//					continue ;
-//				
-//				if(!f.isDirectory())
-//					continue ;
-//				
-//				File[] fs = f.listFiles(new FilenameFilter(){
-//
-//					public boolean accept(File dir, String name)
-//					{
-//						String n = name.toLowerCase() ;
-//						if(n.endsWith(".jar"))
-//							return true ;
-//						if(n.endsWith(".zip"))
-//							return true ;
-//						return false;
-//					}}) ;
-//				
-//				if(fs==null||fs.length<=0)
-//					continue ;
-//				
-//				for(File tmpf : fs)
-//				{
-//					sb.append(tmpf.getCanonicalPath()).append(pathsep) ;
-//				}
-//				
-//			}
-//		}
-//		
-//		sb.append(System.getProperty("java.class.path")) ;
-//		System.setProperty("java.class.path", sb.toString()) ;
-		
-		//System.out.println("java.class.path="+System.getProperty("java.class.path")) ;
+
+		// Element[] libdirs = Convert.getSubChildElement(sysele, "lib") ;
+		// StringBuilder sb = new StringBuilder() ;
+		// String pathsep = System.getProperty("path.separator") ;
+		// if(Convert.isNullOrEmpty(pathsep))
+		// pathsep = ";" ;
+		//
+		// if(libdirs!=null)
+		// {
+		// for(Element libd:libdirs)
+		// {
+		// String dir = libd.getAttribute("dir") ;
+		// if(Convert.isNullOrEmpty(dir))
+		// continue ;
+		//
+		// File f = new File(dir) ;
+		// if(!f.exists())
+		// continue ;
+		//
+		// if(!f.isDirectory())
+		// continue ;
+		//
+		// File[] fs = f.listFiles(new FilenameFilter(){
+		//
+		// public boolean accept(File dir, String name)
+		// {
+		// String n = name.toLowerCase() ;
+		// if(n.endsWith(".jar"))
+		// return true ;
+		// if(n.endsWith(".zip"))
+		// return true ;
+		// return false;
+		// }}) ;
+		//
+		// if(fs==null||fs.length<=0)
+		// continue ;
+		//
+		// for(File tmpf : fs)
+		// {
+		// sb.append(tmpf.getCanonicalPath()).append(pathsep) ;
+		// }
+		//
+		// }
+		// }
+		//
+		// sb.append(System.getProperty("java.class.path")) ;
+		// System.setProperty("java.class.path", sb.toString()) ;
+
+		// System.out.println("java.class.path="+System.getProperty("java.class.path"))
+		// ;
 	}
-	
-	
+
 	public static String getLastConfigError()
 	{
 		return lastConfigError;
 	}
-	
+
 	public static boolean isDebug()
 	{
-		return bDebug ;
+		return bDebug;
 	}
-	
+
 	public static String getServerId()
 	{
-		return serverId ;
+		return serverId;
 	}
-	
+
 	public static String getAppTitle()
 	{
-		return appTitle ;
+		return appTitle;
 	}
-	
 
 	public static List<String> getHttpBases()
 	{
 		return httpBases;
 	}
-	
+
 	/**
 	 * �����Ի����£���ö�������Ŀ�б�
+	 * 
 	 * @return
 	 */
 	public static List<LangItem> getMultiLangItems()
@@ -826,65 +824,63 @@ public class Config
 
 	public static LangItem getMultiLangDefault()
 	{
-		if(multiLangItems==null||multiLangItems.size()<=0)
-			return null ;
-		
-		for(LangItem li:multiLangItems)
+		if (multiLangItems == null || multiLangItems.size() <= 0)
+			return null;
+
+		for (LangItem li : multiLangItems)
 		{
-			if(li.bDefault)
-				return li ;
+			if (li.bDefault)
+				return li;
 		}
-		return multiLangItems.get(0) ;
+		return multiLangItems.get(0);
 	}
-	
-	
+
 	public static String getAppCopyRight()
 	{
-		return appCopyRight ;
+		return appCopyRight;
 	}
-	
+
 	public static String getAppLang()
 	{
-		return appLang ;
+		return appLang;
 	}
-	
+
 	public static void setAppLang(String ln)
 	{
-		appLang = ln ;
+		appLang = ln;
 	}
 
 	public static boolean isAuthDefaultLogin()
 	{
-		return bAuthDefaultLogin ;
+		return bAuthDefaultLogin;
 	}
-	
 
 	public static boolean isAuthDefaultAllow()
 	{
-		return bAuthDefaultAllow ;
+		return bAuthDefaultAllow;
 	}
 
 	public static Element getConfElement(String name)
 	{
 		Element re = loadConf();
-		if(re==null)
-			return null ;
+		if (re == null)
+			return null;
 		NodeList nl = re.getElementsByTagName(name);
-		if(nl==null||nl.getLength()<=0)
-		{//try load debug
+		if (nl == null || nl.getLength() <= 0)
+		{// try load debug
 			re = loadConfDebug();
-			if(re!=null)
+			if (re != null)
 				nl = re.getElementsByTagName(name);
 		}
-		
+
 		if (nl == null)
 			return null;
 
 		return (Element) nl.item(0);
 	}
-	
-	static Element confRootEleDebug = null ; 
-	
+
+	static Element confRootEleDebug = null;
+
 	private static Element loadConfDebug()
 	{
 		if (confRootEleDebug != null)
@@ -898,8 +894,8 @@ public class Config
 			try
 			{
 				File f = getConfFile("app_debug.xml");
-				
-				if(!f.exists())
+
+				if (!f.exists())
 					return null;//
 
 				DocumentBuilderFactory docBuilderFactory = null;
@@ -916,15 +912,14 @@ public class Config
 				confRootEleDebug = doc.getDocumentElement();
 				return confRootEleDebug;
 			}
-			catch(Exception ee)
+			catch ( Exception ee)
 			{
 				ee.printStackTrace();
-				return null ;
+				return null;
 			}
 		}
 	}
-	
-	
+
 	public static Element getConfElementDebug(String name)
 	{
 		Element re = loadConfDebug();
@@ -934,107 +929,163 @@ public class Config
 
 		return (Element) nl.item(0);
 	}
-	
-	
+
 	public static String transConfPath(String p)
 	{
-		if(p.startsWith("[$"))
+		if (p.startsWith("[$"))
 		{
-			if(p.startsWith("[$data]"))
-				return Config.getDataDirBase()+"/"+p.substring(7) ;
-			else if(p.startsWith("[$webapps]"))
-				return Config.getWebappBase()+"/"+p.substring(10) ;
-			throw new IllegalArgumentException("unknown conf path="+p) ;
+			if (p.startsWith("[$data]"))
+				return Config.getDataDirBase() + "/" + p.substring(7);
+			else if (p.startsWith("[$webapps]"))
+				return Config.getWebappBase() + "/" + p.substring(10);
+			throw new IllegalArgumentException("unknown conf path=" + p);
 		}
-		return p ;
+		return p;
 	}
-	
+
 	private static String version;
-	 
-    public static String getVersion()
-    {
-    	if(version!=null)
-    		return version ;
-       try
-       {
-           String res = "META-INF/maven/org.iottree/iottree-core/pom.properties";
-           URL url = Thread.currentThread().getContextClassLoader().getResource(res);
-           try(InputStream inputs = url.openStream())
-           {
-        	   HashMap<String,String> props = Convert.readStringMapFromStream(inputs, "utf-8") ;
-        	   version = props.get("version");
-           }
-       }
-       catch(Exception e)
-       {
-    	   e.printStackTrace();
-    	   version="" ;
-       }
-       return version;
-   }
-    
-   public static class InnerComp
-   {
-	   String name = null ;
-	   
-	   boolean bEnable=true ;
-	   
-	   private InnerComp(String n,boolean ben)
-	   {
-		   this.name = n ;
-		   this.bEnable = ben ;
-	   }
-   }
-   
-    
-    public static InnerComp getInnerComp(String name)
-    {
-    	Element ele = Config.getConfElement("system") ;
-    	if(ele==null)
-    		return null ;
-    	for(Element ele0 :XmlHelper.getSubChildElement(ele, "inner_comp"))
-    	{
-    		String nn = ele0.getAttribute("name") ;
-    		if(!name.equals(nn))
-    			continue ;
-    		
-    		boolean ben = !"false".equals(ele0.getAttribute("enable")) ;
-    		return new InnerComp(nn,ben) ;
-    	}
-    	return null ;
-    }
-    
-    /**
-     * $data_dyn:/platform/prj_up/
-     * /xxx/
-     *  ./abcv/
-     * 
-     * @param dir_str
-     * @return
-     */
-    public static File parseDir(String dir_str)
-    {
-    	if(dir_str.startsWith("$"))
-    	{
-    		int k = dir_str.indexOf(":"); 
-    		if(k<=0)
-    			throw new IllegalArgumentException("invalid path "+dir_str+",it must be $xxx: head") ;
-    		String head = dir_str.substring(0,k) ;
-    		String subp = dir_str.substring(k+1) ;
-    		switch(head)
-    		{
-    		case "$data":
-    			return new File(getDataDirBase()+"/"+subp) ;
-    		case "$data_dyn":
-    			return new File(getDataDynDirBase()+"/"+subp) ;
-    		case "$webapps":
-    			return new File(getWebappBase()+"/"+subp) ;
-    		case "$":
-    		default:
-    			return new File(getConfigFileBase()+"/"+subp) ;
-    		}
-    	}
-    	
-    	return new File(dir_str) ;
-    }
+
+	public static String getVersion()
+	{
+		if (version != null)
+			return version;
+		try
+		{
+			String res = "META-INF/maven/org.iottree/iottree-core/pom.properties";
+			URL url = Thread.currentThread().getContextClassLoader().getResource(res);
+			try (InputStream inputs = url.openStream())
+			{
+				HashMap<String, String> props = Convert.readStringMapFromStream(inputs, "utf-8");
+				version = props.get("version");
+			}
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+			version = "";
+		}
+		return version;
+	}
+
+	public static class InnerComp
+	{
+		String name = null;
+
+		boolean bEnable = true;
+
+		private InnerComp(String n, boolean ben)
+		{
+			this.name = n;
+			this.bEnable = ben;
+		}
+	}
+
+	public static InnerComp getInnerComp(String name)
+	{
+		Element ele = Config.getConfElement("system");
+		if (ele == null)
+			return null;
+		for (Element ele0 : XmlHelper.getSubChildElement(ele, "inner_comp"))
+		{
+			String nn = ele0.getAttribute("name");
+			if (!name.equals(nn))
+				continue;
+
+			boolean ben = !"false".equals(ele0.getAttribute("enable"));
+			return new InnerComp(nn, ben);
+		}
+		return null;
+	}
+
+	/**
+	 * $data_dyn:/platform/prj_up/ /xxx/ ./abcv/
+	 * 
+	 * @param dir_str
+	 * @return
+	 */
+	public static File parseDir(String dir_str)
+	{
+		if (dir_str.startsWith("$"))
+		{
+			int k = dir_str.indexOf(":");
+			if (k <= 0)
+				throw new IllegalArgumentException("invalid path " + dir_str + ",it must be $xxx: head");
+			String head = dir_str.substring(0, k);
+			String subp = dir_str.substring(k + 1);
+			switch (head)
+			{
+			case "$data":
+				return new File(getDataDirBase() + "/" + subp);
+			case "$data_dyn":
+				return new File(getDataDynDirBase() + "/" + subp);
+			case "$webapps":
+				return new File(getWebappBase() + "/" + subp);
+			case "$":
+			default:
+				return new File(getConfigFileBase() + "/" + subp);
+			}
+		}
+
+		return new File(dir_str);
+	}
+
+	public static String getJavaHome()
+	{
+		// 1. 优先检查 java.home 系统属性
+		String javaHome = System.getProperty("java.home");
+
+		// 2. 如果 java.home 指向 jre 目录，则向上退一级到 JDK 目录
+		if (javaHome.endsWith(File.separator + "jre"))
+		{
+			File jreDir = new File(javaHome);
+			File jdkDir = jreDir.getParentFile();
+			if (jdkDir != null && jdkDir.exists())
+			{
+				return jdkDir.getAbsolutePath();
+			}
+		}
+
+		// 3. 检查 JAVA_HOME 环境变量
+		String envJavaHome = System.getenv("JAVA_HOME");
+		if (envJavaHome != null && !envJavaHome.isEmpty())
+		{
+			return envJavaHome;
+		}
+
+		return javaHome;
+	}
+
+	/**
+	 * 获取 java 可执行文件完整路径
+	 */
+	public static String getJavaExePath()
+	{
+		String javaHome = getJavaHome();
+		String executable = System.getProperty("os.name").toLowerCase().contains("win") ? "java.exe" : "java";
+
+		Path javaPath = Paths.get(javaHome, "bin", executable);
+
+		if (Files.exists(javaPath))
+		{
+			return javaPath.toAbsolutePath().toString();
+		}
+
+		Path altPath = Paths.get(javaHome, "jre", "bin", executable);
+		if (Files.exists(altPath))
+		{
+			return altPath.toAbsolutePath().toString();
+		}
+
+		return javaPath.toString();
+	}
+
+	/**
+	 * 获取 java 命令所在目录
+	 */
+	public static String getJavaComDir()
+	{
+		String javaExecutable = getJavaExePath();
+		File javaFile = new File(javaExecutable);
+		return javaFile.getParent();
+	}
 }
