@@ -1,4 +1,4 @@
-What is IOT-Tree Server?
+IOT-Tree Server
 ==
  <a href="./web/doc/cn/README.md" target="_blank">中文</a>
  <!--
@@ -204,4 +204,22 @@ If you encounter problems with the system or have suggestions, you can send us e
 [lamp_demo]: ./web/doc/en/doc/case/example_lamp_demo.md
 [embed_ctrl_demo]: ./web/doc/en/doc/case/example_embed.md
 [center_substation]: ./web/doc/en/doc/advanced/main_sub_station.md
+
+## 📜 Licensing Model
+
+This project adopts a **dual licensing agreement**:
+
+| **License Type** | **Applicable Scenario** | **Main Content** |
+|-------------|------------|------------|
+| **MPL 2.0** | Open source users | Except for some third-party drivers (without source code) and third-party functional plugins (without source code) in the Release package
+| **Commercial License** | Enterprise Users | Third-party drivers (without source code) and third-party feature plugins (without source code) in the Release package • No secondary distribution allowed • Includes technical support |
+
+## ⚠️ Important Notice
+
+• For details of the disclaimer, please refer to [DISCLAIMER.md](DISCLAIMER.md)
+
+• Third-party component licensing is detailed in [NOTICE](NOTICE)
+
+• Commercial licensing inquiries: iottree@hotmail.com
+
 
