@@ -163,4 +163,15 @@ public class MemSeg8 extends MemSeg
 		}
 	}
 	
+	@Override
+	public byte[] getBytes(long idx,int len)
+	{
+		int sidx = (int)(idx-this.idx) ;
+		if(this.buf.length<sidx+len)
+			return null;
+		byte[] rets = new byte[len] ;
+		System.arraycopy(this.buf, sidx, rets, 0, len);
+		//return new String(this.buf,sidx,len) ;
+		return rets;
+	}
 }

@@ -44,7 +44,7 @@ for (Mixer.Info info : mixerInfos)
             Line line = mixer.getLine(targetLineInfo);
             if (line instanceof DataLine) {
                 AudioFormat[] formats = ((DataLine.Info) line.getLineInfo()).getFormats();
-                System.out.println("支持格式: " + formats.length + " 种");
+                System.out.println("ff: " + formats.length + " ");
             }
             */
         } catch (Exception e) {

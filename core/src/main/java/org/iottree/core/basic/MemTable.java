@@ -238,6 +238,15 @@ public class MemTable<T extends MemSeg>
 		return n.intValue() ;
 	}
 	
+	public byte[] getBytes(long idx,int len)
+	{
+		T ms = acquireMemSeg(idx,len) ;
+		if(ms==null)
+			return null ;
+		//return ms.getValStr(idx,  len) ;
+		return ms.getBytes(idx,len) ;
+	}
+	
 	public String toSegsStr()
 	{
 		StringBuilder sb=  new StringBuilder() ;

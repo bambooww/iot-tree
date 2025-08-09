@@ -94,6 +94,8 @@ public class MNManager
 	
 	public static void registerItem(MNBase mnn,MNCat cat)
 	{
+		if(!mnn.ENV_check())
+			return ;
 		//mnn.setNodeTP(tp, tpt);
 		//String tp = mnn.getNodeTP() ;
 		mnn.setCat(cat);
@@ -124,7 +126,7 @@ public class MNManager
 			 try
 			{
 					Class<?> c = wi.getAppClassLoader().loadClass(ci.getClassName()) ;
-					MNBase mnn = (MNBase)c.newInstance() ;
+					MNBase mnn = (MNBase)c.getConstructor().newInstance() ;
 					mnn.setCat(cat);
 					cat.item2conf.put(mnn.getTPFull(), ci) ;
 					registerItem(mnn,cat);
@@ -152,8 +154,10 @@ public class MNManager
 	{
 		try
 		{
+			if(classname.startsWith("#"))
+				return null ;
 			Class<?> c = Class.forName(classname) ;
-			MNBase m = (MNBase)c.newInstance() ;
+			MNBase m = (MNBase)c.getConstructor().newInstance() ;
 			registerItem(m,cat);
 			return m ;
 		}
@@ -170,8 +174,10 @@ public class MNManager
 	{
 		try
 		{
+			if(classname.startsWith("#"))
+				return null ;
 			Class<?> c = Class.forName(classname) ;
-			MNNode n = (MNNode)c.newInstance() ;
+			MNNode n = (MNNode)c.getConstructor().newInstance() ;
 			m.registerSubTpNode(n);
 			return n ;
 		}

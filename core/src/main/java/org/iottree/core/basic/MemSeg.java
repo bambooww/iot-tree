@@ -51,6 +51,8 @@ public abstract class MemSeg
 	
 	public abstract Number getValNumber(UAVal.ValTP tp,long idx,ByteOrder bo);
 	
+	public abstract byte[] getBytes(long idx,int len);//(long idx,int len) ;
+	
 	public static MemSeg createInstance(long idx,int len,int bitlen)
 	{
 		switch(bitlen)

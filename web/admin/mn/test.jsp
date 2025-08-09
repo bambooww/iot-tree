@@ -9,18 +9,7 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-	if(!Convert.checkReqEmpty(request, out, "prjid","netid","nodeid"))
-			return ;
-	String prjid = request.getParameter("prjid");
-	String netid = request.getParameter("netid") ;
-	String nodeid = request.getParameter("nodeid") ;
-	
-	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
-	if(prj==null)
-	{
-		out.print("no prj found") ;
-		return ;
-	}
+
 %><!DOCTYPE html>
 <html lang="en">
 <head>

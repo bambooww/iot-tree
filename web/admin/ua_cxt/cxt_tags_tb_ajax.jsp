@@ -175,7 +175,7 @@ for(UANodeOCTags tn:tns)
 		
 		
 		String addr_sor = addr ;
-		if(addr.length()>10)
+		if(addr.length()>30)
 	addr = addr.substring(0,10)+"..." ;
 		
 		String valtp_str = tag.getValTp().getStr();

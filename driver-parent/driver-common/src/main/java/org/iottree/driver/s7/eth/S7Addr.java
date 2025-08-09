@@ -27,6 +27,12 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	
 	int inBit = -1 ;//-1 is null
 	
+	int inNum = -1 ; //string len
+	
+	int inRowN = -1 ; //row num
+	
+	int inColN = -1 ; //column num
+	
 	S7ValTp memValTp = null ;
 	
 	/**
@@ -111,13 +117,44 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		
 		apt.valTP = vtp ;
 		apt.bytesNum = vtp.getValByteLen();
+		if(apt.memValTp==S7ValTp.STRING)
+		{
+			if(apt.inNum<=0)
+			{
+				failedr.append("STRINGxx.nn must has nn >0");
+				return null ;//
+			}
+			apt.bytesNum = apt.inNum + 2 ; //PLC has 2 bytes ahead with nn cur_n xxxxx
+		}
 		return apt;//new S7Addr(addr,apt,vtp) ;
 	}
 	
 	@Override
 	public DevAddr parseAddr(UADev dev,String str, ValTP vtp, StringBuilder failedr)
 	{
-		return parseS7Addr(str,vtp,failedr) ;
+		S7Addr addr = parseS7Addr(str,vtp,failedr) ;
+		if(addr==null)
+			return null ;
+		
+		if(!checkS7AddrByModel(dev,addr,failedr))
+			return null ;
+		return addr ;
+	}
+	
+	
+	private boolean checkS7AddrByModel(UADev dev,S7Addr addr,StringBuilder failedr)
+	{
+		S7Model m = (S7Model)dev.getDrvDevModel() ;
+		if(m==null)
+			return true ;
+		
+		List<S7MemTp> memtps = m.listSupMemTps() ;
+		if(!memtps.contains(addr.getMemTp()))
+		{
+			failedr.append("not support MemTp="+addr.getMemTp().name()) ;
+			return false ;
+		}
+		return true;
 	}
 	
 	public S7MemTp getMemTp()
@@ -179,6 +216,8 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		if(apt==null)
 			return new ChkRes(-1,null,null,failedr.toString()) ;
 		
+		if(!checkS7AddrByModel(dev,apt,failedr))
+			return new ChkRes(-1,null,null,failedr.toString()) ;
 		return checkFit(addr,apt,vtp) ;
 	}
 	
@@ -235,8 +274,12 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 				return new ChkRes(0,addr,ValTP.vt_uint16,"S7 Addr ["+addr+"] may use vt_uint16 value type");
 			break;
 		case D:
-			if(vtp!=ValTP.vt_int32 && vtp!= ValTP.vt_uint32)
+			if(vtp!=ValTP.vt_int32 && vtp!= ValTP.vt_uint32 )
 				return new ChkRes(0,addr,ValTP.vt_uint32,"S7 Addr ["+addr+"] may use vt_uint32 value type");
+			break;
+		case REAL:
+			if(vtp!=ValTP.vt_float)
+				return new ChkRes(0,addr,ValTP.vt_float,"S7 Addr ["+addr+"] may use vt_float value type");
 			break;
 		default:
 			break;
@@ -266,7 +309,10 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 		S7Addr addr = parseS7Addr(str,vtp,failedr) ;
 		if(addr==null)
 			return null ;
-		return addr;
+		
+		if(!checkS7AddrByModel(dev,addr,failedr))
+			return null ;
+		return addr ;
 	}
 
 	@Override
@@ -296,7 +342,10 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 	
 	public int getRegEnd()
 	{
-		return offsetBytes + this.getValTP().getValByteLen() ;
+		if(this.memValTp==S7ValTp.STRING)
+			return offsetBytes + this.inNum ;
+		else
+			return offsetBytes + this.getValTP().getValByteLen() ;
 	}
 	
 //	public S7MemTp getMemTp()
@@ -359,6 +408,12 @@ public class S7Addr extends DevAddr implements Comparable<S7Addr>
 			if(memTp==S7MemTp.DB || memTp.getDefaultS7ValTp()!=this.memValTp)
 				ret += this.memValTp.name() ;
 			ret += offsetBytes+"."+inBit;
+		}
+		else if(inNum>0)
+		{
+			if(memTp==S7MemTp.DB || memTp.getDefaultS7ValTp()!=this.memValTp)
+				ret += this.memValTp.name() ;
+			ret += offsetBytes+"."+inNum;
 		}
 		else
 		{
@@ -434,7 +489,10 @@ DB<num>,<S7 data type><address><[row][col]>
 			if(k>0)
 			{
 				ret.offsetBytes = Integer.parseInt(addr.substring(0,k)) ;
-				ret.inBit = Integer.parseInt(addr.substring(k+1)) ;
+				if(vtp==S7ValTp.STRING)
+					ret.inNum = Integer.parseInt(addr.substring(k+1)) ;
+				else
+					ret.inBit = Integer.parseInt(addr.substring(k+1)) ;
 			}
 			else
 			{
@@ -449,6 +507,119 @@ DB<num>,<S7 data type><address><[row][col]>
 		}
 		
 	}
+	
+	private static S7Addr parseAddrNor(String addr,StringBuilder failedr)
+	{
+		String addr0 = addr ;
+		// parse mem
+				S7MemTp mt = S7MemTp.parseStrHead(addr);
+//				char fc = addr.charAt(0);
+//				switch(fc)
+//				{
+//				case 'I':
+//					mt = S7MemTp.I;
+//					break;
+//				case 'Q':
+//					mt = S7MemTp.Q;
+//					break;
+//				case 'M':
+//					mt = S7MemTp.M;
+//					break;
+//				case 'C':
+//					mt = S7MemTp.C;
+//					break;
+//				case 'T':
+//					mt = S7MemTp.T;
+//					break;
+//				default:
+//					failedr.append("unknown mem tp:"+addr);
+//					return null ;
+//				}
+				if(mt==null)
+				{
+					failedr.append("unknown mem tp:"+addr);
+					return null ;
+				}
+				
+				addr = addr.substring(mt.name().length());
+				
+				int k = 0 ;
+				int addrlen = addr.length() ;
+				for(; k < addrlen ; k ++)
+				{
+					int c = addr.charAt(k) ;
+					if(c>='0' && c<='9')
+						break ;
+				}
+				
+				S7ValTp vt  = null;
+				if(k>0)
+				{//like I0
+					String pstr = addr.substring(0,k) ;
+					vt = S7ValTp.valOf(pstr) ;
+					if(vt==null)
+					{
+						failedr.append("unknown val tp:"+pstr);
+						return null ;//
+					}
+					addr = addr.substring(k) ;
+				}
+				
+				if(vt==null)
+				{// use default valtp
+//					switch(mt)
+//					{
+//					case I:
+//					case Q:
+//					case M:
+//						vt = S7ValTp.B;
+//						break;
+//					case C:
+//						vt = S7ValTp.W;
+//						break ;
+//					case T:
+//						vt = S7ValTp.D;
+//						break ;
+//					default:
+//						vt = S7ValTp.B;
+//						break;
+//					}
+					
+					vt = mt.getDefaultS7ValTp() ;
+				}
+				
+				S7Addr ret = new S7Addr(addr0,vt.getValTP()) ;
+				ret.memTp = mt ;
+				ret.memValTp = vt ;
+				ret.bytesNum = vt.getByteNum() ;
+				try
+				{
+					k = addr.indexOf('.') ;
+					if(k>0)
+					{
+						ret.offsetBytes = Integer.parseInt(addr.substring(0,k));
+						if(vt==S7ValTp.STRING)
+							ret.inNum = Integer.parseInt(addr.substring(k+1)) ;
+						else
+							ret.inBit = Integer.parseInt(addr.substring(k+1)) ;
+					}
+					else
+					{
+						if(vt==S7ValTp.X)
+						{
+							failedr.append("bit addr must end with num.num") ;
+							return null ;
+						}
+						ret.offsetBytes = Integer.parseInt(addr);
+					}
+				}
+				catch(Exception e)
+				{
+					failedr.append(e.getMessage()) ;
+					return null ;
+				}
+				return ret ;
+	}
 	/**
 	 * parse from string
 	 * @param addr
@@ -458,116 +629,31 @@ DB<num>,<S7 data type><address><[row][col]>
 	{
 		addr0 = addr0.toUpperCase();
 		String addr = addr0 ;
+		S7Addr rets =null; 
 		if(addr.startsWith("DB"))
-		{//parse DB
-			return parseAddrDB(addr,failedr) ;
-		}
-		
-		// parse mem
-		S7MemTp mt = S7MemTp.parseStrHead(addr);
-//		char fc = addr.charAt(0);
-//		switch(fc)
-//		{
-//		case 'I':
-//			mt = S7MemTp.I;
-//			break;
-//		case 'Q':
-//			mt = S7MemTp.Q;
-//			break;
-//		case 'M':
-//			mt = S7MemTp.M;
-//			break;
-//		case 'C':
-//			mt = S7MemTp.C;
-//			break;
-//		case 'T':
-//			mt = S7MemTp.T;
-//			break;
-//		default:
-//			failedr.append("unknown mem tp:"+addr);
-//			return null ;
-//		}
-		if(mt==null)
+			rets = parseAddrDB(addr,failedr) ;
+		else
+			rets= parseAddrNor(addr,failedr) ;
+
+		if(rets.memValTp==S7ValTp.STRING)
 		{
-			failedr.append("unknown mem tp:"+addr);
-			return null ;
-		}
-		
-		addr = addr.substring(mt.name().length());
-		
-		int k = 0 ;
-		int addrlen = addr.length() ;
-		for(; k < addrlen ; k ++)
-		{
-			int c = addr.charAt(k) ;
-			if(c>='0' && c<='9')
-				break ;
-		}
-		
-		S7ValTp vt  = null;
-		if(k>0)
-		{//like I0
-			String pstr = addr.substring(0,k) ;
-			vt = S7ValTp.valOf(pstr) ;
-			if(vt==null)
+			if(rets.inNum<=0 ||rets.inNum>254)
 			{
-				failedr.append("unknown val tp:"+pstr);
-				return null ;//
-			}
-			addr = addr.substring(k) ;
-		}
-		
-		if(vt==null)
-		{// use default valtp
-//			switch(mt)
-//			{
-//			case I:
-//			case Q:
-//			case M:
-//				vt = S7ValTp.B;
-//				break;
-//			case C:
-//				vt = S7ValTp.W;
-//				break ;
-//			case T:
-//				vt = S7ValTp.D;
-//				break ;
-//			default:
-//				vt = S7ValTp.B;
-//				break;
-//			}
-			
-			vt = mt.getDefaultS7ValTp() ;
-		}
-		
-		S7Addr ret = new S7Addr(addr0,vt.getValTP()) ;
-		ret.memTp = mt ;
-		ret.memValTp = vt ;
-		ret.bytesNum = vt.getByteNum() ;
-		try
-		{
-			k = addr.indexOf('.') ;
-			if(k>0)
-			{
-				ret.offsetBytes = Integer.parseInt(addr.substring(0,k));
-				ret.inBit = Integer.parseInt(addr.substring(k+1)) ;
-			}
-			else
-			{
-				if(vt==S7ValTp.X)
-				{
-					failedr.append("bit addr must end with num.num") ;
-					return null ;
-				}
-				ret.offsetBytes = Integer.parseInt(addr);
+				failedr.append("STRING.n n must in [1,254]") ;
+				return null ;
 			}
 		}
-		catch(Exception e)
+		
+		if(rets.inBit>=0)
 		{
-			failedr.append(e.getMessage()) ;
-			return null ;
+			int bit_max = rets.memValTp.getByteNum()*8 ;
+			if(bit_max>0 && rets.inBit>=bit_max)
+			{
+				failedr.append("bit position .b must in [0,"+(bit_max-1)+"]") ;
+				return null ;
+			}
 		}
-		return ret ;
+		return rets ;
 	}
 
 }

@@ -45,9 +45,12 @@ public class UAServer
 	
 	public static void onServerStarted(List<WebItem> webitems)
 	{
-		for(WebItem wi:webitems)
+		if(webitems!=null)
 		{
-			PlugManager.getInstance().onWebappLoaded(wi);
+			for(WebItem wi:webitems)
+			{
+				PlugManager.getInstance().onWebappLoaded(wi);
+			}
 		}
 		
 		System.out.println("**starting service manager") ;

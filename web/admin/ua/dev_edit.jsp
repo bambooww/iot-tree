@@ -90,7 +90,7 @@
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <script>
-dlg.resize_to(650,400);
+dlg.resize_to(650,500);
 </script>
 </head>
 <body>

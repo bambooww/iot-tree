@@ -679,9 +679,11 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			r.addPropItem(new PropItem("drv_tt",lan,PValTP.vt_str,true,null,null,""));
 		}
 		
-		r.addPropItem(new PropItem("drv_intv",lan,PValTP.vt_int,
-				false,null,null,1000)); //"Driver scan interval","Driver scan interval on every loop"
-				
+		if(dd!=null && !dd.isConnPtToDev())
+		{
+			r.addPropItem(new PropItem("drv_intv",lan,PValTP.vt_int,
+					false,null,null,1000)); //"Driver scan interval","Driver scan interval on every loop"
+		}		
 		//r.addPropItem(new PropItem("script","JavaScript","JavaScript run interval by Channel",PValTP.vt_str,false,null,null,"")
 		//		.withTxtMultiLine(true));
 		

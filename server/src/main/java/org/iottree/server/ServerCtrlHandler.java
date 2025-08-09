@@ -18,6 +18,8 @@ public class ServerCtrlHandler
 		in = new BufferedReader(new InputStreamReader(cmdinput));
 	}
 	
+	static long M = 1024*1024 ;
+	
 	public void handle() throws Exception
 	{
 		
@@ -56,6 +58,28 @@ public class ServerCtrlHandler
 				else if ("ver".equals(cmds[0]))
 				{
 					System.out.println("IOT-Tree Server,Version:"+Config.getVersion());
+				}
+				else if ("mem".equals(cmds[0]))
+				{
+					if(cmds.length>1)
+					{
+						if("gc".equals(cmds[1]))
+						{
+							System.gc();
+							System.out.println("gc end") ;
+						}
+					}
+					Runtime rt = Runtime.getRuntime() ;
+					System.out.println("total mem="+rt.totalMemory()/M+"  free="+rt.freeMemory()/M+" used="+(rt.totalMemory()-rt.freeMemory())/M);
+				}
+				else if("tomcat".equals(cmds[0]))
+				{
+					if(cmds.length<=1)
+						continue;
+					if("start".equals(cmds[1]))
+						Server.loadAndStartTomcat();
+					else if("stop".equals(cmds[1]))
+						Server.stopTomcat();
 				}
 				else
 				{

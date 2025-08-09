@@ -27,6 +27,11 @@
 		desc_cn="共用一个Module的消息队列，也即是共用一个消息处理线程的队列"
 		desc_en="Message queue sharing a module, that is, sharing one processing thread in related module"
 		/>
+		
+	<dd_node id="1" name="fsm" name_cn="有限状态机" name_en="Finite State Machine" 
+		desc_cn=""
+		desc_en=""
+		/>	
 	
 	<dd_node id="1" name="sql_que_msg_per_row_jo" name_cn="每行一个消息JSONObject输出" name_en="A message per row-JONSObject" />
 	<dd_node id="1" name="sql_que_msg_firstrow_jo" name_cn="第一行单个消息JSONObject输出" name_en="Single message for first row-JONSObject" />

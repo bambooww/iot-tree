@@ -13,6 +13,7 @@
 	<dd_node id="1" name="_vo" name_cn="音频" name_en="Audio" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_seq" name_cn="序列化" name_en="sequence" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_parser" name_cn="解析" name_en="parser" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_armlinux" name_cn="ARM Linux" name_en="ARM Linux" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_storage" name_cn="存储" name_en="storage" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_sim" name_cn="模拟器" name_en="Simulator" desc_cn="" desc_en=""/>
 	

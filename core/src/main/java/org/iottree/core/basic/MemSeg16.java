@@ -132,7 +132,7 @@ public class MemSeg16  extends MemSeg
 		}
 	}
 	
-	
+	@Override
 	public Number getValNumber(UAVal.ValTP tp,long idx,ByteOrder bo)
 	{
 		int offset = (int)(idx-this.idx) ;
@@ -194,5 +194,11 @@ public class MemSeg16  extends MemSeg
 		default:
 			throw new IllegalArgumentException("not support vt="+tp.getStr());
 		}
+	}
+	
+	@Override
+	public byte[] getBytes(long idx,int len)
+	{
+		return null ;
 	}
 }

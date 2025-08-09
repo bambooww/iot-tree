@@ -11,6 +11,7 @@
 	    ,{"n":"trigger"    ,   "fn":"trigger.svg"}
 	    ,{"n":"whiteg"    ,   "fn":"white-globe.svg"}
 	    ,{"n":"function"    ,   "fn":"function.svg"}
+	    ,{"n":"flw"    ,   "fn":"flw.svg"}
 	    ,{"n":"outer"    ,   "fn":"arrow-in.svg"}
 	    ,{"n":"bus"    ,   "fn":"bus.svg"}
 	    ,{"n":"filer"    ,   "fn":"file_r.svg"}

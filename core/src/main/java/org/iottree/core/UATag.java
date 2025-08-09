@@ -1617,7 +1617,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			}
 		}
 		
-		return dd.RT_writeVal(ch,dev,this, da, v);
+		if(dd.RT_writeVal(ch,dev,this, da, v))
+			return true ;
+		
+		failedr.append("driver write err,may be invalid input param") ;
+		return false;
 	}
 	
 	private boolean RT_writeValLocal(Object v)
@@ -1752,8 +1756,9 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		catch(Exception ee)
 		{
-			ee.printStackTrace();
-			failedr.append(ee.getMessage()) ;
+			if(log.isDebugEnabled())
+				log.debug(ee);
+			failedr.append("write error:"+ee.getMessage()) ;
 			return false;
 		}
 	}

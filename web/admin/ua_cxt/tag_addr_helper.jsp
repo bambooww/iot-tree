@@ -47,6 +47,14 @@ if(dm==null)
 	out.print("no Device Driver Model found") ;
 	return ;
 }
+
+String lan = Lan.getUsingLang() ;
+String hurl = dm.getAddrHelpUrl(lan) ;
+if(Convert.isNotNullEmpty(hurl))
+{
+	response.sendRedirect("./addr_help/"+hurl) ;
+	return ;
+}
 List<DevAddr.IAddrDef> defs = dm.getAddrDefs() ;
 if(defs==null)
 {

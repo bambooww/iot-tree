@@ -48,30 +48,12 @@ public class Server
 		{
 		}
 	}
-
-	static void startServer(boolean bservice) throws Exception
+	
+	
+	static synchronized List<UAServer.WebItem> loadAndStartTomcat() throws Exception
 	{
-		printBanner();
-
-		if (Config.isDebug())
-			System.out.println("user.dir=" + System.getProperties().getProperty("user.dir"));
-
-		// System.out.println("java.class.path=" +
-		// System.getProperties().getProperty("java.class.path"));
-
-		Config.loadConf();
-
-		// ClassLoader tbs_loader = null;
-		//
-		// if (tbs_loader != null)
-		// {
-		// Thread.currentThread().setContextClassLoader(tbs_loader);
-		// SecurityClassLoad.securityClassLoad(tbs_loader);
-		// } else
-		// {
-		// tbs_loader = Thread.currentThread().getContextClassLoader();
-		// }
-
+		if(serverTomcat!=null)
+			return null;
 		ClassLoader tbs_loader = Thread.currentThread().getContextClassLoader();
 
 		//String jdkhome = System.getProperties().getProperty("java.home");
@@ -120,7 +102,35 @@ public class Server
 		}
 
 		serverTomcat = new ServerTomcat();
-		List<UAServer.WebItem> wis = serverTomcat.startTomcat(tbs_loader);
+		return serverTomcat.startTomcat(tbs_loader);
+	}
+
+	static void startServer(boolean bservice) throws Exception
+	{
+		printBanner();
+
+		if (Config.isDebug())
+			System.out.println("user.dir=" + System.getProperties().getProperty("user.dir"));
+
+		// System.out.println("java.class.path=" +
+		// System.getProperties().getProperty("java.class.path"));
+
+		Config.loadConf();
+
+		// ClassLoader tbs_loader = null;
+		//
+		// if (tbs_loader != null)
+		// {
+		// Thread.currentThread().setContextClassLoader(tbs_loader);
+		// SecurityClassLoad.securityClassLoad(tbs_loader);
+		// } else
+		// {
+		// tbs_loader = Thread.currentThread().getContextClassLoader();
+		// }
+
+		List<UAServer.WebItem> wis = null;
+		
+		wis = loadAndStartTomcat();
 
 		//------ after tomcat start 
 		// old service start here
@@ -157,18 +167,26 @@ public class Server
 		}
 
 		//
-		if(serverTomcat!=null)
-		{
-			try
-			{
-				serverTomcat.stopComp();
-			}
-			catch(Exception e)
-			{
-				
-			}
-		}
+		stopTomcat() ;
+	}
+	
+	static synchronized void stopTomcat()
+	{
+		if(serverTomcat==null)
+			return ;
 		
+		try
+		{
+			serverTomcat.stopComp();
+		}
+		catch(Exception e)
+		{
+			
+		}
+		finally
+		{
+			serverTomcat = null ;
+		}
 	}
 
 	static Runnable consoleRunner = new Runnable() {
@@ -176,7 +194,6 @@ public class Server
 		{
 			try
 			{
-
 				ServerCtrlHandler sch = new ServerCtrlHandler(System.in);
 				sch.handle();
 				stopServer();

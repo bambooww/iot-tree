@@ -169,6 +169,14 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 			return null ;
 		}
 		
+		/**
+		 * not null will has owner addr help page
+		 * @return
+		 */
+		public String getAddrHelpUrl(String lan)
+		{
+			return null;
+		}
 //		/**
 //		 * impl will provider special prop for devive in ch
 //		 * @param dev

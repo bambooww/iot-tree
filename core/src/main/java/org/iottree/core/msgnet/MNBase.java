@@ -67,6 +67,15 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 	}
 	
+	/**
+	 * when driver is loaded,it will check env to decide it will be used
+	 * @return
+	 */
+	protected boolean ENV_check()
+	{
+		return true ;
+	}
+	
 	void setCat(MNCat cat)
 	{
 		this.cat = cat ;

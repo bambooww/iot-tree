@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.iottree</groupId>
     <artifactId>iottree-parent</artifactId>
-    <version>1.7.6</version>
+    <version>1.7.7</version>
     <packaging>pom</packaging>
     <name>IoT-Tree Project Parent POM</name>
     <description>This is the top level project that builds, packages sub-projects and integration libs.</description>
