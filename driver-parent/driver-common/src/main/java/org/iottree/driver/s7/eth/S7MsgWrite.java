@@ -320,14 +320,15 @@ public class S7MsgWrite extends S7Msg
 		this.writeNum = addr.getBytesNum();
 		this.writeObj = v ;
 		this.writeV = transVToBytes(addr,v);
-		
+		if(this.writeV==null && this.bitIdx<0)
+			return null;
 		return this ;
 	}
 	
 	private byte[] transVToBytes(S7Addr addr,Object v)
 	{
 		S7ValTp s7vtp = addr.getMemValTp() ;
-		if(s7vtp==null)
+		if(s7vtp==null ||v==null)
 			return null ;
 		UAVal.ValTP vtp = addr.getValTP();// s7vtp.getValTP() ;
 		int bn = s7vtp.getByteNum() ;
@@ -353,6 +354,22 @@ public class S7MsgWrite extends S7Msg
 					return new byte[] { (byte) ((intv>>24) & 0xFF),(byte) ((intv>>16) & 0xFF),(byte) ((intv>>8) & 0xFF) , (byte)(intv & 0xFF)};
 				}
 			}
+		}
+		else if(s7vtp==S7ValTp.STRING)
+		{
+			String strv = v.toString() ;
+			byte[] bv = strv.getBytes() ;
+			bn = addr.getBytesNum() ;
+			int in_num = addr.inNum ;
+			if(in_num+2!=bn || in_num>255)
+				return null ;
+			if(bv.length>in_num)
+				return null ;
+			byte[] ret = new byte[bn] ;
+			ret[0] = (byte)in_num ;
+			ret[1] = (byte)bv.length ;
+			System.arraycopy(bv, 0, ret, 2, bv.length);
+			return ret;
 		}
 
 		

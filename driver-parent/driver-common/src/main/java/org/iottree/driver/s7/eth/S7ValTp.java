@@ -80,6 +80,8 @@ public enum S7ValTp
 			return T;
 		case"TOD":
 			return TOD;
+		case "STRING":
+			return STRING;
 		default:
 			return null;
 		}

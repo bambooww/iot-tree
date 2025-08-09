@@ -1,6 +1,7 @@
 package org.iottree.driver.s7.eth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,7 +16,7 @@ import org.iottree.core.UAVal.ValTP;
  * @author jason.zhu
  *
  */
-public class S7Model extends DevDriver.Model
+public abstract class S7Model extends DevDriver.Model
 {
 	private LinkedHashMap<String,S7AddrDef> prefix2addrdef = new LinkedHashMap<>() ;
 	
@@ -28,6 +29,8 @@ public class S7Model extends DevDriver.Model
 	{
 		prefix2addrdef.put(addr_def.prefix, addr_def) ;
 	}
+	
+	public abstract List<S7MemTp> listSupMemTps();
 	
 	public List<String> listPrefix()
 	{
@@ -171,6 +174,7 @@ public class S7Model extends DevDriver.Model
 		return rets ;
 	}
 	
+	@Override
 	public List<IAddrDef> getAddrDefs()
 	{
 		ArrayList<IAddrDef> rets = new ArrayList<>() ;
@@ -178,153 +182,72 @@ public class S7Model extends DevDriver.Model
 		return rets ;
 	}
 	
-	
+	/**
+	 * not null will has owner addr help page
+	 * @return
+	 */
+	@Override
+	public String getAddrHelpUrl(String lan)
+	{
+		return S7EthDriver.DRIVER_NAME+".s7_eth."+lan+".jsp";
+	}
 }
 
 
-//class S7Model_Q extends S7Model
-//{
-//	// read write test ok
-//	public S7Model_Q()
-//	{
-//		super("q", "Q Series");
-//
-//		setAddrDef(new S7AddrDef("X","Inputs")
+class S7Model_200 extends S7Model
+{
+	static List<S7MemTp> MEM_TPS = Arrays.asList(S7MemTp.I,S7MemTp.Q,S7MemTp.M,S7MemTp.DB,S7MemTp.C,S7MemTp.T,
+			S7MemTp.V,S7MemTp.AI,S7MemTp.AQ) ;
+	// read write test ok
+	public S7Model_200(String name,String tt)
+	{
+		super(name, tt);
+
+//		setAddrDef(new S7AddrDef("I","Inputs")
 //				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3ff0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3fe0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
 //				) ;
-//		setAddrDef(new S7AddrDef("DX","Direct Inputs")
+		
+	}
+	
+	@Override
+	public List<S7MemTp> listSupMemTps()
+	{
+		return MEM_TPS;
+	}
+	
+	@Override
+	public String getAddrHelpUrl(String lan)
+	{
+		return S7EthDriver.DRIVER_NAME+".s7_200."+lan+".jsp";
+	}
+}
+
+class S7Model_300__1500 extends S7Model
+{
+	static List<S7MemTp> MEM_TPS = Arrays.asList(S7MemTp.I,S7MemTp.Q,S7MemTp.M,S7MemTp.DB,S7MemTp.C,S7MemTp.T) ;
+	// read write test ok
+	public S7Model_300__1500(String name,String tt)
+	{
+		super(name, tt);
+
+//		setAddrDef(new S7AddrDef("I","Inputs")
 //				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3ff0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3fe0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
 //				) ;
-//		
-//		setAddrDef(new S7AddrDef("Y","Outputs")
+//		setAddrDef(new S7AddrDef("Q","Outputs")
 //				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3ff0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
 //				.asValTpSeg(new S7AddrSeg(0,0x3fe0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
 //				) ;
-//		setAddrDef(new S7AddrDef("DY","Direct Outputs")
-//				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x3ff0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x3fe0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("B","Link Relays")
-//				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x3ff0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x3fe0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("SB","Special Link Relays")
-//				.asValTpSeg(new S7AddrSeg(0,0x07ff,4,new ValTP[] {ValTP.vt_bool}).asHex(true).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x07f0,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x07e0,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("M","Internal Relays")
-//				.asValTpSeg(new S7AddrSeg(0,16383,5,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,16368,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,16352,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("SM","Special Int. Relays")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("L","Latch Relays")
-//				.asValTpSeg(new S7AddrSeg(0,16383,5,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,16368,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,16352,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("F","Annunciator Relays")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("V","Edge Relays")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		
-//		// may no in 3E
-////		setAddrDef(new S7AddrDef("S","Step Relays")
-////				.asValTpSeg(new S7AddrSeg(0,16383,5,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-////				.asValTpSeg(new S7AddrSeg(0,16368,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-////				.asValTpSeg(new S7AddrSeg(0,16352,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-////				) ;
-//		setAddrDef(new S7AddrDef("TS","Timer Contacts")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("TC","Timer Coils")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("SS","Integrating Timer Contacts")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("SC","Integrating Timer Coils")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,2032,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,2016,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("CS","Counter Contacts")
-//				.asValTpSeg(new S7AddrSeg(0,1023,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,1008,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,992,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("CC","Counter Coils")
-//				.asValTpSeg(new S7AddrSeg(0,1023,4,new ValTP[] {ValTP.vt_bool}).asHex(false).asValBit(true))
-//				.asValTpSeg(new S7AddrSeg(0,1008,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				.asValTpSeg(new S7AddrSeg(0,992,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(false))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("TN","Timer Value")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("SN","Integrating Timer Value")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("CN","Counter Value")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false))
-//				) ;
-//		setAddrDef(new S7AddrDef("D","Data Registers")
-//				.asValTpSeg(new S7AddrSeg(0,12287,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,12286,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asHex(false).asBitPos(true))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("SD","Special Data Registers")
-//				.asValTpSeg(new S7AddrSeg(0,2047,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,2046,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asHex(false).asBitPos(true))
-//				) ;
-//		
-//		setAddrDef(new S7AddrDef("W","Link Registers")
-//				.asValTpSeg(new S7AddrSeg(0,0x3fff,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x3ffe,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asHex(true).asBitPos(true))
-//				) ;
-//		setAddrDef(new S7AddrDef("SW","Special Link Registers")
-//				.asValTpSeg(new S7AddrSeg(0,0x07ff,4,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(true).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,0x07fe,4,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32}).asHex(true).asBitPos(true))
-//				) ;
-//		setAddrDef(new S7AddrDef("R","File Registers")
-//				.asValTpSeg(new S7AddrSeg(0,32767,5,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,32766,5,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asHex(false).asBitPos(true))
-//				) ;
-//		setAddrDef(new S7AddrDef("Z","Index Registers")
-//				.asValTpSeg(new S7AddrSeg(0,15,2,new ValTP[] {ValTP.vt_int16,ValTP.vt_uint16,}).asHex(false).asBitPos(true))
-//				.asValTpSeg(new S7AddrSeg(0,14,2,new ValTP[] {ValTP.vt_int32,ValTP.vt_uint32,ValTP.vt_float}).asHex(false).asBitPos(true))
-//				) ;
-//	}
-//	
-//}
+	}
+	
+	@Override
+	public List<S7MemTp> listSupMemTps()
+	{
+		return MEM_TPS;
+	}
+	
+}

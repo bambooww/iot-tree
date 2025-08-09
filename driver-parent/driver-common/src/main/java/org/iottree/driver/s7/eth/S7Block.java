@@ -138,7 +138,7 @@ public class S7Block
 			}
 			
 			S7Addr lastma = curaddrs.get(curaddrs.size()-1) ;
-			int regnum = lastma.getOffsetBytes()-cur_reg+lastma.getValTP().getValByteLen() ;
+			int regnum = lastma.getOffsetBytes()-cur_reg+lastma.getBytesNum();//.getValTP().getValByteLen() ;
 			//regnum = regnum/2+regnum%2;
 			
 			curcmd = new S7MsgRead().withParam(memTp, dbNum, cur_reg,regnum)
@@ -204,6 +204,19 @@ public class S7Block
 		else if(vt.isNumberVT())
 		{
 			return memTb.getValNumber(vt,da.getOffsetBytes(),ByteOrder.LittleEndian) ;
+		}
+		else if(vt==UAVal.ValTP.vt_str)
+		{
+			byte[] buf = memTb.getBytes(da.getOffsetBytes(), da.getBytesNum()) ;
+			int ttlen = buf[0] & 0xFF ;
+			int dlen = buf[1] & 0xFF ;
+			if(ttlen==0 && dlen==0)
+				return "" ;
+			if(ttlen!=da.inNum)
+				return null ;
+			if(dlen>da.inNum)
+				return null ;
+			return new String(buf,2,dlen) ;
 		}
 		return null;
 	}
@@ -396,9 +409,14 @@ public class S7Block
 		Thread.sleep(this.interReqMs); // to make read not too fast issue err 
 	}
 	
-	public boolean setWriteCmdAsyn(S7Addr addr, Object v)
+	public boolean setWriteCmdAsyn(S7Addr addr, Object v,StringBuilder failedr)
 	{
 		S7MsgWrite mc = new S7MsgWrite().withParam(memTp, this.dbNum, addr,v);
+		if(mc==null)
+		{
+			failedr.append("invalid write param") ;
+			return false;
+		}
 		mc.init(ppiDrv);
 		synchronized(writeCmds)
 		{

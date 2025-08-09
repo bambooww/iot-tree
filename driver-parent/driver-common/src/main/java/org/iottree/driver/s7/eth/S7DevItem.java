@@ -87,19 +87,19 @@ public class S7DevItem
 		
 		int failAfterSuccessive = uaDev.getOrDefaultPropValueInt("timing", "failed_tryn", 3);
 		
-		int blocksize = 32;
-		if(devDef!=null)
-			blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
-		if(blocksize<=0)
-			blocksize=32;
+		int blocksize =S7Msg.PDU_DEFAULT_LEN;
+		//if(devDef!=null)
+		//	blocksize = devDef.getOrDefaultPropValueInt("block_size", "out_coils", 32);//uaDev.getPropValueLong("block_size", "out_coils", 32);
+		//if(blocksize<=0)
+		//	blocksize=32;
 		
-		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;;//devDef.getPropValueLong("timing", "req_to", 1000) ;
+		long reqto = uaDev.getOrDefaultPropValueLong("timing", "req_to", 100) ;//devDef.getPropValueLong("timing", "req_to", 1000) ;
 		long recvto = uaDev.getOrDefaultPropValueLong("timing", "recv_to", 200) ;
-		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 100) ;
+		long inter_ms = uaDev.getOrDefaultPropValueLong("timing", "inter_req", 20) ;
 		
 		for(Integer dbnum:this.searchAddrsDBNums())
 		{
-			initAddrs(S7MemTp.DB,dbnum) ;
+			initAddrs(S7MemTp.DB,dbnum,blocksize,inter_ms) ;
 		}
 		//create modbus cmd and address mapping
 		for(S7MemTp mtp:S7MemTp.values())
@@ -107,37 +107,37 @@ public class S7DevItem
 			if(mtp==S7MemTp.DB)
 				continue ;
 			
-			initAddrs(mtp,0) ;
+			initAddrs(mtp,0,blocksize,inter_ms) ;
 		}
 
 		return true;
 	}
 	
-	private void initAddrs(S7MemTp mtp,int dbnum)
+	private void initAddrs(S7MemTp mtp,int dbnum,int block_size,long scan_inter_ms)
 	{
 		List<S7Addr> addrs = filterAndSortAddrs(mtp,dbnum) ;
 		if(addrs==null||addrs.size()<=0)
 			return ;
 		
 		String areakey = addrs.get(0).getAreaKey();
-		S7Block blk = new S7Block(addrs,32,200l);
+		S7Block blk = new S7Block(addrs,block_size,scan_inter_ms);
 		//blk.setTimingParam(reqto, recvto, inter_ms);
 		if(blk.initCmds(s7Drv))
 			tp2block.put(areakey,blk) ;
 	}
 	
-	boolean doCmd(S7TcpConn conn) // throws Exception
+	boolean doCmd(S7TcpConn conn)  throws Exception
 	{
 		for(S7Block blk:tp2block.values())
 		{
-			try
-			{
+//			try
+//			{
 				blk.runCmds(conn);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
+//			}
+//			catch(Exception e)
+//			{
+//				e.printStackTrace();
+//			}
 		}
 		
 //		PPICmd ppic = new PPICmd((short)2,"QB0",(short)3) ;
@@ -146,17 +146,20 @@ public class S7DevItem
 		return true;
 	}
 	
-	public boolean RT_writeVal(DevAddr da, Object v)
+	public boolean RT_writeVal(DevAddr da, Object v,StringBuilder failedr)
 	{
 		S7Addr ma = (S7Addr)da ;
 		S7Block blk = tp2block.get(ma.getAreaKey());
 		if(blk==null)
+		{
+			failedr.append("no block found with "+ma.getAreaKey()) ;
 			return false;
+		}
 //		int intv ;
 //		if(v instanceof Number)
 //			intv = ((Number)v).intValue() ;
 //		else
 //			intv = Integer.parseInt(v+"");
-		return blk.setWriteCmdAsyn(ma,v) ;
+		return blk.setWriteCmdAsyn(ma,v,failedr) ;
 	}
 }

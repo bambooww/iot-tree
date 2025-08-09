@@ -1,7 +1,5 @@
 package org.iottree.driver.s7.eth;
 
-import java.io.IOException;
-
 public class S7Exception extends Exception
 {
 	/**

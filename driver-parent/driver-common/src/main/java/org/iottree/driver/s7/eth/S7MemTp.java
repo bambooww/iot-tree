@@ -14,7 +14,7 @@ public enum S7MemTp
 	C(0x1C,false,true,Tp2ValTP.VTP_W_S,S7ValTp.W),  //counter
 	T(0x1D,false,true,Tp2ValTP.VTP_W_S,S7ValTp.D),  //timer
 	
-	//add after 2024
+	//add after 2024 - s7-200 only
 	V(0x84,true,true,Tp2ValTP.VTP_NOR,S7ValTp.B), // Variable same as DB1 ,s7-200 will use it
 	AI(0x6,false,false,Tp2ValTP.VTP_W_S,S7ValTp.W), //Analog Inputs
 	AQ(0x7,false,true,Tp2ValTP.VTP_W_S,S7ValTp.W); //Analog outputs
