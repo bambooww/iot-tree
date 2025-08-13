@@ -159,6 +159,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		return this.readNoDataTimeout ;
 	}
 	
+	
 	public abstract boolean isClosed() ; 
 	
 	//public abstract String getConnST() ;

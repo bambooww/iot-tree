@@ -43,6 +43,13 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	String desc = "";
 	
+	/**
+	 * Set some markers to support node positioning through marks
+	 * In this way, the top-level business system can utilize nodes in msgnet as more precise configuration information
+	 * In addition to filtering and searching through node types, you can also use marks for more accurate filtering
+	 */
+	List<String> marks = null ;
+	
 	MNNet belongTo = null ;
 	
 	MNCat cat = null ;

@@ -203,6 +203,22 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			return n;
 		return id2module.get(id) ;
 	}
+	
+	public <T extends MNBase> List<T> findItemByTpMark(Class<T> c,String mark)
+	{
+		ArrayList<T> ret = new ArrayList<>() ;
+		for(MNNode n:this.id2node.values())
+		{
+			if(c.isInstance(n))
+				ret.add((T)n) ;
+		}
+		for(MNModule n:this.id2module.values())
+		{
+			if(c.isInstance(n))
+				ret.add((T)n) ;
+		}
+		return ret;
+	}
 //	/**
 //	 * 获得网络内部的Collector节点
 //	 * @return

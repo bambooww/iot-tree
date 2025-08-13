@@ -71,6 +71,37 @@ public class JavaTableInfo implements IXmlDataable
 		return rets ;
 	}
 	
+	private transient String[] all_cols = null ;
+	
+	public String[] getAllColNamesArr()
+	{
+		if(all_cols!=null)
+			return all_cols ;
+		
+		String[] ss = new String[this.norColInfos.size()+1] ;
+		ss[0] = this.pkColInfo.getColumnName() ;
+		for(int i = 1 ; i < ss.length ; i ++)
+		{
+			ss[i] = this.norColInfos.get(i-1).getColumnName() ;
+		}
+		return all_cols = ss ;
+	}
+	
+	private transient String[] nor_cols = null ;
+	
+	public String[] getNorColNames()
+	{
+		if(nor_cols!=null)
+			return nor_cols ;
+		
+		String[] ss = new String[this.norColInfos.size()] ;
+		for(int i = 0 ; i < ss.length ; i ++)
+		{
+			ss[i] = this.norColInfos.get(i).getColumnName() ;
+		}
+		return nor_cols = ss ;
+	}
+	
 	public JavaColumnInfo getColumnInfoByName(String n)
 	{
 		if(pkColInfo.getColumnName().equalsIgnoreCase(n))

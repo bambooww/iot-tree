@@ -32,6 +32,8 @@ public class ConnPtTcpAccepted extends ConnPtStream
 	 * so it may has inner auth driver to support.
 	 */
 	String sockConnId = null ;
+	
+	private transient long connDT = -1 ;
 
 	public ConnPtTcpAccepted()
 	{
@@ -86,6 +88,7 @@ public class ConnPtTcpAccepted extends ConnPtStream
 			inputS = sock.getInputStream();
 			outputS = sock.getOutputStream();
 	
+			this.connDT = System.currentTimeMillis() ;
 			this.fireConnReady();
 			return true ;
 		}
@@ -196,6 +199,12 @@ public class ConnPtTcpAccepted extends ConnPtStream
 	public boolean isConnReady()
 	{
 		return sock!=null;
+	}
+	
+	@Override
+	public long getConnDT()
+	{
+		return this.connDT ;
 	}
 	
 	public String getConnErrInfo()

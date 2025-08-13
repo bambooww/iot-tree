@@ -73,6 +73,8 @@ public class ConnPtCOM extends ConnPtStream
 	gnu.io.SerialPort serialPortRxTx = null;
 
 	SerialPort serialPort = null;
+	
+	private transient long connDT = -1 ;
 
 	public ConnPtCOM()
 	{
@@ -378,7 +380,8 @@ public class ConnPtCOM extends ConnPtStream
 		try
 		{
 			//System.out.println("com chk conn") ;
-			connect();
+			if(connect())
+				this.connDT = System.currentTimeMillis() ;
 		}
 		finally
 		{
@@ -408,6 +411,13 @@ public class ConnPtCOM extends ConnPtStream
 		else
 			return serialPort!=null ;
 	}
+	
+
+	@Override
+	public long getConnDT()
+	{
+		return this.connDT;
+	}
 
 	public String getConnErrInfo()
 	{
@@ -422,5 +432,6 @@ public class ConnPtCOM extends ConnPtStream
 	{
 		disconnect();
 	}
+
 
 }

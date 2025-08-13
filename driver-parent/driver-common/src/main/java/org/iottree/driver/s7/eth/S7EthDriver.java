@@ -28,6 +28,8 @@ public class S7EthDriver extends DevDriver
 	private final S7MsgISOCR msgISOCR = new S7MsgISOCR();
 
 	private HashMap<UADev, S7DevItem> dev2item = new HashMap<>();
+	
+	private String strEncod = "UTF-8" ;
 
 	public S7EthDriver()
 	{
@@ -123,7 +125,9 @@ public class S7EthDriver extends DevDriver
 		//gp.addPropItem(new PropItem("failed_tryn", lan, PValTP.vt_int, false, null, null, 3));
 		gp.addPropItem(new PropItem("inter_req", lan, PValTP.vt_int, false, null, null, 20));
 		pgs.add(gp);
-
+		//gp = new PropGroup("s7_eth", lan);// "Timing");
+		
+		//pgs.add(gp);
 		return pgs;
 	}
 
@@ -225,6 +229,9 @@ public class S7EthDriver extends DevDriver
 		pi_remote_tsap.setValChker(tsapchk);
 		gp_tsap.addPropItem(pi_remote_tsap);
 
+		
+		
+		
 		switch (d.getDevModel())
 		{
 		case M_S7_200:
@@ -240,6 +247,8 @@ public class S7EthDriver extends DevDriver
 		case M_S7_400:
 		case M_S7_1200:
 		case M_S7_1500:
+			//encod
+			gp_nor.addPropItem(new PropItem("encod", lan, PValTP.vt_str, false, null, null, "UTF-8"));
 			pgs.add(gp_nor);
 			break;
 		}
@@ -261,6 +270,7 @@ public class S7EthDriver extends DevDriver
 		List<UADev> devs = this.getBelongToCh().getDevs();
 
 		HashMap<UADev, S7DevItem> d2i = new HashMap<>();
+
 
 		// create modbus cmds
 		for (UADev dev : devs)
@@ -286,6 +296,11 @@ public class S7EthDriver extends DevDriver
 	S7DevItem getDevItem(UADev d)
 	{
 		return this.dev2item.get(d);
+	}
+	
+	public String getStrEncod()
+	{
+		return this.strEncod ;
 	}
 
 	@Override
@@ -317,6 +332,9 @@ public class S7EthDriver extends DevDriver
 			int slot = dev.getOrDefaultPropValueInt("s7_comm_pm", "slot", 1);
 			conn.withRackSlot(rack, slot);
 		}
+
+		strEncod = dev.getOrDefaultPropValueStr("s7_comm_pm", "encod", "UTF-8") ;
+		
 		try
 		{// do iso connection
 			msgISOCR.processByConn(conn);

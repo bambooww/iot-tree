@@ -10,6 +10,7 @@ import org.iottree.core.basic.ByteOrder;
 import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -62,7 +63,7 @@ public class S7Block
 	 */
 	private transient int lastFailedCC  = 0 ;
 	
-	private transient S7EthDriver ppiDrv = null ;
+	private transient S7EthDriver driver = null ;
 	
 	public S7Block(List<S7Addr> addrs,
 			int block_size,long scan_inter_ms)//,int failed_successive)
@@ -110,7 +111,7 @@ public class S7Block
 	
 	boolean initCmds(S7EthDriver drv)
 	{
-		ppiDrv = drv ;
+		driver = drv ;
 		
 		if(addrs==null||addrs.size()<=0)
 			return false ;
@@ -216,7 +217,18 @@ public class S7Block
 				return null ;
 			if(dlen>da.inNum)
 				return null ;
-			return new String(buf,2,dlen) ;
+			try
+			{
+				String enc = this.driver.getStrEncod() ;
+				if(Convert.isNotNullEmpty(enc))
+					return new String(buf,2,dlen,enc) ;
+				else
+					return new String(buf,2,dlen) ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -411,13 +423,16 @@ public class S7Block
 	
 	public boolean setWriteCmdAsyn(S7Addr addr, Object v,StringBuilder failedr)
 	{
-		S7MsgWrite mc = new S7MsgWrite().withParam(memTp, this.dbNum, addr,v);
+		String encod = this.driver.getStrEncod() ;
+		S7MsgWrite mc = new S7MsgWrite().withParam(memTp, this.dbNum, addr,v,encod);
 		if(mc==null)
 		{
 			failedr.append("invalid write param") ;
+			if(addr.memValTp==S7ValTp.STRING)
+				failedr.append(",string encode by "+encod+" may length>"+addr.inNum) ;
 			return false;
 		}
-		mc.init(ppiDrv);
+		mc.init(driver);
 		synchronized(writeCmds)
 		{
 			writeCmds.addLast(mc);

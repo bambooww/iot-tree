@@ -24,6 +24,10 @@ public class PlatNodeManager
 		b_platnode = f.exists() ;
 	}
 	
+	/**
+	 * run as agent
+	 * @return
+	 */
 	public static boolean isPlatNode()
 	{
 		return b_platnode;

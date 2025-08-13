@@ -1,6 +1,7 @@
 package org.iottree.driver.s7.eth;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
@@ -311,7 +312,7 @@ public class S7MsgWrite extends S7Msg
 		return this ;
 	}
 	
-	public S7MsgWrite withParam(S7MemTp area_memtp, int db_num, S7Addr addr,Object v)
+	public S7MsgWrite withParam(S7MemTp area_memtp, int db_num, S7Addr addr,Object v,String str_encod) //throws UnsupportedEncodingException
 	{
 		this.areaMemtp = area_memtp ;
 		this.dbNum = db_num;
@@ -319,13 +320,13 @@ public class S7MsgWrite extends S7Msg
 		this.bitIdx = addr.getInBits() ;
 		this.writeNum = addr.getBytesNum();
 		this.writeObj = v ;
-		this.writeV = transVToBytes(addr,v);
+		this.writeV = transVToBytes(addr,v,str_encod);
 		if(this.writeV==null && this.bitIdx<0)
 			return null;
 		return this ;
 	}
 	
-	private byte[] transVToBytes(S7Addr addr,Object v)
+	private byte[] transVToBytes(S7Addr addr,Object v,String str_encod)// throws UnsupportedEncodingException
 	{
 		S7ValTp s7vtp = addr.getMemValTp() ;
 		if(s7vtp==null ||v==null)
@@ -358,7 +359,21 @@ public class S7MsgWrite extends S7Msg
 		else if(s7vtp==S7ValTp.STRING)
 		{
 			String strv = v.toString() ;
-			byte[] bv = strv.getBytes() ;
+			byte[] bv = null;
+			if(Convert.isNotNullEmpty(str_encod))
+			{
+				try
+				{
+					bv = strv.getBytes(str_encod) ;
+				}
+				catch(Exception ee)
+				{
+					ee.printStackTrace();
+					return null ;
+				}
+			}
+			else
+				bv = strv.getBytes() ;
 			bn = addr.getBytesNum() ;
 			int in_num = addr.inNum ;
 			if(in_num+2!=bn || in_num>255)

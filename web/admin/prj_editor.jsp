@@ -2415,13 +2415,16 @@ function prj_rt()
 			$("#cp_"+id).attr("cp_run",""+brun) ;
 			for(var conn of cp.connections)
 			{
-				var cid = conn.conn_id;
-				var bready = conn.ready ;
-				var connerr = conn.conn_err;
-				var conninf = conn.conn_inf ;
+				let cid = conn.conn_id;
+				let bready = conn.ready ;
+				let connerr = conn.conn_err;
+				let conndt = conn.conn_dt ;
+				let conninf = conn.conn_inf ;
 				
 				if(!conninf)
 					conninf = "connection is ready" ;
+				if(bready &&conndt>0)
+					conninf += " @"+new Date(conndt).format_local("yyyy-MM-dd hh:mm:ss") ;
 				var benable = conn.enable;
 				var bnewdev = conn.new_devs;
 				var color = "grey";

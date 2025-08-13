@@ -218,7 +218,6 @@ if(b_tags)
      <th style="width:20px;text-align: center;">
         <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
 </th>
-
         <th style="width:15px;text-align: center;">T</th>
     	<th sort_by="name"><wbt:g>tag</wbt:g></th>
     	<th sort_by="title"><wbt:g>title</wbt:g></th>
@@ -854,7 +853,7 @@ function show_cxt_dyn(p,cxt)
 		var strchgdt = "",strchgdtt="" ;
 		if(dt>0)
 		{
-			strdt =new Date(dt).format("hh:mm:ss");//
+			strdt =new Date(dt).format("hh:mm:ss")+"."+(dt%1000).toString().padStart(3,'0');//
 			strdtt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
 		}
 			

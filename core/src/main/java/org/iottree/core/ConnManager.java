@@ -616,7 +616,7 @@ public class ConnManager
 //					Map<String,ConnDev> n2dev = ((ConnDevFindable)conn).getFoundConnDevs() ;
 //					fnewdev = (n2dev!=null&&n2dev.size()>0) ;
 //				} 
-				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_err\":\""+connerr+"\",\"conn_inf\":\""+conninf+"\",\"msgs\":[");
+				out.print("{\"conn_id\":\""+conn.getId()+"\",\"enable\":"+conn.isEnable()+",\"ready\":"+conn.isConnReady()+",\"conn_dt\":"+conn.getConnDT()+",\"conn_err\":\""+connerr+"\",\"conn_inf\":\""+conninf+"\",\"msgs\":[");
 				List<ConnMsg> cpt_msgs = conn.getConnMsgs() ;
 				if(cpt_msgs!=null)
 				{

@@ -374,14 +374,32 @@ public class MNMsg implements IMNCxtPk
 	@Override
 	public boolean CXT_PK_setSubVal(String subname,Object subv,StringBuilder failedr) 
 	{
-		switch(subname)
+		List<String> ss = Convert.splitStrWith(subname, ".") ;
+		int ss_n = 0 ;
+		if(ss==null||(ss_n=ss.size())<=0)
+			return false;
+		
+		switch(ss.get(0))
 		{
 		case "topic":
 			this.asTopic((String)subv) ;
 			return true ;
 		
 		case "payload":
-			this.asPayload(subv) ;
+			if(ss_n==1)
+				this.asPayload(subv) ;
+			else
+			{
+				JSONObject pjo = this.getPayloadJO(new JSONObject()) ;
+				for(int k = 1 ; k < ss_n-1 ; k ++)
+				{
+					JSONObject tmpjo = pjo.getJSONObject(ss.get(k)) ;
+					if(tmpjo==null)
+						pjo.put(ss.get(k),tmpjo = new JSONObject()) ;
+					pjo = tmpjo ;
+				}
+				pjo.put(ss.get(ss_n-1),subv) ;
+			}
 			return true ;
 		case "heads":
 		default:

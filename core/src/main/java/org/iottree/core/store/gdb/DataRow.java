@@ -606,13 +606,13 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 		return jo ;
 	}
 	/**
-	 * �������ݿ����Ӻͱ������У������ݿ�Ĳ������
+	 * 
 	 * @param conn
 	 * @param tablename
 	 * @param colnames
 	 * @throws SQLException 
 	 */
-	public void doInsertDB(Connection conn,String tablename,String[] colnames) throws SQLException
+	public int doInsertDB(Connection conn,String tablename,String[] colnames) throws SQLException
 	{
 		StringBuilder insertsql = new StringBuilder() ;
 		insertsql.append("insert into ").append(tablename);
@@ -653,7 +653,7 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 				}
 			}
 			
-			ps.executeUpdate() ;
+			return ps.executeUpdate() ;
 		}
 		finally
 		{
@@ -662,7 +662,7 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 		}
 	}
 	
-	public void doUpdateDB(Connection conn,String tablename,String uniquecol,String[] cols) throws SQLException
+	public int doUpdateDB(Connection conn,String tablename,String uniquecol,String[] cols) throws SQLException
 	{
 		StringBuilder upsql = new StringBuilder() ;
 		upsql.append("update ").append(tablename).append(" set ");
@@ -700,7 +700,7 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 				}
 			}
 			
-			ps.executeUpdate() ;
+			return ps.executeUpdate() ;
 		}
 		finally
 		{

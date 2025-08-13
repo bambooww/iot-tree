@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 import org.iottree.core.ConnProvider;
 import org.iottree.core.util.CompressUUID;
@@ -37,17 +39,19 @@ public class ConnPtTcpClient extends ConnPtStream
 	OutputStream outputS = null;
 	
 	String localIP = null;
+	
+	private transient long connDT = -1 ;
 
 	public ConnPtTcpClient()
 	{
-		readNoDataTimeout = 60000;
+		//readNoDataTimeout = 60000;
 	}
 
 	public ConnPtTcpClient(ConnProvider cp, String name, String title, String desc)
 	{
 		super(cp, name, title, desc);
 		
-		readNoDataTimeout = 60000;
+		//readNoDataTimeout = 60000;
 	}
 
 	public String getConnType()
@@ -83,8 +87,8 @@ public class ConnPtTcpClient extends ConnPtStream
 		super.injectByJson(jo);
 
 		this.host = jo.getString("host");
-		this.port = jo.getInt("port");
-		this.connTimeoutMS = jo.getInt("conn_to");
+		this.port = jo.optInt("port",8081);
+		this.connTimeoutMS = jo.optInt("conn_to",3000);
 		this.readNoDataTimeout = jo.optLong("read_no_to",60000);
 		this.localIP = jo.optString("local_ip","") ;
 	}
@@ -136,8 +140,8 @@ public class ConnPtTcpClient extends ConnPtStream
 	{
 		return this.host + ":" + this.port;
 	}
-
-	private synchronized boolean connect()
+	
+	private synchronized boolean connect00()
 	{
 		if (sock != null)
 		{
@@ -204,11 +208,88 @@ public class ConnPtTcpClient extends ConnPtStream
 		}
 	}
 
+	private synchronized boolean connect()
+	{
+		if (sock != null)
+		{
+			if (sock.isClosed())
+			{
+				try
+				{
+					disconnect();
+				}
+				catch ( Exception e)
+				{
+				}
+			}
+
+//			try
+//			{//   ****** this code may cause tcp reset with 90s interval *****
+//				sock.sendUrgentData(0xFF);
+//			}
+//			catch (Exception e)
+//			{
+//				System.out.println(" ConnPtTcpClient will disconnect by sending err:"+e.getMessage()) ;
+//				disconnect();
+//			}
+			return true;
+		}
+		
+		
+		if(log.isTraceEnabled())
+			log.trace(" ConnPtTcpClient try connect to "+host+":"+port) ;
+		
+		try
+		{
+			sock = new Socket();
+			if(Convert.isNotNullEmpty(this.localIP))
+			{
+				InetAddress locaddr = InetAddress.getByName(this.localIP) ;
+				SocketAddress loc_sa = new InetSocketAddress(locaddr, 0);
+				sock.bind(loc_sa);
+			}
+			
+			//sock.setPerformancePreferences(connectionTime, latency, bandwidth);
+			//set recv timeout,it will make read waiting throw timeout
+			int read_no_dt = (int)this.readNoDataTimeout ;
+			if(read_no_dt>0)
+				sock.setSoTimeout(read_no_dt);
+			
+			//
+			
+			sock.connect(new InetSocketAddress(host, port),this.connTimeoutMS);
+			//sock.
+			sock.setTcpNoDelay(true);
+			sock.setKeepAlive(true);
+			inputS = sock.getInputStream();
+			outputS = sock.getOutputStream();
+
+			connDT = System.currentTimeMillis() ;
+			this.fireConnReady();
+			if(log.isDebugEnabled())
+				log.debug("connect ok to "+this.host+":"+this.port);
+			return true;
+		}
+		catch ( Exception ee)
+		{
+			if(log.isDebugEnabled())
+			{
+				log.debug(" ConnPtTcpClient will disconnect by connect err:"+ee.getMessage()) ;
+				ee.printStackTrace(); 
+			}
+			disconnect();
+			return false;
+		}
+	}
+
 	void disconnect() // throws IOException
 	{
 		if (sock == null)
 			return;
 
+		if(log.isDebugEnabled())
+			log.debug("disconnect from "+this.host+":"+this.port);
+		
 		synchronized (this)
 		{
 			//System.out.println("ConnPtTcpClient disconnect [" + this.getName());
@@ -308,6 +389,12 @@ public class ConnPtTcpClient extends ConnPtStream
 		if(sock==null)
 			return false;
 		return !sock.isClosed();
+	}
+	
+	@Override
+	public long getConnDT()
+	{
+		return this.connDT ;
 	}
 
 	public String getConnErrInfo()
