@@ -3,10 +3,6 @@ package org.iottree.driver.s7.eth;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-
 import org.iottree.core.conn.ConnPtTcpClient;
 
 
@@ -189,11 +185,9 @@ public final class S7TcpConn
 		}
 	}
 
-	@Override
-	protected void finalize() throws Throwable
-	{
-		this.close();
-	}
-
-	
+//	@Override
+//	protected void finalize() throws Throwable
+//	{// call by gc,it will close connpt,and may let normal conn is broken
+//		this.close();
+//	}
 }

@@ -45,7 +45,7 @@ case "w":
 	String strv = request.getParameter("v") ;
 	StringBuilder failedr = new StringBuilder() ;
 	if(tag.RT_writeValStr(strv,failedr))
-		out.print("write value ok") ;
+		out.print("write value out") ;
 	else
 		out.print(failedr.toString()) ;
 	break ;

@@ -159,7 +159,7 @@ public class S7MsgWrite extends S7Msg
 			if (len == 22)
 			{
 				if ((S7Util.getUInt16(conn.PDU, 17) != 0) || (conn.PDU[21] != (byte) 0xFF))
-					throw new S7Exception("write date err");
+					throw new S7Exception("S7MsgWrite date err,return PDU err");
 			}
 			else
 				throw new S7Exception("invalid pdu");

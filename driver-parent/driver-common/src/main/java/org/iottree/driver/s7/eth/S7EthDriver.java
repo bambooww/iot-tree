@@ -15,6 +15,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.ValChker;
 import org.iottree.core.basic.PropItem.PValTP;
+import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.conn.ConnPtTcpClient;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
@@ -28,6 +29,10 @@ public class S7EthDriver extends DevDriver
 	private final S7MsgISOCR msgISOCR = new S7MsgISOCR();
 
 	private HashMap<UADev, S7DevItem> dev2item = new HashMap<>();
+	
+	//private UADev firstDev = null ;
+	
+	//private S7DevItem firstDevItem = null ;
 	
 	private String strEncod = "UTF-8" ;
 
@@ -121,7 +126,7 @@ public class S7EthDriver extends DevDriver
 		gp = new PropGroup("timing", lan);// "Timing");
 
 		//gp.addPropItem(new PropItem("scan_intv",lan,PValTP.vt_int,false,null,null,100)); 
-		//gp.addPropItem(new PropItem("req_to", lan, PValTP.vt_int, false, null, null, 2000));
+		gp.addPropItem(new PropItem("recv_to", lan, PValTP.vt_int, false, null, null, 3000));
 		//gp.addPropItem(new PropItem("failed_tryn", lan, PValTP.vt_int, false, null, null, 3));
 		gp.addPropItem(new PropItem("inter_req", lan, PValTP.vt_int, false, null, null, 20));
 		pgs.add(gp);
@@ -279,7 +284,11 @@ public class S7EthDriver extends DevDriver
 			StringBuilder devfr = new StringBuilder();
 			if (!mdi.init(devfr))
 				continue;
-
+//			if(firstDev==null)
+//			{
+//				firstDev = dev ;
+//				firstDevItem=mdi ;
+//			}
 			d2i.put(dev, mdi);
 		}
 
@@ -303,9 +312,14 @@ public class S7EthDriver extends DevDriver
 		return this.strEncod ;
 	}
 
+	//RT_
 	@Override
 	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev)
 	{
+//		if(dev==null)
+//		{
+//			dev = firstDev ;
+//		}
 		ConnPtTcpClient tcpc = (ConnPtTcpClient) cp;
 		S7TcpConn conn = new S7TcpConn(tcpc);
 		if (M_S7_200.equals(dev.getDevModel()))
@@ -333,8 +347,11 @@ public class S7EthDriver extends DevDriver
 			conn.withRackSlot(rack, slot);
 		}
 
+		
 		strEncod = dev.getOrDefaultPropValueStr("s7_comm_pm", "encod", "UTF-8") ;
 		
+		int recv_to = dev.getOrDefaultPropValueInt("timing", "recv_to", 3000) ;
+		conn.withTimeout(recv_to);
 		try
 		{// do iso connection
 			msgISOCR.processByConn(conn);
@@ -350,14 +367,28 @@ public class S7EthDriver extends DevDriver
 		}
 	}
 
+
+	//boolean connNotReadyShowed = false;
+	
 	@Override
 	protected synchronized void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev)
 	{
+		//System.out.println(" RT_onConnInvalid for  "+dev.getTitle()) ;
 		dev2conn.remove(dev);
 		try
 		{
-			ConnPtTcpClient tcpc = (ConnPtTcpClient) cp;
+ 			ConnPtTcpClient tcpc = (ConnPtTcpClient) cp;
 			tcpc.close();
+			
+			//if(!connNotReadyShowed)
+			{
+				S7DevItem ditem = dev2item.get(dev);
+				if (ditem != null)
+				{
+					ditem.doCmdError("connection is not ready");
+				}
+				// connNotReadyShowed = true ;
+			}
 		}
 		catch ( Exception e)
 		{
@@ -365,6 +396,7 @@ public class S7EthDriver extends DevDriver
 		}
 	}
 
+	
 	@Override
 	protected boolean RT_runInLoop(UACh ch, UADev dev, StringBuilder failedr) throws Exception
 	{
@@ -375,8 +407,12 @@ public class S7EthDriver extends DevDriver
 		}
 
 		if (s7conn == null)
+		{
 			return true;
+		}
 
+		//connNotReadyShowed = false ;
+		
 		S7DevItem ditem = dev2item.get(dev);
 		if (ditem == null)
 			return true;
@@ -388,6 +424,31 @@ public class S7EthDriver extends DevDriver
 		return true;
 	}
 
+//	private boolean runInDev(UADev dev) throws Exception
+//	{
+//		S7TcpConn s7conn = null;
+//		synchronized (this)
+//		{
+//			s7conn = dev2conn.get(dev);
+//		}
+//
+//		if (s7conn == null)
+//		{
+//			return true;
+//		}
+//
+//		//connNotReadyShowed = false ;
+//		
+//		S7DevItem ditem = dev2item.get(dev);
+//		if (ditem == null)
+//			return true;
+//
+//		ditem.doCmd(s7conn);
+//
+//		// byte[] bs = .read(DaveArea.INPUTS, 0, 1, 0);
+//
+//		return true;
+//	}
 //	private void test(UACh ch, UADev dev, S7TcpConn s7conn) throws S7Exception, IOException
 //	{
 //		System.out.println(dev.getName() + " S7 run in loop");

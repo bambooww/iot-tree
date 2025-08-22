@@ -397,6 +397,10 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 	
 	transient private DevDriver bindedDrv = null ;
 	
+	// for outer temp add related obj
+	transient private Object bindedObj1 = null ;
+	
+	transient private Object bindedObj2 = null ;
 	/**
 	 * create a empty connpt,it will be injected to old data
 	 */
@@ -688,6 +692,26 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 				return cm ;
 		}
 		return null ;
+	}
+	
+	public void setBindedObj1(Object obj)
+	{
+		this.bindedObj1 = obj ;
+	}
+	
+	public Object getBindedObj1()
+	{
+		return this.bindedObj1 ;
+	}
+	
+	public void setBindedObj2(Object obj)
+	{
+		this.bindedObj2 = obj ;
+	}
+	
+	public Object getBindedObj2()
+	{
+		return this.bindedObj2 ;
 	}
 	
 	protected void RT_connInit() throws Exception

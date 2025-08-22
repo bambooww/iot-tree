@@ -46,6 +46,9 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 
 	@data_val(param_name = "show_tags")
 	String showTags = "";
+	
+	@data_val(param_name = "bk_color")
+	String bkColor = "";
 
 	public UAHmi()
 	{
@@ -97,6 +100,11 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 	public String getShowTagsTxt()
 	{
 		return this.showTags ;
+	}
+	
+	public String getBkColor()
+	{
+		return this.bkColor ;
 	}
 
 	private List<PropGroup> hmiPGS = null;
@@ -182,6 +190,10 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 				null, null, "").withTxtMultiLine(true).withPop(PropItem.POP_N_SEL_TAGS));//, "Select Tags")); //"Show Tags", "Tags data will show in HMI client."
 		// r.addPropItem(new PropItem("devid","Dev Id","Device
 		// ID",PValTP.vt_str,false,null,null,""));
+		
+		r.addPropItem(new PropItem("bk_color",lan,
+				PValTP.vt_str, false, null, null, ""));
+		
 		return r;
 	}
 
@@ -197,6 +209,8 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 				return notRunPrompt;
 			case "show_tags":
 				return this.showTags;
+			case "bk_color":
+				return bkColor;
 			}
 		}
 		Object locv = super.getPropValue(groupn, itemn);
@@ -218,6 +232,9 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 				return true;
 			case "show_tags":
 				this.showTags = strv;
+				return true;
+			case "bk_color":
+				this.bkColor = strv;
 				return true;
 			}
 		}

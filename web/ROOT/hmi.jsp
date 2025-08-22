@@ -16,11 +16,11 @@
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
    String bkc = request.getParameter("bkc") ;
-   if(Convert.isNullOrEmpty(bkc))
-	   bkc = "#1e1e1e";
    String user = request.getParameter("user") ;
    if(Convert.isNullOrEmpty(user))
 	   user="" ;
+   
+   boolean b_zoom_show = !"false".equals(request.getParameter("zoom")) ;
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
 	UAHmi uahmi = UAUtil.findHmiByPath(path) ;
@@ -105,6 +105,17 @@
 	String not_run_prompt = uahmi.getNotRunPrompt() ;
 	if(Convert.isNullOrEmpty(not_run_prompt))
 		not_run_prompt = "Project is not running." ;
+	
+	//String bd_css = "" ;
+	String bkcolor = uahmi.getBkColor() ;
+	if(Convert.isNullOrEmpty(bkc) && Convert.isNotNullEmpty(bkcolor))
+	{
+		//bd_css = "background-color:"+bd_css ;
+		bkc = bkcolor ;
+		
+	}
+	if(Convert.isNullOrEmpty(bkc))
+		   bkc = "#1e1e1e";
 	//String repname = rep.getName() ;%><!DOCTYPE html>
 <html>
 <head>
@@ -605,13 +616,27 @@ if(path2tt!=null && path2tt.size()>0)
 }
 %>
 <div style="z-index:65534;position: absolute;right:0px;top:0px">
+<%
+if(b_zoom_show)
+{
+%>
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x" title="fit windows"></i></div>
 	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x" title="zoom up"></i></div>
 	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x" title="zoom down"></i></div>
 	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
 	<div id="oper_data" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
 	<div id="oper_ui" class="oper" style="top:280px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
-	
+<%
+}
+else
+{
+%>
+	<div id="oper_alert" class="oper" style="top:10px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
+	<div id="oper_data" class="oper" style="top:60px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
+	<div id="oper_ui" class="oper" style="top:110px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
+<%
+}
+%>
 	<div id="alert_list_c" style="display:none;width:700px" class="pwin">
  		<span class="op">
  		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History"><lan:g>history_d</lan:g></button>
@@ -1419,9 +1444,13 @@ function cxt_rt()
 
 function show_or_hide_alerts()
 {
+	
 	let dis= $("#alert_list_c").css("display");
 	if("none"==dis)
-		$("#alert_list_c").css("display","");
+	{
+		let y = $("#oper_alert").offset().top;
+		$("#alert_list_c").css("top",y+"px").css("display","");
+	}
 	else
 		$("#alert_list_c").css("display","none");
 }
@@ -1449,7 +1478,11 @@ function show_or_hide_datas()
 {
 	let dis= $("#data_list_c").css("display");
 	if("none"==dis)
-		$("#data_list_c").css("display","");
+	{
+		let y = $("#oper_data").offset().top;
+		$("#data_list_c").css("top",y+"px").css("display","");
+	}
+		
 	else
 		$("#data_list_c").css("display","none");
 }
@@ -1483,7 +1516,10 @@ function show_or_hide_uis()
 {
 	let dis= $("#ui_list_c").css("display");
 	if("none"==dis)
-		$("#ui_list_c").css("display","");
+	{
+		let y = $("#oper_ui").offset().top;
+		$("#ui_list_c").css("top",y+"px").css("display","");
+	}
 	else
 		$("#ui_list_c").css("display","none");
 }

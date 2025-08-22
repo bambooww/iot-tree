@@ -48,6 +48,7 @@
 	<dd_node id="1" name="pi_conn_borken_prompt" name_cn="连接中断提示" name_en="Conn Broken Prompt" desc_cn="在监控画面中，连接中断时的提示" desc_en="Conn Broken Prompt Show in UI"/>
 	<dd_node id="1" name="pi_not_run_prompt" name_cn="未运行提示" name_en="Not Run Prompt" desc_cn="在监控画面中，项目没有运行时的提示" desc_en="Project is not run prompt Show in UI"/>
 	<dd_node id="1" name="pi_show_tags" name_cn="显示标签" name_en="Show Tags" desc_cn="在监控画面中列举显示的标签" desc_en="Tags data will show in HMI client."/>
+	<dd_node id="1" name="pi_bk_color" name_cn="背景颜色" name_en="Background Color" desc_cn="背景颜色" desc_en=""/>
 	
 	<dd_node id="1" name="pg_prj_restful" name_cn="项目RESTFul接口" name_en="Project RESTFul Api" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="pi_token_en" name_cn="启用Token验证" name_en="Enable Token Check" desc_cn=""/>

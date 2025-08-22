@@ -1,6 +1,8 @@
 package org.iottree.driver.s7.eth;
 
-public class S7Exception extends Exception
+import org.iottree.core.ConnException;
+
+public class S7Exception extends ConnException
 {
 	/**
 	 * 

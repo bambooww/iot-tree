@@ -517,6 +517,10 @@ function open_doc()
 }
 </script>
 <body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
+<%
+if(!hide_top)
+{
+%>
 <div class="top " style="background-color: #007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:5px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree <wbt:g>prj</wbt:g></div>
@@ -560,7 +564,15 @@ if(!hide_top && rep.isPrjPStationIns())
 		     &nbsp;&nbsp;<span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;<wbt:g>help</wbt:g></span>
 		 </div>
 </div>
-<div class='hj-wrap' style="opacity: 1.0;">
+<%
+}
+
+String top_css="";
+if(hide_top)
+	top_css="top:0px";
+%>
+
+<div class='hj-wrap' style="opacity: 1.0;<%=top_css%>">
         <div id="div_conn" class="hj-transverse-split-div subwin" style="width:15%">
 			<div class="subwin_toolbar">
 			<span style="left:20px;display:none" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>

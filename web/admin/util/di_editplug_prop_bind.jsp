@@ -48,18 +48,29 @@ if(!bind_tag_only)
 
     </div>
   </div>
-   <div class="layui-form-item" id="divtag">
+<div id="divtag">
+   <div class="layui-form-item" >
     <label class="layui-form-label">Tag:</label>
     <div class="layui-input-inline" style="width:400px;">
       <input type="text" id="tag" name="tag" lay-verify="required" autocomplete="off" class="layui-input" >
     </div>
     <div class="layui-form-mid"><button onclick="sel_tag()" class="layui-btn layui-btn-sm layui-btn-primary">...</button></div>
   </div>
+  <div class="layui-form-item" >
+    <label class="layui-form-label">Trans JS:</label>
+    <div class="layui-input-inline" style="width:400px;">
+    ($V,$this)=>{
+      <textarea id="trans" name="trans" placeholder="" class="layui-textarea" rows="8" ondblclick="on_client_js_edit('trans')"></textarea>
+      }
+    </div>
+  </div>
+</div>
+  
   <div class="layui-form-item" id="divtjs" style="display:none;">
     <label class="layui-form-label">Client Script:</label>
-    <div class="layui-input-block">
+    <div class="layui-input-inline" style="width:400px;">
     ()=>{
-      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10" ondblclick="on_client_js_edit()"></textarea>
+      <textarea id="js" name="js" placeholder="" class="layui-textarea" rows="10" ondblclick="on_client_js_edit('js')"></textarea>
       }
       <br/><div class="layui-form-mid layui-word-aux" onclick="insert_tag()">insert tag</div>
     </div>
@@ -109,6 +120,7 @@ if(plugpm!=null)
 	{
 		document.getElementById("exp_"+vv.bExp).checked = true ;
 		sel_exp_or_not(vv.bExp?"true":"false") ;
+		$("#trans").val(vv.binderTrans)
 		if(vv.bExp)
 			$("#js").val(vv.binderTxt) ;
 		else
@@ -229,6 +241,7 @@ function editplug_get(cb)
 {
 	var tag = $("#tag").val() ;
 	var js =  $("#js").val() ;
+	let trans = $("#trans").val();
 	var jstxt=null ;
 	var bexp = false;
 	var bunbind=false;
@@ -257,23 +270,22 @@ function editplug_get(cb)
 		bunbind=true;
 	}
 	
-	return {bexp:bexp,jstxt:jstxt,unbind:bunbind};
+	return {bexp:bexp,jstxt:jstxt,unbind:bunbind,trans:trans};
 }
 
-function on_client_js_edit()
+function on_client_js_edit(id)
 {
-	//if(!path)
-	//	return ;
+	let txt = $("#"+id).val();
 	
 	dlg.open("../ua_cxt/client_script.jsp?dlg=true&opener_txt_id=js&path=",
-			{title:"Edit Client JS",w:'600px',h:'400px',js_cxt:js_cxt},
+			{title:"Edit Client JS",w:'600px',h:'400px',js_cxt:txt},
 			['Ok','Cancel'],
 			[
 				function(dlgw)
 				{
 					let jstxt = dlgw.get_edited_js();
 					
-					$("#clientjs").val(jstxt) ;
+					$("#"+id).val(jstxt) ;
 					dlg.close();
 				},
 				function(dlgw)

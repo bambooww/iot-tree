@@ -107,9 +107,10 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 					}
 					catch ( InterruptedException ie)
 					{
-
+						if(log.isTraceEnabled())
+							log.trace(ie);
 					}
-					catch ( ConnException e)
+					catch (ConnException e)
 					{// ConnException will not stop driver
 						if(this.connPt instanceof Closeable)
 						{
@@ -119,6 +120,9 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 							}
 							catch(Exception eee) {}
 						}
+						
+						if(log.isDebugEnabled())
+							log.debug(e);
 					}
 					finally
 					{
@@ -421,6 +425,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 				rtBindedDev2SubTh.put(dev, sth);
 				// callback
 				cpt.onDriverBinded(this);
+				cpt.setBindedObj1(sth); // sub thread set to bind1
 			}
 		}
 		else
@@ -708,12 +713,16 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 
 	protected final UADev getBindedDevByConnPt(ConnPt cp)
 	{
-		for (Map.Entry<UADev, SubDevThread> d2th : this.rtBindedDev2SubTh.entrySet())
-		{
-			if (d2th.getValue().getConnPt() == cp)
-				return d2th.getKey();
-		}
-		return null;
+		SubDevThread subdt = (SubDevThread)cp.getBindedObj1() ;
+		if(subdt==null)
+			return null ;
+		return subdt.getDev() ;
+//		for (Map.Entry<UADev, SubDevThread> d2th : this.rtBindedDev2SubTh.entrySet())
+//		{
+//			if (d2th.getValue().getConnPt() == cp)
+//				return d2th.getKey();
+//		}
+//		return null;
 	}
 
 	/**

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.iottree.core.UAVal;
 import org.iottree.core.basic.ByteOrder;
-import org.iottree.core.basic.IConnEndPoint;
 import org.iottree.core.basic.MemSeg8;
 import org.iottree.core.basic.MemTable;
 import org.iottree.core.util.Convert;
@@ -264,16 +263,25 @@ public class S7Block
 	
 	public boolean runCmds(S7TcpConn conn) throws Exception
 	{
-		this.runWriteCmdAndClear(conn);
+		try
+		{
+			this.runWriteCmdAndClear(conn);
+		}
+		catch(Exception ee)
+		{
+			if(log.isErrorEnabled())
+				log.error("runCmds write err", ee);
+			
+		}
 		boolean r = runReadCmds(conn) ;
 		Thread.sleep(this.interReqMs); 
 		return r ;
 	}
 	
-	public void runCmdsErr()
-	{
-		runReadCmdsErr() ;
-	}
+//	public void runCmdsErr()
+//	{
+//		runReadCmdsErr() ;
+//	}
 	
 	private void transMem2Addrs(List<S7Addr> addrs)
 	{
@@ -378,7 +386,18 @@ public class S7Block
 		return ret ;
 	}
 	
-	private boolean runReadCmdsErr() //throws Exception
+	private void setAddrError(List<S7Addr> addrs,String errinf)
+	{
+		if(addrs==null)
+			return ;
+		for(S7Addr ma:addrs)
+		{
+			//ma.RT_setVal(null);
+			ma.RT_setValErr(errinf);
+		}
+	}
+	
+	boolean runReadCmdsErr(String errinf) //throws Exception
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
 		boolean ret = true;
@@ -386,6 +405,7 @@ public class S7Block
 		{
 			
 			List<S7Addr> addrs = cmd2addr.get(mc) ;
+			setAddrError(addrs,errinf);
 			setAddrError(addrs);
 			//transMem2Addrs(addrs);
 		}

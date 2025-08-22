@@ -386,9 +386,10 @@ public class ConnPtTcpClient extends ConnPtStream
 	@Override
 	public boolean isConnReady()
 	{
-		if(sock==null)
+		if(sock==null || sock.isClosed())
 			return false;
-		return !sock.isClosed();
+		return inputS!=null;
+		//return !sock.isClosed();
 	}
 	
 	@Override

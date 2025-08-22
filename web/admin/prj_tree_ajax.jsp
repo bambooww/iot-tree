@@ -176,7 +176,7 @@
 			boolean ref_locked = dev.isRefLocked();
 %>
 			{
-				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title='<%=dev.getTitle()%><%=model_t%>'><%=dev.getName() %><%=model_n%></span><%=deft%> <%=devok%>"
+				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title=''><%=dev.getTitle()%>[<%=dev.getName() %>]<%=model_t%></span><%=deft%> <%=devok%>"
 			  ,"id":"<%=dev.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(dev.getTitle())%>"}
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"

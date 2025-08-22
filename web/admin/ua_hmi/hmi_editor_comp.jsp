@@ -580,11 +580,11 @@ function editor_plugcb(jq_ele,tp,di,pn_defname,name,val)
 							var ret = dlgw.editplug_get() ;
 							if(ret.unbind)
 							{
-								di.setPropBinder(name,null,false) ;
+								di.setPropBinder(name,null,false,ret.trans) ;
 							}
 							else
 							{
-								di.setPropBinder(name,ret.jstxt,ret.bexp) ;
+								di.setPropBinder(name,ret.jstxt,ret.bexp,ret.trans) ;
 							}
 							
 							editor.refreshPropBindEditor();

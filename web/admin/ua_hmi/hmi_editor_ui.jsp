@@ -31,6 +31,10 @@
 		response.sendRedirect(path);
 		return ;
 	}
+	
+	String bkcolor = uahmi.getBkColor() ;
+	if(Convert.isNullOrEmpty(bkcolor))
+		bkcolor = "#1e1e1e" ; 
 	UANodeOCTagsCxt node = uahmi.getBelongTo() ;
 	String cxtnodeid = node.getId() ;
 	UANode topn = node.getTopNode() ;
@@ -382,7 +386,7 @@ if(bprj)
 			<iframe id="left_pan_iframe" src="" style="width:100%;height:90%;overflow:hidden;margin: 0px;border:0px;padding: 0px" ></iframe>
 		</div>
 		<div class="mid">
-			<div id="main_panel" style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; background-color: #1e1e1e" ondrop0="drop(event)" ondragover0="allowDrop(event)">
+			<div id="main_panel" style="border: 0px solid #000;margin:0px; width: 100%; height: 100%; background-color: <%=bkcolor %>" ondrop0="drop(event)" ondragover0="allowDrop(event)">
 				<div id="win_act_store" style="position: absolute; display: none; background-color: #cccccc;z-index:1">
 					<div class="layui-btn-group">
 					  <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" title="Add New Store"  onclick="store_add_db()">
@@ -592,10 +596,8 @@ var editor_plugcb_pm=null ;
 
 function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 {
-	
 	editor_plugcb_pm = {editor:editorname,editor_id:cxtnodeid,path:path,di:di,name:name,val:val,cxtnodeid:cxtnodeid} ;
 	//console.log(11,editor_plugcb_pm)
-
 	if(tp.indexOf("event_")==0)
 	{
 		dlg.open("../util/di_editplug_"+tp+".jsp?p="+path,
@@ -651,13 +653,14 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 						if(tp=="prop_bind")
 						{
 							var ret = dlgw.editplug_get() ;
+							// console.log(ret);
 							if(ret.unbind)
 							{
-								di.setPropBinder(name,null,false) ;
+								di.setPropBinder(name,null,false,ret.trans) ;
 							}
 							else
 							{
-								di.setPropBinder(name,ret.jstxt,ret.bexp) ;
+								di.setPropBinder(name,ret.jstxt,ret.bexp,ret.trans) ;
 							}
 							
 							editor.refreshPropBindEditor();

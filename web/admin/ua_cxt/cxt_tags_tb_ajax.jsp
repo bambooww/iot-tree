@@ -252,8 +252,23 @@ if(bloc&&!tag.isSysTag())
 <%
 	if(tag.isCanWrite())
 	{
+		if(tag.getValTp()==UAVal.ValTP.vt_bool)
+		{
+%><span id="ctag_w_<%=tag.getId()%>" bb="true" style="width:90px;border:1px solid #999999">&nbsp;<input type="radio" name="ctag_w_<%=tag.getId()%>" value="1" lay-ignore />true
+&nbsp;
+<input type="radio" name="ctag_w_<%=tag.getId()%>"  value="0" lay-ignore/>false</span>&nbsp;
+<%
+		}
+		else
+		{
+			String inp_tp = "text" ;
+			if(tag.getValTp().isNumberVT())
+				inp_tp="number" ;
+%><input type="<%=inp_tp %>" id="ctag_w_<%=tag.getId()%>" value="" style="color:#999999;width:90px"/>
+<%
+		}
 %>
-        	<input type="text" id="ctag_w_<%=tag.getId()%>" value="" style="color:#999999;width:90px"/><a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+        	<a href="javascript:w_tag('<%=tag.getId()%>')"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
 <%
 	}
 %>

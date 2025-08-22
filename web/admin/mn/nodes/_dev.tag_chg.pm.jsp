@@ -48,13 +48,25 @@
  <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">Ignore Invalid:</span>
     </div>
-	  <div class="layui-input-inline" style="width: 50px;">
+	  <div class="layui-input-inline" style="width: 20px;">
 	    <input type="checkbox" id="ignore_invalid" class="layui-input" lay-skin="primary" />
 	  </div>
 	  <div class="layui-form-mid"><span style="white-space: nowrap;">Ignore Update (Value Not Changed):</span>
     </div>
-	  <div class="layui-input-inline" style="width: 50px;">
+	  <div class="layui-input-inline" style="width: 20px;">
 	    <input type="checkbox" id="ignore_update" class="layui-input" lay-skin="primary" />
+	  </div>
+	  <div class="layui-form-mid">Change TP</span>
+    </div>
+	  <div class="layui-input-inline" style="width: 170px;">
+	    <select id="chg_tp"  lay-skin="primary" >
+<%
+	for(NS_TagChgTrigger.ChgTP chgtp:NS_TagChgTrigger.ChgTP.values())
+	{
+%><option value="<%=chgtp.getIntVal()%>"><%=chgtp.getTitle() %></option><%
+	}
+%>
+	    </select>
 	  </div>
 </div>
  
@@ -127,19 +139,21 @@ function get_pm_jo()
 	let ret = {tag_paths:tag_paths} ;
 	ret.ignore_invalid = $("#ignore_invalid").prop("checked") ;
 	ret.ignore_update = $("#ignore_update").prop("checked") ;
+	ret.chg_tp = parseInt($("#chg_tp").val());
 	return ret ;
 }
 
 function set_pm_jo(jo)
-{
+{//console.log(jo) ;
 	tag_paths = jo.tag_paths;
 	$("#ignore_invalid").prop("checked",jo.ignore_invalid||true) ;
 	$("#ignore_update").prop("checked",jo.ignore_update||false) ;
+	$("#chg_tp").val(jo.chg_tp||0) ;
 }
 
 function get_pm_size()
 {
-	return {w:600,h:450} ;
+	return {w:700,h:450} ;
 }
 
 //on_init_pm_ok() ;

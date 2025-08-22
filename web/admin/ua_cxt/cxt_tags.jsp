@@ -812,7 +812,12 @@ function del_tag(id)
 
 function w_tag(id)
 {
-	var strv = $("#ctag_w_"+id).val();
+	let ele = $("#ctag_w_"+id) ;
+	let strv = null ;
+	if(ele.attr("bb")=='true')
+		strv = ele.find('input[type="radio"]:checked').attr("value");
+	else
+		strv = ele.val();
 	if(strv==null||strv=="")
 	{
 		dlg.msg("<wbt:g>pls,input,write,val</wbt:g>") ;

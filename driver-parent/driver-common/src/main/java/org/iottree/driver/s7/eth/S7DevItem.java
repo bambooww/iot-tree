@@ -146,6 +146,16 @@ public class S7DevItem
 		return true;
 	}
 	
+
+	void doCmdError(String errinf)
+	{
+		for(S7Block blk:tp2block.values())
+		{
+			blk.runReadCmdsErr(errinf);
+		}
+	}
+	
+	
 	public boolean RT_writeVal(DevAddr da, Object v,StringBuilder failedr)
 	{
 		S7Addr ma = (S7Addr)da ;
