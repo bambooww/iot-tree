@@ -9,14 +9,18 @@
 	org.iottree.core.*,
 	org.iottree.core.util.*,
 	org.iottree.core.util.xmldata.*
-	"%>
-<%@ taglib uri="wb_tag" prefix="wbt"%>	
-<%
+	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
+%><%
 if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
 
 String search_txt = request.getParameter("search_txt") ;
+if(search_txt==null)
+{
+	search_txt ="";
+}
+session.setAttribute("_di_tag_sel_stxt", search_txt) ;
 
 String val = request.getParameter("val") ;
 if(val==null)
@@ -60,6 +64,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 
 	for(UATag tg : tags)
 	{
+		String tagid = tg.getId() ;
 		String pathn = tg.getNodeCxtPathIn(ntags) ;
 		String patht =  tg.getNodeCxtPathTitleIn(ntags) ;
 		String addr0 = tg.getAddress() ;
@@ -76,7 +81,8 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 			chked = "checked='checked'" ;
 		String addr = tg.getAddress() ;
 %>
- <tr id="row_<%=pathn %>" height0='1' style0="height:5" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
+ <tr id="row_<%=pathn %>" height0='1' style0="height:5" onmouseover="mouseover(this)" onmouseout="mouseout(this)" 
+ 	onclick="clk_sel(this)" tagp="<%=pathn%>" tagt="<%=patht%>" tagid="<%=tagid%>">
   <td><input type="checkbox" id="cb_<%=pathn %>"  <%=chked %>/></td>
   <td><%=pathn %></td>
   <td><%=addr %></td>

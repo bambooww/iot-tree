@@ -27,12 +27,14 @@ import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
 import org.iottree.core.store.gdb.autofit.JavaTableInfo;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class RelationalDB_JSON2TB extends MNNodeMid
 {
+	public static final String COL_REC_MS = "_rec_ms" ;
 	
 	private static XmlVal.XmlValType transValTp2XVT(ValTP vtp)
 	{
@@ -69,7 +71,11 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 	{
 		public String jsonPN ;
 		
+		public boolean bAuto = false;
+		
 		public String colName ;
+		
+		public String title ;
 		
 		public ValTP valTP ;
 		
@@ -77,12 +83,34 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		
 		public boolean hasIdx = false;
 		
+		public boolean isNumValTP()
+		{
+			if(valTP==null)
+				return false;
+			return valTP.isNumberVT() ;
+		}
+		
+		public String getShowTitle()
+		{
+			if(Convert.isNullOrEmpty(this.title))
+				return "["+colName+"]" ;
+			return this.title+"["+colName+"]" ;
+		}
+		
 		public boolean isPkValid(StringBuilder failedr)
 		{
-			if(Convert.isNullOrEmpty(jsonPN))
+			if(Convert.isNullOrEmpty(jsonPN) && !bAuto)
 			{
-				failedr.append("pk column must has json prop set") ;
+				failedr.append("pk column must has json prop or auto set") ;
 				return false;
+			}
+			if(bAuto)
+			{
+				if(this.valTP!=ValTP.vt_str)
+				{
+					failedr.append("auto pk column must string value type") ;
+					return false;
+				}
 			}
 			if(Convert.isNullOrEmpty(colName))
 			{
@@ -199,7 +227,9 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		{
 			JSONObject jo = new JSONObject() ;
 			jo.putOpt("jo_pn", this.jsonPN) ;
+			jo.put("bauto", this.bAuto) ;
 			jo.putOpt("col", this.colName) ;
+			jo.putOpt("title",this.title) ;
 			if(valTP!=null)
 				jo.putOpt("val_tp",valTP.name()) ;
 			jo.put("max_len",this.maxLen) ;
@@ -211,7 +241,9 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		{
 			ColDef ret = new ColDef() ;
 			ret.jsonPN = jo.optString("jo_pn") ;
+			ret.bAuto = jo.optBoolean("bauto",false) ;
 			ret.colName = jo.optString("col",null) ;
+			ret.title = jo.optString("title",null) ;
 			String tp = jo.optString("val_tp") ;
 			if(Convert.isNotNullEmpty(tp))
 			{
@@ -344,6 +376,18 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 	public List<ColDef> getNorColDefs()
 	{
 		return this.norCols ;
+	}
+	
+	public ColDef getNorColDef(String col_name)
+	{
+		if(this.norCols==null)
+			return null ;
+		for(ColDef cd:this.norCols)
+		{
+			if(col_name.equals(cd.colName))
+				return cd ;
+		}
+		return null ;
 	}
 	
 	private DBConnPool RT_getConnPool()
@@ -508,6 +552,9 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 			norcols.add(new JavaColumnInfo(cd.colName,false, xvt, cd.maxLen,
 					cd.hasIdx, false,cd.colName+"_idx", false,-1, "",false,false));
 		}
+		// add _rec_ms 记录毫秒数
+		norcols.add(new JavaColumnInfo(COL_REC_MS,false, XmlVal.XmlValType.vt_int64,-1,
+				true, false,COL_REC_MS+"_idx", false,-1, "",false,false));
 		
 		tableInfo = new JavaTableInfo(tablename, pkcol, norcols, null);
 		
@@ -539,17 +586,26 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 	private DataRow transJO2Row(DataTable dt ,JSONObject jo,StringBuilder failedr)
 	{
 		DataRow dr = dt.createNewRow() ;
-		Object v = jo.opt(this.pkCol.jsonPN) ;
-		if(v==null||"".equals(v))
+		
+		Object v = null;
+		if(this.pkCol.bAuto)
 		{
-			failedr.append("jo has no pk prop ="+this.pkCol.jsonPN) ;
-			return null ; //
+			v = IdCreator.newSeqId();
 		}
-		v = this.pkCol.transColVal(v, failedr);
-		if(v==null || "".equals(v))
+		else
 		{
-			failedr.append(" @ jo."+this.pkCol.jsonPN) ;
-			return null ;
+			v = jo.opt(this.pkCol.jsonPN) ;
+			if(v==null||"".equals(v))
+			{
+				failedr.append("jo has no pk prop ="+this.pkCol.jsonPN) ;
+				return null ; //
+			}
+			v = this.pkCol.transColVal(v, failedr);
+			if(v==null || "".equals(v))
+			{
+				failedr.append(" @ jo."+this.pkCol.jsonPN) ;
+				return null ;
+			}
 		}
 		dr.putValue(this.pkCol.colName,v) ;
 		
@@ -568,6 +624,7 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 			}
 			dr.putValue(cd.colName,v) ;
 		}
+		dr.putValue(COL_REC_MS,System.currentTimeMillis()) ;
 		
 		return dr;
 	}

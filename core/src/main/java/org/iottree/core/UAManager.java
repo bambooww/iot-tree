@@ -51,20 +51,36 @@ public class UAManager implements IMNContProvider
 	
 	private UAManager()
 	{
-		prjs = loadPrjs();
-		if(prjs==null)
-			prjs = new ArrayList<>() ;
-		updatePrjList();
 		
-		constrcuctTree();
 	}
 	
-	
-	private void constrcuctTree()
+	public ArrayList<UAPrj> listPrjs()
 	{
-		for(UAPrj r:prjs)
-			r.constructNodeTree();
+		if(prjs!=null)
+			return prjs ;
+		
+		synchronized(this)
+		{
+			if(prjs!=null)
+				return prjs ;
+			
+			ArrayList<UAPrj> prjs00 = loadPrjs();
+			if(prjs00==null)
+				prjs00 = new ArrayList<>() ;
+			updatePrjList(prjs00);
+			//constrcuctTree();
+			for(UAPrj r:prjs00)
+				r.constructNodeTree();
+			
+			return prjs = prjs00 ;
+		}
 	}
+	
+//	private void constrcuctTree()
+//	{
+//		for(UAPrj r:prjs)
+//			r.constructNodeTree();
+//	}
 	
 	public EventBus getEventBus()
 	{
@@ -102,7 +118,7 @@ public class UAManager implements IMNContProvider
 					if(dc==null)
 						continue ;
 					reps.add(dc);
-					dc.onLoaded();
+					//dc.onLoaded();
 				}
 				catch (Exception e)
 				{
@@ -114,10 +130,9 @@ public class UAManager implements IMNContProvider
 		return reps;
 	}
 	
-	private void updatePrjList()
+	private static void updatePrjList(List<UAPrj> prjss)
 	{
-		Collections.sort(prjs, new Comparator<UAPrj>() {
-
+		Collections.sort(prjss, new Comparator<UAPrj>() {
 		    @Override
 		    public int compare(UAPrj o1, UAPrj o2) {
 		        long v = o1.getSavedDT()-o2.getSavedDT() ;
@@ -130,19 +145,18 @@ public class UAManager implements IMNContProvider
 		});
 	}
 	
-	public List<UAPrj> listPrjs()
+	private void updatePrjList()
 	{
-		return prjs;
+		updatePrjList(this.listPrjs());
 	}
-	
 	
 	transient String defaultPrjId = null ;
 	/**
-	 * get default repository
+	 * get default project
 	 * @return
 	 * @throws IOException 
 	 */
-	public UAPrj getPrjDefault() throws IOException
+	public UAPrj getPrjDefault()// throws IOException
 	{
 		if(defaultPrjId!=null)
 		{
@@ -155,16 +169,26 @@ public class UAManager implements IMNContProvider
 		if(!f.exists())
 			return null ;
 		
-		String defid = Convert.readFileTxt(f, "utf-8");
-		if(Convert.isNullOrEmpty(defid))
+		try
 		{
-			defaultPrjId = "" ;
+			String defid = Convert.readFileTxt(f);
+			if(Convert.isNullOrEmpty(defid))
+			{
+				defaultPrjId = "" ;
+			}
+			else
+			{
+				defaultPrjId = defid ;
+			}
+			return this.getPrjById(defaultPrjId);
 		}
-		else
+		catch(Exception ee)
 		{
-			defaultPrjId = defid ;
+			ee.printStackTrace();
+			return null ;
 		}
-		return this.getPrjById(defaultPrjId);
+		
+		
 	}
 	
 	public void setPrjDefault(UAPrj prj) throws FileNotFoundException, IOException
@@ -200,7 +224,7 @@ public class UAManager implements IMNContProvider
 //			}
 //		}
 		
-		for(UAPrj r:prjs)
+		for(UAPrj r:listPrjs())
 		{
 			if(r.getId().contentEquals(id))
 				return r ;
@@ -210,7 +234,7 @@ public class UAManager implements IMNContProvider
 	
 	public UAPrj getPrjByName(String name)
 	{
-		for(UAPrj r:prjs)
+		for(UAPrj r:listPrjs())
 		{
 			if(name.contentEquals(r.getName()))
 				return r ;
@@ -218,7 +242,15 @@ public class UAManager implements IMNContProvider
 		return null ;
 	}
 	
-	
+//	public UAPrj getPrjMain()
+//	{
+//		for(UAPrj r:listPrjs())
+//		{
+//			if(r.isMainPrj())
+//				return r ;
+//		}
+//		return null ;
+//	}
 	
 	static File getPrjDataDir()
 	{
@@ -282,7 +314,7 @@ public class UAManager implements IMNContProvider
 			Convert.deleteDir(df) ;
 		}
 		
-		this.prjs.remove(prj) ;
+		this.listPrjs().remove(prj) ;
 	}
 	
 	
@@ -303,7 +335,7 @@ public class UAManager implements IMNContProvider
 		r = new UAPrj(name,title,desc) ;
 		savePrj(r);
 		r.RT_init(true, false);
-		prjs.add(r);
+		listPrjs().add(r);
 		
 		this.updatePrjList();
 		return r ;
@@ -565,7 +597,7 @@ public class UAManager implements IMNContProvider
 		if(Convert.isNotNullEmpty(newid))
 		{
 			p.RT_init(true, true);
-			this.prjs.add(p) ;
+			this.listPrjs().add(p) ;
 		}
 		this.updatePrjList();	
 		p.constructNodeTree();
@@ -641,7 +673,7 @@ public class UAManager implements IMNContProvider
 		savePrj(p) ;
 		
 		p.RT_init(true, true);
-		this.prjs.add(p) ;
+		this.listPrjs().add(p) ;
 		
 		this.updatePrjList();	
 		p.constructNodeTree();
@@ -677,16 +709,15 @@ public class UAManager implements IMNContProvider
 	
 	Runnable uaMonRunner = new Runnable()
 			{
-
 				@Override
 				public void run()
 				{
 					ArrayList<UAPrj> ppps = new ArrayList<>() ;
 					ppps.addAll(UAManager.this.listPrjs()) ;
+					
 					for(UAPrj prj:ppps)
 					{
 						prj.RT_onMonInit() ;
-						
 						if(prj.isAutoStart())
 							prj.RT_start();
 					}

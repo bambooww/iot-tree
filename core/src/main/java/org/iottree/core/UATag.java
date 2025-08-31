@@ -1493,6 +1493,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			if(tmpv!=null)
 				uav = tmpv ;
 		}
+		UAVal last_val = this.curVal ;
 		this.curVal = uav ;
 		
 		UAPrj prj = this.getBelongToPrj() ;
@@ -1505,21 +1506,23 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		if(bNetMon)
-			RT_fireValChgedNetMon(uav.isValid(),uav.getObjVal()) ;
+			RT_fireValChgedNetMon(last_val,uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	private void RT_setUAValOnly(UAVal uav)
 	{
 		HIS_setVal(uav) ;
+		UAVal last_val = this.curVal ;
 		this.curVal = uav ;
 		
 		if(bNetMon)
-			RT_fireValChgedNetMon(uav.isValid(),uav.getObjVal()) ;
+			RT_fireValChgedNetMon(last_val,uav.isValid(),uav.getObjVal()) ;
 	}
 	
 	public void RT_setUAValOnlyAlert(UAVal uav)
 	{
 		HIS_setVal(uav) ;
+		UAVal last_val = this.curVal ;
 		this.curVal = uav ;
 		
 		boolean bvalid = uav.isValid() ;
@@ -1529,14 +1532,14 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 		
 		if(bNetMon)
-			RT_fireValChgedNetMon(bvalid,uav.getObjVal()) ;
+			RT_fireValChgedNetMon(last_val,bvalid,uav.getObjVal()) ;
 	}
 	
-	private void RT_fireValChgedNetMon(boolean bvalid,Object curv)
+	private void RT_fireValChgedNetMon(UAVal last_v,boolean bvalid,Object curv)
 	{
 		UAPrj prj = this.getBelongToPrj() ;
 		if(prj!=null)
-			prj.RT_onTagValChgedNetMon(this,bvalid,curv);
+			prj.RT_onTagValChgedNetMon(this,last_v,bvalid,curv);
 	}
 	
 	private void RT_fireValNotChgUpdateNetMon()

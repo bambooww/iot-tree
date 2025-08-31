@@ -192,14 +192,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 
-	void onLoaded()
-	{
-		//this.getResDir();
-
-		this.RT_init(true, true);
-		
-		
-	}
+//	void onLoaded()
+//	{
+//		//this.getResDir();
+//		this.RT_init(true, true); // move to RT_monInit
+//	}
 
 	public List<UANode> getSubNodes()
 	{
@@ -307,6 +304,39 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		chs.remove(ch);
 		save();
+	}
+	
+
+	public boolean chgChPosUpDown(int dir,UACh ch) throws Exception
+	{
+		if(dir==0)
+			return false;
+		List<UACh> chs = getChs() ;
+		if(!chs.contains(ch))
+			return false;
+		int k = chs.indexOf(ch) ;
+		if(k<0)
+			return false;
+		if(dir<0)//up
+		{
+			if(k==0)
+				return false;
+			UACh tmpch = chs.get(k-1) ;
+			chs.set(k-1,ch) ;
+			chs.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
+		else
+		{//down
+			if(k>=chs.size()-1)
+				return false;
+			UACh tmpch = chs.get(k+1) ;
+			chs.set(k+1,ch) ;
+			chs.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
 	}
 
 	public UACh deepPasteCh(UACh ch) throws Exception
@@ -762,7 +792,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		this.setNameTitle(prjn, null, null) ;
 	}
 
-	public boolean isMainPrj() throws IOException
+	public boolean isMainPrj() //throws IOException
 	{
 		return UAManager.getInstance().getPrjDefault() == this;
 	}
@@ -788,7 +818,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return getPrjSubDir();
 	}
 	
-	
+	public final MNManager getMNManager()
+	{
+		return MNManager.getInstance(this) ;
+	}
 
 	@Override
 	public List<NameTitle> getMNContTagListCatTitles()
@@ -1282,6 +1315,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	void RT_onMonInit()
 	{
+		this.RT_init(true, true);
+		
 		if(this.isPrjPStationIns())
 		{
 			try
@@ -1296,6 +1331,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				e.printStackTrace();
 			}
 		}
+		
+		this.constructNodeTree(); //may sys tag added
 	}
 
 	@Override
@@ -2192,9 +2229,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		}
 	}
 	
-	void RT_onTagValChgedNetMon(UATag tag,boolean cur_valid,Object curv)
+	void RT_onTagValChgedNetMon(UATag tag,UAVal lastv,boolean cur_valid,Object curv)
 	{//RT_TAG_updt_valnotchg
-		MNManager.getInstance(this).RT_TAG_valchged(tag,cur_valid, curv);
+		MNManager.getInstance(this).RT_TAG_valchged(tag,lastv,cur_valid, curv);
 	}
 	
 	void RT_onTagValNotChgUpdateNetMon(UATag tag)

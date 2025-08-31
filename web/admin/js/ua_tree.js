@@ -219,6 +219,21 @@ function UATree(tree_opt)
 		return this.jsTree;
 	}
 	
+	this.collapse_lvl1=function(ch_dev)
+	{
+	    let me =this ;
+	    let tree_ele = $('#'+this.id) ;
+	    tree_ele.find('.jstree-node').each(function() {
+	        let node = me.get_node_by_id(this.id);
+	        if(!node) return ;
+	        if (node.type=='prj')
+	        	return;
+	        if(ch_dev && ch_dev=='dev' && node.type=='ch')
+	        	return ;
+	        tree_ele.jstree('close_node', node);
+	    });
+	}
+	
 	this.get_join_pts=function()
 	{
 		var r = [] ;
@@ -428,7 +443,6 @@ function UAPanel(conn_opt,connch_opt,tree_opt)
 
 	this.init_tree=function()
 	{
-		
 		this.ua_tree.init().on("loaded.jstree",(e,data)=>{
 			//console.log("loaded...",data);
 			if(tree_opt.on_loaded)

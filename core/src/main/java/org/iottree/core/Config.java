@@ -859,6 +859,11 @@ public class Config
 	{
 		return bAuthDefaultAllow;
 	}
+	
+	public static Element getConfElementRoot()
+	{
+		return loadConf();
+	}
 
 	public static Element getConfElement(String name)
 	{

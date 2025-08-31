@@ -182,6 +182,7 @@ white-space: nowrap;
 </body>
 
 <script>
+//dlg.dlg_top=true;
 var container_id = "<%=container_id%>" ;
 var netid = "<%=netid%>" ;
 

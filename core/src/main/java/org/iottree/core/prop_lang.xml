@@ -74,4 +74,10 @@
 	<dd_node id="1" name="pg_ch_drv_spc_conf" name_cn="驱动特殊配置" name_en="Driver specific configation" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="pi_ch_drv_conf" name_cn="驱动配置" name_en="Driver configation" desc_cn=""/>
 	
+	<dd_node id="1" name="pg_tagg_tags_pm" name_cn="内部标签参数" name_en="Inner Tags Parameter" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_read_intv_en" name_cn="启用标签读取时间间隔" name_en="Enable Read Interval" desc_cn=""/>
+	<dd_node id="1" name="pi_read_intv" name_cn="标签读取时间间隔(毫秒)" name_en="Read Interval(MS)" desc_cn=""/>
+	
+	
+	
 </dd_class>

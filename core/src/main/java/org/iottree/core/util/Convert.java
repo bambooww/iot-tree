@@ -2723,6 +2723,105 @@ public class Convert
 		return rets ;
 	}
 	
+
+	public static String getFileExt(String fn)
+	{
+		int k = fn.lastIndexOf('.') ;
+		if(k<0)
+			return null ;
+		return fn.substring(k+1).trim().toLowerCase() ;
+	}
+	
+	public static String getFileExt(File f)
+	{
+		if(f.isDirectory())
+			throw new IllegalArgumentException("input f is dir") ;
+		return getFileExt(f.getName()) ;
+	}
+	
+	
+	public static String transIdsStrToSqlIn(String ids_str)
+	{
+		List<String> ss = splitStrWith(ids_str, ", |") ;
+		return transIdsToSqlIn(ss) ;
+	}
+	
+	public static String transIdsToSqlIn(List<?> ids)
+	{
+		int n ;
+		if(ids==null||(n=ids.size())<=0)
+			return "" ;
+		Object ob = ids.get(0) ;
+		boolean b_str = ob instanceof String ;
+		StringBuilder tids = new StringBuilder() ;
+		if(b_str)
+			tids.append("'").append(ob.toString()).append("'") ;
+		else
+			tids.append(ob.toString()) ;
+		
+		for(int i = 1 ; i < n ; i ++)
+		{
+			if(b_str)
+				tids.append(",'").append(ids.get(i)).append("'") ;
+			else
+				tids.append(",").append(ids.get(i)) ;
+		}
+		return tids.toString() ;
+	}
+	
+	public static String transListToJSArray(List<?> ids)
+	{
+		int n ;
+		if(ids==null||(n=ids.size())<=0)
+			return "[]" ;
+		Object ob = ids.get(0) ;
+		StringBuilder tids = new StringBuilder() ;
+		tids.append("[") ;
+		if(ob instanceof Number || ob instanceof Boolean)
+			tids.append(ob.toString()) ;
+		else
+			tids.append("\"").append(plainToJsStr(ob.toString())).append("\"") ;
+		
+		for(int i = 1 ; i < n ; i ++)
+		{
+			ob = ids.get(i) ;
+			if(ob instanceof Number || ob instanceof Boolean)
+				tids.append(",").append(ob.toString()) ;
+			else
+				tids.append(",\"").append(plainToJsStr(ob.toString())).append("\"") ;
+		}
+		tids.append("]") ;
+		return tids.toString() ;
+	}
+	
+	public static ArrayList<String> transJSONArrayToStrList(JSONArray jarr)
+	{
+		if(jarr==null)
+			return null ;
+		int n = jarr.length() ;
+		ArrayList<String> rets = new ArrayList<>() ;
+		for(int i = 0 ; i <  n ; i ++)
+		{
+			String s = jarr.getString(i) ;
+			rets.add(s) ;
+		}
+		return rets ;
+	}
+	
+	public static ArrayList<Integer> transJSONArrayToIntList(JSONArray jarr)
+	{
+		if(jarr==null)
+			return null ;
+		int n = jarr.length() ;
+		ArrayList<Integer> rets = new ArrayList<>() ;
+		for(int i = 0 ; i <  n ; i ++)
+		{
+			int s = jarr.getInt(i) ;
+				rets.add(s) ;
+		}
+		return rets ;
+	}
+	
 //	public static ArrayList<String> optJOIntList(JSONObject jo,String key)
 //	{
 //		JSONArray jarr = jo.optJSONArray(key) ;

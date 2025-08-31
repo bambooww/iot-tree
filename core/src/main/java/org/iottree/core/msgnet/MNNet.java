@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import javax.script.ScriptException;
 
-import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.msgnet.cxt.MNContext;
 import org.iottree.core.msgnet.nodes.NS_OnFlowEvt;
@@ -204,18 +202,25 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return id2module.get(id) ;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T extends MNBase> List<T> findItemByTpMark(Class<T> c,String mark)
 	{
 		ArrayList<T> ret = new ArrayList<>() ;
 		for(MNNode n:this.id2node.values())
 		{
-			if(c.isInstance(n))
-				ret.add((T)n) ;
+			if(!c.isInstance(n))
+				continue ;
+			if(Convert.isNotNullEmpty(mark) && !n.hasMark(mark))
+				continue ;
+			ret.add((T)n) ;
 		}
 		for(MNModule n:this.id2module.values())
 		{
-			if(c.isInstance(n))
-				ret.add((T)n) ;
+			if(!c.isInstance(n))
+				continue;
+			if(Convert.isNotNullEmpty(mark) && !n.hasMark(mark))
+				continue ;
+			ret.add((T)n) ;
 		}
 		return ret;
 	}

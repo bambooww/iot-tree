@@ -74,16 +74,16 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		{
 			return subDev;
 		}
-
+		
 		@Override
 		public void run()
 		{
 			
-			long drv_int = subDev.getOrDefaultPropValueLong("dev", "dev_intv", 100);
-			if (drv_int < 0)
-				drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
-			if (drv_int < 0)
-				drv_int = 1000;
+//			long drv_int = subDev.getOrDefaultPropValueLong("dev", "dev_intv", 100);
+//			if (drv_int < 0)
+//				drv_int = DevDriver.this.getBelongToCh().getDriverIntMS();
+//			if (drv_int < 0)
+//				drv_int = 1000;
 			
 			//subDev.getOrDefaultPropValueLong("", itemn, defv)
 			try
@@ -93,7 +93,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 				{
 					try
 					{
-						sleep(drv_int);
+						sleep(1);
 						
 						if(!this.connPt.isConnReady())
 							this.connPt.RT_checkConn();

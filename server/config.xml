@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<iottree debug="true" title="IOTTree Server" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" >
+<iottree debug="true" title="生产线监控系统" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" 
+	nav_bk_color="#ced9e1" nav_icon_color="rgb(73, 83, 89)" nav_txt_color="#333333" >
 
  	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web" >
  	 	<webapp name="admin" />
@@ -11,9 +12,11 @@
 		<webapp name="opencharts" path="../../opencharts" />
 		<webapp name="msg_net" path="../../msg_net" />
 		<webapp name="_sys" />
-		<webapp name="main" main="true"/>
-		<!-- 
+		<webapp name="_templet" />
+		<webapp name="ent" main="true"/>
 		
+		<!-- 
+		<webapp name="main"/>
 		<webapp name="main" path="main/main.war" /> 
 		
 		 -->
@@ -30,6 +33,17 @@
 	<log>
 		<ctrl name="xx.xx" default_level="trace" />
 	</log>
+	
+	<auth login_session_timeout="30" 
+		authorization_is_login="true"
+		admin_roles="manager,"
+		debug_cookie_only="true"
+
+		login_page="/ent/login/login.jsp"
+		login_redirect_page="/ent/index.jsp"
+		is_force_redirect="true"
+		desc="debug_cookie_only为true的情况是用户IE不关闭就一直登陆">
+	</auth>
 	
 	<access_limit enable="true">
 	    <ip_prefix ip="127.0.0.1"/>
@@ -56,5 +70,48 @@
 	<run_as_station enabled="true" station_id="demo_station" station_title="Demo Station"
 		platform="192.168.0.18" port="9090"  key="1232213123" />
 	 -->
+	
+	<nav name="ent_sys" title="IOT-Tree Enterprise" icon="images/monitor.gif"
+		refresh_msg_url="" 
+		sub_nav_url="" 
+		right=""  home_page="/_portal/main/home"
+		order="100">
+		
+		<sub_nav name="home" title="首页"  icon="fa fa-home" color="#00a8e0" notroles="small_user"  url="/_portal/main/home" />
+			<sub_nav name="dev_rt_mon" title="监控实时画面"  icon="fa-solid fa-hard-drive" color="#00a8e0" notroles="small_user"  url="/ent/devices/devices_mon_main.jsp" >
+		</sub_nav>
+		
+		<sub_nav name="prod_test" title="生产检测"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  >
+			<sub_nav name="prod_test_stat" title="检测实时统计"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  url="/ent/datastat/rt_prod_test_stat.jsp" />
+			<sub_nav name="json2tb" title="检测记录"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  url="/ent/datarec/json2tb_main.jsp" />
+		</sub_nav>
+		
+		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datarec/prod_rec.jsp" ></sub_nav>
+		<!--
+		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_bar.jsp?confn=pro_stat" ></sub_nav>
+		<sub_nav name="pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_pron" ></sub_nav> 
+		<sub_nav name="stat_cost" title="能耗分析"  icon="fa fa-area-chart" color="#e43020" notroles="small_user"  >
+			<sub_nav name="cost_que" title="能耗查询"  icon="fa fa-area-chart" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_cost" />
+			<sub_nav name="cost_compare" title="能耗对比分析"  icon="fa fa-area-chart" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_compare.jsp?tp=dvalue_cost" />
+		</sub_nav>
+		 -->
+		<sub_nav name="pro_spc" title="SPC"  icon="fa-solid fa-wave-square" color="#e43020" notroles="small_user"  url="/ent/datarec/spc_main.jsp" ></sub_nav>
+		<sub_nav name="alarm_mgr" title="报警记录"  icon="fa fa-bell" color="#00a8e0" notroles="small_user"  url="/ent/datarec/alarm_main.jsp">
+		</sub_nav>
+		<sub_nav name="mon_data_ana" title="采集数据分析"  icon="fa fa-chart-line" color="#e43020" notroles="small_user" >
+			<sub_nav name="mon_data_raw" title="原始数据分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_raw.jsp" />
+			<sub_nav name="mon_data_aggr" title="聚合分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_aggr.jsp" />
+			<sub_nav name="mon_data_aggr_c" title="聚合比对分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_aggr_c.jsp" />
+		</sub_nav>
+		
+		<sub_nav name="sy_mgr" title="设置"  icon="fa fa-cog" color="#e68367" roles="root">
+				<sub_nav name="sy_mgr_3_1" title="用户管理" icon="fa fa-user" url="/admin/user/auth_main.jsp" target="main" roles="root"/>
+				<sub_nav name="sy_mgr_portal" title="Portal配置" icon="fa-solid fa-shapes" url="/admin/portal/portal_main.jsp" target="main" roles="root"/>
+				<sub_nav name="sy_portal_temp" title="Portal模板" icon="fa-solid fa-shapes" url="/admin/portal/templet_main.jsp" target="main" roles="root"/>
+				<sub_nav name="pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_pron" />
+				<sub_nav name="log_mgr" title="日志控制" icon="fa fa-gear" url="/admin/util/log_mgr.jsp" target="main" roles="root"/>
+				<sub_nav name="iot_tree" title="设备接入"  icon="fa fa-server" color="#e43020" notroles="small_user"  url="/ent/device/device_main.jsp"  roles="root" />
+		</sub_nav>
+	</nav>
 	
 </iottree>

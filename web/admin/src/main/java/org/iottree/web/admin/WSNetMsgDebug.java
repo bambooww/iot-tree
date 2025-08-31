@@ -36,7 +36,7 @@ public class WSNetMsgDebug extends WSMsgNetRoot
 				@Override
 				public boolean checkWSRight(HttpSession session)
 				{
-return					LoginUtil.checkAdminLogin(session) ;
+						return	LoginUtil.checkUserLogin(session) ;
 				}
 	};
 	

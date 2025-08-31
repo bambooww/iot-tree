@@ -119,7 +119,7 @@ for(UANodeOCTags ntags:ntags_list)
 		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" tagid="<%=tagid %>" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
-  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>"  sub="<%=subpath %>" <%=chked %>/></td>
+  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>" patht="<%=patht %>"  sub="<%=subpath %>" <%=chked %>/></td>
   <td><%=pathn %></td>
   <td><%=addr %></td>
   <td><%=patht %></td>
@@ -204,6 +204,21 @@ function get_selected_tagpaths()
 		{
 			let tagid = $(this).attr('path') ;
 			ret.push(tagid) ;
+		}
+	});
+	return ret ;
+}
+
+function get_selected_tags()
+{
+	let ret=[] ;
+	$(".chk").each(function(){
+		if($(this).prop("checked"))
+		{
+			let tagid = $(this).attr('tagid') ;
+			let tagp = $(this).attr('path') ;
+			let patht= $(this).attr('patht') ;
+			ret.push({tagid:tagid,tagp:tagp,tagt:patht}) ;
 		}
 	});
 	return ret ;

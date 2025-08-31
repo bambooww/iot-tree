@@ -650,7 +650,11 @@ function edit_alert(idx)
 	let dd = null;
 	if(idx>=0)
 		dd = alerts_dd[idx] ;
-	dlg.open("./tag_evt_edit.jsp",	{title:tt,w:'600px',h:'400px',dd:dd},
+	
+	 let cur_tagt = $("#title").val() ;
+	 let cur_tagvt = $("#vt").val() ;
+	  
+	dlg.open("./tag_evt_edit.jsp?",	{title:tt,w:'600px',h:'400px',dd:dd,tag_v:{t:cur_tagt,vt:cur_tagvt,idx:idx||-1}},
 			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)

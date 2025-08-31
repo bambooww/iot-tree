@@ -44,13 +44,13 @@ for(MNNet n:nets)
 visibility: visible;
  }
  
-.lib_item
+.net_item
 {
 position:relative;
-	height:35px;
-	border:1px solid;
+	height:30px;
+	border:1px solid;border-radius:5px;
 	border-color: #499ef3;
-	margin:5px;
+	margin:5px;cursor:pointer;
 	white-space: nowrap;
 	display:inline-block;
 	vertical-align:middle;
@@ -64,7 +64,7 @@ position:relative;
 
 </style>
 <body marginwidth="0" marginheight="0" style="overflow: hidden;">
- <div style="overflow:auto;">
+ <div id="ccc" style="overflow:auto;width:100%;height:100%;border:0px solid;">
 <%
 int cc = 0 ;
 for(MNNet net:nets)
@@ -83,8 +83,8 @@ for(MNNet net:nets)
 			//tt = "<w:g>flow_is_not_en</w:g>";
 		}
 %>
-	<span class="lib_item btn_sh_c"  style="<%=borderc%>" title="<%=tt%>">
-		<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> &nbsp;<a class="text title" href="javascript:open_net('<%=net.getId()%>','<%=net.getTitle() %>')" ><%=net.getTitle() %></a>
+	<span class="net_item btn_sh_c"  style="<%=borderc%>" title="<%=tt%>">
+		&nbsp;<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> <a class="text title" onclick="javascript:open_net('<%=net.getId()%>','<%=net.getTitle() %>')" ><%=net.getTitle() %></a>
 		
 		<span class="btn_sh">
            <span class="bitem" onclick="add_or_edit_flow('<%=net.getId()%>')" title="<w:g>edit</w:g>">
@@ -105,7 +105,7 @@ for(MNNet net:nets)
 <%
 }
 %>
-	<span class="lib_item" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></span>
+	<button class="net_item" style="position:absolute;right:10px;top:0px;width:40px;" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></button>
 </div>
 <script>
 
@@ -176,6 +176,19 @@ function flow_del(id)
 	});
 }
 
+/*
+function resize_h()
+{
+	var h = $(window).height();
+	$("#ccc").css("height",h+"px");
+}
+
+$(window).resize(function(){
+	resize_h();
+});
+
+resize_h()
+*/
 </script>
 
 </body>

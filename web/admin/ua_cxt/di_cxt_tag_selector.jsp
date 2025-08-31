@@ -16,6 +16,9 @@ if(!Convert.checkReqEmpty(request, out, "path"))
 	return;
 boolean bind_tag_only = "true".equalsIgnoreCase(request.getParameter("bind_tag_only")) ;
 
+String last_search_txt = (String)session.getAttribute("_di_tag_sel_stxt") ;
+if(last_search_txt==null)
+	last_search_txt = "" ;
 
 String val = request.getParameter("val") ;
 if(val==null)
@@ -78,7 +81,9 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 %>
 <span id="updt"></span><span id="log_inf"></span>
 <div style="float:left;overflow: auto;height: 90%;width:70%">
-Tags  <input id="search_txt" style="width:20%;"  onkeydown="on_search_key()"/> <button onclick="on_search()"><i class="fa fa-search"></i></button>
+Tags  <input id="search_txt" style="width:20%;" value="<%=last_search_txt %>" onkeydown="on_search_key()"/> 
+	<button onclick="on_search()"><i class="fa fa-search"></i></button>
+	<button onclick="on_search(false)"><i class="fa-solid fa-eraser"></i></button>
 <table width='100%' border='1' height0="100%">
  <tr height0='20'>
   <td width='2%'></td>
@@ -150,7 +155,8 @@ var path="<%=path%>" ;
 var rowbgcolor = '#ffffff';
 var selVal = "<%=val%>" ;
 var bind_tag_only = <%=bind_tag_only%>;
-var search_txt = "" ;
+var search_txt = "<%=last_search_txt%>" ;
+var cur_sel_tag = null ;
 
 function mouseover(sel)
 {
@@ -173,9 +179,12 @@ function update_list()
 
 update_list();
 
-function on_search()
+function on_search(inp)
 {
-	search_txt = $("#search_txt").val()||"" ;
+	if(inp===false)
+		$("#search_txt").val(search_txt = "") ;
+	else
+		search_txt = $("#search_txt").val()||"" ;
 	update_list();
 }
 
@@ -183,7 +192,6 @@ function on_search_key()
 {
 	if(event.keyCode==13)
 		on_search();
-		
 }
 
 function clk_sel(sel)
@@ -198,6 +206,16 @@ function clk_sel(sel)
 	}
 	document.getElementById("cb_"+id).checked=true;
 	selVal = id ;
+	let ele = $(sel) ;
+	let tagp = ele.attr('tagp');
+	let tagt = ele.attr('tagt');
+	let tagid = ele.attr('tagid');
+	cur_sel_tag = {tagid:tagid,tagp:tagp,tagt:tagt} ;
+}
+
+function get_select_tag()
+{
+	return cur_sel_tag;
 }
 
 function get_val()

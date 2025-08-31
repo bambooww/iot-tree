@@ -38,6 +38,11 @@
 	
 	String tp = item.getTPFull() ;
 	String title = item.getTitle() ;
+	
+	String mark_str = "" ;
+	List<String> marks = item.getMarks();
+	if(marks!=null && marks.size()>0)
+		mark_str = Convert.combineStrWith(marks, ',') ;
 
 	String res_name = item.getMNResName() ;
 	if(res_name==null)
@@ -146,7 +151,9 @@ function on_init_pm_ok()
 	if(typeof(get_pm_size)=='function')
 	{
 		let wh = get_pm_size() ;
-		dlg.resize_to(wh.w,wh.h+100) ;
+		if(wh.w<800)
+			wh.w = 800;
+		dlg.resize_to(wh.w,wh.h+110) ;
 	}
 	
 	if(typeof(set_pm_jo)=='function')
@@ -186,6 +193,7 @@ function do_submit(cb)
 	}
 	
 	let tt = $('#title').val();
+	let marks = $("#marks").val();
 	let ben = $("#enable").prop("checked") ;
 	let res_name = $("#res_name").val() ;
 	if(typeof(pmjo) == "string")
@@ -193,7 +201,7 @@ function do_submit(cb)
 		cb(false,pmjo) ;
 		return ;
 	}
-	let rr = {title:tt,enable:ben,pm_jo:pmjo,res_name:res_name};
+	let rr = {title:tt,enable:ben,pm_jo:pmjo,res_name:res_name,marks:marks};
 	cb(true,rr);
 }
 
@@ -275,11 +283,15 @@ if(can_save)
 <form class="layui-form"  onsubmit="return false;">
   <div class="layui-form-item">
     <label class="layui-form-label"><w:g>title</w:g>:</label>
-    <div class="layui-input-inline" style="width:46%;">
+    <div class="layui-input-inline" style="width:300px;">
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
     </div>
-    <div class="layui-input-inline" style="width:20%;">
-      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /> <w:g>enable</w:g>
+    <div class="layui-input-inline" style="width:80px;">
+      <w:g>enable</w:g><input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> />
+    </div>
+    <label class="layui-form-mid"><w:g>mark</w:g>:</label>
+    <div class="layui-input-inline" style="width:170px;">
+      <input type="text" class="layui-input" lay-skin="primary" id="marks"  value="<%=mark_str %>" />
     </div>
   </div>
 <%

@@ -131,6 +131,17 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return desc ;
 	}
 	
+	public List<String> getMarks()
+	{
+		return this.marks ;
+	}
+	
+	public boolean hasMark(String mark)
+	{
+		if(this.marks==null)
+			return false;
+		return this.marks.contains(mark) ;
+	}
 	
 	public MNNet getBelongTo()
 	{
@@ -255,6 +266,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		setParamJO(pm_jo);
 		this.bEnable = jo.optBoolean("enable",true) ;
 		this.title = jo.optString("title","") ;
+		this.marks = Convert.splitStrWith(jo.optString("marks"), ",|") ;
 		this.desc = jo.optString("desc","") ;
 		this.resName = jo.optString("res_name") ;
 		//other may be icon color etc
@@ -274,6 +286,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		if(Convert.isNullOrEmpty(tt))
 			tt = this.getTPTitle() ;
 		jo.putOpt("title", tt) ;
+		jo.putOpt("marks", Convert.combineStrWith(this.marks, ',')) ;
 		jo.putOpt("desc", desc);
 		jo.put("_tp", getTPFull()) ;
 		jo.put("tpt", getTPTitle()) ;
@@ -326,6 +339,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.id = jo.getString("id") ;
 		this.title = jo.optString("title") ;
 		this.desc = jo.optString("desc") ;
+		this.marks = Convert.splitStrWith(jo.optString("marks"), ",|") ;
 		this.x = jo.optFloat("x",0) ;
 		this.y = jo.optFloat("y",0) ;
 		this.bEnable = jo.optBoolean("enable",true) ;

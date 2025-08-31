@@ -2,6 +2,7 @@ package org.iottree.core.msgnet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -242,6 +243,46 @@ public abstract class MNNode extends MNBase
 				return true ;
 		}
 		return false;
+	}
+
+	/**
+	 * find  SubsequentNodes by type
+	 * @param <T>
+	 * @param c
+	 * @return
+	 */
+	public final <T extends MNNode> List<T> findSubsequentNodes(Class<T> c)
+	{
+		ArrayList<T> rets = new ArrayList<>() ;
+		HashSet<MNNode> ignore = new HashSet<>() ;
+		ignore.add(this) ;
+		findSubsequentNodes(this,c,rets,ignore) ;
+		return rets ;
+	}
+	
+	private static <T extends MNNode> void findSubsequentNodes(MNNode curnd,Class<T> c,List<T> rets,HashSet<MNNode> ignore)
+	{
+		List<MNNode> nds = curnd.getOutConnNodes() ;
+		if(nds==null||nds.size()<=0)
+			return ;
+		
+		ArrayList<MNNode> nextnds = new ArrayList<>() ;
+		for(MNNode nd:nds)
+		{
+			if(ignore.contains(nd))
+				continue;
+			
+			if(c.isInstance(nd))
+				rets.add((T)nd) ;
+			
+			nextnds.add(nd) ;
+		}
+		
+		ignore.addAll(nds) ;
+		for(MNNode nd:nextnds)
+		{
+			findSubsequentNodes(nd,c,rets,ignore) ;
+		}
 	}
 	
 	public final MNConn setOutConn(int idx,String to_nid) throws MNException

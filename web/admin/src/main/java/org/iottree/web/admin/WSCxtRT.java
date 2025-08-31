@@ -50,7 +50,7 @@ public class WSCxtRT extends WSRoot
 			@PathParam(value = "nodeid") String nodeid,EndpointConfig config) throws Exception //
 	{
 		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
-		if(!LoginUtil.checkAdminLogin(hs))
+		if(!LoginUtil.checkUserLogin(hs))
 		{
 			session.close();
 			return ;

@@ -40,7 +40,7 @@ dlg.resize_to(650,500);
 </style>
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" action="" onsubmit="return false;">
  <div class="layui-form-item"  id="dt_tp">
     <label class="layui-form-label"><wbt:g>alert</wbt:g>/<wbt:g>evt</wbt:g> <wbt:g>type</wbt:g></label>
     <div class="layui-input-inline" style="width: 180px;">
@@ -85,9 +85,10 @@ for(int k = 1 ; k <= 5 ; k ++)
 	     </select>
 	  </div>
     <div class="layui-form-mid"><wbt:g>enable</wbt:g></div>
-	  <div class="layui-input-inline" style="width: 100px;">
+	  <div class="layui-input-inline" style="width: 50px;">
 	    <input type="checkbox" id="en" name="en"  title="Enable or Not" lay-skin="switch"> 
 	  </div>
+	  <div class="layui-form-mid" id="btn_auto_c" style="display:none"><button class="layui-btn layui-btn-xs layui-btn-primary" onclick="auto_input()">Auto</button></div>
 </div>
 
 <div class="layui-form-item">
@@ -158,6 +159,16 @@ if(alertdd==null||alertdd==undefined)
 	alertdd={tp:1,group:0,lvl:3,param1:"0",en:true};
 else
 	alertid = alertdd.id ;
+var cur_tag_v = dlg.get_opener_opt("tag_v"); //{t:cur_tagt,vt:cur_tagvt}
+if(cur_tag_v && cur_tag_v.idx<0)
+{//first edit
+	if(cur_tag_v.vt==1)
+	{//bool
+		$("#btn_auto_c").css("display","") ;
+	}
+	//console.log("first",cur_tag_v) ;
+}
+
 var path=node_path ;
 
 layui.use('form', function(){
@@ -184,6 +195,17 @@ layui.use('form', function(){
 
 	  form.render();
 });
+
+function auto_input()
+{
+	if(cur_tag_v.vt==1)
+	{
+		$("#param1").val(1) ;
+		let curpp = $("#prompt").val();
+		if(!curpp)
+			$("#prompt").val(cur_tag_v.t||"") ;
+	}
+}
 
 function get_val(n,defv)
 {

@@ -2,6 +2,7 @@ package org.iottree.core.ws;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,7 +81,7 @@ public abstract class WSRoot
 		public boolean checkRight()
 		{
 			HttpSession hs = WebSocketConfig.getHttpSession(config);
-			return LoginUtil.checkAdminLogin(hs);
+			return LoginUtil.checkUserLogin(hs);
 		}
 
 		public UAPrj getPrj()

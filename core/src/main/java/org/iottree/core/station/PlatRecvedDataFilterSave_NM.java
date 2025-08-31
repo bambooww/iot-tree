@@ -12,6 +12,7 @@ import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.msgnet.IMNContainer;
+import org.iottree.core.msgnet.IMNTagFilter;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
@@ -29,7 +30,7 @@ import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 
-public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
+public class PlatRecvedDataFilterSave_NM  extends MNNodeMid implements IMNTagFilter
 {
 	/**
 	 * all tagpath under cxtNodePath 
@@ -153,6 +154,25 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 	public ArrayList<String> getTagPaths()
 	{
 		return this.tagPaths ;
+	}
+
+	@Override
+	public List<UATag> getFilterTags()
+	{
+		if(this.tagPaths==null)
+			return null ;
+		UAPrj prj = this.getPrj() ;
+		if(prj==null)
+			return null ;
+		ArrayList<UATag> rets = new ArrayList<>() ;
+		for(String p:this.tagPaths)
+		{
+			UATag t = prj.getTagByPath(p) ;
+			if(t==null)
+				continue ;
+			rets.add(t) ;
+		}
+		return rets;
 	}
 	
 	public InfluxDB_Measurement getInfluxDB_Measurement()
@@ -338,4 +358,6 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid
 		
 		super.RT_renderDiv(divblks);
 	}
+
+
 }

@@ -16,7 +16,7 @@
 	switch(op)
 	{
 	case "login":
-		if(LoginUtil.doLogin(request, user, psw,lan))
+		if(LoginUtil.doLogin(request,response, user, psw,lan))
 		{
 			out.print("succ") ;
 		}
@@ -26,11 +26,11 @@
 		}
 		break ;
 	case "logout":
-		LoginUtil.doLogout(request) ;
+		LoginUtil.doLogout(request,response) ;
 		out.print("ok") ;
 		break ;
 	case "chg_psw":
-		if(!LoginUtil.checkAdminLogin(request))
+		if(!LoginUtil.checkUserLogin(request))
 		{
 			out.print("no current login inf") ;
 			return ;
@@ -53,7 +53,7 @@
 	case "set_session_lan":
 		if(!Convert.checkReqEmpty(request,  out, "lan"))
 			return ;
-		LoginUtil.SessionItem si = LoginUtil.getAdminLoginSession(session) ;
+		LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
 		if(si==null)
 		{
 			out.print("no login session") ;

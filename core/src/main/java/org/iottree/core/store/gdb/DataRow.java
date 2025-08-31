@@ -662,6 +662,61 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 		}
 	}
 	
+	public static void  doInsertDB(List<DataRow> rows,Connection conn,String tablename,String[] colnames) throws SQLException
+	{
+		StringBuilder insertsql = new StringBuilder() ;
+		insertsql.append("insert into ").append(tablename);
+		StringBuilder lstr = new StringBuilder(),rstr = new StringBuilder() ;
+		lstr.append("(").append(colnames[0]) ;
+		rstr.append("(?");
+		
+		for(int i = 1 ; i < colnames.length ; i ++)
+		{
+			lstr.append(",").append(colnames[i]) ;
+			rstr.append(",?") ;
+		}
+		lstr.append(")");
+		rstr.append(")");
+		
+		insertsql.append(lstr).append("values").append(rstr) ;
+		
+		boolean old_autoc = conn.getAutoCommit() ;
+		try(PreparedStatement ps = conn.prepareStatement(insertsql.toString()) ;)
+		{
+			//System.out.println(insertsql.toString()) ;
+			conn.setAutoCommit(false);
+			for(DataRow row:rows)
+			{
+				for(int i = 0 ; i < colnames.length ; i ++)
+				{
+					Object tmpo = prepareObjVal(row.getValue(colnames[i]));
+					if (tmpo != null)
+					{
+						ps.setObject(i+1, tmpo);
+					}
+					else
+					{
+						int sqlt = row.belongToDT.getColumn(colnames[i]).getJdbcType();//JavaColumnInfo.Class2SqlType(c)
+						if (sqlt == java.sql.Types.BLOB)// for sqlserver driver
+							// NullPointer error
+							ps.setObject(1 + i, new byte[0]);
+						else
+							ps.setNull(1 + i, sqlt);
+					}
+				}
+				ps.addBatch();
+			}
+			
+			ps.executeBatch() ;
+			conn.commit();
+			// return ps.executeUpdate() ;
+		}
+		finally
+		{
+			conn.setAutoCommit(old_autoc);
+		}
+	}
+	
 	public int doUpdateDB(Connection conn,String tablename,String uniquecol,String[] cols) throws SQLException
 	{
 		StringBuilder upsql = new StringBuilder() ;

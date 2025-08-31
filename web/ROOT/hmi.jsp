@@ -20,6 +20,15 @@
    if(Convert.isNullOrEmpty(user))
 	   user="" ;
    
+   String path_head = request.getParameter("path_head") ;// for nginx proxy_pass supporting
+   if(Convert.isNullOrEmpty(path_head))
+	   path_head="" ;
+   else
+   {
+	   if(!path_head.startsWith("/"))
+		   path_head = "/"+path_head;
+   }
+		   
    boolean b_zoom_show = !"false".equals(request.getParameter("zoom")) ;
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
@@ -135,8 +144,9 @@
  --%>
  <jsp:include page="head.jsp">
  	<jsp:param value="true" name="oc_min"/>
+ 	<jsp:param value="<%=path_head %>" name="path_head"/>
  </jsp:include>
- <script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
+ <script src="<%=path_head %>/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
 <style>
 body {
 	margin: 0px;
@@ -780,7 +790,7 @@ if(b_his)
 		
 		String icon = uii.getIconUrl() ;
 		if(Convert.isNullOrEmpty(icon))
-			icon = "/_iottree/res/ui_def.png" ;
+			icon = path_head+"/_iottree/res/ui_def.png" ;
 %>
 	<div class="ui_item" uiid="<%=uiid%>" uitt="<%=tt %>" ui_url="<%=url%>" ui_w="<%=w %>" ui_h="<%=h%>">
 	    <img src="<%=icon %>" />
@@ -802,6 +812,8 @@ if(b_his)
 <script>
 var show_tick = false;
 var prjid = "<%=prjid%>" ;
+var path_head ="<%=path_head%>";
+
 document.addEventListener('touchmove', function (event) {
 	    event.preventDefault();
  }, false);
@@ -923,8 +935,8 @@ function init_iottpanel()
 {
 	oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
 	hmiModel = new oc.hmi.HMIModel({
-		temp_url:"/hmi_ajax.jsp?op=load&path="+path,
-		comp_url:"/comp_ajax.jsp?op=comp_load",
+		temp_url:`\${path_head}/hmi_ajax.jsp?op=load&path=\${path}`,
+		comp_url:`\${path_head}/comp_ajax.jsp?op=comp_load`,
 		hmi_path:path,hmi_user:hmi_user
 	});
 	
@@ -1191,9 +1203,9 @@ var last_blink=-1 ;
 
 function ws_conn()
 {
-	var url = 'ws://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
+	var url = 'ws://' + window.location.host +path_head+ '/_ws/hmi/'+prj_name+"/"+hmi_id;
 	if('https:' == document.location.protocol)
-		url = 'wss://' + window.location.host + '/_ws/hmi/'+prj_name+"/"+hmi_id;
+		url = 'wss://' + window.location.host +path_head+ '/_ws/hmi/'+prj_name+"/"+hmi_id;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {
@@ -1431,7 +1443,7 @@ $(document).ready(function()
 
 function cxt_rt()
 {
-	send_ajax("/hmi_ajax.jsp",{path:path,tp:"rt"},(bsucc,ret)=>{
+	send_ajax(path_head+"/hmi_ajax.jsp",{path:path,tp:"rt"},(bsucc,ret)=>{
 		if(!bsucc)
 			return ;
 		if(typeof(ret) == 'string')
@@ -1463,7 +1475,7 @@ function hide_alerts()
 function show_alerts_his()
 {
 	event.stopPropagation();
-	let u = "/prj_evt_alert_sel.jsp?prjid="+prjid;//"/prj_alert_his.jsp?prjid="+prjid;
+	let u = path_head+"/prj_evt_alert_sel.jsp?prjid="+prjid;//"/prj_alert_his.jsp?prjid="+prjid;
 	dlg.open(u,{title:"<lan:g>alert,his</lan:g>"},
 			['<lan:g>close</lan:g>'],
 			[
@@ -1496,7 +1508,7 @@ function rec_tag_show(tagpath,title)
 {
 	if(!prjid)
 		return ;
-	dlg.open_win("/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
+	dlg.open_win(path_head+"/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
 			{title:"<lan:g>tag,rec,his</lan:g> - "+title,w:960,h:650,wh_auto:true},
 			[],
 			[]);
@@ -1505,7 +1517,7 @@ function rec_tag_show(tagpath,title)
 function show_data_his(outtp,outid,tagp,title)
 {
 	event.stopPropagation();
-	dlg.open_win("/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
+	dlg.open_win(path_head+"/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
 			{title:"<lan:g>data,his</lan:g> - "+title,w:960,h:650},
 			[],
 			[]);

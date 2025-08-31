@@ -123,17 +123,34 @@ function sel_tag(ele,rw)
 	let w_only = "" ;
 	if(rw=='r')
 	{
-//		seltagids = out_tagids ;
 	}
 	else if(rw=='w')
 	{
-		//seltagids = in_tagids ;
 		w_only = "true" ;
 	}
-		
 	else
 		return ;
 	
+	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?w_only="+w_only+"&multi=false&path="+prjpath,//+"&val="+tmpv,
+			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagids:seltagids},
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					let ret = dlgw.get_select_tag();
+					if(!ret)
+						$(ele).val("") ;
+					else
+						$(ele).val(ret.tagp) ;
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+	
+	/*
 	dlg.open("../ua_cxt/cxt_tag_selector.jsp?w_only="+w_only+"&multi=false&path="+prjpath,//+"&val="+tmpv,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagids:seltagids},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
@@ -152,6 +169,7 @@ function sel_tag(ele,rw)
 					dlg.close();
 				}
 			]);
+ */
 }
 
 function add_rule(jo)

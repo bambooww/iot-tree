@@ -72,6 +72,7 @@
 		/>
 
 	<dd_node id="1" name="tag_alert_trigger" name_cn="标签事件/报警触发器" name_en="Tags Event/Alert Trigger" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tag_filter_tsdb" name_cn="标签过滤存入时序数据库" name_en="Tags Filter Save To TSDB" desc_cn="支持InfluxDB" desc_en="Supported InfluxDB"/>
 
 	<dd_node id="1" name="http_client" name_cn="HTTP客户端" name_en="HTTP Client"
 		desc_cn="通过特定的URL，基于Http协议访问提交请求并获取应答"

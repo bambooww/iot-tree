@@ -751,6 +751,8 @@ if(ins.isAutoStart())
 					       <a href="javascript:log_ctrl()" ><wbt:lang>log_ctrl</wbt:lang></a>&nbsp;
 					       <a href="javascript:cer_mgr()" ><wbt:lang>cer</wbt:lang></a>&nbsp;
 					       <a href="javascript:conn_platform()" ><wbt:lang>conn_platform</wbt:lang></a>
+					       <a href="javascript:window.open('./portal/portal_main.jsp')" >Portal</a>
+					       <a href="javascript:window.open('./portal/templet_main.jsp')" >Portal Templet</a>
 					     </div>
 					</div>
 				</div>

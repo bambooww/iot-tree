@@ -34,13 +34,15 @@ public class S7Block
 	
 	List<S7Addr> addrs = null ;
 	
-	int blockSize = 32 ;
+	int blockSize = S7Msg.PDU_DEFAULT_LEN ;
 	
 	long scanInterMS = 100 ;
 	
 	MemTable<MemSeg8> memTb = new MemTable<>(8,65536*2) ;
 	
-	transient HashMap<S7Msg,List<S7Addr>> cmd2addr = new HashMap<>() ;
+	transient HashMap<S7Msg,List<S7Addr>> readCmd2addr = new HashMap<>() ;
+	
+	private ArrayList<S7Msg> readCmds = new ArrayList<>() ;
 	
 	private int failedSuccessive = 3 ;
 	
@@ -78,6 +80,7 @@ public class S7Block
 		this.addrs = addrs ;
 		this.blockSize = block_size ;
 		this.scanInterMS = scan_inter_ms;
+		//this.interReqMs = req_intv_ms ;
 		//this.failedSuccessive = failed_successive;
 	}
 	
@@ -144,7 +147,8 @@ public class S7Block
 			curcmd = new S7MsgRead().withParam(memTp, dbNum, cur_reg,regnum)
 					.withScanIntervalMS(this.scanInterMS);//(this.getFC(),this.scanInterMS,
 			curcmd.init(drv);
-			cmd2addr.put(curcmd, curaddrs);
+			readCmd2addr.put(curcmd, curaddrs);
+			readCmds.add(curcmd) ;
 				
 			cur_reg = regp ;
 			curaddrs = new ArrayList<>() ;
@@ -166,10 +170,11 @@ public class S7Block
 			curcmd.init(drv);
 			//curcmd.setRecvTimeout(reqTO);
 			//curcmd.setRecvEndTimeout(recvTO);
-			cmd2addr.put(curcmd, curaddrs);
+			readCmd2addr.put(curcmd, curaddrs);
+			readCmds.add(curcmd) ;
 		}
 		
-//		for(S7Msg mc:cmd2addr.keySet())
+//		for(S7Msg mc:readCmd2addr.keySet())
 //		{
 //			mc.withRecvTimeout(reqTO).withRecvEndTimeout(recvTO);
 //			if(log.isDebugEnabled())
@@ -278,6 +283,33 @@ public class S7Block
 		return r ;
 	}
 	
+	private int RT_runCmdIdx = 0 ;
+	
+	/**
+	 * 0=not run  1=ok -1=err
+	 * @param conn
+	 * @return
+	 */
+	public int runNextCmd(S7TcpConn conn)
+	{
+		try
+		{
+			this.runWriteCmdAndClear(conn);
+		}
+		catch(Exception ee)
+		{
+			if(log.isErrorEnabled())
+				log.error("runCmds write err", ee);
+			
+		}
+		
+		S7Msg cmd = this.readCmds.get(RT_runCmdIdx) ;
+		RT_runCmdIdx ++ ;
+		if(RT_runCmdIdx>=this.readCmds.size())
+			RT_runCmdIdx = 0 ;
+		return runReadCmd(conn,cmd) ;
+	}
+	
 //	public void runCmdsErr()
 //	{
 //		runReadCmdsErr() ;
@@ -341,49 +373,61 @@ public class S7Block
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
 		boolean ret = true;
-		for(S7Msg mc:cmd2addr.keySet())
+		for(S7Msg mc:readCmd2addr.keySet())
 		{
-			if(!mc.tickCanRun())
+			int r = runReadCmd(conn,mc) ;
+			if(r==0)
 				continue ;
-			
-			S7MsgRead cmdr = (S7MsgRead)mc ;
 			Thread.sleep(this.interReqMs);
-			
-			List<S7Addr> addrs = cmd2addr.get(mc) ;
-			
-			conn.clearInputStream(50);
-			byte[] retbs = null;
-			
-			try
-			{
-				cmdr.processByConn(conn);
-				//cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
-				retbs = cmdr.getReadRes() ;
-			}
-			catch(Exception e)
-			{
-				if(S7Msg.log.isDebugEnabled())
-					S7Msg.log.error("",e);
-			}
-			//retbs = resp.getRetData() ;
-			
-			if(retbs==null)
-			{
-				if(chkSuccessiveFailed(true))
-				{
-					setAddrError(addrs);
-					ret = false;
-				}
-				continue ;
-			}
-			
-			int offsetbs = cmdr.getPos();
-			//int offsetbs = cmdr.getOffsetBytes() ;
-			memTb.setValBlock(offsetbs, retbs.length, retbs, 0);
-			transMem2Addrs(addrs);
-			chkSuccessiveFailed(false) ;
+			if(r<0)
+				ret = false;
 		}
 		return ret ;
+	}
+	
+	private int runReadCmd(S7TcpConn conn,S7Msg mc)
+	{
+		int ret = 0 ; //not run
+		if(!mc.tickCanRun())
+			return ret ;
+		
+		S7MsgRead cmdr = (S7MsgRead)mc ;
+		//Thread.sleep(this.interReqMs);
+		
+		List<S7Addr> addrs = readCmd2addr.get(mc) ;
+		
+		conn.clearInputStream(50);
+		byte[] retbs = null;
+		
+		try
+		{
+			cmdr.processByConn(conn);
+			//cmdr.doCmd(ep.getInputStream(),ep.getOutputStream());
+			retbs = cmdr.getReadRes() ;
+		}
+		catch(Exception e)
+		{
+			if(S7Msg.log.isDebugEnabled())
+				S7Msg.log.error("",e);
+		}
+		//retbs = resp.getRetData() ;
+		
+		if(retbs==null)
+		{
+			if(chkSuccessiveFailed(true))
+			{
+				setAddrError(addrs);
+				ret = -1;
+			}
+			return ret ;
+		}
+		
+		int offsetbs = cmdr.getPos();
+		//int offsetbs = cmdr.getOffsetBytes() ;
+		memTb.setValBlock(offsetbs, retbs.length, retbs, 0);
+		transMem2Addrs(addrs);
+		chkSuccessiveFailed(false) ;
+		return 1;
 	}
 	
 	private void setAddrError(List<S7Addr> addrs,String errinf)
@@ -401,10 +445,10 @@ public class S7Block
 	{
 		//ArrayList<DevAddr> okaddrs = new ArrayList<>() ;
 		boolean ret = true;
-		for(S7Msg mc:cmd2addr.keySet())
+		for(S7Msg mc:readCmd2addr.keySet())
 		{
 			
-			List<S7Addr> addrs = cmd2addr.get(mc) ;
+			List<S7Addr> addrs = readCmd2addr.get(mc) ;
 			setAddrError(addrs,errinf);
 			setAddrError(addrs);
 			//transMem2Addrs(addrs);

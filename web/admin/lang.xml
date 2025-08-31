@@ -52,6 +52,9 @@
   <dd_node id="1" name="yes" name_cn="确定" name_en="Yes" />
   <dd_node id="1" name="class" name_cn="类" name_en="Class" />
   
+  <dd_node id="1" name="pos_up" name_cn="位置上移" name_en="Up" />
+  <dd_node id="1" name="pos_down" name_cn="位置下移" name_en="Down" />
+  
   <dd_node id="1" name="del_confirm" name_cn="删除确认" name_en="Delete Confirm" />
   <dd_node id="1" name="del_sure" name_cn="确认要删除此项么?" name_en="make sure to delete it?" />
   

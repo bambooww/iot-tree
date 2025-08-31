@@ -135,7 +135,6 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	{
 		List<UANode> rets = super.getSubNodes();
 		rets.addAll(devs);
-		
 		return rets;
 	}
 	
@@ -578,6 +577,37 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		}
 	}
 	
+	public boolean chgDevPosUpDown(int dir,UADev dev) throws Exception
+	{
+		if(dir==0)
+			return false;
+		List<UADev> devs = this.getDevs() ;
+		if(!devs.contains(dev))
+			return false;
+		int k = devs.indexOf(dev) ;
+		if(k<0)
+			return false;
+		if(dir<0)//up
+		{
+			if(k==0)
+				return false;
+			UADev tmpch = devs.get(k-1) ;
+			devs.set(k-1,dev) ;
+			devs.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
+		else
+		{//down
+			if(k>=devs.size()-1)
+				return false;
+			UADev tmpch = devs.get(k+1) ;
+			devs.set(k+1,dev) ;
+			devs.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
+	}
 	
 //	protected void listTagsAll(List<UATag> tgs,boolean bmid)
 //	{
@@ -803,6 +833,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		this.setSysTag("_conn_ready", "","",ValTP.vt_bool) ;
 		this.setSysTag("_conn_name", "","",ValTP.vt_str) ;
 		this.setSysTag("_conn_tp", "","",ValTP.vt_str) ;
+		
+		//this.constructNodeTree();
 	}
 	
 	@Override

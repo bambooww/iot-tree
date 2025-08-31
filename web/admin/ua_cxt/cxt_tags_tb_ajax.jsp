@@ -254,7 +254,7 @@ if(bloc&&!tag.isSysTag())
 	{
 		if(tag.getValTp()==UAVal.ValTP.vt_bool)
 		{
-%><span id="ctag_w_<%=tag.getId()%>" bb="true" style="width:90px;border:1px solid #999999">&nbsp;<input type="radio" name="ctag_w_<%=tag.getId()%>" value="1" lay-ignore />true
+%><span id="ctag_w_<%=tag.getId()%>" bb="true" class="wbool">&nbsp;<input type="radio" name="ctag_w_<%=tag.getId()%>" value="1" lay-ignore />true
 &nbsp;
 <input type="radio" name="ctag_w_<%=tag.getId()%>"  value="0" lay-ignore/>false</span>&nbsp;
 <%

@@ -437,12 +437,53 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	void RT_init(boolean breset, boolean b_sub)
 	{
 		super.RT_init(breset, b_sub);
+		
 		this.setSysTag("_name", "device name", "", ValTP.vt_str);
 		this.setSysTag("_title", "device title", "", ValTP.vt_str);
 		this.RT_setSysTagVal("_name", this.getName()) ;
 		this.RT_setSysTagVal("_title", this.getTitle()) ;
+		
+		DevDriver dd = getRelatedDrv();
+		if(dd!=null&&dd.isConnPtToDev())
+		{
+			this.setSysTag("_conn_ready", "","",ValTP.vt_bool) ;
+			this.setSysTag("_conn_name", "","",ValTP.vt_str) ;
+			this.setSysTag("_conn_tp", "","",ValTP.vt_str) ;
+			//this.constructNodeTree();
+		}
 	}
 
+	private transient boolean b_conn_n_set = false;
+	@Override
+	protected void RT_flush()
+	{
+		super.RT_flush();
+		
+		DevDriver dd = getRelatedDrv();
+		if(dd!=null&&dd.isConnPtToDev())
+		{
+			try
+			{
+				ConnPt cpt = getConnPt() ;
+				this.RT_setSysTagVal("_conn_ready", cpt!=null&&cpt.isConnReady());
+				if(cpt!=null)
+				{
+					if(!b_conn_n_set)
+					{
+						this.RT_setSysTagVal("_conn_name", cpt.getName());
+						this.RT_setSysTagVal("_conn_tp", cpt.getConnType());
+						b_conn_n_set = true;
+					}
+				}
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 	/**
 	 * driver run ok or not for this device.
 	 * @return

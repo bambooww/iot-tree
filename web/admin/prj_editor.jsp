@@ -379,7 +379,7 @@ background-color: #ffffff;
         width:100%;
         height: 40px;
         font-size: medium;
-		line-height: 40px;
+		line-height: 0px;
  }
  .subwin_content{
         width:100%;
@@ -507,6 +507,7 @@ background-color: #515658;
 {
 	display:none;
 }
+.tree_btn {border:1px solid #ccc;border-radius:3px;width:22px;color:#666;height:22px;top:10px;cursor:pointer;display:inline-block;position: relative;text-align: center;}
 </style>
 
 </head>
@@ -661,7 +662,10 @@ if(hide_top)
 				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
 				  </a>
 				   --%>
-				  &nbsp;&nbsp;<span title="<wbt:g>refresh,browser,tree</wbt:g>"><i onclick="refresh_ui()" class="fa fa-refresh fa-lg" aria-hidden="true"></i></span>
+				  &nbsp;&nbsp;<button class="tree_btn" title="<wbt:g>refresh,browser,tree</wbt:g>" onclick="refresh_ui()" ><i class="fa fa-refresh fa" aria-hidden="true"></i></button>
+				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1('dev')"><i  class="fa-solid fa-angle-up"" aria-hidden="true"></i></button>
+				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1()"><i  class="fa-solid fa-angles-up"" aria-hidden="true"></i></button>
+				  
 				  
 				  
 				 </div>
@@ -808,7 +812,8 @@ function share_as_node()
 function resize_iframe_h()
 {
 	   var h = $(window).height()-80;
-	   $("iframe").css("height",h+"px");
+	   $(".ptab_if").css("height",h+"px");
+	   //$("iframe").css("height",h+"px");
 }
 
 function resize_tree()
@@ -1012,7 +1017,7 @@ var cxt_menu = {
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
-		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true},
+		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-table-list",op_action:act_prop,default:true},
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
@@ -1043,7 +1048,9 @@ var cxt_menu = {
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
-		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper",op_action:act_prop,default:true}
+		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper",op_action:act_prop,default:true},
+		{op_name:"pos_up",op_title:"<wbt:lang>pos_up</wbt:lang>",op_icon:"fa fa-arrow-up",op_action:act_pos_up},
+		{op_name:"pos_down",op_title:"<wbt:lang>pos_down</wbt:lang>",op_icon:"fa fa-arrow-down",op_action:act_pos_down}
 	],
 	"dev":[
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
@@ -1058,7 +1065,9 @@ var cxt_menu = {
 		}},
 		{op_name:"open_cxt",op_title:"<wbt:lang>cxt_script_test</wbt:lang>",op_icon:"fa fa-list-alt",op_action:act_open_cxt_script},
 		{op_name:"access_ui",op_title:"<wbt:lang>access</wbt:lang>",op_icon:"fa fa-paper-plane",op_action:act_access},
-		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-newspaper-o",op_action:act_prop,default:true}
+		{op_name:"prop",op_title:"<wbt:lang>properties</wbt:lang>",op_icon:"fa fa-table-list",op_action:act_prop,default:true},
+		{op_name:"pos_up",op_title:"<wbt:lang>pos_up</wbt:lang>",op_icon:"fa fa-arrow-up",op_action:act_pos_up},
+		{op_name:"pos_down",op_title:"<wbt:lang>pos_down</wbt:lang>",op_icon:"fa fa-arrow-down",op_action:act_pos_down}
 	],
 	"tagg":[
 		
@@ -1099,7 +1108,16 @@ var cxt_menu = {
 function on_tree_node_selected(tn)
 {
 	$("#if_prop").attr("src","./ua/ui_prop.jsp?dlg=false&&tabid=drv&path="+tn.path) ;
-	$("#if_tags").attr("src","./ua_cxt/cxt_tags.jsp?tabid=main&path="+tn.path);
+	let if_tags = $("#if_tags") ;
+	let bsys = false;
+	let bsub = false;
+	if(if_tags.length>0)
+	{
+		let if_win = $("#if_tags")[0].contentWindow ;
+		bsys = if_win.b_sys==true ;
+		bsub = if_win.b_sub==true;
+	}
+	$("#if_tags").attr("src",`./ua_cxt/cxt_tags.jsp?tabid=main&path=\${tn.path}&sys=\${bsys}&sub=\${bsub}`);
 }
 
 function on_tree_loaded(data)
@@ -1177,7 +1195,6 @@ function act_node_paste(n,op)
 		}
 		refresh_ui();
 	});
-	
 }
 
 function reset_cp(cptp,cpid)
@@ -1192,6 +1209,29 @@ function reset_cp(cptp,cpid)
 			dlg.msg("send reset ok") ;
 		else
 			dlg.msg(ret.err) ;
+	})
+}
+
+function act_pos_up(n,op)
+{
+	send_ajax("./ua/node_pos_updown.jsp",{prjid:repid,op:"up",path:n.path},function(bsucc,ret){
+		if(!bsucc || ret!="succ")
+		{
+			//dlg.msg(ret) ;
+			return ;
+		}
+		refresh_ui();
+	})
+}
+function act_pos_down(n,op)
+{
+	send_ajax("./ua/node_pos_updown.jsp",{prjid:repid,op:"down",path:n.path},function(bsucc,ret){
+		if(!bsucc || ret!="succ")
+		{
+			//dlg.msg(ret) ;
+			return ;
+		}
+		refresh_ui();
 	})
 }
 
@@ -2050,7 +2090,7 @@ function act_main_hmi(n,op)
 
 function act_hmi_edit_ui(n,op)
 {
-	console.log(n)
+	//console.log(n)
 	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
@@ -2082,7 +2122,7 @@ function add_tab(id,title,u)
 
 	layuiEle.tabAdd('tab_hmi_editor', {
 		    id:id,title: title
-		    ,content:"<iframe id='if_"+id+"' src='"+u+"' style='width:100%;height:100%;border:0px;'></iframe>"
+		    ,content:"<iframe class='ptab_if' id='if_"+id+"' src='"+u+"' style='width:100%;height:100%;border:0px;'></iframe>"
 		});
 	resize_iframe_h();
 	layuiEle.tabChange('tab_hmi_editor', id);

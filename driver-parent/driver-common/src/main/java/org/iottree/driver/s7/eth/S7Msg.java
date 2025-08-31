@@ -131,9 +131,8 @@ public abstract class S7Msg
 	protected static final int ISO_HEAD_LEN = 7; // TPKT+COTP Header Length
 	
 	protected static final int PDU_MIN_LEN = 16;
-	protected static final int PDU_DEFAULT_LEN = 480;
+	protected static final int PDU_DEFAULT_LEN = 1024;
 	protected static final int PDU_MAX_LEN = PDU_DEFAULT_LEN + ISO_HEAD_LEN;
-
 
 	protected static final byte WL_BYTE = 0x02;
 	protected static final byte WL_COUNTER = 0x1C;

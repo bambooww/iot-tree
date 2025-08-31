@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
@@ -15,11 +18,15 @@ import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.nodes.NS_TagEvtTrigger.MsgOutSty;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class NS_TagChgTrigger extends MNNodeStart
 {
+	static ILogger log = LoggerManager.getLogger(NS_TagChgTrigger.class) ;
+	
 	// String tagId = null ;
 	public static enum ChgTP
 	{
@@ -65,7 +72,44 @@ public class NS_TagChgTrigger extends MNNodeStart
 		 * @param curval
 		 * @return
 		 */
-		public boolean checkChgTrigger(ValItem last_vi, boolean cur_valid, Object curval)
+//		public boolean checkChgTrigger(ValItem last_vi, boolean cur_valid, Object curval)
+//		{
+//			if (!cur_valid)
+//			{
+//				return this == all_chg;
+//			}
+//
+//			Object lastv = null;
+//			if (last_vi != null && last_vi.bValid)
+//				lastv = last_vi.val;
+//			if (lastv == null)
+//			{
+//				switch (this)
+//				{
+//				case all_chg:
+//				case all_valid_chg:
+//					return true;
+//				default:
+//					return false;
+//				}
+//			}
+//
+//			int comp_res = compareCurLastUpDown(curval, lastv);
+//			// valid = true
+//			switch (this)
+//			{
+//			case up:
+//				return comp_res > 0;
+//			case down:
+//				return comp_res < 0;
+//			case up_down:
+//				return comp_res != 0;
+//			default:
+//				return false;
+//			}
+//		}
+		
+		public boolean checkChgTrigger(UAVal last_v, boolean cur_valid, Object curval)
 		{
 			if (!cur_valid)
 			{
@@ -73,9 +117,9 @@ public class NS_TagChgTrigger extends MNNodeStart
 			}
 
 			Object lastv = null;
-			if (last_vi != null && last_vi.bValid)
-				lastv = last_vi.val;
-			if (lastv == null)
+			if (last_v != null && last_v.isValid())
+				lastv = last_v.getObjVal();
+			if (lastv == null || !lastv.equals(curval))
 			{
 				switch (this)
 				{
@@ -101,6 +145,8 @@ public class NS_TagChgTrigger extends MNNodeStart
 				return false;
 			}
 		}
+		
+		
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		private static int compareCurLastUpDown(Object curval, Object lastv)
@@ -177,6 +223,12 @@ public class NS_TagChgTrigger extends MNNodeStart
 	ArrayList<String> tagPaths = null;
 
 	ChgTP chgTP = ChgTP.all_chg;
+	
+	boolean enableDelay = false;
+	
+	long delayMS = -1 ;
+	
+	boolean enableLog = false;
 
 	transient private HashSet<String> tagIdSet = null;
 
@@ -239,6 +291,9 @@ public class NS_TagChgTrigger extends MNNodeStart
 		jo.putOpt("tag_paths", this.tagPaths);
 		if (chgTP != null)
 			jo.put("chg_tp", chgTP.val);
+		jo.put("bdelay", this.enableDelay) ;
+		jo.put("delay_ms",this.delayMS) ;
+		jo.put("blog", this.enableLog) ;
 		return jo;
 	}
 
@@ -260,6 +315,9 @@ public class NS_TagChgTrigger extends MNNodeStart
 		this.chgTP = ChgTP.fromIntVal(chg_tp);
 		if (this.chgTP == null)
 			this.chgTP = ChgTP.up_down;
+		this.enableDelay = jo.optBoolean("bdelay",false) ;
+		this.delayMS = jo.optLong("delay_ms", -1) ;
+		this.enableLog = jo.optBoolean("blog",false) ;
 		synchronized (this)
 		{
 			tagIdSet = null;
@@ -348,27 +406,27 @@ public class NS_TagChgTrigger extends MNNodeStart
 		return true;
 	}
 
-	private static class ValItem
-	{
-		private boolean bValid = false;
+//	private static class ValItem
+//	{
+//		private boolean bValid = false;
+//
+//		private Object val = null;
+//
+//		ValItem(boolean valid, Object val)
+//		{
+//			this.bValid = valid;
+//			this.val = val;
+//		}
+//	}
 
-		private Object val = null;
-
-		ValItem(boolean valid, Object val)
-		{
-			this.bValid = valid;
-			this.val = val;
-		}
-	}
-
-	private transient Hashtable<String, ValItem> lastTagId2ValItem = new Hashtable<>();
+	//private transient Hashtable<String, ValItem> lastTagId2ValItem = new Hashtable<>();
 
 	private void clearCache()
 	{
-		lastTagId2ValItem = new Hashtable<>();
+		//lastTagId2ValItem = new Hashtable<>();
 	}
 
-	public boolean RT_fireValChg(UATag tag,boolean cur_valid,Object curval)
+	public boolean RT_fireValChg(UATag tag,UAVal lastv,boolean cur_valid,Object curval)
 	{
 		HashSet<String> idset = getTagIdSet() ;
 		if(idset==null)
@@ -386,8 +444,8 @@ public class NS_TagChgTrigger extends MNNodeStart
 					return false;
 			}
 			
-			ValItem last_vi = lastTagId2ValItem.get(tagid) ;
-			if(!chgTP.checkChgTrigger(last_vi,cur_valid,curval))
+			//ValItem last_vi = lastTagId2ValItem.get(tagid) ;
+			if(!chgTP.checkChgTrigger(lastv,cur_valid,curval))
 				return false;
 			
 			sendTagOut(tag,v) ;
@@ -395,11 +453,56 @@ public class NS_TagChgTrigger extends MNNodeStart
 		}
 		finally
 		{
-			lastTagId2ValItem.put(tagid,new ValItem(cur_valid,curval)) ;
+			//lastTagId2ValItem.put(tagid,new ValItem(cur_valid,curval)) ;
 		}
 	}
-
-	private void sendTagOut(UATag tag, UAVal v)
+	
+	private transient boolean delaySending = false;
+	
+	private transient long delayST = -1;
+	
+	//private transient ScheduledExecutorService executor = null ;
+	
+	private void sendTagOut(UATag tag,UAVal v)
+	{
+		if(!enableDelay || delayMS<=0)
+		{
+			if(enableLog)
+				log.warn("sendTagOutDo nor at="+System.currentTimeMillis());
+			sendTagOutDo(tag, v);
+			return ;
+		}
+		
+		//
+		synchronized(this)
+		{
+			if(delaySending)
+			{
+				if(System.currentTimeMillis()-this.delayST<this.delayMS*2)
+					return ; //ignore
+				//timeout do send again
+			}
+			
+			delaySending = true;
+			delayST = System.currentTimeMillis() ;
+			if(enableLog)
+				log.warn("sendTagOut delay at="+System.currentTimeMillis());
+			DELAY_EXE.schedule(() -> {
+				try
+				{
+					if(enableLog)
+						log.warn("sendTagOutDo after "+delayMS+" at="+System.currentTimeMillis());
+					sendTagOutDo(tag, v);
+				}
+				finally
+				{
+					delaySending = false;
+				}
+			}, delayMS, TimeUnit.MILLISECONDS);
+		}
+	}
+	
+	private void sendTagOutDo(UATag tag, UAVal v)
 	{
 		if (v == null)
 			return;
@@ -422,5 +525,23 @@ public class NS_TagChgTrigger extends MNNodeStart
 			jo.putOpt("tag_err", v.getErr());
 		msg.asPayload(jo);
 		RT_sendMsgOut(RTOut.createOutAll(msg));
+	}
+	
+	public static final ScheduledExecutorService DELAY_EXE = 
+	        Executors.newScheduledThreadPool(5);
+	
+	static
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			DELAY_EXE.shutdown();
+		    try {
+		        // wait to normal shut down
+		        if (!DELAY_EXE.awaitTermination(60, TimeUnit.SECONDS)) {
+		        	DELAY_EXE.shutdownNow();
+		        }
+		    } catch (InterruptedException e) {
+		    	DELAY_EXE.shutdownNow();
+		    }
+		}));
 	}
 }

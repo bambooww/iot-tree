@@ -53,7 +53,7 @@ String prjpath = prj.getNodePath() ;
 .tb {width:90%;,margin-left:5%;font-size:12px;}
 th {border:1px solid #333;}
 td {border:1px solid #ccc;}
-.inp {width:130px;}
+.inp {width:100px;}
 .sel {width:80px;}
 .del {width:30px;}
 
@@ -65,20 +65,24 @@ td {border:1px solid #ccc;}
   	<th></th>
     <th>JSON PN</th>
     <th>Column</th>
-    <th>Type</th>
-    <th>Max Length</th>
+    <th >Type</th>
+    <th>Title</th>
+    <th >Max Length</th>
     <th>Has Index</th>
     <th></th>
   </tr>
   <tr id="pk_col">
   	<td>PK</td>
-    <td><input type="text" class="jo_pn inp"/></td>
+    <td><input type="text" class="jo_pn inp"/>
+    	<input type="checkbox" class="bauto" lay-ignore/>auto
+    </td>
     <td><input type="text" class="col inp" /></td>
     <td><select lay-ignore class="val_tp inp">
     		<option value="vt_str"     >str   </option>
 			<option value="vt_int32"   >int32 </option>
 			<option value="vt_int64"   >int64 </option>
     	</select></td>
+    <td><input type="text" class="title inp" /></td>
     <td><input type="number" class="max_len inp" /></td>
     <td></td>
   </tr>
@@ -101,6 +105,7 @@ td {border:1px solid #ccc;}
 			<option value="vt_date"  >date</option>
     	</select>
     </td>
+    <td><input type="text" class="title inp" /></td>
     <td><input type="number" class="max_len inp" /></td>
     <td><input type="checkbox" class="has_idx sel" lay-ignore/></td>
     <td><button class="del" onclick="del_nor_col(this)">X</button></td>
@@ -133,6 +138,7 @@ function add_nor_col(jo)
 		row.find(".jo_pn").val(jo.jo_pn||"") ;
 		row.find(".col").val(jo.col||"") ;
 		row.find(".val_tp").val(jo.val_tp||"str") ;
+		row.find(".title").val(jo.title||"") ;
 		let mlen = jo.max_len>0?jo.max_len:"";
 		row.find(".max_len").val(mlen) ;
 		row.find(".has_idx").prop("checked",jo.has_idx||false) ;
@@ -151,13 +157,15 @@ function extract_col_jo(ele)
 {
 	let ret={} ;
 	ret.jo_pn = ele.find(".jo_pn").val()||"" ;
-	if(ret.jo_pn=="")
+	ret.bauto = ele.find(".bauto").prop("checked") ;
+	if(ret.jo_pn=="" && !ret.bauto)
 		return "JSON PN cannot empty" ;
 	ret.col = ele.find(".col").val()||"" ;
 	if(ret.col=="")
 		return "Column cannot empty" ;
 	
 	ret.val_tp = ele.find(".val_tp").val()||"" ;
+	ret.title = ele.find(".title").val()||"" ;
 	ret.max_len = parseInt(ele.find(".max_len").val()||"-1") ;
 	ret.has_idx = ele.find(".has_idx").prop("checked") ;
 	
@@ -193,14 +201,16 @@ function get_pm_jo()
 	let nor_cols = [] ;
 	jo.nor_cols = nor_cols ;
 	
+	let err=null;
 	$("#nor_cols").find(".nor_col").each(function(){
 		let ele = $(this) ;
 		let tmpjo = extract_col_jo(ele) ;
 		if(typeof(tmpjo)=='string')
-			return tmpjo ;
+			return err = tmpjo ;
 		nor_cols.push(tmpjo) ;
 	}) ;
-	
+	if(err)
+		return err ;
 	//console.log(jo) ;
 	return jo ;
 }
@@ -210,12 +220,16 @@ function set_pm_jo(jo)
 	if(!jo || !jo.pk_col)
 	{
 		$("#pk_col").find(".col").val("ID")
+		$("#pk_col").find(".bauto").prop("checked",true);
+		$("#pk_col").find(".max_len").val(30)
 	}
 	else
 	{
 		$("#pk_col").find(".col").val(jo.pk_col.col||"ID")
+		$("#pk_col").find(".bauto").prop("checked",jo.pk_col.bauto||false);
 		$("#pk_col").find(".jo_pn").val(jo.pk_col.jo_pn||"")
 		$("#pk_col").find(".val_tp").val(jo.pk_col.val_tp||"")
+		$("#pk_col").find(".title").val(jo.pk_col.title||"")
 		let mlen = jo.pk_col.max_len>0?jo.pk_col.max_len:"";
 		$("#pk_col").find(".max_len").val(mlen)
 	}

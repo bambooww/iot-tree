@@ -119,6 +119,5 @@
   	<module>ROOT</module>
   	<module>doc</module>
   	<module>main</module>
-  	<module>platform</module>
   </modules>
 </project>

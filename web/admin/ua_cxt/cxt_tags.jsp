@@ -161,7 +161,7 @@ text-overflow:ellipsis;
 	border:0px;
 	background-color: rgba(0,0,0,0);
 }
-
+.wbool {width:90px;border:0px solid #999999;height:100%;}
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">

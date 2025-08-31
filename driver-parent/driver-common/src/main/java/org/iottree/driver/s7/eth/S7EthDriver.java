@@ -473,7 +473,7 @@ public class S7EthDriver extends DevDriver
 		if (mdi == null)
 			return false;
 		StringBuilder failedr = new StringBuilder();
-		boolean r = mdi.RT_writeVal(da, v, failedr);
+		boolean r = mdi.RT_writeVal(tag,da, v, failedr);
 		if (!r)
 		{
 			if (log.isDebugEnabled())

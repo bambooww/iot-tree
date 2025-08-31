@@ -64,7 +64,7 @@ public class AdminFilter implements Filter,ILang
 		if(Convert.isNullOrEmpty(lan))
 		{
 			HttpServletRequest req = (HttpServletRequest) request;
-			LoginUtil.SessionItem si = LoginUtil.getAdminLoginSession(req.getSession()) ;
+			LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(req) ;
 			if(si!=null)
 				lan = si.lan ; // then session
 		}
@@ -111,14 +111,17 @@ public class AdminFilter implements Filter,ILang
 			log.debug("sp="+sp) ;
 		}
 		
-		if(!LoginUtil.checkAdminLogin(req)) //. && !checkPlatAdmin())
+		if(!LoginUtil.checkUserLogin(req)) //. && !checkPlatAdmin())
 		{
 			if(sp.endsWith("_ajax.jsp"))
 			{
 				resp.getWriter().write(g("need_login"));
 				return ;
 			}
-			resp.sendRedirect("/admin/login/login.jsp");
+			String rurl = LoginUtil.getLoginPage();
+			if(Convert.isNullOrEmpty(rurl))
+				rurl = "/admin/login/login.jsp" ;
+			resp.sendRedirect(rurl);
 			return ;
 		}
 		

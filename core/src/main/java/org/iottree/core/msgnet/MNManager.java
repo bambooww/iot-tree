@@ -12,6 +12,7 @@ import java.util.Map;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.UATag;
+import org.iottree.core.UAVal;
 import org.iottree.core.basic.ValEvent;
 import org.iottree.core.conn.ConnPtMSGNor;
 import org.iottree.core.conn.ConnPtMsg;
@@ -943,7 +944,7 @@ public class MNManager
 		}
 	}
 	
-	public void RT_TAG_valchged(UATag tag,boolean cur_valid,Object curv)
+	public void RT_TAG_valchged(UATag tag,UAVal lastv,boolean cur_valid,Object curv)
 	{
 		for(MNNet net :this.listNets())
 		{
@@ -952,7 +953,7 @@ public class MNManager
 			for(MNNode node:net.getNodeMapAll().values())
 			{
 				if(node instanceof NS_TagChgTrigger && node.isEnable())
-					((NS_TagChgTrigger)node).RT_fireValChg(tag,cur_valid,curv) ;
+					((NS_TagChgTrigger)node).RT_fireValChg(tag,lastv,cur_valid,curv) ;
 			}
 		}
 	}

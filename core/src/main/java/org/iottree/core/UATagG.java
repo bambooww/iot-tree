@@ -2,7 +2,11 @@ package org.iottree.core;
 
 import java.util.*;
 
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
+import org.iottree.core.basic.PropGroup;
+import org.iottree.core.basic.PropItem;
+import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.cxt.JsDef;
 
 /**
@@ -179,15 +183,55 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 //		 listTagsAll(rets) ;
 //		 return rets ;
 //	 }
-
-
+	
+	private List<PropGroup> tagGPGS = null ;
 	
 	@Override
 	protected void onPropNodeValueChged()
 	{
-		
+		tagGPGS = null ;
 	}
+	
 
+	@Override
+	public List<PropGroup> listPropGroups()
+	{
+		UANode pnode = this.getParentNode() ;
+		if(!(pnode instanceof UADev))
+		{
+			return super.listPropGroups() ;
+		}
+
+		if(tagGPGS!=null)
+			return tagGPGS;
+		ArrayList<PropGroup> pgs = new ArrayList<>() ;
+		List<PropGroup> lpgs = super.listPropGroups() ;
+		if(lpgs!=null)
+			pgs.addAll(lpgs) ;
+		
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup pg = new PropGroup("tagg_tags_pm",lan);//,"Device run parameters") ;
+		pg.addPropItem(new PropItem("read_intv_en",lan,PValTP.vt_bool,false,null,null,false)); 
+		pg.addPropItem(new PropItem("read_intv",lan,PValTP.vt_int,false,null,null,100)); //"Read Interval MS",""
+		pgs.add(pg) ;
+		//pgs.add(this.getDevPropGroup()) ;
+		//
+		
+		tagGPGS = pgs;
+		return pgs;
+	}
+	
+	public boolean isReadIntvEnabled()
+	{
+		return this.getOrDefaultPropValueBool("tagg_tags_pm", "read_intv_en", false) ;
+	}
+	
+	public int getReadIntvMS()
+	{
+		return this.getOrDefaultPropValueInt("tagg_tags_pm", "read_intv", 100) ;
+	}
+	
 	@Override
 	public String OCUnit_getUnitTemp()
 	{
