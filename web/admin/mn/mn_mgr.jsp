@@ -29,14 +29,16 @@ for(MNNet n:nets)
 %><html>
 <head>
 <title></title>
-<jsp:include page="../head.jsp"></jsp:include>
+<jsp:include page="../head.jsp">
+<jsp:param value="true" name="simple"/>
+</jsp:include>
 </head>
 <style>
 
  .btn_sh
  {
-  //display:none;
-  visibility: hidden;
+  visibility: hidden;display:inline-block;
+  width:70px;border:0px solid #ccc;
  }
  
  .btn_sh_c:hover .btn_sh
@@ -47,23 +49,23 @@ visibility: visible;
 .net_item
 {
 position:relative;
-	height:30px;
+	height:25px;
 	border:1px solid;border-radius:5px;
 	border-color: #499ef3;
 	margin:5px;cursor:pointer;
 	white-space: nowrap;
 	display:inline-block;
-	vertical-align:middle;
+	vertical-align:left;
 	padding:2px;
 }
 
 .bitem
 {
-	cursor: pointer;
+	cursor: pointer;width:30px;margin:1px;
 }
 
 </style>
-<body marginwidth="0" marginheight="0" style="overflow: hidden;">
+<body marginwidth="0" marginheight="0" style="overflow: hidden;background: #eee;">
  <div id="ccc" style="overflow:auto;width:100%;height:100%;border:0px solid;">
 <%
 int cc = 0 ;
@@ -83,30 +85,36 @@ for(MNNet net:nets)
 			//tt = "<w:g>flow_is_not_en</w:g>";
 		}
 %>
-	<span class="net_item btn_sh_c"  style="<%=borderc%>" title="<%=tt%>">
+	<div class="net_item btn_sh_c"  style="<%=borderc%>" title="<%=tt%>">
 		&nbsp;<i class="fa fa-code-fork fa-lg fa-rotate-90"></i> <a class="text title" onclick="javascript:open_net('<%=net.getId()%>','<%=net.getTitle() %>')" ><%=net.getTitle() %></a>
 		
-		<span class="btn_sh">
-           <span class="bitem" onclick="add_or_edit_flow('<%=net.getId()%>')" title="<w:g>edit</w:g>">
-              <span class="fa-stack fa-1x">
-							  <i class="fa fa-square fa-stack-1x"></i>
-							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
-							</span>
+		<div class="btn_sh" >
+            <span class="bitem" onclick="add_or_edit_flow('<%=net.getId()%>')" title="<w:g>edit</w:g>">
+            <i class="fa fa-pencil "></i>
+           </span>
+            <span class="bitem" onclick="exp_flow('<%=net.getId()%>')" title="<w:g>export</w:g>">
+            <i class="fa-regular fa-circle-up"></i>
            </span>
            <span class="bitem"  style="color: #e33a3e" onclick="flow_del('<%=net.getId()%>')" title="<w:g>delete</w:g>">
-              <span class="fa-stack">
-							  <i class="fa fa-square fa-stack-1x"></i>
-							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
-							</span>
+           &nbsp;&nbsp;<i class="fa fa-times "></i>
            </span>
-           </span>
+      </div>
 
-	</span>
+	</div>
 <%
 }
 %>
 	<button class="net_item" style="position:absolute;right:10px;top:0px;width:40px;" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></button>
+	<button class="net_item" style="position:absolute;right:10px;top:33px;width:40px;" onclick="imp_flow()" title="<w:g>import</w:g>"><span class="bitem"><i class="fa-regular fa-circle-left fa-lg" style="top:10px;"></i></span></button>
+	
 </div>
+
+<%--
+  <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+ --%>
 <script>
 
 var container_id="<%=container_id%>" ;
@@ -151,6 +159,76 @@ function add_or_edit_flow(id)
 							 location.reload();
 						 });
 				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function exp_flow(netid)
+{
+	dlg.open("./mn_imp_exp.jsp?container_id="+container_id+"&netid="+netid,
+			{title:"<w:g>export</w:g>"},
+			['<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function imp_flow()
+{
+	dlg.open("./mn_imp_exp.jsp",
+			{title:"<w:g>import</w:g>"},
+			['<w:g>import</w:g>','<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					let txt = dlgw.get_txt();
+					if(!txt)
+					{
+						dlg.msg("please input exported json txt") ;
+						return ;
+					}
+					let ob = null ;
+					try{
+						eval("ob="+txt) ;
+					}catch(e) {dlg.msg("not valid json txt:"+e);return;}
+					
+					let n = ob.name ;
+					dlg.close();
+					pre_imp(n,ob) ;
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function pre_imp(n,jo)
+{
+	dlg.open("./mn_imp_pre.jsp?container_id="+container_id+"&name="+n,{title:"pre import"},
+			['<w:g>import</w:g>','<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					let txt = dlgw.do_submit((bsucc,ret)=>{
+						if(!bsucc) {dlg.msg(ret);return}
+						send_ajax("mn_ajax.jsp",{op:"imp_net",container_id:container_id,jstr:JSON.stringify(jo),...ret},(bsucc,ret)=>{
+							if(!bsucc || ret!="succ")
+							{
+								dlg.msg(ret);return;
+							}
+							dlg.close();
+							location.reload();
+						});
+					});
+					
 				},
 				function(dlgw)
 				{

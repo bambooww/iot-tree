@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.Config;
+import org.iottree.core.UAManager;
+import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,40 +23,62 @@ import org.w3c.dom.Element;
  */
 public class PortalManager
 {
-	private static PortalManager instance = null;
+	//private static PortalManager instance = null;
 
 	public static PortalManager getInstance()
 	{
-		if (instance != null)
-			return instance;
+		UAPrj mainprj = UAManager.getInstance().getPrjDefault() ;
+		if(mainprj==null)
+		{
+			throw new RuntimeException("no main prj set") ;
+		}
+		return getInstance(mainprj);
+	}
+	
+	private static HashMap<String,PortalManager> prjn2pm = new HashMap<>() ;
+	
+	public static PortalManager getInstance(UAPrj prj)
+	{
+		PortalManager ins = prjn2pm.get(prj.getName()) ;
+		if (ins != null)
+			return ins;
 
 		synchronized (PortalManager.class)
 		{
-			if (instance != null)
-				return instance;
+			ins = prjn2pm.get(prj.getName()) ;
+			if (ins != null)
+				return ins;
 
-			return instance = new PortalManager();
+			ins  = new PortalManager(prj);
+			prjn2pm.put(prj.getName(),ins) ;
+			return ins ;
 		}
 	}
 
-	public static void regDataSor(DataSor ds)
-	{
+//	public static void regDataSor(DataSor ds)
+//	{
+//
+//	}
 
-	}
-
-	static File getDir()
-	{
-		return new File(Config.getDataDirBase() + "/portal/");
-	}
-
+	UAPrj uaPrj = null ; 
+	
 	private LinkedHashMap<String, PageCat> pageCats = null;
 
 	private LinkedHashMap<String, TempletCat> templetCats = null;
 
-	private PortalManager()
+	private PortalManager(UAPrj owner)
 	{
+		this.uaPrj = owner ;
 	}
 
+
+	File getDir()
+	{
+		File dirf = uaPrj.getPrjSubDir() ;
+		return new File(dirf+ "/portal/");
+	}
+
+	
 //	public void onWebAllLoaded()
 //	{
 //		for (AppInfo awc : CompManager.getInstance().getAllAppInfo())
@@ -269,7 +294,7 @@ public class PortalManager
 		for (File subd : subds)
 		{
 			String n = subd.getName();
-			PageCat pc = PageCat.loadPageCat(n) ;
+			PageCat pc = PageCat.loadPageCat(this,n) ;
 			if(pc!=null)
 				rets.add(pc) ;
 		}
@@ -291,7 +316,7 @@ public class PortalManager
 			return null;
 		}
 
-		pc = new PageCat(name,title);
+		pc = new PageCat(this,name,title);
 		pc.savePageCat();
 		
 		pageCats.put(name, pc);

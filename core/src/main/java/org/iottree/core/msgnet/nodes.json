@@ -1,0 +1,141 @@
+{
+"cats":[
+	{"cat":"_com","nodes":[
+		"org.iottree.core.msgnet.nodes.ManualTrigger",
+		"org.iottree.core.msgnet.nodes.NS_TimerTrigger",
+		"org.iottree.core.msgnet.nodes.NE_Debug",
+		"org.iottree.core.msgnet.nodes.NM_MemQueue",
+		"org.iottree.core.msgnet.nodes.NS_OuterTrigger",
+		"org.iottree.core.msgnet.nodes.NS_OnFlowEvt",
+		"org.iottree.core.msgnet.nodes.OutCallFunc",
+		"org.iottree.core.msgnet.nodes.OutCallRet"
+	],"modules":[
+		{"cn":"org.iottree.core.msgnet.modules.MemMultiQueue","nodes":[
+			"org.iottree.core.msgnet.modules.MemQueue_NM"
+		]}
+	]},
+	
+	{"cat":"_func","nodes":[
+		"org.iottree.core.msgnet.nodes.NM_JsFunc",
+		"org.iottree.core.msgnet.nodes.NM_Template",
+		"org.iottree.core.msgnet.nodes.NM_Change",
+		"org.iottree.core.msgnet.nodes.NM_Switch",
+		"org.iottree.core.msgnet.nodes.NM_OnOff",
+		"org.iottree.core.msgnet.nodes.NM_Exec"
+	],"modules":[
+		{"cn":"org.iottree.core.msgnet.modules.PID_M","nodes":[
+			"org.iottree.core.msgnet.modules.PID_PV",
+			"org.iottree.core.msgnet.modules.PID_SP",
+			"#org.iottree.core.msgnet.modules.PID_AutoManual",
+			"#org.iottree.core.msgnet.modules.PID_ManualOutput",
+			"org.iottree.core.msgnet.modules.PID_Output",
+			"org.iottree.core.msgnet.modules.PID_Err"
+		]},
+		{"cn":"org.iottree.core.msgnet.modules.FSM_M","nodes":[
+			"#org.iottree.core.msgnet.modules.PID_AutoManual",
+			"#org.iottree.core.msgnet.modules.PID_ManualOutput"
+			
+		]}
+		
+	]},
+	
+	{"cat":"_trans","nodes":[
+		"org.iottree.core.msgnet.nodes.NM_Csv"
+	]},
+	
+	{"cat":"_dev","nodes":[
+		"org.iottree.core.msgnet.nodes.NM_TagReader",
+		"org.iottree.core.msgnet.nodes.NM_TagWriter",
+		"org.iottree.core.msgnet.nodes.NM_TagFilter",
+		"org.iottree.core.msgnet.nodes.NM_TagFilterW",
+		"org.iottree.core.msgnet.nodes.NM_TagRT2RDB",
+		"org.iottree.core.msgnet.nodes.NS_TagChgTrigger",
+		"org.iottree.core.msgnet.nodes.NS_TagAlertTrigger",
+		"org.iottree.core.msgnet.nodes.NS_TagEvtTrigger",
+		"org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB"
+	],"modules":[
+		{"cn":"org.iottree.core.msgnet.modules.ConnInMsg_M","nodes":[
+			"org.iottree.core.msgnet.modules.ConnMsgIn_NS",
+			"org.iottree.core.msgnet.modules.ConnMsgOut_NE"
+		]}
+		
+	]},
+	
+	{"cat":"_armlinux","nodes":[
+		"org.iottree.ext.armlinux.GPIOOut_NE"
+		
+	],"modules":[
+		
+	]},
+	
+	{"cat":"_station","nodes":[
+		"org.iottree.core.station.PlatRecvedDataGet_NM",
+		"org.iottree.core.station.PlatRecvedDataFilterSave_NM",
+		"org.iottree.core.station.StationMsgSend_NE",
+		"org.iottree.core.station.PlatMsgRecv_NS"
+	]},
+	
+	{"cat":"_net","nodes":[
+		"org.iottree.core.msgnet.nodes.NM_HttpClient",
+		"org.iottree.core.msgnet.nodes.NM_TcpClientRR",
+		"org.iottree.core.msgnet.nodes.NM_RESTfulApi"
+	],"modules":[
+		{"cn":"org.iottree.ext.msg_net.Kafka_M","nodes":[
+			"org.iottree.ext.msg_net.KafkaIn_NS",
+			"org.iottree.ext.msg_net.KafkaOut_NE"
+		]},
+		{"cn":"org.iottree.ext.msg_net.Mqtt_M","nodes":[
+			"org.iottree.ext.msg_net.MqttIn_NS",
+			"org.iottree.ext.msg_net.MqttOut_NE"
+		]},
+		{"cn":"org.iottree.ext.msg_net.BACnet_M","nodes":[
+		]}
+	]},
+	
+	{"cat":"_vo","nodes":[
+		"org.iottree.ext.vo.MicIn_NS",
+		"org.iottree.ext.vo.VoReco_NM"
+	],"modules":[
+		
+	]},
+	
+	{"cat":"_storage",
+		"nodes":[
+			"org.iottree.core.msgnet.nodes.NM_FileReader",
+			"org.iottree.core.msgnet.nodes.NM_FileWriter",
+			"org.iottree.core.msgnet.nodes.NM_FileDirMon"
+		]
+		,"modules":[
+			{  "cn":"org.iottree.core.msgnet.modules.FileDir_M","nodes":[
+					"org.iottree.core.msgnet.modules.FileDir_Open",
+					"org.iottree.core.msgnet.modules.FileDir_Write",
+					"org.iottree.core.msgnet.modules.FileDir_Close"
+			]},
+			{  "cn":"org.iottree.core.msgnet.store.influxdb.InfluxDB_M","nodes":[
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Query",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Writer",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_JO2Point",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Tag2Point",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement"
+					
+			],"bk":"org.iottree.core.msgnet.store.StoreTbWriter_NE"},
+			{"cn":"org.iottree.core.msgnet.modules.RelationalDB_M","nodes":[
+				"org.iottree.core.msgnet.modules.RelationalDB_Table",
+				"org.iottree.core.msgnet.modules.RelationalDB_SQL_UP",
+				"org.iottree.core.msgnet.modules.RelationalDB_SQL_Query",
+				"org.iottree.core.msgnet.modules.RelationalDB_JSON2TB"
+			]}
+		]
+	},
+	
+	{"cat":"_sim","nodes":[
+		"org.iottree.core.msgnet.nodes.NM_HeatingFurnace"
+	],"modules":[
+		{"cn":"org.iottree.pro.modbuss.MSBus_M","nodes":[
+			"org.iottree.pro.modbuss.MSChgState_NE",
+			"org.iottree.pro.modbuss.MSUpdateMem_NE",
+			"org.iottree.pro.modbuss.MSOnMasterWrite_NS"
+		]}
+	]}
+  ]
+}

@@ -71,13 +71,15 @@ public class PageCat
 	private LinkedHashMap<String,Page> id2page = null ;
 	private HashMap<String,Page> name2page = null ;
 	
+	private PortalManager owner ;
+	
 	//private HashMap<String,Page> id2page = new HashMap<>() ;
 	
-	public PageCat(String name,String title) //,LinkedHashMap<String,Head> pageid2t)
+	public PageCat(PortalManager pmgr,String name,String title) //,LinkedHashMap<String,Head> pageid2t)
 	{
 		if(Convert.isNullOrEmpty(name))
 			throw new IllegalArgumentException("name cannot be null") ;
-		
+		this.owner = pmgr ;
 		this.name = name ;
 		if(Convert.isNullOrEmpty(title))
 			title = name ;
@@ -127,9 +129,10 @@ public class PageCat
 		return this.name2page ;
 	}
 	
+	
 	private File getCatDir()
 	{
-		return new File(PortalManager.getDir(),this.name+"/") ;
+		return new File(owner.getDir(),this.name+"/") ;
 	}
 	
 	private synchronized void loadPages()
@@ -214,15 +217,15 @@ public class PageCat
 		Convert.writeFileJO(new File(dirf, "_cat.json"), jo);
 	}
 	
-	static PageCat loadPageCat(String name) throws IOException
+	static PageCat loadPageCat(PortalManager pm,String name) throws IOException
 	{
-		File dirf = new File(PortalManager.getDir(),name+"/") ;
+		File dirf = new File(pm.getDir(),name+"/") ;
 		File catf = new File(dirf, "_cat.json");
 		if (!catf.exists())
 			return null ;
 		
 			JSONObject jo = Convert.readFileJO(catf);
-			return PageCat.fromJO(name,jo) ;
+			return PageCat.fromJO(pm,name,jo) ;
 	}
 	
 	void setAndSavePage(Page p) throws IOException
@@ -338,7 +341,7 @@ public class PageCat
 		return jo ;
 	}
 
-	public static PageCat fromJO(String name,JSONObject jo)
+	public static PageCat fromJO(PortalManager pm,String name,JSONObject jo)
 	{
 		String t = jo.optString("t",name) ;
 //		JSONArray jarr = jo.optJSONArray("page_idtts") ;
@@ -355,7 +358,7 @@ public class PageCat
 //				id2t.put(h.pageid,h) ;
 //			}
 //		}
-		return new PageCat(name,t) ;
+		return new PageCat(pm,name,t) ;
 	}
 
 }

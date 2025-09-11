@@ -80,7 +80,7 @@ public abstract class PageBlk
 	{
 		if(ALL_TPS!=null)
 			return ALL_TPS ;
-		return ALL_TPS= Arrays.asList(new PageBlkTxt(null,null),new PageBlkVTxtDDyn(null,null),new PageBlkVTxtDUrl(null,null)) ;
+		return ALL_TPS= Arrays.asList(new PageBlkTxt(null,null),new PageBlkLet(null,null),new PageBlkVTxtDDyn(null,null),new PageBlkVTxtDUrl(null,null)) ;
 	}
 
 	static PageBlk transFromJO(Page p,JSONObject jo)
@@ -101,6 +101,9 @@ public abstract class PageBlk
 		{
 		case PageBlkTxt.TP:
 			ret = new PageBlkTxt(p,blk_n) ;
+			break ;
+		case PageBlkLet.TP:
+			ret = new PageBlkLet(p,blk_n) ;
 			break ;
 		case PageBlkVTxtDUrl.TP:
 			ret = new PageBlkVTxtDUrl(p,blk_n) ;

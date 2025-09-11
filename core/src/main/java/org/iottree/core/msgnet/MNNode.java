@@ -199,15 +199,25 @@ public abstract class MNNode extends MNBase
 	
 	public final List<MNNode> getOutConnNodes()
 	{
+		return getOutConnNodes(-1) ;
+	}
+	
+	public final List<MNNode> getOutConnNodes(int conn_idx)
+	{
 		int n = this.getOutNum() ;
-		if(connOut==null || n<=0)
+		if(connOut==null || n<=0 || conn_idx>=n)
 			return null ;
+		
 		ArrayList<MNNode> rets = new ArrayList<>() ;
 		for(int i = 0 ; i < n ; i ++)
 		{
+			if(conn_idx>=0 && i!=conn_idx)
+				continue ;
+			
 			List<MNConn> cs = getOutConns(i) ;
 			if(cs==null||cs.size()<=0)
 				continue ;
+			
 			for(MNConn c:cs)
 			{
 				MNNode ton = c.getToNode() ;

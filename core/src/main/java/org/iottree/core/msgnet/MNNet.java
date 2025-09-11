@@ -347,6 +347,60 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return new_n ;
 	}
 	
+	
+	public MNNode createNewNodeByPaste(float x,float y,JSONObject in_jo,StringBuilder failedr)  throws Exception
+	{
+		String cp_cid = in_jo.optString("_cp_container_id") ;
+		String cp_netid = in_jo.optString("_cp_netid") ;
+		if(Convert.isNullOrEmpty(cp_cid) || Convert.isNullOrEmpty(cp_netid))
+		{
+			failedr.append("input has no container and net info") ;
+			return null ;
+		}
+		MNManager cp_mnm = MNManager.getInstanceByContainerId(cp_cid) ;
+		if(cp_mnm==null)
+		{
+			failedr.append("invalid copied container id") ;
+			return null ;
+		}
+		MNNet cp_net = cp_mnm.getNetById(cp_netid) ;
+		if(cp_net==null)
+		{
+			failedr.append("invalid copied net id") ;
+			return null ;
+		}
+		String nodeid = in_jo.optString("id") ;
+		MNNode cp_nd = cp_net.getNodeById(nodeid) ;
+		if(cp_nd==null)
+		{
+			failedr.append("invalid copied node") ;
+			return null ;
+		}
+		
+		if(cp_nd.TP_getRelatedModule()!=null)
+		{
+			failedr.append("node owned by module cannot be pasted") ;
+			return null;
+		}
+		
+		MNNode newn = (MNNode)cp_nd.createNewIns(this) ;
+		
+		if(!newn.fromJO(cp_nd.toJO()))
+		{
+			failedr.append("node create failed") ;
+			return null ;
+		}
+		newn.id = IdCreator.newSeqId() ;
+		
+		newn.x = x ;
+		newn.y = y ;
+		
+		id2node.put(newn.id, newn) ;
+		
+		save() ;
+		return newn ;
+	}
+	
 	public MNNode createNewNodeInModule(MNModule m,MNNode tempn,float x,float y,String lib_item_id,boolean bsave)  throws Exception
 	{
 		//m.getSupportedNodeByTP(tp) ;

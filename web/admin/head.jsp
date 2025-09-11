@@ -18,27 +18,31 @@ String ver = Config.getVersion() ;
 	if(bsimple)
 	{
 %>
-<script src="/_js/jquery-1.12.0.min.js"></script>
+<script src="/_js/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
-<script defer src="/_js/font6/js/all.js"></script>
 <link href="/_js/font6/css/all.css" rel="stylesheet">
+<%--
+<script defer src="/_js/font6/js/all.js"></script>
+--%>
 <script src="/admin/js/util.js"></script>
 <%
 	}
 	else
 	{
-%><script src="/_js/jquery-1.12.0.min.js"></script>
+%><script src="/_js/jquery.min.js"></script>
+<%--
+<script defer src="/_js/font6/js/all.js"></script>
+ --%>
+<link href="/_js/font6/css/all.css" rel="stylesheet">
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/_js/ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js?v=<%=ver%>"></script>
 <link  href="/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script defer src="/_js/font6/js/all.js"></script>
-<link href="/_js/font6/css/all.css" rel="stylesheet">
 <script src="/admin/js/util.js"></script>
 <%--
 <link  href="/_js/font4.7.0/css/font-awesome.css"  rel="stylesheet" type="text/css" >

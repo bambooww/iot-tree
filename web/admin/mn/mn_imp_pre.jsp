@@ -9,7 +9,7 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%
-	if(!Convert.checkReqEmpty(request, out, "container_id"))
+	if(!Convert.checkReqEmpty(request, out, "container_id","name"))
 		return ;
 	String container_id = request.getParameter("container_id");
 	//String prjid = request.getParameter("prjid");
@@ -20,39 +20,16 @@ if(mnm==null)
 	return ;
 }
 	
-	String name="" ;
+	String name = request.getParameter("name") ;
+	MNNet oldnet = mnm.getNetByName(name) ;
 	String title = "" ;
-	String desc="" ;
-	
-	//MNManager mnm = MNManager.getInstance(prj) ;
-	String id = request.getParameter("netid") ;
-	boolean benable = true ;
-	if(Convert.isNotNullEmpty(id))
-	{
-		MNNet net = mnm.getNetById(id) ;
-		if(net==null)
-		{
-			out.print("no net found with id="+id) ;
-			return ;
-		}
-		name  = net.getName() ;
-		title =net.getTitle() ;
-		desc = net.getDesc() ;
-		benable = net.isEnable() ;
-		if(title==null)
-			title ="" ;
-		if(desc==null)
-			desc = "" ;
-	}
-	
-	String ben_chked = benable?"checked":"" ;
+	if(oldnet!=null)
+		title = oldnet.getTitle() ;
 %>
 <html>
 <head>
 <title>net editor</title>
-<jsp:include page="../head.jsp">
-	<jsp:param value="true" name="simple"/>
-</jsp:include>
+<jsp:include page="../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(600,400);
 </script>
@@ -61,16 +38,24 @@ dlg.resize_to(600,400);
 </head>
 <body>
 <form class="layui-form" action="">
+<%
+if(oldnet!=null)
+{
+%><span style="color:red"><%=oldnet.getTitle()%> [<%=oldnet.getName() %>] is existed.</span>
+<%
+}
+%>
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <div class="layui-input-inline" style="width:200px;">
+		<input type="radio" name="replace_or_not" value="true"/>Replace <input type="radio" name="replace_or_not" value="false" checked="checked"/>Create New One
+    </div>
+  </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>name</wbt:lang></label>
     <div class="layui-input-inline" style="width:200px;">
       <input type="text" name="name" id="name" value="<%=name %>"  class="layui-input"/>
     </div>
-    
-     <div class="layui-input-inline" style="width:30px;">
-      <input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> />
-    </div>
-    <div class="layui-form-mid" style="width:50px;">Enable</div>
   </div>
  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:lang>title</wbt:lang></label>
@@ -78,12 +63,7 @@ dlg.resize_to(600,400);
       <input type="text" name="title" id="title" value="<%=title %>"  class="layui-input"/>
     </div>
   </div>
-  <div class="layui-form-item layui-form-text">
-    <label class="layui-form-label"><wbt:lang>description</wbt:lang></label>
-    <div class="layui-input-inline" style="width:60%;">
-      <textarea name="desc" id="desc" class="layui-textarea"><%=desc %></textarea>
-    </div>
-  </div>
+  
 </form>
 </body>
 <script type="text/javascript">
@@ -111,11 +91,8 @@ function do_submit(cb)
 	{
 		tt = n;
 	}
-	var desc = document.getElementById('desc').value;
-	if(desc==null)
-		desc ='' ;
-	let benable = $("#enable").prop("checked") ;
-	cb(true,{name:n,title:tt,desc:desc,enable:benable});
+	let rep = $('input[name="replace_or_not"]:checked').val()=='true';
+	cb(true,{name:n,title:tt,replace:rep});
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;

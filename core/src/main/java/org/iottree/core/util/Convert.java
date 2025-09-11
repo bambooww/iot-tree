@@ -165,6 +165,7 @@ public class Convert
 		{
 			m = Integer.parseInt(datastr.substring(p));
 			cal.set(Calendar.MONTH, m - 1);
+			cal.set(Calendar.DAY_OF_MONTH,1) ;
 			return cal;
 		}
 
@@ -2519,6 +2520,21 @@ public class Convert
 			fis.read(buffer);
 			return buffer;
 		}
+	}
+	
+	public static byte[] readStreamBuffer(InputStream inputs) throws IOException
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
+		int len = 0,rlen=0 ;
+		byte[] buf = new byte[1024] ;
+		while((rlen=inputs.read(buf))>0)
+		{
+			baos.write(buf, 0, rlen);
+			len += rlen ;
+			if(len> 10485760)
+				throw new RuntimeException("stream data is too long ");
+		}
+		return baos.toByteArray() ;
 	}
 
 	public static List<String> readFileTxtLines(File f, String encod) throws IOException

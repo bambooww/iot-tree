@@ -39,7 +39,7 @@
 		admin_roles="manager,"
 		debug_cookie_only="true"
 
-		login_page="/ent/login/login.jsp"
+		login_page="/ent/login/login_01.jsp"
 		login_redirect_page="/ent/index.jsp"
 		is_force_redirect="true"
 		desc="debug_cookie_only为true的情况是用户IE不关闭就一直登陆">
@@ -86,7 +86,9 @@
 			<sub_nav name="json2tb" title="检测记录"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  url="/ent/datarec/json2tb_main.jsp" />
 		</sub_nav>
 		
-		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datarec/prod_rec.jsp" ></sub_nav>
+		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datarec/prod_rec.jsp" >
+			<sub_nav name="prod_plan" title="产量计划"  icon="fa-solid fa-calendar-check" color="#e43020" notroles="small_user"  url="/ent/portlet/cx1/prod_plan.jsp" />
+		</sub_nav>
 		<!--
 		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_bar.jsp?confn=pro_stat" ></sub_nav>
 		<sub_nav name="pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_pron" ></sub_nav> 
@@ -95,10 +97,13 @@
 			<sub_nav name="cost_compare" title="能耗对比分析"  icon="fa fa-area-chart" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_compare.jsp?tp=dvalue_cost" />
 		</sub_nav>
 		 -->
-		<sub_nav name="pro_spc" title="SPC"  icon="fa-solid fa-wave-square" color="#e43020" notroles="small_user"  url="/ent/datarec/spc_main.jsp" ></sub_nav>
+		<sub_nav name="pro_spc" title="SPC"  icon="fa-solid fa-wave-square" color="#e43020" notroles="small_user">
+			<sub_nav name="pro_spc_xr" title="X̄-R"  icon="fa-solid fa-wave-square" color="#e43020" notroles="small_user"  url="/ent/datarec/spc_main.jsp?tp=xr" />
+			<sub_nav name="pro_spc_ca_cp_cpk" title="CA CP CPK"  icon="fa-solid fa-wave-square" color="#e43020" notroles="small_user"  url="/ent/datarec/spc_main.jsp?tp=ca_cp_cpk" />
+		</sub_nav>
 		<sub_nav name="alarm_mgr" title="报警记录"  icon="fa fa-bell" color="#00a8e0" notroles="small_user"  url="/ent/datarec/alarm_main.jsp">
 		</sub_nav>
-		<sub_nav name="mon_data_ana" title="采集数据分析"  icon="fa fa-chart-line" color="#e43020" notroles="small_user" >
+		<sub_nav name="mon_data_ana" title="采集数据分析"  icon="fa fa-chart-line" color="#e43020" notroles="small_user" roles="root">
 			<sub_nav name="mon_data_raw" title="原始数据分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_raw.jsp" />
 			<sub_nav name="mon_data_aggr" title="聚合分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_aggr.jsp" />
 			<sub_nav name="mon_data_aggr_c" title="聚合比对分析"  icon="fa fa-chart-line" color="#19ac18" notroles="small_user"          url="/ent/dataana/lns_multi_aggr_c.jsp" />
@@ -108,9 +113,11 @@
 				<sub_nav name="sy_mgr_3_1" title="用户管理" icon="fa fa-user" url="/admin/user/auth_main.jsp" target="main" roles="root"/>
 				<sub_nav name="sy_mgr_portal" title="Portal配置" icon="fa-solid fa-shapes" url="/admin/portal/portal_main.jsp" target="main" roles="root"/>
 				<sub_nav name="sy_portal_temp" title="Portal模板" icon="fa-solid fa-shapes" url="/admin/portal/templet_main.jsp" target="main" roles="root"/>
+				<!-- 
 				<sub_nav name="pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_pron" />
-				<sub_nav name="log_mgr" title="日志控制" icon="fa fa-gear" url="/admin/util/log_mgr.jsp" target="main" roles="root"/>
 				<sub_nav name="iot_tree" title="设备接入"  icon="fa fa-server" color="#e43020" notroles="small_user"  url="/ent/device/device_main.jsp"  roles="root" />
+				 -->
+				<sub_nav name="log_mgr" title="日志控制" icon="fa fa-gear" url="/admin/util/log_mgr.jsp" target="main" roles="root"/>
 		</sub_nav>
 	</nav>
 	

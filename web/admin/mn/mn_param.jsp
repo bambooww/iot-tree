@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8"%>
-<%@ page import="java.util.*,
+<%@ page contentType="text/html;charset=UTF-8"%><%@ page import="java.util.*,
 	java.io.*,org.json.*,
 	org.iottree.core.*,
 	org.iottree.core.basic.*,
@@ -106,7 +105,6 @@
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
 	<jsp:param value="true" name="tree"/>
-
 </jsp:include>
 <script type="text/javascript">
 

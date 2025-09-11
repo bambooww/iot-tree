@@ -34,6 +34,7 @@ String using_lan = Lan.getUsingLang() ;
 	String path = rep.getNodePath() ;
 	
 	boolean hide_top = "true".equalsIgnoreCase(request.getParameter("hide_top")) ;
+	boolean b_ent = Config.getWebappByName("ent")!=null ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -703,7 +704,7 @@ if(hide_top)
         
         <div class="left_btm">
     	
-    	<div class="left_btm_tab">
+    	<div class="left_btm_tab" style="background-color: #eee;">
     	<ul></ul>
           <div></div>
           </div>
@@ -718,6 +719,7 @@ dlg.dlg_top=true;
 var repid="<%=prjid%>";
 var prjid="<%=prjid%>";
 var hmi_main = {id:"<%=hmi_main_id %>",title:"<%=hmi_main_title %>",path:"<%=hmi_main_path %>"};
+var b_ent = <%=b_ent%>;
 
 var connpro_menu = [
 	//{content:'Connector Provider',header: true},
@@ -2281,6 +2283,17 @@ function clk_alert_mgr()
 	dlg.open(u,{title:"Alert Setup",w:'500px',h:'400px'});
 }
 
+function clk_portal()
+{
+	add_tab("___portal","<i class='fa fa-file'></i>Portal Template","./portal/portal_main.jsp?prjid="+prjid) ;
+}
+
+function clk_ent_conf()
+{
+	add_tab("___ent_conf","<i class='fa fa-gear'></i>Enterprise Config","/ent/util/ent_config.jsp?prjid="+prjid) ;
+}
+
+
 function clk_dd()
 {
 	event.stopPropagation();
@@ -2335,15 +2348,29 @@ function init_left_btm()
     
     let tmps = `<iframe src="./mn/mn_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps});
-	tmps=`<div   style="height:100px;width:290px;font-size:30px;color:#57a9d0"><br>
+	tmps=`<div   style="height:100%;width:100%;font-size:30px;color:#57a9d0"><br>
 		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
 		  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
 		  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
-		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-		  </div>
-		  `;
+		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>`;
+	if(b_ent)
+	{
+		tmps += `<span id='portal' onclick='clk_portal()' title="Portal">
+			  <span class="fa-stack">
+			  <i class="fa-regular fa-file  fa-lg fa-stack-1x"></i>
+			  <i class="fa-solid fa-shapes fa-stack-1x fa-inverse" style="color:green;"></i>
+			  </span>
+		  </span>
+		  <span id='ent_conf' onclick='clk_ent_conf()' title="Ent Config">
+		  <span class="fa-stack">
+		  <i class="fa-regular fa-file  fa-lg fa-stack-1x"></i>
+		  <i class="fa-solid fa-gear fa-stack-1x fa-inverse" style="color:green;"></i>
+		  </span>
+	  </span>`;
+	}
+	tmps += "</div>";
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>extends</wbt:g>', 'id': 'lb_tab_extend', 'content': tmps});
 	
 	$(".left_btm_tab").tab('selectTab', 'lb_tab_msg_net');

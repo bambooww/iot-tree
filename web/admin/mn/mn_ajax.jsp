@@ -151,6 +151,17 @@ try
 		}
 		out.print("succ") ;
 		return ;
+	case "node_add_paste":
+		if(!Convert.checkReqEmpty(request, out,"netid","x","y","jstr"))
+			return ;
+		rnn = net.createNewNodeByPaste(x, y,in_jo,failedr) ;
+		if(rnn==null)
+		{
+			out.print("paste node failed:"+failedr) ;
+			return ;
+		}
+		out.print("succ") ;
+		return ;
 	case "module_add_up":
 		if(!Convert.checkReqEmpty(request, out,"netid", "tp","x","y"))
 			return ;
@@ -215,6 +226,15 @@ try
 		{
 			out.print(e.getMessage()) ;
 		}
+		return ;
+	case "imp_net":
+		if(!Convert.checkReqEmpty(request, out,"replace","jstr"))
+			return;
+		boolean force_replace = "true".equals(request.getParameter("replace")) ;
+		if(mnm.impNetByJO(in_jo, name, title, force_replace, failedr)!=null)
+			out.print("succ") ;
+		else
+			out.print("import failed:"+failedr) ;
 		return ;
 	case "save_to_lib":
 		if(!Convert.checkReqEmpty(request, out,"mn","fulltp","jstr"))

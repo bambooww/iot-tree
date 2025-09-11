@@ -27,6 +27,8 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.conn.ConnPtHTTPSer;
+import org.iottree.core.msgnet.MNManager;
+import org.iottree.core.msgnet.nodes.NM_RESTfulApi;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -118,6 +120,75 @@ public class PrjFilter implements Filter
 		return true;
 	}
 	
+	private boolean doMsgNetRESTfulApi(String path,HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException
+	{
+		List<String> ss = Convert.splitStrWith(path, "/") ;
+		if(ss.size()!=4)
+			return false;
+		String s1 = ss.get(1) ;
+		if(!s1.equals("_mn_restful_api"))
+			return false;
+		
+		String prjn = ss.get(0);
+		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
+		if(prj==null)
+			return false;
+		String netname = ss.get(2) ;
+		String apiname = ss.get(3) ;
+		MNManager mnm = MNManager.getInstance(prj) ;
+		if(mnm==null)
+			return false;
+		List<NM_RESTfulApi> rapis = mnm.findNodesByTP(NM_RESTfulApi.class, true) ;
+		if(rapis==null)
+			return false;
+		NM_RESTfulApi api = null ;
+		for(NM_RESTfulApi rapi:rapis)
+		{
+			if(apiname.equals(rapi.getApiName()))
+			{
+				api = rapi;
+				break ;
+			}
+		}
+		if(api==null)
+			return false;
+		//
+		String method = request.getMethod() ;
+		byte[] bs = readPostBS(request, response) ;
+		//String resptxt = cpt_hs.onRecvedFromConn(null, bs);
+		String req_txt = new String(bs,"UTF-8") ;
+		if("GET".equals(method) || Convert.isNullOrEmpty(req_txt))
+		{//may send_ajax post req
+			Object objv = api.getOutputObj() ;
+			if(objv==null)
+			{
+				response.sendError(404);
+				return true ;
+			}
+			response.getOutputStream().write(objv.toString().getBytes("UTF-8"));
+			return true ;
+		}
+		if("POST".equals(method))
+		{
+			if(Convert.isNullOrEmpty(req_txt))
+				return true ;
+			try
+			{
+				api.RT_onApiPosted(req_txt);
+				String ok_resp = api.getOkRespTxt() ;
+				if(Convert.isNotNullEmpty(ok_resp))
+					response.getOutputStream().write(ok_resp.getBytes("UTF-8"));
+			}
+			catch(Exception e)
+			{
+				String errm = e.getMessage() ;
+				response.getOutputStream().write(errm.getBytes("UTF-8"));
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException
@@ -180,10 +251,15 @@ public class PrjFilter implements Filter
 		}
 		
 		if(doConnHttpSer(uri, req, resp))
-		{
+		{//http server conn in
 			return ;
 		}
 		
+		if(doMsgNetRESTfulApi(uri, req, resp))
+		{//restful api in msg net
+			return ;
+		}
+		 
 		UANode node = UAUtil.findNodeByPath(uri) ;
 		if(node==null)
 		{

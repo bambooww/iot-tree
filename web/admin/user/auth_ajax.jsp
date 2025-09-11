@@ -54,6 +54,8 @@ try
 	JSONObject tmpjo ;
 	for(LoginUtil.UserAuthItem u:us.values())
 	{
+		if(u.getState()!=LoginUtil.UserState.Normal)
+			continue ;
 		if(bfirst)
 			bfirst=false;
 		else
@@ -70,7 +72,7 @@ try
 	case "user_edit":
 		if(!Convert.checkReqEmpty(request, out,"username","disname"))
 			return ;
-		if(!badmin || !b_self)
+		if(!badmin && !b_self)
 		{
 			out.print("no right") ;
 			return ;
@@ -103,10 +105,10 @@ try
 			out.print("no right") ;
 			return ;
 		}
-		if(LoginUtil.delUser(username))
+		if(LoginUtil.delUser(username,false,failedr))
 			out.print("succ") ;
 		else
-			out.print("del failed") ;
+			out.print("del failed:"+failedr) ;
 		return ;
 	case "admin_chg_psw":
 		if(!Convert.checkReqEmpty(request, out,"username","new_psw"))

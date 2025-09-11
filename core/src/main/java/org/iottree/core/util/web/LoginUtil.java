@@ -2,7 +2,6 @@ package org.iottree.core.util.web;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugAuthUser;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.SecureUtil;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -40,11 +38,65 @@ public class LoginUtil
 {
 	static ILogger log = LoggerManager.getLogger(LoginUtil.class) ;
 	
+	public enum UserState
+	{
+		Normal(0), Invalid(1), Delete(2),ResetPsw(3),New(4);
+
+		private final int stVal;
+
+		UserState(int v)
+		{
+			stVal = v;
+		}
+
+		public int getIntValue()
+		{
+			return stVal;
+		}
+		
+		public String getTitle()
+		{
+			switch(stVal)
+			{
+			case 1:
+				return "<font color=red>无效</font>";
+			case 2:
+				return "<font color=red>删除</font>";
+			case 3:
+				return "<font color=blue>重置密码</font>";
+			case 4:
+				return "<font color=blue>新建</font>";
+			default:
+				return "<font color=green>正常</font>";
+			}
+		}
+		
+		public static UserState getByIntValue(int v)
+		{
+			switch(v)
+			{
+			case 1:
+				return Invalid;
+			case 2:
+				return Delete;
+			case 3:
+				return ResetPsw;
+			case 4:
+				return New;
+			default:
+				return Normal;
+			}
+		}
+	}
+	
+	
 	public static class UserAuthItem
 	{
 		String username ;
 		
 		String disname ;//显示名称
+		
+		UserState state = UserState.Normal ;
 		
 		String salt ;
 		
@@ -72,6 +124,11 @@ public class LoginUtil
 			return this.disname ;
 		}
 		
+		public UserState getState()
+		{
+			return this.state ;
+		}
+		
 		public List<String> getRoleNames()
 		{
 			return this.roles ;
@@ -82,6 +139,8 @@ public class LoginUtil
 			JSONObject jo = new JSONObject() ;
 			jo.put("usern",this.username) ;
 			jo.putOpt("disn", this.disname) ;
+			jo.put("state",this.state.stVal) ;
+			jo.put("state_t",this.state.getTitle()) ;
 			return jo ;
 		}
 		
@@ -90,6 +149,7 @@ public class LoginUtil
 			JSONObject jo = new JSONObject() ;
 			jo.put("usern",this.username) ;
 			jo.putOpt("disn", this.disname) ;
+			jo.put("state",this.state.stVal) ;
 			jo.putOpt("salt", this.salt) ;
 			jo.putOpt("enc_psw", this.encPsw) ;
 			jo.putOpt("roles", Convert.combineStrWith(this.roles, ',')) ;
@@ -103,6 +163,7 @@ public class LoginUtil
 			if(Convert.isNullOrEmpty(ret.username))
 				return null ;
 			ret.disname = jo.optString("disn") ;
+			ret.state = UserState.getByIntValue(jo.optInt("state",0)) ;
 			ret.salt = jo.optString("salt") ;
 			ret.encPsw = jo.optString("enc_psw") ;
 			ret.roles = Convert.splitStrWith(jo.optString("roles"), ",|") ;
@@ -379,7 +440,7 @@ public class LoginUtil
 		return null ;
 	}
 	
-	public static boolean delUser(String username)
+	public static boolean delUser(String username,boolean deleted,StringBuilder failedr) throws Exception
 	{
 		if("admin".equals(username))
 			return false ;
@@ -392,13 +453,36 @@ public class LoginUtil
 		File f = calcAuthFile(username) ;
 		if(f.exists())
 		{
-			if(f.delete())
+			if(deleted)
 			{
-				listUserAll().remove(username);
+				if(f.delete())
+				{
+					listUserAll().remove(username);
+					return true;
+				}
+			}
+			else
+			{
+				if(changeUserStateAdmin(username,UserState.Invalid,failedr)!=null)
+					return true;
 			}
 		}
 		
 		return false ;
+	}
+	
+	public static UserAuthItem changeUserStateAdmin(String username,UserState ust,StringBuilder failedr) throws Exception
+	{
+		UserAuthItem uai = getUserItem(username) ;
+		if(uai==null)
+		{
+			failedr.append(username+" is not existed") ;
+			return null ;
+		}
+		uai.state= ust ;
+		if(saveUserAuthItem(uai))
+			return uai ;
+		return null ;
 	}
 	
 	public static UserAuthItem changeUserPsw(String username,String newpsw,String oldpsw,StringBuilder failedr) throws Exception
@@ -451,6 +535,8 @@ public class LoginUtil
 			return uai ;
 		return null ;
 	}
+	
+	
 	
 	public static boolean checkUserPsw(String username,String password)  throws Exception
 	{

@@ -3,6 +3,7 @@ package org.iottree.core.msgnet;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,6 +22,7 @@ import org.iottree.core.msgnet.store.evt_alert.EvtAlertTb;
 import org.iottree.core.msgnet.modules.*;
 import org.iottree.core.msgnet.util.ConfItem;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
@@ -240,11 +242,30 @@ public class MNManager
 //
 //	}
 	
-	
 	private static void loadNodesFile(File f) throws IOException
 	{
 		JSONObject jo = Convert.readFileJO(f) ;
-		JSONArray catjarr = jo.optJSONArray("cats") ;
+		loadNodesConf(jo) ;
+	}
+	
+	
+	private static boolean loadNodesAsStream() throws IOException
+	{
+		InputStream inps = MNManager.class.getResourceAsStream("/org/iottree/core/msgnet/nodes.json");
+		if(inps==null)
+			return false;
+		
+		byte[] buf = Convert.readStreamBuffer(inps) ;
+		String txt = new String(buf,"UTF-8") ;
+		JSONObject jo = new JSONObject(txt) ;
+		loadNodesConf(jo);
+		return true ;
+	}
+	
+	private static void loadNodesConf(JSONObject conf_jo) throws IOException
+	{
+		//JSONObject jo = Convert.readFileJO(f) ;
+		JSONArray catjarr = conf_jo.optJSONArray("cats") ;
 		int n = catjarr.length() ;
 		for(int i =0 ; i < n ; i ++)
 		{
@@ -286,16 +307,17 @@ public class MNManager
 
 	static
 	{
-		String msgnetdir = System.getProperty("iottree.msg_net") ;
-		if(Convert.isNullOrEmpty(msgnetdir))
-			throw new RuntimeException("no [iottree.msg_net] env property found") ;
-		File nodesf = new File(msgnetdir+"nodes.json") ;
-		if(!nodesf.exists())
-			throw new RuntimeException("no nodes file found = "+nodesf.getAbsolutePath()) ;
+//		String msgnetdir = System.getProperty("iottree.msg_net") ;
+//		if(Convert.isNullOrEmpty(msgnetdir))
+//			throw new RuntimeException("no [iottree.msg_net] env property found") ;
+//		File nodesf = new File(msgnetdir+"nodes.json") ;
+//		if(!nodesf.exists())
+//			throw new RuntimeException("no nodes file found = "+nodesf.getAbsolutePath()) ;
 		
 		try
 		{
-			loadNodesFile(nodesf) ;
+			//loadNodesFile(nodesf) ;
+			loadNodesAsStream();
 		}
 		catch(Exception ee)
 		{
@@ -304,16 +326,20 @@ public class MNManager
 		
 		
 		// for platform
-		nodesf = new File(msgnetdir+"nodes_platform.json") ;
-		if(nodesf.exists())
+		String msgnetdir = System.getProperty("iottree.msg_net") ;
+		if(Convert.isNotNullEmpty(msgnetdir))
 		{
-			try
+			File nodesf = new File(msgnetdir+"nodes_platform.json") ;
+			if(nodesf.exists())
 			{
-				loadNodesFile(nodesf) ;
-			}
-			catch(Exception ee)
-			{
-				ee.printStackTrace();
+				try
+				{
+					loadNodesFile(nodesf) ;
+				}
+				catch(Exception ee)
+				{
+					ee.printStackTrace();
+				}
 			}
 		}
 	}
@@ -580,6 +606,51 @@ public class MNManager
 		return rnn ;
 	}
 	
+	public MNNet impNetByJO(JSONObject net_jo,String newname,String new_title,boolean force_replace,StringBuilder failedr) throws Exception
+	{
+		MNNet ret = new MNNet(this) ;
+		if(!ret.fromJO(net_jo))
+		{
+			failedr.append("导入格式不对");
+			return null ;
+		}
+		
+		if(!Convert.checkVarName(newname, failedr))
+			throw new Exception(failedr.toString()) ;
+		
+		MNNet old_n = this.getNetByName(newname) ;
+		if(old_n!=null && !force_replace)
+			throw new Exception("net with name "+newname+ " is already existed") ;
+		
+		List<MNNet> nets = this.listNets();
+		
+		if(old_n!=null && force_replace)
+		{//replace old one
+			if(old_n.RT_isRunning())
+			{
+				failedr.append("cannot replace net ,becuse net is running") ;
+				return null;
+			}
+			ret.id = old_n.id ;
+			if(Convert.isNotNullEmpty(new_title))
+				ret.title = new_title ;
+			int k = nets.indexOf(old_n) ;
+			saveNet(ret);
+			nets.set(k,ret) ;
+			clearCache();
+			return ret ;
+		}
+		
+		//add new one
+		ret.id = IdCreator.newSeqId() ;
+		ret.name = newname ;
+		if(Convert.isNotNullEmpty(new_title))
+			ret.title = new_title ;
+		saveNet(ret);
+		nets.add(ret) ;
+		clearCache();
+		return ret ;
+	}
 	/**
 	 * 在Manager范围内，根据资源名称定位对应的节点
 	 * @param res_name
@@ -663,8 +734,13 @@ public class MNManager
 		return rets ;
 	}
 	
+	public <T extends MNBase> List<T> findNodesByTP(Class<T> tp,boolean ignore_disable)
+	{
+		return findNodesByTP(tp,null,ignore_disable) ;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T extends MNBase> List<T> findNodeByTP(Class<T> tp,boolean ignore_disable)
+	public <T extends MNBase> List<T> findNodesByTP(Class<T> tp,String mark,boolean ignore_disable)
 	{
 		ArrayList<T> rets = new ArrayList<>() ;
 		List<MNNet> nets = this.listNets() ;
@@ -678,7 +754,11 @@ public class MNManager
 				if(ignore_disable && !m.isEnable())
 					continue ;
 				if(tp.isInstance(m))
+				{
+					if(Convert.isNotNullEmpty(mark) && !m.hasMark(mark))
+						continue ;
 					rets.add((T)m) ;
+				}
 				continue ;
 			}
 			
@@ -688,7 +768,12 @@ public class MNManager
 				if(ignore_disable && !m.isEnable())
 					continue ;
 				if(tp.isInstance(m))
+				{
+					if(Convert.isNotNullEmpty(mark) && !m.hasMark(mark))
+						continue ;
+					
 					rets.add((T)m) ;
+				}
 				continue ;
 			}
 		}

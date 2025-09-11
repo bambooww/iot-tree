@@ -1041,6 +1041,7 @@ public class NM_TagRT2RDB  extends MNNodeMid
 			ps.setString(1, this.tagTT);
 			ps.setString(2, this.valTP);
 			ps.setString(3, this.indicator);
+			ps.setString(4, this.unit);
 			ps.setString(5, this.autoId);
 			return ps ;
 		}

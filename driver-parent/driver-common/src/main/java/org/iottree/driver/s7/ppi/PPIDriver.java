@@ -51,7 +51,7 @@ public class PPIDriver extends DevDriver
 	@Override
 	public String getTitle()
 	{
-		return "Siemens S7-200";
+		return "Siemens PPI";
 	}
 	
 	public short getMasterID()

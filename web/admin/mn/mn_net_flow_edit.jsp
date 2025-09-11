@@ -259,7 +259,7 @@ function init_iottpanel()
 		on_prompt_msg:on_editor_prompt
 	}) ;
 	hmiView = new mn.MNView(hmiModel,panel,editor,{
-		copy_paste_url:"./util/copy_paste_ajax.jsp",
+		copy_paste_url:`./mn_copy_paste_ajax.jsp?container_id=\${container_id}&netid=\${netid}`,
 		on_model_loaded:()=>{
 			panel.updatePixelSize();
 			draw_fit()
@@ -321,6 +321,19 @@ function init_iottpanel()
 	                		return ;
 	                	}
 	                	dlg.msg(ret) ;
+	                }) ;
+		},
+		onDINodePaste:(x, y, node)=>{
+			console.log(x,y,node);
+			send_ajax("./mn_ajax.jsp",{op:"node_add_paste",container_id:container_id,netid:netid,x:x,y:y,jstr:JSON.stringify(node)},
+	                (bsucc,ret)=>{
+	                	
+	                	if(!bsucc||ret!="succ")
+	                	{
+	                		dlg.msg(ret) ;
+	                		return ;
+	                	}
+	                	reload_net();
 	                }) ;
 		}
 	});

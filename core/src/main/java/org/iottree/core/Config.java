@@ -231,9 +231,14 @@ public class Config
 			return null;
 		}
 	}
+	
+	private static Webapps webapps = null ;
 
 	public static Webapps getWebapps()
 	{
+		if(webapps!=null)
+			return webapps ;
+		
 		Element wappsele = getConfElement("webapps");
 		if (wappsele == null)
 			return null;
@@ -257,7 +262,20 @@ public class Config
 				r.webapps.add(new Webapp(appn, path, bmain));
 			}
 		}
-		return r;
+		return webapps = r;
+	}
+	
+	public static Webapp getWebappByName(String name)
+	{
+		Webapps webapps = getWebapps() ;
+		if(webapps==null)
+			return null;
+		for(Webapp wapp:webapps.webapps)
+		{
+			if(name.equals(wapp.appName))
+				return wapp ;
+		}
+		return null ;
 	}
 
 	public static Webapp getWebappMain()

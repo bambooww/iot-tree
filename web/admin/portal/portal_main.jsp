@@ -3,6 +3,7 @@
 		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%
 	//UserProfile up = UserProfile.getUserProfile(request) ;
 	//List<Warehouse> whs = WareManager.getInstance().getHousesAll() ;
+	String prjid = request.getParameter("prjid") ;
 %><html>
 <head>
         <jsp:include page="../head.jsp">

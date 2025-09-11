@@ -85,7 +85,7 @@ function edit_user(user)
 	{
 		//console.log(user) ;
 		username = user.usern ;
-		pm={username:username,disnamen:user.disn} ;
+		pm={username:username,disname:user.disn} ;
 		editt = "编辑用户" ;
 		op = "user_edit" ;
 	}
@@ -132,10 +132,7 @@ function render_tb()
 	 //cols.push({field: 'name_en', title: '英文名', width:'20%'});
 	
 	 cols.push({field: 'st', title: '状态', width:'10%',templet:function(res){
-		 //if(res.st!=1) return res.stt||"" ;
-		 //console.log(res) ;
-		 //return `\${res.stt} <button style="border:1px solid #ccc" onclick="recover_user('\${res.userid}')">恢复</button>`
-		 return "";
+		 return res.state_t;
 	 }});
 
 	 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"15%", templet:function(res){
@@ -192,7 +189,7 @@ function render_tb()
 		  }
 		  else if(lay_evt === 'del')
 		  {
-			  del_user(data.userid);
+			  del_user(data);
 		  }
 		  else if(lay_evt === 'edit')
 		  {
@@ -215,7 +212,7 @@ function render_tb()
 
 function refresh_table()
 {
-	let pm = {url:"auth_ajax.jsp?op=list_users&orgid="+(orgid||"")+"&roleid="+(roleid||"")};
+	let pm = {url:"auth_ajax.jsp?op=list_users"};
 	table.reload("user_list",pm);
 }
 
@@ -239,8 +236,7 @@ function chg_user_psw(u)
 {
 	if(event) event.stopPropagation();
 	
-	//console.log(u) ;
-	dlg.open("./auth_chg_psw.jsp",{title:`修改用户 \${u.name_cn} [\${u.name}]登录密码`,w:'500px',h:'400px'},
+	dlg.open("./auth_chg_psw.jsp",{title:`修改用户 \${u.disn} [\${u.usern}]登录密码`,w:'500px',h:'400px'},
 			['确定','取消'],
 			[
 				function(dlgw)
@@ -250,8 +246,7 @@ function chg_user_psw(u)
 					{
 						dlg.msg(rrr);return;
 					}
-					
-					 send_ajax("./auth_ajax.jsp",{op:"admin_chg_psw",name:u.name,...rrr},(bsucc,ret)=>{
+					 send_ajax("./auth_ajax.jsp",{op:"admin_chg_psw",username:u.usern,...rrr},(bsucc,ret)=>{
 						 if(!bsucc || ret!="succ")
 						 {
 							 dlg.msg(ret) ;
@@ -268,12 +263,12 @@ function chg_user_psw(u)
 			]);
 }
 
-function del_user(userid)
+function del_user(u)
 {
 	dlg.confirm('确定要删除此用户么?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
-					//send_ajax("auth_ajax.jsp",{op:"user_del",userid:userid},function(bsucc,ret){
-					send_ajax("auth_ajax.jsp",{op:"user_set_state",userid:userid,userst:1},function(bsucc,ret){
+					//console.log(u);
+					send_ajax("auth_ajax.jsp",{op:"user_del",username:u.usern},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
 			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;

@@ -340,7 +340,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				-->
+                				
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre8_x86/"/>
@@ -349,7 +349,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                          
+			                          -->
 							</tasks>
 						</configuration>
 					</execution>

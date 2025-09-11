@@ -33,6 +33,9 @@ import org.iottree.core.station.PStation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.common.primitives.UnsignedInteger;
+import com.google.common.primitives.UnsignedLong;
+
 
 /**
  * 
@@ -1801,8 +1804,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		case "_value":
 			if(!uav.isValid() && UACodeItem.isRunInJS())
 				throw new RuntimeException("invalid tag value with="+this.getNodePathCxt()) ;
-			return uav.getObjVal() ;
-			
+			Object objv = uav.getObjVal() ;
+			if(objv instanceof UnsignedInteger)
+				objv = ((UnsignedInteger)objv).longValue() ;
+			else if(objv instanceof UnsignedLong)
+				objv = ((UnsignedLong)objv).longValue() ;
+			return objv ;
 		case "_valid":
 			return uav.isValid() ;
 		case "_updt":

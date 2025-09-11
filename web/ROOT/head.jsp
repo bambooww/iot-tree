@@ -25,7 +25,7 @@
 	if(bsimple)
 	{
 %>
-<script src="<%=path_head %>/_js/jquery-1.12.0.min.js"></script>
+<script src="<%=path_head %>/_js/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path_head %>/_js/layui/css/layui.css" />
 <script type="text/javascript" src="<%=path_head %>/_js/ajax.js"></script>
 <script src="<%=path_head %>/_js/layui/layui.all.js"></script>
