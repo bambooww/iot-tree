@@ -353,6 +353,7 @@ layui.use('form', function(){
 	  element = layui.element;
 	  form.render();
 	  
+	  dlg.resize_to(800,300) ;
 	  init_pm() ;
 	 
 });

@@ -381,8 +381,6 @@ position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;to
 margin-top:5px;
 }
 
-
-
 .overlay_msg
 {
 	position:absolute;
@@ -1248,7 +1246,6 @@ function ws_conn()
     	let iob =$("#oper_alert_i") ; 
     	if(d.has_alert)
     	{
-    		
     		iob.css("color","red") ;
     		let ms = new Date().getTime();
     		if(ms-last_blink>500)
@@ -1349,9 +1346,10 @@ function update_tag_alert_list(alerts)
 	if(!alerts)
 	{
 		$("#alert_list").html("") ;
+		$(".__hmi_alert_list").html("") ;
 		return ;
 	}
-	
+	//console.log(alerts) ;
 	
 	let tmps = "" ;
 	for(let alert of alerts)
@@ -1366,7 +1364,7 @@ function update_tag_alert_list(alerts)
 		tmps += `<tr style="color:\${color};">
 			<td style="text-align:center">L\${alert.lvl}</td>
             <td>\${dt}</td>
-            <td title="\${alert.tag_path}\r\n\${alert.tag_tpath}">\${alert.tag_t}</td>
+            <td title="\${alert.tag_path}\r\n\${alert.tag_tpath}">\${alert.tag_tpath}</td>
             <td>\${item.evt_tpt}</td>
             <td>\${item.trigger_v}</td>
             <td>\${item.evt_prompt}</td>
@@ -1374,6 +1372,7 @@ function update_tag_alert_list(alerts)
 		` ;
 	}
 	$("#alert_list").html(tmps) ;
+	$(".__hmi_alert_list").html(tmps) ;
 }
 
 function ws_disconn() {

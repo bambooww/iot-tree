@@ -41,7 +41,7 @@ String net_tt = net.getTitle() ;
 </jsp:include>
 <script type="text/javascript" src="../js/tab.js" ></script>
 <link rel="stylesheet" href="../js/tab.css" />
-<link rel="stylesheet" href="./inc/mn.css" />
+<link rel="stylesheet" href="./inc/mn.css?v=1" />
 <style>
 .rt_blk
 {
@@ -167,7 +167,6 @@ white-space: nowrap;
 	<i id="rt_update" class="fa fa-refresh fa-2x" onclick="rt_flow_clear()" title="Clear Flow"></i>
 	<i id="hide_status_all" class="fa fa-angle-double-up fa-2x" onclick="rt_show_hide_status(false)" title="Hide all status"></i>
 	<i id="show_status_all" class="fa fa-angle-double-down fa-2x" onclick="rt_show_hide_status(true)" title="Show all status"></i>
-	&nbsp;&nbsp;
 	<i id="rt_flow_start" class="fa fa-play fa-2x" onclick="rt_flow_start_stop(true)" title="Start Flow"></i>
 	<i id="rt_flow_stop" class="fa fa-stop fa-2x" style="color:red;" onclick="rt_flow_start_stop(false)" title="Stop Flow"></i>
 </div>

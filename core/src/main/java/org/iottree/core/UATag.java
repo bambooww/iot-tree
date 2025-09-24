@@ -1306,6 +1306,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@HostAccess.Export
 	public void RT_setVal(Object v)
 	{
+		if(v==null)
+			return ;
+		//String p = this.getNodeCxtPathInPrj() ;
+		//if(p.startsWith("dlb1.d1."))
+		//	System.out.println(" setval tagp="+p) ;
 		long cdt = System.currentTimeMillis() ;
 		//UAVal uav = ;//RT_getVal();
 		//boolean bchg = true; 

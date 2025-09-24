@@ -113,6 +113,7 @@
 				<sub_nav name="sy_mgr_3_1" title="用户管理" icon="fa fa-user" url="/admin/user/auth_main.jsp" target="main" roles="root"/>
 				<sub_nav name="sy_mgr_portal" title="Portal配置" icon="fa-solid fa-shapes" url="/admin/portal/portal_main.jsp" target="main" roles="root"/>
 				<sub_nav name="sy_portal_temp" title="Portal模板" icon="fa-solid fa-shapes" url="/admin/portal/templet_main.jsp" target="main" roles="root"/>
+				<sub_nav name="pro_aggr" title="生产聚合统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datarec/prod_aggr.jsp?tp=dvalue_pron" />
 				<!-- 
 				<sub_nav name="pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datastat/dvalue_stat.jsp?tp=dvalue_pron" />
 				<sub_nav name="iot_tree" title="设备接入"  icon="fa fa-server" color="#e43020" notroles="small_user"  url="/ent/device/device_main.jsp"  roles="root" />

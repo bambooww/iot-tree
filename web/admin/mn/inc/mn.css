@@ -85,20 +85,21 @@ border: 1;
 .toolbox
 {
 position:absolute;
-top:30px;
-right:350px;
-width:220px;
+top:22px;
+left:218px;
+width:290px;
 z-index:1000;
-border:1px solid;
-background: #555555;
+border:0px solid;
+background0: #555555;
 }
 .toolbox i
 {
-	border: 2px solid #000000;
-	margin: 2px;
-	background: #808080;
+	border: 2px solid #5400e1;
+	margin: 2px;width:30px;height:30px;border-radius:5px;
+	background: #808080;text-align:center;
 	cursor: pointer;
 }
+.toolbox i:hover {background-color: yellow;}
 
 .toolleft
 {

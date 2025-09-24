@@ -137,7 +137,7 @@
 					continue ;
 				String addr = null ;
 				if(has_addr)
-					addr = ss.remove(0) ;
+					addr = ss.remove(0).trim() ;
 				
 				String title = Convert.combineStrWith(ss, " ") ;
 				UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, "",addr,dt,-1,null,100,null,null) ;

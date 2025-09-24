@@ -49,9 +49,9 @@ tr {height:20px;line-height: 1.2; }
 
 <div class="layui-form-item" id="limit_c" style="display:none">
     <label class="layui-form-label">Limit Words:</label>
-    <div class="layui-input-inline" style="width: 400px;height:500px;">
-      <div id="words_limit" style="width:400px;height:100px;font-size:12px;border:0px solid #ccc;">
-      	<table style="width:529px;height:40px" class0="lay-table">
+    <div class="layui-input-inline" style="width:600px;height:500px;border:0px solid;">
+      <div id="words_limit" style="width:602px;height:100px;font-size:12px;border:0px solid #ccc;">
+      	<table style="width:602px;height:40px" class0="lay-table">
       		<thead style="border:1px solid green;">
       			<tr style="background-color: #ccc;">
       				<td>Key</td>
@@ -67,12 +67,12 @@ tr {height:20px;line-height: 1.2; }
       		
       	</table>
       	
-      	<div style="overflow-y:auto;border:1px solid blue;width:527px;margin-top:3px;height:350px;">
-      		<table style="width:480px;display:block;border-collapse: collapse;" id="limit_bd">
+      	<div style="overflow-y:auto;border:1px solid blue;width:600px;margin-top:3px;height:350px;">
+      		<table style="width:580px;display:block;border-collapse: collapse;" id="limit_bd">
       		
       		</table>
       	</div>
-      	<div style="overflow-y:auto;border:1px solid red;width:527px;margin-top:3px;height:100px;position: relative;">
+      	<div style="overflow-y:auto;border:1px solid red;width:600px;margin-top:3px;height:100px;position: relative;">
       		<div id="err_words" ></div>
       		<button style="position: absolute;right:1px;top:3px;" onclick="chk_words()">Check Words</button>	
       	</div>

@@ -338,7 +338,7 @@ public class ConnPtTcpClient extends ConnPtStream
 
 	public synchronized void RT_checkConn()
 	{
-		if (System.currentTimeMillis() - lastChk < 5000)
+		if (System.currentTimeMillis() - lastChk < connTimeoutMS)
 			return;
 		try
 		{

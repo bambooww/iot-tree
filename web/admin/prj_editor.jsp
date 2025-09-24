@@ -671,8 +671,8 @@ if(hide_top)
 				  
 				 </div>
            </div>
-           <div class="subwin_content" style="overflow:auto">
-           		<div id="tree"  class="tree" style="width:100%;overflow:auto;left:-30px;position:absolute;height:700px"></div>
+           <div class="subwin_content" style="overflow:hidden;">
+           		<div id="tree"  class="tree" style="width:100%;overflow-y:auto;overflow-x:hidden;left:-30px;position:absolute;height:700px"></div>
            		<div style="width:80%;overflow: hidden;height:100px">&nbsp;</div>
            </div>
             <label class="hj-transverse-split-label"></label>

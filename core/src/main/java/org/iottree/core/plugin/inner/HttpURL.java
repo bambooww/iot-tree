@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -84,10 +85,13 @@ public class HttpURL extends JSObMap
 					git.setHeader(n2v.getKey(), n2v.getValue());
 				}
 			}
-			HttpResponse resp = chc.execute(git);
-			InputStream respIs = resp.getEntity().getContent();
-			byte[] bs = IOUtils.toByteArray(respIs);
-			return new String(bs, "UTF-8");
+			try (CloseableHttpResponse resp = chc.execute(git))
+			{
+				//HttpResponse resp = chc.execute(git);
+				InputStream respIs = resp.getEntity().getContent();
+				byte[] bs = IOUtils.toByteArray(respIs);
+				return new String(bs, "UTF-8");
+			}
 		}
 	}
 	
@@ -124,10 +128,13 @@ public class HttpURL extends JSObMap
 				git.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
 			}
 
-			HttpResponse resp = chc.execute(git);
-			InputStream respIs = resp.getEntity().getContent();
-			byte[] bs = IOUtils.toByteArray(respIs);
-			return new String(bs, "UTF-8");
+			try (CloseableHttpResponse resp = chc.execute(git))
+			{
+				//HttpResponse resp = chc.execute(git);
+				InputStream respIs = resp.getEntity().getContent();
+				byte[] bs = IOUtils.toByteArray(respIs);
+				return new String(bs, "UTF-8");
+			}
 		}
 	}
 	
@@ -147,11 +154,13 @@ public class HttpURL extends JSObMap
 			}
 
 			git.setEntity(new StringEntity(post_txt));
-
-			HttpResponse resp = chc.execute(git);
-			InputStream respIs = resp.getEntity().getContent();
-			byte[] bs = IOUtils.toByteArray(respIs);
-			return new String(bs, "UTF-8");
+			try (CloseableHttpResponse resp = chc.execute(git))
+			{
+				//HttpResponse resp = chc.execute(git);
+				InputStream respIs = resp.getEntity().getContent();
+				byte[] bs = IOUtils.toByteArray(respIs);
+				return new String(bs, "UTF-8");
+			}
 		}
 	}
 

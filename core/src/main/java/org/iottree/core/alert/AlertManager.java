@@ -403,7 +403,6 @@ public class AlertManager  extends JSObMap
 	
 	private void RT_init()
 	{
-		
 		if(this.alertHandlers!=null)
 		{
 			this.alertHandlers.forEach((id,ah)->{

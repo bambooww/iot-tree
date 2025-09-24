@@ -221,6 +221,12 @@ public class SourceJDBC extends Source
 	@data_val(param_name = "db_psw")
 	String dbPsw = null ;
 	
+	@data_val(param_name = "db_conn_init")
+	int dbConnInitN = 1 ;
+	
+	@data_val(param_name = "db_conn_max")
+	int dbConnMaxN = 10 ;
+	
 	public SourceJDBC()
 	{
 		super();
@@ -297,6 +303,16 @@ public class SourceJDBC extends Source
 		return this.dbPsw ;
 	}
 	
+	public int getDBConnInitN()
+	{
+		return this.dbConnInitN ;
+	}
+	
+	public int getDBConnMaxN()
+	{
+		return this.dbConnMaxN ;
+	}
+	
 	public String getJDBCUrl()
 	{
 		Drv drv = getName2Driver().get(this.drvName) ;
@@ -338,7 +354,7 @@ public class SourceJDBC extends Source
 		Drv drv = getName2Driver().get(this.drvName) ;
 		String url = drv.calJdbcUrl(this.dbHost, this.dbPort, this.dbName) ;
 		connPool = new DBConnPool(drv.dbTp, this.getName(), drv.getDriverClassName(), url,this.dbName, this.dbUser,
-				this.dbPsw, "0", "10",drv.plugDir.getOrLoadCL());
+				this.dbPsw, ""+dbConnInitN, ""+dbConnMaxN,drv.plugDir.getOrLoadCL());
 		return connPool ;
 	}
 	
@@ -391,6 +407,8 @@ public class SourceJDBC extends Source
 		jo.put("db_name",this.dbName);
 		jo.put("db_user",this.dbUser);
 		jo.put("db_psw",this.dbPsw);
+		jo.put("db_conn_init",""+this.dbConnInitN);
+		jo.put("db_conn_max",""+this.dbConnMaxN);
 		return jo ;
 	}
 
@@ -403,11 +421,18 @@ public class SourceJDBC extends Source
 		this.dbName = pmjo.optString("db_name");
 		this.dbUser = pmjo.optString("db_user");
 		this.dbPsw = pmjo.optString("db_psw");
+		this.dbConnInitN = Convert.parseToInt32(pmjo.optString("db_conn_init"),0) ;
+		this.dbConnMaxN = Convert.parseToInt32(pmjo.optString("db_conn_max"),10) ;
 		return true;
 	}
 	
 //	public Connection DB_getConn()
 //	{
 //		getConnPool().
+//	}
+	
+//	public String RT_getInf()
+//	{
+//		
 //	}
 }

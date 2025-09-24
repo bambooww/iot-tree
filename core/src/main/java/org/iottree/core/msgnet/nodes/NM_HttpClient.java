@@ -7,11 +7,14 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNCxtValSty;
 import org.iottree.core.msgnet.MNMsg;
@@ -24,31 +27,53 @@ public class NM_HttpClient extends MNNodeMid
 {
 	public static enum Method
 	{
-		GET,POST,PUT,DELETE
+		GET,POST
+		//,PUT,DELETE
 	}
 	
 	public static enum RespFmt
 	{
 		utf8string,json;
-		
-		
 	}
 	
-	Method method = Method.GET ;
+	Method method = Method.POST ;
 	
 	MNCxtValSty urlSty = MNCxtValSty.vt_str; //FOR_STR_LIST
 	String urlSubN = null ;
 	
 	RespFmt respFmt = RespFmt.utf8string ;
 	
-	HashMap<String,String> heads = new HashMap<>() ;
+	String headTxt = null ;
+	
+	String postBody = null ;
 	
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		return 2;
 	}
+	
+	@Override
+	public String getOutColor(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+			return "red";
+		return null ;
+	}
+	
 
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if(idx==0)
+			return null;
+		if(idx==1)
+			return "HTTP Response Error";
+		return null ;
+	}
+	
 	@Override
 	public String getTP()
 	{
@@ -58,7 +83,7 @@ public class NM_HttpClient extends MNNodeMid
 	@Override
 	public String getTPTitle()
 	{
-		return "todo "+g("http_client");
+		return g("http_client");
 	}
 
 	@Override
@@ -71,6 +96,11 @@ public class NM_HttpClient extends MNNodeMid
 	public String getIcon()
 	{
 		return "PK_whiteg";
+	}
+	
+	public Map<String,String> getHeadMap()
+	{
+		return Convert.transPropStrToMap(this.headTxt) ;
 	}
 
 	@Override
@@ -87,7 +117,8 @@ public class NM_HttpClient extends MNNodeMid
 		jo.put("url_sty", this.urlSty.name()) ;
 		jo.putOpt("url_subn", this.urlSubN) ;
 		jo.put("resp_fmt", respFmt.name()) ;
-		jo.put("heads", new JSONObject(heads)) ;
+		jo.putOpt("head_txt", headTxt) ;
+		jo.putOpt("post_body", this.postBody) ;
 		return jo;
 	}
 
@@ -98,17 +129,8 @@ public class NM_HttpClient extends MNNodeMid
 		this.urlSty = MNCxtValSty.valueOf(jo.optString("url_sty",MNCxtValSty.vt_str.name())) ;
 		this.urlSubN = jo.optString("url_subn","") ;
 		this.respFmt = RespFmt.valueOf(jo.optString("resp_fmt",RespFmt.utf8string.name()));
-		JSONObject tmpjo = jo.optJSONObject("heads") ;
-		if(tmpjo!=null)
-		{
-			HashMap<String,String> hds = new HashMap<>() ;
-			for(String n:tmpjo.keySet())
-			{
-				String v = tmpjo.getString(n) ;
-				hds.put(n,v) ;
-			}
-			this.heads=hds ;
-		}
+		this.headTxt = jo.optString("head_txt") ;
+		this.postBody = jo.optString("post_body","") ;
 	}
 	
 	// ---- rt
@@ -125,37 +147,44 @@ public class NM_HttpClient extends MNNodeMid
 		
 		String url = (String)urlob ;
 		
-		byte[] bs = null ;
+		String ret = null ;
+		JSONObject failed_jo = new JSONObject() ;
 		
 		switch(method)
 		{
 		case GET:
-			bs = this.getData(url) ;
+			ret = this.getData(url,failed_jo) ;
 			break ;
 		case POST:
-		case PUT:
-		case DELETE:
+			ret = postData(url, this.postBody,failed_jo) ;
+			break ;
+		//case PUT:
+		//case DELETE:
 		default:
 			return null ;
 		}
 		
-		if(bs==null)
-			return null ;
+		if(ret==null)
+		{// send error
+			MNMsg m = new MNMsg().asPayload(failed_jo) ;
+			return RTOut.createOutIdx().asIdxMsg(1, m) ;
+		}
 		
-		String ss = new String(bs,"UTF-8") ;
-		Object pld = null ;
+		//String ss = new String(bs,"UTF-8") ;
+		Object pld = ret ;
 		switch(respFmt)
 		{
 		case json:
-			pld = MNMsg.transStrJoJArr(ss) ;
+			pld = MNMsg.transStrJoJArr(ret) ;
 			if(pld instanceof String)
 			{
 				this.RT_DEBUG_ERR.fire("httpc", "not json format response");
-				return null ;
+				MNMsg m = new MNMsg().asPayload(failed_jo) ;
+				return RTOut.createOutIdx().asIdxMsg(1, m) ;
 			}
 			break ;
 		default:
-			pld = new String(bs,"UTF-8") ;
+			//pld = new String(bs,"UTF-8") ;
 			break ;
 		}
 		
@@ -167,29 +196,56 @@ public class NM_HttpClient extends MNNodeMid
 	
 	
 
-	private byte[] getData(String url) throws Exception
+	private String getData(String url,JSONObject failed_jo) throws Exception
 	{
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		HttpGet git = new HttpGet(url);
 		//String result = "";
 		try (CloseableHttpClient chc = httpClientBuilder.build())
 		{
-			for(Map.Entry<String, String> n2v:this.heads.entrySet())
+			Map<String,String> heads = getHeadMap() ;
+			if(heads!=null)
 			{
-				git.setHeader(n2v.getKey(), n2v.getValue());
+				for(Map.Entry<String, String> n2v:heads.entrySet())
+				{
+					git.setHeader(n2v.getKey(), n2v.getValue());
+				}
 			}
-			HttpResponse resp = chc.execute(git);
-			InputStream respIs = resp.getEntity().getContent();
-			return IOUtils.toByteArray(respIs);
+			
+			try (CloseableHttpResponse response = chc.execute(git))
+			{
+                StatusLine statusLine = response.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+               
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                EntityUtils.consume(entity);
+
+                if (statusCode >= 200 && statusCode < 300)
+                {//succ
+                    return responseBody;
+                } else
+                {// err
+                	failed_jo.put("code",statusCode);
+                    failed_jo.put("reason",statusLine.getReasonPhrase());
+                    failed_jo.putOpt("resp_body",responseBody);
+                    return null;
+                }
+            }
+		    
+//			HttpResponse resp = chc.execute(git);
+//			
+//			InputStream respIs = resp.getEntity().getContent();
+//			return IOUtils.toByteArray(respIs);
 		}
 	}
 
 
-	private byte[] postData(String url, String post_txt, String token) throws Exception
+	private String postData(String url, String post_txt,JSONObject failed_jo) throws Exception
 	{
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		HttpPost post = new HttpPost(url);
-		String result = "";
+		//String result = "";
 		try (CloseableHttpClient chc = httpClientBuilder.build())
 		{
 			if(Convert.isNotNullEmpty(post_txt))
@@ -197,16 +253,41 @@ public class NM_HttpClient extends MNNodeMid
 				HttpEntity entity = new StringEntity(post_txt, "UTF-8");
 				post.setEntity(entity);
 			}
-			for(Map.Entry<String, String> n2v:this.heads.entrySet())
+			Map<String,String> heads = getHeadMap() ;
+			if(heads!=null)
 			{
-				post.setHeader(n2v.getKey(), n2v.getValue());
+				for(Map.Entry<String, String> n2v:heads.entrySet())
+				{
+					post.setHeader(n2v.getKey(), n2v.getValue());
+				}
 			}
 			
-			if (Convert.isNotNullEmpty(token))
-				post.setHeader("token", token);
-			HttpResponse resp = chc.execute(post);
-			InputStream respIs = resp.getEntity().getContent();
-			return IOUtils.toByteArray(respIs);
+			try (CloseableHttpResponse response = chc.execute(post))
+			{
+                StatusLine statusLine = response.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+               
+                HttpEntity entity = response.getEntity();
+                String responseBody = EntityUtils.toString(entity);
+                EntityUtils.consume(entity);
+
+                if (statusCode >= 200 && statusCode < 300)
+                {//succ
+                    return responseBody;
+                } else
+                {// err
+                	failed_jo.put("code",statusCode);
+                    failed_jo.put("reason",statusLine.getReasonPhrase());
+                    failed_jo.putOpt("resp_body",responseBody);
+                    return null;
+                }
+            }
+			
+//			//if (Convert.isNotNullEmpty(token))
+//			//	post.setHeader("token", token);
+//			HttpResponse resp = chc.execute(post);
+//			InputStream respIs = resp.getEntity().getContent();
+//			return IOUtils.toByteArray(respIs);
 		}
 	}
 }

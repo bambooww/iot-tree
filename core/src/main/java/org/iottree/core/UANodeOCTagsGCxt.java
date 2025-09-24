@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -12,6 +13,7 @@ import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
+import org.json.JSONArray;
 
 @data_class
 public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
@@ -395,6 +397,42 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		Convert.copyRelatedFile(rf2new);
 		return newtgg;
 	}
+	
+	@Override
+	void RT_init(boolean breset, boolean b_sub)
+	{
+		super.RT_init(breset, b_sub);
+		
+		//this.setSysTag("_alm_num", "","",ValTP.vt_int32) ;
+		//this.setSysTag("_alm_jstr", "","",ValTP.vt_str) ;
+	}
+	
+
+
+//	final int CXT_calAlmUp(JSONArray jarr)
+//	{
+//		int alm_n = 0 ;
+//		//find local alm_n and alm_list
+//		List<UATag> tags = this.getNorTags();
+//		if(tags!=null)
+//		{
+//			for(UATag tag:tags)
+//			{
+//				tag.RT_hasAlertTriggered()
+//			}
+//		}
+//		// cal sub first
+//		List<UANodeOCTagsCxt> subncxts = this.getSubNodesCxt();
+//		if (subncxts != null)
+//		{
+//			for (UANodeOCTagsCxt subncxt : subncxts)
+//			{
+//				subncxt.CXT_calMidTagsVal();
+//			}
+//		}
+//
+//		CXT_calMidTagsValLocal();
+//	}
 	
 	/**
 	 * when recved an data package which has multi tags in this GGxt will be updated

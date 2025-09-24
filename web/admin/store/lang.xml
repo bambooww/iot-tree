@@ -19,4 +19,8 @@
   <dd_node id="1" name="keep_days" name_cn="保留天数" name_en="Keep Days" />
   <dd_node id="1" name="min_rec_intv" name_cn="最小记录间隔" name_en="Min Record Interval" />
   
+  <dd_node id="1" name="connpool" name_cn="连接池" name_en="Connection Pool" />
+  <dd_node id="1" name="init_c_n" name_cn="初始连接数" name_en="Initial Number" />
+  <dd_node id="1" name="max_c_n" name_cn="最大连接数" name_en="Max Number" />
+  
 </dd_class>

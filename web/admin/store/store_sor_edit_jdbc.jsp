@@ -29,6 +29,8 @@ String db_port_str = "" ;
 String db_name = "" ;
 String db_user = "" ;
 String db_psw="" ;
+int db_conn_init = 0 ;
+int db_conn_max = 10 ;
 if(Convert.isNotNullEmpty(id))
 {
 	SourceJDBC st = (SourceJDBC)StoreManager.getSourceById(id);//.getSourceById(storeid) ;
@@ -48,6 +50,8 @@ if(Convert.isNotNullEmpty(id))
 	db_name = st.getDBName() ;
 	db_user = st.getDBUser() ;
 	db_psw = st.getDBPsw() ;
+	db_conn_init = st.getDBConnInitN() ;
+	db_conn_max = st.getDBConnMaxN() ;
 	desc = st.getDesc() ;
 }
 %>
@@ -120,6 +124,20 @@ dlg.resize_to(700,600);
 	  <div class="layui-input-inline user_psw" style="width: 130px;">
 	    <input type="password" id="db_psw" name="db_psw" value="<%=db_psw%>"  autocomplete="off" class="layui-input">
 	  </div>
+ </div>
+ 
+   <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    
+	  <div class="layui-form-mid user_psw"><w:g>connpool,init_c_n</w:g>:</div>
+	  <div class="layui-input-inline" style="width: 50px;">
+	    <input type="number" id="db_conn_init" name="db_conn_init" value="<%=db_conn_init%>"  autocomplete="off" class="layui-input">
+	  </div>
+	  <div class="layui-form-mid user_psw"><w:g>max_c_n</w:g>:</div>
+    <div class="layui-input-inline user_psw" style="width: 50px;">
+      <input type="number" id="db_conn_max" name="db_conn_max" value="<%=db_conn_max%>"  autocomplete="off"  class="layui-input">
+    </div>
+    
  </div>
 
       <div class="layui-form-item">
@@ -205,6 +223,8 @@ function do_submit(cb)
 	let db_port=0;
 	let db_user="";
 	let db_psw="";
+	let db_conn_init= 0 ;
+	let db_conn_max= 10 ;
 	
 	if(drv_name!='sqlite')
 	{
@@ -227,6 +247,19 @@ function do_submit(cb)
 			return ;
 		}
 		db_psw = $('#db_psw').val();
+		
+		db_conn_init = parseInt($('#db_conn_init').val());
+		if(db_conn_init==NaN)
+		{
+			cb(false,"db_conn_init >= 0 ") ;
+			return ;
+		}
+		db_conn_max = parseInt($('#db_conn_max').val());
+		if(db_conn_max==NaN)
+		{
+			cb(false,"db_conn_max >= 0 ") ;
+			return ;
+		}
 	}
 	
 	var db_name = $('#db_name').val();
@@ -237,10 +270,8 @@ function do_submit(cb)
 	}
 		
 	cb(true,{id:id,_tp:"jdbc",name:n,title:tt,enable:ben,desc:desc,drv_name:drv_name,
-		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw});
-	//var dbname=document.getElementById('db_name').value;
-	
-	//document.getElementById('form1').submit() ;
+		db_host:db_host,db_port:db_port,db_name:db_name,db_user:db_user,db_psw:db_psw,
+		db_conn_init:db_conn_init,db_conn_max:db_conn_max});
 }
 
 </script>

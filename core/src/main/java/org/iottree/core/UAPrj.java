@@ -107,6 +107,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	transient long midTagScriptRunDT = System.currentTimeMillis();
 
+	transient long midAlmUpDT = System.currentTimeMillis();
 	/**
 	 * check js script ok or not
 	 */
@@ -1556,6 +1557,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					{
 						runFlush();
 						runMidTagsScript();
+						//runAlmUpdate();
 						runScriptInterval();
 						runShareInterval();
 					}
@@ -1563,6 +1565,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					{
 						runFlush();
 						runMidTagsScript();
+						//runAlmUpdate();
 						
 						if(stationUpDT>0 && tagStationUpGAP!=null)
 						{
@@ -1872,7 +1875,22 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 	}
 	
-	
+//	void runAlmUpdate()
+//	{
+//		
+//		if (System.currentTimeMillis() - this.midAlmUpDT < this.midTagScriptInt)
+//			return;// no run
+//
+//		try
+//		{
+//			CXT_calAlmUp();
+//		}
+//		finally
+//		{
+//			this.midAlmUpDT = System.currentTimeMillis();
+//		}
+//	}
+//	
 	public boolean checkOperator(String user,String psw)
 	{
 		if(Convert.isNullOrEmpty(this.operators))

@@ -509,7 +509,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				if ("id".contentEquals(tmpn) || "n".contentEquals(tmpn))
 					throw new RuntimeException("extend pms cannot has name id and n");
 				Object tmpv = n2v.getValue();
-				if (tmpv instanceof Boolean || tmpv instanceof Number)
+				if ((tmpv instanceof Boolean || tmpv instanceof Number))
 					w.write(",\"" + tmpn + "\":" + tmpv);
 				else
 					w.write(",\"" + tmpn + "\":\"" + tmpv + "\"");

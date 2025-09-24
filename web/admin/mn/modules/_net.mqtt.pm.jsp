@@ -47,12 +47,12 @@
   </div>
    <div class="layui-form-item">
     <label class="layui-form-label"><w:g>producer</w:g></label>
-    <div class="layui-input-inline pclist" id="send_confs" >
+    <div class="layui-input-inline pclist" id="send_confs"  style="width:250px;border:1px solid #ccc;height:250px;">
       &nbsp;
     </div>
     <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_prod()">+<w:g>add</w:g></button></div>
     <div class="layui-form-mid"><w:g>consumer</w:g></div>
-    <div class="layui-input-inline pclist" id="recv_confs" >
+    <div class="layui-input-inline pclist" id="recv_confs" style="width:250px;border:1px solid #ccc;height:250px;">
       &nbsp;
     </div>
     <div class="layui-form-mid"><button type="button" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_cons()">+<w:g>add</w:g></button></div>
@@ -286,7 +286,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:700,h:350} ;
+	return {w:800,h:500} ;
 }
 
 //on_init_pm_ok() ;
