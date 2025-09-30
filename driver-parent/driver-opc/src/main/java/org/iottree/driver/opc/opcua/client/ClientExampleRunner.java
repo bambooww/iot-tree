@@ -16,7 +16,7 @@ import org.eclipse.milo.opcua.stack.core.security.FileBasedTrustListManager;
 import org.eclipse.milo.opcua.stack.core.security.MemoryCertificateQuarantine;
 import org.eclipse.milo.opcua.stack.core.security.TrustListManager;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
-import org.iottree.driver.opc.opcua.server.ExampleServer;
+import org.iottree.driver.opc.opcua.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class ClientExampleRunner {
 
   private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
 
-  private ExampleServer exampleServer;
+  private Server exampleServer;
 
   private TrustListManager clientTrustListManager;
 
@@ -47,7 +47,7 @@ public class ClientExampleRunner {
     this.serverRequired = serverRequired;
 
     if (serverRequired) {
-      exampleServer = new ExampleServer();
+      exampleServer = new Server(null);
       exampleServer.startup().get();
     }
   }

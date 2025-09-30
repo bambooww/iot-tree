@@ -29,7 +29,7 @@ public class ServiceManager
 	
 	private static String[] ALL_CNS = new String[] {
 			"org.iottree.core.service.ServiceActiveMQ",
-			//"org.iottree.driver.opc.opcua.server.OpcUAServer"
+			"org.iottree.driver.opc.opcua.server.OpcUAService"
 	} ;
 	
 	private ArrayList<AbstractService> allServices = new ArrayList<>() ;
@@ -48,7 +48,7 @@ public class ServiceManager
 				Class<?> c = Class.forName(cn) ;
 				if(c==null)
 					continue ;
-				AbstractService as = (AbstractService)c.newInstance() ;
+				AbstractService as = (AbstractService)c.getConstructor().newInstance() ;
 				allServices.add(as) ;
 			}
 			catch(Exception e)

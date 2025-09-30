@@ -45,8 +45,6 @@ public class PPIDriver extends DevDriver
 	{
 		return "s7_200_ppi";
 	}
-	
-	
 
 	@Override
 	public String getTitle()
@@ -168,6 +166,11 @@ public class PPIDriver extends DevDriver
 	public DevAddr getSupportAddr()
 	{
 		return ppiAddr;
+	}
+	
+	public String getAddrHelpUrl(String lan)
+	{
+		return "s7_ppi."+lan+".jsp";
 	}
 	
 	protected  boolean initDriver(StringBuilder failedr) throws Exception

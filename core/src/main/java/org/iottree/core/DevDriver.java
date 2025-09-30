@@ -326,6 +326,14 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	public abstract DevAddr getSupportAddr();
 
 	/**
+	 * not null will has owner addr help page
+	 * @return
+	 */
+	public String getAddrHelpUrl(String lan)
+	{
+		return null;
+	}
+	/**
 	 * 
 	 * @return
 	 */

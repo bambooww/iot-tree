@@ -63,9 +63,8 @@ for(AbstractService as:ass)
     <tr>
       <td><%=as.getTitle() %></td>
       <td><%=as.getBrief() %></td>
-      <td><span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<wbt:g><%=run_t %></wbt:g></td>
-      <td>
-<%
+      <td><span id="" style="width:20px;height:20px;background-color: <%=run_c %>;" >&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;<wbt:g><%=run_t %></wbt:g>
+      <%
 if(as.isEnable())
 {
 	if(as.isRunning())
@@ -84,6 +83,9 @@ if(as.isEnable())
 	}
 }
 %>
+      </td>
+      <td>
+
         
         <a href="javascript:edit_server('<%=as.getName()%>','<%=as.getTitle()%>')"><i class="fa fa-pencil-square fa-lg " aria-hidden="true"></i></a> 
 	  </td>

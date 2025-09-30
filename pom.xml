@@ -24,7 +24,7 @@
 		
 		<guava.version>29.0-jre</guava.version>
 		<paho.version>1.2.4</paho.version>
-		<milo.version>1.0.0-M2</milo.version> <!--0.6.3-->
+		<milo.version>1.0.5</milo.version> <!--0.6.3-->
 		<graalvm.version>20.3.0</graalvm.version>
 		<fastjson.version>1.2.74</fastjson.version>
 		

@@ -130,8 +130,6 @@ public class ConnPtOPCUA extends ConnPtBinder
 	{
 		anony, //Anonymous
 		user_psw;  // User Details
-		
-		
 	}
 	
 	

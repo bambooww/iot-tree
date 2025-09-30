@@ -40,7 +40,14 @@ if(dev==null)
 	out.print("no belong to Device found") ;
 	return ;
 }
+String lan = Lan.getUsingLang() ;
 DevDriver dd = dev.getRelatedDrv() ;
+String hurl = dd.getAddrHelpUrl(lan) ;
+if(Convert.isNotNullEmpty(hurl))
+{
+	response.sendRedirect("./addr_help/"+hurl) ;
+	return ;
+}
 DevDriver.Model  dm = dev.getDrvDevModel() ;
 if(dm==null)
 {
@@ -48,8 +55,8 @@ if(dm==null)
 	return ;
 }
 
-String lan = Lan.getUsingLang() ;
-String hurl = dm.getAddrHelpUrl(lan) ;
+
+hurl = dm.getAddrHelpUrl(lan) ;
 if(Convert.isNotNullEmpty(hurl))
 {
 	response.sendRedirect("./addr_help/"+hurl) ;

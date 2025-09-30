@@ -455,6 +455,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			pgs.addAll(lpgs);
 		pgs.add(this.getPrjPropGroup());
 		pgs.add(this.getPrjRestfulApiGroup());
+		pgs.add(this.getPrjOpcUAGroup());
 		pgs.add(this.getPrjHmiNavGroup());
 		pgs.add(this.getPrjPStationGroup());
 		//
@@ -506,6 +507,24 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		r.addPropItem(new PropItem("wtag_cutoff", lan, PValTP.vt_bool, false, null, null,false));
 		
 		return r;
+	}
+	
+	private PropGroup getPrjOpcUAGroup()
+	{
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		
+		PropGroup r = new PropGroup("prj_opcua", lan,null);//"Project");
+		r.addPropItem(new PropItem("b_open", lan, PValTP.vt_bool, false, null, null,false));
+		return r;
+	}
+	
+	/**
+	 * judge this project is opened for OPC UA
+	 * @return
+	 */
+	public boolean isOpcUAOpen()
+	{
+		return this.getOrDefaultPropValueBool("prj_opcua", "b_open", false) ;
 	}
 	
 	public PrjRestful getEnabledRestfulToken()

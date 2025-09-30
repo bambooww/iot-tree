@@ -130,7 +130,7 @@ for(int i = 0 ; i < ConnPtCOM.PARITY.length ; i ++)
 {
 	int pri = ConnPtCOM.PARITY[i] ;
 	String tt =  ConnPtCOM.PARITY_NAME[i] ;
-%><option value="<%=pri%>"><wbt:g>parity_<%=tt %></wbt:g></option>
+%><option value="<%=pri%>"><wbt:g>parity_<%=tt %></wbt:g> <%=tt %></option>
 <%
 }
 %>   </select>

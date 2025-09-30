@@ -112,7 +112,7 @@ public class NM_RESTfulApi extends MNNodeMid //implements
 	@Override
 	public String RT_getInTitle()
 	{
-		return this.apiName;
+		return "Input Payload will be response to out request";//this.apiName;
 	}
 	
 	/**

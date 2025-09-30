@@ -12,11 +12,11 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
-OpcUAServer ser = (OpcUAServer)ServiceManager.getInstance().getService(OpcUAServer.NAME);
+OpcUAService ser = (OpcUAService)ServiceManager.getInstance().getService(OpcUAService.NAME);
 	HashMap<String,String> pms = ser.getConfPMS() ;
 	boolean enable = ser.isEnable();//ser.isMqttEn();
 	//boolean tcp_en = false;//ser.isTcpEn();
-	String port =  "4840";// ser.getMqttPortStr();
+	String port =  ser.getTcpPortStr();//.getMqttPortStr();
 	
 	String chked_en = "" ;
 	if(enable)
@@ -26,7 +26,8 @@ OpcUAServer ser = (OpcUAServer)ServiceManager.getInstance().getService(OpcUAServ
 	
 	String user = "";// ser.getAuthUser() ;
 	String psw =  "";// ser.getAuthPsw() ;
-	String users =  "";// ser.getAuthUsers();
+	String users = ser.getAuthUsers();
+	
 	
 %>
 <html>
