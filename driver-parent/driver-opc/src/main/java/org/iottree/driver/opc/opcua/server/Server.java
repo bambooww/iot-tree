@@ -59,6 +59,9 @@ public class Server
 	
 	static ILogger log = LoggerManager.getLogger(Server.class) ;
 
+	static KeyStoreLoader loader ;
+
+	
 	static
 	{
 		// Required for SecurityPolicy.Aes256_Sha256_RsaPss
@@ -67,12 +70,17 @@ public class Server
 		try
 		{
 			NonceUtil.blockUntilSecureRandomSeeded(10, TimeUnit.SECONDS);
+			
+			loader = new KeyStoreLoader().load(KeyStoreLoader.securityTempDir);
 		}
-		catch ( ExecutionException | InterruptedException | TimeoutException e)
+		catch ( Exception e)
 		{
 			e.printStackTrace();
 			//System.exit(-1);
 		}
+		
+
+		
 	}
 
 //	public static void main(String[] args) throws Exception
@@ -98,30 +106,15 @@ public class Server
 	{
 		this.service = service ;
 		
-		String tmpdir = Config.getDataTmpDir() ;
-		Path securityTempDir = Paths.get(tmpdir, "opc_ua_ser", "security");
-		Files.createDirectories(securityTempDir);
-		if (!Files.exists(securityTempDir))
-		{
-			throw new Exception("unable to create security temp dir: " + securityTempDir);
-		}
-
-		File pkiDir = securityTempDir.resolve("pki").toFile();
-
-		log.info("security dir: "+ securityTempDir.toAbsolutePath());
-		log.info("security pki dir: "+ pkiDir.getAbsolutePath());
-
-		KeyStoreLoader loader = new KeyStoreLoader().load(securityTempDir);
-
 		var certificateStore = KeyStoreCertificateStore.createAndInitialize(
-				new KeyStoreCertificateStore.Settings(securityTempDir.resolve("iottree-server.pfx"),
+				new KeyStoreCertificateStore.Settings(KeyStoreLoader.securityTempDir.resolve("iottree-server.pfx"),
 						"password"::toCharArray, alias -> "password".toCharArray()));
 
-		var trustListManager = FileBasedTrustListManager.createAndInitialize(pkiDir.toPath());
-
+		var trustListManager = FileBasedTrustListManager.createAndInitialize(KeyStoreLoader.pkiDir.toPath());
+		
 		var certificateQuarantine = FileBasedCertificateQuarantine
-				.create(pkiDir.toPath().resolve("rejected").resolve("certs"));
-
+				.create(KeyStoreLoader.pkiDir.toPath().resolve("rejected").resolve("certs"));
+		
 		var certificateFactory = new RsaSha256CertificateFactory() {
 			@Override
 			protected KeyPair createRsaSha256KeyPair()

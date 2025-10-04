@@ -135,7 +135,7 @@ public class PrjNamespace extends ManagedNamespaceWithLifecycle
 		// Add the rest of the nodes
 		//addVariableNodes(folderNode);
 		addSubCxtNodes(folderNode, this.prj) ;
-
+		addSubTagNodes(folderNode ,this.prj);
 		//addSqrtMethod(folderNode);
 
 		//addGenerateEventMethod(folderNode);
@@ -298,6 +298,7 @@ public class PrjNamespace extends ManagedNamespaceWithLifecycle
 					.setNodeId(newNodeId(id))	// .setNodeId(newNodeId("HelloWorld/Dynamic/"+name))
 					.setAccessLevel(al).setBrowseName(newQualifiedName(name))
 					.setUserAccessLevel(al)
+					.setMinimumSamplingInterval(100.0)
 					.setDisplayName(LocalizedText.english(title)).setDataType(typeId)
 					.setTypeDefinition(NodeIds.BaseDataVariableType)
 					//.setMinimumSamplingInterval(minimumSamplingInterval)

@@ -161,6 +161,15 @@ function start_stop(b,n)
 	var op = "start" ;
 	if(!b)
 		op = "stop";
+	
+	send_ajax("service_ajax.jsp",{op:op,n:n},(bsucc,ret)=>{
+		if(!bsucc||ret!='ok')
+		{
+			dlg.msg(ret);return;
+		}
+		location.reload() ;
+	});
+	/*
 	$.ajax({
         type: 'post',
         url:'service_ajax.jsp',
@@ -181,6 +190,7 @@ function start_stop(b,n)
         	dlg.msg(e);
         }
     });
+	*/
 }
 
 </script>

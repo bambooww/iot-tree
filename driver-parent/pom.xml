@@ -4,7 +4,7 @@
   <parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>1.7.7</version>
+		<version>1.7.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
   <groupId>org.iottree.driver</groupId>
@@ -18,13 +18,12 @@
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--不对外发布-->
     <maven.deploy.skip>true</maven.deploy.skip>
     <output.directory>../_output</output.directory>
   </properties>
   
   <modules>
-    <!-- <module>driver-opc</module> -->
+    <module>driver-opc</module>
     <module>driver-common</module>
   </modules>
   
@@ -32,7 +31,7 @@
     <dependency>
 	    <groupId>org.iottree</groupId>
 	    <artifactId>iottree-core</artifactId>
-	    <version>1.7.7</version>
+	    <version>1.7.8</version>
 	</dependency>
 
 <!-- https://mvnrepository.com/artifact/tanukisoft/wrapper -->
