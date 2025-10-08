@@ -152,6 +152,7 @@
 ##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.7 Center-substation remote monitoring</a>
 ##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.8 Device simulators</a>
 
+
 #### <a href="doc/version.md" >11 Version</a>
 
 <!--
