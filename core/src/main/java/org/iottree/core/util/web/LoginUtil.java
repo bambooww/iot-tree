@@ -333,40 +333,45 @@ public class LoginUtil
 			if(user2items!=null)
 				return user2items;
 			
-			File dir = new File(Config.getDataDirBase()+"/auth/");
-			File[] fs = dir.listFiles(new FileFilter() {
+			return reloadUsers();
+		}
+	}
 	
-				@Override
-				public boolean accept(File f)
-				{
-					if(!f.isFile())
-						return false;
-					String fn = f.getName() ;
-					return fn.endsWith(".json");
-				}}) ;
-			
-			LinkedHashMap<String,UserAuthItem> n2i = new LinkedHashMap<>() ;
-			if(fs!=null)
+	private static LinkedHashMap<String,UserAuthItem> reloadUsers()
+	{
+		File dir = new File(Config.getDataDirBase()+"/auth/");
+		File[] fs = dir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
 			{
-				for(File f:fs)
+				if(!f.isFile())
+					return false;
+				String fn = f.getName() ;
+				return fn.endsWith(".json");
+			}}) ;
+		
+		LinkedHashMap<String,UserAuthItem> n2i = new LinkedHashMap<>() ;
+		if(fs!=null)
+		{
+			for(File f:fs)
+			{
+				String fn = f.getName();
+				fn =fn.substring(0,fn.length()-5) ;
+				try
 				{
-					String fn = f.getName();
-					fn =fn.substring(0,fn.length()-5) ;
-					try
-					{
-						UserAuthItem uai = loadUserAuthItem(fn) ;
-						if(uai==null)
-							continue ;
-						n2i.put(fn,uai) ;
-					}
-					catch(Exception ee)
-					{
-						ee.printStackTrace();
-					}
+					UserAuthItem uai = loadUserAuthItem(fn) ;
+					if(uai==null)
+						continue ;
+					n2i.put(fn,uai) ;
+				}
+				catch(Exception ee)
+				{
+					ee.printStackTrace();
 				}
 			}
-			return user2items = n2i ;
 		}
+		return user2items = n2i ;
 	}
 	
 	public static UserAuthItem getUserItem(String username)
@@ -413,6 +418,7 @@ public class LoginUtil
 		if(!f.getParentFile().exists())
 			f.getParentFile().mkdirs() ;
 		Convert.writeFileJO(f, uai.toJO());
+		reloadUsers();
 		return uai ;
 	}
 	

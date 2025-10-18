@@ -74,27 +74,47 @@ long int_ms = cpt.getUpdateIntMs() ;
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <style type="text/css">
-.sitem {position: relative;border:1px solid #ccc;width:98%;}
-.eitem {cursor:pointer;margin-left:10px;position:relative;}
+.sopt {border:0px solid;height:25px;}
+.sopt input {margin-left:120px;margin-top:6px;}
+.sitem {position: relative;border:1px solid #ccc;width:98%;overflow:hidden;}
+.sitem .hd {font-weight:bold;white-space: nowrap;}
+.eitem {cursor:pointer;margin-left:10px;position:relative;border:1px solid;border-color:green;border-radius: 3px;margin-top:2px;}
 .eitem:hover {background-color: #ccc;}
 .seled {background-color: #ccc;}
 </style>
 <script>
-dlg.resize_to(700,500);
+dlg.resize_to(700,550);
 </script>
 </head>
 <body>
-  <div class="layui-form-item">
-    <label class="layui-form-label">URI:</label>
-    <div class="layui-input-inline" style="width:450px;">
-      <input type="text" id="uri" name="uri" value=""  lay-verify="required" autocomplete="off" class="layui-input">
+	<div class="sopt">
+    <input type="radio" id="discovery" name="search_tp" value="dis" checked="checked" onclick="chg_search_tp()"/> Discovery
+      <input type="radio" id="manual" name="search_tp" value="man" onclick="chg_search_tp()"/> Manual
+  </div>
+  
+  <div class="layui-form-item" id="cont_dis">
+    <label class="layui-form-label">Host/IP:</label>
+    <div class="layui-input-inline" style="width:350px;">
+      <input type="text" id="host" name="host" value="localhost"  autocomplete="off" class="layui-input">
     </div>
-    <div class="layui-form-mid"><button class="layui-btn layui-btn-sm" onclick="on_search()">Search</button></div>
+    <div class="layui-form-mid">Port:</div>
+    <div class="layui-input-inline" style="width:100px;">
+      <input type="number" id="port" name="port" value="4840"  class="layui-input">
+    </div>
+    <div class="layui-input-inline" style="width:40px;"><button class="layui-btn" onclick="on_search_dis()"><i class="fa fa-search"></i></button></div>
+  </div>
+  
+  <div class="layui-form-item" id="cont_man" style="display:none;">
+    <label class="layui-form-label">URI:</label>
+    <div class="layui-input-inline" style="width:500px;">
+      <input type="text" id="uri" name="uri" value=""  autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-input-inline" style="width:40px;"><button class="layui-btn" onclick="on_search_man()"><i class="fa fa-search"></i></button></div>
   </div>
    
    <div class="layui-form-item">
     <label class="layui-form-label"></label>
-    <div id="res" class="layui-input-inline" style="width:500px;height:300px;">
+    <div id="res" class="layui-input-inline" style="width:550px;height:350px;overflow-y: auto;">
     </div>
   </div>
 </body>
@@ -114,8 +134,31 @@ layui.use('form', function(){
 	  form.render(); 
 	  
 	  if(u)
-		  on_search();
+	  {
+		  $('input[name="search_tp"][value="man"]').prop('checked', true);
+		  chg_search_tp();
+		  search_by_uri(u);
+	  }
+	  else
+	  {
+		  search_by_uri("opc.tcp://localhost:4840") ;
+	  }
 });
+
+function chg_search_tp()
+{
+	let stp = $('input[name="search_tp"]:checked').val();
+	if(stp=='man')
+	{
+		$("#cont_man").css("display","");
+		$("#cont_dis").css("display","none");
+	}
+	else
+	{
+		$("#cont_man").css("display","none");
+		$("#cont_dis").css("display","");
+	}
+}
 
 function up_endpoints(obs)
 {
@@ -123,12 +166,13 @@ function up_endpoints(obs)
 	for(let ob of obs)
 	{
 		let app_n = ob.app_n ;
-		tmps += `<div class="sitem"><span>\${app_n} - \${ob.app_uri}</span>` ;
+		tmps += `<div class="sitem"><span class="hd">\${app_n} - \${ob.app_uri}</span>` ;
 		for(let ep of ob.endpoints)
 		{
+			let ico = ep.sm_none?"<i class='fa fa-lock-open' style='color:#ee3124'></i>":"<i class='fa fa-lock' style='color:#1272b2'></i>";
 			tmps += `<div class="eitem" onclick="on_sel_ep(this)" 
 				ep_u="\${ep.url}" ep_sm="\${ep.sm}" ep_sp_uri="\${ep.sp_uri}" ep_sp="\${ep.sp_name}">
-				\${ep.url} \${ep.sp_name} \${ep.sm_name}</div>` ;
+				\${ico} \${ep.url} \${ep.sp_name} \${ep.sm_name}</div>` ;
 		}
 		tmps += "</div>"
 	}
@@ -147,24 +191,51 @@ function on_sel_ep(ele)
 	cur_ep = {url:url,sm:sm,sp_uri:sp_uri,sp:ep_sp};
 }
 
-function on_search()
+function on_search_dis()
+{
+	let host = $("#host").val();
+	let port = parseInt($("#port").val());
+	if(!host)
+	{
+		dlg.msg("<w:g>pls,input</w:g> Host");return;
+	}
+	if(isNaN(port) || port<=0)
+	{
+		dlg.msg("<w:g>pls,input,valid</w:g> Port");return;
+	}
+	let uri = `opc.tcp://\${host}:\${port}`;
+	search_by_uri(uri);
+}
+
+function on_search_man()
 {
 	let uri = $("#uri").val();
 	if(!uri)
 	{
-		dlg.msg("请输入URI");return;
+		dlg.msg("<w:g>pls,input</w:g>URI");return;
 	}
+	search_by_uri(uri);
+}
+
+function search_by_uri(uri)
+{
+	dlg.loading(true) ;
 	send_ajax("opc_ua_ajax.jsp",{op:"endpts_find",uri:uri},(bsucc,ret)=>{
+		dlg.loading(false) ;
 		if(!bsucc || ret.indexOf("[")!=0)
 		{
-			dlg.msg(ret);return ;
+			//dlg.msg("<span style='color:red'><w:g>search,failed</w:g></span>:"+ret);
+			$("#res").html("<span style='color:red'><w:g>search,failed</w:g></span>:"+ret) ;
+			return ;
 		}
 		let obs = null ;
 		eval("obs="+ret) ;
-		console.log(obs) ;
+		//console.log(obs) ;
 		up_endpoints(obs)
 	});
 }
+
+
 	
 function win_close()
 {

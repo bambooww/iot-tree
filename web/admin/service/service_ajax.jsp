@@ -27,14 +27,20 @@ case "stop":
 	String n = request.getParameter("n") ;
 	
 	AbstractService as = ServiceManager.getInstance().getService(n) ;
-	System.out.println("nn==="+n+" as="+as) ;
+	//System.out.println("nn==="+n+" as="+as) ;
 	if(as==null)
 	{
 		out.print("no service found") ;
 		return ;
 	}
 	if("start".equals(op))
-		as.startService();
+	{
+		if(!as.startService(failedr))
+		{
+			out.print(failedr.toString());
+			return ;
+		}
+	}
 	else
 		as.stopService() ;
 	out.print("ok") ;

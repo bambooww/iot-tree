@@ -7,9 +7,13 @@ import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 
 public class ServiceManager
 {
+	private static ILogger log = LoggerManager.getLogger(ServiceManager.class) ;
+	
 	private static ServiceManager inst  = null ;
 	
 	public static ServiceManager getInstance()
@@ -29,7 +33,8 @@ public class ServiceManager
 	
 	private static String[] ALL_CNS = new String[] {
 			"org.iottree.core.service.ServiceActiveMQ",
-			"org.iottree.driver.opc.opcua.server.OpcUAService"
+			"org.iottree.driver.opc.opcua.server.OpcUAService",
+			"org.iottree.driver.bacnet.BACnetService"
 	} ;
 	
 	private ArrayList<AbstractService> allServices = new ArrayList<>() ;
@@ -51,7 +56,7 @@ public class ServiceManager
 				AbstractService as = (AbstractService)c.getConstructor().newInstance() ;
 				allServices.add(as) ;
 			}
-			catch(Exception e)
+			catch(Throwable e)
 			{
 				e.printStackTrace();
 			}
@@ -98,9 +103,13 @@ public class ServiceManager
 				HashMap<String,String> conf = this.loadServiceConf(as.getName()) ;
 				as.initService(conf);
 				if(as.isEnable())
-					as.startService();
+				{
+					StringBuilder failedr = new StringBuilder() ;
+					if(!as.startService(failedr))
+						log.error(failedr.toString());
+				}
 			}
-			catch(Exception ee)
+			catch(Throwable ee)
 			{
 				ee.printStackTrace();
 			}

@@ -19,6 +19,8 @@ import java.util.function.Predicate;
 
 import org.eclipse.milo.opcua.sdk.client.DiscoveryClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.SessionActivityListener;
+import org.eclipse.milo.opcua.sdk.client.UaSession;
 import org.eclipse.milo.opcua.sdk.client.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.sdk.client.identity.IdentityProvider;
 import org.eclipse.milo.opcua.sdk.client.identity.UsernameProvider;
@@ -60,29 +62,29 @@ import org.json.JSONObject;
 
 public class ConnPtOPCUA extends ConnPtBinder
 {
-	static ILogger log = LoggerManager.getLogger(ConnPtOPCUA.class) ;
-	
+	static ILogger log = LoggerManager.getLogger(ConnPtOPCUA.class);
+
 	public static final String CLIENT_APP_URI = "urn:iottree:client";
-	
-//	public static enum SecurityPolicy
-//	{
-//		basic256sha256, basic256, basic128rsa15, none;
-//
-//		public String getTitle()
-//		{
-//			switch (this)
-//			{
-//			case basic256sha256:
-//				return "Basic256Sha256";
-//			case basic256:
-//				return "Basic256 (Deprecated)";
-//			case basic128rsa15:
-//				return "Basic128Rsa15 (Deprecated)";
-//			default:
-//				return "None";
-//			}
-//		}
-//	}
+
+	// public static enum SecurityPolicy
+	// {
+	// basic256sha256, basic256, basic128rsa15, none;
+	//
+	// public String getTitle()
+	// {
+	// switch (this)
+	// {
+	// case basic256sha256:
+	// return "Basic256Sha256";
+	// case basic256:
+	// return "Basic256 (Deprecated)";
+	// case basic128rsa15:
+	// return "Basic128Rsa15 (Deprecated)";
+	// default:
+	// return "None";
+	// }
+	// }
+	// }
 
 	/**
 	 * SecurityPolicy != none ,it will be used
@@ -90,127 +92,128 @@ public class ConnPtOPCUA extends ConnPtBinder
 	 * @author jason.zhu
 	 *
 	 */
-//	public static enum SecurityMode
-//	{
-//		sign, sign_encrypt;
-//
-//		public String getTitle()
-//		{
-//			switch (this)
-//			{
-//			case sign:
-//				return "Sign";
-//			case sign_encrypt:
-//				return "Sign and Encrypt";
-//			default:
-//				return "";
-//			}
-//		}
-//		
-//		public MessageSecurityMode getMsgSecurityMode()
-//		{
-//			switch (this)
-//			{
-//			case sign:
-//				return MessageSecurityMode.Sign;
-//			case sign_encrypt:
-//				return MessageSecurityMode.SignAndEncrypt;
-//			default:
-//				return MessageSecurityMode.None;
-//			}
-//		}
-//	}
-	
+	// public static enum SecurityMode
+	// {
+	// sign, sign_encrypt;
+	//
+	// public String getTitle()
+	// {
+	// switch (this)
+	// {
+	// case sign:
+	// return "Sign";
+	// case sign_encrypt:
+	// return "Sign and Encrypt";
+	// default:
+	// return "";
+	// }
+	// }
+	//
+	// public MessageSecurityMode getMsgSecurityMode()
+	// {
+	// switch (this)
+	// {
+	// case sign:
+	// return MessageSecurityMode.Sign;
+	// case sign_encrypt:
+	// return MessageSecurityMode.SignAndEncrypt;
+	// default:
+	// return MessageSecurityMode.None;
+	// }
+	// }
+	// }
+
 	/**
 	 * 验证类型
+	 * 
 	 * @author jason.zhu
 	 *
 	 */
 	public static enum AuthTP
 	{
-		anony, //Anonymous
-		user_psw;  // User Details
+		anony, // Anonymous
+		user_psw; // User Details
 	}
-	
-	
+
 	public static class EndpointPk
 	{
-		String endpointUrl ;
-		
-		SecurityPolicy secPolicy ;
-		
-		MessageSecurityMode secMode ;
-		
-		public EndpointPk(String endp_url,SecurityPolicy sp,MessageSecurityMode sm)
+		String endpointUrl;
+
+		SecurityPolicy secPolicy;
+
+		MessageSecurityMode secMode;
+
+		public EndpointPk(String endp_url, SecurityPolicy sp, MessageSecurityMode sm)
 		{
-			this.endpointUrl = endp_url ;
-			this.secPolicy = sp ;
-			this.secMode = sm ;
+			this.endpointUrl = endp_url;
+			this.secPolicy = sp;
+			this.secMode = sm;
 		}
-		
+
 		public String getEndpointUrl()
 		{
-			return this.endpointUrl ;
+			return this.endpointUrl;
 		}
-		
+
 		public SecurityPolicy getSecPolicy()
 		{
-			return this.secPolicy ;
+			return this.secPolicy;
 		}
-		
+
 		public MessageSecurityMode getSecMode()
 		{
-			return this.secMode ;
+			return this.secMode;
 		}
-		
-		public JSONObject toJO()
-		{
-			JSONObject jo = new JSONObject() ;
-			jo.putOpt("url", this.endpointUrl) ;
-			jo.put("sp_uri",secPolicy.getUri()) ;
-			jo.put("sm",secMode.getValue()) ;
-			jo.put("sp_name", secPolicy.name()) ;
-			jo.put("sm_name", secMode.name()) ;
-			return jo ;
-		}
-	}
-	
-	public static class ServerPk
-	{
-		String appName ;
-		
-		String appUri ;
-		
-		ArrayList<EndpointPk> endptPks = new ArrayList<>() ;
-		
-		public ServerPk(String app_n,String app_uri)
-		{
-			this.appName = app_n ;
-			this.appUri = app_uri ;
-		}
-		
-		public String getAppName()
-		{
-			return this.appName ;
-		}
-		
-		public List<EndpointPk> getEndpointPks()
-		{
-			return this.endptPks ;
-		}
-		
+
 		public JSONObject toJO()
 		{
 			JSONObject jo = new JSONObject();
-			jo.put("app_n", this.appName) ;
-			jo.put("app_uri", this.appUri) ;
-			JSONArray jarr = new JSONArray() ;
-			jo.put("endpoints",jarr) ;
-			for(EndpointPk ept:this.endptPks)
+			jo.putOpt("url", this.endpointUrl);
+			jo.put("sp_uri", secPolicy.getUri());
+			jo.put("sm", secMode.getValue());
+			jo.put("sm_none", secMode == MessageSecurityMode.None || secMode == MessageSecurityMode.Invalid);
+			jo.put("sp_name", secPolicy.name());
+			jo.put("sm_name", secMode.name());
+			return jo;
+		}
+	}
+
+	public static class ServerPk
+	{
+		String appName;
+
+		String appUri;
+
+		ArrayList<EndpointPk> endptPks = new ArrayList<>();
+
+		public ServerPk(String app_n, String app_uri)
+		{
+			this.appName = app_n;
+			this.appUri = app_uri;
+		}
+
+		public String getAppName()
+		{
+			return this.appName;
+		}
+
+		public List<EndpointPk> getEndpointPks()
+		{
+			return this.endptPks;
+		}
+
+		public JSONObject toJO()
+		{
+			JSONObject jo = new JSONObject();
+			jo.put("app_n", this.appName);
+			jo.put("app_uri", this.appUri);
+			JSONArray jarr = new JSONArray();
+			jo.put("endpoints", jarr);
+			for (EndpointPk ept : this.endptPks)
 			{
-				jarr.put(ept.toJO()) ;
+				jarr.put(ept.toJO());
 			}
-			return jo ;
+			return jo;
 		}
 	}
 
@@ -231,8 +234,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 	MessageSecurityMode securityMode = MessageSecurityMode.None;
 
 	int reqTimeout = 5000;
-	
-	AuthTP authTP = AuthTP.anony ;
+
+	AuthTP authTP = AuthTP.anony;
 
 	String idUser = null;
 
@@ -241,6 +244,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 	long updateIntMs = 3000;
 
 	private transient OpcUaClient uaClient = null;
+	
+	private transient UaSession session = null ;
 
 	@Override
 	public String getConnType()
@@ -295,24 +300,24 @@ public class ConnPtOPCUA extends ConnPtBinder
 			{
 				securityPolicy = SecurityPolicy.valueOf(opc_sp);
 			}
-			catch(Exception ee)
+			catch ( Exception ee)
 			{
-				securityPolicy= SecurityPolicy.None;
+				securityPolicy = SecurityPolicy.None;
 			}
 		}
 		if (securityPolicy == null)
 			securityPolicy = SecurityPolicy.None;
 
 		int opc_mm = xd.getParamValueInt32("opc_sec_m", 1);
-		//if (Convert.isNotNullEmpty(opc_mm))
+		// if (Convert.isNotNullEmpty(opc_mm))
 		securityMode = MessageSecurityMode.from(opc_mm);
 
 		this.reqTimeout = xd.getParamValueInt32("opc_req_to", 5000);
 		String authtp = xd.getParamValueStr("auth_tp", "");
-		if(Convert.isNullOrEmpty(authtp))
-			this.authTP = AuthTP.anony ;
+		if (Convert.isNullOrEmpty(authtp))
+			this.authTP = AuthTP.anony;
 		else
-			this.authTP = AuthTP.valueOf(authtp) ;
+			this.authTP = AuthTP.valueOf(authtp);
 		this.idUser = xd.getParamValueStr("opc_user", "");
 		this.idPsw = xd.getParamValueStr("opc_psw", "");
 		this.updateIntMs = xd.getParamValueInt64("int_ms", 3000);
@@ -362,15 +367,15 @@ public class ConnPtOPCUA extends ConnPtBinder
 			securityPolicy = SecurityPolicy.None;
 
 		int opc_mm = jo.optInt("opc_sec_m", 1);
-		//if (Convert.isNotNullEmpty(opc_mm))
+		// if (Convert.isNotNullEmpty(opc_mm))
 		securityMode = MessageSecurityMode.from(opc_mm);
-		
+
 		this.reqTimeout = optJSONInt(jo, "opc_req_to", 5000);
 		String authtp = jo.optString("auth_tp", "");
-		if(Convert.isNullOrEmpty(authtp))
-			this.authTP = AuthTP.anony ;
+		if (Convert.isNullOrEmpty(authtp))
+			this.authTP = AuthTP.anony;
 		else
-			this.authTP = AuthTP.valueOf(authtp) ;
+			this.authTP = AuthTP.valueOf(authtp);
 		this.idUser = optJSONString(jo, "opc_user", "");
 		this.idPsw = optJSONString(jo, "opc_psw", "");
 		this.updateIntMs = optJSONInt64(jo, "int_ms", 3000);
@@ -448,10 +453,10 @@ public class ConnPtOPCUA extends ConnPtBinder
 	{
 		return this.updateIntMs;
 	}
-	
+
 	public AuthTP getOpcAuthTP()
 	{
-		return this.authTP ;
+		return this.authTP;
 	}
 
 	public String getOpcIdUser()
@@ -471,31 +476,32 @@ public class ConnPtOPCUA extends ConnPtBinder
 	Predicate<EndpointDescription> endpointFilter()
 	{
 		return e -> {
-			//System.out.println(e.getEndpointUrl()) ;
-			//return false;
-			return e.getSecurityMode()==securityMode &&
-					e.getSecurityPolicyUri().equals(this.securityPolicy.getUri()) ;
+			// System.out.println(e.getEndpointUrl()) ;
+			// return false;
+			return e.getSecurityMode() == securityMode && e.getSecurityPolicyUri().equals(this.securityPolicy.getUri());
 		};
 	}
 
 	private IdentityProvider getIdPro()
 	{
-		if(this.authTP==AuthTP.anony)
-			return new AnonymousProvider() ;
-		
+		if (this.authTP == AuthTP.anony)
+			return new AnonymousProvider();
+
 		if (Convert.isNotNullEmpty(this.idUser))
 			return new UsernameProvider(this.idUser, idPsw);
 		else
-			return new AnonymousProvider() ;
+			return new AnonymousProvider();
 	}
 
-//	UaSubscriptionManager.SubscriptionListener subLis = new UaSubscriptionManager.SubscriptionListener() {
-//
-//		public void onSubscriptionTransferFailed(UaSubscription subscription, StatusCode statusCode)
-//		{
-//			System.out.println("onSubscriptionTransferFailed");
-//		}
-//	};
+	// UaSubscriptionManager.SubscriptionListener subLis = new
+	// UaSubscriptionManager.SubscriptionListener() {
+	//
+	// public void onSubscriptionTransferFailed(UaSubscription subscription,
+	// StatusCode statusCode)
+	// {
+	// System.out.println("onSubscriptionTransferFailed");
+	// }
+	// };
 
 	private static List<UaNode> browserNodes(OpcUaClient client) throws Exception
 	{
@@ -503,7 +509,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 		ArrayList<UaNode> rets = new ArrayList<>();
 		// start browsing at root folder
-		browseNode("",rets, client, NodeIds.RootFolder);
+		browseNode("", rets, client, NodeIds.RootFolder);
 
 		return rets;
 	}
@@ -522,7 +528,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 		}
 		catch ( UaException e)
 		{
-			if(log.isDebugEnabled())
+			if (log.isDebugEnabled())
 				log.debug(e);
 		}
 	}
@@ -566,81 +572,76 @@ public class ConnPtOPCUA extends ConnPtBinder
 		// w.write(p+" "+curnode.getNodeId().toParseableString()+"<br/>");
 
 	}
-	
-	public static LinkedHashMap<String,ServerPk> findServerPks(String uri) throws Exception
+
+	public static LinkedHashMap<String, ServerPk> findServerPks(String uri) throws Exception
 	{
-		LinkedHashMap<String,ServerPk> rets = new LinkedHashMap<>() ;
+		LinkedHashMap<String, ServerPk> rets = new LinkedHashMap<>();
 		List<EndpointDescription> epts = DiscoveryClient.getEndpoints(uri).get();
-		for(EndpointDescription ept:epts)
+		for (EndpointDescription ept : epts)
 		{
-			ApplicationDescription ad = ept.getServer() ;
-			String app_uri = ad.getApplicationUri() ;
-			String appname = ad.getApplicationName().text() ;
-			
-			ServerPk spk = rets.get(appname) ;
-			if(spk==null)
+			ApplicationDescription ad = ept.getServer();
+			String app_uri = ad.getApplicationUri();
+			String appname = ad.getApplicationName().text();
+
+			ServerPk spk = rets.get(appname);
+			if (spk == null)
 			{
-				spk = new ServerPk(appname,app_uri) ;
-				rets.put(appname,spk) ;
+				spk = new ServerPk(appname, app_uri);
+				rets.put(appname, spk);
 			}
 			String epu = ept.getEndpointUrl();
-			String stt = ept.getSecurityPolicyUri() ;
-			SecurityPolicy sp = SecurityPolicy.fromUri(stt) ;
-			spk.endptPks.add(new EndpointPk(epu,sp,ept.getSecurityMode())) ;
-			//ept.
+			String stt = ept.getSecurityPolicyUri();
+			SecurityPolicy sp = SecurityPolicy.fromUri(stt);
+			spk.endptPks.add(new EndpointPk(epu, sp, ept.getSecurityMode()));
+			// ept.
 		}
-		return rets ;
+		return rets;
 	}
 
-	public static List<EndpointDescription> getEndpointsByUri(String uri)
-			throws Exception
+	public static List<EndpointDescription> getEndpointsByUri(String uri) throws Exception
 	{
 		List<ApplicationDescription> servers = DiscoveryClient.findServers(uri).get();
-		
-		for(ApplicationDescription server:servers)
+
+		for (ApplicationDescription server : servers)
 		{
 			String appn = server.getApplicationName().getText();
-            System.out.println("Application URI: " + server.getApplicationUri());
-            System.out.println("Product URI: " + server.getProductUri());
-            System.out.println("Application Name: " + server.getApplicationName().getText());
-            System.out.println("Discovery URLs: " + server.getDiscoveryUrls());
-            System.out.println("----------------------------------");
-            
-            SecurityPolicy sp = null ;
-            //server.
+			System.out.println("Application URI: " + server.getApplicationUri());
+			System.out.println("Product URI: " + server.getProductUri());
+			System.out.println("Application Name: " + server.getApplicationName().getText());
+			System.out.println("Discovery URLs: " + server.getDiscoveryUrls());
+			System.out.println("----------------------------------");
+
+			SecurityPolicy sp = null;
+			// server.
 		}
-		
-		
-		
+
 		/*
-		.thenAccept(servers -> {
-			for(ApplicationDescription server:servers)
-			{
-				appn = server.getApplicationName().getText();
-                System.out.println("Application URI: " + server.getApplicationUri());
-                System.out.println("Product URI: " + server.getProductUri());
-                System.out.println("Application Name: " + server.getApplicationName().getText());
-                System.out.println("Discovery URLs: " + server.getDiscoveryUrls());
-                System.out.println("----------------------------------");
-			}
-            
-        }).get(); 
-        */
+		 * .thenAccept(servers -> { for(ApplicationDescription server:servers) {
+		 * appn = server.getApplicationName().getText();
+		 * System.out.println("Application URI: " + server.getApplicationUri());
+		 * System.out.println("Product URI: " + server.getProductUri());
+		 * System.out.println("Application Name: " +
+		 * server.getApplicationName().getText());
+		 * System.out.println("Discovery URLs: " + server.getDiscoveryUrls());
+		 * System.out.println("----------------------------------"); }
+		 * 
+		 * }).get();
+		 */
 		List<EndpointDescription> epts = DiscoveryClient.getEndpoints(uri).get();
-		for(EndpointDescription ept:epts)
+		for (EndpointDescription ept : epts)
 		{
-			ApplicationDescription ad = ept.getServer() ;
-			//ad.
-			//ept.
+			ApplicationDescription ad = ept.getServer();
+			// ad.
+			// ept.
 		}
-		return epts ;
+		return epts;
 	}
-	
-	//public static 
+
+	// public static
 
 	public static List<EndpointDescription> getEndpointsByPort(int port) throws Exception
 	{
-		return getEndpointsByUri("opc.tcp://localhost:" + port+"/milo/discovery");
+		return getEndpointsByUri("opc.tcp://localhost:" + port + "/milo/discovery");
 	}
 
 	public void writeUaNodeTreeJson(Writer w, String nodeid) throws Exception
@@ -692,8 +693,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 			throws Exception
 	{
 		NodeId nid = n.getNodeId();
-		
-		String nidd = nid.toParseableString() ;
+
+		String nidd = nid.toParseableString();
 		String bn = n.getBrowseName().getName();
 		if (n instanceof UaVariableNode)
 		{
@@ -720,7 +721,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 				arr_dim = Convert.combineWith(arrdim, ',');
 			}
 
-			BindItem bi = new BindItem(nidd,ppath + "/" + bn, datatp);
+			BindItem bi = new BindItem(nidd, ppath + "/" + bn, datatp);
 			bi.setVal(valob);
 			bis.add(bi);
 			return;
@@ -839,7 +840,6 @@ public class ConnPtOPCUA extends ConnPtBinder
 		w.write("]");
 	}
 
-	
 	private void writeBindBeSelectTreeNode(Writer w, UaNode n) throws Exception
 	{
 
@@ -1016,7 +1016,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 		boolean bvar = n instanceof UaVariableNode;
 
-		//System.out.println(nid.toParseableString()) ;
+		// System.out.println(nid.toParseableString()) ;
 		w.write("{\"id\":\"" + nid.toParseableString() + "\"");
 		w.write(",\"nc\":" + n.getNodeClass().getValue());
 		if (bvar)
@@ -1182,49 +1182,55 @@ public class ConnPtOPCUA extends ConnPtBinder
 	// }
 	// }
 
-//	private static void createSubscription(OpcUaClient client) throws InterruptedException, ExecutionException
-//	{
-//		// create connection
-//		client.connect();//.get();
-//
-//		// interval 1000ms
-//		UaSubscription subscription = client.getSubscriptionManager().createSubscription(1000.0).get();
-//
-//		// sub var
-//		NodeId nodeId = new NodeId(3, "\"test_value\"");
-//		ReadValueId readValueId = new ReadValueId(nodeId, AttributeId.Value.uid(), null, null);
-//
-//		MonitoringParameters parameters = new MonitoringParameters(uint(1), 1000.0, // sampling
-//																					// interval
-//				null, // filter, null means use default
-//				uint(10), // queue size
-//				true // discard oldest
-//		);
-//
-//		MonitoredItemCreateRequest request = new MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting,
-//				parameters);
-//
-//		List<MonitoredItemCreateRequest> requests = new ArrayList<>();
-//		requests.add(request);
-//
-//		// create and callback
-//		List<UaMonitoredItem> items = subscription
-//				.createMonitoredItems(TimestampsToReturn.Both, requests, (item, id) -> {
-//					item.setValueConsumer((item0, value) -> {
-//						System.out.println("nodeid :" + item0.getReadValueId().getNodeId());
-//						System.out.println("value :" + value.getValue().getValue());
-//					});
-//				}).get();
-//	}
+	// private static void createSubscription(OpcUaClient client) throws
+	// InterruptedException, ExecutionException
+	// {
+	// // create connection
+	// client.connect();//.get();
+	//
+	// // interval 1000ms
+	// UaSubscription subscription =
+	// client.getSubscriptionManager().createSubscription(1000.0).get();
+	//
+	// // sub var
+	// NodeId nodeId = new NodeId(3, "\"test_value\"");
+	// ReadValueId readValueId = new ReadValueId(nodeId,
+	// AttributeId.Value.uid(), null, null);
+	//
+	// MonitoringParameters parameters = new MonitoringParameters(uint(1),
+	// 1000.0, // sampling
+	// // interval
+	// null, // filter, null means use default
+	// uint(10), // queue size
+	// true // discard oldest
+	// );
+	//
+	// MonitoredItemCreateRequest request = new
+	// MonitoredItemCreateRequest(readValueId, MonitoringMode.Reporting,
+	// parameters);
+	//
+	// List<MonitoredItemCreateRequest> requests = new ArrayList<>();
+	// requests.add(request);
+	//
+	// // create and callback
+	// List<UaMonitoredItem> items = subscription
+	// .createMonitoredItems(TimestampsToReturn.Both, requests, (item, id) -> {
+	// item.setValueConsumer((item0, value) -> {
+	// System.out.println("nodeid :" + item0.getReadValueId().getNodeId());
+	// System.out.println("value :" + value.getValue().getValue());
+	// });
+	// }).get();
+	// }
 
 	private static void readValue(OpcUaClient client) throws Exception
 	{
-		client.connect();//.get();
+		client.connect();// .get();
 
 		NodeId nodeid = new NodeId(3, "\"test_value\"");
 
-		//DataValue value = client.readValue(maxAge, timestampsToReturn, nodeId)
-		DataValue value = client.readValue(0.0, TimestampsToReturn.Both, nodeid) ;//.get();
+		// DataValue value = client.readValue(maxAge, timestampsToReturn,
+		// nodeId)
+		DataValue value = client.readValue(0.0, TimestampsToReturn.Both, nodeid);// .get();
 
 		System.out.println((Integer) value.getValue().getValue());
 	}
@@ -1232,7 +1238,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 	private static boolean writeValue(OpcUaClient client, int value) throws Exception
 	{
 		// 创建连接
-		client.connect();//.get();
+		client.connect();// .get();
 
 		// 创建变量节点
 		NodeId nodeId = new NodeId(3, "\"test_value\"");
@@ -1241,65 +1247,80 @@ public class ConnPtOPCUA extends ConnPtBinder
 		Variant v = new Variant(value);
 		DataValue dataValue = new DataValue(v, null, null);
 
-		StatusCode statusCode = client.writeValues(Arrays.asList(nodeId), Arrays.asList(dataValue)).get(0);//.writeValue(nodeId, dataValue).get();
-		//StatusCode statusCode = client.writeValue(nodeId, dataValue).get();
+		StatusCode statusCode = client.writeValues(Arrays.asList(nodeId), Arrays.asList(dataValue)).get(0);// .writeValue(nodeId,
+																											// dataValue).get();
+		// StatusCode statusCode = client.writeValue(nodeId, dataValue).get();
 
 		return statusCode.isGood();
 	}
-	
+
 	private boolean connect() // throws UaException
 	{
 		if (uaClient != null)
 			return true;
 		try
 		{
-			String dir = Config.getDataTmpDir()+"/opcua/security/" ;
-			File dirf=  new File(dir) ;
-			if(!dirf.exists())
-				dirf.mkdirs() ;
-			
+			String dir = Config.getDataTmpDir() + "/opcua_client/security/";
+			File dirf = new File(dir);
+			if (!dirf.exists())
+				dirf.mkdirs();
+
 			Path sec_p = Paths.get(dir);
 			// EndpointDescription[] endpointDescription =
 			// UaTcpStackClient.getEndpoints(EndPointUrl).get();
 			KeyStoreLoader loader = new KeyStoreLoader().load(sec_p);
 			IdentityProvider unp = getIdPro();
-			
-//			uaClient =  OpcUaClient.create(
-//				        clientExample.getEndpointUrl(),
-//				        endpoints -> endpoints.stream().filter(clientExample.endpointFilter()).findFirst(),
-//				        transportConfigBuilder -> {},
-//				        clientConfigBuilder ->
-//				            clientConfigBuilder
-//				                .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
-//				                .setApplicationUri("urn:eclipse:milo:examples:client")
-//				                .setKeyPair(loader.getClientKeyPair())
-//				                .setCertificate(loader.getClientCertificate())
-//				                .setCertificateChain(loader.getClientCertificateChain())
-//				                .setCertificateValidator(certificateValidator)
-//				                .setIdentityProvider(clientExample.getIdentityProvider()));
-			 
+
+			// uaClient = OpcUaClient.create(
+			// clientExample.getEndpointUrl(),
+			// endpoints ->
+			// endpoints.stream().filter(clientExample.endpointFilter()).findFirst(),
+			// transportConfigBuilder -> {},
+			// clientConfigBuilder ->
+			// clientConfigBuilder
+			// .setApplicationName(LocalizedText.english("eclipse milo opc-ua
+			// client"))
+			// .setApplicationUri("urn:eclipse:milo:examples:client")
+			// .setKeyPair(loader.getClientKeyPair())
+			// .setCertificate(loader.getClientCertificate())
+			// .setCertificateChain(loader.getClientCertificateChain())
+			// .setCertificateValidator(certificateValidator)
+			// .setIdentityProvider(clientExample.getIdentityProvider()));
+
 			uaClient = OpcUaClient.create(this.getOpcEndPointURI(),
-					endpoints -> endpoints.stream().filter(endpointFilter()).findFirst(),
-					transportConfigBuilder -> {},
-					configBuilder -> {
+					endpoints -> endpoints.stream().filter(endpointFilter()).findFirst(), transportConfigBuilder -> {
+					}, configBuilder -> {
 						configBuilder.setApplicationName(LocalizedText.english(this.getOpcAppNameDef()));
-						
+
 						configBuilder.setApplicationUri(CLIENT_APP_URI);
-						//configBuilder.setEndpoint(endpoint)
-						//if(this.securityMode==MessageSecurityMode.Sign)
-						//	configBuilder.sec
-						//configBuilder.setCertificate(loader.getClientCertificate()).setKeyPair(loader.getClientKeyPair());
+						// configBuilder.setEndpoint(endpoint)
+						// if(this.securityMode==MessageSecurityMode.Sign)
+						// configBuilder.sec
+						// configBuilder.setCertificate(loader.getClientCertificate()).setKeyPair(loader.getClientKeyPair());
 						configBuilder.setIdentityProvider(unp);
 						configBuilder.setRequestTimeout(uint(reqTimeout));
 						configBuilder.setCertificate(loader.getClientCertificate());
-						configBuilder.setCertificateChain(new X509Certificate[] {loader.getClientCertificate()});
+						configBuilder.setCertificateChain(new X509Certificate[] { loader.getClientCertificate() });
 						configBuilder.setKeyPair(loader.getClientKeyPair());
-						
-						// configBuilder.setCertificateValidator(certificateValidator)
-						
+
+						// configBuilder..setCertificateValidator(certificateValidator)
+
 						configBuilder.build();
-						//return configBuilder ;
+						// return configBuilder ;
 					});
+			uaClient.addSessionActivityListener(new SessionActivityListener() {
+				@Override
+				public void onSessionActive(UaSession ss)
+				{
+					session = ss ;
+				}
+
+				@Override
+				public void onSessionInactive(UaSession ss)
+				{
+					session = null;
+				}
+			});
 			uaClient.connect();
 		}
 		catch ( Exception e)
@@ -1344,7 +1365,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 			if (k > 0)
 				tagp = tagp.substring(0, k);
 			NodeId pnid = null;
-			pnid = NodeId.parse(bindp); //s=id
+			pnid = NodeId.parse(bindp); // s=id
 			if (pnid == null)
 				continue;
 			t2n.put(tagp, pnid);
@@ -1377,16 +1398,17 @@ public class ConnPtOPCUA extends ConnPtBinder
 				NodeId nodeid = tag2n.getValue();
 				UShort us = nodeid.getNamespaceIndex();
 				Object id = nodeid.getIdentifier();
-				//DataValue v = uaClient.readValue(maxAge, timestampsToReturn, nodeId)
-				DataValue v = uaClient.readValue(0.0, TimestampsToReturn.Both, nodeid);//.get()
+				// DataValue v = uaClient.readValue(maxAge, timestampsToReturn,
+				// nodeId)
+				DataValue v = uaClient.readValue(0.0, TimestampsToReturn.Both, nodeid);// .get()
 				updateTagVal(ch, tag2n.getKey(), v);
 			}
 		}
-		catch(Exception e)
+		catch ( Exception e)
 		{
-			if(log.isDebugEnabled())
+			if (log.isDebugEnabled())
 				log.debug(e);
-			//System.out.println("read data err=" + e.getMessage());
+			// System.out.println("read data err=" + e.getMessage());
 			e.printStackTrace();
 		}
 		finally
@@ -1394,8 +1416,8 @@ public class ConnPtOPCUA extends ConnPtBinder
 			lastReadData = System.currentTimeMillis();
 		}
 	}
-	
-	private transient HashMap<String,DataValue> lastTagP2GoodDV = new HashMap<>() ;
+
+	private transient HashMap<String, DataValue> lastTagP2GoodDV = new HashMap<>();
 
 	private void updateTagVal(UACh ch, String tagpath, DataValue v) throws Exception
 	{
@@ -1407,7 +1429,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 			return;
 		StatusCode sc = v.getStatusCode();
 		// sc.
-		Variant vvt = v.getValue() ;
+		Variant vvt = v.getValue();
 		Object objv = vvt.getValue();
 		if (objv == null)
 			return;
@@ -1416,24 +1438,24 @@ public class ConnPtOPCUA extends ConnPtBinder
 		// itemval.getValue().
 		if (sc.isGood())
 		{
-			lastTagP2GoodDV.put(tagpath,v) ;
+			lastTagP2GoodDV.put(tagpath, v);
 			long chgdt = v.getServerTime().getJavaTime();
 			// itemval.
 			// UAVal uav =
 			// UAVal.createByStrVal(tag.getValTp(),itemval.getLastValueStr(),chgdt,chgdt);
 			// tag.RT_setUAVal(uav);
-			if(objv instanceof DateTime)
+			if (objv instanceof DateTime)
 			{
-				
+
 			}
-			String strv = objv.toString() ;
-			OpcUaDataType dtp = vvt.getDataType().get() ;
-			if("DateTime".equals(dtp.name()))
+			String strv = objv.toString();
+			OpcUaDataType dtp = vvt.getDataType().get();
+			if ("DateTime".equals(dtp.name()))
 			{
 				DateTime dt = (DateTime) vvt.getValue();
-				strv = Convert.toFullYMDHMS(dt.getJavaDate()) ;
+				strv = Convert.toFullYMDHMS(dt.getJavaDate());
 			}
-			
+
 			tag.RT_setValRawStr(strv, true, chgdt);
 			// tag.RT_setValStr(itemval.getLastValueStr());
 		}
@@ -1443,7 +1465,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 	private long lastChk = -1;
 
-	public void RT_checkConn() 
+	public void RT_checkConn()
 	{
 		if (System.currentTimeMillis() - lastChk < 5000)
 			return;
@@ -1467,13 +1489,18 @@ public class ConnPtOPCUA extends ConnPtBinder
 	@Override
 	public boolean isConnReady()
 	{
-		return uaClient != null;
+		if(uaClient==null)
+			return false;
+		return session!=null;
 	}
 
 	public String getConnErrInfo()
 	{
 		if (uaClient == null)
 			return "no connection";
+		
+		if(session==null)
+			return "no session create or connect failed" ;
 		else
 			return null;
 	}
@@ -1485,7 +1512,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 
 		try
 		{
-			uaClient.disconnect();//.get();
+			uaClient.disconnect();// .get();
 		}
 		catch ( Exception e)
 		{
@@ -1496,44 +1523,44 @@ public class ConnPtOPCUA extends ConnPtBinder
 			uaClient = null;
 		}
 	}
-	
-	private static Object transStr2Obj(OpcUaDataType dt,String strv)
+
+	private static Object transStr2Obj(OpcUaDataType dt, String strv)
 	{
-		switch(dt)
+		switch (dt)
 		{
-		case Boolean://(1, Boolean.class),
-			return "true".equalsIgnoreCase(strv) || "1".equals(strv) ;
-		case SByte://(2, Byte.class),
-			return Byte.parseByte(strv) ;
-		case Byte://(3, UByte.class),
-			return UByte.valueOf(strv) ;
-		case Int16://(4, Short.class),
-			return Short.parseShort(strv) ;
-		case UInt16://(5, UShort.class),
-			return UShort.valueOf(strv) ;
-		case Int32://(6, Integer.class),
-			return Integer.parseInt(strv) ;
-		case UInt32://(7, UInteger.class),
-			return UInteger.valueOf(strv) ;
-		case Int64://(8, Long.class),
-			return Long.parseLong(strv) ;
-		case UInt64://(9, ULong.class),
-			return ULong.valueOf(strv) ;
-		case Float://(10, Float.class),
-			return Float.parseFloat(strv) ;
-		case Double://(11, Double.class),
-			return Double.parseDouble(strv) ;
-		case String://(12, String.class),
-			return strv ;
-		case DateTime://(13, ),
-			return new DateTime(Convert.toCalendar(strv).toInstant()) ;
-		case Guid://(14, UUID.class),
-			return UUID.fromString(strv) ;
-		case ByteString://(15, ByteString.class),
-			byte[] bs = Convert.hexStr2ByteArray(strv) ;
-			return ByteString.of(bs) ;
+		case Boolean:// (1, Boolean.class),
+			return "true".equalsIgnoreCase(strv) || "1".equals(strv);
+		case SByte:// (2, Byte.class),
+			return Byte.parseByte(strv);
+		case Byte:// (3, UByte.class),
+			return UByte.valueOf(strv);
+		case Int16:// (4, Short.class),
+			return Short.parseShort(strv);
+		case UInt16:// (5, UShort.class),
+			return UShort.valueOf(strv);
+		case Int32:// (6, Integer.class),
+			return Integer.parseInt(strv);
+		case UInt32:// (7, UInteger.class),
+			return UInteger.valueOf(strv);
+		case Int64:// (8, Long.class),
+			return Long.parseLong(strv);
+		case UInt64:// (9, ULong.class),
+			return ULong.valueOf(strv);
+		case Float:// (10, Float.class),
+			return Float.parseFloat(strv);
+		case Double:// (11, Double.class),
+			return Double.parseDouble(strv);
+		case String:// (12, String.class),
+			return strv;
+		case DateTime:// (13, ),
+			return new DateTime(Convert.toCalendar(strv).toInstant());
+		case Guid:// (14, UUID.class),
+			return UUID.fromString(strv);
+		case ByteString:// (15, ByteString.class),
+			byte[] bs = Convert.hexStr2ByteArray(strv);
+			return ByteString.of(bs);
 		default:
-			return null ;
+			return null;
 		}
 	}
 
@@ -1547,33 +1574,38 @@ public class ConnPtOPCUA extends ConnPtBinder
 		NodeId nid = tag2nodeid.get(tagpath);
 		if (nid == null)
 			return;
-		DataValue lastdv = lastTagP2GoodDV.get(tagpath) ;
-		if(lastdv==null)
-			return ;
-		
-		OpcUaDataType dt = lastdv.getValue().getDataType().get() ;
-		if(dt==null)
-			return ;
-		Object objv = transStr2Obj(dt,strv) ;
-		if(objv==null)
-			return ;
-		
+		DataValue lastdv = lastTagP2GoodDV.get(tagpath);
+		if (lastdv == null)
+			return;
+
+		OpcUaDataType dt = lastdv.getValue().getDataType().get();
+		if (dt == null)
+			return;
+		Object objv = transStr2Obj(dt, strv);
+		if (objv == null)
+			return;
+
 		Variant v = new Variant(objv);
-		DataValue dataValue = new DataValue(v,StatusCode.GOOD,null); //timestamp may not allowed
-		//WriteValue wv = new WriteValue(nid,null,"",dataValue);
+		DataValue dataValue = new DataValue(v, StatusCode.GOOD, null); // timestamp
+																		// may
+																		// not
+																		// allowed
+		// WriteValue wv = new WriteValue(nid,null,"",dataValue);
 		try
 		{
-			//StatusCode statusCode = uaClient.write(Arrays.asList(wv)).getResults()[0] ;
-			List<StatusCode> scs = uaClient.writeValues(Arrays.asList(nid), Arrays.asList(dataValue)) ;
-			if(scs!=null && scs.size()>0)
+			// StatusCode statusCode =
+			// uaClient.write(Arrays.asList(wv)).getResults()[0] ;
+			List<StatusCode> scs = uaClient.writeValues(Arrays.asList(nid), Arrays.asList(dataValue));
+			if (scs != null && scs.size() > 0)
 			{
 				StatusCode statusCode = scs.get(0);
 				boolean r = statusCode.isGood();
-				if(log.isDebugEnabled())
+				if (log.isDebugEnabled())
 				{
-					log.debug("w result=" + r+" status value="+statusCode.getValue()+" wstr="+strv+" objv="+objv+" objvt="+objv.getClass().getCanonicalName());
-					if(!r)
-						log.debug(" status code="+statusCode.toString());
+					log.debug("w result=" + r + " status value=" + statusCode.getValue() + " wstr=" + strv + " objv="
+							+ objv + " objvt=" + objv.getClass().getCanonicalName());
+					if (!r)
+						log.debug(" status code=" + statusCode.toString());
 				}
 			}
 		}
@@ -1583,14 +1615,14 @@ public class ConnPtOPCUA extends ConnPtBinder
 		}
 
 	}
-	
+
 	public boolean RT_supportSendMsgOut()
 	{
 		return false;
 	}
 
 	@Override
-	public boolean RT_sendMsgOut(String topic,byte[] msg,StringBuilder failedr) throws Exception
+	public boolean RT_sendMsgOut(String topic, byte[] msg, StringBuilder failedr) throws Exception
 	{
 		return false;
 	}

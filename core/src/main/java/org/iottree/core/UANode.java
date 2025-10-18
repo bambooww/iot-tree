@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
@@ -35,6 +37,9 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	
 	@data_val
 	String id = null ;
+	
+	@data_val
+	int iid = -1 ;
 	
 	@data_val
 	private String name = "" ;
@@ -64,6 +69,45 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	{
 		id = CompressUUID.createNewId(); //UUID.randomUUID().toString();
 		setNameTitle(name,title,desc);
+	}
+	
+
+	public final String getId()
+	{
+		return id ;
+	}
+	
+	public final IdIId getNextIdByRoot()
+	{
+		IRoot r = getRoot() ;
+		if(r==null)
+			throw new RuntimeException("no root found") ;
+		return r.getRootNextId() ;
+	}
+	
+	public int getIID()
+	{
+		if(this.iid>=0)
+			return this.iid ;
+		if(this.id.charAt(0)=='r')
+		{
+			try
+			{
+				int rv = Integer.parseInt(this.id.substring(1)) ;
+				return rv ;
+			}
+			catch(Exception ee)
+			{
+				return -1 ;
+			}
+		}
+		return -1 ;
+	}
+	
+	protected final void setIdIId(IdIId iiid)
+	{
+		this.id = iiid.id;
+		this.iid = iiid.iid ;
 	}
 	
 	public abstract String getNodeTp() ;
@@ -147,19 +191,6 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		new_self.desc = this.desc ;
 	}
 
-	public String getId()
-	{
-		return id ;
-	}
-	
-	public String getNextIdByRoot()
-	{
-		IRoot r = getRoot() ;
-		if(r==null)
-			throw new RuntimeException("no root found") ;
-		return r.getRootNextId() ;
-	}
-	
 	public int getRelatedFiles(List<File> fs)
 	{
 		//ArrayList<File> rets = new ArrayList<>() ;
@@ -644,6 +675,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		PropGroup pg = new PropGroup("basic",lan) ;
 		
 		pg.addPropItem(new PropItem("id",lan,PValTP.vt_str,true,null,null,"")); //"Id","Object's id"
+		pg.addPropItem(new PropItem("iid",lan,PValTP.vt_int,true,null,null,-1)); 
 		pg.addPropItem(new PropItem("name",lan,PValTP.vt_str,false,null,null,"")); //"Name","Object's name"
 		pg.addPropItem(new PropItem("title",lan,PValTP.vt_str,false,null,null,"")); //"Title","Object's title"
 		pg.addPropItem(new PropItem("desc",lan,PValTP.vt_str,false,null,null,"")); // "Description","Object's Description"
@@ -665,6 +697,8 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 			{
 			case "id":
 				return this.getId();
+			case "iid":
+				return this.getIID();
 			case "name":
 				return this.getName();
 			case "title":

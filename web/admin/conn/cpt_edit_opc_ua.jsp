@@ -71,11 +71,9 @@ long int_ms = cpt.getUpdateIntMs() ;
 <html>
 <head>
 <title></title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <style type="text/css">
 
 .layui-form-label {width: 120px;}
@@ -106,7 +104,7 @@ dlg.resize_to(800,600);
       <input type="text" id="opc_epu" name="opc_epu" value="<%=opc_epu%>"  style="width:500px" class="layui-input">
     </div>
     <div class="layui-input-inline" style="width:50px">
-    <button class="layui-input" onclick="edit_epu()">...</button>
+    <button class="layui-input" onclick="edit_epu()"><i class="fa fa-search"></i>&nbsp;</button>
     </div>
   </div>
   <div class="layui-form-item">

@@ -9,6 +9,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -60,10 +61,12 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 			UATagG ntg = new UATagG() ;
 			if(root_subnode_id)
 			{
+				IdIId iiid = null ;
 				if(root!=null)
-					ntg.id = root.getRootNextId();
+					iiid = root.getRootNextId();
 				else
-					ntg.id = this.getNextIdByRoot();
+					iiid = this.getNextIdByRoot();
+				ntg.setIdIId(iiid);
 			}
 			tagg.copyTreeWithNewSelf(root,ntg,ownerid, copy_id, root_subnode_id,rf2new);
 			self.taggs.add(ntg) ;
@@ -255,7 +258,8 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 		if(d!=null||tg!=null)
 			throw new IllegalArgumentException("tag with name="+name+" existed") ;
 		d = new UATagG(name,title,desc) ;
-		d.id = this.getNextIdByRoot() ;
+		//d.id = this.getNextIdByRoot() ;
+		d.setIdIId(this.getNextIdByRoot());
 		taggs.add(d);
 		constructNodeTree();
 		if(bsave)
@@ -380,7 +384,8 @@ public abstract class UANodeOCTagsGCxt extends UANodeOCTagsCxt
 
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
 		tgg.copyTreeWithNewSelf(null,newtgg, null, false, true,rf2new);
-		newtgg.id = this.getNextIdByRoot();
+		//newtgg.id = this.getNextIdByRoot();
+		newtgg.setIdIId(this.getNextIdByRoot());
 		// newch.name = newname;
 		newtgg.setNameTitle(newname, null, null);
 		// UACh newch = new UACh ch.deepCopyMe();

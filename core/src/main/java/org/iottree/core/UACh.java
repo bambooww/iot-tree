@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.util.*;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.*;
 import org.iottree.core.util.xmldata.XmlDataFilesMem.FileItem;
@@ -107,10 +108,12 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			UADev ndev = new UADev() ;
 			if(root_subnode_id)
 			{
+				IdIId iiid = null ;
 				if(root!=null)
-					ndev.id = root.getRootNextId() ;
+					iiid = root.getRootNextId() ;
 				else
-					ndev.id = this.getNextIdByRoot();
+					iiid = this.getNextIdByRoot();
+				ndev.setIdIId(iiid);
 			}
 			dev.copyTreeWithNewSelf(root,ndev,ownerid,copy_id,root_subnode_id,rf2new);
 			self.devs.add(ndev) ;
@@ -445,8 +448,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 				throw new Exception("no device definition found") ;
 			//d = dd.createNewUADev(this.getNextIdByRoot() ,name, title, desc) ;
 			UADev dev = new UADev() ;
-			dev.id = this.getNextIdByRoot() ;
-			
+			//dev.id = this.getNextIdByRoot() ;
+			dev.setIdIId(this.getNextIdByRoot());
 			
 			d = dd.deepCopyUADev(this.getBelongTo(),dev,name, title, desc,rf2new) ;
 			d.setDevRef(libid,devdef_id);
@@ -455,7 +458,8 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		else
 		{
 			d = new UADev();
-			d.id = this.getNextIdByRoot() ;
+			//d.id = this.getNextIdByRoot() ;
+			d.setIdIId(this.getNextIdByRoot());
 			d.setNameTitle(name, title, desc);
 			d.setDevRef(null,null);
 			d.setDevModel(dev_model);

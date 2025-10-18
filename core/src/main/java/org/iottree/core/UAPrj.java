@@ -7,6 +7,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.SQLiteSaver;
 import org.iottree.core.util.web.PrjNavTree;
@@ -183,10 +184,12 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			UACh nt = new UACh();
 			if (root_subnode_id)
 			{
+				IdIId iiid = null ;
 				if(root!=null)
-					nt.id = root.getRootNextId() ;
+					iiid = root.getRootNextId() ;
 				else
-					nt.id = this.getNextIdByRoot();
+					iiid = this.getNextIdByRoot();
+				nt.setIdIId(iiid);
 			}
 			ch.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
 			self.chs.add(nt);
@@ -273,7 +276,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				ch.OCUnit_setProp(n2v.getKey(), n2v.getValue());
 			}
 		}
-		ch.id = this.getNextIdByRoot();
+		//ch.id = this.getNextIdByRoot();
+		ch.setIdIId(this.getNextIdByRoot());
 		// ch.belongTo = this;
 		chs.add(ch);
 		this.constructNodeTree();
@@ -359,7 +363,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
 		ch.copyTreeWithNewSelf(null,newch, null, false, true,rf2new);
-		newch.id = this.getNextIdByRoot();
+		//newch.id = this.getNextIdByRoot();
+		newch.setIdIId(this.getNextIdByRoot());
 		// newch.name = newname;
 		newch.setNameTitle(newname, null, null);
 		// UACh newch = new UACh ch.deepCopyMe();
@@ -455,7 +460,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			pgs.addAll(lpgs);
 		pgs.add(this.getPrjPropGroup());
 		pgs.add(this.getPrjRestfulApiGroup());
-		pgs.add(this.getPrjOpcUAGroup());
+		//pgs.add(this.getPrjOpcUAGroup());
 		pgs.add(this.getPrjHmiNavGroup());
 		pgs.add(this.getPrjPStationGroup());
 		//
@@ -509,23 +514,23 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return r;
 	}
 	
-	private PropGroup getPrjOpcUAGroup()
-	{
-		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
-		
-		PropGroup r = new PropGroup("prj_opcua", lan,null);//"Project");
-		r.addPropItem(new PropItem("b_open", lan, PValTP.vt_bool, false, null, null,false));
-		return r;
-	}
-	
-	/**
-	 * judge this project is opened for OPC UA
-	 * @return
-	 */
-	public boolean isOpcUAOpen()
-	{
-		return this.getOrDefaultPropValueBool("prj_opcua", "b_open", false) ;
-	}
+//	private PropGroup getPrjOpcUAGroup()
+//	{
+//		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+//		
+//		PropGroup r = new PropGroup("prj_opcua", lan,null);//"Project");
+//		r.addPropItem(new PropItem("b_open", lan, PValTP.vt_bool, false, null, null,false));
+//		return r;
+//	}
+//	
+//	/**
+//	 * judge this project is opened for OPC UA
+//	 * @return
+//	 */
+//	public boolean isOpcUAOpen()
+//	{
+//		return this.getOrDefaultPropValueBool("prj_opcua", "b_open", false) ;
+//	}
 	
 	public PrjRestful getEnabledRestfulToken()
 	{
@@ -1462,7 +1467,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				}
 			}
 		}
-		catch ( Exception e)
+		catch (Throwable e)
 		{
 			e.printStackTrace();
 		}

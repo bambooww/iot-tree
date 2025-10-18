@@ -1774,7 +1774,6 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		}
 	}
 	
-	
 	public UAVal RT_getVal()
 	{
 		return this.curVal ;
@@ -1962,7 +1961,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			dt_chg = System.currentTimeMillis();
 		}
 
-		w.write("{\"id\":\""+this.getId()+"\",\"n\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\",\"u\":\""+this.getUnit()+"\"");
+		w.write("{\"id\":\""+this.getId()+"\",\"iid\":"+this.getIID()+",\"n\":\"" + this.getName() + "\",\"t\":\"" + this.getTitle() + "\",\"vt\":\"" + this.getValTp() + "\",\"u\":\""+this.getUnit()+"\"");
 
 		ValTP vtp = this.getValTp();
 		if (bvalid)
@@ -2045,7 +2044,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 
 		
 		// w.write("\""+tg.getName()+"\":");
-		w.write("{\"n\":\"");
+		w.write("{\"id\":\""+this.getId()+"\",\"iid\":"+this.getIID()+",\"n\":\"");
 		if(innode==null)
 			w.write(getName());
 		else

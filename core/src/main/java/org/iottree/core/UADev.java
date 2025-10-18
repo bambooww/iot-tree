@@ -148,7 +148,8 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	
 	private void deepNewId(UANode n,IRoot root)
 	{
-		n.id = root.getRootNextId() ;
+		//n.id = root.getRootNextId() ;
+		n.setIdIId(root.getRootNextId());
 		List<UANode> subns = n.getSubNodes() ;
 		if(subns==null)
 			return ;

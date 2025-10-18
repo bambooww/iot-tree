@@ -11,6 +11,7 @@
 	<dd_node id="1" name="pg_tag" name_cn="标签属性" name_en="Tag Properties" desc_cn="" desc_en=""/>
 
     <dd_node id="1" name="pi_id" name_cn="ID" name_en="Id" desc_cn="对象唯一id" desc_en="Object's id"/>
+    <dd_node id="1" name="pi_iid" name_cn="IID" name_en="IID" desc_cn="对象内部id" desc_en="Object's inner id"/>
     <dd_node id="1" name="pi_name" name_cn="名称" name_en="Name" desc_cn="对象名称" desc_en="Object's name"/>
     <dd_node id="1" name="pi_title" name_cn="标题" name_en="Title" desc_cn="对象标题" desc_en="Object's title"/>
     <dd_node id="1" name="pi_desc" name_cn="描述" name_en="Description" desc_cn="对象描述" desc_en="Object's Description"/>

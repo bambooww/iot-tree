@@ -72,6 +72,7 @@ public class PrjNamespace extends ManagedNamespaceWithLifecycle
 	private static final ILogger logger = LoggerManager.getLogger(PrjNamespace.class);// Factory.getLogger(getClass());
 
 	private volatile Thread eventThread;
+
 	private volatile boolean keepPostingEvents = true;
 
 	private final Random random = new Random();
@@ -992,7 +993,7 @@ public class PrjNamespace extends ManagedNamespaceWithLifecycle
 		assert dataType != null;
 
 		// Register Codecs for each supported encoding with DataTypeManager
-		var codec = new DynamicStructCodec(dataType, dataTypeTree);
+		DynamicStructCodec codec = new DynamicStructCodec(dataType, dataTypeTree);
 
 		getNodeContext().getServer().getDynamicDataTypeManager().registerType(dataTypeId, codec, binaryEncodingId, null,
 				null);

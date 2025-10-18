@@ -4,7 +4,7 @@ echo Starting IOT-Tree Server
 echo ----------------------------------------
 
 if exist jre set JAVA_HOME=.\jre
-if not exist jre if exist jre8_x86 set JAVA_HOME=.\jre8_x86
+if not exist jre if exist jre_x86 set JAVA_HOME=.\jre_x86
 
 
 if NOT DEFINED JAVA_HOME goto :no_java_home

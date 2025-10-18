@@ -68,7 +68,7 @@ public class ClientExampleRunner {
 
     clientTrustListManager = FileBasedTrustListManager.createAndInitialize(pkiDir);
 
-    var certificateValidator =
+    DefaultClientCertificateValidator certificateValidator =
         new DefaultClientCertificateValidator(
             clientTrustListManager, new MemoryCertificateQuarantine());
 

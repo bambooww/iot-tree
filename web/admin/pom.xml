@@ -4,7 +4,7 @@
 		<groupId>org.iottree.web</groupId>
 		<artifactId>web-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>1.7.8</version>
+		<version>1.7.9</version>
 	</parent>
   <artifactId>admin</artifactId>
   <packaging>jar</packaging>

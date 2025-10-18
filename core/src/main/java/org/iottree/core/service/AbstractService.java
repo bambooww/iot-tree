@@ -46,7 +46,7 @@ public abstract class AbstractService
 		return bEnable ;
 	}
 	
-	public abstract boolean startService() ;
+	public abstract boolean startService(StringBuilder failedr) ;
 	
 	public abstract boolean stopService() ;
 	

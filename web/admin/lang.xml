@@ -24,6 +24,7 @@
   
   <dd_node id="1" name="init" name_cn="初始化" name_en="Init" />
   <dd_node id="1" name="end" name_cn="结束" name_en="End" />
+  <dd_node id="1" name="local" name_cn="本地" name_en="Local" />
   
   <dd_node id="1" name="modified_date" name_cn="修改时间" name_en="modified date" />
   <dd_node id="1" name="more_prjs" name_cn="更多项目" name_en="more projects" />
@@ -329,6 +330,9 @@
   <dd_node id="1" name="router" name_cn="路由" name_en="Router"/>
   <dd_node id="1" name="collation" name_cn="整理" name_en="Collation"/>
   <dd_node id="1" name="collator" name_cn="整理器" name_en="Collator"/>
+  
+  <dd_node id="1" name="security" name_cn="安全" name_en="Security"/>
+  <dd_node id="1" name="mode" name_cn="模式" name_en="Mode"/>
   
   <dd_node id="1" name="path" name_cn="路径" name_en="Path"/>
   <dd_node id="1" name="transfer" name_cn="转换" name_en="Transfer"/>

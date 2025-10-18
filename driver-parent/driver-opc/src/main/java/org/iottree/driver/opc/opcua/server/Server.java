@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 public class Server
 {
-	private static final int TCP_BIND_PORT = 12686;
+	//
 	
 	static ILogger log = LoggerManager.getLogger(Server.class) ;
 
@@ -98,24 +98,35 @@ public class Server
 	
 	private final OpcUAService service ;
 
-	private final OpcUaServer server;
+	private OpcUaServer server;
 	//private final SerNamespace serNS;\
 	private HashMap<String,PrjNamespace> prjn2ns = null;// new HashMap<>() ;
+	
+	private int bindPort = OpcUAService.TCP_BIND_PORT ;
 
-	public Server(OpcUAService service) throws Exception
+	public Server(OpcUAService service) //throws Exception
 	{
 		this.service = service ;
-		
-		var certificateStore = KeyStoreCertificateStore.createAndInitialize(
+	}
+	
+	public Server asBindPort(int port)
+	{
+		this.bindPort = port ;
+		return this ;
+	}
+	
+	void RT_init()  throws Exception
+	{
+		KeyStoreCertificateStore certificateStore = KeyStoreCertificateStore.createAndInitialize(
 				new KeyStoreCertificateStore.Settings(KeyStoreLoader.securityTempDir.resolve("iottree-server.pfx"),
 						"password"::toCharArray, alias -> "password".toCharArray()));
 
-		var trustListManager = FileBasedTrustListManager.createAndInitialize(KeyStoreLoader.pkiDir.toPath());
+		FileBasedTrustListManager trustListManager = FileBasedTrustListManager.createAndInitialize(KeyStoreLoader.pkiDir.toPath());
 		
-		var certificateQuarantine = FileBasedCertificateQuarantine
+		FileBasedCertificateQuarantine certificateQuarantine = FileBasedCertificateQuarantine
 				.create(KeyStoreLoader.pkiDir.toPath().resolve("rejected").resolve("certs"));
 		
-		var certificateFactory = new RsaSha256CertificateFactory() {
+		RsaSha256CertificateFactory certificateFactory = new RsaSha256CertificateFactory() {
 			@Override
 			protected KeyPair createRsaSha256KeyPair()
 			{
@@ -129,14 +140,14 @@ public class Server
 			}
 		};
 
-		var certificateValidator = new DefaultServerCertificateValidator(trustListManager, certificateQuarantine);
+		DefaultServerCertificateValidator certificateValidator = new DefaultServerCertificateValidator(trustListManager, certificateQuarantine);
 
-		var defaultGroup = DefaultApplicationGroup.createAndInitialize(trustListManager, certificateStore,
+		DefaultApplicationGroup defaultGroup = DefaultApplicationGroup.createAndInitialize(trustListManager, certificateStore,
 				certificateFactory, certificateValidator);
 
-		var certificateManager = new DefaultCertificateManager(certificateQuarantine, defaultGroup);
+		DefaultCertificateManager certificateManager = new DefaultCertificateManager(certificateQuarantine, defaultGroup);
 
-		var identityValidator = new UsernameIdentityValidator(authChallenge -> {
+		UsernameIdentityValidator identityValidator = new UsernameIdentityValidator(authChallenge -> {
 			String username = authChallenge.getUsername();
 			String password = authChallenge.getPassword();
 
@@ -147,7 +158,7 @@ public class Server
 			return this.service.checkUserPsw(username, password) ;
 		});
 
-		var x509IdentityValidator = new X509IdentityValidator(c -> true);
+		X509IdentityValidator x509IdentityValidator = new X509IdentityValidator(c -> true);
 
 		X509Certificate certificate = loader.getServerCertificate();
 
@@ -176,17 +187,15 @@ public class Server
 
 			return new OpcTcpServerTransport(transportConfig);
 		});
-
-		
 	}
 
 	private Set<EndpointConfig> createEndpointConfigs(X509Certificate certificate)
 	{
-		var endpointConfigs = new LinkedHashSet<EndpointConfig>();
+		LinkedHashSet<EndpointConfig> endpointConfigs = new LinkedHashSet<>();
 
 		List<String> bindAddresses = List.of("0.0.0.0");
 
-		var hostnames = new LinkedHashSet<String>();
+		LinkedHashSet<String> hostnames = new LinkedHashSet<>();
 		hostnames.add(HostnameUtil.getHostname());
 		hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0", true, false));
 
@@ -200,18 +209,26 @@ public class Server
 						.setCertificate(certificate).addTokenPolicies(
 								USER_TOKEN_POLICY_ANONYMOUS, USER_TOKEN_POLICY_USERNAME, USER_TOKEN_POLICY_X509);
 
-				EndpointConfig.Builder noSecurityBuilder = builder.copy().setSecurityPolicy(SecurityPolicy.None)
-						.setSecurityMode(MessageSecurityMode.None);
+				if(service.secModeNone)
+				{
+					EndpointConfig.Builder noSecurityBuilder = builder.copy().setSecurityPolicy(SecurityPolicy.None)
+							.setSecurityMode(MessageSecurityMode.None);
+	
+					endpointConfigs.add(buildTcpEndpoint(noSecurityBuilder));
+				}
 
-				endpointConfigs.add(buildTcpEndpoint(noSecurityBuilder));
-
-				endpointConfigs.add(buildTcpEndpoint(builder.copy().setSecurityPolicy(SecurityPolicy.Basic256Sha256)
-						.setSecurityMode(MessageSecurityMode.Sign)));
+				if(service.secModeSign)
+				{
+					endpointConfigs.add(buildTcpEndpoint(builder.copy().setSecurityPolicy(SecurityPolicy.Basic256Sha256)
+							.setSecurityMode(MessageSecurityMode.Sign)));
+				}
 				
-				// TCP Basic256Sha256 / SignAndEncrypt
-				endpointConfigs.add(buildTcpEndpoint(builder.copy().setSecurityPolicy(SecurityPolicy.Basic256Sha256)
-						.setSecurityMode(MessageSecurityMode.SignAndEncrypt)));
-				
+				if(service.secModeSignEncrypt)
+				{
+					// TCP Basic256Sha256 / SignAndEncrypt
+					endpointConfigs.add(buildTcpEndpoint(builder.copy().setSecurityPolicy(SecurityPolicy.Basic256Sha256)
+							.setSecurityMode(MessageSecurityMode.SignAndEncrypt)));
+				}
 				
 
 				/*
@@ -228,7 +245,7 @@ public class Server
 				 */
 
 				EndpointConfig.Builder discoveryBuilder = builder.copy()
-						//.setPath("/iottree/discovery")
+						.setPath("/discovery")
 						.setSecurityPolicy(SecurityPolicy.None).setSecurityMode(MessageSecurityMode.None);
 
 				endpointConfigs.add(buildTcpEndpoint(discoveryBuilder));
@@ -238,9 +255,9 @@ public class Server
 		return endpointConfigs;
 	}
 
-	private static EndpointConfig buildTcpEndpoint(EndpointConfig.Builder base)
+	private EndpointConfig buildTcpEndpoint(EndpointConfig.Builder base)
 	{
-		return base.copy().setTransportProfile(TransportProfile.TCP_UASC_UABINARY).setBindPort(TCP_BIND_PORT).build();
+		return base.copy().setTransportProfile(TransportProfile.TCP_UASC_UABINARY).setBindPort(bindPort).build();
 	}
 
 	public OpcUaServer getServer()

@@ -24,6 +24,7 @@ import org.iottree.core.cxt.UAContext;
 import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.json.JSONArray;
@@ -74,10 +75,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			
 			if (root_subnode_id)
 			{
+				IdIId iiid = null ;
 				if(root!=null)
-					nt.id = root.getRootNextId();
+					iiid = root.getRootNextId();
 				else
-					nt.id = this.getNextIdByRoot();
+					iiid = this.getNextIdByRoot();
+				nt.setIdIId(iiid);
 			}
 			//	nt.id = this.getNextIdByRoot();
 			hmi.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
@@ -163,7 +166,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 			}
 		}
 		// ch.belongTo = this;
-		ch.id = this.getNextIdByRoot();
+		//ch.id = this.getNextIdByRoot();
+		ch.setIdIId(this.getNextIdByRoot());
 		hmis.add(ch);
 		this.constructNodeTree();
 
@@ -210,7 +214,8 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		UAHmi nt = new UAHmi();
 		
 		HashMap<IRelatedFile,IRelatedFile> rf2new = new HashMap<>();
-		nt.id = this.getNextIdByRoot() ;
+		//nt.id = this.getNextIdByRoot() ;
+		nt.setIdIId(this.getNextIdByRoot());
 		hmi.copyTreeWithNewSelf((IRoot)this.getTopNode(),nt, null, false, true, rf2new);
 		String oldn = nt.getName() ;
 		UAHmi oldhmi = this.getHmiByName(oldn) ;
@@ -500,7 +505,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		boolean bchg=false;
 		//long maxdt=-1 ;
 		
-		w.write("{\"id\":\"" + this.id + "\",\"n\":\"" + this.getName() + "\",\"t\":\""+this.getTitle()+"\",\"tp\":\""+this.getNodeTp()+"\"");
+		w.write("{\"id\":\"" + this.id + "\",\"iid\":"+this.getIID()+",\"n\":\"" + this.getName() + "\",\"t\":\""+this.getTitle()+"\",\"tp\":\""+this.getNodeTp()+"\"");
 		if (extpms != null)
 		{
 			for (Map.Entry<String, Object> n2v : extpms.entrySet())

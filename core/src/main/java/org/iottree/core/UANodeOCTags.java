@@ -11,6 +11,7 @@ import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.basic.ValUnit;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
@@ -99,10 +100,13 @@ public abstract class UANodeOCTags extends UANodeOC
 			UATag nt = new UATag();
 			if (root_subnode_id)
 			{
+				IdIId iiid = null;
 				if(root!=null)
-					nt.id = root.getRootNextId();
+					iiid = root.getRootNextId();
 				else
-					nt.id = this.getNextIdByRoot();
+					iiid = this.getNextIdByRoot();
+				
+				nt.setIdIId(iiid);
 			}
 				
 			t.copyTreeWithNewSelf(root,nt, ownerid, copy_id, root_subnode_id,rf2new);
@@ -305,7 +309,7 @@ public abstract class UANodeOCTags extends UANodeOC
 				d = new UATag(name, title, desc, addr, vt, dec_digits,mid_w_js);
 			else
 				d = new UATag(name, title, desc, addr, vt, dec_digits, canw, srate);
-			d.id = this.getNextIdByRoot();
+			d.setIdIId(this.getNextIdByRoot());
 			tags.add(d);
 			constructNodeTree();
 		}
@@ -469,7 +473,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			new_addr = n_addr.toString("") ;
 		}
 		UATag newtag = new UATag(cp_tag, name,newtt,new_addr);
-		newtag.id = this.getNextIdByRoot();
+		//newtag.id = this.getNextIdByRoot();
+		newtag.setIdIId(this.getNextIdByRoot());
 		tags.add(newtag);
 		constructNodeTree();
 
@@ -527,7 +532,8 @@ public abstract class UANodeOCTags extends UANodeOC
 				d = new UATag();
 				d.setTagSys(name, title, desc, addr, vt, dec_digits, canw, srate);
 			}
-			d.id = this.getNextIdByRoot();
+			//d.id = this.getNextIdByRoot();
+			d.setIdIId(this.getNextIdByRoot()) ;
 			if (d.isSysTag())
 				sysTags.add(d);
 			else
@@ -559,7 +565,8 @@ public abstract class UANodeOCTags extends UANodeOC
 			throw new IllegalArgumentException("tag with name=" + name + " existed");
 		}
 		UATag d = new UATag(item);
-		d.id = this.getNextIdByRoot();
+		//d.id = this.getNextIdByRoot();
+		d.setIdIId(this.getNextIdByRoot());
 		tags.add(d);
 		constructNodeTree();
 		this.bDirty = true ;
@@ -585,7 +592,8 @@ public abstract class UANodeOCTags extends UANodeOC
 		}
 		
 		UATag d = new UATag(name,title,desc,null,vt,0,false,200);
-		d.id = this.getNextIdByRoot();
+		//d.id = this.getNextIdByRoot();
+		d.setIdIId(this.getNextIdByRoot()) ;
 		d.bCanWrite = canwrite;
 		tags.add(d);
 		constructNodeTree();

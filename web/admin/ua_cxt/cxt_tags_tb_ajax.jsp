@@ -137,7 +137,8 @@ for(UANodeOCTags tn:tns)
 	String tn_path = tn.getNodePath() ;
 	for(UATag tag:tags)
 	{
-		
+		String id = tag.getId();
+		int iid = tag.getIID();
 		
 		String tagpath = tag.getNodePath();//.getNodePathCxt() ;
 		String tagname = tag.getName();
@@ -227,7 +228,9 @@ if(bloc&&!tag.isSysTag())
 	   t = "M" ;
    boolean anti = tag.isValFilter() ;
 %></td>
-        <td style="text-align: center;"><%=t %></td>
+	<td style="text-align: center;"><%=t %></td>
+	<td ><%=id %></td>
+	<td ><%=iid %></td>
 <td title="<%=tag.getNodeCxtPathTitleIn(node_tags)%>"><span style="<%=cssstr%>" 
 <%
 if(bloc&&!tag.isSysTag())

@@ -718,7 +718,7 @@ if(ins.isAutoStart())
 					        
 					    </div>
 					</div>
-					
+					<%--
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
 					        <h3><wbt:lang>num_of_sess</wbt:lang></h3>
@@ -728,7 +728,7 @@ if(ins.isAutoStart())
 					    </div>
 					</div>
 
-					<%--
+					
 
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">

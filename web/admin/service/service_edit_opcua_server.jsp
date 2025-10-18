@@ -29,6 +29,10 @@ OpcUAService ser = (OpcUAService)ServiceManager.getInstance().getService(OpcUASe
 	String psw =  "";// ser.getAuthPsw() ;
 	String users = ser.getAuthUsers();
 	
+	String chked_sm_none = ser.isSecModeNone()?"checked":"" ;
+	String chked_sm_sign = ser.isSecModeSign()?"checked":"" ;
+	String chked_sm_sign_enc = ser.isSecModeSignEncrypt()?"checked":"" ;
+	
 	List<KeyStoreLoader.CertItem> trusted_certs = KeyStoreLoader.listTrustedCers() ;
 	List<KeyStoreLoader.CertItem> rejected_certs = KeyStoreLoader.listRejectedCers() ;
 %>
@@ -40,7 +44,7 @@ OpcUAService ser = (OpcUAService)ServiceManager.getInstance().getService(OpcUASe
 </jsp:include>
 <link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
 <script>
-dlg.resize_to(700,700);
+dlg.resize_to(700,720);
 </script>
 <style>
 .cert {position: relative;width:99%;height:50px;border:1px solid;border-radius: 3px;}
@@ -62,10 +66,11 @@ dlg.resize_to(700,700);
 	  </div>
 	  <div class="layui-form-mid"><wbt:g>port</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 70px;">
-	    <input type="text" id="port" name="port" value="<%=port%>"  class="layui-input">
+	    <input type="number" id="port" name="port" value="<%=port%>"  class="layui-input">
 	  </div>
   </div>
   <%--
+
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>user</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
@@ -78,14 +83,38 @@ dlg.resize_to(700,700);
   </div>
    --%>
   <div class="layui-form-item layui-form-text">
-    <label class="layui-form-label"><wbt:g>more,users</wbt:g></label>
-    <div class="layui-input-inline" style="width:450px">
+    <label class="layui-form-label"><wbt:g>users</wbt:g></label>
+    <div class="layui-input-inline" style="width:200px">
       <textarea name="users" id="users" class="layui-textarea"><%=users %></textarea>
     </div>
+    <div class="layui-form-mid"><wbt:g>prj</wbt:g></div>
+    <div class="layui-input-inline" style="width:300px;height:100px;" >
+    	<div id="prj_list" style="overflow-y:auto;width:100%;height:100%;border:1px solid #ccc;">
+<%
+List<UAPrj> prjs = UAManager.getInstance().listPrjs() ;
+for(UAPrj prj:prjs)
+{
+	String chked = ser.hasPrjId(prj.getId())?"checked":"" ;
+			
+%><div class="prj"><input type="checkbox" class="chk_prj" id="prj_<%=prj.getId() %>" value="<%=prj.getId() %>" <%=chked %> lay-ignore/><%=prj.getTitle() %></div><%
+}
+%>
+    	</div>
+      
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"><wbt:g>security,mode</wbt:g>:</label>
+	  <div class="layui-input-inline" style="width: 350px;">
+	    <input type="checkbox" id="sm_none" name="sm_none" <%=chked_sm_none%> lay-skin="primary"  lay-filter="sm_none" class="layui-input"> None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    <input type="checkbox" id="sm_sign" name="sm_sign" <%=chked_sm_sign%>  lay-skin="primary"   lay-filter="sm_sign" class="layui-input"> Sign&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    <input type="checkbox" id="sm_sign_enc" name="sm_sign_enc" <%=chked_sm_sign_enc%>  lay-skin="primary"   lay-filter="sm_sign_enc" class="layui-input"> Sign &amp; Encrypt
+	  </div>
+	  
   </div>
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:g>trusted,cer</wbt:g></label>
-    <div class="layui-input-inline" style="width:450px;height:200px;border:1px solid #ccc;" id="trusted_list">
+    <div class="layui-input-inline" style="width:450px;height:200px;border:1px solid #ccc;overflow-y:auto;" id="trusted_list">
 <%--
 for(KeyStoreLoader.CertItem certi:trusted_certs)
 {
@@ -112,7 +141,7 @@ for(KeyStoreLoader.CertItem certi:trusted_certs)
  --%>
   <div class="layui-form-item layui-form-text">
     <label class="layui-form-label"><wbt:g>rejected,cer</wbt:g></label>
-    <div class="layui-input-inline" style="width:450px;height:200px;border:1px solid #ccc;"  id="rejected_list">
+    <div class="layui-input-inline" style="width:450px;height:130px;border:1px solid #ccc;overflow-y:auto;"  id="rejected_list">
 <%--
 for(KeyStoreLoader.CertItem certi:rejected_certs)
 {
@@ -154,9 +183,9 @@ function update_ui()
 		for(let cert of cert_jo.trusted)
 		{
 			tmps += `<div class="cert trusted">
-				<div class="subject">主题\${cert.subject}</div>
-				<div class="issuer">颁发者\${cert.issuer}</div>
-				<div class="serial">序列号 \${cert.serial}</div>
+				<div class="subject">\${cert.subject}</div>
+				<div class="issuer">\${cert.issuer}</div>
+				<div class="serial">No: \${cert.serial}</div>
 				<div class="dt">\${new Date(cert.st).format_local('yyyy-MM-dd hh:mm:ss')} - \${new Date(cert.et).format_local('yyyy-MM-dd hh:mm:ss')}</div>
 				<div class="op">
 				<button class="layui-btn layui-btn-xs layui-btn-danger" title="reject" onclick="reject_cert('\${cert.fn}')"><i class="fa fa-arrow-down"></i></button>
@@ -175,9 +204,9 @@ function update_ui()
 		for(let cert of cert_jo.rejected)
 		{
 			tmps += `<div class="cert rejected">
-				<div class="subject">主题\${cert.subject}</div>
-				<div class="issuer">颁发者\${cert.issuer}</div>
-				<div class="serial">序列号 \${cert.serial}</div>
+				<div class="subject">\${cert.subject}</div>
+				<div class="issuer">\${cert.issuer}</div>
+				<div class="serial">No: \${cert.serial}</div>
 				<div class="dt">\${new Date(cert.st).format_local('yyyy-MM-dd hh:mm:ss')} - \${new Date(cert.et).format_local('yyyy-MM-dd hh:mm:ss')}</div>
 				<div class="op">
 					<button class="layui-btn layui-btn-xs" title="trust it" onclick="trust_cert('\${cert.fn}')"><i class="fa fa-arrow-up"></i></button>
@@ -262,8 +291,27 @@ function do_submit(cb)
 	var auth_user = $('#user').val();
 	var auth_psw = $('#psw').val();
 	var auth_users = $('#users').val();
+	let prjids = [] ;
+	$(".chk_prj").each(function(){
+		let ob =$(this) ;
+		if(ob.prop("checked"))
+			prjids.push(ob.val()) ;
+	})
+	
+	let tcp_port = parseInt($("#port").val());
+	if(isNaN(tcp_port))
+	{
+		cb(false,"invalid port") ;
+		return ;
+	}
+	let sm_none = ""+$("#sm_none").prop("checked") ;
+	let sm_sign = ""+$("#sm_sign").prop("checked") ;
+	let sm_sign_enc = ""+$("#sm_sign_enc").prop("checked") ;
+	
 	cb(true,{enable:enable,
-		auth_user:auth_user,auth_psw:auth_psw,auth_users:auth_users});
+		auth_user:auth_user,auth_psw:auth_psw,auth_users:auth_users,
+		sm_sign:sm_sign,sm_none:sm_none,sm_sign_enc:sm_sign_enc,
+		tcp_port:tcp_port,prjs:prjids.join(",")});
 }
 
 </script>

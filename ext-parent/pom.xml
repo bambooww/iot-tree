@@ -4,18 +4,13 @@
   <parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>1.7.8</version>
+		<version>1.7.9</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
   <groupId>org.iottree.ext</groupId>
   <artifactId>ext-parent</artifactId>
   <packaging>pom</packaging>
-  <distributionManagement>
-    <site>
-      <id>website</id>
-      <url>scp://webhost.company.com/www/website</url>
-    </site>
-  </distributionManagement>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--not deploy outer-->
@@ -34,9 +29,10 @@
     <dependency>
 	    <groupId>org.iottree</groupId>
 	    <artifactId>iottree-core</artifactId>
-	    <version>1.7.8</version>
+	    <version>1.7.9</version>
 	</dependency>
 
 	
   </dependencies>
+
 </project>

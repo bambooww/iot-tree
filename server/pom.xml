@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.7.8</version>
+    <version>1.7.9</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -255,6 +255,25 @@
 			            </configuration>
 			        </execution>
 			        
+			        <execution>
+			            <id>copy-drv-comm-lib</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>copy-resources</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>../_output/lib/</outputDirectory>
+			                <resources>
+			                    <resource>
+			                        <directory>../driver-parent/driver-common/lib</directory>
+			                        <includes>
+			                            <include>*.jar</include>
+			                        </includes>
+			                    </resource>
+			                    
+			                </resources>
+			            </configuration>
+			        </execution>
 			    </executions>
 			</plugin>
 			<!-- copy rename -->
@@ -316,40 +335,40 @@
 				                <delete file="../_output/lib/iottree-ext-basic-${project.version}.jar" />
 			                    <delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
 			                    <delete file="../_output/lib/iottree-ext-pro-${project.version}.jar" />
-			                    
-			                    <echo message="package zip file" />
 			                    <!-- 
-			                    <zip destfile="../_output/iot-tree-${project.version}-winjre8x86.zip" >
+			                    <echo message="package zip file" />
+			                    
+			                    <zip destfile="../_output/iot-tree-${project.version}-winjre_x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
 					                    <exclude name="iot-tree-${project.version}.zip"/>
 					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
-					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				 -->
+                				 
                 				
                 				<delete file="../_output/lib/iottree-ext-opcda.jar" />
 
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
 					                  <fileset dir="../_output/">
-					                    <exclude name="jre8_x86/"/>
+					                    <exclude name="jre_x86/"/>
 					                    <exclude name="jre/"/>
 					                    <exclude name="iot-tree-${project.version}.zip"/>
 					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
-					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
                 				
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre.zip" >
 					                  <fileset dir="../_output/">
-					                    <exclude name="jre8_x86/"/>
+					                    <exclude name="jre_x86/"/>
 					                    <exclude name="iot-tree-${project.version}.zip"/>
 					                    <exclude name="iot-tree-${project.version}-winjre.zip"/>
-					                    <exclude name="iot-tree-${project.version}-winjre8x86.zip"/>
+					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                     
+			                     -->
 							</tasks>
 						</configuration>
 					</execution>

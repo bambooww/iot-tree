@@ -258,7 +258,6 @@ public class StoreManager
 		
 		LinkedHashMap<String, Source> n2st = new LinkedHashMap<>();
 		
-		
 		XmlData xd = XmlData.readFromFile(f);
 		List<XmlData> xds = xd.getSubDataArray("sources");
 		if (xds == null)
@@ -269,12 +268,19 @@ public class StoreManager
 			if (Convert.isNullOrEmpty(tp))
 				continue;
 			
-			Source o = Source.newInsByTp(tp) ;
-			if (!DataTranserXml.injectXmDataToObj(o, tmpxd))
-				continue;
-			if(Convert.isNullOrEmpty(o.getId()))
-				o.id = CompressUUID.createNewId() ;
-			n2st.put(o.getName(), o);
+			try
+			{
+				Source o = Source.newInsByTp(tp) ;
+				if (!DataTranserXml.injectXmDataToObj(o, tmpxd))
+					continue;
+				if(Convert.isNullOrEmpty(o.getId()))
+					o.id = CompressUUID.createNewId() ;
+				n2st.put(o.getName(), o);
+			}
+			catch(Throwable ee)
+			{
+				ee.printStackTrace();
+			}
 		}
 		return n2st;
 	}

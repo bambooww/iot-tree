@@ -741,7 +741,7 @@ var connpro_menu = [
 <%
 	}
 %>
-
+{content:'BACnet <wbt:g>client</wbt:g>',callback:function(){edit_cpt("bacnet_client","","");}},
 //	{content:'OPC Agent',callback : function(){edit_cpt("opc_agent","","");}},
 	{content:'<i class="fa fa-link"></i> <wbt:g>msg_conn</wbt:g>',header: true},
 	{content:'HTTP Client',callback:function(){
@@ -958,11 +958,11 @@ function on_conn_ui_showed()
 	        		var tt = "<i class='fa fa-play'></i> <wbt:g>start</wbt:g>" ;
 	        		if(bconn)
 	        			tt = "<i class='fa fa-stop'></i> <wbt:g>stop</wbt:g>" ;
-					d.push({ content : tt, callback:()=>{
-							rt_cpt_start_stop(cpid);
-						}});
-					d.push({content:'sm_divider'});
-					if(cptp=="opc_ua"||cptp=="opc_agent"||cptp=="opc_da")
+					//d.push({ content : tt, callback:()=>{
+					//		rt_cpt_start_stop(cpid);
+					//	}});
+					//d.push({content:'sm_divider'});
+					if(cptp=="opc_ua"||cptp=="opc_agent"||cptp=="opc_da"||cptp=='bacnet_client')
 					{
 						d.push({ content : '<i class="fa fa-pencil"></i> <wbt:g>bind</wbt:g>', callback:()=>{
 							edit_bind_setup(cptp,cpid,connid,conntt) ;

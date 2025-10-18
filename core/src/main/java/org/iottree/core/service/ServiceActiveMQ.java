@@ -111,13 +111,17 @@ public class ServiceActiveMQ extends AbstractService
 	}
 	
 	@Override
-	synchronized public boolean startService()
+	synchronized public boolean startService(StringBuilder failedr)
 	{
 		if(broker!=null)
 			return true;
 		
 		if(!mqttEn && !tcpEn)
+		{
+			failedr.append("not enabled") ;
 			return false;
+		}
+		
 		try
 		{
 			//bad code
@@ -161,6 +165,7 @@ public class ServiceActiveMQ extends AbstractService
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+			failedr.append(e.getMessage()) ;
 			return false;
 		}
 
