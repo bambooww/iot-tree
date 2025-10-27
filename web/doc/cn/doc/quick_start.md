@@ -17,6 +17,9 @@
 
 <a href="https://github.com/bambooww/iot-tree/releases" target="_blank">下载地址</a>
 
+<a href="https://pan.baidu.com/s/15uQT4G0CoV9obc0qn6IPjg?pwd=tuf3" target="_blank">网盘下载<a>
+
+
 
 
 
