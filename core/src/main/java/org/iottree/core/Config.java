@@ -16,6 +16,7 @@ import javax.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlHelper;
 import org.w3c.dom.Document;
@@ -69,6 +70,8 @@ public class Config
 	static String dataDynDirBase = null;
 
 	static String libDirBase = null;
+	
+	static String insUid = null ;
 
 	static
 	{
@@ -374,6 +377,42 @@ public class Config
 			return dataDirBase;
 
 		return dataFileBase + "/data/";
+	}
+	
+	public static String getInsUID()
+	{
+		if(Convert.isNotNullEmpty(insUid))
+			return insUid ;
+		
+		synchronized(Config.class)
+		{
+			if(Convert.isNotNullEmpty(insUid))
+				return insUid ;
+			
+			File ins_uidf = new File(getDataDirBase()+"_ins_uid.txt") ;
+			if(!ins_uidf.exists())
+			{
+				try
+				{
+					String insuid = CompressUUID.createNewId();
+					Convert.writeFileTxt(ins_uidf, insuid);
+					return insUid = insuid ;
+				}
+				catch(Exception ee)
+				{
+					throw new RuntimeException(ee) ;
+				}
+			}
+			
+			try
+			{
+				return insUid = Convert.readFileTxt(ins_uidf) ;
+			}
+			catch(Exception ee)
+			{
+				throw new RuntimeException(ee) ;
+			}
+		}
 	}
 
 	public static String getDataDynDirBase()

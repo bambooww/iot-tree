@@ -12,6 +12,8 @@ import org.iottree.core.ConnPt;
 import org.iottree.core.ConnProvider;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.IXmlDataValidator;
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
@@ -19,6 +21,8 @@ import org.iottree.core.util.xmldata.XmlData;
 
 public class ConnProTcpClient extends ConnProvider
 {
+	static ILogger log = LoggerManager.getLogger(ConnProTcpClient.class) ;
+	
 	public ConnProTcpClient()
 	{
 	
@@ -107,10 +111,13 @@ public class ConnProTcpClient extends ConnProvider
 			try
 			{
 				ConnPtTcpClient conn = (ConnPtTcpClient)ci ;
-//				long st = System.currentTimeMillis() ;
+				long st = System.currentTimeMillis() ;
 				conn.disconnect();
-//				long et = System.currentTimeMillis() ;
-//				System.out.println(" conn="+conn.getName()+" cost="+(et-st));
+				if(log.isDebugEnabled())
+				{
+					long et = System.currentTimeMillis() ;
+					log.debug(" disconnAll.conn="+conn.getName()+" cost="+(et-st));
+				}
 			}
 			catch(Exception e)
 			{

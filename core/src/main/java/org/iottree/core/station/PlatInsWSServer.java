@@ -277,8 +277,12 @@ public class PlatInsWSServer
         
 		PStation pss = PlatInsManager.getInstance().getStationById(stationid) ;
 		
+		
 		if (pss == null)
 		{
+			if(log.isTraceEnabled())
+				log.trace("onOpen stationid="+stationid+"clientip="+clientip+" PStation is unknown");
+			
 			PlatInsManager.getInstance().fireUnknownStation(stationid) ;
 			session.close();
 			return;
@@ -308,6 +312,9 @@ public class PlatInsWSServer
 				return ;
 			}
 		}
+		
+		if(log.isTraceEnabled())
+			log.trace("onOpen stationid="+stationid+"clientip="+clientip+" title="+pss.getTitle());
 		
 		SessionItem si = new SessionItem(session, pss,clientip);
 		addSessionItem(si);

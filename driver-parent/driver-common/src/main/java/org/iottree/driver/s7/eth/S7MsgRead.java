@@ -65,7 +65,7 @@ public class S7MsgRead extends S7Msg
 			if (area_memtp == S7MemTp.DB) // S7.S7AreaDB)
 				S7Util.setUInt16(conn.PDU, 25, db_num);
 			else  if(area_memtp==S7MemTp.V)
-				S7Util.setUInt16(conn.PDU, 25, 1);
+				S7Util.setUInt16(conn.PDU, 25, 1); //DB1 等于V段
 
 			// Adjusts Start and word length
 			if ((area_memtp == S7MemTp.C) || (area_memtp == S7MemTp.T))

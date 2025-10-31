@@ -51,6 +51,11 @@ public abstract class Source extends ExchgObj
 		return this.name ;
 	}
 	
+	public String getTpNameUID()
+	{
+		return this.getSorTp()+"."+this.name ;
+	}
+	
 	public String getTitle()
 	{
 		return this.title ;

@@ -14,11 +14,11 @@
 		<webapp name="_sys" />
 		<webapp name="_templet" />
 		<webapp name="ent" main="true"/>
+		<webapp name="pro" />
 		
 		<!-- 
 		<webapp name="main"/>
 		<webapp name="main" path="main/main.war" /> 
-		
 		 -->
 		
 	</webapps>
@@ -81,9 +81,11 @@
 			<sub_nav name="dev_rt_mon" title="监控实时画面"  icon="fa-solid fa-hard-drive" color="#00a8e0" notroles="small_user"  url="/ent/devices/devices_mon_main.jsp" >
 		</sub_nav>
 		
-		<sub_nav name="prod_test" title="生产检测"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  >
+		<sub_nav name="prod_test" title="生产检测"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"   url="/ent/datarec/json2tb_main.jsp" >
+		<!-- 
 			<sub_nav name="prod_test_stat" title="检测实时统计"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  url="/ent/datastat/rt_prod_test_stat.jsp" />
 			<sub_nav name="json2tb" title="检测记录"  icon="fa-regular fa-rectangle-list" color="#e43020" notroles="small_user"  url="/ent/datarec/json2tb_main.jsp" />
+			 -->
 		</sub_nav>
 		
 		<sub_nav name="dvalue_pro_stat" title="生产统计"  icon="fa-solid fa-chart-column" color="#e43020" notroles="small_user"  url="/ent/datarec/prod_rec.jsp" >

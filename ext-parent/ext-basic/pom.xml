@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>ext-parent</artifactId>
 		<groupId>org.iottree.ext</groupId>
-		<version>1.7.9</version>
+		<version>1.8.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>iottree-ext-basic</artifactId>
@@ -57,6 +57,12 @@
 			<version>0.3.45</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-email</artifactId>
+		    <version>1.6.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava 
 <dependency>
     <groupId>org.lmdbjava</groupId>

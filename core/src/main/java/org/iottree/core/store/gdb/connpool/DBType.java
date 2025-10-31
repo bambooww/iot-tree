@@ -18,6 +18,8 @@ public enum DBType
 	
 	sqlite,
 	
+	postgresql,
+	
 	informix,
 	
 	sybase,

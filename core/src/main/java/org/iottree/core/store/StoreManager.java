@@ -140,6 +140,20 @@ public class StoreManager
 		return getName2Source().get(name);
 	}
 	
+	public static Source getSourceByTpNameUID(String tp_name)
+	{
+		int k = tp_name.indexOf('.');
+		if(k<=0)
+			return null;
+		Source sor = getSourceByName(tp_name.substring(k+1)) ;
+		if(sor==null)
+			return null ;
+		
+		if(!tp_name.substring(0,k).equals(sor.getSorTp()))
+			return null;
+		return sor ;
+	}
+	
 	public static SourceJDBC getSourceJDBC(String name)
 	{
 		 Source sor = getSourceByName(name) ;

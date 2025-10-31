@@ -417,6 +417,7 @@ background-color: #ffffff;
  	border-style:dashed;
  	//background-color: #c2c2c2;
  }
+ .subitem_li:hover {background-color:#0680d7;}
 
 .line{
      position:absolute;
@@ -560,6 +561,7 @@ if(!hide_top && rep.isPrjPStationIns())
 <%
 }
 %>
+
      <div class="top_toolbox"  style="right:10px;width:180px;color:#fff5e2;">
      <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
 	 <button class="layui-btn layui-btn-primary layui-btn-xs <%=("cn".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('cn')">CN</button>
@@ -618,7 +620,7 @@ if(hide_top)
 								</table>
 		               	  </div>
 		               	  <div class="subitem_content">
-		               	 	    <div class="subitem_li" v-for="connection in connector.connections" v-bind:id="'conn_' + connection.id" 
+		               	 	    <div class="subitem_li cpt" v-for="connection in connector.connections" v-bind:id="'conn_' + connection.id" 
 		               	 	    		v-bind:cp_id="connector.id" v-bind:cp_tp="connector.tp" v-bind:conn_id="connection.id" v-bind:tt="connection.title +' '+connection.name">
 		               	 		<table style="width:100%;">
 			               	 		<tr>

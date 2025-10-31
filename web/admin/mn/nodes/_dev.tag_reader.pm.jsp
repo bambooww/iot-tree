@@ -93,7 +93,7 @@ String prjpath = prj.getNodePath() ;
 }
 </style>
 <button onclick="add_rule()" style="border-color:#dddddd">+Add</button>
-<div id="rules">
+<div id="rules" style="overflow-y:auto;max-height: 480px;">
 </div>
  <div class="rule" id="rule_temp" style="display:none">
   <button class="del" onclick="del_rule(this)">X</button>

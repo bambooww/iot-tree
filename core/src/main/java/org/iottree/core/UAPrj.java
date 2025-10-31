@@ -1461,7 +1461,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					else
 						cp.stop();
 				}
-				catch ( Exception e)
+				catch (Throwable e)
 				{
 					e.printStackTrace();
 				}
@@ -1646,11 +1646,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	private void stopPrj()
 	{
-		
-		
 		startStopTask(false);
+		startStopCh(false);//must before ch,or it will cost more time
 		startStopConn(false);
-		startStopCh(false);
 
 		PrjSharer ps = getSharer();
 		if (ps != null)

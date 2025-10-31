@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>driver-parent</artifactId>
 		<groupId>org.iottree.driver</groupId>
-		<version>1.7.9</version>
+		<version>1.8.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>iottree-driver-common</artifactId>
@@ -76,7 +76,13 @@
 		</dependency>
 		
 	
-
+<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.7.8</version>
+</dependency>
+ -->
 </dependencies>
 
 	<build>

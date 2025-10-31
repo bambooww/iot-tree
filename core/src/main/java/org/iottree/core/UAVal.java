@@ -37,7 +37,6 @@ public class UAVal //extends JSObMap
 		vt_str(9,-1,String.class),
 		vt_date(10,8,java.util.Date.class);
 		
-		
 		private final int val ;
 		private final int byteLen;
 		private final Class<?> valC;

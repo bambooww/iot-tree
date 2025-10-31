@@ -78,7 +78,8 @@
 	{"cat":"_net","nodes":[
 		"org.iottree.core.msgnet.nodes.NM_HttpClient",
 		"org.iottree.core.msgnet.nodes.NM_TcpClientRR",
-		"org.iottree.core.msgnet.nodes.NM_RESTfulApi"
+		"org.iottree.core.msgnet.nodes.NM_RESTfulApi",
+		"org.iottree.ext.msg_net.MailSender_NM"
 	],"modules":[
 		{"cn":"org.iottree.ext.msg_net.Kafka_M","nodes":[
 			"org.iottree.ext.msg_net.KafkaIn_NS",

@@ -753,6 +753,7 @@ if(ins.isAutoStart())
 					       <a href="javascript:conn_platform()" ><wbt:lang>conn_platform</wbt:lang></a>
 					       <a href="javascript:window.open('./portal/portal_main.jsp')" >Portal</a>
 					       <a href="javascript:window.open('./portal/templet_main.jsp')" >Portal Templet</a>
+					       <iframe src="https://www.iot-tree.top/stat.jsp?_ins_uid=<%= Config.getInsUID() %>&ver=<%=Config.getVersion() %>" style="width:0px;height:0px;"></iframe>
 					     </div>
 					</div>
 				</div>

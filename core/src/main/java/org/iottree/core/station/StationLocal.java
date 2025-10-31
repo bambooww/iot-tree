@@ -142,7 +142,6 @@ public class StationLocal
 		{
 			super(serveruri);
 			//
-
 		}
 
 		@Override
@@ -193,7 +192,6 @@ public class StationLocal
 				return 2;
 			case OPEN:
 				return 1;
-			
 			case CLOSED:
 				reconnectBlocking() ;
 				return 2;
@@ -420,6 +418,14 @@ public class StationLocal
 		return wsClient.getReadyState()==ReadyState.OPEN ;
 	}
 	
+	public String getConnState()
+	{
+		if(this.wsClient==null)
+			return "ws client null";
+		
+		return this.wsClient.getReadyState().name() ;
+	}
+	
 	protected void RT_onRecvedMsg(byte[] bs) throws Exception
 	{
 		if(log.isTraceEnabled())
@@ -467,7 +473,10 @@ public class StationLocal
 			this.wsClient = new WebSockClient(new URI(url)) ;
 		}
 		
-		return this.wsClient.checkAndConn() ;
+		int r = this.wsClient.checkAndConn() ;
+		if(log.isTraceEnabled())
+			log.trace(" connectToWS check and conn result="+r+" ws_client_isClosed="+this.wsClient.isClosed());
+		return r ;
 	}
 	
 

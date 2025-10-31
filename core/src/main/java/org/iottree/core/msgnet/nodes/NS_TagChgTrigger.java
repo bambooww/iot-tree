@@ -30,7 +30,7 @@ public class NS_TagChgTrigger extends MNNodeStart
 	// String tagId = null ;
 	public static enum ChgTP
 	{
-		all_chg(0), all_valid_chg(1), up_down(2), up(3), down(4);
+		all_chg(0), all_valid_chg(1),up_down(2), up(3), down(4);
 
 		final int val;
 
@@ -119,22 +119,29 @@ public class NS_TagChgTrigger extends MNNodeStart
 			Object lastv = null;
 			if (last_v != null && last_v.isValid())
 				lastv = last_v.getObjVal();
-			if (lastv == null || !lastv.equals(curval))
+			if (lastv == null)
 			{
-				switch (this)
+				if(curval!=null)
 				{
-				case all_chg:
-				case all_valid_chg:
-					return true;
-				default:
-					return false;
+					switch (this)
+					{
+					case all_chg:
+					case all_valid_chg:
+						return true;
+					default:
+						return false;
+					}
 				}
+				return false;
 			}
 
 			int comp_res = compareCurLastUpDown(curval, lastv);
 			// valid = true
 			switch (this)
 			{
+			case all_chg:
+			case all_valid_chg:
+				return comp_res != 0;
 			case up:
 				return comp_res > 0;
 			case down:

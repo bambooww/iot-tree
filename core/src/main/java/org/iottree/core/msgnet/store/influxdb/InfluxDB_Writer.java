@@ -270,6 +270,9 @@ public class InfluxDB_Writer extends MNNodeEnd
 				if(v==null)
 					continue ;
 				
+				String vt = tmpjo.optString("vt") ;
+				v = transValByVT(vt,v) ;
+				
 				if(v instanceof Number)
 					point.addField(fn,(Number)v) ;
 				else if(v instanceof String)
@@ -302,6 +305,24 @@ public class InfluxDB_Writer extends MNNodeEnd
 		}
 		
 		return point ;
+	}
+	
+	private Object transValByVT(String vt,Object v)
+	{
+		if(Convert.isNullOrEmpty(vt))
+			return v ;
+		
+		switch(vt)
+		{
+		case "float":
+			if(v instanceof Number)
+				return ((Number)v).floatValue() ;
+			break ;
+		case "double":
+			if(v instanceof Number)
+				return ((Number)v).doubleValue() ;
+		}
+		return v ;
 	}
 	
 	private transient long lastPtIn = -1 ;

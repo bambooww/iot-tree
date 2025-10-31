@@ -161,6 +161,7 @@ text-overflow:ellipsis;
 	border:0px;
 	background-color: rgba(0,0,0,0);
 }
+th,td {white-space: nowrap;}
 .wbool {width:90px;border:0px solid #999999;height:100%;}
 </style>
 <body marginwidth="0" marginheight="0">
@@ -212,7 +213,7 @@ if(b_tags)
 {
 %>
 <div id="tb_tags" style="position:absoluate;bottom:120px;top:100px;height:300px;overflow-y: auto;">
-<table class="oc_div_list" style="margin-top:0px;width:99%" id="tb_cur" >
+<table class="oc_div_list" style="margin-top:0px;width:99%;overflow:auto;" id="tb_cur" >
   <thead>
      <tr>
      <th style="width:20px;text-align: center;">
@@ -245,7 +246,7 @@ if(prj!=null)
 %>
      </tr>
    </thead>
-   <tbody id="div_list_bd">
+   <tbody id="div_list_bd" >
 
     </tbody>
 </table>
@@ -1317,7 +1318,7 @@ function show_data_his(outtp,outid,tagp,title)
 
 function resize_taglist()
 {
-	var h = $(window).height()-110;
+	var h = $(window).height()-100;
 	$("#tb_tags").css("height",h+"px");
 }
 
