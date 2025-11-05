@@ -70,6 +70,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		String addr0 = tg.getAddress() ;
 		if(addr0==null)
 			addr0="" ;
+		String vt = tg.getValTp().toString() ;
 		if(Convert.isNotNullEmpty(search_txt))
 		{
 			if(!pathn.contains(search_txt) && ! patht.contains(search_txt) && !addr0.contains(search_txt))
@@ -82,7 +83,7 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" height0='1' style0="height:5" onmouseover="mouseover(this)" onmouseout="mouseout(this)" 
- 	onclick="clk_sel(this)" tagp="<%=pathn%>" tagt="<%=patht%>" tagid="<%=tagid%>">
+ 	onclick="clk_sel(this)" tagp="<%=pathn%>" tagt="<%=patht%>" tagid="<%=tagid%>" vt="<%=vt%>">
   <td><input type="checkbox" id="cb_<%=pathn %>"  <%=chked %>/></td>
   <td><%=pathn %></td>
   <td><%=addr %></td>

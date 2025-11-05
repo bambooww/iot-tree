@@ -30,7 +30,6 @@ UANode n = null;
 		return ;
 	}
 
-
 if(n instanceof UAHmi)
 	n = n.getParentNode() ;
 if(!(n instanceof UANodeOCTags))

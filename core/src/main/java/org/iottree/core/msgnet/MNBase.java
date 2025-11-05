@@ -65,6 +65,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	 * 如果节点实现接口IMNNodeRes,此变量才会起作用
 	 */
 	String resName = null ;
+	
+	/**
+	 * show output title or not
+	 */
+	boolean bShowOutTitle = getShowOutTitleDefault();
 //	private String nodeTp = null ;
 //	
 //	private String nodeTpT = null ;
@@ -161,6 +166,16 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	public boolean isEnable()
 	{
 		return this.bEnable ;
+	}
+	
+	public boolean isShowOutTitle()
+	{
+		return this.bShowOutTitle;
+	}
+	
+	public boolean getShowOutTitleDefault()
+	{
+		return false;
 	}
 	
 	public boolean isShowRT()
@@ -265,6 +280,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		JSONObject pm_jo = jo.getJSONObject("pm_jo");
 		setParamJO(pm_jo);
 		this.bEnable = jo.optBoolean("enable",true) ;
+		this.bShowOutTitle = jo.optBoolean("show_out_tt",false);
 		this.title = jo.optString("title","") ;
 		this.marks = Convert.splitStrWith(jo.optString("marks"), ",|") ;
 		this.desc = jo.optString("desc","") ;
@@ -295,6 +311,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.put("y", this.y) ;
 		jo.put("enable", this.bEnable) ;
 		jo.put("show_rt", this.bShowRT) ;
+		jo.put("show_out_tt",this.bShowOutTitle);
 		jo.put("color", this.getColor()) ;
 		jo.putOpt("tcolor", this.getTitleColor()) ;
 		jo.put("icon", this.getIcon()) ;
@@ -344,6 +361,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.y = jo.optFloat("y",0) ;
 		this.bEnable = jo.optBoolean("enable",true) ;
 		this.bShowRT = jo.optBoolean("show_rt",false) ;
+		this.bShowOutTitle = jo.optBoolean("show_out_tt",false) ;
 		
 		this.resName = jo.optString("res_name") ;
 		

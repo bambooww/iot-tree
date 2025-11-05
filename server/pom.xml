@@ -335,9 +335,9 @@
 				                <delete file="../_output/lib/iottree-ext-basic-${project.version}.jar" />
 			                    <delete file="../_output/lib/iottree-ext-opcda-${project.version}.jar" />
 			                    <delete file="../_output/lib/iottree-ext-pro-${project.version}.jar" />
-			                    <!-- 
-			                    <echo message="package zip file" />
 			                    
+			                    <echo message="package zip file" />
+			                    <!-- 
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre_x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
@@ -347,7 +347,7 @@
 					                  </fileset>
                 				</zip>
                 				 
-                				
+                				 -->
                 				<delete file="../_output/lib/iottree-ext-opcda.jar" />
 
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
@@ -368,7 +368,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                     -->
+			                    
 							</tasks>
 						</configuration>
 					</execution>

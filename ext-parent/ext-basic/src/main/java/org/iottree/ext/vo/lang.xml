@@ -5,4 +5,5 @@
 	<dd_node id="1" name="vo_reco" name_cn="语音识别" name_en="Voice Recognizer" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="mic_in" name_cn="麦克风输入" name_en="MIC IN" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="vo_wavplayer" name_cn="Wav音频播放" name_en="Wav Player" desc_cn="" desc_en=""/>
 </dd_class>

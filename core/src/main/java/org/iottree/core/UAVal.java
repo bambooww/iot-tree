@@ -2,7 +2,10 @@ package org.iottree.core;
 
 import java.sql.Date;
 
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.xmldata.XmlVal;
+
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
 
@@ -101,6 +104,30 @@ public class UAVal //extends JSObMap
 			}
 		}
 		
+		public XmlVal.XmlValType toXVT()
+		{
+			switch(this)
+			{
+			case vt_str:
+				return XmlVal.XmlValType.vt_string;
+			case vt_int32:
+				return XmlVal.XmlValType.vt_int32;
+			case vt_float:
+				return XmlVal.XmlValType.vt_float;
+			case vt_bool:
+				return XmlVal.XmlValType.vt_bool;
+			case vt_int16:
+				return XmlVal.XmlValType.vt_int16;
+			case vt_int64:
+				return XmlVal.XmlValType.vt_int64;
+			case vt_double:
+				return XmlVal.XmlValType.vt_double;
+			case vt_date:
+				return XmlVal.XmlValType.vt_date;
+			default:
+				return null;
+			}
+		}
 	}
 	
 	public static ValTP getValTp(String tpstr)

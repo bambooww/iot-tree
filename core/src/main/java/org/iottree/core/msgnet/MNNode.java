@@ -356,15 +356,21 @@ public abstract class MNNode extends MNBase
 		{
 			//JSONArray jarr = new JSONArray() ;
 			JSONArray jarr_c = new JSONArray() ;
+			JSONArray jarr_tt = new JSONArray() ;
 			for(int i = 0 ; i < outn ; i ++)
 			{
-				String tt  = this.getOutColor(i) ;
+				String cc  = this.getOutColor(i) ;
+				String tt = this.RT_getOutTitle(i) ;
+				if(Convert.isNullOrEmpty(cc))
+					cc = "" ;
 				if(Convert.isNullOrEmpty(tt))
 					tt = "" ;
-				jarr_c.put(tt) ;
+				jarr_c.put(cc) ;
+				jarr_tt.put(tt) ;
 			}
 			//jo.put("out_tts", jarr) ;
 			jo.put("out_cs", jarr_c) ; //out color s
+			jo.put("out_tt", jarr_tt) ;
 			Map<Integer,OutResDef> out2res = this.getOut2Res() ;
 			if(out2res!=null&&out2res.size()>0)
 			{

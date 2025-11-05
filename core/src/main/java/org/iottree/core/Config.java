@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlHelper;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -577,6 +578,10 @@ public class Config
 	private static ArrayList<LangItem> multiLangItems = new ArrayList<>();
 
 	private static String appCopyRight = "";
+	
+	private static String productName = null ;
+	
+	private static String productTitle = null ;
 
 	public static Element loadConf()
 	{
@@ -590,10 +595,24 @@ public class Config
 
 			try
 			{
-				File f = getConfFile("config.xml");
+				File prod = getConfFile("product.json");
+				String prod_name = null ;
+				if(prod.exists())
+				{
+					JSONObject jo = Convert.readFileJO(prod) ;
+					if(jo!=null)
+					{
+						productName = prod_name = jo.optString("name") ;
+						productTitle = jo.optString("title") ;
+					}
+				}
+				String cfn = "config.xml" ;
+				if(Convert.isNotNullEmpty(prod_name))
+					cfn = "config-"+prod_name+".xml" ;
+				File f = getConfFile(cfn);
 				if (!f.exists())
 				{
-					throw new RuntimeException("no config.xml file found!");
+					throw new RuntimeException("no "+cfn+" file found!");
 				}
 
 				DocumentBuilderFactory docBuilderFactory = null;
@@ -636,7 +655,7 @@ public class Config
 					dataFileBase = f.getParentFile().getCanonicalPath() + "/";
 				}
 
-				System.out.println("Data Dir Base=" + dataDirBase);
+				
 				System.setProperty("iottree.data_dir", getDataDirBase());
 				System.setProperty("iottree.msg_net", getDataDirBase() + "/msg_net/");
 				System.setProperty("iottree.lib_plugins.dir", getDataDirBase() + "/plugins/");
@@ -664,7 +683,7 @@ public class Config
 						dataDynDirBase += "/";
 				}
 
-				System.out.println("data_dyn_dir=" + dataDynDirBase);
+				
 				System.setProperty("iottree.data_dyn_dir", dataDynDirBase);
 
 				tdata = confRootEle.getAttribute("lib_dir");
@@ -690,7 +709,7 @@ public class Config
 					libDirBase = f.getParentFile().getCanonicalPath() + "/lib/";
 					libDirBase = libDirBase.replace('\\', '/');
 				}
-				System.out.println("Lib Dir Base=" + libDirBase);
+				
 
 				File tmpdir = new File(getDataDirBase() + "/tmp/");
 				if (!tmpdir.exists())
@@ -700,7 +719,7 @@ public class Config
 				if (!javaiotemp.exists())
 					javaiotemp.mkdirs();
 				System.setProperty("java.io.tmpdir", javaiotemp.getCanonicalPath());
-				System.out.println("Data File Base=" + dataFileBase);
+				//System.out.println("Data File Base=" + dataFileBase);
 
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));
 				appTitle = confRootEle.getAttribute("title");
@@ -739,6 +758,18 @@ public class Config
 				return null;
 			}
 		}
+	}
+	
+	public static String getProductName()
+	{
+		loadConf();
+		return productName ; 
+	}
+	
+	public static String getProductTitle()
+	{
+		loadConf();
+		return productTitle ; 
 	}
 
 	private static void loadLangsConfig()

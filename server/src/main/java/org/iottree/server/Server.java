@@ -36,7 +36,14 @@ public class Server
 					else
 					{
 						System.out.print("   version " + Config.getVersion());
-						System.out.println("\r\nfile base="+Config.getConfigFileBase()) ;
+						String prodn = Config.getProductName() ;
+						if(Convert.isNotNullEmpty(prodn))
+							System.out.print("\r\nproduct="+prodn) ;
+						System.out.print("\r\nfile base="+Config.getConfigFileBase()) ;
+						System.out.print("\r\nData Dir Base=" + Config.getDataDirBase());
+						System.out.print("\r\ndata_dyn_dir=" + Config.getDataDynDirBase());
+						System.out.print("\r\nLib Dir Base=" + Config.getLibDirBase());
+						
 						System.out.print("\r\n\r\n");
 						break;
 					}

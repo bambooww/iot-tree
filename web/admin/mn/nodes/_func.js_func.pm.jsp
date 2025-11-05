@@ -7,7 +7,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*,
-	org.iottree.core.msgnet.*,
+	org.iottree.core.msgnet.*,org.iottree.core.msgnet.nodes.*,
 	org.iottree.core.msgnet.util.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	String prjid = request.getParameter("container_id");
@@ -34,6 +34,9 @@
 		return ;
 	}
 	
+	NM_JsFunc node = (NM_JsFunc)item ;
+	
+	
 	MNMsg msg = null;
 	if(item instanceof MNNode)
 		msg = ((MNNode)item).RT_getLastMsgIn() ;
@@ -57,7 +60,7 @@
 	position:absolute;
 	left:5px;top:0px;
 	width:300px;
-	height:400px;
+	height:500px;
 	overflow: auto;
 	text-align: left;
 }
@@ -80,12 +83,20 @@
 color:#2f2f2f;
 }
 
-
+.out_tt {width:150px;}
+.out_tt .idx {width:20px;text-align: right;display:inline-block;}
+.out_tt .inp {width:120px;}
 </style>
-<div class="layui-form-item" style="position: absolute;right:60px;z-index:1000;">
+<div class="layui-form-item" style="position: absolute;right:10px;z-index:1000;">
     <label class="layui-form-label">Outputs:</label>
-    <div class="layui-input-inline" style="width:150px;">
-    	<input type="number" class="layui-input" id="out_num" value="1" min="1"/>
+    <div class="layui-input-inline" style="width:70px;">
+    	<input type="number" class="layui-input" id="out_num" value="1" min="1" onchange="refresh_out_tts(true)"/>
+    </div>
+  </div>
+  <div style="position: absolute;right:5px;top:100px;z-index:1000;width:150px;border:1px solid #ccc;">
+  	<div class="out_tt">&nbsp;&nbsp;Output Titles</div>
+  	<div id="out_tts">
+    
     </div>
   </div>
   <div class="layui-form-item">
@@ -125,17 +136,17 @@ color:#2f2f2f;
   <div class="layui-tab-content" style="padding:0px;">
     <div class="layui-tab-item" id="tab_init_js">
     	
-		<div id='init_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;" ></div>
+		<div id='init_js'  style="overflow: scroll;width:100%;height:490px;border:0px solid #e6e6e6;margin-top:2px;" ></div>
 		
 	</div>
     <div class="layui-tab-item  layui-show" >
     	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_msg_in</span>(<span class="pm" title="In Msg's Topic">topic</span>,<span class="pm" title="In Msg's Heads">heads</span>,<span class="pm" title="In Msg's Payload">payload</span>,<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
-		<div id='run_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;"></div>
+		<div id='run_js'  style="overflow: scroll;width:100%;height:490px;border:0px solid #e6e6e6;margin-top:2px;"></div>
 		<span style="color:#901f1f">}</span>
 	</div>
     <div class="layui-tab-item">
     	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_end</span>(<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
-		<div id='end_js'  style="overflow: scroll;width:100%;height:520px;border:0px solid #e6e6e6;margin-top:2px;"></div>
+		<div id='end_js'  style="overflow: scroll;width:100%;height:490px;border:0px solid #e6e6e6;margin-top:2px;"></div>
 		<span style="color:#901f1f">}</span>
     </div>
   
@@ -262,18 +273,52 @@ var DEF_RUN_JS = "// add you code when msg in\r\n //you can use vars or function
 	
 var DEF_END_JS = "// add you end js code here \r\n// it will run once when flow is stopping\r\n";
 
+var out_tts = [] ;
+
+function read_out_tts()
+{
+	let rets=[] ;
+	$(".out_tt").find(".inp").each(function(){
+		let ob = $(this);
+		let tt = ob.val()||"" ;
+		rets.push(tt) ;
+	});
+	return rets;
+}
+
+function refresh_out_tts(b_read)
+{
+	if(b_read)
+		out_tts = read_out_tts() ;
+	
+	let tmps = "";
+	let out_num = get_input_val("out_num",true,1) ;
+	if(out_num<=0) out_num = 1 ;
+	for(let i = 0 ; i < out_num ; i ++)
+	{
+		let tt = "";
+		if(out_tts&&out_tts.length>i)
+			tt = out_tts[i]||"" ;
+		tmps += `<div class="out_tt"><span class="idx">\${i}</span>&nbsp;<input type="text" class="inp" value="\${tt}" /></div>`
+	}
+	$("#out_tts").html(tmps) ;
+}
+
 function get_pm_jo()
 {
 	let out_num = get_input_val("out_num",true,1) ;
+	let out_tts = read_out_tts() ;
 	let i_js = init_editor?init_editor.getValue():init_js; 
 	let m_js = run_editor.getValue();
 	let e_js = end_editor?end_editor.getValue():end_js;
-	return {out_num:out_num,on_init_js:i_js,on_msg_js:m_js,on_end_js:e_js} ;
+	return {out_num:out_num,out_tts:out_tts,on_init_js:i_js,on_msg_js:m_js,on_end_js:e_js} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#out_num").val(jo.out_num) ;
+	out_tts = jo.out_tts||[] ;
+	refresh_out_tts(false);
 	if(init_editor)
 	{
 		//init_editor.setValue(jo.on_init_js||DEF_INIT_JS);
@@ -291,7 +336,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:1100,h:660} ;
+	return {w:1200,h:550} ;
 }
 
 

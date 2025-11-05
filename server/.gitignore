@@ -3,4 +3,6 @@
 /tomcat/conf/
 /tomcat/work/
 /sbin/
+product.*
+config-*.xml
 plat_node.json

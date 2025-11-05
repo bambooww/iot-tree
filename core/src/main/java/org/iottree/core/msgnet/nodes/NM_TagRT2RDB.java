@@ -96,6 +96,12 @@ public class NM_TagRT2RDB  extends MNNodeMid
 		
 		return null ;
 	}
+	
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
 
 	@Override
 	public String getTP()

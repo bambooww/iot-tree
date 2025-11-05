@@ -43,6 +43,10 @@
 		desc_cn="根据选择的写入标签和赋值方式，对标签进行写入操作。&#13;  由于标签写入可能涉及底层驱动和通信，会有一定的延迟，因此此节点还支持异步方式运行"
 		desc_en="Write the Tag based on the selection and assignment method. &#13;  Due to the potential involvement of underlying drivers and communication in tag writing,&#13;   there may be some delay, so this node also supports asynchronous running"
 		/>
+	<dd_node id="1" name="tag_writer_mem" name_cn="标签数据设置" name_en="Tags Set"
+		desc_cn="根据选择的设置标签和赋值方式，对标签进行内存数据设置操作。&#13;  标签设置不涉及底层驱动和通信"
+		desc_en="According to the selected setting tags and assignment method, perform memory data setting operations on the tags &#13;   Tags setting does not involve underlying drivers and communication"
+		/>
 	<dd_node id="1" name="tag_filter" name_cn="标签读取过滤器" name_en="Tags Read Filter"
 		desc_cn="根据一定的过滤条件（项目树根和节点属性），读取设备实时数据（JSON格式的树形结构）"
 		desc_en="According to certain filtering conditions (project tree root and node attributes), read device runtime data (JSON format tree structure)"
@@ -64,6 +68,12 @@
 		desc_cn="通过配置的关系数据表，触发所有标签实时数据的同步更新，可以为外界提供基于关系数据库表形式的实时数据查询"
 		desc_en="By configuring relational data table, triggering the synchronous update of real-time data for all tags, it can provide real-time data queries based on relational database tables for the outside application"
 		/>
+		
+		<dd_node id="1" name="tag_tsrec_rdb" name_cn="标签时序-关系表" name_en="Tag TS - RDB"
+		desc_cn="单个标签以时序方式记录到关系数据库表中，一个标签只能对应一个表"
+		desc_en="Individual tags are recorded in a relational database table in a time-series manner, with each tag corresponding to only one table"
+		/>
+		
 		
 	
 	<dd_node id="1" name="tag_chg" name_cn="标签变化触发器" name_en="Tag Change Trigger"

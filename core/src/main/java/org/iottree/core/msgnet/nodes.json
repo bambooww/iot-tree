@@ -46,9 +46,11 @@
 	{"cat":"_dev","nodes":[
 		"org.iottree.core.msgnet.nodes.NM_TagReader",
 		"org.iottree.core.msgnet.nodes.NM_TagWriter",
+		"org.iottree.core.msgnet.nodes.NM_TagWriterMem",
 		"org.iottree.core.msgnet.nodes.NM_TagFilter",
 		"org.iottree.core.msgnet.nodes.NM_TagFilterW",
 		"org.iottree.core.msgnet.nodes.NM_TagRT2RDB",
+		"org.iottree.core.msgnet.nodes.NM_TagTSRec2RDB",
 		"org.iottree.core.msgnet.nodes.NS_TagChgTrigger",
 		"org.iottree.core.msgnet.nodes.NS_TagAlertTrigger",
 		"org.iottree.core.msgnet.nodes.NS_TagEvtTrigger",
@@ -95,7 +97,8 @@
 	
 	{"cat":"_vo","nodes":[
 		"org.iottree.ext.vo.MicIn_NS",
-		"org.iottree.ext.vo.VoReco_NM"
+		"org.iottree.ext.vo.VoReco_NM",
+		"org.iottree.ext.vo.WavPlayer_NM"
 	],"modules":[
 		
 	]},

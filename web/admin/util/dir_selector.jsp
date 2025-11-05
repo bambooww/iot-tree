@@ -106,7 +106,7 @@ function tree_init()
 					},
 					'themes' : {
 						'responsive' : false,
-						'variant0' : 'small',
+						'variant0' : 'small',icons: false,
 						'stripes' : false
 					}
 				},

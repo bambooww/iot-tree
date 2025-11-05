@@ -36,30 +36,10 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 {
 	public static final String COL_REC_MS = "_rec_ms" ;
 	
-	private static XmlVal.XmlValType transValTp2XVT(ValTP vtp)
-	{
-		switch(vtp)
-		{
-		case vt_str:
-			return XmlVal.XmlValType.vt_string;
-		case vt_int32:
-			return XmlVal.XmlValType.vt_int32;
-		case vt_float:
-			return XmlVal.XmlValType.vt_float;
-		case vt_bool:
-			return XmlVal.XmlValType.vt_bool;
-		case vt_int16:
-			return XmlVal.XmlValType.vt_int16;
-		case vt_int64:
-			return XmlVal.XmlValType.vt_int64;
-		case vt_double:
-			return XmlVal.XmlValType.vt_double;
-		case vt_date:
-			return XmlVal.XmlValType.vt_date;
-		default:
-			return null;
-		}
-	}
+//	private static XmlVal.XmlValType transValTp2XVT(ValTP vtp)
+//	{
+//		return vtp.toXVT();
+//	}
 	
 	/**
 	 * db column definition
@@ -426,6 +406,11 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		return null ;
 	}
 
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
 
 	
 	public RelationalDB_Table getUsingRDBTable()
@@ -537,7 +522,7 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		JavaColumnInfo pkcol = null;
 		//ArrayList<JavaForeignKeyInfo> fks = new ArrayList<JavaForeignKeyInfo>();
 
-		XmlVal.XmlValType xvt_pk = transValTp2XVT(this.pkCol.valTP) ;
+		XmlVal.XmlValType xvt_pk = this.pkCol.valTP.toXVT() ;
 		if(xvt_pk==null)
 		{
 			failedr.append("pk has no column type found") ;
@@ -548,7 +533,7 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 		
 		for(ColDef cd:this.norCols)
 		{
-			XmlVal.XmlValType xvt = transValTp2XVT(cd.valTP) ;
+			XmlVal.XmlValType xvt = cd.valTP.toXVT() ;
 			norcols.add(new JavaColumnInfo(cd.colName,false, xvt, cd.maxLen,
 					cd.hasIdx, false,cd.colName+"_idx", false,-1, "",false,false));
 		}

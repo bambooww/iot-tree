@@ -79,6 +79,12 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		
 		return null ;
 	}
+	
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
 
 	@Override
 	public String getTP()

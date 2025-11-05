@@ -16,6 +16,7 @@
 	<dd_node id="1" name="mark" name_cn="标记" name_en="Mark" desc_cn="" desc_en=""/>
 	
 	<dd_node id="1" name="runner" name_cn="运行" name_en="Runner" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="show_out_tt" name_cn="显示输出标题" name_en="Show Out Title" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="content" name_cn="内容" name_en="Content" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="exception" name_cn="异常" name_en="Exception" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="flow_is_not_en" name_cn="流程未启用" name_en="Flow is not enabled" desc_cn="" desc_en=""/>

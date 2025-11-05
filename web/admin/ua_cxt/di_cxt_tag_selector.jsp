@@ -210,7 +210,8 @@ function clk_sel(sel)
 	let tagp = ele.attr('tagp');
 	let tagt = ele.attr('tagt');
 	let tagid = ele.attr('tagid');
-	cur_sel_tag = {tagid:tagid,tagp:tagp,tagt:tagt} ;
+	let vt = ele.attr("vt") ;
+	cur_sel_tag = {tagid:tagid,tagp:tagp,tagt:tagt,vt:vt} ;
 }
 
 function get_select_tag()

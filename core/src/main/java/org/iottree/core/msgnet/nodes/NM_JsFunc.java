@@ -1,5 +1,6 @@
 package org.iottree.core.msgnet.nodes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	
 	String onEndJS = "" ;
 	
+	ArrayList<String> outTitles = null ;
+	
 	@Override
 	public String getColor()
 	{
@@ -58,6 +61,11 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	public int getOutNum()
 	{
 		return outNum;
+	}
+	
+	public ArrayList<String> getOutTitles()
+	{
+		return this.outTitles ;
 	}
 
 //	@Override
@@ -99,6 +107,7 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	{
 		JSONObject jo = new JSONObject();
 		jo.put("out_num", this.outNum) ;
+		jo.putOpt("out_tts",this.outTitles) ;
 		jo.putOpt("on_msg_js", this.onMsgJS) ;
 		jo.putOpt("on_init_js", this.onInitJS) ;
 		jo.putOpt("on_end_js", this.onEndJS) ;
@@ -111,6 +120,16 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		this.outNum = jo.optInt("out_num",1) ;
 		if(this.outNum<=0)
 			this.outNum = 1 ;
+		JSONArray jarr = jo.optJSONArray("out_tts") ;
+		if(jarr!=null)
+		{
+			this.outTitles = new ArrayList<>() ;
+			for(int i = 0 ; i < jarr.length() ; i ++)
+			{
+				String tt = jarr.getString(i) ;
+				this.outTitles.add(tt) ;
+			}
+		}
 		this.onMsgJS = jo.optString("on_msg_js", "") ;
 		this.onInitJS = jo.optString("on_init_js", "") ;
 		this.onEndJS = jo.optString("on_end_js", "") ;
@@ -118,6 +137,21 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		RT_clearCxt();
 	}
 	
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
+	
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if(outTitles==null||idx<0)
+			return null ;
+		if(idx<outTitles.size())
+			return this.outTitles.get(idx);
+		return null ;
+	}
 	//    js cxt
 	
 

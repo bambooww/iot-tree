@@ -75,6 +75,7 @@
 		jstr = jo.toString() ;
 	
 	String ben_chked = item.isEnable()?"checked":"" ;
+	String bshow_out_tt_chked = item.isShowOutTitle()?"checked":"";
 	String fulltp = item.getTPFull() ;
 	
 	boolean can_save = true ;
@@ -193,13 +194,14 @@ function do_submit(cb)
 	let tt = $('#title').val();
 	let marks = $("#marks").val();
 	let ben = $("#enable").prop("checked") ;
+	let show_out_tt = $("#show_out_tt").prop("checked") ;
 	let res_name = $("#res_name").val() ;
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;
 		return ;
 	}
-	let rr = {title:tt,enable:ben,pm_jo:pmjo,res_name:res_name,marks:marks};
+	let rr = {title:tt,enable:ben,show_out_tt:show_out_tt,pm_jo:pmjo,res_name:res_name,marks:marks};
 	cb(true,rr);
 }
 
@@ -266,6 +268,13 @@ function save_to_lib()
 
 .in_title {position: absolute;left:2px;top:50px;border:1px solid #ccc;background-color: #003a36;color:#00ffe2;cursor: pointer;}
 .in_title:hover ~ .child  {display: block;}
+.layui-form-item .layui-form-checkbox[lay-skin=primary] {
+    margin-top:0px;
+}
+.layui-form-item {
+    margin-bottom: 3px;
+    margin-top: 3px;
+}
 </style>
 </head>
 
@@ -279,13 +288,15 @@ if(can_save)
 }
 %>
 <form class="layui-form"  onsubmit="return false;">
+<div style="border-bottom:1px solid #ccc;">
   <div class="layui-form-item">
     <label class="layui-form-label"><w:g>title</w:g>:</label>
-    <div class="layui-input-inline" style="width:300px;">
+    <div class="layui-input-inline" style="width:230px;">
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
     </div>
-    <div class="layui-input-inline" style="width:80px;">
-      <w:g>enable</w:g><input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> />
+    <div class="layui-input-inline" style="width:150px;">
+      <w:g>enable</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /><br>
+      <w:g>show_out_tt</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="show_out_tt"   <%=bshow_out_tt_chked %> />
     </div>
     <label class="layui-form-mid"><w:g>mark</w:g>:</label>
     <div class="layui-input-inline" style="width:170px;">
@@ -306,6 +317,7 @@ if(item instanceof IMNNodeRes)
 <%
 }
 %>
+</div>
   <div id="pm_cont">
   	
   </div>
