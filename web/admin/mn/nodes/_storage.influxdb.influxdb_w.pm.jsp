@@ -58,7 +58,10 @@
     <div class="layui-input-inline" style="width: 250px;">
       <input type="text" id="batch_w_buflen" name="batch_w_buflen" value="100"  autocomplete="off"  class="layui-input" >
     </div>
-   
+    <div class="layui-form-mid">Number to double:</div>
+   <div class="layui-input-inline" style="width: 250px;">
+      <input type="checkbox" id="trans_num_float" name="trans_num_float"   lay-skin0="primary" />
+    </div>
  </div>
  
 <script>
@@ -73,13 +76,14 @@ function on_after_pm_show(form)
 function get_pm_jo()
 {
 	let batch_w_buflen = get_input_val('batch_w_buflen',true,10);
-	
-	return {batch_w_buflen:batch_w_buflen} ;
+	let trans_num_float = $("#trans_num_float").prop("checked") ;
+	return {batch_w_buflen:batch_w_buflen,trans_num_float:trans_num_float} ;
 }
 
 function set_pm_jo(jo)
 {
 	$('#batch_w_buflen').val(jo.batch_w_buflen||100);
+	$("#trans_num_float").prop("checked",jo.trans_num_float||false) ;
 }
 
 function get_pm_size()

@@ -353,9 +353,8 @@ height:50px;background-color: grey;
 				
 		</div>
 		<div class="right " style0="background-color: #eeeeee;display:flex;flex-direction: column;">
-		 
-		 <div id="p_info" style="position:absolute;bottom:0px;width:100%;background-color: #cccccc; height: 30px" class="props_panel_pos">&nbsp;</div>
-			<div style="position0: absolute; width: 100%; height:90%; border:1 solid;border-color: red">
+		 <span id="p_info" ></span>
+			<div style="position: absolute; width: 100%; height:90%;top:20px; border:1 solid;border-color: red">
 				<div class="layui-tab">
   <ul class="layui-tab-title">
     <li class="layui-this"><wbt:g>props</wbt:g></li>

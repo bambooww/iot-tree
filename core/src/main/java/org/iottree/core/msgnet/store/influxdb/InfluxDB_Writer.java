@@ -16,6 +16,7 @@ import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
+import com.influxdb.exceptions.InfluxException;
 
 public class InfluxDB_Writer extends MNNodeEnd
 {
@@ -65,6 +66,11 @@ public class InfluxDB_Writer extends MNNodeEnd
 	
 	
 	int batchWriterBufLen = 100 ;
+	
+	/**
+	 * when input number,if not vt set,it will be transfered to double
+	 */
+	boolean bTransNumFloat = false;
 	
 	@Override
 	public String getTP()
@@ -134,6 +140,7 @@ public class InfluxDB_Writer extends MNNodeEnd
 //		}
 //		jo.put("fields",jarr) ;
 		jo.put("batch_w_buflen", this.batchWriterBufLen) ;
+		jo.put("trans_num_float",this.bTransNumFloat) ;
 		return jo;
 	}
 
@@ -180,6 +187,7 @@ public class InfluxDB_Writer extends MNNodeEnd
 		batchWriterBufLen = jo.optInt("batch_w_buflen",100) ;
 		if(batchWriterBufLen<=0)
 			batchWriterBufLen = 100 ;
+		this.bTransNumFloat = jo.optBoolean("trans_num_float",false) ;
 	}
 	
 	
@@ -293,6 +301,7 @@ public class InfluxDB_Writer extends MNNodeEnd
 				if(v==null)
 					continue ;
 				
+				v = transValByVT(null,v) ;
 				if(v instanceof Number)
 					point.addField(fn,(Number)v) ;
 				else if(v instanceof String)
@@ -310,7 +319,14 @@ public class InfluxDB_Writer extends MNNodeEnd
 	private Object transValByVT(String vt,Object v)
 	{
 		if(Convert.isNullOrEmpty(vt))
+		{
+			if(this.bTransNumFloat)
+			{
+				if(v instanceof Number)
+					return ((Number)v).doubleValue() ; //force number to double
+			}
 			return v ;
+		}
 		
 		switch(vt)
 		{
@@ -372,10 +388,28 @@ public class InfluxDB_Writer extends MNNodeEnd
 		InfluxDB_M dbm = (InfluxDB_M)this.getOwnRelatedModule() ;
 		InfluxDBClient client = dbm.RT_getClient() ;
 		WriteApiBlocking wapi = client.getWriteApiBlocking() ;
-		long st = System.currentTimeMillis() ;
-		wapi.writePoints(pts);
-		lastWCostMS = System.currentTimeMillis()-st ;
-		this.lastWNum = pts.size() ;
+		try
+		{
+			long st = System.currentTimeMillis() ;
+			wapi.writePoints(pts);
+			lastWCostMS = System.currentTimeMillis()-st ;
+			this.lastWNum = pts.size() ;
+		}
+		catch(InfluxException ee)
+		{// split to write
+			RT_DEBUG_WARN.fire("do_write", "split to write by "+ee.getMessage());
+			for(Point pt:pts)
+			{
+				try
+				{
+					wapi.writePoint(pt);
+				}
+				catch(InfluxException eee)
+				{
+					RT_DEBUG_WARN.fire("do_write", ee.getMessage());
+				}
+			}
+		}
 	}
 	
 	/**
@@ -408,14 +442,15 @@ public class InfluxDB_Writer extends MNNodeEnd
 			"   \"ts\":1213423423,\r\n" + 
 			"   \"tags\":[\r\n" + 
 			"        {\"n\":\"tag1\",\"v\":\"ttt1\"},\r\n" + 
-			"        {\"n\":\"tag2\",\"v\":\"ttt2\"}\r\n" + 
+			"        {\"n\":\"tag2\",\"v\":\"ttt2\"}\r\n" +
+			"        {\"n\":\"tag3\",\"v\":3,\"vt\":\"float\"},\r\n" +
 			"    ],\r\n" + 
 			"   \"tagob\":{\r\n" +
 			"		\"tag1\":\"ttt1\",\"tag2\":\"ttt2\"" +
 			"    },\r\n" + 
 			"   \"fields\":[\r\n" + 
 			"         {\"n\":\"f1\",\"v\",true},\r\n" + 
-			"         {\"n\":\"ff2.xx\",\"v\":3.14},\r\n" + 
+			"         {\"n\":\"ff2.xx\",\"v\":3.14,\"vt\":\"float\"},\r\n" + 
 			"         {\"n\":\"ff2.yy\",valid:false}\r\n" + 
 			"    ],\r\n" +
 			"   \"fieldob\":{\r\n" +
