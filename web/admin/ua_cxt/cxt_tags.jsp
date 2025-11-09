@@ -163,6 +163,7 @@ text-overflow:ellipsis;
 }
 th,td {white-space: nowrap;}
 .wbool {width:90px;border:0px solid #999999;height:100%;}
+
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
@@ -176,7 +177,7 @@ th,td {white-space: nowrap;}
   <%=node.getNodePathTitle() %>
   &nbsp;<input id="search_txt" style="width:100px;height:25px;border:1px solid #ccc;" onkeydown="on_search_key()"/><button style="color:#333;border:1px solid #ccc;height:25px;width:25px;" onclick="on_search()"><i class="fa fa-search"></i></button>
   </div>
-  <div style="float: right;margin-right:10px;font:15px solid;color:#fff5e2;top:10px;margin-top:8px;border:0px solid;">
+  <div style="float: right;margin-right:1px;font:15px solid;color:#fff5e2;top:10px;margin-top:8px;border:0px solid;">
    
    <%
    if(b_tags)
@@ -188,15 +189,16 @@ th,td {white-space: nowrap;}
 <%
  	}
 %>
-<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="add_or_modify_tag('')">+<wbt:g>add,tag</wbt:g></button>
- 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="add_or_modify_tag('',true)">+<wbt:g>add,middle,tag</wbt:g></button>
- 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="imp_tag()"><wbt:g>imp,tag</wbt:g></button>
- 	<button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="exp_tag()"><wbt:g>export,tag</wbt:g></button>
+<button type="button" class="layui-btn layui-btn-xs " onclick="add_or_modify_tag('')" title="<wbt:g>add,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
+ 	<button type="button" class="layui-btn layui-btn-xs" onclick="add_or_modify_tag('',true)" title="<wbt:g>add,middle,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;M <i class="fa-solid fa-tag"></i></button>
+ 	<button type="button" class="layui-btn layui-btn-xs" onclick="batch_modify_tag()" title="<wbt:g>batch_md</wbt:g>"><i class="fa-solid fa-list-check"></i>&nbsp;<i class="fa fa-pencil"></i></button>
+ 	<button type="button" class="layui-btn layui-btn-xs" onclick="imp_tag()" title="<wbt:g>imp,tag</wbt:g>"><i class="fa fa-arrow-down"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
+ 	<button type="button" class="layui-btn layui-btn-xs" onclick="exp_tag()" title="<wbt:g>export,tag</wbt:g>"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
  	<%--
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
   
-  <button type="button" class="layui-btn layui-btn-xs layui-border-blue" onclick="to_excel()"><i class="fa fa-arrow-right"></i>Excel</button>
+  <button type="button" class="layui-btn layui-btn-xs" onclick="to_excel()" title="<wbt:g>export</wbt:g>Excel"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-file-excel"></i></button>
   
 
 <%
@@ -610,19 +612,26 @@ function sel_tags_all()
 
 function get_selected_ids_in_table()
 {
+	let ids = get_checked_ids() ;
+	if(!ids||ids.length<=0)
+		return "";
+	return ids.join(',');
+}
+
+function get_checked_ids()
+{
 	var tb = document.getElementById("tb_"+path) ;
 	var tb = $(tb) ;
-	var r = "" ;
-	tb.find("input").each(function(){
-		if(!$(this).prop('checked'))
+	var r = [] ;
+	$("#div_list_bd").find("input").each(function(){
+		let ob = $(this) ;
+		if(ob.attr("type")!='checkbox')return;
+		if(!ob.prop('checked'))
 			return ;
 	    var id = $(this).attr("id") ;
 	    if(id.indexOf("chk_")==0)
 	    {
-	    	if(r=="")
-	    		r += id.substring(4) ;
-	    	else
-	    		r+=","+id.substring(4) ;
+	    	r.push(id.substring(4)) ;
 	    }
 	  });
 	return r ;
@@ -664,6 +673,58 @@ function add_or_modify_tag(id,bmid)
 									dlg.close();
 									refresh_tags();
 								},false);
+					 	});
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+}
+
+function batch_modify_tag()
+{
+	let ids = get_checked_ids() ;
+	if(!ids||ids.length<=0)
+	{
+		dlg.msg("<wbt:g>pls_chk_tags</wbt:g>");
+		return ;
+	}
+	//console.log(ids);
+	let tt = "<wbt:g>batch,modify,tag</wbt:g> ["+ids.length+"]";
+	let u = "./tag_edit.jsp?batch=true"
+	dlg.open(u,{title:tt,w:'500px',h:'400px'},
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlgw.do_batch(function(bsucc,ret){
+							 if(!bsucc)
+							 {
+								 dlg.msg(ret) ;
+								 return;
+							 }
+							 if(Object.keys(ret).length === 0)
+							 {
+								 dlg.msg("no batch input");
+								 return ;
+							 }
+							 //console.log(ret);
+							 ret.path = path ;
+							 ret.op = "batch_modify";
+							 ret.ids = ids.join(",");
+							 
+							 send_ajax('./tag_ajax.jsp',ret,function(bsucc,ret)
+							 {
+									if(!bsucc || ret.indexOf('succ=')!=0)
+									{
+										dlg.msg(ret);
+										return ;
+									}
+									dlg.msg("batch modified tags num="+ret.substring(5)) ;
+									dlg.close();
+									refresh_tags();
+							 },false);
 					 	});
 					},
 					function(dlgw)

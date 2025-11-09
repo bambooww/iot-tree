@@ -125,19 +125,16 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
 	  
     </div>
   </div>
-<!-- 
-  </div>
-  \ -->
 </div>
 
 <div class="layui-card" id="card_calc" style="display:none">
     <div class="layui-form-item">
     <label class="layui-form-label">OP<wbt:g>type</wbt:g></label>
     <div class="layui-input-block">
-      <input type="radio" name="op" value="1" title="Add"  >
-      <input type="radio" name="op" value="2" title="Subtract" >
-      <input type="radio" name="op" value="3" title="Multiplay" checked="checked" >
-      <input type="radio" name="op" value="4" title="Divide" >
+      <input type="radio" name="op" value="1" title="<wbt:g>op_add</wbt:g>"  >
+      <input type="radio" name="op" value="2" title="<wbt:g>op_subtract</wbt:g>" >
+      <input type="radio" name="op" value="3" title="<wbt:g>op_multiplay</wbt:g>" checked="checked" >
+      <input type="radio" name="op" value="4" title="<wbt:g>op_divide</wbt:g>" >
     </div>
   </div>
   <div class="layui-form-item">
@@ -315,7 +312,6 @@ function do_submit(cb)
 
 function get_scaling(n,vt,cb)
 {
-	
 	var tp = $("input[name='tp']:checked").val();
 	if(!tp)
 	{
@@ -359,7 +355,6 @@ function get_scaling(n,vt,cb)
 
 function get_js(n,vt,cb)
 {
-	
 	var jstxt = $("#js_txt").val() ;
 	var inverse_jstxt = $("#inverse_js_txt").val() ;
 	
@@ -388,7 +383,7 @@ function get_calc(n,vt,cb)
 	op = parseInt(op) ;
 	var op_tt = $("input[name='op']:checked").attr("title") ;
 	var op_v = get_input_val("op_v",null,true) ;
-	console.log(op_v) ;
+	//console.log(op_v) ;
 	if(op==4 && (op_v==0||op_v==0.0))
 	{
 		cb(false,"cannot divide zero!") ;

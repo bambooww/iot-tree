@@ -8,6 +8,21 @@
 	org.json.*,
 	java.net.*,
 	java.util.*"%><%!
+	
+	private static void setRecentUnit(HttpServletRequest req,String unit)
+	{
+		if(Convert.isNullOrEmpty(unit))
+			return ;
+		HttpSession hs = req.getSession() ;
+		ArrayList<String> units=  (ArrayList<String>)hs.getAttribute("recent_units");
+		if(units==null)
+		{
+			hs.setAttribute("recent_units",units=new ArrayList<>());
+		}
+		if(!units.contains(unit))
+			units.add(unit) ;
+	}
+	
 	private static UATag addTagSimple(UANode n,String tagn,String tagt,String vt_str)
 		throws Exception
 	{
@@ -42,6 +57,7 @@
 		String strcanw = request.getParameter("canw") ;
 		String indicator = request.getParameter("indicator") ;
 		String unit = request.getParameter("unit") ;
+		setRecentUnit(request,unit) ;
 		//boolean canw = "true".equalsIgnoreCase(strcanw);
 
 		boolean b_val_filter = "true".equalsIgnoreCase(request.getParameter("b_val_filter")) ;
@@ -211,10 +227,78 @@
 		out.write(chkres.toJsonStr()) ;
 		return true ;
 	}
+	
+	private static int batchModify(UANode pn,List<String> ids,HttpServletRequest request) throws Exception
+	{
+		if(!(pn instanceof UANodeOCTags))
+			return -1 ;
+		UANodeOCTags nt = (UANodeOCTags)pn;
+		
+		List<String> clears = Convert.splitStrWith(request.getParameter("clears"), ",|") ;
+		if(clears==null)
+			clears = Arrays.asList();
+		int ret = 0 ;
+		for(String tagid:ids)
+		{
+			UATag tag = nt.getTagById(tagid);
+			if(tag==null)
+				continue ;
+			
+			int vt = Convert.parseToInt32(request.getParameter("vt"),-1);
+			UAVal.ValTP dt = tag.getValTpRaw();
+			if(vt>=0)
+				dt =  UAVal.getValTp(vt) ;
+			
+			String strdec = request.getParameter("dec_digits");
+			int dec_digits = tag.getDecDigits() ;
+			if(Convert.isNotNullEmpty(strdec))
+			{
+				dec_digits = Convert.parseToInt32(strdec,-1);
+			}
+			if(clears.contains("dec"))
+				dec_digits = -1 ;
+			
+			String strcanw = request.getParameter("canw") ;
+			if(Convert.isNullOrEmpty(strcanw))
+				strcanw = tag.isCanWrite()+"" ;
+			if(clears.contains("rw"))
+				strcanw = null;
+			
+			String trans = request.getParameter("trans") ;
+			if(Convert.isNullOrEmpty(trans))
+				trans = tag.getValTranser();
+			if(clears.contains("trans"))
+				trans = null ;
+
+			nt.addOrUpdateTagInMem(tagid,tag.isMidExpress(),tag.getName(), tag.getTitle(), tag.getDesc(),tag.getAddress(),
+					dt,dec_digits,strcanw,tag.getScanRate(),trans,tag.getMidWriterJS()) ;
+			
+			String indicator = request.getParameter("indicator") ;
+			if(Convert.isNotNullEmpty(indicator))
+				tag.asIndicator(indicator) ;
+			if(clears.contains("ind"))
+				tag.asIndicator(null) ;
+			
+			String unit = request.getParameter("unit") ;
+			if(Convert.isNotNullEmpty(unit))
+				tag.asUnit(unit) ;
+			if(clears.contains("unit"))
+				tag.asUnit(null) ;
+			
+			ret ++ ;
+		}
+		
+		if(ret>0)
+			nt.save() ;
+		
+		return ret ;
+	}
 %><%
+String op = request.getParameter("op") ;
+
 if(!Convert.checkReqEmpty(request, out, "op","path"))
 	return;
-String op = request.getParameter("op") ;
+boolean b_batch = "batch_modify".equals(op);
 String path = request.getParameter("path") ;
 UANode n = UAUtil.findNodeByPath(path);
 if(n==null)
@@ -226,6 +310,7 @@ if(n==null)
 String tagn = request.getParameter("n") ;
 String tagt = request.getParameter("t") ;
 String vt_str = request.getParameter("vt") ;
+List<String> ids = Convert.splitStrWith(request.getParameter("ids"), ",") ;
 
 UATag tag = null;
 try
@@ -245,6 +330,12 @@ case "edit_tag":
 		out.print(e.getMessage());
 		return ;
 	}
+	return ;
+case "batch_modify":
+	if(!Convert.checkReqEmpty(request, out, "ids"))
+		return;
+	int md_num = batchModify(n,ids,request) ;
+	out.print("succ="+md_num) ;
 	return ;
 case "add_tag_simple":// n t vt path
 	if(!Convert.checkReqEmpty(request, out, "n","t","vt"))

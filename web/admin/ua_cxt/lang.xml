@@ -35,6 +35,18 @@
   <dd_node name="linear" name_cn="线性" name_en="Linear" />
   <dd_node name="squ_root" name_cn="平方根" name_en="Square root" />
   
+  <dd_node name="op_add" name_cn="加" name_en="Add" />
+  <dd_node name="op_subtract" name_cn="减" name_en="Subtract" />
+  <dd_node name="op_multiplay" name_cn="乘" name_en="Multiplay" />
+  <dd_node name="op_divide" name_cn="除" name_en="Divide" />
+  
+  <dd_node name="recent_units" name_cn="最近使用单位" name_en="Recent Units" />
+  <dd_node name="recent_trans" name_cn="最近使用转换" name_en="Recent Transfer" />
+  
+  <dd_node name="batch" name_cn="批量" name_en="Batch" />
+  <dd_node name="batch_md" name_cn="批量修改" name_en="Batch Modify" />
+  <dd_node name="pls_chk_tags" name_cn="请勾选需要处理的标签" name_en="Please check the tags that need to be processed" />
+  
   <dd_node name="scaling" name_cn="缩放比例" name_en="Scaling" />
   <dd_node id="1" name="test_run" name_cn="测试运行" name_en="Test Run" />
   <dd_node id="1"  name="none" name_cn="无" name_en="None" />

@@ -10,6 +10,17 @@
 	java.net.*,
 	java.util.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
+	private static List<String> getRecentUnit(HttpServletRequest req)
+	{
+		HttpSession hs = req.getSession() ;
+		ArrayList<String> units=  (ArrayList<String>)hs.getAttribute("recent_units");
+		if(units==null)
+		{
+			return Arrays.asList();
+		}
+		return units ;
+	}
+	
 	public static String html_str(Object o)
 	{
 		if(o==null)
@@ -17,8 +28,12 @@
 		return Convert.plainToJsStr(""+o) ;
 	}
 	 %><%
-	 if(!Convert.checkReqEmpty(request, out, "path"))
-			return ;
+	 boolean b_batch = "true".equals(request.getParameter("batch")) ;
+	 if(!b_batch)
+	 {
+		 if(!Convert.checkReqEmpty(request, out, "path"))
+				return ;
+	 }
 	boolean bmid = "true".equalsIgnoreCase(request.getParameter("mid")) ;
 	//boolean blocal= "true".equalsIgnoreCase(request.getParameter("local")) ;
 	String path = request.getParameter("path") ;
@@ -50,34 +65,39 @@
 	if(id==null)
 		id = "" ;
 	
-	UANode tmpn = UAUtil.findNodeByPath(path);
-	if(tmpn instanceof UAHmi)
-	{
-		tmpn = tmpn.getParentNode();
-		path = tmpn.getNodePath() ;
-	}
-	UANodeOCTags n = (UANodeOCTags)tmpn;
-	if(n==null)
-	{
-		out.print("no node with path="+path) ;
-		return ;
-	}
-	
-	UADev dev = n.getBelongToDev() ;
-	UACh ch = n.getBelongToCh() ;
 	UAVal.ValTP[] vtps = null;
-	if(ch!=null)
+	UANodeOCTags n = null;
+	if(Convert.isNotNullEmpty(path))
 	{
-		DevDriver dd = ch.getDriver() ;
-		if(dd!=null)
+		UANode tmpn = UAUtil.findNodeByPath(path);
+		if(tmpn instanceof UAHmi)
 		{
-			vtps = dd.getLimitValTPs(dev);
+			tmpn = tmpn.getParentNode();
+			path = tmpn.getNodePath() ;
+		}
+		n = (UANodeOCTags)tmpn;
+		if(n==null)
+		{
+			out.print("no node with path="+path) ;
+			return ;
+		}
+		
+		UADev dev = n.getBelongToDev() ;
+		UACh ch = n.getBelongToCh() ;
+		
+		if(ch!=null)
+		{
+			DevDriver dd = ch.getDriver() ;
+			if(dd!=null)
+			{
+				vtps = dd.getLimitValTPs(dev);
+			}
 		}
 	}
 	if(vtps==null)
 		vtps = UAVal.ValTP.values() ;
 	
-	if( Convert.isNotNullEmpty(id))
+	if(n!=null && Convert.isNotNullEmpty(id))
 	{
  		tag = n.getTagById(id) ;
  		if(tag==null)
@@ -85,6 +105,10 @@
  			out.print("no edit tag found") ;
  			return ;
  		}
+	}
+	
+	if(tag!=null)
+	{
  		name = tag.getName() ;
  		title = tag.getTitle() ;
  		desc = tag.getDesc() ;
@@ -153,6 +177,10 @@ left:5px;
 top:5px;
 	cursor:pointer;
 }
+.batch {color:green;}
+.recent_p {}
+.recent_p .item {margin:1px;border:1px solid blue;font-size:11px;cursor: pointer;}
+.recent_p .item:hover {background-color: grey;}
 </style>
 <script>
 dlg.resize_to(1050,600);
@@ -168,13 +196,13 @@ dlg.resize_to(1050,600);
 	  <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline" style="width: 200px;">
-      <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="name" lay-verify="required" <%=(b_batch?"readonly":"") %> autocomplete="off" class="layui-input">
     </div>
     <div class="layui-form-mid"><wbt:g>title</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 300px;">
-	    <input type="text" id="title" name="title" lay-verify="required" size="0" autocomplete="off" class="layui-input">
+	    <input type="text" id="title" name="title" lay-verify="required" <%=(b_batch?"readonly":"") %> size="0" autocomplete="off" class="layui-input">
 	  </div>
-	  <div class="layui-form-mid"><wbt:g>data,type</wbt:g>:</div>
+	  <div class="layui-form-mid <%=(b_batch?"batch":"")%>"><wbt:g>data,type</wbt:g>:</div>
 	  <div class="layui-input-inline" style="width: 100px;">
       <select  id="vt"  name="vt"  class="layui-input" lay-filter="vt" >
         <option value="">---</option>
@@ -189,11 +217,11 @@ for(UAVal.ValTP vt:vtps)
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>dec_digit</wbt:g>:</label>
+    <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>dec_digit</wbt:g>:</label>
     <div class="layui-input-inline" style="width: 50px;">
       <input type="text" id="dec_digits" name="dec_digits" class="layui-input">
     </div>
-    <div class="layui-form-mid"><wbt:g>r_or_w</wbt:g>:</div>
+    <div class="layui-form-mid <%=(b_batch?"batch":"")%>"><wbt:g>r_or_w</wbt:g>:</div>
     <div class="layui-input-inline" style="width: 120px;">
       <select id="canw"  name="canw" class="layui-input" lay-filter="canw">
         <option value="">---</option>
@@ -202,7 +230,7 @@ for(UAVal.ValTP vt:vtps)
       </select>
     </div>
     
-    <div class="layui-form-mid"><wbt:g>indicator</wbt:g>:</div>
+    <div class="layui-form-mid <%=(b_batch?"batch":"")%>"><wbt:g>indicator</wbt:g>:</div>
     <div class="layui-input-inline" style="width:180px;">
       <select id="indicator"  name="indicator" class="layui-input" lay-filter="indicator">
         <option value="">---</option>
@@ -230,24 +258,29 @@ for(UAVal.ValTP vt:vtps)
 %>
       </select>
     </div>
-    <div class="layui-form-mid"><wbt:g>unit</wbt:g>:</div>
-    <div class="layui-input-inline" style="width: 210px;">
+    <div class="layui-form-mid <%=(b_batch?"batch":"")%>"><wbt:g>unit</wbt:g>:</div>
+    <div class="layui-input-inline" style="width: 180px;">
       <select id="unit"  name="unit" class="layui-input" lay-filter="unit">
       </select>
-      <span style="display:none" ><select id="unit_hid"  name="unit_hid" lay-ignore>
+      <span style="display:none" >
+      <select id="unit_hid"  name="unit_hid" lay-ignore>
         <option value="">---</option>
 <%
 	for(ValUnit vu:ValUnit.values())
 	{
-		
 %>
         <option value="<%=vu.name()%>">[<%=vu.getUnit() %>] <%=vu.getTitle() %></option>
 <%
 	}
 %>
-      </select></span>
+      </select>
+      </span>
+      
     </div>
-    
+    <div class="layui-form-mid"><button style="border:1px solid #ccc;width:25px;height:25px;" title="<wbt:g>recent_units</wbt:g>" onclick="sel_recent_unit()">...</button>
+    	<div id="recent_unit_p"  class="recent_p" style="position:absolute;display:none;border:1px solid green;min-width:180px;min-height:80px;background-color: #fff;">
+    	</div>
+    </div>
   </div>
 <%
 
@@ -271,7 +304,7 @@ if(!bmid)
     <div class="layui-form-item" id="fi_local">
     <div class="layui-form-label"><wbt:g>local</wbt:g></div>
 	  <div class="layui-input-inline" style="width: 100px;" title="<wbt:g>local_ptt</wbt:g>">
-	   <input type="checkbox" id="local" name="local" <%=loc_chked%> lay-skin="switch"  lay-filter="local" class="layui-input">
+	   <input type="checkbox" id="local" name="local" <%=loc_chked%> lay-skin="switch" <%=(b_batch?"readonly disabled":"") %>  lay-filter="local" class="layui-input">
 	  </div>
 	  <div id="local_setting" style="<%=loc_set%>">
     <label class="layui-form-mid"><wbt:g>default_val</wbt:g></label>
@@ -299,7 +332,7 @@ if(bmid)
 else
 {
 %>
-<input type="text"  id="addr"  name="addr" autocomplete="off" class="layui-input" value="<%=addr%>"/>
+<input type="text"  id="addr"  name="addr" autocomplete="off" <%=(b_batch?"readonly":"") %> class="layui-input" value="<%=addr%>"/>
 <%
 }
 %>      
@@ -309,8 +342,8 @@ else
 if(!bmid)
 {
 %>
-    	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()"><i class="fa-solid fa-check"></i></button>
-    	<button class="layui-btn layui-btn-primary" title="Address Help" onclick="help_addr()"><i class="fa-solid fa-question"></i></button>
+    	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-check"></i></button>
+    	<button class="layui-btn layui-btn-primary" title="Address Help" onclick="help_addr()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-question"></i></button>
 <%
 }
 %>
@@ -348,17 +381,21 @@ if(!bmid)
 {
 %>
   <div class="layui-form-item" id="transfer_setting">
-    <label class="layui-form-label"><wbt:g>transfer</wbt:g></label>
-    <div class="layui-input-block" style="width:370px">
+    <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>transfer</wbt:g></label>
+    <div class="layui-input-inline" style="width:370px">
       <input id="transfer_s" name="transfer_s" class="layui-input" readonly="readonly" onclick="edit_trans()"/>
+    </div>
+    <div class="layui-form-mid"><button style="border:1px solid #ccc;width:25px;height:25px;" title="<wbt:g>recent_trans</wbt:g>" onclick="sel_recent_trans()">...</button>
+    	<div id="recent_trans_p"  class="recent_p" style="position:absolute;display:none;border:1px solid green;min-width:320px;min-height:80px;background-color: #fff;">
+    	</div>
     </div>
   </div>
   
   <div class="layui-form-item" id="val_filter_setting">
     <label class="layui-form-label"><wbt:g>filter</wbt:g></label>
     <div class="layui-input-block" style="width:370px">
-      <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=b_val_filter_chked%> lay-skin="switch"  lay-filter="b_val_filter" class="layui-input">
-      <wbt:g>en_anti_interf</wbt:g>
+      <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=(b_batch?"readonly disabled":"") %> <%=b_val_filter_chked%> lay-skin="primary"  lay-filter="b_val_filter" class="layui-input" title="<wbt:g>en_anti_interf</wbt:g>">
+      
     </div>
   </div>
 <%
@@ -381,15 +418,40 @@ if(!bmid)
       <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
     </div>
     <div class="layui-input-inline"  style="width:50px;">
-    <button class="layui-btn layui-btn-primary" title="Add Alert Source" onclick="edit_alert()"><i class="fa-solid fa-plus"></i></button>
+    <button class="layui-btn layui-btn-primary" title="Add Alert Source" onclick="edit_alert()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-plus"></i></button>
     </div>
   </div>
+<%
+if(!b_batch)
+{
+%>
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block">
-      <input type="text"  id="desc"  name="desc"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+      <input type="text"  id="desc"  name="desc"  lay-verify="required" <%=(b_batch?"readonly":"") %> autocomplete="off" class="layui-input">
     </div>
   </div>
+<%
+}
+else
+{
+%>
+  <div class="layui-form-item">
+    <label class="layui-form-label batch"><wbt:g>batch,clear</wbt:g>:</label>
+    <div class="layui-input-block" id="batch_clear_p">
+<%--
+      <input type="checkbox"  class="batch_clear"  batch_clear="vt" class="layui-input" lay-skin="primary" title="<wbt:g>clear,data,type</wbt:g>"/>
+ --%>
+      <input type="checkbox"  class="batch_clear" batch_clear="dec"   class="layui-input" lay-skin="primary" title="<wbt:g>clear,dec_digit</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear"  batch_clear="rw"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,r_or_w</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear" batch_clear="ind"   class="layui-input" lay-skin="primary" title="<wbt:g>clear,indicator</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear" batch_clear="unit"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,unit</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear" batch_clear="trans"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,transfer</wbt:g>"/>
+    </div>
+  </div>
+<%
+}
+%>
   </td>
   <td>
  <div class="layui-btn-container">
@@ -520,6 +582,59 @@ function win_close()
 	dlg.close(0);
 }
 
+function sel_recent_unit()
+{
+	let tdds = read_units_dd() ;
+	let tmps ="" ;
+	for(let i = 0 ; i < tdds.length ; i ++)
+	{
+		let tdd = tdds[i] ;
+		tmps += `<div class="item" onclick="set_recent_unit('\${tdd.u}')">\${tdd.t}</div>` ;
+	}
+	
+    tmps += `<span class="item" onclick="set_recent_unit('')"><wbt:g>clear</wbt:g></span>
+    	<span class="item" onclick='$("#recent_unit_p").css("display","none")'><wbt:g>cancel</wbt:g></span>`;
+    $("#recent_unit_p").html(tmps) ;
+	$("#recent_unit_p").css("display","") ;
+}
+function set_recent_unit(u)
+{
+	$("#unit").val(u) ;
+	$("#recent_unit_p").css("display","none") ;
+	form.render();
+}
+
+function sel_recent_trans()
+{
+	let tdds = read_trans_dd() ;
+	let tmps ="" ;
+	for(let i = 0 ; i < tdds.length ; i ++)
+	{
+		let tdd = tdds[i] ;
+		tmps += `<div class="item" onclick="set_recent_trans(\${i})">\${tdd._tt}</div>` ;
+	}
+	
+    tmps += `<span class="item" onclick="set_recent_trans(-1)"><wbt:g>clear</wbt:g></span>
+    	<span class="item" onclick='$("#recent_trans_p").css("display","none")'><wbt:g>cancel</wbt:g></span>`;
+    $("#recent_trans_p").html(tmps) ;
+	$("#recent_trans_p").css("display","") ;
+}
+function set_recent_trans(idx)
+{
+	$("#recent_trans_p").css("display","none") ;
+	if(idx<0)
+	{
+		trans_dd=null;
+		update_transfer_s();
+		return ;
+	}
+	let tdds = read_trans_dd() ;
+	if(tdds.length<=idx) return ;
+	
+	trans_dd = tdds[idx] ;
+	update_transfer_s();
+}
+
 
 function update_transfer_s()
 {
@@ -608,6 +723,7 @@ function edit_trans()
 							 return;
 						 }
 						 trans_dd = ret ;
+						 save_trans_dd(ret) ;
 						 update_transfer_s();
 						 dlg.close();
 				 	});
@@ -618,6 +734,59 @@ function edit_trans()
 				}
 			]);
 }
+
+function read_trans_dd()
+{
+	return JSON.parse(localStorage.getItem('trans_list') || '[]') ;
+}
+function save_trans_dd(tdd)
+{
+	//console.log(tdd) ;
+	let queue = read_trans_dd();
+	
+	let bsave = false;
+	if(tdd._n=='calc')
+	{
+		tdd._tt = tdd._t ;
+		bsave = true;
+	}
+	else if(tdd._n=='scaling')
+	{
+		tdd._tt = `\${tdd._t} [\${tdd.raw_low} , \${tdd.raw_high}] - [\${tdd.scaled_low},\${tdd.scaled_high}]`;
+		bsave = true;
+	}
+	if(!bsave) return ;
+	
+	for(let ob of queue)
+	{
+		if(ob._tt==tdd._tt)
+			return ;
+	}
+	
+	queue.unshift(tdd);
+	if (queue.length > 5) queue.pop();
+	localStorage.setItem('trans_list', JSON.stringify(queue));
+}
+
+function read_units_dd()
+{
+	return JSON.parse(localStorage.getItem('units_list') || '[]') ;
+}
+function save_units_dd(unit,unit_t)
+{
+	if(!unit) return;
+	let queue = read_units_dd();
+	for(let ob of queue)
+	{
+		if(ob.u==unit)
+			return ;
+	}
+	let tdd = {u:unit,t:unit_t} ;
+	queue.unshift(tdd);
+	if (queue.length > 10) queue.pop();
+	localStorage.setItem('units_list', JSON.stringify(queue));
+}
+
 
 function del_alert(idx)
 {
@@ -740,6 +909,8 @@ function do_submit(cb)
 		}
 	}
 	let unit = $("#unit").val() ;
+	let unit_t = $('#unit option:selected').text();
+	save_units_dd(unit,unit_t) ;
 	let indicator = $("#indicator").val() ;
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
@@ -755,6 +926,43 @@ function do_submit(cb)
 	//var dbname=document.getElementById('db_name').value;
 	
 	//document.getElementById('form1').submit() ;
+}
+
+function do_batch(cb)
+{
+	let retob={} ;
+	
+	let vt = get_input_val("vt","");
+	if(vt) retob.vt = vt ;
+	
+	let dec_d = get_input_val("dec_digits",-1,true);
+	if(dec_d!=-1) retob.dec_digits = dec_d ;
+	
+	let canw = get_input_val("canw","");
+	if(canw) retob.canw=canw ;
+	
+	let unit = $("#unit").val() ;
+	let unit_t = $('#unit option:selected').text();
+	save_units_dd(unit,unit_t) ;
+	if(unit) retob.unit = unit ;
+		
+	let indicator = $("#indicator").val() ;
+	if(indicator) retob.indicator=indicator;
+	
+	if(trans_dd) retob.trans=JSON.stringify(trans_dd);
+	
+	let clears=[];
+	$("#batch_clear_p").find(".batch_clear").each(function(){
+		let ob = $(this) ;
+		let bc = ob.attr("batch_clear") ;
+		if(!bc || !ob.prop("checked"))
+			return ;
+		clears.push(bc) ;
+	});
+	if(clears.length>0)
+		retob.clears = clears.join(",") ;
+	//console.log(retob) ;cb(false,"test")
+	cb(true,retob);
 }
 
 function on_new_tag()
