@@ -90,7 +90,7 @@ running...
 
 
 
-### 1.2 Data Access and Integration Capability
+### 1.2 Data access integration and provision of standard interfaces to outer
 
 IOT-Tree Server supports access to data from different data sources (different standards):
 
@@ -103,6 +103,11 @@ Database: MySQL, SQL Server and Oracle
 IOT-Tree Server provides support for the unified standard interface for industrial OPC. Through simple and clear management of the access devices and data sources, the differences between the underlying complex devices and data sources are shielded, and the interconnection of industry, automation systems, Internet of Things systems and the Internet is achieved with great ease of operation.
 
 IOT-Tree Server provides strong support for access to inter-network resources, such as accurate crawling for HTTP access, precise data extraction in Web pages, and integration into unified data management.
+
+On the other hand, IOT-Tree is also a professional OPC UA Server that can easily provide external access by OPC UA Server after connecting various devices and system data. Not only that, IOT-Tree can also provide BACnet and Modbus analog device interfaces to the outside world.
+
+[IOT‐Tree connects various devices to OPC UA Server output](https://github.com/bambooww/iot-tree/wiki/IOT%E2%80%90Tree-connects-various-devices-to-OPC-UA-Server-output)
+
 
 
 

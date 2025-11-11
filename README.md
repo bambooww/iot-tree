@@ -68,7 +68,7 @@ running...
 
 [Demonstration of Industrial Automation][case_auto_demo]
 
-### 1.2 Data Access and Integration Capability
+### 1.2 Data access integration and provision of standard interfaces to outer
 
 IOT-Tree Server supports access to data from different data sources (different standards):
 
@@ -82,7 +82,9 @@ IOT-Tree Server provides support for the unified standard interface for industri
 
 IOT-Tree Server provides strong support for access to inter-network resources, such as accurate crawling for HTTP access, precise data extraction in Web pages, and integration into unified data management.
 
+On the other hand, IOT-Tree is also a professional OPC UA Server that can easily provide external access by OPC UA Server after connecting various devices and system data. Not only that, IOT-Tree can also provide BACnet and Modbus analog device interfaces to the outside world.
 
+[IOT‐Tree connects various devices to OPC UA Server output](https://github.com/bambooww/iot-tree/wiki/IOT%E2%80%90Tree-connects-various-devices-to-OPC-UA-Server-output)
 
 ### 1.3 embedded into the device
 
