@@ -163,18 +163,6 @@ Starting from this version, IOT-Tree will not update and maintain previous modul
 
 <img src="./web/doc/en/doc/img/msgnet/mn001.png">
 
-#### Alert triggering and handling(before ver 1.7.0)
-
-IOT-Tree is based on an internally unified data tags definition, which allows for flexible and convenient definition of alert sources, alert handler, and alert outputs. And it can be defined and displayed in a clear and intuitive way.
-
-
-<img src="./web/doc/en/doc/img/readme_22.png">
-
-#### Store Output(before ver 1.7.0)
-
-Based on internally unified tags, you can flexibly and conveniently define the database output of real-time and historical data.
-
-<img src="./web/doc/en/doc/img/readme_23.png">
 
 ### 2.6 Client support
 
