@@ -46,6 +46,7 @@
 			jo.put("srate",tag.getScanRate()) ;
 			jo.put("canw",tag.isCanWrite()) ;
 			jo.putOpt("trans",tag.getValTranser()) ;
+			jo.putOpt("val_opt",tag.getValOption()) ;
 			jo.putOpt("unit", tag.getUnit());
 			jo.putOpt("ind", tag.getIndicator()) ;
 			jarr.put(jo) ;

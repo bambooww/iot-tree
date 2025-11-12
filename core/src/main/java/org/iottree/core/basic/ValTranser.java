@@ -151,4 +151,7 @@ public abstract class ValTranser
 	{
 		return this.getTitle()+" - " + this.getTransValTP().getStr();
 	}
+	
+	public abstract String getPmTitle() ;
+	
 }

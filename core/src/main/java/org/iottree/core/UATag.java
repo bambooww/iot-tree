@@ -20,6 +20,7 @@ import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValEvent;
 import org.iottree.core.basic.ValIndicator;
+import org.iottree.core.basic.ValOption;
 import org.iottree.core.basic.ValTranser;
 import org.iottree.core.basic.ValUnit;
 import org.iottree.core.conn.ConnPtBinder;
@@ -145,7 +146,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name="transer")
 	String valTranser=null;
 	
-	
+	@data_val(param_name="val_opt")
+	String valOption = null ;
 	
 	@data_val(param_name="val_cache_len")
 	int valChgedCacheLen = 100 ;
@@ -186,6 +188,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	private transient Object curRawVal = null ;
 	
 	private transient ValTranser valTransObj = null ;
+	
+	private transient ValOption valOptionObj = null ;
 	
 	//for value not chg check,when tag is inited or 
 	// reload,not chg check will ignore
@@ -232,6 +236,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		this.scanRate = t.scanRate ;
 		
 		this.valTranser=t.valTranser;
+		this.valOption = t.valOption;
 		this.valChgedCacheLen = t.valChgedCacheLen ;
 		
 		this.bValFilter = t.bValFilter ;
@@ -467,6 +472,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		nt.scanRate = this.scanRate ;
 		
 		nt.valTranser=this.valTranser;
+		nt.valOption = this.valOption ;
 		
 		nt.valChgedCacheLen = this.valChgedCacheLen ;
 		nt.minValStr = this.minValStr ;
@@ -720,6 +726,40 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			this.valTranser = null ;
 		else
 			this.valTranser = vt.toString() ;
+	}
+	
+	
+	public String getValOption()
+	{
+		return this.valOption;
+	}
+	
+	public void setValOption(String valtstr)
+	{
+		if("null".equals(valtstr))
+			valtstr = null ;
+		
+		this.valOption = valtstr ;
+		this.valOptionObj = null ;
+	}
+	
+	public ValOption getValOptionObj()
+	{
+		if(this.valOptionObj!=null)
+			return this.valOptionObj;
+		if(Convert.isNullOrEmpty(this.valOption)||"null".equals(this.valOption))
+			return null ;
+		
+		return this.valOptionObj = ValOption.parseValOption(this.valOption) ;
+	}
+	
+	public void setValOptionObj(ValOption vo)
+	{
+		this.valOptionObj = vo ;
+		if(vo==null)
+			this.valOption = null ;
+		else
+			this.valOption = vo.toString() ;
 	}
 	
 	public boolean setValAlerts(String jstr) throws Exception
@@ -2061,12 +2101,21 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		w.write(vtp.name());
 		if (bvalid)
 		{
+			ValOption vo = this.getValOptionObj() ;
+			String val_opt_tt = null ;
+			if(vo!=null)
+			{
+				val_opt_tt = vo.RT_getValOptTitle(strv) ;
+			}
+			
 			if (vtp.isNumberVT() || vtp == ValTP.vt_bool)
 				w.write("\",\"valid\":" + bvalid + ",\"v\":" + strv + ",\"strv\":\"" + strv + "\",\"dt\":" + dt
 						+ ",\"chgdt\":" + dt_chg );
 			else
 				w.write("\",\"valid\":" + bvalid + ",\"v\":\"" + Convert.plainToJsStr(strv) + "\",\"strv\":\"" + Convert.plainToJsStr(strv) + "\",\"dt\":" + dt
 						+ ",\"chgdt\":" + dt_chg );
+			if(val_opt_tt!=null)
+				w.write(",\"opt_t\":\""+Convert.plainToJsStr(val_opt_tt)+"\"") ;
 		}
 		else
 		{

@@ -30,6 +30,12 @@ public class ValTransJS extends ValTranser
 		return "JS";
 	}
 	
+	@Override
+	public String getPmTitle()
+	{
+		return "" ;
+	}
+	
 	public String getJsStr()
 	{
 		return jsStr ;

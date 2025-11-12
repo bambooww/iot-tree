@@ -72,12 +72,14 @@
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
 		
 		String trans = request.getParameter("trans") ;
+		String val_opt = request.getParameter("val_opt") ;
 
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans,mid_w_js) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
 		ret.asUnit(unit).asIndicator(indicator) ;
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
+		ret.setValOption(val_opt) ;
 		//ret.asAlertLowHigh(alert_low, alert_high) ;
 		ret.setValAlerts(alert_jstr);
 		nt.save();
@@ -105,13 +107,14 @@
 			long srate = jo.optLong("srate",100) ;
 			String canw_str = jo.optString("canw") ;
 			String trans = jo.optString("trans") ;
+			String val_opt = jo.optString("val_opt") ;
 			String unit = jo.optString("unit") ;
 			String ind = jo.optString("ind") ;
 			//String tagid, boolean bmid, String name, String title, String desc, String addr,
 			// UAVal.ValTP vt, int dec_digits, String canw_str, long srate, String trans,String mid_w_js
 			UATag ret = nt.addOrUpdateTagInMem(null,false,name, title, desc,addr,dt,digist,canw_str,srate,trans,null) ;
 			ret.asUnit(unit).asIndicator(ind) ;
-			
+			ret.setValOption(val_opt) ;
 			rets.add(ret) ;
 		}
 		return rets ;
@@ -284,6 +287,12 @@
 				tag.asUnit(unit) ;
 			if(clears.contains("unit"))
 				tag.asUnit(null) ;
+			
+			String opt = request.getParameter("val_opt") ;
+			if(Convert.isNotNullEmpty(opt))
+				tag.setValOption(opt) ;
+			if(clears.contains("valopt"))
+				tag.setValOption(null) ;
 			
 			ret ++ ;
 		}

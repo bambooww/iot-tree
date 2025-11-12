@@ -54,6 +54,7 @@
 	String canw = "";
 	String desc = "" ;
 	String trans = null ;
+	String val_opt = null ;
 	boolean b_val_filter=false;
 	String min_val_str="" ;
 	String max_val_str="" ;
@@ -128,6 +129,9 @@
  		trans = tag.getValTranser() ;
  		if(Convert.isNullOrEmpty(trans))
  			trans = null ;
+ 		val_opt = tag.getValOption() ;
+ 		if(Convert.isNullOrEmpty(val_opt))
+ 			val_opt = null ;
  		b_val_filter = tag.isValFilter() ;
  		min_val_str = tag.getMinValStr() ;
  		max_val_str = tag.getMaxValStr() ;
@@ -148,6 +152,7 @@
 </jsp:include>
 
 <style type="text/css">
+body {font-size:12px;}
 .btn-group button {
     left:10px;
     padding: 10px 24px;
@@ -389,18 +394,23 @@ if(!bmid)
     	<div id="recent_trans_p"  class="recent_p" style="position:absolute;display:none;border:1px solid green;min-width:320px;min-height:80px;background-color: #fff;">
     	</div>
     </div>
+    <div class="layui-form-mid">&nbsp;&nbsp;&nbsp;&nbsp;<wbt:g>filter</wbt:g></div>
+    <div class="layui-input-inline" style="width:100px">
+      <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=(b_batch?"readonly disabled":"") %> <%=b_val_filter_chked%> lay-skin="primary"  lay-filter="b_val_filter" class="layui-input" title="<wbt:g>en_anti_interf</wbt:g>">
+    </div>
   </div>
-  
+  <%--
   <div class="layui-form-item" id="val_filter_setting">
     <label class="layui-form-label"><wbt:g>filter</wbt:g></label>
     <div class="layui-input-block" style="width:370px">
       <input type="checkbox" id="b_val_filter" name="b_val_filter" <%=(b_batch?"readonly disabled":"") %> <%=b_val_filter_chked%> lay-skin="primary"  lay-filter="b_val_filter" class="layui-input" title="<wbt:g>en_anti_interf</wbt:g>">
-      
     </div>
   </div>
+   --%>
 <%
 }
 %>
+<%--
   <div class="layui-form-item" id="max_min_val" style="display:none;">
     <label class="layui-form-label"><wbt:g>min,val</wbt:g></label>
     <div class="layui-input-inline" style="width: 80px;">
@@ -410,6 +420,22 @@ if(!bmid)
     <div class="layui-form-mid"><wbt:g>max,val</wbt:g></div>
     <div class="layui-input-inline" style="width: 80px;">
       <input type="number" id="max_val_str" name="max_val_str" class="layui-input">
+    </div>
+  </div>
+   --%>
+     <div class="layui-form-item" >
+    <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>val,option</wbt:g></label>
+    <div class="layui-input-inline" style="width: 120px;">
+     <select id="opt_tp" lay-filter="opt_tp">
+     	<option value=""> --- </option>
+     	<option value="enum">Enum</option>
+     	<%--
+     	<option value="range">Range</option>
+     	 --%>
+     </select>
+    </div>
+    <div class="layui-input-inline" style="width:380px;display:none;" id="opt_pm_p">
+      <input type="text" id="opt_pm" name="opt_pm" class="layui-input" onclick="edit_option()" readonly="readonly"/>
     </div>
   </div>
   <div class="layui-form-item">
@@ -447,6 +473,7 @@ else
       <input type="checkbox"  class="batch_clear" batch_clear="ind"   class="layui-input" lay-skin="primary" title="<wbt:g>clear,indicator</wbt:g>"/>
       <input type="checkbox"  class="batch_clear" batch_clear="unit"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,unit</wbt:g>"/>
       <input type="checkbox"  class="batch_clear" batch_clear="trans"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,transfer</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear" batch_clear="valopt"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,val,option</wbt:g>"/>
     </div>
   </div>
 <%
@@ -483,7 +510,8 @@ var unit = "<%=unit%>" ;
 var indicator = "<%=indicator%>" ;
 var mid_w_js = "<%=html_str(mid_w_js)%>" ;
 var trans_dd = <%=trans%>;
-var bloc=<%=blocal%>
+var val_opt_dd = <%=val_opt%>;
+var bloc=<%=blocal%>;
 var loc_devf="<%=html_str(local_defval)%>" ;
 var bloc_autosave = <%=local_autosave%> ;
 var min_val_str = "<%=min_val_str%>";
@@ -544,6 +572,8 @@ layui.use('form', function(){
 	  $("#local_defval").val(loc_devf) ;
 	  $("#min_val_str").val(min_val_str) ;
 	  $("#max_val_str").val(max_val_str) ;
+	  if(val_opt_dd && val_opt_dd._tp)
+	  	$("#opt_tp").val(val_opt_dd._tp);
 	  //$("#alert_low").val(alert_low) ;
 	 // $("#alert_high").val(alert_high) ;
 	  
@@ -563,8 +593,12 @@ layui.use('form', function(){
 		  //      var b = obj.elem.checked ;
 		  update_indicator();
 		  });
-	  update_form();
+	  form.on("select(opt_tp)",function(obj){
+		  update_val_opt();
+		  });
 	  
+	  update_form();
+	  update_val_opt();
 	  $("#indicator").val(indicator) ;
 	  update_indicator();
 	  $("#unit").val(unit) ;
@@ -580,6 +614,35 @@ layui.use('form', function(){
 function win_close()
 {
 	dlg.close(0);
+}
+
+function update_val_opt()
+{
+	let opt_tp = $("#opt_tp").val() ;
+	$("#opt_pm_p").css("display",opt_tp?"":"none") ;
+	if(!opt_tp)
+	{
+		val_opt_dd = null;
+		return;
+	}
+	
+	let tt = "" ;
+	//console.log(val_opt_dd) ;
+	if(opt_tp=='enum')
+	{
+		let items = [];
+		if(val_opt_dd&&val_opt_dd.items)
+			items = val_opt_dd.items ;
+		for(let item of items)
+		{
+			tt += `\${item.v_str}=\${item.v_tt} ` ;
+		}
+	}
+	else if(opt_tp=='range')
+	{
+		
+	}
+	$("#opt_pm").val(tt) ;
 }
 
 function sel_recent_unit()
@@ -858,6 +921,41 @@ function edit_alert(idx)
 			]);
 }
 
+function edit_option()
+{
+	if(event)
+		event.preventDefault() || (event.returnValue = false);
+	let opt_tp = $("#opt_tp").val();
+	if(!opt_tp)
+	{
+		dlg.msg("no option selected");return ;
+	}
+	
+	let tt = "<wbt:g>edit,tag,val,option</wbt:g>"
+
+	dlg.open("./tag_opt_"+opt_tp+"_edit.jsp?",	{title:tt,w:'600px',h:'400px',dd:val_opt_dd},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 val_opt_dd = ret ;
+						 update_val_opt();
+						 dlg.close();
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
 function get_input_val(id,defv,bnum)
 {
 	var n = $('#'+id).val();
@@ -912,6 +1010,22 @@ function do_submit(cb)
 	let unit_t = $('#unit option:selected').text();
 	save_units_dd(unit,unit_t) ;
 	let indicator = $("#indicator").val() ;
+	
+	let opt_tp = $("#opt_tp").val() ||"";
+	let opt_dd = val_opt_dd ;
+	if(opt_tp)
+	{
+		if(!opt_dd || opt_dd._tp!=opt_tp)
+		{
+			cb(false,`<wbt:g>val,option</wbt:g> [\${opt_tp}] has no content set`) ;
+			return ;
+		}
+	}
+	else
+	{
+		opt_dd = null ;
+	}
+	
 	cb(true,{id:id,name:n,title:tt,desc:desc,mid:bmid,
 		addr:get_input_val("addr",""),
 		vt:get_input_val("vt",""),
@@ -919,6 +1033,7 @@ function do_submit(cb)
 		srate:get_input_val("srate",100,true),
 		canw:canw,unit:unit,indicator:indicator,
 		trans:JSON.stringify(trans_dd),
+		val_opt:JSON.stringify(opt_dd),
 		b_val_filter:b_val_filter,
 		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,mid_w_js:mid_w_js,
 		min_val_str:min_val_str,max_val_str:max_val_str,alerts:JSON.stringify(alerts_dd),
@@ -950,6 +1065,7 @@ function do_batch(cb)
 	if(indicator) retob.indicator=indicator;
 	
 	if(trans_dd) retob.trans=JSON.stringify(trans_dd);
+	if(val_opt_dd) retob.val_opt=JSON.stringify(val_opt_dd);
 	
 	let clears=[];
 	$("#batch_clear_p").find(".batch_clear").each(function(){

@@ -29,6 +29,31 @@ public class ValTransCalc extends ValTranser implements ILang
 	{
 		return g(NAME);//"Simple Calc";
 	}
+	
+	@Override
+	public String getPmTitle()
+	{
+		String tt = null;
+		switch(op)
+		{
+		case OP_MULTI:
+			tt = " x ";
+			break ;
+		case OP_ADD:
+			tt = "+" ;
+			break ;
+		case OP_SUBS:
+			tt = "-" ;
+			break ;
+		case OP_DIV:
+			tt = "/" ;
+			break ;
+		default:
+			return null ;
+		}
+		
+		return tt + " "+this.op_v ;
+	}
 
 	@Override
 	public Object transVal(Object v) throws Exception

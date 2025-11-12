@@ -23,6 +23,15 @@
 		{
 			switch(sortBy)
 			{
+			case "id":
+			case "iid":
+				int iid1 = t1.getIID() ;
+				int iid2 = t2.getIID() ;
+				return iid1-iid2;
+			case "name":
+				String n1 = t1.getName() ;
+				String n2 = t2.getName() ;
+				return n1.compareTo(n2) ;
 			case "addr":
 				String addr1 = t1.getAddress() ;
 				String addr2 = t2.getAddress() ;
@@ -52,7 +61,7 @@
 //boolean bmgr ="true".equals(request.getParameter("mgr")) ;
 String sortby = request.getParameter("sortby") ;
 if(sortby==null)
-	sortby="" ;
+	sortby="iid" ;
 boolean bsys = "true".equals(request.getParameter("sys")) ;
 boolean bsub = "true".equals(request.getParameter("sub")) ;
 String path = request.getParameter("path") ;
@@ -183,11 +192,24 @@ for(UANodeOCTags tn:tns)
 		if(tag.getValTranserObj()!=null)
 	valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
 		
+		String trans_tt = "" ;
+		ValTranser val_trans = tag.getValTranserObj() ;
+		if(val_trans!=null)
+			trans_tt = val_trans.toTitleString()+"  "+val_trans.getPmTitle() ;
 		String indicator_t = "" ;
 		ValIndicator vi = tag.getValIndicator() ;
 		if(vi!=null)
 	indicator_t = vi.getTitle();
 		
+		String val_opt_tp = "" ;
+		String val_opt_tt = "" ;
+		
+		ValOption vo = tag.getValOptionObj() ;
+		if(vo!=null)
+		{
+			val_opt_tp = vo.getTP() ;
+			val_opt_tt = vo.getOptTitle();
+		}
 		ValUnit vu = tag.getValUnit();
 		String unit_t = "",unit_tt="" ;
 		if(vu!=null)
@@ -243,8 +265,9 @@ if(bloc&&!tag.isSysTag())
 ><%=cxtpath%></span></td>
 		<td><%=tag.getTitle() %></td>
         <td><%=addr%></td>
-        <td><%=valtp_str %></td>
+        <td title="<%=trans_tt %>"><%=valtp_str %></td>
         <td><%=indicator_t %></td>
+        <td title="<%=val_opt_tt%>"><%=val_opt_tp %></td>
         <td style="text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
         <td title="<%=unit_tt%>">&nbsp;<%=unit_t %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
@@ -297,6 +320,7 @@ if(Convert.isNotNullEmpty(ext_str))
 %>&nbsp;<a href="javascript:bind_ext('<%=tagpath%>')" id="node_ext_<%=tag.getId() %>" title="<%=tagt %>" style="<%=ext_color%>"><i class="fa-solid fa-paperclip" aria-hidden="true"></i></a>
 &nbsp;<a href="javascript:node_access('<%=tagpath%>')"  title="<wbt:g>access</wbt:g>"><i class="fa fa-paper-plane" aria-hidden="true"></i></a>
         </td>
+<%--
 <%
 if(recmgr!=null)
 {
@@ -347,6 +371,8 @@ if(b_his)
 <%
 }
 %>
+
+--%>
       </tr>
 <%
 	}

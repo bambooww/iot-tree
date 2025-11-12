@@ -164,6 +164,9 @@ text-overflow:ellipsis;
 th,td {white-space: nowrap;}
 .wbool {width:90px;border:0px solid #999999;height:100%;}
 
+.bb {white-space: nowrap;}
+.bb_subtt {display:none;}
+.bb:hover .bb_subtt {display:inline;}
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
@@ -189,16 +192,16 @@ th,td {white-space: nowrap;}
 <%
  	}
 %>
-<button type="button" class="layui-btn layui-btn-xs " onclick="add_or_modify_tag('')" title="<wbt:g>add,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
- 	<button type="button" class="layui-btn layui-btn-xs" onclick="add_or_modify_tag('',true)" title="<wbt:g>add,middle,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;M <i class="fa-solid fa-tag"></i></button>
- 	<button type="button" class="layui-btn layui-btn-xs" onclick="batch_modify_tag()" title="<wbt:g>batch_md</wbt:g>"><i class="fa-solid fa-list-check"></i>&nbsp;<i class="fa fa-pencil"></i></button>
- 	<button type="button" class="layui-btn layui-btn-xs" onclick="imp_tag()" title="<wbt:g>imp,tag</wbt:g>"><i class="fa fa-arrow-down"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
- 	<button type="button" class="layui-btn layui-btn-xs" onclick="exp_tag()" title="<wbt:g>export,tag</wbt:g>"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-tag"></i></button>
+<button type="button" class="layui-btn layui-btn-xs bb" onclick="add_or_modify_tag('')" title="<wbt:g>add,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;<i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>add,tag</wbt:g></span></button>
+ 	<button type="button" class="layui-btn layui-btn-xs bb" onclick="add_or_modify_tag('',true)" title="<wbt:g>add,middle,tag</wbt:g>"><i class="fa fa-plus"></i>&nbsp;M <i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>add,middle,tag</wbt:g></span></button>
+ 	<button type="button" class="layui-btn layui-btn-xs bb" onclick="batch_modify_tag()" title="<wbt:g>batch_md</wbt:g>"><i class="fa-solid fa-list-check"></i>&nbsp;<i class="fa fa-pencil"></i><span class="bb_subtt"><wbt:g>batch_md</wbt:g></span></button>
+ 	<button type="button" class="layui-btn layui-btn-xs bb" onclick="imp_tag()" title="<wbt:g>imp,tag</wbt:g>"><i class="fa fa-arrow-down"></i>&nbsp;<i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>imp,tag</wbt:g></span></button>
+ 	<button type="button" class="layui-btn layui-btn-xs bb" onclick="exp_tag()" title="<wbt:g>export,tag</wbt:g>"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>export,tag</wbt:g></span></button>
  	<%--
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
   
-  <button type="button" class="layui-btn layui-btn-xs" onclick="to_excel()" title="<wbt:g>export</wbt:g>Excel"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-file-excel"></i></button>
+  <button type="button" class="layui-btn layui-btn-xs bb" onclick="to_excel()" title="<wbt:g>export</wbt:g>Excel"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-file-excel"></i><span class="bb_subtt"><wbt:g>export</wbt:g>Excel</span></button>
   
 
 <%
@@ -217,18 +220,19 @@ if(b_tags)
 <div id="tb_tags" style="position:absoluate;bottom:120px;top:100px;height:300px;overflow-y: auto;">
 <table class="oc_div_list" style="margin-top:0px;width:99%;overflow:auto;" id="tb_cur" >
   <thead>
-     <tr>
+     <tr style="background-color: #f2f2f2;color:#333;">
      <th style="width:20px;text-align: center;">
         <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
 </th>
         <th style="width:15px;text-align: center;">T</th>
-        <th sort_by="id">ID</th>
-    	<th sort_by="iid">IID</th>
-    	<th sort_by="name"><wbt:g>tag</wbt:g></th>
-    	<th sort_by="title"><wbt:g>title</wbt:g></th>
-        <th sort_by="addr"><wbt:g>addr</wbt:g></th>
-        <th sort_by="valtp" style="width:80px;"><wbt:g>val,type</wbt:g></th>
+        <th sort_by="id" title="<wbt:g>order_by_col</wbt:g>">ID<i class="fa-solid fa-sort"></i></th>
+    	<th sort_by="iid" title="<wbt:g>order_by_col</wbt:g>">IID<i class="fa-solid fa-sort"></i></th>
+    	<th sort_by="name" title="<wbt:g>order_by_col</wbt:g>"><wbt:g>tag</wbt:g><i class="fa-solid fa-sort"></i></th>
+    	<th sort_by="title" title="<wbt:g>order_by_col</wbt:g>"><wbt:g>title</wbt:g><i class="fa-solid fa-sort"></i></th>
+        <th sort_by="addr" title="<wbt:g>order_by_col</wbt:g>"><wbt:g>addr</wbt:g><i class="fa-solid fa-sort"></i></th>
+        <th sort_by="valtp" style="width:80px;" title="<wbt:g>order_by_col</wbt:g>"><wbt:g>val,type</wbt:g><i class="fa-solid fa-sort"></i></th>
         <th ><wbt:g>indicator</wbt:g></th>
+        <th ><wbt:g>val,option</wbt:g></th>
         <th style="min-width:120px;text-align:right;"><wbt:g>val</wbt:g></th>
         <th><wbt:g>unit</wbt:g></th>
         <th ><wbt:g>alert</wbt:g></th>
@@ -238,7 +242,7 @@ if(b_tags)
         <th style="width:110px;"><wbt:g>write</wbt:g></th>
         <th><wbt:g>oper</wbt:g></th>
 <%
-if(prj!=null)
+if(false) //(prj!=null)
 {
 %>
 		<th title="inner recorder"><wbt:g>recorder</wbt:g></th>
@@ -917,6 +921,7 @@ function show_cxt_dyn(p,cxt)
 		var strv ="";
 		if(tg.v!=null)
 			strv = tg.strv ;
+		let opt_t = tg.opt_t ;
 		var strerr = tg.err ;
 		var strdt = "",strdtt="" ;
 		var strchgdt = "",strchgdtt="" ;
@@ -936,11 +941,11 @@ function show_cxt_dyn(p,cxt)
 		if(bfilter && strv)
 		{
 			strv = strv+(bfilter?"<span style='color:green' title='<wbt:g>has,filter</wbt:g>'>[F]</span>":"") ;
-			show_ele_html("ctag_v_"+tagp,strv,false) ;
+			show_ele_html("ctag_v_"+tagp,(opt_t?"("+opt_t+") "+strv:strv),false) ;
 		}
 		else
 		{
-			show_ele_html("ctag_v_"+tagp,strv,true) ;
+			show_ele_html("ctag_v_"+tagp,(opt_t?"("+opt_t+") "+strv:strv),true) ;
 		}
 		
 		show_ele_html("ctag_dt_"+tagp,strdt,0,strdtt) ;

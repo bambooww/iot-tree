@@ -16,11 +16,6 @@
 <html>
 <head>
 <title>Tag Alert Editor </title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
 </jsp:include>

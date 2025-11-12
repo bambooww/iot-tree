@@ -41,6 +41,12 @@ public class ValTransScaling extends ValTranser implements ILang
 		return g("scaling");
 	}
 	
+	@Override
+	public String getPmTitle()
+	{
+		return "["+rawLow+","+rawHigh+"] - ["+scaledLow+","+scaledHigh+"]" ;
+	}
+	
 	public int getScalingTp()
 	{
 		return tp ;
