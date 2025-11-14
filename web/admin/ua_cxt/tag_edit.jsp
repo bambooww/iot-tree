@@ -439,13 +439,28 @@ if(!bmid)
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>evt</wbt:g>/<wbt:g>alert</wbt:g></label>
+    <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>evt</wbt:g>/<wbt:g>alert</wbt:g></label>
     <div class="layui-input-inline"  style="width:500px;">
       <div id="alert_list" style="width:100%;white-space: nowrap;"></div>
     </div>
-    <div class="layui-input-inline"  style="width:50px;">
+<%
+	if(b_batch)
+	{
+%>
+    <div class="layui-input-inline"  style="width:150px;">
+    	<input type="checkbox" id="bool_alm" title="<wbt:g>bool_alm</wbt:g>" lay-skin="primary"/>
+    </div>
+<%
+	}
+	else
+	{
+%>
+<div class="layui-input-inline"  style="width:50px;">
     <button class="layui-btn layui-btn-primary" title="Add Alert Source" onclick="edit_alert()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-plus"></i></button>
     </div>
+<%
+	}
+%>
   </div>
 <%
 if(!b_batch)
@@ -474,6 +489,7 @@ else
       <input type="checkbox"  class="batch_clear" batch_clear="unit"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,unit</wbt:g>"/>
       <input type="checkbox"  class="batch_clear" batch_clear="trans"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,transfer</wbt:g>"/>
       <input type="checkbox"  class="batch_clear" batch_clear="valopt"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,val,option</wbt:g>"/>
+      <input type="checkbox"  class="batch_clear" batch_clear="bool_alm"  class="layui-input" lay-skin="primary" title="<wbt:g>clear,bool_alm</wbt:g>"/>
     </div>
   </div>
 <%
@@ -1066,6 +1082,9 @@ function do_batch(cb)
 	
 	if(trans_dd) retob.trans=JSON.stringify(trans_dd);
 	if(val_opt_dd) retob.val_opt=JSON.stringify(val_opt_dd);
+	
+	if($("#bool_alm").prop("checked"))
+		retob.bool_alm = true;
 	
 	let clears=[];
 	$("#batch_clear_p").find(".batch_clear").each(function(){

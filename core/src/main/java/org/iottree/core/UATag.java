@@ -19,6 +19,7 @@ import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
 import org.iottree.core.basic.ValEvent;
+import org.iottree.core.basic.ValEventTp;
 import org.iottree.core.basic.ValIndicator;
 import org.iottree.core.basic.ValOption;
 import org.iottree.core.basic.ValTranser;
@@ -857,6 +858,53 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 				return va ;
 		}
 		return null ;
+	}
+	
+	/**
+	 * only for value tp bool,for VAT_OnOff,prompt=title
+	 * @param b_set
+	 */
+	public boolean setValAlert_Bool_or_Not(boolean b_set) 
+	{
+		ValTP vt = this.getValTp() ;
+		if(vt!=ValTP.vt_bool)
+			return false;
+		
+		if(!b_set)
+		{//clear
+			if(this.valAlerts==null)
+				return false;
+			for(ValEvent va:this.valAlerts)
+			{
+				ValEventTp etp = va.getEventTp() ;
+				if(etp.getTpVal()==1)
+				{
+					this.valAlerts.remove(va) ;
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		//set
+		if(this.valAlerts!=null)
+		{
+			for(ValEvent va:this.valAlerts)
+			{
+				ValEventTp etp = va.getEventTp() ;
+				if(etp.getTpVal()==1)
+				{
+					return false;//existed
+				}
+			}
+		}
+		else
+		{
+			this.valAlerts = new ArrayList<>() ;
+		}
+		ValEvent ve = ValEvent.createBoolTagEvent(this) ;
+		this.valAlerts.add(ve) ;
+		return true;
 	}
 
 

@@ -7,9 +7,9 @@
 				java.net.*"%><%!
 				public static void renderTagGroup(Writer out,UATagG tg,boolean b_sel,boolean cont_only) throws Exception
 				{
-					out.write("{\"text\": \""+tg.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(tg.getTitle())+"\"}") ;
+					out.write("{\"text\": \"<img src='/admin/inc/sm_icon_tagg.png' style='width:18px;height:18px;'/>"+tg.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(tg.getTitle())+"\"}") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
-					out.write(",\"icon\":\"icon_tagg\",\"state\": {\"opened\": false}") ;
+					out.write(",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
 					out.write(",\"ref_locked\":"+tg.isRefLocked()) ;
 					out.write(",\"state\": {\"opened\": "+(b_sel?"true":"false")+"}") ;
@@ -67,9 +67,10 @@
 						else out.write(",") ;
 						
 						boolean ref = hmi.isRefedNode();
-						out.write("{\"text\": \""+hmi.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
+						
+						out.write("{\"text\": \"<img src='/admin/inc/sm_icon_hmi.png' style='width:18px;height:18px;'/>"+hmi.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
-						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_hmi\",\"state\": {\"opened\": true}}") ;
+						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": true}}") ;
 					}
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))

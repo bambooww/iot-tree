@@ -34,7 +34,7 @@ for(MNNet n:nets)
 </jsp:include>
 </head>
 <style>
-
+body {font-size:12px;}
  .btn_sh
  {
   visibility: hidden;display:inline-block;
@@ -49,7 +49,7 @@ visibility: visible;
 .net_item
 {
 position:relative;
-	height:25px;
+	height:20px;
 	border:1px solid;border-radius:5px;
 	border-color: #499ef3;
 	margin:5px;cursor:pointer;
@@ -104,9 +104,8 @@ for(MNNet net:nets)
 <%
 }
 %>
-	<button class="net_item" style="position:absolute;right:10px;top:0px;width:40px;" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></button>
-	<button class="net_item" style="position:absolute;right:10px;top:33px;width:40px;" onclick="imp_flow()" title="<w:g>import</w:g>"><span class="bitem"><i class="fa-regular fa-circle-left fa-lg" style="top:10px;"></i></span></button>
-	
+	<button class0="net_item" style="position:absolute;right:16px;top:0px;width:30px;height:25px;" onclick="add_or_edit_flow()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></button>
+	<button class0="net_item" style="position:absolute;right:16px;top:33px;width:30px;height:25px" onclick="imp_flow()" title="<w:g>import</w:g>"><span class="bitem"><i class="fa-regular fa-circle-left fa-lg" style="top:10px;"></i></span></button>
 </div>
 
 <%--

@@ -453,7 +453,7 @@ class VAT_OnOff extends ValEventTp
 	{
 		String pstr1 = va.getParamStr1();
 
-		if ("1".equals(pstr1))
+		if ("1".equals(pstr1)||"true".equalsIgnoreCase(pstr1))
 			p1 = 1;
 		else if ("0".equals(pstr1))
 			p1 = 0;

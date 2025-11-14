@@ -294,6 +294,13 @@
 			if(clears.contains("valopt"))
 				tag.setValOption(null) ;
 			
+			//for bool tag,with true will trigger alm/event.
+			//which prompt=tag title
+			String bool_alm = request.getParameter("bool_alm") ;
+			if(clears.contains("bool_alm"))
+				tag.setValAlert_Bool_or_Not(false) ; 
+			else if("true".equals(bool_alm))
+				tag.setValAlert_Bool_or_Not(true) ; 
 			ret ++ ;
 		}
 		

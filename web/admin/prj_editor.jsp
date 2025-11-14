@@ -51,465 +51,11 @@ String using_lan = Lan.getUsingLang() ;
 <script src="./js/vue.min.js"></script>
 <script type="text/javascript" src="./js/tab.js" ></script>
 <link rel="stylesheet" href="./js/tab.css" />
+<link rel="stylesheet" href="./inc/prj_editor.css" />
 <style>
-body {
-	margin: 0px;
-	padding: 0px;
-	font-size: 12px;
--moz-user-select : none;
--webkit-user-select: none;
-}
-.top {
-	position: fixed;
-	
-	left: 0;
-	top: 0;
-	bottom: 0;
-	z-index0: 999;
-	height: 45px;
-	width:100%;
-	text-align: left;
-	margin:0px;
-	padding:0px;
-	overflow: hidden
-}
-
-
-.left {
-	position: fixed;
-	left: 0;
-	top: 45px;
-	bottom: 0;
-	width: 245px;
-	z-index:0;
-	overflow-x: hidden
-}
-
-.divider
-{
-	position: fixed;
-	left: 245px;
-	top: 45px;
-	bottom: 0;
-	width: 5px;
-	z-index:0;
-	overflow-x: hidden;
-	background-color: #111111;
-	cursor: e-resize;
-}
-
-
-.mid {
-	position: fixed;
-	left: 250px;
-	top: 45px;
-	bottom: 0;
-	width: auto;
-	overflow: hidden;
-	box-sizing: border-box;
-	
-}
-
-
-
-.right {
-	position: fixed;
-	float: right;
-	right: 0;
-	top: 45px;
-	bottom: 0;
-	z-index: 999;
-	width: 250px;
-	height: 100%;
-	overflow-x: hidden
-}
-
-.top_btn
-{
-	color:#fff5e2;
-	margin-top: 5px;
-	margin-left:20px;
-	cursor: pointer;
-}
-
-.top i:hover
-{
-color: #fdd000;
-}
-
-.lr_btn
-{
-	margin-top: 10px;
-	color:#009999;
-	cursor: pointer;
-}
-
-.lr_btn_div
-{
-	margin-top: 0px;
-	color:#858585;
-	background-color:#eeeeee;
-	cursor: pointer;
-}
-
-.lr_btn_btm
-{
-	margin-bottom: 20px;
-	position:absolute;
-	left:5px;
-	bottom:20px;
-	color:#858585;
-	
-	cursor: pointer;
-}
-
-.left i:hover{
-color: #fdd000;
-}
-
-.lr_btn i:hover
-{
-color: #fdd000;
-}
-
-.right i:hover{
-color: #ffffff;
-}
-
-.pop_menu
-{
-cursor: pointer;
-font-size:small;
-vertical-align:middle;
-}
-.pop_menu:hover
-{
-color:#03a6ea;
-}
-
-.props_panel_edit
-{
-	position0: absolute;
-	left: 0px;
-	right: 0px;
-	top: 18px;
-	bottom0: 50px;
-	height:80%
-	z-index0: 998;
-
-	overflow-y: auto;
-	vertical-align:top;
-	box-sizing: border-box
-}
-
-.props_panel_pos
-{
-	position: absolute;
-	bottom: 50px;
-	
-	z-index0: 998;
-	box-sizing: border-box
-}
-
-.top_menu_close {
-    font-family: Tahoma;
-    border: solid 2px #ccc;
-    padding: 0px 5px;
-    text-align: center;
-    font-size: 12px;
-    color: blue;
-    position: absolute;
-    top: 2px;
-    line-height: 14px;
-    height: 14px;
-    width: 26px;
-    border-radius: 14px;
-    -moz-border-radius: 14px;
-    background-color: white;
-}
-
-.top_menu_left{
-	position:absolute;z-index0: 50000;width: 25;height:25;TOP:100px;right:0px;
-	text-align: center;
-	font-size: 12px;
- font-weight: bold;
- background-color:#4770a1;
- color: #eeeeee;
- line-height: 35px;
- border:2px solid;
-border-radius:5px;
-//box-shadow: 5px 5px 2px #888888;
-}
-
-.top_win_left
-{
-border:solid 3px gray;		
-background-color:silver;
-top:0;
-left:30;
-height:230;
-width:830;
-padding:1px;
-line-height:21px;
-border-radius:15px;
--moz-border-radius:15px;
-box-shadow:0 5px 27px rgba(0,0,0,0.3);
--webkit-box-shadow:0 5px 27px rgba(0,0,0,0.3);
--moz-box-shadow:0 5px 27px rgba(0,0,0,0.3);
-_position:absolute;
-_display:block;
-z-index0:10000;
-}
-
-.left_panel_win
-{
-position:absolute;display:none;z-index0:1000;left:45px;
-background-color: #eeeeee;
-top:45px;height:100%;
-}
-.left_panel_bar
-{
-height:30px;
-}
-
-.layui-tab {
-    margin: 0px;
-    padding:0px;
-    text-align: left!important;
-    height:40px;
-}
-.layui-tab-title
-{
-margin-top:0px;
-	margin-bottom:0px;
-	height:40px;
-	background-color: #ffffff
-}
-
-
-ul.layui-tab-title li:nth-child(1) i{
-display: none;
-}
-
-ul.layui-tab-title li:nth-child(2) i{
-display: none;
-}
-
-ul.layui-tab-title li:nth-child(3) i{
-display0: none;
-}
-
-.layui-tab-content {
-    padding: 0px;
-}
-.layui-tab-title .layui-this:after {
-	border-width: 0px;
-	    height: 35px;
-}
-
-.layui-nav
-{
-	background-color: #f2f2f2;
-}
-
-.layui-nav-itemed>.layui-nav-child
-{
-background-color: #ffffff;
-}
-
-.hj-wrap {
-    position: fixed;//relative;
-    top:45px;
-    width: 100%;
-    height0: 600px;
-    bottom:0px;
-    margin0: 10px auto;
-    clear: both;
-    overflow: hidden;
-}
-
-
-.hj-transverse-split-div {
-    position: relative;
-    float: left;
-    height: 100%;
-    padding: 0px;
-    overflow: hidden;
-}
-
-.hj-wrap .hj-transverse-split-label {
-    position: absolute;
-    right: 0;
-    top: 0;
-    float: left;
-    width: 2px;
-    height: 100%;
-    display: block;
-    cursor: ew-resize;
-    background-color: #ccc;
-    z-index: 9;
-}
-
-.hj-vertical-split-div {
-    position: relative;
-    border: 0px solid red;
-    width: 99.9%;
-    margin: 0 auto;
-
-}
-
-.hj-vertical-split-label {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    display: block;
-    cursor: ns-resize;
-    background-color: #fff;
-    z-index: 9;
-}
-
-.subwin{
-      width:100%;
-      height:100%;
-      display:flex;
-      flex-direction: column;
-}
-.subwin_toolbar{
-        width:100%;
-        height: 40px;
-        font-size: medium;
-		line-height: 0px;
- }
- .subwin_content{
-        width:100%;
-        flex:1;
-}
-
-.subitem{
-    width:100%;
-    background-color: #f2f2f2;margin-top:3px;margin-bottom: 3px;
-    border-radius:9px;
-    padding-bottom:2px;
-}
-
-.subitem th,.subitem td{
-	//border:1px solid #888;
-}
-
-.subitem_toolbar{
-        width:100%;
-        height0: 25px;
-        border:solid 0px;
-        font-size: small;
-        font-weight:bold;
-		line-height: 25px;
-		//background-color: #f0f7ff;
- }
- .subitem_content{
-        width:100%;
-}
-
- .subitem_li {
- 	margin: 5px;
- 	border: solid 1px;
- 	border-style:dashed;
- 	//background-color: #c2c2c2;
- }
- .subitem_li:hover {background-color:#0680d7;}
-
-.line{
-     position:absolute;
-     background:green;
-     height:1px;
-     z-index: 1;
-}
-.line2{
-position:absolute;
-  width:1px;
-  background-color:red;
-}
-
-#conn_ch
-{
-position:relative;
-left:0px;
-top:0px;
-width:100%;
-height:100%;
-background-color: #fff ;
-}
-
-.tn_warn
-{
-	background-color: #ffc633;
-	height:40px;
-	padding-left:10px;
-	padding-right:10px;
-	margin-left:10px;
-	border-radius:10px;
-}
-
-.tn_ok
-{
-	background-color: #17c680;
-	height:40px;
-	padding-left:10px;
-	padding-right:10px;
-	margin-left:10px;
-	border-radius:10px;
-}
-
-#btn_menu_tree span
-{
-cursor: pointer;
-}
-
-.top_toolbox
-{
-	position:absolute;float:left;margin-right:30px;top:5px;bottom:5px;font: 20px solid;color:#fff5e2;
-	border-radius:5px;
-	
-	padding-top:5px;
-	text-align: center;
-}
-
-.top_tool
-{
-background-color: #515658;
-	box-shadow: 2px 2px 2px #888888;
-}
-
-.top_toolbox span
-{
-   margin-top:10px;
-   cursor: pointer;
-}
-
-.left_btm
-{
-	position: absolute;
-	left:0px;width:30%;
-	bottom: 0px;
-	height:200px;
-	border: 1px solid;
-	border-color: #cccccc;
-}
-
-.left_btm .show_hid
-{
-	position: absolute;
-	right:3px;top:3px;
-	width:20px;
-	text-align:center;
-}
-
-.tab .tab-header-item .close
-{
-	display:none;
-}
 .tree_btn {border:1px solid #ccc;border-radius:3px;width:22px;color:#666;height:22px;top:10px;cursor:pointer;display:inline-block;position: relative;text-align: center;}
+.sp_btn {background-color:#5d5d5d;width:30px;height:30px;margin-top:4px;font-size:14px;}
+.sel_b {border:1px solid #fff;}
 </style>
 
 </head>
@@ -524,31 +70,33 @@ function open_doc()
 if(!hide_top)
 {
 %>
-<div class="top " style="background-color: #007ad4;color:#ffffff;">
+<div class="top " style="background-color:#007ad4;color:#ffffff;">
  <div style="float: left;position:relative;left:0px;margin-left:5px;top:5px;font: 30px solid;font-weight:600;font-size:16px;color:#d6ccd4">
    <img src="inc/logo1.png" width="40px" height="40px"/>IOTTree <wbt:g>prj</wbt:g></div>
 		<div style="float: left;position:relative;left:30px;margin-left:5px;top:9px;font: 18px solid" >
 		[<%=rep.getTitle()%>]
 		</div>
 <%
-if(!hide_top)
+if(false) //(!hide_top)
 {
 %>
+<%--
 	<div class="top_toolbox top_tool"  style="left:40%;width:120px">
 	  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 	  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
 	  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
 	</div>
+	 --%>
 <%
 }
 
 if(!hide_top)
 {
 %>
-<div class="top_toolbox top_tool" style="left:60%;width:110px;">
-		 	<span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
-		 	&nbsp;&nbsp;&nbsp;
-		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
+<div class="top_toolbox " class0="top_tool" style="right:160px;width:130px;border:0px solid;padding:0px;">
+		 	<button id="prj_btn_start"  class="sp_btn" style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></button>
+		 	&nbsp;&nbsp;
+		 	<button id="prj_btn_stop"  class="sp_btn" style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></button>
 </div>
 <%
 }
@@ -562,10 +110,16 @@ if(!hide_top && rep.isPrjPStationIns())
 }
 %>
 
-     <div class="top_toolbox"  style="right:10px;width:180px;color:#fff5e2;">
-     <button class="layui-btn layui-btn-primary layui-btn-xs  <%=("en".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('en')">EN</button>
-	 <button class="layui-btn layui-btn-primary layui-btn-xs <%=("cn".equals(using_lan)?"layui-btn-normal":"") %>" onclick="chg_lan('cn')">CN</button>
-		     &nbsp;&nbsp;<span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;<wbt:g>help</wbt:g></span>
+     <div class="top_toolbox"  style="margin-top:4px;;margin-right:1px;;right:1px;width:180px;color:#fff5e2;border:0px solid;font-size:14px;text-align: right;">
+<%--
+     <span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
+		 	&nbsp;&nbsp;&nbsp;
+		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
+	&nbsp;&nbsp;&nbsp;
+--%>
+     <span class=" <%=("en".equals(using_lan)?"sel_b":"") %>" onclick="chg_lan('en')">EN</span>
+	 &nbsp;&nbsp;<span class="<%=("cn".equals(using_lan)?"sel_b":"") %>" onclick="chg_lan('cn')">CN</span>
+     &nbsp;&nbsp;<span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;</span>
 		 </div>
 </div>
 <%
@@ -1092,10 +646,10 @@ var cxt_menu = {
 		}}
 	],
 	"hmi":[
-		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_hmi_edit_ui,op_chk:(tn)=>{
+		{op_name:"edit_ui",op_title:"<wbt:lang>edit_ui</wbt:lang>",op_icon:"fa-solid fa-draw-polygon",op_action:act_hmi_edit_ui,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
-		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_hmi,op_chk:(tn)=>{
+		{op_name:"modify_ui",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa-solid fa-draw-polygon",op_action:act_edit_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
 		{op_name:"cp_hmi",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
@@ -2095,7 +1649,7 @@ function act_main_hmi(n,op)
 function act_hmi_edit_ui(n,op)
 {
 	//console.log(n)
-	add_tab(n.id,"<i class='fa fa-puzzle-piece'></i>"+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
+	add_tab(n.id,""+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
 function act_open_cxt_script(n,op)
@@ -2356,7 +1910,13 @@ function init_left_btm()
 		  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
 		  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
-		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>`;
+		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+		  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+		  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+		
+		
+		  `;
 	if(b_ent)
 	{
 		tmps += `<span id='portal' onclick='clk_portal()' title="Portal">

@@ -6,6 +6,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.alert.AlertDef;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.cxt.JSObMap;
@@ -185,6 +186,22 @@ public class ValEvent extends JSObMap
 		r.paramStr2 = this.paramStr2 ;
 		r.paramStr3 = this.paramStr3 ;
 		r.alertPrompt = this.alertPrompt ;
+		return r ;
+	}
+	
+	public static ValEvent createBoolTagEvent(UATag tag)
+	{
+		if(tag.getValTp()!=ValTP.vt_bool)
+			return null;
+		
+		ValEvent r = new ValEvent() ;
+		r.setBelongTo(tag);
+		
+		r.eventTp = ValEventTp.getTp(1) ;
+		r.eventTpV = 1 ;
+		r.paramStr1 = "1";
+		r.alertPrompt = tag.getTitle() ;
+		r.eventTp.initVA(r, new StringBuilder()) ;
 		return r ;
 	}
 	
