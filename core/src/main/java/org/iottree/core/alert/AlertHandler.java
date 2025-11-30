@@ -235,7 +235,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 		if(alertOuts!=null)
 			return alertOuts;
 		
-		AlertManager amgr = AlertManager.getInstance(this.prj.getId()) ;
+		AlertManager amgr = AlertManager.getInstancePrjN(this.prj.getName()) ;
 		ArrayList<AlertOut> aos = new ArrayList<>() ;
 		if(this.alertOutIds!=null)
 		{
@@ -637,7 +637,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 	 */
 	void RT_initHandler()
 	{
-		AlertManager amgr = AlertManager.getInstance(this.prj.getId()) ;
+		AlertManager amgr = AlertManager.getInstancePrjN(this.prj.getName()) ;
 		recordJTI = amgr.getAlertsTableInfo() ;
 		if(this.bInnerRecord)
 		{

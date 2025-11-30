@@ -970,6 +970,7 @@ public abstract class UANodeOCTags extends UANodeOC
 			t.setTagSys(name, title, desc, "", vt, dec_digits, false, 200);
 		
 		t.belongToNode = this ;
+		t.parentNode = this ;
 	}
 	
 	public List<UATag> getTagsNorByIds(List<String> tagids)

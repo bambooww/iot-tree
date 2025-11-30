@@ -67,7 +67,7 @@ public abstract class AlertOut extends JSObMap
 	
 	public List<AlertHandler> getRelatedHandlers()
 	{
-		AlertManager am = AlertManager.getInstance(this.prj.getId()) ;
+		AlertManager am = AlertManager.getInstancePrjN(this.prj.getName()) ;
 		//am.
 		return null ;
 	}

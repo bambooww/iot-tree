@@ -189,14 +189,14 @@ public class NM_TagTSRec2RDB extends MNNodeMid
 		return tag.getNodeCxtPathInPrj()+" ["+tag.getValTp()+"]" ;
 	}
 
-	private UAPrj getPrj()
-	{
-		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-		if (mnc == null || !(mnc instanceof UAPrj))
-			return null;
-
-		return (UAPrj) mnc;
-	}
+//	private UAPrj getPrj()
+//	{
+//		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//		if (mnc == null || !(mnc instanceof UAPrj))
+//			return null;
+//
+//		return (UAPrj) mnc;
+//	}
 
 	public RelationalDB_Table getRelationalDB_Table()
 	{

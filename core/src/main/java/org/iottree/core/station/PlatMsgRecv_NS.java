@@ -71,14 +71,14 @@ public class PlatMsgRecv_NS extends MNNodeStart
 		
 		
 
-		private UAPrj getPrj()
-		{
-			IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-			if (mnc == null || !(mnc instanceof UAPrj))
-				return null;
-
-			return (UAPrj) mnc;
-		}
+//		private UAPrj getPrj()
+//		{
+//			IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//			if (mnc == null || !(mnc instanceof UAPrj))
+//				return null;
+//
+//			return (UAPrj) mnc;
+//		}
 		
 		@Override
 		public boolean isParamReady(StringBuilder failedr)

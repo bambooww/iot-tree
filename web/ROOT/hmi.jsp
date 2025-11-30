@@ -96,7 +96,7 @@
 	if(prj!=null)
 	{
 		rec_mgr = RecManager.getInstance(prj) ;
-		alert_def = AlertManager.getInstance(prjid).getAlertDef();
+		alert_def = AlertManager.getInstancePrjN(prj.getName()).getAlertDef();
 		alert_def_lvl_jo = alert_def.LVL_toJO() ;
 	}
 	

@@ -23,7 +23,7 @@ if(prj==null)
 	return ;
 }
 
-AlertManager amgr= AlertManager.getInstance(prjid) ;
+AlertManager amgr= AlertManager.getInstancePrjN(prj.getName()) ;
 List<String> outer_sors = amgr.HIS_getRecordOuterSorNames() ;
 
 %><!DOCTYPE html>

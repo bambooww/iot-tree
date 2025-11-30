@@ -137,16 +137,16 @@ public class StationMsgSend_NE extends MNNodeEnd implements IMNRunner
 		this.saveMaxNum = jo.optInt("save_maxn", -1) ;
 	}
 	
-	private UAPrj prj0 = null ;
-	
-	private UAPrj getPrj()
-	{
-		if(prj0!=null)
-			return prj0 ;
-		
-		prj0 = this.getBelongTo().getBelongTo().getBelongToPrj() ;
-		return prj0 ;
-	}
+//	private UAPrj prj0 = null ;
+//	
+//	private UAPrj getPrj()
+//	{
+//		if(prj0!=null)
+//			return prj0 ;
+//		
+//		prj0 = this.getBelongTo().getBelongTo().getBelongToPrj() ;
+//		return prj0 ;
+//	}
 	
 	static class QItem
 	{

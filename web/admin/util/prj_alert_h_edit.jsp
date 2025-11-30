@@ -23,7 +23,7 @@ if(rep==null)
 	return ;
 }
 
-AlertManager amgr = AlertManager.getInstance(prjid) ;
+AlertManager amgr = AlertManager.getInstancePrjN(rep.getName()) ;
 String prj_path = rep.getNodePath() ;
 String id = request.getParameter("id") ;
 String name="" ;

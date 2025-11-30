@@ -62,14 +62,14 @@ public class PlatRecvedDataGet_NM extends MNNodeMid
 		return null ;
 	}
 	
-	private UAPrj getPrj()
-	{
-		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-		if (mnc == null || !(mnc instanceof UAPrj))
-			return null;
-
-		return (UAPrj) mnc;
-	}
+//	private UAPrj getPrj()
+//	{
+//		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//		if (mnc == null || !(mnc instanceof UAPrj))
+//			return null;
+//
+//		return (UAPrj) mnc;
+//	}
 	
 //	private PStation getPrjStation()
 //	{

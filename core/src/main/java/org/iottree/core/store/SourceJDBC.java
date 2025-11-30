@@ -102,6 +102,9 @@ public class SourceJDBC extends Source
 			
 			String data_dyn_dir = Config.getDataDynDirBase();//dbname System.getProperty("iottree.data_dyn_dir") ;
 			if(Convert.isNullOrEmpty(data_dyn_dir))
+				data_dyn_dir = System.getProperty("iottree.data_dyn_dir") ;
+
+			if(Convert.isNullOrEmpty(data_dyn_dir))
 				throw new RuntimeException("no [data_dyn_dir] found") ;
 			
 			//String fp =  Config.getDataDynDirBase()+"db_sqlite/" ;

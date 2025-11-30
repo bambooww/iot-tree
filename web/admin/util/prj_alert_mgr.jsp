@@ -23,7 +23,7 @@ if(rep==null)
 	return ;
 }
 
-AlertManager amgr = AlertManager.getInstance(prjid) ;
+AlertManager amgr = AlertManager.getInstancePrjN(rep.getName()) ;
 AlertDef alert_def = amgr.getAlertDef() ;
 int def_lvl = alert_def.getDefaultLvl() ;
 AlertDef.Lvl[] lvls = alert_def.getLvls() ;

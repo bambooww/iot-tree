@@ -121,14 +121,14 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid implements IMNTagFil
 	}
 	
 
-	private UAPrj getPrj()
-	{
-		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-		if (mnc == null || !(mnc instanceof UAPrj))
-			return null;
-
-		return (UAPrj) mnc;
-	}
+//	private UAPrj getPrj()
+//	{
+//		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//		if (mnc == null || !(mnc instanceof UAPrj))
+//			return null;
+//
+//		return (UAPrj) mnc;
+//	}
 	
 
 	@Override

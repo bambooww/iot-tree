@@ -334,14 +334,14 @@ public class NS_TagChgTrigger extends MNNodeStart
 		clearCache();
 	}
 
-	private UAPrj getPrj()
-	{
-		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-		if (mnc == null || !(mnc instanceof UAPrj))
-			return null;
-
-		return (UAPrj) mnc;
-	}
+//	private UAPrj getPrj()
+//	{
+//		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//		if (mnc == null || !(mnc instanceof UAPrj))
+//			return null;
+//
+//		return (UAPrj) mnc;
+//	}
 
 	public boolean isIgnoreInvalid()
 	{

@@ -28,7 +28,7 @@ if(prj==null)
 	out.print("no prj found") ;
 	return ;
 }
-AlertManager amgr= AlertManager.getInstance(prjid) ;
+AlertManager amgr= AlertManager.getInstancePrjN(prj.getName()) ;
 String jstr = request.getParameter("jstr") ;
 JSONObject tmpjo = null ;
 switch(op)

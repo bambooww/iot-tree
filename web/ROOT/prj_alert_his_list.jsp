@@ -35,7 +35,7 @@ if(Convert.isNotNullEmpty(end_dt))
 String hander = request.getParameter("handler") ;
 int pageidx = Convert.parseToInt32(request.getParameter("pageidx"), 0) ;
 
-AlertManager amgr = AlertManager.getInstance(prjid) ;
+AlertManager amgr = AlertManager.getInstancePrjN(prj.getName()) ;
 DataTable dt = amgr.HIS_selectRecord(sor_name, startdt, enddt, hander, pageidx, PAGE_SIZE);
 int cc = dt.getTotalCount() ;
 boolean has_next = dt.getRowNum()>=PAGE_SIZE ;

@@ -693,7 +693,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		UAPrj prj= this.getBelongToPrj() ;
 		
 		JSONArray jarr = new JSONArray() ;
-		AlertManager.getInstance(prj.getId()).getHandlers().forEach((id,ah)->{
+		AlertManager.getInstancePrjN(prj.getName()).getHandlers().forEach((id,ah)->{
 			List<AlertItem> items = ah.RT_getAlertItems() ;
 			if(items==null||items.size()<=0)
 				return ;

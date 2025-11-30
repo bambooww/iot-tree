@@ -121,6 +121,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return cont.getMsgNetContainerId()+"-"+ net.getId()+"-"+this.id ;
 	}
 	
+	public UAPrj getPrj()
+	{
+		return this.belongTo.belongTo.getBelongToPrj() ;
+	}
+	
 	public String getTitle()
 	{
 		return title ;

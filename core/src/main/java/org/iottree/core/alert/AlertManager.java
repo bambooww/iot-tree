@@ -32,23 +32,23 @@ import org.json.JSONObject;
 
 public class AlertManager  extends JSObMap
 {
-	private static HashMap<String,AlertManager> prjid2mgr = new HashMap<>() ;
+	private static HashMap<String,AlertManager> prjn2mgr = new HashMap<>() ;
 	
 	
-	public static AlertManager getInstance(String prjid)
+	public static AlertManager getInstancePrjN(String prjn)
 	{
-		AlertManager instance = prjid2mgr.get(prjid) ;
+		AlertManager instance = prjn2mgr.get(prjn) ;
 		if(instance!=null)
 			return instance ;
 		
 		synchronized(AlertManager.class)
 		{
-			instance = prjid2mgr.get(prjid) ;
+			instance = prjn2mgr.get(prjn) ;
 			if(instance!=null)
 				return instance ;
 			
-			instance = new AlertManager(prjid) ;
-			prjid2mgr.put(prjid, instance) ;
+			instance = new AlertManager(prjn) ;
+			prjn2mgr.put(prjn, instance) ;
 			return instance ;
 		}
 	}
@@ -64,11 +64,11 @@ public class AlertManager  extends JSObMap
 	
 	private LinkedHashMap<String,AlertOut> alertOuts = null ;
 	
-	private AlertManager(String prjid)
+	private AlertManager(String prjn)
 	{
-		this.prj = UAManager.getInstance().getPrjById(prjid) ;
+		this.prj = UAManager.getInstance().getPrjByName(prjn);//.getPrjById(prjid) ;
 		if(this.prj==null)
-			throw new IllegalArgumentException("no prj found with id="+prjid) ;
+			throw new IllegalArgumentException("no prj found with name="+prjn) ;
 		this.prjDir = prj.getPrjSubDir();
 		
 		try

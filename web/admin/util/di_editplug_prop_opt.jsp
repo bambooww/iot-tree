@@ -128,11 +128,12 @@ function update_ui()
 				<td><input value="\${opt.dis}" class="def"  type="radio" name="defdis" \${chked}/></td>
 				<td><input value="\${opt.inp}" class="inp"/></td>
 				<td><input value="\${opt.dis}" class="dis"/></td>
+				<td><button onclick="del_opt_row(this)">X<button></td>
 			</tr>` ;
 		}
 		
 		tmps += `<tr>
-		    <td colspan="2"></td>
+		    <td colspan="3"></td>
 			<td ><button onclick="add_opt_row()">&nbsp;&nbsp;+&nbsp;&nbsp;</button></td>
 		</tr>` ;
 	}
@@ -145,6 +146,11 @@ function add_opt_row()
 	inp_dis.opts = get_opts() ;
 	inp_dis.opts.push({dis:"",inp:""}) ;
 	update_ui();
+}
+
+function del_opt_row(ele)
+{
+	$(ele).parent().parent().remove();
 }
 
 layui.use('form', function(){

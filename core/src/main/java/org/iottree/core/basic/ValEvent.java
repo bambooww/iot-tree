@@ -400,7 +400,7 @@ public class ValEvent extends JSObMap
 		
 		//check handler
 		UAPrj prj = this.getPrj() ;
-		AlertManager.getInstance(prj.getId()).RT_fireAlert(this,cur_val) ;
+		AlertManager.getInstancePrjN(prj.getName()).RT_fireAlert(this,cur_val) ;
 		MNManager.getInstance(prj).RT_TAG_triggerEvt(this,cur_val);
 	}
 	
@@ -409,7 +409,7 @@ public class ValEvent extends JSObMap
 		 this.bTrigged =false;
 		 this.lastReleasedDT = System.currentTimeMillis() ;
 		 //
-		 AlertManager.getInstance(getPrj().getId()).RT_fireAlert(this,cur_val) ;
+		 AlertManager.getInstancePrjN(getPrj().getName()).RT_fireAlert(this,cur_val) ;
 		 MNManager.getInstance(prj).RT_TAG_releaseEvt(this,cur_val);
 	}
 	

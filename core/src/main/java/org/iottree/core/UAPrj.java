@@ -1539,7 +1539,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					if(b_rec)
 						RecManager.getInstance(UAPrj.this).RT_start() ;
 					
-					AlertManager.getInstance(UAPrj.this.getId()).RT_start();
+					AlertManager.getInstancePrjN(UAPrj.this.getName()).RT_start();
 					
 					if(b_store)
 						StoreManager.getInstance(UAPrj.this.getId()).RT_start();
@@ -1631,7 +1631,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 				runFlush();
 				
-				AlertManager.getInstance(UAPrj.this.getId()).RT_stop();
+				AlertManager.getInstancePrjN(UAPrj.this.getName()).RT_stop();
 				
 				if(b_store)
 					StoreManager.getInstance(UAPrj.this.getId()).RT_stop();

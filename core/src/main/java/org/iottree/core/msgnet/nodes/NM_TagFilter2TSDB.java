@@ -113,14 +113,14 @@ public class NM_TagFilter2TSDB  extends MNNodeMid implements IMNTagFilter
 	}
 	
 
-	private UAPrj getPrj()
-	{
-		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
-		if (mnc == null || !(mnc instanceof UAPrj))
-			return null;
-
-		return (UAPrj) mnc;
-	}
+//	private UAPrj getPrj()
+//	{
+//		IMNContainer mnc = this.getBelongTo().getBelongTo().getBelongTo();
+//		if (mnc == null || !(mnc instanceof UAPrj))
+//			return null;
+//
+//		return (UAPrj) mnc;
+//	}
 	
 
 	@Override
