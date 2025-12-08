@@ -32,9 +32,9 @@
 			"org.iottree.core.msgnet.modules.PID_Err"
 		]},
 		{"cn":"org.iottree.core.msgnet.modules.FSM_M","nodes":[
-			"#org.iottree.core.msgnet.modules.PID_AutoManual",
-			"#org.iottree.core.msgnet.modules.PID_ManualOutput"
-			
+			"org.iottree.core.msgnet.modules.FSM_State",
+			"org.iottree.core.msgnet.modules.FSM_Transit",
+			"org.iottree.core.msgnet.modules.FSM_Input"
 		]}
 		
 	]},
@@ -95,10 +95,12 @@
 		]}
 	]},
 	
-	{"cat":"_vo","nodes":[
-		"org.iottree.ext.vo.MicIn_NS",
-		"org.iottree.ext.vo.VoReco_NM",
-		"org.iottree.ext.vo.WavPlayer_NM"
+	{"cat":"_av","nodes":[
+		"org.iottree.ext.av.MicIn_NS",
+		"org.iottree.ext.av.VoReco_NM",
+		"org.iottree.ext.av.WavPlayer_NM",
+		"org.iottree.ext.av.ObjReco_NM",
+		"org.iottree.ext.av.TTS_NM"
 	],"modules":[
 		
 	]},
@@ -131,6 +133,14 @@
 			]}
 		]
 	},
+	
+	{"cat":"_aia","nodes":[
+		
+		"org.iottree.ext.ai_agent.PromptSet",
+		"org.iottree.ext.ai_agent.TxtToJSONCmd"
+	],"modules":[
+		
+	]},
 	
 	{"cat":"_sim","nodes":[
 		"org.iottree.core.msgnet.nodes.NM_HeatingFurnace"

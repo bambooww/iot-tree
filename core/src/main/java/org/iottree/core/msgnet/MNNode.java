@@ -295,7 +295,7 @@ public abstract class MNNode extends MNBase
 		}
 	}
 	
-	public final MNConn setOutConn(int idx,String to_nid) throws MNException
+	public final MNConn setOutConn(int idx,String to_nid,boolean ignore_loop_path) throws MNException
 	{
 		int outn = this.getOutNum() ;
 		if(outn<=0)
@@ -304,7 +304,7 @@ public abstract class MNNode extends MNBase
 			throw new IllegalArgumentException("idx is out of boundry") ;
 		if(connOut==null)
 			connOut = new MNConnOut(this) ;
-		return connOut.setConn(idx, to_nid) ;
+		return connOut.setConn(idx, to_nid,ignore_loop_path) ;
 	}
 	
 	public final MNConn unsetOutConn(int idx,String to_nid)

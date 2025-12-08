@@ -327,7 +327,10 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			jo.put("runner", isRunner()) ;
 			jo.put("runner_en", rr.RT_runnerEnabled()) ;
 			jo.put("runner_in", rr.RT_runnerStartInner()) ;
-			
+		}
+		if(this instanceof MNNodeState)
+		{
+			jo.put("_state",true) ;
 		}
 		return jo ;
 	}
@@ -589,6 +592,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			jo.put("divs", tmpjar) ;
 		}
 		
+		if(this instanceof MNNodeState)
+		{
+			jo.put("state", true) ;
+			jo.put("state_active", ((MNNodeState)this).RT_isStateActive()) ;
+			jo.put("state_running", ((MNNodeState)this).RT_isStateRunning()) ;
+		}
 		List<String> ss = this.RT_DEBUG_WARN.getPromptTitles() ;
 		//jo.put("has_warn", warns.size()>0) ;
 		jo.put("warns", new JSONArray(ss)) ;

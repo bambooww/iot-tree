@@ -9,7 +9,7 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.store.*,
 	org.iottree.core.msgnet.*,
-	org.iottree.ext.vo.*, javax.sound.sampled.*,
+	org.iottree.ext.av.*, javax.sound.sampled.*,
 	org.iottree.core.msgnet.util.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%

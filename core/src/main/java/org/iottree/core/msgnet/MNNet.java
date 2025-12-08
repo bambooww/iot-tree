@@ -591,18 +591,18 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		return fromn.getOutConn(from_idx, to_nid) ;
 	}
 	
-	public MNConn addConn(String from_nid,int from_idx,String to_nid) throws Exception
+	public MNConn addConn(String from_nid,int from_idx,String to_nid,boolean ignore_loop_path) throws Exception
 	{
 		MNNode fromn = this.getNodeById(from_nid);
 		if(fromn==null)
 			return null ;
-		MNConn ret = fromn.setOutConn(from_idx, to_nid) ;
+		MNConn ret = fromn.setOutConn(from_idx, to_nid,ignore_loop_path) ;
 		if(ret!=null)
 			this.save();
 		return ret ;
 	}
 	
-	public MNConn addConn(String out_id,String to_nid,StringBuilder failedr) throws IOException
+	public MNConn addConn(String out_id,String to_nid,boolean ignore_loop_path,StringBuilder failedr) throws IOException
 	{
 		int k = out_id.lastIndexOf('_') ;
 		if(k<=0)
@@ -614,7 +614,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			return null ;
 		try
 		{
-			MNConn ret = fromn.setOutConn(from_idx, to_nid) ;
+			MNConn ret = fromn.setOutConn(from_idx, to_nid,ignore_loop_path) ;
 			if(ret!=null)
 				this.save();
 			return ret ;

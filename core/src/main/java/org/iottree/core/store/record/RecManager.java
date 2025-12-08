@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 /**
  * 支持标签基于内部存储tssdb进行相关的配置、数据管理和展示
- * 
+ * @deprecated
  * @author jason.zhu
  */
 public class RecManager implements ILang, IUIProvider

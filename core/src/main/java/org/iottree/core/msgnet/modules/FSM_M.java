@@ -22,20 +22,7 @@ public class FSM_M   extends MNModule implements IMNRunner
 {
 	public static final String TP = "fsm" ;
 	
-	double kp = 1; //gain
-	double ki = 10.0; //minute integral time
-	double kd = 0.0 ; //minute derivative time
-	double sampleTime = 1.0; //second
-	
-	double inputMin = 0.0 ;
-	double inputMax = 100.0 ;
-	
-	double outputMin = 0.0 ;
-	double outputMax = 10.0 ;
-	
-	double stopOutputV = 0.0 ; //when PID is not in loop,it will output default ctrl value
-	
-	double errOutputV = 0.0 ;  //when PID is err ,it will output default ctrl value
+	FSM_State rtCurState = null ;
 	
 	@Override
 	public String getTP()
@@ -66,37 +53,6 @@ public class FSM_M   extends MNModule implements IMNRunner
 	{
 		return "#333333" ;
 	}
-//	
-//	public PID_PV getPV()
-//	{
-//		return this.getRelatedNodeFirst(PID_PV.class) ;
-//	}
-//	
-//	public PID_SP getSP()
-//	{
-//		return this.getRelatedNodeFirst(PID_SP.class) ;
-//	}
-//	
-//	public PID_Output getOutput()
-//	{
-//		return this.getRelatedNodeFirst(PID_Output.class) ;
-//	}
-//	
-//	public PID_Err getErr()
-//	{
-//		return this.getRelatedNodeFirst(PID_Err.class) ;
-//	}
-//	
-//	public PID_AutoManual getAutoManual()
-//	{
-//		return this.getRelatedNodeFirst(PID_AutoManual.class) ;
-//	}
-//	
-//	public PID_ManualOutput getManualOutput()
-//	{
-//		return this.getRelatedNodeFirst(PID_ManualOutput.class) ;
-//	}
-//	
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
@@ -123,38 +79,33 @@ public class FSM_M   extends MNModule implements IMNRunner
 	public JSONObject getParamJO()
 	{
 		JSONObject jo = new JSONObject() ;
-		jo.put("kp",this.kp) ;
-		jo.put("ki",this.ki) ;
-		jo.put("kd",this.kd) ;
-		jo.put("st", this.sampleTime) ;
-		jo.put("input_min", this.inputMin);
-		jo.put("input_max", this.inputMax);
-		jo.put("output_min", this.outputMin);
-		jo.put("output_max", this.outputMax);
-		jo.put("output_stop_v", this.stopOutputV) ;
-		jo.put("output_err_v", this.errOutputV) ;
+//		jo.put("kp",this.kp) ;
+//		jo.put("ki",this.ki) ;
+//		jo.put("kd",this.kd) ;
+//		jo.put("st", this.sampleTime) ;
+		
 		return jo;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		this.kp = jo.optDouble("kp",1) ;
-		this.ki = jo.optDouble("ki",10.0) ;
-		this.kd = jo.optDouble("kd",0.0) ;
-		this.sampleTime = jo.optDouble("st",1.0) ;
-		this.inputMin = jo.optDouble("input_min",0.0) ;
-		this.inputMax = jo.optDouble("input_max",100.0) ;
-		this.outputMin = jo.optDouble("output_min",0.0) ;
-		this.outputMax = jo.optDouble("output_max",10.0) ;
-		
-		this.stopOutputV = jo.optDouble("output_stop_v",0.0) ;
-		this.errOutputV = jo.optDouble("output_err_v",0.0) ;
+//		this.kp = jo.optDouble("kp",1) ;
+//		this.ki = jo.optDouble("ki",10.0) ;
+//		this.kd = jo.optDouble("kd",0.0) ;
+//		this.sampleTime = jo.optDouble("st",1.0) ;
+//		this.inputMin = jo.optDouble("input_min",0.0) ;
+//		this.inputMax = jo.optDouble("input_max",100.0) ;
+//		this.outputMin = jo.optDouble("output_min",0.0) ;
+//		this.outputMax = jo.optDouble("output_max",10.0) ;
+//		
+//		this.stopOutputV = jo.optDouble("output_stop_v",0.0) ;
+//		this.errOutputV = jo.optDouble("output_err_v",0.0) ;
 	}
 	
 	public String getPmTitle()
 	{
-		return String.format("P=%s I=%s D=%s",this.kp,this.ki,this.kd);
+		return null;
 	}
 	
 	@Override
@@ -274,9 +225,10 @@ public class FSM_M   extends MNModule implements IMNRunner
 			{
 				while(bRun)
 				{
-					UTIL_sleep((long)(sampleTime*1000)) ;
+					UTIL_sleep(10L) ;
 					
 					//RT_runPID();
+					RT_runInLoop();
 				}
 			}
 			finally
@@ -289,6 +241,25 @@ public class FSM_M   extends MNModule implements IMNRunner
 			}
 		}
 	};
+	
+	synchronized private void RT_runInLoop()
+	{
+		FSM_State cur_st = this.RT_getCurrentState() ;
+		if(cur_st==null)
+			return ;
+		cur_st.RT_runInLoop() ;
+	}
+	
+
+	synchronized void RT_setCurrentState(FSM_State st_nd)
+	{
+		this.rtCurState = st_nd ;
+	}
+	
+	public FSM_State RT_getCurrentState()
+	{
+		return this.rtCurState ;
+	}
 	
 	@Override
 	public synchronized boolean RT_start(StringBuilder failedr)
@@ -341,4 +312,5 @@ public class FSM_M   extends MNModule implements IMNRunner
 	{
 		return false;
 	}
+	
 }

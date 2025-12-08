@@ -77,7 +77,7 @@ public class MNConnOut implements ILang
 		return rets;
 	}
 	
-	public MNConn setConn(int idx,String to_nid) throws MNException
+	public MNConn setConn(int idx,String to_nid,boolean ignore_loop_path) throws MNException
 	{
 		int n = belongTo.getOutNum() ;
 		if(n==0 || idx>=n)
@@ -99,8 +99,25 @@ public class MNConnOut implements ILang
 		if(to_n instanceof MNNodeStart)
 			throw new MNException("cannot connect to start node") ;
 		
-		if(to_n.checkHasPath(this.belongTo))
-			throw new MNException(g("make_loop_err")) ;
+//		if(this.belongTo instanceof MNNodeState || to_n instanceof MNNodeState)
+//		{
+//			if(!(to_n instanceof MNNodeState))
+//				throw new MNException("state node must connect to another state node") ;
+//		}
+//		else if(to_n instanceof MNNodeState)
+//		{
+//			if(!(belongTo instanceof MNNodeState))
+//				throw new MNException("state node must connect to another state node") ;
+//		}
+		if(this.belongTo instanceof MNNodeState || to_n instanceof MNNodeState)
+		{
+			
+		}
+		else
+		{
+			if(!ignore_loop_path && to_n.checkHasPath(this.belongTo))
+				throw new MNException(g("make_loop_err")) ;
+		}
 		
 		ArrayList<MNConn> conns = idx2conns.get(idx) ;
 		if(conns==null)

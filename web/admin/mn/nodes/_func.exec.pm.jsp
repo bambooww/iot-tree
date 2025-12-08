@@ -94,7 +94,7 @@
     <div class="layui-input-inline" style="width:200px;">
     	<input type="text" class="layui-input" id="subn"  onchange="update_bt()"/>
     </div>
-    <div class="layui-input-inline" style="width:20px;">
+    <div class="layui-form-mid" >
     	<input type="checkbox" class="layui-input" id="qm" lay-skin="primary" lay-filter="qm" />
     </div>
     <div class="layui-form-mid" >

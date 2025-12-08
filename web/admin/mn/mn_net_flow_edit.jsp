@@ -263,7 +263,6 @@ function init_iottpanel()
 			panel.updatePixelSize();
 			draw_fit()
 			setTimeout("draw_fit()",1000)
-			
 		},
 		onAddNode:(tp,x,y,moduleid,lib_item_id)=>{
 			send_ajax("./mn_ajax.jsp",{op:"node_add_up",container_id:container_id,netid:netid,"tp":tp,x:x,y:y,moduleid:moduleid||"",lib_item_id:lib_item_id||""},
@@ -309,6 +308,9 @@ function init_iottpanel()
 		},
 		onDIModuleOpen:(node)=>{
 			on_item_open(node);
+		},
+		onDIConnOpen:(conn)=>{
+			on_conn_open(conn);
 		},
 		onNodeStartTrigger:(node)=>{
 			//console.log("start node trigger",node) ;
@@ -432,6 +434,50 @@ function on_item_open(mn)
 		ftp = mn.moduleItem._tp;
 	let tt = "<wbt:lang>param</wbt:lang> - "+mn.title +"&nbsp;&nbsp;&nbsp;"+ftp;
 	let pm={op:"detail_set",container_id:container_id,netid:netid,itemid:mn.id};
+
+	dlg.open(url,{title:tt,w:'500px',h:'400px'},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+
+						 pm.jstr=JSON.stringify(ret) ;
+						 send_ajax('mn_ajax.jsp',pm,function(bsucc,ret)
+							{
+								if(!bsucc || ret.indexOf('succ')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								dlg.msg("<wbt:g>done</wbt:g>");
+								clear_cache();
+								dlg.close();
+								reload_net();
+							},false);
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function on_conn_open(conn)
+{
+	console.log(conn) ;
+	if(!conn.state) return ;
+
+	
+	let url = `mn_param_conn.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${conn.id}`;
+	let tt = "<wbt:lang>transition</wbt:lang>";
+	let pm={op:"conn_set",container_id:container_id,netid:netid,itemid:conn.id};
 
 	dlg.open(url,{title:tt,w:'500px',h:'400px'},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],

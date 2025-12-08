@@ -1,4 +1,4 @@
-package org.iottree.ext.vo;
+package org.iottree.ext.av;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -359,8 +359,20 @@ public class WavPlayer_NM extends MNNodeMid
 		ais = AudioSystem.getAudioInputStream(wavf);
 		clip = AudioSystem.getClip();
 	}
+	
+	private synchronized boolean onLineEvent(LineEvent e)
+	{
+		if (e.getType() == LineEvent.Type.STOP)
+		{
+			closeClip();
 
-	private void playWav(String key, File wavf) throws Exception
+			return true ;
+			
+		}
+		return false;
+	}
+
+	private synchronized void playWav(String key, File wavf) throws Exception
 	{
 		final String wav_fn = wavf.getName();
 		createClip(wavf);
@@ -368,10 +380,8 @@ public class WavPlayer_NM extends MNNodeMid
 		clip.open(ais);
 		clip.start();
 		clip.addLineListener(e -> {
-			if (e.getType() == LineEvent.Type.STOP)
+			if(onLineEvent(e))
 			{
-				closeClip();
-
 				try
 				{
 					JSONObject jo = new JSONObject().putOpt("key", key).put("file", wav_fn);

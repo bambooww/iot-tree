@@ -137,6 +137,7 @@ public class MNConn
 		jo.put("tid", to_nid) ;
 		jo.put("trans_tp", this.transTP.val) ;
 		jo.putOpt("js", this.jsTxt) ;
+		jo.put("uid", this.getUid()) ;
 		return jo ;
 	}
 	

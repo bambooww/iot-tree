@@ -33,6 +33,11 @@
 		desc_en=""
 		/>	
 	
+	<dd_node id="1" name="fsm_state" name_cn="状态" name_en="State"/>
+	<dd_node id="1" name="fsm_transit" name_cn="状态转换" name_en="Transit State"/>
+	<dd_node id="1" name="fsm_input" name_cn="状态机输入" name_en="SM Input"/>	
+		
+	
 	<dd_node id="1" name="sql_que_msg_per_row_jo" name_cn="每行一个消息JSONObject输出" name_en="A message per row-JONSObject" />
 	<dd_node id="1" name="sql_que_msg_firstrow_jo" name_cn="第一行单个消息JSONObject输出" name_en="Single message for first row-JONSObject" />
  	<dd_node id="1" name="sql_que_multi_row_jarr" name_cn="多行一个消息JSONArray输出" name_en="A message for multi row-JSONArray" />

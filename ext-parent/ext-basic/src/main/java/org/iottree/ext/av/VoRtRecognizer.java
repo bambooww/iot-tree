@@ -1,4 +1,4 @@
-package org.iottree.ext.vo;
+package org.iottree.ext.av;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -62,6 +62,14 @@
 		    <artifactId>commons-email</artifactId>
 		    <version>1.6.0</version>
 		</dependency>
+
+    <!-- https://mvnrepository.com/artifact/io.github.givimad/piper-jni 
+<dependency>
+    <groupId>io.github.givimad</groupId>
+    <artifactId>piper-jni</artifactId>
+    <version>1.2.0-c0670df</version>
+</dependency>
+-->
 <!-- 
 		<dependency>
 		    <groupId>com.microsoft.cognitiveservices.speech</groupId>

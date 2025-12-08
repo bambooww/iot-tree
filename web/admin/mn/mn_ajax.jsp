@@ -203,7 +203,7 @@ try
 		String out_id = request.getParameter("out_id") ;
 		String to_nid = request.getParameter("to_nid") ;
 		
-		MNConn conn = net.addConn(out_id, to_nid,failedr) ;
+		MNConn conn = net.addConn(out_id, to_nid,true,failedr) ;
 		if(conn!=null)
 			out.print("succ") ;
 		else

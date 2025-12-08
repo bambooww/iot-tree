@@ -8,7 +8,7 @@
 	org.iottree.core.dict.*,
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*,
-	org.iottree.ext.vo.*,
+	org.iottree.ext.av.*,
 	org.iottree.core.msgnet.util.*,
 	org.iottree.core.msgnet.nodes.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
