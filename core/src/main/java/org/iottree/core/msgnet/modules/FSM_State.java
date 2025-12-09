@@ -66,13 +66,15 @@ public class FSM_State extends MNNodeState
 	@Override
 	public JSONObject getParamJO()
 	{
-		return new JSONObject().put("start", this.bStart);
+		return new JSONObject().put("start", this.bStart)
+				.put("act_run_intv", this.activeRunIntv);
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
 		this.bStart = jo.optBoolean("start",false) ;
+		this.activeRunIntv = jo.optLong("act_run_intv",1000);
 	}
 	
 

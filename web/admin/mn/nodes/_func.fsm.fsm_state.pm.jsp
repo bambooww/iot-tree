@@ -44,6 +44,20 @@
      <div class="layui-form-mid">&nbsp;</div>
 </div>
 
+<div class="layui-form-item">
+    <label class="layui-form-label">Active Run Interval:</label>
+<div class="layui-form-mid">
+    <input type="number" class="layui-input" id="act_run_intv" lay-skin="primary" value=""/>
+    </div>
+    <div class="layui-input-inline" style="width:350px;">
+    	
+    </div>
+    <div class="layui-form-mid">
+    
+    </div>
+     <div class="layui-form-mid">&nbsp;</div>
+</div>
+
 <script>
 
 
@@ -59,13 +73,15 @@ function on_after_pm_show(form)
 function get_pm_jo()
 {
 	let b_start = $("#start").prop("checked") ;
+	let act_run_intv = get_input_val("act_run_intv",1000,true);
 	
-	return {start:b_start} ;
+	return {start:b_start,act_run_intv:act_run_intv} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#start").prop("checked",jo.start||false) ;
+	$("#act_run_intv").val(jo.act_run_intv||1000);
 	
 }
 
