@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>ext-parent</artifactId>
 		<groupId>org.iottree.ext</groupId>
-		<version>1.8.3</version>
+		<version>1.8.5</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>iottree-ext-basic</artifactId>
@@ -63,6 +63,31 @@
 		    <version>1.6.0</version>
 		</dependency>
 
+<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j -->
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j</artifactId>
+    <version>1.9.1</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-ollama -->
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-ollama</artifactId>
+    <version>1.9.1</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-open-ai -->
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai</artifactId>
+    <version>1.9.1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/com.openai/openai-java -->
+<dependency>
+    <groupId>com.openai</groupId>
+    <artifactId>openai-java</artifactId>
+    <version>4.12.0</version>
+</dependency>
     <!-- https://mvnrepository.com/artifact/io.github.givimad/piper-jni 
 <dependency>
     <groupId>io.github.givimad</groupId>

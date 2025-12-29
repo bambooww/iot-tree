@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dd_class id="1" name="ua_lang"  name_jp=""  >
-
-
-	<dd_node id="1" name="prompt_set" name_cn="提示词设置" name_en="Prompt Set" desc_cn="" desc_en=""/>
-	<dd_node id="1" name="tt_jc" name_cn="文字转JSON指令" name_en="Text to JSON Cmd" desc_cn="" desc_en=""/>
-	
-</dd_class>

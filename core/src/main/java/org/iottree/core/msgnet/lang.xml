@@ -12,6 +12,7 @@
 	<dd_node id="1" name="_net" name_cn="网络" name_en="network" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_av" name_cn="音视频" name_en="Audio/Video" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_aia" name_cn="AI代理(Agent)" name_en="AI Agent" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="_ai" name_cn="AI" name_en="AI" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_seq" name_cn="序列化" name_en="sequence" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_parser" name_cn="解析" name_en="parser" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="_armlinux" name_cn="ARM Linux" name_en="ARM Linux" desc_cn="" desc_en=""/>

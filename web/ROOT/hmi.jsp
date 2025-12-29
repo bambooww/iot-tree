@@ -1201,7 +1201,8 @@ var last_blink=-1 ;
 
 function ws_conn()
 {
-	var url = 'ws://' + window.location.host +path_head+ '/_ws/hmi/'+prj_name+"/"+hmi_id;
+	var bhttps = location.protocol === 'https:';
+	var url = (bhttps?"wss://":'ws://') + window.location.host +path_head+ '/_ws/hmi/'+prj_name+"/"+hmi_id;
 	if('https:' == document.location.protocol)
 		url = 'wss://' + window.location.host +path_head+ '/_ws/hmi/'+prj_name+"/"+hmi_id;
     if ('WebSocket' in window) {

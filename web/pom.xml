@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>1.8.3</version>
+    <version>1.8.5</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <packaging>pom</packaging>

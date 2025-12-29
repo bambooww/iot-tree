@@ -984,7 +984,8 @@ var ws_opened = false;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id+
+	var bhttps = location.protocol === 'https:';
+    var url = (bhttps?'wss://':'ws://') + window.location.host + '/admin/_ws/cxt_rt/'+prj_name+"/"+node_id+
     	"?sys="+b_sys+"&sub="+b_sub;
     //console.log(url) ;
     if ('WebSocket' in window) {

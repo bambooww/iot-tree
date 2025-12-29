@@ -20,5 +20,7 @@
 	    ,{"n":"db"    ,   "fn":"db.svg"}
 	    ,{"n":"call_in"    ,   "fn":"call_in.svg"}
 	    ,{"n":"call_out"    ,   "fn":"call_out.svg"}
+	    ,{"n":"ollama"    ,   "fn":"ollama.svg"}
+	    ,{"n":"vllm"    ,   "fn":"vllm.svg"}
 	]
 }

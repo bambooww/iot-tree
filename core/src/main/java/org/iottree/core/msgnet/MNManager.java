@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -251,15 +252,17 @@ public class MNManager
 	
 	private static boolean loadNodesAsStream() throws IOException
 	{
-		InputStream inps = MNManager.class.getResourceAsStream("/org/iottree/core/msgnet/nodes.json");
-		if(inps==null)
-			return false;
-		
-		byte[] buf = Convert.readStreamBuffer(inps) ;
-		String txt = new String(buf,"UTF-8") ;
-		JSONObject jo = new JSONObject(txt) ;
-		loadNodesConf(jo);
-		return true ;
+		try(InputStream inps = MNManager.class.getResourceAsStream("/org/iottree/core/msgnet/nodes.json"))
+		{
+			if(inps==null)
+				return false;
+			
+			byte[] buf = Convert.readStreamBuffer(inps) ;
+			String txt = new String(buf,"UTF-8") ;
+			JSONObject jo = new JSONObject(txt) ;
+			loadNodesConf(jo);
+			return true ;
+		}
 	}
 	
 	private static void loadNodesConf(JSONObject conf_jo) throws IOException

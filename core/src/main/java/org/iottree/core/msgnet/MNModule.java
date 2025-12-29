@@ -136,6 +136,25 @@ public abstract class MNModule extends MNBase
 	}
 	
 	@SuppressWarnings("unchecked")
+	public <T extends MNNode> List<T> listRelatedNodes(Class<T> c)
+	{
+		ArrayList<T> rets = new ArrayList<>(this.nodeIdSet.size()) ;
+		if(this.nodeIdSet==null||this.nodeIdSet.size()<=0)
+			return null ;
+		
+		for(String nid:this.nodeIdSet)
+		{
+			MNNode n = this.belongTo.getNodeById(nid) ;
+			if(n==null)
+				continue ;
+			if(!c.isInstance(n))
+				continue ;
+			rets.add((T)n) ;
+		}
+		return rets ;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public <T extends MNNode> T getRelatedNodeFirst(Class<T> c)
 	{
 		if(this.nodeIdSet==null||this.nodeIdSet.size()<=0)

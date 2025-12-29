@@ -660,6 +660,8 @@ var cxt_menu = {
 		{op_name:"set_main_ui",op_title:"<wbt:lang>set_as_main_ui</wbt:lang>",op_icon:"fa fa-star",op_action:act_main_hmi,op_chk:(tn)=>{
 			return !tn.ref;
 		}},
+		{op_name:"pos_up",op_title:"<wbt:lang>pos_up</wbt:lang>",op_icon:"fa fa-arrow-up",op_action:act_pos_up},
+		{op_name:"pos_down",op_title:"<wbt:lang>pos_down</wbt:lang>",op_icon:"fa fa-arrow-down",op_action:act_pos_down}
 	]
 }
 
@@ -924,22 +926,7 @@ function set_connprovider(jo,cb)
 				url : "./conn/cp_ajax.jsp",
 				data :{prjid:repid,op:'cp_set',json:JSON.stringify(jo)}
 			};
-		/*
-		send_ajax("./conn/cp_ajax.jsp",{prjid:repid,op:'cp_set',json:JSON.stringify(jo)},(bsucc,ret)=>{
-			if(!bsucc||ret.indexOf("{")!=null)
-			{
-				cb(false,ret) ;
-				return ;
-			}
-			if(typeof(ret)=='string')
-				eval("ret="+ret);
-			if(ret.res)
-				cb(true,"") ;
-			else
-				cb(false,ret.err) ;
-		});
-		*/
-		
+
 		$.ajax(pm).done((ret)=>{
 			if(typeof(ret)=='string')
 				eval("ret="+ret);

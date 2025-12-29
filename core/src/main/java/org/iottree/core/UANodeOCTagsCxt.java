@@ -269,6 +269,37 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return rets;
 	}
 
+	public boolean chgHmiPosUpDown(int dir,UAHmi hmi) throws Exception
+	{
+		if(dir==0)
+			return false;
+		List<UAHmi> hmis = this.getHmis() ;
+		if(hmis==null||!hmis.contains(hmi))
+			return false;
+		int k = hmis.indexOf(hmi) ;
+		if(k<0)
+			return false;
+		if(dir<0)//up
+		{
+			if(k==0)
+				return false;
+			UAHmi tmpch = hmis.get(k-1) ;
+			hmis.set(k-1,hmi) ;
+			hmis.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
+		else
+		{//down
+			if(k>=hmis.size()-1)
+				return false;
+			UAHmi tmpch = hmis.get(k+1) ;
+			hmis.set(k+1,hmi) ;
+			hmis.set(k,tmpch) ;
+			this.save();
+			return true;
+		}
+	}
 	/**
 	 * 
 	 * @return

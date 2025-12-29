@@ -39,8 +39,8 @@
 		admin_roles="manager,"
 		debug_cookie_only="true"
 
-		login_page="/ent/login/login_01.jsp"
-		login_redirect_page="/ent/index.jsp"
+		login_page0="/ent/login/login_01.jsp"
+		login_redirect_page0="/ent/index.jsp"
 		is_force_redirect="true"
 		desc="debug_cookie_only为true的情况是用户IE不关闭就一直登陆">
 	</auth>

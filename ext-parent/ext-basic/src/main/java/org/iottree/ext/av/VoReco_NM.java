@@ -584,6 +584,7 @@ public class VoReco_NM extends MNNodeMid
 			if (reco == null)
 				return null;
 
+			//audio data in PCM 16-bit mono format
 			if (reco.acceptWaveForm(vo_bs, vo_bs.length))
 			{
 				// full result

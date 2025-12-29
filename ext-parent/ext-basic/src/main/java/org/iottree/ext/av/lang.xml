@@ -10,4 +10,6 @@
 	<dd_node id="1" name="obj_reco" name_cn="目标检测" name_en="Object Recognizer" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="tts" name_cn="文本转语音(TTS)" name_en="Text to Speech(TTS)" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="audio_stream_player" name_cn="音频流播放" name_en="Audio Stream Player" desc_cn="" desc_en=""/>
+	
 </dd_class>

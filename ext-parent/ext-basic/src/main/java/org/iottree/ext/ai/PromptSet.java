@@ -1,4 +1,4 @@
-package org.iottree.ext.ai_agent;
+package org.iottree.ext.ai;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
@@ -6,19 +6,19 @@ import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.json.JSONObject;
 
-public class TxtToJSONCmd extends MNNodeMid
+public class PromptSet extends MNNodeMid
 {
 
 	@Override
 	public String getTP()
 	{
-		return "tt_jc";
+		return "prompt_set";
 	}
 
 	@Override
 	public String getTPTitle()
 	{
-		return g("tt_jc");
+		return g("prompt_set");
 	}
 
 	@Override

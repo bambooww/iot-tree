@@ -36,6 +36,8 @@ public class MNMsg implements IMNCxtPk
 	 */
 	private byte[] bytesArray = null ;
 	
+	private Object extObj = null ;
+	
 	public MNMsg()
 	{
 		_id = IdCreator.newSeqId() ;
@@ -263,6 +265,16 @@ public class MNMsg implements IMNCxtPk
 		return this.bytesArray ;
 	}
 	
+	public MNMsg asExtObj(Object extobj)
+	{
+		this.extObj = extobj;
+		return this;
+	}
+	
+	public Object getExtObj()
+	{
+		return this.extObj ;
+	}
 	
 	
 	public JSONObject toJO()
@@ -281,7 +293,8 @@ public class MNMsg implements IMNCxtPk
 		
 		if(this.bytesArray!=null)
 			jo.put("bytes_len",this.bytesArray.length) ;
-		
+		if(extObj!=null)
+			jo.put("ext_obj", true) ;
 		return jo ;
 	}
 	

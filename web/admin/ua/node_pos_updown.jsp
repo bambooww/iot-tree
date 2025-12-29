@@ -8,7 +8,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*"%><%!
-	static boolean updownNd(UANode nd,int dir)
+	static boolean updownNd(UANode nd,int dir) throws Exception
 	{
 		if(nd instanceof UADev)
 		{
@@ -21,6 +21,12 @@
 			UACh ch = (UACh)nd ;
 			UAPrj prj = ch.getBelongTo() ;
 			return prj.chgChPosUpDown(dir,ch) ;
+		}
+		if(nd instanceof UAHmi)
+		{
+			UAHmi ch = (UAHmi)nd ;
+			UANodeOCTagsCxt pn = ch.getBelongTo() ;
+			return pn.chgHmiPosUpDown(dir,ch) ;
 		}
 		return false;
 	}

@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "cmd": {
+      "type": "string"
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "device_id": {"type": "string"},
+          "parameter": {"type": "string"},
+          "value": {
+            "type": [
+              "number",
+              "string"
+            ]
+          }
+        },
+        "required": [
+          "device_id",
+          "parameter",
+          "value"
+        ]
+      }
+    }
+  },
+  "required": [ "cmd", "devices" ]
+}

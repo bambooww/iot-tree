@@ -11,6 +11,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 
 public class UrlUtil
 {
@@ -87,6 +89,40 @@ public class UrlUtil
 			,Integer conn_timeout,Integer read_timeout)
 			throws IOException
 	{
+		String urlpm = "" ;
+		if(post_pm!=null)
+		{
+			StringBuilder sb = new StringBuilder() ;
+			boolean bfirst=true;
+			for(Map.Entry<String, String> n2v:post_pm.entrySet())
+			{
+				if(bfirst) bfirst=false;
+				else sb.append("&") ;
+				sb.append(n2v.getKey()).append("=").append(URLEncoder.encode(n2v.getValue(),"UTF-8")) ;
+			}
+			urlpm = sb.toString() ;
+		}
+		
+		doPostToOut(url, req_heads,"application/x-www-form-urlencoded",urlpm,outputs
+				, conn_timeout, read_timeout) ;
+		
+	}
+	
+	
+	public static String doPostJsonToOut(String url, Map<String,String> req_heads,String json_str
+			,Integer conn_timeout,Integer read_timeout)
+			throws IOException
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream() ;
+		doPostToOut(url, req_heads,"application/json; charset=utf-8",json_str.toString(),baos,conn_timeout,read_timeout);
+		return new String(baos.toByteArray()) ;
+	}
+	
+	
+	public static void doPostToOut(String url, Map<String,String> req_heads,String content_tp,String post_txt,OutputStream outputs
+			,Integer conn_timeout,Integer read_timeout)
+			throws IOException
+	{
 		URL u = new URL(url);
 		HttpURLConnection http_conn = null;
 
@@ -97,24 +133,11 @@ public class UrlUtil
 				http_conn.setConnectTimeout(conn_timeout);
 			if(read_timeout!=null)
 				http_conn.setReadTimeout(read_timeout);
-			
-			String urlpm = "" ;
-			if(post_pm!=null)
-			{
-				StringBuilder sb = new StringBuilder() ;
-				boolean bfirst=true;
-				for(Map.Entry<String, String> n2v:post_pm.entrySet())
-				{
-					if(bfirst) bfirst=false;
-					else sb.append("&") ;
-					sb.append(n2v.getKey()).append("=").append(URLEncoder.encode(n2v.getValue(),"UTF-8")) ;
-				}
-				urlpm = sb.toString() ;
-			}
 
 			http_conn.setRequestMethod("POST");
-			http_conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			http_conn.setRequestProperty("Content-Length", String.valueOf(urlpm.length()));
+			http_conn.setRequestProperty("Content-Type", content_tp);
+			byte[] post_bs = post_txt.getBytes("UTF-8") ;
+			http_conn.setRequestProperty("Content-Length", String.valueOf(post_bs.length));
 			http_conn.setRequestProperty("User-Agent", "Mozilla/5.0");
 			if(req_heads!=null)
 			{
@@ -124,14 +147,12 @@ public class UrlUtil
 				}
 			}
 
-			if(urlpm.length()>0)
+			if(post_bs.length>0)
 			{
 				http_conn.setDoOutput(true);
-				try (DataOutputStream out = new DataOutputStream(http_conn.getOutputStream()))
-				{
-					out.writeBytes(urlpm);
-					out.flush();
-				}
+				OutputStream outs = http_conn.getOutputStream();
+				outs.write(post_bs);
+				outs.flush();
 			}
 			
 			int responseCode = http_conn.getResponseCode();
@@ -152,7 +173,8 @@ public class UrlUtil
 			}
 			else
 			{
-				throw new IOException("postUrlToOut error with HTTP code: " + responseCode);
+				//http_conn.
+				throw new IOException("doPostToOut error with HTTP code: " + responseCode);
 			}
 		}
 		finally

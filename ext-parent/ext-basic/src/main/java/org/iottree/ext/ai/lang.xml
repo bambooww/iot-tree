@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="prompt_set" name_cn="提示词设置" name_en="Prompt Set" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="tt_jc" name_cn="文字转JSON指令" name_en="Text to JSON Cmd" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="chat_ctrl" name_cn="聊天控制" name_en="Chat Control" desc_cn="通过大语音模型，转换为控制指令" desc_en=""/>
+	<dd_node id="1" name="chat_ctrl_cmd" name_cn="控制点指令" name_en="Control Cmd" desc_cn="通过大语音模型，转换为控制指令" desc_en=""/>
+	
+	<dd_node id="1" name="vllm_ctrl" name_cn="vLLM Chat控制" name_en="vLLM Chat Control" desc_cn="通过vLLM模型，转换为控制指令" desc_en=""/>
+	<dd_node id="1" name="vllm_ctrl_cmd" name_cn="vLLM Chat指令" name_en="vLLM Control Cmd" desc_cn="vLLM控制指令" desc_en=""/>
+</dd_class>

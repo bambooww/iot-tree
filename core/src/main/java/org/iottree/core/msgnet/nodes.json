@@ -97,10 +97,13 @@
 	
 	{"cat":"_av","nodes":[
 		"org.iottree.ext.av.MicIn_NS",
+		"org.iottree.ext.av.AudioStreamPlayer",
 		"org.iottree.ext.av.VoReco_NM",
 		"org.iottree.ext.av.WavPlayer_NM",
+		
 		"org.iottree.ext.av.ObjReco_NM",
-		"org.iottree.ext.av.TTS_NM"
+		
+		"org.iottree.ext.av.tts.VibeVoiceTTS"
 	],"modules":[
 		
 	]},
@@ -134,12 +137,27 @@
 		]
 	},
 	
-	{"cat":"_aia","nodes":[
+	{"cat":"_ai","nodes":[
 		
-		"org.iottree.ext.ai_agent.PromptSet",
-		"org.iottree.ext.ai_agent.TxtToJSONCmd"
+		
 	],"modules":[
-		
+		{"cn":"org.iottree.ext.ai.mn.LLMOllama_M","nodes":[
+				"org.iottree.ext.ai.mn.LLMOllamaChat_NM",
+				"org.iottree.ext.ai.mn.LLMOllamaChat_RES",
+				"org.iottree.ext.ai.mn.LLMOllamaEmbed_NM",
+				"org.iottree.ext.ai.mn.LLMOllamaEmbed_RES"
+		]},
+		{"cn":"org.iottree.ext.ai.mn.VLLM_M","nodes":[
+				"org.iottree.ext.ai.mn.VLLMChat_NM"
+		]},
+		{"cn":"org.iottree.ext.ai.mn.LLMTooling_M","nodes":[
+				"org.iottree.ext.ai.mn.LLMToolFunc_RES"
+		]},
+		{"cn":"org.iottree.ext.ai.dev.DevCtrl_M","nodes":[
+				"org.iottree.ext.ai.dev.DevCtrlDevItem_NS",
+				"org.iottree.ext.ai.dev.DevCtrlRequest_NM",
+				"org.iottree.ext.ai.dev.DevCtrlRespHandle_NM"
+		]}
 	]},
 	
 	{"cat":"_sim","nodes":[
