@@ -196,6 +196,7 @@ function do_submit(cb)
 	let ben = $("#enable").prop("checked") ;
 	let show_out_tt = $("#show_out_tt").prop("checked") ;
 	let res_name = $("#res_name").val() ;
+	
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;

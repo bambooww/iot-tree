@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -134,6 +133,18 @@ public class MNManager
 					mnn.setCat(cat);
 					cat.item2conf.put(mnn.getTPFull(), ci) ;
 					registerItem(mnn,cat);
+					
+					if(mnn instanceof MNModule)
+					{
+						List<ConfItem.NodeItem> nodes = ci.getNodes() ;
+						if(nodes!=null)
+						{
+							for(ConfItem.NodeItem nd:nodes)
+							{
+								registerNodeToModule(nd.classn,wi.getAppClassLoader(),(MNModule)mnn) ;
+							}
+						}
+					}
 				}
 				catch(Exception ee)
 				{
@@ -174,13 +185,17 @@ public class MNManager
 		}
 	}
 	
-	public static MNBase registerNodeToModule(String classname,MNModule m)
+	public static MNBase registerNodeToModule(String classname,ClassLoader cl,MNModule m)
 	{
 		try
 		{
 			if(classname.startsWith("#"))
 				return null ;
-			Class<?> c = Class.forName(classname) ;
+			Class<?> c = null;
+			if(cl!=null)
+				c = cl.loadClass(classname) ;
+			else
+				c = Class.forName(classname) ;
 			MNNode n = (MNNode)c.getConstructor().newInstance() ;
 			m.registerSubTpNode(n);
 			return n ;
@@ -267,6 +282,12 @@ public class MNManager
 	
 	private static void loadNodesConf(JSONObject conf_jo) throws IOException
 	{
+		loadNodesConfNodes(conf_jo) ;
+		loadNodesConfRes(conf_jo) ;
+	}
+	
+	private static void loadNodesConfNodes(JSONObject conf_jo) throws IOException
+	{
 		//JSONObject jo = Convert.readFileJO(f) ;
 		JSONArray catjarr = conf_jo.optJSONArray("cats") ;
 		int n = catjarr.length() ;
@@ -300,12 +321,101 @@ public class MNManager
 					for(Object ob:m_nodes.toList())
 					{
 						String cn = (String)ob ;
-						registerNodeToModule(cn,md) ;
+						registerNodeToModule(cn,null,md) ;
 					}
 				}
 				
 			}
 		}
+	}
+	
+	
+	// --- ResCaller
+	
+	private static void loadNodesConfRes(JSONObject conf_jo) throws IOException
+	{
+		//JSONObject jo = Convert.readFileJO(f) ;
+		JSONArray catjarr = conf_jo.optJSONArray("res_cats") ;
+		int n = catjarr.length() ;
+		for(int i =0 ; i < n ; i ++)
+		{
+			JSONObject catjo = catjarr.getJSONObject(i) ;
+			String cat = catjo.getString("name") ;
+			String catt = catjo.optString("title") ;
+			ResCat mncat = registerResCat(new ResCat(cat,catt)) ;
+			JSONArray nodes = catjo.optJSONArray("callers") ;
+			if(nodes!=null)
+			{
+				for(Object ob:nodes.toList())
+				{
+					String cn = (String)ob ;
+					registerResCaller(cn,mncat) ;
+				}
+			}
+		}
+	}
+	
+	public static ResCaller registerResCaller(String classname,ResCat cat)
+	{
+		try
+		{
+			if(classname.startsWith("#"))
+				return null ;
+			Class<?> c = Class.forName(classname) ;
+			ResCaller m = (ResCaller)c.getConstructor(ResCat.class).newInstance(cat) ;
+			cat.name2caller.put(m.getCallerName(),m);
+			return m ;
+		}
+		catch(Throwable ee)
+		{
+			if(log.isDebugEnabled())
+				log.error(ee.getMessage(), ee);
+			log.warn("registerItem "+classname+" "+ee.getMessage());
+			return null ;
+		}
+	}
+	
+	
+	static LinkedHashMap<String,ResCat> NAME2RESCAT = new LinkedHashMap<>() ;
+	
+	public static ResCat registerResCat(ResCat cat)
+	{
+		NAME2RESCAT.put(cat.getName(),cat) ;
+		return cat ;
+	}
+	
+	public static ResCat registerResCat(String name,String title)
+	{
+		ResCat cat = new ResCat(name,title) ;
+		return registerResCat(cat) ;
+	}
+	
+	public static ResCaller getResCaller(String catname,String callername)
+	{
+		ResCat cat = NAME2RESCAT.get(catname) ;
+		if(cat==null)
+			return null ;
+		return cat.getCallerByName(callername) ;
+	}
+	
+	public static ResCaller getResCallerByUID(String uid)
+	{
+		int k = uid.indexOf('.') ;
+		if(k<=0)
+			return null ;
+		return getResCaller(uid.substring(0,k),uid.substring(k+1)) ;
+	}
+	
+	public static List<ResCat> listRegisteredResCats()
+	{
+		ArrayList<ResCat> rets = new ArrayList<>() ;
+		rets.addAll(NAME2RESCAT.values()) ;
+		return rets ;
+	}
+	
+	public static ResCat getResCat(String cat_name)
+	{
+		return NAME2RESCAT.get(cat_name) ;
 	}
 
 	static
@@ -1116,5 +1226,7 @@ public class MNManager
 			}
 		}
 	}
+	
+	
 	
 }

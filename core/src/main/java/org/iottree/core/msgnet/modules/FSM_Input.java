@@ -2,11 +2,16 @@ package org.iottree.core.msgnet.modules;
 
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
-import org.iottree.core.msgnet.MNNodeMid;
+import org.iottree.core.msgnet.MNNodeEnd;
 import org.iottree.core.msgnet.RTOut;
 import org.json.JSONObject;
 
-public class FSM_Input extends MNNodeMid
+/**
+ * Unified input for FSM,msg will out in current FSM_State
+ * @author jason.zhu
+ *
+ */
+public class FSM_Input extends MNNodeEnd
 {
 	public static final String TP = "fsm_input" ;
 	
@@ -32,7 +37,7 @@ public class FSM_Input extends MNNodeMid
 	@Override
 	public String getIcon()
 	{
-		return "PK_flw";
+		return "\\uf30b";
 	}
 	
 	@Override
@@ -42,31 +47,28 @@ public class FSM_Input extends MNNodeMid
 	}
 
 
-	@Override
-	public int getOutNum()
-	{
-		return 1;
-	}
+//	@Override
+//	public int getOutNum()
+//	{
+//		return 1;
+//	}
 	
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -75,6 +77,11 @@ public class FSM_Input extends MNNodeMid
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
+		FSM_M owner = (FSM_M)this.getOwnRelatedModule() ;
+		FSM_State cur_st = owner.RT_getCurrentState() ;
+		if(cur_st==null)
+			return null ;
+		cur_st.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(3, msg));
 		return null;
 	}
 

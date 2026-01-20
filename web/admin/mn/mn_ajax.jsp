@@ -353,6 +353,30 @@ try
 		else
 			m.toJO().write(out) ;
 		return ;
+	case "rt_debug_call_msg":
+		if(!Convert.checkReqEmpty(request, out,"netid", "nodeid","in_out"))
+			return ;
+		//System.out.println("rt_debug_msg ----"+Convert.toFullYMDHMS(new Date())) ;
+		String in_out = request.getParameter("in_out") ;
+		MNNodeResCaller nd_res=  (MNNodeResCaller)node ;
+		if("in".equals(in_out))
+		{
+			JSONObject ooo = nd_res.RT_getCallInput() ;
+			if(ooo==null)
+				out.print("{}") ;
+			else
+				ooo.write(out) ;
+		}
+		else if("out".equals(in_out))
+		{
+			JSONObject ooo = nd_res.RT_getCallOutput() ;
+			if(ooo==null)
+				out.print("{}") ;
+			else
+				ooo.write(out) ;
+		}
+		
+		return ;
 	case "rt_debug_prompt":
 		if(!Convert.checkReqEmpty(request, out,"netid", "itemid","lvl","ptp"))
 			return ;

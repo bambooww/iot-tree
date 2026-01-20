@@ -24,4 +24,9 @@
 	<dd_node id="1" name="ktp_mem" name_cn="内存" name_en="Mem" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="ktp_save" name_cn="保存" name_en="Save" desc_cn="" desc_en=""/>
 	
+	<dd_node id="1" name="res_caller" name_cn="通用调用资源Caller" name_en="Common Caller"
+		desc_cn="可以设置调用参数的通用资源"
+		desc_en="Common resource that can be set caller"
+		/>
+		
 </dd_class>

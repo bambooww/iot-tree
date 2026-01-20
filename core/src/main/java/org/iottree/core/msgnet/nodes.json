@@ -8,7 +8,8 @@
 		"org.iottree.core.msgnet.nodes.NS_OuterTrigger",
 		"org.iottree.core.msgnet.nodes.NS_OnFlowEvt",
 		"org.iottree.core.msgnet.nodes.OutCallFunc",
-		"org.iottree.core.msgnet.nodes.OutCallRet"
+		"org.iottree.core.msgnet.nodes.OutCallRet",
+		"org.iottree.core.msgnet.nodes.NRES_Common"
 	],"modules":[
 		{"cn":"org.iottree.core.msgnet.modules.MemMultiQueue","nodes":[
 			"org.iottree.core.msgnet.modules.MemQueue_NM"
@@ -23,6 +24,10 @@
 		"org.iottree.core.msgnet.nodes.NM_OnOff",
 		"org.iottree.core.msgnet.nodes.NM_Exec"
 	],"modules":[
+		{"cn":"org.iottree.core.msgnet.modules.MsgMTO_M","nodes":[
+			"org.iottree.core.msgnet.modules.MsgMTO_IN",
+			"org.iottree.core.msgnet.modules.MsgMTO_OUT"
+		]},
 		{"cn":"org.iottree.core.msgnet.modules.PID_M","nodes":[
 			"org.iottree.core.msgnet.modules.PID_PV",
 			"org.iottree.core.msgnet.modules.PID_SP",
@@ -33,8 +38,9 @@
 		]},
 		{"cn":"org.iottree.core.msgnet.modules.FSM_M","nodes":[
 			"org.iottree.core.msgnet.modules.FSM_State",
-			"org.iottree.core.msgnet.modules.FSM_Transit",
-			"org.iottree.core.msgnet.modules.FSM_Input"
+			"org.iottree.core.msgnet.modules.FSM_Input",
+			"#org.iottree.core.msgnet.modules.FSM_Transit"
+			
 		]}
 		
 	]},
@@ -53,6 +59,7 @@
 		"org.iottree.core.msgnet.nodes.NM_TagTSRec2RDB",
 		"org.iottree.core.msgnet.nodes.NS_TagChgTrigger",
 		"org.iottree.core.msgnet.nodes.NS_TagAlertTrigger",
+		"org.iottree.core.msgnet.nodes.NM_TagEvtReader",
 		"org.iottree.core.msgnet.nodes.NS_TagEvtTrigger",
 		"org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB"
 	],"modules":[
@@ -139,8 +146,12 @@
 	
 	{"cat":"_ai","nodes":[
 		
-		
+		"#org.iottree.ext.ai.yolo.Yolo_NM"
 	],"modules":[
+		{"cn":"org.iottree.ext.ai.edge.IOTTreeEdge_M","nodes":[
+				"org.iottree.ext.ai.edge.IOTTE_Gesture_NM"
+				
+		]},
 		{"cn":"org.iottree.ext.ai.mn.LLMOllama_M","nodes":[
 				"org.iottree.ext.ai.mn.LLMOllamaChat_NM",
 				"org.iottree.ext.ai.mn.LLMOllamaChat_RES",
@@ -152,6 +163,9 @@
 		]},
 		{"cn":"org.iottree.ext.ai.mn.LLMTooling_M","nodes":[
 				"org.iottree.ext.ai.mn.LLMToolFunc_RES"
+		]},
+		{"cn":"org.iottree.ext.ai.mcp.MCPServer_M","nodes":[
+				"#org.iottree.ext.ai.mcp.MCPTool_RES"
 		]},
 		{"cn":"org.iottree.ext.ai.dev.DevCtrl_M","nodes":[
 				"org.iottree.ext.ai.dev.DevCtrlDevItem_NS",
@@ -169,5 +183,13 @@
 			"org.iottree.pro.modbuss.MSOnMasterWrite_NS"
 		]}
 	]}
+  ],
+  
+  "res_cats":[
+  	{
+  		"name":"_basic","title":"Basic","callers":[
+  			"org.iottree.core.msgnet.caller.JsCaller"
+  		]
+  	}
   ]
 }

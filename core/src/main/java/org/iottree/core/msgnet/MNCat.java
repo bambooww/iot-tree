@@ -107,6 +107,21 @@ public class MNCat implements ILang
 				}
 			}
 
+			if(n instanceof MNNode)
+			{
+				MNNode mnn = (MNNode)n ;
+				MNModule owner = mnn.getOwnRelatedModule() ;
+				if(owner!=null)
+				{
+					ConfItem ci = item2conf.get(owner.getTPFull()) ;
+					if(ci==null)
+						return null ;
+					ConfItem.NodeItem ni = ci.getNodeByClassN(n.getClass().getCanonicalName()) ;
+					if(ni==null)
+						return null ;
+					return "/"+webItem.getAppName()+"/"+ni.pm_ui_path ;
+				}
+			}
 			ConfItem ci = item2conf.get(n.getTPFull()) ;
 			if(ci==null)
 				return null ;

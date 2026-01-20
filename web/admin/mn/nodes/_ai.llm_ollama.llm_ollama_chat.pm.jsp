@@ -41,12 +41,24 @@ if(node==null)
 
 LLMOllama_M m = (LLMOllama_M)node.getOwnRelatedModule() ;
 String model_name = node.getModelName() ;
-List<LLMModel> models = m.listModelItems(true) ;
+List<LLMModel> models = null;
+boolean list_model_err = false;
+try
+{
+	models = m.listModelItems(true) ;
+}
+catch(Exception ee)
+{
+	ee.printStackTrace();
+	//models = m.listModelItems()
+	models = Arrays.asList();
+	list_model_err = true ;
+}
 String sys_msg = node.getSystemMsg() ;
 String last_user_msg=node.getLastUserMsg();
 String last_assistant_msg=node.getLastAssistantMsg() ;
 
-List<LLMToolFunc_RES> tool_funcs = node.listToolFuncs() ;
+List<MNNodeResCaller> tool_funcs = node.listToolFuncCallers() ;
 %>
 <style>
 .msg
@@ -72,6 +84,14 @@ for(LLMModel md:models)
 %>
       </select>
     </div>
+    <div class="layui-form-mid">
+<%
+if(list_model_err)
+{
+%><span style='color:red;'>connect Ollama LLM Error</span><%
+}
+%>
+	</div>
 </div>
 
 <div class="layui-form-item">
@@ -103,9 +123,9 @@ if(tool_funcs!=null&&tool_funcs.size()>0)
     <label class="layui-form-label">Tool Func:</label>
     <div class="layui-input-inline" style="width:600px;">
 <%
-	for(LLMToolFunc_RES tf : tool_funcs)
+	for(MNNodeResCaller tf : tool_funcs)
 	{
-%><span >[<%=tf.getName() %>]:<%=tf.getDesc() %></span><%
+%><span >[<%=tf.getCallerName() %>]:<%=tf.getCallerTitle() %></span><%
 	}
 %>
     </div>

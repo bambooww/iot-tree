@@ -290,6 +290,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.marks = Convert.splitStrWith(jo.optString("marks"), ",|") ;
 		this.desc = jo.optString("desc","") ;
 		this.resName = jo.optString("res_name") ;
+		
+//		if(this instanceof MNNodeRes)
+//		{
+//			MNNodeRes nres = (MNNodeRes)this ;
+//			nres.callerUID = jo.optString("caller_uid") ;
+//		}
 		//other may be icon color etc
 	}
 	

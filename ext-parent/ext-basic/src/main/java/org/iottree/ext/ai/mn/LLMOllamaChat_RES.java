@@ -6,13 +6,12 @@ import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
-import dev.langchain4j.model.ollama.OllamaChatModel;
 
 public class LLMOllamaChat_RES extends MNNodeRes
 {
 	String modelName = null;//"qwen3:4b";
 	
-	private OllamaChatModel chatModel = null ;
+//	private OllamaChatModel chatModel = null ;
 	
 	@Override
 	public String getTP()
@@ -83,7 +82,7 @@ public class LLMOllamaChat_RES extends MNNodeRes
 //		this.ollamaPort = jo.optInt("ollama_port", 11434) ;
 		this.modelName = jo.optString("model_name") ;
 		
-		chatModel = null ;
+//		chatModel = null ;
 	}
 	
 	@Override

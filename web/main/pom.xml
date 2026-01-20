@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.iottree.web</groupId>
     <artifactId>web-parent</artifactId>
-    <version>1.8.5</version>
+    <version>1.8.6</version>
   </parent>
   <artifactId>main</artifactId>
   <!-- 

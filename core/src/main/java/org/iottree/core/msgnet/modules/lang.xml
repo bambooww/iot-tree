@@ -32,10 +32,23 @@
 		desc_cn=""
 		desc_en=""
 		/>	
+		
+	<dd_node id="1" name="mto" name_cn="多到一" name_en="Many To One" 
+		desc_cn=""
+		desc_en=""
+		/>	
+	<dd_node id="1" name="mto_in" name_cn="输入" name_en="In" 
+		desc_cn=""
+		desc_en=""
+		/>	
+	<dd_node id="1" name="mto_out" name_cn="输出" name_en="Out" 
+		desc_cn=""
+		desc_en=""
+		/>	
 	
 	<dd_node id="1" name="fsm_state" name_cn="状态" name_en="State"/>
 	<dd_node id="1" name="fsm_transit" name_cn="状态转换" name_en="Transit State"/>
-	<dd_node id="1" name="fsm_input" name_cn="状态机输入" name_en="SM Input"/>	
+	<dd_node id="1" name="fsm_input" name_cn="状态机统一输入" name_en="FSM Unified Input"/>	
 		
 	
 	<dd_node id="1" name="sql_que_msg_per_row_jo" name_cn="每行一个消息JSONObject输出" name_en="A message per row-JONSObject" />

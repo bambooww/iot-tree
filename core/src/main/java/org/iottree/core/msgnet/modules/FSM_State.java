@@ -56,7 +56,47 @@ public class FSM_State extends MNNodeState
 		return "#333333" ;
 	}
 
+	@Override
+	public final int getOutNum()
+	{
+		return 4;
+	}
+	
 
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		switch(idx)
+		{
+		case 0:
+			return "in";
+		case 1:
+			return "run";
+		case 2:
+			return "out";
+		case 3:
+			return "⟶" ;
+		default:
+			return null ;
+		}
+	}
+	
+	@Override
+	public String RT_getOutColor(int idx)
+	{
+		switch(idx)
+		{
+		case 0:
+			return "green";
+		case 1:
+			return "blue";
+		case 2:
+			return "red";
+		default:
+			return null ;
+		}
+	}
+	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{

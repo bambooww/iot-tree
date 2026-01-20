@@ -1,0 +1,266 @@
+
+.top {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 999;
+	height: 45px;
+	width:100%;
+	text-align: left;
+	margin:0px;
+	padding:0px;
+	overflow: hidden
+}
+
+
+.left {
+	position: fixed;
+	float: left;
+	left: 0;
+	top: 0px;
+	bottom: 0;
+	z-index: 999;
+	width: 45px;
+	overflow-x: hidden;
+	background-color:#aaaaaa;
+	
+}
+
+
+.left_pan {
+	position: fixed;
+	float: left;
+	left: 45px;
+	top: 45px;
+	bottom: 0;
+	z-index: 999;
+	width: 145px;
+	overflow-x: hidden
+}
+
+.right {
+	position: fixed;
+	float: right;
+	right: 0;
+	top: 0px;
+	bottom: 0;
+	z-index: 999;
+	width: 45px;
+	height: 100%;
+	overflow-x: hidden
+	background-color: #aaaaaa;
+}
+
+.mid {
+	position: absolute;
+	left: 45px;
+	right: 0px;
+	top: 0px;
+	bottom: 0;
+	z-index: 998;
+	width: auto;
+	margin:0px;
+	overflow: hidden;
+	box-sizing: border-box
+}
+
+.top_btn
+{
+	color:#009999;
+	margin-top: 5px;
+	margin-left:20px;
+	cursor: pointer;
+}
+
+.top i:hover
+{
+color: #fdd000;
+}
+
+.lr_btn
+{
+	margin-top: 10px;
+	color:#009999;
+	cursor: pointer;
+}
+
+.lr_btn_div
+{
+	margin-top: 0px;
+	color:#858585;
+	background-color:#eeeeee;
+	cursor: pointer;
+}
+
+.lr_btn_btm
+{
+	margin-bottom: 20px;
+	position:absolute;
+	left:5px;
+	bottom:20px;
+	color:#858585;
+	
+	cursor: pointer;
+}
+
+.left i:hover{
+color: #fdd000;
+}
+
+.lr_btn i:hover
+{
+color: #fdd000;
+}
+
+.right i:hover{
+color: #ffffff;
+}
+
+.props_panel_edit
+{
+	position0: absolute;
+	left: 0px;
+	right: 0px;
+	top: 18px;
+	bottom0: 50px;
+	height:80%
+	z-index: 998;
+
+	overflow-y: auto;
+	vertical-align:top;
+	box-sizing: border-box
+}
+
+.props_panel_pos
+{
+	position: absolute;
+	bottom: 50px;
+	
+	z-index: 998;
+	box-sizing: border-box
+}
+
+.top_menu_close {
+    font-family: Tahoma;
+    border: solid 2px #ccc;
+    padding: 0px 5px;
+    text-align: center;
+    font-size: 12px;
+    color: blue;
+    position: absolute;
+    top: 2px;
+    line-height: 14px;
+    height: 14px;
+    width: 26px;
+    border-radius: 14px;
+    -moz-border-radius: 14px;
+    background-color: white;
+}
+
+.top_menu_left{
+	position:absolute;z-index: 50000;width: 25;height:25;TOP:100px;right:0px;
+	text-align: center;
+	font-size: 12px;
+ font-weight: bold;
+ background-color:#4770a1;
+ color: #eeeeee;
+ line-height: 35px;
+ border:2px solid;
+border-radius:5px;
+//box-shadow: 5px 5px 2px #888888;
+}
+
+.top_win_left
+{
+border:solid 3px gray;		
+background-color:silver;
+top:0;
+left:30;
+height:230;
+width:830;
+padding:1px;
+line-height:21px;
+border-radius:15px;
+-moz-border-radius:15px;
+box-shadow:0 5px 27px rgba(0,0,0,0.3);
+-webkit-box-shadow:0 5px 27px rgba(0,0,0,0.3);
+-moz-box-shadow:0 5px 27px rgba(0,0,0,0.3);
+_position:absolute;
+_display:block;
+z-index:10000;
+}
+
+.left_panel_win
+{
+position:absolute;display:none;z-index:60001;left:45px;
+background-color: #eeeeee;
+top:0px;height:100%;
+}
+
+.right_panel_win
+{
+position:absolute;z-index:1000;right:0px;
+top:0px;height:100%;
+border: 1;
+ font: 15;
+  width: 245px;
+  background-color: #f2f2f2;
+
+}
+
+
+.left_panel_bar
+{
+height:30px;
+}
+
+.layui-tab {
+    margin: 0px;
+    padding:0px;
+    text-align: left!important;
+    height:35px;
+}
+.layui-tab-content {
+    padding: 0px;
+}
+
+.edit_toolbar
+{
+height:50px;background-color: grey;
+}
+
+.edit_toolbar button
+{
+	width:40px;height:40px;margin-top:5px;float: left;margin-left:5px;
+}
+
+.oper
+{
+position: absolute;width:45px;height:45px;left:50px;background-color:#67e0e3;top:10px;z-index: 60000
+}
+
+.oper i
+{
+margin-top:5px;
+}
+
+.toolbox
+{
+		top:25px;
+		left:100px;
+		width:150px;
+}
+.prompt_p
+{
+	position: absolute;
+	left:60px;
+	min-height: 40px;
+	min-width:100px;
+	bottom: 10px;
+	border:1px solid;
+	display:none;
+	color:#00ffdd;
+	background-color: #003935;
+	z-index:1001;
+}

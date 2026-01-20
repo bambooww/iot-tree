@@ -15,6 +15,7 @@ import org.iottree.ext.ai.LLMMsg;
 import org.iottree.ext.ai.LLMReq;
 import org.iottree.ext.ai.LLMResp;
 import org.iottree.ext.ai.LLMRespVLLM;
+import org.iottree.ext.ai.LLMToolFunc;
 import org.iottree.ext.ai.LLMMsg.Role;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,6 +93,12 @@ public class VLLMChat_NM extends MNNodeMid
 	public Map<Integer,OutResDef> getOut2Res()
 	{
 		return OUT2RES ;
+	}
+	
+
+	public List<LLMToolFunc_RES> listToolFuncs()
+	{
+		return this.findSubsequentNodes(LLMToolFunc_RES.class) ;
 	}
 
 	public String getModelName()
@@ -286,11 +293,23 @@ public class VLLMChat_NM extends MNNodeMid
 		LLMReq req = RT_getOrCreateReq(msg) ;
 		if(req==null)
 			return null ;
+		
+		List<LLMToolFunc_RES> tfs = listToolFuncs();
+		if(tfs!=null&&tfs.size()>0)
+		{
+			for(LLMToolFunc_RES tf : tfs)
+			{
+				LLMToolFunc llmtf = tf.toToolFunc() ;
+				if(llmtf==null)
+					continue;
+				req.addTool(llmtf) ;
+			}
+		}
 		//req.asMaxTokens()
 		String url = owner.getUrl() + "/v1/chat/completions";
 		JSONObject req_jo = req.toJO() ;
 		String req_jstr = req_jo.toString(2) ;
-		System.out.println(" req jo==="+req_jstr) ;
+		//System.out.println(" req jo==="+req_jstr) ;
 		
 		MNMsg m = new MNMsg().asPayloadJO(req_jo) ;//resp.getMessage().getContent());
 		RTOut rto = RTOut.createOutIdx().asIdxMsg(0, m) ;

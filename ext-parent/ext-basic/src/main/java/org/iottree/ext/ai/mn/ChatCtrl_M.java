@@ -8,9 +8,6 @@ import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.ollama.OllamaChatModel;
-
 /**
  * using prompt and device status ,with chat
  * to return device json command  

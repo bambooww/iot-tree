@@ -12,7 +12,6 @@ import org.iottree.ext.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import dev.langchain4j.model.chat.ChatModel;
 import org.iottree.core.util.*;
 
 public class LLMOllama_M extends MNModule

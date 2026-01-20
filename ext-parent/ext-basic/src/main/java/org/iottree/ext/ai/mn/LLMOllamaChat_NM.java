@@ -9,7 +9,9 @@ import java.util.Map;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
+import org.iottree.core.msgnet.MNNodeResCaller;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.ResCaller;
 import org.iottree.core.msgnet.MNNode.OutResDef;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.UrlUtil;
@@ -98,11 +100,23 @@ public class LLMOllamaChat_NM extends MNNodeMid
 	}
 	
 	
-	public List<LLMToolFunc_RES> listToolFuncs()
+	public List<MNNodeResCaller> listToolFuncCallers()
 	{
-		return this.findSubsequentNodes(LLMToolFunc_RES.class) ;
+		return this.findSubsequentNodes(MNNodeResCaller.class) ;
 	}
 
+	public MNNodeResCaller getToolFuncNode(String call_name)
+	{
+		List<MNNodeResCaller> tfs = listToolFuncCallers() ;
+		if(tfs==null)
+			return null ;
+		for(MNNodeResCaller tf:tfs)
+		{
+			if(call_name.equals(tf.getCallerName()))
+				return tf ;
+		}
+		return null ;
+	}
 
 	public String getModelName()
 	{
@@ -268,12 +282,16 @@ public class LLMOllamaChat_NM extends MNNodeMid
 		if(req==null)
 			return null ;
 		
-		List<LLMToolFunc_RES> tfs = listToolFuncs();
+		List<MNNodeResCaller> tfs = this.listToolFuncCallers();
 		if(tfs!=null&&tfs.size()>0)
 		{
-			for(LLMToolFunc_RES tf : tfs)
+			for(MNNodeResCaller tf : tfs)
 			{
-				LLMToolFunc llmtf = tf.toToolFunc() ;
+				ResCaller rc = tf.getResCaller() ;
+				if(rc==null)
+					continue ;
+				
+				LLMToolFunc llmtf = LLMToolFunc.parseFromResCaller(rc);//.toToolFunc() ;
 				if(llmtf==null)
 					continue;
 				req.addTool(llmtf) ;
@@ -311,14 +329,31 @@ public class LLMOllamaChat_NM extends MNNodeMid
 			
 			if(resp.fromJO(tmpjo))
 			{
-				//resp.getMessage().getContent());
-				String content = resp.getMessage().getContent() ;
+				LLMMsg resp_msg = resp.getMessage() ;
+				String content = resp_msg.getContent() ;
 				MNMsg m = new MNMsg().asPayload(content) ;
 				rto.asIdxMsg(2, m) ;
 				//return rto.asIdxMsg(1, m);//.asIdxMsg(1, new MNMsg().asPayload(content));
-			}
+				
+				RT_processToolCall(resp_msg) ;
+			}			
 		}
 		return rto ;
+	}
+	
+	private void RT_processToolCall(LLMMsg resp_msg) throws Exception
+	{
+		List<LLMMsg.ToolCallFunc> tcfs = resp_msg.getToolCallFunctions() ;
+		if(tcfs!=null)
+		{
+			for(LLMMsg.ToolCallFunc tcf:tcfs)
+			{
+				MNNodeResCaller tf_node = getToolFuncNode(tcf.name) ;
+				if(tf_node==null)
+					continue ;
+				JSONObject call_ret = tf_node.RT_onResCall(tcf.arguments) ;
+			}
+		}
 	}
 
 	@Override

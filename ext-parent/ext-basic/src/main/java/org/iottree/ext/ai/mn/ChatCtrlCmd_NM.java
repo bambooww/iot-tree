@@ -11,13 +11,6 @@ import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.request.ChatRequest;
-import dev.langchain4j.model.chat.request.ResponseFormat;
-import dev.langchain4j.model.chat.request.ResponseFormatType;
-import dev.langchain4j.model.chat.request.json.JsonSchema;
-import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -181,33 +174,34 @@ public class ChatCtrlCmd_NM extends MNNodeMid
 			return null ;
 		
 		
-		OpenAiChatModel model = OpenAiChatModel.builder()
-			    .baseUrl("http://172.20.226.189:8000/v1") // 关键：指向你的vLLM服务
-			    .apiKey("no-api-key-needed") // vLLM不需要key，但需填一个非空值
-			    .modelName("./Qwen2.5-0.5B-Instruct/") // 必须与启动服务时指定的名称一致
-			    .temperature(0.1)
-			    .maxTokens(5500)
-			    .logRequests(true) // 开启日志，便于调试
-			    .logResponses(true)
-			    .build();
-
-		ResponseFormat rf = ResponseFormat.builder()
-				.type(ResponseFormatType.JSON)
-				//.jsonSchema(JsonSchema.builder().name("abc").build())
-				.build();
-		UserMessage umsg = UserMessage.from(pld);
-		//umsg.
-		ChatRequest cr = ChatRequest.builder()
-				.responseFormat(rf)
-				.messages(umsg)
-				.build() ;
-			ChatResponse response = model.chat(cr) ;
-			
-			JSONObject resp_jo = new JSONObject(response.aiMessage().text()) ;
-			//System.out.println() ;
-			MNMsg m = new MNMsg().asPayloadJO(resp_jo) ;
-					 
-		return RTOut.createOutIdx().asIdxMsg(0, m);
+//		OpenAiChatModel model = OpenAiChatModel.builder()
+//			    .baseUrl("http://172.20.226.189:8000/v1") // 关键：指向你的vLLM服务
+//			    .apiKey("no-api-key-needed") // vLLM不需要key，但需填一个非空值
+//			    .modelName("./Qwen2.5-0.5B-Instruct/") // 必须与启动服务时指定的名称一致
+//			    .temperature(0.1)
+//			    .maxTokens(5500)
+//			    .logRequests(true) // 开启日志，便于调试
+//			    .logResponses(true)
+//			    .build();
+//
+//		ResponseFormat rf = ResponseFormat.builder()
+//				.type(ResponseFormatType.JSON)
+//				//.jsonSchema(JsonSchema.builder().name("abc").build())
+//				.build();
+//		UserMessage umsg = UserMessage.from(pld);
+//		//umsg.
+//		ChatRequest cr = ChatRequest.builder()
+//				.responseFormat(rf)
+//				.messages(umsg)
+//				.build() ;
+//			ChatResponse response = model.chat(cr) ;
+//			
+//			JSONObject resp_jo = new JSONObject(response.aiMessage().text()) ;
+//			//System.out.println() ;
+//			MNMsg m = new MNMsg().asPayloadJO(resp_jo) ;
+//					 
+//		return RTOut.createOutIdx().asIdxMsg(0, m);
+		return null;
 	}
 	
 //	@Override

@@ -52,7 +52,7 @@ if(!bind_tag_only)
    <div class="layui-form-item" >
     <label class="layui-form-label">Tag:</label>
     <div class="layui-input-inline" style="width:400px;">
-      <input type="text" id="tag" name="tag" lay-verify="required" autocomplete="off" class="layui-input" >
+      <input type="text" id="tag" name="tag" lay-verify="required" autocomplete="off" class="layui-input" placeholder="Select via the button on the right">
     </div>
     <div class="layui-form-mid"><button onclick="sel_tag()" class="layui-btn layui-btn-sm layui-btn-primary">...</button></div>
   </div>
@@ -60,7 +60,7 @@ if(!bind_tag_only)
     <label class="layui-form-label">Trans JS:</label>
     <div class="layui-input-inline" style="width:400px;">
     ($V,$this)=>{
-      <textarea id="trans" name="trans" placeholder="" class="layui-textarea" rows="8" ondblclick="on_client_js_edit('trans')"></textarea>
+      <textarea id="trans" name="trans" placeholder="e.g. if($V<30) return 'green'; else return 'red';" class="layui-textarea" rows="8" ondblclick="on_client_js_edit('trans')"></textarea>
       }
     </div>
   </div>

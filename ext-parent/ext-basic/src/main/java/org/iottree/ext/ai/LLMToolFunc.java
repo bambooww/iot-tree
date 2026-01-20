@@ -1,11 +1,16 @@
 package org.iottree.ext.ai;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.iottree.core.msgnet.MNNodeResCaller;
+import org.iottree.core.msgnet.ResCaller;
 import org.iottree.core.util.*;
 
 public class LLMToolFunc extends LLMTool
@@ -14,7 +19,7 @@ public class LLMToolFunc extends LLMTool
 	{
 		public String name ;
 		
-		public String tp ;
+		public String tp ; //
 		
 		public String desc ;
 		
@@ -22,7 +27,9 @@ public class LLMToolFunc extends LLMTool
 		
 		private JSONObject toTpDescJO()
 		{
-			return new JSONObject().putOpt("type",tp).putOpt("description",desc) ;
+			JSONObject jo = new JSONObject().putOpt("type",tp).putOpt("description",desc) ;
+			//jo.put("enum", value)
+			return jo ;
 		}
 		
 		public JSONObject toJO()
@@ -54,7 +61,9 @@ public class LLMToolFunc extends LLMTool
 	
 	String desc ;
 	
-	HashMap<String,Param> paramsMap = new HashMap<>() ;
+	HashMap<String,Param> paramsMap = null;//new HashMap<>() ;
+	
+	JSONObject paramJsonSchema = null ;
 	
 	public LLMToolFunc(String name,String desc,List<Param> params)
 	{
@@ -62,6 +71,21 @@ public class LLMToolFunc extends LLMTool
 		this.desc = desc ;
 		for(Param pm:params)
 			paramsMap.put(pm.name,pm) ;
+	}
+	
+	public LLMToolFunc(String name,String desc,JSONObject param_jsonschema)
+	{
+		this.name = name ;
+		this.desc = desc ;
+		this.paramJsonSchema = param_jsonschema;
+	}
+	
+	public static LLMToolFunc parseFromResCaller(ResCaller rc)
+	{
+		if(rc==null)
+			return null ;
+
+		return new LLMToolFunc(rc.getCallerName(),rc.getCallerTitle(),rc.getParamJsonSchema()) ;
 	}
 	
 	@Override
@@ -115,18 +139,28 @@ public class LLMToolFunc extends LLMTool
 		JSONObject ret = new JSONObject() ;
 		ret.put("name", this.name) ;
 		ret.put("description", this.desc) ;
-		JSONObject pm_jo = new JSONObject() ;
-		ret.put("parameters", pm_jo) ;
-		
-		pm_jo.put("type", "object") ;
-		JSONObject ps_jo = new JSONObject() ;
-		JSONArray req_jarr = new JSONArray() ;
-		pm_jo.put("properties", ps_jo) ;
-		pm_jo.put("required", req_jarr) ;
-		
-		for(Param pm:this.paramsMap.values())
+		if(this.paramsMap!=null)
 		{
-			ps_jo.put(pm.name, pm.toTpDescJO()) ;
+			JSONObject pm_jo = new JSONObject() ;
+			ret.put("parameters", pm_jo) ;
+			
+			pm_jo.put("type", "object") ;
+			JSONObject ps_jo = new JSONObject() ;
+			JSONArray req_jarr = new JSONArray() ;
+			pm_jo.put("properties", ps_jo) ;
+			pm_jo.put("required", req_jarr) ;
+			
+			for(Param pm:this.paramsMap.values())
+			{
+				ps_jo.put(pm.name, pm.toTpDescJO()) ;
+			}
+		}
+		
+		if(this.paramJsonSchema!=null)
+		{
+			JSONObject pm_jo = new JSONObject(this.paramJsonSchema.toString()) ;
+			pm_jo.remove("$schema") ;
+			ret.put("parameters", pm_jo) ;
 		}
 		return ret ;
 	}

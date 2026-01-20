@@ -3,6 +3,6 @@
 
 
 	<dd_node id="1" name="devctrl_role_normal" name_cn="设备控制助手" name_en="Device Control Assistant" desc_cn="" desc_en=""/>
-	<dd_node id="1" name="devctrl_role_home_ai" name_cn="智能家居管家" name_en="Smart Home Butler" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="devctrl_role_home_ai" name_cn="智能家居控制" name_en="Smart Home Control" desc_cn="" desc_en=""/>
 	
 </dd_class>

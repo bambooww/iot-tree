@@ -1,7 +1,7 @@
 package org.iottree.ext.ai;
 
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.ollama.OllamaChatModel;
+//import dev.langchain4j.model.chat.ChatModel;
+//import dev.langchain4j.model.ollama.OllamaChatModel;
 
 public class AIAgent
 {
@@ -38,15 +38,15 @@ public class AIAgent
     
     public static void test()
     {
-    	ChatModel chatModel = OllamaChatModel.builder().baseUrl("http://127.0.0.1:11434").modelName(MODEL_NAME).build();
-    	String res = chatModel.chat("你是谁？");
-    	System.out.println(res) ;
+//    	ChatModel chatModel = OllamaChatModel.builder().baseUrl("http://127.0.0.1:11434").modelName(MODEL_NAME).build();
+//    	String res = chatModel.chat("你是谁？");
+//    	System.out.println(res) ;
     }
 
     public static void main(String[] args)
     {
-    	ChatModel chatModel = OllamaChatModel.builder().baseUrl("http://127.0.0.1:11434").modelName(MODEL_NAME).build();
-    	String res = chatModel.chat("你是谁？");
-    	System.out.println(res) ;
+//    	ChatModel chatModel = OllamaChatModel.builder().baseUrl("http://127.0.0.1:11434").modelName(MODEL_NAME).build();
+//    	String res = chatModel.chat("你是谁？");
+//    	System.out.println(res) ;
     }
 }

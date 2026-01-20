@@ -38,6 +38,7 @@ if(node==null)
 	return ;
 }
 
+DevCtrl_M.Role role = node.getRole() ;
 String sys_msg = node.getSystemMsg();
 %>
 <style>
@@ -50,16 +51,27 @@ String sys_msg = node.getSystemMsg();
 </style>
 
 <div class="layui-form-item">
-    <label class="layui-form-label">Host</label>
-    <div class="layui-input-inline" style="width:250px;">
-      <input type="text" id="ollama_host" class="layui-input" value="<%=""%>"/>
+    <label class="layui-form-label">Role</label>
+    <div class="layui-input-inline" style="width:150px;">
+    	<select id="role">
+<%
+for(DevCtrl_M.Role r:DevCtrl_M.Role.values())
+{
+	String sel = (role==r)?"selected":"";
+%><option value="<%=r.name()%>" <%=sel %>><%=r.getTitle() %></option>
+<%
+}
+%>
+		</select>
     </div>
+<%--
     <div class="layui-form-mid">Port</div>
     <div class="layui-input-inline" style="width:100px;">
       <input type="number" id="ollama_port" class="layui-input" value="<%=""%>"/>
     </div>
+     --%>
   </div>
-  
+<%--
   <div class="layui-form-item">
     <label class="layui-form-label">system message:</label>
     <div class="layui-input-inline" style="width:600px;">
@@ -67,7 +79,7 @@ String sys_msg = node.getSystemMsg();
     </div>
     <div class="layui-form-mid"><button class="layui-btn layui-btn-sm layui-btn-primary">...</button></div>
 </div>
-  
+   --%>
 <%--
 <div class="layui-form-item">
     <label class="layui-form-label">LLM Model</label>
@@ -89,11 +101,9 @@ function on_after_pm_show(form)
 
 function get_pm_jo()
 {
-	let ollama_host = $("#ollama_host").val();
-	let ollama_port = get_input_val("ollama_port",11434,true) ;
-	//let model_name =  $("#model_name").val();
+	let role = $("#role").val();
 	
-	return {ollama_host:ollama_host,ollama_port:ollama_port} ;
+	return {role:role} ;
 }
 
 function set_pm_jo(jo)

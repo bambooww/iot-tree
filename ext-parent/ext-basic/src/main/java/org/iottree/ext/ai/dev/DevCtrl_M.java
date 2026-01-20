@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 public class DevCtrl_M extends MNModule
 {
-	static Lan lan = Lan.getLangInPk(ValEventTp.class) ;
+	static Lan lan = Lan.getLangInPk(DevCtrl_M.class) ;
 	
 	public static enum Role
 	{
@@ -31,7 +31,18 @@ public class DevCtrl_M extends MNModule
 		
 		public String getTitle()
 		{
-			return lan.g(this.name()) ;
+			return lan.g("devctrl_role_"+this.name()) ;
+		}
+		
+		public String getPromptTitle()
+		{
+			switch(this.name())
+			{
+			case "home_ai":
+				return "Smart Home Control" ;
+			default:
+				return "Device Control Assistant" ;
+			}
 		}
 	}
 	
@@ -71,6 +82,10 @@ public class DevCtrl_M extends MNModule
 		return "\\uf0a0";
 	}
 	
+	public Role getRole()
+	{
+		return this.role ;
+	}
 	
 	public List<DevCtrlDevItem_NS> listRelatedDevItem()
 	{
@@ -126,8 +141,9 @@ public class DevCtrl_M extends MNModule
 			return null ;
 		HashMap<String,String> blk2val = new HashMap<>() ;
 		JSONArray dev_list_jarr = getRelatedDevItemJArr();
-		System.out.println(dev_list_jarr.toString(2));
+		//System.out.println(dev_list_jarr.toString(2));
 		blk2val.put("device_list_json",dev_list_jarr.toString(2)) ;
+		blk2val.put("sys_role",this.role.getPromptTitle()) ;
 		return tt.getContStr(blk2val) ;
 	}
 	

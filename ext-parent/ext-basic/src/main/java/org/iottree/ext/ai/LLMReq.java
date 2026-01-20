@@ -134,6 +134,7 @@ public class LLMReq
 			ret.put("tools", tool_jarr) ;
 			for(LLMTool t:tools)
 				tool_jarr.put(t.toJO()) ;
+			ret.put("tool_choice", "auto") ;
 		}
 		
 		if(openai_guided_json!=null)

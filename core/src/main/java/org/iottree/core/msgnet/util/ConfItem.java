@@ -18,9 +18,25 @@ import org.json.JSONObject;
  */
 public class ConfItem
 {
-	String tp = null ;
+	public class NodeItem
+	{
+		public String classn ;
+		
+		public String pm_ui_path ;
+		
+		public String doc_path ;
+		
+		public NodeItem(String cn,String pm_ui_path,String doc_path)
+		{
+			this.classn = cn ;
+			this.pm_ui_path = pm_ui_path ;
+			this.doc_path = doc_path ;
+		}
+	}
 	
-	String tpt = null ;
+//	String tp = null ;
+//	
+//	String tpt = null ;
 	
 	String classn = null ;
 	
@@ -30,31 +46,49 @@ public class ConfItem
 	
 	String doc_path = null ;
 	
+	List<NodeItem> nodes = null ;
+	
+	//List<String> nodes = null ;
+	
 	ConfItem(JSONObject jo)
 	{
-		this.tp = jo.optString("tp") ;
-		this.tpt = jo.optString("tpt") ;
+//		this.tp = jo.optString("tp") ;
+//		this.tpt = jo.optString("tpt") ;
 		this.classn = jo.optString("class") ;
 		this.pm_ui_path = jo.optString("pm_ui_path") ;
 		this.rt_panel_path = jo.optString("rt_panel_path") ;
 		this.doc_path = jo.optString("doc_path") ;
+		JSONArray node_jarr = jo.optJSONArray("nodes") ;
+		if(node_jarr!=null)
+		{
+			nodes = new ArrayList<>() ;
+			for(int i = 0 ; i < node_jarr.length() ; i ++)
+			{
+				JSONObject tmpjo = node_jarr.getJSONObject(i) ;
+				String cn = tmpjo.optString("class") ;
+				String pm_ui = tmpjo.optString("pm_ui_path") ;
+				String doc = tmpjo.optString("doc_path") ;
+				nodes.add(new NodeItem(cn,pm_ui,doc)) ;
+			}
+		}
 	}
 	
 	public boolean isValid()
 	{
-		return Convert.isNotNullEmpty(this.tp) && Convert.isNotNullEmpty(this.classn) 
-				&& Convert.isNotNullEmpty(this.pm_ui_path) ;
+//		return Convert.isNotNullEmpty(this.tp) && Convert.isNotNullEmpty(this.classn) 
+//				&& Convert.isNotNullEmpty(this.pm_ui_path) ;
+		return Convert.isNotNullEmpty(this.pm_ui_path) ;
 	}
 	
-	public String getTP()
-	{
-		return tp ;
-	}
-	
-	public String getTPT()
-	{
-		return tpt ;
-	}
+//	public String getTP()
+//	{
+//		return tp ;
+//	}
+//	
+//	public String getTPT()
+//	{
+//		return tpt ;
+//	}
 	
 	public String getClassName()
 	{
@@ -74,6 +108,25 @@ public class ConfItem
 	public String getDocPath()
 	{
 		return this.doc_path ;
+	}
+	
+	
+	
+	public List<NodeItem> getNodes()
+	{
+		return this.nodes ;
+	}
+	
+	public NodeItem getNodeByClassN(String classn)
+	{
+		if(this.nodes==null)
+			return null ;
+		for(NodeItem ni:this.nodes)
+		{
+			if(classn.equals(ni.classn))
+				return ni ;
+		}
+		return null ;
 	}
 	
 	public static List<ConfItem> parseConfItems(JSONObject msg_net_jo)

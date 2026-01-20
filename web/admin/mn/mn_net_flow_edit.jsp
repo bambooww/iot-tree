@@ -916,6 +916,32 @@ function debug_in_out_msg(nodeid,outidx)
 				]);
 	}) ;
 }
+	
+function debug_call_msg(nodeid,in_out)
+{
+	
+	let op = "rt_debug_call_msg";
+
+	send_ajax("mn_ajax.jsp",{op:op,container_id:container_id,netid:netid,nodeid:nodeid,in_out:in_out},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("{")!=0)
+		{
+			dlg.msg(ret) ;
+			return ;
+		}
+		let pm;
+		eval("pm="+ret) ;
+		//console.log(pm) ;
+		dlg.open("./mn_debug_msg.jsp",
+				{title:'<wbt:g>debug,data</wbt:g>',pm:pm},
+				['<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+	}) ;
+}
 
 function debug_prompt_detail(itemid,lvl,ptp) //err warn info
 {

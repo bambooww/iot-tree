@@ -22,5 +22,7 @@
 	    ,{"n":"call_out"    ,   "fn":"call_out.svg"}
 	    ,{"n":"ollama"    ,   "fn":"ollama.svg"}
 	    ,{"n":"vllm"    ,   "fn":"vllm.svg"}
+	    ,{"n":"mto"    ,   "fn":"mto.svg"}
+	    ,{"n":"mcp"    ,   "fn":"mcp.svg"}
 	]
 }

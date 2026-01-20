@@ -11,17 +11,17 @@ import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.json.JSONObject;
 
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.SystemMessage;
-import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.ollama.OllamaChatModel;
+//import dev.langchain4j.data.message.ChatMessage;
+//import dev.langchain4j.data.message.SystemMessage;
+//import dev.langchain4j.data.message.UserMessage;
+//import dev.langchain4j.model.chat.ChatModel;
+//import dev.langchain4j.model.chat.response.ChatResponse;
+//import dev.langchain4j.model.ollama.OllamaChatModel;
 
 public class OllamaChat  extends MNNodeMid
 {
 	
-	ChatModel chatModel = null;
+//	ChatModel chatModel = null;
 	
 	String ollamaHost = "localhost" ;
 	
@@ -167,37 +167,43 @@ public class OllamaChat  extends MNNodeMid
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
-		String pld = msg.getPayloadStr() ;
-		if(Convert.isNullOrEmpty(pld))
-			return null;
-		
-		//if(chatModel==null)
-		{
-			if(Convert.isNullOrEmpty(this.ollamaHost))
-			{
-				RT_DEBUG_ERR.fire("model", "model is not ready");
-				return null;
-			}
-			String url = "http://"+this.ollamaHost+":"+this.ollamaPort ;
-			chatModel = OllamaChatModel.builder().baseUrl(url).modelName(modelName)
-					//.numPredict(128) //限制输出token，避免胡思乱想
-					.build();
-		}
-		
-		
-
-		List<ChatMessage> messages = Arrays.asList(
-                SystemMessage.from(SYSTEM_PROMPT), // 第一段：系统角色
-                UserMessage.from("当前设备状态：\n" + getCurrentDeviceStatus()), // 第二段：状态
-                UserMessage.from("用户指令：" + pld) // 第三段：本次指令
-        );
-		
-		ChatResponse resp = chatModel.chat(messages);
-    	//String res = chatModel.chat(pld);
-		String res = resp.aiMessage().text();
- 
-    	MNMsg outm = new MNMsg().asPayload(res) ;
-		return RTOut.createOutIdx().asIdxMsg(0, outm);
+		return null;
 	}
+	
+//	@Override
+//	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
+//	{
+//		String pld = msg.getPayloadStr() ;
+//		if(Convert.isNullOrEmpty(pld))
+//			return null;
+//		
+//		//if(chatModel==null)
+//		{
+//			if(Convert.isNullOrEmpty(this.ollamaHost))
+//			{
+//				RT_DEBUG_ERR.fire("model", "model is not ready");
+//				return null;
+//			}
+//			String url = "http://"+this.ollamaHost+":"+this.ollamaPort ;
+//			chatModel = OllamaChatModel.builder().baseUrl(url).modelName(modelName)
+//					//.numPredict(128) //限制输出token，避免胡思乱想
+//					.build();
+//		}
+//		
+//		
+//
+//		List<ChatMessage> messages = Arrays.asList(
+//                SystemMessage.from(SYSTEM_PROMPT), // 第一段：系统角色
+//                UserMessage.from("当前设备状态：\n" + getCurrentDeviceStatus()), // 第二段：状态
+//                UserMessage.from("用户指令：" + pld) // 第三段：本次指令
+//        );
+//		
+//		ChatResponse resp = chatModel.chat(messages);
+//    	//String res = chatModel.chat(pld);
+//		String res = resp.aiMessage().text();
+// 
+//    	MNMsg outm = new MNMsg().asPayload(res) ;
+//		return RTOut.createOutIdx().asIdxMsg(0, outm);
+//	}
 
 }

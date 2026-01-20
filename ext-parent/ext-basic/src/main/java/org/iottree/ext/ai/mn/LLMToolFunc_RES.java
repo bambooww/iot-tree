@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.iottree.core.msgnet.MNNodeRes;
+import org.iottree.core.msgnet.MNNodeResCaller;
+import org.iottree.core.msgnet.ResCaller;
 import org.iottree.core.msgnet.MNBase.DivBlk;
 import org.iottree.core.util.Convert;
 import org.iottree.ext.ai.LLMTool;
@@ -12,9 +14,8 @@ import org.iottree.ext.ai.LLMToolFunc;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import dev.langchain4j.model.ollama.OllamaChatModel;
 
-public class LLMToolFunc_RES extends MNNodeRes
+public class LLMToolFunc_RES extends MNNodeResCaller
 {
 	String name ; //func name
 	
@@ -80,6 +81,14 @@ public class LLMToolFunc_RES extends MNNodeRes
 		return new LLMToolFunc(this.name,this.desc,
 				params.values().stream().collect(Collectors.toList())) ;
 	}
+	
+
+	@Override
+	public ResCaller getResCaller()
+	{
+		return null;
+	}
+	
 	
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
@@ -164,4 +173,5 @@ public class LLMToolFunc_RES extends MNNodeRes
 		StringBuilder failedr = new StringBuilder() ;
 		//createNoExistedTable(failedr) ;
 	}
+
 }
