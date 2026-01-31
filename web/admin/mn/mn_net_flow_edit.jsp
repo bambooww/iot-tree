@@ -1161,7 +1161,9 @@ function ws_conn()
 	let pn = window.location.pathname ;
 	let k = pn.indexOf("/",1) ;
 	pn = pn.substring(0,k) ;
-    var url = 'ws://' + window.location.host + pn+'/_ws/net_msg/'+container_id+"/"+netid;
+	
+	var bhttps = location.protocol === 'https:';
+    var url = (bhttps?'wss://':'ws://') + window.location.host + pn+'/_ws/net_msg/'+container_id+"/"+netid;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

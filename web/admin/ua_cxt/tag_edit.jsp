@@ -58,10 +58,12 @@
 	boolean b_val_filter=false;
 	String min_val_str="" ;
 	String max_val_str="" ;
+	String mid_dep="" ;
 	//String alert_low="" ;
 	//String alert_high="" ;
 	String alerts = null ;
 	String mid_w_js = "" ;
+	int val_cache_len = 100 ;
 	
 	if(id==null)
 		id = "" ;
@@ -122,6 +124,7 @@
  		if(valtp!=null)
  			valtp_str = ""+valtp.getInt() ;
  		dec_digits = tag.getDecDigits() ;
+ 		val_cache_len = tag.getValCacheLen() ;
  		srate = tag.getScanRate() ;
  		canw = ""+tag.isCanWrite();
  		unit = tag.getUnit() ;
@@ -136,6 +139,7 @@
  		min_val_str = tag.getMinValStr() ;
  		max_val_str = tag.getMaxValStr() ;
  		mid_w_js = tag.getMidWriterJS() ;
+ 		mid_dep = tag.getMidDepend() ;
  		//alert_low = tag.getAlertLowValStr() ;
  		//alert_high = tag.getAlertHighValStr() ;
  		JSONArray jarr = tag.getValAlertsJArr() ;
@@ -342,17 +346,29 @@ else
 }
 %>      
     </div>
-    <div class="layui-input-inline" >
+    
 <%
-if(!bmid)
+if(bmid)
 {
 %>
+<div class="layui-form-mid"><wbt:g>dep_tags</wbt:g></div>
+<div class="layui-input-inline"  style="width:280px;">
+    <textarea style="width:100%;height:100px;overflow:auto;white-space: nowrap;font-size: 12px"  id="mid_dep"  name="mid_dep"   class="layui-input" title=""></textarea>
+ </div>
+<%
+}
+else
+{
+%>
+<div class="layui-input-inline"  style="width:130px;">
     	<button class="layui-btn layui-btn-primary" title="Check Address" onclick="chk_addr()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-check"></i></button>
     	<button class="layui-btn layui-btn-primary" title="Address Help" onclick="help_addr()" <%=(b_batch?"readonly disabled":"") %>><i class="fa-solid fa-question"></i></button>
+   </div>
 <%
 }
 %>
-    </div>
+
+    
   </div>
 <%
 if(bmid)
@@ -436,6 +452,10 @@ if(!bmid)
     </div>
     <div class="layui-input-inline" style="width:380px;display:none;" id="opt_pm_p">
       <input type="text" id="opt_pm" name="opt_pm" class="layui-input" onclick="edit_option()" readonly="readonly"/>
+    </div>
+    <div class="layui-form-mid">Mem Cache Len</div>
+    <div class="layui-input-inline" style="width:100px">
+    	<input type="number" class="layui-input" id="val_cache_len" <%=(b_batch?"readonly":"") %>/>
     </div>
   </div>
   <div class="layui-form-item">
@@ -521,6 +541,7 @@ var addr = "<%=html_str(addr)%>";
 var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
+var val_cache_len = <%=val_cache_len%>;
 var canw = "<%=canw%>";
 var unit = "<%=unit%>" ;
 var indicator = "<%=indicator%>" ;
@@ -533,6 +554,7 @@ var bloc_autosave = <%=local_autosave%> ;
 var min_val_str = "<%=min_val_str%>";
 var max_val_str = "<%=max_val_str%>";
 var alerts_dd = <%=alerts%>;
+var mid_dep = `<%=mid_dep%>` ;
 if(!alerts_dd)
 	alerts_dd=[];
 
@@ -581,9 +603,14 @@ layui.use('form', function(){
 	  	$("#dec_digits").val(dec_digits);
 	  else
 		$("#dec_digits").val("");
+	  if(val_cache_len>0)
+		  $("#val_cache_len").val(val_cache_len) ;
+	  else
+		  $("#val_cache_len").val(100) ;
 	  $("#vt").val(vt) ;
 	  $("#srate").val(srate) ;
 	  $("#canw").val(canw) ;
+	  $("#mid_dep").val(mid_dep) ;
 	  
 	  $("#local_defval").val(loc_devf) ;
 	  $("#min_val_str").val(min_val_str) ;
@@ -1010,6 +1037,7 @@ function do_submit(cb)
 	let max_val_str = $("#max_val_str").val() ;
 	let min_val_str = $("#min_val_str").val() ;
 	let mid_w_js = $("#mid_w_js").val() ;
+	let mid_dep = $("#mid_dep").val();
 	//let alert_low = $("#alert_low").val();
 	//let alert_high = $("#alert_high").val();
 	
@@ -1046,11 +1074,12 @@ function do_submit(cb)
 		addr:get_input_val("addr",""),
 		vt:get_input_val("vt",""),
 		dec_digits:get_input_val("dec_digits",-1,true),
+		val_cache_len:get_input_val("val_cache_len",100,true),
 		srate:get_input_val("srate",100,true),
 		canw:canw,unit:unit,indicator:indicator,
 		trans:JSON.stringify(trans_dd),
 		val_opt:JSON.stringify(opt_dd),
-		b_val_filter:b_val_filter,
+		b_val_filter:b_val_filter,mid_dep:mid_dep,
 		bloc:bloc,loc_defv:loc_defv,bloc_autosave:bloc_autosave,mid_w_js:mid_w_js,
 		min_val_str:min_val_str,max_val_str:max_val_str,alerts:JSON.stringify(alerts_dd),
 		});

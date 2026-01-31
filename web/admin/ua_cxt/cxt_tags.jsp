@@ -151,22 +151,17 @@ text-overflow:ellipsis;
 	color: white;
 }
 
-.tagsel a
-{
-	color: white;
-}
+.tagsel a{color: white;}
 
-#div_list_bd button
-{
-	border:0px;
-	background-color: rgba(0,0,0,0);
-}
+#div_list_bd button{border:0px;background-color: rgba(0,0,0,0);}
 th,td {white-space: nowrap;}
 .wbool {width:90px;border:0px solid #999999;height:100%;}
-
 .bb {white-space: nowrap;}
 .bb_subtt {display:none;}
 .bb:hover .bb_subtt {display:inline;}
+.td_lr {display: flex;justify-content: space-between;align-items: center;}
+.td_lr .ll {visibility: hidden;cursor:pointer;}
+.td_lr:hover .ll{visibility:visible;}
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
@@ -197,7 +192,9 @@ th,td {white-space: nowrap;}
  	<button type="button" class="layui-btn layui-btn-xs bb" onclick="batch_modify_tag()" title="<wbt:g>batch_md</wbt:g>"><i class="fa-solid fa-list-check"></i>&nbsp;<i class="fa fa-pencil"></i><span class="bb_subtt"><wbt:g>batch_md</wbt:g></span></button>
  	<button type="button" class="layui-btn layui-btn-xs bb" onclick="imp_tag()" title="<wbt:g>imp,tag</wbt:g>"><i class="fa fa-arrow-down"></i>&nbsp;<i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>imp,tag</wbt:g></span></button>
  	<button type="button" class="layui-btn layui-btn-xs bb" onclick="exp_tag()" title="<wbt:g>export,tag</wbt:g>"><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-tag"></i><span class="bb_subtt"><wbt:g>export,tag</wbt:g></span></button>
+ 	
  	<%--
+ 	<button type="button" class="layui-btn layui-btn-xs bb" onclick="exp_tag_partial()" title=""><i class="fa fa-arrow-right"></i>&nbsp;<i class="fa-solid fa-diamond"></i><span class="bb_subtt"><wbt:g>export,tag,partial,data</wbt:g></span></button>
  	<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="del_tag()">+Delete Tag</button>
  	 --%>
   
@@ -614,6 +611,11 @@ function sel_tags_all()
 	form.render();
 }
 
+function show_his(id,tt)
+{
+	dlg.open_win("tag_his.jsp?prjid="+prjid+"&id="+id,{title:"Tag Mem Cache Data - "+tt,w:660,h:350},[],[]);
+}
+
 function get_selected_ids_in_table()
 {
 	let ids = get_checked_ids() ;
@@ -775,7 +777,6 @@ function imp_tag()
 
 function exp_tag()
 {
-	
 	let tags=[];
 	let chk_tag_ns = [] ;
 	$(".tag_row").each(function(){
@@ -795,14 +796,8 @@ function exp_tag()
 		}
 	});
 	
-	dlg.open("tag_export.jsp?cxt_path="+cxt_path,{title:"Export Tag",w:'500px',h:'400px',chk_tag_ns:chk_tag_ns}, //tags:tags,cxt_path:cxt_path
-			['<wbt:g>close</wbt:g>'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-	]);
+	dlg.open_win("tag_export.jsp?cxt_path="+cxt_path,{title:"Export Tags @ "+cxt_path,w:'850',h:'600',chk_tag_ns:chk_tag_ns}, //tags:tags,cxt_path:cxt_path
+			[],[]);
 }
 
 function rename_tag(p,id)

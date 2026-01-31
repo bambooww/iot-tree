@@ -193,32 +193,25 @@ IOT-Tree Server提供了独立的人机交互图元库功能，通过不同的�
 
 <img src="./doc/img/msgnet/mn001.png">
 
-
-#### 报警触发和处理(before ver 1.7.0)
-
-
-IOT-Tree基于内部统一的数据标签定义，可以灵活方便的定义报警源、报警处理和报警输出。并且可以通过直观明了的方式进行定义和展示。
-
-
-
-<img src="./doc/img/readme_22.png">
-
-#### 存储输出(before ver 1.7.0)
-
-
-同样基于内部统一的数据标签，你可以灵活方便的定义实时数据和历史数据的数据库输出。
-
-
-
-<img src="./doc/img/readme_23.png">
-
 ### 2.6 客户端支持
 
-IOT-Tree为了方便监控系统现场计算机（或支持触摸功能的一体PC）使用，提供了监控UI的客户端程序。能够方便设备启动时自动启动，并且使监控画面充满屏幕。
+IOT-Tree Server内部支持gRPC服务，启用之后，你可以使用其他各种语言和技术开发你的客户端程序，这些客户端程序可以获得gRPC接口提供的高性能支持。
+
+你可以参考 [实现你自己的.Net客户端][iottree.net_doc] 和配套的 [开源C#.Net gRPC封装库][iottree.net]
+
+
+另外，IOT-Tree为了方便监控系统现场计算机（或支持触摸功能的一体PC）使用，提供了监控UI的客户端程序。能够方便设备启动时自动启动，并且使监控画面充满屏幕。
 
 
 
-<img src="./doc/img/readme_24.png">
+
+[iottree.net_doc]: ./doc/util/iottree.net.md
+[iottree.net]: https://github.com/bambooww/iottree.net
+
+<table>
+<tr><td><img src="./doc/img/util/rpc04.png"></td><td><img src="./doc/img/readme_24.png"></td>
+</tr>
+</table>
 
 ### 2.7 自定义管理界面
 

@@ -71,14 +71,14 @@ if(as.isEnable())
 	{
 %>
 
-		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red" title="stop service" onclick="start_stop(false,'<%=as.getName()%>')"></i>
+		 <i id="prj_btn_stop"  class="fa fa-pause fa-lg" style="color:red;cursor:pointer" title="stop service" onclick="start_stop(false,'<%=as.getName()%>')"></i>
 		 
 <%
 	}
 	else
 	{
 %>
-<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green" title="start service" onclick="start_stop(true,'<%=as.getName()%>')"></i>
+<i id="prj_btn_start"  class="fa fa-play fa-lg" style="color:green;cursor:pointer" title="start service" onclick="start_stop(true,'<%=as.getName()%>')"></i>
 <%
 	}
 }
@@ -162,7 +162,9 @@ function start_stop(b,n)
 	if(!b)
 		op = "stop";
 	
+	dlg.loading(true);
 	send_ajax("service_ajax.jsp",{op:op,n:n},(bsucc,ret)=>{
+		dlg.loading(false);
 		if(!bsucc||ret!='ok')
 		{
 			dlg.msg(ret);return;

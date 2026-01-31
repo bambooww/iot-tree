@@ -87,9 +87,13 @@
 	{"cat":"_net","nodes":[
 		"org.iottree.core.msgnet.nodes.NM_HttpClient",
 		"org.iottree.core.msgnet.nodes.NM_TcpClientRR",
-		"org.iottree.core.msgnet.nodes.NM_RESTfulApi",
+		"org.iottree.core.msgnet.nodes.NM_RESTfulReadApi",
 		"org.iottree.ext.msg_net.MailSender_NM"
 	],"modules":[
+		{"cn":"org.iottree.core.msgnet.modules.RESTful_M","nodes":[
+			"org.iottree.core.msgnet.modules.RESTful_Req",
+			"org.iottree.core.msgnet.modules.RESTful_Resp"
+		]},
 		{"cn":"org.iottree.ext.msg_net.Kafka_M","nodes":[
 			"org.iottree.ext.msg_net.KafkaIn_NS",
 			"org.iottree.ext.msg_net.KafkaOut_NE"
@@ -98,6 +102,7 @@
 			"org.iottree.ext.msg_net.MqttIn_NS",
 			"org.iottree.ext.msg_net.MqttOut_NE"
 		]},
+		
 		{"cn":"org.iottree.ext.msg_net.BACnet_M","nodes":[
 		]}
 	]},
@@ -132,6 +137,7 @@
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Writer",
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_JO2Point",
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Tag2Point",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_ReadByTags",
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement"
 					
 			],"bk":"org.iottree.core.msgnet.store.StoreTbWriter_NE"},
@@ -149,8 +155,8 @@
 		"#org.iottree.ext.ai.yolo.Yolo_NM"
 	],"modules":[
 		{"cn":"org.iottree.ext.ai.edge.IOTTreeEdge_M","nodes":[
-				"org.iottree.ext.ai.edge.IOTTE_Gesture_NM"
-				
+				"org.iottree.ext.ai.edge.IOTTE_Gesture_NM",
+				"org.iottree.ext.ai.edge.IOTTE_ImgBlkOCR_NM"
 		]},
 		{"cn":"org.iottree.ext.ai.mn.LLMOllama_M","nodes":[
 				"org.iottree.ext.ai.mn.LLMOllamaChat_NM",

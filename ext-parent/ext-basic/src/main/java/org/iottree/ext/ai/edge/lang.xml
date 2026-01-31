@@ -3,5 +3,6 @@
 
 
 	<dd_node id="1" name="iottree_edge_gest" name_cn="手势识别" name_en="Gesture Recognition" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="iottree_edge_imgblkocr" name_cn="图像区块OCR" name_en="Img Block OCR" desc_cn="" desc_en=""/>
 	
 </dd_class>

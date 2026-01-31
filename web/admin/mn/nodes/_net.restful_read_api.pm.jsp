@@ -30,7 +30,7 @@ if(net==null)
 	return ;
 }
 String itemid = request.getParameter("itemid") ;
-NM_RESTfulApi node = (NM_RESTfulApi)net.getNodeById(itemid) ;
+NM_RESTfulReadApi node = (NM_RESTfulReadApi)net.getNodeById(itemid) ;
 if(node==null)
 {
 	out.print("no node found") ;

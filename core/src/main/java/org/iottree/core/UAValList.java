@@ -21,6 +21,25 @@ public class UAValList
 	{
 		return vals.size();
 	}
+	
+	public synchronized void setMaxNum(int n)
+	{
+		if(n<=0)
+			return ;
+		
+		if(n>=this.maxNum)
+		{
+			this.maxNum = n ;
+			return ;
+		}
+		
+		if(vals.size()>n)
+		{
+			int k = vals.size()-n ;
+			for(int i = 0 ; i < k ; i ++)
+				vals.removeFirst() ;
+		}
+	}
 
 	public synchronized void addVal(UAVal v)
 	{

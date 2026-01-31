@@ -15,6 +15,7 @@ import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.cxt.JSObMap;
+import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.JsEnv;
 import org.iottree.core.cxt.JsMethod;
 import org.iottree.core.cxt.JsProp;
@@ -108,6 +109,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return this.cat.getDocUrl(this) ;
 	}
 
+	@JsDef
 	public String getId()
 	{
 		return this.id ;
@@ -126,6 +128,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return this.belongTo.belongTo.getBelongToPrj() ;
 	}
 	
+	@JsDef
 	public String getTitle()
 	{
 		return title ;
@@ -168,6 +171,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return  y;
 	}
 	
+	@JsDef
 	public boolean isEnable()
 	{
 		return this.bEnable ;
@@ -204,10 +208,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	protected abstract String getOwnerTP() ;
 
+	@JsDef
 	public abstract String getTP() ;
 	
 	
-	
+	@JsDef
 	public abstract String getTPTitle();
 	
 	public String getTPDesc()

@@ -140,7 +140,7 @@ color:#2f2f2f;
 		
 	</div>
     <div class="layui-tab-item  layui-show" >
-    	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_msg_in</span>(<span class="pm" title="In Msg's Topic">topic</span>,<span class="pm" title="In Msg's Heads">heads</span>,<span class="pm" title="In Msg's Payload">payload</span>,<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
+    	<span style="color:#229ecc">function</span> <span style="color:#ffcc9e;font-weight: bold;">on_msg_in</span>(<span class="pm" title="Msg From">from_node</span>,<span class="pm" title="In Msg's Topic">topic</span>,<span class="pm" title="In Msg's Heads">heads</span>,<span class="pm" title="In Msg's Payload">payload</span>,<span class="pm" title="this runing node">node</span>,<span class="pm" title="This Flow/Net">flow</span>) <span style="color:#901f1f">{</span>
 		<div id='run_js'  style="overflow: scroll;width:100%;height:490px;border:0px solid #e6e6e6;margin-top:2px;"></div>
 		<span style="color:#901f1f">}</span>
 	</div>

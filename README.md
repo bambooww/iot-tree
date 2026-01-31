@@ -165,10 +165,19 @@ Starting from this version, IOT-Tree will not update and maintain previous modul
 
 
 ### 2.6 Client support
+The IOT-Tree Server internally supports gRPC services. Once enabled, you can develop your client programs using various other languages and technologies. These client programs can benefit from the high-performance support provided by the gRPC interface.
 
-IOT-Tree provides a client program for monitoring UI to facilitate the use of on-site computers (or all-in-one PCs that support touch functionality) in the monitoring system. It can facilitate automatic startup of the device and fill the monitoring screen.
+You can refer to [Implement Your Own .Net Client][iottree.net_doc] and the accompanying [Open-source C#.Net gRPC Wrapper Library][iottree.net]
 
-<img src="./web/doc/en/doc/img/readme_24.png">
+Also,IOT-Tree provides a client program for monitoring UI to facilitate the use of on-site computers (or all-in-one PCs that support touch functionality) in the monitoring system. It can facilitate automatic startup of the device and fill the monitoring screen.
+
+[iottree.net_doc]: ./web/doc/util/iottree.net.md
+[iottree.net]: https://github.com/bambooww/iottree.net
+
+<table>
+<tr><td><img src="./doc/img/util/rpc04.png"></td><td><img src="./doc/img/readme_24.png"></td>
+</tr>
+</table>
 
 ### 2.7 Custom management UI
 

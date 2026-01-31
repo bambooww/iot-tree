@@ -52,6 +52,7 @@
 
 		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
 		int dec_digits = Convert.parseToInt32(request.getParameter("dec_digits"),-1);
+		int val_cache_len = Convert.parseToInt32(request.getParameter("val_cache_len"),100);
 		UAVal.ValTP dt = UAVal.getValTp(vt) ;
 		long srate = Convert.parseToInt64(request.getParameter("srate"),100);
 		String strcanw = request.getParameter("canw") ;
@@ -67,6 +68,7 @@
 		//String alert_high = request.getParameter("alert_high") ;
 		String alert_jstr = request.getParameter("alerts") ;
 		String mid_w_js = request.getParameter("mid_w_js") ;
+		String mid_dep = request.getParameter("mid_dep") ;
 		
 		// float x = Convert.parseToFloat(request.getParameter("x"), 0.0f);
 		//float y = Convert.parseToFloat(request.getParameter("y"), 0.0f);
@@ -76,10 +78,11 @@
 
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans,mid_w_js) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
-		ret.asUnit(unit).asIndicator(indicator) ;
+		ret.asUnit(unit).asIndicator(indicator).asValCacheLen(val_cache_len) ;
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
 		ret.setValOption(val_opt) ;
+		ret.asMidDepend(mid_dep) ;
 		//ret.asAlertLowHigh(alert_low, alert_high) ;
 		ret.setValAlerts(alert_jstr);
 		nt.save();
@@ -541,6 +544,45 @@ case "rt":
 		out.print("{\"tag_id\":\""+tg.getId()+"\",\"dt\":"+dt+",\"valid\":"+valid+",\"strv\":\""+strv+"\",\"alert_trigger\":"+b_alert_triggered+"}") ;
 	}
 	out.print("]");
+	break ;
+case "tag_his":
+	if(n==null||!(n instanceof UATag))
+	{
+		out.print("not tag path") ;
+		return;
+	}
+	UATag ttt = (UATag)n ;
+	List<UAVal> his_vals = ttt.HIS_getVals(-1) ;
+	JSONObject out_jo = new JSONObject() ;
+	UAVal.ValTP vt00 = ttt.getValTp() ;
+	out_jo.put("vt",vt00.getStr()) ;
+	out_jo.put("bnum",vt00.isNumberVT()) ;
+	out_jo.put("path",ttt.getNodeCxtPathInPrj()) ;
+	JSONArray data_jarr = new JSONArray() ;
+	out_jo.put("data",data_jarr) ;
+	if(his_vals!=null)
+	{
+		for(UAVal v:his_vals)
+		{
+			boolean bv = v.isValid() ;
+			long dt = v.getValDT() ;
+			Object vv = null;
+			if(bv)
+			{
+				vv = v.getObjVal() ;
+				if(vv instanceof Boolean)
+					vv = ((Boolean)vv).booleanValue()?1:0;
+			}
+			JSONArray jarr = new JSONArray();
+			jarr.put(dt);
+			if(bv)
+				jarr.put(vv);
+			else
+				jarr.put(0).put(false);
+			data_jarr.put(jarr);
+		}
+	}
+	out_jo.write(out) ;
 	break ;
 case "chk_addr":
 	//DevAddr.ChkRes chkres = chkAddr(n,request,out) ;

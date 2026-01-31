@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -28,7 +29,10 @@ import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.conn.ConnPtHTTPSer;
 import org.iottree.core.msgnet.MNManager;
-import org.iottree.core.msgnet.nodes.NM_RESTfulApi;
+import org.iottree.core.msgnet.MNNet;
+import org.iottree.core.msgnet.modules.RESTful_M;
+import org.iottree.core.msgnet.modules.RESTful_Resp;
+import org.iottree.core.msgnet.nodes.NM_RESTfulReadApi;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
@@ -124,12 +128,28 @@ public class PrjFilter implements Filter
 			throws IOException, ServletException
 	{
 		List<String> ss = Convert.splitStrWith(path, "/") ;
-		if(ss.size()!=4)
+		if(ss.size()<4)
 			return false;
 		String s1 = ss.get(1) ;
-		if(!s1.equals("_mn_restful_api"))
+		if(!s1.startsWith("_mn_"))
 			return false;
+		s1 = s1.substring(4) ;
+		if(RESTful_M.TP.equals(s1))
+		{
+			return handleRestfulModule(request,response,ss) ;
+		}
 		
+		if(NM_RESTfulReadApi.TP.equals(s1)||s1.equals("restful_api"))
+		{
+			return handleRestfulReadApi(request, response, ss);
+		}
+		
+		return false;
+	}
+
+	private boolean handleRestfulReadApi(HttpServletRequest request, HttpServletResponse response, List<String> ss)
+			throws ServletException, IOException, UnsupportedEncodingException
+	{
 		String prjn = ss.get(0);
 		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
 		if(prj==null)
@@ -139,11 +159,11 @@ public class PrjFilter implements Filter
 		MNManager mnm = MNManager.getInstance(prj) ;
 		if(mnm==null)
 			return false;
-		List<NM_RESTfulApi> rapis = mnm.findNodesByTP(NM_RESTfulApi.class, true) ;
+		List<NM_RESTfulReadApi> rapis = mnm.findNodesByTP(NM_RESTfulReadApi.class, true) ;
 		if(rapis==null)
 			return false;
-		NM_RESTfulApi api = null ;
-		for(NM_RESTfulApi rapi:rapis)
+		NM_RESTfulReadApi api = null ;
+		for(NM_RESTfulReadApi rapi:rapis)
 		{
 			if(apiname.equals(rapi.getApiName()))
 			{
@@ -185,6 +205,53 @@ public class PrjFilter implements Filter
 				String errm = e.getMessage() ;
 				response.getOutputStream().write(errm.getBytes("UTF-8"));
 			}
+		}
+		return true;
+	}
+	
+	private boolean handleRestfulModule(HttpServletRequest request, HttpServletResponse response, List<String> ss)
+			throws ServletException, IOException, UnsupportedEncodingException
+	{
+		if(ss.size()!=5)
+			return false;
+		
+		String prjn = ss.get(0);
+		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
+		if(prj==null)
+			return false;
+		String netname = ss.get(2) ;
+		String module = ss.get(3) ;
+		String apiname = ss.get(4) ;
+		MNManager mnm = MNManager.getInstance(prj) ;
+		if(mnm==null)
+			return false;
+		MNNet net = mnm.getNetByName(netname) ;
+		if(net==null)
+			return false;
+		List<RESTful_M> mms = net.findItemByTpMark(RESTful_M.class, null) ;
+		if(mms==null)
+			return false;
+		RESTful_M m = null ;
+		for(RESTful_M mm:mms)
+		{
+			if(module.equals(mm.getModuleName()))
+			{
+				m = mm;
+				break ;
+			}
+		}
+		if(m==null)
+			return false;
+		//
+		String method = request.getMethod() ;
+		byte[] bs = readPostBS(request, response) ;
+		boolean bres = m.RT_onReqResp(apiname, request,response, bs) ;
+		
+		if(!bres)
+		{
+			//String errm ="error" ;
+			//response.getOutputStream().write(errm.getBytes("UTF-8"));
+			response.sendError(500, "no reponse data");
 		}
 		return true;
 	}

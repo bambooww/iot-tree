@@ -24,5 +24,6 @@
 	    ,{"n":"vllm"    ,   "fn":"vllm.svg"}
 	    ,{"n":"mto"    ,   "fn":"mto.svg"}
 	    ,{"n":"mcp"    ,   "fn":"mcp.svg"}
+	    ,{"n":"rest_api"    ,   "fn":"rest-api.svg"}
 	]
 }

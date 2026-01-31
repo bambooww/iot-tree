@@ -75,7 +75,8 @@ if(benable)
   <title></title>
 <jsp:include page="../head.jsp"></jsp:include>
     <style>
-
+.top {width:100%;height:30px;font-weight: bold;}
+.main {position: absolute;top:30px;bottom:0px;width:100%;overflow: auto;}
         .segs
         {
         	
@@ -83,9 +84,9 @@ if(benable)
     </style>
 </head>
 <body>
- <legend><%=sch.getTitle() %> - <%=dev.getTitle() %>  runtime controller</legend>
+ <div class="top"><%=sch.getTitle() %> - <%=dev.getTitle() %>  runtime controller</div>
+ <div class="main">
 <b>Segments under [<%=sch.getName() %>.<%=dev.getName() %>]</b>
-
 <%
 for(SlaveDevSeg seg:segs)
 {
@@ -119,7 +120,7 @@ for(SlaveDevSeg seg:segs)
 <%
 }
 %>
-
+</div>
 </body>
 <script src="/_js/layui/layui.all.js"></script>
 <script type="text/javascript">

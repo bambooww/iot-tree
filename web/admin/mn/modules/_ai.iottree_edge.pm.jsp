@@ -393,7 +393,7 @@ function refresh_edge()
 			dlg.msg(`read edge \${u} error:`+ret);return;
 		}
 		cameras = ret.cameras||[]
-		console.log(cameras)
+		// console.log(cameras)
 		update_edge();
 	})
 }

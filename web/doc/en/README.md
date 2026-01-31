@@ -200,32 +200,24 @@ Starting from this version, IOT-Tree will not update and maintain previous modul
 
 <img src="./doc/img/msgnet/mn001.png">
 
-
-#### Alert triggering and handling(before ver 1.7.0)
-
-
-
-IOT-Tree is based on an internally unified data tags definition, which allows for flexible and convenient definition of alert sources, alert handler, and alert outputs. And it can be defined and displayed in a clear and intuitive way.
-
-
-<img src="./doc/img/readme_22.png">
-
-#### Store Output(before ver 1.7.0)
-
-
-
-Based on internally unified tags, you can flexibly and conveniently define the database output of real-time and historical data.
-
-
-<img src="./doc/img/readme_23.png">
-
 ### 2.6 Client support
 
 
-IOT-Tree provides a client program for monitoring UI to facilitate the use of on-site computers (or all-in-one PCs that support touch functionality) in the monitoring system. It can facilitate automatic startup of the device and fill the monitoring screen.
+The IOT-Tree Server internally supports gRPC services. Once enabled, you can develop your client programs using various other languages and technologies. These client programs can benefit from the high-performance support provided by the gRPC interface.
+
+You can refer to [Implement Your Own .Net Client][iottree.net_doc] and the accompanying [Open-source C#.Net gRPC Wrapper Library][iottree.net]
+
+Also,IOT-Tree provides a client program for monitoring UI to facilitate the use of on-site computers (or all-in-one PCs that support touch functionality) in the monitoring system. It can facilitate automatic startup of the device and fill the monitoring screen.
 
 
-<img src="./doc/img/readme_24.png">
+
+[iottree.net_doc]: ./doc/util/iottree.net.md
+[iottree.net]: https://github.com/bambooww/iottree.net
+
+<table>
+<tr><td><img src="./doc/img/util/rpc04.png"></td><td><img src="./doc/img/readme_24.png"></td>
+</tr>
+</table>
 
 ### 2.7 Custom management UI
 

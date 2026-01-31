@@ -17,6 +17,10 @@
 
 	<properties>
 		<output.directory>../../_output</output.directory>
+		<grpc.version>1.78.0</grpc.version>
+        <protobuf.version>3.25.6</protobuf.version>
+        <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
+        <os.plugin.version>1.7.1</os.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -61,6 +65,23 @@
 		    <artifactId>commons-email</artifactId>
 		    <version>1.6.0</version>
 		</dependency>
+		
+		<!-- Source: https://mvnrepository.com/artifact/io.grpc/grpc-protobuf -->
+		<dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+		<dependency>
+		    <groupId>io.grpc</groupId>
+		    <artifactId>grpc-protobuf</artifactId>
+		    <version>1.78.0</version>
+		</dependency>
+		<dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>1.78.0</version>
+        </dependency>
 		
 		<!-- https://mvnrepository.com/artifact/io.modelcontextprotocol.sdk/mcp
 		<dependency>
@@ -133,9 +154,59 @@
 
 	<build>
 		<finalName>iottree-ext-basic</finalName>
+		<plugins>
+		
+			<!-- os-maven-plugin -->
+            <plugin>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+            </plugin>
+			<!-- protobuf  -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf.plugin.version}</version>
+                <configuration>
+                    <protocArtifact>
+                        com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+                    </protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>
+                        io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
+                    </pluginArtifact>
+                    <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
+                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                    <clearOutputDirectory>false</clearOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+		</plugins>
 		<pluginManagement><!-- lock down plugins versions to avoid using Maven 
 				defaults (may be moved to parent pom) -->
 			<plugins>
+				<!-- os-maven-plugin扩展，用于检测操作系统 -->
+                <plugin>
+                    <groupId>kr.motd.maven</groupId>
+                    <artifactId>os-maven-plugin</artifactId>
+                    <version>${os.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>detect</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+			
 				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>

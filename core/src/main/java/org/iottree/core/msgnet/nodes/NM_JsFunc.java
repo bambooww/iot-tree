@@ -10,6 +10,7 @@ import org.graalvm.polyglot.Value;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
+import org.iottree.core.msgnet.MNNode;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTDebugPrompt;
 import org.iottree.core.msgnet.RTOut;
@@ -236,7 +237,7 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 	{
 		String name_sp = JS_getJsNameSp();
 		StringBuilder sb = new StringBuilder() ;
-		sb.append("\r\nfunction ___on_msg_in(topic,heads,payload,node,flow) {\r\n") ;
+		sb.append("\r\nfunction ___on_msg_in(from_node,topic,heads,payload,node,flow) {\r\n") ;
 		
 		if(Convert.isNotNullEmpty(this.onMsgJS))
 			sb.append(this.onMsgJS) ;
@@ -279,9 +280,9 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 		
 		sb.append("\r\n})("+name_sp+" || ("+name_sp+" = {}));\r\n") ;
 		
-		sb.append("function fn_msgin_"+name_sp+"(topic,heads,bjson,payload,node,flow){\r\n") ;
+		sb.append("function fn_msgin_"+name_sp+"(from_node,topic,heads,bjson,payload,node,flow){\r\n") ;
 		sb.append("\r\n  if(bjson) eval('payload='+payload); \r\n");
-		sb.append("\r\n return "+name_sp+".___on_msg_in(topic,heads,payload,node,flow);\r\n");
+		sb.append("\r\n return "+name_sp+".___on_msg_in(from_node,topic,heads,payload,node,flow);\r\n");
 		sb.append("\r\n}\r\n");
 		
 		sb.append("function fn_end_"+name_sp+"(node,flow){\r\n") ;
@@ -359,7 +360,8 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 			bjson = true ;
 			pld = pld.toString() ;
 		}
-		Object obj = cxt.scriptInvoke(fn,msg.getTopic(), msg.getHeadsMap(),bjson,pld,this,this.getBelongTo()) ;
+		MNNode from_nd = in_conn.getFromBelongToNode() ;
+		Object obj = cxt.scriptInvoke(fn,from_nd,msg.getTopic(), msg.getHeadsMap(),bjson,pld,this,this.getBelongTo()) ;
 		if(obj==null)
 			return null ;
 

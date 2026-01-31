@@ -70,6 +70,17 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	@data_val(param_name = "mid")
 	boolean bMid = false;
 	
+	/**
+	 * middle depend other tag paths
+	 * xxx.xx,yyy.yy,zz.zz
+	 */
+	@data_val(param_name = "mid_dep")
+	private String midDepend = null ;
+	
+	private transient List<UATag> midDependTags = null ;
+	
+	private transient long midLastCalDT = -1 ;
+	
 	@data_val(param_name = "midt")
 	private String get_MidT()
 	{
@@ -554,6 +565,47 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return bMid;
 	}
 	
+	public String getMidDepend()
+	{
+		if(this.midDepend==null)
+			return "" ;
+		return midDepend ;
+	}
+	
+	public UATag asMidDepend(String txt)
+	{
+		this.midDepend = txt ;
+		this.midDependTags = null ;
+		return this ;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public List<UATag> getMidDependTags()
+	{
+		if(Convert.isNullOrEmpty(this.midDepend))
+			return null ;
+		
+		if(midDependTags!=null)
+			return midDependTags; 
+		
+		ArrayList<UATag> tags = new ArrayList<>() ;
+		List<String> ss = Convert.splitStrWith(this.midDepend, ",|\r\n") ;
+		UANodeOCTagsCxt tagcxt = this.CXT_getBelongToCxtNode() ;
+		if(tagcxt==null)
+			return tags ;
+		for(String s:ss)
+		{
+			UANode nd = tagcxt.getDescendantNodeByPath(s) ;
+			if(nd==null || !(nd instanceof UATag))
+				continue ;
+			UATag t = (UATag)nd ;
+			tags.add(t) ;
+		}
+		return this.midDependTags = tags ;
+	}
+	
 	public UADev getBelongToDev()
 	{
 		UANode p = belongToNode ;
@@ -681,6 +733,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	public int getDecDigits()
 	{
 		return decDigits ;
+	}
+	
+	public int getValCacheLen()
+	{
+		return this.valChgedCacheLen ;
 	}
 	
 	public String getMidWriterJS()
@@ -1007,6 +1064,15 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		return this ;
 	}
 	
+	public UATag asValCacheLen(int len)
+	{
+		this.valChgedCacheLen = len ;
+		if(this.valsCacheList!=null)
+			this.valsCacheList.setMaxNum(len);
+		//this.valsCacheList = new UAValList(this.valChgedCacheLen) ;
+		return this ;
+	}
+	
 	public ValUnit getValUnit()
 	{
 		if(Convert.isNullOrEmpty(this.unit))
@@ -1277,6 +1343,28 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(!this.isMidExpress())
 			return null;
 		//UAVal v = new UAVal() ;
+		
+		List<UATag> dtags = this.getMidDependTags() ;
+		if(dtags!=null && dtags.size()>0)
+		{// check depend tag update,if not,then return
+			long updt = -1 ;
+			for(UATag tag : dtags)
+			{
+				UAVal val = tag.RT_getVal() ;
+				if(val==null || !val.isValid())
+					return null ;//invalid data ,not cal mid value
+				long dt = val.getValDT() ;
+				if(dt>updt)
+					updt = dt ;
+			}
+			
+			if(updt<=this.midLastCalDT)
+				return null ;// not updte,not cal mid value
+			
+			this.midLastCalDT = updt;
+		}
+		
+		
 		try
 		{
 			UACodeItem ci =  CXT_getMidCodeItem();
@@ -1508,8 +1596,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 //			cdt = chgdt ;
 		
 		if(this.curVal!=null&&!bval_chg)
-		{
+		{// not changed,but his must update
+			
 			this.curVal.setValUpDT(updt);//.setVal(true,v,cdt);
+			
+			HIS_setVal(this.curVal) ;
+			
 			if(this.curVal.isValid()) // && bval_chg)
 			{
 				RT_chkEvent(true) ;

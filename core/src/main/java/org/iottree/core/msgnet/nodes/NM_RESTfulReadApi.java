@@ -10,9 +10,9 @@ import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 
-public class NM_RESTfulApi extends MNNodeMid //implements
+public class NM_RESTfulReadApi extends MNNodeMid //implements
 {
-	public static final String TP = "restful_api" ;
+	public static final String TP = "restful_read_api" ;
 	
 	String apiName = null ;
 	
@@ -69,9 +69,15 @@ public class NM_RESTfulApi extends MNNodeMid //implements
 	@Override
 	public String getTPTitle()
 	{
-		return "RESTful Api";
+		return "RESTful Read Api";
 	}
 
+	@Override
+	public String getTitleColor()
+	{
+		return "#eeeeee" ;
+	}
+	
 	@Override
 	public String getColor()
 	{

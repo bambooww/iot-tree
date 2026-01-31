@@ -225,7 +225,8 @@ var ws = null;
 
 function ws_conn()
 {
-    var url = 'ws://' + window.location.host + '/admin/ws/cxt_rt/'+repname+"/"+id;
+	var bhttps = location.protocol === 'https:';
+    var url =  (bhttps?'wss://':'ws://') + window.location.host + '/admin/ws/cxt_rt/'+repname+"/"+id;
     if ('WebSocket' in window) {
         ws = new WebSocket(url);
     } else if ('MozWebSocket' in window) {

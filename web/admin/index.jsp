@@ -1408,21 +1408,15 @@ function logout()
 
 function service_setup()
 {
-	dlg.open("service/service_mgr.jsp",
-			{title:"<wbt:lang>service_mgr</wbt:lang>",w:'500px',h:'400px'},
-			['<wbt:lang>close</wbt:lang>'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
+	dlg.open_win("service/service_mgr.jsp",
+			{title:"<wbt:lang>service_mgr</wbt:lang>",w:'700',h:'500'},
+			[],
+			[]);
 }
 
 function open_simins(id)
 {
-	window.open("./sim/sim_ins_mgr.jsp?insid="+id);
-	//window.open("ua_rep.jsp?repid="+id);
+	dlg.open_win("./sim/sim_ins_mgr.jsp?insid="+id,{title:"<wbt:lang>simulator</wbt:lang>",w:'1024',h:'660'},[],[]);
 }
 
 function del_simins(id)
@@ -1531,29 +1525,13 @@ function sim_ins_import()
 
 function log_ctrl()
 {
-	dlg.open("util/log_mgr.jsp",
-			{title:"Log Controller",w:'700px',h:'600px'},
-			['Close'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
+	dlg.open_win("util/log_mgr.jsp",{title:"Log Controller",w:'700',h:'600'},[],[]);
 }
 
 
 function conn_platform()
 {
-	dlg.open("util/station_mgr.jsp",
-			{title:"Station Configuration to Platform",w:'700px',h:'600px'},
-			['Close'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
+	dlg.open_win("util/station_mgr.jsp",{title:"Station Configuration to Platform",w:'700',h:'600'},[],[]);
 }
 
 function pro_mgr()

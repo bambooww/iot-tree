@@ -73,4 +73,20 @@
   <dd_node id="1" name="data_num" name_cn="计算点位数据" name_en="Data Num" />
   <dd_node id="1" name="trigger_tp" name_cn="触发类型" name_en="Trigger Type" />
   
+  <dd_node id="1" name="invalid_pts" name_cn="无效点" name_en="Invalid Points" />
+  <dd_node id="1" name="invalid" name_cn="无效" name_en="Invalid" />
+  <dd_node id="1" name="time" name_cn="时间" name_en="Time" />
+  <dd_node id="1" name="val" name_cn="数值" name_en="Value" />
+  
+  <dd_node id="1" name="dep_tags" name_cn="依赖标签" name_en="Depend Tags" />
+  <dd_node id="1" name="partial" name_cn="部分" name_en="Partial" />
+  
+  <dd_node id="1" name="exp_all_n" name_cn="导出全部" name_en="Export All" />
+  <dd_node id="1" name="exp_path_only_n" name_cn="导出路径" name_en="Export Path" />
+  <dd_node id="1" name="exp_all_pt" name_cn="导出对应标签的全部信息，你复制并在其他列表中进行导入，达到标签批量复制的效果" name_en="Export all information corresponding to the tag, copy it, and import it into other lists to achieve the effect of batch copying tags" />
+  <dd_node id="1" name="exp_path_only" name_cn="只导出对应标签的路径列表" name_en="Only export the path list" />
+  
+  <dd_node id="1" name="full" name_cn="完整" name_en="Full" />
+  <dd_node id="1" name="in_prj" name_cn="相对项目" name_en="Relative to the project" />
+  <dd_node id="1" name="in_nd" name_cn="相对当前节点" name_en="Relative to current node" />
 </dd_class>

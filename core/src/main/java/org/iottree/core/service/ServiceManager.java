@@ -34,7 +34,8 @@ public class ServiceManager
 	private static String[] ALL_CNS = new String[] {
 			"org.iottree.core.service.ServiceActiveMQ",
 			"org.iottree.driver.opc.opcua.server.OpcUAService",
-			"org.iottree.driver.bacnet.BACnetService"
+			"org.iottree.driver.bacnet.BACnetService",
+			"org.iottree.ext.grpc.ServiceGRPC"
 	} ;
 	
 	private ArrayList<AbstractService> allServices = new ArrayList<>() ;

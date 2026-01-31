@@ -57,7 +57,7 @@ background-color: #eeeeee
 <script type="text/javascript">
 dlg.resize_to(700,500) ;
 </script>
-<body marginwidth="0" marginheight="0">
+<body marginwidth="0" marginheight="0" style="overflow: hidden;">
  <blockquote class="layui-elem-quote ">Simulation Instance [<%=ins.getTitle() %>]
  
       	<%
@@ -265,7 +265,7 @@ connections=<span id="ch_rt_<%=ch.getId()%>" ></span>
   </div>
 </td>
     <td style="width:100%;height:100%" valign="top">
-    <iframe id="rightf" src="" style="width:100%;height:99%;border:0px"></iframe>
+    <iframe id="rightf" src="" style="width:100%;height:99%;border:0px;"></iframe>
     </td>
   </tr>
 </table>

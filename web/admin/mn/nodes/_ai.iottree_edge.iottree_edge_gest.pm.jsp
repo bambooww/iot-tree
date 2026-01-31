@@ -31,7 +31,7 @@ if(net==null)
 	return ;
 }
 String itemid = request.getParameter("itemid") ;
-IOTTE_Gesture_NS node = (IOTTE_Gesture_NS)net.getNodeById(itemid) ;
+IOTTE_Gesture_NM node = (IOTTE_Gesture_NM)net.getNodeById(itemid) ;
 if(node==null)
 {
 	out.print("no node found") ;

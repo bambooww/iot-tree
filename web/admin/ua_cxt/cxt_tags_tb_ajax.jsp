@@ -268,7 +268,12 @@ if(bloc&&!tag.isSysTag())
         <td title="<%=trans_tt %>"><%=valtp_str %></td>
         <td><%=indicator_t %></td>
         <td title="<%=val_opt_tt%>"><%=val_opt_tp %></td>
-        <td style="text-align:right;" id="ctag_v_<%=cxtpath%>" filter="<%=anti%>"></td>
+        <td filter="<%=anti%>">
+        	<span class="td_lr" >
+        	<span class="ll" onclick="show_his('<%=tag.getId()%>','<%=tag.getTitle() %>')"><i class="fa fa-chart-line"></i></span>
+        	<span id="ctag_v_<%=cxtpath%>" ></span>
+        	</span>
+        </td>
         <td title="<%=unit_tt%>">&nbsp;<%=unit_t %></td>
         <td><span id="ctag_alert_<%=cxtpath%>"><%=alert_str %></span></td>
         <td id="ctag_dt_<%=cxtpath%>"></td>

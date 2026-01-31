@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+option java_package = "org.iottree.ext.grpc";
+// option java_outer_classname = "IOTTreeServer";
+option csharp_namespace = "iottree.lib";
+
+service IOTTreeServer
+{
+  rpc listPrjs (ReqClient) returns (PrjList) ;
+  
+  rpc listTagsInPrj (ReqPrj) returns (TagList) ;
+  
+  rpc setSynTagPath (ReqTagPaths) returns (TagList) ;
+  
+  rpc getSynTagPath(ReqClient) returns (TagList) ;
+  
+  rpc startSyn(ReqClient) returns (stream TagSynVals) ;
+  
+  rpc stopSyn(ReqClient) returns (Result) ;
+  
+  rpc writeTagVal(ReqTagW) returns (Result) ; // write tag
+  
+  rpc setTagVal(ReqTagW) returns (Result) ; // in memory
+}
+
+message PrjItem
+{
+	string name = 1;
+	string title = 2;
+}
+
+message PrjList
+{
+	repeated PrjItem prjs = 1 ;
+}
+
+message TagItem
+{
+	string prj_name = 1 ;
+	
+	string path = 2 ; //full path
+	
+	int32 iid = 3 ;
+	
+	string title = 4 ;
+	
+	string tp = 5 ; //int32 bool etc
+}
+
+message TagList
+{
+	repeated TagItem tags = 1 ;
+}
+
+message TagSynVal
+{
+	string tag_path = 1 ;
+	int32 iid = 2 ;
+	int64 update_dt = 3 ;
+ 	int64 change_dt = 4;
+ 	string str_val = 5 ;
+ 	bool valid = 6 ;
+}
+
+message TagSynVals
+{
+	repeated TagSynVal tag_vals = 1 ;
+}
+
+
+message Result
+{
+	bool succ = 1 ;
+	optional string info = 2 ; 
+}
+
+message ReqClient
+{
+	string client_id = 1;
+}
+
+
+message ReqPrj
+{
+	string client_id = 1;
+	string prj_name = 2;
+}
+
+message ReqTagPaths
+{
+	string client_id = 1;
+	repeated string tag_paths = 2 ;
+}
+
+message ReqTagW
+{
+	string client_id = 1;
+	string tag_path = 2 ;
+	string str_val = 3;
+}
+
