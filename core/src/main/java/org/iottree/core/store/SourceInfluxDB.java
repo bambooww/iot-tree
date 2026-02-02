@@ -115,11 +115,11 @@ public class SourceInfluxDB extends Source //implements Closeable
 					getToken().toCharArray(),getOrg(),getBucket()))
 		{
 			List<Organization> orgs = dbc.getOrganizationsApi().findOrganizations();
-			System.out.println("find orgs num="+orgs.size()) ;
+			// System.out.println("find orgs num="+orgs.size()) ;
 			orgs.forEach(o -> System.out.println("    "+o.getName()));
 			
 			List<Bucket> buckets = dbc.getBucketsApi().findBuckets();
-			System.out.println("find buckets num="+buckets.size()) ;
+			// System.out.println("find buckets num="+buckets.size()) ;
 			buckets.forEach(b -> System.out.println("   "+b.getName()));
 		}
 		catch(Exception ee)

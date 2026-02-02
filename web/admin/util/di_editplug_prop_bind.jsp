@@ -20,8 +20,18 @@
 <script src="/_js/layui/layui.all.js"></script>
 <script src="/_js/dlg_layer.js"></script>
 <script src="/_js/oc/oc.js"></script>
+<style type="text/css">
+.h_mid{
+    float: left;
+    display: inline-block;
+    padding: 9px 15px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: right;
+}
+</style>
 <script>
-dlg.resize_to(600,500);
+dlg.resize_to(650,500);
 </script>
 </head>
 <body>
@@ -51,14 +61,18 @@ if(!bind_tag_only)
 <div id="divtag">
    <div class="layui-form-item" >
     <label class="layui-form-label">Tag:</label>
-    <div class="layui-input-inline" style="width:400px;">
+    <div class="layui-input-inline" style="width:250px;">
       <input type="text" id="tag" name="tag" lay-verify="required" autocomplete="off" class="layui-input" placeholder="Select via the button on the right">
     </div>
     <div class="layui-form-mid"><button onclick="sel_tag()" class="layui-btn layui-btn-sm layui-btn-primary">...</button></div>
+    <div class="layui-input-inline" style="width:200px;">
+    	<input type="checkbox" class="layui-input" lay-skin="primary" id="need_tag_cached" />
+    	<span class="h_mid">Need Cached Data</span>
+    </div>
   </div>
   <div class="layui-form-item" >
     <label class="layui-form-label">Trans JS:</label>
-    <div class="layui-input-inline" style="width:400px;">
+    <div class="layui-input-inline" style="width:450px;">
     ($V,$this)=>{
       <textarea id="trans" name="trans" placeholder="e.g. if($V<30) return 'green'; else return 'red';" class="layui-textarea" rows="8" ondblclick="on_client_js_edit('trans')"></textarea>
       }
@@ -112,7 +126,7 @@ if(plugpm!=null)
 	
 	if(pb)
 		js_cxt = pb.JS_getCxt();
-	var pdf = di.findProDefItemByName(plugpm.name) ;
+	var pdf = di.findPropDefItemByName(plugpm.name) ;
 	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
 	$("#name").val(plugpm.name) ;
 	var vv = plugpm.val ;
@@ -125,6 +139,7 @@ if(plugpm!=null)
 			$("#js").val(vv.binderTxt) ;
 		else
 			$("#tag").val(vv.binderTxt) ;
+		$("#need_tag_cached").prop("checked",vv.need_tag_cached)
 	}
 	form.render() ;
 }
@@ -245,6 +260,7 @@ function editplug_get(cb)
 	var jstxt=null ;
 	var bexp = false;
 	var bunbind=false;
+	var need_tag_cached = $("#need_tag_cached").prop("checked") ;
 	if(bind_val=="true")
 	{
 		js = trim(js) ;
@@ -270,7 +286,7 @@ function editplug_get(cb)
 		bunbind=true;
 	}
 	
-	return {bexp:bexp,jstxt:jstxt,unbind:bunbind,trans:trans};
+	return {bexp:bexp,jstxt:jstxt,unbind:bunbind,trans:trans,need_tag_cached:need_tag_cached};
 }
 
 function on_client_js_edit(id)

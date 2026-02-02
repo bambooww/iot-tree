@@ -9,6 +9,7 @@
 	org.iottree.core.comp.*,
 	org.iottree.core.msgnet.*,
 	org.iottree.core.msgnet.util.*,
+	org.iottree.core.msgnet.store.influxdb.*,
 	org.iottree.ext.msg_net.*
 	"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	

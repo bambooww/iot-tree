@@ -2,6 +2,8 @@ package org.iottree.core.bind;
 
 import java.util.List;
 
+import org.iottree.core.UAHmi;
+
 /**
  * a drawitem which has multi PropBindItems
  *  
@@ -10,6 +12,7 @@ import java.util.List;
  */
 public class BindDI
 {
+	UAHmi hmi ;
 	/**
 	 * drawitem id
 	 */
@@ -19,14 +22,20 @@ public class BindDI
 	
 	List<EventBindItem> evtBindItems  = null ;
 	
-	public BindDI()
-	{}
+//	public BindDI()
+//	{}
 	
-	public BindDI(String id,List<PropBindItem> pbis,List<EventBindItem> evtbds)
+	public BindDI(UAHmi hmi,String id,List<PropBindItem> pbis,List<EventBindItem> evtbds)
 	{
+		this.hmi = hmi ;
 		this.id = id ;
 		this.propBindItems = pbis ;
 		this.evtBindItems = evtbds ;
+	}
+	
+	public UAHmi getHmi()
+	{
+		return this.hmi;
 	}
 	
 	public String getId()

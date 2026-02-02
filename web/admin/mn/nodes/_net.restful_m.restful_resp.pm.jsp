@@ -91,13 +91,10 @@ textarea {width:100%;height:100%;border:1px solid #ccc;}
 </div>
 
 <script>
-
-
 function on_after_pm_show(form)
 {
 	 
 }
-
 
 function get_pm_jo()
 {
@@ -123,6 +120,4 @@ function get_pm_size()
 {
 	return {w:600,h:550} ;
 }
-
-//on_init_pm_ok() ;
 </script>

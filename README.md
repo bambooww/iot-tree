@@ -5,6 +5,9 @@ IOT-Tree Server
  <a href="./web/doc/jp/README.md" target="_blank">日本語</a>
  -->
 
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">Download</a>
+
+<a href="https://pan.baidu.com/s/15uQT4G0CoV9obc0qn6IPjg?pwd=tuf3" target="_blank">Download pan.baidu.com<a>
 
 IOT-Tree Server is a service software system designed for IoT access, data normalization, human-machine interaction display, scheduling control, and data utilization. It is primarily developed using Java, and its management interface is entirely web-based.
 

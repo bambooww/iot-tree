@@ -21,7 +21,9 @@ import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
+import org.iottree.core.UAVal;
 import org.iottree.core.basic.ValEvent;
+import org.iottree.core.bind.PropBindItem;
 import org.iottree.core.station.PlatInsManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WSRoot.SessionItem;
@@ -54,7 +56,8 @@ public abstract class WSServer// extends ConnServer
 		// private long lastDT = -1;
 		private transient HashMap<UATag, Long> tag2lastdt = new HashMap<>();
 
-		// private boolean bFirstTick=true ;
+		//first create
+		private boolean bFirstTick = true ;
 
 		public SessionItem(Session s, UAPrj rep, UANodeOCTagsCxt nodecxt, UAHmi hmi)
 		{
@@ -125,14 +128,100 @@ public abstract class WSServer// extends ConnServer
 				closeSessionOnError(ioe);
 			}
 		}
-
+		
 		void onTick() throws IOException
 		{
 			UAHmi hmi = getHmi();
 			UAPrj prj = getPrj();
 
-			// long lastdt = lastDT;
-			// lastDT = System.currentTimeMillis();
+			UANodeOCTagsCxt ntags = hmi.getBelongTo();
+			JSONObject out_jo = new JSONObject() ;
+			out_jo.put("server", new JSONObject().put("dt",System.currentTimeMillis())) ;
+			
+			if(bFirstTick)
+			{
+				out_jo.put("first_tick",true) ;
+				bFirstTick = false;
+				List<PropBindItem> tag_cache_pbis = hmi.getPropBindItem_NeedTagCached() ;
+				if(tag_cache_pbis!=null&&tag_cache_pbis.size()>0)
+				{
+					JSONObject tags_mc = new JSONObject() ;
+					for(PropBindItem pbi:tag_cache_pbis)
+					{
+						if(!pbi.isNeedTagCached() )
+							continue ;
+						UATag tag = pbi.getBindedTag() ;
+						if(tag==null)
+							continue ;
+						List<UAVal> hisval = tag.HIS_getVals(-1) ;
+						if(hisval==null||hisval.size()<=0)
+							continue ;
+						String tagp = pbi.getTxt();
+						JSONArray his_jarr = new JSONArray() ;
+						for(UAVal v:hisval)
+						{
+							Object objv =v.getObjVal();
+							if(objv==null)
+								continue ;
+							his_jarr.put(new JSONObject().put("ts", v.getValDT()).put("v", objv)) ;
+						}
+						tags_mc.put(tagp,his_jarr) ;
+					}
+					out_jo.put("tags_mem_cached", tags_mc) ;
+				}
+			}
+			
+			JSONObject data = new JSONObject() ;
+			out_jo.put("data",data) ;
+			data.put("prj_id",prj.getId()).put("cxt_path", ntags.getNodePathCxt()).put("prj_run",prj.RT_isRunning()) ;
+			
+			if (prj.RT_isRunning() || prj.isPrjPStationIns()) //PlatInsManager.isInPlatform())
+			{
+				StringWriter sw_rt = new StringWriter();
+
+				if (ntags.CXT_renderJson(sw_rt, tag2lastdt, null))
+				{
+					JSONObject cxt_rt = new JSONObject(sw_rt.toString()) ;
+					data.put("cxt_rt",cxt_rt) ;
+				}
+				
+				//render alerts
+				JSONArray jarr = ntags.CXT_getAlertsJArr() ;
+				if(jarr!=null && jarr.length()>0)
+				{
+					data.put("has_alert",true).put("alerts",jarr) ;
+				}
+
+				List<ValEvent> vas = ntags.CXT_listAlerts();
+				if(vas!=null&&vas.size()>0)
+				{
+					jarr = new JSONArray() ;
+					for(ValEvent va:vas)
+					{
+						JSONObject jo = va.RT_get_triggered_jo() ;
+						if(jo==null)
+							continue ;
+						jarr.put(jo) ;
+					}
+					data.put("has_tag_alert",true).put("tag_alerts",jarr) ;
+				}
+			}
+
+			String txt = out_jo.toString();
+			try
+			{
+				sendTxt(txt);
+			}
+			catch ( IllegalStateException ise)
+			{
+				ise.printStackTrace();
+			}
+		}
+
+		void onTick_old() throws IOException
+		{
+			UAHmi hmi = getHmi();
+			UAPrj prj = getPrj();
 
 			UANodeOCTagsCxt ntags = hmi.getBelongTo();
 
@@ -144,16 +233,10 @@ public abstract class WSServer// extends ConnServer
 			{
 				StringWriter sw_rt = new StringWriter();
 
-				// long tmp_maxdt = ntags.CXT_renderJson(sw_rt,tag2lastdt,null)
-				// ;
-				// System.out.println(" lastdt="+Convert.toFullYMDHMS(new
-				// Date(lastdt))+" rendmax="+Convert.toFullYMDHMS(new
-				// Date(tmp_maxdt)));
 				if (ntags.CXT_renderJson(sw_rt, tag2lastdt, null))
 				{
 					sw.write(",\"cxt_rt\":");
 					sw.write(sw_rt.toString());
-					// lastDT = tmp_maxdt ;
 				}
 				
 				//render alerts
@@ -192,18 +275,10 @@ public abstract class WSServer// extends ConnServer
 			{
 				ise.printStackTrace();
 			}
-
-			// if(!bhas_data)
-			// {
-			// return ;//do nothing
-			// }
-
-			// System.out.println("session id="+this.getSession().getId()+" has
-			// git data") ;
-
 		}
 	}
 
+	
 	private static ConcurrentHashMap<Session, SessionItem> sess2item = new ConcurrentHashMap<>();
 
 	public static synchronized void addSessionItem(SessionItem si)

@@ -196,8 +196,6 @@ public class RESTful_M extends MNModule
 			resp.RT_clear() ;
 		
 		req.RT_onReq(request,req_bs) ;
-		//
-		
 		if(resp==null)
 			return false ;
 		MNMsg cur_msg = resp.RT_getCurInMsg() ;

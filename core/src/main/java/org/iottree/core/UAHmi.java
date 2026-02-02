@@ -384,8 +384,13 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 					String bdtxt = bdob.optString("txt");
 					if (bdtxt == null || bdtxt.equals(""))
 						continue;
-					boolean bexp = bdob.optBoolean("exp");
-					PropBindItem pbi = new PropBindItem(k, bexp, bdtxt);
+					boolean bexp = "true".equals(bdob.optString("exp"));
+					boolean need_tag_cached = false;
+					if(bdob.has("need_tag_cached"))
+					{
+						need_tag_cached = "true".equals(bdob.optString("need_tag_cached"));
+					}
+					PropBindItem pbi = new PropBindItem(this,k, bexp, bdtxt,need_tag_cached);
 					pbis.add(pbi);
 				}
 			}
@@ -401,14 +406,14 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 					String serverjs = bdob.optString("serverjs");
 					if (serverjs == null || serverjs.equals(""))
 						continue;
-					EventBindItem ebi = new EventBindItem(k, serverjs);
+					EventBindItem ebi = new EventBindItem(this,k, serverjs);
 					ebis.add(ebi);
 				}
 			}
 
 			if (pbis.size() > 0 || ebis.size() > 0)
 			{
-				pbs.add(new BindDI(itemid, pbis, ebis));
+				pbs.add(new BindDI(this,itemid, pbis, ebis));
 			}
 		}
 
@@ -416,6 +421,25 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		return pbs;
 	}
 
+	public List<PropBindItem> getPropBindItem_NeedTagCached()
+	{
+		ArrayList<PropBindItem> rets = new ArrayList<>() ;
+		List<BindDI> bdis = this.getBinds() ;
+		if(bdis==null)
+			return rets ;
+		for(BindDI bdi:bdis)
+		{
+			List<PropBindItem> pbis = bdi.getPropBindItems() ;
+			if(pbis==null || pbis.size()<=0)
+				continue ;
+			for(PropBindItem pbi:pbis)
+			{
+				if(pbi.isNeedTagCached())
+					rets.add(pbi) ;
+			}
+		}
+		return rets ;
+	}
 	//
 	// public void RT_getBindVal()
 	// {

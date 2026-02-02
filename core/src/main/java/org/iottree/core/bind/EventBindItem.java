@@ -1,5 +1,6 @@
 package org.iottree.core.bind;
 
+import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAVal;
 import org.iottree.core.cxt.UACodeItem;
@@ -7,17 +8,21 @@ import org.iottree.core.cxt.UAContext;
 
 public class EventBindItem
 {
+	UAHmi hmi ;
+	
 	String eventName = null ;
 	
 	String serverJS = null ;
 	
 	transient UACodeItem code = null ;
 	
-	public EventBindItem()
-	{}
+//	public EventBindItem()
+//	{}
 	
-	public EventBindItem(String eventn,String serverjs)
+	public EventBindItem(UAHmi hmi ,String eventn,String serverjs)
 	{
+		this.hmi = hmi;
+		
 		this.eventName = eventn ;
 		this.serverJS = serverjs ;
 	}

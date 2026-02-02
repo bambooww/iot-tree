@@ -1,5 +1,6 @@
 package org.iottree.core.bind;
 
+import org.iottree.core.UAHmi;
 import org.iottree.core.UANode;
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UATag;
@@ -17,24 +18,40 @@ import org.iottree.core.util.Convert;
  */
 public class PropBindItem
 {
+	UAHmi hmi ;
+	
 	String name = null ;
 	
 	boolean bExp = false;
 	
 	String txt = null ;
 	
+	/**
+	 * need tag mem cached data first
+	 */
+	boolean needTagCached = false;
+	
 	transient UACodeItem code = null ;
 	
-	public PropBindItem()
-	{
-		
-	}
+	private transient UATag bindTag = null ;
 	
-	public PropBindItem(String name,boolean bexp,String txt)
+//	public PropBindItem()
+//	{
+//		
+//	}
+	
+	public PropBindItem(UAHmi hmi ,String name,boolean bexp,String txt,boolean need_tag_cached)
 	{
+		this.hmi = hmi;
 		this.name = name ;
 		this.bExp = bexp ;
 		this.txt = txt ;
+		this.needTagCached = need_tag_cached;
+	}
+	
+	public UAHmi getHmi()
+	{
+		return this.hmi ;
 	}
 	
 	public String getName()
@@ -52,14 +69,32 @@ public class PropBindItem
 		return txt ;
 	}
 	
+	public UATag getBindedTag()
+	{
+		if(bindTag!=null)
+			return bindTag ;
+		
+		if(Convert.isNullOrEmpty(this.txt))
+			return null ;
+		
+		UANode nd = this.hmi.getBelongTo().getDescendantNodeByPath(this.txt) ;
+		if(nd==null || !(nd instanceof UATag))
+			return null ;
+		
+		return this.bindTag = (UATag)nd ;
+	}
+	
+	/**
+	 * bind item need tag memory cached
+	 * @return
+	 */
+	public boolean isNeedTagCached()
+	{
+		return this.needTagCached ;
+	}
+	
 	private UAVal lastVal = null ;
-	//private Object lastExpVal = null ;
-	
-//	public UAVal RT_getVal(UANodeOCTagsCxt tagn)
-//	{
-//		return RT_getVal(tagn,false) ;
-//	}
-	
+
 	/**
 	 * 
 	 * @param tagn

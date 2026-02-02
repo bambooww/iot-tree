@@ -74,29 +74,22 @@ textarea {width:100%;height:100%;border:1px solid #ccc;}
     </div>
 </div>
   
-<div class="row" >
-   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Access Path</span></div>
-  <div class="nor_sel" style=""> 
-   <div class="url_ppt"><span id="prefix"></span><%=url %></div>
-  </div>
-  </div>
-   
+  <div class="layui-form-item">
+    <label class="layui-form-label">Access Path:</label>
+    <div class="layui-input-inline" style="width:550px;">
+    	<div class="url_ppt"><br><span id="prefix"></span><%=url %></div>
+    </div>
+</div>
 <script>
-
-
 function on_after_pm_show(form)
 {
 	 
 }
-
-
 function get_pm_jo()
 {
 	let jo = {} ;
 	let api_n = $("#api_n").val();
 	let sample = $("#sample").val() ;
-	//let batch_w_buflen = get_input_val('batch_w_buflen',true,10);
-	
 	return {api_n:api_n,sample:sample} ;
 }
 
@@ -105,9 +98,7 @@ function set_pm_jo(jo)
 	$("#api_n").val(jo.api_n||"") ;
 	$("#in_tp").val(jo.in_tp||"json_object") ;
 	$("#sample").val(jo.sample||"") ;
-	//$('#batch_w_buflen').val(jo.batch_w_buflen||100);
 	let pre = location.protocol+"//"+location.host ;
-	
 	$("#prefix").html(pre)
 }
 
@@ -115,6 +106,4 @@ function get_pm_size()
 {
 	return {w:600,h:550} ;
 }
-
-//on_init_pm_ok() ;
 </script>

@@ -63,7 +63,7 @@ var plugpm = ow.editor_plugcb_pm;
 if(plugpm!=null)
 {
 	var di = plugpm.di ;
-	var pdf = di.findProDefItemByName(plugpm.name) ;
+	var pdf = di.findPropDefItemByName(plugpm.name) ;
 	$("#binded_id").val(pdf.title+"["+plugpm.name+"] ") ;
 	$("#name").val(plugpm.name) ;
 	var vv = plugpm.val ;

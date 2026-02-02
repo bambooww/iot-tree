@@ -8,6 +8,7 @@
 				org.iottree.core.ui.*,
 				org.iottree.core.res.*,
 				org.iottree.core.alert.*,
+				org.iottree.core.bind.*,
 				org.iottree.core.store.*,
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,org.iottree.core.station.*,
@@ -125,23 +126,12 @@
 	}
 	if(Convert.isNullOrEmpty(bkc))
 		   bkc = "#1e1e1e";
-	//String repname = rep.getName() ;%><!DOCTYPE html>
+	List<PropBindItem> pbi_tag_caches =  uahmi.getPropBindItem_NeedTagCached();
+%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <title><%=hmitt %></title>
-<%--
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/_js/ajax.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
-<script src="/_js/oc/oc.min.js?v=<%=Config.getVersion()%>"></script>
-<link type="text/css" href="/_js/oc/oc.css?v=<%=Config.getVersion()%>" rel="stylesheet" />
-<link href="/_js/font6/css/all.css" rel="stylesheet">
- --%>
  <jsp:include page="head.jsp">
  	<jsp:param value="true" name="oc_min"/>
  	<jsp:param value="<%=path_head %>" name="path_head"/>
@@ -532,7 +522,6 @@ position:relative;
 </head>
 <script type="text/javascript">
 dlg.dlg_top=true;
-
 var b_station_ins = <%=b_station_ins%>;
 </script>
 <body class="layout-body" >
@@ -1227,20 +1216,20 @@ function ws_conn()
     	if(show_tick)
     		$("#ws_updt").html(new Date().format_local('yyyy-MM-dd hh:mm:ss.SSS')) ;
     	var str = event.data ;
-    	var k = str.indexOf("\r\n") ;
-    	if(k<=0)
-    		return ;
-    	var firstln = str.substring(0,k);
-    	str = str.substring(k+2) ;
-    	
-    	var d = null,s=null ;
+    	var ob = null;
+    	eval("ob="+str) ;
+    	var s = ob.server;
+    	var d = ob.data;
     	//console.log(event.data);
-    	eval("s="+firstln) ;
     	hmiModel.updateServerInfo(s);
-    	eval("d="+str) ;
     	if(d.cxt_rt)
-    	{
-    		hmiModel.updateRtNodes(d.cxt_rt);
+    	{//console.log(ob.tags_mem_cached)
+    		if(ob.tags_mem_cached)
+    		{
+    			for(let k in ob.tags_mem_cached)
+    				console.log(k,ob.tags_mem_cached[k].length)
+    		}
+    		hmiModel.updateRtNodes(d.cxt_rt,ob.tags_mem_cached||null);
     		update_data_list(d.cxt_rt) ;
     	}
     	
@@ -1297,7 +1286,6 @@ function ws_conn()
     	if(b_conn_first)
 		{
 			b_conn_first=false;
-			
 		}
     };
     

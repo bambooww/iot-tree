@@ -20,6 +20,8 @@
 /data_dyn/
 
 *.bat
+*.todo.jsp
+*.old.jsp
 
 # Compiled class files
 *.class

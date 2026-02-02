@@ -2,9 +2,23 @@
 ==
 
 
-本模块是LLM模块配套设备控制工具接入。可以配合LLM Ollama或vLLM自动形成chat提示词及工具定义。
-模块内部有如下子节点：设备项(Deivce Item)、请求输入节点（Request）和LLM应答结果处理节点（Response Handler)
+本模块提供了对外RESTful服务的配置功能。此模块可以把其他节点建立的消息输入输出流程转换为外部RESTful请求和应答Api，可以使得IOT-Tree运行实例直接成为你的后端系统。
 
-<img src="../img/msgnet/edge02_cn.png">
+本模块有两个子节点，请求节点和应答节点。在使用时必须配对使用（使用相同的Api Name）。他们分别代表了外部HTTP客户端发起请求时的触发消息节点，以及在你对此消息处理之后，输出的应答消息。如下图：
 
 
+
+
+<img src="../img/net/rest01.png">
+
+
+在请求和应答两个节点之间，你可以配置任意的消息输入和输出子流程（包含单个节点）。
+
+注意：模块必须配置对应的模块名，请求节点必须配置Api名，并且应答节点必须选择和配对的请求节点相同的Api名称。
+最终，每个请求节点都会自动生成一个RESTful URL。格式如下：
+
+
+
+```
+http://your_host:port/[prj_name]/_mn_restful_m/[net_name]/[module_name]/[api_name]
+```

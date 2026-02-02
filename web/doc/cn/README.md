@@ -2,6 +2,11 @@ IOT-Tree Server 是什么
 ==
 
 
+
+<a href="https://github.com/bambooww/iot-tree/releases" target="_blank">下载地址</a>
+
+<a href="https://pan.baidu.com/s/15uQT4G0CoV9obc0qn6IPjg?pwd=tuf3" target="_blank">网盘下载<a>
+
 IOT-Tree Server是一个物联网接入、数据规整、人机交互展示、调度控制和数据利用的一个服务软件系统。主要使用Java开发，其管理界面完全基于Web方式。
 
 从主要功能上可以分为两大部分：
@@ -201,7 +206,6 @@ IOT-Tree Server内部支持gRPC服务，启用之后，你可以使用其他各�
 
 
 另外，IOT-Tree为了方便监控系统现场计算机（或支持触摸功能的一体PC）使用，提供了监控UI的客户端程序。能够方便设备启动时自动启动，并且使监控画面充满屏幕。
-
 
 
 

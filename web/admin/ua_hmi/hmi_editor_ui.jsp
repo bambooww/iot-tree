@@ -640,12 +640,7 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 			bind_tag_only=false;
 			
 		dlg.open("../util/di_editplug_"+tp+".jsp?res_lib_id="+res_lib_id+"&res_id="+res_id+"&bind_tag_only="+bind_tag_only+"&p="+path,
-				{title:tt,w:'500px',h:'420px',shade: 0.01
-					//,on_val_chg:(v)=>{
-					//	jq_ele.val(v) ;// some bug here
-					//	editor.applyUI2SelectedItem();
-					//}
-				},
+				{title:tt,w:'500px',h:'420px',shade: 0.01},
 				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 				[
 					function(dlgw)
@@ -653,14 +648,14 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 						if(tp=="prop_bind")
 						{
 							var ret = dlgw.editplug_get() ;
-							// console.log(ret);
+							//console.log(ret);
 							if(ret.unbind)
 							{
 								di.setPropBinder(name,null,false,ret.trans) ;
 							}
 							else
 							{
-								di.setPropBinder(name,ret.jstxt,ret.bexp,ret.trans) ;
+								di.setPropBinder(name,ret.jstxt,ret.bexp,ret.trans,ret.need_tag_cached||false) ;
 							}
 							
 							editor.refreshPropBindEditor();
