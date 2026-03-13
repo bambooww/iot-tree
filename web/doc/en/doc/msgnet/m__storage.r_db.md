@@ -17,6 +17,14 @@ Output one or more JSON objects based on the query results and parameter setting
 
 This node requires the input message payload to be an SQL statement (insert data or update data). If successful, output the number of affected rows. If failed, output failure information from the failed connection point.
 
+## JSON To Table (Writing JSON Objects to Database Tables)
+
+The configuration of this node will  specify the database table structure, including the definition of each column and the corresponding mapping relationship with JSON attributes.
+
+When a JSON object is input, the node automatically extracts relevant attributes from the JSON object according to the configuration, forms a database record, and inserts it into the database.
+
+This node must associate the "Relational DB Table" port with a "DB Table" node and support the automatic creation of database tables.
+
 ## DB Table Resource Node
 
 This node is defined as a database table under the corresponding relational database data source. It can directly support other nodes that require the use of relational database table.

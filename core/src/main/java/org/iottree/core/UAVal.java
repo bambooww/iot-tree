@@ -1,10 +1,15 @@
 package org.iottree.core;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ValEvent;
+import org.iottree.core.basic.ValOption;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlVal;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.common.primitives.UnsignedInteger;
 import com.google.common.primitives.UnsignedLong;
@@ -485,6 +490,46 @@ public class UAVal //extends JSObMap
 	public String getErr()
 	{
 		return valErr ;
+	}
+	
+	public JSONObject toDetailJO(UATag tag)
+	{
+		JSONObject ret = new JSONObject().put("valid", this.bValid) ;
+		if(this.bValid)
+		{
+			ret.put("up_dt", this.valDT).put("chg_dt", this.valChgDT).put("v", this.getObjVal());
+			ValOption vo = tag.getValOptionObj() ;
+			if(vo!=null)
+			{
+				String optt = vo.RT_getValOptTitle(this.getObjVal()) ;
+				ret.putOpt("opt_t", optt) ;
+			}
+			if(tag.RT_hasAlertTriggered())
+			{
+				JSONArray alt_jarr = new JSONArray() ;
+				List<ValEvent> ves = tag.getValAlerts() ;
+				if(ves!=null)
+				{
+					for(ValEvent ve:ves)
+					{
+						if(ve.RT_is_triggered())
+						{
+							JSONObject evtjo = new JSONObject().put("tp",ve.getEventTp().getName())
+									.put("lvl", ve.getEventLvl())
+									.putOpt("t", ve.getEventTitle()) ;
+							alt_jarr.put(evtjo) ;
+						}
+					}
+				}
+				if(alt_jarr.length()>0)
+					ret.put("alerts", alt_jarr) ;
+			}
+		}
+		else
+		{
+			ret.putOpt("err", this.valErr) ;
+		}
+		return ret;
 	}
 	
 //	protected Object JS_get(String  key)

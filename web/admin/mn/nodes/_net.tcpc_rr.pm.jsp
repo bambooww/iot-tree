@@ -43,6 +43,14 @@
     	<input type="text" id="req_hex" class="layui-input"/>
     </div>
 </div>
+<div class="layui-form-item">
+    <label class="layui-form-label"></label>
+
+    <div class="layui-form-mid" title="4 bytes of length first">Send Length First</div>
+    <div class="layui-input-inline" style="width:30px;">
+    	<input type="checkbox" id="req_len_first" class="layui-input"/>
+    </div>
+</div>
 
 <div class="layui-form-item">
     <label class="layui-form-label">Response</label>
@@ -139,6 +147,7 @@ function get_pm_jo()
 	let req_tp = get_input_val("req_tp",0,true) ;
 	if(req_tp!=2 && !req_hex)
 		return "please input request hex" ;
+	let req_len_first = $("#req_len_first").prop("checked") ;
 	
 	let resp_pk_tp = get_input_val("resp_pk_tp",0,true) ;
 	let resp_pk_fixedlen = get_input_val("resp_pk_fixedlen",-1,true) ;
@@ -148,7 +157,7 @@ function get_pm_jo()
 	let resp_err_tp = get_input_val("resp_err_tp",0,true) ;
 	let link_end_tp = get_input_val("link_end_tp",0,true) ;
 	
-	return {server:server,port:port,req_tp:req_tp,req_hex:req_hex,resp_pk_tp:resp_pk_tp,
+	return {server:server,port:port,req_tp:req_tp,req_len_first:req_len_first,req_hex:req_hex,resp_pk_tp:resp_pk_tp,
 		resp_pk_fixedlen:resp_pk_fixedlen,
 		resp_err_tp:resp_err_tp,link_end_tp:link_end_tp} ;
 }
@@ -158,6 +167,7 @@ function set_pm_jo(jo)
 	$("#server").val(jo.server||"") ;
 	$("#port").val(jo.port) ;
 	$("#req_tp").val(jo.req_tp||0) ;
+	$("#req_len_first").prop("checked",jo.req_len_first) ;
 	$("#req_hex").val(jo.req_hex||"") ;
 	
 	$("#resp_pk_tp").val(jo.resp_pk_tp||0) ;

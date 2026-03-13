@@ -18,6 +18,11 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+
+import org.iottree.core.basic.ByteOrder;
+import org.iottree.core.util.IBSOutput;
+import org.iottree.core.util.xmldata.DataUtil;
+
 import org.json.JSONObject;
 
 /**
@@ -36,7 +41,8 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 	{
 		fixed_req(0),
 		pm_req(1),
-		no_req(2);
+		bytes_in_req(2),
+		no_req(10);
 		
 		public final int val ;
 		
@@ -62,6 +68,8 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 			case 1:
 				return pm_req ;
 			case 2:
+				return bytes_in_req;
+			case 3:
 				return no_req;
 			default:
 				return fixed_req ;
@@ -233,6 +241,10 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 	
 	String reqHex = null ;
 	
+	boolean lenInt4First = false;//先发送数据包长度
+	
+	
+	
 	//ReqSendTP reqSendTP = ReqSendTP.trigger_in ;
 	/*
 	 * 
@@ -296,6 +308,8 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 			return Convert.hexStr2ByteArray(this.reqHex) ;
 		case pm_req:
 			throw new RuntimeException("no impl") ; //my using msg input var
+		case bytes_in_req:
+			return msg.getBytesArray() ;
 		default:
 			return null ;
 		}
@@ -309,7 +323,7 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 			failedr.append("no invalid server host/ip port set") ;
 			return false;
 		}
-		if(reqTP!=ReqTP.no_req)
+		if(reqTP==ReqTP.fixed_req)
 		{
 			if(Convert.isNullOrEmpty(this.reqHex))
 			{
@@ -317,8 +331,7 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 				return false;
 			}
 		}
-		
-		if(reqTP!=ReqTP.fixed_req)
+		if(reqTP==ReqTP.pm_req)
 		{
 			failedr.append("not impl");
 			return false;
@@ -333,6 +346,7 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 		jo.putOpt("server", this.server);
 		jo.put("port",this.port) ;
 		jo.put("req_tp",this.reqTP.getVal()) ;
+		jo.put("req_len_first", lenInt4First) ;
 		jo.putOpt("req_hex", reqHex) ;
 		if(reqPm2Hex!=null)
 		{
@@ -356,6 +370,7 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 		this.server = jo.optString("server") ;
 		this.port = jo.optInt("port",12345) ;
 		this.reqTP = ReqTP.fromVal(jo.optInt("req_tp",0)) ;
+		this.lenInt4First = jo.optBoolean("req_len_first", false) ;
 		this.reqHex = jo.optString("req_hex") ;
 		JSONObject tmpjo = jo.optJSONObject("pm2hex") ;
 		if(tmpjo!=null)
@@ -473,7 +488,7 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 			//set recv timeout,it will make read waiting throw timeout
 			//sock.setSoTimeout(connTimeoutMS);
 			
-			sock.setTcpNoDelay(true);
+			sock.setTcpNoDelay(true);//
 			sock.setKeepAlive(true);
 			inputS = sock.getInputStream();
 			outputS = sock.getOutputStream();
@@ -675,7 +690,16 @@ public class NM_TcpClientRR extends MNNodeMid implements IMNRunner
 			this.RT_start(null) ; //start recv
 		}
 		RT_curRecvLen = 0 ;
-		this.outputS.write(bs);
+		
+		synchronized(this)
+		{
+			if(lenInt4First)
+			{
+				byte[] bs_len = DataUtil.intToBytes(bs.length,ByteOrder.LittleEndian) ;
+				this.outputS.write(bs_len);
+			}
+			this.outputS.write(bs);
+		}
 //		switch(this.reqTP)
 //		{
 //		case fixed_req:

@@ -14,6 +14,7 @@ public class ValTransCalc extends ValTranser implements ILang
 	public static final int OP_SUBS = 2 ;
 	public static final int OP_MULTI = 3 ;
 	public static final int OP_DIV = 4 ;
+	public static final int OP_MOD = 5 ; //modulo
 	
 	int op = OP_MULTI ;
 	double op_v = 1.0 ;
@@ -48,6 +49,9 @@ public class ValTransCalc extends ValTranser implements ILang
 		case OP_DIV:
 			tt = "/" ;
 			break ;
+		case OP_MOD:
+			tt = "%" ;
+			break ;
 		default:
 			return null ;
 		}
@@ -76,6 +80,9 @@ public class ValTransCalc extends ValTranser implements ILang
 			break ;
 		case OP_DIV:
 			rv = raw_v/op_v ;
+			break ;
+		case OP_MOD:
+			rv = raw_v%op_v ;
 			break ;
 		default:
 			return null ;

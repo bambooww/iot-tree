@@ -194,6 +194,7 @@
   <dd_node id="1" name="tc_rr_req_no_req" name_cn="无请求(只接收)" name_en="No request(Recv only)" />
   <dd_node id="1" name="tc_rr_req_fixed_req" name_cn="固定内容" name_en="Fixed request" />
   <dd_node id="1" name="tc_rr_req_pm_req" name_cn="参数化请求" name_en="Request with parameters" />
+  <dd_node id="1" name="tc_rr_req_bytes_in_req" name_cn="请求中bytes" name_en="Bytes in Request" />
   <dd_node id="1" name="tc_rr_req_sd_trigger_in" name_cn="输入消息触发" name_en="Triggered by msg in" />
   <dd_node id="1" name="tc_rr_req_sd_interval" name_cn="间隔时间发送" name_en="Send interval" />
   <dd_node id="1" name="tc_rr_req_sd_once" name_cn="发送一次" name_en="Send once" />

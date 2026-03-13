@@ -83,6 +83,13 @@
             <version>1.78.0</version>
         </dependency>
 		
+		<!-- Source: https://mvnrepository.com/artifact/org.bytedeco/opencv -->
+<dependency>
+    <groupId>org.bytedeco</groupId>
+    <artifactId>opencv</artifactId>
+    <version>4.9.0-1.5.10</version>
+    <scope>compile</scope>
+</dependency>
 		<!-- https://mvnrepository.com/artifact/io.modelcontextprotocol.sdk/mcp
 		<dependency>
 		    <groupId>io.modelcontextprotocol.sdk</groupId>

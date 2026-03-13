@@ -93,11 +93,12 @@ String prjpath = prj.getNodePath() ;
 }
 </style>
 <button onclick="add_rule()" style="border-color:#dddddd">+Add</button>
+&nbsp;&nbsp;&nbsp;<input type="checkbox" id="tag_val_detail" />Output Detail
 <div id="rules" style="overflow-y:auto;max-height: 480px;">
 </div>
  <div class="rule" id="rule_temp" style="display:none">
   <button class="del" onclick="del_rule(this)">X</button>
-  
+
   <div class="row" >
    <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Tag:</span></div>
   <div class="act" style="width:200px;">
@@ -234,12 +235,14 @@ function get_pm_jo()
 		let tmpjo = extract_rule_jo(ruleele) ;
 		rule_jos.push(tmpjo) ;
 	}) ;
+	jo.tag_val_detail = $("#tag_val_detail").prop("checked") ;
 	
 	return jo ;
 }
 
 function set_pm_jo(jo)
 {
+	$("#tag_val_detail").prop("checked",jo.tag_val_detail===true) ;
 	if(!jo || !jo.tags || jo.tags.length<=0)
 	{
 		add_rule(null) ;

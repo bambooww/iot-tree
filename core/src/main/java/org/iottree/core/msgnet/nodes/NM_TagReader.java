@@ -77,6 +77,18 @@ public class NM_TagReader extends MNNodeMid
 			return jo ;
 		}
 		
+		public JSONObject toTagJO()
+		{
+			JSONObject ret = new JSONObject().putOpt("var", this.varName)
+					.putOpt("tagp", this.tagPath);
+			if(tag!=null)
+			{
+				ret.putOpt("tag_title", tag.getTitle()) ;
+				ret.putOpt("tag_unit", tag.getUnit()) ;
+			}
+			return ret;
+		}
+		
 		public static TagItem fromJO(JSONObject jo)
 		{
 			TagItem ret = new TagItem() ;
@@ -89,6 +101,8 @@ public class NM_TagReader extends MNNodeMid
 	
 	
 	ArrayList<TagItem> tagItems = new ArrayList<>() ;
+	
+	boolean bTagValDetail = false;
 	
 	@Override
 	public String getColor()
@@ -117,7 +131,7 @@ public class NM_TagReader extends MNNodeMid
 	@Override
 	public int getOutNum()
 	{
-		return 2;
+		return 3;
 	}
 	
 	@Override
@@ -127,6 +141,8 @@ public class NM_TagReader extends MNNodeMid
 			return null;
 		if(idx==1)
 			return "red";
+		else if(idx==2)
+			return "blue";
 		return null ;
 	}
 
@@ -169,6 +185,7 @@ public class NM_TagReader extends MNNodeMid
 			}
 		}
 		jo.put("tags",jarr) ;
+		jo.put("tag_val_detail", bTagValDetail) ;
 		return jo;
 	}
 
@@ -191,13 +208,14 @@ public class NM_TagReader extends MNNodeMid
 				String tagpath = ccr.tagPath ;
 				if(Convert.isNotNullEmpty(tagpath))
 				{
-					
 					UATag tag =prj.getTagByPath(tagpath) ;
 					ccr.tag = tag ;
 				}
 			}
 		}
 		this.tagItems = ccrs ;
+		
+		this.bTagValDetail = jo.optBoolean("tag_val_detail",false) ;
 	}
 
 	// --------------
@@ -229,7 +247,14 @@ public class NM_TagReader extends MNNodeMid
 			}
 			else
 			{
-				tmpjo.putOpt(ti.getVarName(), uav.getObjVal()) ;
+				if(bTagValDetail)
+				{
+					tmpjo.putOpt(ti.getVarName(), uav.toDetailJO(tag)) ;
+				}
+				else
+				{
+					tmpjo.putOpt(ti.getVarName(), uav.getObjVal()) ;
+				}
 			}
 		}
 		
@@ -246,11 +271,28 @@ public class NM_TagReader extends MNNodeMid
 			rto.asIdxMsg(1, new MNMsg().asPayload(errjarr)) ;
 			RT_lastInvalidDT = System.currentTimeMillis() ;
 			RT_lastInvalidTags = errjarr ;
-			
 		}
 		return rto;
 	}
 	
+	@Override
+	protected void RT_onAfterNetRun()
+	{
+		//get tagitem and send out
+		JSONObject pld = new JSONObject() ;
+		JSONArray jarr = new JSONArray() ;
+		if(this.tagItems!=null)
+		{
+			for(TagItem ti:this.tagItems)
+			{
+				JSONObject tjo = ti.toTagJO() ;
+				jarr.put(tjo) ;
+			}
+		}
+		pld.put("tags",jarr) ;
+		MNMsg msg = new MNMsg().asPayloadJO(pld) ;
+		this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(2, msg));
+	}
 
 	@Override
 	public String RT_getOutTitle(int idx)
@@ -267,6 +309,8 @@ public class NM_TagReader extends MNNodeMid
 						Convert.plainToHtml(RT_lastInvalidTags.toString(2)) +"</pre>";
 			}
 		}
+		if(idx==2)
+			return "output tag list" ;
 		return null ;
 	}
 	

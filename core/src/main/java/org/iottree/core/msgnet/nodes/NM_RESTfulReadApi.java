@@ -22,7 +22,7 @@ public class NM_RESTfulReadApi extends MNNodeMid //implements
 	
 	private transient Object outputObj = null ;
 	
-	
+	private boolean contentTypeJson = false ; //false=string out,true text/json;charset=UTF-8
 	
 	public String getApiName()
 	{
@@ -44,6 +44,11 @@ public class NM_RESTfulReadApi extends MNNodeMid //implements
 	public String getErrRespTxt()
 	{
 		return this.errRespTxt ;
+	}
+	
+	public boolean isContentTypeJson()
+	{
+		return this.contentTypeJson ;
 	}
 	
 	public Object getOutputObj()
@@ -106,6 +111,7 @@ public class NM_RESTfulReadApi extends MNNodeMid //implements
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("api_n",this.apiName) ;
+		jo.put("cont_tp_json",contentTypeJson) ;
 		return jo;
 	}
 
@@ -113,6 +119,7 @@ public class NM_RESTfulReadApi extends MNNodeMid //implements
 	protected void setParamJO(JSONObject jo)
 	{
 		this.apiName = jo.optString("api_n") ;
+		this.contentTypeJson = jo.optBoolean("cont_tp_json",false) ;
 	}
 	
 	@Override

@@ -64,6 +64,7 @@
 	String alerts = null ;
 	String mid_w_js = "" ;
 	int val_cache_len = 100 ;
+	boolean cache_only_chg = false;
 	
 	if(id==null)
 		id = "" ;
@@ -125,6 +126,7 @@
  			valtp_str = ""+valtp.getInt() ;
  		dec_digits = tag.getDecDigits() ;
  		val_cache_len = tag.getValCacheLen() ;
+ 		cache_only_chg = tag.isCacheOnlyChg();
  		srate = tag.getScanRate() ;
  		canw = ""+tag.isCanWrite();
  		unit = tag.getUnit() ;
@@ -192,7 +194,7 @@ top:5px;
 .recent_p .item:hover {background-color: grey;}
 </style>
 <script>
-dlg.resize_to(1050,600);
+dlg.resize_to(1050,630);
 </script>
 
 </head>
@@ -439,7 +441,7 @@ if(!bmid)
     </div>
   </div>
    --%>
-     <div class="layui-form-item" >
+ <div class="layui-form-item" >
     <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>val,option</wbt:g></label>
     <div class="layui-input-inline" style="width: 120px;">
      <select id="opt_tp" lay-filter="opt_tp">
@@ -453,11 +455,23 @@ if(!bmid)
     <div class="layui-input-inline" style="width:380px;display:none;" id="opt_pm_p">
       <input type="text" id="opt_pm" name="opt_pm" class="layui-input" onclick="edit_option()" readonly="readonly"/>
     </div>
-    <div class="layui-form-mid">Mem Cache Len</div>
-    <div class="layui-input-inline" style="width:100px">
+  </div>
+  
+  <div class="layui-form-item" >
+    <label class="layui-form-label "></label>
+    <div class="layui-form-mid"><wbt:g>cache_only_chg</wbt:g></div>
+    <div class="layui-input-inline" style="width:50px" title="<wbt:g>mem_cache_len</wbt:g>">
+     <div style="white-space: nowrap;">
+    	<input type="checkbox" class="layui-input"   id="cache_only_chg"  <%=(b_batch?"readonly":"") %>/>
+    	
+     </div>	
+    </div>
+    <div class="layui-form-mid"><wbt:g>cache_len</wbt:g></div>
+    <div class="layui-input-inline" style="width:100px" title="<wbt:g>mem_cache_len</wbt:g>">
     	<input type="number" class="layui-input" id="val_cache_len" <%=(b_batch?"readonly":"") %>/>
     </div>
   </div>
+  
   <div class="layui-form-item">
     <label class="layui-form-label <%=(b_batch?"batch":"")%>"><wbt:g>evt</wbt:g>/<wbt:g>alert</wbt:g></label>
     <div class="layui-input-inline"  style="width:500px;">
@@ -542,6 +556,7 @@ var vt = "<%=valtp_str%>" ;
 var srate = "<%=srate%>";
 var dec_digits = <%=dec_digits%> ;
 var val_cache_len = <%=val_cache_len%>;
+var cache_only_chg = <%=cache_only_chg%>;
 var canw = "<%=canw%>";
 var unit = "<%=unit%>" ;
 var indicator = "<%=indicator%>" ;
@@ -607,6 +622,7 @@ layui.use('form', function(){
 		  $("#val_cache_len").val(val_cache_len) ;
 	  else
 		  $("#val_cache_len").val(100) ;
+	  $("#cache_only_chg").prop("checked",cache_only_chg);
 	  $("#vt").val(vt) ;
 	  $("#srate").val(srate) ;
 	  $("#canw").val(canw) ;
@@ -1075,6 +1091,7 @@ function do_submit(cb)
 		vt:get_input_val("vt",""),
 		dec_digits:get_input_val("dec_digits",-1,true),
 		val_cache_len:get_input_val("val_cache_len",100,true),
+		cache_only_chg:$("#cache_only_chg").prop("checked"),
 		srate:get_input_val("srate",100,true),
 		canw:canw,unit:unit,indicator:indicator,
 		trans:JSON.stringify(trans_dd),

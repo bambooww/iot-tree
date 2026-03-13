@@ -24,6 +24,10 @@
 	</webapps>
 	
 	<system>
+		<jvm_lib path="C:/dev/opencv/build/java/x64/opencv_java490.dll" />
+		<!-- 
+		<jvm_lib name="opencv_java490" />
+		 -->
 		<inner_comp name="rec" enable="false" />
 	<!-- 
 		<server_comp class="org.iottree.driver.opc.opcua.server.OpcUAServer"/>

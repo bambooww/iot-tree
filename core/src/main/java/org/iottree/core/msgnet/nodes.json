@@ -115,7 +115,8 @@
 		
 		"org.iottree.ext.av.ObjReco_NM",
 		
-		"org.iottree.ext.av.tts.VibeVoiceTTS"
+		"org.iottree.ext.av.tts.VibeVoiceTTS",
+		"org.iottree.ext.av.CameraCap_NM"
 	],"modules":[
 		
 	]},

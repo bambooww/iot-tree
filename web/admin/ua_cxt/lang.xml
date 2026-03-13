@@ -41,7 +41,12 @@
   <dd_node name="op_subtract" name_cn="减" name_en="Subtract" />
   <dd_node name="op_multiplay" name_cn="乘" name_en="Multiplay" />
   <dd_node name="op_divide" name_cn="除" name_en="Divide" />
+  <dd_node name="op_mod" name_cn="除余" name_en="Modulo" />
   <dd_node name="order_by_col" name_cn="根据此列排序" name_en="Order by this column" />
+  
+  <dd_node name="mem_cache_len" name_cn="内存缓存最大长度" name_en="Memory Cache Max Length" />
+  <dd_node name="cache_len" name_cn="缓存长度" name_en="Cache Len" />
+  <dd_node name="cache_only_chg" name_cn="仅缓存变化值" name_en="Cache Only Changed" />
   
   <dd_node name="option" name_cn="选项" name_en="Option" />
   <dd_node name="param" name_cn="参数" name_en="Param" />

@@ -174,6 +174,8 @@ public class PrjFilter implements Filter
 		if(api==null)
 			return false;
 		//
+		if(api.isContentTypeJson())
+			response.setContentType("text/json;charset=UTF-8");
 		String method = request.getMethod() ;
 		byte[] bs = readPostBS(request, response) ;
 		//String resptxt = cpt_hs.onRecvedFromConn(null, bs);

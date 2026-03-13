@@ -53,6 +53,7 @@
 		int vt = Convert.parseToInt32(request.getParameter("vt"),1);
 		int dec_digits = Convert.parseToInt32(request.getParameter("dec_digits"),-1);
 		int val_cache_len = Convert.parseToInt32(request.getParameter("val_cache_len"),100);
+		boolean cache_only_chg = "true".equals(request.getParameter("cache_only_chg")) ;
 		UAVal.ValTP dt = UAVal.getValTp(vt) ;
 		long srate = Convert.parseToInt64(request.getParameter("srate"),100);
 		String strcanw = request.getParameter("canw") ;
@@ -78,7 +79,7 @@
 
 		UATag ret = nt.addOrUpdateTagInMem(id,bmid,name, title, desc,addr,dt,dec_digits,strcanw,srate,trans,mid_w_js) ;
 		ret.asLocal(bloc, loc_defv, bloc_autosave);
-		ret.asUnit(unit).asIndicator(indicator).asValCacheLen(val_cache_len) ;
+		ret.asUnit(unit).asIndicator(indicator).asValCacheLen(val_cache_len).asCacheOnlyChg(cache_only_chg) ;
 		ret.asFilter(b_val_filter) ;
 		ret.asMinMax(min_val_str, max_val_str);
 		ret.setValOption(val_opt) ;

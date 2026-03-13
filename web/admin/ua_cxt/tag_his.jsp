@@ -118,7 +118,7 @@ function create_series(row_dd)
 			series.push({
 			    type: 'line',
 			    data: seg,
-			    smooth: true,
+			    smooth: false,
 			    lineStyle: { color: '#5470c6', width: 1 },
 			    connectNulls: false,
 			    showSymbol: false

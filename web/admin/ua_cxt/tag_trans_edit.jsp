@@ -135,6 +135,7 @@ for(UAVal.ValTP vt:UAVal.ValTP.values())
       <input type="radio" name="op" value="2" title="<wbt:g>op_subtract</wbt:g>" >
       <input type="radio" name="op" value="3" title="<wbt:g>op_multiplay</wbt:g>" checked="checked" >
       <input type="radio" name="op" value="4" title="<wbt:g>op_divide</wbt:g>" >
+      <input type="radio" name="op" value="5" title="<wbt:g>op_mod</wbt:g>" >
     </div>
   </div>
   <div class="layui-form-item">

@@ -133,8 +133,9 @@ function init_pm()
 {
 	if(!pm_url)
 		return ;
-
+	dlg.loading(true);
 	send_ajax(pm_url,{container_id:container_id,netid:netid,itemid:itemid,pm_jo:JSON.stringify(__pm_jo)},(bsucc,ret)=>{
+		dlg.loading(false);
 		$("#pm_cont").html(ret) ;
 		
 		on_init_pm_ok() ;
@@ -142,7 +143,6 @@ function init_pm()
 		if(typeof(on_after_pm_show)=="function")
 			on_after_pm_show(form);
 	}) ;
-
 }
 
 function on_init_pm_ok()

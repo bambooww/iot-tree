@@ -824,55 +824,41 @@ public class Config
 			}
 		}
 
-		// Element[] libdirs = Convert.getSubChildElement(sysele, "lib") ;
-		// StringBuilder sb = new StringBuilder() ;
-		// String pathsep = System.getProperty("path.separator") ;
-		// if(Convert.isNullOrEmpty(pathsep))
-		// pathsep = ";" ;
-		//
-		// if(libdirs!=null)
-		// {
-		// for(Element libd:libdirs)
-		// {
-		// String dir = libd.getAttribute("dir") ;
-		// if(Convert.isNullOrEmpty(dir))
-		// continue ;
-		//
-		// File f = new File(dir) ;
-		// if(!f.exists())
-		// continue ;
-		//
-		// if(!f.isDirectory())
-		// continue ;
-		//
-		// File[] fs = f.listFiles(new FilenameFilter(){
-		//
-		// public boolean accept(File dir, String name)
-		// {
-		// String n = name.toLowerCase() ;
-		// if(n.endsWith(".jar"))
-		// return true ;
-		// if(n.endsWith(".zip"))
-		// return true ;
-		// return false;
-		// }}) ;
-		//
-		// if(fs==null||fs.length<=0)
-		// continue ;
-		//
-		// for(File tmpf : fs)
-		// {
-		// sb.append(tmpf.getCanonicalPath()).append(pathsep) ;
-		// }
-		//
-		// }
-		// }
-		//
-		// sb.append(System.getProperty("java.class.path")) ;
-		// System.setProperty("java.class.path", sb.toString()) ;
+		Element[] jvm_lib_eles = Convert.getSubChildElement(sysele, "jvm_lib");
+		if (jvm_lib_eles != null)
+		{
+			for (Element env : jvm_lib_eles)
+			{
+				String p = env.getAttribute("path");
+				if (Convert.isNotNullEmpty(p))
+				{
+					try
+					{
+						System.load(p);
+					}
+					catch(Exception ee)
+					{
+						System.err.println("load jvm_lib path="+p+" err:"+ee.getMessage()) ;
+					}
+					continue;
+				}
 
-		// System.out.println("java.class.path="+System.getProperty("java.class.path"))
-		// ;
+				String name = env.getAttribute("name");
+				if (Convert.isNotNullEmpty(name))
+				{
+					try
+					{
+						System.loadLibrary(name);
+					}
+					catch(Exception ee)
+					{
+						System.err.println("load jvm_lib name="+name+" err:"+ee.getMessage()) ;
+					}
+					continue;
+				}
+			}
+		}
+		
 	}
 
 	public static String getLastConfigError()

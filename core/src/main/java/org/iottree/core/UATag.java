@@ -162,7 +162,10 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	String valOption = null ;
 	
 	@data_val(param_name="val_cache_len")
-	int valChgedCacheLen = 100 ;
+	int valCacheLen = 100 ;
+	
+	@data_val(param_name="cache_only_chg")
+	boolean bCacheOnlyChg = false ;
 	
 	@data_val(param_name="b_val_filter")
 	boolean bValFilter = false;
@@ -249,7 +252,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		this.valTranser=t.valTranser;
 		this.valOption = t.valOption;
-		this.valChgedCacheLen = t.valChgedCacheLen ;
+		this.valCacheLen = t.valCacheLen ;
+		this.bCacheOnlyChg = t.bCacheOnlyChg;
 		
 		this.bValFilter = t.bValFilter ;
 		this.valFilter = t.valFilter ; 
@@ -486,7 +490,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		nt.valTranser=this.valTranser;
 		nt.valOption = this.valOption ;
 		
-		nt.valChgedCacheLen = this.valChgedCacheLen ;
+		nt.valCacheLen = this.valCacheLen ;
+		nt.bCacheOnlyChg = this.bCacheOnlyChg ;
 		nt.minValStr = this.minValStr ;
 		nt.maxValStr = this.maxValStr ;
 		
@@ -737,7 +742,12 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public int getValCacheLen()
 	{
-		return this.valChgedCacheLen ;
+		return this.valCacheLen ;
+	}
+	
+	public boolean isCacheOnlyChg()
+	{
+		return this.bCacheOnlyChg;
 	}
 	
 	public String getMidWriterJS()
@@ -1066,10 +1076,16 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public UATag asValCacheLen(int len)
 	{
-		this.valChgedCacheLen = len ;
+		this.valCacheLen = len ;
 		if(this.valsCacheList!=null)
 			this.valsCacheList.setMaxNum(len);
 		//this.valsCacheList = new UAValList(this.valChgedCacheLen) ;
+		return this ;
+	}
+	
+	public UATag asCacheOnlyChg(boolean b)
+	{
+		this.bCacheOnlyChg = b ;
 		return this ;
 	}
 	
@@ -1456,7 +1472,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	private void HIS_setVal(UAVal v)
 	{
 		if(this.valsCacheList==null)
-			this.valsCacheList = new UAValList(this.valChgedCacheLen) ;
+			this.valsCacheList = new UAValList(this.valCacheLen) ;
 		this.valsCacheList.addVal(v.copyMe());
 	}
 	
@@ -1471,9 +1487,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			return null ;
 		return this.valsCacheList.getVals(lastdt) ;
 	}
-	
-	
-	
+
 	/**
 	 * set value in memory
 	 * for systag etc
@@ -1600,7 +1614,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 			
 			this.curVal.setValUpDT(updt);//.setVal(true,v,cdt);
 			
-			HIS_setVal(this.curVal) ;
+			if(!this.bCacheOnlyChg)
+				HIS_setVal(this.curVal) ;
 			
 			if(this.curVal.isValid()) // && bval_chg)
 			{

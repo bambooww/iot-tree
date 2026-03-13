@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.script.ScriptException;
 
@@ -1035,6 +1037,18 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		}
 	}
 	
+	private void RT_onAfterNetRun()
+	{
+		for(MNNode n:this.id2node.values())
+		{
+			n.RT_onAfterNetRun();
+		}
+		for(MNModule m:this.id2module.values())
+		{
+			m.RT_onAfterNetRun();
+		}
+	}
+	
 	private void RT_onAfterNetStop()
 	{
 		for(MNNode n:this.id2node.values())
@@ -1139,6 +1153,49 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		}
 	}
 	
+	private transient Timer netTickTimer = null ;
+	
+	private void RT_tickAllNodes()
+	{
+		for(MNNode n:this.getNodeMapAll().values())
+		{
+			try
+			{
+				n.RT_onNetTick1S();
+			 }
+	        catch(Exception ee)
+	        {
+	        	log.warn("MNNet ["+MNNet.this.getName()+"]'s node ["+n.getTitle()+"] Tick Err",ee);
+	        }
+		}
+		for(MNModule m:this.getModuleMapAll().values())
+		{
+			try
+			{
+				m.RT_onNetTick1S();
+			}
+	        catch(Exception ee)
+	        {
+	        	log.warn("MNNet ["+MNNet.this.getName()+"]'s module ["+m.getTitle()+"] Tick Err",ee);
+	        }
+		}
+	}
+	
+	private transient TimerTask netTick1S = new TimerTask() {
+        @Override
+        public void run()
+        {
+            try
+            {
+            	RT_tickAllNodes();
+            }
+            catch(Exception ee)
+            {
+            	log.warn("MNNet ["+MNNet.this.getName()+"] Tick Err",ee);
+            }
+        }
+    };
+	
 	public void RT_startNetFlow(StringBuilder failedr)
 	{
 		if(!this.bEnable)
@@ -1147,6 +1204,9 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			failedr.append(lan.g("not_enabled")) ;
 			return ;
 		}
+		
+		if(RT_running)
+			return ;
 		
 		RT_onBeforeNetRun() ;
 		
@@ -1190,11 +1250,26 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			}
 		}
 		
+		if(netTickTimer!=null)
+		{
+			netTickTimer.cancel();
+		}
+		netTickTimer = new Timer() ;
+		netTickTimer.schedule(netTick1S, 0, 1000);
+		
 		RT_running = true ;
+		
+		RT_onAfterNetRun();
 	}
 	
 	public void RT_stopNetFlow()
 	{
+		if(netTickTimer!=null)
+		{
+			netTickTimer.cancel();
+			netTickTimer = null;
+		}
+		
 		for(MNNode n:this.id2node.values())
 		{
 			if(!(n instanceof IMNRunner))

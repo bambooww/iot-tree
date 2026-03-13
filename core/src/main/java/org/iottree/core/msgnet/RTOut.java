@@ -35,6 +35,18 @@ public class RTOut
 		return this ;
 	}
 	
+	public RTOut asIdxMsgStr(int idx,String msg_str)
+	{
+		MNMsg m = new MNMsg().asPayload(msg_str) ;
+		return asIdxMsg(idx,m) ;
+	}
+	
+	public RTOut asIdxMsgBytes(int idx,byte[] bs)
+	{
+		MNMsg m = new MNMsg().asBytesArray(bs) ;
+		return asIdxMsg(idx,m) ;
+	}
+	
 //	public MNMsg getOutAllMsg()
 //	{
 //		return this.outAllMsg;

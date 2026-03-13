@@ -419,7 +419,14 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	protected void RT_onBeforeNetRun()
 	{}
 	
+	protected void RT_onAfterNetRun()
+	{}
+	
 	protected void RT_onAfterNetStop()
+	{}
+	
+	//override to do something by net tick 1 second interval
+	protected void RT_onNetTick1S()
 	{}
 	
 	public void RT_clean()

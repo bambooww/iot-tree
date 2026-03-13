@@ -130,6 +130,13 @@ String url = node.getAccessPath() ;
    <input type="text" id="api_n" class="layui-input" />
   </div>
   </div>
+ <div class="row" >
+   <div class="msg"><span style="top:10px;position: absolute;">&nbsp;JSON ContentType</span></div>
+  <div class="nor_sel" style=""> 
+   <input type="checkbox" id="cont_tp_json" class="layui-input" />
+  </div>
+  </div>
+  
 <div class="row" >
    <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Access Path</span></div>
   <div class="nor_sel" style=""> 
@@ -150,15 +157,16 @@ function get_pm_jo()
 {
 	let jo = {} ;
 	let api_n = $("#api_n").val();
-	
+	let cont_tp_json = $("#cont_tp_json").prop("checked") ;
 	//let batch_w_buflen = get_input_val('batch_w_buflen',true,10);
 	
-	return {api_n:api_n} ;
+	return {api_n:api_n,cont_tp_json:cont_tp_json} ;
 }
 
 function set_pm_jo(jo)
 {
 	$("#api_n").val(jo.api_n||"") ;
+	$("#cont_tp_json").prop("checked",jo.cont_tp_json===true) ;
 	//$('#batch_w_buflen').val(jo.batch_w_buflen||100);
 	let pre = location.protocol+"//"+location.host ;
 	

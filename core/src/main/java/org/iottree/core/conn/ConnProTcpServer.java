@@ -570,6 +570,7 @@ public class ConnProTcpServer extends ConnProvider
 				while (acceptTh != null)
 				{
 					Socket client = serverSock.accept();
+					client.setTcpNoDelay(true);
 					new ASHThread(client).start();
 				}
 			} catch (Exception e)
