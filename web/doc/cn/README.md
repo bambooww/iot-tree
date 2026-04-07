@@ -7,6 +7,8 @@ IOT-Tree Server 是什么
 
 <a href="https://pan.baidu.com/s/15uQT4G0CoV9obc0qn6IPjg?pwd=tuf3" target="_blank">网盘下载<a>
 
+<a href="https://blog.csdn.net/qq_40065619?spm=1000.2115.3001.5343" target="_blank">博客系列文章<a>
+
 IOT-Tree Server是一个物联网接入、数据规整、人机交互展示、调度控制和数据利用的一个服务软件系统。主要使用Java开发，其管理界面完全基于Web方式。
 
 从主要功能上可以分为两大部分：
