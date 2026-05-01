@@ -254,7 +254,7 @@ public class DataUtil
 		}
 		else if(bo==ByteOrder.BigEndian)
 		{
-			i = ((bytes[offset] & 0xFF+7) << 8) | (bytes[offset+6] & 0xFF);
+			i = ((bytes[offset+7] & 0xFF) << 8) | (bytes[offset+6] & 0xFF);
 			i = (i << 8) | (bytes[offset+5] & 0xFF);
 			i = (i << 8) | (bytes[offset+4] & 0xFF);
 			i = (i << 8) | (bytes[offset+3] & 0xFF);

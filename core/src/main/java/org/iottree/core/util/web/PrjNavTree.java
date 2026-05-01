@@ -93,7 +93,27 @@ public class PrjNavTree
 			}
 			return jo ;
 		}
-	}
+		
+		public JSONObject toPopMenuJO()
+		{
+			JSONObject jo = new JSONObject() ;
+			jo.put("id", this.n) ;
+			jo.putOpt("name", this.t) ;
+			jo.putOpt("url", this.u) ;
+			jo.putOpt("icon", "") ;
+			if(subs!=null&&subs.size()>0)
+			{
+				JSONArray jarr = new JSONArray() ;
+				jo.put("subItems",jarr) ;
+				for(NavItem ni:this.subs)
+				{
+					JSONObject tmpjo = ni.toPopMenuJO() ;
+					jarr.put(tmpjo) ;
+				}
+			}
+			return jo ;
+		}
+	} // end of NavItem
 	
 	private static NavItem parseFromJO(NavItem p,JSONObject jo)
 	{
@@ -218,5 +238,34 @@ public class PrjNavTree
 			jarr.put(ni.toJO()) ;
 		}
 		return jo ;
+	}
+	
+	public JSONArray toPopMenuJArr()
+	{
+		JSONArray ret = new JSONArray() ;
+		for(NavItem ni:this.lvl1Nav)
+		{
+			ret.put(ni.toPopMenuJO()) ;
+		}
+		return ret ;
+	}
+	
+	public String getFirstUrl()
+	{
+		for(NavItem ni:this.lvl1Nav)
+		{
+			String u = ni.getUrl() ;
+			if(Convert.isNotNullEmpty(u))
+				return u ;
+			if(ni.subs==null)
+				continue ;
+			for(NavItem sub:ni.subs)
+			{
+				u = sub.getUrl() ;
+				if(Convert.isNotNullEmpty(u))
+					return u ;
+			}
+		}
+		return "" ;
 	}
 }

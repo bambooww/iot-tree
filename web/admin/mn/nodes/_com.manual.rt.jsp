@@ -126,7 +126,7 @@ else
 var container_id="<%=container_id%>";
 var netid="<%=netid%>";
 var itemid="<%=itemid%>";
-var val_str = "<%=val_str%>" ;
+var val_str = "<%=Convert.plainToJsStr(val_str)%>" ;
 
 layui.use('form', function(){
 	  form = layui.form;

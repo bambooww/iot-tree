@@ -55,6 +55,12 @@ case "del":
 	out.print("ok") ;
 	break ;
 case "main":
+	if(Convert.isNullOrEmpty(id))
+	{
+		UAManager.getInstance().setPrjDefault(null);
+		out.print("ok");
+		return ;
+	}
 	dc = UAManager.getInstance().getPrjById(id) ;
 	if(dc==null)
 	{

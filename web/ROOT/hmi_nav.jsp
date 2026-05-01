@@ -13,7 +13,28 @@
 				org.iottree.core.plugin.*,
 	org.iottree.core.util.*,org.iottree.core.station.*,
 	org.iottree.core.comp.*,
-				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%!
+				// 常见移动设备关键字
+			    static String[] mobileKeywords = {
+			        "mobile", "android", "iphone", "ipod", "ipad", "windows phone", 
+			        "blackberry", "webos", "opera mini", "iemobile"
+			    };
+				
+			static boolean chkMobile(HttpServletRequest request)
+			{
+					String ua = request.getHeader("User-Agent").toLowerCase();
+				    for (String keyword : mobileKeywords) {
+				        if (ua.contains(keyword)) {
+				            return true;
+				        }
+				    }
+				    
+				    if (ua.contains("miniprogram")) {
+				        return true;
+				    }
+				    return false;
+			}
+%><%
 
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
@@ -25,6 +46,8 @@
    
    if(Convert.isNullOrEmpty(tp))
 	   tp="nav1" ;
+   
+   boolean b_f_app = "app".equalsIgnoreCase(request.getParameter("f")) ;
 	//String op = request.getParameter("op");
 	String path = request.getParameter("path");
 	UANode uanode = UAUtil.findNodeByPath(path) ;
@@ -48,7 +71,22 @@
 	}
 	
 	int maxDeep = navtree.getMaxDeep() ;
-	JSONObject treejo = navtree.toJO() ;%><!DOCTYPE html>
+	JSONObject treejo = null;
+	JSONArray popmenu_jarr = null ;
+	
+	boolean b_mob = chkMobile(request) ;
+	int main_top = 45 ;
+	if(b_mob)
+	{
+		main_top = 0 ;
+		popmenu_jarr = navtree.toPopMenuJArr() ;
+	}
+	else
+	{
+		treejo = navtree.toJO() ;
+	}
+	String first_u = navtree.getFirstUrl() ;
+%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -56,7 +94,7 @@
  <jsp:include page="head.jsp">
  	<jsp:param value="true0" name="oc"/>
  </jsp:include>
-<style>
+ <style>
 body {
 	margin: 0px;
 	padding: 0px;
@@ -90,12 +128,24 @@ th
 .main {
 	position: absolute;
 	left: 0;
-	top: 45px;
+	top: <%=main_top%>px;
 	bottom: 0px;
 	width: 100%;
 	overflow: hidden
 }
+ 
+</style>
+<%
+if(b_mob)
+{
+%><link rel="stylesheet" type="text/css" href="/_js/oc/util_mob_popmenu.css" />
 
+<%
+}
+else
+{
+	%>
+<style>
 .nav1
 {
 	position: relative;
@@ -148,143 +198,192 @@ th
 	color:yellow;
 }
 </style>
+	<%
+}
+%>
 </head>
 <script type="text/javascript">
 dlg.dlg_top=true;
+var firstu = "<%=first_u%>" ;
 </script>
 <body class="layout-body">
+<%
+if(b_mob)
+{
+%><div id="mob-nav-root"></div>
+<div class="main" >
+	<iframe id="if_main" style="border:0px;width:100%;height:100%;overflow: hidden;" src="<%=first_u%>"></iframe>
+</div>
+<%
+}
+else
+{
+%>
 <div class="top" id="top_nav1">
 
 </div>
 <%
-if(maxDeep>1)
-{
+	if(maxDeep>1)
+	{
 %>
 <div class="top" id="top_nav2" style="top:45px;">
 
 </div>
 <%
-}
+	}
 %>
 <div class="main" style="top:<%=(45*maxDeep)%>px;">
-	<iframe id="if_main" style="border:0px;width:100%;height:100%;overflow: hidden;"></iframe>
+	<iframe id="if_main" style="border:0px;width:100%;height:100%;overflow: hidden;" src="<%=first_u%>"></iframe>
 </div>
+<%
+}
+%>
+
+<%
+if(b_mob)
+{
+%>
 <script>
-
-var firstu = "" ;
-var prjid = "<%=prjid%>" ;
-var max_deep = <%=maxDeep%>;
-var treejo = <%=treejo%> ;
-
-layui.use('form', function(){
-
-});
-
-var cur_nav1 = null ;
-var cur_nav2 = null ;
-
-function get_nav1(nav)
-{
-	for(let ni of treejo.navs)
-	{
-		if(nav==ni.n)
-			return ni ;
-	}
-	return null ;
+    const POP_MENU_DATA =<%=popmenu_jarr%>;
+    function on_popmenu_clk(nav1,nav2)
+    {
+    	if(nav2&&nav2.url)
+    	{
+    		$("#if_main").attr("src",nav2.url);
+    		return ;
+    	}
+    	if(nav1 && nav1.url)
+    		$("#if_main").attr("src",nav1.url);
+    	//console.log(nav2);
+    }
+    </script>
+    <script src="/_js/oc/util_mob_popmenu.js?v=1"></script>
+    
+   
+<%
 }
-
-function get_nav2(nav1,nav2)
+else
 {
-	let n1 = get_nav1(nav1) ;
-	if(!n1) return null ;
-	for(let ni of n1.navs)
+%>
+	<script>
+	
+	
+	var prjid = "<%=prjid%>" ;
+	var max_deep = <%=maxDeep%>;
+	var treejo = <%=treejo%> ;
+	
+	layui.use('form', function(){
+	
+	});
+	
+	var cur_nav1 = null ;
+	var cur_nav2 = null ;
+	
+	function get_nav1(nav)
 	{
-		if(nav2==ni.n)
-			return ni ;
-	}
-	return null ;
-}
-
-function update_ui()
-{
-	$(".nav1").removeClass("sel") ;
-	if(cur_nav1)
-	{
-		$("#nav1_"+cur_nav1).addClass("sel") ;
+		for(let ni of treejo.navs)
+		{
+			if(nav==ni.n)
+				return ni ;
+		}
+		return null ;
 	}
 	
-	$(".nav2").removeClass("sel") ;
-	if(cur_nav2)
+	function get_nav2(nav1,nav2)
 	{
-		$("#nav2_"+cur_nav2).addClass("sel") ;
-	}
-}
-
-function show_nav1()
-{
-	let tmps = "" ;
-	let firstn = "" ;
-	for(let ni of treejo.navs)
-	{
-		tmps += `<div id="nav1_\${ni.n}" class="nav1" nav="\${ni.n}" lvl="1" nav_u="\${ni.u}" onclick="on_nav_clk(this)">\${ni.t}</div>` ;
-		if(!firstn)
-			firstn = ni.n ;
-	}
-	$("#top_nav1").html(tmps) ;
-	
-	on_nav_clk($("#nav1_"+firstn)[0]) ;
-}
-
-function show_nav2()
-{
-	if(max_deep<=1) return ;
-	if(!cur_nav1) return ;
-	let n1 = get_nav1(cur_nav1) ;
-	if(!n1) return ;
-	
-	let tmps = "" ;
-	let firstn = "" ;
-	if(n1.navs)
-	{
+		let n1 = get_nav1(nav1) ;
+		if(!n1) return null ;
 		for(let ni of n1.navs)
 		{
-			tmps += `<div id="nav2_\${ni.n}" class="nav2" nav="\${ni.n}" lvl="2" nav_u="\${ni.u}" onclick="on_nav_clk(this)">\${ni.t}</div>` ;
-			if(!firstn)
-				firstn = ni.n ;
+			if(nav2==ni.n)
+				return ni ;
+		}
+		return null ;
+	}
+	
+	function update_ui()
+	{
+		$(".nav1").removeClass("sel") ;
+		if(cur_nav1)
+		{
+			$("#nav1_"+cur_nav1).addClass("sel") ;
+		}
+		
+		$(".nav2").removeClass("sel") ;
+		if(cur_nav2)
+		{
+			$("#nav2_"+cur_nav2).addClass("sel") ;
 		}
 	}
 	
-	$("#top_nav2").html(tmps) ;
-	
-	if(firstn)
-		on_nav_clk($("#nav2_"+firstn)[0]) ;
-}
-
-function on_nav_clk(ele)
-{
-	let ob = $(ele) ;
-	let lvl = parseInt(ob.attr("lvl")) ;
-	let nn = ob.attr("nav") ;
-	let uu = ob.attr("nav_u") ;
-	
-	if(uu)
-		$("#if_main").attr("src",uu);
-	
-	if(lvl==1)
+	function show_nav1()
 	{
-		cur_nav1 = nn ;
-		show_nav2() ;
+		let tmps = "" ;
+		let firstn = "" ;
+		for(let ni of treejo.navs)
+		{
+			tmps += `<div id="nav1_\${ni.n}" class="nav1" nav="\${ni.n}" lvl="1" nav_u="\${ni.u}" onclick="on_nav_clk(this)">\${ni.t}</div>` ;
+			if(!firstn)
+				firstn = ni.n ;
+		}
+		$("#top_nav1").html(tmps) ;
+		
+		on_nav_clk($("#nav1_"+firstn)[0]) ;
 	}
-	else if(lvl==2)
+	
+	function show_nav2()
 	{
-		cur_nav2 = nn ;
+		if(max_deep<=1) return ;
+		if(!cur_nav1) return ;
+		let n1 = get_nav1(cur_nav1) ;
+		if(!n1) return ;
+		
+		let tmps = "" ;
+		let firstn = "" ;
+		if(n1.navs)
+		{
+			for(let ni of n1.navs)
+			{
+				tmps += `<div id="nav2_\${ni.n}" class="nav2" nav="\${ni.n}" lvl="2" nav_u="\${ni.u}" onclick="on_nav_clk(this)">\${ni.t}</div>` ;
+				if(!firstn)
+					firstn = ni.n ;
+			}
+		}
+		
+		$("#top_nav2").html(tmps) ;
+		
+		if(firstn)
+			on_nav_clk($("#nav2_"+firstn)[0]) ;
 	}
-
-	update_ui();
+	
+	function on_nav_clk(ele)
+	{
+		let ob = $(ele) ;
+		let lvl = parseInt(ob.attr("lvl")) ;
+		let nn = ob.attr("nav") ;
+		let uu = ob.attr("nav_u") ;
+		
+		if(uu)
+			$("#if_main").attr("src",uu);
+		
+		if(lvl==1)
+		{
+			cur_nav1 = nn ;
+			show_nav2() ;
+		}
+		else if(lvl==2)
+		{
+			cur_nav2 = nn ;
+		}
+	
+		update_ui();
+	}
+	
+	
+	show_nav1();
+	</script>
+<%
 }
-
-
-show_nav1();
-</script>
+%>
 </body>
 </html>

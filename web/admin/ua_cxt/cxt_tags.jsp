@@ -796,7 +796,7 @@ function exp_tag()
 		}
 	});
 	
-	dlg.open_win("tag_export.jsp?cxt_path="+cxt_path,{title:"Export Tags @ "+cxt_path,w:'850',h:'600',chk_tag_ns:chk_tag_ns}, //tags:tags,cxt_path:cxt_path
+	dlg.open("tag_export.jsp?cxt_path="+cxt_path,{title:"Export Tags @ "+cxt_path,w:'850',h:'600',chk_tag_ns:chk_tag_ns}, //tags:tags,cxt_path:cxt_path
 			[],[]);
 }
 

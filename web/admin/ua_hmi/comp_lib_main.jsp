@@ -200,7 +200,7 @@ else
 %>
 <table style="width:99%;height:<%=tbh %>;border:0px;">
 	<tr >
-		<td style="width:100%;height:100%"><iframe name="comp_left" src="comp_lib_left.jsp?edit=<%=bedit %>&libid=<%=libid %>" style="width:100%;height:100%;border:0"></iframe></td>
+		<td style="width:100%;height:100%"><iframe id="comp_left" name="comp_left" src="comp_lib_left.jsp?edit=<%=bedit %>&libid=<%=libid %>" style="width:100%;height:100%;border:0"></iframe></td>
 	</tr>
 </table>
 <%

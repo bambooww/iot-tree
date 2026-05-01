@@ -279,7 +279,7 @@ public class PrjFilter implements Filter
 		if(uri.startsWith("/iottree"))
 			uri = uri.substring(8) ;
 		
-		if(uri.endsWith(".jsp"))
+		if(uri.endsWith(".jsp") || uri.endsWith(".html") || uri.endsWith(".txt"))
 		{
 //			String u = uri ;
 //			if(qs!=null)

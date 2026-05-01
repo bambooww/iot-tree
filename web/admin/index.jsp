@@ -329,12 +329,12 @@ else
 <%
 if(rep.isMainPrj())
 {
-%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>main_prj</wbt:lang></span><%
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>main_prj</wbt:lang> <span style="color:red;cursor:pointer;" title="unset" onclick="set_prj_main('')"><i class="fa fa-times"></i></span></span><%
 }
 
 if(rep.isAutoStart())
 {
-%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>auto_start</wbt:lang></span><%
+%>&nbsp;&nbsp;<span class="layui-badge layui-bg-blue"><wbt:lang>auto_start</wbt:lang> <span style="color:red;cursor:pointer;" title="unset" onclick="set_prj_auto_start('<%=rep.getId()%>',false)"><i class="fa fa-times"></i></span></span><%
 }
 %>
          </div>

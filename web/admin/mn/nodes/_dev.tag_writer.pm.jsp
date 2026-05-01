@@ -132,8 +132,8 @@ String prjpath = prj.getNodePath() ;
   <div class="l1">
     <w:g>delay</w:g>
   </div>
-  <div class="l2">
-    <input type="number" id="w_delay" class="layui-input" value="0"/>
+  <div class="l2" style="width:80px;">
+    <input type="number" id="w_delay" class="layui-input" value="0" />
   </div>
   <div class="l3">MS</div>
    <div class="msg"><span style="top:10px;position: absolute;">&nbsp;Tag:</span></div>
@@ -154,9 +154,12 @@ String prjpath = prj.getNodePath() ;
     </select>
   </div>
   <div class="tar_subn">
-    <input type="text" id="w_subn" class="layui-input" style="border-left: 0px;left:2px;"/>
+    <input type="text" id="w_subn" class="layui-input" style="border-left: 0px;left:2px;width:90px;"/>
+    
   </div>
-  
+  <div class="mid" style="left:650px;">
+		<input type="checkbox" id="ignore_no_input" lay-ignore/><w:g>ignore_null</w:g>
+  </div>
   </div>
   
  </div>
@@ -219,6 +222,7 @@ function add_rule(jo)
 		if(jo.w_valsty)
 			ele.find("#w_valsty").val(jo.w_valsty) ;
 		ele.find("#w_subn").val(jo.w_subn||"") ;
+		ele.find("#ignore_no_input").prop("checked",jo.ignore_no_input);
 	}
 	
 	form.render() ;
@@ -241,6 +245,7 @@ function extract_rule_jo(ele)
 	ret.tag = ele.find("#tag").val() ;
 	ret.w_valsty = ele.find("#w_valsty").val() ;
 	ret.w_subn = ele.find("#w_subn").val()||"" ;
+	ret.ignore_no_input=ele.find("#ignore_no_input").prop("checked") ;
 	return ret ;
 }
 

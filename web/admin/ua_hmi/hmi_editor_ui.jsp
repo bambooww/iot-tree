@@ -292,7 +292,7 @@ position:absolute;z-index:1000;right:0px;
 top:0px;height:100%;
 border: 1;
  font: 15;
-  width: 245px;
+  width: 318px;
   background-color: #f2f2f2;
 
 }
@@ -421,11 +421,11 @@ if(bprj)
 <div style="position:absolute;right:5px;top:5px;z-index:1001;color:#1e1e1e" title="show or hide properties panel" id="btn_prop_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</div>
 
 <div id='edit_panel'  class="right_panel_win" >
-<div style="height:100px;background-color: grey" class="edit_toolbar">
-				<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
-				<span id="edit_toolbar" class="edit_toolbar"></span>
-				<div id="p_info" style="height: 20;display0:none" class0="props_panel_pos">&nbsp;</div>
-				</div>
+  <div style="height:70px;background-color: grey" class="edit_toolbar">
+	<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
+	<span id="edit_toolbar" class="edit_toolbar"></span>
+	<div id="p_info" style="height: 20;display0:none" class0="props_panel_pos">&nbsp;</div>
+  </div>
   
 	
 		<div class="layui-tab">

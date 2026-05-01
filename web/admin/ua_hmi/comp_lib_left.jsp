@@ -236,9 +236,9 @@ function on_sel_cat(id,tt)
 {
 	catid = id ;
 	cattitle = tt ;
-	let fwin = FindFrameWin('comp_right');
-	  if(fwin&&catid)
-	  	fwin.location.href="comp_cat_list.jsp?libid="+libid+"&catid="+catid+"&edit="+bedit;
+	//let fwin = FindFrameWin('comp_right');
+	//  if(fwin&&catid)
+	//  	fwin.location.href="comp_cat_list.jsp?libid="+libid+"&catid="+catid+"&edit="+bedit;
 	  
 	  if(parent && parent.on_selected_libcat)
 		  parent.on_selected_libcat(libid,catid,libtitle+" - "+cattitle)

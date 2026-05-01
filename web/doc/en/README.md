@@ -245,6 +245,8 @@ You can use the standard Java Webapp development method to implement your custom
 
 If you encounter problems with the system or have suggestions, you can send us email feedback: iottree@hotmail.com
 
+We also provide cost-effective technical consulting and support services. If you need them, please contact:iottree@hotmail.com
+
 
 
 [quick_start]: ./doc/quick_start.md

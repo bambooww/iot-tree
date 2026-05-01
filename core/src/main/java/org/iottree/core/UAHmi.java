@@ -49,6 +49,9 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 	
 	@data_val(param_name = "bk_color")
 	String bkColor = "";
+	
+	@data_val(param_name = "is_3d")
+	boolean b3D = false;
 
 	public UAHmi()
 	{
@@ -78,6 +81,7 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		UAHmi self = (UAHmi) new_self;
 		self.hmiTp = this.hmiTp;
 		self.connBrkPrompt = this.connBrkPrompt;
+		self.b3D = this.b3D ;
 		if (rf2new != null)
 			rf2new.put(this, self);
 	}
@@ -105,6 +109,11 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 	public String getBkColor()
 	{
 		return this.bkColor ;
+	}
+	
+	public boolean is3D()
+	{
+		return this.b3D ;
 	}
 
 	private List<PropGroup> hmiPGS = null;

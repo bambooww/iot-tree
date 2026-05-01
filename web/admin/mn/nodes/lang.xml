@@ -46,6 +46,7 @@
   
   <dd_node id="1" name="evt" name_cn="事件" name_en="Event" />
   <dd_node id="1" name="mode" name_cn="模式" name_en="Mode" />
+  <dd_node id="1" name="ignore_null" name_cn="忽略空值" name_en="Ignore Null" />
   
   <dd_node id="1" name="buf_len" name_cn="缓存个数" name_en="Buffer Num" />
   <dd_node id="1" name="out_fmt" name_cn="输出格式" name_en="Output Format" />

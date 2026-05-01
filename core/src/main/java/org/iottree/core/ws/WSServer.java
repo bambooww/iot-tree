@@ -56,6 +56,9 @@ public abstract class WSServer// extends ConnServer
 		// private long lastDT = -1;
 		private transient HashMap<UATag, Long> tag2lastdt = new HashMap<>();
 
+		//update will render
+		private transient HashMap<UATag, Long> tag2updt = new HashMap<>();
+		
 		//first create
 		private boolean bFirstTick = true ;
 
@@ -150,9 +153,13 @@ public abstract class WSServer// extends ConnServer
 					{
 						if(!pbi.isNeedTagCached() )
 							continue ;
+						
 						UATag tag = pbi.getBindedTag() ;
 						if(tag==null)
 							continue ;
+						
+						tag2updt.put(tag, -1l) ;
+						
 						List<UAVal> hisval = tag.HIS_getVals(-1) ;
 						if(hisval==null||hisval.size()<=0)
 							continue ;
@@ -179,7 +186,7 @@ public abstract class WSServer// extends ConnServer
 			{
 				StringWriter sw_rt = new StringWriter();
 
-				if (ntags.CXT_renderJson(sw_rt, tag2lastdt, null))
+				if (ntags.CXT_renderJson(sw_rt, tag2lastdt,tag2updt, null))
 				{
 					JSONObject cxt_rt = new JSONObject(sw_rt.toString()) ;
 					data.put("cxt_rt",cxt_rt) ;

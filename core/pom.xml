@@ -19,12 +19,6 @@
 		<output.directory>../_output</output.directory>
 	  </properties>
 
-<build>
-        <finalName>iottree-core</finalName>
-        <plugins>
-        </plugins>
-    </build>
-    
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
@@ -279,29 +273,61 @@
 		    <version>3.45.1.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.spullara.mustache.java/compiler -->
-<dependency>
-    <groupId>com.github.spullara.mustache.java</groupId>
-    <artifactId>compiler</artifactId>
-    <version>0.9.13</version>
-</dependency>
+		<dependency>
+		    <groupId>com.github.spullara.mustache.java</groupId>
+		    <artifactId>compiler</artifactId>
+		    <version>0.9.13</version>
+		</dependency>
+				
+				<!-- https://mvnrepository.com/artifact/com.fazecast/jSerialComm -->
+		<dependency>
+		    <groupId>com.fazecast</groupId>
+		    <artifactId>jSerialComm</artifactId>
+		    <version>2.11.0</version>
+		</dependency>
+				
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		</dependency>
+				<!-- https://mvnrepository.com/artifact/com.github.victools/jsonschema-generator -->
+		<dependency>
+		    <groupId>com.github.victools</groupId>
+		    <artifactId>jsonschema-generator</artifactId>
+		    <version>4.38.0</version>
+		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/com.fazecast/jSerialComm -->
-<dependency>
-    <groupId>com.fazecast</groupId>
-    <artifactId>jSerialComm</artifactId>
-    <version>2.11.0</version>
-</dependency>
-		
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-</dependency>
-		<!-- https://mvnrepository.com/artifact/com.github.victools/jsonschema-generator -->
-<dependency>
-    <groupId>com.github.victools</groupId>
-    <artifactId>jsonschema-generator</artifactId>
-    <version>4.38.0</version>
-</dependency>
+	    <dependency>
+	        <groupId>info.picocli</groupId>
+	        <artifactId>picocli</artifactId>
+	        <version>4.7.6</version>
+	    </dependency>
+	    
+	    <dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.15.2</version>
+		</dependency>
+
 	</dependencies>
-	
+
+	<build>
+		<finalName>iottree-core</finalName>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <version>3.8.1</version>
+	            <configuration>
+	                <annotationProcessorPaths>
+	                    <path>
+	                        <groupId>info.picocli</groupId>
+	                        <artifactId>picocli-codegen</artifactId>
+	                        <version>4.7.6</version>
+	                    </path>
+	                </annotationProcessorPaths>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
 </project>

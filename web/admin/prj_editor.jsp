@@ -97,6 +97,8 @@ if(!hide_top)
 		 	<button id="prj_btn_start"  class="sp_btn" style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></button>
 		 	&nbsp;&nbsp;
 		 	<button id="prj_btn_stop"  class="sp_btn" style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></button>
+		 	&nbsp;&nbsp;
+		 	<button id="prj_btn_ai"  class="sp_btn" style="color:#f2f2f2;background-color:#3f95c1" title="stop project" onclick="ai_dlg()">AI</button>
 </div>
 <%
 }
@@ -222,9 +224,6 @@ if(hide_top)
 				  &nbsp;&nbsp;<button class="tree_btn" title="<wbt:g>refresh,browser,tree</wbt:g>" onclick="refresh_ui()" ><i class="fa fa-refresh fa" aria-hidden="true"></i></button>
 				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1('dev')"><i  class="fa-solid fa-angle-up"" aria-hidden="true"></i></button>
 				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1()"><i  class="fa-solid fa-angles-up"" aria-hidden="true"></i></button>
-				  
-				  
-				  
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:hidden;">
@@ -268,8 +267,10 @@ if(hide_top)
     </div>
     
     </div>
-    
-    
+    <div id="chat_ai" style="z-index:6000;position: absolute;right:0px;width:700px;height:0px;top:45px;bottom: 0px;border:0px;display:none;">
+    <iframe id="chat_ai_if" style="width:100%;height:100px;border:0px;"></iframe>
+     <button id="chat_ai_op" style="position: absolute;right:20px;top:20px;width:30px;height:30px;display:none;" onclick="ai_dlg()"><i class="fa fa-times"></i></button>
+    </div>
 <script>
 dlg.dlg_top=true;
 var repid="<%=prjid%>";
@@ -1580,7 +1581,10 @@ function add_or_edit_dev(ch_path,dev_path)
 								dlg.msg(ret);
 								return ;
 							}
-							dlg.msg("<wbt:g>add,dev,succ</wbt:g>");
+							if(bedit)
+								dlg.msg("<wbt:g>edit,dev,succ</wbt:g>");
+							else
+								dlg.msg("<wbt:g>add,dev,succ</wbt:g>");
 							dlg.close();
 							refresh_ui() ;
 						},false);
@@ -1791,7 +1795,6 @@ var resize_cc = 0 ;
 $(window).resize(function(){
 	resize_iframe_h();
 	resize_tree();
-	//panel.updatePixelSize() ;
 	resize_cc ++ ;
 	if(resize_cc<=1)
 		draw_fit();
@@ -2207,6 +2210,35 @@ function chg_lan(ln)
 		}
 		location.reload();
 	});
+}
+
+function ai_dlg()
+{
+	let obj_if = $("#chat_ai_if");
+	let obj = $("#chat_ai");
+	var h = $(window).height()-40;
+	
+	if(obj.attr('topm_show')=='1')
+	{
+		obj_if.attr("src","").css("height","0px");;
+		$("#chat_ai_op").css("display","none") ;
+		obj.animate({height: '0px', opacity: 'hide'}, 'normal',function(){ obj.hide();});
+		obj.attr('topm_show',"0") ;
+		return 0 ;
+	}
+	else
+	{
+		let src = obj_if.attr("src");
+		if(!src)
+		{
+			obj_if.attr("src","./util/chat_ai.jsp?prjid="+prjid) ;
+		}
+		$("#chat_ai_op").css("display","") ;
+		obj_if.css("height",h+"px");
+		obj.animate({height: h+"px", opacity: 'show'}, 'normal',function(){ obj.show();});
+		obj.attr('topm_show',"1") ;
+		return 1 ;
+	}
 }
 </script>
 <script src="./js/split.js"></script>

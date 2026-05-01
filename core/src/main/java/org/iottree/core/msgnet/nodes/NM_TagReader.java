@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.basic.ValUnit;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
@@ -80,11 +82,19 @@ public class NM_TagReader extends MNNodeMid
 		public JSONObject toTagJO()
 		{
 			JSONObject ret = new JSONObject().putOpt("var", this.varName)
-					.putOpt("tagp", this.tagPath);
+					.putOpt("tag_path", this.tagPath);
 			if(tag!=null)
 			{
+				ret.putOpt("tag_id", tag.getId()) ;
+				ret.putOpt("tag_iid", tag.getIID()) ;
 				ret.putOpt("tag_title", tag.getTitle()) ;
 				ret.putOpt("tag_unit", tag.getUnit()) ;
+				ValUnit vu = tag.getValUnit() ;
+				if(vu!=null)
+					ret.putOpt("val_unit", vu.getUnit()) ;
+				ValTP vtp = tag.getValTp() ;
+				if(vtp!=null)
+					ret.put("vtp", vtp.getStr());
 			}
 			return ret;
 		}
@@ -226,6 +236,60 @@ public class NM_TagReader extends MNNodeMid
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
+		if(bTagValDetail)
+			return RT_readTagOutDetail();
+		else
+			return RT_readTagOutSimple() ;
+	}
+	
+	private RTOut RT_readTagOutDetail()
+	{
+		if(this.tagItems==null||this.tagItems.size()<=0)
+			return null ;
+		
+		//boolean bok = true;
+		JSONObject tmpjo = new JSONObject() ;
+		JSONArray detail_jarr = new JSONArray() ;
+		//JSONArray errjarr = new JSONArray() ;
+		//bok = true ;
+		for(TagItem ti:this.tagItems)
+		{
+			UATag tag = ti.tag ;
+			if(tag==null)
+				continue ;
+			UAVal uav = tag.RT_getVal() ;
+			JSONObject jo0 = null;
+			if(uav==null||!uav.isValid())
+			{
+				jo0 = new JSONObject() ;
+				jo0.put("valid",false) ;
+			}
+			else
+			{
+				JSONObject djo = uav.toDetailJO(tag) ;
+				jo0 = new JSONObject(djo.toMap()) ;
+				jo0.put("valid",true) ;
+				jo0.putOpt("var_name",ti.getVarName()) ;
+				//tmpjo.putOpt(ti.getVarName(), ) ;
+				jo0.putOpt("tag_path", ti.tagPath) ;
+				ValTP vtp = tag.getValTp() ;
+				if(vtp!=null)
+					jo0.put("vtp", vtp.getStr());
+			}
+			detail_jarr.put(jo0) ;
+		}
+		tmpjo.put("vals", detail_jarr) ;
+		UAPrj prj = this.getPrj() ;
+		tmpjo.put("prj_name", prj.getName()) ;
+		tmpjo.put("prj_title", prj.getTitle()) ;
+		RTOut rto = RTOut.createOutIdx() ;
+		rto.asIdxMsg(0, new MNMsg().asPayload(tmpjo)) ;
+		
+		return rto;
+	}
+	
+	private RTOut RT_readTagOutSimple()
+	{
 		if(this.tagItems==null||this.tagItems.size()<=0)
 			return null ;
 		
@@ -247,14 +311,7 @@ public class NM_TagReader extends MNNodeMid
 			}
 			else
 			{
-				if(bTagValDetail)
-				{
-					tmpjo.putOpt(ti.getVarName(), uav.toDetailJO(tag)) ;
-				}
-				else
-				{
-					tmpjo.putOpt(ti.getVarName(), uav.getObjVal()) ;
-				}
+				tmpjo.putOpt(ti.getVarName(), uav.getObjVal()) ;
 			}
 		}
 		
@@ -290,6 +347,10 @@ public class NM_TagReader extends MNNodeMid
 			}
 		}
 		pld.put("tags",jarr) ;
+		UAPrj prj = this.getPrj() ;
+		pld.put("prj_name", prj.getName()) ;
+		pld.put("prj_title", prj.getTitle()) ;
+		
 		MNMsg msg = new MNMsg().asPayloadJO(pld) ;
 		this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(2, msg));
 	}

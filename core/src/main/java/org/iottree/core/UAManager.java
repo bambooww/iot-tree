@@ -201,7 +201,7 @@ public class UAManager implements IMNContProvider
 		File f = getPrjDefaultFile();
 		try(FileOutputStream fos = new FileOutputStream(f);)
 		{
-			fos.write(prj.getId().getBytes());
+			fos.write(id.getBytes());
 		}
 		defaultPrjId = id ;
 	}

@@ -125,7 +125,7 @@ case "comp_load":
 		return;
 	}
 	
-	out.print("{res_ref_id:\""+ref_lib_id+"\",res_lib_id:\""+reslibid+"\",\"res_id\":\""+compid+"\"}\r\n");
+	out.print("{res_ref_id:\""+ref_lib_id+"\",res_lib_id:\""+reslibid+"\",\"res_id\":\""+compid+"\",\"res_title\":\""+Convert.plainToJsStr(ci.getTitle())+"\"}\r\n");
 	out.print(txt) ;
 	break;
 case "comp_del":

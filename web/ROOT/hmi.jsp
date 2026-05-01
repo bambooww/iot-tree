@@ -122,7 +122,6 @@
 	{
 		//bd_css = "background-color:"+bd_css ;
 		bkc = bkcolor ;
-		
 	}
 	if(Convert.isNullOrEmpty(bkc))
 		   bkc = "#1e1e1e";
@@ -364,12 +363,9 @@ height:30px;
 .oper
 {
 position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000;cursor: pointer;
+padding-top: 5px;
 }
 
-.oper i
-{
-margin-top:5px;
-}
 
 .overlay_msg
 {
@@ -516,6 +512,8 @@ position:relative;
 	
 }
 
+.rotated90 {transform: rotate(90deg);transform-origin: center center;display: block;}
+        
 #ws_updt {z-index:65534;position: absolute;right:10px;bottom: 10px;color:#95ec28;}
 </style>
 
@@ -524,9 +522,9 @@ position:relative;
 dlg.dlg_top=true;
 var b_station_ins = <%=b_station_ins%>;
 </script>
-<body class="layout-body" >
-<div style="z-index: 60000"><button onclick="cxt_rt()" >cxtrt</button></div>
-<%--
+<body class="layout-body" style="background-color:<%=bkc%> ">
+<div style="z-index: 60000"></div>
+<%--  <button onclick="cxt_rt()" >cxtrt</button>
 		<div class="left " style="background-color: #aaaaaa;overflow: hidden;">
 			<div id="leftcat_rep_unit" class0="lr_btn_div" onclick="leftcat_sel('rep_unit','Project Lib')"><i class="fa fa-cube fa-3x lr_btn"></i><br>Project</div>
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic')"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>Basic</div>
@@ -620,9 +618,11 @@ if(b_zoom_show)
 	<div id="oper_fitwin" class="oper" style="top:10px"><i class="fa fa-crosshairs fa-3x" title="fit windows"></i></div>
 	<div id="oper_zoomup" class="oper" style="top:60px"><i class="fa fa-plus fa-3x" title="zoom up"></i></div>
 	<div id="oper_zoomdown" class="oper" style="top:110px"><i class="fa fa-minus fa-3x" title="zoom down"></i></div>
-	<div id="oper_alert" class="oper" style="top:180px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
-	<div id="oper_data" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
-	<div id="oper_ui" class="oper" style="top:280px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
+	<div id="oper_rotate" class="oper" style="top:160px"><i class="fa fa-rotate-right fa-3x" title="rotate"></i></div>
+
+	<div id="oper_alert" class="oper" style="top:230px;border:1px solid;border-color:#469424;background-color: #1e1e1e;" title="show alerts"><i id="oper_alert_i" class="fa fa-bell fa-3x"></i></div>
+	<div id="oper_data" class="oper" style="top:280px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#83ec21" title="show tags data"><i id="oper_data_i" class="fa fa-list-alt fa-3x"></i></div>
+	<div id="oper_ui" class="oper" style="top:330px;border:1px solid;border-color:#469424;background-color: #1e1e1e;color:#ffd898" title="show UI Dialog List"><i class="fa fa-area-chart fa-3x"></i></div>
 <%
 }
 else
@@ -868,6 +868,10 @@ $('#oper_zoomup').click(function()
 $('#oper_zoomdown').click(function()
 {
 	zoom(1)
+});
+$("#oper_rotate").click(function()
+{
+	rotate_90();
 });
 
 $("#oper_alert").click(function()
@@ -1224,11 +1228,11 @@ function ws_conn()
     	hmiModel.updateServerInfo(s);
     	if(d.cxt_rt)
     	{//console.log(ob.tags_mem_cached)
-    		if(ob.tags_mem_cached)
-    		{
-    			for(let k in ob.tags_mem_cached)
-    				console.log(k,ob.tags_mem_cached[k].length)
-    		}
+    		//if(ob.tags_mem_cached)
+    		//{
+    		//	for(let k in ob.tags_mem_cached)
+    		//		console.log(k,ob.tags_mem_cached[k].length)
+    		//}
     		hmiModel.updateRtNodes(d.cxt_rt,ob.tags_mem_cached||null);
     		update_data_list(d.cxt_rt) ;
     	}
@@ -1614,6 +1618,14 @@ async function  f()
 }
 
 f();
+
+function rotate_90() {
+	let ob =$("#main_panel");
+	if(ob.hasClass('rotated90'))
+		ob.removeClass('rotated90');
+	else
+    	ob.addClass('rotated90');
+}
 
 //setInterval("cxt_rt()",5000);
 </script>

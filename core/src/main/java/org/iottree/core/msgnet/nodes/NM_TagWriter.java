@@ -41,6 +41,8 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 		
 		long wDelay = 0 ; //delay before do write
 		
+		boolean ignoreNoInput = false ;
+		
 		private UATag tag = null ;
 		
 		public TagItem(String tagpath,MNCxtValSty w_valsty,String w_subn)
@@ -89,6 +91,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 			jo.putOpt("w_valsty", this.wValSty.name()) ;
 			jo.putOpt("w_subn", this.wSubN) ;
 			jo.putOpt("w_delay", this.wDelay) ;
+			jo.putOpt("ignore_no_input", ignoreNoInput) ;
 			return jo ;
 		}
 		
@@ -99,6 +102,7 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 			ret.wValSty  = MNCxtValSty.valueOf(jo.getString("w_valsty")) ;
 			ret.wSubN = jo.optString("w_subn") ;
 			ret.wDelay = jo.optLong("w_delay",0) ;
+			ret.ignoreNoInput = jo.optBoolean("ignore_no_input",false) ;
 			return ret;
 		}
 	}
@@ -140,7 +144,33 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		return 3;
+	}
+	
+	@Override
+	public String RT_getOutColor(int idx)
+	{
+		switch(idx)
+		{
+		case 1:
+			return "green";
+		case 2:
+			return "red";
+		}
+		return null ;
+	}
+	
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		switch(idx)
+		{
+		case 1:
+			return "ok";
+		case 2:
+			return "err";
+		}
+		return null ;
 	}
 
 	@Override
@@ -230,13 +260,15 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 		}
 		
 		if(this.tagItems==null||this.tagItems.size()<=0)
-			return null ;
+		{
+			return RTOut.createOutIdx().asIdxMsg(2, new MNMsg().asPayload(new JSONObject().put("succ", false).put("err", "no item set")));
+		}
 		
 		StringBuilder failedr = new StringBuilder() ;
 		if(!isParamReady(failedr))
 		{
 			RT_DEBUG_ERR.fire("tag_w", failedr.toString());
-			return null ;
+			return RTOut.createOutIdx().asIdxMsg(2, new MNMsg().asPayload(new JSONObject().put("succ", false).put("err",  failedr.toString())));
 		}
 		
 		HashMap<UATag,Object> tag2val = new HashMap<>() ;
@@ -246,14 +278,21 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 			Object wval = ti.wValSty.RT_getValInCxt(ti.wSubN,this.getBelongTo(), this, msg) ;
 			if(wval==null)
 			{
-				RT_DEBUG_ERR.fire("tag_w",ti.wValSty.getTitle()+" "+ti.wSubN+" return null");
-				return null ;
+				if(ti.ignoreNoInput)
+					continue ;
+				
+				String err = ti.wValSty.getTitle()+" "+ti.wSubN+" return null" ;
+				RT_DEBUG_ERR.fire("tag_w",err);
+				return RTOut.createOutIdx().asIdxMsg(2, new MNMsg().asPayload(new JSONObject().put("succ", false).put("err", err)));
 			}
 			tag2val.put(tag,wval) ;
 		}
 		
 		if(!this.asynMode)
-			return runSyn(msg,tag2val) ;
+		{
+			MNMsg rtoo = runSyn(msg,tag2val) ;
+			return RTOut.createOutIdx().asIdxMsg(0, rtoo).asIdxMsg(1, new MNMsg().asPayload(new JSONObject().put("succ", true)));
+		}
 		
 		//asyn
 		synchronized(this)
@@ -263,11 +302,11 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 			asynTh.start();
 		}
 		
-		return null ;
+		return RTOut.createOutIdx().asIdxMsg(1, new MNMsg().asPayload(new JSONObject().put("succ", true)));
 	}
 	
 	
-	private RTOut runSyn(MNMsg msg,HashMap<UATag,Object> tag2val)
+	private MNMsg runSyn(MNMsg msg,HashMap<UATag,Object> tag2val)
 	{
 		StringBuilder failedr = new StringBuilder() ;
 		for(TagItem ti:this.tagItems)
@@ -282,6 +321,8 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 			
 			UATag tag = ti.tag ;
 			Object wval = tag2val.get(tag) ;
+			if(wval==null)
+				continue ;
 			if(!tag.RT_writeVal(wval, failedr))
 			{
 				RT_DEBUG_ERR.fire("tag_w", failedr.toString());
@@ -290,7 +331,8 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 		}
 		
 		RT_DEBUG_ERR.clear("tag_w");
-		return RTOut.createOutAll(msg);
+		//return RTOut.createOutIdx().asIdxMsg(0,msg);
+		return msg ;
 	}
 	
 	private class AsynTh extends Thread
@@ -308,10 +350,10 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 		{
 			try
 			{
-				RTOut rout = runSyn(msg,tag2val) ;
-				if(rout!=null)
+				MNMsg m = runSyn(msg,tag2val) ;
+				if(m!=null)
 				{
-					NM_TagWriter.this.RT_sendMsgOut(rout);
+					NM_TagWriter.this.RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(0, m));
 				}
 			}
 			catch(Exception ee)

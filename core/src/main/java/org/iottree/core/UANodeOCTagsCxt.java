@@ -521,6 +521,11 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return CXT_renderJson(w, tag2lastdt, -1,extpms);
 	}
 	
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2chgdt,HashMap<UATag,Long> tag2updt, HashMap<String, Object> extpms) throws IOException
+	{
+		return CXT_renderJson(w, tag2chgdt,tag2updt, -1,extpms,false,true);
+	}
+	
 	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms) throws IOException
 	{
 		return CXT_renderJson(w, tag2lastdt, g_lastdt,extpms,false) ; 
@@ -530,8 +535,13 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 	{
 		return CXT_renderJson(w, tag2lastdt, g_lastdt,extpms,ignore_sys_tag,true) ;
 	}
+	
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2last_chgdt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag,boolean inc_sub) throws IOException
+	{
+		return CXT_renderJson(w, tag2last_chgdt,null, g_lastdt,extpms,ignore_sys_tag,inc_sub);
+	}
 
-	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2lastdt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag,boolean inc_sub) throws IOException
+	public boolean CXT_renderJson(Writer w, HashMap<UATag,Long> tag2last_chgdt,HashMap<UATag,Long> tag2last_updt, long g_lastdt,HashMap<String, Object> extpms,boolean ignore_sys_tag,boolean inc_sub) throws IOException
 	{
 		boolean bchg=false;
 		//long maxdt=-1 ;
@@ -560,12 +570,12 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		}
 		
 		
-		if(renderJsonTags(w, tag2lastdt, g_lastdt,ignore_sys_tag))
+		if(renderJsonTags(w, tag2last_chgdt,tag2last_updt, g_lastdt,ignore_sys_tag))
 			bchg = true;
 		
 		if(inc_sub)
 		{
-			if(renderJsonSubs(w, tag2lastdt))
+			if(renderJsonSubs(w, tag2last_chgdt,tag2last_updt))
 				bchg = true ;
 		}
 		
@@ -580,7 +590,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return bchg;
 	}
 
-	private boolean renderJsonSubs(Writer w, HashMap<UATag, Long> tag2lastdt) throws IOException
+	private boolean renderJsonSubs(Writer w, HashMap<UATag, Long> tag2lastdt,HashMap<UATag, Long> tag2updt) throws IOException
 	{
 		boolean bchg =false;
 		boolean bfirst;
@@ -596,7 +606,7 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 				else
 					bfirst = false;
 
-				if(subtg.CXT_renderJson(w, tag2lastdt, null))
+				if(subtg.CXT_renderJson(w, tag2lastdt,tag2updt, null))
 					bchg=true;
 			}
 			w.write("]");
@@ -604,7 +614,17 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		return bchg;
 	}
 
-	private boolean renderJsonTags(Writer w, HashMap<UATag, Long> tag2lastdt, long g_lastdt,boolean ignore_sys) throws IOException
+	/**
+	 * 
+	 * @param w
+	 * @param tag2last_chgdt
+	 * @param tag2last_updt Tags that update will render out
+	 * @param g_lastdt
+	 * @param ignore_sys
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean renderJsonTags(Writer w, HashMap<UATag, Long> tag2last_chgdt,HashMap<UATag, Long> tag2last_updt,long g_lastdt,boolean ignore_sys) throws IOException
 	{
 		boolean bchg=false;
 		w.write(",\"tags\":[");
@@ -617,25 +637,43 @@ public abstract class UANodeOCTagsCxt extends UANodeOCTags
 		{
 			UAVal val = tg.RT_getVal();
 			long dt_chg = -1;
+			long dt_last = -1 ;
 			
 			if (val != null)
-				dt_chg = val.getValChgDT();
-			
-			if(tag2lastdt!=null)
 			{
-				Long lastdt = tag2lastdt.get(tg) ;
-				if (lastdt!=null && lastdt > 0 && dt_chg>0 && dt_chg <= lastdt)
-					continue;
-				if(dt_chg<0 && lastdt!=null && lastdt<0)
-					continue ;
+				dt_chg = val.getValChgDT();
+				dt_last = val.getValDT() ;
+			}
+			
+			Long last_updt = null ;
+			if(tag2last_updt!=null)
+				last_updt = tag2last_updt.get(tg) ;
+			
+			boolean b_up_render= last_updt!=null && last_updt<dt_last;
+			if(b_up_render)
+				tag2last_updt.put(tg,dt_last) ;
+			
+			if(tag2last_chgdt!=null)
+			{
+				Long last_chgdt = tag2last_chgdt.get(tg) ;
+				if(!b_up_render)
+				{
+					if (last_chgdt!=null && last_chgdt > 0 && dt_chg>0 && dt_chg <= last_chgdt)
+						continue;
+					if(dt_chg<0 && last_chgdt!=null && last_chgdt<0)
+						continue ;
+				}
 				
-				lastdt = dt_chg ;
-				tag2lastdt.put(tg, lastdt);
+				last_chgdt = dt_chg ;
+				tag2last_chgdt.put(tg, last_chgdt);
 			}
 			else if(g_lastdt>0)
 			{
-				if (dt_chg <= g_lastdt)
-					continue;
+				if(!b_up_render)
+				{
+					if (dt_chg <= g_lastdt)
+						continue;
+				}
 			}
 			
 			bchg=true;

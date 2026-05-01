@@ -70,6 +70,24 @@
 		
 	]},
 	
+	{"cat":"_edge_c","nodes":[
+		
+	],"modules":[
+		{"cn":"org.iottree.ext.ai.edge_c.EdgeC_iForest_M","nodes":[
+			
+		]}
+		
+	]},
+	
+	{"cat":"_ui","nodes":[
+		
+	],"modules":[
+		{"cn":"org.iottree.ext.ui.UIChatAI_M","nodes":[
+			
+		]}
+		
+	]},
+	
 	{"cat":"_armlinux","nodes":[
 		"org.iottree.ext.armlinux.GPIOOut_NE"
 		
@@ -88,6 +106,7 @@
 		"org.iottree.core.msgnet.nodes.NM_HttpClient",
 		"org.iottree.core.msgnet.nodes.NM_TcpClientRR",
 		"org.iottree.core.msgnet.nodes.NM_RESTfulReadApi",
+		"org.iottree.core.msgnet.nodes.NM_WebSocketApi",
 		"org.iottree.ext.msg_net.MailSender_NM"
 	],"modules":[
 		{"cn":"org.iottree.core.msgnet.modules.RESTful_M","nodes":[
