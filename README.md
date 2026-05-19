@@ -125,7 +125,7 @@ IOT-Tree Server can be deployed as a shared node based on multiple communication
 This distributed function can greatly facilitate the linkage of cross regional monitoring sites. For example, each monitoring site only needs broadband for secure communication with the cloud message queue server, which can easily form a hierarchical relationship. The top IOT-Tree Server node system can monitor the communication link and use this communication state as the system communication exception to deal with multiple related functions.
 
 
-[Center-substation remote monitoring][center_substation]
+[Center-substation data synchronization][center_substation]
 
 
 ## 2 Composition of IOT-Tree Server
@@ -209,7 +209,7 @@ We also provide cost-effective technical consulting and support services. If you
 [pump_demo]: ./web/doc/en/doc/case/example_psd.md
 [lamp_demo]: ./web/doc/en/doc/case/example_lamp_demo.md
 [embed_ctrl_demo]: ./web/doc/en/doc/case/example_embed.md
-[center_substation]: ./web/doc/en/doc/advanced/main_sub_station.md
+[center_substation]: ./web/doc/en/doc/advanced/pstation.md
 [wiki]: https://github.com/bambooww/iot-tree/wiki
 
 ## 📜 Licensing Model

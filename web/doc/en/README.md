@@ -156,7 +156,7 @@ This distributed function can greatly facilitate the linkage of cross regional m
 
 
 
-[Center-substation remote monitoring][center_substation]
+[Center-substation data synchronization(Inner)][center_substation]
 
 
 
@@ -260,7 +260,7 @@ We also provide cost-effective technical consulting and support services. If you
 [lamp_demo]: ./doc/case/example_lamp_demo.md
 
 [embed_ctrl_demo]: ./doc/case/example_embed.md
-[center_substation]: ./doc/advanced/main_sub_station.md
+[center_substation]: ./doc/advanced/pstation.md
 
 
 
