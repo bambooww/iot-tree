@@ -5,5 +5,16 @@
   <dd_node id="1" name="bind_for" name_cn="绑定目标" name_en="Bind For" />
   <dd_node id="1" name="bind_sty" name_cn="绑定方式" name_en="Bind Style" />
   <dd_node id="1" name="input_by_user" name_cn="用户输入" name_en="Input By User" />
-  
+  <dd_node id="1" name="remote_can_write" name_cn="允许远程写数据" name_en="Allow remote writing" />
+  <dd_node id="1" name="remote" name_cn="远程" name_en="Remote" />
+
+<dd_node id="1" name="prj_auto_start" name_cn="项目自动启动" name_en="Project Auto Start" />
+<dd_node id="1" name="en_data_syn" name_cn="使能数据同步" name_en="Enable Data Synchronization" />
+<dd_node id="1" name="intv" name_cn="间隔" name_en="Interval" />
+<dd_node id="1" name="ms" name_cn="毫秒" name_en="Interval" />Millisecond
+<dd_node id="1" name="save_bf_sending" name_cn="消息包发送前保存" name_en="Save message packet before sending" />
+<dd_node id="1" name="max_len" name_cn="最大数量" name_en="Max number" />
+<dd_node id="1" name="set_pm" name_cn="设置参数到子站" name_en="Set parameters to sub stations" />
+<dd_node id="1" name="remote_station_pm_set" name_cn="远程设置子站项目运行参数" name_en="Remote setting of sub station project operating parameters" />
+
 </dd_class>

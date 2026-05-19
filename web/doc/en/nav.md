@@ -149,9 +149,10 @@
 ##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;10.4 Custom Project Management (Webapp)</a>
 ##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;10.5 Provide RESTFul Api externally</a>
 ##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.6 Outer OPC UA Support</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.7 Center-substation remote monitoring</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.8 Device simulators</a>
-##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;10.9 Implement your own .Net client</a>
+##### <a href="doc/advanced/pstation.md" target="main">&nbsp;&nbsp;&nbsp;10.7 Center-substation data synchronization(Inner)</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.8 Center-substation remote monitoring(MQTT)</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.9 Device simulators</a>
+##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;10.10 Implement your own .Net client</a>
 
 
 #### <a href="doc/version.md" >11 Version</a>

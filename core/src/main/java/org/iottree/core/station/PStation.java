@@ -24,7 +24,7 @@ import org.json.JSONObject;
 public class PStation
 {
 	private static ILogger log=  LoggerManager.getLogger(PStation.class) ;
-	
+		
 	String id = null ;
 	
 	String title = null ;
@@ -70,30 +70,32 @@ public class PStation
 	 * 获取接收端对应项目——项目名称=stationid_prjname
 	 * @return
 	 */
-	public List<UAPrj> getRelatedPrjs()
+	public synchronized List<UAPrj> getRelatedPrjs()
 	{
 		if(relatedPrjs!=null)
 			return relatedPrjs; 
 		
-		synchronized(this)
+		ArrayList<UAPrj> rets = new ArrayList<>() ;
+		//String prefix = this.id+"_" ;
+		for(UAPrj prj:UAManager.getInstance().listPrjs())
 		{
-			ArrayList<UAPrj> rets = new ArrayList<>() ;
-			//String prefix = this.id+"_" ;
-			for(UAPrj prj:UAManager.getInstance().listPrjs())
-			{
-				PStation ps = prj.getPrjPStationInsDef() ;
-				if(ps==null)
-					continue ;
-				if(this.id.equals(ps.getId()))
-					rets.add(prj) ;
-	//			String prjn = prj.getName() ;
-	//			if(prjn.startsWith(prefix))
-	//				rets.add(prj) ;
-			}
-			
-			relatedPrjs = rets ;
-			return rets ;
+			PStation ps = prj.getPrjPStationInsDef() ;
+			if(ps==null)
+				continue ;
+			if(this.id.equals(ps.getId()))
+				rets.add(prj) ;
+//			String prjn = prj.getName() ;
+//			if(prjn.startsWith(prefix))
+//				rets.add(prj) ;
 		}
+		
+		relatedPrjs = rets ;
+		return rets ;
+	}
+	
+	synchronized void clearCache()
+	{
+		relatedPrjs = null ;
 	}
 	
 	public UAPrj getRelatedPrjByRStationPrjN(String prjname)

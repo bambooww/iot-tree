@@ -274,7 +274,7 @@ var b_devdef = <%=bdevdef%>;
 var b_refed = <%=brefed%>;
 var b_sys = <%=bsys%>;
 var b_sub = <%=bsub%>;
-var sort_by=null ;
+var sort_by="iid" ;
 
 var search_txt = null ;
 

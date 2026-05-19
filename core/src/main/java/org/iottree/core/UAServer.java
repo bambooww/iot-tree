@@ -67,7 +67,7 @@ public class UAServer
 		ConnProvider.getAllConnProviders();
 		
 		StationLocal sl = StationLocal.getInstance();
-		if(sl!=null)
+		if(sl!=null && sl.isStationValid())
 		{
 			System.out.println("**starting station local ["+sl.getStationId()+"]") ;
 			sl.RT_start();

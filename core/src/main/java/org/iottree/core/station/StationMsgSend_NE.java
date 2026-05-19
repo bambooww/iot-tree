@@ -89,20 +89,23 @@ public class StationMsgSend_NE extends MNNodeEnd implements IMNRunner
 	{
 		if(prj==null)
 			return false;
-		return StationLocal.getInstance()!=null;//.isStationValid() ;
+		StationLocal sl = StationLocal.getInstance();
+		return sl!=null && sl.isStationValid() ;
 	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		if(StationLocal.getInstance()==null)
+		StationLocal sl = StationLocal.getInstance() ;
+		if(sl==null || !sl.isStationValid())
 		{
 			failedr.append("Station Local is not valid") ;
 			return false;
 		}
+		
 		if(Convert.isNullOrEmpty(this.topic))
 		{
-			failedr.append("Station Local is not valid") ;
+			failedr.append("no topic") ;
 			return false;
 		}
 		

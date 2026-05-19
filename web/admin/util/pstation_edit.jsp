@@ -101,7 +101,7 @@ function do_submit(cb)
 	var tt = $('#tt').val();
 	if(tt==null||tt=='')
 	{
-		tt = n;
+		tt = id;
 	}
 	
 

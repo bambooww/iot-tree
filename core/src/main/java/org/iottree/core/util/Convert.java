@@ -719,7 +719,7 @@ public class Convert
 			if (!bc)
 			{
 				if(invalidreson!=null)
-					invalidreson.append("invalid char =" + c);
+					invalidreson.append(t+" has invalid char =" + c);
 				return false;
 			}
 		}

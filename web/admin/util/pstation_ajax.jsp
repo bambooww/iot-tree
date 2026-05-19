@@ -21,14 +21,29 @@ String id = request.getParameter("id") ;
 String tt = request.getParameter("tt") ;
 String key = request.getParameter("key") ;
 
+StringBuilder failedr = new StringBuilder() ;
 switch(op)
 {
+case "add_pstation":
 case "set_pstation":
 	try
 	{
 		if(!Convert.checkReqEmpty(request, out,"id"))
 			return ;
-
+		if(!Convert.checkVarName(id,"Station Id", false, failedr))
+		{
+			out.print(failedr) ;
+			return;
+		}
+		if("add_pstation".equals(op))
+		{
+			PStation oldps = PlatInsManager.getInstance().getStationById(id) ;
+			if(oldps!=null)
+			{
+				out.print("Station Id ["+id+"] is already existed") ;
+				return ;
+			}
+		}
 		PlatInsManager.getInstance().setStation(id, tt, key) ; 
 		
 		out.print("succ") ;
@@ -59,6 +74,19 @@ case "del_pstation":
 	}
 	out.print("delete pstation failed") ;
 	break;
+case "st":
+	JSONObject st_jo = new JSONObject() ;
+	st_jo.put("local",StationLocal.getInstance().RT_toJO());
+	pss = PlatInsManager.getInstance().listStations() ;
+	JSONArray ps_jarr = new JSONArray() ;
+	for(PStation ps:pss)
+	{
+		JSONObject jo = ps.RT_toStatusJO();
+		ps_jarr.put(jo) ;
+	}
+	st_jo.put("pstations",ps_jarr) ;
+	st_jo.write(out) ;
+	return ;
 default:
 	out.print("unknown op="+op) ;
 	return ;

@@ -211,6 +211,7 @@ public class PlatInsManager
 			ps.title = title ;
 			ps.key = key ;
 		}
+		ps.clearCache();
 		this.saveStations();
 	}
 	

@@ -116,6 +116,8 @@ background:#aaaaaa;
 	visibility:hidden;
 	bottom:5px;
 }
+.sor_item .st {position:absolute;right:3px;}
+
 .sor_item:hover .oper{
 	visibility:visible;
 }
@@ -684,12 +686,26 @@ if(ins.isAutoStart())
 				</div>
 				<!--right side -->
 				<div class="iot-side-bar">
-				
+					<div class="iot-mod iot-text-align-justify">
+						    <div class="mod-head">
+						        <span class="tt" title="set as sub station,it will push data to remote station"><wbt:lang>local_station</wbt:lang></span>
+						        <span class="op" onclick="set_local_station()" title="<wbt:lang>set</wbt:lang>" ><i class="fa-solid fa-gear fa-lg"></i></span>
+						    </div>
+						    <div class="mod-body fz" id="local_station">
+						    </div>
+					</div>
+						
 					<div class="iot-mod iot-text-align-justify">
 						    <div class="mod-head">
 						        <span class="tt"><wbt:lang>remote_station</wbt:lang></span>
-						        
-						        <span class="op" onclick="mgr_pstation()" style="right:50px;" title="manage remote station"><i class="fa-solid fa-satellite-dish" ></i></span>
+<%
+if("true".equals(request.getParameter("remote_station_all")))
+{
+%>						        
+  <span class="op" onclick="mgr_pstation()" style="right:50px;" title="manage remote station"><i class="fa-solid fa-satellite-dish" ></i></span>
+<%
+}
+%>
 					        <span class="op" onclick="add_pstation()"><i class="fa-solid fa-plus fa-lg"></i></span>
 						    </div>
 						    <div class="mod-body fz" id="pstation_list">
@@ -770,6 +786,8 @@ if(ins.isAutoStart())
 	</div>
 </div>
 </body>
+
+
 <script type="text/javascript">
 
 layui.use(['form'], function(){
@@ -1686,6 +1704,93 @@ function add_or_edit_source(tp,t,id)
 			]);
 }
 
+function set_local_station()
+{
+		if(event)
+			event.stopPropagation();
+		dlg.open("./util/station_loc_edit.jsp",
+				{title:"<wbt:g>set,local_station</wbt:g>"},
+				['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+				[
+					function(dlgw)
+					{
+						dlgw.do_submit((bsucc,rr)=>{
+							 if(!bsucc)
+							 {
+								 dlg.msg(rr) ;
+								 return;
+							 }
+							 send_ajax("./util/station_loc_ajax.jsp",{op:"set_conf",jstr:JSON.stringify(rr)},(bsucc,ret)=>{
+								 if(!bsucc || ret!="succ")
+								{
+									 dlg.msg(ret);return ;
+								}
+								dlg.close();
+								update_loc_station(null)
+							 }) ;
+						})
+					},
+					function(dlgw)
+					{
+						dlg.close();
+					}
+				]);
+}
+
+function update_station_st(cb)
+{
+	send_ajax("./util/pstation_ajax.jsp",{op:"st"},(bsucc,ret)=>{
+		if(!bsucc||ret.indexOf("{")!=0)
+		{
+			//dlg.msg(ret);
+			console.error(ret)
+			return;
+		}
+		let obj =null;
+		eval("obj="+ret) ;
+		//console.log(obj);
+		show_loc_station(obj.local);
+		show_rt_pstations(obj.pstations) ;
+		if(cb)
+			cb() ;
+	});
+}
+	
+function start_stop_loc_station(brun)
+{
+	send_ajax("./util/station_loc_ajax.jsp",{op:brun?"start":"stop"},(bsucc,ret)=>{
+		if(!bsucc || ret!="succ")
+		{
+			 dlg.msg(ret);return ;
+		}
+		update_station_st(null)
+	 }) ;
+}
+
+function show_loc_station(obj)
+{
+	if(obj.valid===false)
+	{
+		$("#local_station").html(`<wbt:g>not_set_or_invalid</wbt:g>`) ;
+		return ;
+	}
+		
+
+	let run_c = obj.run?"green":"red" ;
+	let run_i = obj.run?"<wbt:g>running</wbt:g>":"<wbt:g>not_run</wbt:g>";
+	let conn_c = obj.conn_ready?"green":"red" ;
+	let conn_i = obj.conn_ready?"<wbt:g>conned</wbt:g>":"<wbt:g>not_conn</wbt:g>";
+	
+	let op = obj.run?`<a href="javascript:start_stop_loc_station(false)"><wbt:lang>stop</wbt:lang></a>`:
+		`<a href="javascript:start_stop_loc_station(true)"><wbt:lang>start</wbt:lang></a>`;
+	let ss = `<i class="fa-solid fa-square" style="color:\${run_c}"></i> <wbt:g>run_st</wbt:g>:<span style="color:\${run_c}">\${run_i}</span>
+	  &nbsp;\${op}
+		<br>
+		<i class="fa-solid fa-square" style="color:\${conn_c}"></i> <wbt:g>conn_st</wbt:g>:<span style="color:\${conn_c}">\${conn_i}</span>` ;
+	
+	$("#local_station").html(ss) ;
+}
+
 
 function mgr_pstation()
 {
@@ -1709,13 +1814,28 @@ function show_pstations(objs)
 		tmps += `<div id="pstation_\${ob.id}" class="sor_item"  t="\${ob.t}" station_id="\${ob.id}">
 					<span class="n">[\${ob.id}]</span>
 					<span class="tp">\${ob.t}</span>
+					<span id="pstation_st_\${ob.id}" class="st"></span>
 					<span class="oper">
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-warm" onclick="set_pstation_pm('\${ob.id}')"><i class="fa-solid fa-arrow-right-arrow-left"></i></button>
 						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_pstation('\${ob.id}')"><i class="fa fa-pencil"></i></button>
 						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_pstation('\${ob.id}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
 					</span>
 					</div>` ;
 	}
 	$("#pstation_list").html(tmps) ;
+}
+
+function show_rt_pstations(sts)
+{
+	//console.log(sts) ;
+	for(let st of sts)
+	{
+		let conn_c = st.client_connok?"green":"red" ;
+		let conn_i = st.client_connok?"<wbt:g>conned</wbt:g>":"<wbt:g>not_conn</wbt:g>";
+	
+		let ss = `<i class="fa-solid fa-square" style="color:\${conn_c}"></i> <span style="color:\${conn_c}">\${conn_i}</span>`;
+		$("#pstation_st_"+st.station_id).html(ss) ;
+	}
 }
 
 function update_pstations(cb)
@@ -1728,16 +1848,13 @@ function update_pstations(cb)
 		}
 		let objs =null;
 		eval("objs="+ret) ;
+		//console.log(objs);
 		show_pstations(objs)
-		
 		if(cb)
 			cb() ;
 	});
 }
 
-update_pstations(()=>{
-	update_sors();
-}) ;
 
 function del_pstation(id)
 {
@@ -1756,6 +1873,14 @@ function del_pstation(id)
 	});
 }
 
+function set_pstation_pm(id)
+{
+	dlg.open("./util/pstation_syn_pm.jsp?id="+id,
+			{title:`<i class="fa-solid fa-arrow-right-arrow-left"></i>`+id},
+			[],
+			[]);
+}
+
 function add_pstation()
 {
 	add_or_edit_pstation("") ;
@@ -1766,9 +1891,11 @@ function add_or_edit_pstation(id)
 	if(event)
 		event.stopPropagation();
 	tt = "<wbt:g>add</wbt:g> Station ";
+	let op = "add_pstation" ;
 	if(id)
 	{
 		tt = "<wbt:g>edit</wbt:g> Station - "+id;
+		op = "set_pstation" ;
 	}
 	if(!id)
 		id = "" ;
@@ -1784,7 +1911,7 @@ function add_or_edit_pstation(id)
 							 dlg.msg(ret) ;
 							 return;
 						 }
-						 ret.op="set_pstation" ;
+						 ret.op=op;
 						 if(id)
 						 	ret.id = id ;
 						 send_ajax("./util/pstation_ajax.jsp",ret,(bsucc,ret)=>{
@@ -1874,5 +2001,14 @@ $('#SysSetting').click(function(){
 		position: { my: "left-100 center", at: "left-100 top",collision :"fit" }
 	});
 });
+
+update_pstations(()=>{
+	update_sors();
+}) ;
+
+setInterval(update_station_st,5000) ;
+
 </script>
+
+
 </html>

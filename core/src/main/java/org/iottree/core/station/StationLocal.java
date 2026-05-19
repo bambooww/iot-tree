@@ -39,8 +39,8 @@ public class StationLocal
 	{
 		if(instance!=null)
 		{
-			if(!instance.bValid)
-				return null ;
+			//if(!instance.bValid)
+			//	return null ;
 			return instance ;
 		}
 		
@@ -48,17 +48,16 @@ public class StationLocal
 		{
 			if(instance!=null)
 			{
-				if(!instance.bValid)
-					return null ;
+				//if(!instance.bValid)
+				//	return null ;
 				return instance ;
 			}
 			
 			instance = new StationLocal() ;
-			if(!instance.bValid)
-				return null ;
+			//if(!instance.bValid)
+			//	return null ;
 			return instance ;
 		}
-		
 	}
 	
 	static class PrjSynPm
@@ -203,7 +202,7 @@ public class StationLocal
 	
 	String id = null ;
 	
-	
+	boolean bEnabled = true ;
 	/**
 	 * local station's parent address
 	 */
@@ -216,7 +215,7 @@ public class StationLocal
 //	boolean rt_data_failed_keep = false ;
 //	long rt_data_keep_len = 3153600 ;
 	
-	private boolean bValid = false;
+	//private boolean bValid = false;
 	
 	private boolean canWrite = false;
 	
@@ -224,7 +223,7 @@ public class StationLocal
 	
 	private StationLocal()
 	{
-		bValid = loadConfig() ;
+		loadConfig() ;
 		prjSynPMs = loadPrjSynPMs() ;
 	}
 	
@@ -240,7 +239,8 @@ public class StationLocal
 			this.platformHost = jo.getString("platform_host") ;
 			this.platformPort = jo.optInt("platform_port",9090) ;
 			this.key = jo.getString("key") ;
-			this.bValid = jo.optBoolean("valid",false) ;
+			//this.bValid = jo.optBoolean("valid",true) ;
+			this.bEnabled = jo.optBoolean("enable",true) ;
 			this.canWrite = jo.optBoolean("can_write",false) ;
 //			this.rt_data_failed_keep = jo.optBoolean("rt_data_failed_keep",false) ;
 //			this.rt_data_keep_len = jo.optLong("rt_data_keep_len", 3153600) ;
@@ -251,6 +251,81 @@ public class StationLocal
 			ee.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean setConfig(JSONObject jo,StringBuilder failedr)
+	{
+		try
+		{
+			if(jo==null)
+			{// unset
+				File fstat = Config.getConfFile("station.json") ;
+				if(fstat.exists())
+					fstat.delete() ;
+				this.id = "" ;
+				this.platformHost = "" ;
+				this.platformPort = 9090 ;
+				this.key = "" ;
+				this.bEnabled = false ;
+				this.canWrite = false ;
+				this.RT_stop();
+				return true;
+			}
+			String id = jo.getString("id") ;
+			if(Convert.isNullOrEmpty(id))
+			{
+				failedr.append("no id input") ;
+				return false;
+			}
+			if(!Convert.checkVarName(id,"id", false, failedr))
+			{
+				return false;
+			}
+			String phost = jo.getString("platform_host") ;
+			if(Convert.isNullOrEmpty(phost))
+			{
+				failedr.append("no platform host input") ;
+				return false;
+			}
+			int pport = jo.optInt("platform_port",9090) ;
+			String key = jo.getString("key") ;
+			if(Convert.isNullOrEmpty(key))
+			{
+				failedr.append("no key input") ;
+				return false;
+			}
+			//this.bValid = jo.optBoolean("valid",true) ;
+			boolean b_en = jo.optBoolean("enable",true) ;
+			boolean b_w = jo.optBoolean("can_write",false) ;
+			File fstat = Config.getConfFile("station.json") ;
+			Convert.writeFileJO(fstat,jo) ;
+			
+			this.id = id ;
+			this.platformHost = phost ;
+			this.platformPort = pport ;
+			this.key = key ;
+			this.bEnabled = b_en ;
+			this.canWrite = b_w ;
+			this.RT_stop();
+			return true ;
+		}
+		catch(Exception ee)
+		{
+			failedr.append(ee.getMessage()) ;
+			return false;
+		}
+	}
+	
+	public JSONObject toConfigJO()
+	{
+		JSONObject ret = new JSONObject() ;
+		ret.putOpt("id", id) ;
+		ret.putOpt("platform_host", platformHost) ;
+		ret.putOpt("platform_port", platformPort) ;
+		ret.putOpt("enable", this.bEnabled) ;
+		ret.putOpt("can_write", this.canWrite) ;
+		ret.putOpt("key", this.key) ;
+		return ret ;
 	}
 	
 	private List<PrjSynPm> loadPrjSynPMs()
@@ -296,14 +371,23 @@ public class StationLocal
 		Convert.writeFileTxt(fstat, jarr.toString());
 	}
 	
-	public boolean isStationValid()
-	{
-		return this.bValid ;
-	}
-	
 	public String getStationId()
 	{
 		return id ;
+	}
+	
+
+	public boolean isStationEnabled()
+	{
+		return this.bEnabled ;
+	}
+	
+	public boolean isStationValid()
+	{
+		if(!this.bEnabled)
+			return false;
+		
+		return Convert.isNotNullEmpty(this.platformHost) && this.platformPort>0 && Convert.isNotNullEmpty(this.key) ;
 	}
 	
 	public String getPlatfromHost()
@@ -787,5 +871,18 @@ public class StationLocal
 			return false;
 		}
 		return true;
+	}
+	
+	public JSONObject RT_toJO()
+	{
+		JSONObject ret = new JSONObject() ;
+		if(!this.isStationValid())
+		{
+			ret.put("valid", false) ;
+			return ret;
+		}
+		ret.put("run", this.isRunning()) ;
+		ret.put("conn_ready", this.isConnReady()) ;
+		return ret;
 	}
 }

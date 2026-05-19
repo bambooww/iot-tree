@@ -584,7 +584,6 @@ public class MNManager
 	private ArrayList<MNNet> loadNets() throws Exception
 	{
 		final FileFilter ff = new FileFilter() {
-
 			@Override
 			public boolean accept(File f)
 			{
