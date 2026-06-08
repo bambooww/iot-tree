@@ -337,7 +337,7 @@ margin-top:5px;
 {
 		top:25px;
 		left:100px;
-		width:150px;
+		width:180px;
 }
 .prompt_p
 {

@@ -336,6 +336,8 @@ public class MNManager
 	{
 		//JSONObject jo = Convert.readFileJO(f) ;
 		JSONArray catjarr = conf_jo.optJSONArray("res_cats") ;
+		if(catjarr==null)
+			return ;
 		int n = catjarr.length() ;
 		for(int i =0 ; i < n ; i ++)
 		{

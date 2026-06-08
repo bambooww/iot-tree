@@ -38,10 +38,10 @@
 			new BtnItem("pic/pipe.png","Pipe","parent.do_add_pts('pipe',{})"),
 			new BtnItem("pic/dial.png","Dial","parent.do_add_di('oc.di.DIDial')"),
 			new BtnItem("pic/wave.png","Wave","parent.do_add_di('oc.di.DIWave')"),
-			//new BtnItem("pic/wave.png","HTML","parent.do_add_di('oc.iott.DIHtml')"),
 			new BtnItem("pic/tb.png","DIDraw","parent.do_add_di('oc.di.DIDraw')"),
-			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
-			//new BtnItem("","Add Img","parent.do_add_di('oc.di.DIImg')"),
+			//new BtnItem("pic/text.png","DITxtBlk","parent.do_add_di('oc.di.DITxtBlk')"),
+			new BtnItem("pic/html.png","DIHtml","parent.do_add_di('oc.iott.DIHtml')"),
+			
 	} ;
 %><%
 %><!DOCTYPE html>
@@ -58,7 +58,6 @@ width:30px;height:30px;margin: 3px;
 font-size: 13px;
 background-color: #eeeeee
 }
-
 </style>
 <body>
 

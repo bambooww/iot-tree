@@ -11,7 +11,7 @@
 <dd_node id="1" name="prj_auto_start" name_cn="项目自动启动" name_en="Project Auto Start" />
 <dd_node id="1" name="en_data_syn" name_cn="使能数据同步" name_en="Enable Data Synchronization" />
 <dd_node id="1" name="intv" name_cn="间隔" name_en="Interval" />
-<dd_node id="1" name="ms" name_cn="毫秒" name_en="Interval" />Millisecond
+<dd_node id="1" name="ms" name_cn="毫秒" name_en="Milliseconds" />
 <dd_node id="1" name="save_bf_sending" name_cn="消息包发送前保存" name_en="Save message packet before sending" />
 <dd_node id="1" name="max_len" name_cn="最大数量" name_en="Max number" />
 <dd_node id="1" name="set_pm" name_cn="设置参数到子站" name_en="Set parameters to sub stations" />

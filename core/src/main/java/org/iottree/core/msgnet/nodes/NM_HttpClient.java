@@ -31,6 +31,28 @@ public class NM_HttpClient extends MNNodeMid
 		//,PUT,DELETE
 	}
 	
+	public static enum ReqFmt
+	{
+		plain,json,xml,form_urlencode;
+		
+		public String getContentType()
+		{
+			switch(this)
+			{
+			case plain:
+				return "text/plain";
+			case json:
+				return "application/json";
+			case xml:
+				return "text/xml";
+			case form_urlencode:
+				return "application/x-www-form-urlencoded";
+			default:
+				return null;
+			}
+		}
+	}
+	
 	public static enum RespFmt
 	{
 		utf8string,json;
@@ -41,6 +63,7 @@ public class NM_HttpClient extends MNNodeMid
 	MNCxtValSty urlSty = MNCxtValSty.vt_str; //FOR_STR_LIST
 	String urlSubN = null ;
 	
+	ReqFmt reqFmt = ReqFmt.json ;
 	RespFmt respFmt = RespFmt.utf8string ;
 	
 	String headTxt = null ;
@@ -116,6 +139,8 @@ public class NM_HttpClient extends MNNodeMid
 		jo.put("method", this.method.name()) ;
 		jo.put("url_sty", this.urlSty.name()) ;
 		jo.putOpt("url_subn", this.urlSubN) ;
+		if(reqFmt!=null)
+			jo.put("req_fmt",reqFmt.name()) ;
 		jo.put("resp_fmt", respFmt.name()) ;
 		jo.putOpt("head_txt", headTxt) ;
 		jo.putOpt("post_body", this.postBody) ;
@@ -128,6 +153,11 @@ public class NM_HttpClient extends MNNodeMid
 		this.method = Method.valueOf(jo.optString("method",Method.GET.name())) ;
 		this.urlSty = MNCxtValSty.valueOf(jo.optString("url_sty",MNCxtValSty.vt_str.name())) ;
 		this.urlSubN = jo.optString("url_subn","") ;
+		String req_fmt = jo.optString("req_fmt");
+		if(Convert.isNotNullEmpty(req_fmt))
+			this.reqFmt = ReqFmt.valueOf(req_fmt) ;
+		else
+			this.reqFmt = ReqFmt.json ;
 		this.respFmt = RespFmt.valueOf(jo.optString("resp_fmt",RespFmt.utf8string.name()));
 		this.headTxt = jo.optString("head_txt") ;
 		this.postBody = jo.optString("post_body","") ;
@@ -211,6 +241,8 @@ public class NM_HttpClient extends MNNodeMid
 					git.setHeader(n2v.getKey(), n2v.getValue());
 				}
 			}
+			if(reqFmt!=null)
+				git.setHeader("Content-type", reqFmt.getContentType());
 			
 			try (CloseableHttpResponse response = chc.execute(git))
 			{
@@ -261,6 +293,8 @@ public class NM_HttpClient extends MNNodeMid
 					post.setHeader(n2v.getKey(), n2v.getValue());
 				}
 			}
+			if(reqFmt!=null)
+				post.setHeader("Content-type", reqFmt.getContentType());
 			
 			try (CloseableHttpResponse response = chc.execute(post))
 			{

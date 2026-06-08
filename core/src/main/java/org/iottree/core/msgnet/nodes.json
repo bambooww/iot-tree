@@ -75,6 +75,9 @@
 	],"modules":[
 		{"cn":"org.iottree.ext.ai.edge_c.EdgeC_iForest_M","nodes":[
 			
+		]},
+		{"cn":"org.iottree.ext.ai.edge_c.AnomalyDetect_M","nodes":[
+			
 		]}
 		
 	]},

@@ -354,4 +354,6 @@
   <dd_node id="1" name="trusted" name_cn="信任" name_en="Trusted"/>
   <dd_node id="1" name="rejected" name_cn="拒绝" name_en="Rejected"/>
   
+  <dd_node id="1" name="ano_det" name_cn="异常检测" name_en="Anomaly Detection"/>
+  
 </dd_class>

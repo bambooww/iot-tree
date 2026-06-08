@@ -42,7 +42,7 @@ Click on the settings icon to open the configuration window. as follows
 
 <img src="../img/adv/ps003.png">
 
-Among them, the site ID is required to be unique across all distributed projects, representing the unique identifier of the current sub site. This identifier only allows ASCII payments and numerical combinations. The remote host and port are the addresses and ports published by the central system to the outside world. Key is the connection key for the local substation, which needs to be paired during subsequent configuration of the connection center.
+Among them, the site ID is required to be unique across all distributed projects, representing the unique identifier of the current sub site. This identifier only allows ASCII char and numerical combinations. The remote host and port are the addresses and ports published by the central system to the outside world. Key is the connection key for the local substation, which needs to be paired during subsequent configuration of the connection center.
 
 ```
 Station Id=wireless_wz
@@ -69,7 +69,7 @@ Click the+button in the upper right corner to bring up the following window:
 
 <img src="../img/adv/ps006.png">
 
-Among them, the site ID requirement is the configuration corresponding to the remote terminal station, representing the unique identifier of the current sub station. This identifier only allows ASCII payment and numerical combination. Key is the connection key for the remote terminal station, and the key must be the same.
+Among them, the station ID requirement is the configuration corresponding to the remote terminal station, representing the unique identifier of the current sub station. This identifier only allows ASCII char and numerical combination. Key is the connection key for the remote terminal station, and the key must be the same.
 
 ```
 Station Id=wireless_wz

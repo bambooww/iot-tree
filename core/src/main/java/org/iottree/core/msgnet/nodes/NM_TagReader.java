@@ -34,6 +34,9 @@ public class NM_TagReader extends MNNodeMid
 		
 		boolean bMustOk = false;
 		
+		String title ;
+		
+		String unit ;
 
 		private UATag tag = null ;
 		
@@ -75,6 +78,8 @@ public class NM_TagReader extends MNNodeMid
 			JSONObject jo = new JSONObject() ;
 			jo.putOpt("tag", this.tagPath) ;
 			jo.putOpt("varn", varName) ;
+			jo.putOpt("t", this.title) ;
+			jo.putOpt("unit", this.unit) ;
 			jo.putOpt("must_ok", this.bMustOk) ;
 			return jo ;
 		}
@@ -87,11 +92,19 @@ public class NM_TagReader extends MNNodeMid
 			{
 				ret.putOpt("tag_id", tag.getId()) ;
 				ret.putOpt("tag_iid", tag.getIID()) ;
-				ret.putOpt("tag_title", tag.getTitle()) ;
+				if(Convert.isNotNullEmpty(this.title))
+					ret.putOpt("tag_title", this.title) ;
+				else
+					ret.putOpt("tag_title", tag.getTitle()) ;
 				ret.putOpt("tag_unit", tag.getUnit()) ;
-				ValUnit vu = tag.getValUnit() ;
-				if(vu!=null)
-					ret.putOpt("val_unit", vu.getUnit()) ;
+				if(Convert.isNotNullEmpty(this.unit))
+					ret.put("val_unit", this.unit);
+				else
+				{
+					ValUnit vu = tag.getValUnit() ;
+					if(vu!=null)
+						ret.putOpt("val_unit", vu.getUnit()) ;
+				}
 				ValTP vtp = tag.getValTp() ;
 				if(vtp!=null)
 					ret.put("vtp", vtp.getStr());
@@ -105,6 +118,8 @@ public class NM_TagReader extends MNNodeMid
 			ret.tagPath = jo.optString("tag") ;
 			ret.varName = jo.optString("varn") ;
 			ret.bMustOk = jo.optBoolean("must_ok",false) ;
+			ret.title = jo.optString("t") ;
+			ret.unit = jo.optString("unit") ;
 			return ret;
 		}
 	}
@@ -226,6 +241,13 @@ public class NM_TagReader extends MNNodeMid
 		this.tagItems = ccrs ;
 		
 		this.bTagValDetail = jo.optBoolean("tag_val_detail",false) ;
+		
+		this.clearCache();
+	}
+	
+	private void clearCache()
+	{
+		bOutList = true ;
 	}
 
 	// --------------
@@ -233,13 +255,22 @@ public class NM_TagReader extends MNNodeMid
 	private transient long RT_lastInvalidDT = -1 ;
 	private transient JSONArray RT_lastInvalidTags = null ;
 
+	private transient boolean bOutList = true;
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg)
 	{
+
+		if(bOutList)
+		{
+			this.RT_onAfterNetRun();
+			bOutList = false;
+		}
+		
 		if(bTagValDetail)
 			return RT_readTagOutDetail();
 		else
 			return RT_readTagOutSimple() ;
+		
 	}
 	
 	private RTOut RT_readTagOutDetail()

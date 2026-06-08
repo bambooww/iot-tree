@@ -9,7 +9,7 @@
 	java.util.*, 
 	org.iottree.core.cxt.*,
 	org.iottree.core.ws.*,
-	org.iottree.core.sim.*,
+	org.iottree.core.sim.*,org.iottree.core.ano_det.*,
 	org.iottree.pro.*,org.iottree.core.station.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
@@ -390,6 +390,81 @@ if(rep.isAutoStart())
 						</div>
 						 --%>
 					</div>
+<%--
+					<div class="iot-mod iot-question-detail iot-item">
+					    <div class="mod-head">
+					        <h1><wbt:lang>ano_det</wbt:lang></h1>
+					        
+					        <div style="float:left;top:5px;position: absolute;left:210px" >
+					        
+					        <a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_prj()">
+							
+							<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
+							</span>&nbsp;<wbt:lang>add</wbt:lang>
+							</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							
+					        	<a href="javascript:dev_lib_import()">
+					        	<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
+							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang>
+							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
+							</a>
+
+							&nbsp;&nbsp;&nbsp;&nbsp;
+					        	<a  title="device library help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_devlib.md" target="_blank">
+							<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-question fa-stack-1x fa-inverse"></i>
+							</span>
+							</a>
+							
+					        </div>
+					    </div>
+					   <div class="mod-body">
+							
+							<%
+	
+	for(ADPrj prj:ADPrjManager.getInstance().listPrjs())
+{
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		
+%>
+	<span class="lib_item btn_sh_c" >
+		<img src="./inc/sm_icon_dev.png"/> &nbsp;<a class="text title" href="javascript:open_devlib('<%=prj.getId()%>')" data-id="8"><%=prj.getTitle() %></a>
+		
+		
+		<span class="btn_sh">
+
+           
+           <a href="javascript:devlib_export('<%=prj.getId()%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:devlib_del('<%=prj.getId()%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="devlib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+				
+						</div>
+					</div>
+					--%>
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
