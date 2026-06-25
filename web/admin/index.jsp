@@ -9,7 +9,7 @@
 	java.util.*, 
 	org.iottree.core.cxt.*,
 	org.iottree.core.ws.*,
-	org.iottree.core.sim.*,org.iottree.core.ano_det.*,
+	org.iottree.core.sim.*,org.iottree.core.devtree.*,
 	org.iottree.pro.*,org.iottree.core.station.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
@@ -121,6 +121,7 @@ background:#aaaaaa;
 .sor_item:hover .oper{
 	visibility:visible;
 }
+.sub_cc {border:1px solid #ccc;width:99%;min-height:50px;border-radius: 5px;display: block;margin-bottom: 5px;}
  </style>
 </head>
 <body aria-hidden="false" style="background-color:#ddd">
@@ -390,28 +391,28 @@ if(rep.isAutoStart())
 						</div>
 						 --%>
 					</div>
-<%--
+
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1><wbt:lang>ano_det</wbt:lang></h1>
+					        <h1>&nbsp;</h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        
-					        <a class0="btn btn-success" style0="width:80px;height:40px;align-content: center;" href="javascript:add_prj()">
-							
-							<span class="fa-stack">
-							  <i class="fa fa-square fa-stack-1x"></i>
-							  <i class="fa fa fa-plus fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;<wbt:lang>add</wbt:lang>
-							</a>
-							&nbsp;&nbsp;&nbsp;&nbsp;
-							
-					        	<a href="javascript:dev_lib_import()">
+					        <a href="javascript:tree_import()">
 					        	<span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang>
-							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
+							</span>&nbsp;&nbsp; <wbt:lang>import,dev,tree</wbt:lang>
+							<input type="file" id='tree_add_file' onchange="tree_imp()" name="tree_add_file" style="left:-9999px;position:absolute;" accept=".zip"/>
+							</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							
+					        	<a href="javascript:tree_port_import()">
+					        	<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-down fa-stack-1x fa-inverse"></i>
+							</span>&nbsp;&nbsp; <wbt:lang>import,devpart</wbt:lang>
+							<input type="file" id='tree_part_add_file' onchange="tree_part_imp()" name="tree_part_add_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
 
 							&nbsp;&nbsp;&nbsp;&nbsp;
@@ -425,10 +426,11 @@ if(rep.isAutoStart())
 					        </div>
 					    </div>
 					   <div class="mod-body">
-							
+							<div class="sub_cc">
+							<wbt:lang>dev,tree</wbt:lang>
 							<%
 	
-	for(ADPrj prj:ADPrjManager.getInstance().listPrjs())
+	for(DTTree tree:DTTreeManager.getInstance().listTrees())
 {
 		cc ++ ;
 		String cssstr = "" ;
@@ -436,19 +438,19 @@ if(rep.isAutoStart())
 		
 %>
 	<span class="lib_item btn_sh_c" >
-		<img src="./inc/sm_icon_dev.png"/> &nbsp;<a class="text title" href="javascript:open_devlib('<%=prj.getId()%>')" data-id="8"><%=prj.getTitle() %></a>
+		<i class="fa-solid fa-folder-tree"></i> &nbsp;<a class="text title" href="javascript:open_tree('<%=tree.getTreeId()%>')" data-id="8"><%=tree.getTitle() %></a>
 		
 		
 		<span class="btn_sh">
 
            
-           <a href="javascript:devlib_export('<%=prj.getId()%>')" title="export">
+           <a href="javascript:devlib_export('<%=tree.getTreeId()%>')" title="export">
               <span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
 							</span>
            </a>
-           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:devlib_del('<%=prj.getId()%>')" title="delete">
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:devlib_del('<%=tree.getTreeId()%>')" title="delete">
               <span class="fa-stack">
 							  <i class="fa fa-square fa-stack-1x"></i>
 							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
@@ -460,11 +462,17 @@ if(rep.isAutoStart())
 <%
 }
 %>
-	<span class="lib_item" onclick="devlib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+	<span class="lib_item" onclick="tree_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
 				
 						</div>
+						<div style="width:100%;text-align: center"><i class="fa fa-arrow-down"></i></div>
+						<div class="sub_cc">
+						<wbt:lang>devpart</wbt:lang>
+						</div>
+					 </div>
+						<br>
 					</div>
-					--%>
+					
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
@@ -550,6 +558,7 @@ if(rep.isAutoStart())
 	<span class="lib_item" onclick="devlib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
 				
 						</div>
+						<br>
 					</div>
 					
 					<div class="iot-mod iot-question-detail iot-item">
@@ -635,6 +644,7 @@ if(rep.isAutoStart())
 	<span class="lib_item" onclick="complib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
 				
 					    </div>
+					    <br>
 					</div>
 					
 					<div class="iot-mod iot-question-detail iot-item">
@@ -1176,6 +1186,76 @@ function imp_simins_demo()
 				}
 			]);
 }
+
+function open_tree(treeid)
+{
+	window.open("./devtree/dt_tree_main.jsp?treeid="+treeid) ;
+}
+
+function tree_del(treeid)
+{
+	dlg.confirm('<wbt:lang>del,this,dev,tree</wbt:lang>?',{btn:['<wbt:lang>yes</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
+		    {
+					send_ajax("./devtree/dt_tree_ajax.jsp","op=del&treeid="+treeid,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
+			    			return ;
+			    		}
+			    		location.reload();
+			    	}) ;
+				});
+}
+
+function tree_add_or_edit(treeid)
+{
+	var tt = "<wbt:lang>edit,device,tree</wbt:lang>" ;
+	if(!treeid)
+	{
+		treeid ="" ;
+		tt = "<wbt:lang>add,device,tree</wbt:lang>" ;
+	}
+		
+	dlg.open("./devtree/dt_tree_basic_edit.jsp?treeid="+treeid,
+			{title:tt},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit" ;
+						 var pm = {
+									type : 'post',
+									url : "./devtree/dt_tree_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if(ret.indexOf("succ=")!=0)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								location.reload();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+
 
 function devlib_export(libid)
 {

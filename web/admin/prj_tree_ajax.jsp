@@ -105,9 +105,15 @@
 		String drvfit = "";
 		DevDriver drv = ch.getDriver();
 		String drvt = "none";
+		boolean ignore_connpt = false;
 		if(drv!=null)
+		{
 			drvt = drv.getTitle() ;
+			ignore_connpt = drv.isIgnoreConnPt() ;
+		}
 		boolean hasdrv = ch.hasDriver();
+		
+		
 		if(hasdrv)
 		{
 			if(!ch.isDriverFit())
@@ -136,7 +142,7 @@
 		}
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png' ignore_connpt='<%=ignore_connpt%>'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
 		  ,"id":"<%=ch.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(ch.getTitle())%>"}
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"

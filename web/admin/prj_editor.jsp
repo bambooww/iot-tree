@@ -245,7 +245,7 @@ if(hide_top)
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			  	<div class="layui-tab-item layui-show" style="position:relative;top:0px;bottom:0px;width:99%;height:99%">
-			      <iframe id="if_tags" src="./ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
+			      <iframe id="if_tags" src="./ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px;overflow: hidden;"></iframe>
 				</div>
 				
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
@@ -323,6 +323,9 @@ var connpro_menu = [
 	{content:'<wbt:g>oths_conn</wbt:g>',header: true},
 	{content:'IOTTree Node',callback:function(){
 		edit_cpt("iottree_node","","");
+	}},
+	{content:'Local Project Map',callback:function(){
+		edit_cpt("loc_prj_map","","");
 	}},
 	{content:'sm_divider'},
 	{content:'<wbt:g>virtual_e</wbt:g>',callback : function(){edit_cpt("virtual","","");}}

@@ -290,6 +290,9 @@ public class PropItem
 	@data_val(param_name = "pop")
 	String popName = null ;
 	
+//	@data_val(param_name = "val_plug")
+//	String valPlug = null ;
+	
 //	@data_val(param_name = "popt")
 //	String popTitle = null ;
 	
@@ -434,6 +437,12 @@ public class PropItem
 		return this ;
 	}
 	
+//	public PropItem withValPlug(String val_plug)
+//	{
+//		this.valPlug = val_plug ;
+//		return this ;
+//	}
+	
 	DataNode piPopDN = null ;
 	
 	public String getPopName()
@@ -448,8 +457,6 @@ public class PropItem
 		
 		return piPopDN.getNameByLang(Lan.getUsingLang()) ;
 	}
-	
-	
 	
 	public PropItem withPop(String pname) //,Lan lan)//,String ptitle)
 	{

@@ -249,6 +249,11 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 */
 	public abstract Class<? extends ConnPt> supportConnPtClass();
 
+	
+	public boolean isIgnoreConnPt()
+	{
+		return false;
+	}
 	/**
 	 * 实现类中可能会对特定的ConnPt不支持，此时需要重载此函数
 	 * @return

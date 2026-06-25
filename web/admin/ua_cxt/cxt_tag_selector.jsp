@@ -113,12 +113,13 @@ for(UANodeOCTags ntags:ntags_list)
 		String tagid = tg.getId() ;
 		String pathn = tg.getNodeCxtPathIn(r_ntags) ;
 		String patht =  tg.getNodeCxtPathTitleIn(r_ntags) ;
+		String vt = tg.getValTp().getStr() ;
 		//pathn = pathn.substring(parent_p.length()) ;
 		String chked = "" ;
 		String addr = tg.getAddress() ;
 %>
  <tr id="row_<%=pathn %>" tagid="<%=tagid %>" onmouseover="mouseover(this)" onmouseout="mouseout(this)" onclick="clk_sel(this)">
-  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>" patht="<%=patht %>"  sub="<%=subpath %>" <%=chked %>/></td>
+  <td><input type="checkbox" class="chk" id="chk_<%=tagid %>" tagid="<%=tagid %>" path="<%=pathn %>" patht="<%=patht %>"  sub="<%=subpath %>" vt="<%=vt %>" <%=chked %>/></td>
   <td><%=pathn %></td>
   <td><%=addr %></td>
   <td><%=patht %></td>
@@ -217,7 +218,8 @@ function get_selected_tags()
 			let tagid = $(this).attr('tagid') ;
 			let tagp = $(this).attr('path') ;
 			let patht= $(this).attr('patht') ;
-			ret.push({tagid:tagid,tagp:tagp,tagt:patht}) ;
+			let vt = $(this).attr('vt') ;
+			ret.push({tagid:tagid,tagp:tagp,tagt:patht,vt:vt}) ;
 		}
 	});
 	return ret ;

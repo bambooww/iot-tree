@@ -138,7 +138,7 @@ th
 <%
 if(b_mob)
 {
-%><link rel="stylesheet" type="text/css" href="/_js/oc/util_mob_popmenu.css" />
+%><link rel="stylesheet" type="text/css" href="/_js/oc/util_mob_popmenu.css?v=1" />
 
 <%
 }

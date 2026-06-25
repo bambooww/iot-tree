@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+  <dd_node id="1" name="devtree" name_cn="设备树" name_en="Device Tree" />
+  <dd_node id="1" name="devpart" name_cn="设备部件" name_en="Device Parts" />
+  
+</dd_class>

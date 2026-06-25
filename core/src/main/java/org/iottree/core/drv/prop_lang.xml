@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+	<dd_node id="1" name="pg_loc_prj_map" name_cn="本地项目数据映射" name_en="Local Project's Data Map" desc_cn="" desc_en=""/>
+
+	<dd_node id="1" name="pi_pop_loc_prj_map" name_cn="本地项目数据映射" name_en="Local Project's Data Map" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pi_map_pm" name_cn="映射参数" name_en="Map Parameters" desc_cn="" desc_en=""/>
+</dd_class>	

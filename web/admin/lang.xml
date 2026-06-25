@@ -10,6 +10,7 @@
   <dd_node id="1" name="chg_psw" name_cn="修改密码" name_en="Change Password" />
   <dd_node id="1" name="reset" name_cn="重置" name_en="Reset" />
   <dd_node id="1001" name="psw_chged" name_cn="密码修改成功" name_en="Password Changed" />
+  <dd_node id="1001" name="tree" name_cn="树" name_en="Tree" />
   
   <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
   <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />
@@ -356,4 +357,6 @@
   
   <dd_node id="1" name="ano_det" name_cn="异常检测" name_en="Anomaly Detection"/>
   
+  <dd_node id="1" name="devtree" name_cn="设备树" name_en="Device Tree" />
+  <dd_node id="1" name="devpart" name_cn="设备部件" name_en="Device Parts" />
 </dd_class>

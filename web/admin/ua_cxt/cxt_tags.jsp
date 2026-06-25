@@ -214,7 +214,7 @@ th,td {white-space: nowrap;}
 if(b_tags)
 {
 %>
-<div id="tb_tags" style="position:absoluate;bottom:120px;top:100px;height:300px;overflow-y: auto;">
+<div id="tb_tags" style="position:absoluate;bottom:120px;top:100px;height:300px;overflow-y:auto;">
 <table class="oc_div_list" style="margin-top:0px;width:99%;overflow:auto;" id="tb_cur" >
   <thead>
      <tr style="background-color: #f2f2f2;color:#333;">
@@ -253,7 +253,7 @@ if(false) //(prj!=null)
 
     </tbody>
 </table>
-<div style="height:180px;"></div>
+<div style="height:160px;"></div>
 </div>
 <%
 }

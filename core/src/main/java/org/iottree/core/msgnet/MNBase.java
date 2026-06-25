@@ -322,6 +322,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.putOpt("desc", desc);
 		jo.put("_tp", getTPFull()) ;
 		jo.put("tpt", getTPTitle()) ;
+		if(this.cat!=null)
+		{
+			jo.put("cat", this.cat.getName()) ;
+			jo.putOpt("catt", this.cat.getTitle()) ;
+		}
 //		jo.put("uid", this.getUID());
 		jo.put("x", this.x) ;
 		jo.put("y", this.y) ;

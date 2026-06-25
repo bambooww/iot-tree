@@ -659,7 +659,7 @@ public abstract class UANodeOCTags extends UANodeOC
 		return rets;
 	}
 	
-
+	// normal tags with mid
 	public List<UATag> getNorTags()
 	{
 		return tags;

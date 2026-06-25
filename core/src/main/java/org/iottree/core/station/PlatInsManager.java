@@ -89,7 +89,7 @@ public class PlatInsManager
 	private PlatInsManager()
 	{}
 	
-	public Map<String,PStation> getPStationMap()  //throws IOException
+	public synchronized Map<String,PStation> getPStationMap()  //throws IOException
 	{
 		if(id2station!=null)
 			return id2station;

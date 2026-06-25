@@ -240,7 +240,8 @@ function UATree(tree_opt)
 		
 		var x = this.belongTo.canvas[0].width-12 ;
 		$("#"+this.id+" img").each((index, element)=>{
-			var id = $(element).attr("id");
+			let ele = $(element);
+			var id = ele.attr("id");
 			if(id==null)
 				return ;
 			
@@ -249,7 +250,9 @@ function UATree(tree_opt)
 			
 			if(id.indexOf("ch_")==0)
 			{//ch
-				var dev_ids = $(element).attr("dev_ids");
+				if(ele.attr("ignore_connpt")==="true")
+					return;
+				var dev_ids = ele.attr("dev_ids");
 				var devids = dev_ids.split(",") ;
 				var chid = id.substring(3) ;
 				var treen = this.get_node_by_id(chid) ;

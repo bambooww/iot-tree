@@ -44,7 +44,6 @@ public class ConnProIOTTreeNode extends ConnProvider
 	@Override
 	protected long connpRunInterval()
 	{
-		// TODO Auto-generated method stub
 		return 1000;
 	}
 
