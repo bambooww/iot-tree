@@ -3,7 +3,7 @@
 	java.io.*,
 	org.iottree.core.*,
 	org.iottree.core.basic.*,
-	org.iottree.core.util.*,
+	org.iottree.core.util.*,org.iottree.core.util.web.*,
 	org.iottree.core.comp.*
 	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 

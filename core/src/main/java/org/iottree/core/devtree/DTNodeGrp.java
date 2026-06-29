@@ -81,18 +81,7 @@ public class DTNodeGrp extends DTNode
 	{
 		DTNodeGrp grp = new DTNodeGrp(this,title,desc) ;
 		//this.nodeGrps.put(grp.getNodeId(),grp) ;
-		if(idx<0||idx>=this.subNodes.size())
-		{
-			this.subNodes.put(grp.getNodeId(),grp) ;
-		}
-		else
-		{
-			List<DTNode> ns = this.getChildNodes() ;
-			ns.add(idx, grp) ;
-			this.subNodes.clear();
-			for(DTNode n:ns)
-				this.subNodes.put(n.getNodeId(),n) ;
-		}
+		appendChild(grp,idx,null);
 		
 		return grp ;
 	}
@@ -111,6 +100,69 @@ public class DTNodeGrp extends DTNode
 //		if(ret!=null)
 //			return ret ;
 //		return this.nodeParts.remove(nodeid) ;
+	}
+	
+	/**
+	 * append or move other node to sub
+	 * @param nd
+	 * @param idx
+	 * @param failedr
+	 * @return
+	 */
+	public synchronized boolean appendChild(DTNode nd,int idx,StringBuilder failedr)
+	{
+		//judge
+		if(nd instanceof DTNodeGrp)
+		{
+			if(nd==this || this.hasAncestor((DTNodeGrp)nd))
+			{
+				if(failedr!=null)
+					failedr.append("cannot append self or ancestors") ;
+				return false;
+			}
+		}
+		
+		int oldidx = this.getChildNodeIdx(nd) ;
+		if(oldidx>=0)
+		{//change order in same parent node
+			if(idx<0)
+				idx = this.subNodes.size() ;
+			if(oldidx==idx)
+				return true;
+			if(idx>oldidx)
+				idx-- ;
+			this.subNodes.remove(nd.getNodeId()) ;
+			List<DTNode> ns = this.getChildNodes() ;
+			if(idx>=ns.size())
+				ns.add(nd) ;
+			else
+				ns.add(idx, nd);
+			this.subNodes.clear();
+			for(DTNode n:ns)
+				this.subNodes.put(n.getNodeId(),n) ;
+			return true ;
+		}
+		
+		DTNodeGrp oldpn = nd.getParentGrp() ;
+		if(oldpn!=null&&oldpn!=this)
+		{
+			oldpn.removeChild(nd.getNodeId()) ;
+		}
+		nd.parent = this ;
+		
+		if(idx<0||idx>=this.subNodes.size())
+		{
+			this.subNodes.put(nd.getNodeId(),nd) ;
+		}
+		else
+		{
+			List<DTNode> ns = this.getChildNodes() ;
+			ns.add(idx, nd) ;
+			this.subNodes.clear();
+			for(DTNode n:ns)
+				this.subNodes.put(n.getNodeId(),n) ;
+		}
+		return true;
 	}
 	
 	@Override

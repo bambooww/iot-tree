@@ -136,7 +136,7 @@ white-space: nowrap;
 			 --%>
 		</div>
 <div id="mid" class="mid">
-			<div id="panel_main" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" title="">
+			<div id="panel_main" tabindex="-1" style="border: 1px solid #cccccc;margin:0px; width: 100%; height: 100%; background-color: #ffffff;overflow: hidden;" title="">
 				<div id="prompt_p" class="prompt_p"></div>
 				<div class="pop_tt_edit"  id="pop_tt_edit" ><input id="tt" type="text" onkeydown="on_tt_edit_keydown()" onblur="on_tt_edit_blur()"/></div>
 			</div>
@@ -242,6 +242,7 @@ function init_iottpanel()
 	
 	hmiModel = new ot.OTModel();
 	
+	
 	panel = new ot.DrawPanel("panel_main",{
 		on_mouse_mv:on_panel_mousemv,
 		on_resolution_chg:on_panel_resolution,
@@ -305,8 +306,11 @@ function init_iottpanel()
 		onDINodeDBClk:(node)=>{
 			on_item_dbclk(node);
 		},
-		onDINodeRetKeyDown:(node)=>{
-			on_item_retkeydown(node);
+		onDINodeKeyDown:(node,keycode,e)=>{
+			on_item_keydown(node,keycode,e);
+		},
+		onMoveAppendSub:(pn,idx,mvnd)=>{
+			on_mv_append_sub(pn,idx,mvnd)
 		},
 		onNodeStartTrigger:(node)=>{
 			//console.log("start node trigger",node) ;
@@ -343,7 +347,7 @@ function init_iottpanel()
 	reload_tree(true,true);
 }
 
-function reload_tree(reload,bfit)
+function reload_tree(reload,bfit,end_cb)
 {
 	send_ajax("dt_tree_ajax.jsp",{op:"load_tree",treeid:treeid},(bsucc,ret)=>{
 		if(!bsucc || ret.indexOf("{")!=0)
@@ -358,6 +362,8 @@ function reload_tree(reload,bfit)
 		hmiModel.load_def(ob) ;
 		if(bfit)
 			draw_fit();
+		if(end_cb)
+			end_cb();
 	});
 }
 
@@ -428,7 +434,11 @@ function on_tt_edit_keydown()
 			{
 				dlg.msg(ret);return;
 			}
-			reload_tree(true,false) ;
+			reload_tree(true,false,()=>{
+				//console.log(cur_tt_node)
+				hmiView.setSelectedDINodeById(cur_tt_node.id) ;
+				$("#panel_main").focus() ;
+			}) ;
 		})	
 	}
 }
@@ -436,6 +446,7 @@ function on_tt_edit_keydown()
 function on_tt_edit_blur()
 {
 	$("#pop_tt_edit").css("display","none") ;
+	$("#panel_main").focus() ;
 }
 
 function trigger_node_tt_edit(node)
@@ -454,10 +465,25 @@ function on_item_dbclk(node)
 	//$("#pop_tt_edit").css("display","block") ;
 }
 
-function on_item_retkeydown(node)
+function on_item_keydown(node,keycode,e)
 {
-	//console.log("ret key ->",node);
-	add_new_node(node,1) ;
+	//console.log("key ->",node);
+	switch(keycode)
+	{
+	case 13:
+		if(e.ctrlKey)
+		{
+			add_new_node(node,3) ;return;
+		}
+		if(e.sshiftKey)
+		{
+			add_new_node(node,2) ;return;
+		}
+		add_new_node(node,1) ;
+		return;
+	case 45: //insert
+		add_new_node(node,0) ;return;
+	}
 }
 
 function add_new_node(node,sty)
@@ -468,14 +494,58 @@ function add_new_node(node,sty)
 			dlg.msg(ret);return;
 		}
 		let newid = ret.substring(5) ;
-		reload_tree(true,false) ;
-		let tree = hmiView.getDITree();
-		let newnd = tree.findNodeById(newid) ;
-		if(!newnd) return ;
-		hmiView.setSelectedDINode(newnd) ;
-		trigger_node_tt_edit(newnd)
-	})	
+		reload_tree(true,false,()=>{
+			let tree = hmiView.getDITree();
+			let newnd = tree.findNodeById(newid) ;
+			//console.log(newnd) ;
+			if(!newnd) return ;
+			hmiView.setSelectedDINode(newnd) ;
+			trigger_node_tt_edit(newnd)
+		}) ;
+	})
 }
+
+function del_node(nodeid)
+{
+	dlg.confirm('<wbt:g>del,this,node</wbt:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
+	{
+		send_ajax("dt_tree_ajax.jsp",{op:"del_node",treeid:treeid,tree_nid:node.getId()},(bsucc,ret)=>{
+			if(!bsucc || ret!="succ")
+			{
+				dlg.msg(ret);return;
+			}
+			reload_tree(true,false,()=>{}) ;
+		})
+	});
+}
+
+
+
+function on_mv_append_sub(pn,idx,mvnd)
+{
+	//console.log(pn,idx,mvnd);
+	send_ajax("dt_tree_ajax.jsp",{op:"mv_node_to",treeid:treeid,pn_id:pn.getId(),idx:idx,tree_nid:mvnd.getId()},(bsucc,ret)=>{
+		if(!bsucc || ret!="succ")
+		{
+			dlg.msg(ret);return;
+		}
+		reload_tree(true,false,()=>{}) ;
+	})
+}
+
+function on_node_grp_menu_act(dn,op,pxy,dxy)
+{
+	console.log(dn,op);
+}
+
+ot.PopMenu.setMenuTp2Items({
+	"node_grp":[
+		{op_name:'add_node',op_title:"Add Node (Enter)",op_icon:"",action:on_node_grp_menu_act},
+		{op_name:'add_node_sub',op_title:"Add Child Node (Insert)",op_icon:"",action:on_node_grp_menu_act},
+		{op_name:'add_node_ahead',op_title:"Add Node Ahead   (Shift_Enter)",op_icon:"",action:on_node_grp_menu_act}
+	]
+})
+
 
 function show_help(mn,tp,bforce_pop)
 {
@@ -565,7 +635,7 @@ function on_del_items(sis)
 	let ids = "" ;
 	for(let si of sis)
 	{
-		if(si.getClassName()=='ot.view.DINet')
+		if(si.getClassName()=='ot.view.DINode')
 			continue ;
 		if(si.getUID)
 			ids+= ((ids!='')?",":"")+si.getUID(); 
@@ -574,14 +644,14 @@ function on_del_items(sis)
 		return ;
 	dlg.confirm("Are you sure to delete selected items?",{btn:["Sure","Cancel"],title:"Warn"},()=>
     {
-		send_ajax("./mn_ajax.jsp",{op:"del_by_ids",container_id:container_id,netid:netid,"ids":ids},
+		send_ajax("./dt_tree_ajax.jsp",{op:"del_node_by_ids",treeid:treeid,tree_nids:ids},
                 (bsucc,ret)=>{
                 	if(!bsucc||ret!="succ")
                 	{
                 		dlg.msg(ret) ;
                 		return ;
                 	}
-                	reload_tree();
+                	reload_tree(true,false);
                 }) ;
     });
 }

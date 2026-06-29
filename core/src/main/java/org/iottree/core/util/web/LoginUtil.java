@@ -693,19 +693,35 @@ public class LoginUtil
 	{
 		SessionItem si = getUserLoginSession(req) ;
 		if(si!=null)
+		{
+			req.getSession().setAttribute(LOGIN_SK, si.sess_id);
 			return true ;
+		}
 		
 		return checkPlatAdmin(req);
 	}
 	
 	public static boolean checkUserLogin(HttpSession hs)// throws UnsupportedEncodingException
 	{
+		return checkUserLogin(hs,false) ;
+	}
+	
+	public static boolean checkUserLogin(HttpSession hs,boolean badmin)// throws UnsupportedEncodingException
+	{
 		if(hs==null)
 			return false;
-		String sess_id = (String)hs.getAttribute(LOGIN_SK);
-		if(Convert.isNullOrEmpty(sess_id))
-			return false;
 		
+		PlatNode.UserRight ur = (PlatNode.UserRight )hs.getAttribute(PlatNode.PN_USER_RIGHT);
+		if(ur!=null)
+		{
+			if(badmin && !ur.bAdmin)
+				return false;
+			return true ;
+		}
+		//
+		//if(Convert.isNullOrEmpty(sess_id))
+		//	return false;
+		String sess_id = (String)hs.getAttribute(LOGIN_SK);
 		SessionItem si = accessSession(sess_id) ;
 		return si!=null;
 	}
@@ -843,6 +859,8 @@ public class LoginUtil
 				if(log.isDebugEnabled())
 					log.debug(" set session id="+hs.getId()+" token="+_plat_token_) ;
 				//System.out.println("set session="+hs+"   ssid="+hs.getId()  );
+				hs.setAttribute(LOGIN_SK, hs.getId());
+				hs.setAttribute(PlatNode.PN_USER_RIGHT, ur);
 				return true ;
 			}
 			else

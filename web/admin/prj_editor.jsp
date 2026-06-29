@@ -1898,7 +1898,7 @@ function init_left_btm()
     let tmps = `<iframe src="./mn/mn_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
     let tmp_ano_det = `<iframe src="./ano_det/ad_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps})
-		.tab('addTab', {'title': '<wbt:g>ano_det</wbt:g>', 'id': 'lb_tab_ano_det', 'content': tmp_ano_det});
+	//	.tab('addTab', {'title': '<wbt:g>ano_det</wbt:g>', 'id': 'lb_tab_ano_det', 'content': tmp_ano_det});
 	tmps=`<div   style="height:100%;width:100%;font-size:30px;color:#57a9d0"><br>
 		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
 		  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
@@ -1909,8 +1909,6 @@ function init_left_btm()
 		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 		  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
 		  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-		
-		
 		  `;
 	if(b_ent)
 	{

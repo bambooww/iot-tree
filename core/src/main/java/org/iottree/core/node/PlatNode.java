@@ -77,7 +77,7 @@ public class PlatNode
 					return true ;
 			}
 		}
-		if("127.0.0.1".equals(in_ip))
+		if("127.0.0.1".equals(in_ip)||"0:0:0:0:0:0:0:1".equals(in_ip))
 			return true;
 		return false;
 	}
@@ -166,6 +166,7 @@ public class PlatNode
 		}
 		
 		public static final String PN_TOKEN = "_plat_token_" ;
+		public static final String PN_USER_RIGHT = "_plat_userright_" ;
 		
 		private HashMap<String,UserRight> user2right = new HashMap<>() ;
 		
@@ -187,6 +188,13 @@ public class PlatNode
 				}
 			}
 			return null ;
+		}
+		
+		public List<UserRight> listUserRights()
+		{
+			ArrayList<UserRight> rets = new ArrayList<>() ;
+			rets.addAll(user2right.values()) ;
+			return rets ;
 		}
 		
 //		public boolean checkUserRight(String token)

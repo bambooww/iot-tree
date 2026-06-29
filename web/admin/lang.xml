@@ -11,6 +11,7 @@
   <dd_node id="1" name="reset" name_cn="重置" name_en="Reset" />
   <dd_node id="1001" name="psw_chged" name_cn="密码修改成功" name_en="Password Changed" />
   <dd_node id="1001" name="tree" name_cn="树" name_en="Tree" />
+  <dd_node id="1001" name="dev_model" name_cn="设备模型" name_en="Device Model" />
   
   <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
   <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />

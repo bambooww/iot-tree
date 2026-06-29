@@ -11,6 +11,9 @@ if(!Convert.checkReqEmpty(request, out,"op"))
 String op = request.getParameter("op");
 String treeid = request.getParameter("treeid");
 String tree_nid = request.getParameter("tree_nid");
+
+String tree_nids_str = request.getParameter("tree_nids");
+
 DTTree tree = null ;
 if(Convert.isNotNullEmpty(treeid))
 {
@@ -22,9 +25,11 @@ if(Convert.isNotNullEmpty(treeid))
 	}
 }
 
+int idx = Convert.parseToInt32(request.getParameter("idx"), -1) ;
+
 //  0 - sub node , 1 - sibling  2 - sibling head 
 int add_sty = Convert.parseToInt32(request.getParameter("sty"), 0) ;
-
+List<String> tree_nids = Convert.splitStrWith(tree_nids_str, ",|") ;
 DTNode dn = null ;
 if(Convert.isNotNullEmpty(tree_nid))
 {
@@ -36,10 +41,24 @@ if(Convert.isNotNullEmpty(tree_nid))
 	}
 }
 
+String pn_id = request.getParameter("pn_id");
+DTNodeGrp pn_node = null ;
+if(Convert.isNotNullEmpty(pn_id))
+{
+	DTNode tmpnd = tree.findNodeById(pn_id) ;
+	if(tmpnd==null || !(tmpnd instanceof DTNodeGrp))
+	{
+		out.print("no pn node grp found") ;
+		return ;
+	}
+	pn_node = (DTNodeGrp)tmpnd ;
+}
+
 String title = request.getParameter("title") ;
 String desc = request.getParameter("desc") ;
 DTTreeRenderCtrl ctrl = new DTTreeRenderCtrl() ;
 
+StringBuilder failedr = new StringBuilder() ;
 try
 {
 switch(op)
@@ -134,12 +153,25 @@ case "del_node":
 	else
 		out.print("del node failed") ;
 	return ;
-case "chg":
+case "del_node_by_ids":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nids"))
+		return ;
+
+	if(tree.delNodeByIds(tree_nids).size()>0)
+		out.print("succ") ;
+	else
+		out.print("del nodes failed") ;
+	return ;
+case "mv_node_to":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","pn_id"))
+		return ;
+	
+	if(pn_node.appendChild(dn, idx, failedr))
+		out.print("succ") ;
+	else
+		out.print(failedr.toString()) ;
 	break;
 
-case "list":
-	
-	break ;
 }
 }
 catch(Exception ee)

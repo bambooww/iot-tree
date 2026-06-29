@@ -104,10 +104,22 @@
 	case "platform_users": //同步平台用户验证数据
 		if(!Convert.checkReqEmpty(request, out, "users_jarr"))
 			return;
-		JSONArray users_jarr = new JSONArray(request.getParameter("users_jarr")) ;
+		String ujarr = request.getParameter("users_jarr") ;
+		ujarr = URLDecoder.decode(ujarr, "UTF-8");
+		JSONArray users_jarr = new JSONArray(ujarr) ;
 		//
 		pn.updateUserRight(users_jarr) ;
 		out.print("succ") ;
+		return ;
+	case "debug_show_urs":
+		//response.setContentType("application/json;charset=UTF-8");
+		List<PlatNode.UserRight> urs = pn.listUserRights() ;
+		JSONArray jarr_urs = new JSONArray() ;
+		for(PlatNode.UserRight ur:urs)
+		{
+			jarr_urs.put(ur.toJO()) ;
+		}
+		jarr_urs.write(out) ;
 		return ;
 	default:
 		out.print("unknown op="+op) ;

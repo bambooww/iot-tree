@@ -4,9 +4,6 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.iottree.core.Config;
-import org.iottree.core.node.PlatNode;
-import org.iottree.core.node.PlatNodeManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.Lan;

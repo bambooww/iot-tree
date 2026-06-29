@@ -132,7 +132,7 @@ if(dn!=null)
 
 var treeid="<%=treeid%>";
 var tree_nid = "<%=tree_nid%>" ;
-var title = "<%=title%>" ;
+var title = "<%=Convert.plainToJsStr(title)%>" ;
 
 var form ;
 

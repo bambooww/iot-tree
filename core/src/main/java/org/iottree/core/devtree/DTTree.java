@@ -24,7 +24,8 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 	{
 		sub(0),
 		sibling(1),
-		sibling_ahead(2);
+		sibling_ahead(2),
+		parent(3);
 		
 		private final int val ;
 		
@@ -48,6 +49,8 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 				return sibling;
 			case 2:
 				return sibling_ahead;
+			case 3:
+				return parent;
 			default:
 				return null ;
 			}
@@ -161,40 +164,61 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		DTNodeGrp pn = null;
 		DTNodeGrp newnd = null;
 		int idx = -1 ;
-		if (Convert.isNotNullEmpty(ref_tree_nid))
+		if(Convert.isNullOrEmpty(ref_tree_nid))
 		{
-			DTNode pn0 = this.findNodeById(ref_tree_nid);
-			if (pn0 == null)
-				return null;
-			if(!(pn0 instanceof DTNodeGrp))
-				throw new Exception("pnode is not DTNodeGrp") ;
-			pn = (DTNodeGrp)pn0 ;
+			// add to root
+			pn = this;
+		}
+
+		DTNode pn0 = this.findNodeById(ref_tree_nid);
+		if (pn0 == null)
+			return null;
+		
+		boolean b_add_parent = false;
+		if(pn0==this)
+		{
+			pn = this ;
+		}
+		else
+		{
+			
 			if(way==null)
 				way = NodeAddWay.sub;
 			
 			switch(way)
 			{
+			case sub:
+				if(!(pn0 instanceof DTNodeGrp))
+					throw new Exception("pnode is not DTNodeGrp") ;
+				pn = (DTNodeGrp)pn0 ;
+				break;
 			case sibling:
-				pn = (DTNodeGrp)pn0.getParent();
+				pn = pn0.getParentGrp();
 				if(pn==null)
 					return null;
 				idx = pn.getChildNodeIdx(pn0) +1;
 				break ;
 			case sibling_ahead:
-				pn = (DTNodeGrp)pn0.getParent();
+				pn =pn0.getParentGrp();
 				if(pn==null)
 					return null;
 				idx = pn.getChildNodeIdx(pn0) -1;
 				if(idx<0)
 					idx = 0 ;
 				break ;
+			case parent:
+				pn = (DTNodeGrp)pn0.getParent();
+				if(pn==null)
+					return null;
+				idx = pn.getChildNodeIdx(pn0) ;
+				b_add_parent = true;
+				break;
 			}
 		}
-		else
-		{// add to root
-			pn = this;
-		}
+		
 		newnd = pn.addChildGrp(t, d,idx);
+		if(b_add_parent)
+			newnd.appendChild(pn0, idx, null) ;
 		save();
 		clearCache();
 
@@ -258,6 +282,37 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		save();
 		clearCache();
 		return nd;
+	}
+	
+	public List<DTNode> delNodeByIds(List<String> nids) throws Exception
+	{
+		if(nids==null||nids.size()<=0)
+			return null ;
+		ArrayList<DTNode> rets = new ArrayList<>() ;
+		for(String nid:nids)
+		{
+			if(nid.equals(this.treeId))
+				continue ; //root cannot be deleted
+			
+			DTNode nd = this.findNodeById(nid);
+			if (nd == null)
+				continue ;
+			
+			DTNodeGrp pn =nd.getParentGrp();
+			if (pn == null)
+				continue ;
+			
+			if (pn.removeChild(nid)==null)
+				continue ;
+			rets.add(nd) ;
+		}
+		
+		if(rets.size()>0)
+		{
+			save();
+			clearCache();
+		}
+		return rets;
 	}
 	
 	public JSONObject rendAsRootNode4JsTree(DTTreeRenderCtrl tr_ctrl) //throws Exception

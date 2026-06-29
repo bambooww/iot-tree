@@ -394,7 +394,7 @@ if(rep.isAutoStart())
 
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1>&nbsp;</h1>
+					        <h1>&nbsp;<wbt:lang>dev_model</wbt:lang></h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        

@@ -84,6 +84,21 @@ public abstract class DTNode
 		return this.parent ;
 	}
 	
+	public DTNodeGrp getParentGrp()
+	{
+		return (DTNodeGrp)this.parent ;
+	}
+	
+	public boolean hasAncestor(DTNodeGrp grp)
+	{
+		DTNodeGrp p = getParentGrp() ;
+		if(p==null)
+			return false;
+		if(p==grp)
+			return true ;
+		return p.hasAncestor(grp) ;
+	}
+	
 	public DTTree getTree()
 	{
 		if(this.parent==null)
@@ -95,6 +110,7 @@ public abstract class DTNode
 		
 		return this.parent.getTree() ;
 	}
+	
 	
 	void clearCache()
 	{

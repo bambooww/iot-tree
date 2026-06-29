@@ -182,7 +182,7 @@ function tree_init()
 	    	on_tree_node_sel(selns[0].original)
 	    else
 	    {
-	    	jsTree.jstree('select_node', deviceid);
+	    	jsTree.jstree('select_node', treeid);
 	    	var selns = $('#device_tree').jstree(true).get_selected(true);
 	    	if(selns&&selns.length>0)
 	    		on_tree_node_sel(selns[0].original)
