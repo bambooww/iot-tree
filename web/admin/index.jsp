@@ -394,7 +394,7 @@ if(rep.isAutoStart())
 
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
-					        <h1>&nbsp;<wbt:lang>dev_model</wbt:lang></h1>
+					        <h1>&nbsp;<wbt:lang>devtree</wbt:lang> & <wbt:lang>model</wbt:lang></h1>
 					        
 					        <div style="float:left;top:5px;position: absolute;left:210px" >
 					        
@@ -466,13 +466,48 @@ if(rep.isAutoStart())
 				
 						</div>
 						<div style="width:100%;text-align: center"><i class="fa fa-arrow-down"></i></div>
-						<div class="sub_cc">
-						<wbt:lang>devpart</wbt:lang>
-						</div>
-					 </div>
-						<br>
-					</div>
-					
+			<div class="sub_cc">
+			<wbt:lang>devpart,lib</wbt:lang>
+<%
+	for(DTDevPartLib partlib:DTDevPartManager.getInstance().listLibs())
+{
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		String plibid = partlib.getLibId() ;
+%>
+	<span class="lib_item btn_sh_c" >
+		<i class="fa-solid fa-cubes"></i> &nbsp;<a class="text title" href="javascript:open_devpart_lib('<%=plibid%>')" data-id="8"><%=partlib.getTitle() %></a>
+		<span class="btn_sh">
+
+           <a href="javascript:partlib_add_or_edit('<%=plibid%>')" title="edit lib">
+              <span class="fa-stack fa-1x">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a href="javascript:devpartlib_export('<%=plibid%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a style="color: #e33a3e" href="javascript:devpartlib_del('<%=plibid%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="partlib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+				</div><br>
+				</div>
+			</div>
 					
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
@@ -486,15 +521,6 @@ if(rep.isAutoStart())
 							</span>&nbsp;&nbsp; <wbt:lang>import</wbt:lang>
 							<input type="file" id='devlib_add_file' onchange="devlib_add_file_onchg()" name="devlib_file" style="left:-9999px;position:absolute;" accept=".zip"/>
 							</a>
-<%--
-					        	&nbsp;&nbsp;&nbsp;&nbsp;
-					        	<a class0="btn btn-success"  style="width:100px;height:40px;" href="javascript:devdef_cat_export()">
-							<span class="fa-stack">
-							  <i class="fa fa-square fa-stack-1x"></i>
-							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
-							</span>&nbsp;&nbsp;Export
-							</a>
- --%>							
 							&nbsp;&nbsp;&nbsp;&nbsp;
 					        	<a  title="device library help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_devlib.md" target="_blank">
 							<span class="fa-stack">
@@ -1255,6 +1281,88 @@ function tree_add_or_edit(treeid)
 			]);
 }
 
+
+function partlib_add_or_edit(libid)
+{
+	var tt = "<wbt:lang>edit,devpart,lib</wbt:lang>" ;
+	if(!libid)
+	{
+		libid ="" ;
+		tt = "<wbt:lang>add,devpart,lib</wbt:lang>" ;
+	}
+		
+	dlg.open("./devtree/dt_partlib_edit.jsp?libid="+libid,
+			{title:tt},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit_partlib" ;
+						 var pm = {
+									type : 'post',
+									url : "./devtree/dt_part_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if(ret.indexOf("succ=")!=0)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								location.reload();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function devpartlib_del(libid)
+{
+	dlg.confirm('<wbt:lang>del,this,devpart,lib</wbt:lang>?',{btn:['<wbt:lang>yes</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
+		    {
+					send_ajax("./devtree/dt_part_ajax.jsp","op=del_partlib&libid="+libid,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
+			    			return ;
+			    		}
+			    		location.reload();
+			    	}) ;
+				});
+}
+
+function open_devpart_lib(id)
+{
+	if(!id)
+		id = "" ;
+	dlg.open_win("./devtree/dt_partlib_list.jsp?edit=true&libid="+id,
+			{title:"<wbt:lang>devpart,lib</wbt:lang>",w:'1000',h:'560'},
+			[{title:'<wbt:lang>close</wbt:lang>',style:"primary"},{title:'<wbt:lang>help</wbt:lang>',style:"primary"}],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.msg("help is under dev");
+				}
+			]);
+}
 
 
 function devlib_export(libid)

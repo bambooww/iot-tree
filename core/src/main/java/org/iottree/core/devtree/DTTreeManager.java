@@ -17,6 +17,7 @@ public class DTTreeManager
 	private static DTTreeManager instance = null ;
 	
 	private static File DIR = new File(Config.getDataDirBase()+"/devtree/trees/") ;
+	private static File DIR_BK = new File(Config.getDataDirBase()+"/devtree/trees/backup/") ;
 	
 	public static DTTreeManager getInstance()
 	{
@@ -38,6 +39,11 @@ public class DTTreeManager
 	private static File calTreeFile(String treeid)
 	{
 		return new File(DIR,"tree_"+treeid+".json") ;
+	}
+	
+	private static File calTreeFileBk(String treeid,String ver)
+	{
+		return new File(DIR_BK,"tree_"+treeid+"."+ver+".json") ;
 	}
 	
 	private LinkedHashMap<String,DTTree> id2tree = null;
@@ -104,6 +110,17 @@ public class DTTreeManager
 		dtt.updateDT = f.lastModified();
 	}
 	
+	public synchronized void saveTreeToBkVer(DTTree dtt,String ver) throws IOException
+	{
+		File f = calTreeFileBk(dtt.getTreeId(),ver) ;
+		if(!f.getParentFile().exists())
+			f.getParentFile().mkdirs() ;
+		
+		JSONObject jo = dtt.toJO(false) ;
+		Convert.writeFileJO(f, jo);
+		//dtt.updateDT = f.lastModified();
+	}
+	
 	public ArrayList<DTTree> listTrees()
 	{
 		ArrayList<DTTree> rets = new ArrayList<>() ;
@@ -115,6 +132,14 @@ public class DTTreeManager
 	public DTTree getTreeById(String treeid)
 	{
 		return getId2Tree().get(treeid) ;
+	}
+	
+	public DTNode getTreeNode(String treeid,String tree_nid)
+	{
+		DTTree t = getTreeById(treeid) ;
+		if(t==null)
+			return null ;
+		return t.findNodeById(tree_nid) ;
 	}
 	
 	public DTTree addTree(String title,String desc) throws IOException

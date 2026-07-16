@@ -79,7 +79,7 @@ dlg.resize_to(400,620);
 		</td>
 		<td>
 <%
-if(dn instanceof DTNodeGrp)
+if(dn instanceof DTNode)
 {
 %>
 		<button id="" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_tn('add_sub_grp')" title=""><i class="fa fa-plus" ></i>添加子节点(分组)</button>

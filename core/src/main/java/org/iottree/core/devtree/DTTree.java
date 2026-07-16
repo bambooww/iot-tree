@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.core.util.CompressUUID;
@@ -18,7 +17,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public class DTTree extends DTNodeGrp implements Comparable<DTTree>
+public class DTTree extends DTNodeRoot implements Comparable<DTTree>
 {
 	public static enum NodeAddWay
 	{
@@ -59,27 +58,31 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 	
 	String treeId ;
 	
-	int curId = 0 ;
-	
 	long updateDT = -1 ;
 	
 	float x = 0 ;
 	float y = 0 ;
 	
-	ArrayList<DTNodeRoot> roots = new ArrayList<>() ;
+	ArrayList<DTNodeGrp> grps = new ArrayList<>() ;
 	
 	private transient HashMap<String,DTNode> cachedId2Node = null;//new HashMap<>() ;
 	
 	public DTTree()
 	{
-		super(null) ;
+		super() ;
 	}
 	
 	DTTree(String title,String desc)
 	{
-		super(null,title,desc) ;
-		treeId = CompressUUID.createNewId() ;
+		super(title,desc) ;
+		this.nodeId = treeId = CompressUUID.createNewId() ;
 		updateDT = System.currentTimeMillis() ;
+	}
+	
+	@Override
+	public String getRootId()
+	{
+		return treeId;
 	}
 	
 	@Override
@@ -88,21 +91,9 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		return "t";
 	}
 	
-	int getNextId()
-	{
-		curId ++ ;
-		return curId ;
-	}
-	
 	public long getUpdateDT()
 	{
 		return this.updateDT ;
-	}
-	
-	@Override
-	public String getNodeId()
-	{
-		return this.treeId ;
 	}
 	
 	public String getTreeId()
@@ -120,7 +111,7 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		return cachedId2Node = id2n ;
 	}
 	
-	private static void constructId2Node(DTNodeGrp cur_n,HashMap<String,DTNode> id2n)
+	private static void constructId2Node(DTNode cur_n,HashMap<String,DTNode> id2n)
 	{
 		List<DTNode> ns = cur_n.getChildNodes() ;
 		if(ns==null || ns.size()<=0)
@@ -128,8 +119,8 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		for(DTNode n:ns)
 		{
 			id2n.put(n.getNodeId(),n) ;
-			if(n instanceof DTNodeGrp)
-				constructId2Node((DTNodeGrp)n,id2n) ;
+			if(n instanceof DTNode)
+				constructId2Node((DTNode)n,id2n) ;
 		}
 	}
 	
@@ -137,7 +128,7 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 	synchronized void clearCache()
 	{
 		cachedId2Node = null ;
-		roots = null ;
+		//grps = null ;
 	}
 	
 	
@@ -148,21 +139,26 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		return getCachedId2Node().get(tree_nid) ;
 	}
 	
-	public DTNode setNodeTitle(String tree_nid,String t) throws Exception
+	public DTNode setNodeTitle(String tree_nid,String t,StringBuilder failedr) throws Exception
 	{
 		DTNode nd = this.findNodeById(tree_nid);
 		if (nd == null)
+		{
+			failedr.append("node is not found");
 			return null;
-		nd.setTitle(t);
+		}
+		
+		if(!nd.setTitle(t,failedr))
+			return null ;
 		save();
 		clearCache();
 		return nd ;
 	}
 	
-	public DTNodeGrp addNodeGrp(String ref_tree_nid, String t, String d,NodeAddWay way) throws Exception
+	public DTNode addNode(String ref_tree_nid, String t, String d,NodeAddWay way,StringBuilder failedr) throws Exception
 	{
-		DTNodeGrp pn = null;
-		DTNodeGrp newnd = null;
+		DTNode pn = null;
+		DTNode newnd = null;
 		int idx = -1 ;
 		if(Convert.isNullOrEmpty(ref_tree_nid))
 		{
@@ -188,9 +184,9 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 			switch(way)
 			{
 			case sub:
-				if(!(pn0 instanceof DTNodeGrp))
-					throw new Exception("pnode is not DTNodeGrp") ;
-				pn = (DTNodeGrp)pn0 ;
+				if(!(pn0 instanceof DTNode))
+					throw new Exception("pnode is not DTNode") ;
+				pn = (DTNode)pn0 ;
 				break;
 			case sibling:
 				pn = pn0.getParentGrp();
@@ -207,7 +203,7 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 					idx = 0 ;
 				break ;
 			case parent:
-				pn = (DTNodeGrp)pn0.getParent();
+				pn = (DTNode)pn0.getParent();
 				if(pn==null)
 					return null;
 				idx = pn.getChildNodeIdx(pn0) ;
@@ -216,7 +212,9 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 			}
 		}
 		
-		newnd = pn.addChildGrp(t, d,idx);
+		newnd = pn.addChild(t, d,idx,failedr);
+		if(newnd==null)
+			return null ;
 		if(b_add_parent)
 			newnd.appendChild(pn0, idx, null) ;
 		save();
@@ -225,30 +223,30 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		return newnd;
 	}
 	
-	public DTNodePart addNodePart(DTDevPart dp,String p_tree_nid, String t, String d) throws Exception
-	{
-		DTNodeGrp pn = null;
-		if (Convert.isNotNullEmpty(p_tree_nid))
-		{
-			DTNode pn0 = this.findNodeById(p_tree_nid);
-			if (pn0 == null)
-				return null;
-			if(!(pn0 instanceof DTNodeGrp))
-				throw new Exception("pnode is not DTNodeGrp") ;
-			pn = (DTNodeGrp)pn0 ;
-		}
-		else
-		{
-			pn = this;
-		}
-
-		DTNodePart newnd = pn.addChildPart(dp,t, d);
-		
-		save();
-		clearCache();
-
-		return newnd;
-	}
+//	public DTNodePart addNodePart(DTDevPart dp,String p_tree_nid, String t, String d) throws Exception
+//	{
+//		DTNode pn = null;
+//		if (Convert.isNotNullEmpty(p_tree_nid))
+//		{
+//			DTNode pn0 = this.findNodeById(p_tree_nid);
+//			if (pn0 == null)
+//				return null;
+//			if(!(pn0 instanceof DTNode))
+//				throw new Exception("pnode is not DTNode") ;
+//			pn = (DTNode)pn0 ;
+//		}
+//		else
+//		{
+//			pn = this;
+//		}
+//
+//		DTNodePart newnd = pn.addChildPart(dp,t, d);
+//		
+//		save();
+//		clearCache();
+//
+//		return newnd;
+//	}
 
 	public DTNode updateNode(String tree_nid, String t, String d) throws Exception
 	{
@@ -263,20 +261,20 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		return nd;
 	}
 
-	public DTNode delNode(String tree_nid) throws Exception
+	public DTNode delNode(String tree_nid,StringBuilder failedr) throws Exception
 	{
 		DTNode nd = this.findNodeById(tree_nid);
 		if (nd == null)
 			return null;
 		
-		DTNodeGrp pn =(DTNodeGrp)nd.getParent();
+		DTNode pn =(DTNode)nd.getParent();
 		if (pn == null)
 		{
 			return null;
 		}
 		else
 		{
-			if (pn.removeChild(tree_nid)==null)
+			if (pn.removeChild(tree_nid,failedr)==null)
 				return null;
 		}
 		save();
@@ -289,6 +287,7 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		if(nids==null||nids.size()<=0)
 			return null ;
 		ArrayList<DTNode> rets = new ArrayList<>() ;
+		StringBuilder failedr = new StringBuilder() ;
 		for(String nid:nids)
 		{
 			if(nid.equals(this.treeId))
@@ -298,11 +297,11 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 			if (nd == null)
 				continue ;
 			
-			DTNodeGrp pn =nd.getParentGrp();
+			DTNode pn =nd.getParentGrp();
 			if (pn == null)
 				continue ;
 			
-			if (pn.removeChild(nid)==null)
+			if (pn.removeChild(nid,failedr)==null)
 				continue ;
 			rets.add(nd) ;
 		}
@@ -314,6 +313,193 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		}
 		return rets;
 	}
+	
+	
+	public boolean setAppendChild(String p_tree_nid,DTNode app_nd,int idx,StringBuilder failedr) throws IOException 
+	{
+		DTNode p_nd = this.findNodeById(p_tree_nid);
+		if (p_nd == null)
+		{
+			failedr.append("no parent node found") ;
+			return false;
+		}
+		if(!p_nd.appendChild(app_nd, idx, failedr))
+			return false;
+		
+		save();
+		clearCache();
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param tree_nid
+	 * @param node_self false-add child node
+	 * @param parttp_uid
+	 * @param partid
+	 * @param failedr
+	 * @return
+	 * @throws IOException
+	 */
+	public DTNode setPartToNode(String tree_nid,boolean node_self,String parttp_uid,String partid,StringBuilder failedr) throws IOException
+	{
+		DTNode nd = this.findNodeById(tree_nid);
+		if (nd == null)
+		{
+			failedr.append("no node found with id="+tree_nid) ;
+			return null;
+		}
+		DTDevPartTP part_tp = DTDevPartManager.getInstance().getPartTPByUID(parttp_uid) ;
+		if(part_tp==null)
+		{
+			failedr.append("no part tp found with uid="+parttp_uid) ;
+			return null;
+		}
+		DTDevPart part = null ;
+		if(Convert.isNotNullEmpty(partid))
+		{
+			part = part_tp.getPartById(partid) ;
+			if(part==null)
+			{
+				failedr.append("no part found with id="+partid) ;
+				return null;
+			}
+		}
+		DTNode retnd = null ;
+		if(node_self)
+		{
+			if(!nd.setThisNodeByPartTP(part_tp, part, failedr))
+				return null ;
+			retnd = nd ;
+		}
+		else
+		{// add as child
+			retnd = nd.addSubNodeByPartTP(part_tp, part, failedr);
+		}
+		
+		if(retnd==null)
+		{
+			return null ;
+		}
+		
+		save();
+		clearCache();
+		
+		return retnd ;
+	}
+	
+	public boolean setStaticDataByJO(String tree_nid,JSONObject jo,StringBuilder failedr) throws IOException 
+	{
+		DTNode nd = this.findNodeById(tree_nid);
+		if (nd == null)
+		{
+			failedr.append("no node found") ;
+			return false;
+		}
+		
+		DTStaticData sd = DTStaticData.fromJO(nd,jo) ;
+		nd.setStaticData(sd);
+		save();
+		clearCache();
+		return true;
+	}
+	/**
+	 * call by config page
+	 * @param tree_nid
+	 * @param jarr
+	 * @param failedr
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean setNodeTagsByJO(String tree_nid,JSONArray jarr,StringBuilder failedr) throws IOException
+	{
+			DTNode nd = this.findNodeById(tree_nid);
+			if (nd == null)
+			{
+				failedr.append("no node found") ;
+				return false;
+			}
+			ArrayList<DTRunTag> rts = new ArrayList<>() ;
+			if(jarr!=null)
+			{
+				int n = jarr.length() ;
+				for(int i = 0 ; i < n ; i ++)
+				{
+					JSONObject tmpjo = jarr.getJSONObject(i) ;
+					DTRunTag rt = DTRunTag.formJO(nd, tmpjo) ;
+					if(rt==null)
+						continue ;
+					rts.add(rt) ;
+				}
+			}
+			if(nd.setRunTags(rts))
+			{
+				save();
+				clearCache();
+			}
+			return true ;
+	}
+	
+	
+	public boolean setRunBlkInsBasicByJO(boolean b_add,String tree_nid,JSONObject jo,
+			StringBuilder failedr) throws IOException
+	{
+		DTNode nd = this.findNodeById(tree_nid);
+		if (nd == null)
+		{
+			failedr.append("no node found") ;
+			return false;
+		}
+		
+		String runblk_uid = jo.optString("runblk_uid") ;
+		String ins_name = jo.optString("ins_name") ;
+		String ins_title = jo.optString("ins_title") ;
+		boolean en = jo.optBoolean("en",true) ;
+		
+		DTRunBlkIns ins = null;
+		if(b_add)
+		{
+			DTRunBlkIns oldins = nd.getRunBlkIns(ins_name) ;
+			if(oldins!=null)
+			{
+				failedr.append("Run Block ["+ins_name+"] is already existed") ;
+				return false;
+			}
+			ins = nd.addRunBlkInsBasic(runblk_uid, ins_name, ins_title, failedr) ;
+		}
+		else
+		{
+			ins =  nd.getRunBlkIns(ins_name) ;
+		}
+		if(ins==null)
+			return false;
+		ins.setBasicByJO(jo);
+		
+		save();
+		clearCache();
+		return true ;
+	}
+	
+	public DTRunBlkIns delRunBlkIns(String tree_nid,String ins_name,StringBuilder failedr) throws IOException
+	{
+		DTNode nd = this.findNodeById(tree_nid);
+		if (nd == null)
+		{
+			failedr.append("no node found") ;
+			return null;
+		}
+		DTRunBlkIns oldins = nd.delRunBlkIns(ins_name) ;
+		if(oldins==null)
+		{
+			failedr.append("Run Block ["+ins_name+"] is not existed") ;
+			return null;
+		}
+		
+		save();
+		clearCache();
+		return oldins ;
+	}
+	
 	
 	public JSONObject rendAsRootNode4JsTree(DTTreeRenderCtrl tr_ctrl) //throws Exception
 	{
@@ -366,15 +552,14 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		
 		ret.put("treeid", this.treeId) ;
 		JSONArray jarr = new JSONArray() ;
-		if(this.roots!=null)
+		if(this.grps!=null)
 		{
-			for(DTNodeRoot r:this.roots)
+			for(DTNodeGrp r:this.grps)
 			{
 				jarr.put(r.toJO(b_show_detail)) ;
 			}
 		}
-		ret.put("roots", jarr) ;
-		ret.put("__curid", curId) ;
+		ret.put("grps", jarr) ;
 		ret.put("x", this.x);
 		ret.put("y", this.y);
 		
@@ -392,10 +577,9 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 		if(Convert.isNullOrEmpty(this.treeId))
 			return false;
 		this.nodeId = this.treeId;
-		this.curId = jo.optInt("__curid", 0) ;
 		this.x = jo.optFloat("x",0.0f);
 		this.y = jo.optFloat("y",0.0f);
-		JSONArray jarr = jo.optJSONArray("roots") ;
+		JSONArray jarr = jo.optJSONArray("grps") ;
 		if(jarr!=null)
 		{
 			int n = jarr.length() ;
@@ -404,9 +588,9 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 				JSONObject tmpjo = jarr.optJSONObject(i) ;
 				if(tmpjo==null)
 					continue ;
-				DTNodeRoot r = new DTNodeRoot(this) ;
+				DTNodeGrp r = new DTNodeGrp(this) ;
 				if(r.fromJO(tmpjo))
-					this.roots.add(r);
+					this.grps.add(r);
 			}
 		}
 		return true ;
@@ -426,6 +610,11 @@ public class DTTree extends DTNodeGrp implements Comparable<DTTree>
 	public void save() throws IOException
 	{
 		DTTreeManager.getInstance().saveTree(this);
+	}
+	
+	public void saveBackupVer(String ver) throws IOException
+	{
+		DTTreeManager.getInstance().saveTreeToBkVer(this,ver);
 	}
 	
 	public boolean renderOut(Writer out) throws IOException

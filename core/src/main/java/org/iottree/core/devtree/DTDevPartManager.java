@@ -3,7 +3,10 @@ package org.iottree.core.devtree;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
@@ -41,7 +44,19 @@ public class DTDevPartManager
 	{
 		if(id2lib!=null)
 			return id2lib;
-		return id2lib = loadLibs();
+		id2lib = loadLibs();
+		if(id2lib.size()<=0)
+		{
+			try
+			{
+				addLib("Default","") ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
+		}
+		return id2lib;
 	}
 	
 	private LinkedHashMap<String,DTDevPartLib> loadLibs()
@@ -78,15 +93,24 @@ public class DTDevPartManager
 		return ret ;
 	}
 	
-	private static File calLibDir(String libid)
+	static File calLibDir(String libid)
 	{
 		return new File(DIR,"lib_"+libid+"/") ;
 	}
 	
 	void saveLib(DTDevPartLib lib) throws IOException
 	{
-		File libf = new File(DIR,"_lib.json") ;
+		File libd = calLibDir(lib.getLibId()) ;
+		File libf = new File(libd,"_lib.json") ;
 		Convert.writeFileJO(libf, lib.toJO());
+	}
+	
+	public List<DTDevPartLib> listLibs()
+	{
+		ArrayList<DTDevPartLib> rets = new ArrayList<>() ;
+		rets.addAll(this.getId2Lib().values()) ;
+		Collections.sort(rets) ;
+		return rets;
 	}
 	
 	public DTDevPartLib getLibById(String libid)
@@ -102,5 +126,36 @@ public class DTDevPartManager
 		saveLib(lib) ;
 		getId2Lib().put(lib.getLibId(),lib) ;
 		return lib ;
+	}
+	
+	public boolean delLib(String libid)
+	{
+		DTDevPartLib lib = this.getLibById(libid) ;
+		if(lib==null)
+			return false;
+		File libd = calLibDir(libid) ;
+		if(Convert.deleteDir(libd))
+		{
+			this.getId2Lib().remove(libid) ;
+			return true;
+		}
+		return false;
+	}
+	
+	public DTDevPartTP getPartTP(String libid,String parttpid)
+	{
+		DTDevPartLib lib = getLibById(libid);
+		if(lib==null)
+			return null ;
+		return lib.getPartTP(parttpid) ;
+	}
+	
+	public DTDevPartTP getPartTPByUID(String uid)
+	{
+		int k = uid.indexOf(".") ;
+		if(k<=0) return null;
+		String libid = uid.substring(0,k) ;
+		String parttpid = uid.substring(k+1) ;
+		return getPartTP(libid,parttpid);
 	}
 }

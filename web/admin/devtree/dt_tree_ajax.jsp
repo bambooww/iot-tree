@@ -4,7 +4,27 @@
 	org.iottree.core.util.*,
 	org.iottree.core.devtree.*
 	"%><%!
-
+ static class CopyItem
+ {
+		String treeid ;
+		String tree_nid ;
+		
+		public CopyItem(String treeid,String tree_nid)
+		{
+			this.treeid = treeid ;
+			this.tree_nid = tree_nid ;
+		}
+		
+		public DTNode getNode()
+		{
+			DTTree tree = DTTreeManager.getInstance().getTreeById(treeid) ;
+			if(tree==null)
+				return null ;
+			return tree.findNodeById(tree_nid) ;
+		}
+ }
+	
+	static CopyItem copiedItem = null ;
 %><%
 if(!Convert.checkReqEmpty(request, out,"op"))
 	return ;
@@ -13,6 +33,7 @@ String treeid = request.getParameter("treeid");
 String tree_nid = request.getParameter("tree_nid");
 
 String tree_nids_str = request.getParameter("tree_nids");
+String runblk_uid = request.getParameter("runblk_uid");
 
 DTTree tree = null ;
 if(Convert.isNotNullEmpty(treeid))
@@ -42,22 +63,37 @@ if(Convert.isNotNullEmpty(tree_nid))
 }
 
 String pn_id = request.getParameter("pn_id");
-DTNodeGrp pn_node = null ;
+DTNode pn_node = null ;
 if(Convert.isNotNullEmpty(pn_id))
 {
 	DTNode tmpnd = tree.findNodeById(pn_id) ;
-	if(tmpnd==null || !(tmpnd instanceof DTNodeGrp))
+	if(tmpnd==null || !(tmpnd instanceof DTNode))
 	{
 		out.print("no pn node grp found") ;
 		return ;
 	}
-	pn_node = (DTNodeGrp)tmpnd ;
+	pn_node = (DTNode)tmpnd ;
 }
 
+
+String parttp_uid = request.getParameter("parttp_uid") ;
+String part_id = request.getParameter("part_id") ;
+
+String name = request.getParameter("name") ;
 String title = request.getParameter("title") ;
 String desc = request.getParameter("desc") ;
+String jarr_str = request.getParameter("jarr") ;
+String jstr = request.getParameter("jstr") ;
+JSONArray input_jarr = null ;
+JSONObject input_jo = null ;
+if(Convert.isNotNullEmpty(jarr_str))
+	input_jarr = new JSONArray(jarr_str) ;
+if(Convert.isNotNullEmpty(jstr))
+	input_jo = new JSONObject(jstr) ;
+
 DTTreeRenderCtrl ctrl = new DTTreeRenderCtrl() ;
 
+JSONObject tmpjo = null ;
 StringBuilder failedr = new StringBuilder() ;
 try
 {
@@ -69,9 +105,9 @@ case "treen":
 	
 	if(Convert.isNotNullEmpty(tree_nid))
 	{
-		if(dn instanceof DTNodeGrp)
+		if(dn instanceof DTNode)
 		{
-			JSONArray jarr = ((DTNodeGrp)dn).renderToTreeSub(ctrl) ;
+			JSONArray jarr = ((DTNode)dn).renderToTreeSub(ctrl) ;
 			if(jarr==null)
 				return ;
 			jarr.write(out) ;
@@ -118,21 +154,21 @@ case "del":
 case "set_node_title":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","title"))
 		return ;
-	if(tree.setNodeTitle(tree_nid, title)!=null)
+	if(tree.setNodeTitle(tree_nid, title,failedr)!=null)
 		out.print("succ") ;
 	else
-		out.print("set title failed") ;
+		out.print(failedr) ;
 	return;
 case "add_sub_grp":
 	if(!Convert.checkReqEmpty(request, out,"treeid"))
 		return ;
 	DTNode newn = null;
 	DTTree.NodeAddWay way = DTTree.NodeAddWay.fromInt(add_sty) ;
-		newn = tree.addNodeGrp(tree_nid,title, desc,way) ;
+		newn = tree.addNode(tree_nid,title, desc,way,failedr) ;
 		if(newn!=null)
 			out.print("succ="+newn.getNodeId()) ;
 		else
-			out.print("add node failed") ;
+			out.print(failedr) ;
 	return ;
 case "edit_node":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","title"))
@@ -148,10 +184,10 @@ case "del_node":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid"))
 		return ;
 
-	if(tree.delNode(tree_nid)!=null)
+	if(tree.delNode(tree_nid,failedr)!=null)
 		out.print("succ") ;
 	else
-		out.print("del node failed") ;
+		out.print(failedr) ;
 	return ;
 case "del_node_by_ids":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nids"))
@@ -165,17 +201,76 @@ case "del_node_by_ids":
 case "mv_node_to":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","pn_id"))
 		return ;
+	boolean b_copy = "true".equals(request.getParameter("copy")) ;
+	if(!b_copy && !dn.canBeMove(failedr))
+	{
+		out.print(failedr) ;
+		return;
+	}
 	
-	if(pn_node.appendChild(dn, idx, failedr))
+	if(b_copy)
+		dn = new DTNode(tree,null,dn,false,!dn.canBeMove(failedr),true,true) ;
+	if(tree.setAppendChild(pn_id,dn, idx, failedr))
 		out.print("succ") ;
 	else
 		out.print(failedr.toString()) ;
 	break;
-
+case "copy_node":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid"))
+		return ;
+	copiedItem = new CopyItem(treeid,tree_nid) ;
+	out.print("succ") ;
+	break;
+case "paste_node":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid"))
+		return ;
+	
+	DTNode cpdn = null;
+	if(copiedItem!=null)
+		cpdn = copiedItem.getNode() ;
+	if(cpdn==null)
+	{
+		out.print("no copied node found") ;
+		return ;
+	}
+	cpdn = new DTNode(tree,null,cpdn,false,false,true,true) ;
+	if(tree.setAppendChild(tree_nid,cpdn, idx, failedr))
+		out.print("succ") ;
+	else
+		out.print(failedr.toString()) ;
+	break ;
+case "set_node_by_part":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","parttp_uid"))
+		return ;
+	boolean node_self = "true".equals(request.getParameter("node_self")) ;
+	DTNode retnd = tree.setPartToNode(tree_nid, node_self, parttp_uid, part_id, failedr) ;
+	if(retnd==null)
+	{
+		out.print(failedr);return;
+	}
+	out.print("succ") ;
+	break ;
+case "set_static_data":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","jstr"))
+		return ;
+	if(!tree.setStaticDataByJO(tree_nid, input_jo, failedr))
+		out.print(failedr);
+	else
+		out.print("succ");
+	break;
+case "set_node_tags":
+	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","jarr"))
+		return ;
+	if(!tree.setNodeTagsByJO(tree_nid, input_jarr, failedr))
+		out.print(failedr);
+	else
+		out.print("succ");
+	break ;
 }
 }
 catch(Exception ee)
 {
 	out.print(ee.getMessage());
+	ee.printStackTrace();
 }
 %>

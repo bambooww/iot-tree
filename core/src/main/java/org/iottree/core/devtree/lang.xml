@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="run_intv" name_cn="间隔运行" name_en="Interval Running" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="run_once" name_cn="运行一次" name_en="Run once" desc_cn="" desc_en=""/>
+	
+	<dd_node id="1" name="is_existed" name_cn="已经存在" name_en="is already existed" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="not_existed" name_cn="不存在" name_en="not existed" desc_cn="" desc_en=""/>
+	
+</dd_class>

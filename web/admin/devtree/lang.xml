@@ -3,5 +3,35 @@
 
   <dd_node id="1" name="devtree" name_cn="设备树" name_en="Device Tree" />
   <dd_node id="1" name="devpart" name_cn="设备部件" name_en="Device Parts" />
+  <dd_node id="1" name="unit" name_cn="单位" name_en="Unit" />
+  <dd_node id="1" name="runblk" name_cn="计算模块" name_en="Run Block" />
+  <dd_node id="1" name="runblk_tp" name_cn="计算模块类型" name_en="Run Block Type" />
+  <dd_node id="1" name="sel" name_cn="选择" name_en="Select" />
+  <dd_node id="1" name="detail" name_cn="详细" name_en="Detail" />
+  <dd_node id="1" name="current" name_cn="当前" name_en="Current" />
+  <dd_node id="1" name="node" name_cn="节点" name_en="Node" />
+  <dd_node id="1" name="pics" name_cn="图片" name_en="Pictures" />
+  <dd_node id="1" name="static" name_cn="静态" name_en="Static" />
+  <dd_node id="1" name="props" name_cn="属性" name_en="Properties" />
+  <dd_node id="1" name="links" name_cn="链接" name_en="Links" />
+  <dd_node id="1" name="parttp" name_cn="部件类" name_en="Part Type" />
+  <dd_node id="1" name="part" name_cn="部件" name_en="Part" />
+  <dd_node id="1" name="only" name_cn="只" name_en="Only" />
+  <dd_node id="1" name="spare_part" name_cn="备件" name_en="Spare Part" />
+  
+  <dd_node id="1" name="add_node" name_cn="新增节点" name_en="Add Node" />
+  <dd_node id="1" name="add_node_d" name_cn="新增节点" name_en="Add Node in same parent (Enter)" />
+  <dd_node id="1" name="add_node_sub" name_cn="新增子节点" name_en="Add Child Node" />
+  <dd_node id="1" name="add_node_ahead" name_cn="新增父节点" name_en="Add Node Ahead" />
+  <dd_node id="1" name="copy_node" name_cn="复制节点" name_en="Copy Node" />
+  <dd_node id="1" name="paste_node" name_cn="粘贴节点" name_en="Paste Node" />
+  <dd_node id="1" name="save_as_parttp" name_cn="保存为部件类" name_en="Save as Part Type" />
+  
+  <dd_node id="1" name="add_sub_part" name_cn="新增部件子节点" name_en="Add Child Part Node" />
+  <dd_node id="1" name="set_self_part" name_cn="设置为部件节点" name_en="Set as Part Node" />
+  <dd_node id="1" name="unset_self_part" name_cn="取消部件节点" name_en="Unset Part Node" />
+  
+  
+  <dd_node id="1" name="no_parttp_lib_ppt" name_cn="没有找到部件类库，请先创建" name_en="No Device Part Type Lib found" />
   
 </dd_class>

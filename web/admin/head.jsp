@@ -107,3 +107,100 @@ if(mn)
 <%
 }
 %>
+<style>
+body
+{
+	font-size: 12px;
+}
+
+table
+{
+font-size: 12px;
+}
+
+.layui-elem-field legend {
+font-size:12px;
+}
+
+.layui-table td, .layui-table th {
+    min-height: 22px;
+    line-height: 18px;
+    font-size: 12px;
+    padding: 4px 15px;
+}
+.layui-border-blue
+{
+	border:1px solid #43a4fa ;
+	color:#43a4fa;
+}
+.layui-border-red
+{
+	border:1px solid #ff7859 ;
+	color:#ff7859;
+}
+.layui-table-cell {
+padding-left:2px;
+}
+
+.layui-btn-group .layui-btn
+{
+	margin-left:5px;
+}
+
+.layui-form-checkbox
+{
+	margin-left:10px;
+	padding-left:10px;
+}
+
+blockquote
+{
+	font-size: 12px;
+}
+
+.layui-elem-quote
+{
+	height0:22px;
+}
+
+.layui-btn-group .layui-btn-primary
+{
+	border:0px;
+	
+}
+.layui-btn-group .layui-btn-primary:first-child
+{
+border-left:0px;
+}
+
+.layui-input, .layui-select, .layui-textarea {
+    height: 30px;
+}
+
+.layui-tab
+{
+	margin-top:0px;
+}
+
+.layui-tab-title li {
+font-size: 12px;
+}
+
+.layui-table-view
+{
+	margin-top: 1px;
+}
+  .layui-table-cell {
+    height: auto;
+    line-height: 18px;
+}
+
+.seled
+{
+background-color:#f2f2f2;
+color:green;
+font-weight: bold;
+}
+
+
+</style>

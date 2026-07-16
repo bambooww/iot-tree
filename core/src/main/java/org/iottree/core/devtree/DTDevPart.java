@@ -1,51 +1,42 @@
 package org.iottree.core.devtree;
 
-import org.iottree.core.util.CompressUUID;
-
 /**
+ * device spare part
  * 
  * @author jason.zhu
  *
  */
 public class DTDevPart
 {
-	String id ; //unique id
-	
-	String title ;// device part title
-	
-	String desc ;
-	
-	String code ;
-	
-	DTDevPart()
+	public static class RefTP
 	{
+		public String name ;
+		
+		public String partTpID ;
+		
 		
 	}
 	
 	/**
-	 * create new
-	 * @param t
-	 * @param d
+	 * using partId
 	 */
-	DTDevPart(String t,String d)
-	{
-		this.id = CompressUUID.createNewId() ;
-		this.title = t ;
-		this.desc = d ;
-	}
+	String partId = null ;
 	
-	public String getId()
-	{
-		return this.id ;
-	}
+	String parttpId = null ;
 	
-	public String getTitle()
-	{
-		return this.title ;
-	}
+	String modelNo = null ;
 	
-	public String getDesc()
+	String barCode = null ;
+	
+	String title = null ;
+	
+	String supplier ;
+	
+	String factory ;
+	
+	
+	public String getPartId()
 	{
-		return this.desc ;
+		return this.partId ;
 	}
 }

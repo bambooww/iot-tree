@@ -38,7 +38,7 @@ dlg.resize_to(650,<%=height%>);
 <form class="layui-form" action="">
   
   <div class="layui-form-item">
-    <label class="layui-form-label"><%=txt_title %>:</label>
+    <label class="layui-form-label" id="txt_title"><%=txt_title %>:</label>
     <div class="layui-input-inline" style="width:500px">
 <%
 if(multi)
@@ -61,7 +61,10 @@ else
 <script type="text/javascript">
 var form = null;
 var opener_txt_id = "<%=opener_txt_id%>" ;
-
+var txt_title = dlg.get_opener_opt("txt_title") ;
+console.log(txt_title) ;
+if(txt_title)
+	$("#txt_title").html(txt_title) ;
 $("#txt").focus();
 
 if(opener_txt_id)
