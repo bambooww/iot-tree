@@ -65,7 +65,7 @@ position:relative;
 }
 
 </style>
-<body marginwidth="0" marginheight="0" style="overflow: hidden;background: #eee;">
+<body marginwidth="0" marginheight="0" style="overflow: hidden;background: #fff;;">
  <div id="ccc" style="overflow:auto;width:100%;height:100%;border:0px solid;">
 <%
 int cc = 0 ;

@@ -345,11 +345,18 @@ public class TxtTemplate
 	}
 	
 	
-	public String getContStr(JSONObject jo,boolean emptyout) throws IOException
+	public String getContStr(JSONObject jo,boolean emptyout)// throws IOException
 	{
-		StringWriter sw = new StringWriter() ;
-		this.writeOut(sw, jo, emptyout);
-		return sw.toString();
+		try
+		{
+			StringWriter sw = new StringWriter() ;
+			this.writeOut(sw, jo, emptyout);
+			return sw.toString();
+		}
+		catch(Exception ee)
+		{
+			return null ;
+		}
 	}
 	
 	

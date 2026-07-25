@@ -111,7 +111,18 @@
 	  </div>
 	  <div class="layui-form-mid"><button class="layui-btn layui-btn-xs layui-btn-primary" onclick="add_tag()">+</button></div>
  </div>
- 
+
+<div class="layui-form-item">
+    <div class="layui-form-label"><span style="white-space: nowrap;">InfluxDB </span>
+    </div>
+	  <div class="layui-input-inline" style="width: 200px">
+	    write number to double<input type="checkbox" id="influx_wfloat" class="layui-input" lay-skin="primary" />
+	  </div>
+	  <div class="layui-form-mid">Default Save Min Interval (ms)</div>
+	  <div class="layui-input-inline" style="width:100px">
+	  <input type="number" id="save_min_intv" class="layui-input" lay-skin="primary" />
+	  </div>
+ </div>
 <script>
 var prj_path = "<%=prj_path%>";
 var container_id="<%=container_id%>";
@@ -161,7 +172,7 @@ function set_sel_tag(ob)
 
 function sel_tags()
 {
-	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/cxt_tag_selector.jsp?path=\${prj_path}&multi=true&bind_tag_only=true`,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/cxt_tag_selector.jsp?path=\${prj_path}&multi=true&bind_tag_only=true`,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:get_tag_paths()},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -199,7 +210,7 @@ function del_tag(tagp)
 
 function  add_tag()
 {
-	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/di_cxt_tag_selector.jsp?path=\${prj_path}&multi=false&bind_tag_only=true`,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/di_cxt_tag_selector.jsp?path=\${prj_path}&multi=false&bind_tag_only=true`,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:get_tag_paths()},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -223,7 +234,9 @@ function  add_tag()
 
 function update_ui()
 {
-	let tmps = "<table style='font-size:12px;' class='layui-table' lay-size='sm'>" ;
+	let tmps = `<table style='font-size:12px;' class='layui-table' lay-size='sm'>
+		<tr><td>Tag</td><td>Title</td><td>Min Save Interval</td><td></td></tr>
+		` ;
 	
 	//if(store_tb.b_all_subt)
 	//	tmps += `<span style="color:green">Using all sub tags</span>`;
@@ -231,7 +244,7 @@ function update_ui()
 	{
 		for(let tag of tags_jarr)
 		{
-			tmps += `<tr><td>\${tag.tagp}</td><td>\${tag.tagt}</td><td><button onclick="del_tag('\${tag.tagp}')" class="layui-btn layui-btn-xs layui-btn-primary">X</button></td></tr>` ;
+			tmps += `<tr><td>\${tag.tagp}</td><td>\${tag.tagt}</td><td><input type="number" class="min_intv" style="width:100px;" value=""/></td><td><button onclick="del_tag('\${tag.tagp}')" class="layui-btn layui-btn-xs layui-btn-primary">X</button></td></tr>` ;
 		}
 	}
 	tmps += "</table>"
@@ -253,11 +266,13 @@ function get_pm_jo()
 	ret.bdelay = $("#bdelay").prop("checked") ;
 	ret.delay_ms = parseInt($("#delay_ms").val());
 	ret.blog= $("#blog").prop("checked") ;
+	ret.influx_wfloat = $("#influx_wfloat").prop("checked") ;
+	ret.save_min_intv = get_input_val("save_min_intv",5000,true) ;
 	return ret ;
 }
 
 function set_pm_jo(jo)
-{//console.log(jo) ;
+{
 	//tag_paths = jo.tag_paths;
 	$("#ignore_invalid").prop("checked",jo.ignore_invalid||true) ;
 	$("#ignore_update").prop("checked",jo.ignore_update||false) ;
@@ -265,6 +280,11 @@ function set_pm_jo(jo)
 	$("#bdelay").prop("checked",jo.bdelay||false) ;
 	$("#delay_ms").val(jo.delay_ms||-1) ;
 	$("#blog").prop("checked",jo.blog||false) ;
+	$("#influx_wfloat").prop("checked",jo.influx_wfloat||false) ;
+	let intv = jo.save_min_intv ;
+	if(intv===null||intv===""||intv===undefined)
+		intv = 5000 ;
+	$("#save_min_intv").val(""+intv) ;
 }
 
 function get_pm_size()

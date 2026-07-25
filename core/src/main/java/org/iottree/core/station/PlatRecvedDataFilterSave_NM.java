@@ -53,7 +53,6 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid implements IMNTagFil
 		return 1;
 	}
 	
-
 	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
 	static
 	{
@@ -65,7 +64,6 @@ public class PlatRecvedDataFilterSave_NM  extends MNNodeMid implements IMNTagFil
 	{
 		return OUT2RES ;
 	}
-
 
 	@Override
 	public String getTP()

@@ -16,7 +16,7 @@
 <html>
 <head>
 <title></title>
-<jsp:include page="../../head.jsp"></jsp:include>
+<jsp:include page="../../../head.jsp"></jsp:include>
 <script>
 dlg.resize_to(550,300);
 </script>

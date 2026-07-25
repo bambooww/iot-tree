@@ -92,18 +92,24 @@ public class MNCat implements ILang
 	
 	public String getParamUrl(MNBase n)
 	{
+		return getNodeUrl(n,"pm") ;
+	}
+	
+	public String getNodeUrl(MNBase n,String tp)
+	{
 			if(this.webItem==null)
 			{
 				String tpf = n.getTPFull() ;
 				if(tpf.startsWith("_platform."))
 				{
-					return "./plat/"+n.getTPFull()+".pm.jsp";
+					return "./plat/"+n.getTPFull()+"."+tp+".jsp";
 				}
 				else
 				{
-					if(n instanceof MNModule)
-						return "./modules/"+n.getTPFull()+".pm.jsp";
-					return "./nodes/"+n.getTPFull()+".pm.jsp";
+//					if(n instanceof MNModule)
+//						return "./modules/"+n.getTPFull()+"."+tp+".jsp";
+//					return "./nodes/"+n.getTPFull()+"."+tp+".jsp";
+					return "./nodes/"+n.getCatName()+"/"+n.getTpFullInCat()+"."+tp+".jsp";
 				}
 			}
 
@@ -119,13 +125,23 @@ public class MNCat implements ILang
 					ConfItem.NodeItem ni = ci.getNodeByClassN(n.getClass().getCanonicalName()) ;
 					if(ni==null)
 						return null ;
-					return "/"+webItem.getAppName()+"/"+ni.pm_ui_path ;
+					String uipath = ni.pm_ui_path ;
+					if(Convert.isNotNullEmpty(uipath))
+						return "/"+webItem.getAppName()+"/"+uipath ;
+					else
+					{
+						return  "/"+webItem.getAppName()+"/"+n.getTPFull()+"."+tp+".jsp";
+					}					
 				}
 			}
 			ConfItem ci = item2conf.get(n.getTPFull()) ;
 			if(ci==null)
 				return null ;
-			return "/"+webItem.getAppName()+"/"+ci.getPmUIPath() ;
+			String uipath = ci.getPmUIPath() ;
+			if(Convert.isNotNullEmpty(uipath))
+				return "/"+webItem.getAppName()+"/"+uipath;
+			else
+				return  "/"+webItem.getAppName()+"/"+n.getTPFull()+"."+tp+".jsp";
 	}
 	
 	public String getRTPanelUrl(MNBase n)

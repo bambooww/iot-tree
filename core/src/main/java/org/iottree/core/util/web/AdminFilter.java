@@ -15,7 +15,7 @@ import org.iottree.core.util.logger.LoggerManager;
  * @author jason.zhu
  *
  */
-public class AdminFilter implements Filter,ILang
+public class AdminFilter  extends CommonFilter implements ILang
 {
 	static
 	{
@@ -38,12 +38,6 @@ public class AdminFilter implements Filter,ILang
 	{
 
 	}
-
-	public void init(FilterConfig config) throws ServletException
-	{
-			//Config.appConfigInitSucc = true;
-	}
-
 
 	
 	static int runJspNum = 0 ;

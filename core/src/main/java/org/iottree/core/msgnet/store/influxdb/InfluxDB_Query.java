@@ -79,26 +79,26 @@ public class InfluxDB_Query extends MNNodeMid
 		InfluxDBClient client = dbm.RT_getClient() ;
 		QueryApi qapi = client.getQueryApi() ;
 		String res = qapi.queryRaw(this.flux) ;
-		List<FluxTable> fts = qapi.query(this.flux) ;
-		System.out.println(fts.size()) ;
-		//FluxTable ft = fts.get(0) ;
-		int s = fts.size() ;
-		for(int i = 0 ; i < s ; i ++)
-		{
-			FluxTable ft = fts.get(i) ;
-			System.out.println("tb idx="+i) ;
-			for(FluxRecord rec:ft.getRecords())
-			{
-				Instant inst = rec.getTime() ;
-				Date dt = Date.from(inst) ;
-				String fn = rec.getField();
-				Object val = rec.getValueByKey("_value") ;
-				Object max = rec.getValueByKey("max") ;
-				Object min = rec.getValueByKey("min") ;
-				Object mean = rec.getValueByKey("mean") ;
-				System.out.println("read at="+Convert.toFullYMDHMS(dt)+" "+fn+"="+val+"  max="+max+" mean="+mean+" min="+min) ;
-			}
-		}
+//		List<FluxTable> fts = qapi.query(this.flux) ;
+//		System.out.println(fts.size()) ;
+//		//FluxTable ft = fts.get(0) ;
+//		int s = fts.size() ;
+//		for(int i = 0 ; i < s ; i ++)
+//		{
+//			FluxTable ft = fts.get(i) ;
+//			System.out.println("tb idx="+i) ;
+//			for(FluxRecord rec:ft.getRecords())
+//			{
+//				Instant inst = rec.getTime() ;
+//				Date dt = Date.from(inst) ;
+//				String fn = rec.getField();
+//				Object val = rec.getValueByKey("_value") ;
+//				Object max = rec.getValueByKey("max") ;
+//				Object min = rec.getValueByKey("min") ;
+//				Object mean = rec.getValueByKey("mean") ;
+//				System.out.println("read at="+Convert.toFullYMDHMS(dt)+" "+fn+"="+val+"  max="+max+" mean="+mean+" min="+min) ;
+//			}
+//		}
 		return RTOut.createOutAll(new MNMsg().asPayload(res));
 	}
 	

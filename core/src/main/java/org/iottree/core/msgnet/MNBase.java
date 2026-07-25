@@ -3,9 +3,13 @@ package org.iottree.core.msgnet;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +27,13 @@ import org.iottree.core.cxt.JsSub;
 import org.iottree.core.cxt.JsSubOb;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.msgnet.MNBase.DivBlk;
+import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.plugin.PlugJsApi;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
+import org.iottree.core.util.Lan;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -38,9 +44,126 @@ import org.json.JSONObject;
  */
 public abstract class MNBase extends MNCxtPk implements ILang
 {
+	private static Lan lan = Lan.getLangInPk(MNBase.class) ;
+	
+	public static class OuterApi implements Comparable<OuterApi>
+	{
+		String name ;
+		
+		String title ;
+		
+		String desc ;
+		
+		Method method ;
+		
+//		OuterApi(String n,String t,String d,Method m)
+//		{
+//			this.name = n ;
+//			this.title = t ;
+//			this.desc = d ;
+//			this.method = m ;
+//		}
+		
+		OuterApi(outer_api oa,Method m)
+		{
+			this.name = oa.name() ;
+			if("cn".equals(Lan.getUsingLang()))
+			{
+				this.title = oa.title_cn() ;
+				this.desc = oa.desc_cn() ;
+				if(Convert.isNullOrEmpty(this.title))
+					this.title = oa.title_en() ;
+				if(Convert.isNullOrEmpty(this.desc))
+					this.desc = oa.desc_en() ;
+			}
+			else
+			{
+				this.title = oa.title_en() ;
+				this.desc = oa.desc_en() ;
+			}
+			
+			if(Convert.isNullOrEmpty(this.name))
+				this.name = m.getName() ;
+			
+			if(Convert.isNullOrEmpty(this.title))
+				this.title = m.getName() ;
+			
+			this.method = m ;
+		}
+		
+		public String getName()
+		{
+			return this.name;
+		}
+		
+		public String getTitle()
+		{
+			return this.title ;
+		}
+		
+		public String getDesc()
+		{
+			return desc ;
+		}
+		
+		public Method getMethod()
+		{
+			return this.method ;
+		}
+
+		@Override
+		public int compareTo(OuterApi o)
+		{
+			return this.name.compareTo(o.name);
+		}
+		
+		private OuterApiLog lastCallLog = null ;
+		
+		public Object RT_call(MNBase mnbase,JSONObject inputjo,StringBuilder failedr)
+			throws Exception
+		{
+			long calldt = System.currentTimeMillis() ;
+			Object retob = this.method.invoke(mnbase, inputjo,failedr) ;
+			long retdt = System.currentTimeMillis() ;
+			lastCallLog = new OuterApiLog(calldt,inputjo,retdt,retob) ;
+			return retob ;
+		}
+		
+		public OuterApiLog RT_getLastCallLog()
+		{
+			return this.lastCallLog ;
+		}
+	}
+	
+	public static class OuterApiLog
+	{
+		public long callDT = -1 ;
+		
+		public long retDT = -1 ;
+		
+		public JSONObject inputJO ;
+		
+		public Object retOb ;
+		
+		OuterApiLog(long calldt,JSONObject inputjo,long retdt,Object retob)
+		{
+			this.callDT = calldt;
+			this.inputJO = inputjo ;
+			this.retDT = retdt ;
+			this.retOb = retob;
+		}
+		
+		public long getCostMS()
+		{
+			return this.retDT - this.callDT ;
+		}
+	}
+	
 	String id = IdCreator.newSeqId() ;
 	
 	String title = "" ;
+	
+	String name = null ; //unique var name in net
 	
 	String desc = "";
 	
@@ -63,7 +186,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	boolean bShowRT = false;
 	
 	/**
-	 * 如果节点实现接口IMNNodeRes,此变量才会起作用
+	 * implements IMNNodeRes,this var can be used
 	 */
 	String resName = null ;
 	
@@ -71,9 +194,14 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	 * show output title or not
 	 */
 	boolean bShowOutTitle = getShowOutTitleDefault();
+	
+	
+	HashSet<String> usingOANames = null ;
 //	private String nodeTp = null ;
 //	
 //	private String nodeTpT = null ;
+	
+	private transient LinkedHashMap<String,OuterApi> usingOAs = null ;
 
 
 	public MNBase()
@@ -137,6 +265,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	public void setTitle(String t)
 	{
 		this.title = t ;
+	}
+	
+	public String getName()
+	{
+		return this.name ;
 	}
 	
 	public String getDesc()
@@ -204,6 +337,20 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			return this.cat.getName()+"."+this.getTP() ;
 		else
 			return this.cat.getName()+"."+ownn+"."+this.getTP() ;
+	}
+	
+	public String getCatName()
+	{
+		return this.cat.getName() ;
+	}
+	
+	public String getTpFullInCat()
+	{
+		String ownn = this.getOwnerTP() ;
+		if(Convert.isNullOrEmpty(ownn))
+			return this.getTP() ;
+		else
+			return ownn+"."+this.getTP() ;
 	}
 	
 	protected abstract String getOwnerTP() ;
@@ -285,10 +432,73 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return this.resName ;
 	}
 	
-	final void setDetailJO(JSONObject jo)
+	public LinkedHashMap<String,OuterApi> listOuterApiAll()
 	{
+		LinkedHashMap<String,OuterApi> rets = new LinkedHashMap<>() ;
+		ArrayList<OuterApi> ss = new ArrayList<>() ;
+		for(Method m:this.getClass().getMethods())
+		{
+			outer_api oa = m.getAnnotation(outer_api.class) ;
+			if(oa==null)
+				continue ;
+			ss.add(new OuterApi(oa,m)) ;
+		}
+		Collections.sort(ss);
+		for(OuterApi oa:ss)
+			rets.put(oa.getName(),oa) ;
+		return rets;
+	}
+	
+	public JSONObject[] getOuterApiIOSample(String apin)
+	{
+		return null ;
+	}
+	
+	public HashSet<String> getUsingOuterApiNames()
+	{
+		return this.usingOANames ;
+	}
+	
+	public synchronized LinkedHashMap<String,OuterApi> getUsingOuterApis()
+	{
+		if(this.usingOAs!=null)
+			return this.usingOAs ;
+		LinkedHashMap<String,OuterApi> ret = new LinkedHashMap<>() ;
+		if(this.usingOANames==null||this.usingOANames.size()<=0)
+			return this.usingOAs = ret ;
+		LinkedHashMap<String,OuterApi> n2oa = listOuterApiAll() ;
+		for(String n:this.usingOANames)
+		{
+			OuterApi oa = n2oa.get(n) ;
+			if(oa==null)
+				continue ;
+			ret.put(oa.getName(),oa) ;
+		}
+		return this.usingOAs = ret ;
+	}
+	
+	public OuterApi getUsingOuterApi(String name)
+	{
+		return getUsingOuterApis().get(name) ;
+	}
+	
+	final void setDetailJO(JSONObject jo) throws MNException
+	{
+		String nn = jo.optString("name") ;
+		if(Convert.isNotNullEmpty(nn))
+		{
+			StringBuilder failedr = new StringBuilder() ;
+			if(!Convert.checkVarName(nn, true, failedr))
+				throw new MNException("name="+nn+" invalid "+failedr) ;
+			MNBase oldb = this.belongTo.getItemByName(nn) ;
+			if(oldb!=null&&oldb!=this)
+				throw new MNException("name="+nn+" is already existed in net") ;
+		}
+		this.name = nn ;
+		
 		JSONObject pm_jo = jo.getJSONObject("pm_jo");
 		setParamJO(pm_jo);
+		
 		this.bEnable = jo.optBoolean("enable",true) ;
 		this.bShowOutTitle = jo.optBoolean("show_out_tt",false);
 		this.title = jo.optString("title","") ;
@@ -296,12 +506,35 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.desc = jo.optString("desc","") ;
 		this.resName = jo.optString("res_name") ;
 		
+		JSONArray outapis_jarr = jo.optJSONArray("outer_apis") ;
+		int n ;
+		if(outapis_jarr!=null && (n=outapis_jarr.length())>0)
+		{
+			this.usingOANames = new HashSet<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tmpn = outapis_jarr.getString(i) ;
+				this.usingOANames.add(tmpn) ;
+			}
+		}
+		else
+		{
+			this.usingOANames = null;
+		}
+		
 //		if(this instanceof MNNodeRes)
 //		{
 //			MNNodeRes nres = (MNNodeRes)this ;
 //			nres.callerUID = jo.optString("caller_uid") ;
 //		}
 		//other may be icon color etc
+		clearCache();
+		this.belongTo.clearCache();
+	}
+	
+	protected synchronized void clearCache()
+	{
+		this.usingOAs=null ;
 	}
 	
 	public void renderOut(Writer w)
@@ -318,6 +551,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		if(Convert.isNullOrEmpty(tt))
 			tt = this.getTPTitle() ;
 		jo.putOpt("title", tt) ;
+		jo.putOpt("name", this.name) ;
 		jo.putOpt("marks", Convert.combineStrWith(this.marks, ',')) ;
 		jo.putOpt("desc", desc);
 		jo.put("_tp", getTPFull()) ;
@@ -336,6 +570,13 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.put("color", this.getColor()) ;
 		jo.putOpt("tcolor", this.getTitleColor()) ;
 		jo.put("icon", this.getIcon()) ;
+		
+		jo.put("outer_api_num", 0) ;
+		if(this.usingOANames!=null&&this.usingOANames.size()>0)
+		{
+			jo.put("outer_apis", this.usingOANames) ;
+			jo.put("outer_api_num", this.usingOANames.size()) ;
+		}
 
 		if(this instanceof IMNRunner)
 		{
@@ -353,7 +594,6 @@ public abstract class MNBase extends MNCxtPk implements ILang
 
 	public JSONObject toJO()
 	{
-		
 		JSONObject jo = this.toListJO() ;
 		
 		JSONObject cxtdefjo = this.CXT_getDefJO();
@@ -379,6 +619,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 		this.id = jo.getString("id") ;
 		this.title = jo.optString("title") ;
+		this.name = jo.optString("name") ;
 		this.desc = jo.optString("desc") ;
 		this.marks = Convert.splitStrWith(jo.optString("marks"), ",|") ;
 		this.x = jo.optFloat("x",0) ;
@@ -388,6 +629,18 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		this.bShowOutTitle = jo.optBoolean("show_out_tt",false) ;
 		
 		this.resName = jo.optString("res_name") ;
+		
+		JSONArray outapis_jarr = jo.optJSONArray("outer_apis") ;
+		int n ;
+		if(outapis_jarr!=null && (n=outapis_jarr.length())>0)
+		{
+			this.usingOANames = new HashSet<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tmpn = outapis_jarr.getString(i) ;
+				this.usingOANames.add(tmpn) ;
+			}
+		}
 		
 		JSONObject pmjo = jo.optJSONObject("pm_jo") ;
 		if(pmjo!=null)
@@ -581,6 +834,24 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		if(supportCxtVars())
 			CXT_renderVarsDiv(divblks) ;
 		
+		LinkedHashMap<String,OuterApi> using_oa = this.getUsingOuterApis() ;
+		if(using_oa!=null&&using_oa.size()>0)
+		{
+			StringBuilder divsb = new StringBuilder() ;
+			divsb.append("<div tp='run' class=\"rt_blk\">Outer Apis")
+				.append("<button onclick=\"mn_open_node_outer_api('"+this.getId()+"')\">View Detail</button>") ;
+			for(OuterApi oa:using_oa.values())
+			{
+				divsb.append("<div style='margin-left:30px;'>").append(oa.getTitle());
+				OuterApiLog lastcl = oa.RT_getLastCallLog() ;
+				if(lastcl!=null)
+					divsb.append(" ").append(Convert.calcDateGapToNow(lastcl.callDT)).append(" cost ").append(lastcl.getCostMS()).append("ms") ;
+				divsb.append("</div>") ;
+			}
+			divsb.append("</div>") ;
+			
+			divblks.add(new DivBlk("outer_api",divsb.toString())) ;
+		}
 	}
 
 
@@ -588,8 +859,21 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	 * override to impl div fired event
 	 * @param evtn
 	 */
-	public void RT_onRenderDivEvent(String evtn,StringBuilder retmsg)
-	{}
+	public void RT_onRenderDivEvent(String evtn,JSONObject evt_pm,StringBuilder retmsg)
+	{
+		switch(evtn)
+		{
+		case "view_outerapi":
+			String apin = evt_pm.getString("apin") ;
+			OuterApi oa = this.getUsingOuterApi(apin) ;
+			if(oa==null)
+			{
+				retmsg.append("<span style='color:red'>no out api found</span>");
+				return;
+			}
+			return ;
+		}
+	}
 	
 	public JSONObject RT_toJO(boolean out_rt_div)
 	{

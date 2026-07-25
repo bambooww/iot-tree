@@ -139,7 +139,7 @@ function add_or_edit_prod(id)
 	let tt = '<w:g>add</w:g> Producer Parameter';
 	if(cur_prod_ob)
 		tt = '<w:g>edit</w:g> Producer Parameter';
-	dlg.open(`\${PM_URL_BASE}/util_topic_edit.jsp`,
+	dlg.open(`\${MN_URL_BASE}/nodes/util/util_topic_edit.jsp`,
 			{title:tt,pm:cur_prod_ob},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -209,7 +209,7 @@ function add_or_edit_cons(id)
 	let tt = '<w:g>add</w:g> Consumer Parameter';
 	if(cur_cons_ob)
 		tt = '<w:g>edit</w:g> Consumer Parameter';
-	dlg.open(`\${PM_URL_BASE}/util_topic_edit.jsp`,
+	dlg.open(`\${MN_URL_BASE}/nodes/util/util_topic_edit.jsp`,
 			{title:tt,pm:cur_cons_ob},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[

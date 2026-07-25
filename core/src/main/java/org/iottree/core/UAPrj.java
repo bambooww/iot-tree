@@ -16,6 +16,7 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_obj;
 import org.iottree.core.util.xmldata.data_val;
+import org.iottree.portal.PortalManager;
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.Config.InnerComp;
 import org.iottree.core.UAVal.ValTP;
@@ -881,6 +882,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return rets ;
 	}
 	
+	public PortalManager getPortalManager()
+	{
+		return PortalManager.getInstance(this) ;
+	}
 
 	public File getSaverDir()
 	{

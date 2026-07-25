@@ -104,6 +104,8 @@ public class InfluxDB_Measurement extends MNNodeRes
 			RT_writePoint(pt) ;
 	}
 	
+	private transient int lastBufLen = -1 ;
+	
 	public void RT_writePoint(Point pt) throws Exception
 	{
 		if(pt==null)
@@ -119,7 +121,7 @@ public class InfluxDB_Measurement extends MNNodeRes
 		InfluxDB_M m = (InfluxDB_M)this.getOwnRelatedModule() ;
 		m.RT_start(null) ;//in msg ,start module
 		
-		if(ptBuf.size()>=this.batchWriterBufLen)
+		if((lastBufLen=ptBuf.size())>=this.batchWriterBufLen)
 			RT_doWriter() ;
 		
 		return;
@@ -134,6 +136,7 @@ public class InfluxDB_Measurement extends MNNodeRes
 		{
 			ptBuf = new ArrayList<>() ;
 		}
+		lastBufLen = 0;
 		
 		if(pts==null||pts.size()<=0)
 			return ;
@@ -152,7 +155,7 @@ public class InfluxDB_Measurement extends MNNodeRes
 	{
 		StringBuilder divsb = new StringBuilder() ;
 		divsb.append("<div class='rt_blk'>Write to InfluxDB --") ;
-		divsb.append(Convert.calcDateGapToNow(lastWDT)+ " Num="+lastWNum+" Cost "+lastWCostMS+"ms") ;
+		divsb.append(Convert.calcDateGapToNow(lastWDT)+ " Num="+lastWNum+" Cost "+lastWCostMS+"ms,BufLen="+this.lastBufLen) ;
 		divsb.append("</div>") ;
 		divblks.add(new DivBlk("influx_m_w",divsb.toString())) ;
 		

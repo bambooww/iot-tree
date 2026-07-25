@@ -436,8 +436,10 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 	}
 	
 	@Override
-	public void RT_onRenderDivEvent(String evtn,StringBuilder retmsg)
+	public void RT_onRenderDivEvent(String evtn,JSONObject evt_pm,StringBuilder retmsg)
 	{
+		super.RT_onRenderDivEvent(evtn,evt_pm,retmsg);
+		
 		try
 		{
 			switch(evtn)
@@ -473,8 +475,9 @@ public class RelationalDB_JSON2TB extends MNNodeMid
 	private DBConnPool connPool = null ;
 	private DataTable dataTable = null ;
 	
-	private synchronized void clearCache()
+	protected synchronized void clearCache()
 	{
+		super.clearCache();
 		tableInfo = null ;
 		connPool = null ;
 		dataTable = null ;

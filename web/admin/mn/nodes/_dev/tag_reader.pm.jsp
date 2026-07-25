@@ -195,7 +195,7 @@ function sel_tag(ele,rw)
 	else
 		return ;
 	
-	dlg.open("../ua_cxt/di_cxt_tag_selector.jsp?w_only="+w_only+"&multi=false&path="+prjpath,//+"&val="+tmpv,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/di_cxt_tag_selector.jsp?w_only=\${w_only}&multi=false&path=\${prjpath}`,//+"&val="+tmpv,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagids:seltagids},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
@@ -266,7 +266,7 @@ function del_rule(ele)
 
 function add_rule_multi()
 {
-	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/cxt_tag_selector.jsp?path=\${prjpath}&multi=true&bind_tag_only=true`,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/cxt_tag_selector.jsp?path=\${prjpath}&multi=true&bind_tag_only=true`,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:[]},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[

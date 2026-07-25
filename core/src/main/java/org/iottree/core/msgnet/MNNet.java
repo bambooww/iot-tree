@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	LinkedHashMap<String,MNNode> id2node = new LinkedHashMap<>() ;
 	
 	LinkedHashMap<String,MNModule> id2module = new LinkedHashMap<>() ;
+	
+	private transient HashMap<String,MNBase> name2base = null ;
 	
 	MNManager belongTo = null ;
 	IMNContainer container = null ;
@@ -194,6 +197,31 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 	public Map<String,MNModule> getModuleMapAll()
 	{
 		return this.id2module ;
+	}
+	
+	public synchronized Map<String,MNBase> getNamedItemsAll()
+	{
+		if(this.name2base!=null)
+			return this.name2base ;
+		HashMap<String,MNBase> n2b = new HashMap<>() ;
+		for(MNBase n:this.id2node.values())
+		{
+			String nn = n.getName() ;
+			if(Convert.isNullOrEmpty(nn))
+				continue ;
+			n2b.put(nn,n) ;
+		}
+		return this.name2base = n2b ;
+	}
+	
+	synchronized void clearCache()
+	{
+		this.name2base = null ;
+	}
+	
+	public MNBase getItemByName(String name)
+	{
+		return getNamedItemsAll().get(name) ;
 	}
 	
 	public MNBase getItemById(String id)

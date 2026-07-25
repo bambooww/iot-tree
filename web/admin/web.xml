@@ -4,4 +4,7 @@
 		<default is_login="true"/>
 		<location path="main.jsp" is_login="false"/>
 	</authorization>
+	
+	<nav>
+	</nav>
 </web>

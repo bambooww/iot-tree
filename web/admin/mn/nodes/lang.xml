@@ -62,4 +62,46 @@
   <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
   <dd_node id="1" name="high" name_cn="上限" name_en="High" />
   <dd_node id="1" name="out_intv" name_cn="输出信号间隔" name_en="Output Signal Interval" />
+  
+  
+  <dd_node id="1" name="producer" name_cn="生产者" name_en="Producer" />
+  <dd_node id="1" name="consumer" name_cn="消费者" name_en="Consumer" />
+  <dd_node id="1" name="keep_intv" name_cn="保持间隔" name_en="Keep Interval" />
+  
+    <dd_node id="1" name="baud" name_cn="波特率" name_en="Baud Rate" />
+  <dd_node id="1" name="data_bits" name_cn="数据位" name_en="Data Bits" />
+  <dd_node id="1" name="stop_bits" name_cn="停止位" name_en="Stop Bits" />
+  <dd_node id="1" name="parity" name_cn="奇偶校验" name_en="Parity" />
+  <dd_node id="1" name="parity_none" name_cn="无校验" name_en="None" />
+<dd_node id="1" name="parity_odd" name_cn="奇校验" name_en="Odd" />
+  <dd_node id="1" name="parity_even" name_cn="偶校验" name_en="Even" />
+  <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
+  <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
+  
+  <dd_node id="1" name="unbind" name_cn="取消绑定" name_en="Unbind" />
+  
+  <dd_node id="1" name="gain" name_cn="增益" name_en="Gain" />
+  <dd_node id="1" name="integral" name_cn="积分" name_en="Integral" />
+  <dd_node id="1" name="derivative" name_cn="微分" name_en="Derivative" />
+  <dd_node id="1" name="sample_t" name_cn="采样时间" name_en="Sample Time" />
+  
+  <dd_node id="1" name="ctrl" name_cn="控制" name_en="Control" />
+  <dd_node id="1" name="in_rg" name_cn="输入范围" name_en="Input Range" />
+  <dd_node id="1" name="out" name_cn="输出" name_en="Output Range" />
+  <dd_node id="1" name="out_rg" name_cn="输出范围" name_en="Output Range" />
+  <dd_node id="1" name="output_stop_v" name_cn="停止时输出值" name_en="Stopping Output Value" />
+  <dd_node id="1" name="output_err_v" name_cn="异常时输出值" name_en="Error Output Value" />
+  
+  <dd_node id="1" name="output_stop_v_d" name_cn="设定值节点输入布尔值false代表停止PID" name_en="Setpoint input boolean value false,make pid stopped"  />
+  <dd_node id="1" name="output_err_v_d" name_cn=" 实际值(测量反馈)没有更新输入等异常" name_en="PV(Measure feedback) has not input. etc" />
+  
+  
+  
+  <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
+  <dd_node id="1" name="high" name_cn="上限" name_en="High" />
+  
+  <dd_node id="1" name="st_desc" name_cn="PID计算输出控制时间间隔" name_en="PID calculation output control time interval" />
+  <dd_node id="1" name="in_range" name_cn="采样输入物理量范围" name_en="Sampling input physical quantity range" />
+  <dd_node id="1" name="out_range" name_cn="物理量控制需要的输出数值范围" name_en="The range of output values required for physical quantity control" />
+  
 </dd_class>

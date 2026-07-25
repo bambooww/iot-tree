@@ -161,15 +161,26 @@
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_JO2Point",
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Tag2Point",
 					"org.iottree.core.msgnet.store.influxdb.InfluxDB_ReadByTags",
-					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement"
-					
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB",
+					"org.iottree.core.msgnet.store.influxdb.InfluxDB_TagAggr2RDB"
 			],"bk":"org.iottree.core.msgnet.store.StoreTbWriter_NE"},
 			{"cn":"org.iottree.core.msgnet.modules.RelationalDB_M","nodes":[
 				"org.iottree.core.msgnet.modules.RelationalDB_Table",
 				"org.iottree.core.msgnet.modules.RelationalDB_SQL_UP",
 				"org.iottree.core.msgnet.modules.RelationalDB_SQL_Query",
-				"org.iottree.core.msgnet.modules.RelationalDB_JSON2TB"
+				"org.iottree.core.msgnet.modules.RelationalDB_JSON2TB",
+				"org.iottree.core.msgnet.modules.RelationalDB_SQL2Api"
 			]}
+		]
+	},
+	
+	{"cat":"_data_pro",
+		"nodes":[
+			
+		]
+		,"modules":[
+			
 		]
 	},
 	

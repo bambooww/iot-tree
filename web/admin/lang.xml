@@ -34,6 +34,8 @@
   <dd_node id="1" name="not_run" name_cn="没有运行" name_en="Not Running" />
   <dd_node id="1" name="conned" name_cn="连接成功" name_en="Connected" />
   <dd_node id="1" name="not_conn" name_cn="未连接" name_en="Not connected" />
+  <dd_node id="1" name="need" name_cn="需要" name_en="need" />
+  <dd_node id="1" name="state" name_cn="状态" name_en="State" />
   
   <dd_node id="1" name="init" name_cn="初始化" name_en="Init" />
   <dd_node id="1" name="end" name_cn="结束" name_en="End" />
@@ -363,4 +365,11 @@
   
   <dd_node id="1" name="devtree" name_cn="设备树" name_en="Device Tree" />
   <dd_node id="1" name="devpart" name_cn="设备部件" name_en="Device Parts" />
+  
+  <dd_node id="1" name="set_as_main" name_cn="设置为主" name_en="Set as Main" />
+  
+  <dd_node id="1" name="portal" name_cn="门户" name_en="Portal" />
+  <dd_node id="1" name="nav_frame" name_cn="导航框架" name_en="Navigation Frame" />
+  <dd_node id="1" name="page" name_cn="页面" name_en="Page" />
+  <dd_node id="1" name="templet" name_cn="模板" name_en="Templet" />
 </dd_class>

@@ -519,7 +519,7 @@ function set_node_by_part(dn,node_self)
 			[
 				function(dlgw)
 				{
-					dlgw.get_selected_part_tp((bok,ret)=>{
+					dlgw.get_selected_part((bok,ret)=>{
 						if(!bok) {dlg.msg(ret);return;}
 						ret.op="set_node_by_part";
 						ret.treeid=treeid;
@@ -533,7 +533,7 @@ function set_node_by_part(dn,node_self)
 				},
 				function(dlgw)
 				{
-					dlgw.get_selected_part((bok,ret)=>{
+					dlgw.get_selected_part_tp((bok,ret)=>{
 						if(!bok) {dlg.msg(ret);return;}
 						ret.op="set_node_by_part";
 						ret.treeid=treeid;

@@ -173,7 +173,7 @@ public class InfluxDB_Tag2Point extends MNNodeMid
 			ts = transTagsFieldsJO(pld_jo,fjarr) ;
 		}
 
-		if(ts<=0 || fjarr.length()<=0)
+		if(ts<=0)
 			return null; 
 		
 		JSONObject retjo = new JSONObject() ;

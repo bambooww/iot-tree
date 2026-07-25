@@ -2,6 +2,7 @@ package org.iottree.core.devtree.dmodel;
 
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
+import org.json.JSONObject;
 
 public class TSTag
 {
@@ -9,11 +10,16 @@ public class TSTag
 	
 	String tagpath ;
 	
-	int tagIID =-1;
+	int saveId =-1;
 	
 	String strVal ;
 	
 	private UATag tag = null ;
+	
+	public TSTag(TSStorage storage)
+	{
+		
+	}
 	
 	public UATag getTag()
 	{
@@ -24,5 +30,10 @@ public class TSTag
 		
 		//return tag = prj.getTagById(id);
 		return null;
+	}
+	
+	public JSONObject toJO()
+	{
+		return new JSONObject().put("sid", this.saveId).put("tagp", tagpath) ;
 	}
 }

@@ -25,6 +25,8 @@ public class DTNode extends JSObMap implements IPack, ILang
 		
 		String partId = null; //more detail spare part,only for tp root
 		
+		int num = 1 ; //only for ref main
+		
 		public PartRef(String tp_uid,String tp_sub_id,String part_id)
 		{
 			this.tpUID = tp_uid ;
@@ -62,6 +64,11 @@ public class DTNode extends JSObMap implements IPack, ILang
 			return this.partId ;
 		}
 		
+		public int getNum()
+		{
+			return this.num ;
+		}
+		
 		public DTDevPartTP getPartTp()
 		{
 			return DTDevPartManager.getInstance().getPartTPByUID(this.tpUID) ;
@@ -96,7 +103,7 @@ public class DTNode extends JSObMap implements IPack, ILang
 		public JSONObject toJO(boolean b_detail)
 		{
 			JSONObject ret = new JSONObject().putOpt("tp_uid", this.tpUID).putOpt("tp_subid", this.tpSubId)
-					.put("part_id", this.partId) ;
+					.put("part_id", this.partId).put("num", num) ;
 			if(b_detail)
 			{
 				DTDevPartTP ptp = getPartTp() ;
@@ -116,7 +123,9 @@ public class DTNode extends JSObMap implements IPack, ILang
 			
 			String tp_subid = jo.optString("tp_subid") ;
 			String part_id = jo.optString("part_id") ;
-			return new PartRef(tp_uid,tp_subid,part_id);
+			PartRef r = new PartRef(tp_uid,tp_subid,part_id);
+			r.num = jo.optInt("num",1) ;
+			return r ;
 		}
 	}
 	
@@ -230,7 +239,7 @@ public class DTNode extends JSObMap implements IPack, ILang
 		}
 	}
 	
-	DTNode addSubNodeByPartTP(DTDevPartTP part_tp,DTDevPart part,StringBuilder failedr)
+	DTNode addSubNodeByPartTP(DTDevPartTP part_tp,DTDevPart part,int num,StringBuilder failedr)
 	{
 		if(this.isPartRefNode())
 		{
@@ -245,12 +254,14 @@ public class DTNode extends JSObMap implements IPack, ILang
 		}
 		DTNode ret = new DTNode(parent) ;
 		constructByPartTP(root,this,part_tp,part,ret,true,part_tp) ;
+		if(num>1)
+			ret.partRef.num = num ;
 		if(!this.appendChild(ret, -1, failedr))
 			return null;
 		return ret;
 	}
 	
-	boolean setThisNodeByPartTP(DTDevPartTP part_tp,DTDevPart part,StringBuilder failedr)
+	boolean setThisNodeByPartTP(DTDevPartTP part_tp,DTDevPart part,int num,StringBuilder failedr)
 	{
 		if(this.isPartRefNode())
 		{
@@ -277,6 +288,8 @@ public class DTNode extends JSObMap implements IPack, ILang
 		
 		String old_title =this.getTitle() ;
 		constructByPartTP(root,this.getParent(),part_tp,part,this,false,part_tp) ;
+		if(num>1)
+			this.partRef.num = num ;
 		this.title = old_title;
 		return true;
 	}

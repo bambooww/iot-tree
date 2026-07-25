@@ -1,27 +1,40 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.iottree.core.UANode;
+import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
+import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.ValEvent;
 import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNMsg;
+import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.MNBase.DivBlk;
+import org.iottree.core.msgnet.MNNode.OutResDef;
 import org.iottree.core.msgnet.nodes.NS_TagEvtTrigger.MsgOutSty;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_M;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.influxdb.client.domain.WritePrecision;
+import com.influxdb.client.write.Point;
 
 public class NS_TagChgTrigger extends MNNodeStart
 {
@@ -236,6 +249,16 @@ public class NS_TagChgTrigger extends MNNodeStart
 	long delayMS = -1 ;
 	
 	boolean enableLog = false;
+	
+	/**
+	 * when input number,if not vt set,it will be transfered to double
+	 */
+	boolean bTransNumFloatInflux = false;
+	
+	/**
+	 * <=0 will save all change ,or it will save min interval
+	 */
+	long saveMinIntv = 5000 ;
 
 	transient private HashSet<String> tagIdSet = null;
 
@@ -244,7 +267,7 @@ public class NS_TagChgTrigger extends MNNodeStart
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		return 2;
 	}
 
 	@Override
@@ -269,6 +292,39 @@ public class NS_TagChgTrigger extends MNNodeStart
 	public String getIcon()
 	{
 		return "PK_trigger";
+	}
+	
+	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
+	static
+	{
+		OUT2RES.put(1,new OutResDef(InfluxDB_Measurement.class,false)) ;
+	}
+	
+	@Override
+	public Map<Integer,OutResDef> getOut2Res()
+	{
+		return OUT2RES ;
+	}
+	
+	public InfluxDB_Measurement getInfluxDB_Measurement()
+	{
+		MNNodeRes noderes = this.getOutResNode(1) ;
+		if(noderes==null)
+			return null;
+		if(!(noderes instanceof InfluxDB_Measurement))
+		{
+			return null ;
+		}
+		
+		return (InfluxDB_Measurement)noderes ;
+	}
+
+	public InfluxDB_M getInfluxDB_M()
+	{
+		InfluxDB_Measurement mt = getInfluxDB_Measurement() ;
+		if(mt==null)
+			return null ;
+		return (InfluxDB_M)mt.getOwnRelatedModule() ;
 	}
 
 	@Override
@@ -301,6 +357,8 @@ public class NS_TagChgTrigger extends MNNodeStart
 		jo.put("bdelay", this.enableDelay) ;
 		jo.put("delay_ms",this.delayMS) ;
 		jo.put("blog", this.enableLog) ;
+		jo.put("influx_wfloat", this.bTransNumFloatInflux) ;
+		jo.put("save_min_intv", saveMinIntv) ;
 		return jo;
 	}
 
@@ -325,6 +383,8 @@ public class NS_TagChgTrigger extends MNNodeStart
 		this.enableDelay = jo.optBoolean("bdelay",false) ;
 		this.delayMS = jo.optLong("delay_ms", -1) ;
 		this.enableLog = jo.optBoolean("blog",false) ;
+		this.bTransNumFloatInflux = jo.optBoolean("influx_wfloat",false);
+		this.saveMinIntv = jo.optLong("save_min_intv", 5000) ;
 		synchronized (this)
 		{
 			tagIdSet = null;
@@ -428,10 +488,6 @@ public class NS_TagChgTrigger extends MNNodeStart
 
 	//private transient Hashtable<String, ValItem> lastTagId2ValItem = new Hashtable<>();
 
-	private void clearCache()
-	{
-		//lastTagId2ValItem = new Hashtable<>();
-	}
 
 	public boolean RT_fireValChg(UATag tag,UAVal lastv,boolean cur_valid,Object curval)
 	{
@@ -509,6 +565,10 @@ public class NS_TagChgTrigger extends MNNodeStart
 		}
 	}
 	
+	private transient long lastInfluxWDT = -1 ;
+	
+	private transient HashMap<String,Long> tag2lastsave = new HashMap<>() ;
+	
 	private void sendTagOutDo(UATag tag, UAVal v)
 	{
 		if (v == null)
@@ -517,8 +577,9 @@ public class NS_TagChgTrigger extends MNNodeStart
 		boolean valid = v.isValid();
 		MNMsg msg = new MNMsg();
 		JSONObject jo = new JSONObject();
+		String tagp = tag.getNodeCxtPathInPrj();
 		jo.put("tag_id", tag.getId());
-		jo.put("tag_path", tag.getNodeCxtPathInPrj());
+		jo.put("tag_path", tagp);
 		jo.putOpt("tag_title", tag.getTitle());
 		jo.put("updt", v.getValDT());
 		jo.put("chgdt", v.getValChgDT());
@@ -531,7 +592,84 @@ public class NS_TagChgTrigger extends MNNodeStart
 		else
 			jo.putOpt("tag_err", v.getErr());
 		msg.asPayload(jo);
-		RT_sendMsgOut(RTOut.createOutAll(msg));
+		RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(0,msg));
+		
+		InfluxDB_Measurement m = this.getInfluxDB_Measurement() ;
+		if(m!=null && valid)
+		{
+			if(this.saveMinIntv>0)
+			{
+				Long lastsv = tag2lastsave.get(tagp);
+				if(lastsv!=null&&System.currentTimeMillis()-lastsv<this.saveMinIntv)
+					return ;
+			}
+			
+			try
+			{
+				Point pt = calTagPoint(m, tag,jo) ;
+				if(pt!=null)
+				{
+					lastInfluxWDT = System.currentTimeMillis() ;
+					m.RT_writePoint(pt);
+					
+					if(this.saveMinIntv>0)
+						tag2lastsave.put(tagp,lastInfluxWDT);
+				}
+			}
+			catch(Exception ee)
+			{
+				RT_DEBUG_ERR.fire("write_to_influx", "write point error", ee);
+			}
+		}
+	}
+	
+	
+	private Point calTagPoint(InfluxDB_Measurement m,UATag tag,JSONObject tagjo)
+	{
+		boolean valid = tagjo.optBoolean("valid",false) ;
+		if(!valid)
+			return null ;
+		
+		Point point = Point.measurement(m.getMeasurement());
+		long ts = tagjo.optLong("updt",-1) ;
+		if(ts<=0)
+			return null ;
+		point.time(ts,WritePrecision.MS);
+		//System.out.println(Convert.toFullYMDHMS(new Date(ts))) ;
+		String fn = tag.getNodeCxtPathInPrj() ;
+		
+		//ValTP vtp = tag.getValTp() ;
+		Object v = tagjo.get("tag_val");//UAVal.transStr2ObjVal(vtp, strv) ;
+		
+		if(v instanceof Number)
+		{
+			if(bTransNumFloatInflux)
+				point.addField(fn,((Number)v).doubleValue()) ;
+			else
+				point.addField(fn,(Number)v) ;
+		}
+		else if(v instanceof String)
+			point.addField(fn,(String)v) ;
+		else if(v instanceof Boolean)
+			point.addField(fn,(Boolean)v) ;
+		else // if(v==null)
+			point.addField(fn, (Number)null) ;
+		
+		return point ;
+	}
+	
+	@Override
+	protected void RT_renderDiv(List<DivBlk> divblks)
+	{
+		if(lastInfluxWDT>0)
+		{
+			StringBuilder divsb = new StringBuilder() ;
+			divsb.append("<div class='rt_blk'>") ;
+			divsb.append(" last write influxdb at "+Convert.calcDateGapToNow(lastInfluxWDT)) ;
+			divsb.append("</div>") ;
+			divblks.add(new DivBlk("tag_chg_trigger",divsb.toString())) ;
+		}
+		super.RT_renderDiv(divblks);
 	}
 	
 	public static final ScheduledExecutorService DELAY_EXE = 

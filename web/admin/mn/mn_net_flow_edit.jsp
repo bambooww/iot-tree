@@ -1149,11 +1149,48 @@ function start_stop_debug_list(ele,debug_nid)
 	}
 }
 
-function mn_fire_node_evt(itemid,evtn)
+function mn_open_node_outer_api(itemid)
 {
-	send_ajax("mn_ajax.jsp",{op:"rt_fire_node_evt",container_id:container_id,netid:netid,itemid:itemid,evtn:evtn},(bsucc,ret)=>{
+	let u = `./mn_node_outer_api.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${itemid}` ;
+	dlg.open(u,{title:'<wbt:g>outer</wbt:g> API'},
+			['<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function mn_fire_node_evt(itemid,evtn,evt_ob)
+{
+	let pm = {op:"rt_fire_node_evt",container_id:container_id,netid:netid,itemid:itemid,evtn:evtn}
+	if(evt_ob)
+	{
+		if(typeof(evt_ob)=='object')
+			pm.evt_pm = JSON.stringify(evt_ob) ;
+		else
+			pm.evt_pm = JSON.stringify(""+evt_ob) ;
+	}
+		
+	dlg.loading(true);
+	send_ajax("mn_ajax.jsp",pm,(bsucc,ret)=>{
+		dlg.loading(false);
 		dlg.msg(ret) ;
 	});
+}
+
+function mn_open_node_dlg(itemid,dlg_name,dlg_title)
+{
+	let u = `./mn_node_dlg.jsp?container_id=\${container_id}&netid=\${netid}&itemid=\${itemid}&dlgn=\${dlg_name}` ;
+	dlg.open(u,{title:dlg_title},
+			['<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 
 function ws_conn()

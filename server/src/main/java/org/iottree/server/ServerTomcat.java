@@ -16,6 +16,7 @@ import org.iottree.core.UAServer;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
+import org.iottree.core.util.web.AppWebConfig;
 
 /**
  * manager tomcat server as component
@@ -109,7 +110,6 @@ public class ServerTomcat implements IServerBootComp
 			}
 			else// if("system".equals(dirn))
 			{
-				///System.out.println("starting webapp="+appn);
 				cxt = tomcat.addWebapp("/" + appn, fp);
 			}
 			
@@ -139,6 +139,8 @@ public class ServerTomcat implements IServerBootComp
 			UAServer.WebItem wi = new UAServer.WebItem(appn, tmpcl, webf) ;
 			wis.add(wi) ;
 		}
+		
+		AppWebConfig.fireAllWebAppLoaded();
 		
 		return wis ;
 	}

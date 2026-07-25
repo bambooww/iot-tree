@@ -21,7 +21,7 @@ dlg.resize_to(450,350);
 <body>
 <form class="layui-form" action="">
 	<div class="layui-form-item">
-    <label class="layui-form-label">名称:</label>
+    <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline" style="width:200px;">
       <input type="text" id="name" name="name" value=""  autocomplete="off" class="layui-input">
     </div>
@@ -33,7 +33,7 @@ dlg.resize_to(450,350);
     </div>
   </div>
   <div class="layui-form-item" id="cont_desc">
-    <label class="layui-form-label">描述:</label>
+    <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="desc" name="desc" value=""  autocomplete="off" class="layui-input">
     </div>

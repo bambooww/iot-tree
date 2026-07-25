@@ -243,7 +243,8 @@ case "set_node_by_part":
 	if(!Convert.checkReqEmpty(request, out,"treeid","tree_nid","parttp_uid"))
 		return ;
 	boolean node_self = "true".equals(request.getParameter("node_self")) ;
-	DTNode retnd = tree.setPartToNode(tree_nid, node_self, parttp_uid, part_id, failedr) ;
+	int num = Convert.parseToInt32(request.getParameter("num"), -1) ;
+	DTNode retnd = tree.setPartToNode(tree_nid, node_self, parttp_uid, part_id,num, failedr) ;
 	if(retnd==null)
 	{
 		out.print(failedr);return;

@@ -37,6 +37,9 @@
 	
 	String tp = item.getTPFull() ;
 	String title = item.getTitle() ;
+	String name = item.getName() ;
+	if(name==null)
+		name="";
 	
 	String mark_str = "" ;
 	List<String> marks = item.getMarks();
@@ -99,6 +102,8 @@
 	{
 		b_running = ((IMNRunner)item).RT_isRunning() ;
 	}
+	
+	LinkedHashMap<String,MNBase.OuterApi> oas = item.listOuterApiAll() ;
 %>
 <html>
 <head>
@@ -116,6 +121,8 @@ var itemid="<%=itemid%>";
 
 var pm_url="<%=pm_url%>" ;
 var PM_URL_BASE = "<%=pm_url_base%>" ;
+var MN_URL_BASE = "/admin/mn";
+var ADMIN_URL_BASE = "/admin";
 var __pm_jo = <%=jstr%> ;
 var mn = "<%=mn%>";
 var fulltp = "<%=fulltp%>" ;
@@ -192,17 +199,31 @@ function do_submit(cb)
 	}
 	
 	let tt = $('#title').val();
+	let nn = $("#name").val();
 	let marks = $("#marks").val();
 	let ben = $("#enable").prop("checked") ;
 	let show_out_tt = $("#show_out_tt").prop("checked") ;
 	let res_name = $("#res_name").val() ;
+	
+	let outer_apis=[];
+	if(typeof(get_outer_api_names)=='function')
+	{
+		outer_apis = get_outer_api_names() ;
+	}
+	
+	if(outer_apis.length>0 && !nn)
+	{
+		cb(false,"<w:g>outer</w:g>API <w:g>need,input,node,name</w:g>");return ;
+	}
 	
 	if(typeof(pmjo) == "string")
 	{
 		cb(false,pmjo) ;
 		return ;
 	}
-	let rr = {title:tt,enable:ben,show_out_tt:show_out_tt,pm_jo:pmjo,res_name:res_name,marks:marks};
+	
+	
+	let rr = {title:tt,name:nn,enable:ben,show_out_tt:show_out_tt,pm_jo:pmjo,res_name:res_name,marks:marks,outer_apis:outer_apis};
 	cb(true,rr);
 }
 
@@ -277,6 +298,67 @@ function save_to_lib()
     margin-top: 3px;
 }
 </style>
+
+<%
+if(oas.size()>0)
+{
+%>
+<style>
+.multiselect {
+    width:100%;
+    position: relative;
+    user-select: none;
+}
+
+.selectBox {
+    border: 1px solid #ccc;
+    height:30px;line-height:30px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    background-color: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    padding: 5px 0;
+}
+
+.dropdown-list.show {
+    display: block;
+}
+
+.dropdown-list label {
+    display: block;
+    padding: 3px 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-list label:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-list input[type="checkbox"] {
+    margin-right: 10px;
+}
+</style>
+<%
+}
+%>
+
 </head>
 
 <body>
@@ -291,9 +373,9 @@ if(can_save)
 <form class="layui-form"  onsubmit="return false;">
 <div style="border-bottom:1px solid #ccc;">
   <div class="layui-form-item">
-    <label class="layui-form-label"><w:g>title</w:g>:</label>
+    <label class="layui-form-label"><w:g>title</w:g></label>
     <div class="layui-input-inline" style="width:230px;">
-      <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input">
+      <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input"><br>
     </div>
     <div class="layui-input-inline" style="width:150px;">
       <w:g>enable</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /><br>
@@ -304,20 +386,98 @@ if(can_save)
       <input type="text" class="layui-input" lay-skin="primary" id="marks"  value="<%=mark_str %>" />
     </div>
   </div>
+
+<div class="layui-form-item">
+    <label class="layui-form-label"><w:g>name</w:g></label>
+    <div class="layui-input-inline" style="width:160px;">
+      <input type="name" id="name" name="name" value="<%=name %>" class="layui-input" />
+    </div>
 <%
 if(item instanceof IMNNodeRes)
 {
 %>
-<div class="layui-form-item">
-    <label class="layui-form-label"><w:g>res_name</w:g>:</label>
-    <div class="layui-input-inline" style="width:46%;" title="<w:g>res_name_ppt</w:g>">
+    <label class="layui-form-mid"><w:g>res_name</w:g>:</label>
+    <div class="layui-input-inline" style="width:120px;" title="<w:g>res_name_ppt</w:g>">
       <input type="text" id="res_name" name="res_name" value="<%=res_name %>"  class="layui-input">
     </div>
-    
-  </div>
+<%
+}
+
+if(oas.size()>0)
+{
+%><label class="layui-form-mid"><w:g>outer</w:g>Api:</label>
+    <div class="layui-input-inline" style="width:200px;" title="<w:g>res_name_ppt</w:g>">
+      <div class="multiselect">
+		    <div class="selectBox" onclick="toggleDropdown()">
+		        <span id="outerapi_tt"></span>
+		        <span class="arrow">▼</span>
+		    </div>
+		    
+		    <div id="checkboxes" class="dropdown-list">
+<%
+int opt_cc =0 ;
+HashSet<String> oa_names = item.getUsingOuterApiNames() ;
+for(MNBase.OuterApi oa:oas.values())
+{
+	opt_cc ++ ;
+	String chked="" ;
+	if(oa_names!=null && oa_names.contains(oa.getName()))
+		chked = "checked" ;
+%><label for="opt_<%=opt_cc%>" onclick="outer_api_chg()">
+<input type="checkbox" id="opt_<%=opt_cc%>" <%=chked %> class='outerapi' value="<%=oa.getName() %>" lay-ignore> <%=oa.getTitle() %>
+</label>
 <%
 }
 %>
+		    </div>
+		</div>
+    </div>
+    <script type="text/javascript">
+function toggleDropdown() {
+    var dropdown = document.getElementById("checkboxes");
+    dropdown.classList.toggle("show");
+}
+
+function get_outer_api_names()
+{
+	let ret = [] ;
+	$(".outerapi").each(function(){
+		let o = $(this) ;
+		if(o.prop("checked"))
+			ret.push(o.attr("value")) ;
+	})
+	return ret ;
+}
+
+function outer_api_chg()
+{
+	let ss = "";
+	let ns = get_outer_api_names() ;
+	if(ns.length>0)
+		ss = " x "+ns.length ;
+	$("#outerapi_tt").html(ss) ;
+}
+
+outer_api_chg();
+
+window.onclick = function(event) {
+    if (!event.target.matches('.selectBox, .selectBox *,#checkboxes,#checkboxes *'))
+    {
+        var dropdowns = document.getElementsByClassName("dropdown-list");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
+<%
+}
+%>
+  </div>
+
 </div>
   <div id="pm_cont">
   	

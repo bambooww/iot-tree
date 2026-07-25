@@ -259,7 +259,7 @@ if(hide_top)
         
         <div class="left_btm">
     	
-    	<div class="left_btm_tab" style="background-color: #eee;">
+    	<div class="left_btm_tab" style="background-color: #eee;height:100%;">
     	<ul></ul>
           <div></div>
           </div>
@@ -1897,7 +1897,9 @@ function init_left_btm()
     
     let tmps = `<iframe src="./mn/mn_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
     let tmp_ano_det = `<iframe src="./ano_det/ad_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
+    let tmps_portal = `<iframe src="./portal/portal_mgr.jsp?prjid=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
 	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps})
+	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>portal</wbt:g>', 'id': 'lb_tab_portal', 'content': tmps_portal})
 	//	.tab('addTab', {'title': '<wbt:g>ano_det</wbt:g>', 'id': 'lb_tab_ano_det', 'content': tmp_ano_det});
 	tmps=`<div   style="height:100%;width:100%;font-size:30px;color:#57a9d0"><br>
 		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>

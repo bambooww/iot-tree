@@ -122,7 +122,7 @@ function add_edit_dev(id)
 		dev_idx = devs.indexOf(dev) ;
 	}
 	
-	dlg.open(`\${PM_URL_BASE}/ms_bus/ms_dev_edit.jsp?container_id=\${container_id}`,{title:tt,dev:dev},
+	dlg.open(`\${MN_URL_BASE}/nodes/ms_bus/ms_dev_edit.jsp?container_id=\${container_id}`,{title:tt,dev:dev},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
@@ -176,7 +176,7 @@ function update_devs()
 
 function add_cp_sel()
 {
-	dlg.open(`\${PM_URL_BASE}/ms_bus/ms_conn_tp_sel.jsp`,
+	dlg.open(`\${MN_URL_BASE}/nodes/ms_bus/ms_conn_tp_sel.jsp`,
 			{title:"<wbt:g>select,type</wbt:g>"},
 			['<wbt:g>cancel</wbt:g>'],
 			[
@@ -223,7 +223,7 @@ function add_edit_cp(tp,tpt,id)
 		cp_idx = cps.indexOf(cp) ;
 	}
 	
-	dlg.open(`\${PM_URL_BASE}/ms_bus/ms_conn_\${tp}_edit.jsp`,{title:tt,cp:cp},
+	dlg.open(`\${MN_URL_BASE}/nodes/ms_bus/ms_conn_\${tp}_edit.jsp`,{title:tt,cp:cp},
 			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
 			[
 				function(dlgw)

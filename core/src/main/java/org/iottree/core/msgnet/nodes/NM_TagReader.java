@@ -245,8 +245,9 @@ public class NM_TagReader extends MNNodeMid
 		this.clearCache();
 	}
 	
-	private void clearCache()
+	protected synchronized void clearCache()
 	{
+		super.clearCache();
 		bOutList = true ;
 	}
 

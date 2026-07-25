@@ -18,7 +18,9 @@ import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB.StatusVal;
 import org.iottree.core.store.gdb.DBResult;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
@@ -251,8 +253,9 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	}
 	
 	@Override
-	public void RT_onRenderDivEvent(String evtn,StringBuilder retmsg)
+	public void RT_onRenderDivEvent(String evtn,JSONObject evt_pm,StringBuilder retmsg)
 	{
+		super.RT_onRenderDivEvent(evtn,evt_pm,retmsg);
 		try
 		{
 			switch(evtn)
@@ -291,8 +294,9 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	private DBConnPool connPool = null ;
 	private DataTable dataTable = null ;
 	
-	private synchronized void clearCache()
+	protected synchronized void clearCache()
 	{
+		super.clearCache();
 		tableInfo = null ;
 		connPool = null ;
 		dataTable = null ;
@@ -597,5 +601,360 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 				cp.free(conn);
 			}
 		}
+	}
+	
+	@Override
+	public JSONObject[] getOuterApiIOSample(String apin)
+	{
+		switch(apin)
+		{
+		case "count_evt":
+			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3)};
+		case "stat_dur_period":
+			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3).put("total_seconds", 100)};
+		case "stat_dur_cur_mon":
+		case "stat_dur_cur_year":
+			return new JSONObject[] {new JSONObject()
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3).put("total_seconds", 100)};
+		}
+		
+		return null ;
+	}
+	
+	@outer_api(name="count_evt")
+	public JSONObject countEvtNumInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+		{
+			failedr.append("not input") ;
+			return null ;
+		}
+		long st = inputjo.optLong("st",-1) ;
+		long et = inputjo.optLong("et",-1) ;
+		if(st<=0||et<=0)
+		{
+			failedr.append("not st or et (int64) input") ;
+			return null ;
+		}
+		JSONArray tmp_jarr = inputjo.optJSONArray("tags") ;
+		ArrayList<String> tags = null ;
+		int n ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			tags = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tagp = tmp_jarr.getString(i) ;
+				if(Convert.isNullOrEmpty(tagp))
+					tags.add(tagp) ;
+			}
+		}
+		
+		tmp_jarr = inputjo.optJSONArray("tps") ;
+		ArrayList<String> tps = null ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			tps = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tp = tmp_jarr.getString(i) ;
+				if(Convert.isNullOrEmpty(tp))
+					tps.add(tp) ;
+			}
+		}
+		
+		tmp_jarr = inputjo.optJSONArray("lvls") ;
+		ArrayList<Integer> lvls = null ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			lvls = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				int lvl = tmp_jarr.getInt(i) ;
+				lvls.add(lvl) ;
+			}
+		}
+		
+		JavaTableInfo jti = getAlertsTableInfo(failedr) ;
+		if(jti==null)
+			return null;
+		
+		
+		DataTable dt = this.RT_getDataTable(failedr) ;
+		if(dt==null)
+			return null;
+		
+		UAPrj prj = this.getPrj() ;
+		String prjn = null;
+		if(prj!=null)
+			prjn = prj.getName() ;
+		
+		StringBuilder sqlsb = new StringBuilder();
+		sqlsb.append("select count(*) as cc  from "+dt.getTableName()+" where TriggerDT>=? and TriggerDT<?") ;
+		if(Convert.isNotNullEmpty(prjn))
+			sqlsb.append("  and PrjName=?") ;
+		if(tags!=null&&tags.size()>0)
+			sqlsb.append("  and Tag in ("+Convert.transIdsToSqlIn(tags)+")") ;
+		if(tps!=null&&tps.size()>0)
+			sqlsb.append("  and AlertTP in ("+Convert.transIdsToSqlIn(tps)+")") ;
+		if(lvls!=null&&lvls.size()>0)
+			sqlsb.append("  and Level in ("+Convert.transIdsToSqlIn(lvls)+")") ;
+		
+		DBConnPool cp = this.RT_getConnPool(failedr) ;
+		if(cp==null)
+			return null ;
+		Connection conn =null;
+		try
+		{
+			conn = cp.getConnection() ;
+			JSONObject ret = new JSONObject() ;
+			try (PreparedStatement ps = conn.prepareStatement(sqlsb.toString()))
+			{
+				java.sql.Timestamp sdate = new java.sql.Timestamp(st) ;
+				java.sql.Timestamp edate = new java.sql.Timestamp(et) ;
+				ps.setTimestamp(1, sdate);
+				ps.setTimestamp(2, edate);
+				if(Convert.isNotNullEmpty(prjn))
+					ps.setString(3, prjn);
+				
+				try(ResultSet rs=ps.executeQuery())
+				{
+					if(rs.next())
+					{
+						int v = rs.getInt("cc") ;
+						ret.put("count", v) ;
+					}
+				}
+			}
+			return ret ;
+		}
+		finally
+		{
+			if(conn!=null)
+				cp.free(conn);
+		}
+	}
+	
+	private static class Dur
+	{
+		long tdt ;
+		long rdt ;
+		
+		public Dur(long tdt,long rdt)
+		{
+			this.tdt = tdt ;
+			this.rdt = rdt ;
+		}
+		
+		public int getSeconds()
+		{
+			return (int)(rdt-tdt)/1000 ;
+		}
+		
+		public boolean isHit(Dur d)
+		{
+			if(this.rdt<d.tdt)
+				return false;
+			if(this.tdt>d.rdt)
+				return false;
+			return true;
+		}
+		
+		public void merge(Dur d)
+		{
+			if(this.tdt>d.tdt)
+				this.tdt = d.tdt ;
+			if(this.rdt<d.rdt)
+				this.rdt = d.rdt ;
+		}
+	}
+	
+	@outer_api(name="stat_dur_cur_mon")
+	public JSONObject statDurInCurrentMonth(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+			inputjo = new JSONObject() ;
+		Date nowdt = new Date() ;
+		inputjo.put("et", nowdt.getTime()) ;
+		Date monst = Convert.calMonthStart(nowdt) ;
+		inputjo.put("st", monst.getTime()) ;
+		return statDurInPeriod(inputjo,failedr) ;
+	}
+	
+	@outer_api(name="stat_dur_cur_year")
+	public JSONObject statDurInCurrentYear(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+			inputjo = new JSONObject() ;
+		Date nowdt = new Date() ;
+		inputjo.put("et", nowdt.getTime()) ;
+		Date monst = Convert.calYearStart(nowdt) ;
+		inputjo.put("st", monst.getTime()) ;
+		return statDurInPeriod(inputjo,failedr) ;
+	}
+	
+	@outer_api(name="stat_dur_period")
+	public JSONObject statDurInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+		{
+			failedr.append("not input") ;
+			return null ;
+		}
+		long st = inputjo.optLong("st",-1) ;
+		long et = inputjo.optLong("et",-1) ;
+		if(st<=0||et<=0)
+		{
+			failedr.append("not st or et (int64) input") ;
+			return null ;
+		}
+		JSONArray tmp_jarr = inputjo.optJSONArray("tags") ;
+		ArrayList<String> tags = null ;
+		int n ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			tags = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tagp = tmp_jarr.getString(i) ;
+				if(Convert.isNullOrEmpty(tagp))
+					tags.add(tagp) ;
+			}
+		}
+		
+		tmp_jarr = inputjo.optJSONArray("tps") ;
+		ArrayList<String> tps = null ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			tps = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				String tp = tmp_jarr.getString(i) ;
+				if(Convert.isNullOrEmpty(tp))
+					tps.add(tp) ;
+			}
+		}
+		
+		tmp_jarr = inputjo.optJSONArray("lvls") ;
+		ArrayList<Integer> lvls = null ;
+		if(tmp_jarr!=null&&(n=tmp_jarr.length())>0)
+		{
+			lvls = new ArrayList<>() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				int lvl = tmp_jarr.getInt(i) ;
+				lvls.add(lvl) ;
+			}
+		}
+		
+		JavaTableInfo jti = getAlertsTableInfo(failedr) ;
+		if(jti==null)
+			return null;
+		
+		DBConnPool cp = this.RT_getConnPool(failedr) ;
+		if(cp==null)
+			return null ;
+		DataTable dt = this.RT_getDataTable(failedr) ;
+		if(cp==null||dt==null)
+			return null;
+		
+		UAPrj prj = this.getPrj() ;
+		String prjn = null;
+		if(prj!=null)
+			prjn = prj.getName() ;
+		
+		StringBuilder sqlsb = new StringBuilder();
+		sqlsb.append("select * from "+dt.getTableName()+" where TriggerDT>=? and TriggerDT<?") ;
+		if(Convert.isNotNullEmpty(prjn))
+			sqlsb.append("  and PrjName=?") ;
+		if(tags!=null&&tags.size()>0)
+			sqlsb.append("  and Tag in ("+Convert.transIdsToSqlIn(tags)+")") ;
+		if(tps!=null&&tps.size()>0)
+			sqlsb.append("  and AlertTP in ("+Convert.transIdsToSqlIn(tps)+")") ;
+		if(lvls!=null&&lvls.size()>0)
+			sqlsb.append("  and Level in ("+Convert.transIdsToSqlIn(lvls)+")") ;
+		
+		Connection conn =null;
+		try
+		{
+			conn = cp.getConnection() ;
+			ArrayList<Dur> durs = new ArrayList<>() ;
+			try (PreparedStatement ps = conn.prepareStatement(sqlsb.toString()))
+			{
+				java.sql.Timestamp sdate = new java.sql.Timestamp(st) ;
+				java.sql.Timestamp edate = new java.sql.Timestamp(et) ;
+				ps.setTimestamp(1, sdate);
+				ps.setTimestamp(2, edate);
+				if(Convert.isNotNullEmpty(prjn))
+					ps.setString(3, prjn);
+				
+				try(ResultSet rs=ps.executeQuery())
+				{
+					while(rs.next())
+					{
+						java.sql.Timestamp tdt = rs.getTimestamp("TriggerDT") ;
+						java.sql.Timestamp rdt = rs.getTimestamp("ReleaseDT") ;
+						if(rdt==null)
+							continue ;
+						long rdt_ms =rdt.getTime() ;
+						if(rdt_ms>et)
+							rdt_ms = et ;
+						long tdt_ms = tdt.getTime() ;
+						if(rdt_ms<=tdt_ms)
+							continue ;
+						Dur d = new Dur(tdt_ms,rdt_ms) ;
+						durs.add(d) ;
+					}
+				}
+			}
+			int rec_n = durs.size() ;
+			//combine durs
+			int ts = combineTotalSecs(durs) ;
+			return new JSONObject().put("count",rec_n).put("total_seconds",ts) ;
+		}
+		finally
+		{
+			if(conn!=null)
+				cp.free(conn);
+		}
+	}
+	
+	private static int combineTotalSecs(List<Dur> durs)
+	{
+		if(durs==null||durs.size()<=0)
+			return 0 ;
+		int n = durs.size() ;
+		ArrayList<Dur> sole_durs = new ArrayList<>() ;
+		do
+		{
+			n = durs.size() ;
+			Dur lastd = durs.remove(n-1) ;
+			for(int k = n-2 ; k >=0 ; k --)
+			{
+				Dur d = durs.get(k) ;
+				if(lastd.isHit(d))
+				{
+					d.merge(lastd) ;
+					lastd = null ;
+					break ;
+				}
+			}
+			
+			if(lastd!=null)//not hit any others,so it's sole dur
+				sole_durs.add(lastd) ;
+			
+		}while(durs.size()>0) ;
+		
+		int r = 0 ;
+		for(Dur d:sole_durs)
+		{
+			r += d.getSeconds();
+		}
+		return r ;
 	}
 }

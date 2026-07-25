@@ -87,7 +87,7 @@ var tag_paths = <%=tagsubpaths_jarr%>;
 
 function sel_tags()
 {	
-	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/cxt_tag_selector.jsp?path=\${prj_path}&multi=true&bind_tag_only=true`,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/cxt_tag_selector.jsp?path=\${prj_path}&multi=true&bind_tag_only=true`,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:tag_paths},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[

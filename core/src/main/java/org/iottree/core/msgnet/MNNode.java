@@ -1,6 +1,7 @@
 package org.iottree.core.msgnet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,17 +22,17 @@ public abstract class MNNode extends MNBase
 {
 	public static class OutResDef
 	{
-		Class<?> resClass = null ;
+		List<Class<?>> resClass = null ;
 		
 		boolean bNeed = false;
 		
 		public  OutResDef(Class<?> c,boolean need)
 		{
-			this.resClass = c ;
+			this.resClass =Arrays.asList(c) ;
 			this.bNeed = need ;
 		}
 		
-		public Class<?> getResClass()
+		public List<Class<?>> getResClass()
 		{
 			return this.resClass ;
 		}

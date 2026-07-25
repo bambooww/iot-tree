@@ -152,6 +152,8 @@ public class DTDevPartManager
 	
 	public DTDevPartTP getPartTPByUID(String uid)
 	{
+		if(Convert.isNullOrEmpty(uid))
+			return null ;
 		int k = uid.indexOf(".") ;
 		if(k<=0) return null;
 		String libid = uid.substring(0,k) ;

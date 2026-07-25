@@ -1551,6 +1551,36 @@ public class Convert
 
 		return new String(bytes);
 	}
+	
+	public static Date calMinuteStart(Date one_day)
+	{
+		if (one_day == null)
+			return null;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(one_day);
+		// cal.set(Calendar.HOUR_OF_DAY, 0) ;
+		//cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+
+	public static Date calMinuteEnd(Date one_day)
+	{
+		if (one_day == null)
+			return null;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(one_day);
+		// cal.set(Calendar.HOUR_OF_DAY, 0) ;
+		//cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 999);
+
+		return cal.getTime();
+	}
 
 	public static Date calHourStart(Date one_day)
 	{
@@ -1718,7 +1748,41 @@ public class Convert
 
 		return cal.getTime();
 	}
+	
+	public static Date calYearStart(Date one_day)
+	{
+		if (one_day == null)
+			return null;
 
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(one_day);
+		cal.set(Calendar.MONTH,0) ;
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+
+	public static Date calYearEnd(Date one_day)
+	{
+		if (one_day == null)
+			return null;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(one_day);
+		cal.set(Calendar.MONTH,11) ;
+		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 999);
+
+		return cal.getTime();
+	}
+	
 	/**
 	 * 计算绝对路径
 	 * 
@@ -2120,6 +2184,10 @@ public class Convert
 		return sb.toString();
 	}
 
+	public static double formatDouble(double value, int dec_ptn) {
+        double scaleFactor = Math.pow(10, dec_ptn);
+        return Math.round(value * scaleFactor) / scaleFactor;
+    }
 	/**
 	 * 平均数过滤器
 	 * 

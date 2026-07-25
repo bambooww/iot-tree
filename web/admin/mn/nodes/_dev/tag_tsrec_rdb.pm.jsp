@@ -107,7 +107,7 @@ function set_sel_tag(t)
 
 function  set_tag()
 {
-	dlg.open(`\${PM_URL_BASE}/../../ua_cxt/di_cxt_tag_selector.jsp?path=\${prj_path}&multi=false&bind_tag_only=true`,
+	dlg.open(`\${ADMIN_URL_BASE}/ua_cxt/di_cxt_tag_selector.jsp?path=\${prj_path}&multi=false&bind_tag_only=true`,
 			{title:"<w:g>select,tags</w:g>",w:'500px',h:'400px',sel_tagpaths:get_tag_path()},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[

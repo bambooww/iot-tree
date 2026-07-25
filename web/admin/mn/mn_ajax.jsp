@@ -415,7 +415,11 @@ try
 		if(!Convert.checkReqEmpty(request, out,"netid", "itemid","evtn"))
 			return ;
 		String evtn = request.getParameter("evtn") ;
-		item.RT_onRenderDivEvent(evtn,failedr) ;
+		String pm_jstr = request.getParameter("evt_pm") ;
+		JSONObject pm_jo = null ;
+		if(Convert.isNotNullEmpty(pm_jstr))
+			pm_jo = new JSONObject(pm_jstr) ;
+		item.RT_onRenderDivEvent(evtn,pm_jo,failedr) ;
 		out.print(failedr) ;
 		return ;
 	default:

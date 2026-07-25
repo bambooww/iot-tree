@@ -306,7 +306,7 @@ function refresh_table()
 }
 
 function on_sel_tp(d)
-{console.log(d);
+{//console.log(d);
 	let fwin = FindFrameWin('dev_right');
 	  if(fwin)
 	  	fwin.location.href="dt_partlib_part_list.jsp?libid="+libid+"&parttpid="+d.parttp_id+"&edit="+bedit;

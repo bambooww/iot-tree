@@ -341,7 +341,7 @@ public class DTTree extends DTNodeRoot implements Comparable<DTTree>
 	 * @return
 	 * @throws IOException
 	 */
-	public DTNode setPartToNode(String tree_nid,boolean node_self,String parttp_uid,String partid,StringBuilder failedr) throws IOException
+	public DTNode setPartToNode(String tree_nid,boolean node_self,String parttp_uid,String partid,int num,StringBuilder failedr) throws IOException
 	{
 		DTNode nd = this.findNodeById(tree_nid);
 		if (nd == null)
@@ -368,13 +368,13 @@ public class DTTree extends DTNodeRoot implements Comparable<DTTree>
 		DTNode retnd = null ;
 		if(node_self)
 		{
-			if(!nd.setThisNodeByPartTP(part_tp, part, failedr))
+			if(!nd.setThisNodeByPartTP(part_tp, part, num,failedr))
 				return null ;
 			retnd = nd ;
 		}
 		else
 		{// add as child
-			retnd = nd.addSubNodeByPartTP(part_tp, part, failedr);
+			retnd = nd.addSubNodeByPartTP(part_tp, part, num,failedr);
 		}
 		
 		if(retnd==null)

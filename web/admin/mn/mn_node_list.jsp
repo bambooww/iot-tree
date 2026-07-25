@@ -404,7 +404,11 @@ function show_m_ns(moduleid,tt,ns)
 	}
 	$("#mlist_hd").html(tt) ;
 	$("#mlist_bd").html(tmps) ;
-	slide_toggle($("#module_list"),280);
+	let h = 50*ns.length+50 ;
+	let wh = $(window).height()/2 ;
+	if(h<280) h=280;
+	if(h>wh) h =wh;
+	slide_toggle($("#module_list"),h);
 	let dps =[];
 	for(let n of ns)
 	{

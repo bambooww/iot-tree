@@ -28,6 +28,7 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.conn.ConnPtHTTPSer;
+import org.iottree.core.msgnet.MNBase;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.modules.RESTful_M;
@@ -40,7 +41,7 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONObject;
 
-public class PrjFilter implements Filter
+public class PrjFilter extends CommonFilter
 {
 	private static ILogger log = LoggerManager.getLogger(PrjFilter.class) ;
 	
@@ -52,12 +53,7 @@ public class PrjFilter implements Filter
     private static final String METHOD_PUT = "PUT";
     private static final String METHOD_TRACE = "TRACE";
     
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException
-	{
-		
-	}
-
+	
 	private boolean checkRestfulApiRight(HttpServletRequest req,UANode node,UAPrj prj)
 	{
 		
@@ -124,8 +120,10 @@ public class PrjFilter implements Filter
 		return true;
 	}
 	
+	private static final String TP_OUTER_API = "outer_api";
+	
 	private boolean doMsgNetRESTfulApi(String path,HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException
+			throws IOException, Exception
 	{
 		List<String> ss = Convert.splitStrWith(path, "/") ;
 		if(ss.size()<4)
@@ -134,6 +132,11 @@ public class PrjFilter implements Filter
 		if(!s1.startsWith("_mn_"))
 			return false;
 		s1 = s1.substring(4) ;
+		if(TP_OUTER_API.equals(s1))
+		{
+			return handleOuterApi(request,response,ss) ;
+		}
+		
 		if(RESTful_M.TP.equals(s1))
 		{
 			return handleRestfulModule(request,response,ss) ;
@@ -145,6 +148,51 @@ public class PrjFilter implements Filter
 		}
 		
 		return false;
+	}
+	
+	private boolean handleOuterApi(HttpServletRequest request, HttpServletResponse response, List<String> ss)
+			throws ServletException, IOException, Exception
+	{
+		if(ss.size()!=5)
+			return false;
+		
+		String prjn = ss.get(0);
+		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
+		if(prj==null)
+			return false;
+		String netname = ss.get(2) ;
+		String node_n = ss.get(3) ;
+		String apiname = ss.get(4) ;
+		MNManager mnm = MNManager.getInstance(prj) ;
+		if(mnm==null)
+			return false;
+		MNNet net = mnm.getNetByName(netname) ;
+		if(net==null)
+			return false;
+		MNBase node = net.getItemByName(node_n) ;
+		if(node==null)
+			return false;
+		MNBase.OuterApi oa = node.getUsingOuterApi(apiname) ;
+		if(oa==null)
+			return false;
+		byte[] bs = readPostBS(request, response) ;
+		JSONObject inputjo = null ;
+		if(bs!=null&&bs.length>0)
+		{
+			String inputstr = new String(bs,"UTF-8") ;
+			inputjo = new JSONObject(inputstr) ;
+		}
+		StringBuilder failedr = new StringBuilder() ;
+		Object retob = oa.RT_call(node, inputjo,failedr) ;
+		if(retob==null)
+		{
+			response.sendError(500, "<pre>"+failedr.toString()+"</pre>");
+			return true ;
+		}
+		java.io.Writer ww = response.getWriter() ;
+		ww.write(retob.toString());
+		ww.flush();
+		return true;
 	}
 
 	private boolean handleRestfulReadApi(HttpServletRequest request, HttpServletResponse response, List<String> ss)
@@ -325,8 +373,22 @@ public class PrjFilter implements Filter
 			return ;
 		}
 		
-		if(doMsgNetRESTfulApi(uri, req, resp))
-		{//restful api in msg net
+		try
+		{
+			if(doMsgNetRESTfulApi(uri, req, resp))
+			{//restful api in msg net
+				return ;
+			}
+		}
+		catch(Exception e)
+		{
+			//e.printStackTrace();
+			PrintWriter w = resp.getWriter();
+			
+			w.write("<pre>check read right exception:");
+			e.printStackTrace(w);
+			w.write("</pre>");
+			//w.write(e.getMessage());
 			return ;
 		}
 		 
