@@ -138,7 +138,7 @@ function page_temp()
 
 function open_nf(nf_id,tt)
 {
-	parent.add_tab("___navfrm_"+nf_id,`<i class="fa-solid fa-chalkboard fa-lg fa-rotate-90"></i> \${tt}`,
+	parent.add_tab("___navfrm_"+nf_id,`<i class="fa-solid fa-chalkboard fa-lg fa-rotate-90"></i><w:g>portal</w:g>-\${tt}`,
 			`./portal/portal_navframe_edit.jsp?prjid=\${prjid}&nf_id=\${nf_id}`) ;
 }
 

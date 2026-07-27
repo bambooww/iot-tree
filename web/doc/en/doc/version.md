@@ -1,9 +1,17 @@
 # Versions
 
-### version 1.8.0 (Plan)
+### version 2.0.0 (Plan)
 
 
-Starting from version 1.8, IOT Tree will not support JDK8 and 32-bit systems
+1. Improve user and role (user group) management: Admins can add different users and roles, and assign roles to users. Based on this, access authorization can be set in the project organization tree nodes (including HMI nodes) - this is achieved by setting one or more roles.
+
+If a node itself does not have any authorization restrictions set, it will inherit the settings of its parent node.
+
+When an HMI node in the organizational tree is limited by its own authorization or inherited authorization from its ancestors, during runtime, if the user wants to issue commands or perform other write operations on the monitoring UI displayed on the terminal, permission judgment will be triggered. If the current operator has not been verified, a user password verification dialog box will automatically pop up, and only authorized users can successfully write operations (issue commands).
+
+2 Add an external HTTP API interface to the message flow node, and select an open api in the node to directly become an API for the backend system
+
+3. Addition, improvement, and bug modification of some message flow nodes
 
 
 ### version 1.7.6

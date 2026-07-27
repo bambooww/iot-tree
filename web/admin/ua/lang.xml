@@ -5,7 +5,7 @@
   <dd_node id="1003" name="driver" name_cn="驱动" name_en="Driver"/>   
   <dd_node id="1" name="description" name_cn="描述" name_en="Description"/>   
   <dd_node id="1" name="ok" name_cn="确认" name_en="Ok"/>  
-  <dd_node id="1" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1" name="cancel" name_cn="取消" name_en="Cancel"/> 
   <dd_node id="1" name="pls_input" name_cn="请输入" name_en="Please input "/>
   <dd_node id="1" name="sel_drv_title" name_cn="选择驱动" name_en="Driver Selector"/> 
 
@@ -16,7 +16,6 @@
 
 <dd_node id="1" name="edit_txt" name_cn="文本编辑" name_en="Txt Editor"/>
 <dd_node id="1" name="drv_en_at_ps" name_cn="远程站点实例也运行" name_en="Run At Remote PStation"/>
-
 
 	<dd_node id="1" name="new_prj_will_imp" name_cn="新项目将被导入" name_en="New project will import"/>
 	<dd_node id="1" name="prj_existed" name_cn="新项目将被导入" name_en="Project is already existed"/>

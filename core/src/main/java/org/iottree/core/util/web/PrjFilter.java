@@ -39,6 +39,8 @@ import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.web.LoginUtil.SessionItem;
+import org.iottree.portal.NavFrame;
 import org.json.JSONObject;
 
 public class PrjFilter extends CommonFilter
@@ -117,6 +119,37 @@ public class PrjFilter extends CommonFilter
 		
 		if(Convert.isNotNullEmpty(resptxt))
 			response.getOutputStream().write(resptxt.getBytes(cpt_hs.getEncod()));
+		return true;
+	}
+	
+	private boolean doPortal(String path,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	//		throws IOException, Exception
+	{
+		List<String> ss = Convert.splitStrWith(path, "/") ;
+		if(ss.size()<1)
+			return false;
+		String prjn = ss.get(0) ;
+		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
+		if(prj==null)
+			return false;
+		
+		NavFrame nf = null;
+		if(ss.size()>1)
+		{
+			String s1 = ss.get(1) ;
+			if(!s1.startsWith("_portal_"))
+				return false;
+			s1 = s1.substring(8) ;
+			nf = prj.getPortalManager().getNavFrameByName(s1) ;
+		}
+		else
+		{
+			nf=  prj.getPortalManager().getNavFrameDefault() ;
+		}
+		if(nf==null)
+			return false;
+		request.getRequestDispatcher("/portal_"+nf.getLayout()+".jsp?prjid="+prj.getId()+"&nf_id="+nf.getId()).forward(request, response);
+		
 		return true;
 	}
 	
@@ -313,6 +346,8 @@ public class PrjFilter extends CommonFilter
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 		HttpSession session = req.getSession();
+		
+		LoginUtil.getUserLoginSession(req) ;//read from cookie
 		//this.getServletContext()..getRequestDispatcher(getServletInfo())
 		response.setContentType("text/html;charset=UTF-8");
 		String uri = req.getRequestURI();
@@ -391,6 +426,11 @@ public class PrjFilter extends CommonFilter
 			//w.write(e.getMessage());
 			return ;
 		}
+		
+		if(doPortal(uri, req, resp))
+		{//http server conn in
+			return ;
+		}
 		 
 		UANode node = UAUtil.findNodeByPath(uri) ;
 		if(node==null)
@@ -431,7 +471,8 @@ public class PrjFilter extends CommonFilter
 			req.getRequestDispatcher("/hmi.jsp?path="+uri+qs).forward(req, resp);
 			return ;
 		}
-	
+		
+		
 		//restful api
 		UANode topn = node.getTopNode() ;
 		if(topn==null || !(topn instanceof UAPrj))

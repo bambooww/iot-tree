@@ -7,6 +7,7 @@
 	java.net.*,
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
+boolean hide_d = "true".equals(request.getParameter("hide_d")) ;
 %>
 <html>
 <head>
@@ -32,12 +33,19 @@ dlg.resize_to(450,350);
       <input type="text" id="title" name="title" value=""  autocomplete="off" class="layui-input">
     </div>
   </div>
+<%
+if(!hide_d)
+{
+%>
   <div class="layui-form-item" id="cont_desc">
     <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="desc" name="desc" value=""  autocomplete="off" class="layui-input">
     </div>
   </div>
+<%
+}
+%>
  </form>
 </body>
 <script type="text/javascript">
@@ -82,12 +90,12 @@ function do_submit(cb)
 	let name = $('#name').val();
 	if(!name && b_name_need)
 	{
-		cb(false,"请输入名称") ;return ;
+		cb(false,"<wbt:g>pls,input,name</wbt:g>") ;return ;
 	}
 	let tt = $('#title').val();
 	if(!tt && b_title_need)
 	{
-		cb(false,"请输入标题") ;return ;
+		cb(false,"<wbt:g>pls,input,title</wbt:g>") ;return ;
 	}
 	let desc = $('#desc').val();
 	//let num = get_input_val("num",0,true) ; ,num:num

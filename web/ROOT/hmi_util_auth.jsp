@@ -7,8 +7,11 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%>
-<html>
+	java.util.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
+	String user = request.getParameter("user") ;
+	if(user==null)
+		user = "" ;
+%><html>
 <head>
 <title>auth</title>
 <script src="/_js/jquery-1.12.0.min.js"></script>
@@ -25,7 +28,7 @@ dlg.resize_to(400,250);
  <div class="layui-form-item">
     <label class="layui-form-label"><lan:g>user</lan:g></label>
     <div class="layui-input-inline">
-      <input type="text" name="user" id="user" class="layui-input" autocomplete="new-password"/>
+      <input type="text" name="user" id="user" class="layui-input" value="<%=user %>" autocomplete="new-password"/>
     </div>
   </div>
  <div class="layui-form-item">

@@ -6,8 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.websocket.EndpointConfig;
 
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
@@ -18,8 +22,12 @@ import org.iottree.core.bind.PropBindItem;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
+import org.iottree.core.util.web.LoginUtil;
+import org.iottree.core.util.web.LoginUtil.UserAuthItem;
 import org.iottree.core.util.xmldata.data_class;
 import org.iottree.core.util.xmldata.data_val;
+import org.iottree.core.ws.WSServer;
+import org.iottree.core.ws.WebSocketConfig;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -415,7 +423,8 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 					String serverjs = bdob.optString("serverjs");
 					if (serverjs == null || serverjs.equals(""))
 						continue;
-					EventBindItem ebi = new EventBindItem(this,k, serverjs);
+					String runname = bdob.optString("runname") ;
+					EventBindItem ebi = new EventBindItem(this,k, serverjs,runname);
 					ebis.add(ebi);
 				}
 			}
@@ -479,4 +488,248 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		((UAPrj) uan).setHmiMainId(this.getId());
 		return true;
 	}
+	
+	public static class ClientEvent
+	{
+		public final UAHmi hmi ;
+		public final OperUser operUser;
+		public final String diid;
+		public final String eventn;
+		public final String runn;
+		public final String val;
+		
+		public ClientEvent(UAHmi hmi,OperUser oper_user,String diid, String eventn, String runn,String val)
+		{
+			this.hmi = hmi ;
+			this.operUser = oper_user ;
+			this.diid = diid ;
+			this.eventn = eventn ;
+			this.runn = runn ;
+			this.val = val ;
+		}
+		
+		public String getUserName()
+		{
+			if(this.operUser==null)
+				return "" ;
+			return this.operUser.name;
+		}
+		
+		public String getHmiPath()
+		{
+			return this.hmi.getNodeCxtPathInPrj() ;
+		}
+		
+		public String getDIId()
+		{
+			if(diid==null)
+				return "";
+			return diid ;
+		}
+		
+		public String getRunName()
+		{
+			if(runn==null)
+				return "";
+			return runn ;
+		}
+		
+		public String getValStr()
+		{
+			if(val==null)
+				return "";
+			return val ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject ret = new JSONObject().put("hmi", hmi.getNodeCxtPathInPrj())
+					.putOpt("diid", this.diid).putOpt("event", this.eventn).put("run", this.runn).putOpt("val", val) ;
+			if(operUser!=null)
+				ret.put("user", operUser.name) ;
+			return ret;
+		}
+		
+		@Override
+		public String toString()
+		{
+			String ret = "ClientEvent ";
+			if(this.operUser!=null)
+				ret += " user:"+operUser.name ;
+			ret += " diid:"+diid ;
+			ret += " event:"+eventn ;
+			ret += " run:"+runn ;
+			ret += " val:"+val ;
+			return ret ;
+		}
+	}
+	
+	
+	public static class OperUser
+	{
+		public String name ;
+		
+		public String nameDis ;
+		
+		public HashSet<String> roles ;
+		
+		public long authDT = System.currentTimeMillis() ;
+		
+		public boolean bPrjOper = false;
+		
+		OperUser(UserAuthItem u)
+		{
+			this.name = u.getUserName() ;
+			this.nameDis = u.getDisName() ;
+			List<String> rns = u.getRoleNames() ;
+			if(rns!=null&&rns.size()>0)
+			{
+				this.roles = new HashSet<>() ;
+				this.roles.addAll(rns);
+			}
+		}
+		
+		OperUser(String prj_oper)
+		{
+			bPrjOper = true;
+			this.name = this.nameDis = prj_oper ;
+		}
+		
+		public boolean hasRole(String rolen)
+		{
+			if("admin".equals(name))
+				return true ;
+			if(this.roles==null)
+				return false;
+			if(this.roles.contains("admin"))
+				return true;
+			return this.roles.contains(rolen) ;
+		}
+		
+		public JSONObject toJO()
+		{
+			JSONObject ret = new JSONObject().put("n", this.name).putOpt("disn", this.nameDis)
+					.put("auth_dt", this.authDT).put("prj_oper", bPrjOper);
+			if(roles!=null)
+				ret.put("roles",roles) ;
+			return ret ;
+		}
+	}
+	
+	
+	public boolean OPER_checkWriteUserRight(UAHmi.OperUser operuser)
+	{
+		HashSet<String> rs = getWriteRolesUsed() ;
+		if(rs==null||rs.size()<=0)
+			return true ;
+		
+		if(operuser==null)
+			return false;//
+		
+		if(operuser.bPrjOper)
+			return true ; //
+		
+		for(String r:rs)
+		{
+			if(operuser.hasRole(r))
+				return true;
+		}
+		return false;
+	}
+
+
+	public boolean OPER_onOperEvent(WSServer.SessionItem<UAHmi.OperUser> si,String diid, String eventn, String val,StringBuilder failedr)
+	{
+		UAHmi.OperUser oper_user = si.getLoginSession();
+		if(oper_user==null)
+		{
+			String k = OPER_getHmiKey(this.getBelongTo().getBelongToPrj(),this) ;
+			oper_user = (UAHmi.OperUser)si.getHttpSession().getAttribute(k) ;
+		}
+		
+		if(!this.OPER_checkWriteUserRight(oper_user))
+		{
+			failedr.append("no hmi write right") ;
+			return false;
+		}
+		
+		BindDI bdi = this.getBind(diid);
+		if (bdi == null)
+		{
+			failedr.append("no bind di found") ;
+			return false;
+		}
+		EventBindItem ebi = bdi.getEventBindItem(eventn);
+		boolean ret = ebi.RT_runEventJS(this.getBelongTo(), val,failedr);
+		if(!ret)
+			return false;
+		UAPrj prj = this.getBelongTo().getBelongToPrj() ;
+		if(prj==null)
+			return ret ;
+		
+		UAHmi.ClientEvent ce = new UAHmi.ClientEvent(this,oper_user,diid, eventn,ebi.getRunName(), val);
+		if(log.isTraceEnabled())
+			log.trace(ce.toString());
+		
+		prj.RT_onHmiEvent(ce);
+		return ret ;
+	}
+	
+	/**
+	 * hmi write operation (send manual cmds) use another way,except user psw checking
+	 * it's run on ROOT/hmi_ajax.jsp,so session obj is limited in this webapp
+	 * 
+	 * session keep obj is not same with normal page
+	 * 
+	 * @author jason.zhu
+	 */
+
+	private static final String OPER_AUTH = "_OPER_AUTH_" ;
+	
+	public static OperUser OPER_checkSessionAuthOk(EndpointConfig config,UAPrj prj,UAHmi hmi)
+	{
+		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
+		return OPER_checkSessionAuthOk(hs,prj,hmi) ;
+	}
+	
+	public static OperUser OPER_getSessionUser(HttpSession hs,UAPrj prj,UAHmi hmi)
+	{
+		String k = OPER_getHmiKey(prj,hmi) ;
+		return (OperUser)hs.getAttribute(k) ;
+	}
+	
+	public static OperUser OPER_checkSessionAuthOk(HttpSession hs,UAPrj prj,UAHmi hmi)
+	{
+		String k = OPER_getHmiKey(prj,hmi) ;
+		OperUser ou = (OperUser)hs.getAttribute(k) ;
+		if(ou==null)
+			return null ;
+		if(System.currentTimeMillis() - ou.authDT < prj.getOperPermDurSec()*1000)
+			return ou;
+		return null ;
+	}
+	
+	public static OperUser OPER_loginSessionAuth(HttpSession hs,UAPrj prj,UAHmi hmi,String user,String psw) throws Exception
+	{
+		if(prj.checkOperator(user, psw))
+		{
+			OperUser ou = new OperUser(user) ;
+			hs.setAttribute(OPER_getHmiKey(prj,hmi), ou);
+			return ou ;
+		}
+		
+		UserAuthItem u =LoginUtil.checkUserPsw(user, psw);
+		if(u!=null)
+		{
+			OperUser ou = new OperUser(u) ;
+			hs.setAttribute(OPER_getHmiKey(prj,hmi), ou);
+			return ou ;
+		}
+		return null ;
+	}
+	
+	private static String OPER_getHmiKey(UAPrj prj,UAHmi hmi)
+	{
+		return OPER_AUTH+prj.getId()+"_"+hmi.getId() ;
+		}
 }

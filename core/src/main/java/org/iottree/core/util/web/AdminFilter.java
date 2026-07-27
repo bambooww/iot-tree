@@ -52,10 +52,10 @@ public class AdminFilter  extends CommonFilter implements ILang
 			FilterChain fc) throws ServletException, IOException
 	{
 		String lan = request.getParameter("_lan_") ;//req url first
+		HttpServletRequest req = (HttpServletRequest) request;
+		LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(req) ;
 		if(Convert.isNullOrEmpty(lan))
 		{
-			HttpServletRequest req = (HttpServletRequest) request;
-			LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(req) ;
 			if(si!=null)
 				lan = si.lan ; // then session
 		}
@@ -70,7 +70,7 @@ public class AdminFilter  extends CommonFilter implements ILang
 				runJspNum ++ ;
 			}
 			
-			doFilterInner(request, response,fc);
+			doFilterInner(request, response,fc,si);
 		}
 		finally
 		{
@@ -85,7 +85,7 @@ public class AdminFilter  extends CommonFilter implements ILang
 	}
 
 	public void doFilterInner(ServletRequest request, ServletResponse response,
-			FilterChain fc) throws ServletException, IOException
+			FilterChain fc,LoginUtil.SessionItem si) throws ServletException, IOException
 	{
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
@@ -116,6 +116,11 @@ public class AdminFilter  extends CommonFilter implements ILang
 			return ;
 		}
 		
+		if(si==null || !si.isAdmin())
+		{
+			resp.getWriter().write("no right");
+			return ;
+		}
 		req.setCharacterEncoding("UTF-8");
 		
 //		resp.setHeader( "Pragma", "no-cache" );

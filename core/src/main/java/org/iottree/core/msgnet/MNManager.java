@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iottree.core.UAHmi;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
 import org.iottree.core.UATag;
@@ -1167,6 +1168,20 @@ public class MNManager
 			{
 				if(node instanceof NS_TagChgTrigger && node.isEnable())
 					((NS_TagChgTrigger)node).RT_fireDtUpValNotChg(tag) ;
+			}
+		}
+	}
+	
+	public void RT_HMI_onHmiEvent(UAHmi.ClientEvent ce)
+	{
+		for(MNNet net :this.listNets())
+		{
+			if(!net.isEnable())
+				continue ;
+			for(MNNode node:net.getNodeMapAll().values())
+			{
+				if(node instanceof NS_HmiEvtTrigger && node.isEnable())
+					((NS_HmiEvtTrigger)node).RT_fireHmiEvent(ce) ;
 			}
 		}
 	}

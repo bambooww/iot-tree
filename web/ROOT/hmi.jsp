@@ -10,16 +10,15 @@
 				org.iottree.core.alert.*,
 				org.iottree.core.bind.*,
 				org.iottree.core.store.*,
-				org.iottree.core.plugin.*,
+				org.iottree.core.plugin.*,org.iottree.core.util.web.*,
 	org.iottree.core.util.*,org.iottree.core.station.*,
 	org.iottree.core.comp.*,
-				java.net.*"%><%@ taglib uri="wb_tag" prefix="lan"%><%
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="w"%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
 		return ;
    String bkc = request.getParameter("bkc") ;
    String user = request.getParameter("user") ;
-   if(Convert.isNullOrEmpty(user))
-	   user="" ;
+   String user_dis = "" ;
    
    String path_head = request.getParameter("path_head") ;// for nginx proxy_pass supporting
    if(Convert.isNullOrEmpty(path_head))
@@ -38,6 +37,9 @@
 	{
 		out.print("no hmi node found") ;
 	}
+	
+	boolean hmi_need_user_chk = uahmi.hasWriteRolesUsed();
+	
 	String hmitt = uahmi.getTitle();
 	UANode topn = uahmi.getTopNode() ;
 	UANodeOCTagsCxt cxtn = uahmi.getBelongTo() ;
@@ -78,6 +80,27 @@
 		if(owner_dev!=null)
 			owner_def = owner_dev.getDevDef() ; 
 	}
+	
+	if(Convert.isNullOrEmpty(user))
+	{
+		user="" ;
+		UAHmi.OperUser operuser = UAHmi.OPER_getSessionUser(session,prj,uahmi) ;
+		if(operuser!=null)
+		{
+			user = operuser.name ;
+			user_dis = operuser.nameDis ;
+		}
+		if(Convert.isNullOrEmpty(user))
+		{
+			LoginUtil.SessionItem logsi = LoginUtil.getUserLoginSession(request) ;
+			if(logsi!=null)
+			{
+				user = logsi.usern ;
+				user_dis = logsi.disn ;
+			}
+		}
+	}
+	   
 	
 	if(owner_def!=null)
 	{// use UADev as top res_ref_id
@@ -135,392 +158,203 @@
  	<jsp:param value="true" name="oc_min"/>
  	<jsp:param value="<%=path_head %>" name="path_head"/>
  </jsp:include>
- <script src="<%=path_head %>/_js/oc/hmi_util.js?v=<%=Config.getVersion()%>"></script>
 <style>
-body {
-	margin: 0px;
-	padding: 0px;
-	font-size: 12px;
-	text-align: center;
--moz-user-select : none;
--webkit-user-select: none;
-}
+body { margin: 0px;padding: 0px;font-size: 12px;text-align: center;-moz-user-select : none;-webkit-user-select: none;}
 .hd {font-size:16px;top:6px;}
-th
-{
-	border:1px solid;
-}
-.top {
-	position: fixed;
-	
-	left: 0;
-	top: 0;
-	bottom: 0;
-	z-index: 999;
-	height: 45px;
-	width:100%;
-	text-align: left;
-	margin:0px;
-	padding:0px;
-	overflow: hidden
-}
-
-
-.left {
-	position: fixed;
-	float: left;
-	left: 0;
-	top: 0px;
-	bottom: 0;
-	z-index: 999;
-	width: 45px;
-	overflow-x: hidden
-}
-
-
-.left_pan {
-	position: fixed;
-	float: left;
-	left: 45px;
-	top: 45px;
-	bottom: 0;
-	z-index: 999;
-	width: 145px;
-	overflow-x: hidden
-}
-
-.right {
-	position: fixed;
-	float: right;
-	right: 0;
-	top: 0px;
-	bottom: 0;
-	z-index: 999;
-	width: 250px;
-	height: 100%;
-	overflow-x: hidden
-}
-
-.mid {
-	position: absolute;
-	left: 0px;
-	right: 0px;
-	top: 0px;
-	bottom: 0;
-	z-index: 998;
-	width: auto;
-	overflow: hidden;
-	box-sizing: border-box
-}
-
-.top_btn
-{
-	color:#009999;
-	margin-top: 5px;
-	margin-left:20px;
-	cursor: pointer;
-}
-
-.top i:hover
-{
-color: #fdd000;
-}
-
-.lr_btn
-{
-	margin-top: 10px;
-	color:#009999;
-	cursor: pointer;
-}
-
-.lr_btn_div
-{
-	margin-top: 0px;
-	color:#858585;
-	background-color:#eeeeee;
-	cursor: pointer;
-}
-
-.lr_btn_btm
-{
-	margin-bottom: 20px;
-	position:absolute;
-	left:5px;
-	bottom:20px;
-	color:#858585;
-	
-	cursor: pointer;
-}
-
-.left i:hover{
-color: #fdd000;
-}
-
-.lr_btn i:hover
-{
-color: #fdd000;
-}
-
-.right i:hover{
-color: #ffffff;
-}
-
-.props_panel_edit
-{
-	position0: absolute;
-	left: 0px;
-	right: 0px;
-	top: 18px;
-	bottom0: 50px;
-	height:80%
-	z-index: 998;
-
-	overflow-y: auto;
-	vertical-align:top;
-	box-sizing: border-box
-}
-
-.props_panel_pos
-{
-	position: absolute;
-	bottom: 50px;
-	
-	z-index: 998;
-	box-sizing: border-box
-}
-
-.top_menu_close {
-    font-family: Tahoma;
-    border: solid 2px #ccc;
-    padding: 0px 5px;
-    text-align: center;
-    font-size: 12px;
-    color: blue;
-    position: absolute;
-    top: 2px;
-    line-height: 14px;
-    height: 14px;
-    width: 26px;
-    border-radius: 14px;
-    -moz-border-radius: 14px;
-    background-color: white;
-}
-
-.top_menu_left{
-	position:absolute;z-index: 50000;width: 25;height:25;TOP:100px;right:0px;
-	text-align: center;
-	font-size: 12px;
- font-weight: bold;
- background-color:#4770a1;
- color: #eeeeee;
- line-height: 35px;
- border:2px solid;
-border-radius:5px;
-//box-shadow: 5px 5px 2px #888888;
-}
-
-.top_win_left
-{
-border:solid 3px gray;		
-background-color:silver;
-top:0;
-left:30;
-height:230;
-width:830;
-padding:1px;
-line-height:21px;
-border-radius:15px;
--moz-border-radius:15px;
-box-shadow:0 5px 27px rgba(0,0,0,0.3);
--webkit-box-shadow:0 5px 27px rgba(0,0,0,0.3);
--moz-box-shadow:0 5px 27px rgba(0,0,0,0.3);
-_position:absolute;
-_display:block;
-z-index:10000;
-}
-
-.left_panel_win
-{
-position:absolute;display:none;z-index:1000;left:45px;
-background-color: #eeeeee;
-top:0px;height:100%;
-}
-.left_panel_bar
-{
-height:30px;
-}
-
-.layui-tab {
-    margin: 0px;
-    padding:0px;
-    text-align: left!important;
-    height:35px;
-}
-.layui-tab-content {
-    padding: 0px;
-}
-
-.oper
-{
-position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000;cursor: pointer;
-padding-top: 5px;
-}
-
-
-.overlay_msg
-{
-	position:absolute;
-	background:#888888;
-	opacity:0.8;
-	clear:both;	
-	top:50px;
-	left:50px;
-	border:solid 3px;
-	text-align:center;
-	vertical-align:middle;
-	width:300px;
-	height:130px;
-	zIndex:65535;
-}
-
-.pwin
-{
-	position: absolute;
-	right:60px;top:180px;width:500px;height:300px;
-	background-color: #555555;
-	z-index: 60002;
-	opacity: 0.5;color: #bbbbbb;
-}
-
-.pwin:hover
-{
-	opacity: 1.0;
-}
-
-.pwin .op
-{
-	position: absolute;
-	right:0px;
-	top:0px;
-	background-color: #aaaaaa;
-}
-
-.navwin
-{
-	position: absolute;
-	left:0px;top:0px;width:100px;height:100%;
-	background-color: #555555;
-	
-	z-index:65534;
-	opacity: 0.5;color: #bbbbbb;
-}
-
-.navwin:hover
-{
-	opacity: 1.0;
-}
-
-.navwin .op
-{
-	position: absolute;
-	right:0px;
-	top:0px;
-	background-color: #aaaaaa;
-}
-
-.nav_item
-{
-	position:relative;
-	width:90%;
-	left:3%;
-	height:90px;
-	
-	margin-top: 20px;
-	text-align: center;
-}
-
-.nav_item:hover
-{
-	background-color: yellow;
-}
-
-.nav_item .icon
-{
-	width:50px;
-	height:50px;
-	
-	font-size:50px;
-}
-
-.nav_cur
-{
-	border:2px solid;
-	border-color:#17c6a3;
-}
-
-.data_list_c::-webkit-scrollbar {
-    width: 10px;
-}
-
-.data_list_c::-webkit-scrollbar-thumb {
-    background: #ccc; 
-    border-radius: 5px; 
-}
-
-.data_list_c::-webkit-scrollbar-thumb:hover {
-    background: #81ec26;
-}
-
-.ui_list_c
-{
-display: flex;
- flex-wrap: wrap;
-}
-
-.ui_item
-{
-position:relative;
-	width:80px;
-	height:80px;
-	border:0px solid ;
-	border-color:#0699f0;
-	margin:5px;
-}
-
-.ui_item .t
-{
-	position:relative;
-	font-size: 16px;
-	left:0px;
-	right:0px;
-	top:5px;
-	line-height:12px;
-}
-
-.ui_item:hover
-{
-	background-color:#f3cf56;
-}
-
-.ui_item img
-{
-	position:relative;
-	top:5px;
-	width:50px;
-	height:50px;
-	border:1px solid;
-	
-}
-
-.rotated90 {transform: rotate(90deg);transform-origin: center center;display: block;}
-        
+th { border:1px solid; }
+.top { position: fixed;left: 0;top: 0;bottom: 0;z-index: 999;height: 45px;width:100%;text-align: left;margin:0px;padding:0px;overflow: hidden}
+.left {position: fixed;float: left;left: 0;top: 0px;bottom: 0;z-index: 999;width: 45px;overflow-x: hidden}
+.left_pan {position: fixed;float: left;left: 45px;top: 45px;bottom: 0;z-index: 999;width: 145px;overflow-x: hidden}
+.right {position: fixed;float: right;right: 0;top: 0px;bottom: 0;z-index: 999;width: 250px;height: 100%;overflow-x: hidden}
+.mid {position: absolute;left: 0px;right: 0px;top: 0px;bottom: 0;z-index: 998;width: auto;overflow: hidden;box-sizing: border-box}
+.top_btn{color:#009999;margin-top: 5px;margin-left:20px;cursor: pointer;}
+.top i:hover{color: #fdd000;}
+.lr_btn{margin-top: 10px;color:#009999;cursor: pointer;}
+.lr_btn_div{margin-top: 0px;color:#858585;background-color:#eeeeee;cursor: pointer;}
+.lr_btn_btm{margin-bottom: 20px;position:absolute;left:5px;bottom:20px;color:#858585;cursor: pointer;}
+.left i:hover{color: #fdd000;}
+.lr_btn i:hover{color: #fdd000;}
+.right i:hover{color: #ffffff;}
+.props_panel_edit{position0: absolute;left: 0px;right: 0px;top: 18px;bottom0: 50px;height:80%z-index: 998;overflow-y: auto;vertical-align:top;box-sizing: border-box}
+.props_panel_pos{position: absolute;bottom: 50px;z-index: 998;box-sizing: border-box}
+.top_menu_close {font-family: Tahoma;border: solid 2px #ccc;padding: 0px 5px;text-align: center;font-size: 12px;color: blue;position: absolute;top: 2px;
+    line-height: 14px;height: 14px;width: 26px;border-radius: 14px;-moz-border-radius: 14px;background-color: white;}
+.top_menu_left{position:absolute;z-index: 50000;width: 25;height:25;TOP:100px;right:0px;text-align: center;font-size: 12px;font-weight: bold;background-color:#4770a1;
+ color: #eeeeee;line-height: 35px;border:2px solidborder-radius:5px;}
+.top_win_left{border:solid 3px gray;		background-color:silver;top:0;left:30;height:230;width:830;padding:1px;line-height:21px;border-radius:15px;-moz-border-radius:15px;
+	box-shadow:0 5px 27px rgba(0,0,0,0.3);-webkit-box-shadow:0 5px 27px rgba(0,0,0,0.3);-moz-box-shadow:0 5px 27px rgba(0,0,0,0.3);_position:absolute;_display:block;z-index:10000;}
+.left_panel_win{position:absolute;display:none;z-index:1000;left:45px;background-color: #eeeeee;top:0px;height:100%;}
+.left_panel_bar{height:30px;}
+.layui-tab {margin: 0px;padding:0px;text-align: left!important;height:35px;}
+.layui-tab-content {padding: 0px;}
+.oper{position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;top:10px;z-index: 60000;cursor: pointer;padding-top: 5px;}
+.oper_btm{position: absolute;width:45px;height:45px;right:10px;background-color:#67e0e3;bottom:10px;z-index: 60000;cursor: pointer;padding-top: 5px;}
+.overlay_msg{position:absolute;background:#888888;opacity:0.8;clear:both;	top:50px;left:50px;border:solid 3px;text-align:center;vertical-align:middle;
+	width:300px;height:130px;zIndex:65535;}
+.pwin{position: absolute;right:60px;top:180px;width:500px;height:300px;background-color: #555555;z-index: 60002;opacity: 0.5;color: #bbbbbb;}
+.pwin:hover{opacity: 1.0;}
+.pwin .op{position: absolute;right:0px;top:0px;background-color: #aaaaaa;}
+.navwin{position: absolute;left:0px;top:0px;width:100px;height:100%;background-color: #555555;z-index:65534;opacity: 0.5;color: #bbbbbb;}
+.navwin:hover{opacity: 1.0;}
+.navwin .op{position: absolute;right:0px;top:0px;background-color: #aaaaaa;}
+.nav_item{position:relative;width:90%;left:3%;height:90px;margin-top: 20px;text-align: center;}
+.nav_item:hover{background-color: yellow;}
+.nav_item .icon{width:50px;height:50px;font-size:50px;}
+.nav_cur{border:2px solid;border-color:#17c6a3;}
+.data_list_c::-webkit-scrollbar {width: 10px;}
+.data_list_c::-webkit-scrollbar-thumb {background: #ccc; border-radius: 5px; }
+.data_list_c::-webkit-scrollbar-thumb:hover {background: #81ec26;}
+.ui_list_c{display: flex;flex-wrap: wrap;}
+.ui_item{position:relative;width:80px;height:80px;border:0px solid ;border-color:#0699f0;margin:5px;}
+.ui_item .t{position:relative;font-size: 16px;left:0px;right:0px;top:5px;line-height:12px;}
+.ui_item:hover{background-color:#f3cf56;}
+.ui_item img{position:relative;top:5px;width:50px;height:50px;border:1px solid;}
+.rotated90 {transform: rotate(90deg);transform-origin: center center;display: block;}     
 #ws_updt {z-index:65534;position: absolute;right:10px;bottom: 10px;color:#95ec28;}
 </style>
-
 </head>
 <script type="text/javascript">
 dlg.dlg_top=true;
 var b_station_ins = <%=b_station_ins%>;
+
+function $util_msg(msg)
+{
+	dlg.msg(msg);
+}
+
+//Before issuing instructions, you need to confirm the operation authority of the current user. 
+//Clientjs can call this function for verification, and do subsequent work after successful callback, 
+//such as triggering specific server operation
+function $util_check_cmd_psw(hmi_path,hmi_user,opt,ok_cb)
+{
+	opt = opt||{} ;
+	var ppt = opt.prompt||'<w:g>sure_send_cmd</w:g>';
+	send_ajax('/hmi_ajax.jsp',{tp:"auth_ok",hmi_path:hmi_path},function(bsucc,ret)
+	{
+		if(bsucc && ret.indexOf('{')==0)
+		{
+			if(!(opt.no_confirm))
+			{
+				if(dlg.confirm(ppt,null,()=>{
+					ok_cb() ;
+				}));
+			}
+			else
+			{
+				ok_cb() ;
+			}
+			
+			return ;
+		}
+		
+		//if(hmi_user)
+		//	$util_show_psw_pad_num(hmi_path,hmi_user,ok_cb);
+		//else
+			$util_check_cmd_psw_dlg(hmi_path,ok_cb) ;
+	},false);
+}
+
+function $util_check_cmd_psw_dlg(hmi_path,ok_cb)
+{//console.log(hmi_path);
+	dlg.open('/hmi_util_auth.jsp?user='+hmi_user,{title:`<w:g>perm_ver</w:g>`,w:'500px',h:'400px'},
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 ret.tp="auth";
+						 ret.hmi_path=hmi_path;
+						 send_ajax('/hmi_ajax.jsp',ret,function(bsucc,ret)
+						{
+								if(!bsucc || ret.indexOf('{')<0)
+								{
+									dlg.msg(ret);
+									return ;
+								}
+								let retob = null;
+								eval("retob="+ret) ;
+								set_oper_user(retob)
+								ok_cb();//
+								dlg.close();
+						},false);
+					});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function $util_show_psw_pad_num(hmi_path,hmi_user,ok_cb,opt)
+{
+	dlg.open( '/hmi_util_num.jsp?user='+hmi_user,{title:`<w:g>perm_ver</w:g> - \${hmi_user_dis}`,w:'500px',h:'400px'},
+			[],
+			[],function(ret)
+				{
+					if(ret==null||ret==''||ret==0)
+						return ;
+					 ret.tp="auth";
+					 ret.hmi_path=hmi_path;
+					 console.log(ret);
+					 send_ajax('/hmi_ajax.jsp',ret,function(bsucc,ret)
+					{
+							if(!bsucc || ret.indexOf('{')<0)
+							{
+								dlg.msg(ret);
+								return ;
+							}
+							let retob = null;
+							eval("retob="+ret) ;
+							set_oper_user(retob)
+							ok_cb();//
+							dlg.close();
+					},false);
+				});
+}
+
+function $util_dlg_input_num(opt,ok_cb)
+{
+	opt = opt||{} ;
+	var tp = opt.tp||'nor' ;
+	var min = opt.min||0;
+	var max = opt.max||100 ;
+	var val = opt.val||0 ;
+	var bfloat = opt.is_float||false;
+	dlg.open('/hmi_util_input_num.jsp?tp='+tp+'&min='+min+'&max='+max+'&v='+val+'&float='+bfloat,
+			{title:'Input',w:'500px',h:'400px'},
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit(function(bsucc,ret){
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 ok_cb(ret);
+						 dlg.close();
+					});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function on_clk_oper_user()
+{
+	$util_check_cmd_psw_dlg(path,()=>{
+		
+	})
+}
 </script>
 <body class="layout-body" style="background-color:<%=bkc%> ">
 <div style="z-index: 60000"></div>
@@ -609,6 +443,15 @@ if(path2tt!=null && path2tt.size()>0)
 </div>
 <%
 }
+
+if(hmi_need_user_chk && !prj.isClientForbidW())
+{
+%>
+<div class="oper_btm"  style="bottom:30px;height:60px;background-color: #1e1e1e;">
+<div id="oper_user" style="border:0px solid;border-color:#469424;height:45px;color:#f8b0a8" title="show user login"><i class="fa fa-user fa-3x"></i><span id="user_dis"><%=user_dis %></span></div>
+</div>
+<%
+}
 %>
 <div style="z-index:65534;position: absolute;right:0px;top:0px">
 <%
@@ -636,20 +479,20 @@ else
 %>
 	<div id="alert_list_c" style="display:none;width:700px" class="pwin">
  		<span class="op">
- 		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History"><lan:g>history_d</lan:g></button>
+ 		    <button type="button" class="layui-btn layui-btn-xs layui-btn-warn" onclick="show_alerts_his()" title="Show Alerts History"><w:g>history_d</w:g></button>
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_alerts()" ><i class="fa fa-times"></i></button>
 		</span>
-		<div class="hd"><lan:g>alerts,list</lan:g></div>
+		<div class="hd"><w:g>alerts,list</w:g></div>
  		<div class="" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
-                  <th><lan:g>lvl</lan:g></th>
-                	<th><lan:g>time</lan:g></th>
-                    <th><lan:g>tag</lan:g></th>
-                    <th><lan:g>type</lan:g></th>
-                    <th><lan:g>val</lan:g></th>
-                    <th><lan:g>prompt</lan:g></th>
+                  <th><w:g>lvl</w:g></th>
+                	<th><w:g>time</w:g></th>
+                    <th><w:g>tag</w:g></th>
+                    <th><w:g>type</w:g></th>
+                    <th><w:g>val</w:g></th>
+                    <th><w:g>prompt</w:g></th>
                 </tr>
             </thead>
  
@@ -664,17 +507,17 @@ else
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_datas()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<div class="hd"><lan:g>data,list</lan:g></div>
+		<div class="hd"><w:g>data,list</w:g></div>
  		<div class="data_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
  			<table cellpadding="0" cellspacing="0" style="width:100%;">
             <thead>
                 <tr>
-                	<th><lan:g>title</lan:g></th>
-                	<th><lan:g>up_dt</lan:g></th>
-                    <th><lan:g>chg_dt</lan:g></th>
-                    <th><lan:g>valid</lan:g></th>
-                    <th><lan:g>val</lan:g></th>
-                    <th><lan:g>oper</lan:g></th>
+                	<th><w:g>title</w:g></th>
+                	<th><w:g>up_dt</w:g></th>
+                    <th><w:g>chg_dt</w:g></th>
+                    <th><w:g>valid</w:g></th>
+                    <th><w:g>val</w:g></th>
+                    <th><w:g>oper</w:g></th>
                 </tr>
             </thead>
  
@@ -742,7 +585,7 @@ if(b_his)
  		<span class="op">
 			<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="hide_uis()" title="hidde"><i class="fa fa-times"></i></button>
 		</span>
-		<div class="hd"><lan:g>dlg_ui,list</lan:g></div>
+		<div class="hd"><w:g>dlg_ui,list</w:g></div>
  		<div class="ui_list_c" style="overflow-y: auto;width:100%;top:25px;bottom:2px;position: absolute;">
 <%
 	for(UIItem uii:UIManager.getInstance(prj).getId2Items().values())
@@ -800,6 +643,7 @@ if(b_his)
 var show_tick = false;
 var prjid = "<%=prjid%>" ;
 var path_head ="<%=path_head%>";
+var hmi_need_user_chk = <%=hmi_need_user_chk%> ;
 
 document.addEventListener('touchmove', function (event) {
 	    event.preventDefault();
@@ -811,6 +655,7 @@ window.event.returnValue = false;
 var layuiEle ;
 var path="<%=path%>";
 var hmi_user="<%=user%>";
+var hmi_user_dis="<%=user_dis%>";
 var hmi_path = path;
 var ppath = "<%=path.substring(0,path.lastIndexOf("/")+1)%>";
 var prj_name = "<%=prjname%>" ;
@@ -828,6 +673,14 @@ var not_run_prompt = "<%=not_run_prompt%>" ;
 //$util.hmi_can_write = can_write;
 
 var alert_def_lvl_jo = <%=alert_def_lvl_jo%> ;
+
+function set_oper_user(ou)
+{
+	//console.log(ou)
+	hmi_user = ou.n ;
+	hmi_user_dis = ou.disn ;
+	$("#user_dis").html(ou.disn)
+}
 
 function get_alert_lvl(lv)
 {
@@ -889,6 +742,11 @@ $("#oper_ui").click(function()
 	show_or_hide_uis() ;
 });
 
+$("#oper_user").click(function()
+{
+	on_clk_oper_user();
+});
+
 
 function add_tab()
 {
@@ -924,6 +782,7 @@ function zoom(v)
 
 function init_iottpanel()
 {
+	oc.util.Util.getIns().setHmiNeedUserChk(hmi_need_user_chk) ;//
 	oc.DrawItem.G_REF_LIB_ID =res_ref_id ;
 	hmiModel = new oc.hmi.HMIModel({
 		temp_url:`\${path_head}/hmi_ajax.jsp?op=load&path=\${path}`,
@@ -1222,71 +1081,18 @@ function ws_conn()
     	var str = event.data ;
     	var ob = null;
     	eval("ob="+str) ;
-    	var s = ob.server;
-    	var d = ob.data;
-    	//console.log(event.data);
-    	hmiModel.updateServerInfo(s);
-    	if(d.cxt_rt)
-    	{//console.log(ob.tags_mem_cached)
-    		//if(ob.tags_mem_cached)
-    		//{
-    		//	for(let k in ob.tags_mem_cached)
-    		//		console.log(k,ob.tags_mem_cached[k].length)
-    		//}
-    		hmiModel.updateRtNodes(d.cxt_rt,ob.tags_mem_cached||null);
-    		update_data_list(d.cxt_rt) ;
+    	let __tp = ob.__tp||"" ;
+    	switch(__tp)
+    	{
+    	case "evt_ret":
+    		on_event_ret(ob)
+    		break ;
+    	default:
+    		on_normal_tick(ob)
+    		break ;
     	}
     	
-    	let iob =$("#oper_alert_i") ; 
-    	if(d.has_alert)
-    	{
-    		iob.css("color","red") ;
-    		let ms = new Date().getTime();
-    		if(ms-last_blink>500)
-    		{
-        		if("none"==iob.css("display"))
-        			iob.css("display","");
-        		else
-        			iob.css("display","none");
-    			last_blink = ms ;
-    		}
-    		
-    		if(d.alerts)
-    		{
-    			update_alert_list(d.alerts);
-    		}
-    	}
-    	else if(d.has_tag_alert)
-    	{
-    		iob.css("color","red") ;
-    		let ms = new Date().getTime();
-    		if(ms-last_blink>500)
-    		{
-        		if("none"==iob.css("display"))
-        			iob.css("display","");
-        		else
-        			iob.css("display","none");
-    			last_blink = ms ;
-    		}
-    		
-    		if(d.tag_alerts)
-    		{
-    			update_tag_alert_list(d.tag_alerts);
-    		}
-    	}
-    	else
-    	{
-    		iob.css("color","#494949").css("display","") ;
-    		update_alert_list(null);
-    		update_tag_alert_list(null);
-    	}
-    		
     	
-    	if(d.prj_run || b_station_ins)
-    		show_overlay(false);
-    	else
-    		show_overlay(true,not_run_prompt);
-    	 
     	if(b_conn_first)
 		{
 			b_conn_first=false;
@@ -1300,6 +1106,79 @@ function ws_conn()
     };
     
     return true;
+}
+
+function on_event_ret(ob)
+{
+	dlg.msg("Server:"+ob.msg||"") ;
+}
+
+function on_normal_tick(ob)
+{
+	var s = ob.server;
+	var d = ob.data;
+	//console.log(event.data);
+	hmiModel.updateServerInfo(s);
+	if(d.cxt_rt)
+	{//console.log(ob.tags_mem_cached)
+		//if(ob.tags_mem_cached)
+		//{
+		//	for(let k in ob.tags_mem_cached)
+		//		console.log(k,ob.tags_mem_cached[k].length)
+		//}
+		hmiModel.updateRtNodes(d.cxt_rt,ob.tags_mem_cached||null);
+		update_data_list(d.cxt_rt) ;
+	}
+	
+	let iob =$("#oper_alert_i") ; 
+	if(d.has_alert)
+	{
+		iob.css("color","red") ;
+		let ms = new Date().getTime();
+		if(ms-last_blink>500)
+		{
+    		if("none"==iob.css("display"))
+    			iob.css("display","");
+    		else
+    			iob.css("display","none");
+			last_blink = ms ;
+		}
+		
+		if(d.alerts)
+		{
+			update_alert_list(d.alerts);
+		}
+	}
+	else if(d.has_tag_alert)
+	{
+		iob.css("color","red") ;
+		let ms = new Date().getTime();
+		if(ms-last_blink>500)
+		{
+    		if("none"==iob.css("display"))
+    			iob.css("display","");
+    		else
+    			iob.css("display","none");
+			last_blink = ms ;
+		}
+		
+		if(d.tag_alerts)
+		{
+			update_tag_alert_list(d.tag_alerts);
+		}
+	}
+	else
+	{
+		iob.css("color","#494949").css("display","") ;
+		update_alert_list(null);
+		update_tag_alert_list(null);
+	}
+		
+	
+	if(d.prj_run || b_station_ins)
+		show_overlay(false);
+	else
+		show_overlay(true,not_run_prompt);
 }
 
 function update_alert_list(alerts)
@@ -1380,6 +1259,9 @@ function ws_disconn() {
 var ws = null;
 var ws_last_chk = -1 ;
 var ws_opened = false;
+//var last_usern = "" ;
+//var last_user_needlogin=false;
+//var b_logining = false;
 
 function check_ws()
 {
@@ -1388,7 +1270,7 @@ function check_ws()
 		ws_last_chk = new Date().getTime();
 		return ;
 	}
-
+	
 	if(ws==null)
 	{
 		ws_disconn();
@@ -1406,6 +1288,30 @@ function check_ws()
 	ws_conn();
 	ws_last_chk = new Date().getTime();
 	return ;
+	
+	/*
+	if(b_logining)
+		return ;
+	if(last_user_needlogin)
+	{
+		last_user_needlogin = false;
+		do_hmi_login() ;
+		return ;
+	}
+
+	send_ajax("/hmi_ajax.jsp",{tp:"hmi_tick"},(bsucc,ret)=>{
+		console.log(ret) ;
+		if(!bsucc || ret.indexOf("ok=")!=0)
+			return ;
+		let usern = ret.substring(3) ;
+		if(!usern||(last_usern && usern!=last_usern))
+		{//need login
+			last_user_needlogin = true ;
+			return ;
+		}
+		
+	})
+	*/
 }
 
 
@@ -1468,8 +1374,8 @@ function show_alerts_his()
 {
 	event.stopPropagation();
 	let u = path_head+"/prj_evt_alert_sel.jsp?prjid="+prjid;//"/prj_alert_his.jsp?prjid="+prjid;
-	dlg.open(u,{title:"<lan:g>alert,his</lan:g>"},
-			['<lan:g>close</lan:g>'],
+	dlg.open(u,{title:"<w:g>alert,his</w:g>"},
+			['<w:g>close</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -1501,7 +1407,7 @@ function rec_tag_show(tagpath,title)
 	if(!prjid)
 		return ;
 	dlg.open_win(path_head+"/prj_tag_rec.jsp?prjid="+prjid+"&tag="+tagpath,
-			{title:"<lan:g>tag,rec,his</lan:g> - "+title,w:960,h:650,wh_auto:true},
+			{title:"<w:g>tag,rec,his</w:g> - "+title,w:960,h:650,wh_auto:true},
 			[],
 			[]);
 }
@@ -1510,7 +1416,7 @@ function show_data_his(outtp,outid,tagp,title)
 {
 	event.stopPropagation();
 	dlg.open_win(path_head+"/prj_data_"+outtp+".jsp?outid="+outid+"&prjid="+prjid+"&tag="+tagp,
-			{title:"<lan:g>data,his</lan:g> - "+title,w:960,h:650},
+			{title:"<w:g>data,his</w:g> - "+title,w:960,h:650},
 			[],
 			[]);
 }

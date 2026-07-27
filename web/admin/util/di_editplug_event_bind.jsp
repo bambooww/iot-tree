@@ -38,10 +38,11 @@ dlg.resize_to(600,580);
     <div class="layui-input-inline" style="text-align: left;color:green;width:400px;">
     ($server,$parent,$util,$this)=&gt;{
       <textarea id="clientjs" name="clientjs" placeholder="" class="layui-textarea" rows="6" ondblclick="on_client_js_edit()" title="double click to open js editor"></textarea>
-     }
+     } // $server.fire_to_server() must be called in client js to be triggered.
      </div>
       <div class="layui-form-mid" style="padding: 0!important;top:15px;"> 
         <button type="button" class="layui-btn layui-btn-primary" onclick="on_client_js_edit()" title="open js editor">...</button>
+         <br><span class="layui-form-mid layui-word-aux" onclick="insert_client_evt()">+Event</span>
     </div>
   </div>
 <%
@@ -53,15 +54,25 @@ if(bsjs)
     <div class="layui-input-inline" style="text-align: left;color:green;width:400px;">
       ($input)=&gt;{
       <textarea id="serverjs" name="serverjs" placeholder="" class="layui-textarea" rows="6" ondblclick="on_js_edit()" title="double click to open js editor"></textarea>
-      } // $event.fire_to_server() must be called in client js to be triggered.
-      <div class="layui-form-mid layui-word-aux" onclick="insert_tag('serverjs')">insert tag</div>
+      }
+      
     </div>
     <div class="layui-form-mid" style="padding: 0!important;top:15px;"> 
         <button type="button" class="layui-btn layui-btn-primary" onclick="on_js_edit()" title="open js editor">...</button>
+        <br><span class="layui-form-mid layui-word-aux" onclick="insert_tag('serverjs')">+tag</span>
     </div>
   </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">Run Name:</label>
+    <div class="layui-input-inline" style="text-align: left;color:green;width:200px;">
+    	<input id="runname" class="layui-input"  />
+    </div>
+    <div class="layui-form-mid" style="padding: 0!important;top:15px;">
+    	Support operation log recording!
+    </div>
+   </div>
 <%
-} 
+}
 %>
  </form>
 </body>
@@ -81,6 +92,7 @@ if(plugpm!=null)
 	{
 		$("#clientjs").val(eventb.getClientJS()) ;
 		$("#serverjs").val(eventb.getServerJS()) ;
+		$("#runname").val(eventb.runName||"") ;
 	}
 }
 if(!path) path="" ;
@@ -94,6 +106,11 @@ function win_close()
 	dlg.close(0);
 }
 
+function insert_client_evt()
+{
+	$("#clientjs").val(`$server.fire_to_server("")
+			`) ;
+}
 
 function editplug_get(cb)
 {
@@ -105,7 +122,8 @@ function editplug_get(cb)
 		cb(false,'please input name') ;
 		return ;
 	}
-	return {n:n,clientjs:cjs,serverjs:sjs};
+	let runname = $('#runname').val();
+	return {n:n,clientjs:cjs,serverjs:sjs,runname:runname};
 }
 
 function insert_tag(txtid)

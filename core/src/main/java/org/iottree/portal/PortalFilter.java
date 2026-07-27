@@ -74,7 +74,7 @@ public class PortalFilter implements Filter
 				qs = "";
 			else
 				qs = "&" + qs;
-			req.getRequestDispatcher("/portal_page.jsp?path=" + uri + qs).forward(req, resp);
+			req.getRequestDispatcher("/portal__page.jsp?path=" + uri + qs).forward(req, resp);
 			return;
 		}
 

@@ -128,8 +128,9 @@
     <a href="doc/msgnet/m__sim.modbus_slave_bus.md" style="border:1px solid;">Modbus Slave Simulator</a>
 </p>
 
-##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.11 Demo: Automatic data recorder flow</a>
-##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.12 Demo: Alarm detection and output</a>
+##### <a href="doc/msgnet/outer_api.md" >&nbsp;&nbsp;&nbsp;8.11 Nodes directly open HTTP API to the outer</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.12 Demo: Automatic data recorder flow</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.13 Demo: Alarm detection and output</a>
 
 #### <a href="doc/hmi/index.md" >9 HMI and Dialog</a>
 ##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 HMI (UI) Node
@@ -140,22 +141,23 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
 
+#### <a href="doc/auth/index.md" >10 Users and Roles</a>
+##### <a href="doc/auth/hmi_w_auth.md" >10.1 HMI write operation (issue the command) authorization</a>
+
+#### <a href="doc/advanced/index.md" >11 Extends Functions</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 Plugins Development</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 Plugin Development - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 Plugin Development - Authority</a>
+##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;11.4 Custom Project Management (Webapp)</a>
+##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;11.5 Provide RESTFul Api externally</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.6 Outer OPC UA Support</a>
+##### <a href="doc/advanced/pstation.md" target="main">&nbsp;&nbsp;&nbsp;11.7 Center-substation data synchronization(Inner)</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.8 Center-substation remote monitoring(MQTT)</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.9 Device simulators</a>
+##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;11.10 Implement your own .Net client</a>
 
 
-#### <a href="doc/advanced/index.md" >10 Extends Functions</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 Plugins Development</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 Plugin Development - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 Plugin Development - Authority</a>
-##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;10.4 Custom Project Management (Webapp)</a>
-##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;10.5 Provide RESTFul Api externally</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.6 Outer OPC UA Support</a>
-##### <a href="doc/advanced/pstation.md" target="main">&nbsp;&nbsp;&nbsp;10.7 Center-substation data synchronization(Inner)</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.8 Center-substation remote monitoring(MQTT)</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.9 Device simulators</a>
-##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;10.10 Implement your own .Net client</a>
-
-
-#### <a href="doc/version.md" >11 Version</a>
+#### <a href="doc/version.md" >12 Version</a>
 
 <!--
 #### <a href="doc/store/index.md" >8 Data storage, processing, and presentation</a>

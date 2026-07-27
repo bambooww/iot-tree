@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 import javax.websocket.CloseReason.CloseCodes;
@@ -26,11 +27,12 @@ import org.iottree.core.basic.ValEvent;
 import org.iottree.core.bind.PropBindItem;
 import org.iottree.core.station.PlatInsManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.ws.WSRoot.SessionItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public abstract class WSServer// extends ConnServer
+public abstract class WSServer<T>// extends ConnServer
 {
 
 	// protected String getSessionHead(Session session,String name)
@@ -46,12 +48,14 @@ public abstract class WSServer// extends ConnServer
 	// return vvs.get(0);
 	// }
 
-	public static class SessionItem
+	public static class SessionItem<T>
 	{
 		private final Session session;
+		private final HttpSession httpSession;
 		private final UAPrj prj;
 		private final UANodeOCTagsCxt nodecxt;
 		private final UAHmi hmi;
+		private final T login_si ;
 
 		// private long lastDT = -1;
 		private transient HashMap<UATag, Long> tag2lastdt = new HashMap<>();
@@ -62,17 +66,24 @@ public abstract class WSServer// extends ConnServer
 		//first create
 		private boolean bFirstTick = true ;
 
-		public SessionItem(Session s, UAPrj rep, UANodeOCTagsCxt nodecxt, UAHmi hmi)
+		public SessionItem(Session s,HttpSession hs, UAPrj rep, UANodeOCTagsCxt nodecxt, UAHmi hmi,T login_si)
 		{
 			this.session = s;
+			this.httpSession = hs;
 			this.prj = rep;
 			this.nodecxt = nodecxt;
 			this.hmi = hmi;
+			this.login_si = login_si;
 		}
 
 		public Session getSession()
 		{
 			return session;
+		}
+		
+		public HttpSession getHttpSession()
+		{
+			return this.httpSession ;
 		}
 
 		public UAPrj getPrj()
@@ -83,6 +94,11 @@ public abstract class WSServer// extends ConnServer
 		public UAHmi getHmi()
 		{
 			return hmi;
+		}
+		
+		public T getLoginSession()
+		{
+			return this.login_si ;
 		}
 
 		// /**
@@ -116,7 +132,7 @@ public abstract class WSServer// extends ConnServer
 			}
 		}
 
-		public void sendTxt(String txt)
+		public synchronized void sendTxt(String txt)
 		{
 			try
 			{
@@ -139,6 +155,7 @@ public abstract class WSServer// extends ConnServer
 
 			UANodeOCTagsCxt ntags = hmi.getBelongTo();
 			JSONObject out_jo = new JSONObject() ;
+			out_jo.put("__tp","tick") ;
 			out_jo.put("server", new JSONObject().put("dt",System.currentTimeMillis())) ;
 			
 			if(bFirstTick)
@@ -301,6 +318,11 @@ public abstract class WSServer// extends ConnServer
 
 		// System.out.println(" remove session ,num="+sess2item.size()) ;
 	}
+	
+	public static <T> SessionItem<T> getSessionItem(Session ss)
+	{
+		return sess2item.get(ss) ;
+	}
 
 	public static int getSessionNum()
 	{
@@ -331,6 +353,7 @@ public abstract class WSServer// extends ConnServer
 		}
 		return rets;
 	}
+	
 
 	// private static Timer timer = null;
 

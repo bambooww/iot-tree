@@ -4,7 +4,7 @@
 	org.iottree.core.util.*,
 	org.iottree.core.res.*,
 	org.iottree.web.oper.*,
-	org.iottree.core.comp.*,
+	org.iottree.core.comp.*,org.iottree.core.util.web.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,
@@ -30,6 +30,13 @@
 
 	switch(tp)
 	{
+	case "hmi_tick":
+		LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
+		String usern = "" ;
+		if(si!=null)
+			usern = si.usern ;
+		out.print("ok="+usern) ;
+		return ;
 	case "subp":
 		if(!Convert.checkReqEmpty(request, out, "hmi_path","sub_path"))
 			return;
@@ -168,9 +175,11 @@
 			out.print("no project hmi found or input") ;
 			return ;
 		}
-		if(OperAuth.checkSessionAuthOk(session,prj))
+		
+		UAHmi.OperUser ou = UAHmi.OPER_checkSessionAuthOk(session,prj,hmi);
+		if(ou!=null)
 		{
-			out.print("ok") ;
+			ou.toJO().write(out) ;
 			return ;
 		}
 		out.print("failed") ;
@@ -186,10 +195,11 @@
 		String user = request.getParameter("user") ;
 		String psw = request.getParameter("psw") ;
 		
-		if(!OperAuth.checkSessionAuth(session, prj, user, psw))
+		ou = UAHmi.OPER_loginSessionAuth(session, prj,hmi, user, psw);
+		if(ou==null)
 			out.print("check operation permission failed") ;
 		else
-			out.print("succ");
+			ou.toJO().write(out) ;
 		break ;
 	default:
 		if(!Convert.checkReqEmpty(request, out, "path"))

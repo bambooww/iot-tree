@@ -17,7 +17,7 @@ String lan = Lan.getUsingLang() ;
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
-    <title>IOT-Tree</title>
+    <title>IOT-Tree Document</title>
     <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
     <script src="/_js/jquery-1.12.0.min.js"></script>
 <script src="/_js/bootstrap/js/bootstrap.min.js"></script>

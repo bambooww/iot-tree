@@ -2,12 +2,15 @@
 				java.io.*,
 				java.net.*,
 				java.util.*,
-				org.iottree.core.*,
+				org.iottree.core.*,org.iottree.core.util.web.*,
 				org.iottree.core.util.*,
-				java.net.*"%><%!
-				public static void renderTagGroup(Writer out,UATagG tg,boolean b_sel,boolean cont_only) throws Exception
+				java.net.*"%><%@ taglib uri="wb_tag" prefix="w"%><%!
+				
+				public static void renderTagGroup(Writer out,UATagG tg,boolean b_sel,boolean cont_only,String res_roles_tt) throws Exception
 				{
-					out.write("{\"text\": \"<img src='/admin/inc/sm_icon_tagg.png' style='width:18px;height:18px;'/>"+tg.getName()+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(tg.getTitle())+"\"}") ;
+					String auth = tg.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
+					
+					out.write("{\"text\": \"<img src='/admin/inc/sm_icon_tagg.png' style='width:18px;height:18px;'/>"+tg.getName()+" "+auth+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(tg.getTitle())+"\"}") ;
 					out.write(",\"id\": \""+tg.getId()+"\",\"type\":\"tagg\" ,\"path\":\""+tg.getNodePath()+"\"") ;
 					out.write(",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": false}") ;
 					out.write(",\"in_dev\":"+tg.isInDev()) ;
@@ -18,26 +21,23 @@
 					boolean bfirst = true ;
 					if(tgs!=null)
 					{
-						
 						for(UATagG subtg:tgs)
 						{
 							if(bfirst)
 								bfirst = false;
 							else
 								out.write(',') ;
-							renderTagGroup(out,subtg,b_sel,cont_only);
+							renderTagGroup(out,subtg,b_sel,cont_only,res_roles_tt);
 						}
 					}
 					if(!cont_only)
-						renderHmis(bfirst,out,tg);
+						renderHmis(bfirst,out,tg,res_roles_tt);
 					out.write("]}") ;
 				}
 	
-				public static void renderTagGroupInCxt(boolean bfirst,Writer out,UANodeOCTagsGCxt dev,boolean b_sel,boolean cont_only) throws Exception
+				public static void renderTagGroupInCxt(boolean bfirst,Writer out,UANodeOCTagsGCxt dev,boolean b_sel,boolean cont_only,String res_roles_tt) throws Exception
 				{
-					//DevDef dd = dev.getDevDef();
 					List<UATagG> tgs = dev.getSubTagGs();
-					//boolean bfirst = true ;
 					if(tgs!=null)
 					{
 						for(UATagG tg:tgs)
@@ -46,15 +46,15 @@
 								bfirst = false;
 							else
 								out.write(',') ;
-							renderTagGroup(out,tg,b_sel,cont_only);
+							renderTagGroup(out,tg,b_sel,cont_only,res_roles_tt);
 						}
 					}
 					
 					if(!cont_only)
-						renderHmis(bfirst,out,dev) ;
+						renderHmis(bfirst,out,dev,res_roles_tt) ;
 				}
 				
-				public static void renderHmis(boolean bfirst,Writer out,UANodeOCTagsCxt tagcxt) throws Exception
+				public static void renderHmis(boolean bfirst,Writer out,UANodeOCTagsCxt tagcxt,String res_roles_tt) throws Exception
 				{
 					List<UAHmi> hmis = tagcxt.getHmis() ;
 					if(hmis==null||hmis.size()<=0)
@@ -67,14 +67,15 @@
 						else out.write(",") ;
 						
 						boolean ref = hmi.isRefedNode();
-						
-						out.write("{\"text\": \"<img src='/admin/inc/sm_icon_hmi.png' style='width:18px;height:18px;'/>"+hmi.getName()+" - "+Convert.plainToJsStr(hmi.getTitle())+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
+						String auth = hmi.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
+						out.write("{\"text\": \"<img src='/admin/inc/sm_icon_hmi.png' style='width:18px;height:18px;'/>"+hmi.getName()+" - "+Convert.plainToJsStr(hmi.getTitle())+" "+auth+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
 						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": true}}") ;
 					}
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
+String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 	String id = request.getParameter("id");
 	boolean b_sel = "true".equals(request.getParameter("sel")) ;
 	boolean cont_only = "true".equals(request.getParameter("cont_only")) ;
@@ -83,10 +84,12 @@
 	{
 		out.print("no repository found!");
 		return;
-	}%>[
+	}
+	String auth = rep.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
+	%>[
 	
 	{
-	"text":"<%=rep.getName() %>"
+	"text":"<%=rep.getName() %> <%=auth%>"
 	,"id":"<%=rep.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(rep.getTitle())%>"}
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
@@ -112,7 +115,6 @@
 			ignore_connpt = drv.isIgnoreConnPt() ;
 		}
 		boolean hasdrv = ch.hasDriver();
-		
 		
 		if(hasdrv)
 		{
@@ -140,9 +142,11 @@
 				sub_devids+= ",";
 			sub_devids+=dev.getId() ;
 		}
+		
+		auth = ch.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png' ignore_connpt='<%=ignore_connpt%>'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png' ignore_connpt='<%=ignore_connpt%>'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%> <%=auth%>"
 		  ,"id":"<%=ch.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(ch.getTitle())%>"}
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"
@@ -181,9 +185,10 @@
 			if(Convert.isNotNullEmpty(deft))
 				deft = "["+deft+"]" ;
 			boolean ref_locked = dev.isRefLocked();
+			auth = dev.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
 %>
 			{
-				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title=''><%=dev.getTitle()%>[<%=dev.getName() %>]<%=model_t%></span><%=deft%> <%=devok%>"
+				"text":"<img id='dev_<%=ch.getId()%>-<%=dev.getId()%>' src='/admin/inc/sm_icon_dev.png' style='width:18px;height:18px' can_connpt_bind='<%=b_connpt_to_dev?true:false%>' /><span title=''><%=dev.getTitle()%>[<%=dev.getName() %>]<%=model_t%></span><%=deft%> <%=devok%> <%=auth%>"
 			  ,"id":"<%=dev.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(dev.getTitle())%>"}
 			  ,"type":"dev","ref_locked":<%=ref_locked%>
 			   ,"path":"<%=dev.getNodePath()%>"
@@ -191,13 +196,13 @@
 			   ,"icon":"icon_dev_hidden"
 			  ,"children": [
 <%
-renderTagGroupInCxt(true,out,dev,b_sel,cont_only) ;
+renderTagGroupInCxt(true,out,dev,b_sel,cont_only,res_roles_tt) ;
 %>
 			   ]
 			}
 	<%
 		}
-		renderTagGroupInCxt(bf2,out, ch,b_sel,cont_only);
+		renderTagGroupInCxt(bf2,out, ch,b_sel,cont_only,res_roles_tt);
 		//renderHmis(bf2,out,ch) ;
 %>
 		  ]
@@ -205,7 +210,7 @@ renderTagGroupInCxt(true,out,dev,b_sel,cont_only) ;
 <%
 	}
 	if(!cont_only)
-		renderHmis(bf1,out,rep) ;
+		renderHmis(bf1,out,rep,res_roles_tt) ;
 %>
 
 	]}

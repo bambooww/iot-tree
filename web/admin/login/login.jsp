@@ -181,26 +181,18 @@ layui.use('form', function(){
 
 function do_login(user,psw)
 {
-	$.ajax({
-        type: 'post',
-        url:'./login_ajax.jsp',
-        data: {op:"login",user:user,psw:psw},
-        async: true,  
-        success: function (result) {  
-        	if("succ"==result)
-        	{
-        		document.location.href="/admin/" ;
-        	}
-        	else
-        	{
-        		dlg.msg("<wbt:lang>login_failed</wbt:lang>") ;
-        	}
-        },
-        error:function(req,err,e)
-        {
-        	dlg.msg(e);
-        }
-    });
+	send_ajax("./login_ajax.jsp",{op:"login",user:user,psw:psw},(bsucc,ret)=>{
+		if(!bsucc || ret.indexOf("{")!=0)
+		{
+			dlg.msg("<wbt:lang>login_failed</wbt:lang>") ;return;
+		}
+		let retob = null;
+		eval("retob="+ret);
+		if(retob.admin)
+			document.location.href="/admin/" ;
+		else
+			document.location.href="/" ;
+	})
 }
 
 $("#psw").focus();

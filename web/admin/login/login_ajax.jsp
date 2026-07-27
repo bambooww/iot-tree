@@ -16,9 +16,10 @@
 	switch(op)
 	{
 	case "login":
-		if(LoginUtil.doLogin(request,response, user, psw,lan))
+		LoginUtil.SessionItem si = LoginUtil.doLogin(request,response, user, psw,lan) ;
+		if(si!=null)
 		{
-			out.print("succ") ;
+			si.toJO().write(out) ;
 		}
 		else
 		{
@@ -53,7 +54,7 @@
 	case "set_session_lan":
 		if(!Convert.checkReqEmpty(request,  out, "lan"))
 			return ;
-		LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
+		si = LoginUtil.getUserLoginSession(request) ;
 		if(si==null)
 		{
 			out.print("no login session") ;

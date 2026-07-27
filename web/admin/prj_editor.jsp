@@ -10,6 +10,7 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return ;
+boolean b_portal = "true".equals(request.getParameter("p")) ;
 String using_lan = Lan.getUsingLang() ;
 	//String op = request.getParameter("op");
 	String prjid = request.getParameter("id");
@@ -62,7 +63,13 @@ String using_lan = Lan.getUsingLang() ;
 <script type="text/javascript">
 function open_doc()
 {
-	window.open("/doc/");
+	dlg.open("./doc.jsp",{title:"Document"},['<wbt:g>close</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
 }
 </script>
 <body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
@@ -239,15 +246,13 @@ if(hide_top)
 			<div class="layui-tab layui-tab-brief"  lay-filter="tab_hmi_editor" lay-allowclose="true" style="width:100%;height:100%">
 			<span id="right_tabs_btn" style="position:absolute;right:10px;top:10px;z-index:60001"><i class="fa fa-window-restore fa-lg" aria-hidden="true"></i></span>
 			  <ul class="layui-tab-title">
-			    <li class="layui-this"><i class="fa fa-tags" ></i>[<wbt:g>tags</wbt:g>]</li>
-			    <li ><i class="fa fa-list-alt" ></i><wbt:g>props</wbt:g></li>
-			    
+			    <li class="layui-this"><i class="fa fa-tags" ></i> [<wbt:g>tags</wbt:g>]</li>
+			    <li ><i class="fa fa-list-alt" ></i> <wbt:g>props</wbt:g></li>
 			  </ul>
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			  	<div class="layui-tab-item layui-show" style="position:relative;top:0px;bottom:0px;width:99%;height:99%">
 			      <iframe id="if_tags" src="./ua_cxt/cxt_tags.jsp?tabid=main&path=<%=path %>" style="width:100%;height:100%;border:0px;overflow: hidden;"></iframe>
 				</div>
-				
 				<div class="layui-tab-item"  style="position:relative;top:0px;bottom:0px;width:100%;height:100%">
 			      <iframe id="if_prop" src="./ua/ui_prop.jsp?dlg=false&&tabid=drv&path=<%=path %>" style="width:100%;height:100%;border:0px"></iframe>
 				</div>
@@ -257,16 +262,54 @@ if(hide_top)
             <label class="hj-transverse-split-label"></label>
         </div>
         
-        <div class="left_btm">
-    	
+        <div class="left_btm" style="height:250px;">
     	<div class="left_btm_tab" style="background-color: #eee;height:100%;">
-    	<ul></ul>
-          <div></div>
-          </div>
-          <div id="show_hid" class="show_hid"><i class="fa fa-angle-double-down" aria-hidden="true" /></i></div>
+    	<div class="layui-tab layui-tab-brief"  lay-filter="tab_left_btm_ext" style="width:100%;height:100%">
+			  <ul class="layui-tab-title">
+			    <li class="layui-this"><wbt:g>msg_net</wbt:g></li>
+<%
+if(b_portal)
+{
+%>
+			    <li ><wbt:g>portal</wbt:g></li>
+<%
+}
+%>
+			    <li ><wbt:g>extends</wbt:g></li>
+			  </ul>
+			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
+			  	<div class="layui-tab-item layui-show left_btm_bd" style="position:relative;top:0px;bottom:0px;width:99%;height:210px">
+			      <iframe src="./mn/mn_mgr.jsp?container_id=<%=prjid %>" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>
+				</div>
+<%
+if(b_portal)
+{
+%>
+				<div class="layui-tab-item left_btm_bd"  style="position:relative;top:0px;bottom:0px;width:100%;height:210px">
+			      <iframe src="./portal/portal_mgr.jsp?prjid=<%=prjid %>" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>
+				</div>
+<%
+}
+%>
+				<div class="layui-tab-item left_btm_bd"  style="position:relative;top:0px;bottom:0px;width:100%;height:200px">
+			      <div   style="height:100%;width:100%;font-size:30px;color:#57a9d0"><br>
+					  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
+					  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
+					  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
+					  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
+					  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
+					  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+					  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
+					  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
+					  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+					  </div>
+				</div>
+			  </div>
+			</div>
+          <div id="show_hid" class="show_hid" style="top:8px;"><i class="fa fa-angle-double-down" aria-hidden="true" /></i></div>
+    </div>
     </div>
     
-    </div>
     <div id="chat_ai" style="z-index:6000;position: absolute;right:0px;width:700px;height:0px;top:45px;bottom: 0px;border:0px;display:none;">
     <iframe id="chat_ai_if" style="width:100%;height:100px;border:0px;"></iframe>
      <button id="chat_ai_op" style="position: absolute;right:20px;top:20px;width:30px;height:30px;display:none;" onclick="ai_dlg()"><i class="fa fa-times"></i></button>
@@ -391,6 +434,7 @@ $("#right_tabs_btn").click(function(){
 	{//position:
 		$("#right_tabs").css("position","inherit") ;
 		resize_iframe_h();
+		resize_left_btm();
 	}
 	else
 	{
@@ -565,8 +609,6 @@ function on_conn_ui_showed()
 
 var cxt_menu = {
 	"prj":[
-		
-		
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
 		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
@@ -1680,6 +1722,14 @@ function add_tab(id,title,u)
 	layuiEle.tabChange('tab_hmi_editor', id);
 }
 
+function add_tab_leftbtm(id,title,content)
+{
+	layuiEle.tabAdd('tab_left_btm_ext', {
+		    id:id,title: title
+		    ,content:content
+		});	
+}
+
 function set_comp_editor_tab(catid,itemid,title)
 {
 	var oldif = document.getElementById("if_"+itemid) ;
@@ -1793,11 +1843,17 @@ function leftcat_close()
 	left_cur=null ;
 	slide_toggle($('#left_panel'));
 }
+function resize_left_btm()
+{
+	$(".left_btm_bd").height("210px") ;
+	$(".left_btm_bd iframe").height("100%") ;
+}
 
 var resize_cc = 0 ;
 $(window).resize(function(){
 	resize_iframe_h();
 	resize_tree();
+	resize_left_btm();
 	resize_cc ++ ;
 	if(resize_cc<=1)
 		draw_fit();
@@ -1891,46 +1947,6 @@ function init_left_btm()
 			lb.css("height","30px") ;
 		}
 	});
-	
-
-    $(".left_btm_tab").tab();
-    
-    let tmps = `<iframe src="./mn/mn_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
-    let tmp_ano_det = `<iframe src="./ano_det/ad_mgr.jsp?container_id=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
-    let tmps_portal = `<iframe src="./portal/portal_mgr.jsp?prjid=\${prjid}" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>`;
-	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>msg_net</wbt:g>', 'id': 'lb_tab_msg_net', 'content': tmps})
-	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>portal</wbt:g>', 'id': 'lb_tab_portal', 'content': tmps_portal})
-	//	.tab('addTab', {'title': '<wbt:g>ano_det</wbt:g>', 'id': 'lb_tab_ano_det', 'content': tmp_ano_det});
-	tmps=`<div   style="height:100%;width:100%;font-size:30px;color:#57a9d0"><br>
-		  <span id='data_dict' onclick='clk_dd()' title="<wbt:g>dict,mgr</wbt:g>"><i class='fa fa-book fa-lg'></i></span>
-		  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
-		  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
-		  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
-		  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
-		  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-		  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
-		  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
-		  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
-		  `;
-	if(b_ent)
-	{
-		tmps += `<span id='portal' onclick='clk_portal()' title="Portal">
-			  <span class="fa-stack">
-			  <i class="fa-regular fa-file  fa-lg fa-stack-1x"></i>
-			  <i class="fa-solid fa-shapes fa-stack-1x fa-inverse" style="color:green;"></i>
-			  </span>
-		  </span>
-		  <span id='ent_conf' onclick='clk_ent_conf()' title="Ent Config">
-		  <span class="fa-stack">
-		  <i class="fa-regular fa-file  fa-lg fa-stack-1x"></i>
-		  <i class="fa-solid fa-gear fa-stack-1x fa-inverse" style="color:green;"></i>
-		  </span>
-	  </span>`;
-	}
-	tmps += "</div>";
-	$('.left_btm_tab').tab('addTab', {'title': '<wbt:g>extends</wbt:g>', 'id': 'lb_tab_extend', 'content': tmps});
-	
-	$(".left_btm_tab").tab('selectTab', 'lb_tab_msg_net');
 }
 
 $(document).ready(function()
@@ -2199,7 +2215,6 @@ layui.use('element', function(){
 		});
 	
 	layuiEle.render();
-	
 });
 
 setInterval(prj_rt,3000) ;
@@ -2245,6 +2260,7 @@ function ai_dlg()
 		return 1 ;
 	}
 }
+
 </script>
 <script src="./js/split.js"></script>
 </body>

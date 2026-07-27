@@ -4,7 +4,7 @@
 	java.io.*,
 	java.util.*,
 	java.net.*,
-	java.util.*,
+	java.util.*,org.iottree.portal.*,
 	org.iottree.core.util.web.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="lan"%><%
@@ -26,6 +26,17 @@ if(prjs==null||prjs.size()<=0)
 UAPrj uprj = uamgr.getPrjDefault() ;
 if(uprj!=null)
 {
+	PortalManager pmgr = uprj.getPortalManager() ;
+	if(pmgr!=null)
+	{
+		NavFrame nf = pmgr.getNavFrameDefault();
+		if(nf!=null)
+		{
+			response.sendRedirect("/"+uprj.getName()+"/");
+			return ;
+		}
+	}
+	
 	UAHmi hmi = uprj.getHmiMain() ;
 	if(hmi!=null)
 	{

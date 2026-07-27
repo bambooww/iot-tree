@@ -84,9 +84,9 @@ public class PortalManager
 //
 //	}
 
-	UAPrj uaPrj = null ;
+	private UAPrj uaPrj = null ;
 	
-	File portalDir = null ;
+	private File portalDir = null ;
 	
 	private LinkedHashMap<String, PageCat> pageCats = null;
 
@@ -101,6 +101,11 @@ public class PortalManager
 		portalDir = new File(dirf+ "/portal/");
 		if(!portalDir.exists())
 			portalDir.mkdirs() ;
+	}
+	
+	public UAPrj getOwner()
+	{
+		return this.uaPrj ;
 	}
 
 //	private PortalManager(String product_n)
@@ -435,6 +440,19 @@ public class PortalManager
 		return null ;
 	}
 	
+	public NavFrame getNavFrameDefault()
+	{
+		LinkedHashMap<String,NavFrame> id2nf = this.getNavFrameAll() ;
+		if(id2nf==null||id2nf.size()<=0)
+			return null ;
+		if(id2nf.size()==1)
+			for(NavFrame nf: id2nf.values())
+				return nf ;
+		if(Convert.isNullOrEmpty(this.navFrameIdDefault))
+			return null ;
+		return id2nf.get(this.navFrameIdDefault) ;
+	}
+	
 	private LinkedHashMap<String,NavFrame> loadNavFrames()
 	{
 		LinkedHashMap<String,NavFrame> nfs = new LinkedHashMap<>() ;
@@ -491,6 +509,12 @@ public class PortalManager
 	
 	public NavFrame setNavFrameBasic(String id,String title,String name,boolean b_def,StringBuilder failedr) throws IOException
 	{
+		if(Convert.isNotNullEmpty(name))
+		{
+			if(!Convert.checkVarName(name, true, failedr))
+				return null;
+		}
+		
 		NavFrame nf = null;
 		if(Convert.isNullOrEmpty(id))
 		{

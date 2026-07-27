@@ -10,6 +10,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.SQLiteSaver;
+import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.util.web.PrjNavTree;
 import org.iottree.core.util.web.PrjRestful;
 import org.iottree.core.util.xmldata.XmlData;
@@ -102,6 +103,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	@data_val(param_name="client_hmis")
 	String clientHmis = null ;
+	
+	@data_val(param_name="client_forbid_w")
+	boolean clientForbidW = false;
 	/**
 	 * last script date time
 	 */
@@ -485,13 +489,15 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		r.addPropItem(new PropItem("script_int", lan, PValTP.vt_int,
 				false, null, null, "10000")); //"JavaScript Interval", "JavaScript run interval(ms)"
 		
-		r.addPropItem(new PropItem("operators",lan, PValTP.vt_str, false, null, null,
-				"").withTxtMultiLine(true)); // "Operators","Operators may has name and password,it's may need to input when do some operation command."
+		// replace by user role
+		//r.addPropItem(new PropItem("operators",lan, PValTP.vt_str, false, null, null,
+		//		"").withTxtMultiLine(true)); // "Operators","Operators may has name and password,it's may need to input when do some operation command."
 		
 		r.addPropItem(new PropItem("perm_dur", lan, PValTP.vt_int, false, null, null,
 				"300")); // "Permission duration In seconds","Duration of authority after operator authentication."
 		
 		r.addPropItem(new PropItem("client_hmis", lan, PValTP.vt_str, false, null, null,"").withPop(PropItem.POP_N_CLIENT_HMIS)); 
+		r.addPropItem(new PropItem("client_forbid_w", lan, PValTP.vt_bool, false, null, null,false)); 
 		
 		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT, lan, PValTP.vt_bool, false, null, null,false)); 
 		r.addPropItem(new PropItem(PI_SAVE_SNAPSHOT_INTV, lan, PValTP.vt_int, false, null, null,5000));
@@ -743,6 +749,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				return this.permDur ;
 			case "client_hmis":
 				return this.clientHmis ;
+			case "client_forbid_w":
+				return clientForbidW;
 			}
 		}
 		return super.getPropValue(groupn, itemn);
@@ -769,6 +777,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			case "client_hmis":
 				this.clientHmis = strv;
 				return true ;
+			case "client_forbid_w":
+				clientForbidW = "true".equals(strv);
+				return true;
 			}
 
 		}
@@ -1938,6 +1949,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return this.permDur;
 	}
 	
+	public boolean isClientForbidW()
+	{
+		return clientForbidW;
+	}
+	
 	public static class HmiNavItem
 	{
 		public String path ;
@@ -2282,6 +2298,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	void RT_onTagValNotChgUpdateNetMon(UATag tag)
 	{//RT_TAG_updt_valnotchg
 		MNManager.getInstance(this).RT_TAG_updt_valnotchg(tag);
+	}
+	
+	void RT_onHmiEvent(UAHmi.ClientEvent ce)
+	{
+		MNManager.getInstance(this).RT_HMI_onHmiEvent(ce);
 	}
 
 	public void RT_onStationRecved(PStation pstation,String key,byte[] zipdata,JSONObject rt_jo,boolean b_his)

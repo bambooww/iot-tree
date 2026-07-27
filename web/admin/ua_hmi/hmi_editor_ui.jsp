@@ -609,11 +609,12 @@ function editor_plugcb(jq_ele,tp,di,pn_def,name,val)
 						var ret = dlgw.editplug_get() ;
 						 var cjs = ret.clientjs ;
 						 var sjs = ret.serverjs;
+						 let runname = ret.runname ||"";
 						 if(cjs==null)
 							 cjs = "" ;
 						 if(sjs==null)
 							 sjs = "" ;
-						 di.setEventBinder(name,cjs,sjs) ;
+						 di.setEventBinder(name,cjs,sjs,runname) ;
 						 editor.refreshEventEditor();
 						 dlg.close();
 					},

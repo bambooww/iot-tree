@@ -61,7 +61,8 @@
 		"org.iottree.core.msgnet.nodes.NS_TagAlertTrigger",
 		"org.iottree.core.msgnet.nodes.NM_TagEvtReader",
 		"org.iottree.core.msgnet.nodes.NS_TagEvtTrigger",
-		"org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB"
+		"org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB",
+		"org.iottree.core.msgnet.nodes.NS_HmiEvtTrigger"
 	],"modules":[
 		{"cn":"org.iottree.core.msgnet.modules.ConnInMsg_M","nodes":[
 			"org.iottree.core.msgnet.modules.ConnMsgIn_NS",

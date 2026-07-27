@@ -57,6 +57,14 @@
 		else
 			out.print("failed:"+failedr.toString()) ;
 		return ;
+	case "set_nf_detail":
+		if(!Convert.checkReqEmpty(request, out, "nf_id","jstr"))
+			return ;
+		if(pmgr.setNavFrameDetail(nf_id, inputjo, failedr)!=null)
+			out.print("succ");
+		else
+			out.print(failedr.toString());
+		return ;
 	case "edit_page":
 		
 		return ;

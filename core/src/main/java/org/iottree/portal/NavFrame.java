@@ -3,6 +3,8 @@ package org.iottree.portal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iottree.core.UAManager;
+import org.iottree.core.UAPrj;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.web.AppWebConfig;
@@ -29,10 +31,10 @@ public class NavFrame
 	String logo = null ;
 	
 	/**
-	 * navigator frame style name
+	 * navigator frame layout name
 	 * null==default
 	 */
-	String style ;
+	String layout ;
 	
 	//public Element eleRoot=null;
 	//public NavNode navRoot = null;
@@ -44,9 +46,12 @@ public class NavFrame
 	
 	PortalManager pmgr ;
 	
+	UAPrj prj ;
+	
 	public NavFrame(PortalManager pmgr)
 	{
 		this.pmgr = pmgr;
+		prj = pmgr.getOwner() ;
 	}
 	
 	//create new
@@ -80,6 +85,11 @@ public class NavFrame
 		return this.id.equals(this.pmgr.navFrameIdDefault) ;
 	}
 	
+	public String getHomeUrl()
+	{
+		return this.homeUrl ;
+	}
+	
 	void setBasic(String title,String name)
 	{
 		this.title = title ;
@@ -88,12 +98,33 @@ public class NavFrame
 	
 	public String getSysTitle()
 	{
+		if(this.sysTitle==null)
+			return "" ;
 		return this.sysTitle ;
 	}
 	
 	public String getLogo()
 	{
 		return this.logo ;
+	}
+	
+	public String getLayout()
+	{
+		if(Convert.isNullOrEmpty(this.layout))
+			return "default";
+		return this.layout ;
+	}
+	
+	public String getUrlPath(boolean ignore_default)
+	{
+		if(!ignore_default && this.isDefault())
+			return "/"+this.prj.getName()+"/";
+		return "/"+this.prj.getName()+"/_portal_"+this.getName() ;
+	}
+	
+	public String getUrlPath()
+	{
+		return getUrlPath(false) ;
 	}
 	
 	public List<NavNode> getNavNodes()
@@ -118,7 +149,7 @@ public class NavFrame
 	{
 		this.sysTitle = jo.optString("sys_t") ;
 		this.logo = jo.optString("logo") ;
-		this.style = jo.optString("style") ;
+		this.layout = jo.optString("layout") ;
 		this.homeUrl = jo.optString("home_url") ;
 		
 		JSONArray jarr = jo.optJSONArray("nav_node_uids") ;
@@ -137,7 +168,7 @@ public class NavFrame
 	{
 		JSONObject ret = new JSONObject() ;
 		ret.put("id",this.id).putOpt("n", this.name).put("t", this.title).putOpt("sys_t", this.sysTitle)
-			.putOpt("logo",this.logo).putOpt("style", this.style).putOpt("home_url", this.homeUrl) ;
+			.putOpt("logo",this.logo).putOpt("layout", this.layout).putOpt("home_url", this.homeUrl) ;
 		ret.putOpt("nav_node_uids", this.navNodeUIDs) ;
 		return ret;
 	}
@@ -217,5 +248,16 @@ public class NavFrame
 		NavApp na = new NavApp(awc) ;
 		constructNavNodes(na, nav_ele,1);
 		return na ;
+	}
+	
+	public static NavFrame getNavFrame(String prjid,String nf_id)
+	{
+		UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+		if(prj==null)
+			return null ;
+		PortalManager pm = PortalManager.getInstance(prj) ;
+		if(pm==null)
+			return null ;
+		return pm.getNavFrameById(nf_id) ;
 	}
 }

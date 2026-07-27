@@ -5,7 +5,10 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.EndpointConfig;
 
 import org.iottree.core.Config;
 import org.iottree.core.node.PlatNode;
@@ -22,9 +26,12 @@ import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugAuthUser;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
 import org.iottree.core.util.SecureUtil;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.ws.WebSocketConfig;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
 
@@ -40,13 +47,18 @@ public class LoginUtil
 	
 	public enum UserState
 	{
-		Normal(0), Invalid(1), Delete(2),ResetPsw(3),New(4);
+		Normal(0,"正常","normal"), Invalid(1,"无效","invalid"), Delete(2,"删除","deleted")
+			,ResetPsw(3,"重置密码","reset password"),New(4,"新建","new");
 
 		private final int stVal;
+		private final String title_cn;
+		private final String title_en;
 
-		UserState(int v)
+		UserState(int v,String t_cn,String t_en)
 		{
 			stVal = v;
+			title_cn = t_cn ;
+			title_en = t_en ;
 		}
 
 		public int getIntValue()
@@ -56,19 +68,29 @@ public class LoginUtil
 		
 		public String getTitle()
 		{
+			if("cn".equals(Lan.getUsingLang()))
+				return title_cn ;
+			return title_en ;
+		}
+		
+		public String getTitleColor()
+		{
+			String t = this.getTitle() ;
+			String c ;
 			switch(stVal)
 			{
 			case 1:
-				return "<font color=red>无效</font>";
+				c = "red";break;
 			case 2:
-				return "<font color=red>删除</font>";
+				c = "red";break;
 			case 3:
-				return "<font color=blue>重置密码</font>";
+				c = "blue";break;
 			case 4:
-				return "<font color=blue>新建</font>";
+				c = "blue";break;
 			default:
-				return "<font color=green>正常</font>";
+				c = "green";break;
 			}
+			return "<font color='"+c+"'>"+t+"</font>";
 		}
 		
 		public static UserState getByIntValue(int v)
@@ -134,6 +156,13 @@ public class LoginUtil
 			return this.roles ;
 		}
 		
+		public boolean hasRole(String rolen)
+		{
+			if(this.roles==null)
+				return false;
+			return this.roles.contains(rolen) ;
+		}
+		
 		public JSONObject toListJO()
 		{
 			JSONObject jo = new JSONObject() ;
@@ -141,6 +170,22 @@ public class LoginUtil
 			jo.putOpt("disn", this.disname) ;
 			jo.put("state",this.state.stVal) ;
 			jo.put("state_t",this.state.getTitle()) ;
+			jo.put("state_t_c",this.state.getTitleColor()) ;
+			if(this.roles!=null && this.roles.size()>0)
+			{
+				ArrayList<String> rrs = new ArrayList<>() ;
+				ArrayList<String> roles_t = new ArrayList<>() ;
+				for(String r:this.roles)
+				{
+					Role rr = getRole(r) ;
+					if(rr==null)
+						continue ;
+					rrs.add(rr.getRoleName()) ;
+					roles_t.add(rr.getRoleTitle()) ;
+				}
+				jo.put("roles", Convert.combineWith(rrs, ',')) ;
+				jo.put("roles_t", Convert.combineWith(roles_t, ',')) ;
+			}
 			return jo ;
 		}
 		
@@ -167,6 +212,13 @@ public class LoginUtil
 			ret.salt = jo.optString("salt") ;
 			ret.encPsw = jo.optString("enc_psw") ;
 			ret.roles = Convert.splitStrWith(jo.optString("roles"), ",|") ;
+			if("admin".equals(ret.username))
+			{
+				if(ret.roles==null)
+					ret.roles = new ArrayList<>();
+				if(!ret.roles.contains("admin"))
+					ret.roles.add("admin") ;
+			}
 			return ret;
 		}
 	}
@@ -176,6 +228,14 @@ public class LoginUtil
 		String role_n ;
 		
 		String role_t;
+		
+		Role(){}
+		
+		Role(String n,String t)
+		{
+			this.role_n = n ;
+			this.role_t = t ;
+		}
 		
 		public String getRoleName()
 		{
@@ -213,21 +273,59 @@ public class LoginUtil
 		public String disn = null ;
 		public String lan = null ;
 		
+		public HashSet<String> roles = null ;
+		
 		public long loginDT  =System.currentTimeMillis();
 		
 		transient long lastAcc = System.currentTimeMillis() ;
 		
-		public SessionItem(String sess_id,String usern,String disn,String lang)
+		public SessionItem(String sess_id,String usern,String disn,List<String> roles,String lang)
 		{
 			this.sess_id = sess_id;
 			this.usern = usern ;
 			this.disn = disn ;
 			this.lan = lang ;
+			if(roles!=null)
+			{
+				this.roles = new HashSet<>();
+				this.roles.addAll(roles) ;
+			}
 		}
 		
 		public boolean isAdmin()
 		{
-			return "admin".equals(usern) ;
+			if("admin".equals(usern))
+				return true ;
+//			UserAuthItem uai = LoginUtil.getUserItem(usern) ;
+//			if(uai==null)
+//				return false;
+//			return uai.hasRole("admin") ;
+			if(this.roles==null)
+				return false;
+			return this.roles.contains("admin") ;
+		}
+		
+		public boolean hasRole(String rolen)
+		{
+			if("admin".equals(usern))
+				return true ;
+			if(this.roles==null)
+				return false;
+			if(this.roles.contains("admin"))
+				return true;
+			return this.roles.contains(rolen) ;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "usern:"+this.usern ;
+		}
+		
+		public JSONObject toJO()
+		{
+			return new JSONObject().put("n", this.usern).putOpt("disn", this.disn).putOpt("lan", this.lan)
+					.putOpt("login_dt", this.loginDT).put("admin", this.isAdmin()).putOpt("roles", this.roles) ;
 		}
 	}
 	
@@ -301,6 +399,111 @@ public class LoginUtil
 	
 	private static LinkedHashMap<String,UserAuthItem> user2items = null ;
 	
+	private static LinkedHashMap<String,Role> role2items = null ;
+	
+	public static LinkedHashMap<String,Role> listRoleAll()
+	{
+		if(role2items!=null)
+			return role2items;
+		
+		synchronized(LoginUtil.class)
+		{
+			if(role2items!=null)
+				return role2items;
+			
+			try
+			{
+				return reloadRoles();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return null ;
+			}
+		}
+	}
+	
+	public static Role getRole(String name)
+	{
+		return listRoleAll().get(name) ;
+	}
+	
+	private static LinkedHashMap<String,Role> reloadRoles() throws IOException
+	{
+		File rf = new File(Config.getDataDirBase()+"/auth/_roles.json");
+		String txt =  Convert.readFileTxt(rf) ;
+		JSONArray jarr = null;
+		if(Convert.isNotNullEmpty(txt))
+			jarr =new JSONArray(txt) ;
+		LinkedHashMap<String,Role> n2i = new LinkedHashMap<>() ;
+		n2i.put("admin",new Role("admin","Admin")) ;
+		if(jarr==null)
+			return n2i ;
+		int n = jarr.length() ;
+		for(int i = 0 ; i < n ; i ++)
+		{
+			JSONObject tmpjo = jarr.getJSONObject(i) ;
+			Role r = Role.fromJO(tmpjo) ;
+			if(r==null)
+				continue ;
+			n2i.put(r.role_n,r) ;
+		}
+		return role2items = n2i ;
+	}
+	
+	public static JSONArray listRoleAllJArr()
+	{
+		JSONArray jarr = new JSONArray() ;
+		LinkedHashMap<String,Role> n2r = listRoleAll() ;
+		for(Role r:n2r.values())
+		{
+			jarr.put(r.toJO()) ;
+		}
+		return jarr ;
+	}
+	
+	private static void saveRoles() throws IOException
+	{
+		JSONArray jarr = listRoleAllJArr() ;
+		File rf = new File(Config.getDataDirBase()+"/auth/_roles.json");
+		if(!rf.getParentFile().exists())
+			rf.getParentFile().mkdirs() ;
+		Convert.writeFileTxt(rf, jarr.toString());
+	}
+	
+	public static Role setRole(String name,String title,StringBuilder failedr) throws IOException
+	{
+		if(!Convert.checkVarName(name, failedr))
+			return null ;
+		if("admin".equals(name))
+		{
+			failedr.append("admin cannot be modified") ;
+			return null ;
+		}
+		Role r = getRole(name) ;
+		if(r==null)
+		{
+			r = new Role(name,title) ;
+			listRoleAll().put(name,r) ;
+		}
+		else
+		{
+			r.role_t = title ;
+		}
+		saveRoles() ;
+		return r ;
+	}
+	
+	public static Role delRole(String name) throws IOException
+	{
+		if("admin".equals(name))
+			return null ;
+		Role r = listRoleAll().remove(name) ;
+		if(r==null)
+			return null ;
+		saveRoles() ;
+		return r ;
+	}
 
 	private static File calcAuthFile(String username)
 	{
@@ -348,6 +551,8 @@ public class LoginUtil
 				if(!f.isFile())
 					return false;
 				String fn = f.getName() ;
+				if(fn.startsWith("_"))
+					return false;
 				return fn.endsWith(".json");
 			}}) ;
 		
@@ -391,6 +596,11 @@ public class LoginUtil
 
 	public static UserAuthItem addUser(String username,String disname,String psw,StringBuilder failedr) throws Exception
 	{
+		if(username.startsWith("_"))
+		{
+			failedr.append("username cannot start with _") ;
+			return null ;
+		}
 		if("admin".equals(username))
 			return null ;
 		
@@ -444,6 +654,51 @@ public class LoginUtil
 		if(saveUserAuthItem(uai))
 			return uai ;
 		return null ;
+	}
+	
+	public static UserAuthItem setUserRoles(String username,List<String> roles,StringBuilder failedr) throws Exception
+	{
+		if("admin".equals(username))
+		{
+			failedr.append("admin's role cannot be changed") ;
+			return null ;
+		}
+		UserAuthItem uai = getUserItem(username) ;
+		if(uai==null)
+		{
+			failedr.append("no user found") ;
+			return null ;
+		}
+		
+		uai.roles = roles ;
+		if(saveUserAuthItem(uai))
+			return uai ;
+		failedr.append("save user failed");
+		return null ;
+	}
+	
+	public static List<UserAuthItem> listUsersByRoles(Collection<String> roles)
+	{
+		ArrayList<UserAuthItem> rets = new ArrayList<>() ;
+		if(roles==null||roles.size()<=0)
+			return rets ;
+		for(UserAuthItem uai:listUserAll().values())
+		{
+			for(String role:roles)
+			{
+				if(uai.hasRole(role))
+				{
+					rets.add(uai) ;
+					break ;
+				}
+			}
+		}
+		return rets;
+	}
+	
+	public static List<UserAuthItem> listUsersByRole(String role)
+	{
+		return listUsersByRoles(Arrays.asList(role)) ;
 	}
 	
 	public static boolean delUser(String username,boolean deleted,StringBuilder failedr) throws Exception
@@ -505,7 +760,7 @@ public class LoginUtil
 			return null ;
 		}
 		
-		if(!checkUserPsw(username,oldpsw))
+		if(checkUserPsw(username,oldpsw)==null)
 		{
 			failedr.append("old psw check failed") ;
 			return null;
@@ -544,34 +799,37 @@ public class LoginUtil
 	
 	
 	
-	public static boolean checkUserPsw(String username,String password)  throws Exception
+	public static UserAuthItem checkUserPsw(String username,String password)  throws Exception
 	{
-		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
-		if(pa!=null && pa.canCheckAdminUser())
-		{
-			PlugAuthUser u = pa.checkAdminUser(username, password);
-			if(u==null)
-				return false;
-			return true ;
-		}
+//		PlugAuth pa = PlugManager.getInstance().getPlugAuth() ;
+//		if(pa!=null && pa.canCheckAdminUser())
+//		{
+//			PlugAuthUser u = pa.checkAdminUser(username, password);
+//			if(u==null)
+//				return null;
+//			return true ;
+//		}
 		
 		
-		if(!"admin".equals(username))
-			return false;
+		//if(!"admin".equals(username))
+		//	return false;
 		UserAuthItem uai = getUserItem(username) ;
 		if(uai==null)
-			return false;
+			return null;
 
-		return SecureUtil.checkPsw(password, uai.encPsw, uai.salt) ;
+		if(SecureUtil.checkPsw(password, uai.encPsw, uai.salt))
+			return uai ;
+		else
+			return null ;
 	}
 	
-	public static boolean doLogin(HttpServletRequest req,HttpServletResponse resp,String username,String password,String lang) throws Exception
+	public static SessionItem doLogin(HttpServletRequest req,HttpServletResponse resp,String username,String password,String lang) throws Exception
 	{
 		SessionItem si = validateLogin(req,username,password,lang);
 		if(si==null)
-			return false;
+			return null;
 		processSession(req,resp,si) ;
-		return true;
+		return si;
 	}
 	
 	private static SessionItem validateLogin(HttpServletRequest req,String username,String password,String lang) throws Exception
@@ -584,7 +842,7 @@ public class LoginUtil
 			PlugAuthUser u = pa.checkAdminUser(username, password);
 			if(u==null)
 				return null;
-			return new SessionItem(sessid,username,u.getFullName(),lang);
+			return new SessionItem(sessid,username,u.getFullName(),null,lang);
 		}
 		
 		UserAuthItem uai = getUserItem(username) ;
@@ -606,7 +864,7 @@ public class LoginUtil
 				return null;
 		}
 		
-		return new SessionItem(sessid,username,uai.disname,lang);
+		return new SessionItem(sessid,username,uai.disname,uai.getRoleNames(),lang);
 	}
 	
 	public static final String IOTTREE_COOKIE = "__iottree__";
@@ -729,11 +987,23 @@ public class LoginUtil
 	public static SessionItem getUserLoginSession(HttpServletRequest req) throws UnsupportedEncodingException
 	{
 		HttpSession hs = req.getSession() ;
-		//if(hs==null)
-		//	return null;
-		String sess_id = null;// (String)hs.getAttribute(LOGIN_SK);
+		return getUserLoginSession(hs,req);
+	}
+	
+	public static SessionItem getUserLoginSession(javax.websocket.EndpointConfig config) throws UnsupportedEncodingException
+	{
+		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
+		return getUserLoginSession(hs,null);
+	}
+	
+	public static SessionItem getUserLoginSession(HttpSession hs,HttpServletRequest req) throws UnsupportedEncodingException
+	{
+		String sess_id = (String)hs.getAttribute(LOGIN_SK);
 		if(Convert.isNullOrEmpty(sess_id))
 		{
+			if(req==null)
+				return null ;
+			
 			//read from cookie
 			HttpCookie wb_cookie = HttpCookie.getRequestCookie(IOTTREE_COOKIE,req);
 			if (wb_cookie == null)

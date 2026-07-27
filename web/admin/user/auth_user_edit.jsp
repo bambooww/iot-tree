@@ -25,7 +25,7 @@ dlg.resize_to(480,400);
   <div class="layui-form-item">
     <label class="layui-form-label">注册名</label>
     <div class="layui-input-inline" style="width:330px;">
-      <input type="text" id="username" name="username" value=""  autocomplete="off" class="layui-input">
+      <input type="text" id="username" name="username" value=""   autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
@@ -37,7 +37,7 @@ dlg.resize_to(480,400);
   <div class="layui-form-item" id="psw_c">
     <label class="layui-form-label">密码</label>
     <div class="layui-input-inline" style="width:330px;">
-      <input type="password" id="psw" name="psw" value=""  autocomplete="off" class="layui-input">
+      <input type="password" id="psw" name="psw" value=""  autocomplete="new-password" class="layui-input">
     </div>
   </div>
   

@@ -128,8 +128,9 @@
     <a href="doc/msgnet/m__sim.modbus_slave_bus.md" style="border:1px solid;">Modbus Slave(从设备)模拟器</a>
 </p>
 
-##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.11 演示：自动数据记录</a>
-##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.12 演示：报警发现与输出</a>
+##### <a href="doc/msgnet/outer_api.md" >&nbsp;&nbsp;&nbsp;8.11 节点直接对外开放http api</a>
+##### <a href="doc/msgnet/demo_auto_rec.md" >&nbsp;&nbsp;&nbsp;8.12 演示：自动数据记录</a>
+##### <a href="doc/msgnet/demo_alert.md" >&nbsp;&nbsp;&nbsp;8.13 演示：报警发现与输出</a>
 
 #### <a href="doc/hmi/index.md" >9 人机交互(HMI)和对话框(Dialog)</a>
 ##### <a href="doc/hmi/hmi_node.md" target="main">&nbsp;&nbsp;&nbsp;9.1 界面HMI（UI）节点
@@ -140,22 +141,23 @@
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI客户端数据列表展示</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 记录数据展示</a>
 
+#### <a href="doc/auth/index.md" >10 用户和角色</a>
+##### <a href="doc/auth/hmi_w_auth.md" >10.1 HMI写操作(下达指令)授权</a>
+
+#### <a href="doc/advanced/index.md" >11 高级特性</a>
+##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;11.1 插件开发</a>
+##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;11.2 插件开发 - JsApi</a>
+##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;11.3 插件开发 - Authority</a>
+##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;11.4 自定义项目管理(Webapp)</a>
+##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;11.5 对外提供RESTFul接口</a>
+##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;11.6 对外提供OPC UA接口</a>
+##### <a href="doc/advanced/pstation.md" target="main">&nbsp;&nbsp;&nbsp;11.7 中心-子站数据同步(内置)</a>
+##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;11.8 中心-子站远程监控(MQTT)</a>
+##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;11.9 设备模拟器</a>
+##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;11.10 实现你自己的.Net客户端</a>
 
 
-#### <a href="doc/advanced/index.md" >10 高级特性</a>
-##### <a href="doc/advanced/adv_plugin.md" >&nbsp;&nbsp;&nbsp;10.1 插件开发</a>
-##### <a href="doc/advanced/adv_plugin_jsapi.md" target="main">&nbsp;&nbsp;&nbsp;10.2 插件开发 - JsApi</a>
-##### <a href="doc/advanced/adv_plugin_auth.md" target="main">&nbsp;&nbsp;&nbsp;10.3 插件开发 - Authority</a>
-##### <a href="doc/advanced/adv_self_app.md" target="main">&nbsp;&nbsp;&nbsp;10.4 自定义项目管理(Webapp)</a>
-##### <a href="doc/advanced/adv_restful_out.md" target="main">&nbsp;&nbsp;&nbsp;10.5 对外提供RESTFul接口</a>
-##### <a href="doc/advanced/adv_opc_ua_out.md" target="main">&nbsp;&nbsp;&nbsp;10.6 对外提供OPC UA接口</a>
-##### <a href="doc/advanced/pstation.md" target="main">&nbsp;&nbsp;&nbsp;10.7 中心-子站数据同步(内置)</a>
-##### <a href="doc/advanced/main_sub_station.md" target="main">&nbsp;&nbsp;&nbsp;10.8 中心-子站远程监控(MQTT)</a>
-##### <a href="doc/advanced/adv_dev_simulator.md" target="main">&nbsp;&nbsp;&nbsp;10.9 设备模拟器</a>
-##### <a href="doc/util/iottree.net.md" target="main">&nbsp;&nbsp;&nbsp;10.10 实现你自己的.Net客户端</a>
-
-
-#### <a href="doc/version.md" >11 版本说明</a>
+#### <a href="doc/version.md" >12 版本说明</a>
 
 <!--
 #### <a href="doc/store/index.md" >8 数据存储、处理和展示</a>

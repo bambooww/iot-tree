@@ -14,7 +14,7 @@
 		<webapp name="msg_net" path="../../msg_net" />
 		<webapp name="_sys" />
 		<webapp name="_templet" />
-		<webapp name="ent" main="true"/>
+		<webapp name="ent" main0="true"/>
 		<webapp name="pro" />
 		
 		<!-- 

@@ -4,7 +4,7 @@
   <dd_node id="1" name="title" name_cn="标题" name_en="Title"/>
    
   <dd_node id="1" name="ok" name_cn="确认" name_en="Ok"/>  
-  <dd_node id="1" name="cancel" name_cn="关闭" name_en="Cancel"/> 
+  <dd_node id="1" name="cancel" name_cn="取消" name_en="Cancel"/> 
   <dd_node id="1" name="pls_input" name_cn="请输入" name_en="Please input "/>
   <dd_node id="1" name="input" name_cn="输入" name_en="Input "/>
   <dd_node id="1" name="user" name_cn="用户" name_en="User"/> 
@@ -53,6 +53,9 @@
 	<dd_node id="1" name="span" name_cn="跨度" name_en="Span"/>
 	<dd_node id="1" name="all" name_cn="全部" name_en="All"/>
 	
+	<dd_node id="1" name="perm_ver" name_cn="权限验证" name_en="Permission verification"/>
+	
+	
 	<dd_node id="1" name="trigger_dt" name_cn="触发时间" name_en="Trigger Time"/>
 	<dd_node id="1" name="release_dt" name_cn="释放时间" name_en="Release Time"/>
 	
@@ -61,5 +64,5 @@
 	<dd_node id="1" name="release_dt" name_cn="解除时间" name_en="Event/Alert"/>
 	<dd_node id="1" name="no_evt_alert" name_cn="无事件/报警信息" name_en="No Event/Alert Data"/>
 	<dd_node id="1" name="dur_tm" name_cn="持续时间" name_en="Duration"/>
-	
+	<dd_node id="1" name="sure_send_cmd" name_cn="确定要发送指令么?" name_en="Are you sure you want to send the command?"/>
 </dd_class>

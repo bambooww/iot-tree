@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page
 	import="org.iottree.core.*,org.iottree.core.util.*,
-		org.iottree.core.util.web.*,org.iottree.ent.web.*,
+		org.iottree.core.util.web.*,org.iottree.portal.*,
 		org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*"%><%
+		String prjid = request.getParameter("prjid") ;
+		String nf_id = request.getParameter("nf_id") ;
+		
 		LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
 		if(si==null)
 		{
@@ -11,16 +14,18 @@
 		
 		String user_n = si.usern ;
 		String user_disn = si.disn ;
-String title ="" ;
-String home_jsp = TreeNodeManager.getInstanceApp().getHomePageUrl();
-if(Convert.isNullOrEmpty(home_jsp))
-	home_jsp = "home.jsp" ;
-	title = Config.getAppTitle();
-	
-String icon = Config.getConfElementRoot().getAttribute("icon") ;
+
+	NavFrame nf = NavFrame.getNavFrame(prjid, nf_id) ;
+	if(nf==null)
+	{
+		out.print("no nf found") ;
+		return ;
+	}
+	String title =nf.getSysTitle() ;
+String icon =nf.getLogo() ;
 if(icon==null)
 	icon="" ;
-
+String home_u = nf.getHomeUrl() ;
 
 	//	picon = "" ;
 	String nav_bk_color = Config.getConfElementRoot().getAttribute("nav_bk_color") ;
@@ -76,7 +81,7 @@ if(icon==null)
                     var data = null ;
                     eval("data="+ret) ;
                     load_nav('nav_tab_list',data,[
-                       { id: 'home', title: '首页', closed: false, icon: 'fa fa fa-desktop', url: contentPath + '<%=home_jsp%>' }
+                       { id: 'home', title: '<w:g>home</w:g>', closed: false, icon: 'fa fa fa-desktop', url: contentPath + '<%=home_u%>' }
                        ]
                    );
                 });

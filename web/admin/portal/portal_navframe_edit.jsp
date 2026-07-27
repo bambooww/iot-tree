@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page 
 	import="org.iottree.core.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%@ taglib uri="wb_tag" prefix="w"%><%
 	String prjid = request.getParameter("prjid") ;
 	String nf_id = request.getParameter("nf_id") ;
 %><html>
@@ -67,6 +67,11 @@ position: absolute;right:0px;top:200px;
   line-height: 1.5;
   font-size: 14px; cursor:pointer;
 }
+
+#right_panel {right:0%;top:0px;bottom:0px;width:550px;z-index: 10px;background-color: #ffffff;
+box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+	transition: box-shadow 0.3s, transform 0.3s;}
+
 </style>
 <script>
 dlg.dlg_top=true ;
@@ -82,114 +87,17 @@ dlg.dlg_top=true ;
 
 
 </div>
-<div class="rrr" id="right_panel" style="right:0%;top:0px;bottom:0px;width:550px;z-index: 10px;background-color: #ffffff;" topm_show="1">
-    <iframe id="if_item_list" name="if_item_list"  src="portal_navframe_right.jsp" style="width:100%;overflow: hidden;"></iframe>
-    
+<div class="rrr" id="right_panel" style="" topm_show="1">
+    <iframe id="if_item_list" name="if_item_list"  src="portal_navframe_right.jsp?prjid=<%=prjid %>&nf_id=<%=nf_id %>" style="width:100%;overflow: hidden;"></iframe>
 </div>
-<button id="topr_show_hd" style="position:absolute;top:5px;right:5px;" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_page_setup()" title="&nbsp;"><i class="fa-solid fa-angle-right"></i></button>
-<%--
- <div id="h_list_btn" class="rrrr-box" style="top:10px" onclick="show_page_setup(true)">
-  页<br>面<br>设<br>置
-</div>
- <div id="h_list_btn" class="rounded-box" onclick="show_page_list(true)">
-  页<br>面<br>列<br>表
-</div>
-<div id="h_nav_btn" class="rounded-box" style="top:300px;" onclick="show_nav_setup(true)">
-  导<br>航<br>设<br>置
-</div>
+<button id="topr_show_hd" style="position:absolute;top:5px;right:5px;" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_right_setup()" title="&nbsp;"><i class="fa-solid fa-angle-right"></i></button>
 
- --%>
 </body>
 <script type="text/javascript">
 
-function on_blk_set(op,page_uid,blkn,pblk_tp,pblk_tpt)
+function on_page_preview(u)
 {
-	switch(op)
-	{
-	case 'set':
-		blk_tp_sel(page_uid,blkn);
-		break;
-	case 'edit':
-		edit_pblk(page_uid,blkn,pblk_tp,pblk_tpt);
-		break;
-	}
-}
-
-function blk_tp_sel(page_uid,blkn)
-{
-	dlg.open("./page_blk_tp_sel.jsp",
-			{title:"选择类型"},
-			['关闭'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			],(ret)=>{
-				if(!ret)
-					return ;
-				if(ret.tp=='')
-					del_pblk(page_uid,blkn);
-				else
-					edit_pblk(page_uid,blkn,ret.tp,ret.tt);
-			});
-}
-
-function edit_pblk(page_uid,blkn,pblk_tp,pblk_tpt)
-{
-	if(event)
-		event.stopPropagation();
-	console.log(page_uid,blkn,pblk_tp,pblk_tpt);
-	dlg.open(`./page_blk_edit.\${pblk_tp}.jsp?page_uid=\${page_uid}&blkn=\${blkn}`,{title:"编辑区块 - "+pblk_tpt,w:'500px',h:'400px',input:{}},
-			['确定','取消'],
-			[
-				function(dlgw)
-				{
-					dlgw.do_submit(function(bsucc,ret){
-						 if(!bsucc)
-		        	     {
-							 dlg.msg(ret) ;
-							 return ;
-		        	     }
-						 //console.log(ret) ;
-						 send_ajax("page_blk_ajax.jsp",{op:"set_pblk_detail",page_uid:page_uid,blkn:blkn,pblk_tp:pblk_tp,jstr:JSON.stringify(ret)},(bsucc,ret)=>{
-							 if(!bsucc || ret.indexOf("succ")!=0)
-							 {
-								 dlg.msg(ret) ;
-								 return ;
-							 }
-							 dlg.close() ;
-							 update_detail_show()
-						 }) ;
-				 	});
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
-function del_pblk(page_uid,blkn)
-{
-	if(event)
-		event.stopPropagation();
-	dlg.confirm('删除这个块配置 ['+blkn+'] ?', {btn:["确定","关闭"],title:"删除确认"},function ()
-	{
-		send_ajax("./page_ajax.jsp",{op:"del_pblk",page_uid:page_uid,blkn:blkn},(bsucc,ret)=>{
-    		if(!bsucc||ret!="succ")
-    		{
-    			dlg.msg(ret);
-    			return ;
-    		}
-    		update_detail_show()
-    	}) ;
-	});
-}
-
-function on_page_sel(item)
-{
-	$("#if_detail").attr("src",`page_detail.jsp?page_uid=\${item.page_uid}`)
+	$("#if_detail").attr("src",u)
 }
 
 function update_detail_show()
@@ -197,7 +105,7 @@ function update_detail_show()
 	$("#if_detail")[0].contentWindow.location.reload();
 }
 
-function show_page_setup()
+function show_right_setup()
 {
 	let obj = $('#right_panel') ;
 	if(obj.attr('topm_show')=='1')
@@ -216,26 +124,6 @@ function show_page_setup()
 	}
 }
 
-function show_page_setup_win(b)
-{
-	dlg.open_multi("");
-}
-
-function show_page_list(b)
-{
-	if(b)
-		slide_toggle($('#left_panel'),"550px");
-	else
-		hide_toggle($('#left_panel'));
-}
-
-function show_nav_setup(b)
-{
-	if(b)
-		slide_toggle($('#nav_panel'),"550px");
-	else
-		hide_toggle($('#nav_panel'));
-}
 
 function slide_toggle(obj,w)
 {

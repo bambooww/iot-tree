@@ -3,11 +3,11 @@
  	<webapps port="9090" ajp_port="" base_dir="./web">
  	 	<webapp name="admin" />
 		<webapp name="ROOT" />
-		<webapp name="doc" />
 		<webapp name="_js" />
 		<webapp name="_iottree" />
 		<webapp name="_ui" />
 		<!--
+		<webapp name="doc" />
 		<webapp name="main" path="main/main.war" main="true"/> 
 		 -->
 	</webapps>

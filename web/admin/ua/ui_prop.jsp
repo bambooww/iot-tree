@@ -406,7 +406,7 @@ function pop_multi_ln_edit(inputid)
 	cur_txt = input.value ;
 	dlg.open("ui_prop_multiln.jsp",
 			{title:"<wbt:lang>edit_txt</wbt:lang>",w:'500px',h:'400px'},
-			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{
@@ -435,7 +435,7 @@ function pop_edit(popname,poptitle,inputid)
 	cur_txt = input.value ;
 	dlg.open("ui_prop_pop_"+popname+".jsp?nodepath="+path,
 			{title:poptitle,w:'500px',h:'400px',inputv:cur_txt},
-			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
 			[
 				function(dlgw)
 				{

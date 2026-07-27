@@ -1,13 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page 
-	import="org.iottree.core.*,org.iottree.portal.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%! 
+	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%@ taglib uri="wb_tag" prefix="w"%><%! 
 
 %><%
-//if(!Convert.checkReqEmpty(request, out, "house_id"))
-//	return ;
-
-//UserProfile up = UserProfile.getUserProfile(request) ;
-//String house_id = request.getParameter("house_id") ;
+if(!Convert.checkReqEmpty(request, out, "prjid","nf_id"))
+	return ;
+String prjid = request.getParameter("prjid") ;
+String nf_id = request.getParameter("nf_id") ;
+NavFrame navf = NavFrame.getNavFrame(prjid,nf_id) ;
+if(navf==null)
+{
+	out.print("no NavFrame found") ;
+	return ;
+}
 %><!DOCTYPE html>
 <html>
 <head>
@@ -18,14 +23,16 @@
 </jsp:include>
     <style>
 .layui-form-label{
-    width: 120px;
+    width: 100px;
 }
 .layui-input-block {
     margin-left: 140px;
     min-height: 36px;
     width:240px;
 }
-
+.layui-form-item {
+    margin-bottom: 5px;
+}
   .layui-table {
   margin:0px;
     font-size: 12px; 
@@ -53,28 +60,31 @@
 <form class="layui-form"  onsubmit="return false;" >
 <table style="width:100%;height:40px;border-bottom: 1px solid #e6e6e6;">
 	<tr>
-		<td style="width:150px;padding-left:5px;font-weight: bold;">页面列表 <span id="top_tt"></span></td>
+		<td style="width:150px;padding-left:5px;font-weight: bold;"><w:g>nav_frame</w:g> - <span id="top_tt"><%=navf.getTitle() %></span></td>
 		<td style="text-align: left;padding-right:5px;width:250px;border:0px solid">
-		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page_cat()" ><i class="fa fa-plus"></i>新增分类</button>
-		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page()" ><i class="fa fa-plus"></i>新增页面</button>
-		
+		<button id="btn_save_detail" class="layui-btn layui-btn-sm layui-btn-primary" onclick="save_detail()" ><i class="fa fa-save"></i></button>
+		<button id="btn_open_url" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_page()" ><i class="fa-regular fa-paper-plane"></i></button>
 		</td>
 		
 	</tr>
 </table>
-</form>
-<div style="position:relative ;width:100%;height:20%;overflow-y: auto;">
-<%
-for(PageCat p:PortalManager.getInstance().listPageCats().values())
-{
-%><span class="cat" onclick="on_sel_cat('<%=p.getName() %>','<%=p.getTitle() %>')">
-	<span class="n"><%=p.getName() %></span>
-	<span class="t"><%=p.getTitle() %></span>
-</span>
-<%	
-}
-%>
+  <div class="layui-form-item" id="">
+    <label class="layui-form-label"><w:g>layout,temp</w:g>:</label>
+    <div class="layui-input-inline"  style="width:200px;">
+      <select id="layout" class="layui-input" lay-filter="layout">
+      	<option value=""> --- </option>
+      	<option value="default">default</option>
+      </select>
+  </div>
+  <div class="layui-form-item" id="">
+    <label class="layui-form-label"><w:g>sys,title</w:g>:</label>
+    <div class="layui-input-inline"  style="width:200px;">
+      <input type="text" id="sys_t" value="<%=navf.getSysTitle()%>" class="layui-input"/>
+    </div>
+  </div>
 </div>
+</form>
+
 <div style="position:absolute ;top:20%;width:100%">
 <table id="page_list"  lay-filter="page_list"  lay-even="true" class="layui-table" style="top:1px;width:99%;">
 
@@ -94,245 +104,76 @@ for(PageCat p:PortalManager.getInstance().listPageCats().values())
 
 %>
 
-<%--
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="setup"><i class="fa fa-gear"></i></button>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="deverr"><i class="fa-solid fa-screwdriver-wrench"></i></button>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary layui-border-red"  lay-event="del" title="delete"><i class="fa fa-times"></i></button>
---%>
 </script>
 <script>
+var prjid="<%=prjid%>"
+var nf_id="<%=nf_id%>"
 var form ;
 var table ;
-var table_cur_page = 1 ;
-
-var cur_page_cat_name = "" ;
-var cur_page_cat_title = "" ;
-
+var url_path = "<%=navf.getUrlPath(true)%>" ;
 layui.use(['table','form'], function()
 {
 	form = layui.form;
 	table = layui.table;
-	render_tb() ;
+	$("#sys_t").on("input",function(e){
+		set_dirty(true);
+	});
+	 form.on('select(layout)', function(data){   
+		 set_dirty(true);
+	 });
+	 
+	form.render();
 });
 
-function on_sel_cat(n,t)
+function show_page()
 {
-	cur_page_cat_name = n ;
-	cur_page_cat_title = t ;
-	refresh_table();
-}
-
-function edit_page_cat(catn,catt)
-{//cp_partid will be used when add
-	let tt =catn?"修改分类":"新增分类";
-	let op = catn?"edit_page_cat":"add_page_cat";
-	dlg.open("../util/n_t_d_edit.jsp",{title:tt,w:'500px',h:'400px',input:{name:catn||"",title:catt||""}},
-				['确定','取消'],
-				[
-					function(dlgw)
-					{
-						dlgw.do_submit(function(bsucc,ret){
-							 if(!bsucc)
-			        	     {
-								 dlg.msg(ret) ;
-								 return ;
-			        	     }
-							 //console.log(ret) ;
-							 send_ajax("page_ajax.jsp",{op:op,...ret},(bsucc,ret)=>{
-								 if(!bsucc || ret.indexOf("succ")!=0)
-								 {
-									 dlg.msg(ret) ;
-									 return ;
-								 }
-								 dlg.close() ;
-								 location.reload();
-							 }) ;
-					 	});
-					},
-					function(dlgw)
-					{
-						dlg.close();
-					}
-				]);
-}
-
-function edit_page(pg)
-{
-	if(event)
-		event.stopPropagation();
-	let tt =pg?"修改页面":"新增页面";
-	let op = pg?"edit_page":"add_page";
-	let cat ;
-	if(!pg)
-	{
-		if(!cur_page_cat_name)
-		{
-			dlg.msg("请选择分类") ;
-			return ;
-		}
-		cat = cur_page_cat_name ;
-		pg={}
-	}
-	else
-	{
-		cat = pg.cat ;
-	}
-	
-	let id = pg.page_id||"";
-	let name = pg.page_name||"";
-	let pagett = pg.page_title||"";
-	let templet_uid = pg.templet_uid||"" ;
-	dlg.open("./page_edit.jsp",{title:tt,w:'500px',h:'400px',input:{pageid:id,name:name,title:pagett,templet_uid:templet_uid}},
-				['确定','取消'],
-				[
-					function(dlgw)
-					{
-						dlgw.do_submit(function(bsucc,ret){
-							 if(!bsucc)
-			        	     {
-								 dlg.msg(ret) ;
-								 return ;
-			        	     }
-							 //console.log(ret) ;
-							 send_ajax("page_ajax.jsp",{op:op,cat:cat,pageid:id,...ret},(bsucc,ret)=>{
-								 if(!bsucc || ret.indexOf("succ")!=0)
-								 {
-									 dlg.msg(ret) ;
-									 return ;
-								 }
-								 dlg.close() ;
-								 location.reload();
-							 }) ;
-					 	});
-					},
-					function(dlgw)
-					{
-						dlg.close();
-					}
-				]);
-}
-
-function render_tb()
-{
-	  let cols = [];
-	  cols.push({field: 'cat_title', title: '分类', width:'20%'});
-	  cols.push({field: 'page_name', title: '名称', width:'20%'});
-	 cols.push({field: 'page_title', title: '标题', width:'25%'});
-	 cols.push({field: 'templet_title', title: '模板', width:'20%'});
-	 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"15%" ,toolbar: '#row_toolbar'}) ;
-	 
-	table.render({
-	    elem: '#page_list'
-	    ,height: "full-40"
-	    ,url: "page_ajax.jsp?op=list_pages&cat="+(cur_page_cat_name||"")
-	    ,page0: {layout:['prev', 'page', 'next'],limit:25,theme:"#c00"} //open page
-	    ,cols: [cols]
-	  ,parseData:function(res){
-			if(res.data.length==0){
-				return{
-					'code':'201',
-					'msg':'无内容'
-				};
-			};
-		}
-	    ,done:function(res, curr, count){
-		   	 table_cur_page = curr ;
-		   	 var trs = $(".layui-table-body.layui-table-main tr");
-		   	 if(res && res.data)
-		   	 {
-		   		for(var i = 0 ; i < res.data.length;i++)
-		  		 {
-		  		    //if(i%2==1)
-			    	//	 trs.eq(i).css("background-color","#f2f2f2");
-			     }
-		   	 }
-	   	 }
-	  });
-	  
-	  table.on('tool(page_list)', function(obj){ // lay-filter="mc_acc_list"
-		  var data = obj.data; //cur d
-		  var lay_evt = obj.event; // lay-event
-		  var tr = obj.tr; //tr DOM
-		 
-		  if(lay_evt === 'barcode'){ //
-			  
-			  dlg.msg("TODO") ;
-		  }
-		  
-		  else if(lay_evt==='show')
-		  {
-			 show_page(data);
-		  }
-		  else if(lay_evt === 'del')
-		  {
-			  del_page(data);
-		  }
-		  else if(lay_evt === 'edit')
-		  {
-			  edit_page(data) ;
-		  }
-		});
-	  
-	  table.on('row(page_list)', function(obj)
-			  {
-		  var trs = $(".layui-table-body.layui-table-main tr");
-		  trs.each(function(){
-			  $(this).removeClass("seled") ;
-		  })
-		  obj.tr.addClass("seled");
-				  var data = obj.data; //cur d
-				  	on_sel_single(data)
-			  });
-	  table.on("checkbox(page_list)",function(obj){
-		  if(selmulti)
-			  on_sel_multi_part() ;
-	  }) ;
-	  //refresh_table(true);
-}
-
-function refresh_table()
-{
-	let search_txt = $("#search_txt").val()||"" ;
-	table.reload("page_list",{ url:"page_ajax.jsp?search_txt="+search_txt+"&cat="+(cur_page_cat_name||"")+"&op=list_pages",page0:{curr:1}});
-	//table.reload("dev_part_list",{});
-}
-
-function del_page(pg)
-{
-	if(event)
-		event.stopPropagation();
-	if(!pg)return ;
-	let pageid = pg.page_id ;
-	let cat = pg.cat ;
-	dlg.confirm('确定要删除此页面么?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
-		    {
-					send_ajax("",{op:"del_page",pageid:pageid,cat:cat,del:true},function(bsucc,ret){
-			    		if(!bsucc || ret!='succ')
-			    		{
-			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
-			    			return ;
-			    		}
-			    		//
-						location.reload();
-			    	}) ;
-		});
-}
-function show_page(pg)
-{
-	window.open(`/_portal/\${pg.cat}/\${pg.page_name}`);
+	window.open(url_path);
 }
 
 var selected_item= null ;
 
 function on_sel_single(item)
 {
-	//console.log(item) ;
 	selected_item = item ;
 	if(parent.on_page_sel)
 		parent.on_page_sel(item) ;
-	
+	reload_preview();
 }
 
+function get_detail()
+{
+	let ret = {} ;
+	ret.sys_t = $("#sys_t").val()||"";
+	ret.layout = $("#layout").val()||"default";
+	ret.home_url = $("#home_url").val()||"" ;
+	
+	return ret;
+}
+
+function save_detail()
+{
+	let ob = get_detail() ;
+	send_ajax("portal_ajax.jsp",{op:"set_nf_detail",prjid:prjid,nf_id:nf_id,jstr:JSON.stringify(ob)},(bsucc,ret)=>{
+		if(!bsucc || ret!='succ')
+		{
+			dlg.msg(ret);return;
+		}
+		set_dirty(false);
+		reload_preview();
+	})
+}
+
+function set_dirty(b)
+{
+	$("#btn_save_detail").css("background-color",b?"yellow":"") ;
+}
+
+function reload_preview()
+{
+	parent.on_page_preview(url_path)
+}
+
+reload_preview()
 
 function fit_height()
 {

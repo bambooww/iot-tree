@@ -7,7 +7,7 @@
 	java.util.*,
 	java.net.*,
 	java.util.*, 
-	org.iottree.core.cxt.*,
+	org.iottree.core.cxt.*,org.iottree.core.util.*,org.iottree.core.util.web.*,
 	org.iottree.core.ws.*,
 	org.iottree.core.sim.*,org.iottree.core.devtree.*,
 	org.iottree.pro.*,org.iottree.core.station.*,
@@ -18,6 +18,12 @@
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
 String using_lan = Lan.getUsingLang() ;
 String sname = "Server";
+
+boolean m = "true".equals(request.getParameter("m")) ;
+
+LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
+String user_n = si.usern ;
+String user_disn = si.disn ;
 
 //UAContext.getOrLoadJsApi() ;%><!DOCTYPE html>
 <html class="">
@@ -148,7 +154,7 @@ background:#aaaaaa;
 				<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 				  <ul class="nav navbar-nav">
 					  <li><a href="https://github.com/bambooww/iot-tree.git"  target="_blank" class=""><i class="icon icon-home"></i><wbt:lang>home</wbt:lang></a></li>
-					  <li><a href="/doc" target="_blank"><i class="icon icon-topic"></i><wbt:lang>doc</wbt:lang></a></li>
+					  <li><a href="javascript:open_doc()" ><i class="icon icon-topic"></i><wbt:lang>doc</wbt:lang></a></li>
 					  <li><a href="mailto:iottree@hotmail.com"  ><i class="icon icon-topic"></i><wbt:lang>feedback</wbt:lang></a></li>
 					  <li><a href="/util/biz_helper.jsp" target="_blank"><i class="icon icon-topic"></i><wbt:lang>tech_sup</wbt:lang></a></li>
 <%
@@ -185,7 +191,7 @@ if(pros.size()>0)
 }
 %>
 <button class="layui-btn layui-btn-primary layui-btn-xs" class0="list" id="SysSetting" style="cursor:pointer;">
-                          admin&nbsp;<i class="fa-solid fa-angle-down"></i>
+                          <%=user_disn %>&nbsp;<i class="fa-solid fa-angle-down"></i>
                         </button>
                         
 
@@ -391,7 +397,10 @@ if(rep.isAutoStart())
 						</div>
 						 --%>
 					</div>
-
+<%
+if(m)
+{
+%>
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
 					        <h1>&nbsp;<wbt:lang>devtree</wbt:lang> & <wbt:lang>model</wbt:lang></h1>
@@ -508,7 +517,9 @@ if(rep.isAutoStart())
 				</div><br>
 				</div>
 			</div>
-					
+<%
+}
+%>
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
 					        <h1><wbt:lang>dev_lib</wbt:lang></h1>
@@ -799,6 +810,13 @@ if(ins.isAutoStart())
 				<div class="iot-side-bar">
 					<div class="iot-mod iot-text-align-justify">
 						    <div class="mod-head">
+						        <span class="tt" title=""><wbt:lang>user</wbt:lang>&amp;<wbt:lang>role</wbt:lang></span>
+						        <span class="op" onclick="user_mgr()" title="<wbt:lang>set</wbt:lang>" ><i class="fa-solid fa-pencil fa-lg"></i></span>
+						    </div>
+					</div>
+					
+					<div class="iot-mod iot-text-align-justify">
+						    <div class="mod-head">
 						        <span class="tt" title="set as sub station,it will push data to remote station"><wbt:lang>local_station</wbt:lang></span>
 						        <span class="op" onclick="set_local_station()" title="<wbt:lang>set</wbt:lang>" ><i class="fa-solid fa-gear fa-lg"></i></span>
 						    </div>
@@ -906,6 +924,11 @@ layui.use(['form'], function(){
 	  
 	  form.render() ;
 });
+
+function user_mgr()
+{
+	dlg.open("/admin/user/auth_main.jsp?dlg=true",{title:"<wbt:g>user,role,mgr</wbt:g>"})
+}
 
 var all_panels=[];
 function open_rep(id)
@@ -2244,6 +2267,17 @@ function cer_mgr()
 	if(event)
 		event.stopPropagation();
 	dlg.open("./util/cer_mgr.jsp",{title:"Certificate Management"},['<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function open_doc()
+{
+	dlg.open("./doc.jsp",{title:"Document"},['<wbt:g>close</wbt:g>'],
 			[
 				function(dlgw)
 				{
