@@ -111,8 +111,7 @@
 	z-index: 999;
 	width: 45px;
 	overflow-x: hidden;
-	background-color:#aaaaaa;
-	
+	background-color:#eee;
 }
 
 
@@ -169,15 +168,14 @@ color: #fdd000;
 .lr_btn
 {
 	margin-top: 10px;
-	color:#009999;
+	color:#555;
 	cursor: pointer;
 }
 
 .lr_btn_div
 {
 	margin-top: 0px;
-	color:#858585;
-	background-color:#eeeeee;
+	background-color:#ccc;
 	cursor: pointer;
 }
 
@@ -214,7 +212,6 @@ color: #ffffff;
 	bottom0: 50px;
 	height:80%
 	z-index: 998;
-
 	overflow-y: auto;
 	vertical-align:top;
 	box-sizing: border-box
@@ -283,7 +280,8 @@ z-index:10000;
 {
 position:absolute;display:none;z-index:60001;left:45px;
 background-color: #eeeeee;
-top:0px;height:100%;
+top:0px;height:100%;box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+	transition: box-shadow 0.3s, transform 0.3s;
 }
 
 .right_panel_win
@@ -358,23 +356,23 @@ margin-top:5px;
 	
 		<div class="left " style="overflow: hidden;">
 		
-			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-puzzle-piece fa-3x lr_btn"></i><br>&nbsp;</div>
+			<div id="leftcat_cxt_sub_hmi" onclick="leftcat_sel('cxt_sub_hmis','Context Sub HMI',350)" title="Context Sub-HMI"><i class="fa fa-puzzle-piece fa-2x lr_btn"></i><br>&nbsp;</div>
 			<%--
 			<div id="leftcat_basic_di" onclick="leftcat_sel('basic_di','Basic',230)" title="Basic"><i class="fa fa-circle-o fa-3x lr_btn" ></i><br>&nbsp;</div>
 			 --%>
-			<div id="leftcat_comp" onclick="leftcat_sel('comp','HMI Components',500)" title="Components"><i class="fa fa-cogs fa-3x lr_btn"></i><br>&nbsp; </div>
-			<div id="leftcat_divcomp" onclick="leftcat_sel('divcomp','Components',330)" title="Controller"><i class="fa fa-cog fa-3x lr_btn"></i><br> &nbsp;</div>
+			<div id="leftcat_comp" onclick="leftcat_sel('comp','HMI Components',500)" title="Components"><i class="fa fa-cogs fa-2x lr_btn"></i><br>&nbsp; </div>
+			<div id="leftcat_divcomp" onclick="leftcat_sel('divcomp','Components',330)" title="Controller"><i class="fa fa-cog fa-2x lr_btn"></i><br> &nbsp;</div>
 			
 			<%--
 			<div id="leftcat_basic_icon" onclick="leftcat_sel('basic_icon','Basic Icons')" title="Icon"><i class="fa fa-image fa-3x lr_btn"></i><br>&nbsp;</div>
-			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)" title="Pic Library"><i class="fa fa-cubes fa-3x lr_btn"></i><br>&nbsp;</div>
-			 --%>
 			
+			 --%>
+			<div id="leftcat_pic" onclick="leftcat_sel('pic','Pictures Lib',500)" title="Pic Library"><i class="fa-regular fa-file-image fa-2x lr_btn"></i><br>&nbsp;</div>
 <%
 if(bprj)
 {
 %>
-			<div id="leftcat_bkground" onclick="leftcat_sel('bkground','Background',350)" title="Background"><i class="fa fa-area-chart fa-3x lr_btn"></i><br>&nbsp;</div>
+			<div id="leftcat_bkground" onclick="leftcat_sel('bkground','Background',350)" title="Background"><i class="fa fa-area-chart fa-2x lr_btn"></i><br>&nbsp;</div>
 <%
 }
 %>

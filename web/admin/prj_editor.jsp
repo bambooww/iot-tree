@@ -58,7 +58,6 @@ String using_lan = Lan.getUsingLang() ;
 .sp_btn {background-color:#5d5d5d;width:30px;height:30px;margin-top:4px;font-size:14px;}
 .sel_b {border:1px solid #fff;}
 </style>
-
 </head>
 <script type="text/javascript">
 function open_doc()
@@ -72,7 +71,7 @@ function open_doc()
 			]);
 }
 </script>
-<body class0="layout-body" style="overflow-x:hidden;overflow-y:hidden;">
+<body style="overflow-x:hidden;overflow-y:hidden;">
 <%
 if(!hide_top)
 {
@@ -120,12 +119,6 @@ if(!hide_top && rep.isPrjPStationIns())
 %>
 
      <div class="top_toolbox"  style="margin-top:4px;;margin-right:1px;;right:1px;width:180px;color:#fff5e2;border:0px solid;font-size:14px;text-align: right;">
-<%--
-     <span id="prj_btn_start"  style="color:grey" title="start project" onclick="prj_run(true)"><i class="fa fa-play fa-lg" ></i></span>
-		 	&nbsp;&nbsp;&nbsp;
-		 	<span id="prj_btn_stop"  style="color:grey" title="stop project" onclick="prj_run(false)"><i class="fa fa-stop fa-lg" ></i></span>
-	&nbsp;&nbsp;&nbsp;
---%>
      <span class=" <%=("en".equals(using_lan)?"sel_b":"") %>" onclick="chg_lan('en')">EN</span>
 	 &nbsp;&nbsp;<span class="<%=("cn".equals(using_lan)?"sel_b":"") %>" onclick="chg_lan('cn')">CN</span>
      &nbsp;&nbsp;<span onclick="open_doc()"><i class="fa fa-question-circle fa-lg" ></i>&nbsp;</span>
@@ -143,10 +136,6 @@ if(hide_top)
         <div id="div_conn" class="hj-transverse-split-div subwin" style="width:15%">
 			<div class="subwin_toolbar">
 			<span style="left:20px;display:none" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</span>
-			<%--
-			Connectors
-				<button type="button" class="btn btn-default"><i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;<i class="fa fa-caret-down"></i></button>
-				 --%>
 				<div class="btn-group open"  id="btn_menu_conn">
 				  <a class="btn" href="#"><i class="fa fa-link fa-fw"></i> <wbt:g>connectors</wbt:g></a>
 				  <a class="btn" href="#">
@@ -162,22 +151,10 @@ if(hide_top)
 		               	      <table style="width:100%;border:0px">
 			               	 		<tr>
 										<td width="90%" style="white-space: nowrap;" v-bind:title="connector.static_txt">
-<%--
-											<span style="left:20px;" id="btn_left_showhidden">&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>&nbsp;&nbsp;</span>
-											 --%>
 											&nbsp;&nbsp;<span style="left:5px;width:15px;height:15px;background-color: grey;"  v-bind:id="'cp_st_'+connector.id" >&nbsp;&nbsp;&nbsp;&nbsp;</span>
 											[{{ connector.tpt }}]{{ connector.title }} 
 										</td>
-										<%--
-										<td width="25px">
-											<a v-bind:href="'javascript:edit_cp(\''+connector.tp+'\',\''+connector.id+'\')'"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-										</td>
-										<i class="fa-solid fa-meteor"></i>
-										 --%>
 										<td width="20px" v-bind:cp_id="connector.id"  v-bind:id="'cp_msgs_'+connector.id" >
-<%--
-											<span style="width:20px;height:20px;color:red;" onclick="show_cp_pmsg(this)"><i class="fa-solid fa-bolt fa-beat-fade"></i></span>
- --%>
 										</td>
 									</tr>
 								</table>
@@ -195,12 +172,6 @@ if(hide_top)
 										</td>
 										<td width0="10px" v-bind:cp_id="connector.id"  v-bind:cpt_id="+connection.id"  v-bind:id="'cpt_msgs_'+connection.id" style="white-space:nowrap;">
 										</td>
-										
-										<%--
-										<td width="25px">
-											<div style="width:15px;height:15px;"  v-bind:id="'conn_run_'+connection.id" ><i class="fa fa-cog fa-lg"></i></div>
-										</td>
-										 --%>
 									</tr>
 								</table>
 		               	 	</div>
@@ -223,11 +194,6 @@ if(hide_top)
            --%>
            <div class="btn-group open"  id="btn_menu_tree">
 				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> <wbt:g>browser,tree</wbt:g></a>
-				  <%--
-				  <a class="btn "  href="#">
-				    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
-				  </a>
-				   --%>
 				  &nbsp;&nbsp;<button class="tree_btn" title="<wbt:g>refresh,browser,tree</wbt:g>" onclick="refresh_ui()" ><i class="fa fa-refresh fa" aria-hidden="true"></i></button>
 				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1('dev')"><i  class="fa-solid fa-angle-up"" aria-hidden="true"></i></button>
 				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1()"><i  class="fa-solid fa-angles-up"" aria-hidden="true"></i></button>
@@ -314,6 +280,7 @@ if(b_portal)
     <iframe id="chat_ai_if" style="width:100%;height:100px;border:0px;"></iframe>
      <button id="chat_ai_op" style="position: absolute;right:20px;top:20px;width:30px;height:30px;display:none;" onclick="ai_dlg()"><i class="fa fa-times"></i></button>
     </div>
+</div>
 <script>
 dlg.dlg_top=true;
 var repid="<%=prjid%>";

@@ -113,7 +113,7 @@ public class PlugManager
 	private HashMap<String,PlugJsApi> name2jsapi = null ;
 	
 	
-	public HashMap<String,PlugJsApi> getJsApiAll()
+	public synchronized HashMap<String,PlugJsApi> getJsApiAll()
 	{
 		if(name2jsapi!=null)
 			return name2jsapi;

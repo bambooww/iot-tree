@@ -67,13 +67,84 @@
     	<br>
     	<input type="checkbox" class="layui-input" lay-skin="primary" id="on_week_<%=Calendar.THURSDAY %>"  value="<%=Calendar.THURSDAY %>"   name="on_week"/><w:g>thursday</w:g>
     	<input type="checkbox" class="layui-input" lay-skin="primary" id="on_week_<%=Calendar.FRIDAY %>"    value="<%=Calendar.FRIDAY %>"     name="on_week"/><w:g>friday</w:g>
-    	<input type="checkbox" class="layui-input" lay-skin="primary" id="on_week_<%=Calendar.SATURDAY %>"  value="<%=Calendar.SATURDAY %>"   name="on_week"/><w:g>saturday</w:g>\
+    	<input type="checkbox" class="layui-input" lay-skin="primary" id="on_week_<%=Calendar.SATURDAY %>"  value="<%=Calendar.SATURDAY %>"   name="on_week"/><w:g>saturday</w:g>
     	<br>
     	<input type="checkbox" class="layui-input" lay-skin="primary" id="on_week_<%=Calendar.SUNDAY %>"    value="<%=Calendar.SUNDAY %>"     name="on_week"/><w:g>sunday</w:g>
     </div>
 </div>
 </div>
+<div class="layui-form-item">
+    <label class="layui-form-label">Multiple Outputs</label>
+    <div class="layui-input-inline" style="width:450px;border:0px solid red;" id="multi_outs">
+    	
+    </div>
+    <div class="layui-form-mid"><button onclick="add_mo()" class="layui-btn layui-btn-sm layui-btn-primary"><i class="fa fa-plus"></i></button></div>
+</div>
+<style>
+.mo {border:1px solid green; height:40px;min-width:95px;display: inline-block;line-height: 40px;text-align: center;}
+.mo input {height:25px;width:50px;}
+</style>
 <script>
+
+var multi_outs = [] ;
+
+function update_multi_outs()
+{
+	let ss ="" ;
+	for(let mo of multi_outs)
+	{
+		ss += `<div class='mo'>
+			X <input type="number" class="moi" value="\${mo}"/>
+			<button onclick='del_mo(this)' class="layui-btn layui-btn-xs layui-btn-primary" style="color:red">&nbsp;x&nbsp;</button>
+			</div>`;
+	}
+	$("#multi_outs").html(ss) ;
+}
+
+function get_mo_items_out(b_chk)
+{
+	let ret = [] ;
+	let err = null ;
+	$(".moi").each(function(){
+		let ob = $(this) ;
+		let v = parseInt(ob.val()) ;
+		if(v==null||v==""||isNaN(v))
+		{
+			if(b_chk)
+			{
+				err = "multiple output cannot empty or non-integer"
+				return;
+			}
+				
+			else
+				v = 10 ;
+		}
+		if(v<=1)
+		{
+			if(b_chk)
+			{
+				err = "multiple output must bigger than 1"
+				return ;
+			}
+		}
+		ret.push(v) ;
+	})
+	if(err)
+		return err ;
+	return ret ;
+}
+
+function del_mo(ele)
+{
+	$(ele).parent().remove();
+}
+
+function add_mo()
+{
+	multi_outs = get_mo_items_out() ;
+	multi_outs.push(10);
+	update_multi_outs()
+}
 
 function on_after_pm_show(form)
 {
@@ -145,8 +216,12 @@ function get_pm_jo()
 		let iv = parseInt(tmpv) ;
 		on_week += (1<<iv) ;
 	}
+	let mos = get_mo_items_out(true);
+	if(typeof(mos)=='string')
+		return mos ;
 	return {b_delay:b_delay,delay_ms:delay_ms,repeat_tp:repeat_tp,interval_ms:interval_ms,
-		between_s:between_s,between_e:between_e,b_on_week:b_on_week,on_week:on_week} ;
+		between_s:between_s,between_e:between_e,b_on_week:b_on_week,on_week:on_week,
+		multi_outs:mos} ;
 }
 
 function set_pm_jo(jo)
@@ -169,6 +244,8 @@ function set_pm_jo(jo)
 			}
 		}
 	}
+	multi_outs = jo.multi_outs||[];
+	update_multi_outs() ;
 }
 
 function get_pm_size()

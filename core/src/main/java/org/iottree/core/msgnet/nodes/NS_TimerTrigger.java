@@ -1,7 +1,9 @@
 package org.iottree.core.msgnet.nodes;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +19,7 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.jt.JSONTemp;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
@@ -33,8 +36,42 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 
 	LocalTime betweenE = null;
 
-	boolean bOnWeek= false;
+	boolean bOnWeek = false;
 	int onWeekMark = 0xFF;
+
+	ArrayList<Integer> multipleOuts = null;
+
+	private static class MultiVCC
+	{
+		Integer multiV;
+
+		int cc = 0;
+
+		public MultiVCC(Integer mv)
+		{
+			this.multiV = mv;
+		}
+	}
+
+	private HashMap<Integer, MultiVCC> multiV2CC = null;
+
+	@Override
+	protected synchronized void clearCache()
+	{
+		super.clearCache();
+		if (multipleOuts == null)
+		{
+			multiV2CC = null;
+			return;
+		}
+		HashMap<Integer, MultiVCC> v2c = new HashMap<>();
+		for (Integer intv : this.multipleOuts)
+		{
+			MultiVCC mc = new MultiVCC(intv);
+			v2c.put(mc.multiV, mc);
+		}
+		multiV2CC = v2c;
+	}
 
 	@Override
 	public String getTP()
@@ -75,9 +112,27 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	@Override
 	public int getOutNum()
 	{
-		return 1;
+		if (multipleOuts == null || multipleOuts.size() <= 0)
+			return 1;
+		return this.multipleOuts.size() + 1;
 	}
 
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		if (idx <= 0)
+			return null;
+		if (this.multipleOuts == null || this.multipleOuts.size() < idx)
+			return null;
+		int mv = this.multipleOuts.get(idx - 1);
+		return "x" + mv;
+	}
+
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
 	// @Override
 	// public String getNodeTP()
 	// {
@@ -89,14 +144,14 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	// {
 	// return g("inject");
 	// }
-	
+
 	@Override
 	public String getPmTitle()
 	{
-		if(this.intervalMS<=0)
-			return "[]" ;
+		if (this.intervalMS <= 0)
+			return "[]";
 		else
-			return "["+this.intervalMS+"MS]" ;
+			return "[" + this.intervalMS + "MS]";
 	}
 
 	@Override
@@ -136,9 +191,11 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 			jo.put("between_s", betweenS.toString()); // betweenS.toSecondOfDay());
 		}
 		if (betweenE != null)
-			jo.put("between_e", betweenE.toString());//.toSecondOfDay());
-		jo.put("b_on_week", this.bOnWeek) ;
+			jo.put("between_e", betweenE.toString());// .toSecondOfDay());
+		jo.put("b_on_week", this.bOnWeek);
 		jo.put("on_week", onWeekMark);
+		if (this.multipleOuts != null)
+			jo.put("multi_outs", this.multipleOuts);
 		return jo;
 	}
 
@@ -155,17 +212,30 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 		this.intervalMS = jo.optLong("interval_ms", 10000);
 		String ss = jo.optString("between_s");
 		if (Convert.isNotNullEmpty(ss))
-			this.betweenS = LocalTime.parse(ss);//.ofSecondOfDay(ss);
+			this.betweenS = LocalTime.parse(ss);// .ofSecondOfDay(ss);
 		else
-			this.betweenS = null ;
+			this.betweenS = null;
 		ss = jo.optString("between_e");
 		if (Convert.isNotNullEmpty(ss))
-			this.betweenE = LocalTime.parse(ss);//.ofSecondOfDay(ss);
+			this.betweenE = LocalTime.parse(ss);// .ofSecondOfDay(ss);
 		else
-			this.betweenE = null ;
-		
-		this.bOnWeek = jo.optBoolean("b_on_week", false) ;
+			this.betweenE = null;
+
+		this.bOnWeek = jo.optBoolean("b_on_week", false);
 		this.onWeekMark = jo.optInt("on_week", 0xFF);
+
+		JSONArray tmpjarr = jo.optJSONArray("multi_outs");
+		ArrayList<Integer> mms = null;
+		int n;
+		if (tmpjarr != null && (n = tmpjarr.length()) > 0)
+		{
+			mms = new ArrayList<>();
+			for (int i = 0; i < n; i++)
+				mms.add(tmpjarr.getInt(i));
+		}
+		this.multipleOuts = mms;
+
+		clearCache();
 	}
 
 	public boolean isDelayExec()
@@ -200,16 +270,18 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 
 	public String getBetweenDesc()
 	{
-		if(this.betweenS!=null && this.betweenE!=null)
+		if (this.betweenS != null && this.betweenE != null)
 		{
-			if(this.betweenS.compareTo(this.betweenE)<=0)
-				return this.betweenS.toString()+g("to_day") + this.betweenE.toString() ;
+			if (this.betweenS.compareTo(this.betweenE) <= 0)
+				return this.betweenS.toString() + g("to_day") + this.betweenE.toString();
 			else
-				return this.betweenS.toString()+ g("to_next_day") + this.betweenE.toString() ;
+				return this.betweenS.toString() + g("to_next_day") + this.betweenE.toString();
 		}
-		
-		return this.betweenS!=null?this.betweenS.toString():"00:00" +" -- "+this.betweenE!=null?this.betweenE.toString():"24:00" ;
+
+		return this.betweenS != null ? this.betweenS.toString()
+				: "00:00" + " -- " + this.betweenE != null ? this.betweenE.toString() : "24:00";
 	}
+
 	/**
 	 * 
 	 * @param mon_sun
@@ -220,40 +292,37 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	{
 		return (this.onWeekMark & (1 << mon_sun)) > 0;
 	}
-	
-	private static String[] WEEK_N = new String[] {"","sunday",
-			"monday",
-			"tuesday",
-			"wednesday",
-			"thursday",
-			"friday",
-			"saturday"};
-	
+
+	private static String[] WEEK_N = new String[] { "", "sunday", "monday", "tuesday", "wednesday", "thursday",
+			"friday", "saturday" };
+
 	public String getOnWeekDesc()
 	{
-		StringBuilder sb = new StringBuilder() ;
-		boolean bfirst = true ;
-		//Lan lan = Lan.getLangInPk(this.getClass()) ;
-		for(int i = 1 ; i <= 7  ; i ++)
+		StringBuilder sb = new StringBuilder();
+		boolean bfirst = true;
+		// Lan lan = Lan.getLangInPk(this.getClass()) ;
+		for (int i = 1; i <= 7; i++)
 		{
-			if((this.onWeekMark & (1<<i))>0)
+			if ((this.onWeekMark & (1 << i)) > 0)
 			{
-				if(bfirst) bfirst=false;
-				else sb.append(",") ;
-				
-				sb.append(g(WEEK_N[i])) ;
+				if (bfirst)
+					bfirst = false;
+				else
+					sb.append(",");
+
+				sb.append(g(WEEK_N[i]));
 			}
 		}
-		return sb.toString() ;
+		return sb.toString();
 	}
 
 	// ---------------
-	
+
 	private boolean bRun = false;
 	// private boolean bInSending = false;
 	private Thread timerTH = null;
-	
-	private String pausedBT = null ;
+
+	private String pausedBT = null;
 
 	@Override
 	public boolean RT_triggerByOnOff(StringBuilder failedr)
@@ -264,10 +333,9 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 		return true;
 	}
 
-
 	private void runInTh()
 	{
-		if(this.bDelayExec)
+		if (this.bDelayExec)
 		{
 			try
 			{
@@ -280,24 +348,24 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 
 		do
 		{
-			if(this.repeatTp==RepeatTP.intv_bt)
-			{// check begin time -  end time
-				if(!checkBetween())
+			if (this.repeatTp == RepeatTP.intv_bt)
+			{// check begin time - end time
+				if (!checkBetween())
 				{
-					pausedBT = g("suspend_out")+" "+getBetweenDesc();
+					pausedBT = g("suspend_out") + " " + getBetweenDesc();
 					sleep(this.intervalMS);
-					continue ;
+					continue;
 				}
-				if(!checkWeek())
+				if (!checkWeek())
 				{
-					pausedBT =  g("suspend_notin")+" "+getOnWeekDesc() ;
+					pausedBT = g("suspend_notin") + " " + getOnWeekDesc();
 					sleep(this.intervalMS);
-					continue ;
+					continue;
 				}
 			}
-			
-			pausedBT = null ;
-			
+
+			pausedBT = null;
+
 			synchronized (this)
 			{// in here cannot be interrupted
 				try
@@ -306,12 +374,32 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 					// bInSending = true ;
 					MNMsg msg = new MNMsg();
 					msg.asPayload(System.currentTimeMillis());
-					RT_sendMsgOut(RTOut.createOutAll(msg));
+					RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(0, msg));
+
+					int mo_n;
+					if (this.multiV2CC != null && (mo_n = this.multipleOuts.size()) > 0)
+					{
+						for (MultiVCC mcc : this.multiV2CC.values())
+						{
+							mcc.cc++;
+							if (mcc.cc > mcc.multiV)
+							{
+								mcc.cc = 0;
+								for (int i = 0; i < mo_n; i++)
+								{
+									Integer mo_v = this.multipleOuts.get(i);
+									if (mcc.multiV == mo_v)
+										RT_sendMsgOut(RTOut.createOutIdx().asIdxMsg(i + 1, msg));
+								}
+							}
+						}
+					}
+
 				}
 				catch ( Exception ee)
 				{
 					ee.printStackTrace();
-					this.RT_DEBUG_ERR.fire("send_out","TimerTrigger sendMsgOut err:" + ee.getMessage(), ee);
+					this.RT_DEBUG_ERR.fire("send_out", "TimerTrigger sendMsgOut err:" + ee.getMessage(), ee);
 				}
 				finally
 				{
@@ -321,12 +409,12 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 
 			if (!bRun)
 				break;
-			
+
 			sleep(this.intervalMS);
-			
+
 		} while (bRun);
 	}
-	
+
 	private void sleep(long ms)
 	{
 		try
@@ -337,38 +425,39 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 		{
 		}
 	}
-	
+
 	private boolean checkBetween()
 	{
-		if(betweenS==null && betweenE==null)
-			return true ;
-		
-		LocalTime nowt = LocalTime.now() ;
-		if(betweenS!=null && betweenE==null)
+		if (betweenS == null && betweenE == null)
+			return true;
+
+		LocalTime nowt = LocalTime.now();
+		if (betweenS != null && betweenE == null)
 		{
-			return nowt.compareTo(betweenS)>=0 ;
+			return nowt.compareTo(betweenS) >= 0;
 		}
-		
-		if(betweenS==null && betweenE!=null)
+
+		if (betweenS == null && betweenE != null)
 		{
-			return nowt.compareTo(betweenE)<=0 ;
+			return nowt.compareTo(betweenE) <= 0;
 		}
-		
-		if(betweenS.compareTo(betweenE)<=0)
+
+		if (betweenS.compareTo(betweenE) <= 0)
 		{
-			return nowt.compareTo(betweenS)>=0 && nowt.compareTo(betweenE)<=0 ;
+			return nowt.compareTo(betweenS) >= 0 && nowt.compareTo(betweenE) <= 0;
 		}
 		else
-		{//span to next day,and two seg  E - 24:00    00:00 - S
-			return nowt.compareTo(betweenS)>=0 || nowt.compareTo(betweenE)<=0 ;
+		{// span to next day,and two seg E - 24:00 00:00 - S
+			return nowt.compareTo(betweenS) >= 0 || nowt.compareTo(betweenE) <= 0;
 		}
 	}
-	
+
 	private boolean checkWeek()
 	{
-		if(!bOnWeek) return true ;
-		int dayofweek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) ;
-		return (onWeekMark & (1<<dayofweek)) >0 ;
+		if (!bOnWeek)
+			return true;
+		int dayofweek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+		return (onWeekMark & (1 << dayofweek)) > 0;
 	}
 
 	private Runnable runner = new Runnable() {
@@ -414,30 +503,32 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 	{
 		return bRun;
 	}
-	
+
 	@Override
 	public boolean RT_isSuspendedInRun(StringBuilder reson)
 	{
-		String pbt = this.pausedBT ;
-		if(Convert.isNotNullEmpty(pbt))
+		String pbt = this.pausedBT;
+		if (Convert.isNotNullEmpty(pbt))
 		{
 			reson.append(pbt);
-			return true ;
+			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * false will not support runner
+	 * 
 	 * @return
 	 */
 	public boolean RT_runnerEnabled()
 	{
-		return true ;
+		return true;
 	}
-	
+
 	/**
 	 * true will not support manual trigger to start
+	 * 
 	 * @return
 	 */
 	public boolean RT_runnerStartInner()

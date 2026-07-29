@@ -432,8 +432,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return this.resName ;
 	}
 	
+	private transient LinkedHashMap<String,OuterApi> outerApiAll = null ;
+	
 	public LinkedHashMap<String,OuterApi> listOuterApiAll()
 	{
+		if(this.outerApiAll!=null)
+			return outerApiAll;
 		LinkedHashMap<String,OuterApi> rets = new LinkedHashMap<>() ;
 		ArrayList<OuterApi> ss = new ArrayList<>() ;
 		for(Method m:this.getClass().getMethods())
@@ -446,7 +450,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		Collections.sort(ss);
 		for(OuterApi oa:ss)
 			rets.put(oa.getName(),oa) ;
-		return rets;
+		return outerApiAll = rets;
 	}
 	
 	public JSONObject[] getOuterApiIOSample(String apin)
@@ -571,6 +575,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		jo.putOpt("tcolor", this.getTitleColor()) ;
 		jo.put("icon", this.getIcon()) ;
 		
+		jo.put("outer_api_total", listOuterApiAll().size()) ;
 		jo.put("outer_api_num", 0) ;
 		if(this.usingOANames!=null&&this.usingOANames.size()>0)
 		{

@@ -1,6 +1,6 @@
 # Versions
 
-### version 2.0.0 (Plan)
+### version 2.0.0
 
 
 1. Improve user and role (user group) management: Admins can add different users and roles, and assign roles to users. Based on this, access authorization can be set in the project organization tree nodes (including HMI nodes) - this is achieved by setting one or more roles.
@@ -12,6 +12,52 @@ When an HMI node in the organizational tree is limited by its own authorization 
 2 Add an external HTTP API interface to the message flow node, and select an open api in the node to directly become an API for the backend system
 
 3. Addition, improvement, and bug modification of some message flow nodes
+
+
+### version 1.9.0
+
+
+Transplanted and open sourced data synchronization between sub sites and centers, enabling IOT Tree to provide stronger support for enterprise level distributed applications. It can provide efficient and fast data aggregation function for on-site devices to connect to the center or cloud IoT platform.
+
+Reference :[Center-substation data synchronization(Inner)](https://github.com/bambooww/iot-tree/blob/main/web/doc/en/doc/advanced/pstation.md)
+
+
+### version 1.8.6
+
+
+The newly added gPRC service can support clients developed in various other languages and ensure high performance
+
+The newly added RESTful Module in the message flow enables any process segment to be converted into a RESTful API, providing services externally
+
+The newly added AI Device Ctrl module in the message flow can easily enable device link to LLM
+
+
+### version 1.8.5
+
+
+Added integration with local LLM model nodes in the message flow. It can support setting prompt words and chat support.
+Some interface improvements and bug handling
+
+
+### version 1.8.5
+
+
+The tag has added a batch modification function.
+The value option function for adding tag values supports setting enumeration values and displaying them in a list.
+Improve some document and message flow nodes
+
+
+### version 1.8.0
+
+Improvements and additions to some message flow nodes
+Handling of some bugs
+
+### version 1.7.9
+
+
+The newly added BACnet device service allows for the conversion of project data into the BACnet device protocol
+Improve OPC UA Client access
+Some bug handling
 
 
 ### version 1.7.6

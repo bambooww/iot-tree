@@ -3,7 +3,7 @@
 	java.io.*,
 	org.iottree.core.res.*,
 	org.iottree.core.comp.*,
-	org.iottree.core.gr.*
+	org.iottree.core.util.gr.*
 	"%><%!
 
 %><%

@@ -361,6 +361,8 @@
   <dd_node id="1" name="inner" name_cn="内部" name_en="Inner"/>
   
   <dd_node id="1" name="topic" name_cn="主题" name_en="Topic"/>
+  <dd_node id="1" name="pics" name_cn="图片" name_en="Pictures"/>
+  <dd_node id="1" name="pic" name_cn="图片" name_en="Picture"/>
   
   <dd_node id="1" name="cer" name_cn="证书" name_en="Certificate"/>
   <dd_node id="1" name="trusted" name_cn="信任" name_en="Trusted"/>

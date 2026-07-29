@@ -224,7 +224,6 @@ public class PlugDir
 
 	private PlugJsApi loadJsApi(JSONObject job) throws Exception
 	{
-
 		String name = job.optString("name");
 		String classn = job.optString("class");
 		String mode = job.optString("mode") ;
@@ -293,41 +292,34 @@ public class PlugDir
 		return ob ;
 	}
 
-	public HashMap<String, PlugJsApi> getOrLoadJsApiObjs() throws MalformedURLException, IOException
+	public synchronized HashMap<String, PlugJsApi> getOrLoadJsApiObjs() throws MalformedURLException, IOException
 	{
 		if (this.jsapi_name2ob != null)
 			return jsapi_name2ob;
 
-		synchronized (this)
+		HashMap<String, PlugJsApi> mm = new HashMap<>();
+
+		if (this.js_api_arr != null)
 		{
-			if (this.jsapi_name2ob != null)
-				return jsapi_name2ob;
-
-			jsapi_name2ob = new HashMap<>();
-
-			if (this.js_api_arr != null)
+			int n = js_api_arr.length();
+			for (int i = 0; i < n; i++)
 			{
-				int n = js_api_arr.length();
-				for (int i = 0; i < n; i++)
+				JSONObject job = js_api_arr.getJSONObject(i);
+				String nn = job.getString("name") ;
+				try
 				{
-					JSONObject job = js_api_arr.getJSONObject(i);
-					String nn = job.getString("name") ;
-					try
-					{
-						PlugJsApi ob = loadJsApi(job);
-						jsapi_name2ob.put(nn, ob);
-						
-						System.out.println(" plug ["+name+"] load js api object [$$"+nn+"]") ;
-					}
-					catch ( Exception e)
-					{
-						e.printStackTrace();
-					}
+					PlugJsApi ob = loadJsApi(job);
+					mm.put(nn, ob);
+					
+					System.out.println(" plug ["+name+"] load js api object [$$"+nn+"]") ;
+				}
+				catch ( Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
-
-			return jsapi_name2ob;
 		}
+		return jsapi_name2ob=mm;
 	}
 	
 	

@@ -3,9 +3,9 @@
 	java.io.*,
 	org.iottree.core.*,
 	org.iottree.core.util.*,
-	org.iottree.core.gr.*,
+	org.iottree.core.util.gr.*,
 	org.iottree.core.comp.*
-	"%><%!
+	"%><%@ taglib uri="wb_tag" prefix="w"%><%!
 
 %><%
 boolean bdlg = !"false".equalsIgnoreCase(request.getParameter("dlg")) ;
@@ -19,13 +19,10 @@ if(Convert.isNotNullEmpty(cat))
 %><html>
 <head>
 <title></title>
-
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<script src="/_js/bootstrap/js/bootstrap.min.js"></script>
-<script src="/_js/ajax.js" ></script>
-<script src="/_js/dlg.js" ></script>
-<script src="/_js/oc/oc.js"></script>
-<link type="text/css" href="/_js/oc/oc.css" rel="stylesheet" />
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+	<jsp:param value="true" name="oc"/>
+</jsp:include>
 </head>
 <script type="text/javascript">
 function drag(ev)
@@ -44,37 +41,37 @@ function drag(ev)
  	<td colspan='2'></td>
  </tr>
  <tr>
- <td valign="top" width="25%">分类
+ <td valign="top" width="25%"><w:g>cat</w:g>
    <select id='var_cat' multiple="multiple" style="width: 100%;height: 100%" onchange="single_sel_chg_cat('var_cat')">
 <%
 	for(GRCat grc:GRManager.getInstance().getGRCatAll())
 	{
 		if(grc.getName().equals(cat))
 		{
-%><option value="<%=grc.getName() %>" selected="selected"><%=grc.getTitleCN() %></option><%
+%><option value="<%=grc.getName() %>" selected="selected"><%=grc.getTitle() %></option><%
 		}
 		else
 		{
-%><option value="<%=grc.getName() %>"><%=grc.getTitleCN() %></option><%
+%><option value="<%=grc.getName() %>"><%=grc.getTitle() %></option><%
 		}
 	}
 %>
    </select>
  </td>
- <td valign="top" width="25%">图元
+ <td valign="top" width="25%"><w:g>pics</w:g>
  	<select id='var_item' multiple="multiple" style="width: 100%;height: 100%" onchange="single_sel_chg('var_item')">
 <%
 	if(curCat!=null)
 	{
 		for(GRItem gri:curCat.getGRItems())
 		{
-%><option value="<%=gri.getRefPath() %>"><%=gri.getTitleCN() %></option><%
+%><option value="<%=gri.getRefPath() %>"><%=gri.getTitle() %></option><%
 		}
 	}
 %>
  	</select>
  </td>
- <td width="50%" height='90%' valign="top" >示意
+ <td width="50%" height='90%' valign="top" >
  	<img id='pic_demo' src="" width='90%' height='90%' draggable="true" ondragstart="drag(event)"/><br/>
  	<input type='button' value="OK" onclick="sel()"/> &nbsp; 
   <input type='button' value="Cancel" onclick="dlg.close()"/>
@@ -116,14 +113,14 @@ function sel()
 	var o = document.getElementById('var_cat');
 	if(o.value==null||o.value=='')
 	{
-		alert('请选择分类') ;
+		dlg.msg('<w:g>pls,select,cat</w:g>') ;
 		return ;
 	}
 	var tmps = o.value +'.';
 	o = document.getElementById('var_item');
 	if(o.value==null||o.value=='')
 	{
-		alert('请选择图元') ;
+		dlg.msg('<w:g>pls,select,pic</w:g>') ;
 		return ;
 	}
 	

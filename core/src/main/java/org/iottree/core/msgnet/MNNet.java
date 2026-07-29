@@ -1230,11 +1230,11 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		{
 			Lan lan = Lan.getLangInPk(this.getClass()) ;
 			failedr.append(lan.g("not_enabled")) ;
-			return ;
+			return;
 		}
 		
 		if(RT_running)
-			return ;
+			return;
 		
 		RT_onBeforeNetRun() ;
 		
@@ -1259,7 +1259,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			IMNRunner mnr = (IMNRunner)m ;
 			if(!mnr.RT_start_main(failedr))
 			{
-				failedr.append("\r\n") ;
+				failedr.append("@"+m.getTitle()+"\r\n") ;
 			}
 		}
 		
@@ -1274,7 +1274,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			IMNRunner mnr = (IMNRunner)n ;
 			if(!mnr.RT_start_main(failedr))
 			{
-				failedr.append("\r\n") ;
+				failedr.append("@"+n.getTitle()+"\r\n") ;
 			}
 		}
 		

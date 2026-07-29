@@ -20,7 +20,7 @@
 		out.print("no MsgNet Manager with container_id="+container_id) ;
 		return ;
 	}
-	
+
 	UAPrj prj = mnm.getBelongToPrj() ;
 	String prjn = prj.getName() ;
 
@@ -73,6 +73,7 @@
     margin-bottom: 3px;
     margin-top: 3px;
 }
+.abc {word-break: break-all;white-space: normal;}
 </style>
 </head>
 
@@ -104,27 +105,26 @@ for(MNBase.OuterApi oa:all_apis.values())
 		url = "/"+prjn+"/_mn_outer_api/"+net_n+"/"+ndname+"/"+oa.getName()+"</span>" ;
 	}
 %><tr>
- 		<td><%=oa.getName() %></td>
+ 		<td rowspan="2"><%=oa.getName() %></td>
  		<td><%=oa.getTitle() %></td>
- 		<td><%=oa.getDesc() %>
+ 		<td><div class="abc"><%=oa.getDesc() %>
 <%
 if(inout!=null)
 {
-	if(inout[0]!=null)
+	if(inout.length>=1 && inout[0]!=null)
 	{
 %><br>In:<%=inout[0]%><%
 	}
-	if(inout[1]!=null)
+	if(inout.length>=2 && inout[1]!=null)
 	{
 %><br>Out:<%=inout[1]%><%
 	}
 }
 
 %>
- 		</td>
+ 		</div></td>
  	</tr>
  	<tr>
- 		<td></td>
  		<td colspan="3" style="color:<%=color%>;"><span class="pre"></span><%=url %></td>
  	</tr>
 <%

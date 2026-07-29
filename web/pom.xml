@@ -27,12 +27,6 @@
 	    <version>${project.version}</version>
 	</dependency>
 	
-	<dependency>
-	    <groupId>org.iottree.ext</groupId>
-	    <artifactId>iottree-ext-opcda</artifactId>
-	    <version>${project.version}</version>
-	</dependency>
-	
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

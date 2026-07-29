@@ -10,8 +10,11 @@
     
     <modules>
         <module>core</module>
-		<module>driver-parent</module>
-		<module>ext-parent</module>
+		<module>driver-common</module>
+		<module>driver-opc</module>
+		<module>ext-basic</module>
+		<module>ext-opcda</module>
+		<module>ext-pro</module>
 		<module>web</module>
 		<module>server</module>
   </modules>

@@ -25,23 +25,6 @@
 	    <version>${project.version}</version>
 	</dependency>
 	
-	<dependency>
-	    <groupId>org.iottree.ext</groupId>
-	    <artifactId>iottree-ext-opcda</artifactId>
-	    <version>${project.version}</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>org.iottree.ext</groupId>
-	    <artifactId>iottree-ext-basic</artifactId>
-	    <version>${project.version}</version>
-	</dependency>
-  
-   <dependency>
-	    <groupId>org.iottree.ext</groupId>
-	    <artifactId>iottree-ext-pro</artifactId>
-	    <version>${project.version}</version>
-	</dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -151,17 +134,26 @@
     
     <plugins>
     <!-- 
-           <plugin>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <configuration>
-                   <compilerArguments>
-                       <extdirs>.\tomcat\lib\</extdirs>
-                   </compilerArguments>
-               </configuration>
-           </plugin>
-            -->     
-            
-
+            <plugin>
+			    <groupId>com.github.wvengen</groupId>
+			    <artifactId>proguard-maven-plugin</artifactId>
+			    <version>2.6.0</version>
+			    <executions>
+			       <execution>
+			           <phase>package</phase>
+			           <goals><goal>proguard</goal></goals>
+			       </execution>
+			    </executions>
+			    <configuration>
+			        <options>
+			            
+			            <option>-keep public class org.iottree.server.Server { public static void main(java.lang.String[]); }</option>
+			            
+			            <option>-keepclassmembers class * { @org.iottree *; }</option>
+			        </options>
+			    </configuration>
+			</plugin>
+			-->
 				<!-- config manifest add lib dependence -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -266,7 +258,7 @@
 			                <outputDirectory>../_output/lib/</outputDirectory>
 			                <resources>
 			                    <resource>
-			                        <directory>../driver-parent/driver-common/lib</directory>
+			                        <directory>../driver-common/lib</directory>
 			                        <includes>
 			                            <include>*.jar</include>
 			                        </includes>
@@ -301,14 +293,14 @@
 								
 								<copy file="../core/target/iottree-core.jar" tofile="../_output/lib/iottree-core.jar" />
 								<copy file="../server/target/iottree-server.jar" tofile="../_output/lib/iottree-server.jar" />
-								<copy file="../driver-parent/driver-common/target/iottree-driver-common.jar"
+								<copy file="../driver-common/target/iottree-driver-common.jar"
 								        tofile="../_output/lib/iottree-driver-common.jar" />
-								<copy file="../driver-parent/driver-opc/target/iottree-driver-opc.jar"
+								<copy file="../driver-opc/target/iottree-driver-opc.jar"
 								        tofile="../_output/lib/iottree-driver-opc.jar" />
 								        
-								<copy file="../ext-parent/ext-basic/target/iottree-ext-basic.jar"  tofile="../_output/lib/iottree-ext-basic.jar" />
-								<copy file="../ext-parent/ext-opcda/target/iottree-ext-opcda.jar"  tofile="../_output/lib/iottree-ext-opcda.jar" />
-								<copy file="../ext-parent/ext-pro/target/iottree-ext-pro.jar"  tofile="../_output/lib/iottree-ext-pro.jar" />
+								<copy file="../ext-basic/target/iottree-ext-basic.jar"  tofile="../_output/lib/iottree-ext-basic.jar" />
+								<copy file="../ext-opcda/target/iottree-ext-opcda.jar"  tofile="../_output/lib/iottree-ext-opcda.jar" />
+								<copy file="../ext-pro/target/iottree-ext-pro.jar"  tofile="../_output/lib/iottree-ext-pro.jar" />
 								        
 								<delete file="../_output/lib/jsp-api-2.2.jar" />
 			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
