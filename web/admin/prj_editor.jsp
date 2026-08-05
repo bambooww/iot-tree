@@ -10,7 +10,7 @@
 <%
 	if(!Convert.checkReqEmpty(request, out, "id"))
 		return ;
-boolean b_portal = "true".equals(request.getParameter("p")) ;
+//boolean b_portal = "true".equals(request.getParameter("p")) ;
 String using_lan = Lan.getUsingLang() ;
 	//String op = request.getParameter("op");
 	String prjid = request.getParameter("id");
@@ -234,7 +234,7 @@ if(hide_top)
 			  <ul class="layui-tab-title">
 			    <li class="layui-this"><wbt:g>msg_net</wbt:g></li>
 <%
-if(b_portal)
+//if(b_portal)
 {
 %>
 			    <li ><wbt:g>portal</wbt:g></li>
@@ -248,7 +248,7 @@ if(b_portal)
 			      <iframe src="./mn/mn_mgr.jsp?container_id=<%=prjid %>" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>
 				</div>
 <%
-if(b_portal)
+//if(b_portal)
 {
 %>
 				<div class="layui-tab-item left_btm_bd"  style="position:relative;top:0px;bottom:0px;width:100%;height:210px">

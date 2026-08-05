@@ -361,7 +361,7 @@ if(oas.size()>0)
 
 </head>
 
-<body>
+<body style="overflow: hidden;">
 <%
 if(can_save)
 {
@@ -406,7 +406,7 @@ if(item instanceof IMNNodeRes)
 if(oas.size()>0)
 {
 %><label class="layui-form-mid"><w:g>outer</w:g>Api:</label>
-    <div class="layui-input-inline" style="width:200px;" title="<w:g>res_name_ppt</w:g>">
+    <div class="layui-input-inline" style="width:400px;" title="<w:g>res_name_ppt</w:g>">
       <div class="multiselect">
 		    <div class="selectBox" onclick="toggleDropdown()">
 		        <span id="outerapi_tt"></span>
@@ -479,7 +479,7 @@ window.onclick = function(event) {
   </div>
 
 </div>
-  <div id="pm_cont">
+  <div id="pm_cont" >
   	
   </div>
  </form>

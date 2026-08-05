@@ -85,7 +85,7 @@ color:#2f2f2f;
 
 .out_tt {width:150px;}
 .out_tt .idx {width:20px;text-align: right;display:inline-block;}
-.out_tt .inp {width:120px;}
+.out_tt .inp {width:110px;}
 </style>
 <div class="layui-form-item" style="position: absolute;right:10px;z-index:1000;">
     <label class="layui-form-label">Outputs:</label>
@@ -93,7 +93,7 @@ color:#2f2f2f;
     	<input type="number" class="layui-input" id="out_num" value="1" min="1" onchange="refresh_out_tts(true)"/>
     </div>
   </div>
-  <div style="position: absolute;right:5px;top:100px;z-index:1000;width:150px;border:1px solid #ccc;">
+  <div style="position: absolute;right:5px;top:135px;z-index:1000;width:140px;border:1px solid #ccc;">
   	<div class="out_tt">&nbsp;&nbsp;Output Titles</div>
   	<div id="out_tts">
     

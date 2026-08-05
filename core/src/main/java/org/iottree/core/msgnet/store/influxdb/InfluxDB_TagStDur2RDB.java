@@ -19,6 +19,7 @@ import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagAggr2RDB.AggrTag;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
@@ -232,6 +233,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		}
 		this.durTP = DurTP.valOfInt(jo.optInt("dur_tp",0)) ;
 		JSONArray jarr = jo.optJSONArray("st_vals") ;
+		LinkedHashMap<String,StatusVal> s2v = new LinkedHashMap<>() ;
 		if(jarr!=null)
 		{
 			int n = jarr.length() ;
@@ -241,9 +243,10 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 				StatusVal sv = StatusVal.fromJO(bfloat ,tmpjo) ;
 				if(sv==null)
 					continue ;
-				this.strv2sv.put(sv.strv,sv) ;
+				s2v.put(sv.strv,sv) ;
 			}
 		}
+		this.strv2sv = s2v ;
 		clearCache();
 	}
 	
@@ -695,7 +698,8 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		return cc;
 	}
 	
-	@outer_api(desc_en="input null output {status_v1:int32,status_v2:int32...}")
+	@outer_api(name="dur_in_cur_mon",
+			title_en="Calculate the duration of tag status for the current month (in seconds)",title_cn="计算当月标签状态持续时间(秒)")
 	public JSONObject statDurInCurrentMonth(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -707,7 +711,8 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		return statDurInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(desc_en="input null output {status_v1:int32,status_v2:int32...}")
+	@outer_api(name="dur_in_cur_year",
+			title_en="Calculate the duration of tag status for the current year (in seconds)",title_cn="计算当年标签状态持续时间(秒)")
 	public JSONObject statDurInCurrentYear(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -719,7 +724,8 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		return statDurInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(desc_en="input {st:int64,et:int64} output {status_v1:int32,status_v2:int32...}")
+	@outer_api(name="dur_in_period",
+			title_en="Calculate the duration (in seconds) of tag status during a time period",title_cn="计算在一个时间段标签状态持续时间(秒)")
 	public JSONObject statDurInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -790,5 +796,29 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 			if(conn!=null)
 				cp.free(conn);
 		}
+	}
+	
+	private static final JSONObject input_st_et = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
+	//private static final JSONObject ouput_dur = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
+	@Override
+	public JSONObject[] getOuterApiIOSample(String apin)
+	{
+		JSONObject out_jo = new JSONObject() ;
+		for(StatusVal sv:this.strv2sv.values())
+		{
+			out_jo.put(sv.dbCol,100) ;
+		}
+		
+		switch(apin)
+		{
+		case "dur_in_cur_mon":
+			return new JSONObject[] {null,out_jo};
+		case "dur_in_cur_year":
+			return new JSONObject[] {null,out_jo};
+		case "dur_in_period":
+			return new JSONObject[] {input_st_et,out_jo};
+		
+		}
+		return null ;
 	}
 }

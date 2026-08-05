@@ -242,7 +242,12 @@ IOT-Tree Server内部支持gRPC服务，启用之后，你可以使用其他各�
 
 如果你使用系统碰到问题或者有好的建议，可以给我们发邮件反馈：iottree@hotmail.com
 
-我们还提供高性价比的技术咨询和技术支持服务，如果你有需要，请联系：iottree@hotmail.com
+我们还提供高性价比的技术咨询和技术支持服务，如果你有需要，请联系：iottree@hotmail.com 
+
+或加微信
+
+<img src="./doc/img/wx.png">
+
 
 
 

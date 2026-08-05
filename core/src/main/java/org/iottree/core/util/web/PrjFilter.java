@@ -29,6 +29,7 @@ import org.iottree.core.UATag;
 import org.iottree.core.UAUtil;
 import org.iottree.core.conn.ConnPtHTTPSer;
 import org.iottree.core.msgnet.MNBase;
+import org.iottree.core.msgnet.MNBase.OuterApi;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.modules.RESTful_M;
@@ -41,6 +42,7 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.web.LoginUtil.SessionItem;
 import org.iottree.portal.NavFrame;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PrjFilter extends CommonFilter
@@ -153,9 +155,107 @@ public class PrjFilter extends CommonFilter
 		return true;
 	}
 	
-	private static final String TP_OUTER_API = "outer_api";
 	
-	private boolean doMsgNetRESTfulApi(String path,HttpServletRequest request, HttpServletResponse response)
+	
+	private void handleOuterApi(List<String> ss,HttpServletRequest request, HttpServletResponse response)
+			throws Exception
+	{
+		byte[] bs = readPostBS(request, response) ;
+		String input_txt=  null ;
+		
+		if(bs!=null&&bs.length>0)
+			input_txt = new String(bs,"UTF-8").trim() ;
+		
+		JSONArray req_jarr = null ;
+		JSONObject req_jo = null ;
+		if(Convert.isNotNullEmpty(input_txt))
+		{
+			if(input_txt.startsWith("{"))
+				req_jo = new JSONObject(input_txt) ;
+			else if(input_txt.startsWith("["))
+				req_jarr = new JSONArray(input_txt) ;
+		}
+		
+		StringBuilder failedr = new StringBuilder() ;
+		Object retob = null;
+		
+		int nnn = ss.size() ;
+		UAPrj prj = null ;
+		MNNet net = null ;
+		MNBase node = null ;
+		MNBase.OuterApi oa = null;
+		if(nnn>1)
+		{
+			String prjn = ss.get(1);
+			prj = UAManager.getInstance().getPrjByName(prjn) ;
+			if(prj==null)
+				return ;
+		}
+		
+		if(nnn>2)
+		{
+			String netname = ss.get(2) ;
+			net = prj.getMNManager().getNetByName(netname) ;
+			if(net==null)
+				return ;
+		}
+		
+		if(nnn>3)
+		{
+			String node_n = ss.get(3) ;
+			node = net.getItemByName(node_n) ;
+			if(node==null)
+				return ;
+		}
+		if(nnn>4)
+		{
+			String apiname = ss.get(4) ;
+			oa = node.getUsingOuterApi(apiname) ;
+			if(oa==null)
+				return ;
+		}
+		
+		if(nnn<=4 && req_jarr==null)
+		{
+			response.sendError(500, "<pre>no request JSONArray input</pre>");
+			return ;
+		}
+			
+		switch(nnn)
+		{
+		case 1://all prj in server
+			retob = OuterApi.RT_callInServer(req_jarr, failedr) ;
+			break ;
+		case 2:// in prj call
+			retob = OuterApi.RT_callInPrj(prj,req_jarr, failedr) ;
+			break ;
+		case 3: //in msg net call
+			retob = OuterApi.RT_callInNet(net,req_jarr, failedr) ;
+			break;
+		case 4: // in node call
+			retob = OuterApi.RT_callInNode(node,req_jarr, failedr) ;
+			break;
+		case 5: // api call
+			retob = oa.RT_call(req_jo,failedr) ;
+			break;
+		default:
+			return ;
+		}
+		
+		//return response
+		if(retob==null)
+		{
+			response.sendError(500, "<pre>"+failedr.toString()+"</pre>");
+			return  ;
+		}
+		java.io.Writer ww = response.getWriter() ;
+		ww.write(retob.toString());
+		ww.flush();
+		return ;
+	}
+	
+	
+	private boolean doPrjMsgNetRESTfulApi(String path,HttpServletRequest request, HttpServletResponse response)
 			throws IOException, Exception
 	{
 		List<String> ss = Convert.splitStrWith(path, "/") ;
@@ -165,10 +265,6 @@ public class PrjFilter extends CommonFilter
 		if(!s1.startsWith("_mn_"))
 			return false;
 		s1 = s1.substring(4) ;
-		if(TP_OUTER_API.equals(s1))
-		{
-			return handleOuterApi(request,response,ss) ;
-		}
 		
 		if(RESTful_M.TP.equals(s1))
 		{
@@ -183,51 +279,7 @@ public class PrjFilter extends CommonFilter
 		return false;
 	}
 	
-	private boolean handleOuterApi(HttpServletRequest request, HttpServletResponse response, List<String> ss)
-			throws ServletException, IOException, Exception
-	{
-		if(ss.size()!=5)
-			return false;
-		
-		String prjn = ss.get(0);
-		UAPrj prj = UAManager.getInstance().getPrjByName(prjn) ;
-		if(prj==null)
-			return false;
-		String netname = ss.get(2) ;
-		String node_n = ss.get(3) ;
-		String apiname = ss.get(4) ;
-		MNManager mnm = MNManager.getInstance(prj) ;
-		if(mnm==null)
-			return false;
-		MNNet net = mnm.getNetByName(netname) ;
-		if(net==null)
-			return false;
-		MNBase node = net.getItemByName(node_n) ;
-		if(node==null)
-			return false;
-		MNBase.OuterApi oa = node.getUsingOuterApi(apiname) ;
-		if(oa==null)
-			return false;
-		byte[] bs = readPostBS(request, response) ;
-		JSONObject inputjo = null ;
-		if(bs!=null&&bs.length>0)
-		{
-			String inputstr = new String(bs,"UTF-8") ;
-			inputjo = new JSONObject(inputstr) ;
-		}
-		StringBuilder failedr = new StringBuilder() ;
-		Object retob = oa.RT_call(node, inputjo,failedr) ;
-		if(retob==null)
-		{
-			response.sendError(500, "<pre>"+failedr.toString()+"</pre>");
-			return true ;
-		}
-		java.io.Writer ww = response.getWriter() ;
-		ww.write(retob.toString());
-		ww.flush();
-		return true;
-	}
-
+	
 	private boolean handleRestfulReadApi(HttpServletRequest request, HttpServletResponse response, List<String> ss)
 			throws ServletException, IOException, UnsupportedEncodingException
 	{
@@ -360,6 +412,36 @@ public class PrjFilter extends CommonFilter
 			chain.doFilter(request, response);
 			return ;
 		}
+		
+		if(uri.startsWith(OuterApi.MN_OUTER_API_PRE))
+		{
+			List<String> ss = Convert.splitStrWith(uri, "/") ;
+			if("_doc".equals(ss.get(ss.size()-1)))
+			{
+				ss.remove(ss.size()-1) ;
+				ss.remove(0) ;
+				req.getRequestDispatcher("/mn_outer_api_doc.jsp?path="+Convert.combineStrWith(ss,  '.')).forward(req, resp);
+				return ;
+			}
+			
+			try
+			{
+				handleOuterApi(ss,req, resp) ;
+			}
+			catch(Exception e)
+			{
+				//e.printStackTrace();
+				PrintWriter w = resp.getWriter();
+				
+				w.write("<pre>check read right exception:");
+				e.printStackTrace(w);
+				w.write("</pre>");
+				//w.write(e.getMessage());
+				return ;
+			}
+			return ;
+		}
+		
 		if(uri.startsWith("/iottree"))
 			uri = uri.substring(8) ;
 		
@@ -410,8 +492,8 @@ public class PrjFilter extends CommonFilter
 		
 		try
 		{
-			if(doMsgNetRESTfulApi(uri, req, resp))
-			{//restful api in msg net
+			if(doPrjMsgNetRESTfulApi(uri, req, resp))
+			{//restful api in project 's msg net
 				return ;
 			}
 		}

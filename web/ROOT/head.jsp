@@ -30,7 +30,6 @@
 <script type="text/javascript" src="<%=path_head %>/_js/ajax.js"></script>
 <script src="<%=path_head %>/_js/layui/layui.all.js"></script>
 <script src="<%=path_head %>/_js/dlg_layer.js"></script>
-<script defer src="<%=path_head %>/_js/font6/js/all.js"></script>
 <link href="<%=path_head %>/_js/font6/css/all.css" rel="stylesheet">
 <%
 	}

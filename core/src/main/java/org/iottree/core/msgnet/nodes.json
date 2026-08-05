@@ -22,7 +22,8 @@
 		"org.iottree.core.msgnet.nodes.NM_Change",
 		"org.iottree.core.msgnet.nodes.NM_Switch",
 		"org.iottree.core.msgnet.nodes.NM_OnOff",
-		"org.iottree.core.msgnet.nodes.NM_Exec"
+		"org.iottree.core.msgnet.nodes.NM_Exec",
+		"org.iottree.core.msgnet.nodes.NM_OuterApiCombinator"
 	],"modules":[
 		{"cn":"org.iottree.core.msgnet.modules.MsgMTO_M","nodes":[
 			"org.iottree.core.msgnet.modules.MsgMTO_IN",

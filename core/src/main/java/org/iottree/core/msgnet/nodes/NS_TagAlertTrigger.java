@@ -20,6 +20,7 @@ import org.iottree.core.msgnet.MNNodeStart;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagAggr2RDB.AggrTag;
 import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB.StatusVal;
 import org.iottree.core.store.gdb.DBResult;
 import org.iottree.core.store.gdb.DBUtil;
@@ -603,30 +604,8 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		}
 	}
 	
-	@Override
-	public JSONObject[] getOuterApiIOSample(String apin)
-	{
-		switch(apin)
-		{
-		case "count_evt":
-			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
-					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
-					,new JSONObject().put("count", 3)};
-		case "stat_dur_period":
-			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
-					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
-					,new JSONObject().put("count", 3).put("total_seconds", 100)};
-		case "stat_dur_cur_mon":
-		case "stat_dur_cur_year":
-			return new JSONObject[] {new JSONObject()
-					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
-					,new JSONObject().put("count", 3).put("total_seconds", 100)};
-		}
-		
-		return null ;
-	}
-	
-	@outer_api(name="count_evt")
+	@outer_api(name="count_evt"
+			,title_en="Count the number of events/alarms during a time period",title_cn="计数一个时间段事件报警次数")
 	public JSONObject countEvtNumInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -774,7 +753,8 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		}
 	}
 	
-	@outer_api(name="stat_dur_cur_mon")
+	@outer_api(name="stat_dur_cur_mon"
+			,title_en="Calculate the duration of the alarm for the current month",title_cn="计算当月报警持续时间")
 	public JSONObject statDurInCurrentMonth(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -786,7 +766,8 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		return statDurInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(name="stat_dur_cur_year")
+	@outer_api(name="stat_dur_cur_year"
+	,title_en="Calculate the duration of the alarm for that year",title_cn="计算当年报警持续时间")
 	public JSONObject statDurInCurrentYear(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -798,7 +779,8 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		return statDurInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(name="stat_dur_period")
+	@outer_api(name="stat_dur_period"
+			,title_en="Calculate the alarm duration for a time period",title_cn="计算一个时间段报警持续时间")
 	public JSONObject statDurInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -957,4 +939,29 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 		}
 		return r ;
 	}
+	
+
+	@Override
+	public JSONObject[] getOuterApiIOSample(String apin)
+	{
+		switch(apin)
+		{
+		case "count_evt":
+			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3)};
+		case "stat_dur_period":
+			return new JSONObject[] {new JSONObject().put("st",1767196800000l).put("et", 1784627683879l)
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3).put("total_seconds", 100)};
+		case "stat_dur_cur_mon":
+		case "stat_dur_cur_year":
+			return new JSONObject[] {new JSONObject()
+					.put("tags", new JSONArray()).put("tps", new JSONArray()).put("lvls", new JSONArray())
+					,new JSONObject().put("count", 3).put("total_seconds", 100)};
+		}
+		
+		return null ;
+	}
+	
 }

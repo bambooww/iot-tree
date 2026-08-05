@@ -859,6 +859,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	{
 		return MNManager.getInstance(this) ;
 	}
+	
+	public final List<MNNet> listMNNetsAll()
+	{
+		return getMNManager().listNets() ;
+	}
 
 	@Override
 	public List<NameTitle> getMNContTagListCatTitles()

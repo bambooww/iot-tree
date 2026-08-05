@@ -10,7 +10,6 @@
 				org.iottree.core.msgnet.*,
 				org.iottree.core.store.*,
 				java.net.*"%><%!
-				
 %><%
 	if(!PlatNodeManager.isPlatNode())
 		return ;

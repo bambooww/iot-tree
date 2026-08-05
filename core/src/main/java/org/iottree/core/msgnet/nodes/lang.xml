@@ -34,6 +34,11 @@
 		desc_cn="对输入的消息根据一定的条件判断是否通过或不通过"
 		desc_en="Determine whether the input message has passed or blocked based on certain conditions"
 		/>
+		
+	<dd_node id="1" name="outerapi_comb" name_cn="外部Api组合器" name_en="Outer Api Combinator"
+		desc_cn="对项目-消息流-节点内部的外部Api进行组合调用支持"
+		desc_en="Support for combined calling of Outer APIs within the project - message flow - node"
+		/>	
 	
 	<dd_node id="1" name="tag_reader" name_cn="标签数据读取" name_en="Tags Reader"
 		desc_cn="根据选择的标签和变量命名，读取当前运行项目中标签值，形成JSON数据输出"

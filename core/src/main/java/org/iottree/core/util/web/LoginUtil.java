@@ -292,6 +292,19 @@ public class LoginUtil
 			}
 		}
 		
+		public SessionItem(PlatNode.UserRight ur)
+		{
+			//this.sess_id = sess_id;
+			this.usern = ur.userName ;
+			this.disn = ur.userDisName ;
+			this.lan = ur.lan ;
+			if(ur.bAdmin)
+			{
+				this.roles = new HashSet<>();
+				this.roles.add("admin") ;
+			}
+		}
+		
 		public boolean isAdmin()
 		{
 			if("admin".equals(usern))
@@ -944,7 +957,7 @@ public class LoginUtil
 		if(si!=null&&si.usern.equals("admin"))
 			return true ;
 		
-		return checkPlatAdmin(req) ;
+		return checkPlatAdmin(req)!=null ;
 	}
 	
 	public static boolean checkUserLogin(HttpServletRequest req) throws UnsupportedEncodingException
@@ -956,7 +969,7 @@ public class LoginUtil
 			return true ;
 		}
 		
-		return checkPlatAdmin(req);
+		return checkPlatAdmin(req)!=null;
 	}
 	
 	public static boolean checkUserLogin(HttpSession hs)// throws UnsupportedEncodingException
@@ -1006,20 +1019,33 @@ public class LoginUtil
 			
 			//read from cookie
 			HttpCookie wb_cookie = HttpCookie.getRequestCookie(IOTTREE_COOKIE,req);
-			if (wb_cookie == null)
-			{
-				return null ;
-			}
-			sess_id = wb_cookie.getValue(COOKIE_NAME_SESSION);
+			if (wb_cookie != null)
+				sess_id = wb_cookie.getValue(COOKIE_NAME_SESSION);
 		}
+		
 		if(Convert.isNullOrEmpty(sess_id))
+		{
+			PlatNode.UserRight ur = checkPlatAdmin(req) ;
+			if(ur!=null)
+			{
+				return new SessionItem(ur) ;
+			}
 			return null ;
+		}
+		
 		SessionItem si = accessSession(sess_id);
 		if(si!=null)
 		{
 			hs.setAttribute(LOGIN_SK, sess_id);
+			return si ;
 		}
-		return si;
+
+		PlatNode.UserRight ur = checkPlatAdmin(req) ;
+		if(ur!=null)
+		{
+			return new SessionItem(ur) ;
+		}
+		return null ;
 	}
 	
 	private static SessionItem accessSession(String sessionid)
@@ -1102,14 +1128,14 @@ public class LoginUtil
 	 * @return
 	 * @throws UnsupportedEncodingException 
 	 */
-	private static boolean checkPlatAdmin(HttpServletRequest request) throws UnsupportedEncodingException
+	private static PlatNode.UserRight checkPlatAdmin(HttpServletRequest request) throws UnsupportedEncodingException
 	{
 		if(!PlatNodeManager.isPlatNode())
-			return false;
+			return null;
 		
 		PlatNode pn = PlatNodeManager.getInstance().getNode() ;
 		if(pn==null)
-			return false;
+			return null;
 		
 		String _plat_token_ = request.getParameter(PlatNode.PN_TOKEN) ;
 		if(Convert.isNotNullEmpty(_plat_token_))
@@ -1131,11 +1157,11 @@ public class LoginUtil
 				//System.out.println("set session="+hs+"   ssid="+hs.getId()  );
 				hs.setAttribute(LOGIN_SK, hs.getId());
 				hs.setAttribute(PlatNode.PN_USER_RIGHT, ur);
-				return true ;
+				return ur ;
 			}
 			else
 			{
-				return false;
+				return null;
 			}
 		}
 		
@@ -1145,12 +1171,7 @@ public class LoginUtil
 		//System.out.println("si=="+si) ;
 		if(log.isDebugEnabled())
 			log.debug("chk session id="+hs.getId());//+" si="+si);
-		return Convert.isNotNullEmpty(tk);
-		//_plat_token_ = (String)request.getSession().getAttribute(PlatNode.PN_TOKEN) ;
-//		if(Convert.isNullOrEmpty(_plat_token_))
-//			return false;
-//		
-		//PlatNode.UserRight ur = pn.getRightByToken(_plat_token_) ;
-		//return ur!=null ;
+		//return Convert.isNotNullEmpty(tk);
+		return (PlatNode.UserRight)hs.getAttribute(PlatNode.PN_USER_RIGHT) ;
 	}
 }

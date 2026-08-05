@@ -228,7 +228,7 @@ public class MNMsg implements IMNCxtPk
 		 }
 		 
 		 //throw new RuntimeException("not JSONArray payload") ;
-		 return null ;
+		 return def_v ;
 	}
 	
 	public int getPayloadInt32()

@@ -21,6 +21,7 @@ import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB.StatusVal;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
@@ -969,7 +970,10 @@ private transient DurItem lastDur = null ;
 		return cc;
 	}
 	
-	@outer_api(name="read_aggr_items_cur_mon",desc_en="input null output {status_v1:int32,status_v2:int32...}")
+	@outer_api(name="aggr_items_cur_mon"
+		,title_cn="计算当月标签聚合值",title_en="Calculate the aggregated value of tags for the current month"
+		,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
+		,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
 	public JSONArray statDurInCurrentMonth(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -981,7 +985,10 @@ private transient DurItem lastDur = null ;
 		return readAggrItemInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(name="read_aggr_items_cur_year",desc_en="input null output {status_v1:int32,status_v2:int32...}")
+	@outer_api(name="aggr_items_cur_year"
+		,title_cn="计算当年标签聚合值",title_en="Calculate the aggregated value of tags for the current year"
+		,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
+		,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
 	public JSONArray statDurInCurrentYear(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -993,7 +1000,10 @@ private transient DurItem lastDur = null ;
 		return readAggrItemInPeriod(inputjo,failedr) ;
 	}
 	
-	@outer_api(name="read_aggr_items")
+	@outer_api(name="aggr_items"
+			,title_cn="计算一个时间段标签聚合值",title_en="Calculate the aggregated value of a time period tag"
+			,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
+			,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
 	public JSONArray readAggrItemInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -1021,15 +1031,10 @@ private transient DurItem lastDur = null ;
 			return null;
 		
 		StringBuilder sqlsb = new StringBuilder();
-		sqlsb.append("select ") ;
-		boolean bfirst = true;
+		sqlsb.append("select _st,_et") ;
 		for(AggrTag sv:this.dbc2ats.values())
 		{
-			if(bfirst)
-				bfirst = false;
-			else
-				sqlsb.append(",") ;
-			sqlsb.append(sv.dbCol) ;
+			sqlsb.append(",").append(sv.dbCol) ;
 			//norcols.add(new JavaColumnInfo(sv.dbCol,false, XmlVal.XmlValType.vt_int32,-1,
 			//		false, false,null, false,-1, "",false,false));
 		}
@@ -1073,7 +1078,9 @@ private transient DurItem lastDur = null ;
 	}
 	
 	
-	@outer_api(name="sum_aggr_items")
+	@outer_api(name="sum_aggr_items"
+			,title_cn="计算一个时间段标签总和",title_en="Calculate the total sum of time period tag"
+			)
 	public JSONObject sumAggrItemInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -1152,13 +1159,22 @@ private transient DurItem lastDur = null ;
 	public JSONObject[] getOuterApiIOSample(String apin)
 	{
 		final JSONObject input = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
-		
+		JSONObject out_jo = new JSONObject() ;
+		for(AggrTag sv:this.dbc2ats.values())
+		{
+			if(sv.valTP.isNumberFloat())
+				out_jo.put(sv.dbCol,3.14) ;
+			else
+				out_jo.put(sv.dbCol,100) ;
+		}
 		switch(apin)
 		{
-		case "read_aggr_items":
-		case "read_aggr_items_cur_year":
-		case "read_aggr_items_cur_mon":
-			return new JSONObject[] {input,};
+		
+		case "aggr_items_cur_year":
+		case "aggr_items_cur_mon":
+			return new JSONObject[] {null,out_jo};
+		case "aggr_items":
+			return new JSONObject[] {input,out_jo};
 		case "sum_aggr_items":
 			JSONObject sum_out = new JSONObject().put("_st", 1767196800000l).put("_et", 1784627699999l);
 			for(AggrTag sv:this.dbc2ats.values())

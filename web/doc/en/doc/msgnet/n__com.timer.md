@@ -27,11 +27,11 @@ If you check this option and fill in the delay milliseconds parameter. The node 
 You can set a fixed interval for subsequent repeated triggering messages. Messages can also be triggered at fixed time intervals within certain time periods based on options.
 
 
-#### Frequency multiplication outputs
+#### Multiple cycle output
 
 
 
-You can set any number of frequency multiplication outputs (the multiplication parameter must be an integer greater than 1). Nodes will automatically add output ports.
+You can set any number of multiple cycle output (the multiplication parameter must be an integer greater than 1). Nodes will automatically add output ports.
 
 Note: All output ports share an internal timing thread, and different output ports have different running times in the future, with time accuracy affected by subsequent nodes.
 

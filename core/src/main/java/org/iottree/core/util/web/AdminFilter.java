@@ -116,9 +116,14 @@ public class AdminFilter  extends CommonFilter implements ILang
 			return ;
 		}
 		
-		if(si==null || !si.isAdmin())
+		if(si==null)
 		{
-			resp.getWriter().write("no right");
+			resp.getWriter().write("no right (no si)");
+			return ;
+		}
+		if(!si.isAdmin())
+		{
+			resp.getWriter().write("no right (not admin)");
 			return ;
 		}
 		req.setCharacterEncoding("UTF-8");

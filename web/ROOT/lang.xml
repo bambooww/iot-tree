@@ -65,4 +65,8 @@
 	<dd_node id="1" name="no_evt_alert" name_cn="无事件/报警信息" name_en="No Event/Alert Data"/>
 	<dd_node id="1" name="dur_tm" name_cn="持续时间" name_en="Duration"/>
 	<dd_node id="1" name="sure_send_cmd" name_cn="确定要发送指令么?" name_en="Are you sure you want to send the command?"/>
+	
+	<dd_node id="1" name="prj" name_cn="项目" name_en="Project"/>
+	<dd_node id="1" name="msgnet" name_cn="消息流程" name_en="Messsage Flow"/>
+	<dd_node id="1" name="node" name_cn="节点" name_en="Node"/>
 </dd_class>

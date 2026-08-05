@@ -79,8 +79,9 @@
  </div>
 <div class="layui-form-item">
     <label class="layui-form-label">Value-Column</label>
-    <div class="layui-input-inline" style="width:500px;" id="status_vals">
-      
+    <div class="layui-input-inline" style="width:500px;" >
+      <div id="status_vals" style="max-height:280px;overflow-y:auto;border:0px solid red">
+      </div>
     </div>
     <div class="layui-form-mid"></div>
     <div class="layui-input-inline" style="width: 100px;">

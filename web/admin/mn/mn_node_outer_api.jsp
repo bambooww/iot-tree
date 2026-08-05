@@ -40,6 +40,13 @@
 	
 	String tp = item.getTPFull() ;
 	String title = item.getTitle() ;
+	String item_n = item.getName() ;
+	
+	if(true)
+	{
+		response.sendRedirect("/_mn_api/"+prjn+"/"+net_n+"/"+item_n+"/_doc") ;
+		return ;
+	}
 	
 	LinkedHashMap<String,MNBase.OuterApi> all_apis = item.listOuterApiAll() ;
 	if(all_apis==null||all_apis.size()<=0)
@@ -55,13 +62,21 @@
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <style>
+.layui-elem-quote {
+    margin-bottom: 1px;
+    padding: 8px;font-weight:bold;
+    line-height: 15px;
+    border-left: 5px solid #009688;
+    border-radius: 0 2px 2px 0;
+    background-color: #f2f2f2;
+}
+
 .save_btn
 {
 	position: absolute;
 	right:5px;
 	top:5px;
 	color:#27ba7d;
-	
 }
 
 .in_title {position: absolute;left:2px;top:50px;border:1px solid #ccc;background-color: #003a36;color:#00ffe2;cursor: pointer;}
@@ -79,7 +94,10 @@
 
 <body>
 <blockquote class="layui-elem-quote">
-  <%=title %>
+  <span class="pre"></span>/<%=net_n %>
+</blockquote>
+<blockquote class="layui-elem-quote">
+  <span class="pre"></span>/<%=net_n%>/<%=item_n %>
 </blockquote>
 <table class="layui-table">
  <thead>
@@ -102,7 +120,7 @@ for(MNBase.OuterApi oa:all_apis.values())
 		boolean bopen = use_apis.containsKey(oa.getName()) ;
 		color = bopen?"green":"red";
 		
-		url = "/"+prjn+"/_mn_outer_api/"+net_n+"/"+ndname+"/"+oa.getName()+"</span>" ;
+		url = MNBase.OuterApi.MN_OUTER_API_PRE+ "/"+prjn+"/"+net_n+"/"+ndname+"/"+oa.getName()+"</span>" ;
 	}
 %><tr>
  		<td rowspan="2"><%=oa.getName() %></td>

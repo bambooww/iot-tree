@@ -343,6 +343,11 @@ public class NM_JsFunc extends MNNodeMid implements ILang
 			JSONObject tmpjo = new JSONObject((Map<?,?>)obj) ;
 			return createMsgFromRetJO(tmpjo) ;
 		}
+		if(obj instanceof List)
+		{
+			JSONArray tmpjarr = new JSONArray((List<?>)obj) ;
+			return new MNMsg().asPayload(tmpjarr) ;
+		}
 		
 		return  new MNMsg().asPayload(obj) ;
 	}

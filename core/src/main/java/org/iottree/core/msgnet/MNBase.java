@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import org.iottree.core.UACh;
 import org.iottree.core.UADev;
+import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
 import org.iottree.core.UAPrj;
 import org.iottree.core.UAServer;
@@ -48,13 +50,24 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	
 	public static class OuterApi implements Comparable<OuterApi>
 	{
+		public static final String MN_OUTER_API_PRE = "/_mn_api";
+		
+		public static final String MN_OUTER_API = "_mn_api";
+		
+		final MNBase owner ;
+		
 		String name ;
 		
-		String title ;
+		String title_en ;
 		
-		String desc ;
+		String title_cn ;
+		
+		String desc_en ;
+		String desc_cn ;
 		
 		Method method ;
+		
+		
 		
 //		OuterApi(String n,String t,String d,Method m)
 //		{
@@ -64,31 +77,119 @@ public abstract class MNBase extends MNCxtPk implements ILang
 //			this.method = m ;
 //		}
 		
-		OuterApi(outer_api oa,Method m)
+		OuterApi(MNBase owner,outer_api oa,Method m)
 		{
+			this.owner = owner ;
 			this.name = oa.name() ;
-			if("cn".equals(Lan.getUsingLang()))
-			{
-				this.title = oa.title_cn() ;
-				this.desc = oa.desc_cn() ;
-				if(Convert.isNullOrEmpty(this.title))
-					this.title = oa.title_en() ;
-				if(Convert.isNullOrEmpty(this.desc))
-					this.desc = oa.desc_en() ;
-			}
-			else
-			{
-				this.title = oa.title_en() ;
-				this.desc = oa.desc_en() ;
-			}
+			this.title_cn = oa.title_cn() ;
+			this.title_en = oa.title_en() ;
+			this.desc_en = oa.desc_en() ;
+			this.desc_cn = oa.desc_cn() ;
+			
+//			if("cn".equals(Lan.getUsingLang()))
+//			{
+//				
+////				if(Convert.isNullOrEmpty(this.title))
+////					this.title = oa.title_en() ;
+////				if(Convert.isNullOrEmpty(this.desc))
+////					this.desc = oa.desc_en() ;
+//			}
+//			else
+//			{
+//				this.title = oa.title_en() ;
+//				this.desc = oa.desc_en() ;
+//			}
 			
 			if(Convert.isNullOrEmpty(this.name))
 				this.name = m.getName() ;
 			
-			if(Convert.isNullOrEmpty(this.title))
-				this.title = m.getName() ;
+//			if(Convert.isNullOrEmpty(this.title))
+//				this.title = m.getName() ;
 			
 			this.method = m ;
+			
+			//owner.get
+		}
+		
+		public MNBase getOwner()
+		{
+			return this.owner ;
+		}
+		
+		public MNNet getBelongToNet()
+		{
+			return this.owner.getBelongTo() ;
+		}
+		
+		public UAPrj getBelongToPrj()
+		{
+			return this.owner.getPrj() ;
+		}
+		
+		public String getApiUID()
+		{
+			return this.getBelongToPrj().getName()+"."+this.getBelongToNet().getName()
+			+"."+this.owner.getName() +"."+this.name;
+		}
+		
+		public String getAccessPath()
+		{
+			return MN_OUTER_API_PRE+"/"+this.getBelongToPrj().getName()+"/"+this.getBelongToNet().getName()
+					+"/"+this.owner.getName() +"/"+this.name;
+		}
+		
+		public String getSubPathIn(String prj_n,String net_n,String node_n)
+		{
+			if(Convert.isNullOrEmpty(prj_n))
+				return "/"+this.getBelongToPrj().getName()+"/"+this.getBelongToNet().getName()
+						+"/"+this.owner.getName() +"/"+this.name;
+			if(Convert.isNullOrEmpty(net_n))
+				return "/"+this.getBelongToNet().getName()
+						+"/"+this.owner.getName() +"/"+this.name;
+			if(Convert.isNullOrEmpty(node_n))
+				return "/"+this.owner.getName() +"/"+this.name;
+			return "/"+this.name;
+		}
+		
+		public JSONObject[] getSubInOutSampleIn(String prj_n,String net_n,String node_n)
+		{
+			JSONObject in_jo = new JSONObject() ;
+			JSONObject out_jo = new JSONObject() ;
+			if(Convert.isNullOrEmpty(prj_n))
+			{
+				String n = this.getBelongToPrj().getName();
+				in_jo.put("prj_n", n) ;
+				out_jo.put("prj_n", n) ;
+			}
+			if(Convert.isNullOrEmpty(net_n))
+			{
+				String n = this.getBelongToNet().getName();
+				in_jo.put("net_n", n) ;
+				out_jo.put("net_n", n) ;
+			}
+			if(Convert.isNullOrEmpty(node_n))
+			{
+				String n = this.owner.getName();
+				in_jo.put("node_n", n) ;
+				out_jo.put("node_n", n) ;
+			}
+			in_jo.put("api_n", this.name);
+			out_jo.put("api_n", this.name) ;
+			
+			JSONObject[] inout = this.owner.getOuterApiIOSample(this.name) ;
+			if(inout!=null)
+			{
+				if(inout.length>0)
+					in_jo.putOpt("api_in", inout[0]) ;
+				if(inout.length>1)
+					out_jo.putOpt("api_out", inout[1]) ;
+			}
+			return new JSONObject[] {in_jo,out_jo};
+		}
+		
+		public JSONObject[] getApiSample()
+		{
+			return this.owner.getOuterApiIOSample(this.name) ;
 		}
 		
 		public String getName()
@@ -98,12 +199,28 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		
 		public String getTitle()
 		{
-			return this.title ;
+			if("cn".equals(Lan.getUsingLang()))
+			{
+				if(Convert.isNotNullEmpty(this.title_cn))
+					return this.title_cn ;
+			}
+			
+			if(Convert.isNotNullEmpty(this.title_en))
+				return this.title_en ;
+			return this.name ;
 		}
 		
 		public String getDesc()
 		{
-			return desc ;
+			if("cn".equals(Lan.getUsingLang()))
+			{
+				if(Convert.isNotNullEmpty(this.desc_cn))
+					return this.desc_cn ;
+			}
+			
+			if(Convert.isNotNullEmpty(this.desc_en))
+				return this.desc_en ;
+			return null;
 		}
 		
 		public Method getMethod()
@@ -117,21 +234,351 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			return this.name.compareTo(o.name);
 		}
 		
+		public JSONObject toListJO()
+		{
+			return new JSONObject().put("api_n", this.name).put("api_t", this.getTitle()).putOpt("api_desc", this.getDesc()).put("path", this.getAccessPath())
+					.put("node_n", this.owner.getName()).put("net_n", this.getBelongToNet().getName())
+					.put("prj_n",this.getBelongToPrj().getName()).put("uid", this.getApiUID());
+		}
+		
+		public JSONObject toDetailJO()
+		{
+			JSONObject ret = this.toListJO() ;
+			JSONObject[] sp_io = this.getApiSample() ;
+			if(sp_io!=null)
+			{
+				ret.putOpt("sample_in",sp_io[0]) ;
+				ret.putOpt("sample_out",sp_io[1]) ;
+			}
+			return ret ;
+		}
+		
 		private OuterApiLog lastCallLog = null ;
 		
-		public Object RT_call(MNBase mnbase,JSONObject inputjo,StringBuilder failedr)
-			throws Exception
+		public Object RT_call(JSONObject inputjo,StringBuilder failedr)
+		//	throws Exception
 		{
-			long calldt = System.currentTimeMillis() ;
-			Object retob = this.method.invoke(mnbase, inputjo,failedr) ;
-			long retdt = System.currentTimeMillis() ;
-			lastCallLog = new OuterApiLog(calldt,inputjo,retdt,retob) ;
-			return retob ;
+			try
+			{
+				long calldt = System.currentTimeMillis() ;
+				Object retob = this.method.invoke(this.owner, inputjo,failedr) ;
+				long retdt = System.currentTimeMillis() ;
+				lastCallLog = new OuterApiLog(calldt,inputjo,retdt,retob) ;
+				return retob ;
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+				failedr.append(ee.getMessage()) ;
+				return null ;
+			}
 		}
 		
 		public OuterApiLog RT_getLastCallLog()
 		{
 			return this.lastCallLog ;
+		}
+		
+		public static JSONArray RT_callInServer(JSONArray req_jarr,StringBuilder failedr)
+		{
+			JSONArray ret_jarr = new JSONArray() ;
+			int n = req_jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = req_jarr.getJSONObject(i) ;
+				String prj_n = tmpjo.optString("prj_n") ;
+				String net_n = tmpjo.optString("net_n") ;
+				String node_n = tmpjo.optString("node_n") ;
+				String api_n = tmpjo.optString("api_n") ;
+				if(Convert.isNullOrEmpty(prj_n)||Convert.isNullOrEmpty(net_n)
+						||Convert.isNullOrEmpty(node_n)||Convert.isNullOrEmpty(api_n))
+					continue ;
+				UAPrj prj = UAManager.getInstance().getPrjByName(prj_n) ;
+				if(prj==null)
+					continue ;
+				MNNet net = prj.getMNManager().getNetByName(net_n) ;
+				if(net==null)
+					continue ;
+				MNBase node = net.getItemByName(node_n) ;
+				if(node==null)
+					continue ;
+				OuterApi oa = node.getUsingOuterApi(api_n) ;
+				if(oa==null)
+				{
+					ret_jarr.put(new JSONObject().put("api_n",api_n).put("api_out_err","no using api found with name="+api_n)) ;
+					continue ;
+				}
+				
+				JSONObject in_jo = tmpjo.optJSONObject("api_in") ;
+				doOuterApi(oa,in_jo,ret_jarr) ;
+			}
+			
+			return ret_jarr ;
+		}
+		
+		public static JSONArray RT_callInPrj(UAPrj prj,JSONArray req_jarr,StringBuilder failedr)
+		{
+			JSONArray ret_jarr = new JSONArray() ;
+			int n = req_jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = req_jarr.getJSONObject(i) ;
+				String net_n = tmpjo.optString("net_n") ;
+				String node_n = tmpjo.optString("node_n") ;
+				String api_n = tmpjo.optString("api_n") ;
+				if(Convert.isNullOrEmpty(net_n)||Convert.isNullOrEmpty(node_n)||Convert.isNullOrEmpty(api_n))
+					continue ;
+				MNNet net = prj.getMNManager().getNetByName(net_n) ;
+				if(net==null)
+					continue ;
+				MNBase node = net.getItemByName(node_n) ;
+				if(node==null)
+					continue ;
+				OuterApi oa = node.getUsingOuterApi(api_n) ;
+				if(oa==null)
+				{
+					ret_jarr.put(new JSONObject().put("api_n",api_n).put("api_out_err","no using api found with name="+api_n)) ;
+					continue ;
+				}
+				
+				JSONObject in_jo = tmpjo.optJSONObject("api_in") ;
+				doOuterApi(oa,in_jo,ret_jarr) ;
+			}
+			
+			return ret_jarr ;
+		}
+		
+		public static JSONArray RT_callInNet(MNNet net,JSONArray req_jarr,StringBuilder failedr)
+		{
+			JSONArray ret_jarr = new JSONArray() ;
+			int n = req_jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = req_jarr.getJSONObject(i) ;
+				String node_n = tmpjo.optString("node_n") ;
+				String api_n = tmpjo.optString("api_n") ;
+				if(Convert.isNullOrEmpty(node_n)||Convert.isNullOrEmpty(api_n))
+					continue ;
+				MNBase node = net.getItemByName(node_n) ;
+				if(node==null)
+					continue ;
+				OuterApi oa = node.getUsingOuterApi(api_n) ;
+				if(oa==null)
+				{
+					ret_jarr.put(new JSONObject().put("api_n",api_n).put("api_out_err","no using api found with name="+api_n)) ;
+					continue ;
+				}
+				
+				JSONObject in_jo = tmpjo.optJSONObject("api_in") ;
+				doOuterApi(oa,in_jo,ret_jarr) ;
+			}
+			
+			return ret_jarr ;
+		}
+		
+
+		public static JSONArray RT_callInNode(MNBase node,JSONArray req_jarr,StringBuilder failedr)
+		{
+			JSONArray ret_jarr = new JSONArray() ;
+			int n = req_jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tmpjo = req_jarr.getJSONObject(i) ;
+				String api_n = tmpjo.optString("api_n") ;
+				if(Convert.isNullOrEmpty(api_n))
+					continue ;
+				OuterApi oa = node.getUsingOuterApi(api_n) ;
+				if(oa==null)
+				{
+					ret_jarr.put(new JSONObject().put("api_n",api_n).put("api_out_err","no using api found with name="+api_n)) ;
+					continue ;
+				}
+				
+				JSONObject in_jo = tmpjo.optJSONObject("api_in") ;
+				doOuterApi(oa,in_jo,ret_jarr) ;
+			}
+			
+			return ret_jarr ;
+		}
+		
+		private static void doOuterApi(OuterApi oa,JSONObject in_jo,JSONArray ret_jarr)
+		{
+			StringBuilder ffr = new StringBuilder() ;
+			JSONObject retjo = new JSONObject().put("api_n",oa.getName());
+			MNBase node = oa.getOwner() ;
+			MNNet net = node.getBelongTo() ;
+			UAPrj prj = node.getPrj() ;
+			retjo.put("prj_n", prj.getName()).put("net_n", net.getName()).put("node_n", node.getName()) ;
+			
+			Object retob = oa.RT_call(in_jo, ffr) ;
+			if(retob==null)
+			{
+				ret_jarr.put(retjo.put("api_out_err","no using api found")) ;
+				return ;
+			}
+			ret_jarr.put(retjo.put("api_out",retob)) ;//succ out
+		}
+		
+		public static JSONArray RT_callInPath(String uri_path,JSONArray req_jarr,StringBuilder failedr)
+		{
+			List<String> ss = Convert.splitStrWith(uri_path, "./");
+			int plen = 0;
+			if(ss!=null)
+				plen = ss.size() ;
+			UAPrj prj = null;
+			MNNet net = null ;
+			MNBase node = null ;
+			if(plen>0)
+			{
+				prj = UAManager.getInstance().getPrjByName(ss.get(0)) ;
+				if(prj==null)
+				{
+					failedr.append("no prj found") ;
+					return null ;
+				}
+			}
+			if(plen>1)
+			{
+				net = prj.getMNManager().getNetByName(ss.get(1));
+				if(net==null)
+				{
+					failedr.append("no net found") ;
+					return null ;
+				}
+			}
+			if(plen>2)
+			{
+				node = net.getItemByName(ss.get(2));
+				if(node==null)
+				{
+					failedr.append("no node found") ;
+					return null ;
+				}
+			}
+			
+			switch(plen)
+			{
+			case 0:
+				return RT_callInServer(req_jarr,failedr) ;
+			case 1:
+				return RT_callInPrj(prj, req_jarr, failedr);
+			case 2:
+				return RT_callInNet(net,req_jarr,failedr);
+			case 3:
+				return RT_callInNode(node,req_jarr,failedr) ;
+			default:
+				failedr.append("only support in server prj net node") ;
+				return null ;
+			}
+		}
+		//
+		
+		public static OuterApi getOuterApiByUID(String uid)
+		{
+			List<String> ss = Convert.splitStrWith(uid, ".") ;
+			if(ss.size()!=4)
+				return null ;
+			UAPrj prj = UAManager.getInstance().getPrjByName(ss.get(0)) ;
+			if(prj==null)
+				return null ;
+			MNNet net = prj.getMNManager().getNetByName(ss.get(1)) ;
+			if(net==null)
+				return null ;
+			MNBase node  = net.getItemByName(ss.get(2)) ;
+			if(node==null)
+				return null ;
+			return node.getOuterApi(ss.get(3)) ;
+		}
+		
+		public static LinkedHashMap<String,OuterApi> listSubApisAll()
+		{
+			return listSubApis(null,null,null) ;
+		}
+		
+		public static LinkedHashMap<String,OuterApi> listSubApis(String prj_n,String net_n,String node_n)
+		{
+			LinkedHashMap<String,OuterApi> rets = new LinkedHashMap<>() ;
+			for(UAPrj prj:UAManager.getInstance().listPrjs())
+			{
+				String pn = prj.getName() ;
+				if(Convert.isNotNullEmpty(prj_n))
+				{
+					 if(!prj_n.equals(pn))
+						 continue ;
+				}
+				
+				for(MNNet net:prj.listMNNetsAll())
+				{
+					if(Convert.isNotNullEmpty(net_n))
+					{
+						if(!net_n.equals(net.getName()))
+							continue ;
+					}
+					
+					for(MNBase node:net.getNamedItemsAll().values())
+					{
+						if(Convert.isNotNullEmpty(node_n))
+						{
+							if(!node_n.equals(node.getName()))
+								continue ;
+						}
+						
+						Collection<OuterApi> oas = node.getUsingOuterApis().values() ;
+						for(OuterApi oa:oas)
+						{
+							rets.put(oa.getApiUID(),oa) ;
+						}
+					}
+				}
+			}
+			return rets ;
+		}
+		
+		public static JSONArray listSubApiJArr(String prj_n,String net_n,String node_n)
+		{
+			JSONArray ret = new JSONArray() ;
+			for(OuterApi api:listSubApis(prj_n,net_n,node_n).values())
+			{
+				JSONObject tmpjo = api.toListJO() ;
+				String subp = api.getSubPathIn(prj_n,net_n,node_n);
+				tmpjo.put("sub_path", subp) ;
+				MNBase node = api.owner ;
+				tmpjo.put("node_tpt",node.getTPTitle()) ;
+				ret.put(tmpjo) ;
+			}
+			return ret ;
+		}
+		
+		public static JSONObject[] getApiInOutSample(String api_uid)
+		{
+			OuterApi oa = getOuterApiByUID(api_uid) ;
+			if(oa==null)
+				return null ;
+			return oa.owner.getOuterApiIOSample(oa.name) ;
+		}
+		
+		public static JSONArray[] listSubApiInOutSample(String prj_n,String net_n,String node_n,
+				List<String> sub_uids)
+		{
+			JSONArray in = new JSONArray() ;
+			JSONArray out = new JSONArray() ;
+			if(sub_uids==null||sub_uids.size()<=0)
+				return new JSONArray[] {in,out};
+			LinkedHashMap<String,OuterApi> uid2oa = listSubApis(prj_n,net_n,node_n);
+			if(uid2oa==null||uid2oa.size()<=0)
+				return new JSONArray[] {in,out};
+			
+			for(OuterApi oa:uid2oa.values())
+			{
+				String uid = oa.getApiUID() ;
+				if(!sub_uids.contains(uid))
+					continue ;
+				JSONObject[] inout = oa.getSubInOutSampleIn(prj_n,net_n,node_n);
+				in.put(inout[0]);
+				out.put(inout[1]);
+			}
+			
+			return new JSONArray[] {in,out};
 		}
 	}
 	
@@ -157,6 +604,57 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		{
 			return this.retDT - this.callDT ;
 		}
+	}
+	
+	public static class Widget implements Comparable<Widget>
+	{
+		String name ;
+		
+		String title ;
+		
+		String desc ;
+		
+		Widget(outer_api oa)
+		{
+			this.name = oa.name() ;
+			if("cn".equals(Lan.getUsingLang()))
+			{
+				this.title = oa.title_cn() ;
+				this.desc = oa.desc_cn() ;
+				if(Convert.isNullOrEmpty(this.title))
+					this.title = oa.title_en() ;
+				if(Convert.isNullOrEmpty(this.desc))
+					this.desc = oa.desc_en() ;
+			}
+			else
+			{
+				this.title = oa.title_en() ;
+				this.desc = oa.desc_en() ;
+			}
+			
+		}
+		
+		public String getName()
+		{
+			return this.name;
+		}
+		
+		public String getTitle()
+		{
+			return this.title ;
+		}
+		
+		public String getDesc()
+		{
+			return desc ;
+		}
+		
+		@Override
+		public int compareTo(Widget o)
+		{
+			return this.name.compareTo(o.name);
+		}
+		
 	}
 	
 	String id = IdCreator.newSeqId() ;
@@ -445,12 +943,17 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			outer_api oa = m.getAnnotation(outer_api.class) ;
 			if(oa==null)
 				continue ;
-			ss.add(new OuterApi(oa,m)) ;
+			ss.add(new OuterApi(this,oa,m)) ;
 		}
 		Collections.sort(ss);
 		for(OuterApi oa:ss)
 			rets.put(oa.getName(),oa) ;
 		return outerApiAll = rets;
+	}
+	
+	public OuterApi getOuterApi(String apin)
+	{
+		return listOuterApiAll().get(apin) ;
 	}
 	
 	public JSONObject[] getOuterApiIOSample(String apin)
