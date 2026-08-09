@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%>
 <%@ page import="java.util.*,
-				java.io.*,
+				java.io.*,org.json.*,
 				java.util.*,
 				org.iottree.core.*,
 				org.iottree.core.util.*,
@@ -119,7 +119,7 @@ overflow: hidden;
 {
 border: 1px solid #cccccc;
 background-color:#f0f0f0;
-height:48px;
+min-height:48px;
 padding-left:3px;
 padding-right:3px;
 padding-bottom: 0px;
@@ -358,7 +358,19 @@ String sel="" ;
 	  
 	 </div>
 	  <div id="editdesc"  class="prop_edit_desc">
-	  
+<%
+if(n instanceof UACh)
+{
+	UACh ch = (UACh)n ;
+	DevDriver dd = ch.getDriver() ;
+	JSONObject rt_jo = dd.RT_getRunInfo() ;
+	if(rt_jo!=null)
+	{
+%><code><pre><%=rt_jo.toString(4) %></pre></code>
+<%
+	}
+}
+%>
 	  </div>
     </td>
   </tr>

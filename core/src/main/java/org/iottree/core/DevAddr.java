@@ -279,6 +279,10 @@ public abstract class DevAddr
 		
 		public boolean isWritable() ;
 		
+		public boolean isValBit();
+		
+		public boolean isHasStr();
+		
 		public String getSample() ;
 		
 		

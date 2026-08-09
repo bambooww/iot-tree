@@ -942,7 +942,7 @@ public class NS_TagAlertTrigger  extends MNNodeStart
 	
 
 	@Override
-	public JSONObject[] getOuterApiIOSample(String apin)
+	protected JSONObject[] extOuterApiIOSample(String apin)
 	{
 		switch(apin)
 		{

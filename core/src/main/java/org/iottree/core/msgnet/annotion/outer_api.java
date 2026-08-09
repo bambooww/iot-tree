@@ -18,4 +18,8 @@ public @interface outer_api
 	String desc_cn() default "";
 	
 	String desc_en() default "";
+	
+	String in_sample() default "" ;
+	
+	String out_sample() default "" ;
 }

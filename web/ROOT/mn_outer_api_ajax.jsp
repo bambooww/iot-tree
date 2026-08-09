@@ -72,7 +72,7 @@
 			return ;
 
 	String color = "red" ;
-	JSONObject[] inout = node.getOuterApiIOSample(api_n) ;
+	Object[] inout = node.getOuterApiIOSample(api_n) ;
 	boolean bopen = use_apis.containsKey(api_n) ;
 	if(bopen)
 		color="green" ;
@@ -119,12 +119,19 @@ if(inout!=null)
 	case "api_sample":
 		if(!Convert.checkReqEmpty(request, out, "prj_n","net_n","node_n","api_n"))
 			return ;
-		JSONObject[] api_sps = api.getApiSample();
+		Object[] api_sps = api.getApiSample();
 		buff = new StringBuilder() ;
 		buff.append("\r\n// client post to server JSON format sample");
 		if(api_sps!=null&&api_sps.length>0 && api_sps[0]!=null)
 		{
-			buff.append("<textarea>"+api_sps[0].toString(4)+"</textarea>") ;
+			String ss ;
+			if(api_sps[0] instanceof JSONObject)
+				ss = ((JSONObject)api_sps[0]).toString(4) ;
+			else if(api_sps[0] instanceof JSONArray)
+				ss = ((JSONArray)api_sps[0]).toString(4) ;
+			else
+				ss = api_sps[0].toString() ;
+			buff.append("<textarea>"+ss+"</textarea>") ;
 		}
 		else
 		{
@@ -134,7 +141,14 @@ if(inout!=null)
 		buff.append("\r\n\r\n// server response to client JSON format sample");
 		if(api_sps!=null&&api_sps.length>1 && api_sps[1]!=null)
 		{
-			buff.append("<textarea>"+api_sps[1].toString(4)+"</textarea>") ;
+			String ss ;
+			if(api_sps[1] instanceof JSONObject)
+				ss = ((JSONObject)api_sps[1]).toString(4) ;
+			else if(api_sps[1] instanceof JSONArray)
+				ss = ((JSONArray)api_sps[1]).toString(4) ;
+			else
+				ss = api_sps[1].toString() ;
+			buff.append("<textarea>"+ss+"</textarea>") ;
 		}
 		else
 		{

@@ -318,6 +318,11 @@ public class DataUtil
 		return longToBytes(Double.doubleToLongBits(f),ByteOrder.LittleEndian);
 	}
 	
+	public final static byte[] doubleToBytes(double f,ByteOrder bo)
+	{
+		return longToBytes(Double.doubleToLongBits(f),bo);
+	}
+	
 	public final static void doubleToBytes(double f,byte[] bs,int offset)
 	{
 		doubleToBytes(f,bs,offset,ByteOrder.LittleEndian);

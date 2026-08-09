@@ -19,7 +19,6 @@ import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
-import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagAggr2RDB.AggrTag;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
@@ -27,7 +26,6 @@ import org.iottree.core.store.gdb.autofit.JavaColumnInfo;
 import org.iottree.core.store.gdb.autofit.JavaTableInfo;
 import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.Lan;
 import org.iottree.core.util.xmldata.XmlVal;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +44,7 @@ import com.influxdb.query.FluxTable;
  */
 public class InfluxDB_TagStDur2RDB extends MNNodeMid
 {
-	private static Lan lan = Lan.getLangInPk(InfluxDB_TagStDur2RDB.class) ;
+	//private static Lan lan = Lan.getLangInPk(InfluxDB_TagStDur2RDB.class) ;
 	
 	public static enum DurTP
 	{
@@ -135,7 +133,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 	
 	LinkedHashMap<String,StatusVal> strv2sv = new LinkedHashMap<>() ;
 	
-	private transient DurItem cur_duritem = null ;
+	//private transient DurItem cur_duritem = null ;
 	
 	@Override
 	public String getTP()
@@ -424,7 +422,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		QueResult ret = queryAt(di.start_dt,di.end_dt) ;
 		if(ret==null)
 			return null;
-		JSONObject ret_jo = ret.toJO() ;
+		//JSONObject ret_jo = ret.toJO() ;
 		StringBuilder failedr = new StringBuilder() ;
 		if(!this.RT_addOrUpdate(ret, failedr))
 			throw new Exception(failedr.toString()) ;
@@ -541,7 +539,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		tableInfo = null ;
 		connPool = null ;
 		dataTable = null ;
-		this.cur_duritem = null ;
+		//this.cur_duritem = null ;
 	}
 	
 	
@@ -801,7 +799,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 	private static final JSONObject input_st_et = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
 	//private static final JSONObject ouput_dur = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
 	@Override
-	public JSONObject[] getOuterApiIOSample(String apin)
+	protected JSONObject[] extOuterApiIOSample(String apin)
 	{
 		JSONObject out_jo = new JSONObject() ;
 		for(StatusVal sv:this.strv2sv.values())

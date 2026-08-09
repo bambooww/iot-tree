@@ -11,6 +11,7 @@ import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.json.JSONObject;
 
 /**
  * belong to channel and may limit devices in channel 1)driver self may has some
@@ -484,7 +485,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 * @param vtp
 	 * @return
 	 */
-	public ChkRes checkAddr(UADev dev,String addr, ValTP vtp)
+	public final ChkRes checkAddr(UADev dev,String addr, ValTP vtp)
 	{
 		DevAddr daddr = this.getSupportAddr();
 		if (daddr == null)
@@ -852,5 +853,10 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	public String RT_getWarnInf()
 	{
 		return this.warnInf ;
+	}
+	
+	public JSONObject RT_getRunInfo()
+	{
+		return null ;
 	}
 }

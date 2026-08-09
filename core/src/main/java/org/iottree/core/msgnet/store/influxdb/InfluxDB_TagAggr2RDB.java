@@ -21,7 +21,6 @@ import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.msgnet.annotion.outer_api;
 import org.iottree.core.msgnet.modules.RelationalDB_Table;
-import org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB.StatusVal;
 import org.iottree.core.store.gdb.DBUtil;
 import org.iottree.core.store.gdb.DataRow;
 import org.iottree.core.store.gdb.DataTable;
@@ -566,7 +565,7 @@ public class InfluxDB_TagAggr2RDB extends MNNodeMid
 		}
 	}
 	
-	private QueResult queryAt(Date start_dt,Date end_dt)
+	private QueResult queryStEt(Date start_dt,Date end_dt)
 	{
 		QueResult ret = new QueResult(start_dt,end_dt) ;
 		
@@ -667,7 +666,7 @@ private transient DurItem lastDur = null ;
 	
 	private QueResult queAndUpRDB(DurItem di) throws Exception
 	{
-		QueResult ret = queryAt(di.start_dt,di.end_dt) ;
+		QueResult ret = queryStEt(di.start_dt,di.end_dt) ;
 		if(ret==null)
 			return null;
 		//JSONObject ret_jo = ret.toJO() ;
@@ -714,7 +713,8 @@ private transient DurItem lastDur = null ;
 			"  |> filter(fn: (r) => r[\"_measurement\"] == m \r\n" + 
 			"                   and r[\"_field\"] == f)\r\n" + 
 			"  \r\n" + 
-			"  // using reduce calc max, min, sum, count\r\n" + 
+			"  // trans _value to float and using reduce calc max, min, sum, count\r\n" + 
+			"  |> toFloat()\r\n"+
 			"  |> reduce(\r\n" + 
 			"      identity: {max: float(v: \"-Inf\"), min: float(v: \"+Inf\"), sum: 0.0, count: 0.0},\r\n" + 
 			"      fn: (r, accumulator) => ({\r\n" + 
@@ -960,7 +960,7 @@ private transient DurItem lastDur = null ;
 		List<DurItem> dis = calDurItemsInPeriod(st,et);
 		for(DurItem di:dis)
 		{
-			QueResult ret = queryAt(di.start_dt,di.end_dt) ;
+			QueResult ret = queryStEt(di.start_dt,di.end_dt) ;
 			if(ret==null)
 				continue ;
 			StringBuilder failedr = new StringBuilder() ;
@@ -971,7 +971,7 @@ private transient DurItem lastDur = null ;
 	}
 	
 	@outer_api(name="aggr_items_cur_mon"
-		,title_cn="计算当月标签聚合值",title_en="Calculate the aggregated value of tags for the current month"
+		,title_cn="读取当月标签聚合记录",title_en="Read the tag aggregation records for the current month"
 		,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
 		,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
 	public JSONArray statDurInCurrentMonth(JSONObject inputjo,StringBuilder failedr) throws Exception
@@ -986,7 +986,7 @@ private transient DurItem lastDur = null ;
 	}
 	
 	@outer_api(name="aggr_items_cur_year"
-		,title_cn="计算当年标签聚合值",title_en="Calculate the aggregated value of tags for the current year"
+		,title_cn="读取当年标签聚合记录",title_en="Read the tag aggregation records for the current year"
 		,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
 		,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
 	public JSONArray statDurInCurrentYear(JSONObject inputjo,StringBuilder failedr) throws Exception
@@ -1001,9 +1001,11 @@ private transient DurItem lastDur = null ;
 	}
 	
 	@outer_api(name="aggr_items"
-			,title_cn="计算一个时间段标签聚合值",title_en="Calculate the aggregated value of a time period tag"
+			,title_cn="读取一个时间段标签聚合记录",title_en="Read a time period tags aggregation record"
 			,desc_en="There are mean, maximum and minimum values, difference, rising edge, falling edge, and rising and falling edge counts"
-			,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数")
+			,desc_cn="有均值，最大最小值，差值，上升沿、下降沿和上升下降沿计数",
+			in_sample = "{st:1767196800000l,et:1784627683879l}",
+			out_sample = "")
 	public JSONArray readAggrItemInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
 		if(inputjo==null)
@@ -1077,9 +1079,36 @@ private transient DurItem lastDur = null ;
 		}
 	}
 	
+	@outer_api(name="sum_items_cur_mon"
+			,title_cn="求和-当月聚合记录",title_en="Sum up - aggregate records in current month"
+			)
+	public JSONObject sumAggrItemCurMon(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+			inputjo = new JSONObject() ;
+		Date nowdt = new Date() ;
+		inputjo.put("et", nowdt.getTime()) ;
+		Date monst = Convert.calMonthStart(nowdt) ;
+		inputjo.put("st", monst.getTime()) ;
+		return sumAggrItemInPeriod(inputjo,failedr);
+	}
 	
-	@outer_api(name="sum_aggr_items"
-			,title_cn="计算一个时间段标签总和",title_en="Calculate the total sum of time period tag"
+	@outer_api(name="sum_items_cur_year"
+			,title_cn="求和-当年聚合记录",title_en="Sum up - aggregate records in current year"
+			)
+	public JSONObject sumAggrItemCurYear(JSONObject inputjo,StringBuilder failedr) throws Exception
+	{
+		if(inputjo==null)
+			inputjo = new JSONObject() ;
+		Date nowdt = new Date() ;
+		inputjo.put("et", nowdt.getTime()) ;
+		Date monst = Convert.calYearStart(nowdt) ;
+		inputjo.put("st", monst.getTime()) ;
+		return sumAggrItemInPeriod(inputjo,failedr);
+	}
+	
+	@outer_api(name="sum_items"
+			,title_cn="求和-一个时间段聚合记录",title_en="Sum up - aggregate records for a time period"
 			)
 	public JSONObject sumAggrItemInPeriod(JSONObject inputjo,StringBuilder failedr) throws Exception
 	{
@@ -1109,14 +1138,15 @@ private transient DurItem lastDur = null ;
 		
 		StringBuilder sqlsb = new StringBuilder();
 		sqlsb.append("select ") ;
-		boolean bfirst = true;
+		//boolean bfirst = true ;
+		sqlsb.append("min(_st) as _st,max(_et) as _et") ;
 		for(AggrTag sv:this.dbc2ats.values())
 		{
-			if(bfirst)
-				bfirst = false;
-			else
-				sqlsb.append(",") ;
-			sqlsb.append("sum("+sv.dbCol+") as "+sv.dbCol) ;
+//			if(bfirst)
+//				bfirst = false;
+//			else
+//				sqlsb.append(",") ;
+			sqlsb.append(",sum("+sv.dbCol+") as "+sv.dbCol) ;
 		}
 		sqlsb.append(" from ").append(jti.getTableName()).append(" where ")
 			.append(COL_ST).append(">=? and ").append(COL_ST).append("<?") ;
@@ -1156,31 +1186,40 @@ private transient DurItem lastDur = null ;
 	}
 	
 	@Override
-	public JSONObject[] getOuterApiIOSample(String apin)
+	protected Object[] extOuterApiIOSample(String apin)
 	{
 		final JSONObject input = new JSONObject().put("st", 1767196800000l).put("et", 1784627683879l) ;
-		JSONObject out_jo = new JSONObject() ;
+		JSONArray out_aggr_jo = new JSONArray() ;
+		JSONObject tmpjo = new JSONObject() ;
 		for(AggrTag sv:this.dbc2ats.values())
 		{
+			tmpjo.put("_st", 1767196800000l).put("_et", 1784627699999l);
 			if(sv.valTP.isNumberFloat())
-				out_jo.put(sv.dbCol,3.14) ;
+				tmpjo.put(sv.dbCol,3.14) ;
 			else
-				out_jo.put(sv.dbCol,100) ;
+				tmpjo.put(sv.dbCol,100) ;
 		}
+		out_aggr_jo.put(tmpjo) ;
+		out_aggr_jo.put(tmpjo) ;
+		
+		JSONObject sum_out = new JSONObject().put("_st", 1767196800000l).put("_et", 1784627699999l);
+		for(AggrTag sv:this.dbc2ats.values())
+		{
+			sum_out.put(sv.dbCol, 100) ;
+		}
+		
 		switch(apin)
 		{
 		
 		case "aggr_items_cur_year":
 		case "aggr_items_cur_mon":
-			return new JSONObject[] {null,out_jo};
+			return new Object[] {null,out_aggr_jo};
 		case "aggr_items":
-			return new JSONObject[] {input,out_jo};
-		case "sum_aggr_items":
-			JSONObject sum_out = new JSONObject().put("_st", 1767196800000l).put("_et", 1784627699999l);
-			for(AggrTag sv:this.dbc2ats.values())
-			{
-				sum_out.put(sv.dbCol, 100) ;
-			}
+			return new Object[] {input,out_aggr_jo};
+		case "sum_items_cur_year":
+		case "sum_items_cur_mon":
+			return new JSONObject[] {null,sum_out};
+		case "sum_items":
 			return new JSONObject[] {input,sum_out};
 		}
 		return null ;

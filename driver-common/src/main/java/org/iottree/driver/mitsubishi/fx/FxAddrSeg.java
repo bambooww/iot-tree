@@ -20,6 +20,8 @@ public class FxAddrSeg implements IAddrDefSeg
 	
 	boolean bValBit = false;
 	
+	boolean bHasStr = false;
+	
 	boolean bAddrStepInt32 = false;
 	
 	UAVal.ValTP[] valTPs = null ;
@@ -95,6 +97,12 @@ public class FxAddrSeg implements IAddrDefSeg
 		return this ;
 	}
 	
+	public FxAddrSeg asHasStr(boolean b)
+	{
+		this.bHasStr = b ;
+		return this ;
+	}
+	
 	public FxAddrSeg asAddrStepInt32(boolean b)
 	{
 		this.bAddrStepInt32 = b ;
@@ -125,6 +133,11 @@ public class FxAddrSeg implements IAddrDefSeg
 	public boolean isValBit()
 	{
 		return this.bValBit ;
+	}
+	
+	public boolean isHasStr()
+	{
+		return this.bHasStr;
 	}
 	
 	public boolean isWritable()

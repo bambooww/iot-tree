@@ -173,12 +173,32 @@ public class RESTful_Req extends MNNodeStart
 			switch(this.inTP)
 			{
 			case json_object:
-				JSONObject tmpjo = new JSONObject(req_txt) ;
-				msg = new MNMsg().asPayload(tmpjo) ;
+				try
+				{
+					JSONObject tmpjo = null;
+					if(Convert.isNotNullEmpty(req_txt))
+						tmpjo = new JSONObject(req_txt) ;
+					msg = new MNMsg().asPayload(tmpjo) ;
+				}
+				catch(Exception ee)
+				{
+					RT_DEBUG_ERR.fire("rest_req", "req txt="+req_txt+" is not jsonobject format");
+					return ;
+				}
 				break ;
 			case json_array:
-				JSONArray tmpjarr = new JSONArray(req_txt) ;
-				msg = new MNMsg().asPayload(tmpjarr) ;
+				try
+				{
+					JSONArray tmpjarr = null;
+					if(Convert.isNotNullEmpty(req_txt))
+						tmpjarr = new JSONArray(req_txt) ;
+					msg = new MNMsg().asPayload(tmpjarr) ;
+				}
+				catch(Exception ee)
+				{
+					RT_DEBUG_ERR.fire("rest_req", "req txt="+req_txt+" is not jsonarray format");
+					return ;
+				}
 				break ;
 			case str:
 				msg = new MNMsg().asPayload(req_txt) ;

@@ -235,7 +235,7 @@ public class RelationalDB_SQL2Api extends MNNodeMid
 	}
 	
 	@Override
-	public JSONObject[] getOuterApiIOSample(String apin)
+	protected JSONObject[] extOuterApiIOSample(String apin)
 	{
 		if("do_sql".equals(apin))
 		{

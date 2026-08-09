@@ -7,8 +7,13 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeRes;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.annotion.outer_api;
+import org.iottree.core.msgnet.annotion.outer_api_pm;
 import org.iottree.core.msgnet.MNBase.DivBlk;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_M.InterpolateWay;
+import org.iottree.core.msgnet.store.influxdb.InfluxDB_M.ValItem;
 import org.iottree.core.util.Convert;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.influxdb.client.InfluxDBClient;
@@ -17,6 +22,7 @@ import com.influxdb.client.write.Point;
 
 public class InfluxDB_Measurement extends MNNodeRes
 {
+	
 	String measurement = null ;
 
 	int batchWriterBufLen = 100 ;
@@ -187,5 +193,34 @@ public class InfluxDB_Measurement extends MNNodeRes
 			RT_DEBUG_WARN.fire("influx_mt", "RT_doWriter error", ee);
 			return false;
 		}
+	}
+	
+	
+	//
+	@outer_api(name="que_val_last",out_sample="100.0")
+	public Object queValLast(@outer_api_pm(name="fieldn") String fieldn)
+	{
+		InfluxDB_M m = (InfluxDB_M)this.getOwnRelatedModule() ;
+		return m.queValLast(measurement,fieldn) ;
+	}
+	
+	@outer_api(name="que_val_at")
+	public Object queValAt(
+			@outer_api_pm(name="fieldn") String tagpath,
+			@outer_api_pm(name="at_dt") long at_dt,
+			@outer_api_pm(name="interp_way",val_opts="")  InterpolateWay iway)
+	{
+		InfluxDB_M m = (InfluxDB_M)this.getOwnRelatedModule() ;
+		return m.queValAt(this.measurement, tagpath, at_dt, iway) ;
+	}
+	
+	@outer_api(name="que_val_last",out_sample=InfluxDB_M.ValItem.JARR_SAMPLE)
+	public List<ValItem> queValAtMulti(
+			String tagpath,
+			List<Long> at_dts,
+			InterpolateWay iway)
+	{
+		InfluxDB_M m = (InfluxDB_M)this.getOwnRelatedModule() ;
+		return m.queValAtMulti(this.measurement, tagpath, at_dts, iway) ;
 	}
 }

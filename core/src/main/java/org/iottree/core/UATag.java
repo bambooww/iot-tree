@@ -1903,8 +1903,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		{
 			if(failedr!=null)
 				failedr.append(e.getMessage()) ;
-			else
-				e.printStackTrace();
+			//else
+			e.printStackTrace();
 			return false;
 		}
 	}

@@ -1,6 +1,7 @@
 package org.iottree.core.msgnet.store.influxdb;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.iottree.core.msgnet.IMNNodeRes;
@@ -10,17 +11,38 @@ import org.iottree.core.msgnet.MNNode;
 import org.iottree.core.store.SourceInfluxDB;
 import org.iottree.core.store.StoreManager;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IJoOut;
 import org.json.JSONObject;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.QueryApi;
-import com.influxdb.client.domain.Organization;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
 public class InfluxDB_M extends MNModule implements IMNRunner, IMNNodeRes
 {
+	public static class ValItem implements IJoOut
+	{
+		public Object val ;
+		public long dt ;
+		
+		public ValItem(Object v,long dt)
+		{
+			this.val = v ;
+			this.dt = dt ;
+		}
+
+		@Override
+		public JSONObject toJO()
+		{
+			return new JSONObject().put("dt", dt).putOpt("v", val);
+		}
+		
+		public static final String JARR_SAMPLE = "[{dt:134344543534,v:100.0},{dt:134344543834,v:200.0}]";
+	}
+	
+	
 	private boolean usingSource = true;
 
 	private String sourceName = null;
@@ -346,4 +368,127 @@ public class InfluxDB_M extends MNModule implements IMNRunner, IMNNodeRes
 	{
 		return false;
 	}
+	
+	// - query
+	
+	public static enum InterpolateWay
+	{
+		linear, //using linear 
+		before_val //using before value
+	}
+	
+
+	private ValItem[] queBeforeAfterValAt(String measurement,String tagpath,long at_dt)
+	{
+		if(Convert.isNullOrEmpty(measurement))
+			return null ;
+		InfluxDBClient dbc = this.RT_getClient();
+		if (dbc == null)
+			return null;
+
+		String s_at_dt = Convert.toUTCFormat(new Date(at_dt));
+		
+		String flux_vars = "bkt = \"" + this.bucket + "\"\r\n" + "m = \"" + measurement + "\" \r\n" + "at_dt = " + s_at_dt
+				+ "\r\nf = \"" + tagpath + "\"\r\n";
+		String flux = flux_vars + BEFORE_AFTER_AT ;
+		QueryApi qapi = dbc.getQueryApi();
+		List<FluxTable> fts = qapi.query(flux);
+		ValItem before = null ;
+		ValItem after = null ;
+		
+		if (fts.size() <= 0)
+			return null;
+		for(FluxTable tb:fts)
+		{
+			List<FluxRecord> frs = tb.getRecords();
+			if (frs.size() <= 0)
+				continue;
+			for(FluxRecord fr:frs)
+			{
+				Object sor = fr.getValueByKey("position") ;
+				long dt = fr.getTime().toEpochMilli() ;
+				Object val = fr.getValue();
+				if("before".equals(sor))
+					before =new ValItem(val,dt) ;
+				else if("after".equals(sor))
+					after = new ValItem(val,dt) ;
+			}
+		}
+		
+		if(before==null&&after==null)
+			return null ;
+		
+		return new ValItem[] {before,after} ;
+	}
+	
+	public Object queValLast(String measurement,String tagpath)
+	{
+		ValItem[] ba = queBeforeAfterValAt(measurement,tagpath,System.currentTimeMillis()) ;
+		if(ba==null || ba[0]==null)
+			return null ;
+		return ba[0].val ;
+	}
+	
+	public Object queValAt(String measurement,String tagpath,long at_dt,InterpolateWay iway)
+	{
+		ValItem[] ns = queBeforeAfterValAt(measurement,tagpath,at_dt);
+		if(ns==null)
+			return null ;
+		if(ns[0]==null && ns[1]==null)
+			return null;//ns[1].val ;
+		if(ns[0].dt==at_dt)
+			return ns[0].val;
+		else if(ns[1].dt==at_dt)
+			return ns[1].val ;
+		if(ns[1].dt==ns[0].dt)
+			return ns[0].val ;
+		
+		if(iway==InterpolateWay.linear)
+		{
+			double av = ((Number)ns[1].val).doubleValue() ;
+			long at = ns[1].dt ;
+			double bv = ((Number)ns[0].val).doubleValue() ;
+			long bt = ns[0].dt ;
+			double a = (av-bv)/(at-bt) ;
+			double b = av-a*at ; 
+			return a*at_dt+b ;
+		}
+		else if(iway==InterpolateWay.before_val)
+		{
+			return ns[0].val ;
+		}
+		
+		return null ;
+	}
+	
+	public List<ValItem> queValAtMulti(String measurement,String tagpath,List<Long> at_dts,InterpolateWay iway)
+	{
+		ArrayList<ValItem> ret = new ArrayList<>() ;
+		for(Long dt:at_dts)
+		{
+			Object v = queValAt(measurement,tagpath,dt,iway);
+			if(v==null)
+				continue ;
+			ret.add(new ValItem(v,dt)) ;
+		}
+		return ret ;
+	}
+	
+	
+	private static final String BEFORE_AFTER_AT = 
+			"// 1. locate last before target_time\r\n" + 
+			"before = from(bucket: bkt)\r\n" + 
+			"  |> range(start: 0, stop: at_dt) \r\n" + 
+			"  |> filter(fn: (r) => r._measurement == m and r._field == f)\r\n" + 
+			"  |> last()\r\n" +
+			"  |> map(fn: (r) => ({ r with position: \"before\" }))\r\n" + 
+			"\r\n" + 
+			"// 2. locate first after target_time\r\n" + 
+			"after = from(bucket: bkt)\r\n" + 
+			"  |> range(start: at_dt, stop: 2099-01-01T00:00:00Z) \r\n" + 
+			"  |> filter(fn: (r) => r._measurement == m and r._field == f)\r\n" + 
+			"  |> first()\r\n" + 
+			"  |> map(fn: (r) => ({ r with position: \"after\" }))\r\n"+
+			"\r\n" + 
+			"union(tables: [before, after])" ;
 }

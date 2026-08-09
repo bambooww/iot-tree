@@ -43,7 +43,8 @@ public class UAVal //extends JSObMap
 		vt_float(7,4,Float.class),
 		vt_double(8,8,Double.class),
 		vt_str(9,-1,String.class),
-		vt_date(10,8,java.util.Date.class);
+		vt_date(10,8,java.util.Date.class),
+		vt_bytes(20,-1,byte[].class) ;
 		
 		private final int val ;
 		private final int byteLen;
@@ -109,6 +110,11 @@ public class UAVal //extends JSObMap
 			}
 		}
 		
+		public boolean isDataBlock()
+		{
+			return this==vt_str ||this==vt_bytes ;
+		}
+		
 		public XmlVal.XmlValType toXVT()
 		{
 			switch(this)
@@ -129,6 +135,8 @@ public class UAVal //extends JSObMap
 				return XmlVal.XmlValType.vt_double;
 			case vt_date:
 				return XmlVal.XmlValType.vt_date;
+			case vt_bytes:
+				return XmlVal.XmlValType.vt_byte_array;
 			default:
 				return null;
 			}
@@ -183,6 +191,8 @@ public class UAVal //extends JSObMap
 			return ValTP.vt_uint32 ;
 		if(c==UnsignedLong.class)
 			return ValTP.vt_uint64 ;
+		if(c==byte[].class)
+			return ValTP.vt_bytes ;
 		return null ;
 	}
 	
@@ -205,6 +215,7 @@ public class UAVal //extends JSObMap
 		case 12:return ValTP.vt_uint16;
 		case 13:return ValTP.vt_uint32;
 		case 14:return ValTP.vt_uint64;
+		case 20:return ValTP.vt_bytes;
 		default:
 			throw new RuntimeException("unknow valtp="+iv) ;
 		}
@@ -268,6 +279,8 @@ public class UAVal //extends JSObMap
 			return ulong ;
 		case vt_str:
 			return strv ;
+		case vt_bytes:
+			return Convert.hexStr2ByteArray(strv);
 		case vt_none:
 			return null ;
 		default:
@@ -287,17 +300,15 @@ public class UAVal //extends JSObMap
 				return Convert.toDecimalDigitsStr(((Number)objv).doubleValue(), dec_digits,false) ;
 			}
 		}
-//		//System.out.println(objVal.getClass()) ;
+
 		if(objv instanceof java.util.Date)
-		{
 			return Convert.toFullYMDHMS((java.util.Date)objv) ;
-			//return Convert.toShortYMD(d)
-		}
+		
+		if(objv instanceof byte[])
+			return Convert.byteArray2HexStr((byte[])objv) ;
+		
 		return objv.toString() ;
 	}
-	
-	
-	
 	
 	Object objVal = null ;
 	

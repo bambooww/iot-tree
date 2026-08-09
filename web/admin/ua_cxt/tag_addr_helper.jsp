@@ -92,7 +92,7 @@ if(defs==null)
       <th width="25%"><lan:g>range</lan:g></th>
       <th width="15%"><lan:g>data,type</lan:g></th>
       <th width="10%"><lan:g>access</lan:g></th>
-      <th width="20%"><lan:g>sample</lan:g></th>
+      <th width="20%"><lan:g>sample</lan:g>/<lan:g>desc</lan:g></th>
     </tr> 
   </thead>
   <tbody>

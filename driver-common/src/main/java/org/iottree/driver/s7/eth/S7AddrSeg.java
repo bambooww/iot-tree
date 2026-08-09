@@ -20,6 +20,8 @@ public class S7AddrSeg implements IAddrDefSeg
 	
 	boolean bValBit = false;
 	
+	boolean bHasStr = false;
+	
 	boolean bAddrStepInt32 = false;
 	
 	UAVal.ValTP[] valTPs = null ;
@@ -50,7 +52,6 @@ public class S7AddrSeg implements IAddrDefSeg
 		this.valEnd = valend ;
 		this.digitNum = digit_num ;
 		this.valTPs = tps ;
-		//this.bBitPos = b_bitpos ;
 	}
 	
 	public S7AddrSeg asHex(boolean b)
@@ -62,6 +63,12 @@ public class S7AddrSeg implements IAddrDefSeg
 	public S7AddrSeg asValBit(boolean b)
 	{
 		this.bValBit = b ;
+		return this ;
+	}
+	
+	public S7AddrSeg asHasStr(boolean b)
+	{
+		this.bHasStr = b ;
 		return this ;
 	}
 	
@@ -91,6 +98,12 @@ public class S7AddrSeg implements IAddrDefSeg
 	public boolean isValBit()
 	{
 		return this.bValBit ;
+	}
+	
+	@Override
+	public boolean isHasStr()
+	{
+		return bHasStr;
 	}
 	
 	public boolean isWritable()
@@ -170,4 +183,5 @@ public class S7AddrSeg implements IAddrDefSeg
 	{
 		return "";
 	}
+
 }

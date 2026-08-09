@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +68,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		
 		Method method ;
 		
-		
+		outer_api oa ;
 		
 //		OuterApi(String n,String t,String d,Method m)
 //		{
@@ -80,6 +81,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		OuterApi(MNBase owner,outer_api oa,Method m)
 		{
 			this.owner = owner ;
+			this.oa = oa ;
 			this.name = oa.name() ;
 			this.title_cn = oa.title_cn() ;
 			this.title_en = oa.title_en() ;
@@ -176,7 +178,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			in_jo.put("api_n", this.name);
 			out_jo.put("api_n", this.name) ;
 			
-			JSONObject[] inout = this.owner.getOuterApiIOSample(this.name) ;
+			Object[] inout = this.owner.getOuterApiIOSample(this.name) ;
 			if(inout!=null)
 			{
 				if(inout.length>0)
@@ -187,7 +189,12 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			return new JSONObject[] {in_jo,out_jo};
 		}
 		
-		public JSONObject[] getApiSample()
+		private Object[] getApiSampleLoc()
+		{
+			return new Object[] {oa.in_sample(),oa.out_sample()} ;
+		}
+		
+		public Object[] getApiSample()
 		{
 			return this.owner.getOuterApiIOSample(this.name) ;
 		}
@@ -244,7 +251,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		public JSONObject toDetailJO()
 		{
 			JSONObject ret = this.toListJO() ;
-			JSONObject[] sp_io = this.getApiSample() ;
+			Object[] sp_io = this.getApiSample() ;
 			if(sp_io!=null)
 			{
 				ret.putOpt("sample_in",sp_io[0]) ;
@@ -252,6 +259,8 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			}
 			return ret ;
 		}
+		
+		
 		
 		private OuterApiLog lastCallLog = null ;
 		
@@ -413,7 +422,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			Object retob = oa.RT_call(in_jo, ffr) ;
 			if(retob==null)
 			{
-				ret_jarr.put(retjo.put("api_out_err","no using api found")) ;
+				ret_jarr.put(retjo.put("api_out_err",ffr.toString())) ;
 				return ;
 			}
 			ret_jarr.put(retjo.put("api_out",retob)) ;//succ out
@@ -549,7 +558,7 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			return ret ;
 		}
 		
-		public static JSONObject[] getApiInOutSample(String api_uid)
+		public static Object[] getApiInOutSample(String api_uid)
 		{
 			OuterApi oa = getOuterApiByUID(api_uid) ;
 			if(oa==null)
@@ -956,7 +965,19 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		return listOuterApiAll().get(apin) ;
 	}
 	
-	public JSONObject[] getOuterApiIOSample(String apin)
+	public final Object[] getOuterApiIOSample(String apin)
+	{
+		Object[] iosp = extOuterApiIOSample(apin) ;
+		if(iosp!=null)
+			return iosp ;
+		
+		OuterApi oa = this.listOuterApiAll().get(apin) ;
+		if(oa==null)
+			return null ;
+		return oa.getApiSampleLoc() ;
+	}
+	
+	protected Object[] extOuterApiIOSample(String apin)
 	{
 		return null ;
 	}
