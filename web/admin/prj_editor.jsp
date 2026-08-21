@@ -1969,7 +1969,7 @@ function show_conn_msg(ob)
 	
 function prj_rt()
 {
-	send_ajax("./prj_rt_ajax.jsp",{id:repid},(bsucc,ret)=>{
+	send_ajax("./prj_rt_ajax.jsp",{op:"prj_rt",id:repid},(bsucc,ret)=>{
 		if(!bsucc)
 			return ;
 		var v = ret ;

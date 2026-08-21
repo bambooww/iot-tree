@@ -27,11 +27,15 @@ import org.iottree.core.store.gdb.conf.InParam;
 import org.iottree.core.store.gdb.conf.SqlItem;
 import org.iottree.core.store.gdb.conf.SqlItem.RuntimeItem;
 import org.iottree.core.store.gdb.conf.XORM;
+import org.iottree.core.store.gdb.connpool.DBConnPool;
 import org.iottree.core.store.gdb.connpool.IConnPool;
 import org.iottree.core.store.gdb.xorm.XORMUtil;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.core.util.xmldata.XmlVal;
+import org.json.JSONObject;
 
 public class GDB
 {
@@ -273,6 +277,210 @@ public class GDB
 		catch(Exception e)
 		{
 			e.printStackTrace() ;
+		}
+	}
+	
+
+	
+	public static DataTable queryByColOperVal(Connection conn,
+			JavaTableInfo jti,String[] cols,String[] opers,Object[] vals,
+			boolean[] null_ignores,String more_wherestr,
+			String orderby, int idx, int count,boolean b_count,IDBSelectCallback cb)
+		throws Exception
+	{
+		int total_cc = -1 ;
+		
+		if(b_count)
+		{
+			String sqlstr_cc = jti.SQL_calcSqlCountByColOpers(cols, opers, vals, null_ignores, more_wherestr, orderby) ;
+			try(PreparedStatement ps = conn.prepareStatement(sqlstr_cc))
+			{
+				for (int i = 0; i < cols.length; i++)
+				{
+					JavaColumnInfo jci = jti.getColumnInfoByName(cols[i]) ;
+					Object tmpo = prepareObjVal(jci,vals[i]) ;
+					
+					if (tmpo != null)
+					{
+						if(jci==null)
+							ps.setObject(1 + i, tmpo);
+						else
+							ps.setObject(1+i, tmpo,jci.getSqlValType());
+					}
+					else
+					{
+						if(null_ignores!=null&&null_ignores[i])
+							continue ;//ignore this val
+						if(jci==null)
+							throw new Exception("cannot get column with name="+cols[i]) ;
+						
+						ps.setNull(1 + i, jci.getSqlValType());
+					}
+				}
+				
+				try(ResultSet rs = ps.executeQuery())
+				{
+					if(rs.next())
+					{
+						total_cc = rs.getInt(1) ;
+					}
+				}
+			}
+		}
+		
+		String sqlstr = jti.SQL_calcSqlByColOpers(cols, opers, vals, null_ignores, more_wherestr, orderby) ;
+
+		try(PreparedStatement ps = conn.prepareStatement(sqlstr,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY))
+		{
+			long tt = System.currentTimeMillis();
+			
+			for (int i = 0; i < cols.length; i++)
+			{
+				JavaColumnInfo jci = jti.getColumnInfoByName(cols[i]) ;
+				Object tmpo = prepareObjVal(jci,vals[i]) ;
+				
+				if (tmpo != null)
+				{
+					if(jci==null)
+						ps.setObject(1 + i, tmpo);
+					else
+						ps.setObject(1+i, tmpo,jci.getSqlValType());
+				}
+				else
+				{
+					if(null_ignores!=null&&null_ignores[i])
+						continue ;//ignore this val
+					if(jci==null)
+						throw new Exception("cannot get column with name="+cols[i]) ;
+					
+					ps.setNull(1 + i, jci.getSqlValType());
+				}
+			}
+			
+			if (count > 0)
+				ps.setMaxRows(idx + count);
+
+			DataTable dt = null;
+			DBResult dbr = new DBResult();
+			try(ResultSet rs = ps.executeQuery())
+			{
+				dt = dbr.appendResultSet(null,0,rs, idx, count,cb);
+			}
+
+			dt.totalCount = total_cc ;
+			return dt ;
+		}
+	}
+	
+	
+	public static int insertRow(Connection conn,JavaTableInfo jti,JSONObject row_jo)
+		throws Exception
+	{
+		String sqlstr = jti.SQL_calcInsertSql() ;
+		try(PreparedStatement ps = conn.prepareStatement(sqlstr);)
+		{
+			JavaColumnInfo pkcol = jti.getPkColumnInfo() ;
+			int p_sv = 1 ;
+			if(pkcol!=null)
+			{
+				Object newid = row_jo.opt(pkcol.getColumnName());
+				if(newid==null)
+					newid = IdCreator.newSeqId() ;
+				ps.setObject(1, newid);
+				p_sv = 2 ;
+			}
+
+			JavaColumnInfo[] nor_jcis = jti.getNorColumnInfos();
+			for (int i = 0; i < nor_jcis.length; i++)
+			{
+				JavaColumnInfo jci = nor_jcis[i] ;
+				Object tmpo = prepareObjVal(jci,row_jo.get(jci.getColumnName()));
+				if (tmpo != null)
+					ps.setObject(p_sv + i, tmpo);
+				else
+				{
+					int sqlt = nor_jcis[i].getSqlValType();
+					if (sqlt == java.sql.Types.BLOB)// for sqlserver driver
+						// NullPointer error
+						ps.setObject(p_sv + i, new byte[0]);
+					else
+						ps.setNull(p_sv + i, sqlt);
+				}
+			}
+			
+			return ps.executeUpdate();
+		}
+	}
+	
+	public static int updateRowByPkId(Connection conn,JavaTableInfo jti,String pkid,String[] cols,JSONObject row_jo)
+		throws Exception
+	{
+		StringBuilder sql_sb = new StringBuilder() ;
+		cols = jti.SQL_calcUpdateByPkIdSql(cols,sql_sb) ;
+		try(PreparedStatement ps = conn.prepareStatement(sql_sb.toString());)
+		{
+			for (int i = 0; i < cols.length; i++)
+			{
+				JavaColumnInfo jci = jti.getColumnInfoByName(cols[i]) ;
+				Object tmpo = prepareObjVal(jci,row_jo.get(cols[i]));
+				if (tmpo != null)
+				{
+					ps.setObject(1 + i, tmpo);
+					continue ;
+				}
+				// set null
+				
+				int sqlt = jci.getSqlValType();
+				if (sqlt == java.sql.Types.BLOB)// for sqlserver driver
+					// NullPointer error
+					ps.setObject(1 + i, new byte[0]);
+				else
+					ps.setNull(1 + i, sqlt);
+			}
+			//set pk
+			ps.setObject(1+cols.length, pkid);
+			
+			return ps.executeUpdate();
+		}
+	}
+	
+	public static int delRowByPkId(Connection conn,JavaTableInfo jti,String pkid)
+			throws Exception
+	{
+		JavaColumnInfo pkcol = jti.getPkColumnInfo() ;
+		if(pkcol==null)
+			throw new RuntimeException("no pk col") ;
+		return delRowByPkId(conn,jti,new String[] {pkcol.getColumnName()},new String[] {"="},
+				new Object[] {pkid},null,null) ;
+	}
+	
+	public static int delRowByPkId(Connection conn,JavaTableInfo jti,String[] cols,String[] opers,
+				Object[] vals,boolean[] null_ignores,
+				String more_wherestr)
+	throws Exception
+	{
+		String delsql = jti.SQL_calcDelSqlByColOpers(cols,opers,vals,null_ignores,more_wherestr) ;
+		try(PreparedStatement ps = conn.prepareStatement(delsql);)
+		{
+			for (int i = 0; i < cols.length; i++)
+			{
+				JavaColumnInfo jci =jti.getColumnInfoByName(cols[i]) ;
+				Object tmpo = prepareObjVal(jci,vals[i]);
+				if (tmpo != null)
+				{
+					ps.setObject(1 + i, tmpo);
+					continue ;
+				}
+				// set null
+				int sqlt = jci.getSqlValType();
+				if (sqlt == java.sql.Types.BLOB)// for sqlserver driver
+					// NullPointer error
+					ps.setObject(1 + i, new byte[0]);
+				else
+					ps.setNull(1 + i, sqlt);
+			}
+			
+			return ps.executeUpdate();
 		}
 	}
 	
@@ -760,7 +968,12 @@ public class GDB
 
 	}
 	
-	static Object prepareObjVal(Object o)
+//	static Object prepareObjVal(Object o)
+//	{
+//		return prepareObjVal(null,o) ;
+//	}
+	
+	static Object prepareObjVal(JavaColumnInfo col,Object o)
 	{
 		if(o==null)
 			return null;
@@ -768,8 +981,21 @@ public class GDB
 		if ((o instanceof java.util.Date)
 				&& !(o instanceof java.sql.Timestamp))
 		{
-			return new java.sql.Timestamp(((java.util.Date) o)
-					.getTime());
+			return new java.sql.Timestamp(((java.util.Date) o).getTime());
+		}
+		
+		if(col!=null)
+		{
+			if(col.getValType()==XmlVal.XmlValType.vt_date)
+			{
+				if(o instanceof String)
+				{
+					java.util.Date dt = Convert.toCalendar((String)o).getTime() ;
+					return new java.sql.Timestamp(dt.getTime());
+				}
+				if(o instanceof Long)
+					return new java.sql.Timestamp((Long)o);
+			}
 		}
 		
 		return o ;
@@ -844,7 +1070,7 @@ public class GDB
 			// JavaColumnInfo[] nor_jcis = jti.getNorColumnInfos();
 			for (int i = 0; i < property_names.length; i++)
 			{
-				Object tmpo = prepareObjVal(prop_vals[i]);
+				Object tmpo = prepareObjVal(null,prop_vals[i]);
 				if (tmpo != null)
 				{
 					ps.setObject(1 + i, tmpo);

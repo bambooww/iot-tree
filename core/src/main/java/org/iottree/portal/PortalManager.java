@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.res.ResItem;
 import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,23 +27,24 @@ public class PortalManager
 {
 	//private static PortalManager instance = null;
 
-	public static PortalManager getInstance()
-	{
-		String pro_n = Config.getProductName() ;
-		if(Convert.isNotNullEmpty(pro_n))
-		{
-			return getProductIns(pro_n) ;
-		}
-		else
-		{
-			UAPrj mainprj = UAManager.getInstance().getPrjDefault() ;
-			if(mainprj==null)
-			{
-				throw new RuntimeException("no main prj set") ;
-			}
-			return getInstance(mainprj);
-		}
-	}
+//	public static PortalManager getInstance()
+//	{
+//		String pro_n = Config.getProductName() ;
+//		if(Convert.isNotNullEmpty(pro_n))
+//		{
+//			return getProductIns(pro_n) ;
+//		}
+//		else
+//		{
+////			UAPrj mainprj = UAManager.getInstance().getPrjDefault() ;
+////			if(mainprj==null)
+////			{
+////				throw new RuntimeException("no main prj set") ;
+////			}
+////			return getInstance(mainprj);
+//			return null ;
+//		}
+//	}
 	
 	private static HashMap<String,PortalManager> prjn2pm = new HashMap<>() ;
 	
@@ -61,6 +64,14 @@ public class PortalManager
 			prjn2pm.put(prj.getName(),ins) ;
 			return ins ;
 		}
+	}
+	
+	public static PortalManager getInstanceByPrjId(String prjid)
+	{
+		UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+		if(prj==null)
+			return null ;
+		return getInstance(prj) ;
 	}
 	
 	/**
@@ -90,10 +101,6 @@ public class PortalManager
 	
 	private LinkedHashMap<String, PageCat> pageCats = null;
 
-	private LinkedHashMap<String, TempletCat> templetCats = null;
-	
-	
-
 	private PortalManager(UAPrj owner)
 	{
 		this.uaPrj = owner ;
@@ -114,7 +121,7 @@ public class PortalManager
 //		portalDir = new File(dirf+ "/portal/");
 //	}
 
-	File getDir()
+	public File getDir()
 	{
 		return portalDir;
 	}
@@ -166,125 +173,7 @@ public class PortalManager
 //		}
 //	}
 
-	// templet
-
-	public LinkedHashMap<String, TempletCat> listTempletCats()
-	{
-		if (templetCats != null)
-			return templetCats;
-
-		synchronized (this)
-		{
-			if (templetCats != null)
-				return templetCats;
-
-			try
-			{
-				List<TempletCat> pcs = this.loadTempletCats();
-				LinkedHashMap<String, TempletCat> ret = new LinkedHashMap<>();
-				for (TempletCat pc : pcs)
-				{
-					ret.put(pc.getName(), pc);
-				}
-				return templetCats = ret;
-			}
-			catch (Exception ee)
-			{
-				ee.printStackTrace();
-				return null;
-			}
-		}
-	}
 	
-	private List<TempletCat> loadTempletCats() throws IOException
-	{
-		ArrayList<TempletCat> rets = new ArrayList<>();
-
-		File dir = TempletCat.getTempletBaseDir() ;
-		if (!dir.exists())
-			return rets;
-
-		File[] subds = dir.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File f)
-			{
-				return f.isDirectory();
-			}
-		});
-
-		for (File subd : subds)
-		{
-			String catn = subd.getName();
-			File tf = new File(subd, "_templets.json");
-			JSONObject jo = Convert.readFileJO(tf);
-			String catt = catn;
-			if (jo == null)
-			{
-				TempletCat tc = new TempletCat(catn,catt) ;
-				rets.add(tc) ;
-				continue ;
-			}
-			
-			catt = jo.optString("t", catn);
-			TempletCat tc = new TempletCat(catn,catt) ;
-			rets.add(tc) ;
-			
-			JSONArray jarr = jo.optJSONArray("templets");
-			if (jarr != null)
-			{
-				int ii = jarr.length();
-				for (int i = 0; i < ii; i++)
-				{
-					JSONObject tmpjo = jarr.getJSONObject(i);
-					// {"n":"dp1","t":"大屏模板1","page":"dp1.html"}
-					String n = tmpjo.optString("n");
-					if (Convert.isNullOrEmpty(n))
-						continue;
-					String t = tmpjo.optString("t");
-					String p = tmpjo.optString("page");
-					Templet tmp = new Templet(tc,n,t,p) ;
-					tc.name2tmp.put(n,tmp) ;
-				}
-			}
-		}
-
-		return rets;
-	}
-	
-
-	public List<Templet> listTempletsAll()
-	{
-		ArrayList<Templet> rets = new ArrayList<>() ;
-		for(TempletCat tc: listTempletCats().values())
-		{
-			rets.addAll(tc.listTempletAll().values()) ;
-		}
-		return rets;
-	}
-
-	
-	public TempletCat getTempletCat(String name)
-	{
-		return listTempletCats().get(name) ;
-	}
-	
-	public Templet getTemplet(String cat_name,String name)
-	{
-		TempletCat tc = listTempletCats().get(cat_name) ;
-		if(tc==null)
-			return null ;
-		return tc.getTemplet(name) ;
-	}
-	
-	public Templet getTempletByUID(String uid)
-	{
-		int k = uid.indexOf('.') ;
-		if(k<=0)
-			return null ;
-		return this.getTemplet(uid.substring(0,k), uid.substring(k+1)) ;
-	}
-
 	// pages
 
 	public LinkedHashMap<String, PageCat> listPageCats()
@@ -357,6 +246,9 @@ public class PortalManager
 			return null;
 		}
 
+		if(!Convert.checkVarName(name, true, failedr))
+			return null ;
+		
 		pc = new PageCat(this,name,title);
 		pc.savePageCat();
 		
@@ -366,10 +258,13 @@ public class PortalManager
 	
 	public synchronized PageCat editPageCat(String name, String title, StringBuilder failedr) throws IOException
 	{
+		if(!Convert.checkVarName(name, true, failedr))
+			return null ;
+		
 		PageCat pc = getPageCat(name);
 		if (pc == null)
 		{
-			failedr.append("PageCat is already existed with name=" + name);
+			failedr.append("PageCat not existed with name=" + name);
 			return null;
 		}
 
@@ -399,7 +294,7 @@ public class PortalManager
 	
 	public Page getPageByPath(String path)
 	{
-		List<String> ss = Convert.splitStrWith(path, "/\\") ;
+		List<String> ss = Convert.splitStrWith(path, "/\\.") ;
 		if(ss==null||ss.size()!=2)
 			return null ;
 		PageCat pc = this.getPageCat(ss.get(0)) ;
@@ -415,6 +310,11 @@ public class PortalManager
 	private File getNavFrameFile()
 	{
 		return new File(this.portalDir,"_nav_frames.json") ;
+	}
+	
+	private File getNavFrameDir()
+	{
+		return this.portalDir ;//,"_nav_frames.json") ;
 	}
 	
 	public LinkedHashMap<String,NavFrame> getNavFrameAll()
@@ -465,19 +365,36 @@ public class PortalManager
 				if(tmpjo!=null)
 				{
 					this.navFrameIdDefault = tmpjo.optString("default_uid") ;
-					JSONArray jarr = tmpjo.optJSONArray("nfs") ;
-					if(jarr!=null)
-					{
-						int n = jarr.length() ;
-						for(int i = 0 ; i < n ; i ++)
-						{
-							JSONObject jo0 = jarr.getJSONObject(i) ;
-							NavFrame nf = new NavFrame(this) ;
-							if(nf.fromJO(jo0))
-								nfs.put(nf.getId(),nf) ;
-						}
-					}
 				}
+			}
+			catch(Exception ee)
+			{
+				ee.printStackTrace();
+			}
+		}
+		
+		File pdir = this.getNavFrameDir() ;
+		File[] nf_fs = pdir.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File f)
+			{
+				if(!f.isFile())
+					return false;
+				String fn = f.getName() ;
+				return fn.startsWith("nf_")&&fn.endsWith(".json");
+			}});
+		
+		for(File nf_f:nf_fs)
+		{
+			try
+			{
+				JSONObject jo0 = Convert.readFileJO(nf_f) ;
+				if(jo0==null)
+					continue ;
+				NavFrame nf = new NavFrame(this) ;
+				if(nf.fromJO(jo0))
+					nfs.put(nf.getId(),nf) ;
 			}
 			catch(Exception ee)
 			{
@@ -488,23 +405,36 @@ public class PortalManager
 		return nfs ;
 	}
 	
-	private void saveNavFrames() throws IOException
+	private void saveNavFrameDefault() throws IOException
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.putOpt("default_uid", this.navFrameIdDefault) ;
 		
-		LinkedHashMap<String,NavFrame> nfss = getNavFrameAll() ;
-		if(nfss!=null && nfss.size()>0)
-		{
-			JSONArray jarr = new JSONArray() ;
-			jo.put("nfs",jarr) ;
-			for(NavFrame nf:nfss.values())
-			{
-				jarr.put(nf.toJO()) ;
-			}
-		}
+		
 		File nff = getNavFrameFile() ;
 		Convert.writeFileJO(nff, jo);
+	}
+	
+	private File calcNavFrameFile(String nf_id)
+	{
+		return new File(this.portalDir,"nf_"+nf_id+".json") ;
+	}
+	
+	private File calcNavFrameLogoFile(String nf_id,String inputfn)
+	{
+		inputfn = inputfn.toLowerCase() ;
+		int k = inputfn.lastIndexOf('.') ;
+		if(k<0)
+			return null ;
+		String ext = inputfn.substring(k+1) ;
+		return new File(this.portalDir,"logo_"+nf_id+"."+ext) ;
+	}
+	
+	private void saveNavFrame(NavFrame nf) throws IOException
+	{
+		JSONObject nfjo = nf.toJO() ;
+		File f = calcNavFrameFile(nf.getId()) ;
+		Convert.writeFileJO(f, nfjo);
 	}
 	
 	public NavFrame setNavFrameBasic(String id,String title,String name,boolean b_def,StringBuilder failedr) throws IOException
@@ -551,8 +481,11 @@ public class PortalManager
 			nf.setBasic(title, name);
 		}
 		if(b_def||this.navFrameAll.size()==1)
+		{
 			this.navFrameIdDefault = nf.getId() ;
-		this.saveNavFrames(); 
+			this.saveNavFrameDefault();
+		}
+		this.saveNavFrame(nf); 
 		return nf ;
 	}
 	
@@ -560,7 +493,51 @@ public class PortalManager
 	{
 		NavFrame nf =  this.getNavFrameById(id) ;
 		nf.setDetailByJO(jo);
-		this.saveNavFrames(); 
+		this.saveNavFrame(nf); 
 		return nf ;
+	}
+	
+	public File setNavFrameLogoFile(String id,FileItem logof,StringBuilder failedr) throws Exception
+	{
+		NavFrame nf =  this.getNavFrameById(id) ;
+		if(nf==null)
+		{
+			failedr.append("no NavFrame found") ;
+			return null ;
+		}
+		String inputfn = logof.getName() ;
+		File tarf = calcNavFrameLogoFile(id,inputfn) ;
+		if(tarf==null)
+		{
+			failedr.append("invalid input logo file") ;
+			return null ;
+		}
+		if(tarf.exists())
+			tarf.delete();
+		
+		logof.write(tarf);
+//		if(!logof.renameTo(tarf))
+//		{
+//			failedr.append("invalid set target logo file") ;
+//			return null ;
+//		}
+		nf.logo = tarf.getName() ;
+		this.saveNavFrame(nf);
+		return tarf ;
+	}
+	
+	public NavFrame delNavFrame(String id,StringBuilder failedr) throws IOException
+	{
+		NavFrame nf =  this.getNavFrameById(id) ;
+		if(nf==null)
+		{
+			failedr.append("no NavFrame found") ;
+			return null ;
+		}
+		File f = calcNavFrameFile(nf.getId()) ;
+		if(f.delete())
+			return nf ;
+		failedr.append("del nav frame failed") ;
+		return null ;
 	}
 }

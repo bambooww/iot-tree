@@ -232,17 +232,13 @@ if(bloc&&!tag.isSysTag())
    	 ondblclick="add_or_modify_tag('<%=tag.getId()%>')"
 <%
 }
-%> ><td>
-<%
-	if(bloc)
+%> ><td><%
+	//if(bloc)
 	{
 		//String ss = "✔";
 		
-%>
-        <input type="checkbox" lay-skin="primary"  id="chk_<%=tag.getId()%>"/>
-<%
+%><input type="checkbox" lay-skin="primary" id="chk_<%=tag.getId()%>"/><%
 	}
-   
    String t = "" ;
    if(tag.isLocalTag())
 	   t = "L" ;

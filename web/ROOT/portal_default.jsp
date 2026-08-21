@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page
-	import="org.iottree.core.*,org.iottree.core.util.*,
+	import="org.iottree.core.*,org.iottree.core.util.*,org.json.*,
 		org.iottree.core.util.web.*,org.iottree.portal.*,
 		org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*"%><%
 		String prjid = request.getParameter("prjid") ;
@@ -36,11 +36,11 @@ String home_u = nf.getHomeUrl() ;
 		nav_txt_color ="#fff" ;
 	
 	String login_page = LoginUtil.getLoginPage() ;
+	JSONArray nav_jarr = nf.getNavNodeInssJArr();
 %><!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><%=title %></title>
     <jsp:include page="head.jsp">
     	<jsp:param value="true" name="simple"/>
@@ -49,8 +49,8 @@ String home_u = nf.getHomeUrl() ;
     <script src="/_js/jquery.cookie.js"></script>  
    <link rel="stylesheet" href="/_js/selectmenu/selectmenu.css" />
 	<script src="/_js/selectmenu/selectmenu.min.js"></script>
-    <script src="/ent/inc/fmain.js"></script>
-    <link href="/ent/inc/fmain.css" rel="stylesheet" />
+    <script src="/_js/oc/nav.js"></script>
+    <link href="/_js/oc/nav.css" rel="stylesheet" />
 <style type="text/css">
 .logo_title {color:#555555;}
 #nav .main-nav-text { color:<%=nav_txt_color%>;margin-top:5px;}
@@ -59,6 +59,13 @@ String home_u = nf.getHomeUrl() ;
 .full_not {position:absolute;right:5px;top:40px;cursor:pointer;z-index:10000;font-size:12px;color:#1d89f0}
 </style>
 <script>
+
+var home_nv = { id:'__home',node_id: '__home', title: '首页', closed: false, icon: 'fa fa fa-desktop',color:"#495359", url: contentPath + '/home' };
+
+var nav_data = <%=nav_jarr%> ;
+if(nav_data.length<=0)
+	nav_data.unshift(home_nv)
+
         var contentPath = "";
         $(function () {
         	init_page();
@@ -70,7 +77,9 @@ String home_u = nf.getHomeUrl() ;
             $(window).resize(function (e) {
                 $("#container").height($(window).height());
             });
+            load_nav('nav_tab_list',nav_data,[nav_data[0]]);
             
+            /*
         	send_ajax("nav_left_ajax.jsp","",function (bsucc,ret)
                 {
         			if(!bsucc)
@@ -81,11 +90,11 @@ String home_u = nf.getHomeUrl() ;
                     var data = null ;
                     eval("data="+ret) ;
                     load_nav('nav_tab_list',data,[
-                       { id: 'home', title: '<w:g>home</w:g>', closed: false, icon: 'fa fa fa-desktop', url: contentPath + '<%=home_u%>' }
+                       { id: 'home', title: '<w:g>home</w:g>', closed: false, icon: 'fa fa fa-desktop', url: contentPath + '/home' }
                        ]
                    );
                 });
-            
+            */
             
             
             $("#HomePage").click(function () {
@@ -143,7 +152,7 @@ String home_u = nf.getHomeUrl() ;
 <%
 if(Convert.isNotNullEmpty(icon))
 {
-%><img id="icon-vension" src="<%=icon %>"  width="52" height="52" alt="" style="left:15px;top:10px">
+%><img id="icon-vension" src="/portal__logo.jsp?prjid=<%=prjid %>&nf_id=<%=nf_id %>"  width="52" height="52" alt="" style="left:15px;top:10px">
 <%
 }
 %>
@@ -156,34 +165,7 @@ if(Convert.isNotNullEmpty(icon))
                  <img class="logo_icon" src="" /><div class="logo_title" style="margin-top:2px"><%=title %></div>
                 </div>
                 <div style="float: left">
-                   <%--
-                    <ul id="topnav">
-                    
-                        <li class="list" id="HomePage" title="首页">
-                            <a title="首页">
-                                <span><i class="fa fa-home" style="color:#e35b5a"></i></span>
-                            </a>
-                        </li>
-                         
-                        <li class="list" id="map_main" title="地图数据层">
-                            <a>
-                                <span><i class="fa fa-globe" style="color:#14aae4"></i></span>
-                            </a>
-                        </li>
-                        
-                        <li class="list" id="taskchain" title="任务链">
-                            <a>
-                                <span><i class="fa fa-superpowers" style="color:#ffcd42"></i></span>
-                            </a>
-                        </li>
-                        <li class="list" id="help"  title="帮助">
-                            <a>
-                                <span><i class=" fa fa-question-circle" style="color:#43a72d"></i></span>
-                            </a>
-                        </li>
-                      
-                    </ul>
-                    --%>
+                   
                 </div>
                 <div style="float: right">
                     <ul id="topnav_r">

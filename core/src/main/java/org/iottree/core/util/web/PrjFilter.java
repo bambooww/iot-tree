@@ -136,9 +136,26 @@ public class PrjFilter extends CommonFilter
 			return false;
 		
 		NavFrame nf = null;
-		if(ss.size()>1)
+		int n = ss.size() ; 
+		if(n>1)
 		{
 			String s1 = ss.get(1) ;
+			if(s1.startsWith("_page"))
+			{//do page output
+				if(n<=2)
+					return true; 
+				String qs = request.getQueryString();
+				String p = ss.get(2) ;
+				for(int i = 3 ; i < n ; i ++)
+					p += "."+ss.get(i) ;
+				if (qs == null)
+					qs = "";
+				else
+					qs = "&" + qs;
+				request.getRequestDispatcher("/portal__page.jsp?prjid="+prj.getId()+"&path=" + p + qs).forward(request, response);
+				return true;
+			}
+			
 			if(!s1.startsWith("_portal_"))
 				return false;
 			s1 = s1.substring(8) ;
@@ -154,8 +171,6 @@ public class PrjFilter extends CommonFilter
 		
 		return true;
 	}
-	
-	
 	
 	private void handleOuterApi(List<String> ss,HttpServletRequest request, HttpServletResponse response)
 			throws Exception

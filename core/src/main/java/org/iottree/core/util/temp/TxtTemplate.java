@@ -183,6 +183,13 @@ public class TxtTemplate
 		writeOut(w,block2val,false) ;
 	}
 	
+	public String calcTxtOut(HashMap<String,String> block2val) throws IOException
+	{
+		StringWriter sw = new StringWriter() ;
+		writeOut(sw,block2val) ;
+		return sw.toString() ;
+	}
+	
 	public void writeOut(Writer w,HashMap<String,String> block2val,boolean emptyout) throws IOException
 	{
 		for(Object o :contList)

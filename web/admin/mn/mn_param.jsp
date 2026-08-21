@@ -277,6 +277,18 @@ function save_to_lib()
 				}
 			]);
 }
+
+
+function on_cp_uid(uid)
+{
+	try {
+        navigator.clipboard.writeText(uid);
+        dlg.msg("copied uid ok - "+uid) ;
+    } catch (err) {
+        dlg.msg("copy failed") ;
+    }
+}
+
 </script>
 <style>
 .save_btn
@@ -378,7 +390,7 @@ if(can_save)
       <input type="text" id="title" name="title" value="<%=title %>"  class="layui-input"><br>
     </div>
     <div class="layui-input-inline" style="width:150px;">
-      <w:g>enable</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> /><br>
+      <w:g>enable</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="enable"  <%=ben_chked %> />   <span title="<%=item.CXT_getUID()%>" onclick="on_cp_uid('<%=item.CXT_getUID()%>')">UID</span><br>
       <w:g>show_out_tt</w:g>&nbsp;<input type="checkbox" class="layui-input" lay-skin="primary" id="show_out_tt"   <%=bshow_out_tt_chked %> />
     </div>
     <label class="layui-form-mid"><w:g>mark</w:g>:</label>

@@ -90,11 +90,7 @@ for(NavFrame net:navs)
             <span class="bitem" onclick="add_or_edit_nf('<%=net.getId()%>','<%=net.getTitle() %>','<%=net.getName() %>')" title="<w:g>edit</w:g>">
             <i class="fa fa-pencil "></i>
            </span>
-<%--
-            <span class="bitem" onclick="exp_flow('<%=net.getId()%>')" title="<w:g>export</w:g>">
-            <i class="fa-regular fa-circle-up"></i>
-           </span>
- --%>
+
            <span class="bitem"  style="color: #e33a3e" onclick="nf_del('<%=net.getId()%>')" title="<w:g>delete</w:g>">
            &nbsp;&nbsp;<i class="fa fa-times "></i>
            </span>
@@ -105,9 +101,6 @@ for(NavFrame net:navs)
 }
 %>
 	<button class0="net_item" style="right:16px;top:0px;width:30px;height:25px;" onclick="add_or_edit_nf()"><span class="bitem"><i class="fa-solid fa-plus fa-lg" style="top:10px;"></i></span></button>
-	<%--
-	<button class0="net_item" style="right:16px;top:33px;width:30px;height:25px" onclick="imp_nf()" title="<w:g>import</w:g>"><span class="bitem"><i class="fa-regular fa-circle-left fa-lg" style="top:10px;"></i></span></button>
-	 --%>
 </div>
 
 <div class="mid"><i class="fa-solid fa-down-long"></i></div>
@@ -115,12 +108,6 @@ for(NavFrame net:navs)
 <button style="top:0px;min-width:30px;height:25px;" onclick="page_config()"><span class="bitem"><i class="fa-regular fa-file-lines fa-lg" style="top:10px;"></i><w:g>page,config</w:g></span></button>
 <button style="top:0px;min-width:30px;height:25px;" onclick="page_temp()"><span class="bitem"><i class="fa-regular fa-file fa-lg" style="top:10px;"></i></span><w:g>page,templet</w:g></button>
 </div>
-<%--
-  <span class="fa-stack">
-							  <i class="fa fa-square fa-stack-1x"></i>
-							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
-							</span>
- --%>
 <script>
 
 var prjid="<%=prjid%>" ;
@@ -139,7 +126,7 @@ function page_temp()
 function open_nf(nf_id,tt)
 {
 	parent.add_tab("___navfrm_"+nf_id,`<i class="fa-solid fa-chalkboard fa-lg fa-rotate-90"></i><w:g>portal</w:g>-\${tt}`,
-			`./portal/portal_navframe_edit.jsp?prjid=\${prjid}&nf_id=\${nf_id}`) ;
+			`/admin/portal/portal_navframe_edit.jsp?prjid=\${prjid}&nf_id=\${nf_id}`) ;
 }
 
 function add_or_edit_nf(id,t,n)
@@ -209,82 +196,12 @@ function add_or_edit_nf(id,t,n)
 			]);
 }
 
-function exp_flow(netid)
-{
-	dlg.open("./mn_imp_exp.jsp?prjid="+prjid+"&netid="+netid,
-			{title:"<w:g>export</w:g>"},
-			['<w:g>cancel</w:g>'],
-			[
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
-function imp_flow()
-{
-	dlg.open("./mn_imp_exp.jsp",
-			{title:"<w:g>import</w:g>"},
-			['<w:g>import</w:g>','<w:g>cancel</w:g>'],
-			[
-				function(dlgw)
-				{
-					let txt = dlgw.get_txt();
-					if(!txt)
-					{
-						dlg.msg("please input exported json txt") ;
-						return ;
-					}
-					let ob = null ;
-					try{
-						eval("ob="+txt) ;
-					}catch(e) {dlg.msg("not valid json txt:"+e);return;}
-					
-					let n = ob.name ;
-					dlg.close();
-					pre_imp(n,ob) ;
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
-function pre_imp(n,jo)
-{
-	dlg.open("./mn_imp_pre.jsp?prjid="+prjid+"&name="+n,{title:"pre import"},
-			['<w:g>import</w:g>','<w:g>cancel</w:g>'],
-			[
-				function(dlgw)
-				{
-					let txt = dlgw.do_submit((bsucc,ret)=>{
-						if(!bsucc) {dlg.msg(ret);return}
-						send_ajax("mn_ajax.jsp",{op:"imp_net",prjid:prjid,jstr:JSON.stringify(jo),...ret},(bsucc,ret)=>{
-							if(!bsucc || ret!="succ")
-							{
-								dlg.msg(ret);return;
-							}
-							dlg.close();
-							location.reload();
-						});
-					});
-					
-				},
-				function(dlgw)
-				{
-					dlg.close();
-				}
-			]);
-}
-
 function nf_del(id)
 {
 	dlg.confirm('<w:g>del,this,nav_frame</w:g>?',{btn:["<w:g>yes</w:g>","<w:g>cancel</w:g>"],title:"<w:g>del,confirm</w:g>"},function ()
     {
 		let op={op:"del_nf",prjid:prjid,nf_id:id};
-		send_ajax("mn_ajax.jsp",op,(bsucc,ret)=>{
+		send_ajax("portal_ajax.jsp",op,(bsucc,ret)=>{
 			 if(!bsucc||ret!='succ')
 			 {
 				 dlg.msg(ret) ;

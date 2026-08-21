@@ -16,8 +16,8 @@
   <dd_node id="1" name="unit" name_cn="单位" name_en="Unit" />
   <dd_node id="1" name="indicator" name_cn="指标" name_en="Indicator" />
   <dd_node id="1" name="bool_alm" name_cn="Bool报警触发" name_en="Bool Alm/Event" />
-  
-  
+  <dd_node id="1" name="dis_tags_waves" name_cn="显示多标签数据波形" name_en="Display multi tags data wave" />
+  <dd_node id="1" name="auto_refresh" name_cn="自动刷新" name_en="Auto Refresh" />
   <dd_node id="1" name="edit_mid_tag_js" name_cn="编辑中间标签JS表达式" name_en="Edit Middle Tag JS Express" />
   
   <dd_node id="1" name="exp_wjs" name_cn="写入时JS" name_en="On Write JS" />

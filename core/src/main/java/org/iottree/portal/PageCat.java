@@ -89,6 +89,11 @@ public class PageCat
 //		this.pageid2head = pageid2t ;
 	}
 	
+	public PortalManager getOwner()
+	{
+		return this.owner ;
+	}
+	
 	public String getName()
 	{
 		return this.name ;
@@ -256,7 +261,7 @@ public class PageCat
 	//only head
 	public Page addPage(String name,String title,String templet_uid,StringBuilder failedr) throws IOException
 	{
-		Templet temp = PortalManager.getInstance().getTempletByUID(templet_uid) ;
+		Templet temp = TempletCat.getTempletByUID(templet_uid) ;
 		if(temp==null)
 		{
 			failedr.append("no templet found") ;
@@ -286,7 +291,7 @@ public class PageCat
 			return false ;
 		}
 		
-		Templet temp = PortalManager.getInstance().getTempletByUID(templet_uid) ;
+		Templet temp = TempletCat.getTempletByUID(templet_uid) ;
 		if(temp==null)
 		{
 			failedr.append("no templet found") ;

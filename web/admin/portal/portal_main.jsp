@@ -1,9 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page 
-	import="org.iottree.core.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%
-	//UserProfile up = UserProfile.getUserProfile(request) ;
-	//List<Warehouse> whs = WareManager.getInstance().getHousesAll() ;
+	import="org.iottree.core.*,org.iottree.core.util.*,
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" 
+		%><%@ taglib uri="wb_tag" prefix="w"%><%
+	if(!Convert.checkReqEmpty(request, out, "prjid"))
+		return ;
+		
 	String prjid = request.getParameter("prjid") ;
+	UAPrj prj = UAManager.getInstance().getPrjById(prjid) ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
 %><html>
 <head>
         <jsp:include page="../head.jsp">
@@ -83,73 +91,17 @@ dlg.dlg_top=true ;
 </div>
 
 
-<div class="ccc" id="left_panel" style="left:0%;top:0px;bottom:0px;width:550px;display0:none;z-index: 10px;background-color: #ffffff" >
-    <%-- <div class="top">
-   
-<table style="width:100%;height:100%;">
-	<tr>
-		<td style="width:150px;font-size:14px;">&nbsp;</td>
-		<td style="width:100px;white-space: normal;">
-	<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_page_list(false)" title="&nbsp;隐藏列表"><i class="fa-solid fa-angle-left"></i></button>
-	</tr>
-</table>
+<div class="ccc" id="left_panel" style="left:0%;top:0px;bottom:0px;width:550px;display:none;z-index: 10px;background-color: #ffffff" >
+</div>
 
-</div> --%>
-<iframe id="if_item_list" name="if_item_list"  src="page_list.jsp" style="width:100%;overflow: hidden;"></iframe>
-</div>
-<%--
-<div class="ccc" id="nav_panel" style="left:0%;top:0px;bottom:0px;width:0px;display:none;z-index: 9px;background-color: #ffffff" >
-    <div class="top">
-
-<table style="width:100%;height:100%;">
-	<tr>
-		<td style="width:150px;font-size:14px;">&nbsp;</td>
-		<td style="width:100px;white-space: normal;">
-	<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_nav_setup(false)" title="&nbsp;隐藏列表"><i class="fa-solid fa-angle-left"></i></button>
-	</tr>
-</table>
-</div>
-<iframe id="if_nav_setup" name="if_nav_setup"  src="nav_setup.jsp" style="width:100%;overflow: hidden;"></iframe>
-</div>
---%>
 <div class="rrr" id="right_panel" style="right:0%;top:0px;bottom:0px;width:550px;display:none;z-index: 10px;background-color: #ffffff" >
-    <div class="top">
-
-<table style="width:100%;height:100%;">
-	<tr>
-		<td style="width:150px;font-size:14px;">&nbsp;</td>
-		<td style="width:100px;white-space: normal;">
-	<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_page_setup(false)" title="&nbsp;隐藏"><i class="fa-solid fa-angle-right"></i></button>
-	</tr>
-</table>
+   <iframe id="if_item_list" name="if_item_list"  src="page_list.jsp?prjid=<%=prjid %>" style="width:100%;overflow: hidden;"></iframe>
 </div>
-
-</div>
-<%--
-<div class="ccc" id="dp_panel" style="left:0%;top:0px;bottom:0px;width:250px;display:none;z-index: 10px;background-color: #ffffff" >
-<div class="btm" id="dp_list" style="top:0px;">
-<iframe id="if_dp_list" src="" style="width:100%;height:100%;"></iframe>
-</div>
-<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_devpart_list(false)"
-	title="&nbsp;隐藏列表" style="position:absolute;right:10px;top:5px;"><i class="fa-solid fa-angle-left"></i></button>
-</div>
-
-
-
- --%>
- <div id="h_list_btn" class="rrrr-box" style="top:10px" onclick="show_page_setup(true)">
-  页<br>面<br>设<br>置
-</div>
- <div id="h_list_btn" class="rounded-box" onclick="show_page_list(true)">
-  页<br>面<br>列<br>表
-</div>
-<div id="h_nav_btn" class="rounded-box" style="top:300px;" onclick="show_nav_setup(true)">
-  导<br>航<br>设<br>置
-</div>
-
+<button id="topr_show_hd" style="position:absolute;top:5px;right:5px;" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_right_setup()" title="&nbsp;"><i class="fa-solid fa-angle-right"></i></button>
 
 </body>
 <script type="text/javascript">
+var prjid = "<%=prjid%>" ;
 
 function on_blk_set(op,page_uid,blkn,pblk_tp,pblk_tpt)
 {
@@ -190,7 +142,7 @@ function edit_pblk(page_uid,blkn,pblk_tp,pblk_tpt)
 		event.stopPropagation();
 	console.log(page_uid,blkn,pblk_tp,pblk_tpt);
 	dlg.open(`./page_blk_edit.\${pblk_tp}.jsp?page_uid=\${page_uid}&blkn=\${blkn}`,{title:"编辑区块 - "+pblk_tpt,w:'500px',h:'400px',input:{}},
-			['确定','取消'],
+			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
 				{
@@ -201,7 +153,7 @@ function edit_pblk(page_uid,blkn,pblk_tp,pblk_tpt)
 							 return ;
 		        	     }
 						 //console.log(ret) ;
-						 send_ajax("page_blk_ajax.jsp",{op:"set_pblk_detail",page_uid:page_uid,blkn:blkn,pblk_tp:pblk_tp,jstr:JSON.stringify(ret)},(bsucc,ret)=>{
+						 send_ajax("page_blk_ajax.jsp",{op:"set_pblk_detail",prjid:prjid,page_uid:page_uid,blkn:blkn,pblk_tp:pblk_tp,jstr:JSON.stringify(ret)},(bsucc,ret)=>{
 							 if(!bsucc || ret.indexOf("succ")!=0)
 							 {
 								 dlg.msg(ret) ;
@@ -238,7 +190,7 @@ function del_pblk(page_uid,blkn)
 
 function on_page_sel(item)
 {
-	$("#if_detail").attr("src",`page_detail.jsp?page_uid=\${item.page_uid}`)
+	$("#if_detail").attr("src",`page_detail.jsp?prjid=\${prjid}&page_uid=\${item.page_uid}`)
 }
 
 function update_detail_show()
@@ -267,36 +219,24 @@ function show_page_list(b)
 		hide_toggle($('#left_panel'));
 }
 
-function show_nav_setup(b)
+function show_right_setup()
 {
-	if(b)
-		slide_toggle($('#nav_panel'),"550px");
-	else
-		hide_toggle($('#nav_panel'));
-}
-
-function slide_toggle(obj,w)
-{
+	let obj = $('#right_panel') ;
 	if(obj.attr('topm_show')=='1')
 	{
 		obj.animate({width: '0px', opacity: 'hide'}, 'normal',function(){ obj.hide();});
 		obj.attr('topm_show',"0") ;
+		$("#topr_show_hd").html(`<i class="fa-solid fa-angle-left"></i>`)
 		return 0 ;
 	}
 	else
 	{
-		obj.animate({width: w, opacity: 'show'}, 'normal',function(){ obj.show();});
+		obj.animate({width: "550px", opacity: 'show'}, 'normal',function(){ obj.show();});
 		obj.attr('topm_show',"1") ;
+		$("#topr_show_hd").html(`<i class="fa-solid fa-angle-right"></i>`)
 		return 1 ;
 	}
 }
-
-function hide_toggle(obj)
-{
-	obj.hide();
-	obj.attr('topm_show',"0") ;
-}
-
-
+show_right_setup()
 </script>
 </html>

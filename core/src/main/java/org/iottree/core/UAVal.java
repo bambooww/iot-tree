@@ -3,7 +3,6 @@ package org.iottree.core;
 import java.sql.Date;
 import java.util.List;
 
-import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.ValEvent;
 import org.iottree.core.basic.ValOption;
 import org.iottree.core.util.Convert;

@@ -9,6 +9,8 @@
 	java.net.*,
 	java.util.*"%><%!
 	
+	
+	
 	private static void setRecentUnit(HttpServletRequest req,String unit)
 	{
 		if(Convert.isNullOrEmpty(unit))
@@ -313,6 +315,76 @@
 		
 		return ret ;
 	}
+	
+	private static JSONObject getTagHisJO(UATag ttt)
+	{
+		List<UAVal> his_vals = ttt.HIS_getVals(-1) ;
+		JSONObject out_jo = new JSONObject() ;
+		UAVal.ValTP vt00 = ttt.getValTp() ;
+		out_jo.put("vt",vt00.getStr()) ;
+		out_jo.put("bnum",vt00.isNumberVT()) ;
+		out_jo.put("path",ttt.getNodeCxtPathInPrj()) ;
+		out_jo.put("title",ttt.getTitle()) ;
+		out_jo.put("tagid",ttt.getId()) ;
+		out_jo.put("bstr",vt00==UAVal.ValTP.vt_str);
+		String unit = ttt.getUnit() ;
+		if(unit==null)
+			unit = "" ;
+		out_jo.put("unit",unit) ;
+		JSONArray data_jarr = new JSONArray() ;
+		out_jo.put("data",data_jarr) ;
+		if(his_vals!=null)
+		{
+			UAVal last_v = null ;
+			int last_adj = 1 ;
+			int last_strlen = -1 ;
+			for(UAVal v:his_vals)
+			{
+				boolean bv = v.isValid() ;
+				long dt = v.getValDT() ;
+				Object vv = null;
+				String vstr = null ;
+				JSONArray jarr = new JSONArray();
+				if(bv)
+				{
+					vv = v.getObjVal() ;
+					if(vv instanceof Boolean)
+						vv = ((Boolean)vv).booleanValue()?1:0;
+					else if(vv instanceof String)
+					{
+						vstr = (String)vv;
+						vv = vstr.length() ;
+					}
+				}
+				
+				jarr.put(dt);
+				if(bv)
+					jarr.put(vv);
+				else
+					jarr.put(0).put(false);
+				if(vstr!=null)
+					jarr.put(vstr) ;
+				data_jarr.put(jarr);
+				last_v = v ;
+			}
+			
+			if(ttt.isCacheOnlyChg())
+			{//set last one
+				UAVal cur_v = ttt.RT_getVal() ;
+				if(cur_v.isValid() && last_v!=null&&last_v.getValChgDT()!=cur_v.getValDT())
+				{
+					long dt = cur_v.getValDT() ;
+					Object vv = cur_v.getObjVal() ;
+					if(vv instanceof Boolean)
+						vv = ((Boolean)vv).booleanValue()?1:0;
+					JSONArray jarr = new JSONArray();
+					jarr.put(dt).put(vv);
+					data_jarr.put(jarr);
+				}
+			}
+		}
+		return out_jo;
+	}
 %><%
 String op = request.getParameter("op") ;
 
@@ -327,6 +399,16 @@ if(n==null)
 	return ;
 }
 
+String prjid = request.getParameter("prjid") ;
+UAPrj prj = null ;
+if(Convert.isNotNullEmpty(prjid))
+{
+	prj = UAManager.getInstance().getPrjById(prjid) ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;return ;
+	}
+}
 String tagn = request.getParameter("n") ;
 String tagt = request.getParameter("t") ;
 String vt_str = request.getParameter("vt") ;
@@ -553,37 +635,25 @@ case "tag_his":
 		return;
 	}
 	UATag ttt = (UATag)n ;
-	List<UAVal> his_vals = ttt.HIS_getVals(-1) ;
-	JSONObject out_jo = new JSONObject() ;
-	UAVal.ValTP vt00 = ttt.getValTp() ;
-	out_jo.put("vt",vt00.getStr()) ;
-	out_jo.put("bnum",vt00.isNumberVT()) ;
-	out_jo.put("path",ttt.getNodeCxtPathInPrj()) ;
-	JSONArray data_jarr = new JSONArray() ;
-	out_jo.put("data",data_jarr) ;
-	if(his_vals!=null)
-	{
-		for(UAVal v:his_vals)
-		{
-			boolean bv = v.isValid() ;
-			long dt = v.getValDT() ;
-			Object vv = null;
-			if(bv)
-			{
-				vv = v.getObjVal() ;
-				if(vv instanceof Boolean)
-					vv = ((Boolean)vv).booleanValue()?1:0;
-			}
-			JSONArray jarr = new JSONArray();
-			jarr.put(dt);
-			if(bv)
-				jarr.put(vv);
-			else
-				jarr.put(0).put(false);
-			data_jarr.put(jarr);
-		}
-	}
+	JSONObject out_jo = getTagHisJO(ttt) ;
 	out_jo.write(out) ;
+	break ;
+case "tag_his_multi":
+	if(!Convert.checkReqEmpty(request, out, "prjid","ids"))
+		return ;
+	ArrayList<UATag> tmp_tags = new ArrayList<>() ;
+	prj.iteratorAllTags((tt)->{
+		if(ids.contains(tt.getId()))
+			tmp_tags.add(tt) ;
+	});
+	JSONArray out_jarr = new JSONArray() ;
+	for(UATag tt : tmp_tags)
+	{
+		JSONObject out_jo00 = getTagHisJO(tt) ;
+		if(out_jo00!=null)
+			out_jarr.put(out_jo00) ;
+	}
+	out_jarr.write(out) ;
 	break ;
 case "chk_addr":
 	//DevAddr.ChkRes chkres = chkAddr(n,request,out) ;

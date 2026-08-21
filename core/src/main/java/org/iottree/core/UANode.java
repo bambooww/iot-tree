@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.IdIId;
 import org.iottree.core.util.Lan;
 import org.iottree.core.util.logger.ILogger;

@@ -3,13 +3,11 @@ package org.iottree.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.alert.AlertItem;
 import org.iottree.core.alert.AlertManager;
 import org.iottree.core.basic.ValEvent;

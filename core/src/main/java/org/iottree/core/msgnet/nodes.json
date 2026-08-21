@@ -169,6 +169,7 @@
 			],"bk":"org.iottree.core.msgnet.store.StoreTbWriter_NE"},
 			{"cn":"org.iottree.core.msgnet.modules.RelationalDB_M","nodes":[
 				"org.iottree.core.msgnet.modules.RelationalDB_Table",
+				"org.iottree.core.msgnet.modules.RelationalDB_CRUD",
 				"org.iottree.core.msgnet.modules.RelationalDB_SQL_UP",
 				"org.iottree.core.msgnet.modules.RelationalDB_SQL_Query",
 				"org.iottree.core.msgnet.modules.RelationalDB_JSON2TB",

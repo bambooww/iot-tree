@@ -104,10 +104,7 @@ public class XmlVal implements IXmlStringable
 		{
 			return (short)val ;
 		}
-		/**
-		 * ������Ͷ�Ӧ���ַ���
-		 * @return
-		 */
+		
 		public String getTypeStr()
 		{
 			return this.toString().substring(3) ;
@@ -219,7 +216,7 @@ public class XmlVal implements IXmlStringable
 	}
 
 	/**
-	 * ���̶Ⱥܸߵ�����ת��
+	 * 
 	 * @param strt
 	 * @return
 	 */

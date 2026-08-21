@@ -3,14 +3,12 @@ package org.iottree.core.store.gdb.autofit;
 import java.io.*;
 import java.util.*;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.*;
+import org.json.JSONArray;
 
 
 /**
- * ��java��Ϣ���������ݿ����Ϣ
- * 
- * �������ṩ�;������ݿ��޹صı���Ϣ��Database���Ը��ݸ���Ϣ��Բ�ͬ�����ݿ���
- * ���ݿ�ı��Զ��������������Զ������ȹ���
  * @author Jason Zhu
  */
 public class JavaTableInfo implements IXmlDataable
@@ -256,5 +254,154 @@ public class JavaTableInfo implements IXmlDataable
 				fkInfos.add(tmpfki);
 			}
 		}
+	}
+	
+	// - sql helper
+	
+	public String SQL_calcInsertSql()
+	{
+		StringBuilder q_mark_str = new StringBuilder() ;
+		String pk_nor_colstr = SQL_calcPkNor(q_mark_str) ;
+		StringBuilder sb = new StringBuilder() ;
+		sb.append("insert into ").append(this.tableName)
+			.append(" (").append(pk_nor_colstr).append(" ) values (").append(q_mark_str).append(")");
+		return sb.toString() ;
+	}
+	
+	public String[] SQL_calcUpdateByPkIdSql(String[] cols,StringBuilder sql_sb)
+	{
+		if(this.pkColInfo==null)
+			throw new RuntimeException("no pk col") ;
+		
+		if(cols==null||cols.length<=0)
+		{
+			cols = new String[this.norColInfos.size()];
+			for(int i = 0 ; i < cols.length ; i ++)
+				cols[i] = this.norColInfos.get(i).getColumnName() ;
+		}
+
+		sql_sb.append("update ").append(this.tableName).append(" set ").append(cols[0]).append("=?");
+		for(int i = 1 ; i < cols.length ;i ++)
+		{
+			sql_sb.append(",").append(cols[i]).append("=?");
+		}
+		sql_sb.append(" where ").append(this.pkColInfo.getColumnName()).append("=?");
+		return cols ;
+	}
+	
+	public String SQL_calcDeleteByPkIdSql()
+	{
+		if(this.pkColInfo==null)
+			throw new RuntimeException("no pk col") ;
+		return SQL_calcDelSqlByColOpers(new String[] {this.pkColInfo.getColumnName()},new String[] {"="},
+				null,null,null) ;
+	}
+	
+	public String SQL_calcDelSqlByColOpers(String[] cols,String[] opers,
+			Object[] vals,boolean[] null_ignores,
+			String more_wherestr)
+	{
+		StringBuilder sb = new StringBuilder() ;
+		sb.append("delete from ").append(this.tableName);
+		sb.append(SQL_calcWhereSqlByColOpers(cols,opers,vals,null_ignores,more_wherestr,null));
+		return sb.toString();
+	}
+	
+	public String SQL_calcSqlByColOpers(String[] cols,String[] opers,
+			Object[] vals,boolean[] null_ignores,//判断每个列值中的vals空值是否需要忽略
+			String more_wherestr,
+			String orderby)
+	{
+		StringBuilder sb = new StringBuilder() ;
+		sb.append("select ").append(SQL_calcPkNor(null)).append(" from ").append(this.tableName);
+		sb.append(SQL_calcWhereSqlByColOpers(cols,opers,vals,null_ignores,more_wherestr,orderby));
+		return sb.toString();
+	}
+	
+	public String SQL_calcSqlCountByColOpers(String[] cols,String[] opers,
+			Object[] vals,boolean[] null_ignores,//判断每个列值中的vals空值是否需要忽略
+			String more_wherestr,
+			String orderby) throws ClassNotFoundException
+	{
+		StringBuilder sb = new StringBuilder() ;
+		sb.append("select count(*) from ").append(this.tableName);
+		sb.append(SQL_calcWhereSqlByColOpers(cols,opers,vals,null_ignores,more_wherestr,orderby));
+		return sb.toString();
+	}
+	
+	
+	private String SQL_calcPkNor(StringBuilder insert_q_mark)
+	{
+		StringBuilder sb = new StringBuilder() ;
+		
+		boolean bfirst = true;
+		if(pkColInfo!=null)
+		{
+			sb.append(pkColInfo.getColumnName()) ;
+			bfirst = false;
+			
+			if(insert_q_mark!=null)
+				insert_q_mark.append("?") ;
+		}
+		for(JavaColumnInfo jci:this.norColInfos)
+		{
+			if(bfirst)
+				bfirst = false;
+			else
+			{
+				sb.append(",");
+				if(insert_q_mark!=null)
+					insert_q_mark.append(",") ;
+			}
+			
+			sb.append(jci.getColumnName()) ;
+			
+			if(insert_q_mark!=null)
+				insert_q_mark.append("?") ;
+		}
+		return sb.toString() ;
+	}
+	
+	private String SQL_calcWhereSqlByColOpers(String[] cols,String[] opers,
+			Object[] vals,boolean[] ignore_nulls,String more_wherestr,
+			String orderby)
+	{
+		StringBuilder sb = new StringBuilder() ;
+		if(vals==null)
+		{
+			if(cols.length>0)
+			{
+				sb.append(" where ");
+				sb.append(cols[0]).append(opers[0]).append("?") ;
+				for(int k = 1 ; k < cols.length ; k ++)
+					sb.append(" and ").append(cols[k]).append(opers[k]).append("?") ;
+			}
+		}
+		else
+		{//
+			StringBuffer tmpsb = new StringBuffer() ;
+			for(int k = 0 ; k < cols.length ; k ++)
+			{
+				if(vals[k]==null && 
+						ignore_nulls!=null && ignore_nulls[k])
+					continue ;//ignore null
+				if(tmpsb.length()==0)
+					tmpsb.append(" where ").append(cols[k]).append(opers[k]).append("?") ;
+				else
+					tmpsb.append(" and ").append(cols[k]).append(opers[k]).append("?") ;
+			}
+			sb.append(tmpsb) ;
+		}
+		
+		if(Convert.isNotNullEmpty(more_wherestr))
+			sb.append(" and ").append(more_wherestr) ;
+		
+		if(!Convert.isNullOrTrimEmpty(orderby))
+		{
+			sb.append(" order by ").append(orderby);
+//			if(b_order_desc)
+//				sb.append(" desc");
+		}
+		return sb.toString();
 	}
 }

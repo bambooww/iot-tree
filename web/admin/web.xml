@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<web>
+<web title_en="Admin" title_cn="Admin">
 	<authorization desc="">
 		<default is_login="true"/>
-		<location path="main.jsp" is_login="false"/>
 	</authorization>
 	
 	<nav>
+		<sub_nav name="user_mgr" title_en="User Mgr" title_cn="用户权限"  icon="fa-regular fa-user" color="#e43020" notroles="small_user"   url="/admin/user/auth_main.jsp" >
+		</sub_nav>
+		
+		<sub_nav name="log_mgr" title_en="Log Control"  title_cn="日志控制" icon="fa-solid fa-terminal" color="#e43020" notroles="small_user"  url="/admin/util/log_mgr.jsp" >
+		</sub_nav>
+
+
 	</nav>
 </web>

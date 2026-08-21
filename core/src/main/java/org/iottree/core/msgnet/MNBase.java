@@ -37,6 +37,8 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.ILang;
 import org.iottree.core.util.IdCreator;
 import org.iottree.core.util.Lan;
+import org.iottree.portal.Widget;
+import org.iottree.portal.WidgetCatable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,7 +47,7 @@ import org.json.JSONObject;
  * @author jason.zhu
  *
  */
-public abstract class MNBase extends MNCxtPk implements ILang
+public abstract class MNBase extends MNCxtPk implements ILang,WidgetCatable,Comparable<MNBase>
 {
 	private static Lan lan = Lan.getLangInPk(MNBase.class) ;
 	
@@ -615,55 +617,27 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		}
 	}
 	
-	public static class Widget implements Comparable<Widget>
+	public static abstract class WidgetBase extends Widget
 	{
-		String name ;
+		MNBase ownerNode ;
 		
-		String title ;
-		
-		String desc ;
-		
-		Widget(outer_api oa)
+		public WidgetBase(MNBase owner)
 		{
-			this.name = oa.name() ;
-			if("cn".equals(Lan.getUsingLang()))
-			{
-				this.title = oa.title_cn() ;
-				this.desc = oa.desc_cn() ;
-				if(Convert.isNullOrEmpty(this.title))
-					this.title = oa.title_en() ;
-				if(Convert.isNullOrEmpty(this.desc))
-					this.desc = oa.desc_en() ;
-			}
-			else
-			{
-				this.title = oa.title_en() ;
-				this.desc = oa.desc_en() ;
-			}
-			
+			super(owner);
+			this.ownerNode = owner ;
 		}
-		
-		public String getName()
-		{
-			return this.name;
-		}
-		
-		public String getTitle()
-		{
-			return this.title ;
-		}
-		
-		public String getDesc()
-		{
-			return desc ;
-		}
-		
+
 		@Override
-		public int compareTo(Widget o)
+		public String getTPJsPath()
 		{
-			return this.name.compareTo(o.name);
+			return "_mn/"+this.ownerNode.getCatName()+"/"+this.ownerNode.getTP()+"/"+this.getTPName()+".js" ;
 		}
-		
+
+		@Override
+		public String getTPJsClz()
+		{
+			return "_mn."+this.ownerNode.getCatName()+"."+this.ownerNode.getTP()+"."+this.getTPName();
+		}
 	}
 	
 	String id = IdCreator.newSeqId() ;
@@ -715,6 +689,11 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	{
 	}
 	
+	@Override
+	public int compareTo(MNBase o)
+	{
+		return this.id.compareTo(o.id) ;
+	}
 	/**
 	 * when driver is loaded,it will check env to decide it will be used
 	 * @return
@@ -756,6 +735,22 @@ public abstract class MNBase extends MNCxtPk implements ILang
 		MNNet net = this.getBelongTo() ;
 		IMNContainer cont = net.getContainer() ;
 		return cont.getMsgNetContainerId()+"-"+ net.getId()+"-"+this.id ;
+	}
+	
+	public static MNBase findByCxtUID(String uid)
+	{
+		if(Convert.isNullOrEmpty(uid))
+			return null ;
+		List<String> ss = Convert.splitStrWith(uid, "-") ;
+		if(ss.size()!=3)
+			return null ;
+		UAPrj prj = UAManager.getInstance().getPrjById(ss.get(0)) ;
+		if(prj==null)
+			return null ;
+		MNNet net = prj.getMNManager().getNetById(ss.get(1)) ;
+		if(net==null)
+			return null ;
+		return net.getItemById(ss.get(2)) ;
 	}
 	
 	public UAPrj getPrj()
@@ -1008,6 +1003,33 @@ public abstract class MNBase extends MNCxtPk implements ILang
 	public OuterApi getUsingOuterApi(String name)
 	{
 		return getUsingOuterApis().get(name) ;
+	}
+	
+	@Override
+	public String getWidgetCatPrefix()
+	{
+		return "mn";
+	}
+	
+	@Override
+	public String getWidgetCatTPUID()
+	{
+		return this.getTPFull() ;
+	}
+	
+	@Override
+	public String getWidgetCatInsUID()
+	{
+		return this.belongTo.getName()+"."+this.getId() ;
+	}
+	/**
+	 * tobe override to support page or portal
+	 * @return
+	 */
+	@Override
+	public LinkedHashMap<String,Widget> getWidgets()
+	{
+		return null ;
 	}
 	
 	final void setDetailJO(JSONObject jo) throws MNException
@@ -1380,6 +1402,24 @@ public abstract class MNBase extends MNCxtPk implements ILang
 			divsb.append("</div>") ;
 			
 			divblks.add(new DivBlk("outer_api",divsb.toString())) ;
+		}
+		
+		LinkedHashMap<String,Widget> insn2wid = this.getWidgets() ;
+		if(insn2wid!=null && insn2wid.size()>0)
+		{
+			UAPrj prj = this.getPrj() ;
+			String prjid = prj.getId() ;
+			StringBuilder divsb = new StringBuilder() ;
+			divsb.append("<div tp='run' class=\"rt_blk\">Widget") ;
+			for(Widget wid:insn2wid.values())
+			{
+				divsb.append("<div style='margin-left:30px;'>");
+				divsb.append("<button onclick=\"window.open('/admin/portal/widget_show.jsp?prjid="+prjid+"&ins_uid="+wid.getInsUID()+"')\">"+wid.getInsTitle()+"</button>") ;
+				divsb.append("</div>") ;
+			}
+			divsb.append("</div>") ;
+			
+			divblks.add(new DivBlk("widgets",divsb.toString())) ;
 		}
 	}
 

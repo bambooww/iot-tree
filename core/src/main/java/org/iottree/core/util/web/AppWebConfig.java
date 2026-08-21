@@ -1,9 +1,11 @@
 package org.iottree.core.util.web;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.Config;
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlHelper;
 import org.iottree.portal.NavApp;
 import org.w3c.dom.Document;
@@ -19,6 +22,11 @@ import org.w3c.dom.NodeList;
 
 public class AppWebConfig
 {
+	public static interface IWebLoadListener
+	{
+		public void onWebappAllLoaded(AppWebConfig webc,HashMap<String,AppWebConfig> module2awc) 
+			throws Exception;
+	}
 	
 	public static final String TAG_AUTH = "authorization";
 	public static final String TAG_DEFAULT = "default";
@@ -54,14 +62,14 @@ public class AppWebConfig
 		return module2webconf.get(modulen);
 	}
 	
-	static AppWebConfig registerModuleWebConfig(String modulen,ClassLoader cl)
+	public static AppWebConfig registerModuleWebConfig(File webf,String modulen,ClassLoader cl)
 		//throws Exception
 	{
 		AppWebConfig wc = module2webconf.get(modulen);
 		if(wc!=null)
 			return wc ;
 		
-		File webf = new File(Config.getWebappBase()+"/"+modulen) ;
+		//File webf = new File(Config.getWebappBase()+"/"+modulen) ;
 		
 		wc = new AppWebConfig(webf,modulen,cl);
 		module2webconf.put(modulen, wc);
@@ -76,13 +84,29 @@ public class AppWebConfig
 		return rets ;
 	}
 	
-	/**
-	 * call by server tomcat
-	 */
-	public static void fireAllWebAppLoaded()
-	{
-		
-	}
+//	/**
+//	 * call by server tomcat
+//	 */
+//	public static void fireAllWebAppLoaded()
+//	{
+//		for(AppWebConfig wc:module2webconf.values())
+//		{
+//			for(Object ob:wc.webLoadLiss)
+//			{
+//				if(!(ob instanceof IWebLoadListener))
+//					continue ;
+//				try
+//				{
+//					IWebLoadListener wll = (IWebLoadListener)ob ;
+//					wll.onWebappAllLoaded(wc,module2webconf);
+//				}
+//				catch(Exception ee)
+//				{
+//					ee.printStackTrace();
+//				}
+//			}
+//		}
+//	}
 	
 	public static String transAbsPath(String appn,String p)
 	{
@@ -110,7 +134,7 @@ public class AppWebConfig
 	
 	private String titleEn = null ;
 	
-
+	private ArrayList<Object> webLoadLiss = new ArrayList<>() ;
 	/**
 	 * 
 	 * @param b
@@ -124,8 +148,9 @@ public class AppWebConfig
 		File conff = new File(webf,"web.xml") ;
 		loadConf(conff);
 		
-		
 		NavApp.loadFromWebConfig(this);
+		
+		//loadListeners() ;
 	}
 	
 	private Element loadConf(File f)
@@ -168,12 +193,53 @@ public class AppWebConfig
 		}
 	}
 	
+	public ClassLoader getRelatedCL()
+	{
+		return this.relatedCl ;
+	}
+	
+	public void loadListeners(List<AppWebConfig> awcs)
+	{
+		if(confRootEle==null)
+			return ;
+		
+		String liss = confRootEle.getAttribute("listeners") ;
+		if(Convert.isNullOrEmpty(liss))
+			return ;
+		List<String> ss = Convert.splitStrWith(liss, ",") ;
+		for(String cn:ss)
+		{
+			try
+			{
+				Class<?> c = relatedCl.loadClass(cn) ;
+				Object ob = c.getConstructor().newInstance() ;
+				webLoadLiss.add(ob) ;
+				
+				if(ob instanceof IWebLoadListener)
+				{
+					try
+					{
+						IWebLoadListener wll = (IWebLoadListener)ob ;
+						wll.onWebappAllLoaded(this,module2webconf);
+					}
+					catch(Exception ee)
+					{
+						ee.printStackTrace();
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				System.err.println("load web listener failed :"+cn) ;
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public static Element loadConfElementFromFile(File f) throws Exception
 	{
 		if(!f.exists())
 			return null ;
-		
 		
 		DocumentBuilderFactory docBuilderFactory = null;
 		DocumentBuilder docBuilder = null;

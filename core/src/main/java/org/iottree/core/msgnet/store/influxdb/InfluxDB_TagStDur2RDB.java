@@ -106,6 +106,16 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 			this.dbCol = dbcol ;
 		}
 		
+		public String getStrV()
+		{
+			return this.strv ;
+		}
+		
+		public String getDBCol()
+		{
+			return this.dbCol ;
+		}
+		
 		public JSONObject toJO()
 		{
 			return new JSONObject().put("strv", this.strv).put("dbc", this.dbCol) ;
@@ -163,6 +173,11 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 	public int getOutNum()
 	{
 		return 2;
+	}
+	
+	public LinkedHashMap<String,StatusVal> getStrv2StatusValMap()
+	{
+		return this.strv2sv;
 	}
 
 	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
@@ -345,15 +360,37 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		QueResult ret = new QueResult(start_dt,end_dt) ;
 		for (FluxRecord rec : ft.getRecords())
 		{
-			Number ssv = (Number)rec.getValueByKey("status") ;
-			if(ssv==null)
-				continue ;
-			String status_v = null;
-			if(bfloat)
-				status_v = ssv.doubleValue()+"" ;
-			else
-				status_v = ssv.longValue()+"" ;
-			StatusVal sv = this.strv2sv.get(status_v) ;
+			StatusVal sv = null;
+			Object objv = rec.getValueByKey("status") ;
+			if(objv instanceof Number)
+			{
+				Number ssv = (Number)objv ;
+				if(ssv==null)
+					continue ;
+				String status_v = null;
+				if(bfloat)
+					status_v = ssv.doubleValue()+"" ;
+				else
+					status_v = ssv.longValue()+"" ;
+				sv = this.strv2sv.get(status_v) ;
+			}
+			else if(objv instanceof Boolean)
+			{
+				boolean b = ((Boolean)objv) ;
+				if(b)
+				{
+					sv = this.strv2sv.get("true") ;
+					if(sv==null)
+						sv = this.strv2sv.get("1") ;
+				}
+				else
+				{
+					sv = this.strv2sv.get("false") ;
+					if(sv==null)
+						sv = this.strv2sv.get("0") ;
+				}
+			}
+			
 			if(sv==null)
 				continue ;
 			int  dur_sec = ((Number)rec.getValueByKey("dur_sec")).intValue() ;
@@ -738,7 +775,22 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 			failedr.append("not st or et (int64) input") ;
 			return null ;
 		}
-		
+		HashMap<String,Integer> col2sec = statDurInPeriod(st,et,failedr);
+		if(col2sec==null)
+			return null ;
+		return new JSONObject(col2sec) ;
+	}
+	
+	/**
+	 * 
+	 * @param st
+	 * @param et
+	 * @param failedr
+	 * @return dbcol2seconds
+	 * @throws Exception
+	 */
+	public HashMap<String,Integer> statDurInPeriod(long st,long et,StringBuilder failedr) throws Exception
+	{
 		JavaTableInfo jti = getTableInfo(failedr) ;
 		if(jti==null)
 			return null;
@@ -770,7 +822,7 @@ public class InfluxDB_TagStDur2RDB extends MNNodeMid
 		try
 		{
 			conn = cp.getConnection() ;
-			JSONObject ret = new JSONObject() ;
+			HashMap<String,Integer> ret = new HashMap<>() ;
 			try (PreparedStatement ps = conn.prepareStatement(sqlsb.toString()))
 			{
 				ps.setLong(1, st);

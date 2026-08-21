@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import org.iottree.core.util.xmldata.IXmlDataable;
+import org.json.JSONObject;
 import org.iottree.core.util.xmldata.*;
 
 
@@ -63,7 +64,6 @@ public class JavaColumnInfo implements IXmlDataable
 		}
 		else if (vt == XmlVal.XmlValType.vt_xml_data)
 		{
-			//return java.sql.Types.CLOB;
 			return java.sql.Types.BLOB;
 		}
 		else
@@ -72,8 +72,40 @@ public class JavaColumnInfo implements IXmlDataable
 		}
 	}
 	
+	
+	public static XmlVal.XmlValType SqlType2XmlValType(int sql_type)
+	{
+		switch(sql_type)
+		{
+		case java.sql.Types.BLOB:
+			return XmlVal.XmlValType.vt_byte_array;
+		case java.sql.Types.TIMESTAMP:
+			return XmlVal.XmlValType.vt_date;
+		case java.sql.Types.DOUBLE:
+			return XmlVal.XmlValType.vt_double;
+		case java.sql.Types.FLOAT:
+		case java.sql.Types.REAL:
+			return XmlVal.XmlValType.vt_float;
+		case java.sql.Types.BIGINT:
+			return XmlVal.XmlValType.vt_int64;
+		case java.sql.Types.INTEGER:
+			return XmlVal.XmlValType.vt_int32;
+		case java.sql.Types.SMALLINT:
+			return XmlVal.XmlValType.vt_int16;
+		case java.sql.Types.TINYINT:
+			return XmlVal.XmlValType.vt_byte;
+		case java.sql.Types.VARCHAR:
+			return XmlVal.XmlValType.vt_string;
+		case java.sql.Types.BIT:
+			return XmlVal.XmlValType.vt_bool;
+		case java.sql.Types.DECIMAL:
+			return XmlVal.XmlValType.vt_bigdecimal;
+		default:
+			throw new IllegalArgumentException("unknow java sql type="+sql_type);
+		}
+	}
 	/**
-	 * ���ݶ������ͣ���ö�Ӧ��jdbc sql����
+	 * 
 	 * @param c
 	 * @return
 	 */
@@ -89,6 +121,8 @@ public class JavaColumnInfo implements IXmlDataable
 
 	private String columnName = null;
 	
+	private String colTitle = null ;
+	
 	private boolean bPk = false;
 
 	private XmlVal.XmlValType valType = XmlVal.XmlValType.vt_string;
@@ -102,15 +136,12 @@ public class JavaColumnInfo implements IXmlDataable
 	private boolean bHasIdx = true;
 	
 	/**
-	 * �������ƣ��������������ͬ������Ҫ������������
+	 * 
 	 */
 	private String idxName = null ;
 
 	private boolean bAutoVal = false;
-	
-	/**
-	 * �Զ�ֵ����ʼֵ
-	 */
+
 	private long autoValStart = -1 ;
 	
 	private String defaultStrVal = null ;
@@ -119,6 +150,7 @@ public class JavaColumnInfo implements IXmlDataable
 	
 	private boolean bUpdateAsSingle = false;
 
+	private boolean bNullable = false;
 	// private boolean bPrimaryKey = false;
 
 	public JavaColumnInfo()
@@ -155,14 +187,22 @@ public class JavaColumnInfo implements IXmlDataable
 		bUpdateAsSingle = b_update_as_single ;
 	}
 
-	/**
-	 * �õ�������
-	 * 
-	 * @return
-	 */
 	public String getColumnName()
 	{
 		return columnName;
+	}
+	
+	public String getColumnTitle()
+	{
+		if(this.colTitle==null)
+			return "" ;
+		return this.colTitle ;
+	}
+	
+	public JavaColumnInfo asColumnTitle(String tt)
+	{
+		this.colTitle = tt ;
+		return this;
 	}
 	
 	public boolean isPk()
@@ -175,10 +215,17 @@ public class JavaColumnInfo implements IXmlDataable
 		return valType;
 	}
 	
-	/**
-	 * �ж��Ƿ����ַ������͵�����ֵ����
-	 * @return
-	 */
+	public boolean isNullable()
+	{
+		return this.bNullable ;
+	}
+	
+	public JavaColumnInfo asNullable(boolean b)
+	{
+		this.bNullable = b ;
+		return this ;
+	}
+	
 	public boolean isAutoStringValuePk()
 	{
 		if(!bPk)
@@ -289,6 +336,21 @@ public class JavaColumnInfo implements IXmlDataable
 		// xd.setParamValue("is_pk", bPrimaryKey);
 		return xd;
 	}
+	
+	public JSONObject toJO()
+	{
+		JSONObject ret = new JSONObject() ;
+		ret.putOpt("coln", columnName);
+		ret.putOpt("colt", colTitle);
+		ret.putOpt("val_tp", valType.getTypeStr());
+		ret.putOpt("max_len", maxLen);
+		ret.putOpt("unique", bUnique);
+		ret.putOpt("idx", bHasIdx);
+		ret.putOpt("autoval", bAutoVal);
+		ret.putOpt("pk",bPk) ;
+		ret.putOpt("nullable", this.bNullable) ;
+		return ret ;
+	}
 
 	public void fromXmlData(XmlData xd)
 	{
@@ -304,6 +366,25 @@ public class JavaColumnInfo implements IXmlDataable
 		bUnique = xd.getParamValueBool("is_unique", false);
 		bHasIdx = xd.getParamValueBool("has_idx", true);
 		bAutoVal = xd.getParamValueBool("is_autoval", false);
-		// bPrimaryKey = xd.getParamValueBool("is_pk", false);
+		bNullable = xd.getParamValueBool("nullable", false);
+	}
+	
+	public void fromJO(JSONObject jo)
+	{
+		columnName = jo.optString("coln");
+		this.colTitle = jo.optString("colt") ;
+		String tmps = jo.optString("val_tp");
+		if (tmps != null)
+		{
+			valType = XmlVal.StrType2ValType(tmps);
+			sqlValType = XmlValType2SqlType(valType) ;
+		}
+
+		maxLen =   jo.optInt("max_len", -1);
+		bUnique =  jo.optBoolean("unique", false);
+		bHasIdx =  jo.optBoolean("idx", true);
+		bAutoVal = jo.optBoolean("autoval", false);
+		bPk = jo.optBoolean("pk", false) ;
+		bNullable = jo.optBoolean("nullable", false);
 	}
 }

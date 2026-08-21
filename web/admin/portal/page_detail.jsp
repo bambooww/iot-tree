@@ -2,10 +2,17 @@
     pageEncoding="UTF-8"%><%@page 
 	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
 		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%
-	if(!Convert.checkReqEmpty(request, out, "page_uid"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","page_uid"))
 		return ;
+	String prjid = request.getParameter("prjid") ;
+	PortalManager pm = PortalManager.getInstanceByPrjId(prjid) ;
+	if(pm==null)
+	{
+		out.print("no portal manager found") ;
+		return ;
+	}
 	String page_uid = request.getParameter("page_uid") ;
-	Page pp = PortalManager.getInstance().getPageByUID(page_uid) ;
+	Page pp = pm.getPageByUID(page_uid) ;
 	if(pp==null)
 	{
 		out.print("no page found") ;

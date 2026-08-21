@@ -259,6 +259,11 @@ public class InfluxDB_TagAggr2RDB extends MNNodeMid
 	{
 		return 2;
 	}
+	
+	public LinkedHashMap<String,AggrTag> getDBCol2AggrTagMap()
+	{
+		return dbc2ats;
+	}
 
 	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
 	static
@@ -1124,7 +1129,14 @@ private transient DurItem lastDur = null ;
 			failedr.append("not st or et (int64) input") ;
 			return null ;
 		}
-		
+		HashMap<String,Number> col2num = sumAggrItemInPeriod(st,et,failedr);
+		if(col2num==null)
+			return null ;
+		return new JSONObject(col2num) ;
+	}
+	
+	public HashMap<String,Number> sumAggrItemInPeriod(long st,long et,StringBuilder failedr) throws Exception
+	{
 		JavaTableInfo jti = getTableInfo(failedr) ;
 		if(jti==null)
 			return null;
@@ -1155,7 +1167,7 @@ private transient DurItem lastDur = null ;
 		try
 		{
 			conn = cp.getConnection() ;
-			JSONObject ret = new JSONObject() ;
+			HashMap<String,Number> ret = new HashMap<>() ;
 			try (PreparedStatement ps = conn.prepareStatement(sqlsb.toString()))
 			{
 				ps.setLong(1, st);
@@ -1171,7 +1183,9 @@ private transient DurItem lastDur = null ;
 						for(AggrTag sv:this.dbc2ats.values())
 						{
 							Object v = rs.getObject(sv.dbCol) ;
-							ret.putOpt(sv.dbCol, v) ;
+							if(v==null)
+								continue ;
+							ret.put(sv.dbCol, (Number)v) ;
 						}
 					}
 				}

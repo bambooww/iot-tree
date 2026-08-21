@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.Lan;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class NavNode
@@ -17,7 +19,9 @@ public class NavNode
 
 	private String id_name = null;
 
-	private String title = null;
+	private String title_en = null;
+	
+	private String title_cn = null;
 
 	private String url = null;
 
@@ -71,25 +75,26 @@ public class NavNode
 	{
 		bSep = bsep;
 	}
-	/**
-	 * name,title,icon,url,img,order
-	 * */
-	public NavNode(String id_n, String title,String icon, String url,  String img,int ordernum)
-	{
-		this.id_name = id_n;
-		this.title = title;
-		this.url = url;
-		this.icon = icon;
-		this.img = img;
-		this.order=ordernum;
-	}
+//	/**
+//	 * name,title,icon,url,img,order
+//	 * */
+//	public NavNode(String id_n, String title,String icon, String url,  String img,int ordernum)
+//	{
+//		this.id_name = id_n;
+//		this.title_en = title_en;
+//		this.url = url;
+//		this.icon = icon;
+//		this.img = img;
+//		this.order=ordernum;
+//	}
 	/**
 	 * name,title,icon,url,target,roles,order
 	 * */
-	public NavNode(String id_n, String title,String icon,String url, String tar,String roles,int ordernum)
+	public NavNode(String id_n, String title_en,String title_cn,String icon,String url, String tar,String roles,int ordernum)
 	{
 		this.id_name = id_n;
-		this.title = title;
+		this.title_en = title_en;
+		this.title_cn = title_cn;
 		this.icon = icon;
 		this.url = url;
 		this.target = tar;
@@ -97,50 +102,50 @@ public class NavNode
 		this.order=ordernum;
 	}
 	
-	public NavNode(String id_n, String title, String url)
+	public NavNode(String id_n, String title, String icon,String url)
 	{
-		this(id_n, title, url, (String[]) null);
+		this(id_n, title, title,icon,url, null,null,0);
 	}
-
-	public NavNode(String id_n, String title, String url,
-			String[] relatedurl)
-	{
-		this.id_name = id_n;
-		this.title = title;
-		this.url = url;
-
-		relatedLink.add(url);
-
-		if (relatedurl != null)
-		{
-			for (String rul : relatedurl)
-				relatedLink.add(rul);
-		}
-	}
-
-	public NavNode(String id_n, String title, String url, String icon)
-	{
-		this.id_name = id_n;
-		this.title = title;
-		this.url = url;
-		this.icon = icon;
-	}
-
-	public NavNode(String id_n, String title, String url, String icon,
-			String roles, String tar, String tips)
-	{
-		this(id_n, title, url, icon);
-		this.tips = tips;
-		this.roles = roles;
-		this.target = tar;
-	}
+//
+//	public NavNode(String id_n, String title, String url,
+//			String[] relatedurl)
+//	{
+//		this.id_name = id_n;
+//		this.title = title;
+//		this.url = url;
+//
+//		relatedLink.add(url);
+//
+//		if (relatedurl != null)
+//		{
+//			for (String rul : relatedurl)
+//				relatedLink.add(rul);
+//		}
+//	}
+//
+//	public NavNode(String id_n, String title, String url, String icon)
+//	{
+//		this.id_name = id_n;
+//		this.title = title;
+//		this.url = url;
+//		this.icon = icon;
+//	}
+//
+//	public NavNode(String id_n, String title, String url, String icon,
+//			String roles, String tar, String tips)
+//	{
+//		this(id_n, title, url, icon);
+//		this.tips = tips;
+//		this.roles = roles;
+//		this.target = tar;
+//	}
 
 	public NavNode copyMe()
 	{
 		NavNode wtn = new NavNode();
 		wtn.bSep = this.bSep;
 		wtn.id_name = this.id_name;
-		wtn.title = this.title;
+		wtn.title_en = this.title_en;
 		wtn.url = this.url;
 		wtn.icon = this.icon;
 		wtn.target = this.target;
@@ -179,7 +184,7 @@ public class NavNode
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.putOpt("id_name", this.id_name) ;
-		jo.putOpt("title", this.title) ;
+		jo.putOpt("title", this.getTitle()) ;
 		jo.putOpt("url", this.url) ;
 		jo.putOpt("icon", this.icon) ;
 		jo.putOpt("target", this.target) ;
@@ -192,6 +197,24 @@ public class NavNode
 			}
 		}
 		return jo ;
+	}
+	
+	public JSONObject toNavJO()
+	{
+		JSONObject ret = toJO() ;
+		ret.put("node_id", this.getNavUID()) ;
+		ret.put("id", this.getNavUID()) ;
+		
+		if(this.hasChild())
+		{
+			JSONArray sub = new JSONArray() ;
+			ret.put("sub", sub) ;
+			for(NavNode subn:this.childs)
+			{
+				sub.put(subn.toNavJO()) ;
+			}
+		}
+		return ret ;
 	}
 
 	public boolean isSeperator()
@@ -221,13 +244,18 @@ public class NavNode
 
 	public String getTitle()
 	{
-		return title;
+		if("cn".equals(Lan.getUsingLang()))
+		{
+			if(Convert.isNotNullEmpty(this.title_cn))
+				return this.title_cn ;
+		}
+		return this.title_en ;
 	}
 
-	public void setTitle(String t)
-	{
-		title = t;
-	}
+//	public void setTitle(String t)
+//	{
+//		title = t;
+//	}
 
 	public String getUrl()
 	{
@@ -318,12 +346,11 @@ public class NavNode
 		roles = r;
 	}
 	
-	/**��ֹ�Ľ�ɫ**/
 	public String getNotRoles()
 	{
 		return notroles;
 	}
-	/**��ֹ�Ľ�ɫ**/
+	
 	public void setNotRoles(String notRole)
 	{
 		notroles = notRole;

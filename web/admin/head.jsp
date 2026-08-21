@@ -7,6 +7,7 @@
 				"%><%
 String ver = Config.getVersion() ;
 				boolean bsimple = "true".equals(request.getParameter("simple"));
+				boolean bsimple_font4 = "true".equals(request.getParameter("simple_font4"));
 				boolean oc = "true".equals(request.getParameter("oc"));
 				boolean oc_min= "true".equals(request.getParameter("oc_min"));
 				boolean tree  ="true".equals(request.getParameter("tree"));
@@ -27,6 +28,18 @@ String ver = Config.getVersion() ;
 <%--
 <script defer src="/_js/font6/js/all.js"></script>
 --%>
+<script src="/admin/js/util.js"></script>
+<%
+	}
+	else if(bsimple_font4)
+	{
+%>
+<script src="/_js/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
+<script type="text/javascript" src="/_js/ajax.js"></script>
+<script src="/_js/layui/layui.all.js"></script>
+<script src="/_js/dlg_layer.js"></script>
+<link href="/_js/font4/css/all.css" rel="stylesheet">
 <script src="/admin/js/util.js"></script>
 <%
 	}

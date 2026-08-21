@@ -20,12 +20,12 @@ public class Page implements Comparable<Page>
 	
 	String title = null ;
 	/**
-	 * 页面使用的模板
+	 * 
 	 */
 	Templet templet = null ;
 	
 	/**
-	 * 模板内容器对应的页面块
+	 * 
 	 */
 	HashMap<String,PageBlk> name2blks = new HashMap<>() ;
 	
@@ -100,8 +100,12 @@ public class Page implements Comparable<Page>
 		return this.chgDT ;
 	}
 	
+	public String getAccessPath()
+	{
+		return "/"+this.cat.getOwner().getOwner().getName()+"/_page/"+this.cat.getName()+"/"+this.getName() ;
+	}
 	/**
-	 * 根据内部模板块名称，获取模板块
+	 * 
 	 * @param blkn
 	 * @return
 	 */
@@ -176,7 +180,7 @@ public class Page implements Comparable<Page>
 		if(Convert.isNullOrEmpty(p.id))
 			return null ;
 		
-		p.templet = PortalManager.getInstance().getTempletByUID(temp_uid) ;
+		p.templet = TempletCat.getTempletByUID(temp_uid) ;
 		if(p.templet==null)
 			return null ;
 		

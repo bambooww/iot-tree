@@ -130,20 +130,9 @@ background-color: #eeeeee
 }
 
 
-table, th, td
-{
-border:1px solid;
-}
-th
-{
-	font-size: 12px;
-	font-weight: bold;
-}
-td
-{font-size: 12px;
-overflow:hidden;
-text-overflow:ellipsis;
-}
+table, th, td {border:1px solid #aaa;}
+th{font-size: 12px;font-weight: bold;}
+td{font-size: 12px;overflow:hidden;text-overflow:ellipsis;}
 
 .tagsel
 {
@@ -162,6 +151,9 @@ th,td {white-space: nowrap;}
 .td_lr {display: flex;justify-content: space-between;align-items: center;}
 .td_lr .ll {visibility: hidden;cursor:pointer;}
 .td_lr:hover .ll{visibility:visible;}
+.layui-form-checkbox {margin-left: 1px;}
+.layui-form-checkbox[lay-skin=primary] {padding-left: 8px;}
+.layui-elem-quote {margin-bottom: 1px;}
 </style>
 <body marginwidth="0" marginheight="0">
 <form class="layui-form" action="" onsubmit="return false;">
@@ -174,6 +166,7 @@ th,td {white-space: nowrap;}
   <div style="left:20px;top:22px;position:absolute;font-size:13px;">
   <%=node.getNodePathTitle() %>
   &nbsp;<input id="search_txt" style="width:100px;height:25px;border:1px solid #ccc;" onkeydown="on_search_key()"/><button style="color:#333;border:1px solid #ccc;height:25px;width:25px;" onclick="on_search()"><i class="fa fa-search"></i></button>
+  <button style="color:#333;border:1px solid #ccc;height:25px;width:45px;" onclick="show_his_multi()" title="<wbt:g>dis_tags_waves</wbt:g>"><i class="fa-solid fa-tags"></i>&nbsp;<i class="fa-solid fa-chart-line"></i></button>
   </div>
   <div style="float: right;margin-right:1px;font:15px solid;color:#fff5e2;top:10px;margin-top:8px;border:0px solid;">
    
@@ -218,9 +211,7 @@ if(b_tags)
 <table class="oc_div_list" style="margin-top:0px;width:99%;overflow:auto;" id="tb_cur" >
   <thead>
      <tr style="background-color: #f2f2f2;color:#333;">
-     <th style="width:20px;text-align: center;">
-        <input type="checkbox" lay-skin="primary"  id="chkall" lay-filter="chkall" />
-</th>
+     <th style="width:15px;text-align: center;"><input type="checkbox"  lay-skin="primary"  id="chkall" lay-filter="chkall" /></th>
         <th style="width:15px;text-align: center;">T</th>
         <th sort_by="id" title="<wbt:g>order_by_col</wbt:g>">ID<i class="fa-solid fa-sort"></i></th>
     	<th sort_by="iid" title="<wbt:g>order_by_col</wbt:g>">IID<i class="fa-solid fa-sort"></i></th>
@@ -614,6 +605,15 @@ function sel_tags_all()
 function show_his(id,tt)
 {
 	dlg.open_win("tag_his.jsp?prjid="+prjid+"&id="+id,{title:"Tag Mem Cache Data - "+tt,w:660,h:350},[],[]);
+}
+
+function show_his_multi()
+{
+	let chkids = get_checked_ids();
+	if(!chkids||chkids.length<=0)
+	{ dlg.msg("please check tags");return;}
+	
+	dlg.open_win("tag_his_multi.jsp?path="+path+"&prjid="+prjid+"&ids="+chkids.join(","),{title:"<wbt:g>dis_tags_waves</wbt:g>",w:960,h:550},[],[]);
 }
 
 function get_selected_ids_in_table()
@@ -1079,11 +1079,15 @@ function show_ele_html(n,v,chklen,title)
 		return ;
 	if(chklen&&v!=null&&v.length>40)
 	{
-		ele.innerHTML = "<span title='"+title+"'>"+v.substr(0,40)+"...</span>";
+		let txt = v.substr(0,40)+"...";
+		let sp = $("<span>").attr("title",v).text(txt) ;
+		$(ele).empty().append(sp) ;
 	}
 	else if(title)
 	{
-		ele.innerHTML = "<span title='"+title+"'>"+v||""+"...</span>";
+		let txt = v||""+"...";
+		let sp = $("<span>").attr("title",title).text(txt) ;
+		$(ele).empty().append(sp) ;
 	}
 	else
 		ele.innerHTML=v||"" ;
@@ -1380,7 +1384,7 @@ function show_data_his(outtp,outid,tagp,title)
 
 function resize_taglist()
 {
-	var h = $(window).height()-100;
+	var h = $(window).height()-90;
 	$("#tb_tags").css("height",h+"px");
 }
 

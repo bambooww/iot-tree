@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%><%@page 
 	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %>
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%@ taglib uri="wb_tag" prefix="w"%>
 <%
 %>
 <html>
@@ -17,23 +17,23 @@ dlg.resize_to(450,350);
 <body>
 <form class="layui-form" action="">
 <div class="layui-form-item">
-    <label class="layui-form-label">名称:</label>
+    <label class="layui-form-label"><w:g>name</w:g>:</label>
     <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="name" name="name" value=""  autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:lang>title</wbt:lang>:</label>
+    <label class="layui-form-label"><w:g>title</w:g>:</label>
     <div class="layui-input-inline"  style="width:300px;">
       <input type="text" id="title" name="title" value=""  autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item" id="cont_desc">
-    <label class="layui-form-label">模板:</label>
+    <label class="layui-form-label"><w:g>templet</w:g>:</label>
     <div class="layui-input-inline"  style="width:300px;">
       <select id="templet_uid" lay-filter="templet_uid">
 <%
-for(Templet temp:PortalManager.getInstance().listTempletsAll())
+for(Templet temp:TempletCat.listTempletsAll())
 {
 %><option value="<%=temp.getUID() %>"><%=temp.getCat().getTitle()%>.<%=temp.getTitle() %></option><%
 }

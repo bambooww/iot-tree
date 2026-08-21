@@ -16,6 +16,9 @@
   <dd_node id="1001" name="devtree" name_cn="设备树" name_en="Device Tree" />
   <dd_node id="1001" name="devpart" name_cn="设备部件" name_en="Device Part" />
   <dd_node id="1001" name="res_roles" name_cn="限制角色(用户组)" name_en="Restricting roles (user groups)" />
+  <dd_node id="1001" name="icon" name_cn="图标" name_en="Icon" />
+  <dd_node id="1001" name="nav" name_cn="导航" name_en="Navigator" />
+  <dd_node id="1001" name="left_nav1_node" name_cn="左边一级导航节点" name_en="Left first level navigation" />
   
   <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
   <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />

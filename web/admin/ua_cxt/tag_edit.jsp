@@ -64,7 +64,7 @@
 	String alerts = null ;
 	String mid_w_js = "" ;
 	int val_cache_len = 100 ;
-	boolean cache_only_chg = false;
+	boolean cache_only_chg = true;
 	
 	if(id==null)
 		id = "" ;
@@ -462,8 +462,7 @@ if(!bmid)
     <div class="layui-form-mid"><wbt:g>cache_only_chg</wbt:g></div>
     <div class="layui-input-inline" style="width:50px" title="<wbt:g>mem_cache_len</wbt:g>">
      <div style="white-space: nowrap;">
-    	<input type="checkbox" class="layui-input"   id="cache_only_chg"  <%=(b_batch?"readonly":"") %>/>
-    	
+    	<input type="checkbox" class="layui-input"  lay-skin="primary"   id="cache_only_chg"  <%=(b_batch?"readonly":"") %>/>
      </div>	
     </div>
     <div class="layui-form-mid"><wbt:g>cache_len</wbt:g></div>

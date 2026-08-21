@@ -5,10 +5,17 @@
 	java.io.*,
 	java.net.*,org.iottree.portal.*,
 	java.util.*"%><%
-	if(!Convert.checkReqEmpty(request, out, "path"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","path"))
 		return ;
+	String prjid = request.getParameter("prjid") ;
 	String path = request.getParameter("path") ;
-	Page pp = PortalManager.getInstance().getPageByPath(path) ;
+	PortalManager pm = PortalManager.getInstanceByPrjId(prjid) ;
+	if(pm==null)
+	{
+		out.print("no portal manager found");
+		return ;
+	}
+	Page pp = pm.getPageByPath(path) ;
 	if(pp==null)
 	{
 		out.print("no page found") ;
@@ -39,7 +46,6 @@ function __load_portlet()
 		{
 			$("#"+plet.id).html(`<span style="color:red">\${ret} }</span>`);return;
 		}
-	//console.log(ret) ;
 		$("#"+plet.id).html(ret) ;
 		__portlet_idx ++ ;
 		__load_portlet();

@@ -48,7 +48,7 @@ public class DataRow extends HashMap<String,Object> implements IXmlDataable
 		{
 			if ((ov instanceof java.util.Date)
 					&& !(ov instanceof java.sql.Timestamp))
-			{//Ϊ����Ӧjdbc�������ݿ��Ҫ�󣬰�Date�ĳ�Timestamp
+			{
 				ov = new java.sql.Timestamp(((java.util.Date) ov)
 						.getTime());
 			}

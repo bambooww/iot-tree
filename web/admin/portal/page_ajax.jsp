@@ -4,10 +4,17 @@
 
 		
 %><%
-	if(!Convert.checkReqEmpty(request, out, "op"))
+	if(!Convert.checkReqEmpty(request, out, "op","prjid"))
 		return ;
 	//UserProfile up = UserProfile.getUserProfile(request);
-
+	String prjid = request.getParameter("prjid");
+	PortalManager pm = PortalManager.getInstanceByPrjId(prjid) ;
+	if(pm==null)
+	{
+		out.print("no portal manager in prj") ;
+		return ;
+	}
+	UAPrj prj = pm.getOwner() ;
 	String op=request.getParameter("op") ;
 	String cat = request.getParameter("cat") ;
 	String pageid = request.getParameter("pageid") ;
@@ -15,7 +22,7 @@
 	Page page_item = null ;
 	if(Convert.isNotNullEmpty(cat))
 	{
-		page_cat = PortalManager.getInstance().getPageCat(cat) ;
+		page_cat = pm.getPageCat(cat) ;
 		if(page_cat==null)
 		{
 			out.print("no page cat found") ;
@@ -52,7 +59,7 @@
 	case "add_page_cat":
 		if(!Convert.checkReqEmpty(request, out, "name","title"))
 			return ;
-		if(PortalManager.getInstance().addPageCat(n, t, failedr)!=null)
+		if(pm.addPageCat(n, t, failedr)!=null)
 			out.print("succ") ;
 		else
 			out.print("add page cat failed:"+failedr.toString()) ;
@@ -67,7 +74,7 @@
 <%
 	boolean bfirst = true;
 	int cc = 0 ;
-	for(PageCat pc:PortalManager.getInstance().listPageCats().values())
+	for(PageCat pc:pm.listPageCats().values())
 	{
 		if(Convert.isNotNullEmpty(cat))
 		{

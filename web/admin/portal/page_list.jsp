@@ -1,13 +1,21 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page 
-	import="org.iottree.core.*,org.iottree.portal.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%! 
+	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%@ taglib uri="wb_tag" prefix="w"%><%! 
 
 %><%
-//if(!Convert.checkReqEmpty(request, out, "house_id"))
-//	return ;
-
-//UserProfile up = UserProfile.getUserProfile(request) ;
-//String house_id = request.getParameter("house_id") ;
+String prjid = request.getParameter("prjid") ;
+if(prjid==null)
+	prjid="" ;
+UAPrj prj = null ;
+if(Convert.isNotNullEmpty(prjid))
+{
+	prj = UAManager.getInstance().getPrjById(prjid) ;
+	if(prj==null)
+	{
+		out.print("no prj found") ;
+		return ;
+	}
+}
 %><!DOCTYPE html>
 <html>
 <head>
@@ -53,7 +61,7 @@
 <form class="layui-form"  onsubmit="return false;" >
 <table style="width:100%;height:40px;border-bottom: 1px solid #e6e6e6;">
 	<tr>
-		<td style="width:150px;padding-left:5px;font-weight: bold;">页面列表 <span id="top_tt"></span></td>
+		<td style="width:150px;padding-left:5px;font-weight: bold;"><w:g>page,list</w:g> <span id="top_tt"></span></td>
 <%-- 
 		<td style="padding:5px;width:30%;">
 			<input class="layui-input" id="search_txt" onkeydown="on_search_key()"/>
@@ -63,10 +71,9 @@
 			<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="refresh_table()"><i class="fa fa-refresh"></i></button>
       </td>
       --%>
-		<td style="text-align: right;padding-right:5px;width:250px;border:0px solid">
-		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page_cat()" ><i class="fa fa-plus"></i>新增分类</button>
-		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page()" ><i class="fa fa-plus"></i>新增页面</button>
-		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="parent.show_page_list(false)" title="&nbsp;隐藏列表"><i class="fa-solid fa-angle-left"></i></button>
+		<td style="text-align: right;padding-right:55px;width:250px;border:0px solid">
+		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page_cat()" ><i class="fa fa-plus"></i><w:g>add,cat</w:g></button>
+		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page()" ><i class="fa fa-plus"></i><w:g>add,page</w:g></button>
 		</td>
 		
 	</tr>
@@ -74,7 +81,7 @@
 </form>
 <div style="position:relative ;width:100%;height:20%;overflow-y: auto;">
 <%
-for(PageCat p:PortalManager.getInstance().listPageCats().values())
+for(PageCat p:PortalManager.getInstance(prj).listPageCats().values())
 {
 %><span class="cat" onclick="on_sel_cat('<%=p.getName() %>','<%=p.getTitle() %>')">
 	<span class="n"><%=p.getName() %></span>
@@ -91,25 +98,15 @@ for(PageCat p:PortalManager.getInstance().listPageCats().values())
 </div>
 <script type="text/html" id="row_toolbar">
 <div class="layui-btn-group">
-<%
-
-%>
 <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit"><i class="fa fa-pencil"></i></button>
 <button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="show"><i class="fa-solid fa-paper-plane"></i></button>
 &nbsp;<button type="button" class="layui-btn layui-btn-xs layui-btn-primary layui-border-red"  lay-event="del" title="delete"><i class="fa fa-times"></i></button>
 
-
-<%
-
-%>
-
-<%--
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="setup"><i class="fa fa-gear"></i></button>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="deverr"><i class="fa-solid fa-screwdriver-wrench"></i></button>
-<button type="button" class="layui-btn layui-btn-xs layui-btn-primary layui-border-red"  lay-event="del" title="delete"><i class="fa fa-times"></i></button>
---%>
+</div>
 </script>
 <script>
+var prjid = "<%=prjid%>" ;
+var prjn = "<%=prj.getName()%>" ;
 var form ;
 var table ;
 var table_cur_page = 1 ;
@@ -133,10 +130,10 @@ function on_sel_cat(n,t)
 
 function edit_page_cat(catn,catt)
 {//cp_partid will be used when add
-	let tt =catn?"修改分类":"新增分类";
+	let tt =catn?"<w:g>edit,cat</w:g>":"<w:g>add,cat</w:g>";
 	let op = catn?"edit_page_cat":"add_page_cat";
 	dlg.open("../util/n_t_d_edit.jsp",{title:tt,w:'500px',h:'400px',input:{name:catn||"",title:catt||""}},
-				['确定','取消'],
+				['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 				[
 					function(dlgw)
 					{
@@ -147,7 +144,7 @@ function edit_page_cat(catn,catt)
 								 return ;
 			        	     }
 							 //console.log(ret) ;
-							 send_ajax("page_ajax.jsp",{op:op,...ret},(bsucc,ret)=>{
+							 send_ajax("page_ajax.jsp",{op:op,prjid:prjid,...ret},(bsucc,ret)=>{
 								 if(!bsucc || ret.indexOf("succ")!=0)
 								 {
 									 dlg.msg(ret) ;
@@ -169,14 +166,14 @@ function edit_page(pg)
 {
 	if(event)
 		event.stopPropagation();
-	let tt =pg?"修改页面":"新增页面";
+	let tt =pg?"<w:g>edit,page</w:g>":"<w:g>add,page</w:g>";
 	let op = pg?"edit_page":"add_page";
 	let cat ;
 	if(!pg)
 	{
 		if(!cur_page_cat_name)
 		{
-			dlg.msg("请选择分类") ;
+			dlg.msg("<w:g>pls,select,cat</w:g>") ;
 			return ;
 		}
 		cat = cur_page_cat_name ;
@@ -192,7 +189,7 @@ function edit_page(pg)
 	let pagett = pg.page_title||"";
 	let templet_uid = pg.templet_uid||"" ;
 	dlg.open("./page_edit.jsp",{title:tt,w:'500px',h:'400px',input:{pageid:id,name:name,title:pagett,templet_uid:templet_uid}},
-				['确定','取消'],
+				['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 				[
 					function(dlgw)
 					{
@@ -203,7 +200,7 @@ function edit_page(pg)
 								 return ;
 			        	     }
 							 //console.log(ret) ;
-							 send_ajax("page_ajax.jsp",{op:op,cat:cat,pageid:id,...ret},(bsucc,ret)=>{
+							 send_ajax("page_ajax.jsp",{op:op,prjid:prjid,cat:cat,pageid:id,...ret},(bsucc,ret)=>{
 								 if(!bsucc || ret.indexOf("succ")!=0)
 								 {
 									 dlg.msg(ret) ;
@@ -224,23 +221,23 @@ function edit_page(pg)
 function render_tb()
 {
 	  let cols = [];
-	  cols.push({field: 'cat_title', title: '分类', width:'20%'});
-	  cols.push({field: 'page_name', title: '名称', width:'20%'});
-	 cols.push({field: 'page_title', title: '标题', width:'25%'});
-	 cols.push({field: 'templet_title', title: '模板', width:'20%'});
+	  cols.push({field: 'cat_title', title: '<w:g>cat</w:g>', width:'20%'});
+	  cols.push({field: 'page_name', title: '<w:g>name</w:g>', width:'20%'});
+	 cols.push({field: 'page_title', title: '<w:g>title</w:g>', width:'25%'});
+	 cols.push({field: 'templet_title', title: '<w:g>temp</w:g>', width:'20%'});
 	 cols.push({field: 'Oper', title: '<wbt:g>oper</wbt:g>', width:"15%" ,toolbar: '#row_toolbar'}) ;
 	 
 	table.render({
 	    elem: '#page_list'
 	    ,height: "full-40"
-	    ,url: "page_ajax.jsp?op=list_pages&cat="+(cur_page_cat_name||"")
+	    ,url: "page_ajax.jsp?op=list_pages&prjid="+prjid+"&cat="+(cur_page_cat_name||"")
 	    ,page0: {layout:['prev', 'page', 'next'],limit:25,theme:"#c00"} //open page
 	    ,cols: [cols]
 	  ,parseData:function(res){
 			if(res.data.length==0){
 				return{
 					'code':'201',
-					'msg':'无内容'
+					'msg':'  '
 				};
 			};
 		}
@@ -302,7 +299,7 @@ function render_tb()
 function refresh_table()
 {
 	let search_txt = $("#search_txt").val()||"" ;
-	table.reload("page_list",{ url:"page_ajax.jsp?search_txt="+search_txt+"&cat="+(cur_page_cat_name||"")+"&op=list_pages",page0:{curr:1}});
+	table.reload("page_list",{ url:"page_ajax.jsp?prjid="+prjid+"&search_txt="+search_txt+"&cat="+(cur_page_cat_name||"")+"&op=list_pages",page0:{curr:1}});
 	//table.reload("dev_part_list",{});
 }
 
@@ -313,9 +310,9 @@ function del_page(pg)
 	if(!pg)return ;
 	let pageid = pg.page_id ;
 	let cat = pg.cat ;
-	dlg.confirm('确定要删除此页面么?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
+	dlg.confirm('<w:g>del,this,page</w:g>?',{btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
 		    {
-					send_ajax("",{op:"del_page",pageid:pageid,cat:cat,del:true},function(bsucc,ret){
+					send_ajax("",{op:"del_page",prjid:prjid,pageid:pageid,cat:cat,del:true},function(bsucc,ret){
 			    		if(!bsucc || ret!='succ')
 			    		{
 			    			dlg.msg("<wbt:g>del,err</wbt:g>:"+ret) ;
@@ -328,7 +325,7 @@ function del_page(pg)
 }
 function show_page(pg)
 {
-	window.open(`/_portal/\${pg.cat}/\${pg.page_name}`);
+	window.open(`/\${prjn}/_page/\${pg.cat}/\${pg.page_name}`);
 }
 
 var selected_item= null ;
@@ -353,8 +350,6 @@ fit_height();
 $(window).resize(function(){
 	fit_height();
 });
-
-//
 
 </script>
 </body>

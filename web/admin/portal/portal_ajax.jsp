@@ -65,6 +65,14 @@
 		else
 			out.print(failedr.toString());
 		return ;
+	case "del_nf":
+		if(!Convert.checkReqEmpty(request, out, "nf_id"))
+			return ;
+		if(pmgr.delNavFrame(nf_id, failedr)==null)
+			out.print(failedr.toString()) ;
+		else
+			out.print("succ") ;
+		return ;
 	case "edit_page":
 		
 		return ;

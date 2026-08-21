@@ -7,10 +7,11 @@ import java.util.*;
 
 import org.iottree.core.util.xmldata.IXmlDataable;
 import org.iottree.core.util.xmldata.XmlData;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
- * �˶���֧��ͬ�����ݿ����
  * @author Jason Zhu
  *
  */
@@ -359,10 +360,21 @@ public class DataTable implements IXmlDataable
 		pageCur = xd.getParamValueInt32("page_cur", -1) ;
 	}
 	
+	
+	public JSONObject toTableJO()
+	{
+		JSONObject ret = new JSONObject().put("code", 0).put("count", this.totalCount) ;
+		
+		JSONArray jarr = new JSONArray() ;
+		ret.put("data", jarr) ;
+		for(DataRow dr:this.rows)
+		{
+			jarr.put(dr.toJO(true, true, true));
+		}
+		return ret ;
+	}
+	
 	/**
-	 * ���������������ˢ��ҳ��ʹ�õ��ַ���
-	 * �磬֧��jsҳ�����ɱ��������
-	 * ��������̨��ˢ��jspʵ�־Ϳ��Էǳ���
 	 * @param w
 	 * @throws IOException 
 	 */
@@ -422,14 +434,6 @@ public class DataTable implements IXmlDataable
 	}
 	
 	/**
-	 * ͬ������Ӧ�����ݱ���
-	 * 1,������Ψһ��
-	 * 2,
-	 * @param conn ���ݿ�����
-	 * @param tablename ���ݿ������
-	 * @param uniquecol ���ݿ���Ψһ��ֵ
-	 * @param syncols ��Ҫͬ����������
-	 * @param bdel �Ƿ�Ҫ����¼ɾ��--��Щ����£�����������ɾ������ʱ��ͬ������Ҫ��ɾ�������������false
 	 */
 	public int[] synToDBTable(Connection conn,String tablename,String uniquecol,String[] syncols,boolean bdel)
 		throws Exception

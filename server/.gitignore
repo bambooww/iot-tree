@@ -5,4 +5,5 @@
 /sbin/
 product.*
 config-*.xml
+app.xml
 plat_node.json

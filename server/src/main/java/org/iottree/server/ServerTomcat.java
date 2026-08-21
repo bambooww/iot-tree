@@ -3,10 +3,12 @@ package org.iottree.server;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Loader;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.jasper.servlet.JasperInitializer;
@@ -87,7 +89,7 @@ public class ServerTomcat implements IServerBootComp
 		String wbase = Config.getWebappBase();
 		File wbf = new File(wbase);
 		
-		HashMap<String,Context> app2cxt = new HashMap<>() ;
+		LinkedHashMap<String,Context> app2cxt = new LinkedHashMap<>() ;
 		HashMap<String,File> app2ff = new HashMap<>() ;
 		//tomcat.setPort(w.getPort());
 		for (Webapp app : w.getAppList())
@@ -123,7 +125,32 @@ public class ServerTomcat implements IServerBootComp
 		long st = System.currentTimeMillis() ;
 		tomcat.start();
 		
+		for(Map.Entry<String,Context> a2c:app2cxt.entrySet())
+		{
+			String appn = a2c.getKey() ;
+			Context cxt = a2c.getValue() ;
+			Loader loader = cxt.getLoader();
+	        ClassLoader clzld = loader.getClassLoader() ;
+	        String doc_base = cxt.getDocBase(); //  /xx/xx
+	        //System.out.println(" app="+appn+" docbase="+doc_base+"  clzld="+clzld.hashCode()) ;
+	        if(appn.startsWith("_"))
+	        	continue ;
+	        File webf = new File(doc_base) ;
+	        File web_xmlf = new File(webf,"web.xml") ;
+	        if(!web_xmlf.exists())
+	        	continue ;
+	        System.out.println(">>>loaded webapp ["+appn+"] - "+doc_base);
+	        AppWebConfig.registerModuleWebConfig(webf,appn, clzld) ;
+		}
+		
+		ArrayList<AppWebConfig> awcs = AppWebConfig.getModuleWebConfigAll() ;
+		for(AppWebConfig awc:awcs)
+		{
+			awc.loadListeners(awcs);
+		}
+        
 		System.out.println(" tomcat started . cost ["+(System.currentTimeMillis()-st)+"] ms") ;
+		
 		
 		ArrayList<UAServer.WebItem> wis = new ArrayList<>() ;
 		for(Map.Entry<String, Context> n2cxt:app2cxt.entrySet())
@@ -140,7 +167,7 @@ public class ServerTomcat implements IServerBootComp
 			wis.add(wi) ;
 		}
 		
-		AppWebConfig.fireAllWebAppLoaded();
+		//AppWebConfig.fireAllWebAppLoaded();
 		
 		return wis ;
 	}

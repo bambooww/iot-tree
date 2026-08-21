@@ -68,7 +68,7 @@ position: absolute;right:0px;top:200px;
   font-size: 14px; cursor:pointer;
 }
 
-#right_panel {right:0%;top:0px;bottom:0px;width:550px;z-index: 10px;background-color: #ffffff;
+#right_panel {right:0%;top:0px;bottom:0px;z-index: 10px;background-color: #ffffff;
 box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
 	transition: box-shadow 0.3s, transform 0.3s;}
 
@@ -87,7 +87,7 @@ dlg.dlg_top=true ;
 
 
 </div>
-<div class="rrr" id="right_panel" style="" topm_show="1">
+<div class="rrr" id="right_panel" style="" topm_show="0">
     <iframe id="if_item_list" name="if_item_list"  src="portal_navframe_right.jsp?prjid=<%=prjid %>&nf_id=<%=nf_id %>" style="width:100%;overflow: hidden;"></iframe>
 </div>
 <button id="topr_show_hd" style="position:absolute;top:5px;right:5px;" class="layui-btn layui-btn-sm layui-btn-primary" onclick="show_right_setup()" title="&nbsp;"><i class="fa-solid fa-angle-right"></i></button>
@@ -117,7 +117,7 @@ function show_right_setup()
 	}
 	else
 	{
-		obj.animate({width: "550px", opacity: 'show'}, 'normal',function(){ obj.show();});
+		obj.animate({width: "650px", opacity: 'show'}, 'normal',function(){ obj.show();});
 		obj.attr('topm_show',"1") ;
 		$("#topr_show_hd").html(`<i class="fa-solid fa-angle-right"></i>`)
 		return 1 ;
@@ -147,6 +147,6 @@ function hide_toggle(obj)
 	obj.attr('topm_show',"0") ;
 }
 
-
+show_right_setup()
 </script>
 </html>

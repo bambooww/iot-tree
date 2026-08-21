@@ -100,6 +100,8 @@
   <dd_node id="1" name="low" name_cn="下限" name_en="Low" />
   <dd_node id="1" name="high" name_cn="上限" name_en="High" />
   
+  <dd_node id="1" name="will_over_exists" name_cn="将要覆盖现有设置" name_en="Will overwrite existing settings" />
+  <dd_node id="1" name="overwrite" name_cn="覆盖" name_en="Overwrite" />
   <dd_node id="1" name="st_desc" name_cn="PID计算输出控制时间间隔" name_en="PID calculation output control time interval" />
   <dd_node id="1" name="in_range" name_cn="采样输入物理量范围" name_en="Sampling input physical quantity range" />
   <dd_node id="1" name="out_range" name_cn="物理量控制需要的输出数值范围" name_en="The range of output values required for physical quantity control" />

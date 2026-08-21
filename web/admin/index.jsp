@@ -266,9 +266,10 @@ if(pros.size()>0)
 %>
 	<div class="aw-item btn_sh_c" id="<%=tmpid%>" style="<%=cssstr%>">
 	   
-       <a class="img aw-border-radius-5" >
+       <span class="aw-border-radius-5" style0="color:#309af9">
          <i class="fa fa-sitemap fa-1x"></i>
-       </a>
+         <span class="d_btn" style="font-size:13px;top:0px;position:relative;margin-right:5px;"><i id="prj_run_<%=rep.getId() %>" class="fa-regular fa-life-ring" tt=""></i></span>
+       </span>
        <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=rep.getTitle() %></a>
        <div class="inline-block pull-right text-left ">
           <span class="btn_sh">
@@ -2299,12 +2300,41 @@ $('#SysSetting').click(function(){
 	});
 });
 
+function rt_prj_st()
+{
+	send_ajax("prj_rt_ajax.jsp",{op:"prjs_rt_all"},(bsucc,ret)=>{
+		if(!bsucc) {console.log(ret);return;}
+		//let prjs = null;
+		//eval("prjs="+ret) ;
+		for(let prj of ret)
+		{
+			let $drun = $("#prj_run_"+prj.id) ;
+			if($drun.length==0)
+				continue ;
+			if(!prj.run)
+			{
+				$drun.css("color","red").attr("title","Not running") ;
+				$drun[0].classList.remove("fa-spin") ;
+			}
+			else
+			{
+				$drun.css("color","green").attr("title","Running") ;
+				$drun[0].classList.add("fa-spin") ;
+			}
+		}
+	})
+}
+
 update_pstations(()=>{
 	update_sors();
 }) ;
 
 setInterval(update_station_st,5000) ;
+setInterval(rt_prj_st,3000) ;
 
+rt_prj_st();
+update_station_st();
+//update_sors();
 </script>
 
 

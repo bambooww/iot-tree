@@ -1,5 +1,6 @@
 package org.iottree.portal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +41,11 @@ public class NavFrame
 	//public NavNode navRoot = null;
 	private String homeUrl = null ;
 	
-	private ArrayList<String> navNodeUIDs = null ;
+	//private ArrayList<String> navNodeUIDs = null ;
 	
-	private transient ArrayList<NavNode> navNodes = null ;
+	//private transient ArrayList<NavNode> navNodes = null ;
+	
+	private ArrayList<NavNodeIns> navNodeInss = new ArrayList<>() ;
 	
 	PortalManager pmgr ;
 	
@@ -58,6 +61,7 @@ public class NavFrame
 	NavFrame(PortalManager pmgr,String title,String name)
 	{
 		this.pmgr = pmgr;
+		prj = pmgr.getOwner() ;
 		this.id = CompressUUID.createNewId() ;
 		this.title = title ;
 		this.name = name;
@@ -108,6 +112,19 @@ public class NavFrame
 		return this.logo ;
 	}
 	
+	public NavFrame asLogo(String fn)
+	{
+		this.logo = fn ;
+		return this ;
+	}
+	
+	public File getLogoFile()
+	{
+		if(Convert.isNullOrEmpty(this.logo))
+			return null ;
+		return new File(this.pmgr.getDir(),this.logo) ;
+	}
+	
 	public String getLayout()
 	{
 		if(Convert.isNullOrEmpty(this.layout))
@@ -127,41 +144,71 @@ public class NavFrame
 		return getUrlPath(false) ;
 	}
 	
-	public List<NavNode> getNavNodes()
+	public synchronized List<NavNodeIns> getNavNodeInss()
 	{
-		if(this.navNodes!=null)
-			return this.navNodes ;
-		ArrayList<NavNode> nns = new ArrayList<>() ;
-		if(this.navNodeUIDs!=null)
+//		if(this.navNodes!=null)
+//			return this.navNodes ;
+//		ArrayList<NavNode> nns = new ArrayList<>() ;
+//		if(this.navNodeUIDs!=null)
+//		{
+//			for(String nuid :this.navNodeUIDs)
+//			{
+//				NavNode nn = NavApp.getNavNodeByUID(nuid) ;
+//				if(nn==null)
+//					continue ;
+//				nns.add(nn) ;
+//			}
+//		}
+//		return this.navNodes = nns ;
+		return navNodeInss;
+	}
+	
+	private JSONArray navNodeInsJArr = null ;
+	
+	public synchronized JSONArray getNavNodeInssJArr()
+	{
+		if(navNodeInsJArr!=null)
+			return navNodeInsJArr ;
+		JSONArray jarr  =new JSONArray() ;
+		//jarr.put(new JSONObject().put("node_id", "__home")) ;
+		List<NavNodeIns> nns = getNavNodeInss() ;
+		for(NavNodeIns nn:nns)
 		{
-			for(String nuid :this.navNodeUIDs)
-			{
-				NavNode nn = NavApp.getNavNodeByUID(nuid) ;
-				if(nn==null)
-					continue ;
-				nns.add(nn) ;
-			}
+			jarr.put(nn.toNavJO()) ;
 		}
-		return this.navNodes = nns ;
+		return navNodeInsJArr = jarr ;
+	}
+	
+	private synchronized void clearCache()
+	{
+		//this.navNodes = null ;
+		this.navNodeInsJArr = null ;
 	}
 	
 	public void setDetailByJO(JSONObject jo)
 	{
 		this.sysTitle = jo.optString("sys_t") ;
-		this.logo = jo.optString("logo") ;
+		//this.logo = jo.optString("logo") ;
 		this.layout = jo.optString("layout") ;
 		this.homeUrl = jo.optString("home_url") ;
 		
-		JSONArray jarr = jo.optJSONArray("nav_node_uids") ;
+		JSONArray jarr = jo.optJSONArray("node_inss") ;
+		ArrayList<NavNodeIns> nnis = new ArrayList<>() ;
 		if(jarr!=null)
 		{
-			this.navNodeUIDs = new ArrayList<>() ;
 			int n = jarr.length() ;
 			for(int i = 0 ; i < n ; i ++)
 			{
-				this.navNodeUIDs.add(jarr.getString(i)) ;
+				JSONObject tmpjo = jarr.getJSONObject(i) ;
+				NavNodeIns nni = NavNodeIns.fromJO(tmpjo) ;
+				if(nni!=null)
+					nnis.add(nni) ;
 			}
 		}
+		
+		navNodeInss = nnis ;
+		
+		clearCache();
 	}
 	
 	public JSONObject toJO()
@@ -169,7 +216,16 @@ public class NavFrame
 		JSONObject ret = new JSONObject() ;
 		ret.put("id",this.id).putOpt("n", this.name).put("t", this.title).putOpt("sys_t", this.sysTitle)
 			.putOpt("logo",this.logo).putOpt("layout", this.layout).putOpt("home_url", this.homeUrl) ;
-		ret.putOpt("nav_node_uids", this.navNodeUIDs) ;
+		JSONArray jarr  =new JSONArray() ;
+		//jarr.put(new JSONObject().put("node_id", "__home")) ;
+		List<NavNodeIns> nns = getNavNodeInss() ;
+		for(NavNodeIns nn:nns)
+		{
+			jarr.put(nn.toJO()) ;
+		}
+		ret.put("node_inss", jarr) ;
+		
+		//ret.putOpt("nav_node_uids", this.navNodeUIDs) ;
 		return ret;
 	}
 	
@@ -224,16 +280,19 @@ public class NavFrame
 			return null;
 
 		String title = ele.getAttribute("title");
+		String title_en = ele.getAttribute("title_en");
+		String title_cn = ele.getAttribute("title_cn");
+		if(Convert.isNotNullEmpty(title))
+			title_en = title_cn = title ;
 		String url = ele.getAttribute("url");
 		String icon = ele.getAttribute("icon");
-		String img = ele.getAttribute("img");
 		String tar = ele.getAttribute("target");
 		String roles = ele.getAttribute("roles");
 		String notroles=ele.getAttribute("notroles");
 		
 		int order=Convert.parseToInt32(ele.getAttribute("order"),-1);
 		
-		NavNode tmpNode=new NavNode(n, title,icon,url,tar,roles,order);
+		NavNode tmpNode=new NavNode(n, title_en,title_cn,icon,url,tar,roles,order);
 		if(Convert.isNotNullEmpty(notroles)&&!"null".equals(notroles))
 		{
 			tmpNode.setNotRoles(notroles);

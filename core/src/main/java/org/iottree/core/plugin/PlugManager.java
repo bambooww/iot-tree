@@ -255,7 +255,7 @@ public class PlugManager
 		if(pds!=null)
 			return pds ;
 		
-		String lib_plugins_dir = System.getProperty("iottree.lib_plugins.dir") ;
+		String lib_plugins_dir =System.getProperty("iottree.lib_plugins.dir") ; // Config.getDataDirBase()+"/plugins/" ;//
 		if(Convert.isNullOrEmpty(lib_plugins_dir))
 			throw new RuntimeException("no [iottree.lib_plugins.dir] env property found") ;
 		

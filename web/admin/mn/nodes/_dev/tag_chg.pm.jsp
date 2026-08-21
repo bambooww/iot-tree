@@ -63,41 +63,43 @@
  <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">Ignore Invalid:</span>
     </div>
-	  <div class="layui-input-inline" style="width: 20px;">
+	  <div class="layui-form-mid">
 	    <input type="checkbox" id="ignore_invalid" class="layui-input" lay-skin="primary" />
 	  </div>
-	  <div class="layui-form-mid"><span style="white-space: nowrap;">Ignore Update (Value Not Changed):</span>
+	  <div class="layui-form-mid">
+	  <span style="white-space: nowrap;">Ignore Update (Value Not Changed):
+	  <input type="checkbox" id="ignore_update" class="layui-input" lay-skin="primary" />
+	  </span>
     </div>
-	  <div class="layui-input-inline" style="width: 20px;">
-	    <input type="checkbox" id="ignore_update" class="layui-input" lay-skin="primary" />
-	  </div>
-	  <div class="layui-form-mid">Change TP</span>
+	  
+	  <div class="layui-form-mid">
+		  <span>Change TP</span>
     </div>
-	  <div class="layui-input-inline" style="width: 170px;">
+	  <div class="layui-form-mid" style="width: 170px;">
 	    <select id="chg_tp"  lay-skin="primary" >
-<%
-	for(NS_TagChgTrigger.ChgTP chgtp:NS_TagChgTrigger.ChgTP.values())
-	{
-%><option value="<%=chgtp.getIntVal()%>"><%=chgtp.getTitle() %></option><%
-	}
-%>
-	    </select>
+	<%
+		for(NS_TagChgTrigger.ChgTP chgtp:NS_TagChgTrigger.ChgTP.values())
+		{
+	%><option value="<%=chgtp.getIntVal()%>"><%=chgtp.getTitle() %></option><%
+		}
+	%>
+		    </select>
 	  </div>
 </div>
 
 <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">Trigger Delay:</span>
     </div>
-	  <div class="layui-input-inline" style="width: 20px;">
+	  <div class="layui-form-mid"  style="width: 20px;">
 	    <input type="checkbox" id="bdelay" class="layui-input" lay-skin="primary" />
 	  </div>
-	  <div class="layui-form-mid"><span style="white-space: nowrap;">After</span>
+	  <div class="layui-form-mid"><span style="white-space: nowrap;">&nbsp;After</span>
     </div>
 	  <div class="layui-input-inline" style="width: 100px;">
 	    <input type="number" id="delay_ms" class="layui-input" lay-skin="primary" />
 	  </div>
 	  <div class="layui-form-mid">(MS)  Enable Log</div>
-	  <div class="layui-input-inline" style="width: 20px;">
+	  <div class="layui-form-mid" style="width: 20px;">
 	    <input type="checkbox" id="blog" class="layui-input" lay-skin="primary" />
 	  </div>
 </div>
@@ -115,7 +117,7 @@
 <div class="layui-form-item">
     <div class="layui-form-label"><span style="white-space: nowrap;">InfluxDB </span>
     </div>
-	  <div class="layui-input-inline" style="width: 200px">
+	  <div class="layui-form-mid" style="width: 200px">
 	    write number to double<input type="checkbox" id="influx_wfloat" class="layui-input" lay-skin="primary" />
 	  </div>
 	  <div class="layui-form-mid">Default Save Min Interval (ms)</div>
