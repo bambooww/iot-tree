@@ -363,7 +363,9 @@ if(n instanceof UACh)
 {
 	UACh ch = (UACh)n ;
 	DevDriver dd = ch.getDriver() ;
-	JSONObject rt_jo = dd.RT_getRunInfo() ;
+	JSONObject rt_jo = null;
+	if(dd!=null)
+		rt_jo = dd.RT_getRunInfo() ;
 	if(rt_jo!=null)
 	{
 %><code><pre><%=rt_jo.toString(4) %></pre></code>

@@ -174,39 +174,6 @@ var ids_str = "<%=ids_str%>" ;
 
 var table_uid = null ;
 
-var cur_lns =[
-    {
-        "tagp": "ch1.aio.wl_val",
-        "aggr_tpt": "均值",
-        "color": "#8e1f1f",
-        //"max": 100,
-        "dec_ptn": -1,
-        "aggr_color": "",
-        "aggr_tp": "mean",
-        "yaxis_right": false,
-        "title": "water level value",
-        "aggr_min": 0,
-        "unit": "m",
-       // "min": 0,
-        "aggr_max": 100
-    },
-    {
-        "tagp": "ch1.flow.flow_val",
-        "aggr_tpt": "均值",
-        "color": "#15c1ad",
-        //"max": 100,
-        "dec_ptn": -1,
-        "aggr_color": "",
-        "aggr_tp": "mean",
-        "yaxis_right": false,
-        "title": "speed value",
-        "aggr_min": 0,
-        "unit": "m³/h",
-        //"min": 0,
-        "aggr_max": 100
-    }
-];
-
 function resize_iframe_h()
 {
 	   var h = $(window).height()-80+45;
@@ -400,7 +367,7 @@ function draw_lines(lns)
             grid: {
                 left: 10+(lns.length - 1) * 30,
                 right: '3%',
-                bottom: '3%',
+                bottom: '20px',
                 containLabel: true
             },
             xAxis: {
@@ -408,7 +375,19 @@ function draw_lines(lns)
                 boundaryGap: true,
             },
             yAxis: y_axis,
-            series: series
+            series: series,
+            dataZoom: [{
+                type: 'slider',
+                xAxisIndex: 0,
+                start: 0,
+                end: 100,
+                height: 20,
+                bottom: 0,
+                borderColor: '#dce2ec',
+                fillerColor: 'rgba(79, 124, 255, 0.12)',
+                handleStyle: { color: '#4f7cff' },
+                textStyle: { color: '#6b7a93', fontSize: 11 }
+            }]
         };
 	ccc.clear();
 	ccc.setOption(option);

@@ -1224,7 +1224,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
         }
     };
 	
-	public void RT_startNetFlow(StringBuilder failedr)
+	public synchronized void RT_startNetFlow(StringBuilder failedr)
 	{
 		if(!this.bEnable)
 		{
@@ -1290,7 +1290,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		RT_onAfterNetRun();
 	}
 	
-	public void RT_stopNetFlow()
+	public synchronized void RT_stopNetFlow()
 	{
 		if(netTickTimer!=null)
 		{

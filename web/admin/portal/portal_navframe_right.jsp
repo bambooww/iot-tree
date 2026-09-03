@@ -23,6 +23,7 @@ if(navf==null)
 JSONArray navs_jarr = navf.getNavNodeInssJArr() ;
 
 List<UAHmi> hmis = prj.listHmiNodesAll() ;
+String logo = navf.getLogo() ;
 %><!DOCTYPE html>
 <html>
 <head>
@@ -114,7 +115,7 @@ List<UAHmi> hmis = prj.listHmiNodesAll() ;
     </div>
   </div>
 </div>
-<div class="logo_c" onclick="change_logo()">
+<div class="logo_c" onclick="change_logo()" nf_logo="<%=logo%>">
 	<img id="img_logo" src="/portal__logo.jsp?prjid=<%=prjid %>&nf_id=<%=nf_id %>" />
 </div>
 <input type="file" id='add_file' onchange="add_file_onchg()" name="file" style="left:-9999px;position:absolute;" 
@@ -575,6 +576,7 @@ function get_detail()
 	ret.sys_t = $("#sys_t").val()||"";
 	ret.layout = $("#layout").val()||"default";
 	ret.home_url = $("#home_url").val()||"" ;
+	ret.logo = $(".logo_c").attr("nf_logo");
 	ret.node_inss = navs ;
 	return ret;
 }
@@ -627,6 +629,7 @@ function add_file_onchg()
  	  			let fn = data.substring(5) ;
  	  			let img_u = `/portal__logo.jsp?prjid=\${prjid}&fn=\${fn}&v=`+new Date().getTime();
  	  		 	$("#img_logo").attr("src",img_u) ;
+ 	  		 	$(".logo_c").attr("nf_logo",fn) ;
  	  		}
  	  		else
  	  		{

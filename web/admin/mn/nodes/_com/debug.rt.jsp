@@ -274,7 +274,7 @@ function on_rt_panel_btn()
 	}
 	
 	let pm = {op:"send",container_id:container_id,netid:netid,itemid:itemid,strv:strv} ;
-	send_ajax("_com.manual.rt.jsp",pm,(bsucc,ret)=>{
+	send_ajax("./manual.rt.jsp",pm,(bsucc,ret)=>{
 		if(!bsucc||ret!="succ")
 		{
 			dlg.msg(ret);return;

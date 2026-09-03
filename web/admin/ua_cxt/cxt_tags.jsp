@@ -902,6 +902,8 @@ function cxt_rt()
 	},false) ;
 }
 
+var tagp2updt = {}
+
 function show_cxt_dyn(p,cxt)
 {
 	for(var tg of cxt.tags)
@@ -922,8 +924,17 @@ function show_cxt_dyn(p,cxt)
 		var strchgdt = "",strchgdtt="" ;
 		if(dt>0)
 		{
+			let lastdt = tagp2updt[tagp]||-1 ;
+			let up_gap = "" ;
+			if(lastdt>0 && dt!=lastdt && (dt-lastdt)<1000)
+			{
+				up_gap = ((dt-lastdt)+"").padStart(3,'0')
+				up_gap = " ("+up_gap+")" ;
+			}
+			
+			tagp2updt[tagp] = dt ;
 			strdt =new Date(dt).format("hh:mm:ss")+"."+(dt%1000).toString().padStart(3,'0');//
-			strdtt =new Date(dt).format("yyyy-MM-dd hh:mm:ss");
+			strdtt =new Date(dt).format("yyyy-MM-dd hh:mm:ss")+up_gap;
 		}
 			
 		if(chgdt>0)

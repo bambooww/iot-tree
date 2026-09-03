@@ -40,7 +40,7 @@ String using_lan = Lan.getUsingLang() ;
 <html>
 <head>
 <meta charset="utf-8">
-<title>IOTTree Project Editor</title>
+<title>IOTTree-<%=rep.getTitle() %></title>
 <jsp:include page="head.jsp">
 <jsp:param value="true" name="tree"/>
 <jsp:param value="true" name="tab"/>
@@ -194,9 +194,12 @@ if(hide_top)
            --%>
            <div class="btn-group open"  id="btn_menu_tree">
 				  <a class="btn " href="#"><i class="fa fa-sitemap fa-fw"></i> <wbt:g>browser,tree</wbt:g></a>
-				  &nbsp;&nbsp;<button class="tree_btn" title="<wbt:g>refresh,browser,tree</wbt:g>" onclick="refresh_ui()" ><i class="fa fa-refresh fa" aria-hidden="true"></i></button>
-				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1('dev')"><i  class="fa-solid fa-angle-up"" aria-hidden="true"></i></button>
-				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1()"><i  class="fa-solid fa-angles-up"" aria-hidden="true"></i></button>
+				  &nbsp;&nbsp;<button class="tree_btn" title="<wbt:g>refresh,browser,tree</wbt:g>" onclick="refresh_ui()" ><i class="fa fa-refresh fa" ></i></button>
+				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1('dev')"><i  class="fa-solid fa-angle-up"" ></i></button>
+				  <button class="tree_btn"  title="" onclick="ua_panel.ua_tree.collapse_lvl1()"><i  class="fa-solid fa-angles-up"" ></i></button>
+				  <%--
+				  <button class="tree_btn"  title="" onclick="show_hide_tree_detail()"><i class="fa-solid fa-bars-staggered"></i></i></button>
+				   --%>
 				 </div>
            </div>
            <div class="subwin_content" style="overflow:hidden;">
@@ -592,9 +595,6 @@ var cxt_menu = {
 		{op_name:"start_stop",op_title:"<wbt:lang>start/stop</wbt:lang>",op_icon:"fa fa-refresh",op_action:""},
 	],
 	"ch":[
-		{op_name:"paste_dev",op_title:"<wbt:g>paste,dev</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
-			return true;//copiedItem!=null&&copiedItem.type=="dev";
-		}},
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
 		
 		
@@ -610,7 +610,9 @@ var cxt_menu = {
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		
 		{op_name:"cp_ch",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
-		
+		{op_name:"paste",op_title:"<wbt:g>paste</wbt:g>",op_icon:"fa fa-clipboard",op_action:act_node_paste,op_chk:(tn)=>{
+			return true;//copiedItem!=null&&copiedItem.type=="dev";
+		}},
 		{op_name:"ch_start",op_title:"<wbt:lang>start</wbt:lang>",op_icon:"fa fa-play",op_action:act_ch_start_stop,op_chk:(tn)=>{
 			return !tn.run;
 		}},

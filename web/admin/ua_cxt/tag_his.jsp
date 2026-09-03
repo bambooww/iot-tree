@@ -40,10 +40,14 @@
 <style>
   html,body{margin:0;padding:0;height:100%}
   #main{width:100%;height:100%}
+  #ctrl_panel {position: absolute;top:10px;right:10px;border:1px solid #ccc;}
 </style>
 </head>
 <body>
 <div id="main"></div>
+<div id="ctrl_panel">
+	<button onclick="show_cache.jsp"><wbt:g>show,cache</wbt:g></button>
+</div>
 <script>
 var title = "<%=ttp%>" ;
 var path = "<%=path%>";

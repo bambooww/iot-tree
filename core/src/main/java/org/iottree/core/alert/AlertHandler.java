@@ -647,7 +647,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 				innerPool = innersor.getConnPool() ;
 				innerDT = DBUtil.createOrUpTable(innerPool,recordJTI,true) ;
 			}
-			catch(Exception ee)
+			catch(Throwable ee)
 			{
 				ee.printStackTrace();
 			}
@@ -661,7 +661,7 @@ public class AlertHandler extends JSObMap //implements IJsProp
 				outerPool = outersor.getConnPool() ;
 				outerDT = DBUtil.createOrUpTable(outerPool,recordJTI,true) ;
 			}
-			catch(Exception ee)
+			catch(Throwable ee)
 			{
 				ee.printStackTrace();
 			}

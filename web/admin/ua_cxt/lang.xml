@@ -26,6 +26,7 @@
   <dd_node id="1" name="dict_ext_props" name_cn="字典扩展属性" name_en="Dictionary Extension Properties" />
   
   <dd_node id="1" name="ref_val" name_cn="参考值" name_en="Reference Value" />
+  <dd_node id="1" name="cache" name_cn="缓存" name_en="Cache" />
   <dd_node id="1" name="trigger_err" name_cn="触发误差" name_en="Trigger Error" />
   <dd_node id="1" name="release_err" name_cn="释放误差" name_en="Release Error" />
   

@@ -109,6 +109,8 @@ public class NavFrame
 	
 	public String getLogo()
 	{
+		if(this.logo==null)
+			return "" ;
 		return this.logo ;
 	}
 	
@@ -188,7 +190,7 @@ public class NavFrame
 	public void setDetailByJO(JSONObject jo)
 	{
 		this.sysTitle = jo.optString("sys_t") ;
-		//this.logo = jo.optString("logo") ;
+		this.logo = jo.optString("logo") ;
 		this.layout = jo.optString("layout") ;
 		this.homeUrl = jo.optString("home_url") ;
 		

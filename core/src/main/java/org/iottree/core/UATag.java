@@ -1703,6 +1703,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		if(prj!=null)
 			prj.RT_onTagValSet(this);
 		
+//		long st = System.currentTimeMillis() ;
 		if(uav.isValid()) // && bval_chg)
 		{
 			RT_chkEvent(true) ;
@@ -1710,6 +1711,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		
 		if(bNetMon)
 			RT_fireValChgedNetMon(last_val,uav.isValid(),uav.getObjVal()) ;
+		
+//		long et = System.currentTimeMillis() ;
+//		
+//		long cost = et-st ;
+//		cost += 0 ;
 	}
 	
 	private void RT_setUAValOnly(UAVal uav)

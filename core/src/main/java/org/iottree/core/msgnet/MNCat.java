@@ -155,9 +155,7 @@ public class MNCat implements ILang
 				}
 				else
 				{
-					if(n instanceof MNModule)
-						return "./modules/"+n.getTPFull()+".rt.jsp";
-					return "./nodes/"+n.getTPFull()+".rt.jsp";
+					return "./nodes/"+n.getCatName()+"/"+n.getTpFullInCat()+".rt.jsp";
 				}
 			}
 

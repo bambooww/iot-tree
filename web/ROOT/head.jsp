@@ -21,7 +21,7 @@
 		if(!path_head.startsWith("/"))
 			path_head = "/"+path_head;
 	}
-				
+
 	if(bsimple)
 	{
 %>
@@ -35,14 +35,13 @@
 	}
 	else
 	{
-%><script src="<%=path_head %>/_js/jquery-1.12.0.min.js"></script>
+%><script src="<%=path_head %>/_js/jquery.min.js"></script>
 <script src="<%=path_head %>/_js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=path_head %>/_js/ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="<%=path_head %>/_js/layui/css/layui.css" />
 <script src="<%=path_head %>/_js/layui/layui.all.js"></script>
 <script src="<%=path_head %>/_js/dlg_layer.js?v=<%=ver%>"></script>
 <link  href="<%=path_head %>/_js/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-<script defer src="<%=path_head %>/_js/font6/js/all.js"></script>
 <link href="<%=path_head %>/_js/font6/css/all.css" rel="stylesheet">
 <script src="<%=path_head %>/admin/js/util.js"></script>
 <%--

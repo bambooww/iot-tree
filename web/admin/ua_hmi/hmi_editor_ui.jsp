@@ -417,16 +417,15 @@ if(bprj)
 		
 
 <div style="position:absolute;right:5px;top:5px;z-index:1001;color:#1e1e1e" title="show or hide properties panel" id="btn_prop_showhidden">&nbsp;&nbsp;<i class="fa fa-bars fa-lg"></i>&nbsp;&nbsp;</div>
-
+<div style="position:absolute;left:10px;bottom:3px;height:20px;color:yellow;" class0="props_panel_pos">&nbsp;<span><%=uahmi.getNodePathTitle() %> [<%=uahmi.getNodePath() %>] </span><span id="p_info" ></span></div>
 <div id='edit_panel'  class="right_panel_win" >
-  <div style="height:70px;background-color: grey" class="edit_toolbar">
+  <div style="height:70px;background-color:#ccc" class="edit_toolbar">
 	<button id="oper_save"  title="save"><i class="fa fa-floppy-disk fa-2x"></i></button>
 	<span id="edit_toolbar" class="edit_toolbar"></span>
-	<div id="p_info" style="height: 20;display0:none" class0="props_panel_pos">&nbsp;</div>
   </div>
   
 	
-		<div class="layui-tab">
+	<div class="layui-tab">
 	  <ul class="layui-tab-title">
 	    <li class="layui-this">Properties</li>
 	    <li>Events</li>

@@ -1514,6 +1514,9 @@ function nav_hmi(p)
 
 async function  f()
 {
+	if(!chrome)
+		return ;
+
 	const iottc = chrome?.webview?.hostObjects?.iottree_client;
 	
 	if(!iottc)

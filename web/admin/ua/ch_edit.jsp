@@ -13,6 +13,7 @@
 	String reppath = request.getParameter("rep_path") ;
 String chpath = request.getParameter("ch_path") ;
 UACh ch= null;
+boolean b_add = true ;
 UAPrj rep = null ;
 if(Convert.isNotNullEmpty(reppath))
 {
@@ -49,6 +50,7 @@ boolean drv_en_at_ps = false;
 
 if(ch!=null)
 {
+	b_add = false;
 	name = ch.getName() ;
 	title = ch.getTitle() ;
 	desc = ch.getDesc() ;
@@ -121,6 +123,11 @@ if(rep.isPrjPStationIns())
 </form>
 </body>
 <script type="text/javascript">
+var b_add = <%=b_add%> ;
+if(b_add)
+	$("#name").focus();
+else
+	$("#title").focus();
 
 layui.use('form', function(){
 	  var form = layui.form;

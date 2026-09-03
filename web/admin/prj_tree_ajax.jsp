@@ -75,6 +75,7 @@
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))
 		return;
+boolean b_detail = "true".equals(request.getParameter("detail")) ;
 String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 	String id = request.getParameter("id");
 	boolean b_sel = "true".equals(request.getParameter("sel")) ;
@@ -86,10 +87,14 @@ String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 		return;
 	}
 	String auth = rep.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
+	
+	String prj_detail = "" ;
+	if(b_detail)
+		prj_detail = rep.getTitle() ;
 	%>[
 	
 	{
-	"text":"<%=rep.getName() %> <%=auth%>"
+	"text":"<%=rep.getName() %> <%=auth%> <%=prj_detail%>"
 	,"id":"<%=rep.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(rep.getTitle())%>"}
 	,"type":"prj"
 	,"path":"<%=rep.getNodePath()%>"
@@ -146,7 +151,7 @@ String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 		auth = ch.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
 %>
 		{
-		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png' ignore_connpt='<%=ignore_connpt%>'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title='<%=ch.getTitle()%>'><%=ch.getName() %></span><%=drvfit%> <%=auth%>"
+		  "text":"<img id='ch_<%=ch.getId()%>' src='/admin/inc/sm_icon_ch.png' ignore_connpt='<%=ignore_connpt%>'  can_connpt_bind='<%=b_connpt_to_dev?false:true%>'  dev_ids='<%=sub_devids%>' /><%if(hasdrv){%><i id='ch_run_<%=ch.getId()%>' class='fa fa-cog fa-lg'></i><%}%>&nbsp;<span title=''><%=ch.getTitle()%>[<%=ch.getName() %>]</span><%=drvfit%> <%=auth%>"
 		  ,"id":"<%=ch.getId() %>","a_attr":{"title":"<%=Convert.plainToJsStr(ch.getTitle())%>"}
 		  ,"type":"ch"
 		  ,"path":"<%=ch.getNodePath()%>"

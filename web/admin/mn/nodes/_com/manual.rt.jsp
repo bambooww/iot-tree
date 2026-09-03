@@ -70,7 +70,7 @@
 <html>
 <head>
 <title></title>
-<jsp:include page="../../head.jsp">
+<jsp:include page="../../../head.jsp">
 	<jsp:param value="true" name="simple"/>
 </jsp:include>
 <script type="text/javascript">
@@ -146,7 +146,7 @@ function on_rt_panel_btn()
 	}
 	
 	let pm = {op:"send",container_id:container_id,netid:netid,itemid:itemid,strv:strv} ;
-	send_ajax("_com.manual.rt.jsp",pm,(bsucc,ret)=>{
+	send_ajax("./manual.rt.jsp",pm,(bsucc,ret)=>{
 		if(!bsucc||ret!="succ")
 		{
 			dlg.msg(ret);return;
