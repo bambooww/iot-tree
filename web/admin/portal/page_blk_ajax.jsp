@@ -4,11 +4,12 @@
 
 		
 %><%
-	if(!Convert.checkReqEmpty(request, out, "op"))
+	if(!Convert.checkReqEmpty(request, out, "op","prjid"))
 		return ;
 	//UserProfile up = UserProfile.getUserProfile(request);
-
+	
 	String op=request.getParameter("op") ;
+	String prjid=request.getParameter("prjid") ;
 	String cat = request.getParameter("cat") ;
 	String page_uid = request.getParameter("page_uid") ;
 	String blkn = request.getParameter("blkn") ;
@@ -17,7 +18,7 @@
 	
 	if(Convert.isNotNullEmpty(page_uid))
 	{
-		page_item = PortalManager.getInstance().getPageByUID(page_uid) ;
+		page_item = PortalManager.getInstanceByPrjId(prjid).getPageByUID(page_uid) ;
 		if(page_item==null)
 		{
 			out.print("no page found with uid="+page_uid) ;

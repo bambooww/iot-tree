@@ -231,7 +231,7 @@ if(hide_top)
             <label class="hj-transverse-split-label"></label>
         </div>
         
-        <div class="left_btm" style="height:250px;">
+   <div class="left_btm" style="height:250px;">
     	<div class="left_btm_tab" style="background-color: #eee;height:100%;">
     	<div class="layui-tab layui-tab-brief"  lay-filter="tab_left_btm_ext" style="width:100%;height:100%">
 			  <ul class="layui-tab-title">
@@ -266,8 +266,10 @@ if(hide_top)
 					  <span id='recorder' onclick='clk_rec()' title="<wbt:g>tag,data,recorder</wbt:g>"><i class="fa fa-edit fa-lg"></i></span>
 					  <span id='store' onclick='clk_store()' title="<wbt:g>data,store</wbt:g>"><i class="fa fa-database fa-lg"></i></span>
 					  <span id='ui_mgr' onclick='clk_ui_mgr()' title="<wbt:g>ui,dialog,mgr</wbt:g>"><i class="fa fa-area-chart fa-lg"></i></span>
+<%--					  
 					  <span id='ui_mgr' onclick='clk_router_mgr()' title="<wbt:g>data,router</wbt:g>"><i class="fa fa-sitemap fa-lg fa-rotate-270"></i></span>
 					  <span id='alert' onclick='clk_alert()' title="<wbt:g>alert,handler</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
+--%>
 					  <span id='share_run' onclick='clk_share_run()' title="<wbt:g>share,prj</wbt:g>"><i id='' class='fa fa-share-alt-square fa-lg'></i></span>
 					  <span id='task_run' onclick='clk_task_run()' title="<wbt:g>task,mgr</wbt:g>"><i id='task_run_icon' class='fa fa-circle-notch fa-lg'></i></span>
 					  <span id='alert' onclick='clk_alert_mgr()' title="<wbt:g>alert,mgr</wbt:g>"><i class="fa fa-bell  fa-lg"  id="alert_icon" /></i></span>
@@ -277,12 +279,11 @@ if(hide_top)
 			</div>
           <div id="show_hid" class="show_hid" style="top:8px;"><i class="fa fa-angle-double-down" aria-hidden="true" /></i></div>
     </div>
-    </div>
-    
-    <div id="chat_ai" style="z-index:6000;position: absolute;right:0px;width:700px;height:0px;top:45px;bottom: 0px;border:0px;display:none;">
+ </div>
+ <div id="chat_ai" style="z-index:6000;position: absolute;right:0px;width:700px;height:0px;top:45px;bottom: 0px;border:0px;display:none;">
     <iframe id="chat_ai_if" style="width:100%;height:100px;border:0px;"></iframe>
      <button id="chat_ai_op" style="position: absolute;right:20px;top:20px;width:30px;height:30px;display:none;" onclick="ai_dlg()"><i class="fa fa-times"></i></button>
-    </div>
+ </div>
 </div>
 <script>
 dlg.dlg_top=true;

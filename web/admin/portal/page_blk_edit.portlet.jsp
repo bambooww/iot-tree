@@ -3,12 +3,13 @@
 	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
 		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %>
 <%
-	if(!Convert.checkReqEmpty(request, out, "page_uid","blkn"))
+	if(!Convert.checkReqEmpty(request, out, "prjid","page_uid","blkn"))
 		return ;
 	String page_uid = request.getParameter("page_uid") ;
+	String prjid = request.getParameter("prjid") ;
 	String blkn = request.getParameter("blkn") ;
 	
-	Page pp = PortalManager.getInstance().getPageByUID(page_uid) ;
+	Page pp = PortalManager.getInstanceByPrjId(prjid).getPageByUID(page_uid) ;
 	if(pp==null)
 	{
 		out.print("no page found") ;

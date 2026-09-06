@@ -7,19 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
-import org.iottree.core.Config;
-import org.iottree.core.station.StationLocSaver.Item;
-
-/**
- * 通用的可靠存储器——用来支持一些目录下的信息可靠存储（代替文件系统的写入中断不可靠）
- * 如：在UAPrj中，记录local tag，整体最新标签数据快照等内容，都需要有个可靠高效的能力
- * 
- * @author jason.zhu
- *
- */
-public class SQLiteSaver
+public class KeyValSaverSQLite extends KeyValSaver
 {
 	String dbUrl ;
 	
@@ -27,9 +16,8 @@ public class SQLiteSaver
 	
 	private Connection conn;
 	
-	public SQLiteSaver(File f) throws Exception
+	public KeyValSaverSQLite(File f) throws Exception
 	{
-		
 		if (!f.getParentFile().exists())
 			f.getParentFile().mkdirs();
 

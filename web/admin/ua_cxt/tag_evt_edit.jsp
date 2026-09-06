@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ page import="
+    pageEncoding="UTF-8"%><%@ page import="
 	org.iottree.core.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
@@ -8,9 +7,9 @@
 	java.util.*,
 	java.net.*,
 	java.util.*
-	"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
+"%><%@ taglib uri="wb_tag" prefix="wbt"%><%!
 
-	 %><%
+%><%
 	String lang = "en" ;
 %>
 <html>
@@ -29,7 +28,7 @@ dlg.resize_to(650,500);
 }
 .prompt
 {
-	border:1px solid;
+	border:1px solid;border-color:#ccc;padding:5px;
 	margin:10px;
 }
 </style>

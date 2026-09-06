@@ -77,7 +77,6 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 	
 	private transient DevDriver devDrv = null ;
 	
-	
 	@data_obj(obj_c=UADev.class)
 	List<UADev> devs = new ArrayList<>();
 	

@@ -140,6 +140,7 @@
 ##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;9.5 HMI组件(控件)</a>
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI客户端数据列表展示</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 记录数据展示</a>
+##### <a href="doc/hmi/portal_nav.md" target="main">&nbsp;&nbsp;&nbsp;9.8 应用门户</a>
 
 #### <a href="doc/auth/index.md" >10 用户和角色</a>
 ##### <a href="doc/auth/hmi_w_auth.md" >10.1 HMI写操作(下达指令)授权</a>

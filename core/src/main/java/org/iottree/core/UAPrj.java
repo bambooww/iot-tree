@@ -8,8 +8,10 @@ import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdIId;
+import org.iottree.core.util.KeyValSaver;
+import org.iottree.core.util.KeyValSaverFile;
+import org.iottree.core.util.KeyValSaverSQLite;
 import org.iottree.core.util.Lan;
-import org.iottree.core.util.SQLiteSaver;
 import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.util.web.PrjNavTree;
 import org.iottree.core.util.web.PrjRestful;
@@ -131,7 +133,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	
 	private transient UAContext context = null ;
 	
-	private transient SQLiteSaver sqliteSaver = null ;
+	private transient KeyValSaver keyValSaver = null ;
 	
 	private transient long stationUpDT = System.currentTimeMillis() ;
 	
@@ -1081,19 +1083,33 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	 * @return
 	 * @throws Exception 
 	 */
-	public SQLiteSaver getSQLiteSaver() throws Exception
+	public KeyValSaver getKeyValSaver() throws Exception
 	{
-		if(sqliteSaver!=null)
-			return sqliteSaver;
+		if(keyValSaver!=null)
+			return keyValSaver;
 		
 		synchronized(this)
 		{
-			if(sqliteSaver!=null)
-				return sqliteSaver;
+			if(keyValSaver!=null)
+				return keyValSaver;
 			
-			File dbf = new File(this.getSaverDir(),"_prj_store.db");
-			sqliteSaver = new SQLiteSaver(dbf) ;
-			return sqliteSaver;
+			File dbf = new File(this.getSaverDir(),"_prj_store.json");
+			keyValSaver = new KeyValSaverFile(dbf) ;
+			return keyValSaver;
+			
+//			try
+//			{
+//				File dbf = new File(this.getSaverDir(),"_prj_store.db");
+//				keyValSaver = new KeyValSaverSQLite(dbf) ;
+//				return keyValSaver;
+//			}
+//			catch(Exception ee)
+//			{
+//				System.out.print("Warn: create KeyValSaverSQLite error,use File "+ee.getMessage());
+//				File dbf = new File(this.getSaverDir(),"_prj_store.json");
+//				keyValSaver = new KeyValSaverFile(dbf) ;
+//				return keyValSaver;
+//			}
 		}
 	}
 
@@ -1131,7 +1147,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		if(localtags==null||localtags.size()<=0)
 			return ;
 		
-		SQLiteSaver sqls = getSQLiteSaver() ;
+		KeyValSaver sqls = getKeyValSaver() ;
 		String ss = sqls.getValByKey(LOCAL_TAG_VALS) ;
 		if(Convert.isNotNullEmpty(ss))
 			localTagVals = XmlData.parseFromReader(new StringReader(ss)) ;
@@ -1202,7 +1218,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 //			Convert.writeFileSafe(f, (tmpf)->{
 //				XmlData.writeToFile(xd, tmpf);
 //			});
-			SQLiteSaver sqls = getSQLiteSaver() ;
+			KeyValSaver sqls = getKeyValSaver() ;
 			sqls.setKeyVal(LOCAL_TAG_VALS,xd.toXmlString()) ;
 			localTagVals = xd ;
 		}
@@ -1239,7 +1255,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		if(snapshotSaveIntv<=0)
 			return ;
 		
-		SQLiteSaver sqls = getSQLiteSaver() ;
+		KeyValSaver sqls = getKeyValSaver() ;
 		String ss = sqls.getValByKey(TAGS_SNAPSHOT) ;
 		if(Convert.isNullOrEmpty(ss))
 			return ;
@@ -1254,7 +1270,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			return ;
 		
 		JSONObject jo = RT_snapCurData(true,true);
-		SQLiteSaver sqls = getSQLiteSaver() ;
+		KeyValSaver sqls = getKeyValSaver() ;
 		sqls.setKeyVal(TAGS_SNAPSHOT,jo.toString()) ;
 	}
 	

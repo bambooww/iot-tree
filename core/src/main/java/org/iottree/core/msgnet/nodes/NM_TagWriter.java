@@ -184,6 +184,12 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	{
 		return g("tag_writer");
 	}
+	
+	@Override
+	public boolean isShowOutTitle()
+	{
+		return true;
+	}
 
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
@@ -203,7 +209,6 @@ public class NM_TagWriter extends MNNodeMid implements IMNRunner
 	{
 		JSONObject jo = new JSONObject() ;
 		jo.put("asyn", this.asynMode) ;
-		
 		JSONArray jarr = new JSONArray() ;
 		if(tagItems!=null)
 		{

@@ -42,7 +42,6 @@ public class InfluxDB_M extends MNModule implements IMNRunner, IMNNodeRes
 		public static final String JARR_SAMPLE = "[{dt:134344543534,v:100.0},{dt:134344543834,v:200.0}]";
 	}
 	
-	
 	private boolean usingSource = true;
 
 	private String sourceName = null;

@@ -1,6 +1,5 @@
 package org.iottree.ext.ai.dev;
 
-import org.iottree.core.util.*;
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
@@ -20,13 +19,13 @@ public class DevCtrlRespHandle_NM extends MNNodeMid
 	@Override
 	public String getTPTitle()
 	{
-		return "Response Handle";
+		return "AI Chat Response Handle";
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#af40a0";
+		return "#3989D7";
 	}
 	
 	@Override
@@ -141,7 +140,7 @@ public class DevCtrlRespHandle_NM extends MNNodeMid
 			return null ;
 		}
 		
-		DevCtrl_M owner = (DevCtrl_M)this.getOwnRelatedModule() ;
+		
 		
 		if(jarr!=null)
 		{//[   {     "device_id": "kt.light",     "parameter": "on_off",     "value": "1"   },  
@@ -150,20 +149,29 @@ public class DevCtrlRespHandle_NM extends MNNodeMid
 			for(int i = 0 ; i < n ; i ++)
 			{
 				JSONObject tmpjo = jarr.getJSONObject(i) ;
-				if(!tmpjo.has("device_id") || !tmpjo.has("parameter") || !tmpjo.has("value"))
-					continue ;
-				String dev_id = tmpjo.optString("device_id") ;
-				String param = tmpjo.optString("parameter") ;
-				String strv =  tmpjo.optString("value") ;
-				DevCtrlDevItem_NS devitem = owner.getRelatedDevItem(dev_id) ;
-				if(devitem==null)
-					continue ;
-				devitem.RT_setParamValueOut(param, strv) ;
+				setDevItem(tmpjo) ;
 			}
 		}
-		
-		
+		else if(jo!=null)
+		{
+			setDevItem(jo) ;
+		}
 		
 		return null ;
+	}
+	
+	private boolean setDevItem(JSONObject tmpjo)
+	{
+		if(!tmpjo.has("device_id") || !tmpjo.has("parameter") || !tmpjo.has("value"))
+			return false ;
+		DevCtrl_M owner = (DevCtrl_M)this.getOwnRelatedModule() ;
+		String dev_id = tmpjo.optString("device_id") ;
+		String param = tmpjo.optString("parameter") ;
+		String strv =  tmpjo.optString("value") ;
+		DevCtrlDevItem_NS devitem = owner.getRelatedDevItem(dev_id) ;
+		if(devitem==null)
+			return false ;
+		devitem.RT_setParamValueOut(param, strv) ;
+		return true;
 	}
 }

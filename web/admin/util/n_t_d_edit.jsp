@@ -8,6 +8,10 @@
 	java.util.*"%><%@ taglib uri="wb_tag" prefix="wbt"%>
 <%
 boolean hide_d = "true".equals(request.getParameter("hide_d")) ;
+boolean name_readonly = "true".equals(request.getParameter("name_readonly")) ;
+String n_read_only = "" ;
+if(name_readonly)
+	n_read_only = "readonly" ;
 %>
 <html>
 <head>
@@ -24,7 +28,7 @@ dlg.resize_to(450,350);
 	<div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>name</wbt:g>:</label>
     <div class="layui-input-inline" style="width:200px;">
-      <input type="text" id="name" name="name" value=""  autocomplete="off" class="layui-input">
+      <input type="text" id="name" name="name" value=""  <%=n_read_only %> autocomplete="off" class="layui-input">
     </div>
   </div>
   <div class="layui-form-item">

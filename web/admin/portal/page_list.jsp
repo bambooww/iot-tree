@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%><%@page 
 	import="org.iottree.core.*,org.iottree.portal.*,org.iottree.core.util.*,
-		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*" %><%@ taglib uri="wb_tag" prefix="w"%><%! 
+		org.json.*,org.w3c.dom.*,java.util.*,org.iottree.core.util.xmldata.*"
+%><%@ taglib uri="wb_tag" prefix="w"%><%! 
 
 %><%
 String prjid = request.getParameter("prjid") ;
@@ -50,6 +51,8 @@ if(Convert.isNotNullEmpty(prjid))
  .cat:hover {background-color: #ccc;}
  .cat .t {position: absolute;left:5px;top:3px;font-size: 14px;font-weight: bold;}
  .cat .n {position: absolute;left:8px;bottom:1px;font-size: 12px;}
+ .cat .op {position:absolute;right:3px;top:5px;}
+ .cat .op button{width:18px;}
  
 .pics {overflow-y:auto;}
 .pic_item {border:0px solid;text-align: center;margin: 5px;position: relative;}
@@ -70,7 +73,7 @@ if(Convert.isNotNullEmpty(prjid))
 			<button id="top_oper_search" class="layui-btn layui-btn-sm layui-btn-primary" onclick="search_devpart()"><i class="fa fa-search"></i></button>
 			<button class="layui-btn layui-btn-sm layui-btn-primary" onclick="refresh_table()"><i class="fa fa-refresh"></i></button>
       </td>
-      --%>
+--%>
 		<td style="text-align: right;padding-right:55px;width:250px;border:0px solid">
 		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page_cat()" ><i class="fa fa-plus"></i><w:g>add,cat</w:g></button>
 		<button id="top_oper_add" class="layui-btn layui-btn-sm layui-btn-primary" onclick="edit_page()" ><i class="fa fa-plus"></i><w:g>add,page</w:g></button>
@@ -83,9 +86,16 @@ if(Convert.isNotNullEmpty(prjid))
 <%
 for(PageCat p:PortalManager.getInstance(prj).listPageCats().values())
 {
-%><span class="cat" onclick="on_sel_cat('<%=p.getName() %>','<%=p.getTitle() %>')">
+	String catn = p.getName() ;
+	String catt = p.getTitle() ;
+%>
+<span class="cat" onclick="on_sel_cat('<%=p.getName() %>','<%=p.getTitle() %>')">
 	<span class="n"><%=p.getName() %></span>
 	<span class="t"><%=p.getTitle() %></span>
+	<span class="op">
+		<button onclick="edit_page_cat('<%=catn%>','<%=catt%>')"><i class="fa fa-pencil"></i></button>
+		<button onclick="del_page_cat('<%=catn%>')"><i class="fa fa-times"></i></button>
+	</span>
 </span>
 <%	
 }
@@ -130,9 +140,15 @@ function on_sel_cat(n,t)
 
 function edit_page_cat(catn,catt)
 {//cp_partid will be used when add
+	if(event)
+	{
+		//event.preventDefault();
+		event.stopPropagation();
+	}
 	let tt =catn?"<w:g>edit,cat</w:g>":"<w:g>add,cat</w:g>";
 	let op = catn?"edit_page_cat":"add_page_cat";
-	dlg.open("../util/n_t_d_edit.jsp",{title:tt,w:'500px',h:'400px',input:{name:catn||"",title:catt||""}},
+	let n_readonly = catn?true:false;
+	dlg.open("../util/n_t_d_edit.jsp?name_readonly="+n_readonly,{title:tt,w:'500px',h:'400px',input:{name:catn||"",title:catt||""}},
 				['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 				[
 					function(dlgw)
@@ -160,6 +176,23 @@ function edit_page_cat(catn,catt)
 						dlg.close();
 					}
 				]);
+}
+
+function del_page_cat(catn)
+{//cp_partid will be used when add
+	if(event)
+		event.stopPropagation();
+	dlg.confirm('<w:g>del,this,cat</w:g>?',{btn:["<w:g>yes</w:g>","<w:g>cancel</w:g>"],title:"<w:g>del,confirm</w:g>"},function ()
+	{
+		send_ajax("page_ajax.jsp",{op:'del_page_cat',prjid:prjid,name:catn},(bsucc,ret)=>{
+			 if(!bsucc || ret.indexOf("succ")!=0)
+			 {
+				 dlg.msg(ret) ;
+				 return ;
+			 }
+			 location.reload();
+		 }) ;
+	})
 }
 
 function edit_page(pg)

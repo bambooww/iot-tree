@@ -4,13 +4,10 @@ import org.iottree.core.util.*;
 import org.iottree.core.util.temp.TxtTemplate;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.iottree.core.basic.ValEventTp;
-import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNModule;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,7 +46,10 @@ public class DevCtrl_M extends MNModule
 	Role role = Role.normal ;
 	
 	//ArrayList<DevItem> devItems = null ;
-	
+	/**
+	 * support control rule or not
+	 */
+	boolean supportCtrlRule = false;
 
 	
 	@Override
@@ -85,6 +85,11 @@ public class DevCtrl_M extends MNModule
 	public Role getRole()
 	{
 		return this.role ;
+	}
+	
+	public boolean isSupportCtrlRule()
+	{
+		return this.supportCtrlRule ;
 	}
 	
 	public List<DevCtrlDevItem_NS> listRelatedDevItem()

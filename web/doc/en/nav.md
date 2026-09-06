@@ -140,6 +140,7 @@
 ##### <a href="doc/hmi/hmi_comp.md" target="main">&nbsp;&nbsp;&nbsp;9.5 HMI Components</a>
 ##### <a href="doc/hmi/hmi_data_show.md" target="main">&nbsp;&nbsp;&nbsp;9.6 HMI Client's data list</a>
 ##### <a href="doc/hmi/hmi_s4tss_rec.md" target="main">&nbsp;&nbsp;&nbsp;9.7 Recorded data shower</a>
+##### <a href="doc/hmi/portal_nav.md" target="main">&nbsp;&nbsp;&nbsp;9.8 Application Portal</a>
 
 #### <a href="doc/auth/index.md" >10 Users and Roles</a>
 ##### <a href="doc/auth/hmi_w_auth.md" >10.1 HMI write operation (issue the command) authorization</a>

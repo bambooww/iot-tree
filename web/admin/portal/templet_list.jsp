@@ -72,7 +72,7 @@
 <div style="position:absolute ;right:0px;width:100%">
 <table id="item_list"  lay-filter="item_list"  lay-even="true" class="layui-table" style="top:1px;width:99%;">
 <%
-	List<Templet> temps = PortalManager.getInstance().listTempletsAll() ;
+	List<Templet> temps = TempletCat.listTempletsAll() ;
 	for(Templet temp:temps)
 	{
 		String uid = temp.getUID() ;

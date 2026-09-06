@@ -22,6 +22,7 @@
 %>
 <script>
 var ___page_uid___ = "<%=page_uid%>" ;
+var prjid = "<%=prjid%>" ;
 
 function __on_blk_set__(op,blkn,pblk_tp,pblk_tpt)
 {

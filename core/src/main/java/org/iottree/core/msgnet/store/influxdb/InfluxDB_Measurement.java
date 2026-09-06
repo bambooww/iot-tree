@@ -195,7 +195,6 @@ public class InfluxDB_Measurement extends MNNodeRes
 		}
 	}
 	
-	
 	//
 	@outer_api(name="que_val_last",out_sample="100.0")
 	public Object queValLast(@outer_api_pm(name="fieldn") String fieldn)

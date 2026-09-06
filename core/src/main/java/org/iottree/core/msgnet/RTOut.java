@@ -27,8 +27,6 @@ public class RTOut
 		return this.outAllMsg!=null ;
 	}
 	
-	
-	
 	public RTOut asIdxMsg(int idx,MNMsg m)
 	{
 		this.outIdx2Msg.put(idx, m) ;

@@ -5,7 +5,7 @@
 	if(!Convert.checkReqEmpty(request, out, "uid"))
 		return ;
 	String uid = request.getParameter("uid") ;
-	Templet temp = PortalManager.getInstance().getTempletByUID(uid) ;
+	Templet temp = TempletCat.getTempletByUID(uid) ;
 	if(temp==null)
 	{
 		out.print("no temp found") ;

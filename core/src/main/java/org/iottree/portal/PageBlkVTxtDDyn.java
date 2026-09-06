@@ -34,7 +34,7 @@ public class PageBlkVTxtDDyn extends PageBlk
 	@Override
 	public String getTPT()
 	{
-		return "显示静态数据动态";
+		return "显示静态,数据动态";
 	}
 	
 	public String getVTxt()

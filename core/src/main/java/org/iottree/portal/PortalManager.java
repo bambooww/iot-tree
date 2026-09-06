@@ -276,6 +276,24 @@ public class PortalManager
 		return pc;
 	}
 	
+	public synchronized PageCat delPageCat(String name,StringBuilder failedr) throws Exception
+	{
+		PageCat pc = getPageCat(name);
+		if (pc == null)
+		{
+			failedr.append("PageCat not existed with name=" + name);
+			return null;
+		}
+		File dirf = new File(getDir(), "./" + name + "/");
+		if(!dirf.exists())
+		{
+			return null ;
+		}
+		Convert.deleteDir(dirf) ;	
+		pageCats.remove(name);
+		return pc ;
+	}
+	
 	public Page getPage(String cat_name,String page_id)
 	{
 		PageCat pc = this.getPageCat(cat_name) ;

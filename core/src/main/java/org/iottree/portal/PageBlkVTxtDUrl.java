@@ -30,7 +30,7 @@ public class PageBlkVTxtDUrl extends PageBlk
 	@Override
 	public String getTPT()
 	{
-		return "显示静态URL动态";
+		return "显示静态,URL动态";
 	}
 	
 	public String getVTxt()

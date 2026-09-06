@@ -64,6 +64,22 @@
 		else
 			out.print("add page cat failed:"+failedr.toString()) ;
 		return ;
+	case "edit_page_cat":
+		if(!Convert.checkReqEmpty(request, out, "name","title"))
+			return ;
+		if(pm.editPageCat(n, t, failedr)!=null)
+			out.print("succ") ;
+		else
+			out.print("edit page cat failed:"+failedr.toString()) ;
+		return ;
+	case "del_page_cat":
+		if(!Convert.checkReqEmpty(request, out, "name"))
+			return ;
+		if(pm.delPageCat(n, failedr)!=null)
+			out.print("succ") ;
+		else
+			out.print("del page cat failed:"+failedr.toString()) ;
+		return ;
 	case "list_pages":
 		//if(!Convert.checkReqEmpty(request, out, "cat"))
 		//	return ;

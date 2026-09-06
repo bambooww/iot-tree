@@ -1,6 +1,5 @@
 package org.iottree.ext.ai;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public abstract class LLMResp

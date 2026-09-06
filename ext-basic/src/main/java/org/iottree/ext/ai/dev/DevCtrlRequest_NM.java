@@ -1,17 +1,12 @@
 package org.iottree.ext.ai.dev;
 
-import java.util.List;
-
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
-import org.iottree.ext.ai.LLMMsg;
 import org.iottree.ext.ai.LLMReq;
 import org.iottree.ext.ai.LLMMsg.Role;
-import org.iottree.ext.ai.mn.VLLM_M;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -37,13 +32,13 @@ public class DevCtrlRequest_NM extends MNNodeMid
 	@Override
 	public String getTPTitle()
 	{
-		return "Request";
+		return "AI Chat Request";
 	}
 
 	@Override
 	public String getColor()
 	{
-		return "#af40a0";
+		return "#3989D7";
 	}
 	
 	@Override

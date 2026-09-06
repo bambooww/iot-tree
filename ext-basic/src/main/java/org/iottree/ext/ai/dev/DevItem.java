@@ -1,7 +1,5 @@
 package org.iottree.ext.ai.dev;
 
-import java.util.LinkedHashMap;
-
 import org.iottree.core.util.Convert;
 import org.json.JSONObject;
 

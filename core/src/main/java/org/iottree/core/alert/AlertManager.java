@@ -408,7 +408,7 @@ public class AlertManager  extends JSObMap
 			this.alertHandlers.forEach((id,ah)->{
 				if(!ah.isEnable())
 					return ;
-				ah.RT_initHandler() ;
+				//ah.RT_initHandler() ; // not support
 			});
 		}
 	}

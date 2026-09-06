@@ -141,7 +141,7 @@ function edit_pblk(page_uid,blkn,pblk_tp,pblk_tpt)
 	if(event)
 		event.stopPropagation();
 	console.log(page_uid,blkn,pblk_tp,pblk_tpt);
-	dlg.open(`./page_blk_edit.\${pblk_tp}.jsp?page_uid=\${page_uid}&blkn=\${blkn}`,{title:"编辑区块 - "+pblk_tpt,w:'500px',h:'400px',input:{}},
+	dlg.open(`./page_blk_edit.\${pblk_tp}.jsp?prjid=\${prjid}&page_uid=\${page_uid}&blkn=\${blkn}`,{title:"编辑区块 - "+pblk_tpt,w:'500px',h:'400px',input:{}},
 			['<w:g>ok</w:g>','<w:g>cancel</w:g>'],
 			[
 				function(dlgw)
@@ -177,7 +177,7 @@ function del_pblk(page_uid,blkn)
 		event.stopPropagation();
 	dlg.confirm('删除这个块配置 ['+blkn+'] ?', {btn:["确定","关闭"],title:"删除确认"},function ()
 	{
-		send_ajax("./page_ajax.jsp",{op:"del_pblk",page_uid:page_uid,blkn:blkn},(bsucc,ret)=>{
+		send_ajax("./page_ajax.jsp",{op:"del_pblk",prjid:prjid,page_uid:page_uid,blkn:blkn},(bsucc,ret)=>{
     		if(!bsucc||ret!="succ")
     		{
     			dlg.msg(ret);

@@ -1,6 +1,5 @@
 package org.iottree.ext.ai.dev;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.msgnet.*;
 import org.iottree.core.util.Convert;
-import org.iottree.core.util.temp.TxtTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
