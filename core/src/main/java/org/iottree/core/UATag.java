@@ -120,7 +120,7 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	boolean bLocalAutoSave = false;
 
 	
-	private UAVal.ValTP valTp = null;
+	UAVal.ValTP valTp = null;
 	
 	@data_val(param_name = "vt")
 	private int get_ValTP()
@@ -1091,10 +1091,11 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 	
 	public ValUnit getValUnit()
 	{
-		if(Convert.isNullOrEmpty(this.unit))
-			return null ;
-		
-		return ValUnit.valueOf(this.unit) ;
+		return ValUnit.parseFromStr(this.unit) ;
+//		if(Convert.isNullOrEmpty(this.unit))
+//			return null ;
+//		
+//		return ValUnit.valueOf(this.unit) ;
 	}
 	
 	public boolean delFromParent() throws Exception
@@ -1955,6 +1956,8 @@ public class UATag extends UANode implements IOCDyn //UANode UABox
 		else
 			tp = this.getValTpRaw();
 		
+		if(tp==null)
+			tp = this.getValTpRaw() ;
 		try
 		{
 			Object v = UAVal.transStr2ObjVal(tp, strv);

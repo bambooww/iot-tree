@@ -124,7 +124,7 @@ public class ConnPtTcpAccepted extends ConnPtStream
 	}
 	
 
-	synchronized void disconnect() //throws IOException
+	public synchronized void disconnect() //throws IOException
 	{
 		if (sock == null)
 			return;

@@ -20,6 +20,7 @@ import org.iottree.core.conn.ConnPtMSGNor;
 import org.iottree.core.conn.ConnPtVirtual;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.res.ResDir;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @data_class
@@ -416,6 +417,16 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 		return null ;
 	}
 	
+	public UADev getDevByOuterId(String outer_id)
+	{
+		for(UADev d:devs)
+		{
+			if(outer_id.contentEquals(d.getOuterId()))
+				return d ;
+		}
+		return null ;
+	}
+	
 	@HostAccess.Export
 	public UADev getDevByName(String n)
 	{
@@ -611,6 +622,92 @@ public class UACh extends UANodeOCTagsGCxt implements IOCUnit,IOCDyn,IJoinedNode
 			return true;
 		}
 	}
+	
+	
+	private String calcNextName(String dev_name_prefix)
+	{
+		int max_i = 0 ;
+		List<UANode> ns = this.getSubNodes() ;
+		if(ns==null||ns.size()<=0)
+		{
+			max_i ++ ;
+			return dev_name_prefix+max_i ;
+		}
+		for(UANode nd:ns)
+		{
+			String n = nd.getName() ;
+			if(n.startsWith(dev_name_prefix))
+			{
+				String sufs = n.substring(dev_name_prefix.length()) ;
+				try
+				{
+					int num = Convert.parseToInt32(sufs, -1) ;
+					if(num>max_i)
+						max_i = num ;
+				}
+				catch(Exception ee)
+				{}
+			}
+		}
+		
+		max_i ++ ;
+		return dev_name_prefix+max_i ;
+	}
+	/**
+	 * for outer or ch driver find device,then using this func to support syn dev node (include sub tags)
+	 * 
+	 * @param outer_id outer_id outer unique id in channel
+	 * @param dev_name_prefix auto create new dev node name prefix
+	 * @param dev_title 
+	 * @param tags [{name:"",title:"",val_tp:"",write:true,addr:"",unit:"",}]
+	 * @return
+	 */
+	public void synOuterDevByJO(String outer_id,String dev_name_prefix,
+			String dev_title,JSONArray tags_jarr,boolean bsave) throws Exception
+	{
+		UADev d = (UADev)this.getSubNodeByOuterId(outer_id) ;
+		boolean bdirty = false ;
+		if(d==null)
+		{
+			String dev_name = calcNextName(dev_name_prefix) ;
+			d = new UADev();
+			d.setIdIId(this.getNextIdByRoot());
+			d.setOuterId(outer_id);
+			d.setNameTitle(dev_name, dev_title, "");
+			d.setDevRef(null,null);
+			
+			devs.add(d);
+			constructNodeTree(); //make sure add tags succ
+			bdirty = true ;
+		}
+		else
+		{
+			if(d.setNameTitle(null,dev_title,""))
+			{
+				bdirty = true ;
+			}
+		}
+		
+		//tags
+		if(tags_jarr!=null)
+		{
+			int n = tags_jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject tagjo = tags_jarr.getJSONObject(i) ;
+				if(d.synTagByJO_MEM(tagjo))
+					bdirty = true ;
+			}
+		}
+		
+		if(bdirty)
+		{
+			constructNodeTree();
+			if(bsave)
+				this.getBelongTo().save();
+		}
+	}
+	
 	
 //	protected void listTagsAll(List<UATag> tgs,boolean bmid)
 //	{

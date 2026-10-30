@@ -158,14 +158,12 @@ public class SimCPTcp extends SimCP
 	@Override
 	public String toConfigStr()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean fromConfig(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

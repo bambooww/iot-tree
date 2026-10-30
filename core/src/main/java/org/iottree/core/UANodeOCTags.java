@@ -269,7 +269,7 @@ public abstract class UANodeOCTags extends UANodeOC
 			if(ddable!=null)
 			{
 				DevDriver dd = ddable.getRelatedDrv() ;
-				if(dd!=null)
+				if(dd!=null && !dd.ignoreParseAddr())
 				{
 					StringBuilder failedr = new StringBuilder() ;
 					DevAddr p_addr = dd.getSupportAddr().parseAddr(dev, addr, vt, failedr) ;
@@ -281,8 +281,12 @@ public abstract class UANodeOCTags extends UANodeOC
 							canw = false;
 						
 						addr = p_addr.getAddr();//.toString() ;
-						if(vt!=p_addr.getValTP())
-							vt = p_addr.getValTP() ;
+						UAVal.ValTP p_vt = p_addr.getValTP() ;
+						if(p_vt!=null)
+						{
+							if(vt!=p_vt)
+								vt = p_vt ;
+						}
 					}
 					else
 					{
@@ -581,6 +585,11 @@ public abstract class UANodeOCTags extends UANodeOC
 	
 	public UATag addTag(String name,String title,String desc,UAVal.ValTP vt,boolean canwrite,boolean bsave) throws Exception
 	{
+		return addTag(name,title,desc,null,vt,canwrite,null,bsave);
+	}
+	
+	public UATag addTag(String name,String title,String desc,String addr,UAVal.ValTP vt,boolean canwrite,String unit,boolean bsave) throws Exception
+	{
 		UAUtil.assertUAName(name);
 		UANode tmpn = getSubNodeByName(name);
 		// UATagG tgg = this.getSubTagGByName(name) ;
@@ -595,6 +604,8 @@ public abstract class UANodeOCTags extends UANodeOC
 		//d.id = this.getNextIdByRoot();
 		d.setIdIId(this.getNextIdByRoot()) ;
 		d.bCanWrite = canwrite;
+		d.asUnit(unit) ;
+		d.addr = addr ;
 		tags.add(d);
 		constructNodeTree();
 		this.bDirty = true ;
@@ -640,6 +651,61 @@ public abstract class UANodeOCTags extends UANodeOC
 			return true;
 		}
 		return false;
+	}
+	
+
+	/**
+	 * syn tag based on tag name
+	 * @param tagjo  {name:"",title:"",val_tp:"",write:true,addr:"",unit:"",}
+	 * @return
+	 * @throws Exception 
+	 */
+	boolean synTagByJO_MEM(JSONObject tagjo) throws Exception
+	{
+		String name = tagjo.optString("name") ;
+		if(Convert.isNullOrEmpty(name))
+			return false;
+		String title = tagjo.optString("title",name) ;
+		String desc = tagjo.optString("desc","") ;
+		String val_tp = tagjo.optString("val_tp") ;
+		UAVal.ValTP vt = UAVal.getValTp(val_tp) ;
+		
+		boolean w = tagjo.optBoolean("write",false) ;
+		String addr = tagjo.optString("addr") ;
+		String unit = tagjo.optString("unit") ;
+		
+		UATag tag = this.getTagByName(name) ;
+		if(tag==null)
+		{
+			UATag newtag = addTag(name,title,desc,addr,vt,w,unit,false) ;
+			return newtag!=null ;
+		}
+		
+		//update
+		boolean bchg = false;
+		if(tag.setNameTitle(null, title, desc))
+			bchg = true ;
+		if(vt!=null && vt!=tag.getValTp())
+		{
+			tag.valTp = vt ;
+			bchg = true ;
+		}
+		if(w!=tag.bCanWrite)
+		{
+			tag.bCanWrite = w ;
+			bchg = true ;
+		}
+		if(Convert.isNotNullEmpty(addr) && !addr.equals(tag.getAddress()))
+		{
+			tag.addr = addr ;
+			bchg = true ;
+		}
+		if(Convert.isNotNullEmpty(unit) && !unit.equals(tag.getUnit()))
+		{
+			tag.unit = unit ;
+			bchg = true ;
+		}
+		return bchg ;
 	}
 
 	/**
@@ -793,6 +859,21 @@ public abstract class UANodeOCTags extends UANodeOC
 		for(UATag tt:tts)
 		{
 			if(vu==tt.getValUnit())
+				rets.add(tt) ;
+		}
+		return rets ;
+	}
+	
+	public List<UATag> filterTagsAllByAddr(String addr)
+	{
+		if(Convert.isNullOrEmpty(addr))
+			return null ;
+		ArrayList<UATag> tts = new ArrayList<>();
+		listTagsAll(tts, true, false,false);
+		ArrayList<UATag> rets = new ArrayList<>();
+		for(UATag tt:tts)
+		{
+			if(addr.equals(tt.getAddress()))
 				rets.add(tt) ;
 		}
 		return rets ;

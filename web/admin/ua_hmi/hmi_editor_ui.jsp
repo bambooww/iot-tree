@@ -936,7 +936,6 @@ $('#btn_prop_showhidden').click(function(){
 	}
 });
 
-
 </script>
 </body>
 </html>

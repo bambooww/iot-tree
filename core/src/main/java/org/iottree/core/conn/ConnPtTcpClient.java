@@ -282,7 +282,7 @@ public class ConnPtTcpClient extends ConnPtStream
 		}
 	}
 
-	void disconnect() // throws IOException
+	public void disconnect() // throws IOException
 	{
 		if (sock == null)
 			return;

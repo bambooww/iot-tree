@@ -204,6 +204,9 @@
 		{"cn":"org.iottree.ext.ai.mn.VLLM_M","nodes":[
 				"org.iottree.ext.ai.mn.VLLMChat_NM"
 		]},
+		{"cn":"org.iottree.ext.ai.mn.LLMOnline_M","nodes":[
+				"org.iottree.ext.ai.mn.LLMOnlineChat_NM"
+		]},
 		{"cn":"org.iottree.ext.ai.mn.LLMTooling_M","nodes":[
 				"org.iottree.ext.ai.mn.LLMToolFunc_RES"
 		]},
@@ -213,7 +216,8 @@
 		{"cn":"org.iottree.ext.ai.dev.DevCtrl_M","nodes":[
 				"org.iottree.ext.ai.dev.DevCtrlDevItem_NS",
 				"org.iottree.ext.ai.dev.DevCtrlRequest_NM",
-				"org.iottree.ext.ai.dev.DevCtrlRespHandle_NM"
+				"org.iottree.ext.ai.dev.DevCtrlRespHandle_NM",
+				"org.iottree.ext.ai.dev.DevCtrlTagsWriter_NM"
 		]}
 	]},
 	

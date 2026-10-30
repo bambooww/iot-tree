@@ -4,6 +4,7 @@ import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.util.Convert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -154,7 +155,23 @@ public class DevCtrlRespHandle_NM extends MNNodeMid
 		}
 		else if(jo!=null)
 		{
-			setDevItem(jo) ;
+			if(Convert.isNotNullEmpty(jo.optString("cmd")))
+			{
+				JSONArray devices = jo.optJSONArray("devices") ;
+				if(devices!=null&&devices.length()>0)
+				{
+					int n = devices.length() ;
+					for(int i = 0 ; i < n ; i ++)
+					{
+						JSONObject tmpjo = devices.getJSONObject(i) ;
+						setDevItem(tmpjo) ;
+					}
+				}
+			}
+			else
+			{
+				setDevItem(jo) ;
+			}
 		}
 		
 		return null ;

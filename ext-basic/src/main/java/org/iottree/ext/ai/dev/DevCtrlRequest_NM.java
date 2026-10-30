@@ -104,7 +104,6 @@ public class DevCtrlRequest_NM extends MNNodeMid
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
-		
 		String pldstr = msg.getPayloadStr() ;
 		if(Convert.isNullOrEmpty(pldstr))
 			return null;

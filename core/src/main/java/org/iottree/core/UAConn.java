@@ -73,35 +73,30 @@ public class UAConn extends UANode
 	@Override
 	public JSONObject OC_getPropsJSON()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void OC_setPropsJSON(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public List<UANode> getSubNodes()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected boolean chkValid()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	protected void onPropNodeValueChged()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 }

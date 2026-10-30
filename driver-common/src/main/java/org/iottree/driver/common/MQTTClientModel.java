@@ -39,21 +39,18 @@ public class MQTTClientModel //extends DevModel
 //	@Override
 //	protected void RT_runInLoop()
 //	{
-//		// TODO Auto-generated method stub
 //		
 //	}
 //
 //	@Override
 //	protected void RT_endModel()
 //	{
-//		// TODO Auto-generated method stub
 //		
 //	}
 //
 //	@Override
 //	public boolean RT_writeVal(DevAddr da, Object v)
 //	{
-//		// TODO Auto-generated method stub
 //		return false;
 //	}
 

@@ -1,5 +1,6 @@
 package org.iottree.core.basic;
 
+import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 
 public enum ValUnit
@@ -47,5 +48,21 @@ public enum ValUnit
 	public String getUnit()
 	{
 		return lan.gn("vu_" + this.name()).getAttr("unit");
+	}
+	
+	public static ValUnit parseFromStr(String ss)
+	{
+		if(Convert.isNullOrEmpty(ss))
+			return null ;
+		ss = ss.toLowerCase() ;
+		for(ValUnit vu:ValUnit.values())
+		{
+			if(ss.equals(vu.name().toLowerCase()))
+				return vu ;
+			
+			if(ss.equalsIgnoreCase(vu.getUnit()))
+				return vu ;
+		}
+		return null ;
 	}
 }

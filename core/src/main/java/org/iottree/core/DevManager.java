@@ -3,6 +3,7 @@ package org.iottree.core;
 import java.io.*;
 import java.util.*;
 
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
@@ -72,11 +73,30 @@ public class DevManager // implements IResCxt
 	
 	private void loadDrivers() throws Exception
 	{
-		File f = new File(getDevDrvBase(),"drivers.json");
-		if(!f.exists())
-			return ;
-		String txt = Convert.readFileTxt(f, "UTF-8") ;
-		JSONArray jarr = new JSONArray(txt) ;
+		try(InputStream inps = DevManager.class.getResourceAsStream("/org/iottree/core/drivers.json"))
+		{
+			if(inps==null)
+				return ;
+			
+			byte[] buf = Convert.readStreamBuffer(inps) ;
+			String txt = new String(buf,"UTF-8") ;
+			JSONArray jarr = new JSONArray(txt) ;
+			loadDrivers(jarr) ;
+		}
+	}
+	
+//	private void loadDrivers() throws Exception
+//	{
+//		File f = new File(getDevDrvBase(),"drivers.json");
+//		if(!f.exists())
+//			return ;
+//		String txt = Convert.readFileTxt(f, "UTF-8") ;
+//		JSONArray jarr = new JSONArray(txt) ;
+//		loadDrivers(jarr) ;
+//	}
+	
+	private void loadDrivers(JSONArray jarr)
+	{
 		int len = jarr.length() ;
 		for(int i = 0 ; i < len ; i ++)
 		{
@@ -118,10 +138,9 @@ public class DevManager // implements IResCxt
 					e.printStackTrace();
 					log.warn("load driver ["+ln+"] failed!") ;
 				}
-				}
+			}
 		}
 	}
-	
 	
 	private File getDevLibDir(String libid)
 	{

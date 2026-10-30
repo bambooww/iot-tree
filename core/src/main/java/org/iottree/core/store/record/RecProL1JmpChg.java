@@ -149,7 +149,6 @@ public class RecProL1JmpChg extends RecProL1  implements ILang
 	@Override
 	public List<RecShower> getSupportedShowers()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

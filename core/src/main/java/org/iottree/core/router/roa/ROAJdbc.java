@@ -54,14 +54,12 @@ public abstract class ROAJdbc extends RouterOuterAdp implements ILang
 	@Override
 	public void RT_stop()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean RT_isRunning()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

@@ -48,21 +48,18 @@ public class IOTTE_ImgBlkOCR_NM extends MNNodeMid
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void setParamJO(JSONObject jo)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -597,8 +597,6 @@ var cxt_menu = {
 	],
 	"ch":[
 		{op_name:"sel_drv",op_title:"<wbt:lang>select_drv</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_ch_sel_drv},
-		
-		
 		{op_name:"new_tagg",op_title:"<wbt:lang>new_tag_group</wbt:lang>",op_icon:"fa fa-tags",op_action:act_new_tagg,op_chk:(tn)=>{
 			return !tn.ref_locked;
 		}},
@@ -1698,6 +1696,13 @@ function add_tab_leftbtm(id,title,content)
 		    id:id,title: title
 		    ,content:content
 		});	
+}
+
+function on_clk_drv(node_p,tt,u)
+{
+	if(event)
+		event.stopPropagation();
+	add_tab("drv_u_"+node_p,tt,`\${u}?path=\${node_p}`) ;
 }
 
 function set_comp_editor_tab(catid,itemid,title)

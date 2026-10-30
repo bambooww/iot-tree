@@ -7,6 +7,7 @@ import org.iottree.core.DevAddr.ChkRes;
 import org.iottree.core.DevAddr.IAddrDef;
 import org.iottree.core.UAVal.ValTP;
 import org.iottree.core.basic.*;
+import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.cxt.JSObMap;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.util.logger.ILogger;
@@ -285,6 +286,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 */
 	public abstract boolean supportDevFinder();
 	
+	
 	/**
 	 * @see supportDevFinder return true,this func may be override to update devices under ch
 	 * @return
@@ -295,6 +297,10 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 		return false;
 	}
 
+	public String getDriverMgrUrl()
+	{
+		return null;
+	}
 	// ----
 	// prop definitions that driver must provide.
 	// 1) DevDef will use it to edit DevDef.
@@ -331,6 +337,10 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	 */
 	public abstract DevAddr getSupportAddr();
 
+	public boolean ignoreParseAddr()
+	{
+		return false;
+	}
 	/**
 	 * not null will has owner addr help page
 	 * @return
@@ -505,6 +515,11 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	{
 		return;
 	}
+	
+	protected void RT_beforeDriverRunLoop() throws Exception
+	{
+		return;
+	}
 
 	synchronized final boolean RT_start(StringBuilder failedr) throws Exception
 	{
@@ -578,7 +593,8 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 				StringBuilder failedr = new StringBuilder();
 				log.info(" driver [" + DevDriver.this.getName() + " @ " + DevDriver.this.getBelongToCh().getName()
 						+ "] started");
-
+				
+				RT_beforeDriverRunLoop();
 				
 				UACh ch = getBelongToCh();
 				ConnPt cpt = null;
@@ -629,6 +645,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 					}
 					catch ( ConnException e)
 					{// ConnException will not stop driver
+						e.printStackTrace();
 						if(cpt instanceof Closeable)
 						{
 							try
@@ -643,9 +660,8 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 			catch (Exception e)
 			{
 				if(log.isWarnEnabled())
-					log.warn(e.getMessage());
-				if(log.isDebugEnabled())
-					log.debug(e);
+					log.warn(e.getMessage(),e);
+				//e.printStackTrace();
 			}
 			finally
 			{
@@ -791,6 +807,7 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	{
 		return false;
 	}
+	
 	/**
 	 * if driver RT_initDriver or RT_runInLoop failed,or to be stopped this
 	 * method will be called.
@@ -858,5 +875,15 @@ public abstract class DevDriver extends JSObMap implements IPropChecker
 	public JSONObject RT_getRunInfo()
 	{
 		return null ;
+	}
+	
+	public static void sleep(int ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}
+		catch(Exception ee)
+		{}
 	}
 }

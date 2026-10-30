@@ -3,7 +3,6 @@ package org.iottree.core.conn;
 import org.iottree.core.ConnPt;
 
 /**
- * TODO
  * 
  * 特殊的接入。用来对接两个Stream接入，形成中间监视节点
  * 
@@ -38,21 +37,18 @@ public class ConnPtLinkPair extends ConnPt
 	@Override
 	public void RT_checkConn()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean isConnReady()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public String getConnErrInfo()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

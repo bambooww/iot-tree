@@ -58,7 +58,6 @@ public class ASHCommon implements ConnProTcpServer.AcceptedSockHandler
 	@Override
 	public int getRecvEndTimeout()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

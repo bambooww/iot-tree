@@ -16,7 +16,6 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public boolean checkPropValue(String groupn, String itemn, String strv, StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -61,14 +60,12 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public List<PropGroup> getPropGroupsForCh(UACh ch)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -87,7 +84,6 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	protected void RT_onConnInvalid(ConnPt cp,UACh ch,UADev dev)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -100,14 +96,12 @@ public class JsonJSDrv  extends DevDriver
 	@Override
 	public boolean RT_writeVal(UACh ch,UADev dev,UATag tag, DevAddr da, Object v)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean RT_writeVals(UACh ch,UADev dev,UATag[] tags, DevAddr[] da, Object[] v)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

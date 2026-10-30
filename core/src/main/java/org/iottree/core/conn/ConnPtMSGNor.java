@@ -1198,13 +1198,11 @@ public abstract class ConnPtMSGNor  extends ConnPtDevFinder
 	@Override
 	public void writeBindBeSelectedTreeJson(Writer w, boolean list_tags_only, boolean force_refresh) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void RT_writeValByBind(String tagpath, String strv)
 	{
-		// TODO
 	}
 
 }

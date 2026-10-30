@@ -1,0 +1,433 @@
+package org.iottree.ext.ai.mn;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.iottree.core.ai.AIApiKey;
+import org.iottree.core.msgnet.MNConn;
+import org.iottree.core.msgnet.MNMsg;
+import org.iottree.core.msgnet.MNNodeMid;
+import org.iottree.core.msgnet.MNNodeResCaller;
+import org.iottree.core.msgnet.RTOut;
+import org.iottree.core.msgnet.ResCaller;
+import org.iottree.core.msgnet.MNNode.OutResDef;
+import org.iottree.core.util.Convert;
+import org.iottree.ext.ai.LLMMsg;
+import org.iottree.ext.ai.LLMReq;
+import org.iottree.ext.ai.LLMRespOllama;
+import org.iottree.ext.ai.LLMRespOpenAI;
+import org.iottree.ext.ai.LLMToolFunc;
+import org.iottree.ext.ai.LLMMsg.Role;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class LLMOnlineChat_NM extends MNNodeMid
+{
+	String modelName = null;//"qwen3:4b";
+	
+	long connTO = 3000 ; //ms
+	long readTO = 180000 ; //ms
+	
+	/**
+	 * set fixed system message
+	 */
+	String systemMsg = null ;
+	
+	String lastUserMsg =null ;
+	
+	String lastAssistantMsg = null ;
+	
+	@Override
+	public String getTP()
+	{
+		return "llm_online_chat";
+	}
+
+	@Override
+	public String getTPTitle()
+	{
+		return "Online Chat";
+	}
+
+	@Override
+	public String getColor()
+	{
+		return "#a349a4";
+	}
+	
+	@Override
+	public String getTitleColor()
+	{
+		return "#eeeeee";
+	}
+
+	@Override
+	public String getIcon()
+	{
+		return "PK_openai";
+	}
+	
+	@Override
+	public int getOutNum()
+	{
+		return 4;
+	}
+	
+
+	private static HashMap<Integer,OutResDef> OUT2RES =new HashMap<>() ;
+	static
+	{
+		OUT2RES.put(3,new OutResDef(LLMToolFunc_RES.class,false)) ;
+	}
+	
+	@Override
+	public Map<Integer,OutResDef> getOut2Res()
+	{
+		return OUT2RES ;
+	}
+	
+	
+	public List<MNNodeResCaller> listToolFuncCallers()
+	{
+		return this.findSubsequentNodes(MNNodeResCaller.class) ;
+	}
+
+	public MNNodeResCaller getToolFuncNode(String call_name)
+	{
+		List<MNNodeResCaller> tfs = listToolFuncCallers() ;
+		if(tfs==null)
+			return null ;
+		for(MNNodeResCaller tf:tfs)
+		{
+			if(call_name.equals(tf.getCallerName()))
+				return tf ;
+		}
+		return null ;
+	}
+
+	public String getModelName()
+	{
+		if(this.modelName==null)
+			return "" ;
+		return this.modelName ;
+	}
+	
+	public String getSystemMsg()
+	{
+		if(this.systemMsg==null)
+			return "" ;
+		return this.systemMsg ;
+	}
+	
+	public String getLastUserMsg()
+	{
+		if(this.lastUserMsg==null)
+			return "" ;
+		return this.lastUserMsg ;
+	}
+	
+	public String getLastAssistantMsg()
+	{
+		if(this.lastAssistantMsg==null)
+			return "" ;
+		return this.lastAssistantMsg ;
+	}
+
+	@Override
+	public boolean isParamReady(StringBuilder failedr)
+	{
+//		if(Convert.isNullOrEmpty(this.ollamaHost) || this.ollamaPort<=0)
+//		{
+//			failedr.append("no valid ollama host:port set") ;
+//			return false ;
+//		}
+		if(Convert.isNullOrEmpty(modelName))
+		{
+			failedr.append("no model name set") ;
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public JSONObject getParamJO()
+	{
+		JSONObject jo = new JSONObject() ;
+		jo.putOpt("model_name",this.modelName) ;
+		jo.putOpt("sys_msg",this.systemMsg) ;
+		jo.putOpt("last_user_msg",this.lastUserMsg) ;
+		jo.putOpt("last_assistant_msg",this.lastAssistantMsg) ;
+		return jo;
+	}
+
+	@Override
+	protected void setParamJO(JSONObject jo)
+	{
+		this.modelName = jo.optString("model_name") ;
+		this.systemMsg = jo.optString("sys_msg") ;
+		this.lastUserMsg = jo.optString("last_user_msg") ;
+		this.lastAssistantMsg = jo.optString("last_assistant_msg") ;
+		
+		synchronized(this)
+		{
+			httpClient = null ;
+		}
+	}
+	
+	@Override
+	public String getPmTitle()
+	{
+		return this.modelName ;
+	}
+	
+	private transient OkHttpClient httpClient = null ; 
+			
+	private synchronized OkHttpClient getHttpClient()
+	{
+		if(httpClient!=null)
+			return httpClient ;
+		
+		return httpClient = new OkHttpClient.Builder()
+				//.callTimeout(Duration.ofMinutes(3))
+				.connectTimeout(Duration.ofSeconds(connTO))
+				.readTimeout(Duration.ofMillis(readTO))
+				.build() ;
+	}
+	
+//	
+//	
+//	@Override
+//	protected void RT_onAfterNetStop()
+//	{
+//		
+//	}
+	
+	private LLMReq RT_getOrCreateReq(MNMsg msg)
+	{
+		
+		LLMReq req = null;
+				
+		Object pld = msg.getPayload() ;
+		if(pld!=null&&!"".equals(pld))
+		{
+			req = new LLMReq() ;
+			if(Convert.isNotNullEmpty(this.systemMsg))
+				req.addMessage(Role.system, systemMsg) ;
+			if(Convert.isNotNullEmpty(lastUserMsg) && Convert.isNotNullEmpty(this.lastAssistantMsg))
+			{
+				req.addMessageUser(lastUserMsg) ;
+				req.addMessageAssistsnt(this.lastAssistantMsg) ;
+			}
+			
+			if(pld instanceof String)
+			{
+				String pldstr = (String)pld ;
+				req.addMessageUser(pldstr) ; //default user message
+			}
+			else if(pld instanceof JSONObject)
+			{
+				LLMMsg mmm = LLMMsg.transFromJO((JSONObject)pld) ;
+				if(mmm==null)
+					return null ;
+				req.addMessage(mmm) ;
+			}
+			else if(pld instanceof JSONArray)
+			{
+				List<LLMMsg> mms = LLMMsg.transFromJArr((JSONArray)pld) ;
+				req.addMessages(mms) ;
+			}
+			else
+			{
+				return null ;
+			}
+		}
+		
+		if(req==null)
+		{
+			Object extob = msg.getExtObj() ;
+			if(extob!=null && extob instanceof LLMReq)
+				req = (LLMReq)extob;
+		}
+		
+		
+		if(req==null)
+			return null ;
+		
+		
+		req.asModel(this.modelName) ;
+		
+		return req;
+	}
+
+	@Override
+	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
+	{
+		if(Convert.isNullOrEmpty(this.modelName))
+			return null ;
+		
+		LLMReq req  = RT_getOrCreateReq(msg) ;
+		if(req==null)
+			return null ;
+		
+		List<MNNodeResCaller> tfs = this.listToolFuncCallers();
+		if(tfs!=null&&tfs.size()>0)
+		{
+			for(MNNodeResCaller tf : tfs)
+			{
+				ResCaller rc = tf.getResCaller() ;
+				if(rc==null)
+					continue ;
+				
+				LLMToolFunc llmtf = LLMToolFunc.parseFromResCaller(rc);//.toToolFunc() ;
+				if(llmtf==null)
+					continue;
+				req.addTool(llmtf) ;
+			}
+		}
+		
+		req.asModel(this.modelName) ;
+		
+		
+		JSONObject req_jo = req.toJO() ;
+//		RequestBody req_body = RequestBody.create(
+//				req_jo.toString() //req_str
+//				,MediaType.get("application/json; charset=utf-8")) ;
+		
+		MNMsg req_m = new MNMsg().asPayloadJO(req_jo) ;
+		
+		RTOut rto = RTOut.createOutIdx() ;
+		rto.asIdxMsg(0, req_m) ;
+		
+		String resptxt = this.chat(req_jo.toString()) ;
+		JSONObject tmpjo = new JSONObject(resptxt) ;
+		rto.asIdxMsg(1, new MNMsg().asPayload(tmpjo));
+		
+		LLMRespOpenAI resp = new LLMRespOpenAI();
+//		
+		if(resp.fromJO(tmpjo))
+		{
+			LLMMsg resp_msg = resp.getMessage() ;
+			if(resp_msg!=null)
+			{
+				String content = resp_msg.getContent() ;
+				MNMsg m = new MNMsg().asPayload(content) ;
+				rto.asIdxMsg(2, m) ;
+				//return rto.asIdxMsg(1, m);//.asIdxMsg(1, new MNMsg().asPayload(content));
+				
+				RT_processToolCall(resp_msg) ;
+			}
+		}			
+		
+//		Request request = new Request.Builder()
+//				.url(url).post(req_body)
+//				.build();
+//		try (Response response = this.getHttpClient().newCall(request).execute())
+//		{
+//			if (!response.isSuccessful())
+//				throw new RuntimeException("Unexpected code " + response);
+//			String responseBody = response.body().string();
+//			JSONObject tmpjo = new JSONObject(responseBody) ;
+//			rto.asIdxMsg(1, new MNMsg().asPayload(tmpjo));
+//			LLMRespOllama resp = new LLMRespOllama();
+//			
+//			if(resp.fromJO(tmpjo))
+//			{
+//				LLMMsg resp_msg = resp.getMessage() ;
+//				String content = resp_msg.getContent() ;
+//				MNMsg m = new MNMsg().asPayload(content) ;
+//				rto.asIdxMsg(2, m) ;
+//				//return rto.asIdxMsg(1, m);//.asIdxMsg(1, new MNMsg().asPayload(content));
+//				
+//				RT_processToolCall(resp_msg) ;
+//			}			
+//		}
+		return rto ;
+	}
+	
+	private OkHttpClient client;
+	private ObjectMapper mapper;
+	
+	private OkHttpClient getClient()
+	{
+		//if(client!=null)
+		//	return client ;
+		return this.client = new OkHttpClient.Builder()
+				.connectTimeout(30, TimeUnit.SECONDS) // Connection timeout
+				.readTimeout(60, TimeUnit.SECONDS) // Read timeout
+				.writeTimeout(60, TimeUnit.SECONDS) // Write timeout
+				.callTimeout(120, TimeUnit.SECONDS) // Total call timeout
+				.build();// .Builder().build();
+	}
+
+	private String chat(String prompt) throws Exception
+	{
+		LLMOnline_M owner = (LLMOnline_M)this.getOwnRelatedModule() ;
+		AIApiKey aak = owner.getApiKey();
+		if (aak == null)
+			return null;
+		
+		this.mapper = new ObjectMapper();
+
+		String url = aak.getChatUrl();// "https://"+aak.getApiHost() + "/chat/completions";
+		Map<String, Object> requestBody = Map.of("model", this.modelName, "messages",
+				List.of(Map.of("role", "user", "content", prompt)));
+
+		Request request = new Request.Builder()
+				.url(url)
+				.addHeader("Authorization", "Bearer " + aak.getApiKey())
+				.post(RequestBody.create(mapper.writeValueAsString(requestBody), MediaType.get("application/json")))
+				.build();
+
+		try (Response response = getClient().newCall(request).execute())
+		{
+			return response.body().string();
+		}
+	}
+	
+	private void RT_processToolCall(LLMMsg resp_msg) throws Exception
+	{
+		List<LLMMsg.ToolCallFunc> tcfs = resp_msg.getToolCallFunctions() ;
+		if(tcfs!=null)
+		{
+			for(LLMMsg.ToolCallFunc tcf:tcfs)
+			{
+				MNNodeResCaller tf_node = getToolFuncNode(tcf.name) ;
+				if(tf_node==null)
+					continue ;
+				JSONObject call_ret = tf_node.RT_onResCall(tcf.arguments) ;
+			}
+		}
+	}
+
+	@Override
+	public String RT_getOutTitle(int idx)
+	{
+		switch(idx)
+		{
+		case 0: return "request";
+		case 1: return "response";
+		case 2: return "return";
+		case 3: return "Tools" ;
+		default:
+			return null ;
+		}
+	}
+	
+	@Override
+	public boolean getShowOutTitleDefault()
+	{
+		return true;
+	}
+
+}

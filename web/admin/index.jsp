@@ -856,12 +856,19 @@ if("true".equals(request.getParameter("remote_station_all")))
 					
 					<div class="iot-mod iot-text-align-justify">
 					    <div class="mod-head">
-					        <h3><wbt:lang>services</wbt:lang></h3>
+					        <span class="tt">AI Api Key</span>
+					        <span class="op" onclick="add_ai_apikey()"><i class="fa-solid fa-plus fa-lg"></i></span>
 					    </div>
-					    <div class="mod-body fz">
-					       
-					       <a href="javascript:service_setup()"><wbt:lang>setup</wbt:lang></a>
+					    <div class="mod-body fz" id="ai_apikey_list">
 					        
+					    </div>
+					    
+					</div>
+					
+					<div class="iot-mod iot-text-align-justify">
+					    <div class="mod-head">
+					        <span class="tt" title="">services</span>
+						        <span class="op" onclick="service_setup()" title="<wbt:lang>set</wbt:lang>" ><i class="fa-solid fa-pencil fa-lg"></i></span>
 					    </div>
 					</div>
 					<%--
@@ -2218,6 +2225,108 @@ function add_or_edit_pstation(id)
 			]);
 }
 
+function add_ai_apikey()
+{
+	add_or_edit_ai_apikey("") ;
+}
+
+function add_or_edit_ai_apikey(n)
+{
+	if(event)
+		event.stopPropagation();
+	tt = "<wbt:g>add</wbt:g> AI Api Key ";
+	let op = "add_apikey" ;
+	if(n)
+	{
+		tt = "<wbt:g>edit</wbt:g> AI Api Key - "+n;
+		op = "set_apikey" ;
+	}
+	if(!n)
+		n = "" ;
+	dlg.open("./ai/apikey_edit.jsp?n="+n,
+			{title:tt},
+			['<wbt:g>ok</wbt:g>','<wbt:g>cancel</wbt:g>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 if(n)
+						 	ret.n = n ;
+						 send_ajax("./ai/ai_ajax.jsp",{op:op,jstr:JSON.stringify(ret)},(bsucc,ret)=>{
+							 if(!bsucc || ret!="succ")
+							{
+								 dlg.msg(ret);return ;
+							}
+							 dlg.close();
+								update_ai_apikey();
+						 }) ;
+					})
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function del_ai_apikey(n)
+{
+	let ob = $("#apikey_"+n);
+	event.stopPropagation();
+	dlg.confirm('<wbt:g>del,this,</wbt:g> '+ob.attr('t')+' ['+ob.attr('apikey_n')+'] ?', {btn:["<wbt:g>yes</wbt:g>","<wbt:g>cancel</wbt:g>"],title:"<wbt:g>del,confirm</wbt:g>"},function ()
+	{
+		send_ajax("./ai/ai_ajax.jsp",{op:"del_apikey",n:n},(bsucc,ret)=>{
+    		if(!bsucc||ret!="succ")
+    		{
+    			dlg.msg(ret);
+    			return ;
+    		}
+    		update_ai_apikey();
+    	}) ;
+	});
+}
+
+function show_ai_apikey(objs)
+{
+	//console.log(objs);
+	let tmps="" ;
+	for(let ob of objs)
+	{//console.log(ob) ;
+		tmps += `<div id="apikey_\${ob.n}" class="sor_item"  t="\${ob.t||""}" apikey_n="\${ob.n}">
+					<span class="n">[\${ob.n}]</span>
+					<span class="tp">\${ob.t}</span>
+					<span class="oper">
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-normal" onclick="add_or_edit_ai_apikey('\${ob.n}')"><i class="fa fa-pencil"></i></button>
+						<button type="button" style="margin-left:2px;" class="layui-btn layui-btn-xs layui-btn-danger" onclick="del_ai_apikey('\${ob.n}')" title="delete"><i class="fa-regular fa-rectangle-xmark"></i></button>
+					</span>
+					</div>` ;
+	}
+	$("#ai_apikey_list").html(tmps) ;
+}
+
+function update_ai_apikey(cb)
+{
+	send_ajax("./ai/ai_ajax.jsp",{op:"list_apikey"},(bsucc,ret)=>{
+		if(!bsucc||ret.indexOf("[")!=0)
+		{
+			dlg.msg(ret);
+			return;
+		}
+		let objs =null;
+		eval("objs="+ret) ;
+		//console.log(objs);
+		show_ai_apikey(objs)
+		if(cb)
+			cb() ;
+	});
+}
+
+
 function chg_lan(ln)
 {
 	send_ajax("./login/login_ajax.jsp",{op:"set_session_lan",lan:ln},(bsucc,ret)=>{
@@ -2334,6 +2443,7 @@ setInterval(rt_prj_st,3000) ;
 
 rt_prj_st();
 update_station_st();
+update_ai_apikey()
 //update_sors();
 </script>
 

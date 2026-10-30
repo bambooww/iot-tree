@@ -266,14 +266,12 @@ public class UATagG extends UANodeOCTagsGCxt implements IOCUnit
 	@Override
 	public boolean CXT_containsKey(String jsk)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Object CXT_getByKey(String jsk)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

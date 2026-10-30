@@ -13,6 +13,8 @@ import org.iottree.core.util.xmldata.XmlData;
 import org.json.JSONObject;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
 
 import gnu.io.CommPortIdentifier;
 
@@ -30,29 +32,14 @@ public class ConnPtCOM extends ConnPtStream
 	public static int[] PARITY = new int[] { 0, 1, 2 };
 	public static String[] PARITY_TITLE = new String[] { "None", "Odd", "Even" };
 	public static String[] PARITY_NAME = new String[] { "none", "odd", "even" };
+	
+	public final static int FLOWCTL_NONE = 0 ;
+	public final static int FLOWCTL_RTS_CTS = 1 ;
+	public final static int FLOWCTL_DTR_DSR = 2 ;
+	public final static int FLOWCTL_XON_XOFF = 3 ;
 
-	public static int[] FLOWCTL = new int[] { 0, 1, 2, 3, 4 };
-	public static String[] FLOWCTL_TITLE = new String[] { "None", "DTR", "RTS", "RTS DTR", "RTS Always" };
-
-	/*
-	 * r.addPropItem(new
-	 * PropItem("comid","COM ID","Physical port number",PValTP.vt_int,false,null
-	 * ,null,1)); r.addPropItem(new PropItem("baud","Baud rate"
-	 * ,"Select hardware communication speed(unit: bits / second)",PValTP.vt_int
-	 * ,false, new String[]
-	 * {"300","600","1200","2400","4800","9600","19200","28800","38400"}, new
-	 * Object[] {300,600,1200,2400,4800,9600,19200,28800,38400},19200));
-	 * r.addPropItem(new
-	 * PropItem("databits","Data bits","",PValTP.vt_int,false,new String[]
-	 * {"5","6","7","8"},new Object[] {5,6,7,8},8)); r.addPropItem(new
-	 * PropItem("parity","Parity","",PValTP.vt_int,false,new String[]
-	 * {"None","Odd","Even"},new Object[] {0,1,2},0)); r.addPropItem(new
-	 * PropItem("stopbits","Stop bits","",PValTP.vt_int,false,new String[]
-	 * {"1","2"},new Object[] {1,2},1)); r.addPropItem(new
-	 * PropItem("flowctl","Flow control","�豸�������������(������·����)",PValTP.
-	 * vt_int,false, new String[] {"None","DTR","RTS","RTS DTR","RTS Always"},
-	 * new Object[] {0,1,2,3,4},0));
-	 */
+	public static int[] FLOWCTL = new int[] { 0, 1, 2, 3 };
+	public static String[] FLOWCTL_TITLE = new String[] { "None", "RTS-CTS", "DTR-DSR", "XON-XOFF"};
 
 	String comId = "";
 
@@ -65,6 +52,12 @@ public class ConnPtCOM extends ConnPtStream
 	int stopBits = 1; // 1 2
 
 	int flowCtl = 0; // 0=None 1=DTR 2=RTS 3=RTS DTR 4 = RTS Always ;
+	
+	/**
+	 * do RTS or DTR High/Low/Do nothing after connection
+	 */
+	int ctrlRTS =0 ; //-1 clear 0- do nothing 1 -set
+	int ctrlDTR = 0 ; //-1 clear 0- do nothing 1 -set
 
 	InputStream inputS = null;
 
@@ -100,6 +93,8 @@ public class ConnPtCOM extends ConnPtStream
 		xd.setParamValue("parity", parity);
 		xd.setParamValue("stopbits", stopBits);
 		xd.setParamValue("flowctl", flowCtl);
+		xd.setParamValue("ctrl_dtr", this.ctrlDTR);
+		xd.setParamValue("ctrl_rts", this.ctrlRTS);
 		return xd;
 	}
 
@@ -113,6 +108,8 @@ public class ConnPtCOM extends ConnPtStream
 		this.parity = xd.getParamValueInt32("parity", 0);
 		this.stopBits = xd.getParamValueInt32("stopbits", 1);
 		this.flowCtl = xd.getParamValueInt32("flowctl", 0);
+		this.ctrlDTR= xd.getParamValueInt32("ctrl_dtr", 0); // clear
+		this.ctrlRTS= xd.getParamValueInt32("ctrl_rts", 0); //clear
 		return r;
 	}
 
@@ -126,6 +123,9 @@ public class ConnPtCOM extends ConnPtStream
 		this.parity = jo.getInt("parity");
 		this.stopBits = jo.getInt("stopbits");
 		this.flowCtl = jo.getInt("flowctl");
+		
+		this.ctrlDTR = jo.optInt("ctrl_dtr",0);//clear
+		this.ctrlRTS = jo.optInt("ctrl_rts",0); //clear
 	}
 
 	public String getComId()
@@ -157,7 +157,25 @@ public class ConnPtCOM extends ConnPtStream
 	{
 		return flowCtl;
 	}
-
+	
+	/**
+	 * ctrl rts low / high /none after connection
+	 * @return
+	 */
+	public int getCtrlRTSLowHigh()
+	{
+		return this.ctrlRTS;
+	}
+	
+	/**
+	 * ctrl dtr low / high /none after connection
+	 * @return
+	 */
+	public int getCtrlDTRLowHigh()
+	{
+		return this.ctrlDTR;
+	}
+	
 	@Override
 	protected InputStream getInputStreamInner()
 	{
@@ -235,25 +253,68 @@ public class ConnPtCOM extends ConnPtStream
 			case 0:
 				flow_ctl = SerialPort.FLOW_CONTROL_DISABLED;
 				break;
-			case 1:
-				flow_ctl = SerialPort.FLOW_CONTROL_DTR_ENABLED;
+			case 1: // RTS-CTS
+				flow_ctl = SerialPort.FLOW_CONTROL_RTS_ENABLED | SerialPort.FLOW_CONTROL_CTS_ENABLED;
 				break;
-			case 2:
-				flow_ctl = SerialPort.FLOW_CONTROL_RTS_ENABLED;
+			case 2: // DTR-DSR old merdom
+				flow_ctl = SerialPort.FLOW_CONTROL_DTR_ENABLED | SerialPort.FLOW_CONTROL_DSR_ENABLED;
 				break;
-			case 3:
-				flow_ctl = SerialPort.FLOW_CONTROL_RTS_ENABLED;
+			case 3: // XON-XOFF
+				flow_ctl = SerialPort.FLOW_CONTROL_XONXOFF_IN_ENABLED | SerialPort.FLOW_CONTROL_XONXOFF_OUT_ENABLED;
 				break;
 			}
 			serialPort.setFlowControl(flow_ctl);
 
+			//serialPort.setFlowControl(SerialPort.FLOW_CONTROL_DISABLED);
+
+			String osName = System.getProperty("os.name").toLowerCase();
+	        boolean isWindows = osName.contains("win");
+
+	        // add listener to disconnected
+	        serialPort.addDataListener(new SerialPortDataListener() {
+	            @Override
+	            public int getListeningEvents()
+	            {
+	                // only lis disconn event
+	                return SerialPort.LISTENING_EVENT_PORT_DISCONNECTED|SerialPort.LISTENING_EVENT_CARRIER_DETECT ;
+	            }
+
+	            @Override
+	            public void serialEvent(SerialPortEvent event)
+	            {
+	            	int evt = event.getEventType() ;
+	                if (evt == SerialPort.LISTENING_EVENT_PORT_DISCONNECTED ||
+	                		evt == SerialPort.LISTENING_EVENT_CARRIER_DETECT)
+	                {
+	                    // find disconn ,release port
+	                    serialPort.closePort();
+	                    serialPort = null;
+	                }
+	            }
+	        });
+	        
 			// serialPort.enableReceiveTimeout(5000);
 
 			inputS = serialPort.getInputStream();
 			outputS = serialPort.getOutputStream();
+			
 			serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 5000, 5000);
+			
 			if(serialPort.openPort())
 			{
+	            //Thread.sleep(20);
+				if(this.ctrlRTS<0)
+					serialPort.clearRTS();
+				else if(this.ctrlRTS>0)
+					serialPort.setRTS();
+				
+				if(this.ctrlDTR<0)
+					serialPort.clearDTR();
+				else if(this.ctrlDTR>0)
+					serialPort.setDTR() ;
+	            
+	            //System.out.println("clear_rts="+b_clear_rts+" clear_dtr="+b_clear_dtr);
+	            
 				this.fireConnReady();
 				return true;
 			}
@@ -309,7 +370,7 @@ public class ConnPtCOM extends ConnPtStream
 		}
 	}
 
-	synchronized void disconnect() // throws IOException
+	public synchronized void disconnect() // throws IOException
 	{
 		try
 		{

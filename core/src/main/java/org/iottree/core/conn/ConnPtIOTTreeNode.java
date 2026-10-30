@@ -518,7 +518,7 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGNor
 		//TODO 
 	}
 
-	synchronized void disconnect() // throws IOException
+	public synchronized void disconnect() // throws IOException
 	{
 		prjCaller.disconnect();
 	}
@@ -583,7 +583,6 @@ public class ConnPtIOTTreeNode  extends ConnPtMSGNor
 				System.out.println("mqtt msg deliveryComplete=" + mm.getPayload().length);
 			} catch (MqttException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			// .getPayload().length

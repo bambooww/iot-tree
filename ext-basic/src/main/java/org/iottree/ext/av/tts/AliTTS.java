@@ -62,7 +62,6 @@ public class AliTTS
 //			@Override
 //			public void onFail(SpeechSynthesizerResponse resp)
 //			{
-//				// TODO Auto-generated method stub
 //				
 //			}
 //		  };

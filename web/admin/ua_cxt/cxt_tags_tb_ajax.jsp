@@ -190,7 +190,13 @@ for(UANodeOCTags tn:tns)
 		
 		String valtp_str = tag.getValTp().getStr();
 		if(tag.getValTranserObj()!=null)
-	valtp_str = tag.getValTpRaw().getStr()+"-"+valtp_str;
+		{
+			UAVal.ValTP raw_vt = tag.getValTpRaw() ;
+			String raw_vt_str = "" ;
+			if(raw_vt!=null)
+				raw_vt_str = raw_vt.getStr() ;
+			valtp_str = raw_vt_str+"-"+valtp_str;
+		}
 		
 		String trans_tt = "" ;
 		ValTranser val_trans = tag.getValTranserObj() ;

@@ -34,7 +34,7 @@ public class RecProL1MutPts extends RecProL1  implements ILang
 	private static Lan lan = Lan.getLangInPk(RecProL1MutPts.class);
 	
 	/**
-	 * TODO 可能还需要拆分，支持更复杂的应用
+	 * 可能还需要拆分，支持更复杂的应用
 	 * @author jason.zhu
 	 *
 	 */
@@ -249,7 +249,6 @@ public class RecProL1MutPts extends RecProL1  implements ILang
 	@Override
 	public List<RecShower> getSupportedShowers()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

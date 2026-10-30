@@ -410,21 +410,18 @@ public class ConnPtHTTP extends ConnPtMSGNor
 	// @Override
 	// public List<String> getMsgTopics()
 	// {
-	// // TODO Auto-generated method stub
 	// return null;
 	// }
 
 	@Override
 	public boolean sendMsg(String topic, byte[] bs) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void runOnWrite(UATag tag, Object val) throws Exception
 	{
-		// TODO Auto-generated method stub
 
 	}
 

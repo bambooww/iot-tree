@@ -1184,6 +1184,28 @@ public class Convert
 		return ret.toString();
 	}
 
+	public static HashMap<String, String> parseCssParamStr(String css_str)
+	{
+		if (css_str == null)
+			return null;
+		HashMap<String, String> ret = new HashMap<String, String>();
+		List<String> ss = Convert.splitStrWith(css_str, ";") ;
+		for(String s:ss)
+		{
+			String tmps = s.trim() ;
+			if(Convert.isNullOrEmpty(tmps))
+				continue ;
+			int k = tmps.indexOf(':') ;
+			if(k<=0)
+				continue ;
+			String n = tmps.substring(0,k).trim() ;
+			if(Convert.isNullOrEmpty(n))
+				continue ;
+			String v = tmps.substring(k+1).trim();
+			ret.put(n,v) ;
+		}
+		return ret;
+	}
 	
 	public static String transListToMultiLineStr(List<String> ls)
 	{
@@ -1266,11 +1288,15 @@ public class Convert
 	//////////////
 	public static String byteArray2HexStr(byte[] bs)
 	{
+		if(bs==null)
+			return null ;
 		return byteArray2HexStr(bs, 0, bs.length);
 	}
 	
 	public static String byteArray2HexStr(byte[] bs,String delim)
 	{
+		if(bs==null)
+			return null ;
 		return byteArray2HexStr(bs, 0, bs.length,delim);
 	}
 
@@ -1310,7 +1336,7 @@ public class Convert
 		if (hexstr.equals(""))
 			return new byte[0];
 
-		if(hexstr.indexOf(' ')<0)
+		if(hexstr.indexOf(' ')<0 && hexstr.indexOf('-')<0)
 		{
 			int s = hexstr.length() / 2;
 			byte[] ret = new byte[s];
@@ -1321,7 +1347,7 @@ public class Convert
 			return ret;
 		}
 		
-		List<String> ss = Convert.splitStrWith(hexstr, " ") ;
+		List<String> ss = Convert.splitStrWith(hexstr, " -") ;
 		int s = ss.size() ;
 		byte[] ret = new byte[s];
 		for (int i = 0; i < s ; i++)
@@ -1329,6 +1355,34 @@ public class Convert
 			ret[i] = (byte) Short.parseShort(ss.get(i), 16);
 		}
 		return ret;
+	}
+	
+	public static int hexStr2ByteArray(String hexstr,byte[] ret,int offset)
+	{
+		if (hexstr == null)
+			return 0;
+
+		if (hexstr.equals(""))
+			return 0;
+
+		if(hexstr.indexOf(' ')<0)
+		{
+			int s = hexstr.length() / 2;
+			
+			for (int i = 0; i < s; i++)
+			{
+				ret[offset+i] = (byte) Short.parseShort(hexstr.substring(i * 2, i * 2 + 2), 16);
+			}
+			return s;
+		}
+		
+		List<String> ss = Convert.splitStrWith(hexstr, " ") ;
+		int s = ss.size() ;
+		for (int i = 0; i < s ; i++)
+		{
+			ret[offset+i] = (byte) Short.parseShort(ss.get(i), 16);
+		}
+		return s;
 	}
 
 	// public static void sort(List<?> ll)
@@ -1922,6 +1976,19 @@ public class Convert
 		StringTokenizer st = new StringTokenizer(str, delimi);
 		while (st.hasMoreTokens())
 			rets.add(st.nextToken());
+
+		return rets;
+	}
+	
+	public static List<Integer> splitStrAsInts(String str, String delimi)
+	{
+		if (isNullOrEmpty(str))
+			return null;
+
+		ArrayList<Integer> rets = new ArrayList<>();
+		StringTokenizer st = new StringTokenizer(str, delimi);
+		while (st.hasMoreTokens())
+			rets.add(Integer.parseInt(st.nextToken()));
 
 		return rets;
 	}
@@ -2905,6 +2972,263 @@ public class Convert
 		}
 		return rets ;
 	}
+	
+	private static void print_indent(Writer ps,int n,String... ss) throws IOException
+	{
+		for(int i = 0 ;i < n ; i ++)
+			ps.write(" ");
+		for(String s:ss)
+			ps.write(s) ;
+	}
+	
+	
+	public static void printJSON(JSONObject jo)
+	{
+		OutputStreamWriter ps= new OutputStreamWriter(System.out) ;
+		try
+		{
+			printKeyVal(ps,"",null,jo,4,0,null) ;
+			ps.flush();
+		}
+		catch ( IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void printJSON(Writer ps,JSONObject jo,String sub_orderby_key)
+	{
+		try
+		{
+			printKeyVal(ps,"",null,jo,4,0,sub_orderby_key) ;
+		}
+		catch ( IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void printJSON(JSONArray jarr)
+	{
+		OutputStreamWriter ps= new OutputStreamWriter(System.out) ;
+		try
+		{
+			printKeyVal(ps,"",null,jarr,4,0,null) ;
+			ps.flush();
+		}
+		catch ( IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void printJSON(Writer ps,JSONArray jarr,String sub_orderby_key) throws IOException
+	{
+		printKeyVal(ps,"",null,jarr,4,0,sub_orderby_key) ;
+	}
+	
+	private static class SubWrap implements Comparable<SubWrap>
+	{
+		String k;
+		Object v;
+		String order_k ;
+		
+		private Object order_v ;
+		
+		SubWrap(String k,Object v,String order_k)
+		{
+			this.k = k ;
+			this.v = v ;
+			this.order_k = order_k;
+			
+			if(v instanceof JSONObject)
+				this.order_v = ((JSONObject)v).opt(order_k) ;
+			if(this.order_v==null)
+				this.order_v = 0 ;
+		}
+
+		@Override
+		public int compareTo(SubWrap o)
+		{
+			if(order_v instanceof Number && o.order_v instanceof Number)
+			{
+				Number n = ((Number)order_v) ;
+				Number no = ((Number)o.order_v) ;
+				return n.intValue()-no.intValue() ;
+			}
+			return this.order_v.toString().compareTo(o.order_v.toString());
+		}
+	}
+	
+	private static void printKeyVal(Writer ps,String prefix,String key,Object val,int indent,int cur_lvl,String sub_orderby_key) throws IOException
+	{
+		if(val==null)
+			return ;
+		boolean bsimple = checkJSONSimple(val) ;
+		if(bsimple)
+		{
+			String vstr = JSONObject.valueToString(val) ;
+//			if(val instanceof String)
+//				vstr = "\""++"\"" ;
+//			else
+//				vstr = val.toString() ;
+			if(Convert.isNullOrEmpty(key))
+				print_indent(ps,cur_lvl*indent,prefix,vstr) ;
+			else
+				print_indent(ps,cur_lvl*indent,prefix,"\"",key,"\":",vstr) ;
+			return ;
+		}
+		
+		
+		if(val instanceof JSONObject)
+		{
+			JSONObject jo = (JSONObject)val ;
+			
+			if(Convert.isNullOrEmpty(key))
+				print_indent(ps,cur_lvl*indent,prefix,"{\r\n") ;
+			else
+				print_indent(ps,cur_lvl*indent,prefix,key,": {\r\n") ;
+			
+			boolean bfirst = true ;
+			String pre="" ;
+			if(Convert.isNullOrEmpty(sub_orderby_key))
+			{
+				for(String k : jo.keySet())
+				{
+					Object o = jo.get(k) ;
+					
+					if(bfirst)
+						bfirst = false;
+					else
+						pre=",";
+					printKeyVal(ps,pre,k,o,indent,cur_lvl+1,sub_orderby_key) ;
+					ps.write("\r\n");
+				}
+			}
+			else
+			{
+				ArrayList<SubWrap> sws = new ArrayList<>() ;
+				for(String k : jo.keySet())
+				{
+					Object o = jo.get(k) ;
+					sws.add(new SubWrap(k,o,sub_orderby_key)) ;
+				}
+				Collections.sort(sws);
+				for(SubWrap sw:sws)
+				{
+					if(bfirst)
+						bfirst = false;
+					else
+						pre=",";
+					printKeyVal(ps,pre,sw.k,sw.v,indent,cur_lvl+1,sub_orderby_key) ;
+					ps.write("\r\n");
+				}
+			}
+			
+			print_indent(ps,cur_lvl*indent,"}") ;
+			return ;
+		}
+		
+		if(val instanceof JSONArray)
+		{
+			JSONArray jarr = (JSONArray)val ;
+			print_indent(ps,cur_lvl*indent,prefix,key,": [\r\n") ;
+			int n = jarr.length();
+			String pre="" ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				Object o = jarr.get(i) ;
+				if(i>0)
+					pre=",";
+				printKeyVal(ps,pre,null,o,indent,cur_lvl+1,sub_orderby_key) ;
+				ps.write("\r\n");
+			}
+			print_indent(ps,cur_lvl*indent,"]") ;
+			return ;
+		}
+	}
+	
+	private static boolean checkJSONSimple(Object o)
+	{
+		if(o instanceof JSONObject)
+		{
+			JSONObject jo = (JSONObject)o ;
+			for(String k:jo.keySet())
+			{
+				Object tmpo = jo.get(k) ;
+				if(tmpo instanceof JSONObject)
+				{
+					if(((JSONObject)tmpo).length()>0)
+						return false;
+				}
+				if(tmpo instanceof JSONArray)
+				{
+					if(((JSONArray)tmpo).length()>0)
+						return false;
+				}
+			}
+			return true ;
+		}
+		if(o instanceof JSONArray)
+		{
+			JSONArray jarr = (JSONArray)o ;
+			int n = jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				Object tmpo = jarr.get(i) ;
+				if(tmpo instanceof JSONObject)
+				{
+					if(((JSONObject)tmpo).length()>0)
+						return false;
+				}
+				if(tmpo instanceof JSONArray)
+				{
+					if(((JSONArray)tmpo).length()>0)
+						return false;
+				}
+			}
+		}
+		
+		return true ;
+	}
+	
+	
+//	private static void printObjectFmt(PrintStream ps,Object obj,int indent,int cur_lvl,int max_expand_lvl)
+//	{
+//		boolean bexp = cur_lvl<max_expand_lvl ;
+//		if(obj instanceof JSONObject)
+//		{
+//			JSONObject jo = (JSONObject)obj ;
+//			
+//			print_indent(ps,cur_lvl*indent,"{\r\n") ;
+//			for(String k : jo.keySet())
+//			{
+//				Object o = jo.get(k) ;
+//				print_indent(ps,(cur_lvl+1)*indent,k,":") ;
+//				if(!bexp)
+//				{
+//					ps.println(o.toString()) ;
+//					continue ;
+//				}
+//				
+//				// exp
+//				if(o instanceof JSONObject)
+//				{
+//					printObjectFmt(ps,(JSONObject)o,indent, cur_lvl+1,max_expand_lvl) ;
+//				}
+//				else if(o instanceof JSONArray)
+//				{
+//					
+//				}
+//			}
+//			print_indent(ps,cur_lvl*indent,"}\r\n") ;
+//		}
+//		else if(obj instanceof JSONArray)
+//		{
+//			JSONArray jarr = (JSONArray)obj ;
+//			
+//		}
+//	}
 	
 //	public static ArrayList<String> optJOIntList(JSONObject jo,String key)
 //	{

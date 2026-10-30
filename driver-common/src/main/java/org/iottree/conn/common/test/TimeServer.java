@@ -94,7 +94,6 @@ public class TimeServer
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
 		{
-			// TODO Auto-generated method stub
 			//super.exceptionCaught(ctx, cause);
 			
 			System.out.println("unexpected exception="+cause.getMessage());

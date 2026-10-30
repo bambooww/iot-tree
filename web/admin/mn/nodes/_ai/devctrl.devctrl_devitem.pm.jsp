@@ -121,13 +121,13 @@ var pms_jarr = <%=pms_jarr%> ;
 //console.log(pms_jarr) ;
 function on_after_pm_show(form)
 {
-	update_tbs(pms_jarr)
+	update_tbs()
 }
 //<button class="btn_bind write" onclick="set_bind_tag('w',this)" tagp="\${bind_w_tag}">write tag</button>
-function update_tbs(pms)
+function update_tbs()
 {
 	let ss = '' ;
-	for(let pm of pms)
+	for(let pm of pms_jarr)
 	{
 		let lim_inp = "" ;
 		if(pm.type=='range')
@@ -141,7 +141,7 @@ function update_tbs(pms)
 				  <button class="btn" onclick='state_add_item(this)'>&nbsp;+&nbsp;</button>
 				</div>
 				`;
-			for(let alv of pm.allowed_values)
+			for(let alv of pm.allowed_values||[])
 			{
 				lim_inp += `<div class="alv item">
 					  <input class="field val" placeholder="value" value="\${alv.value}">
@@ -162,6 +162,7 @@ function update_tbs(pms)
 				<td>\${lim_inp}</td>
 				<td style="text-align:center" class="value">
 					<button class="btn_bind read" onclick="set_bind_tag('r',this)"  tagp="\${bind_r_tag}">read tag</button>
+					<button class="btn_bind write" onclick="set_bind_tag('w',this)"  tagp="\${bind_w_tag}">write tag</button>
 				</td>
 				<td><button class="del" onclick="del_pm(this)">&nbsp;<i class="fa fa-times"></i>&nbsp;</button></td>
 			</tr>`;
@@ -171,8 +172,59 @@ function update_tbs(pms)
 	update_btn_bind();
 }
 
+
+function calc_input_pms(err_rets)
+{
+	let ret = [] ;
+	let errs = err_rets||[] ;
+	$("#tbd_pms").find("tr").each(function(){
+		let tr = $(this) ;
+		let key = tr.find(".key").val() ;
+		if(!key)
+		{
+			errs.push("Key cannot be null") ; return;
+		}
+		let tt = tr.find(".title").val() ;
+		if(!tt)
+		{
+			errs.push("Title cannot be null") ; return;
+		}
+			
+		let tp = tr.find(".tp").val() ;
+		let pm = {key:key,title:tt,type:tp||'state'}
+		if(tp=='range')
+		{
+			pm.min = tr.find(".min").val()||"";
+			pm.max = tr.find(".max").val()||"";
+		}
+		else if(tp=='state')
+		{
+			let alv = tr.find(".allowed_values") ;
+			let vts = [] ;
+			alv.find(".item").each(function(){
+				let item = $(this) ;
+				let val = item.find(".val").val() || "";
+				let tt = item.find(".tt").val()||"" ;
+				if(val)
+					vts.push({value:val,title:tt}) ;
+			}) ;
+			pm.allowed_values = vts ;
+		}
+		let td_val = tr.find(".value") ;
+		pm.bind_r_tag = td_val.find(".read").attr("tagp")||"";
+		pm.bind_w_tag = td_val.find(".write").attr("tagp")||"";
+		
+		ret.push(pm);
+	});
+	return ret;
+}
+
 function add_pm(tp)
 {
+	pms_jarr = calc_input_pms();
+	pms_jarr.push({type:tp}) ;
+	update_tbs()
+	/*
 	let lim_inp = "" ;
 	if(tp=='range')
 		lim_inp = `min:<input type='number' class='min' style='width:50px;' /> - max:<input type='number' class='max' style='width:50px;' />`;
@@ -206,7 +258,7 @@ function add_pm(tp)
 	
 	$("#tbd_pms").append(ss);
 	form.render();
-	
+	*/
 }
 
 function update_btn_bind()
@@ -269,49 +321,11 @@ function set_bind_tag(rw,btn)
 				]);
 }
 
+
 function read_input_pms()
 {
-	let ret = [] ;
 	let errs = [] ;
-	$("#tbd_pms").find("tr").each(function(){
-		let tr = $(this) ;
-		let key = tr.find(".key").val() ;
-		if(!key)
-		{
-			errs.push("Key cannot be null") ; return;
-		}
-		let tt = tr.find(".title").val() ;
-		if(!tt)
-		{
-			errs.push("Title cannot be null") ; return;
-		}
-			
-		let tp = tr.find(".tp").val() ;
-		let pm = {key:key,title:tt,type:tp||'state'}
-		if(tp=='range')
-		{
-			pm.min = tr.find(".min").val()||"";
-			pm.max = tr.find(".max").val()||"";
-		}
-		else if(tp=='state')
-		{
-			let alv = tr.find(".allowed_values") ;
-			let vts = [] ;
-			alv.find(".item").each(function(){
-				let item = $(this) ;
-				let val = item.find(".val").val() || "";
-				let tt = item.find(".tt").val()||"" ;
-				if(val)
-					vts.push({value:val,title:tt}) ;
-			}) ;
-			pm.allowed_values = vts ;
-		}
-		let td_val = tr.find(".value") ;
-		pm.bind_r_tag = td_val.find(".read").attr("tagp")||"";
-		pm.bind_w_tag = td_val.find(".write").attr("tagp")||"";
-		
-		ret.push(pm);
-	});
+	let ret = calc_input_pms(errs)
 	
 	let keys = [] ;
 	for(let pm of ret)

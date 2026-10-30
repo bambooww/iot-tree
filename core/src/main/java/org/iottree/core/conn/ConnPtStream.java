@@ -3,6 +3,7 @@ package org.iottree.core.conn;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -24,7 +25,11 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 	public static String TP = "stream" ;
 	
 	
-	private MonInputStream monInputS = null ;
+//	private MonInputStream monInputS = null ;
+//	
+//	private MonOutputStream monOutputS = null ;
+	
+	private MonPushbkInputStream monInputS = null ;
 	
 	private MonOutputStream monOutputS = null ;
 
@@ -44,22 +49,22 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		super(cp,name,title,desc);
 	}
 	
-	
-	public final InputStream getInputStream()// throws Exception
+	public final MonPushbkInputStream getInputStream()// throws Exception
 	{
 		InputStream inputs = getInputStreamInnerEnc() ;
 		if(inputs==null)
 			return null ;
 		if(monInputS == null)
 		{
-			monInputS = new MonInputStream(inputs) ;
+			monInputS = new MonPushbkInputStream(new MonInputStream(inputs)) ;
 			return monInputS ;
 		}
 		
-		if(monInputS.getWrapperInputStream()==inputs)
+		if(monInputS.monInputs.getWrapperInputStream()==inputs)
 			return monInputS ;
 		
-		monInputS.setWrapperInputStream(inputs);
+		//monInputS.monInputs.setWrapperInputStream(inputs);
+		monInputS = new MonPushbkInputStream(new MonInputStream(inputs)) ;
 		return monInputS ;
 	}
 	
@@ -68,6 +73,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		OutputStream outputs = getOutputStreamInnerEnc() ;
 		if(outputs==null)
 			return null ;
+		
 		if(monOutputS == null)
 		{
 			monOutputS = new MonOutputStream(outputs) ;
@@ -206,6 +212,17 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		
 		public void setWrapperInputStream(InputStream inputs)
 		{
+			if(this.wrapperInputs!=null)
+			{
+				try
+				{
+					this.wrapperInputs.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
 			this.wrapperInputs = inputs ;
 			//lastHasDataDT = System.currentTimeMillis() ;
 		}
@@ -380,6 +397,18 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		}
 	}
 	
+	public class MonPushbkInputStream extends PushbackInputStream
+	{
+		MonInputStream monInputs ;
+		
+		public MonPushbkInputStream(MonInputStream in)
+		{
+			super(in);
+			monInputs = in ;
+		}
+		
+	}
+	
 	public class MonOutputStream extends OutputStream
 	{
 		OutputStream wrapperOutputs = null ;
@@ -396,6 +425,18 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 		
 		public void setWrapperOutputStream(OutputStream outputs)
 		{
+			if(this.wrapperOutputs!=null)
+			{
+				try
+				{
+					this.wrapperOutputs.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
 			this.wrapperOutputs = outputs ;
 		}
 		
@@ -410,6 +451,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			{
 				ConnPtStream.this.fireConnInvalid();
 				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				this.close() ;
 				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			byte[] bs = new byte[1] ;
@@ -432,6 +474,7 @@ public abstract class ConnPtStream extends ConnPt implements IConnEndPoint
 			{
 				ConnPtStream.this.fireConnInvalid();
 				ConnProvider cp = ConnPtStream.this.getConnProvider() ;
+				this.close() ;
 				throw new ConnException(cp.getName()+"-"+ConnPtStream.this.getName(),e) ; // it will be catched
 			}
 			byte[] bs = new byte[len] ;

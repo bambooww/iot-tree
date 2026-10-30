@@ -515,8 +515,8 @@ public abstract class MNNode extends MNBase
 			for(MNConn conn:conns)
 			{
 				MNNode ton = conn.getToNode() ;
-				if(ton==null)
-					return ;
+				if(ton==null || !ton.isEnable())
+					continue ;
 				ton.RT_onMsgInWithTrans(conn, msg);
 			}
 		}

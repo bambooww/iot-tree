@@ -37,35 +37,30 @@ public class ROAFilesXls extends ROAFiles
 	@Override
 	protected boolean RT_start_ov()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void RT_stop()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean RT_isRunning()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public List<JoinIn> getJoinInList()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<JoinOut> getJoinOutList()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

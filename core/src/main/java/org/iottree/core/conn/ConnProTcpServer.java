@@ -323,7 +323,6 @@ public class ConnProTcpServer extends ConnProvider
 	@Override
 	protected long connpRunInterval()
 	{
-		// TODO Auto-generated method stub
 		return 500;
 	}
 

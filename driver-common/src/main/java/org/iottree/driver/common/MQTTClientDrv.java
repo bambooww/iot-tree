@@ -318,49 +318,42 @@ public class MQTTClientDrv extends DevDriver
 	@Override
 	public boolean supportDevFinder()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevDef()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Class<? extends ConnPt> supportConnPtClass()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<PropGroup> getPropGroupsForDevInCh(UADev d)
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void RT_onConnInvalid(ConnPt cp,UACh ch,UADev dev)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected boolean RT_runInLoop(UACh ch,UADev dev,StringBuilder failedr) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

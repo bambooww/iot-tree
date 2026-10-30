@@ -165,7 +165,6 @@ public class RecProL1StablePts extends RecProL1  implements ILang
 	@Override
 	public List<RecShower> getSupportedShowers()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

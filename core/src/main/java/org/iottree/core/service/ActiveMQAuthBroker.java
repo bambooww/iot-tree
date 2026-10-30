@@ -128,8 +128,9 @@ public class ActiveMQAuthBroker extends AbstractAuthenticationBroker
 			ActiveMQTopic topic = (ActiveMQTopic) dest;
 			topicn = topic.getTopicName();
 		}
-
-		System.out.println("AuthBroker [" + username + "] addProducer	 (" + topicn + ")->" + dest + " " + "\r\n");
+		
+		if(Convert.isNotNullEmpty(topicn))
+			System.out.println("AuthBroker [" + username + "] addProducer	 (" + topicn + ")->" + dest + " " + "\r\n");
 
 		super.addProducer(context, info);
 	}

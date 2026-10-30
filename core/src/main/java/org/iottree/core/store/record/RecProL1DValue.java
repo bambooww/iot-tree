@@ -362,7 +362,6 @@ public class RecProL1DValue extends RecProL1  implements ILang
 	@Override
 	public List<RecShower> getSupportedShowers()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

@@ -57,14 +57,12 @@ public class TxtToJSONCmd extends MNNodeMid
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 

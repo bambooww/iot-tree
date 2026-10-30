@@ -32,21 +32,18 @@ public class SourceIoTDB extends Source
 	@Override
 	public String getExchgTP()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected JSONObject toExchgPmJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected boolean fromExchgPmJO(JSONObject pmjo)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

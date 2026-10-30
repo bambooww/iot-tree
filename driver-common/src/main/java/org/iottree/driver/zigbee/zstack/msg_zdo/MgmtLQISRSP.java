@@ -1,0 +1,69 @@
+package org.iottree.driver.zigbee.zstack.msg_zdo;
+
+import org.iottree.driver.zigbee.zstack.MsgRecv;
+import org.json.JSONObject;
+
+public class MgmtLQISRSP extends MsgRecv
+{
+	public static final int CMD0 = 0x65 ;
+	public static final int CMD1 = 0x31 ;
+	
+	public MgmtLQISRSP()
+	{
+		this.cmd0 = CMD0 ;
+		this.cmd1 = CMD1 ;
+	}
+	
+	@Override
+	public String getTpName()
+	{
+		return "ZDO_MGMT_LQI_REQ";
+	}
+	
+	@Override
+	public int getDataLenMin()
+	{
+		return 1;
+	}
+
+//	@Override
+//	public byte[] getData()
+//	{
+//		return this.data;
+//	}
+//
+//	@Override
+//	protected boolean parseData(byte[] data, StringBuilder failedr)
+//	{
+//		if(data==null||data.length<1)
+//			return false;
+//		this.data = data ;
+//		return true;
+//	}
+	
+	@Override
+	protected boolean checkCmd()
+	{
+		if(this.cmd0!=CMD0)
+			return false;
+		if(this.cmd1!=CMD1)
+			return false;
+		return true ;
+	}
+
+	public boolean getStatus()
+	{//Status is either Success (0) or Failure (1).
+		return this.data[0]==0 ;
+	}
+	
+	public int getStatusVal()
+	{
+		return this.data[0] & 0xFF;
+	}
+	
+	@Override
+	public JSONObject toRecvJO()
+	{
+		return new JSONObject().put("status",this.getStatusVal()).put("status_ok", this.getStatus());
+	}
+}

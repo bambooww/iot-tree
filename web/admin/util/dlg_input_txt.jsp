@@ -5,7 +5,6 @@
 	org.iottree.core.conn.*,
 				org.iottree.core.util.*,
 				org.iottree.core.basic.*,
-				org.iottree.ext.opcda.*,
 	java.io.*,
 	java.util.*,
 	java.net.*,

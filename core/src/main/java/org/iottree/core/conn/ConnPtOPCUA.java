@@ -1505,7 +1505,7 @@ public class ConnPtOPCUA extends ConnPtBinder
 			return null;
 	}
 
-	synchronized void disconnect() // throws IOException
+	public synchronized void disconnect() // throws IOException
 	{
 		if (uaClient == null)
 			return;

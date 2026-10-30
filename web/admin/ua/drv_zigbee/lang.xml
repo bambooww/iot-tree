@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+  <dd_node id="1001" name="permit_join" name_cn="允许加入" name_en="Permit Join" />
+  <dd_node id="1001" name="disable_join" name_cn="禁用加入" name_en="Disable joining" />
+  <dd_node id="1001" name="exp_func" name_cn="暴露功能" name_en="Exposed Functions" />
+  <dd_node id="1001" name="syn_tags" name_cn="同步标签定义" name_en="Synchronize tag definition" />
+  
+</dd_class>

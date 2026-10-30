@@ -725,6 +725,8 @@ public abstract class ConnPt extends JSObMap implements IXmlDataValidator
 	
 	public abstract boolean isConnReady() ;
 	
+	public synchronized void disconnect() {}
+	
 	/**
 	 * get conn datetime as ms
 	 * @return

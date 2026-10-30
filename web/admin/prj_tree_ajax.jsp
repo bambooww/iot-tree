@@ -110,6 +110,7 @@ String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 			bf1=false;
 		else
 			out.print(",") ;
+		String ch_path = ch.getNodePathCxt();
 		String drvfit = "";
 		DevDriver drv = ch.getDriver();
 		String drvt = "none";
@@ -126,7 +127,13 @@ String res_roles_tt = LangTag.getLangValue(pageContext,"res_roles") ;
 			if(!ch.isDriverFit())
 				drvfit = "<span class=tn_warn title='"+drvt+" is not fit'>drv?</span>" ;
 			else
-				drvfit = "<span class=tn_ok title='"+drvt+"'>drv</span>" ;
+			{
+				String u = drv.getDriverMgrUrl() ;
+				if(Convert.isNotNullEmpty(u))
+					drvfit = "<span class='tn_ok_u' title='"+drvt+"' onclick='on_clk_drv(\\\""+ch_path+"\\\",\\\""+ch.getTitle()+"\\\",\\\""+u+"\\\")'><i class='fa-solid fa-angles-left'></i><i class='fa-solid fa-angles-right'></i></span>" ;
+				else
+					drvfit = "<span class='tn_ok' title='"+drvt+"'><i class='fa-solid fa-angles-left'></i><i class='fa-solid fa-angles-right'></i></span>" ;
+			}
 		}
 		
 		if(b_sel)

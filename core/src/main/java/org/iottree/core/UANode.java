@@ -43,6 +43,13 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	@data_val
 	private String name = "" ;
 	
+	/**
+	 * outer app unique id in parent node.
+	 * 
+	 */
+	@data_val(param_name = "outer_id")
+	private String outerId = "" ;
+	
 	@data_val
 	private String title = "" ;
 	
@@ -308,6 +315,18 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return name ;
 	}
 	
+	public String getOuterId()
+	{
+		if(outerId==null)
+			return "" ;
+		return outerId ;
+	}
+	
+	protected void setOuterId(String oid)
+	{
+		this.outerId = oid ;
+	}
+	
 	public String getTitle()
 	{
 		if(title==null)
@@ -533,6 +552,21 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		return null;
 	}
 	
+	public UANode getSubNodeByOuterId(String oid)
+	{
+		if(Convert.isNullOrEmpty(oid))
+			return null; 
+		List<UANode> subns = getSubNodes() ;
+		if(subns==null)
+			return null ;
+		for(UANode subn:subns)
+		{
+			if(oid.contentEquals(subn.getOuterId()))
+				return subn ;
+		}
+		return null;
+	}
+	
 	/**
 	 * when do copy paste operation,name may auto created.
 	 * to avoid confliction,node can use this method to create next name
@@ -676,6 +710,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		pg.addPropItem(new PropItem("id",lan,PValTP.vt_str,true,null,null,"")); //"Id","Object's id"
 		pg.addPropItem(new PropItem("iid",lan,PValTP.vt_int,true,null,null,-1)); 
 		pg.addPropItem(new PropItem("name",lan,PValTP.vt_str,false,null,null,"")); //"Name","Object's name"
+		pg.addPropItem(new PropItem("outer_id",lan,PValTP.vt_str,true,null,null,"")); //"Name","Object's name"
 		pg.addPropItem(new PropItem("title",lan,PValTP.vt_str,false,null,null,"")); //"Title","Object's title"
 		pg.addPropItem(new PropItem("desc",lan,PValTP.vt_str,false,null,null,"")); // "Description","Object's Description"
 		
@@ -700,6 +735,8 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 				return this.getIID();
 			case "name":
 				return this.getName();
+			case "outer_id":
+				return this.getOuterId() ;
 			case "title":
 				return this.getTitle() ;
 			case "desc":

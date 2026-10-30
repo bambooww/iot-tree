@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 
 /**
  * 1,admin user login support
- * 2, TODO access
+ * 
  * @author jason.zhu
  *
  */

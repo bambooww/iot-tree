@@ -209,7 +209,6 @@ public class PPIDriver extends DevDriver
 	@Override
 	protected void RT_onConnReady(ConnPt cp,UACh ch,UADev dev)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

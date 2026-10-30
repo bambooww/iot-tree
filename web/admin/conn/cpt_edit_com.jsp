@@ -53,17 +53,17 @@ int databits = cpt.getDataBits() ;
 int parity = cpt.getParity() ;
 int stopbits = cpt.getStopBits() ;
 int flowctl = cpt.getFlowCtl() ;
+int ctrl_rts = cpt.getCtrlRTSLowHigh() ;
+int ctrl_dtr = cpt.getCtrlDTRLowHigh() ;
 String cp_tp = cp.getProviderType() ;
 
 %>
 <html>
 <head>
 <title>conn editor</title>
-<script src="/_js/jquery-1.12.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/_js/layui/css/layui.css" />
-<script src="/_js/dlg_layer.js"></script>
-<script src="/_js/layui/layui.all.js"></script>
-<script src="/_js/dlg_layer.js"></script>
+<jsp:include page="../head.jsp">
+	<jsp:param value="true" name="simple"/>
+</jsp:include>
 <script>
 dlg.resize_to(800,430);
 </script>
@@ -109,9 +109,10 @@ for(int b:ConnPtCOM.BAUDS)
 %>   </select>
 	  </div>
   </div>
+  
   <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>data_bits</wbt:g>:</label>
-    <div class="layui-input-inline">
+    <div class="layui-input-inline" style="width:100px;">
       	    <select id="databits" lay-filter="databits">
 <%
 for(int dbit:ConnPtCOM.DATABITS)
@@ -122,7 +123,7 @@ for(int dbit:ConnPtCOM.DATABITS)
 %>   </select>
     </div>
     <div class="layui-form-mid"><wbt:g>parity</wbt:g>:</div>
-	  <div class="layui-input-inline" style="width: 150px;">
+	  <div class="layui-input-inline" style="width: 200px;">
 	    <select id="parity" lay-filter="parity">
 <%
 
@@ -135,10 +136,8 @@ for(int i = 0 ; i < ConnPtCOM.PARITY.length ; i ++)
 }
 %>   </select>
 	  </div>
-  </div>
-  <div class="layui-form-item">
-    <label class="layui-form-label"><wbt:g>stop_bits</wbt:g>:</label>
-    <div class="layui-input-inline">
+	  <div class="layui-form-mid"><wbt:g>stop_bits</wbt:g>:</div>
+	  <div class="layui-input-inline" style="width:100px">
       	    <select id="stopbits" lay-filter="stopbits">
       	    	
 <%
@@ -149,7 +148,10 @@ for(int dbit:ConnPtCOM.STOPBITS)
 }
 %>   </select>
     </div>
-    <div class="layui-form-mid"><wbt:g>flow_ctrl</wbt:g>:</div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label"><wbt:g>flow_ctrl</wbt:g>:</label>
 	  <div class="layui-input-inline" style="width: 150px;">
 	    <select id="flowctl" lay-filter="flowctl">
 <%
@@ -162,7 +164,29 @@ for(int i = 0 ; i < ConnPtCOM.FLOWCTL.length;i++)
 }
 %>   </select>
 	  </div>
+	  <div class="layui-form-mid">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<wbt:g>after_conn</wbt:g></div>
+	  <div class="layui-input-inline" style="width: 300px;">
+	  	<table>
+	  	  <tr>
+	  	   <td>
+	  		<select id="ctrl_rts" lay-filter="ctrl_rts">
+	  			<option value="0">RTS-<wbt:g>no_act</wbt:g></option>
+	  			<option value="-1">RTS-<wbt:g>pull_low</wbt:g></option>
+	  			<option value="1">RTS-<wbt:g>pull_high</wbt:g></option>
+	  		</select>
+	  		</td>
+	  		<td>
+	  		<select id="ctrl_dtr" lay-filter="ctrl_dtr">
+	  			<option value="0">DTR-<wbt:g>no_act</wbt:g></option>
+	  			<option value="-1">DTR-<wbt:g>pull_low</wbt:g></option>
+	  			<option value="1">DTR-<wbt:g>pull_high</wbt:g></option>
+	  		</select>
+	  		</td>
+	  	  </table>
+	  	</div>
+	  </div>
   </div>
+  
     <div class="layui-form-item">
     <label class="layui-form-label"><wbt:g>desc</wbt:g>:</label>
     <div class="layui-input-block" style="width:650px">
@@ -178,18 +202,13 @@ var databits = <%=databits%>;
 var parity = <%=parity%>;
 var stopbits = <%=stopbits%>;
 var flowctl = <%=flowctl%>;
-$("#comid").val(comid) ;
-$("#baud").val(baud) ;
-$("#databits").val(databits) ;
-$("#parity").val(parity) ;
-$("#stopbits").val(stopbits) ;
-$("#flowctl").val(flowctl) ;
+var ctrl_rts = <%=ctrl_rts%> ;
+var ctrl_dtr = <%=ctrl_dtr%> ;
+
 
 var form = null;
 layui.use('form', function(){
 	  form = layui.form;
-	  
-	  
 	  
 	  form.on("select(comid)",function(obj){
 		  setDirty(true);
@@ -209,13 +228,27 @@ layui.use('form', function(){
 	  form.on("select(flowctl)",function(obj){
 		  setDirty(true);
 		  });
+	  form.on("select(ctrl_rts)",function(obj){
+		  setDirty(true);
+		  });
+	  form.on("select(ctrl_dtr)",function(obj){
+		  setDirty(true);
+		  });
+	  
 	  $("#desc").on("input",function(e){
 		  setDirty(true);
 		  });
 	  form.on('switch(enable)', function(obj){
 		  setDirty(true);
 		  });
-		  
+	  $("#comid").val(comid) ;
+	  $("#baud").val(baud) ;
+	  $("#databits").val(databits) ;
+	  $("#parity").val(parity) ;
+	  $("#stopbits").val(stopbits) ;
+	  $("#flowctl").val(flowctl) ;
+	  $("#ctrl_rts").val(ctrl_rts) ;
+	  $("#ctrl_dtr").val(ctrl_dtr) ;
 	  form.render(); 
 });
 
@@ -302,10 +335,11 @@ function do_submit(cb)
 	var parity = get_val("parity","<wbt:g>parity</wbt:g>",cb,true);
 	var stopbits = get_val("stopbits","<wbt:g>stop_bits</wbt:g>",cb,true);
 	var flowctl = get_val("flowctl","<wbt:g>flow_ctrl</wbt:g>",cb,true);
-	
+	let ctrl_rts = get_input_val("ctrl_rts",0,true);
+	let ctrl_dtr = get_input_val("ctrl_dtr",0,true);
 	cb(true,{id:conn_id,name:n,title:tt,desc:desc,enable:ben,
 		comid:comid,baud:baud,databits:databits,
-		parity:parity,stopbits:stopbits,flowctl:flowctl
+		parity:parity,stopbits:stopbits,flowctl:flowctl,ctrl_rts:ctrl_rts,ctrl_dtr:ctrl_dtr
 		});
 }
 

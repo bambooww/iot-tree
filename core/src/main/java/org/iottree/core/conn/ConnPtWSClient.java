@@ -219,7 +219,7 @@ public class ConnPtWSClient extends ConnPtMSGNor
 		return null;
 	}
 	
-	void disconnect() // throws IOException
+	public void disconnect() // throws IOException
 	{
 		WebSockClient ss = wsClient;
 		if(ss==null)

@@ -1209,20 +1209,7 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 		}
 	}
 	
-	private transient TimerTask netTick1S = new TimerTask() {
-        @Override
-        public void run()
-        {
-            try
-            {
-            	RT_tickAllNodes();
-            }
-            catch(Exception ee)
-            {
-            	log.warn("MNNet ["+MNNet.this.getName()+"] Tick Err",ee);
-            }
-        }
-    };
+	
 	
 	public synchronized void RT_startNetFlow(StringBuilder failedr)
 	{
@@ -1283,6 +1270,22 @@ public class MNNet extends MNCxtPk implements ILang,IMNRunner
 			netTickTimer.cancel();
 		}
 		netTickTimer = new Timer() ;
+		
+		TimerTask netTick1S = new TimerTask() {
+	        @Override
+	        public void run()
+	        {
+	            try
+	            {
+	            	RT_tickAllNodes();
+	            }
+	            catch(Exception ee)
+	            {
+	            	log.warn("MNNet ["+MNNet.this.getName()+"] Tick Err",ee);
+	            }
+	        }
+	    };
+	    
 		netTickTimer.schedule(netTick1S, 0, 1000);
 		
 		RT_running = true ;

@@ -70,7 +70,6 @@ public class RecAdapterConfig //extends RecAdapter
 //	@Override
 //	public boolean init(StringBuilder failedr)
 //	{
-//		// TODO Auto-generated method stub
 //		return false;
 //	}
 //
@@ -78,7 +77,6 @@ public class RecAdapterConfig //extends RecAdapter
 //	@Override
 //	protected RecIO getIO()
 //	{
-//		// TODO Auto-generated method stub
 //		return null;
 //	}
 }

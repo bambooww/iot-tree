@@ -9,6 +9,10 @@
   <dd_node id="1" name="parity_even" name_cn="偶校验" name_en="Even" />
   <dd_node id="1" name="flow_ctrl" name_cn="流控" name_en="Flow Control" />
   <dd_node id="1" name="com_port" name_cn="串口" name_en="Port" />
+  <dd_node id="1" name="after_conn" name_cn="连接之后" name_en="After connection" />
+  <dd_node id="1" name="no_act" name_cn="无动作" name_en="No action" />
+  <dd_node id="1" name="pull_low" name_cn="拉低电平" name_en="Pull low level" />
+  <dd_node id="1" name="pull_high" name_cn="拉高电平" name_en="Pull High level" />
   
   <dd_node id="1" name="bind_map" name_cn="绑定映射" name_en="Bind Map" />
   <dd_node id="1" name="tags_in_ch" name_cn="通道下标签" name_en="Tags In Channel" />

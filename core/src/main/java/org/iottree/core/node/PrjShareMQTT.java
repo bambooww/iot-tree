@@ -70,7 +70,6 @@ public class PrjShareMQTT extends PrjSharer
 	@Override
 	public boolean isValid()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

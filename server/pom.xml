@@ -221,6 +221,7 @@
 			                            <include>data/msg_net/nodes.json</include>
 			                            <include>data/msg_net/lib/**/pp-*.json</include>
 			                            <include>data/devtree/runblks/</include>
+			                            <include>data/zigbee/</include>
 			                        </includes>
 			                    </resource>
 			                </resources>

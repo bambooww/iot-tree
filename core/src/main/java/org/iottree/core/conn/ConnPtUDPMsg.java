@@ -283,7 +283,7 @@ public class ConnPtUDPMsg extends ConnPtMsg
 		return "" ;
 	}
 	
-	synchronized void disconnect() // throws IOException
+	public synchronized void disconnect() // throws IOException
 	{
 		if (socket == null)
 			return;

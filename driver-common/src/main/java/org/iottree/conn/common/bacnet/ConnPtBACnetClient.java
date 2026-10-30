@@ -570,7 +570,7 @@ public class ConnPtBACnetClient extends ConnPtBinder
 			return null;
 	}
 
-	synchronized void disconnect() // throws IOException
+	public synchronized void disconnect() // throws IOException
 	{
 		
 	}

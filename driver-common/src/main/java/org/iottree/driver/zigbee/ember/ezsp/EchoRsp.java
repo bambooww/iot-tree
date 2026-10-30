@@ -1,0 +1,67 @@
+package org.iottree.driver.zigbee.ember.ezsp;
+
+import org.iottree.core.util.Convert;
+import org.iottree.driver.zigbee.ember.EZSPRsp;
+import org.iottree.driver.zigbee.ember.EmberManager;
+import org.json.JSONObject;
+
+public class EchoRsp extends EZSPRsp
+{
+	byte[] data;
+	
+	public EchoRsp(EmberManager emgr)
+	{
+		super(emgr) ;
+	}
+
+	@Override
+	public int getFrmID()
+	{
+		return 0x0081;
+	}
+
+	@Override
+	public String getFrmName()
+	{
+		return "echo";
+	}
+	
+	public byte[] getEchoData()
+	{
+		return this.data ;
+	}
+
+	@Override
+	protected int getParamsLen()
+	{
+		return 1;
+	}
+
+	@Override
+	protected boolean packParams(byte[] bs, int offset, int len,StringBuilder failedr)
+	{
+		int dlen = this.data!=null?this.data.length:0 ;
+		bs[offset] = (byte)dlen ;
+		if(dlen>0)
+			System.arraycopy(this.data, 0, bs, offset+1, dlen);
+		return true;
+	}
+
+	@Override
+	protected boolean unpackParams(byte[] bs, int offset, int len,StringBuilder failedr)
+	{
+		int dlen = bs[offset] & 0xFF ;
+		if(dlen>0)
+		{
+			this.data = new byte[dlen] ;
+			System.arraycopy(bs, offset+1, this.data, 0, dlen);
+		}
+		return true;
+	}
+	
+	@Override
+	public JSONObject toJO()
+	{
+		return super.toJO().put("echo", Convert.byteArray2HexStr(this.data, "-")) ;
+	}
+}

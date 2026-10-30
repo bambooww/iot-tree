@@ -48,14 +48,12 @@ public class TTS_NM extends MNNodeMid
 	@Override
 	public boolean isParamReady(StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public JSONObject getParamJO()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -69,7 +67,6 @@ public class TTS_NM extends MNNodeMid
 	@Override
 	protected RTOut RT_onMsgIn(MNConn in_conn, MNMsg msg) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

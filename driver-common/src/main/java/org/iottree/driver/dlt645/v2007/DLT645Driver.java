@@ -18,7 +18,6 @@ public class DLT645Driver extends DevDriver implements ILang
 	@Override
 	public boolean checkPropValue(String groupn, String itemn, String strv, StringBuilder failedr)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -79,21 +78,18 @@ public class DLT645Driver extends DevDriver implements ILang
 	@Override
 	protected void RT_onConnReady(ConnPt cp, UACh ch, UADev dev) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void RT_onConnInvalid(ConnPt cp, UACh ch, UADev dev) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected boolean RT_runInLoop(UACh ch, UADev dev, StringBuilder failedr) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

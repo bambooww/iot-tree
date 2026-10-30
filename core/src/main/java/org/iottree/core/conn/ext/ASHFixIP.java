@@ -49,14 +49,12 @@ public class ASHFixIP  implements ConnProTcpServer.AcceptedSockHandler
 	@Override
 	public int getRecvTimeout()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getRecvEndTimeout()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
