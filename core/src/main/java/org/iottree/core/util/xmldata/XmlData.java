@@ -11,7 +11,7 @@ import org.iottree.core.util.xmldata.XmlDataPath.PathItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 //import javax.swing.tree.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;

@@ -123,9 +123,9 @@
 		StringBuilder failedr = new StringBuilder() ;
 		PkEZSP r = new PkEZSP() ;
 		if(b_legacy)
-			r.frm = EZSPFrame.unpackLegacy(em_drv,bs,0,bs.length,failedr) ;
+			r.frm = EZSPFrame.unpackLegacy(em_drv,bs,0,bs.length,null,failedr) ;
 		else
-			r.frm = EZSPFrame.unpack(em_drv,bs,0,bs.length,failedr) ;
+			r.frm = EZSPFrame.unpack(em_drv,bs,0,bs.length,null,failedr) ;
 		if(r.frm==null)
 			r.res="??? "+failedr ;
 		r.src = Convert.byteArray2HexStr(bs, "-");
@@ -268,7 +268,7 @@
 	ZSDevice input_ed = null ;
 	if(Convert.isNotNullEmpty(ieee))
 	{
-		input_ed = z_coor.getEndDeviceByIEEEAddr(ieee) ;
+		input_ed = z_coor.getDeviceByIEEEAddr(ieee) ;
 		if(input_ed==null)
 		{
 			out.print("no ed found") ;

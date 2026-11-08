@@ -1,6 +1,7 @@
 package org.iottree.driver.zigbee.zstack.msg_af;
 
 import org.iottree.driver.zigbee.zstack.MsgRecv;
+import org.iottree.driver.zigbee.zstack.types.ZnpCmdStatus;
 import org.json.JSONObject;
 
 public class DataConfirmAREQ_CB extends MsgRecv
@@ -39,6 +40,11 @@ public class DataConfirmAREQ_CB extends MsgRecv
 	public boolean getStatus()
 	{
 		return this.data[0]==0;
+	}
+	
+	public ZnpCmdStatus getZnpCmdStatus()
+	{
+		return ZnpCmdStatus.valOfInt(this.getStatusVal()) ;
 	}
 	
 	public int getStatusVal()

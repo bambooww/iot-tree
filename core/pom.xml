@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.iottree</groupId>
 		<artifactId>iottree-parent</artifactId>
-		<version>2.1.0</version>
+		<version>3.0.0-alpha</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -14,8 +14,7 @@
 	
 	  <properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	    <maven.compiler.source>1.8</maven.compiler.source>
-	    <maven.compiler.target>1.8</maven.compiler.target>
+	    <maven.compiler.release>17</maven.compiler.release>
 		<output.directory>../_output</output.directory>
 	  </properties>
 
@@ -97,38 +96,33 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-	<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+	<!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api 
 		
 	<dependency>
 	    <groupId>javax.servlet</groupId>
 	    <artifactId>servlet-api</artifactId>
-	    <scope>system</scope>
 	    <version>2.5</version>
-	     <systemPath>${basedir}/../server/tomcat/lib/servlet-api.jar</systemPath>
+	    <scope>provided</scope>
 	</dependency>
 	
 	<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
-			<scope>system</scope>
 			<version>2.2</version>
-			<systemPath>${basedir}/../server/tomcat/lib/jsp-api.jar</systemPath>
+			<scope>provided</scope>
 		</dependency>
 	
 	<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>websocket-api</artifactId>
-			<scope>system</scope>
 			<version>2.2</version>
-			<systemPath>${basedir}/../server/tomcat/lib/websocket-api.jar</systemPath>
+			<scope>provided</scope>
 		</dependency>
-	
+	-->
 		<dependency>
 			<groupId>gun.io</groupId>
 			<artifactId>RXTXcomm</artifactId>
-			<scope>system</scope>
 			<version>2.2</version>
-			<systemPath>${basedir}/lib/RXTXcomm.jar</systemPath>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
@@ -136,19 +130,22 @@
 		    <groupId>org.json</groupId>
 		    <artifactId>json</artifactId>
 		</dependency>
-				
+	
+		<!-- Source: https://mvnrepository.com/artifact/commons-io/commons-io -->
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.22.0</version>
+    <scope>compile</scope>
+</dependency>
+<!-- Source: https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+    <version>2.0.0-M5</version>
+</dependency>
 				<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
-		<dependency>
-		    <groupId>commons-fileupload</groupId>
-		    <artifactId>commons-fileupload</artifactId>
-		    <version>1.4</version>
-		    <exclusions>
-		    	<exclusion>
-		    		<groupId>commons-io</groupId>
-		    		<artifactId>commons-io</artifactId>
-		    	</exclusion>
-		    </exclusions>
-		</dependency>
+		
 <!-- 
 		<dependency>
 		    <groupId>org.bidib.jbidib.org.qbang.rxtx</groupId>
@@ -160,7 +157,7 @@
 		<dependency>
 		    <groupId>org.java-websocket</groupId>
 		    <artifactId>Java-WebSocket</artifactId>
-		    <version>1.5.2</version>
+		    <version>1.6.0</version>
 		</dependency>
 
 <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-all
@@ -205,13 +202,13 @@
     <version>2.15.1</version>
 </dependency>
 
-<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
+<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
 <dependency>
     <groupId>org.eclipse.jetty</groupId>
     <artifactId>jetty-server</artifactId>
     <version>9.4.43.v20210629</version>
 </dependency>
-
+ -->
 <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
 <dependency>
     <groupId>commons-logging</groupId>
@@ -253,11 +250,21 @@
 		    <artifactId>jsoup</artifactId>
 		    <version>1.15.1</version>
 		</dependency>
+	
 		<dependency>
 		     <groupId>net.sourceforge.htmlunit</groupId>
 		     <artifactId>htmlunit</artifactId>
 		     <version>2.62.0</version>
-		     
+		     <exclusions>
+		        <exclusion>
+		            <groupId>xerces</groupId>
+		            <artifactId>xercesImpl</artifactId>
+		        </exclusion>
+		        <exclusion>
+		            <groupId>xml-apis</groupId>
+		            <artifactId>xml-apis</artifactId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 		
 		<dependency>
@@ -328,6 +335,28 @@
 	                </annotationProcessorPaths>
 	            </configuration>
 	        </plugin>
+	        
+	        <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-dependency-plugin</artifactId>
+			    <version>3.7.0</version>
+			    <executions>
+			        <execution>
+			            <id>copy-dependencies</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>copy-dependencies</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>../_output/lib</outputDirectory>
+			                <overWriteReleases>false</overWriteReleases>
+			                <overWriteSnapshots>false</overWriteSnapshots>
+			                <overWriteIfNewer>true</overWriteIfNewer>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+
 	    </plugins>
 	</build>
 </project>

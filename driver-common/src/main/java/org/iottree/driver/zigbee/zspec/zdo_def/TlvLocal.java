@@ -1,6 +1,11 @@
 package org.iottree.driver.zigbee.zspec.zdo_def;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.iottree.driver.zigbee.zspec.ZDOBuffer;
+import org.iottree.driver.zigbee.zspec.ZDOConsts;
+import org.iottree.driver.zigbee.zspec.ZSpecConsts;
 
 public interface TlvLocal extends Tlv
 {
@@ -89,13 +94,13 @@ public interface TlvLocal extends Tlv
 	    /** A randomly generated 64-bit value previously received in the APSFrameCounterChallengeTLV. */
 		public byte[] receivedChallengeValue ; //: Buffer;
 	    /** The current outgoing APS security frame counter held by the Responder EUI64 device. */
-		public int apsFrameCounter ; //: number;
+		public long apsFrameCounter ; //: number;
 	    /**
 	     * The AES-CCM-128 outgoing frame counter used to generate the MIC over the octet sequence
 	     * { tag || length || responder EUI-64 || received challenge value || APS frame counter }
 	     * using the special nonce and AES-128 key for frame counter synchronization.
 	     */
-		public int challengeSecurityFrameCounter; //: number;
+		public long challengeSecurityFrameCounter; //: number;
 	    /**
 	     * The AES-128-CCM 64-bit MIC (security level 2) on all previous fields of this TLV,
 	     * excluding the challenge security frame counter, including Tag ID and length fields.
@@ -162,4 +167,115 @@ public interface TlvLocal extends Tlv
 //	        processingStatus: Status.SUCCESS | Status.INV_REQUESTTYPE | Status.NOT_SUPPORTED;
 //	    }[];
 	};
+	
+	
+	public static BeaconSurveyResultsTLV readBeaconSurveyResultsTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readBeaconSurveyResultsTLV with length=${length}`, NS);
+        if (length != 4) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected 4.");
+        }
+        BeaconSurveyResultsTLV r = new BeaconSurveyResultsTLV() ;
+        r.totalBeaconsReceived = buf.readUInt8();
+        r.onNetworkBeacons = buf.readUInt8();
+        r.potentialParentBeacons = buf.readUInt8();
+        r.otherNetworkBeacons = buf.readUInt8();
+
+        return r;
+    }
+	
+	public static PotentialParentsTLV readPotentialParentsTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readPotentialParentsTLV with length=${length}`, NS);
+		if (length != 4) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected at least 4.");
+        }
+		PotentialParentsTLV r = new PotentialParentsTLV() ;
+        r.currentParentNwkAddress = buf.readUInt16();
+        r.currentParentLQA = buf.readUInt8();
+        // [0x00 - 0x05]
+        r.entryCount = buf.readUInt8();
+
+        if (length != 4 + r.entryCount * 3) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected "+(4 + r.entryCount * 3));
+        }
+
+        ArrayList<PotentialParent> potentialParents = new ArrayList<>();
+        r.potentialParents = potentialParents ;
+        
+        for (int i = 0; i < r.entryCount; i ++) {
+        	PotentialParent pp = new PotentialParent() ;
+            pp.nwkAddress = buf.readUInt16();
+            pp.lqa = buf.readUInt8();
+            potentialParents.add(pp);
+        }
+
+        return r; 
+    }
+	
+	public static Curve25519PublicPointTLV readCurve25519PublicPointTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readCurve25519PublicPointTLV with length=${length}`, NS);
+        if (length != ZSpecConsts.EUI64_SIZE + ZDOConsts.CURVE_PUBLIC_POINT_SIZE) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected "+(ZSpecConsts.EUI64_SIZE + ZDOConsts.CURVE_PUBLIC_POINT_SIZE));
+        }
+        Curve25519PublicPointTLV r = new Curve25519PublicPointTLV() ;
+        r.eui64 = buf.readIEEEAddr();
+        r.publicPoint = buf.readBuf(ZDOConsts.CURVE_PUBLIC_POINT_SIZE);
+
+        return r;
+    }
+	
+	public static DeviceAuthenticationLevelTLV readDeviceAuthenticationLevelTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readDeviceAuthenticationLevelTLV with length=${length}`, NS);
+        if (length != 10) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '${length}', expected 10.");
+        }
+
+        DeviceAuthenticationLevelTLV r = new DeviceAuthenticationLevelTLV() ;
+        r. remoteNodeIeee = buf.readIEEEAddr();
+        r. initialJoinMethod = InitialJoinMethod.valOfInt(buf.readUInt8());
+        r. activeLinkKeyType = ActiveLinkKeyType.valOfInt(buf.readUInt8());
+
+        return r;
+    }
+	
+	public static ProcessingStatusTLV readProcessingStatusTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readProcessingStatusTLV with length=${length}`, NS);
+        int count = buf.readUInt8();
+
+        if (length != 1 + count * 2) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected "+(1 + count * 2));
+        }
+        ProcessingStatusTLV r = new ProcessingStatusTLV() ;
+        r.count = count ;
+        r.tlvs = new ArrayList<>() ;
+
+        for (int i = 0; i < count; i++) {
+        	TagProcessStatus tps = new TagProcessStatus() ;
+            tps.tagId = buf.readUInt8();
+            tps.processingStatus = buf.readUInt8();
+            r.tlvs.add(tps);
+        }
+        return r;
+    }
+	
+	public static  APSFrameCounterResponseTLV readAPSFrameCounterResponseTLV(ZDOBuffer buf,int length)
+	{
+        //logger.debug(`readAPSFrameCounterResponseTLV with length=${length}`, NS);
+        if (length != 32) {
+            throw new IllegalArgumentException("Malformed TLV. Invalid length '"+length+"', expected 32.");
+        }
+
+        APSFrameCounterResponseTLV r = new APSFrameCounterResponseTLV() ;
+        r.responderEui64 = buf.readIEEEAddr();
+        r.receivedChallengeValue = buf.readBuf(ZDOConsts.CHALLENGE_VALUE_SIZE);
+        r.apsFrameCounter = buf.readUInt32();
+        r.challengeSecurityFrameCounter = buf.readUInt32();
+        r.mic = buf.readBuf(8);
+
+        return r ;
+    }
 }

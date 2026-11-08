@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.jsp.*;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.iottree.core.dict.DataClass;
 import org.iottree.core.dict.DataNode;
@@ -19,6 +15,9 @@ import org.iottree.core.dict.DictManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.Lan;
 import org.xml.sax.SAXException;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 

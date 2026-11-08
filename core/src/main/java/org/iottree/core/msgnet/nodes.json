@@ -5,6 +5,7 @@
 		"org.iottree.core.msgnet.nodes.NS_TimerTrigger",
 		"org.iottree.core.msgnet.nodes.NE_Debug",
 		"org.iottree.core.msgnet.nodes.NM_MemQueue",
+		"org.iottree.core.ai.NM_AIRole",
 		"org.iottree.core.msgnet.nodes.NS_OuterTrigger",
 		"org.iottree.core.msgnet.nodes.NS_OnFlowEvt",
 		"org.iottree.core.msgnet.nodes.OutCallFunc",

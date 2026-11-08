@@ -17,6 +17,7 @@ import org.iottree.core.conn.ConnPtStream;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
+import org.iottree.driver.zigbee.zspec.ZSWaiter;
 import org.iottree.driver.zigbee.zspec.util.RunRes;
 
 public class ZStackManager
@@ -92,7 +93,14 @@ public class ZStackManager
 	{
 		if(coor!=null)
 			return this.coor ;
-		return coor = new ZStackCoor(this) ;
+		
+		synchronized(this)
+		{
+			if(coor!=null)
+				return this.coor ;
+			
+			return coor = new ZStackCoor(this) ;
+		}
 	}
 	
 	public synchronized int get_next_trans_id()
@@ -141,12 +149,20 @@ public class ZStackManager
 	}
 	
 	private transient MsgReqRsp curReqRsp = null ;
+	
+	private transient MsgWaiter<MsgRecv> curWaiter = null ;
 
 	synchronized void RT_onMsgRecv(MsgRecv m_recv)
 	{
 		if(this.curReqRsp!=null)
 		{
 			if(this.curReqRsp.RT_onMsgRecv(m_recv))
+				return ;
+		}
+		
+		if(this.curWaiter!=null)
+		{
+			if(this.curWaiter.RT_onRspRecv(m_recv,m_recv))
 				return ;
 		}
 		
@@ -220,6 +236,40 @@ public class ZStackManager
 			synchronized(this)
 			{
 				this.curReqRsp = null ;
+			}
+		}
+	}
+	
+	/**
+	 * 等待一个特定的消息到来，直到时间过期
+	 */
+	@SuppressWarnings("unchecked")
+	public <R extends MsgRecv> R RT_synWaitFor(MsgWaiter<R> waiter)
+	{
+		waiter.startWait();
+		try
+		{
+			synchronized(this)
+			{
+				this.curWaiter = (MsgWaiter<MsgRecv>)waiter ;
+			}
+			
+			int end_res =0 ;
+			while((end_res=waiter.RT_checkEnd())==0)
+			{
+				sleep(5);
+			}
+			if(end_res<0)
+			{
+				return null;
+			}
+			return waiter.getWaitRsp() ;
+		}
+		finally
+		{
+			synchronized(this)
+			{
+				this.curWaiter = null ;
 			}
 		}
 	}
@@ -415,7 +465,7 @@ public class ZStackManager
 		return this.thread!=null ;
 	}
 	
-	private static void sleep(int ms)
+	public static void sleep(int ms)
 	{
 		try
 		{

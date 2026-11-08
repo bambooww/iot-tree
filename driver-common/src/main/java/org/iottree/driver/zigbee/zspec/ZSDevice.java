@@ -11,12 +11,15 @@ import org.iottree.core.UANode;
 import org.iottree.core.UATag;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.zigbee.zcl.ZCLAttr;
 import org.iottree.driver.zigbee.zcl.ZCLCluster;
 import org.iottree.driver.zigbee.zcl.ZCLCmd;
 import org.iottree.driver.zigbee.zcl.ZCLParam;
 import org.iottree.driver.zigbee.zcl.ZCLFrame;
 import org.iottree.driver.zigbee.zcl.ZCLStatus;
+import org.iottree.driver.zigbee.zcl.cmd_frm.ReportAttr;
 import org.iottree.driver.zigbee.zcl.util.DataVal;
 import org.iottree.driver.zigbee.zcl.util.TagDef;
 import org.iottree.driver.zigbee.zspec.event.ZclPayload;
@@ -27,11 +30,14 @@ import org.iottree.driver.zigbee.zspec.types.ZSDeviceType;
 import org.iottree.driver.zigbee.zspec.util.EndDeviceCap;
 import org.iottree.driver.zigbee.zspec.util.PowerSrc;
 import org.iottree.driver.zigbee.zspec.util.ShortAddr;
+import org.iottree.driver.zigbee.zstack.ZStackCoor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public  class ZSDevice implements Comparable<ZSDevice>
 {
+	static ILogger log = LoggerManager.getLogger(ZSDevice.class);
+	
 	protected String ieee_addr ; // unique id
 	
 	protected ZSDeviceType dev_tp = ZSDeviceType.Unknown ;
@@ -67,7 +73,7 @@ public  class ZSDevice implements Comparable<ZSDevice>
 	public ZSDevice(ZSCoor belongto,String ieeeaddr)
 	{
 		this.belongTo = belongto ;
-		this.ieee_addr = ieeeaddr ;
+		this.ieee_addr = ieeeaddr.toUpperCase() ;
 	}
 	
 	public ZSDevice asBasic(ZSDeviceType dtp,String title,int addr,PowerSrc pow_src,
@@ -211,6 +217,11 @@ public  class ZSDevice implements Comparable<ZSDevice>
 		return this.short_addr ;
 	}
 	
+	public int getShortAddrVal()
+	{
+		return this.short_addr.getAddrVal() ;
+	}
+	
 	public void setShortAddr(ShortAddr sa)
 	{
 		this.short_addr = sa ;
@@ -224,7 +235,8 @@ public  class ZSDevice implements Comparable<ZSDevice>
 	public boolean updateBy(ShortAddr addr,EndDeviceCap cap)
 	{
 		this.short_addr = addr ;
-		this.endDevCap = cap ;
+		if(cap!=null)
+			this.endDevCap = cap ;
 		this.updateDT = System.currentTimeMillis() ;
 		return true;
 	}
@@ -430,6 +442,48 @@ public  class ZSDevice implements Comparable<ZSDevice>
 		}
 		
 		return ret ;
+	}
+	
+
+	public static ZSDevice fromeJO(ZSCoor coor,JSONObject jo)
+	{
+		String ieee = jo.optString("ieee_addr","").toUpperCase() ;
+		if(Convert.isNullOrEmpty(ieee))
+			return null ;
+		ZSDevice r = new ZSDevice(coor,ieee) ;
+		r.title = jo.optString("title") ;
+		r.findDT = jo.optLong("find_dt",-1) ;
+		r.updateDT = jo.optLong("update_dt") ;
+		int short_addr = jo.optInt("short_addr",-1) ;
+		if(short_addr>=0)
+			r.short_addr = new ShortAddr(short_addr) ;
+		int cap_v = jo.optInt("cap_v",-1);
+		if(cap_v>=0)
+			r.endDevCap = new EndDeviceCap(cap_v) ;
+		
+		r.linkQual = jo.optInt("link_qual", -1) ;
+		r.linkDT = jo.optInt("link_dt", -1) ;
+		
+		r.facCode = jo.optInt("fac_code", -1) ;
+		r.facName = jo.optString("fac_name") ;
+		r.facModel = jo.optString("fac_model") ;
+		int psv = jo.optInt("power_src", -1) ;
+		r.powerSrc = PowerSrc.valOfInt(psv) ;
+		
+		JSONArray jarr = jo.optJSONArray("endpoints") ;
+		if(jarr!=null)
+		{
+			int n = jarr.length() ;
+			for(int i = 0 ; i < n ; i ++)
+			{
+				JSONObject ep_jo = jarr.getJSONObject(i) ;
+				StringBuilder failedr = new StringBuilder() ;
+				ZSEndPoint ep = ZSEndPoint.fromJO(r,ep_jo, failedr) ;
+				r.endpoints.put(ep.getEndPointId(),ep) ;
+			}
+		}
+		
+		return r ;
 	}
 	
 	public JSONObject RT_toJO()
@@ -759,6 +813,73 @@ public  class ZSDevice implements Comparable<ZSDevice>
 //
 //	        this.removeFromDatabase(clearCache);
 
+	}
+	
+	/**
+	 * 被动接收到的Report Attr
+	 * @param endpoint
+	 * @param clusterid
+	 * @param ra
+	 * @return
+	 */
+	public boolean RT_onReportAttr(int endpoint,int clusterid,ReportAttr ra,StringBuilder failedr)
+	{
+		boolean b_dirty = false;
+		ZSEndPoint ep = this.endpoints.get(endpoint) ;
+		if(ep==null)
+		{
+			ep = new ZSEndPoint(this,endpoint) ;
+			this.endpoints.put(endpoint, ep) ;
+			b_dirty = true ;
+		}
+		
+		ArrayList<ZSAttrVal> avs = new ArrayList<>() ;
+		boolean b = ep.RT_onReportAttr(clusterid,ra,avs,failedr) ;
+		if(b)
+			b_dirty = true ;
+		if(avs==null||avs.size()>0)
+			RT_onUpdateAttrVals(avs) ;
+		
+		this.updateDT = System.currentTimeMillis() ;
+		
+		return b_dirty ;
+	}
+	
+
+	// update to related tags
+	private void RT_onUpdateAttrVals(List<ZSAttrVal> zavs)
+	{
+		UADev dev = getRelatedUADev() ;
+		if(dev==null)
+			return ;
+		for(ZSAttrVal zav:zavs)
+		{
+			Object objv = zav.getObjVal() ;
+			if(objv==null)
+				continue ;
+			int attr_id = zav.getAttrId() ;
+			// DataVal dv = zav.getVal().getDataVal() ;
+			String addr = zav.getTagAddr() ;
+			String tag_vt = zav.getValTP() ;
+			List<UATag> tags = dev.filterTagsAllByAddr(addr) ;
+			if(tags==null||tags.size()<=0)
+				continue ;
+			
+			String strv = objv.toString();
+			for(UATag tag:tags)
+			{
+				try
+				{
+					tag.RT_setValRawStr(strv);
+					//tag.RT_setValRaw(objv);
+				}
+				catch(Exception ee)
+				{
+					if(log.isWarnEnabled())
+						log.warn("attr_id="+attr_id+" attr_tag_vt="+tag_vt+" addr="+addr+" set_strv="+objv+" to_tag="+tag.getNodePathCxt()+"\r\n\t"+ ee.getMessage());
+				}
+			}
+		}
 	}
 	
 	public void RT_onZclData(ZclPayload dataPayload,

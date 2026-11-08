@@ -24,6 +24,9 @@ public class IncomeMsgDefEvt implements IncomeMsgEvt
 	
 	ZCLFrame zclFrm ;
 	
+	public IncomeMsgDefEvt()
+	{}
+	
 	public IncomeMsgDefEvt(int grpid,int clusterid,int src_ep,int dst_ep,
 			int src_addr,boolean b_bcast,int link_qual,ZCLFrame zcl_f)
 	{

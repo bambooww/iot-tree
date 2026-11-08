@@ -4,7 +4,7 @@
   <parent>
     <artifactId>iottree-parent</artifactId>
     <groupId>org.iottree</groupId>
-    <version>2.1.0</version>
+    <version>3.0.0-alpha</version>
   </parent>
 
   <artifactId>iottree-server</artifactId>
@@ -13,8 +13,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
     <output.directory>../_output</output.directory>
   </properties>
 
@@ -24,7 +23,6 @@
 	    <artifactId>iottree-core</artifactId>
 	    <version>${project.version}</version>
 	</dependency>
-	
 
     <dependency>
       <groupId>junit</groupId>
@@ -51,6 +49,8 @@
 	    <version>2.4</version>
 	</dependency>
 	
+    
+
 	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 	<!-- 
 	<dependency>
@@ -58,7 +58,7 @@
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>8.0.22</version>
 	</dependency>
-	 -->
+	
 	<dependency>
 			<groupId>tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
@@ -66,6 +66,9 @@
 			<version>2.2</version>
 			<systemPath>${basedir}/../server/tomcat/lib/catalina.jar</systemPath>
 		</dependency>
+		
+	 -->
+	
 	<!-- 
 	<dependency>
 			<groupId>javax.servlet</groupId>
@@ -197,10 +200,12 @@
 			                            <include>log/tail.exe</include>
 			                            <include>log/tt.bat</include>
 			                            <include>mon/*.*</include>
+			                            <!--
 			                            <include>tomcat/lib/</include>
 			                            <include>tomcat/bin/</include>
 			                            <include>tomcat/webapps/readme.txt</include>
 			                            <include>tomcat/temp/readme.txt</include>
+			                            -->
 			                            <include>wrapper.*</include>
 			                            <include>iottree_win_panel.exe</include>
 			                        </includes>
@@ -331,7 +336,7 @@
 			                    <delete file="../_output/lib/iottree-ext-pro-${project.version}.jar" />
 			                    
 			                    <echo message="package zip file" />
-			                    <!-- 
+			                    <!--
 			                    <zip destfile="../_output/iot-tree-${project.version}-winjre_x86.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre/"/>
@@ -340,8 +345,7 @@
 					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
-                				 
-                				 -->
+                				-->
                 				<delete file="../_output/lib/iottree-ext-opcda.jar" />
 
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >

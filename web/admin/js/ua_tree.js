@@ -94,7 +94,20 @@ function UATree(tree_opt)
 				if(!op.op_chk(tn))
 					continue ;
 			}
-			r[op_name]={op_name:op_name,op_action:op.op_action,label:op.op_title,icon:op.op_icon, "separator_after": true,action:UATree_CXTMENU_ACT} ;
+			let menu_i ;
+			if(op.submenu)
+			{
+				let subms=[] ;
+				for(let subm of op.submenu)
+				{
+					let subop_n = subm.op_name ;
+					subms.push({op_name:subop_n,op_action:subm.op_action,label:subm.op_title,icon:subm.op_icon, "separator_after": true,action:UATree_CXTMENU_ACT}) ;
+				}
+				menu_i = {op_name:op_name,label:op.op_title,icon:op.op_icon, "separator_after": true,submenu:subms} ;
+			}
+			else
+				menu_i = {op_name:op_name,op_action:op.op_action,label:op.op_title,icon:op.op_icon, "separator_after": true,action:UATree_CXTMENU_ACT} ;
+			r[op_name]=menu_i ;
 		}
 		//this.cxt_menu[tp] =r ;
 		return r ;

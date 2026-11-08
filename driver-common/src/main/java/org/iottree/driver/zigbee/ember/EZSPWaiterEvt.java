@@ -1,5 +1,6 @@
 package org.iottree.driver.zigbee.ember;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.iottree.core.util.Convert;
@@ -9,9 +10,9 @@ import org.iottree.driver.zigbee.DataBuffer;
 import org.iottree.driver.zigbee.ember.ASHFrmData;
 import org.iottree.driver.zigbee.ember.EZSPBuffer;
 import org.iottree.driver.zigbee.ember.EZSPRsp;
-import org.iottree.driver.zigbee.ember.EZSPWaiter;
 import org.iottree.driver.zigbee.ember.EmberCoor;
 import org.iottree.driver.zigbee.ember.EmberManager;
+import org.iottree.driver.zigbee.ember.ezsp.TCPostJoinHandlerRspCB;
 import org.iottree.driver.zigbee.ember.types.*;
 import org.iottree.driver.zigbee.ember.util.SLStatus;
 import org.iottree.driver.zigbee.zcl.ZCLCluster;
@@ -21,9 +22,15 @@ import org.iottree.driver.zigbee.zcl.ZCLCmd;
 import org.iottree.driver.zigbee.zcl.ZCLFrame;
 import org.iottree.driver.zigbee.zcl.ZCLManager;
 import org.iottree.driver.zigbee.zcl.defs.ManufacturerCode;
+import org.iottree.driver.zigbee.zcl.defs.ManufacturerSpec;
+import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.iottree.driver.zigbee.zspec.ZDOConsts;
+import org.iottree.driver.zigbee.zspec.ZDOResp;
 import org.iottree.driver.zigbee.zspec.ZSController;
+import org.iottree.driver.zigbee.zspec.ZSWaiter;
 import org.iottree.driver.zigbee.zspec.ZSpecConsts;
+import org.iottree.driver.zigbee.zspec.event.DeviceJoinedPld;
+import org.iottree.driver.zigbee.zspec.event.DeviceLeavePld;
 import org.iottree.driver.zigbee.zspec.event.IncomeMsgDefEvt;
 import org.iottree.driver.zigbee.zspec.event.PermitJoinEvt;
 import org.iottree.driver.zigbee.zspec.event.ZDORspEvt;
@@ -34,11 +41,14 @@ import org.iottree.driver.zigbee.zspec.event.ZDORspEvt;
  * 此handle处理处理 synReqRsp和synWaiter之外的其他所有 Callback 消息
  * @author jason.zhu
  */
-public class EZSPWaiterEvt extends EZSPWaiter
+public class EZSPWaiterEvt extends ZSWaiter<ASHFrmData,EZSPRsp>
 {
+	
 	static ILogger log = LoggerManager.getLogger(EZSPWaiterEvt.class) ;
 	
 	EmberManager mgr ;
+	
+	EmberCoor coor ;
 	
 	// EmberEvtHandle evtHandle ;
 	
@@ -50,6 +60,7 @@ public class EZSPWaiterEvt extends EZSPWaiter
 	{
 		super(to_ms);
 		this.mgr = mgr;
+		this.coor = mgr.getCoor() ;
 		this.ezspFrmID = ezsp_fid ;
 		//this.evtName = evt_name ;
 		
@@ -84,7 +95,15 @@ public class EZSPWaiterEvt extends EZSPWaiter
 		if(ezspFrmID!=null && frm_id!=ezspFrmID.getIntVal())
 			return false;
 		EZSPBuffer databuf = fd.getEZSPFrmBufUnpacked() ;
-		return this.RT_onEZSPFrmCallback(frm_id, databuf, rsp) ;
+		try
+		{
+			return this.RT_onEZSPFrmCallback(frm_id, databuf, rsp) ;
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+			return false;
+		}
 	}
 	
 	public final void emit(String evt_n, ZSController.IEvent evt_v)
@@ -92,7 +111,7 @@ public class EZSPWaiterEvt extends EZSPWaiter
 		this.mgr.getCoor().RT_fireEvent(evt_n, evt_v);
 	}
 	
-	final boolean RT_onEZSPFrmCallback(int frm_id, EZSPBuffer databuf, EZSPRsp frm)
+	final boolean RT_onEZSPFrmCallback(int frm_id, EZSPBuffer databuf, EZSPRsp frm) throws Exception
 	{
 		EzspFrameID fid = EzspFrameID.valOfInt(frm_id);
 		if (fid == null)
@@ -426,12 +445,13 @@ public class EZSPWaiterEvt extends EZSPWaiter
             break;
         }
         case TRUST_CENTER_JOIN_HANDLER: {
-            int newNodeId = databuf.readUInt16();
-            String newNodeEui64 = databuf.readIEEEAddr();
-            EmberDeviceUpdate status = EmberDeviceUpdate.valOfInt(databuf.readUInt8());
-            EmberJoinDecision policyDecision = EmberJoinDecision.valOfInt(databuf.readUInt8());
-            int parentOfNewNodeId = databuf.readUInt16();
-            this.ezspTrustCenterJoinHandler(newNodeId, newNodeEui64, status, policyDecision, parentOfNewNodeId);
+//            int newNodeId = databuf.readUInt16();
+//            String newNodeEui64 = databuf.readIEEEAddr();
+//            EmberDeviceUpdate status = EmberDeviceUpdate.valOfInt(databuf.readUInt8());
+//            EmberJoinDecision policyDecision = EmberJoinDecision.valOfInt(databuf.readUInt8());
+//            int parentOfNewNodeId = databuf.readUInt16();
+            TCPostJoinHandlerRspCB tc_pjh_cb = (TCPostJoinHandlerRspCB)frm ;
+            this.ezspTrustCenterJoinHandler(tc_pjh_cb); //(newNodeId, newNodeEui64, status, policyDecision, parentOfNewNodeId);
             break;
         }
         case GENERATE_CBKE_KEYS_HANDLER: {
@@ -636,6 +656,7 @@ public class EZSPWaiterEvt extends EZSPWaiter
 	}
 
 	private void ezspIncomeMsgHandle(IncomeMsgTp type, ApsFrame aspf, RxPacketInfo pk_inf, byte[] pld)
+		throws Exception
 	{
 		if (log.isDebugEnabled())
 			log.debug("ezspIncomingMessageHandler: type=" + type + " apsFrame=" + aspf.toJO() + "packetInfo:"
@@ -643,6 +664,17 @@ public class EZSPWaiterEvt extends EZSPWaiter
 
 		if (aspf.profileId == ZDOConsts.ZDO_PROFILE_ID)
 		{
+			ZDOClusterId cid = aspf.getZDOClusterId() ;
+			if(cid==null)
+				return  ;
+			ZDOResp zdo_resp = ZDOResp.parseResp(true,cid,pld) ;
+			if(zdo_resp==null)
+			{
+				if(log.isWarnEnabled())
+					log.warn("unparsed ZDOCluster with id="+cid.toHexStr());
+				return ;
+			}
+			
 			ZDORspEvt rspevt = new ZDORspEvt() ;
 			rspevt.clusterId = aspf.clusterId ;
 			rspevt.pld = pld ;
@@ -653,6 +685,7 @@ public class EZSPWaiterEvt extends EZSPWaiter
 //            if (aspf.clusterId == ZDOClusterId.NETWORK_ADDRESS_RESPONSE.getIntVal()) {
 //            	
 //            }
+			this.coor.MGR_onZDOResp(zdo_resp) ;
 			this.emit(ZSController.ZDO_RSP, rspevt);
 		}
 		else if (aspf.profileId == ZSpecConsts.HA_PROFILE_ID || aspf.profileId == ZSpecConsts.WILDCARD_PROFILE_ID
@@ -672,6 +705,7 @@ public class EZSPWaiterEvt extends EZSPWaiter
 			IncomeMsgDefEvt inmsg = new IncomeMsgDefEvt(aspf.groupId,aspf.clusterId,aspf.src_ep,aspf.dst_ep,
 					pk_inf.senderShortAddr,b_bcast,pk_inf.lastHopLqi,zcl_f) ;
 		
+			this.coor.MGR_onIncomingMsg(inmsg);
 			this.emit(ZSController.INCOME_MSG, inmsg);
 		}
 	}
@@ -782,16 +816,57 @@ public class EZSPWaiterEvt extends EZSPWaiter
      * @param status The status of the node: Secure Join/Rejoin, Unsecure Join/Rejoin, Device left.
      * @param policyDecision An EmberJoinDecision reflecting the decision made.
      * @param parentOfNewNodeId The parent of the node whose status has changed.
+	 * @throws IOException 
      */
-    private void ezspTrustCenterJoinHandler(int newNodeId,String newNodeEui64,
-    		EmberDeviceUpdate status,EmberJoinDecision policyDecision ,int parentOfNewNodeId)
+    private void ezspTrustCenterJoinHandler(TCPostJoinHandlerRspCB resp) throws IOException
+    //(int newNodeId,String newNodeEui64,
+    //		EmberDeviceUpdate status,EmberJoinDecision policyDecision ,int parentOfNewNodeId) throws Exception
     {
-    	if(log.isDebugEnabled())
-    		log.debug("ezspTrustCenterJoinHandler: newNodeId="+newNodeId+" newNodeEui64="+newNodeEui64 +
-                "status="+status+" policyDecision="+policyDecision+" parentOfNewNodeId="+parentOfNewNodeId);
-        // NOTE: this is mostly just passing stuff up to Z2M, so use only one emit for all, let adapter do the rest, no parsing needed
-    	// TODO wait to impl
-        //this.emit(ZSController.TRUST_CENTER_JOIN, newNodeId, newNodeEui64, status, policyDecision, parentOfNewNodeId);
+//    	if(log.isDebugEnabled())
+//    		log.debug("ezspTrustCenterJoinHandler: newNodeId="+newNodeId+" newNodeEui64="+newNodeEui64 +
+//                "status="+status+" policyDecision="+policyDecision+" parentOfNewNodeId="+parentOfNewNodeId);
+        
+    	EmberDeviceUpdate status = resp.getStatus() ;
+    	EmberJoinDecision policyDecision = resp.getPolicyDecision() ;
+    	
+    	if (status == EmberDeviceUpdate.DEVICE_LEFT) {
+    		DeviceLeavePld payload  = new DeviceLeavePld();
+            payload.network_addr =  resp.getNewNodeId() ;//newNodeId ;
+            payload.ieee_addr = resp.getNewNodeIEEE() ;//newNodeEui64 ;
+            
+
+            //this.emit("deviceLeave", payload);
+        }
+    	else
+    	{
+            if (policyDecision != EmberJoinDecision.DENY_JOIN)
+            {
+            	DeviceJoinedPld payload = new DeviceJoinedPld();
+            	payload.network_addr =  resp.getNewNodeId() ;//newNodeId ;
+                payload.ieee_addr = resp.getNewNodeIEEE() ;//newNodeEui64 ;
+                
+                // set workaround manuf code if necessary, or revert to default if previous joined device required workaround and new one does not
+                Integer joinManufCode = ManufacturerSpec.SPEC_MANUF_IEEE_PREFIX_TO_CODE.get(payload.ieee_addr.substring(0, 6)) ;
+                if(joinManufCode==null)
+                	joinManufCode = EmberCoor.DEFAULT_MANUFACTURER_CODE;
+
+//                if (this.manufacturerCode != joinManufCode)
+//                {
+//                        logger.debug(`[WORKAROUND] Setting coordinator manufacturer code to ${Zcl.ManufacturerCode[joinManufCode]}.`, NS);
+//                        await this.ezsp.ezspSetManufacturerCode(joinManufCode);
+//
+//                        this.manufacturerCode = joinManufCode;
+//
+//                }
+                //this.emit("deviceJoined", payload);
+                this.coor.MGR_onDeviceJoined(payload) ;
+            }
+            else
+            {
+                log.warn("[TRUST CENTER] Device "+resp.getNewNodeId()+":"+resp.getNewNodeIEEE()+" was denied joining via "+resp.getParentOfNewNodeId());
+            }
+        }
+    	
     }
     
 	/**

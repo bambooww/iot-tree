@@ -11,6 +11,7 @@ import org.iottree.driver.zigbee.ember.req_rsp.VersionRR;
 import org.iottree.driver.zigbee.ember.util.EzspError;
 import org.iottree.driver.zigbee.ember.util.EzspStatus;
 import org.iottree.driver.zigbee.zspec.ZSDriver;
+import org.iottree.driver.zigbee.zspec.ZSWaiter;
 import org.iottree.driver.zigbee.zspec.util.RunRes;
 
 /**
@@ -60,7 +61,6 @@ public class EmberManager
 		log.setCurrentLogLevel(ILogger.LOG_LEVEL_DEBUG);
 		
 		this.slideWin = new EmberSlideWin(this);//,5,100) ;
-		this.eventH = new EZSPWaiterEvt(this,null,1000) ;
 	}
 	
 	public EmberDriver getDriver()
@@ -72,11 +72,22 @@ public class EmberManager
 	{
 		if(coor!=null)
 			return this.coor ;
-		return coor = new EmberCoor(this.driver,this) ;
+		
+		synchronized(this)
+		{
+			if(coor!=null)
+				return this.coor ;
+			
+			return coor = new EmberCoor(this.driver,this) ;
+		}
 	}
 	
-	public EZSPWaiterEvt getEvtHandle()
+	private synchronized EZSPWaiterEvt getEvtHandle()
 	{
+		if(this.eventH!=null)
+			return this.eventH ;
+		
+		this.eventH = new EZSPWaiterEvt(this,null,1000) ;
 		return this.eventH ;
 	}
 	
@@ -123,10 +134,10 @@ public class EmberManager
 		this.bLegacy = b ;
 	}
 	
-	public synchronized void RT_sendFrmData(ASHFrmData fd) throws Exception
+	public synchronized boolean RT_sendFrmData(ASHFrmData fd) throws Exception
 	{
 		if(!this.driver.isBindConnPtReady())
-			throw new EzspError(EzspStatus.NOT_CONNECTED) ;
+			return false;//throw new EzspError(EzspStatus.NOT_CONNECTED) ;
 		
 		fd.getEZSPFrame().seq = this.ezspSeq ;
 		//System.out.println(" *** ezsp frame seq="+this.ezspSeq) ;
@@ -134,6 +145,7 @@ public class EmberManager
 		this.slideWin.pushFrmData(fd) ;
 		if(log.isDebugEnabled())
 			log.debug("send_frm_data="+fd.getEZSPFrame().toShortString());
+		return true ;
 	}
 	
 	public void RT_sendReset()
@@ -156,7 +168,7 @@ public class EmberManager
 	
 	private transient EZSPReqRsp curReqRsp = null ;
 	
-	private transient EZSPWaiter curWaiter = null ;
+	private transient ZSWaiter<ASHFrmData,EZSPRsp> curWaiter = null ;
 	
 	void RT_WIN_onFrameData(ASHFrmData fd)
 	{
@@ -180,7 +192,15 @@ public class EmberManager
 			}
 		}
 		
-		this.eventH.RT_onEZSPFrmCallback(fd.getEZSPFrmIDUnpacked(),fd.getEZSPFrmBufUnpacked(), f);
+		try
+		{
+			//this.getCoor().RT_onCoorIndCallback(fd.getEZSPFrmIDUnpacked(),fd.getEZSPFrmBufUnpacked(), f) ;
+			this.getEvtHandle().RT_onEZSPFrmCallback(fd.getEZSPFrmIDUnpacked(),fd.getEZSPFrmBufUnpacked(), f);
+		}
+		catch(Exception ee)
+		{
+			ee.printStackTrace();
+		}
 	}
 	
 	void RT_WIN_onFrameRstAck(ASHFrmRstAck rstack)
@@ -242,7 +262,7 @@ public class EmberManager
 	/**
 	 * 等待一个特定的消息到来，直到时间过期
 	 */
-	public EZSPRsp RT_synWaitFor(EZSPWaiter waiter)
+	public EZSPRsp RT_synWaitFor(ZSWaiter<ASHFrmData,EZSPRsp> waiter)
 	{
 		waiter.startWait();
 		try
@@ -449,7 +469,9 @@ public class EmberManager
 							catch(Exception  ee)
 							{
 								ee.printStackTrace();
-								sleep(5) ;
+								sleep(1000) ;
+								
+								EmberManager.this.hostST = 0; //reset
 							}
 						}
 					}

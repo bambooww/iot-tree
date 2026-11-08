@@ -1,5 +1,6 @@
 package org.iottree.driver.zigbee.zstack.req_rsp;
 
+import org.iottree.driver.zigbee.DataUtil;
 import org.iottree.driver.zigbee.zcl.cluster_cmd.GreenPowerCmd;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.iottree.driver.zigbee.zstack.MsgReqRsp;
@@ -9,6 +10,7 @@ import org.iottree.driver.zigbee.zstack.msg_af.DataRequestExtSREQ;
 import org.iottree.driver.zigbee.zstack.msg_af.DataRequestExtSRSP;
 import org.iottree.driver.zigbee.zstack.msg_af.DataRequestSREQ;
 import org.iottree.driver.zigbee.zstack.msg_af.DataRequestSRSP;
+import org.iottree.driver.zigbee.zstack.types.AddressMode;
 import org.json.JSONObject;
 
 public class DataReqExtConfirm_CMD extends MsgReqRsp
@@ -21,7 +23,7 @@ public class DataReqExtConfirm_CMD extends MsgReqRsp
 	DataReqExtConfirm_CMD(DataRequestExtSREQ req)
 	{
 		super();
-		this.asReq(req, true, 5000) ;
+		this.asReq(req, true, 10000) ;
 	}
 	
 	public static DataReqExtConfirm_CMD createClusterCmdReqRsp(ZStackManager zsm,
@@ -29,6 +31,38 @@ public class DataReqExtConfirm_CMD extends MsgReqRsp
 	{
 		int trans_id = zsm.get_next_trans_id() ;
 		DataRequestExtSREQ req = DataRequestExtSREQ.createClusterCmdReq(dst_addr,endpoint,cluster_id,cmd_id,dir_s2c,trans_id) ;
+		DataReqExtConfirm_CMD ret = new DataReqExtConfirm_CMD(req) ;
+		return ret;
+	}
+	
+	public static DataReqExtConfirm_CMD createClusterCmdReqRsp(ZStackManager zsm,
+			AddressMode addr_mode,Object dst_addr,
+			int dst_endpoint,int dst_pan_id,
+			int src_endpoint,int cluster_id,
+			int options,int radius,byte[] last_data)
+	{
+		int trans_id = zsm.get_next_trans_id() ;
+		
+		byte[] dst_bs = null ;
+		if(dst_addr instanceof Integer)
+		{
+			int addr = (Integer)dst_addr ;
+			dst_bs = new byte[8] ;
+			DataUtil.setUInt16(addr, dst_bs, 0);
+		}
+		else if(dst_addr instanceof String)
+		{
+			String hexaddr = (String)dst_addr ;
+			dst_bs = new byte[8] ;
+			DataUtil.transStr2IEEEAddr(hexaddr, dst_bs, 0) ;
+		}
+		else
+			throw new IllegalArgumentException("invalid dst_addr="+dst_addr) ;
+		
+		DataRequestExtSREQ req = new DataRequestExtSREQ( addr_mode.val, dst_bs,
+				dst_endpoint, dst_pan_id,
+				src_endpoint, cluster_id, trans_id, options, radius, last_data) ;
+		
 		DataReqExtConfirm_CMD ret = new DataReqExtConfirm_CMD(req) ;
 		return ret;
 	}

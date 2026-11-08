@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.websocket.EndpointConfig;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.*;
 
 import org.iottree.core.Config;
 import org.iottree.core.node.PlatNode;
@@ -1003,7 +1003,7 @@ public class LoginUtil
 		return getUserLoginSession(hs,req);
 	}
 	
-	public static SessionItem getUserLoginSession(javax.websocket.EndpointConfig config) throws UnsupportedEncodingException
+	public static SessionItem getUserLoginSession(EndpointConfig config) throws UnsupportedEncodingException
 	{
 		HttpSession hs = WebSocketConfig.getHttpSession(config) ;
 		return getUserLoginSession(hs,null);

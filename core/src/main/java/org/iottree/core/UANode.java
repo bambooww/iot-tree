@@ -63,6 +63,7 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	
 	transient UANode parentNode = null ;
 	
+	transient String useTitle = "" ;
 	//transient State nodeState = State.st_not_setup; 
 	//private ScriptEngine scriptEng = null ;
 	
@@ -175,6 +176,22 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		this.title = title ;
 		this.desc = desc ;
 	}
+	
+
+	public String getUseTitle()
+	{
+		if(Convert.isNotNullEmpty(this.useTitle))
+			return this.useTitle ;
+		return this.getTitle() ;
+	}
+	
+	
+	public void setUseTitle(String t)
+	{
+		this.useTitle = t ;
+	}
+	
+	
 	/**
 	 * 
 	 * @param new_self create by copySelfWithNewId
@@ -816,6 +833,8 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 			return this.name ;
 		case "__t":
 			return this.title ;
+		case "__ut":
+			return this.getUseTitle() ;
 		case "__d":
 			return this.desc ;
 		}
@@ -826,9 +845,10 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 	{
 		List<JsProp> ss = super.JS_props() ;
 		ss.add(new JsProp("__id",this.id,null,false,"Id","Node Unique Id")) ;
-		ss.add(new JsProp("__n",this.name,null,false,"Id","Node Name")) ;
-		ss.add(new JsProp("__t",this.title,String.class,false,"Id","Node Title")) ;
-		ss.add(new JsProp("__d",this.desc,String.class,false,"Id","Node Description")) ;
+		ss.add(new JsProp("__n",this.name,null,false,"Name","Node Name")) ;
+		ss.add(new JsProp("__t",this.title,String.class,false,"Title","Node Title")) ;
+		ss.add(new JsProp("__ut",this.getUseTitle(),String.class,false,"UseTitle","Node Using Title")) ;
+		ss.add(new JsProp("__d",this.desc,String.class,false,"Desc","Node Description")) ;
 		List<UANode> subns = this.getSubNodes() ;
 		if(subns!=null)
 		{

@@ -192,7 +192,7 @@
 	String pm=request.getParameter("pm");
 	String title=request.getParameter("title");
 	String ieee=request.getParameter("ieee");
-	
+	int ch = Convert.parseToInt32(request.getParameter("ch"), -1) ;
 	boolean permit = "true".equals(request.getParameter("permit")) ;
 	JSONObject pm_jo = null ;
 	if(Convert.isNotNullEmpty(pm) && pm.startsWith("{"))
@@ -266,6 +266,14 @@ case "zstack_init":
 case "coor_info":
 	JSONObject coor_jo = z_coor.toJO() ;
 	coor_jo.write(out, 4, 4);
+	return ;
+case "coor_set_ch":
+	if(!Convert.checkReqEmpty(request, out, "ch"))
+		return ;
+	if(ch<=0)
+		return  ;
+	z_coor.getSettings().setChannel(ch) ;
+	out.print("succ") ;
 	return ;
 case "print_jo":
 	String out_txt = print_jo(input_txt) ;

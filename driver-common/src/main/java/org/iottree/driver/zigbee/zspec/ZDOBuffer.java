@@ -415,6 +415,10 @@ public class ZDOBuffer extends DataBuffer
         return r ;
     }
     
+    public List<TlvTag> readTLVs()
+    {
+    	return readTLVs(null, false)  ;
+    }
     /**
      * ANNEX I ZIGBEE TLV DEFINITIONS AND FORMAT
      *
@@ -647,12 +651,12 @@ public class ZDOBuffer extends DataBuffer
 	/**
 	 * @see ClusterId.NETWORK_ADDRESS_RESPONSE
 	 */
-	public AddrRsp readNwkAddrResp()
+	public AddrResp readNwkAddrResp()
 	{
 		//if(cid!= && cid!=ZDOClusterId.IEEE_ADDRESS_RESPONSE)
 			
 		//ZDOStatus status = ZDOStatus.valOfInt(this.readUInt8());
-		AddrRsp ret = new AddrRsp(ZDOClusterId.NETWORK_ADDRESS_RESPONSE);
+		AddrResp ret = new AddrResp(ZDOClusterId.NETWORK_ADDRESS_RESPONSE);
 		ret.unpackResp(this) ;
 		return ret ;
 		
@@ -674,9 +678,9 @@ public class ZDOBuffer extends DataBuffer
 	/**
 	 * @see ClusterId.IEEE_ADDRESS_RESPONSE
 	 */
-	public AddrRsp readIEEEAddrResp()
+	public AddrResp readIEEEAddrResp()
 	{
-		AddrRsp ret = new AddrRsp(ZDOClusterId.IEEE_ADDRESS_RESPONSE);
+		AddrResp ret = new AddrResp(ZDOClusterId.IEEE_ADDRESS_RESPONSE);
 		ret.unpackResp(this) ;
 		return ret ;
 	}

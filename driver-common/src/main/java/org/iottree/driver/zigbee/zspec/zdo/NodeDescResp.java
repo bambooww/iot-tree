@@ -1,15 +1,19 @@
 package org.iottree.driver.zigbee.zspec.zdo;
 
+import java.util.List;
+
 import org.iottree.driver.zigbee.zspec.ZDOBuffer;
 import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.iottree.driver.zigbee.zspec.ZDOResp;
 import org.iottree.driver.zigbee.zspec.ZDOStatus;
 import org.iottree.driver.zigbee.zspec.zdo_def.MACCapabilityFlags;
 import org.iottree.driver.zigbee.zspec.zdo_def.ServerMask;
+import org.iottree.driver.zigbee.zspec.zdo_def.TlvTag;
 
 public class NodeDescResp extends ZDOResp
 {
-
+	public ZDOStatus status ;
+	
 	/** NWK address for the request. */
     public int nwkAddr;
     /** 000 == Zigbee Coordinator, 001 == Zigbee Router,  010 === Zigbee End Device, 011-111 === Reserved */
@@ -58,6 +62,8 @@ public class NodeDescResp extends ZDOResp
      */
     public int maxOutTxSize ;
     public int deprecated1;
+    
+    public List<TlvTag> tlv_tags = null ;
 
 	public NodeDescResp()
 	{
@@ -66,22 +72,19 @@ public class NodeDescResp extends ZDOResp
 	@Override
 	public ZDOStatus getStatus()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return status;
 	}
 
 	@Override
 	public ZDOClusterId getZDOClusterId()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return ZDOClusterId.NODE_DESCRIPTOR_RESPONSE;
 	}
 
 	@Override
 	public void packTo(ZDOBuffer buf)
 	{
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("no impl") ;
 	}
 
 	@Override
@@ -106,9 +109,9 @@ public class NodeDescResp extends ZDOResp
             
             this.maxOutTxSize = buf.readUInt16();
             this.deprecated1 = buf.readUInt8();
-            // Global: FragmentationParametersGlobalTLV
-            // TODO ret. tlvs: Tlv[] = this.readTLVs();
-
+            
+            this.tlv_tags = buf.readTLVs(null, false) ;
+            
 //            result = {
 //                nwkAddress,
 //                

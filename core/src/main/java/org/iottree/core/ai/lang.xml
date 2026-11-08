@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+
+	<dd_node id="1" name="ai_r_ha" name_cn="家庭助手HA" name_en="Home Assistant" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ai_r_nor" name_cn="设备通用控制" name_en="General AI Control" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="ai_role" name_cn="AI角色" name_en="AI Role"
+		desc_cn="此节点配合设备树中的设备节点AI关联定义，使用特定的角色对设备进行AI监视与控制"
+		desc_en="This node is defined in conjunction with the AI association of device nodes in the device tree, using specific roles to monitor and control devices through AI"/>
+</dd_class>

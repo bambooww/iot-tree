@@ -6,6 +6,7 @@ import org.iottree.driver.zigbee.zcl.ZCLCluster;
 import org.iottree.driver.zigbee.zcl.ZCLClusterManager;
 import org.iottree.driver.zigbee.zcl.ZCLFrame;
 import org.iottree.driver.zigbee.zcl.ZCLManager;
+import org.iottree.driver.zigbee.zspec.event.IncomeMsgDefEvt;
 import org.iottree.driver.zigbee.zspec.event.IncomeMsgEvt;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
@@ -13,6 +14,8 @@ import org.json.JSONObject;
 /**
  * This callback message is in response to incoming data to any of the registered endpoints
  *  on this device. 
+ *  
+ *  ZCL Frame携带的数据包
  *  
  * @author jason.zhu
  */
@@ -154,6 +157,28 @@ public class IncomingMsgAREQ_CB extends MsgRecv implements IncomeMsgEvt
 			return null ;
 		
 		return ZCLManager.unpackedFrame(bs, failedr) ;
+	}
+	
+	public IncomeMsgDefEvt toIncomeMsgDefEvt()
+	{
+		StringBuilder failedr = new StringBuilder() ;
+		ZCLFrame zclf = this.getZCLFrame(failedr) ;
+		if(zclf==null)
+		{
+			//warn
+		}
+		IncomeMsgDefEvt ret = new IncomeMsgDefEvt(
+				this.getGroupId(),
+				this.getClusterId(),
+				this.getSrcEndpoint(),
+				this.getDstEndpoint(),
+				this.getSrcAddr(),
+				this.getWasBroadcast(),
+				this.getLinkQuality(),
+				zclf
+				) ;
+		
+		return ret ;
 	}
 	
 	@Override

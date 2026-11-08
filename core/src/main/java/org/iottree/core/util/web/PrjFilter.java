@@ -8,19 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.iottree.core.ConnManager;
-import org.iottree.core.ConnPt;
 import org.iottree.core.UAHmi;
 import org.iottree.core.UAManager;
 import org.iottree.core.UANode;
@@ -33,17 +21,23 @@ import org.iottree.core.msgnet.MNBase.OuterApi;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.msgnet.modules.RESTful_M;
-import org.iottree.core.msgnet.modules.RESTful_Resp;
 import org.iottree.core.msgnet.nodes.NM_RESTfulReadApi;
 import org.iottree.core.plugin.PlugAuth;
 import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
-import org.iottree.core.util.web.LoginUtil.SessionItem;
 import org.iottree.portal.NavFrame;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class PrjFilter extends CommonFilter
 {

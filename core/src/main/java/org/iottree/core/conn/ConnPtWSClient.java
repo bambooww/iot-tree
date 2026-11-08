@@ -8,14 +8,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.websocket.ClientEndpoint;
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
+import jakarta.websocket.ClientEndpoint;
+import jakarta.websocket.ContainerProvider;
+import jakarta.websocket.DeploymentException;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
+import jakarta.websocket.WebSocketContainer;
 
 import org.iottree.core.ConnDev;
 import org.iottree.core.UATag;
@@ -49,7 +49,7 @@ public class ConnPtWSClient extends ConnPtMSGNor
 	@Override
 	public String getStaticTxt()
 	{
-		// javax.websocket.Session ss =
+		// jakarta.websocket.Session ss =
 		return null;
 	}
 	

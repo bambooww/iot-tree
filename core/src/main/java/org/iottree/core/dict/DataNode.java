@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.util.*;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 import org.iottree.core.Config;
 import org.iottree.core.UANode;

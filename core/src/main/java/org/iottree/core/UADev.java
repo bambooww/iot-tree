@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAVal.ValTP;
+import org.iottree.core.ai.AIDevDef;
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
 import org.iottree.core.basic.PropItem.PValTP;
@@ -57,7 +58,7 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 	@data_val(param_name = "is_set")
 	boolean bSet = false;
 	
-	
+
 	public UADev()
 	{}
 	
@@ -327,10 +328,45 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 			if(drvpgs!=null)
 				pgs.addAll(drvpgs);
 		}
+		//aia
+		pgs.add(listAIAPropGroup()) ;
+		
 		devPGS = pgs;
 		return pgs;
 	}
 	
+	private PropGroup listAIAPropGroup()
+	{
+		Lan lan = Lan.getPropLangInPk(this.getClass()) ;
+		PropGroup pg = new PropGroup("ai_asso",lan);//,"Device run parameters") ;
+		pg.addPropItem(new PropItem("aia_name",lan,PValTP.vt_str,false,
+				null,null,""));
+		pg.addPropItem(new PropItem("aia_tagsdef",lan,PValTP.vt_str,false,
+				null,null,"").withPop("aia_tagsdef"));
+		return pg ;
+	}
+	
+	private AIDevDef aiDevDef = null ;
+	
+	
+	public AIDevDef getAIDevDef()
+	{
+		if(aiDevDef!=null)
+			return aiDevDef ;
+		
+		String aia_name = this.getOrDefaultPropValueStr("ai_asso", "aia_name", null) ;
+		String pstr = this.getOrDefaultPropValueStr("ai_asso", "aia_tagsdef", null) ;
+		if(Convert.isNullOrEmpty(pstr))
+			return null ;
+		JSONObject pm_jo = new JSONObject(pstr) ;
+		AIDevDef ret = AIDevDef.parseFrom(aia_name, pm_jo) ;
+		return aiDevDef = ret;
+	}
+	
+	private void clearDevCache()
+	{
+		aiDevDef = null ;
+	}
 //	private PropGroup getDevPropGroup()
 //	{
 //		PropGroup r = new PropGroup("dev","Device");
@@ -363,7 +399,6 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 			if(ddef!=null)
 				locv = ddef.getPropValue(groupn, itemn) ;
 		}
-		
 		return locv;
 	}
 	
@@ -380,7 +415,10 @@ public class UADev extends UANodeOCTagsGCxt  implements IOCUnit,IOCDyn,IRefOwner
 //				this.modelUid = strv ;
 			}
 		}
-		return super.setPropValue(groupn, itemn,strv);
+		boolean b = super.setPropValue(groupn, itemn,strv);
+
+		this.clearDevCache() ;
+		return b ;
 	}
 	
 	public String OCUnit_getUnitTemp()

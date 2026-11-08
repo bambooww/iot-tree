@@ -67,10 +67,13 @@
 						else out.write(",") ;
 						
 						boolean ref = hmi.isRefedNode();
+						String hmi_tp = hmi.getHmiTp() ;
+						if(Convert.isNotNullEmpty(hmi_tp))
+							hmi_tp = "["+hmi_tp+"] " ;
 						String auth = hmi.hasAuthRoleLocal()?"<i class='fa-regular fa-hand' title='"+res_roles_tt+"'></i>":"" ;
-						out.write("{\"text\": \"<img src='/admin/inc/sm_icon_hmi.png' style='width:18px;height:18px;'/>"+hmi.getName()+" - "+Convert.plainToJsStr(hmi.getTitle())+" "+auth+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
+						out.write("{\"text\": \"<img src='/admin/inc/sm_icon_hmi.png' style='width:18px;height:18px;'/>"+hmi_tp+hmi.getName()+" - "+Convert.plainToJsStr(hmi.getTitle())+" "+auth+"\",\"a_attr\":{\"title\":\""+Convert.plainToJsStr(hmi.getTitle()+"["+hmi.getId()+"]")+"\"},\"ref\":"+ref) ;
 						out.write(",\"id\": \""+hmi.getId()+"\",\"type\":\"hmi\" ,\"path\":\""+hmi.getNodePath()+"\",\"main_ui\":"+hmi.isMainInPrj()) ;
-						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": true}}") ;
+						out.write(",\"tp\":\"hmi\",\"icon\":\"icon_dev_hidden\",\"state\": {\"opened\": true},\"hmi_tp\":\""+hmi.getHmiTp()+"\"}") ;
 					}
 				}
 %><%if(!Convert.checkReqEmpty(request, out, "id"))

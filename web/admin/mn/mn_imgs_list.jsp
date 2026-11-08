@@ -26,5 +26,7 @@
 	    ,{"n":"mcp"    ,   "fn":"mcp.svg"}
 	    ,{"n":"rest_api"    ,   "fn":"rest-api.svg"}
 	    ,{"n":"openai"    ,   "fn":"openai.svg"}
+	    ,{"n":"ai"    ,   "fn":"ai.svg"}
+	    ,{"n":"ai_role"    ,   "fn":"ai_role.svg"}
 	]
 }

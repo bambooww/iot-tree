@@ -415,17 +415,6 @@ public class NS_TimerTrigger extends MNNodeStart implements IMNRunner, IMNOnOff
 		} while (bRun);
 	}
 
-	private void sleep(long ms)
-	{
-		try
-		{
-			Thread.sleep(ms);
-		}
-		catch ( Exception ee)
-		{
-		}
-	}
-
 	private boolean checkBetween()
 	{
 		if (betweenS == null && betweenE == null)

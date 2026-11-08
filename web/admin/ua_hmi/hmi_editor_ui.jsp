@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%>
-<%@ page
+<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false"%><%@ page
 	import="java.util.*,
 				java.io.*,
 				java.util.*,

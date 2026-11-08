@@ -1,6 +1,6 @@
 package org.iottree.driver.zigbee.zstack.msg_zdo;
 
-import org.iottree.driver.zigbee.zspec.zdo.AddrRsp;
+import org.iottree.driver.zigbee.zspec.zdo.AddrResp;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
 
@@ -9,7 +9,7 @@ public class IEEEAddrSRSP extends MsgRecv
 	public static final int CMD0 = 0x65 ;
 	public static final int CMD1 = 0x01 ;
 
-	AddrRsp zspecRsp = null ;
+	AddrResp zspecRsp = null ;
 	
 	public IEEEAddrSRSP()
 	{

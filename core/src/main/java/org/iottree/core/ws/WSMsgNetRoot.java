@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpSession;
-import javax.websocket.CloseReason;
-import javax.websocket.EndpointConfig;
-import javax.websocket.Session;
-import javax.websocket.CloseReason.CloseCodes;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.Session;
+import jakarta.websocket.CloseReason.CloseCodes;
 
 import org.iottree.core.UANodeOCTagsCxt;
 import org.iottree.core.UAPrj;

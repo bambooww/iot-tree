@@ -280,7 +280,7 @@ if(hide_top)
           <div id="show_hid" class="show_hid" style="top:8px;"><i class="fa fa-angle-double-down" aria-hidden="true" /></i></div>
     </div>
  </div>
- <div id="chat_ai" style="z-index:6000;position: absolute;right:0px;width:700px;height:0px;top:45px;bottom: 0px;border:0px;display:none;">
+ <div id="chat_ai" style="z-index:65000;position: absolute;width:700px;height:0px;top:40px;bottom: 0px;border:0px;display:none;">
     <iframe id="chat_ai_if" style="width:100%;height:100px;border:0px;"></iframe>
      <button id="chat_ai_op" style="position: absolute;right:20px;top:20px;width:30px;height:30px;display:none;" onclick="ai_dlg()"><i class="fa fa-times"></i></button>
  </div>
@@ -576,12 +576,17 @@ function on_conn_ui_showed()
 	})
 }
 
-
+var menu_hmi_add = {op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",submenu:[
+	{op_name:"new_hmi",op_title:"<wbt:lang>hmi_nor</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+	{op_name:"new_hmi_aipage",op_title:"<wbt:lang>hmi_aipage</wbt:lang>",op_icon:"fa fa-puzzle-piece",hmi_tp:"ai_page",op_action:act_new_hmi_ai_page},
+	{op_name:"new_hmi_aipage",op_title:"<wbt:lang>hmi_ainav</wbt:lang>",op_icon:"fa fa-puzzle-piece",hmi_tp:"ai_nav",op_action:act_new_hmi_ai_nav}
+	]};
 
 var cxt_menu = {
 	"prj":[
 		{op_name:"new_ch",op_title:"<wbt:lang>new_ch</wbt:lang>",op_icon:"fa fa-random",op_action:act_rep_new_ch},
-		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+		menu_hmi_add,
+		
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-compass",op_action:""},
 		
 		{op_name:"edit_prj",op_title:"<wbt:g>edit,prj</wbt:g>",op_icon:"fa fa-pencil",op_action:act_edit_prj},
@@ -605,7 +610,8 @@ var cxt_menu = {
 		{op_name:"edit_ch",op_title:"<wbt:lang>edit_ch</wbt:lang>",op_icon:"fa fa-pencil",op_action:act_edit_ch},
 		{op_name:"del_ch",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_ch},
 		
-		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+		//{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+		menu_hmi_add,
 		//{op_name:"new_tag_exp",op_title:"<wbt:lang>new_tag_mid</wbt:lang>",op_icon:"fa fa-tag",op_action:""},
 		
 		{op_name:"cp_ch",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
@@ -625,7 +631,8 @@ var cxt_menu = {
 		{op_name:"pos_down",op_title:"<wbt:lang>pos_down</wbt:lang>",op_icon:"fa fa-arrow-down",op_action:act_pos_down}
 	],
 	"dev":[
-		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+		//{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi},
+		menu_hmi_add,
 		{op_name:"edit_dev",op_title:"<wbt:lang>edit_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_edit_dev},
 		//{op_name:"refresh_dev",op_title:"<wbt:lang>refresh_dev</wbt:lang>",op_icon:"fa fa-tasks",op_action:act_refresh_dev},
 		{op_name:"del_dev",op_title:"<wbt:lang>delete</wbt:lang>",op_icon:"fa fa-times",op_action:act_del_dev},
@@ -643,9 +650,10 @@ var cxt_menu = {
 	],
 	"tagg":[
 		
-		{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi,op_chk:(tn)=>{
-			return true;//return !tn.in_dev;
-		}},
+		//{op_name:"new_hmi",op_title:"<wbt:lang>new_hmi</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_new_hmi,op_chk:(tn)=>{
+		//	return true;//return !tn.in_dev;
+		//}},
+		menu_hmi_add,
 		{op_name:"cp_tagg",op_title:"<wbt:g>copy</wbt:g>",op_icon:"fa fa-copy",op_action:act_node_copy},
 		{op_name:"modify_tagg",op_title:"<wbt:lang>modify</wbt:lang>",op_icon:"fa fa-puzzle-piece",op_action:act_edit_tagg,op_chk:(tn)=>{
 			return true;// !tn.in_dev;
@@ -1616,13 +1624,26 @@ function add_or_edit_dev(ch_path,dev_path)
 
 function act_new_hmi(n,op)
 {
-	hmi_add_edit(false,n.path,()=>{
+	hmi_add_edit(false,n.path,"",()=>{
 		refresh_ui() ;
 	});
 }
+function act_new_hmi_ai_page(n,op)
+{
+	hmi_add_edit(false,n.path,"ai_page",()=>{
+		refresh_ui() ;
+	});
+}
+function act_new_hmi_ai_nav(n,op)
+{
+	hmi_add_edit(false,n.path,"ai_nav",()=>{
+		refresh_ui() ;
+	});
+}
+
 function act_edit_hmi(n,op)
 {
-	hmi_add_edit(true,n.path,()=>{
+	hmi_add_edit(true,n.path,n.hmi_tp,()=>{
 		refresh_ui() ;
 	});
 }
@@ -1652,8 +1673,10 @@ function act_main_hmi(n,op)
 
 function act_hmi_edit_ui(n,op)
 {
-	//console.log(n)
-	add_tab(n.id,""+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
+	if(n.hmi_tp)
+		add_tab(n.id,""+n.text,"/admin/ua_hmi/hmi_editor_"+n.hmi_tp+".jsp?tabid="+n.id+"&path="+n.path) ;
+	else
+		add_tab(n.id,""+n.text,"/admin/ua_hmi/hmi_editor_ui.jsp?tabid="+n.id+"&path="+n.path) ;
 }
 
 function act_open_cxt_script(n,op)
@@ -2207,15 +2230,29 @@ function chg_lan(ln)
 	});
 }
 
+var chat_ai = $("#chat_ai");
+var win_w = $(window).width() ;
+var chat_ai_w = 700 ;
+//chat_ai.css('width',chat_ai_w) ;
+var chat_ai_xy = {x:win_w-chat_ai_w,y:40} ;
+//console.log(win_w,chat_ai_xy)
+function move_chat_ai(dx,dy)
+{
+	chat_ai_xy.x += dx ;
+	chat_ai_xy.y += dy ;
+	chat_ai.css("left",chat_ai_xy.x+"px").css("top",chat_ai_xy.y+"px");
+}
+move_chat_ai(0,0) ;
+
 function ai_dlg()
 {
 	let obj_if = $("#chat_ai_if");
-	let obj = $("#chat_ai");
-	var h = $(window).height()-40;
+	let obj = chat_ai;
+	let h = $(window).height()-100;
 	
 	if(obj.attr('topm_show')=='1')
 	{
-		obj_if.attr("src","").css("height","0px");;
+		obj_if.css("height","0px"); //.attr("src","")
 		$("#chat_ai_op").css("display","none") ;
 		obj.animate({height: '0px', opacity: 'hide'}, 'normal',function(){ obj.hide();});
 		obj.attr('topm_show',"0") ;
@@ -2226,7 +2263,7 @@ function ai_dlg()
 		let src = obj_if.attr("src");
 		if(!src)
 		{
-			obj_if.attr("src","./util/chat_ai.jsp?prjid="+prjid) ;
+			obj_if.attr("src","./util/chat_ai_term.jsp?prjid="+prjid) ;
 		}
 		$("#chat_ai_op").css("display","") ;
 		obj_if.css("height",h+"px");
@@ -2235,6 +2272,7 @@ function ai_dlg()
 		return 1 ;
 	}
 }
+
 
 </script>
 <script src="./js/split.js"></script>

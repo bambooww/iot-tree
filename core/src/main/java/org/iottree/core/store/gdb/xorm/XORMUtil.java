@@ -6,7 +6,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.iottree.core.store.gdb.DataColumn;
 import org.iottree.core.store.gdb.DataRow;

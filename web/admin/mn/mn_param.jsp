@@ -113,7 +113,6 @@
 	<jsp:param value="true" name="tree"/>
 </jsp:include>
 <script type="text/javascript">
-
 var container_id="<%=container_id%>";
 var netid="<%=netid%>";
 var itemid="<%=itemid%>";
@@ -538,7 +537,7 @@ layui.use('form', function(){
 	  element = layui.element;
 	  form.render();
 	  
-	  dlg.resize_to(800,300) ;
+	  dlg.resize_to(800,500) ;
 	  init_pm() ;
 	 
 });

@@ -46,4 +46,17 @@ public interface IMNRunner
 	 * @return
 	 */
 	public boolean RT_runnerStartInner() ;
+	
+	public default void sleep(long ms)
+	{
+		try
+		{
+			Thread.sleep(ms);
+		}
+		catch ( InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

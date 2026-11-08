@@ -5,7 +5,6 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.zigbee.ember.ASHFrmData;
 import org.iottree.driver.zigbee.ember.EZSPRsp;
-import org.iottree.driver.zigbee.ember.EZSPWaiter;
 import org.iottree.driver.zigbee.ember.ezsp.MsgIncomeHandlerCB;
 import org.iottree.driver.zigbee.ember.types.ApsFrame;
 import org.iottree.driver.zigbee.ember.types.IncomeMsgTp;
@@ -13,9 +12,10 @@ import org.iottree.driver.zigbee.ember.types.RxPacketInfo;
 import org.iottree.driver.zigbee.zcl.ZCLFrame;
 import org.iottree.driver.zigbee.zcl.ZCLFrmClusterCmd;
 import org.iottree.driver.zigbee.zcl.ZCLManager;
+import org.iottree.driver.zigbee.zspec.ZSWaiter;
 import org.iottree.driver.zigbee.zspec.ZSpecConsts;
 
-public class EZSPWaiterZCL extends EZSPWaiter
+public class EZSPWaiterZCL extends ZSWaiter<ASHFrmData,EZSPRsp>
 {
 	static ILogger log = LoggerManager.getLogger(EZSPWaiterZCL.class) ;
 	

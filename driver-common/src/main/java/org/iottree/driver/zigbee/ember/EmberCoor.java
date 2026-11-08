@@ -45,7 +45,9 @@ import org.iottree.driver.zigbee.zspec.types.NetworkParam;
 import org.iottree.driver.zigbee.zspec.types.ZSStartResult;
 import org.iottree.driver.zigbee.zspec.util.RunRes;
 import org.iottree.driver.zigbee.zspec.util.ZSpecUtil;
-import org.iottree.driver.zigbee.zspec.zdo.PermitJoiningReq;
+import org.iottree.driver.zigbee.zspec.zdo.EndDeviceAnnounceResp;
+import org.iottree.driver.zigbee.zspec.zdo.*;
+
 import org.json.JSONObject;
 
 public class EmberCoor extends ZSCoor
@@ -77,6 +79,8 @@ public class EmberCoor extends ZSCoor
 	private static final int  QUEUE_BUSY_DEFER_MSEC = 500;
 	private static final int  QUEUE_NETWORK_DOWN_DEFER_MSEC = 1500;
 	
+	public static final int DEFAULT_MANUFACTURER_CODE = ManufacturerCode.SILICON_LABORATORIES;
+	
 	int ncpVer = -1 ;
 	
 	
@@ -106,6 +110,7 @@ public class EmberCoor extends ZSCoor
 	public EmberCoor(EmberDriver drv,EmberManager ebm)
 	{
 		super(drv) ;
+		
 		this.ebm = ebm ;
 		this.ezsp = new EZSP(ebm) ;
 		try
@@ -247,7 +252,7 @@ public class EmberCoor extends ZSCoor
 		DataUtil.setUInt16(stack_config.TRANSIENT_DEVICE_TIMEOUT, vs, 0);
 		SetValueRR.setValue(ebm, EzspValueId.TRANSIENT_DEVICE_TIMEOUT, vs) ;
 
-		final int DEFAULT_MANUFACTURER_CODE = ManufacturerCode.SILICON_LABORATORIES;
+		
 		SetFacCodeRR.setFacCode(ebm, DEFAULT_MANUFACTURER_CODE);
 		
 		// network security init
@@ -257,7 +262,7 @@ public class EmberCoor extends ZSCoor
 		ConfRR.setConfigVal(ebm, EzspConfigId.MAX_END_DEVICE_CHILDREN, stack_config.MAX_END_DEVICE_CHILDREN);
 		ConfRR.setConfigVal(ebm, EzspConfigId.END_DEVICE_POLL_TIMEOUT, stack_config.END_DEVICE_POLL_TIMEOUT);
 		ConfRR.setConfigVal(ebm, EzspConfigId.TRANSIENT_KEY_TIMEOUT_S, stack_config.TRANSIENT_KEY_TIMEOUT_S);
-        // XXX: temp-fix: forces a side-effect in the firmware that prevents broadcast issues in environments with unusual interferences
+        // : temp-fix: forces a side-effect in the firmware that prevents broadcast issues in environments with unusual interferences
 		SetValueRR.setValue(ebm, EzspValueId.CCA_THRESHOLD, new byte[] {0});
 
         if (stack_config.CCA_MODE!=null) {
@@ -286,14 +291,14 @@ public class EmberCoor extends ZSCoor
 
             if (rp_status != SLStatus.OK) {
                 // soft-fail, don't prevent start
-                log.error("Failed to set transmit power to "+this.adapterOpt.tansmit_power+" status="+rp_status);
+                getLog().error("Failed to set transmit power to "+this.adapterOpt.tansmit_power+" status="+rp_status);
             }
         }
 
         this.nwkCache.params = params;
         this.nwkCache.ieee_addr = NwkRR.getEui64(ebm);
 
-        log.debug("[INIT] Network Ready! "+this.nwkCache);
+        getLog().debug("[INIT] Network Ready! "+this.nwkCache);
 
         //this.watchdogCountersHandle = setInterval(this.watchdogCounters.bind(this), WATCHDOG_COUNTERS_FEED_INTERVAL);
 
@@ -321,14 +326,14 @@ public class EmberCoor extends ZSCoor
 
                 if (sl_st!=null&& sl_st.isOk())
                 {
-                	if(log.isDebugEnabled())
-                		log.debug("Registered endpoint ["+ep.endpoint+"]");
+                	if(getLog().isDebugEnabled())
+                		getLog().debug("Registered endpoint ["+ep.endpoint+"]");
                 } else {
                     throw new Exception("Failed to register endpoint ["+ep.endpoint+"] with status="+sl_st);
                 }
             } else {
-            	if(log.isDebugEnabled())
-            		log.debug("Endpoint ["+ep.endpoint+"] already registered.");
+            	if(getLog().isDebugEnabled())
+            		getLog().debug("Endpoint ["+ep.endpoint+"] already registered.");
             }
 
             for (Integer multicastId : ep.multicastIds)
@@ -345,8 +350,8 @@ public class EmberCoor extends ZSCoor
                 if (status!=SLStatus.OK)
                     throw new Exception("Failed to register group "+multicastId+" in multicast table with status="+status);
 
-                if(log.isDebugEnabled())
-            		log.debug("Registered multicast table entry "+this.multicastTable.size()+" "+multicastEntry);
+                if(getLog().isDebugEnabled())
+            		getLog().debug("Registered multicast table entry "+this.multicastTable.size()+" "+multicastEntry);
                 this.multicastTable.add(multicastEntry.multicastId);
             }
         }
@@ -372,6 +377,8 @@ public class EmberCoor extends ZSCoor
 	{
 		return RunRes.ok ;
 	}
+	
+	
 
 	@Override
 	public JSONObject toJO()
@@ -384,6 +391,8 @@ public class EmberCoor extends ZSCoor
 	@Override
 	public void fromJO(JSONObject jo)
 	{
+		super.fromJO(jo);
+		//
 		
 	}
 	
@@ -391,11 +400,14 @@ public class EmberCoor extends ZSCoor
 	@Override
 	public int MGR_setPermitJoin(boolean permit_or_not, StringBuilder failedr) throws Exception
 	{
-		int sec = permit_or_not?0xFE:0x00 ;
-		SLStatus slst = NwkRR.permitJoining(ebm, sec) ;
-		if(slst == SLStatus.OK)
-			return sec ;
-		return -1 ;
+		int seconds = permit_or_not?0xFE:0 ;
+		this.permitJoin( seconds,-1) ; 
+		
+//		int sec = permit_or_not?0xFE:0x00 ;
+//		SLStatus slst = NwkRR.permitJoining(ebm, sec) ;
+//		if(slst == SLStatus.OK)
+//			return sec ;
+		return seconds ;
 	}
 
 	
@@ -430,11 +442,18 @@ public class EmberCoor extends ZSCoor
        
        // 对比coor装载的之前保存数据
        
+       NwkStateRsp nwk_st_rsp = NwkRR.ezspNwkStatus(ebm) ;
+       NwkStatus nwk_st = null ;
+       if(nwk_st_rsp!=null)
+    	   nwk_st = nwk_st_rsp.getStatus() ;
+       if(getLog().isDebugEnabled())
+    	   getLog().debug("[INIT TC] Network status="+nwk_st);
+       
        int nwk_bitm =  NwkInitBitmask.PARENT_INFO_IN_TOKEN.getIntVal() | NwkInitBitmask.END_DEVICE_REJOIN_ON_REBOOT.getIntVal() ;
        SLStatus initStatus =  NwkRR.nwkInit(ebm,nwk_bitm);
 
-       if(log.isDebugEnabled())
-    	   log.debug("[INIT TC] Network init status="+initStatus);
+       if(getLog().isDebugEnabled())
+    	   getLog().debug("[INIT TC] Network init status="+initStatus);
        
        if (initStatus != SLStatus.OK && initStatus != SLStatus.NOT_JOINED)
            throw new Exception("[INIT TC] Failed network init request with status="+initStatus);
@@ -448,8 +467,8 @@ public class EmberCoor extends ZSCoor
            NwkGetParamsRsp ngp = NwkRR.getNwkParams(ebm) ;
            SLStatus np_status = ngp.getStatus() ;
            NwkParams nwk_params = ngp.getNwkParams() ;
-           if(log.isDebugEnabled())
-        	   log.debug("[INIT TC] Current adapter network: nodeType="+ngp.getEmberNodeType()+" params="+ngp.getNwkParams().toJO());
+           if(getLog().isDebugEnabled())
+        	   getLog().debug("[INIT TC] Current adapter network: nodeType="+ngp.getEmberNodeType()+" params="+ngp.getNwkParams().toJO());
 
            if (np_status == SLStatus.OK && ngp.getEmberNodeType() == EmberNodeType.COORDINATOR &&
                    this.settings.getPanId() == nwk_params.panId && nwk_params.getExtPanIdStr().equals(this.settings.getExtPanId()))
@@ -476,7 +495,7 @@ public class EmberCoor extends ZSCoor
            
            if (action == NwkInitAction.LEAVE)
            {
-               log.info("[INIT TC] Adapter network does not match config. Leaving network...");
+               getLog().info("[INIT TC] Adapter network does not match config. Leaving network...");
                SLStatus leave_st = NwkRR.nwkLeave(ebm) ;
                if (leave_st != SLStatus.OK) {
                    throw new Exception("[INIT TC] Failed leave network request with status="+leave_st);
@@ -508,12 +527,12 @@ public class EmberCoor extends ZSCoor
                    action = NwkInitAction.FORM_BACKUP;
                } else {
                    // config doesn't match backup
-                   log.info("[INIT TC] Config does not match backup.");
+                   getLog().info("[INIT TC] Config does not match backup.");
                    action = NwkInitAction.FORM_CONFIG;
                }
            } else {
                // no backup
-               log.info("[INIT TC] No valid backup found.");
+               getLog().info("[INIT TC] No valid backup found.");
                action = NwkInitAction.FORM_CONFIG;
            }
        }
@@ -524,7 +543,7 @@ public class EmberCoor extends ZSCoor
 
        switch (action) {
            case FORM_BACKUP: {
-               log.info("[INIT TC] Forming from backup.");
+               getLog().info("[INIT TC] Forming from backup.");
                // `backup` valid in this `action` path (not detected by TS)
                /* v8 ignore start */
                List<LinkKeyData> keyList = new ArrayList<>();
@@ -583,7 +602,7 @@ public class EmberCoor extends ZSCoor
                break;
            }
            case FORM_CONFIG: {
-               log.info("[INIT TC] Forming from config.");
+               getLog().info("[INIT TC] Forming from config.");
                MGR_formNetwork(
                    false /*from config*/,
                    this.settings.getNetworkKey(),
@@ -601,7 +620,7 @@ public class EmberCoor extends ZSCoor
                break;
            }
            case DONE: {
-               log.info("[INIT TC] Adapter network matches config.");
+               getLog().info("[INIT TC] Adapter network matches config.");
                break;
            }
            default:
@@ -625,7 +644,7 @@ public class EmberCoor extends ZSCoor
            //         return SLStatus.OK;
            //     }, logger.error, true);// no reject just log error if any, will retry next start, & prioritize so we know it'll run when expected
            // }, 300000);
-           log.warn("[INIT TC] Network key frame counter is reaching its limit. A new network key will have to be instaured soon.");
+           getLog().warn("[INIT TC] Network key frame counter is reaching its limit. A new network key will have to be instaured soon.");
        }
 
        
@@ -649,7 +668,7 @@ public class EmberCoor extends ZSCoor
 
        long remainTilMTORR = MsgRR.setSrcRouteDiscMode(ebm,EmberSrcRouteDiscMode.RESCHEDULE);
 
-       log.info("[CONCENTRATOR] Started source route discovery. "+remainTilMTORR+"ms until next broadcast.");
+       getLog().info("[CONCENTRATOR] Started source route discovery. "+remainTilMTORR+"ms until next broadcast.");
    }
    
    /**
@@ -667,12 +686,12 @@ public class EmberCoor extends ZSCoor
 			e.printStackTrace();
 		}
 
-           log.info("[NCP COUNTERS] "+Convert.combineWith(ncpCounters, ','));
+           getLog().info("[NCP COUNTERS] "+Convert.combineWith(ncpCounters, ','));
 
            List<Integer> ash_cc = ebm.slideWin.readAndClearCounters() ;
            //const ashCounters = this.ezsp.ash.readAndClearCounters();
 
-           log.info("[ASH COUNTERS] "+Convert.combineWith(ash_cc, ','));
+           getLog().info("[ASH COUNTERS] "+Convert.combineWith(ash_cc, ','));
    }
    
    /**
@@ -700,7 +719,7 @@ public class EmberCoor extends ZSCoor
        {
     	   SecManExportLinkKeyByIdxRsp rsp = SecRR.exportLinkKeyByIndex(ebm,i);
     	   status = rsp.getSLStatus() ;
-           log.debug("Export link key at index "+i+", status="+status);
+           getLog().debug("Export link key at index "+i+", status="+status);
            context = rsp.getContext() ;
            plaintextKey = rsp.getSecManKey() ;
            apsKeyMeta = rsp.getKeyData() ;
@@ -723,7 +742,7 @@ public class EmberCoor extends ZSCoor
            }
        }
 
-       log.info(" Retrieved "+keyList.size()+" link keys");
+       getLog().info(" Retrieved "+keyList.size()+" link keys");
 
        return keyList;
    }
@@ -773,7 +792,7 @@ public class EmberCoor extends ZSCoor
           }
       }
 
-      log.info("Imported "+linkks.size()+" keys.");
+      getLog().info("Imported "+linkks.size()+" keys.");
   }
 
    private void MGR_formNetwork(
@@ -820,7 +839,7 @@ public class EmberCoor extends ZSCoor
 	            status = SecRR.clearKeyTable(ebm); //.ezspClearKeyTable();
 
 	            if (status != SLStatus.OK) {
-	                log.error("[INIT FORM] Failed to clear key table with status="+status);
+	                getLog().error("[INIT FORM] Failed to clear key table with status="+status);
 	            }
 	        }
 
@@ -834,7 +853,7 @@ public class EmberCoor extends ZSCoor
 	        netParams.nwk_updateid =     nwkUpdateId ;
 	        netParams.channels = ZSpecConsts.ALL_802_15_4_CHANNELS_MASK ;
 
-	        log.info("[INIT FORM] Forming new network with: "+netParams.toJO());
+	        getLog().info("[INIT FORM] Forming new network with: "+netParams.toJO());
 
 	        status = NwkRR.formNetwork(ebm,netParams);
 
@@ -846,8 +865,8 @@ public class EmberCoor extends ZSCoor
 
 	        status = SetValueRR.startWritingStackTokens(ebm);
 
-	        log.debug("[INIT FORM] Start writing stack tokens status="+status);
-	        log.info("[INIT FORM] New network formed!");
+	        getLog().debug("[INIT FORM] Start writing stack tokens status="+status);
+	        getLog().info("[INIT FORM] New network formed!");
 	    }
    
    private EZSPRsp waitForStackStatusEvt(SLStatus wait_st,String inf)
@@ -858,8 +877,8 @@ public class EmberCoor extends ZSCoor
        		super.ezspStackStatusHandler(status) ;
                if(status==wait_st)
                {
-               	if(log.isDebugEnabled())
-               		log.debug(inf+"wait STACK_STATUS_HANDLER - "+wait_st+" ok");
+               	if(getLog().isDebugEnabled())
+               		getLog().debug(inf+"wait STACK_STATUS_HANDLER - "+wait_st+" ok");
                    return true ;// wait ok
                }
                return true ;
@@ -1019,12 +1038,14 @@ public class EmberCoor extends ZSCoor
 		return 0;
 	}
 	
-	@Override
-	public boolean MGR_setEndDeviceTitle(String ieeeaddr, String tt) throws Exception
+	public void MGR_onZDOResp(ZDOResp zdo_resp)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(zdo_resp instanceof EndDeviceAnnounceResp)
+		{
+			
+		}
 	}
+
 	
 	@Override
 	public boolean MGR_setEndDeviceConfigReportAttr(String ieeeaddr, int endpoint, int cluster_id,
@@ -1116,8 +1137,8 @@ public class EmberCoor extends ZSCoor
 		SLStatus  st = SecRR.importTransientKey(ebm,ieee_addr,key,SecManFlag.NONE) ;
 		if(st!=SLStatus.OK)
 			throw new Exception("addInstallCode failed for "+ieee_addr+" with status="+st) ;
-		if(log.isDebugEnabled())
-			log.debug("addInstallCode succ for "+ieee_addr);
+		if(getLog().isDebugEnabled())
+			getLog().debug("addInstallCode succ for "+ieee_addr);
 	}
 	
 	/**
@@ -1164,7 +1185,7 @@ public class EmberCoor extends ZSCoor
 	
 	        if (ZSpecUtil.isBroadcastAddress(nwk_addr))
 	        {
-	            log.debug("[ZDO "+clusterName+" BROADCAST to="+nwk_addr+" messageTag="+messageTag+" payload=");
+	            getLog().debug("[ZDO "+clusterName+" BROADCAST to="+nwk_addr+" messageTag="+messageTag+" payload=");
 	
 	            //ebm, alias_addr, dest_addr, nwk_seq, aps_frm, radius, msg_tag, msg_cont)
 	            SendRsp rsp = MsgRR.ezspSendBroadcast(ebm,
@@ -1176,20 +1197,20 @@ public class EmberCoor extends ZSCoor
 	            int aps_seq = rsp.getSeq() ;
 	            apsf.sequence = aps_seq;
 	
-	            log.debug("[SENT ZDO BROADCAST messageTag=${messageTag} apsSequence=${apsSequence} status=${SLStatus[status]}]");
+	            getLog().debug("[SENT ZDO BROADCAST messageTag=${messageTag} apsSequence=${apsSequence} status=${SLStatus[status]}]");
 	
 	            if (status != SLStatus.OK) {
 	                throw new Exception("[ZDO ${clusterName} BROADCAST to=${networkAddress} messageTag=${messageTag}] Failed to send request with status=${SLStatus[status]}.");
 	            }
 	        } else {
-	            log.debug("[ZDO ${clusterName} UNICAST to=${ieeeAddress}:${networkAddress} messageTag=${messageTag} payload=");
+	            getLog().debug("[ZDO ${clusterName} UNICAST to=${ieeeAddress}:${networkAddress} messageTag=${messageTag} payload=");
 	            SendRsp rsp = MsgRR.ezspSendUnicast(ebm,OutgoingMsgType.DIRECT,
 	                    nwk_addr,apsf,messageTag,payload);
 	            status = rsp.getStatus() ;
 	            int aps_seq = rsp.getSeq() ;
 	            apsf.sequence = aps_seq;
 	
-	            log.debug("[SENT ZDO UNICAST messageTag="+messageTag+" apsSequence="+aps_seq+" status="+status);
+	            getLog().debug("[SENT ZDO UNICAST messageTag="+messageTag+" apsSequence="+aps_seq+" status="+status);
 	
 	            if (status != SLStatus.OK) {
 	                throw new Exception("[ZDO "+clusterName+" UNICAST to=${ieeeAddress}:${networkAddress} messageTag=${messageTag}] Failed to send request with status="+status);
@@ -1221,8 +1242,8 @@ public class EmberCoor extends ZSCoor
 	private SLStatus emberSetEzspPolicy(EzspPolicyId policyId ,int decision_id) throws Exception
 	{
 	    SLStatus status = SetPolicyRR.setPolicyVal(ebm, policyId,  decision_id) ;
-	    if(log.isDebugEnabled())
-	    	log.debug("[EzspPolicyId] SET '"+policyId+"' TO '"+decision_id+"' with status="+status);
+	    if(getLog().isDebugEnabled())
+	    	getLog().debug("[EzspPolicyId] SET '"+policyId+"' TO '"+decision_id+"' with status="+status);
 	    return status;
 	}
 	
@@ -1315,8 +1336,8 @@ public class EmberCoor extends ZSCoor
 	            throw new Exception("[ZDO] Failed coordinator permit joining request with status="+status);
 	        }
 	
-	        if(log.isDebugEnabled())
-	        	log.debug("Permit joining on coordinator for "+seconds+" sec.");
+	        if(getLog().isDebugEnabled())
+	        	getLog().debug("Permit joining on coordinator for "+seconds+" sec.");
 	
 	        // broadcast permit joining ZDO
 	        if (nwk_addr<0) {
@@ -1378,7 +1399,7 @@ public class EmberCoor extends ZSCoor
         //return await this.queue.execute<ZclPayload | undefined>(async () => {
         //    this.checkInterpanLock();
 
-            log.debug("~~~> [ZCL to=${ieeeAddr}:${networkAddress} apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
+            getLog().debug("~~~> [ZCL to=${ieeeAddr}:${networkAddress} apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
 
             for (int i = 1; i <= QUEUE_MAX_SEND_ATTEMPTS; i++)
             {
@@ -1431,7 +1452,7 @@ public class EmberCoor extends ZSCoor
                     throw new Exception("~x~> [ZCL to=${ieeeAddr}:${networkAddress} apsFrame=${JSON.stringify(apsFrame)}] Failed to send request with status=${SLStatus[status]}.");
                 }
 
-                log.debug("~x~> [ZCL to=${ieeeAddr}:${networkAddress}] Failed to send request attempt ${i}/${QUEUE_MAX_SEND_ATTEMPTS} with status=${SLStatus[status]}.");
+                getLog().debug("~x~> [ZCL to=${ieeeAddr}:${networkAddress}] Failed to send request attempt ${i}/${QUEUE_MAX_SEND_ATTEMPTS} with status=${SLStatus[status]}.");
             }
 
             if (commandResponseId !=null)
@@ -1484,7 +1505,7 @@ public class EmberCoor extends ZSCoor
 	        byte[] data = zclf.packFrame() ;
 
 
-	           log.debug("~~~> [ZCL GROUP apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
+	           getLog().debug("~~~> [ZCL GROUP apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
 	           SendRsp send_rsp = this.ezsp.send(
 	                OutgoingMsgType.MULTICAST,
 	                groupID, // not used with MULTICAST
@@ -1530,7 +1551,7 @@ public class EmberCoor extends ZSCoor
 	            byte[] data = zclf.packFrame() ;
 
 
-	            log.debug("~~~> [ZCL BROADCAST apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
+	            getLog().debug("~~~> [ZCL BROADCAST apsFrame=${JSON.stringify(apsFrame)} header=${JSON.stringify(zclFrame.header)}]");
 	            SendRsp send_rsp = this.ezsp.send(
 	                OutgoingMsgType.BROADCAST,
 	                destination.val,
@@ -1582,7 +1603,7 @@ public class EmberCoor extends ZSCoor
         byte[] zclf_bs = zclFrame.packFrame() ;
         byte[] msg_bs = DataBuffer.concat(buf,zclf_bs) ;
         
-        log.debug("~~~> [ZCL TOUCHLINK to="+ieee_addr+" header=${JSON.stringify(zclFrame.header)}]");
+        getLog().debug("~~~> [ZCL TOUCHLINK to="+ieee_addr+" header=${JSON.stringify(zclFrame.header)}]");
         SLStatus status = this.ezsp.sendRawMessage(
             msg_bs,//Buffer.concat([msgBuffalo.getWritten(), zclFrame.toBuffer()]),
             EmberTransmitPriority.NORMAL,
@@ -1642,7 +1663,7 @@ public class EmberCoor extends ZSCoor
         byte[] zclf_bs = zclf.packFrame() ;
         byte[] data = DataBuffer.concat(buf,zclf_bs) ;
         
-         log.debug("~~~> [ZCL TOUCHLINK BROADCAST header=${JSON.stringify(zclFrame.header)}]");
+         getLog().debug("~~~> [ZCL TOUCHLINK BROADCAST header=${JSON.stringify(zclFrame.header)}]");
          SLStatus status = this.ezsp.sendRawMessage(data, EmberTransmitPriority.NORMAL, true);
 
             if (status != SLStatus.OK) {

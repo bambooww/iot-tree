@@ -59,7 +59,7 @@ public class DataRequestExtSREQ extends MsgData
 					requests as necessary
 	 * @param last_data 0-128 bytes data
 	 */
-	private DataRequestExtSREQ(int dst_addr_mode,byte[] dst_addr,
+	public DataRequestExtSREQ(int dst_addr_mode,byte[] dst_addr,
 			int dst_endpoint,int dst_pan_id,
 			int src_endpoint,int cluster_id,int trans_id,int options,int radius,byte[] last_data)
 	{

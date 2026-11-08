@@ -16,8 +16,17 @@ if(!Convert.checkReqEmpty(request, out, "cn","op"))
 String op = request.getParameter("op");
 String classn = request.getParameter("cn");
 Class<?> cc = Class.forName(classn) ;
-
-Object sub_ob = cc.newInstance() ;
+//System.out.println(" cc="+cc.getCanonicalName());
+Object sub_ob = null;
+try
+{
+	sub_ob = cc.getConstructor().newInstance() ;
+}
+catch(Exception ee)
+{
+	out.print(ee.getMessage()) ;
+	return ;
+}
 
 if(sub_ob instanceof IJsProp)
 {

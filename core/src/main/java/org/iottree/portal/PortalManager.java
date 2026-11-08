@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.iottree.core.Config;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
@@ -533,7 +533,7 @@ public class PortalManager
 		if(tarf.exists())
 			tarf.delete();
 		
-		logof.write(tarf);
+		logof.write(tarf.toPath());
 //		if(!logof.renameTo(tarf))
 //		{
 //			failedr.append("invalid set target logo file") ;

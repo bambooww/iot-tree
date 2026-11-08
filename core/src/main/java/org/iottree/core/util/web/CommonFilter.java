@@ -1,8 +1,8 @@
 package org.iottree.core.util.web;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
 
 import org.iottree.core.util.Convert;
 

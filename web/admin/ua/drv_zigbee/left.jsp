@@ -52,7 +52,7 @@
 			//,new NavItem("devices","fa-solid fa-plug","Devices","设备","devices.jsp")
 			,new NavItem("groups","fa-solid fa-border-all","Groups","分组","") //groups.jsp
 			,new NavItem("network","fa-solid fa-share-nodes","Network","网络","") //network.jsp
-			,new NavItem("setup","fa-solid fa-gear","Setup","设置","") //setup.jsp
+			,new NavItem("setup","fa-solid fa-gear","Setup","设置","settings.jsp") //setup.jsp
 	};
 	%><%
 	if(!Convert.checkReqEmpty(request, out, "path"))
@@ -137,7 +137,6 @@ body {background-color: #f5f5f5;overflow: hidden;}
 </script>
 </head>
 <body>
-
 <div class="top"  onclick="window.open('main_<%=drv_name %>.jsp?path=<%=path%>')">
 	<i class="fa-solid fa-tower-broadcast" style="font-size:13px;border:0px;"></i>&nbsp;&nbsp;<%=nav_t %>
 	<div class="sub"><%=dd_t %></div>

@@ -53,10 +53,7 @@ if(params!=null)
 }
 %>
 <style>
-.msg
-{
-	height:85px;width:100%;
-}
+.msg height:85px;width:100%;}
 table {font-size:12px;margin:0px;width:100%;}
 td {border:1px solid #ccc;vertical-align: top;}
 #tb_pms button {white-space: nowrap;}

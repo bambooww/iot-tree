@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-import javax.websocket.EndpointConfig;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.EndpointConfig;
 
 import org.iottree.core.basic.PropGroup;
 import org.iottree.core.basic.PropItem;
@@ -42,6 +42,12 @@ import org.json.JSONObject;
 public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 {
 	public static final String NODE_TP = "hmi";
+	
+	public static final String HMI_TP_3D = "3d" ;
+	
+	public static final String HMI_TP_AI_PAGE = "ai_page" ;
+	
+	public static final String HMI_TP_AI_NAV = "ai_nav" ;
 
 	@data_val(param_name = "tp")
 	String hmiTp = "";
@@ -58,8 +64,11 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 	@data_val(param_name = "bk_color")
 	String bkColor = "";
 	
-	@data_val(param_name = "is_3d")
-	boolean b3D = false;
+//	@data_val(param_name = "is_3d")
+//	boolean b3D = false;
+//	
+//	@data_val(param_name = "is_ai_page")
+//	boolean bAIPage = false;
 
 	public UAHmi()
 	{
@@ -89,7 +98,8 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		UAHmi self = (UAHmi) new_self;
 		self.hmiTp = this.hmiTp;
 		self.connBrkPrompt = this.connBrkPrompt;
-		self.b3D = this.b3D ;
+//		self.b3D = this.b3D ;
+//		self.bAIPage = this.bAIPage ;
 		if (rf2new != null)
 			rf2new.put(this, self);
 	}
@@ -121,9 +131,14 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 	
 	public boolean is3D()
 	{
-		return this.b3D ;
+		return HMI_TP_3D.equalsIgnoreCase(this.hmiTp) ;
 	}
-
+	
+	public boolean isAIPage()
+	{
+		return HMI_TP_AI_PAGE.equalsIgnoreCase(this.hmiTp) ;
+	}
+	
 	private List<PropGroup> hmiPGS = null;
 	
 	private transient LinkedHashMap<UATag,String> showTag2Title = null ;
@@ -324,6 +339,17 @@ public class UAHmi extends UANodeOC implements IOCUnit, IRelatedFile
 		}
 
 		binds = null;
+	}
+	
+	// ai page dir
+	public File getRelatedAIPageDir()
+	{
+		if(!this.isAIPage())
+			throw new RuntimeException("no ai page ui hmi node") ;
+		
+		ISaver rep = (ISaver) this.getTopNode();
+		File subdir = rep.getSaverDir();
+		return new File(subdir, "hmi_ai_page/hmi_" + this.getId() + "/");
 	}
 
 	@Override

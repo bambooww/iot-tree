@@ -27,7 +27,7 @@
 	}
 	ZSCoor z_coor = z_dd.getZSCoor();//.getCoor() ;
 	
-	ZSDevice ed = z_coor.getEndDeviceByIEEEAddr(ieee) ;
+	ZSDevice ed = z_coor.getDeviceByIEEEAddr(ieee) ;
 	if(ed==null)
 	{
 		out.print("no ed found") ;
@@ -103,7 +103,7 @@ for(ZSEndPoint ep:ed.listEndPoints())
 		String c_tt = "???";
 		if(zsc!=null)
 		{
-			Cluster c = zsc.getClusterDef() ;
+			ZCLCluster c = zsc.getClusterDef() ;
 			if(c!=null)
 			{
 				c_tt = c.getName() ;

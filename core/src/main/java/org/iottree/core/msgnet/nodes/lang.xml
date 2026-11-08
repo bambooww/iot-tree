@@ -29,6 +29,7 @@
 	<dd_node id="1" name="template" name_cn="模板" name_en="Template"
 		desc_cn="此节点内部支持带有{{}}的模板文本，配合消息、节点变量和流程变量进行组合，输出特定格式的消息负载数据。"
 		desc_en=""/>
+	
 	<dd_node id="1" name="exec" name_cn="执行系统命令" name_en="Exec Cmd" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="onoff" name_cn="开关" name_en="On Off"
 		desc_cn="对输入的消息根据一定的条件判断是否通过或不通过"

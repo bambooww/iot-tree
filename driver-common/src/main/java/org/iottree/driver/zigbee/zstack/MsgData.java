@@ -19,6 +19,11 @@ public abstract class MsgData extends Msg
 		super(cmd0_type, cmd0_sub, cmd1);
 	}
 	
+	public MsgData(CmdTp com_tp,SubSys sub_sys,int cmd1)
+	{
+		super(com_tp,sub_sys,cmd1);
+	}
+	
 	public abstract int getDataLenMin() ;
 	
 	public boolean isCluster()

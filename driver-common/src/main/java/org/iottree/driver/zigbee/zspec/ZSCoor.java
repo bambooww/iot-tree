@@ -16,11 +16,14 @@ import org.iottree.core.UAPrj;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
-import org.iottree.driver.zigbee.ember.util.EZSPWaiterZDO;
 import org.iottree.driver.zigbee.models.M_Coor;
+import org.iottree.driver.zigbee.zcl.ZCLCluster;
 import org.iottree.driver.zigbee.zcl.ZCLFrame;
 import org.iottree.driver.zigbee.zcl.ZCLFrmClusterCmd;
+import org.iottree.driver.zigbee.zcl.cmd_frm.ReportAttr;
 import org.iottree.driver.zigbee.zcl.util.AttrReportConfig;
+import org.iottree.driver.zigbee.zspec.event.DeviceJoinedPld;
+import org.iottree.driver.zigbee.zspec.event.IncomeMsgDefEvt;
 import org.iottree.driver.zigbee.zspec.types.BroadcastAddr;
 import org.iottree.driver.zigbee.zspec.types.InterviewState;
 import org.iottree.driver.zigbee.zspec.types.NetworkParam;
@@ -28,10 +31,16 @@ import org.iottree.driver.zigbee.zspec.types.ZSDeviceType;
 import org.iottree.driver.zigbee.zspec.types.ZSStartResult;
 import org.iottree.driver.zigbee.zspec.util.Capabilities;
 import org.iottree.driver.zigbee.zspec.util.DeviceState;
+import org.iottree.driver.zigbee.zspec.util.EndDeviceCap;
 import org.iottree.driver.zigbee.zspec.util.PowerSrc;
 import org.iottree.driver.zigbee.zspec.util.RunRes;
 import org.iottree.driver.zigbee.zspec.util.ShortAddr;
 import org.iottree.driver.zigbee.zspec.util.StartupStatus;
+import org.iottree.driver.zigbee.zspec.zdo.EndDeviceAnnounceResp;
+import org.iottree.driver.zigbee.zstack.msg_sys.VersionSRSP;
+import org.iottree.driver.zigbee.zstack.msg_util.GetDeviceInfoSRSP;
+import org.iottree.driver.zigbee.zstack.msg_zdo.NwkAddrRspAREQ_CB;
+import org.json.JSONArray;
 //import org.iottree.driver.zigbee.zstack.ZStackEndDevice;
 //import org.iottree.driver.zigbee.zstack.msg_af.IncomingMsgAREQ_CB;
 //import org.iottree.driver.zigbee.zstack.msg_zdo.EndDeviceAnnceIndSREQ_CB;
@@ -71,7 +80,7 @@ public abstract class ZSCoor
 	
 	private ZSController controller = null ;
 	
-	protected ILogger log ;
+	private ILogger log ;
 
 	public ZSCoor(ZSDriver drv)
 	{
@@ -87,14 +96,18 @@ public abstract class ZSCoor
 		}
 		this.settings = ZSSettings.acquireSettings(this) ;
 		this.controller = new ZSController(this,this.settings) ;
-		
-		log = LoggerManager.getLogger("Coor_"+drv.getBelongToCh().getName()) ;
-		log.setCurrentLogLevel(ILogger.LOG_LEVEL_DEBUG);
 	}
 
 	public ZSDriver getDriver()
 	{
 		return this.zsDrv;
+	}
+	
+	protected ILogger getLog()
+	{
+		log = LoggerManager.getLogger("Coor_"+this.zsDrv.getBelongToCh().getName()) ;
+		log.setCurrentLogLevel(ILogger.LOG_LEVEL_DEBUG);
+		return log ;
 	}
 	
 	public final ZSSettings getSettings()
@@ -190,8 +203,8 @@ public abstract class ZSCoor
 			int res = RT_interviewEndDev(ed, failedr);
 			if (res < 0)
 			{
-				if (log.isWarnEnabled())
-					log.warn("RT_interviewEndDev " + ed.getIEEEAddr() + " err:" + failedr.toString());
+				if (getLog().isWarnEnabled())
+					getLog().warn("RT_interviewEndDev " + ed.getIEEEAddr() + " err:" + failedr.toString());
 				continue;
 			}
 			if (res > 0)
@@ -299,7 +312,7 @@ public abstract class ZSCoor
 
 	public ZSDevice getDeviceByIEEEAddr(String ieee_addr)
 	{
-		return this.ieee2device.get(ieee_addr.toLowerCase());
+		return this.ieee2device.get(ieee_addr.toUpperCase());
 	}
 
 	public ZSDevice getDeviceByShortAddr(int addr)
@@ -430,8 +443,8 @@ public abstract class ZSCoor
 			int res = this.RT_interviewEndDev(new_ed, failedr);
 			if (res < 0)
 			{
-				if (this.log.isWarnEnabled())
-					this.log.warn("RT_interviewEndDev err:" + failedr);
+				if (this.getLog().isWarnEnabled())
+					this.getLog().warn("RT_interviewEndDev err:" + failedr);
 			}
 			else if (res > 0)
 			{
@@ -464,15 +477,72 @@ public abstract class ZSCoor
 	 */
 	protected abstract int RT_interviewEndDev(ZSDevice ed, StringBuilder failedr) throws Exception;
 
+	
 	public JSONObject toJO()
 	{
-			JSONObject ret = new JSONObject() ;
-			ret.putOpt("pan_id", this.getPanIDSetting()).putOpt("ext_pan_id", this.getExtPanID()).putOpt("nwk_key", this.getNwkKey())
-				.putOpt("ieee_addr", this.ieee_addr) ;
-			return ret ;
+		JSONObject ret = new JSONObject() ;
+		ret.putOpt("ieee_addr", this.ieee_addr) ; 
+			//.putOpt("pan_id", this.getPanIDSetting()).putOpt("ext_pan_id", this.getExtPanID()).putOpt("nwk_key", this.getNwkKey())
+		
+		if(cap!=null)
+		{
+			ret.put("capabilities_v", this.cap.getCapVal()) ;
+			ret.put("capabilities", this.cap.toJO()) ;
+		}
+		
+		
+		JSONArray end_devs = new JSONArray() ;
+		ret.put("end_devices", end_devs) ;
+		for(ZSDevice ed:this.ieee2device.values())
+		{
+			end_devs.put(ed.toJO()) ;
+		}
+		
+		JSONArray net_relations = new JSONArray() ;
+		ret.put("net_relations", net_relations) ;
+		for(DevNetRelation nr:this.ieee2net_relat.values())
+		{
+			net_relations.put(nr.toJO()) ;
+		}
+		
+		return ret ;
 	}
 
-	public abstract void fromJO(JSONObject jo);
+	public void fromJO(JSONObject jo)
+	{
+//		this.pan_id = jo.optInt("pan_id",-1) ;
+//		this.ext_pan_id = jo.optString("ext_pan_id") ;
+//		this.nwkKey = jo.optString("nwk_key") ;
+		this.ieee_addr = jo.optString("ieee_addr","").toUpperCase() ;
+		
+		
+		JSONArray tmpjarr = jo.optJSONArray("end_devices") ;
+		if(tmpjarr!=null)
+		{
+			int n = tmpjarr.length() ;
+			for(int i = 0 ; i <  n ; i ++)
+			{
+				JSONObject oo = tmpjarr.getJSONObject(i) ;
+				ZSDevice ed = ZSDevice.fromeJO(this, oo) ;
+				if(ed==null)
+					continue ;
+				this.ieee2device.put(ed.getIEEEAddr(),ed) ;
+			}
+		}
+		
+		tmpjarr = jo.optJSONArray("net_relations") ;
+		if(tmpjarr!=null)
+		{
+			int n = tmpjarr.length() ;
+			for(int i = 0 ; i <  n ; i ++)
+			{
+				JSONObject oo = tmpjarr.getJSONObject(i) ;
+				DevNetRelation nr = new DevNetRelation();
+				if(nr.fromJO(oo))
+					this.ieee2net_relat.put(nr.getIEEEAddr(),nr) ;
+			}
+		}
+	}
 
 	//call by sub class
 	public final void RT_fireEvent(String evt_n,ZSController.IEvent evt_v)
@@ -510,8 +580,6 @@ public abstract class ZSCoor
 //
 //	protected abstract void MGR_onIncomingMsg(IncomingMsgAREQ_CB in_msg) throws IOException;
 
-	public abstract boolean MGR_setEndDeviceTitle(String ieeeaddr, String tt) throws Exception;
-
 	/**
 	 * 
 	 * @param ieeeaddr
@@ -525,15 +593,7 @@ public abstract class ZSCoor
 	public abstract boolean MGR_setEndDeviceConfigReportAttr(String ieeeaddr, int endpoint, int cluster_id,
 			List<AttrReportConfig> attr_rcs, StringBuilder failedr) throws Exception;
 
-	/**
-	 * syn UADev (include sub tags) under coor channel
-	 * 
-	 * @param ieeeaddr
-	 * @param failedr
-	 * @return
-	 * @throws Exception
-	 */
-	public abstract boolean MGR_synEndDeviceToUADev(String ieeeaddr, StringBuilder failedr) throws Exception;
+	
 
 	/**
 	 * 触发EndDevice新发现运行过程
@@ -547,6 +607,153 @@ public abstract class ZSCoor
 	public abstract int MGR_delEndDevice(String ieee, boolean force_del, boolean rejoin, boolean del_uadev,
 			StringBuilder failedr) throws Exception;
 
+
+	/**
+	 * 当新的EndDevice 发现
+	 * @param endd
+	 * @throws IOException 
+	 */
+	protected ZSDevice MGR_onEndDeviceAnnce(EndDeviceAnnounceResp endd) throws IOException
+	{
+		String ieee_addr = endd.ieee_addr ;
+		ZSDevice old_ed = getDeviceByIEEEAddr(ieee_addr) ;
+		ZSDevice new_ed = null;
+		if(old_ed==null)
+		{//new add
+			new_ed = new ZSDevice(this,ieee_addr) ;
+			new_ed.setFindDT(System.currentTimeMillis()) ;
+			UADev related_d = new_ed.getRelatedUADev() ;
+			if(related_d!=null)
+				new_ed.setTitle(related_d.getTitle()) ;
+		}
+		else
+		{//check change or not
+			if(!endd.MGR_checkChanged(old_ed))
+				return null;
+			new_ed = old_ed ;
+		}
+		new_ed.updateBy(new ShortAddr(endd.nwk_addr) ,endd.cap);
+		new_ed.setUpdateDT(System.currentTimeMillis()) ;
+		setDevice(new_ed) ;
+
+		this.save();
+		return new_ed ;
+	}
+	
+	public ZSDevice MGR_onDeviceJoined(DeviceJoinedPld devjoined) throws IOException
+	{
+		ZSDevice old_ed = getDeviceByIEEEAddr(devjoined.ieee_addr) ;
+		ZSDevice new_ed = null;
+		if(old_ed==null)
+		{//new add
+			new_ed = new ZSDevice(this,devjoined.ieee_addr) ;
+			new_ed.setFindDT(System.currentTimeMillis()) ;
+			UADev related_d = new_ed.getRelatedUADev() ;
+			if(related_d!=null)
+				new_ed.setTitle(related_d.getTitle()) ;
+		}
+		else
+		{//check change or not
+			if(old_ed.getShortAddrVal()==devjoined.network_addr)
+				return null;
+			new_ed = old_ed ;
+		}
+		new_ed.updateBy(new ShortAddr(devjoined.network_addr) ,null);
+		new_ed.setUpdateDT(System.currentTimeMillis()) ;
+		setDevice(new_ed) ;
+
+		this.save();
+		return new_ed ;
+	}
+	
+
+	public void MGR_onIncomingMsg(IncomeMsgDefEvt in_msg) throws IOException
+	{
+		//IncomeMsgDefEvt income_msg_evt = in_msg.toIncomeMsgDefEvt() ;
+		
+		 int src_addr = in_msg.getSrcAddr();
+		 ZSDevice ed = getDeviceByShortAddr(src_addr) ;
+		 if(ed==null)
+		 {
+			 if(getLog().isWarnEnabled())
+				 getLog().warn("no EndDevice found with src_addr"+src_addr+" in IncomeMsg");
+			 return ;
+		 }
+		 
+		 ed.setLinkQual(in_msg.getLinkQuality());
+		 
+		 int src_ep = in_msg.getSrcEndpoint() ;
+		 int cluster_id = in_msg.getClusterId() ;
+		 // ZCLCluster c = in_msg.getCluster() ;
+		 
+		 StringBuilder failedr  = new StringBuilder() ;
+		 ZCLFrame f = in_msg.getZCLFrame(failedr) ;
+		 if(f==null)
+		 {
+			 //
+			 System.err.println(failedr) ;
+			 return ;
+		 }
+		 
+		 if(f instanceof ReportAttr)
+		 {
+			 ReportAttr ra = (ReportAttr)f ;
+			 boolean b_dirty = ed.RT_onReportAttr(src_ep,cluster_id,ra,failedr) ;
+			 if(b_dirty)
+				 this.save();
+			 else
+			 {
+				 if(getLog().isWarnEnabled())
+					 getLog().warn("MGR_onIncomingMsg RT_onReportAttr err:"+failedr.toString()+"\r\n\t"+in_msg);
+			 }
+		 }
+	}
+	
+	
+	/**
+	 * syn UADev (include sub tags) under coor channel
+	 * @param ieeeaddr
+	 * @param failedr
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean MGR_synEndDeviceToUADev(String ieeeaddr,StringBuilder failedr) throws Exception
+	{
+		ZSDevice ed = this.getDeviceByIEEEAddr(ieeeaddr) ;
+		if(ed==null)
+		{
+			failedr.append("no EndDevice found") ;
+			return false;
+		}
+		UACh ch = this.zsDrv.getBelongToCh() ;
+		String tt = ed.getTitle() ;
+		if(Convert.isNullOrEmpty(tt))
+			tt = ed.getIEEEAddr();
+		JSONArray tags_jarr = new JSONArray() ;
+		ed.setupTagsJArr(tags_jarr) ;
+		ch.synOuterDevByJO(ieeeaddr, "ed_", tt, tags_jarr, true);
+		return true ;
+	}
+	
+
+	public boolean MGR_setEndDeviceTitle(String ieeeaddr,String tt) throws Exception
+	{
+		ZSDevice ed = this.getDeviceByIEEEAddr(ieeeaddr) ;
+		if(ed==null)
+			return false;
+		ed.MGR_setTitle(tt);
+		this.save();
+		StringBuilder failedr = new StringBuilder() ;
+		if(!this.MGR_synEndDeviceToUADev(ieeeaddr, failedr))
+		{
+			if(log.isDebugEnabled())
+				log.debug("MGR_setEndDeviceTitle - MGR_synEndDeviceToUADev err:"+failedr);
+		}
+		
+		return true ;
+	}
+	
+	
 //	/**
 //	 * coor 主动发起读取cluster定义好的(带__tag定义)的所有属性值
 //	 * @param endpoint

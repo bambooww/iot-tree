@@ -1,7 +1,5 @@
 package org.iottree.driver.zigbee.zspec;
 
-import org.iottree.driver.zigbee.zspec.zdo.AddrRsp;
-import org.iottree.driver.zigbee.zspec.zdo.CommonStatusRsp;
 
 public abstract class ZDOCluster
 {

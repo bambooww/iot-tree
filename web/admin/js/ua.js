@@ -24,14 +24,14 @@ var pm = {
 	})) ;
 }
 
-function hmi_add_edit(bedit,path,ok_cb)
-{
+function hmi_add_edit(bedit,path,hmi_tp,ok_cb)
+{//console.log(bedit,path,hmi_tp,ok_cb)
 	var u = "/admin/ua/hmi_edit.jsp?ppath="+path;
-	var t = "Add HMI";
+	var t = "Add HMI - "+hmi_tp;
 	var op="add" ;
 	if(bedit)
 	{
-		t = "Edit HMI";
+		t = "Edit HMI - "+hmi_tp;
 		op="edit" ;
 		u = "/admin/ua/hmi_edit.jsp?hmi_path="+path;
 	}
@@ -50,6 +50,7 @@ function hmi_add_edit(bedit,path,ok_cb)
 						 
 						 ret.op=op;
 						 ret.path = path;
+						 ret.hmi_tp = hmi_tp ;
 						 send_ajax('/admin/ua/hmi_ajax.jsp',ret,function(bsucc,ret)
 							{
 								if(!bsucc || ret.indexOf('succ')<0)

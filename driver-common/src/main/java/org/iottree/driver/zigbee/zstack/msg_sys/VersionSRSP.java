@@ -1,6 +1,7 @@
 package org.iottree.driver.zigbee.zstack.msg_sys;
 
 import org.iottree.core.util.Convert;
+import org.iottree.driver.zigbee.DataUtil;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
 
@@ -65,6 +66,13 @@ public class VersionSRSP extends MsgRecv
 	public int getMaintRel()
 	{
 		return data[4] & 0xFF ;
+	}
+	
+	public long getRevision()
+	{
+		if(this.data.length>=9)
+			return DataUtil.getUInt32(this.data, 5) ;
+		return -1 ;
 	}
 	
 //	@Override

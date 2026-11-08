@@ -1506,7 +1506,7 @@ public abstract class MNBase extends MNCxtPk implements ILang,WidgetCatable,Comp
 	
 	private List<JsProp> globalPropsCxt = null ;
 	
-	protected List<JsProp> JS_getGlobalPropsCxt()
+	protected final List<JsProp> JS_getGlobalPropsCxt()
 	{
 		if(globalPropsCxt!=null)
 			return globalPropsCxt ;
@@ -1521,8 +1521,17 @@ public abstract class MNBase extends MNCxtPk implements ILang,WidgetCatable,Comp
 		//jps.add(new JsProp("topic",null,String.class,false,"In Msg Topic","")) ;
 		//jps.add(new JsProp("heads",null,Map.class,true,"In Msg Heads","")) ;
 		//jps.add(new JsProp("payload",null,Object.class,true,"In Msg Payload","")) ;
+		List<JsProp> extps = JS_getGlobalPropsCxtExts() ;
+		if(extps!=null)
+			jps.addAll(extps) ;
+		
 		globalPropsCxt = jps;
 		return jps ;
+	}
+	
+	protected List<JsProp> JS_getGlobalPropsCxtExts()
+	{
+		return null ;
 	}
 	
 	private transient List<JsSub> js_cxt_root_subs = null ;

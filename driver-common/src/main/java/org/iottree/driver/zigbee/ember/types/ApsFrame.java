@@ -1,6 +1,7 @@
 package org.iottree.driver.zigbee.ember.types;
 
 import org.iottree.driver.zigbee.DataUtil;
+import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.json.JSONObject;
 
 public class ApsFrame
@@ -17,6 +18,11 @@ public class ApsFrame
     
     // radius
     public Integer radius = null ;
+    
+    public ZDOClusterId getZDOClusterId()
+    {
+    	return ZDOClusterId.valOfInt(this.clusterId) ;
+    }
 
     public int pack(byte[] bs,int offset)
 	{

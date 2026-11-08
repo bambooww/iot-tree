@@ -3,10 +3,10 @@ package org.iottree.core.plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.websocket.EndpointConfig;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.EndpointConfig;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.ws.WebSocketConfig;

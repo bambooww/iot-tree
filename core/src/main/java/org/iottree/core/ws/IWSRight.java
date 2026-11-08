@@ -1,6 +1,6 @@
 package org.iottree.core.ws;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public interface IWSRight
 {

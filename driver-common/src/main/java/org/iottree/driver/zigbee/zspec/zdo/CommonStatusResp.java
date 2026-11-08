@@ -10,13 +10,13 @@ import org.iottree.driver.zigbee.zspec.ZDOStatus;
  * @author jason.zhu
  *
  */
-public class CommonStatusRsp extends ZDOResp
+public class CommonStatusResp extends ZDOResp
 {
 	ZDOClusterId clusterId ;
 	
 	ZDOStatus status = null ;
 	
-	public CommonStatusRsp(ZDOClusterId cid)
+	public CommonStatusResp(ZDOClusterId cid)
 	{
 		this.clusterId = cid ;
 	}
@@ -38,7 +38,7 @@ public class CommonStatusRsp extends ZDOResp
 	@Override
 	public void packTo(ZDOBuffer buf)
 	{
-		
+		throw new RuntimeException("no impl") ;
 	}
 
 	@Override

@@ -1,14 +1,12 @@
 package org.iottree.driver.zigbee.zspec;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.iottree.driver.zigbee.zcl.ZCLCluster;
 import org.iottree.driver.zigbee.zcl.ZCLClusterManager;
 import org.iottree.driver.zigbee.zcl.cmd_frm.ReportAttr;
-import org.iottree.driver.zigbee.zstack.msg_zdo.SimpleDescRspAREQ_CB;
+import org.iottree.driver.zigbee.zspec.zdo.SimpleDescResp;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -145,32 +143,32 @@ public class ZSEndPoint
 	 * @param sdr
 	 * @return true=有修改
 	 */
-	public boolean MGR_updateBy(SimpleDescRspAREQ_CB sdr)
+	public boolean MGR_updateBy(SimpleDescResp sdr)
 	{
-		int epid = sdr.getEndpoint() ;
+		int epid = sdr.endpoint ;
 		if(id!=epid)
 			return false;
 		boolean b_dirty = false;
-		int dev_id = sdr.getDeviceId() ;
+		int dev_id = sdr.device_id;
 		if(deviceId!=dev_id)
 		{
 			this.deviceId = dev_id ;
 			b_dirty = true ;
 		}
-		int prof_id = sdr.getProfileId() ;
+		int prof_id = sdr.profile_id ;
 		if(this.profileId!=prof_id)
 		{
 			this.profileId = prof_id ;
 			b_dirty = true ;
 		}
-		List<Integer> ids = sdr.getInClusterList() ;
+		List<Integer> ids = sdr.in_cluster_list ;
 		if(!checkIdsSame(this.in_cluster_ids,ids))
 		{
 			this.in_cluster_ids = ids ;
 			b_dirty = true;
 		}
 		
-		ids = sdr.getOutClusterList() ;
+		ids = sdr.out_cluster_list ;//.getOutClusterList() ;
 		if(!checkIdsSame(this.out_cluster_ids,ids))
 		{
 			this.out_cluster_ids = ids ;
@@ -203,18 +201,18 @@ public class ZSEndPoint
 		ret.put("in_cluster_ids", this.in_cluster_ids) ;
 		ret.put("out_cluster_ids", this.out_cluster_ids) ;
 		
-		JSONArray jarr = new JSONArray() ;
-		ret.put("in_clusters",jarr) ;
-		for(ZSCluster zsc:this.getInClusters())
-		{
-			jarr.put(zsc.toJO()) ;
-		}
-		jarr = new JSONArray() ;
-		ret.put("out_clusters",jarr) ;
-		for(ZSCluster zsc:this.getOutClusters())
-		{
-			jarr.put(zsc.toJO()) ;
-		}
+//		JSONArray jarr = new JSONArray() ;
+//		ret.put("in_clusters",jarr) ;
+//		for(ZSCluster zsc:this.getInClusters())
+//		{
+//			jarr.put(zsc.toJO()) ;
+//		}
+//		jarr = new JSONArray() ;
+//		ret.put("out_clusters",jarr) ;
+//		for(ZSCluster zsc:this.getOutClusters())
+//		{
+//			jarr.put(zsc.toJO()) ;
+//		}
 		return ret ;
 	}
 	

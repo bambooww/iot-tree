@@ -1,7 +1,7 @@
 package org.iottree.driver.zigbee.zstack.msg_zdo;
 
 import org.iottree.driver.zigbee.zspec.ZDOBuffer;
-import org.iottree.driver.zigbee.zspec.zdo.LQITableRsp;
+import org.iottree.driver.zigbee.zspec.zdo.LQITableResp;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
 
@@ -10,7 +10,7 @@ public class MgmtLQITableRspAREQ extends MsgRecv
 	public static final int CMD0 = 0x45 ;
 	public static final int CMD1 = 0xB1 ;
 	
-	LQITableRsp tableRsp = new LQITableRsp() ;
+	LQITableResp tableRsp = new LQITableResp() ;
 	
 	public MgmtLQITableRspAREQ()
 	{

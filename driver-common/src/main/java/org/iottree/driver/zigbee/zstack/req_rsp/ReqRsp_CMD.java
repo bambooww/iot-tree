@@ -3,30 +3,51 @@ package org.iottree.driver.zigbee.zstack.req_rsp;
 import org.iottree.driver.zigbee.zstack.Msg;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.iottree.driver.zigbee.zstack.MsgReqRsp;
+import org.iottree.driver.zigbee.zstack.util.ICopyable;
 import org.json.JSONObject;
 
 public class ReqRsp_CMD<T extends Msg,R extends MsgRecv> extends MsgReqRsp
 {
 	R respRSP = null ;
-	Class<R> respC ;
+	Class<R> respC = null;
+	int[] cmd01 = null;
 	
 	public ReqRsp_CMD(T req,Class<R> rc)
 	{
+		this(req,rc,null) ;
+	}
+	
+	public ReqRsp_CMD(T req,Class<R> rc,int[] cmd01)
+	{
 		super();
 		respC = rc ;
-		this.asReq(req, false, 5000) ;
+		this.cmd01 = cmd01 ;
+		this.asReq(req, false, 10000) ;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean RT_chkSRspMsg(MsgRecv m_recv, StringBuilder failedr)
 	{
-		if(!respC.isInstance(m_recv))
+		if(cmd01!=null)
 		{
-			failedr.append("not "+respC.getName()+" response") ;
-			return false;
+			boolean b = m_recv.getCmd0()==cmd01[0] && m_recv.getCmd1()==cmd01[1] ;
+			if(b)
+			{
+				respRSP = (R)m_recv;
+				return true ;
+			}
 		}
-		respRSP = (R)m_recv;
+		else if(respC!=null)
+		{
+			if(!respC.isInstance(m_recv))
+			{
+				failedr.append("not "+respC.getName()+" response") ;
+				return false;
+			}
+			respRSP = (R)m_recv;
+		}
+		
 		return true ;
 	}
 

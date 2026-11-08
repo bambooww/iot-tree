@@ -7,7 +7,42 @@ import org.json.JSONObject;
 
 public abstract class Msg
 {
+	public static enum CmdTp
+	{
+		POLL(0x00),SREQ(0x20),AREQ(0x40),SRSP(0x60);
+		public final int val;
+
+		CmdTp(int val)
+		{
+			this.val = val;
+		}
+	}
+	
+	public static enum SubSys
+	{
+		RESERVED(0x00),
+			    SYS(0x01),
+			    MAC(0x02),
+			    NWK(0x03),
+			    AF(0x04),
+			    ZDO(0x05),
+			    SAPI(0x06),
+			    UTIL(0x07),
+			    DEBUG(0x08),
+			    APP(0x09),
+			    APP_CNF(0x0F),
+			    GREENPOWER(0x15);
+		public final int val;
+
+		SubSys(int val)
+		{
+			this.val = val;
+		}
+	}
+	
 	public static final int SOF = 0xFE ;
+	
+	
 	
 	//
 	public static final byte CMD0_TYPE_POLL = (byte)0x00 ;
@@ -62,6 +97,11 @@ public abstract class Msg
 		return this ;
 	}
 	
+	public Msg(CmdTp com_tp,SubSys sub_sys,int cmd1)
+	{
+		this.cmd0 = (com_tp.val & 0xE0) + (sub_sys.val&0x1F) ;
+		this.cmd1 = cmd1 ;
+	}
 	
 	public byte getCmd0Type()
 	{
@@ -82,6 +122,23 @@ public abstract class Msg
 			return "SRSP";
 		default:
 			return "tp" ;
+		}
+	}
+	
+	public CmdTp getCmdTp()
+	{
+		switch(getCmd0Type())
+		{
+		case CMD0_TYPE_POLL:
+			return CmdTp.POLL;
+		case CMD0_TYPE_SREQ:
+			return CmdTp.SREQ;
+		case CMD0_TYPE_AREQ:
+			return CmdTp.AREQ;
+		case CMD0_TYPE_SRSP:
+			return CmdTp.SRSP;
+		default:
+			return null ;
 		}
 	}
 	
@@ -120,6 +177,39 @@ public abstract class Msg
 			return "GreenPower";
 		default:
 			return "sub";
+		}
+	}
+	
+	public SubSys getSubSys()
+	{
+		switch(getCmd0Subsystem())
+		{
+		case CMD0_SUBSYS_00:
+			return SubSys.RESERVED ;
+		case CMD0_SUBSYS_SYS:
+			return SubSys.SYS;
+		case CMD0_SUBSYS_MAC:
+			return SubSys.MAC;
+		case CMD0_SUBSYS_NWK:
+			return SubSys.NWK;
+		case CMD0_SUBSYS_AF:
+			return SubSys.AF;
+		case CMD0_SUBSYS_ZDO:
+			return SubSys.ZDO;
+		case CMD0_SUBSYS_SAPI:
+			return SubSys.SAPI;
+		case CMD0_SUBSYS_UTIL:
+			return SubSys.UTIL;
+		case CMD0_SUBSYS_DEBUG:
+			return SubSys.DEBUG;
+		case CMD0_SUBSYS_APP_INTERFACE:
+			return SubSys.APP;
+		case CMD0_SUBSYS_APPCNF:
+			return SubSys.APP_CNF;
+		case CMD0_SUBSYS_GP:
+			return SubSys.GREENPOWER;
+		default:
+			return null;
 		}
 	}
 	

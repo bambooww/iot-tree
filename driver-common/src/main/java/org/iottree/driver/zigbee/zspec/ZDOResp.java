@@ -1,7 +1,6 @@
 package org.iottree.driver.zigbee.zspec;
 
-import org.iottree.driver.zigbee.zspec.zdo.AddrRsp;
-import org.iottree.driver.zigbee.zspec.zdo.CommonStatusRsp;
+import org.iottree.driver.zigbee.zspec.zdo.*;
 
 public abstract class ZDOResp extends ZDOCluster
 {
@@ -18,95 +17,95 @@ public abstract class ZDOResp extends ZDOCluster
 	        switch (clusterId) {
 	            case NETWORK_ADDRESS_RESPONSE:
 	            case IEEE_ADDRESS_RESPONSE: {
-	                return new AddrRsp(clusterId).unpackResp(buf) ;
+	                return new AddrResp(clusterId).unpackResp(buf) ;
 	            }
-//	            case NODE_DESCRIPTOR_RESPONSE: {
-//	                return buffalo.readNodeDescriptorResponse() as ResponseMap[K];
-//	            }
-//	            case POWER_DESCRIPTOR_RESPONSE: {
-//	                return buffalo.readPowerDescriptorResponse() as ResponseMap[K];
-//	            }
-//	            case SIMPLE_DESCRIPTOR_RESPONSE: {
-//	                return buffalo.readSimpleDescriptorResponse() as ResponseMap[K];
-//	            }
-//	            case ACTIVE_ENDPOINTS_RESPONSE: {
-//	                return buffalo.readActiveEndpointsResponse() as ResponseMap[K];
-//	            }
-//	            case MATCH_DESCRIPTORS_RESPONSE: {
-//	                return buffalo.readMatchDescriptorsResponse() as ResponseMap[K];
-//	            }
-//	            case END_DEVICE_ANNOUNCE: {
-//	                return buffalo.readEndDeviceAnnounce() as ResponseMap[K];
-//	            }
-//	            case SYSTEM_SERVER_DISCOVERY_RESPONSE: {
-//	                return buffalo.readSystemServerDiscoveryResponse() as ResponseMap[K];
-//	            }
-//	            case PARENT_ANNOUNCE_RESPONSE: {
-//	                return buffalo.readParentAnnounceResponse() as ResponseMap[K];
-//	            }
-//	            case BIND_RESPONSE: {
-//	                return buffalo.readBindResponse() as ResponseMap[K];
-//	            }
-//	            case UNBIND_RESPONSE: {
-//	                return buffalo.readUnbindResponse() as ResponseMap[K];
-//	            }
-//	            case CLEAR_ALL_BINDINGS_RESPONSE: {
-//	                return buffalo.readClearAllBindingsResponse() as ResponseMap[K];
-//	            }
-//	            case LQI_TABLE_RESPONSE: {
-//	                return buffalo.readLQITableResponse() as ResponseMap[K];
-//	            }
-//	            case ROUTING_TABLE_RESPONSE: {
-//	                return buffalo.readRoutingTableResponse() as ResponseMap[K];
-//	            }
-//	            case BINDING_TABLE_RESPONSE: {
-//	                return buffalo.readBindingTableResponse() as ResponseMap[K];
-//	            }
-//	            case LEAVE_RESPONSE: {
-//	                return buffalo.readLeaveResponse() as ResponseMap[K];
-//	            }
+	            case NODE_DESCRIPTOR_RESPONSE: {
+	                return new NodeDescResp().unpackResp(buf) ;
+	            }
+	            case POWER_DESCRIPTOR_RESPONSE: {
+	                return new PowerDescResp().unpackResp(buf) ;
+	            }
+	            case SIMPLE_DESCRIPTOR_RESPONSE: {
+	                return new SimpleDescResp().unpackResp(buf) ;
+	            }
+	            case ACTIVE_ENDPOINTS_RESPONSE: {
+	                return new ActiveEndpointsResp().unpackResp(buf);
+	            }
+	            case MATCH_DESCRIPTORS_RESPONSE: {
+	                return new MatchDescResp().unpackResp(buf);
+	            }
+	            case END_DEVICE_ANNOUNCE: {
+	                return new EndDeviceAnnounceResp().unpackResp(buf);
+	            }
+	            case SYSTEM_SERVER_DISCOVERY_RESPONSE: {
+	                return new SystemServerDiscResp().unpackResp(buf);
+	            }
+	            case PARENT_ANNOUNCE_RESPONSE: {
+	                return new ParentAnnounceResp().unpackResp(buf) ;
+	            }
+	            case BIND_RESPONSE: {
+	                return new CommonStatusResp(ZDOClusterId.BIND_RESPONSE).unpackResp(buf); 
+	            }
+	            case UNBIND_RESPONSE: {
+	            	return new CommonStatusResp(ZDOClusterId.UNBIND_RESPONSE).unpackResp(buf);
+	            }
+	            case CLEAR_ALL_BINDINGS_RESPONSE: {
+	            	return new CommonStatusResp(ZDOClusterId.CLEAR_ALL_BINDINGS_RESPONSE).unpackResp(buf);
+	            }
+	            case LQI_TABLE_RESPONSE: {
+	                return new LQITableResp().unpackResp(buf) ;
+	            }
+	            case ROUTING_TABLE_RESPONSE: {
+	                return new RoutingTableResp().unpackResp(buf) ;
+	            }
+	            case BINDING_TABLE_RESPONSE: {
+	                return new BindingTableResp().unpackResp(buf) ;
+	            }
+	            case LEAVE_RESPONSE: {
+	                return new CommonStatusResp(ZDOClusterId.LEAVE_RESPONSE).unpackResp(buf);
+	            }
 	            case PERMIT_JOINING_RESPONSE: {
-	                return new CommonStatusRsp(ZDOClusterId.PERMIT_JOINING_RESPONSE).unpackResp(buf); // ;buffalo.readPermitJoiningResponse() as ResponseMap[K];
+	                return new CommonStatusResp(ZDOClusterId.PERMIT_JOINING_RESPONSE).unpackResp(buf); // ;buffalo.readPermitJoiningResponse() as ResponseMap[K];
 	            }
-//	            case NWK_UPDATE_RESPONSE: {
-//	                return buffalo.readNwkUpdateResponse() as ResponseMap[K];
-//	            }
-//	            case NWK_ENHANCED_UPDATE_RESPONSE: {
-//	                return buffalo.readNwkEnhancedUpdateResponse() as ResponseMap[K];
-//	            }
-//	            case NWK_IEEE_JOINING_LIST_RESPONSE: {
-//	                return buffalo.readNwkIEEEJoiningListResponse() as ResponseMap[K];
-//	            }
-//	            case NWK_UNSOLICITED_ENHANCED_UPDATE_RESPONSE: {
-//	                return buffalo.readNwkUnsolicitedEnhancedUpdateResponse() as ResponseMap[K];
-//	            }
-//	            case NWK_BEACON_SURVEY_RESPONSE: {
-//	                return buffalo.readNwkBeaconSurveyResponse() as ResponseMap[K];
-//	            }
-//	            case START_KEY_NEGOTIATION_RESPONSE: {
-//	                return buffalo.readStartKeyNegotiationResponse() as ResponseMap[K];
-//	            }
-//	            case RETRIEVE_AUTHENTICATION_TOKEN_RESPONSE: {
-//	                return buffalo.readRetrieveAuthenticationTokenResponse() as ResponseMap[K];
-//	            }
-//	            case GET_AUTHENTICATION_LEVEL_RESPONSE: {
-//	                return buffalo.readGetAuthenticationLevelResponse() as ResponseMap[K];
-//	            }
-//	            case SET_CONFIGURATION_RESPONSE: {
-//	                return buffalo.readSetConfigurationResponse() as ResponseMap[K];
-//	            }
-//	            case GET_CONFIGURATION_RESPONSE: {
-//	                return buffalo.readGetConfigurationResponse() as ResponseMap[K];
-//	            }
-//	            case START_KEY_UPDATE_RESPONSE: {
-//	                return buffalo.readStartKeyUpdateResponse() as ResponseMap[K];
-//	            }
-//	            case DECOMMISSION_RESPONSE: {
-//	                return buffalo.readDecommissionResponse() as ResponseMap[K];
-//	            }
-//	            case CHALLENGE_RESPONSE: {
-//	                return buffalo.readChallengeResponse() as ResponseMap[K];
-//	            }
+	            case NWK_UPDATE_RESPONSE: {
+	                return new NwkUpdateResp().unpackResp(buf);
+	            }
+	            case NWK_ENHANCED_UPDATE_RESPONSE: {
+	                return new NwkEnhancedUpdateResp().unpackResp(buf);
+	            }
+	            case NWK_IEEE_JOINING_LIST_RESPONSE: {
+	                return new NwkIEEEJoinListResp().unpackResp(buf);
+	            }
+	            case NWK_UNSOLICITED_ENHANCED_UPDATE_RESPONSE: {
+	                return new NwkUnsolicEnhancedUpdateResp().unpackResp(buf) ;
+	            }
+	            case NWK_BEACON_SURVEY_RESPONSE: {
+	                return new NwkBeaconSurveyResp().unpackResp(buf) ;
+	            }
+	            case START_KEY_NEGOTIATION_RESPONSE: {
+	                return new StartKeyNegotiationResp().unpackResp(buf);
+	            }
+	            case RETRIEVE_AUTHENTICATION_TOKEN_RESPONSE: {
+	                return new RetrieveAuthTokenResp().unpackResp(buf) ;
+	            }
+	            case GET_AUTHENTICATION_LEVEL_RESPONSE: {
+	                return new GetAuthLevelResp().unpackResp(buf) ;
+	            }
+	            case SET_CONFIGURATION_RESPONSE: {
+	                return new SetConfigResp().unpackResp(buf) ;
+	            }
+	            case GET_CONFIGURATION_RESPONSE: {
+	                return new GetConfigResp().unpackResp(buf) ;
+	            }
+	            case START_KEY_UPDATE_RESPONSE: {
+	                return new CommonStatusResp(ZDOClusterId.START_KEY_UPDATE_RESPONSE).unpackResp(buf);
+	            }
+	            case DECOMMISSION_RESPONSE: {
+	            	return new CommonStatusResp(ZDOClusterId.DECOMMISSION_RESPONSE).unpackResp(buf);
+	            }
+	            case CHALLENGE_RESPONSE: {
+	                return new ChallengeResp().unpackResp(buf) ;
+	            }
 	            default: {
 	                throw new IllegalArgumentException("Unsupported response reading for cluster ID "+clusterId);
 	            }

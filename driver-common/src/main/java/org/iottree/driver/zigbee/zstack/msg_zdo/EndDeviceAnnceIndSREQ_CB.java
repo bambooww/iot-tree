@@ -4,6 +4,7 @@ import org.iottree.driver.zigbee.DataUtil;
 import org.iottree.driver.zigbee.zspec.ZSDevice;
 import org.iottree.driver.zigbee.zspec.util.EndDeviceCap;
 import org.iottree.driver.zigbee.zspec.util.ShortAddr;
+import org.iottree.driver.zigbee.zspec.zdo.EndDeviceAnnounceResp;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
 
@@ -84,6 +85,11 @@ public class EndDeviceAnnceIndSREQ_CB extends MsgRecv
 		return new EndDeviceCap(this.data[12]) ;
 	}
 	
+	public EndDeviceAnnounceResp toZdoResp()
+	{
+		return new EndDeviceAnnounceResp(this.getNwkAddr(),this.getIEEEAddr(),this.getDeviceCapabilites()) ;
+	}
+	
 	@Override
 	public JSONObject toRecvJO()
 	{
@@ -95,20 +101,4 @@ public class EndDeviceAnnceIndSREQ_CB extends MsgRecv
 	}
 	
 
-	public boolean MGR_checkChanged(ZSDevice d)
-	{
-		ShortAddr d_addr = d.getShortAddr() ;
-		if(d_addr==null)
-			return true;
-		if(this.getNwkAddr()!=d_addr.getAddrVal())
-			return true ;
-		
-		if(d.getDeviceCap()==null)
-			return true ;
-		if(this.getDeviceCapabilites().getCapVal()!=d.getDeviceCap().getCapVal())
-			return true ;
-		return false;
-	}
-	
-	
 }

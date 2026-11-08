@@ -62,6 +62,7 @@ float:left;background-color: #f8f8f8;
 .item .del {position:absolute;right:0px;top:0px;color:#ee931e;}
 </style>
 </head>
+<body>
 <%--
 <div style="width:100%;white-space:nowrap;display:inline-block;z-index:10;background-color: #fff;">
 		<div style="float: left;margin-top:7px;">&nbsp;设list</div>

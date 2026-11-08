@@ -1,7 +1,7 @@
 package org.iottree.core.store.gdb;
 
 import java.util.*;
-import javax.servlet.http.*;
+import jakarta.servlet.http.*;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.XmlData;
 

@@ -60,7 +60,7 @@
 	position:absolute;
 	left:5px;top:0px;
 	width:300px;
-	height:500px;
+	height:400px;
 	overflow: auto;
 	text-align: left;
 }
@@ -69,9 +69,10 @@
 	position:absolute;
 	left:5px;top:400px;
 	width:300px;
-	height:200px;
+	height:150px;
 	overflow: auto;
 	text-align: left;
+	border:1px solid #ccc;
 }
 .layui-tab-title li
 {
@@ -336,7 +337,7 @@ function set_pm_jo(jo)
 
 function get_pm_size()
 {
-	return {w:1200,h:550} ;
+	return {w:1200,h:650} ;
 }
 
 

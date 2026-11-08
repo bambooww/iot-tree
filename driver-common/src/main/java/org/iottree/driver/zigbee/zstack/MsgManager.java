@@ -8,6 +8,7 @@ import org.iottree.driver.zigbee.zstack.msg_af.*;
 import org.iottree.driver.zigbee.zstack.msg_appcnf.*;
 import org.iottree.driver.zigbee.zstack.msg_sys.*;
 import org.iottree.driver.zigbee.zstack.msg_zdo.*;
+import org.iottree.driver.zigbee.zstack.util.ICopyable;
 import org.iottree.driver.zigbee.zstack.msg_util.*;
 
 
@@ -105,12 +106,19 @@ public class MsgManager
 		reg_msg(new DataRequestSREQ()) ;
 		reg_msg(new DataRequestSRSP()) ;
 		
+		reg_msg(new InterPanCtlSREQ()) ;
+		reg_msg(new CommonStatusSRSP(0x64,0x10,"AF_INTER_PAN_CTL")) ;
+		
 		//UTIL
 		reg_msg(new GetDeviceInfoSREQ()) ;
 		reg_msg(new GetDeviceInfoSRSP()) ;
+		reg_msg(new AssocGetWithAddrSREQ()) ;
+		reg_msg(new AssocGetWithAddrSRSP()) ;
 		
 		//APPCNF
 		reg_msg(new BDBCommNotifAREQ_CB()) ;
+		reg_msg(new BDBAddInstallCodeSREQ()) ;
+		reg_msg(new CommonStatusSRSP(0x6F,0x04,"APP_CNF_BDB_ADD_INSTALLCODE")) ;
 	}
 	
 	static Msg createNewIns(int cmd0,int cmd1)
@@ -119,6 +127,10 @@ public class MsgManager
 		Msg mr = CMD2MSG.get(cmd) ;
 		if(mr==null)
 			return null ;
+		
+		if(mr instanceof ICopyable)
+			return ((ICopyable)mr).copyMe() ;
+		
 		try
 		{
 			return mr.getClass().getConstructor().newInstance() ;

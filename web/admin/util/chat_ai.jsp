@@ -36,7 +36,7 @@
 
         body {
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background-color:#2375cf;
+            background-color0:#2375cf;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -747,7 +747,7 @@ var prj_name = "<%=prj_name%>" ;
             //messageInput.disabled = false;   // 输入框可用，但发送会校验连接
             messageInput.placeholder = "未连接服务，请先配置上方WebSocket地址并点击连接";
             // 若有默认地址显示
-            if (wsUrlInput.value === 'wss://echo.websocket.org') {
+            if (wsUrlInput && wsUrlInput.value === 'wss://echo.websocket.org') {
                 addSystemMessage('💡 当前默认使用公共 echo 测试服务器 (会原样返回消息)。如需真实AI，请修改为你的后端WebSocket地址。', false);
             }
             autoResizeTextarea();

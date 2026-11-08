@@ -21,12 +21,16 @@ import org.iottree.driver.zigbee.zcl.cmd_frm.ReportAttr;
 import org.iottree.driver.zigbee.zcl.util.AttrReportConfig;
 import org.iottree.driver.zigbee.zcl.util.DataVal;
 import org.iottree.driver.zigbee.zspec.DevNetRelation;
+import org.iottree.driver.zigbee.zspec.ZDOBuffer;
 import org.iottree.driver.zigbee.zspec.ZDOCluster;
+import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.iottree.driver.zigbee.zspec.ZDOResp;
+import org.iottree.driver.zigbee.zspec.ZDOUtil;
 import org.iottree.driver.zigbee.zspec.ZSController;
 import org.iottree.driver.zigbee.zspec.ZSCoor;
 import org.iottree.driver.zigbee.zspec.ZSDevice;
 import org.iottree.driver.zigbee.zspec.ZSEndPoint;
+import org.iottree.driver.zigbee.zspec.event.IncomeMsgDefEvt;
 import org.iottree.driver.zigbee.zspec.event.PermitJoinEvt;
 import org.iottree.driver.zigbee.zspec.types.BroadcastAddr;
 import org.iottree.driver.zigbee.zspec.types.NetworkParam;
@@ -34,13 +38,21 @@ import org.iottree.driver.zigbee.zspec.types.ZSStartResult;
 import org.iottree.driver.zigbee.zspec.util.DeviceState;
 import org.iottree.driver.zigbee.zspec.util.EndDeviceCap;
 import org.iottree.driver.zigbee.zspec.util.ShortAddr;
+import org.iottree.driver.zigbee.zspec.zdo.EndDeviceAnnounceResp;
 import org.iottree.driver.zigbee.zstack.msg_af.*;
+import org.iottree.driver.zigbee.zstack.msg_appcnf.BDBAddInstallCodeSREQ;
 import org.iottree.driver.zigbee.zstack.msg_zdo.*;
 import org.iottree.driver.zigbee.zstack.msg_sys.*;
+import org.iottree.driver.zigbee.zstack.msg_util.CommonStatusSRSP;
 import org.iottree.driver.zigbee.zstack.msg_util.GetDeviceInfoSREQ;
 import org.iottree.driver.zigbee.zstack.msg_util.GetDeviceInfoSRSP;
 import org.iottree.driver.zigbee.zstack.req_rsp.*;
+import org.iottree.driver.zigbee.zstack.req_rsp.ZStackUtil.AssocRestore;
+import org.iottree.driver.zigbee.zstack.types.AFConsts;
+import org.iottree.driver.zigbee.zstack.types.AddressMode;
+import org.iottree.driver.zigbee.zstack.types.ZnpCmdStatus;
 import org.iottree.driver.zigbee.zstack.util.NVItemIDS;
+import org.iottree.driver.zigbee.zstack.util.ZnpEndpoint;
 import org.iottree.driver.zigbee.zstack.util.ZnpVersion;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -66,12 +78,14 @@ public class ZStackCoor extends ZSCoor
 	
 	GetDeviceInfoSRSP deviceInfo = null ;
 	
+	private int transactionID = 0;
 	
-	
+	private boolean interpanEndpointRegistered = false;
 	
 	public ZStackCoor(ZStackManager zsm)
 	{
 		super(zsm.getDriver()) ;
+		
 		this.zsm = zsm ;
 		log = LoggerManager.getLogger("ZStackCoor_"+zsm.getBelongToCh().getName()) ;
 		log.setCurrentLogLevel(ILogger.LOG_LEVEL_DEBUG);
@@ -95,15 +109,8 @@ public class ZStackCoor extends ZSCoor
 	
 	public JSONObject toJO()
 	{
-		JSONObject ret = new JSONObject() ;
-		ret.putOpt("ieee_addr", this.ieee_addr)
-			//.putOpt("pan_id", this.pan_id).putOpt("ext_pan_id", this.ext_pan_id).putOpt("nwk_key", this.nwkKey)
-			;
-		if(cap!=null)
-		{
-			ret.put("capabilities_v", this.cap.getCapVal()) ;
-			ret.put("capabilities", this.cap.toJO()) ;
-		}
+		JSONObject ret = super.toJO() ;
+		
 		if(this.version!=null)
 			ret.put("version",this.version.toRecvJO()) ;
 		if(this.startupST!=null)
@@ -115,30 +122,14 @@ public class ZStackCoor extends ZSCoor
 		if(this.deviceInfo!=null)
 			ret.put("device_info", this.deviceInfo.toRecvJO()) ;
 		
-		
-		JSONArray end_devs = new JSONArray() ;
-		ret.put("end_devices", end_devs) ;
-		for(ZSDevice ed:this.ieee2device.values())
-		{
-			end_devs.put(ed.toJO()) ;
-		}
-		
-		JSONArray net_relations = new JSONArray() ;
-		ret.put("net_relations", net_relations) ;
-		for(DevNetRelation nr:this.ieee2net_relat.values())
-		{
-			net_relations.put(nr.toJO()) ;
-		}
-		
 		return ret ;
 	}
 	
+	
 	public void fromJO(JSONObject jo)
 	{
-//		this.pan_id = jo.optInt("pan_id",-1) ;
-//		this.ext_pan_id = jo.optString("ext_pan_id") ;
-//		this.nwkKey = jo.optString("nwk_key") ;
-		this.ieee_addr = jo.optString("ieee_addr") ;
+		super.fromJO(jo);
+		
 		JSONObject tmpjo = jo.optJSONObject("version") ;
 		if(tmpjo!=null)
 		{
@@ -161,33 +152,6 @@ public class ZStackCoor extends ZSCoor
 			GetDeviceInfoSRSP v = new GetDeviceInfoSRSP() ;
 			if(v.fromRecvJO(tmpjo))
 				this.deviceInfo = v ;
-		}
-		
-		JSONArray tmpjarr = jo.optJSONArray("end_devices") ;
-		if(tmpjarr!=null)
-		{
-			int n = tmpjarr.length() ;
-			for(int i = 0 ; i <  n ; i ++)
-			{
-				JSONObject oo = tmpjarr.getJSONObject(i) ;
-				ZStackEndDevice ed = ZStackEndDevice.fromeJO(this, oo) ;
-				if(ed==null)
-					continue ;
-				this.ieee2device.put(ed.getIEEEAddr(),ed) ;
-			}
-		}
-		
-		tmpjarr = jo.optJSONArray("net_relations") ;
-		if(tmpjarr!=null)
-		{
-			int n = tmpjarr.length() ;
-			for(int i = 0 ; i <  n ; i ++)
-			{
-				JSONObject oo = tmpjarr.getJSONObject(i) ;
-				DevNetRelation nr = new DevNetRelation();
-				if(nr.fromJO(oo))
-					this.ieee2net_relat.put(nr.getIEEEAddr(),nr) ;
-			}
 		}
 	}
 	
@@ -217,7 +181,7 @@ public class ZStackCoor extends ZSCoor
 		{
 			EndDeviceAnnceIndSREQ_CB cbmsg = (EndDeviceAnnceIndSREQ_CB)m_recv ;
 			//System.out.println(">>annce ed>>"+cbmsg) ;
-			ZSDevice ed = MGR_onDeviceAnnce(cbmsg) ;
+			ZSDevice ed = MGR_onEndDeviceAnnce(cbmsg.toZdoResp()) ;
 			putQueue(QN_ANNCE_EP,ed) ;
 			return ;
 		}
@@ -233,7 +197,7 @@ public class ZStackCoor extends ZSCoor
 		{// 在 TCDevIndAREQ_CB之后会出现
 			//System.out.println("$IncomingMsgAREQ_CB$>>"+m_recv) ;
 			IncomingMsgAREQ_CB income_msg = (IncomingMsgAREQ_CB)m_recv ;
-			MGR_onIncomingMsg(income_msg) ;
+			MGR_onIncomingMsg(income_msg.toIncomeMsgDefEvt()) ;
 			this.RT_fireEvent(ZSController.INCOME_MSG, income_msg);
 			return ;
 		}
@@ -297,7 +261,9 @@ public class ZStackCoor extends ZSCoor
 		
 		this.version = readVersion(failedr) ;
 		if(this.version==null)
+		{
 			return false;
+		}
 		
 		int pan_id = this.readPanId(failedr) ;
 		if(pan_id<0)
@@ -846,7 +812,7 @@ public class ZStackCoor extends ZSCoor
 					SimpleDescRspAREQ_CB sdr = readSimpleDesc(dst_addr,epid, failedr) ;
 					if(sdr==null)
 						continue ;
-					if(ep.MGR_updateBy(sdr))
+					if(ep.MGR_updateBy(sdr.toZDOObj()))
 						b_dirty = true ;
 				}
 			}
@@ -913,42 +879,10 @@ public class ZStackCoor extends ZSCoor
 		this.save();
 	}
 	
-	/**
-	 * 当新的EndDevice 发现
-	 * @param endd
-	 * @throws IOException 
-	 */
-	protected ZSDevice MGR_onDeviceAnnce(EndDeviceAnnceIndSREQ_CB endd) throws IOException
-	{
-		String ieee_addr = endd.getIEEEAddr() ;
-		ZSDevice old_ed = (ZStackEndDevice)getDeviceByIEEEAddr(ieee_addr) ;
-		ZSDevice new_ed = null;
-		if(old_ed==null)
-		{//new add
-			new_ed = new ZSDevice(this,ieee_addr) ;
-			new_ed.setFindDT(System.currentTimeMillis()) ;
-			UADev related_d = new_ed.getRelatedUADev() ;
-			if(related_d!=null)
-				new_ed.setTitle(related_d.getTitle()) ;
-		}
-		else
-		{//check change or not
-			if(!endd.MGR_checkChanged(old_ed))
-				return null;
-			new_ed = old_ed ;
-		}
-		new_ed.updateBy(new ShortAddr(endd.getNwkAddr()) ,endd.getDeviceCapabilites());
-		new_ed.setUpdateDT(System.currentTimeMillis()) ;
-		setDevice(new_ed) ;
-
-		this.save();
-		return new_ed ;
-	}
-	
-	protected  ZStackEndDevice MGR_onEndDeviceNwkAddr(String ieee_addr,NwkAddrRspAREQ_CB nwkaddr_rsp)
+	protected  ZSDevice MGR_onEndDeviceNwkAddr(String ieee_addr,NwkAddrRspAREQ_CB nwkaddr_rsp)
 			throws IOException
 	{
-		ZStackEndDevice ed = (ZStackEndDevice)getDeviceByIEEEAddr(ieee_addr) ;
+		ZSDevice ed = getDeviceByIEEEAddr(ieee_addr) ;
 		if(ed==null)
 			return null ;
 		int rsp_addr = nwkaddr_rsp.getNwkAddr().getAddrVal() ;
@@ -959,64 +893,6 @@ public class ZStackCoor extends ZSCoor
 			this.save();
 		}
 		return ed ;
-	}
-	
-	protected  void MGR_onIncomingMsg(IncomingMsgAREQ_CB in_msg) throws IOException
-	{
-		 int src_addr = in_msg.getSrcAddr();
-		 ZStackEndDevice ed = (ZStackEndDevice)getDeviceByShortAddr(src_addr) ;
-		 if(ed==null)
-		 {
-			 if(log.isWarnEnabled())
-				 log.warn("no EndDevice found with src_addr"+src_addr+" in IncomeMsg");
-			 return ;
-		 }
-		 
-		 ed.setLinkQual(in_msg.getLinkQuality());
-		 
-		 int src_ep = in_msg.getSrcEndpoint() ;
-		 int cluster_id = in_msg.getClusterId() ;
-		 ZCLCluster c = in_msg.getCluster() ;
-		 
-		 StringBuilder failedr  = new StringBuilder() ;
-		 ZCLFrame f = in_msg.getZCLFrame(failedr) ;
-		 if(f==null)
-		 {
-			 //
-			 System.err.println(failedr) ;
-			 return ;
-		 }
-		 
-		 if(f instanceof ReportAttr)
-		 {
-			 ReportAttr ra = (ReportAttr)f ;
-			 boolean b_dirty = ed.RT_onReportAttr(src_ep,cluster_id,ra,failedr) ;
-			 if(b_dirty)
-				 this.save();
-			 else
-			 {
-				 if(log.isWarnEnabled())
-					 log.warn("MGR_onIncomingMsg RT_onReportAttr err:"+failedr.toString()+"\r\n\t"+in_msg);
-			 }
-		 }
-	}
-	
-	@Override
-	public boolean MGR_setEndDeviceTitle(String ieeeaddr,String tt) throws Exception
-	{
-		ZStackEndDevice ed = (ZStackEndDevice)this.getDeviceByIEEEAddr(ieeeaddr) ;
-		if(ed==null)
-			return false;
-		ed.MGR_setTitle(tt);
-		this.save();
-		StringBuilder failedr = new StringBuilder() ;
-		if(!this.MGR_synEndDeviceToUADev(ieeeaddr, failedr))
-		{
-			if(log.isDebugEnabled())
-				log.debug("MGR_setEndDeviceTitle - MGR_synEndDeviceToUADev err:"+failedr);
-		}
-		
-		return true ;
 	}
 	
 	/**
@@ -1033,7 +909,7 @@ public class ZStackCoor extends ZSCoor
 	public boolean MGR_setEndDeviceConfigReportAttr(String ieeeaddr,int endpoint,int cluster_id,
 			List<AttrReportConfig> attr_rcs,StringBuilder failedr) throws Exception
 	{
-		ZStackEndDevice ed = (ZStackEndDevice)this.getDeviceByIEEEAddr(ieeeaddr) ;
+		ZSDevice ed = this.getDeviceByIEEEAddr(ieeeaddr) ;
 		if(ed==null)
 		{
 			failedr.append("no end device found") ;
@@ -1042,31 +918,7 @@ public class ZStackCoor extends ZSCoor
 		return sendConfigReportToEndDevice(ed.getShortAddr().getAddrVal(),endpoint, cluster_id,
 				attr_rcs,failedr) ;
 	}
-	/**
-	 * syn UADev (include sub tags) under coor channel
-	 * @param ieeeaddr
-	 * @param failedr
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public boolean MGR_synEndDeviceToUADev(String ieeeaddr,StringBuilder failedr) throws Exception
-	{
-		ZStackEndDevice ed = (ZStackEndDevice)this.getDeviceByIEEEAddr(ieeeaddr) ;
-		if(ed==null)
-		{
-			failedr.append("no EndDevice found") ;
-			return false;
-		}
-		UACh ch = this.zsm.getBelongToCh() ;
-		String tt = ed.getTitle() ;
-		if(Convert.isNullOrEmpty(tt))
-			tt = ed.getIEEEAddr();
-		JSONArray tags_jarr = new JSONArray() ;
-		ed.setupTagsJArr(tags_jarr) ;
-		ch.synOuterDevByJO(ieeeaddr, "ed_", tt, tags_jarr, true);
-		return true ;
-	}
+	
 	
 	/**
 	 * 触发EndDevice新发现运行过程
@@ -1077,7 +929,7 @@ public class ZStackCoor extends ZSCoor
 	@Override
 	public boolean MGR_putQueueEndDevice(String ieee,StringBuilder failedr)
 	{
-		ZStackEndDevice ed = (ZStackEndDevice)this.getDeviceByIEEEAddr(ieee) ;
+		ZSDevice ed = this.getDeviceByIEEEAddr(ieee) ;
 		if(ed==null)
 		{
 			failedr.append("no end device found") ;
@@ -1090,7 +942,7 @@ public class ZStackCoor extends ZSCoor
 	@Override
 	public int MGR_delEndDevice(String ieee,boolean force_del,boolean rejoin,boolean del_uadev,StringBuilder failedr) throws Exception
 	{
-		ZStackEndDevice ed = (ZStackEndDevice)this.getDeviceByIEEEAddr(ieee) ;
+		ZSDevice ed = this.getDeviceByIEEEAddr(ieee) ;
 		if(ed==null)
 		{
 			failedr.append("no end device found") ;
@@ -1152,8 +1004,9 @@ public class ZStackCoor extends ZSCoor
 	@Override
 	public String getCoordinatorVersion()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		if(this.version==null)
+			return "ZStack";
+		return ""+this.version.getProductId() ;
 	}
 
 	@Override
@@ -1181,17 +1034,163 @@ public class ZStackCoor extends ZSCoor
 	@Override
 	public void addInstallCode(String ieee_addr, String key, boolean hashed) throws Exception
 	{
-		// TODO Auto-generated method stub
+		if(this.version.getProductId()==ZnpVersion.ZStack12.val)
+		{
+			if(log.isWarnEnabled())
+				log.warn("install code is not support ZStack12");
+			return ;
+		}
+		int fmt = hashed?0x02:0x01 ;
+		byte[] install_cd = Convert.hexStr2ByteArray(key) ;
+		if(install_cd.length!=16 && install_cd.length!=18)
+			throw new IllegalArgumentException("16bytes key derived from IE,18 bytes for install code+crc") ;
+		BDBAddInstallCodeSREQ req = new BDBAddInstallCodeSREQ(fmt,ieee_addr,install_cd) ;
+		ReqRsp_CMD<BDBAddInstallCodeSREQ,CommonStatusSRSP> rr = new ReqRsp_CMD<>(req,CommonStatusSRSP.class,new int[] {0x6F,0x04}) ;
+		StringBuilder failedr = new StringBuilder() ;
+		zsm.RT_synReqRsp(rr,failedr) ;
 		
+//		if(!zsm.RT_synReqRsp(rr,failedr))
+//			return ;
+//		CommonStatusSRSP rsp = rr.getRsp() ;
+//		if(rsp==null)
+//			return ;
+//		return rsp.getStatus() ;
 	}
 
 	@Override
 	public ZDOResp sendZdo(String ieee_address, int nwk_addr, ZDOCluster clusterobj, boolean disableResponse)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	private MsgRecv sendZdoInternal(String ieeeAddress,int networkAddress,
+	        ZDOClusterId clusterId,
+	        byte[] payload,
+	        boolean disableResponse) throws Exception//: Promise<ZdoTypes.RequestToResponseMap[K] | undefined> 
+	    {
+		BroadcastAddr baddr = BroadcastAddr.valOfInt(networkAddress);
+	            // stack-specific requirements
+	            switch (clusterId) {
+	                case PERMIT_JOINING_REQUEST: {
+	                	ZDOBuffer finalPayload = ZDOBuffer.alloc(payload.length + 3);
+	                	
+	                    finalPayload.writeUInt8(baddr!=null ? AddressMode.ADDR_BROADCAST.val : AddressMode.ADDR_16BIT.val); // 0
+	                    finalPayload.writeUInt16(networkAddress == 0 ? BroadcastAddr.DEFAULT.val : networkAddress); //1-2
+	                    finalPayload.writeBuf(payload,0,payload.length);
+	                    payload = finalPayload.getWritten();
+	                    break;
+	                }
+
+	                case NWK_UPDATE_REQUEST: {
+	                    // extra zeroes for empty nwkManagerAddr if necessary
+	                    int zeroes = 9 - payload.length - 1; /* zstack doesn't have nwkUpdateId */
+	                    ZDOBuffer finalPayload = ZDOBuffer.alloc(payload.length + 3 + zeroes);
+	                    finalPayload.writeUInt16(networkAddress);
+	                    finalPayload.writeUInt8(baddr!=null ? AddressMode.ADDR_BROADCAST.val : AddressMode.ADDR_16BIT.val);
+	                    finalPayload.writeBuf(payload,0,payload.length);
+
+	                    payload = finalPayload.getWritten();
+	                    break;
+	                }
+
+	                case BIND_REQUEST:
+	                case UNBIND_REQUEST: {
+	                    // extra zeroes for uint16 (in place of ieee when MULTICAST) and endpoint (not used when MULTICAST)
+	                    int zeroes = 21 - payload.length;
+	                    ZDOBuffer finalPayload = ZDOBuffer.alloc(payload.length + 2 + zeroes);
+	                    finalPayload.writeUInt16(networkAddress);
+	                    finalPayload.writeBuf(payload,0,payload.length);
+
+	                    payload = finalPayload.getWritten();
+	                    break;
+	                }
+
+	                case NETWORK_ADDRESS_REQUEST:
+	                case IEEE_ADDRESS_REQUEST: {
+	                    // no modification necessary
+	                    break;
+	                }
+
+	                default: {
+	                	ZDOBuffer finalPayload = ZDOBuffer.alloc(payload.length + 2);
+	                    finalPayload.writeUInt16(networkAddress);
+	                    finalPayload.writeBuf(payload,0,payload.length);
+
+	                    payload = finalPayload.getWritten();
+	                    break;
+	                }
+	            }
+
+	            MsgWaiter<MsgRecv> waiter = null; 
+	            //let waiter: ReturnType<typeof this.znp.waitFor> | undefined;
+
+	            if (!disableResponse) {
+	                //const responseClusterId = Zdo.Utils.getResponseClusterId(clusterId);
+	                ZDOClusterId resp_cid = ZDOUtil.getRespClusterId(clusterId);
+		            if (resp_cid!=null)
+	                 {
+		            	 waiter = new MsgWaiter<>(10000).asMatchCmdTp(Msg.CmdTp.AREQ)
+		            			 .asMatchSubSys(Msg.SubSys.ZDO).asMatchCmd1(resp_cid.getIntVal())
+		            			 .asMatchTarget(resp_cid == ZDOClusterId.NETWORK_ADDRESS_RESPONSE ? ieeeAddress : networkAddress);
+	                    //const cmd = Definition[Subsystem.ZDO].find((c) => isMtCmdAreqZdo(c) && c.zdoClusterId === responseClusterId);
+	                    //assert(cmd, `Response for ZDO cluster ID '${responseClusterId}' not supported.`);
+
+//	                    waiter = this.znp.waitFor(
+//	                        UnpiConstants.Type.AREQ,
+//	                        Subsystem.ZDO,
+//	                        cmd.name,
+//	                        responseClusterId === NETWORK_ADDRESS_RESPONSE ? ieeeAddress : networkAddress,
+//	                        undefined,
+//	                        undefined,
+//	                    );
+	                }
+	            }
+
+	            try {
+	                //this.znp.requestZdo(clusterId, payload, waiter?.ID);
+	                this.requestZdo(clusterId,payload);
+	            } catch (Exception e)
+	            {
+	                if (clusterId == ZDOClusterId.NODE_DESCRIPTOR_REQUEST) {
+	                    // Discover route when node descriptor request fails
+	                    // https://github.com/Koenkk/zigbee2mqtt/issues/3276
+	                    log.debug("Discover route to '"+networkAddress+" because node descriptor request failed");
+	                    this.discoverRoute(networkAddress,true);
+	                    
+	                    //this.znp.requestZdo(clusterId, payload, /* v8 ignore next */ waiter?.ID);
+	                    this.requestZdo(clusterId,payload);
+	                } else {
+	                    throw e;
+	                }
+	            }
+
+	            if (waiter!=null) {
+	            	return this.zsm.RT_synWaitFor(waiter) ;
+	                //const response = await waiter.start().promise;
+
+	                //return response.payload.zdo;
+	            }
+	       return null ;
+	    }
+	
+	private void requestZdo(ZDOClusterId clusterid,byte[] pld)
+	{
+		
+	}
+	
+	private void discoverRoute(int networkAddress, boolean waitSettled) throws Exception // = true)
+	{
+		 log.debug("Discovering route to "+networkAddress);
+	        ExtRouterDiscSREQ req = new ExtRouterDiscSREQ() ;
+	        
+		 StringBuilder failedr = new StringBuilder() ;
+			ReqRsp_CMD<ExtRouterDiscSREQ,ExtRouterDiscSRSP> rr = new ReqRsp_CMD<>(req,ExtRouterDiscSRSP.class) ;
+			zsm.RT_synReqRsp(rr,failedr);
+			
+			if (waitSettled)
+	            ZStackManager.sleep(3000);
+    }
 
 	@Override
 	public void permitJoin(int seconds, int nwk_addr) throws Exception
@@ -1205,7 +1204,7 @@ public class ZStackCoor extends ZSCoor
 			int timeout, boolean disableResponse, boolean disableRecovery, Integer sourceEndpoint, Integer profileId)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
+				
 		return null;
 	}
 
@@ -1213,36 +1212,70 @@ public class ZStackCoor extends ZSCoor
 	public void sendZclFrameToGroup(int groupID, ZCLFrmClusterCmd zclf, Integer sourceEndpoint, Integer profileId)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
-		
+//		this.dataRequestExtended(
+//                AddressMode.ADDR_GROUP,
+//                groupID,
+//                0xff,
+//                0,
+//                srcEndpoint,
+//                zclFrame.cluster.ID,
+//                Constants.AF.DEFAULT_RADIUS,
+//                zclFrame.toBuffer(),
+//                3000,
+//                true,
+//            );
 	}
 
 	@Override
 	public void sendZclFrameToAll(int endpoint, ZCLFrmClusterCmd zclf, Integer src_endpoint, BroadcastAddr destination,
 			Integer profileId) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void setChannelInterPAN(int channel) throws Exception
 	{
-		// TODO Auto-generated method stub
+		setChannelInterPAN(1,new byte[] {(byte)channel}) ;
 		
+		if (!this.interpanEndpointRegistered) {
+            // Make sure that endpoint 12 is registered to proxy the InterPAN messages.
+            setChannelInterPAN(2,new byte[] {12}) ;
+            this.interpanEndpointRegistered = true;
+        }
 	}
+	
+
+	@Override
+	public void restoreChannelInterPAN() throws Exception
+	{
+		setChannelInterPAN(0,null) ;
+		ZStackManager.sleep(3000);
+	}
+	
+	private boolean setChannelInterPAN(int cmd,byte[] data) throws Exception
+	{
+		InterPanCtlSREQ req = new InterPanCtlSREQ(cmd,data) ;
+		ReqRsp_CMD<InterPanCtlSREQ,CommonStatusSRSP> rr = new ReqRsp_CMD<>(req,CommonStatusSRSP.class,new int[] {0x64,0x10}) ;
+		StringBuilder failedr = new StringBuilder() ;
+		if(!zsm.RT_synReqRsp(rr,failedr))
+			return false ;
+		CommonStatusSRSP rsp = rr.getRsp() ;
+		if(rsp==null)
+			return false;
+		return rsp.getStatus() ;
+	}
+
 
 	@Override
 	public void sendZclFrameInterPANToIeeeAddr(ZCLFrmClusterCmd zclFrame, String ieee_addr) throws Exception
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public ZCLFrame sendZclFrameInterPANBroadcast(ZCLFrmClusterCmd zclFrame, int timeout) throws Exception
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -1250,16 +1283,238 @@ public class ZStackCoor extends ZSCoor
 	public ZCLFrame sendZclFrameInterPANBroadcast(ZCLFrmClusterCmd zclFrame, int timeout, boolean disableResponse)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public void restoreChannelInterPAN() throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
-	
+    private int selectSourceEndpoint(Integer sourceEndpoint,Integer profileId)
+    {
+        // Use provided sourceEndpoint as the highest priority
+    	Integer srcEndpoint = sourceEndpoint;
+        // If sourceEndpoint is not provided, try to select the source endpoint based on the profileId.
+        if (srcEndpoint == null && profileId != null) {
+            srcEndpoint = ZnpEndpoint.findEndpointDefaultByProfileId(profileId);
+        }
+        //If no profileId is provided, or if no corresponding endpoint exists, use endpoint 1.
+        if (srcEndpoint == null) {
+            srcEndpoint = 1;
+        }
+
+        // Validate that the requested profileId can be satisfied by the adapter.
+        if (profileId != null && ZnpEndpoint.findProfileIdDefaultByEndpoint(srcEndpoint) != profileId) {
+            throw new RuntimeException("Profile ID "+profileId+" is not supported by this adapter.");
+        }
+
+        return srcEndpoint;
+    }
+    
+    private boolean supportsAssocRemove() {
+        return this.version.getProductId() == ZnpVersion.ZStack3x0.val && this.version.getRevision()>= 20200805;
+    }
+    
+
+    public ZCLFrame sendZclFrameToEndpointInternal(
+    		ZStackManager zsm,
+            String ieeeAddr,
+            int networkAddress,
+            int endpoint,
+            int sourceEndpoint,
+            ZCLFrmClusterCmd zclFrame,
+            int timeout,
+            boolean disableResponse,
+            boolean disableRecovery,
+            int responseAttempt,
+            int dataRequestAttempt,
+            boolean checkedNetworkAddress,
+            boolean discoveredRoute,
+            boolean assocRemove,
+            AssocRestore assocRestore //?: {ieeeadr: string; nwkaddr: number; noderelation: number},
+        ) //: Promise<Events.ZclPayload | undefined> 
+    {
+//            log.debug("sendZclFrameToEndpointInternal ${ieeeAddr}:${networkAddress}/${endpoint} " +
+//                    "(${responseAttempt},${dataRequestAttempt},${this.queue.count()})");
+//
+//
+//            ZnpCmdStatus dataConfirmResult = ZStackUtil.sendDataRequest(zsm,
+//                networkAddress,
+//                endpoint,
+//                sourceEndpoint,
+//                zclFrame.getClusterID(),
+//                AFConsts.DEFAULT_RADIUS,
+//                zclFrame.packFrame(),
+//                timeout
+//            );
+//
+//            if (dataConfirmResult != ZnpCmdStatus.SUCCESS) {
+//                // In case dataConfirm timesout (= null) or gives an error, try to recover
+//                log.debug("Data confirm error (${ieeeAddr}:${networkAddress},${dataConfirmResult},${dataRequestAttempt})");
+//                // if (response != null) response.cancel();
+//
+//
+//                
+//                if (dataRequestAttempt >= 4 || !ZStackUtil.recoverableErrors.contains(dataConfirmResult) || disableRecovery) {
+//                    throw new DataConfirmError(dataConfirmResult);
+//                }
+//
+//                if (
+//                    dataConfirmResult == ZnpCmdStatus.MAC_CHANNEL_ACCESS_FAILURE ||
+//                    dataConfirmResult == ZnpCmdStatus.BUFFER_FULL ||
+//                    dataConfirmResult == ZnpCmdStatus.MAC_NO_RESOURCES
+//                ) {
+//                    /**
+//                     * MAC_CHANNEL_ACCESS_FAILURE: When many commands at once are executed we can end up in a MAC
+//                     * channel access failure error. This is because there is too much traffic on the network.
+//                     * Retry this command once after a cooling down period.
+//                     * BUFFER_FULL: When many commands are executed at once the buffer can get full, wait
+//                     * some time and retry.
+//                     * MAC_NO_RESOURCES: Operation could not be completed because no memory resources are available,
+//                     * wait some time and retry.
+//                     */
+//                    ZStackManager.sleep(2000);
+//                    return sendZclFrameToEndpointInternal(
+//                        ieeeAddr,
+//                        networkAddress,
+//                        endpoint,
+//                        sourceEndpoint,
+//                        zclFrame,
+//                        timeout,
+//                        disableResponse,
+//                        disableRecovery,
+//                        responseAttempt,
+//                        dataRequestAttempt + 1,
+//                        checkedNetworkAddress,
+//                        discoveredRoute,
+//                        assocRemove,
+//                        assocRestore
+//                    );
+//                }
+//
+//                boolean doAssocRemove = false;
+//                if (
+//                    !assocRemove &&
+//                    dataConfirmResult == ZnpCmdStatus.MAC_TRANSACTION_EXPIRED &&
+//                    dataRequestAttempt >= 1 &&
+//                    this.supportsAssocRemove()
+//                ) {
+//                    const match = this.znp.requestWithReply(Subsystem.UTIL, "assocGetWithAddress", {
+//                        extaddr: ieeeAddr,
+//                        nwkaddr: networkAddress,
+//                    });
+//
+//                    if (match.payload.nwkaddr !== 0xfffe && match.payload.noderelation !== 255) {
+//                        doAssocRemove = true;
+//                        assocRestore = {ieeeadr: ieeeAddr, nwkaddr: networkAddress, noderelation: match.payload.noderelation};
+//                    }
+//
+//                    assocRemove = true;
+//                }
+//
+//                // NWK_NO_ROUTE: no network route => rediscover route
+//                // MAC_NO_ACK: route may be corrupted
+//                // MAC_TRANSACTION_EXPIRED: Mac layer is sleeping
+//                if (doAssocRemove) {
+//
+//                    log.debug("assocRemove="+ieeeAddr);
+//                    this.znp.request(Subsystem.UTIL, "assocRemove", {ieeeadr: ieeeAddr});
+//                } else if (!discoveredRoute && dataRequestAttempt >= 1) {
+//                    discoveredRoute = true;
+//                    this.discoverRoute(networkAddress);
+//                } else if (!checkedNetworkAddress && dataRequestAttempt >= 1) {
+//                    // Figure out once if the network address has been changed.
+//                    try {
+//                        checkedNetworkAddress = true;
+//                        const actualNetworkAddress = await this.requestNetworkAddress(ieeeAddr);
+//                        if (networkAddress !== actualNetworkAddress) {
+//                            log.debug("Failed because request was done with wrong network address", NS);
+//                            discoveredRoute = true;
+//                            networkAddress = actualNetworkAddress;
+//                            this.discoverRoute(actualNetworkAddress);
+//                        } else {
+//                            log.debug("Network address did not change", NS);
+//                        }
+//                        /* v8 ignore start */
+//                    } catch {
+//                        /* empty */
+//                    }
+//                    /* v8 ignore stop */
+//                } else {
+//                    log.debug("Wait 2000ms");
+//                    ZStackManager.sleep(2000);
+//                }
+//
+//                return await this.sendZclFrameToEndpointInternal(
+//                    ieeeAddr,
+//                    networkAddress,
+//                    endpoint,
+//                    sourceEndpoint,
+//                    zclFrame,
+//                    timeout,
+//                    disableResponse,
+//                    disableRecovery,
+//                    responseAttempt,
+//                    dataRequestAttempt + 1,
+//                    checkedNetworkAddress,
+//                    discoveredRoute,
+//                    assocRemove,
+//                    assocRestore,
+//                );
+//            }
+//
+//            if (response !== null) {
+//                try {
+//                    const result = response.start().promise;
+//                    return result;
+//                } catch (error) {
+//                    log.debug("Response timeout "+ieeeAddr+":"+networkAddress+","+responseAttempt);
+//                    if (responseAttempt < 1 && !disableRecovery) {
+//                        // No response could be because the radio of the end device is turned off:
+//                        // Sometimes the coordinator does not properly set the PENDING flag.
+//                        // Try to rewrite the device entry in the association table, this fixes it sometimes.
+//                        const match = this.znp.requestWithReply(Subsystem.UTIL, "assocGetWithAddress", {
+//                            extaddr: ieeeAddr,
+//                            nwkaddr: networkAddress,
+//                        });
+//                        logger.debug(
+//                            `Response timeout recovery: Node relation ${match.payload.noderelation} (${ieeeAddr} / ${match.payload.nwkaddr})`,
+//                            NS,
+//                        );
+//                        if (
+//                            this.supportsAssocAdd() &&
+//                            this.supportsAssocRemove() &&
+//                            match.payload.nwkaddr !== 0xfffe &&
+//                            match.payload.noderelation === 1
+//                        ) {
+//                            logger.debug(`Response timeout recovery: Rewrite association table entry (${ieeeAddr})`, NS);
+//                            await this.znp.request(Subsystem.UTIL, "assocRemove", {ieeeadr: ieeeAddr});
+//                            await this.znp.request(Subsystem.UTIL, "assocAdd", {
+//                                ieeeadr: ieeeAddr,
+//                                nwkaddr: networkAddress,
+//                                noderelation: match.payload.noderelation,
+//                            });
+//                        }
+//                        // No response could be of invalid route, e.g. when message is send to wrong parent of end device.
+//                        await this.discoverRoute(networkAddress);
+//                        return await this.sendZclFrameToEndpointInternal(
+//                            ieeeAddr,
+//                            networkAddress,
+//                            endpoint,
+//                            sourceEndpoint,
+//                            zclFrame,
+//                            timeout,
+//                            disableResponse,
+//                            disableRecovery,
+//                            responseAttempt + 1,
+//                            dataRequestAttempt,
+//                            checkedNetworkAddress,
+//                            discoveredRoute,
+//                            assocRemove,
+//                            assocRestore,
+//                        );
+//                    }
+//
+//                    throw error;
+//                }
+//            }
+    		return null ;
+        }
 }

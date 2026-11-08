@@ -10,6 +10,7 @@ import org.iottree.driver.zigbee.zstack.ZStackManager;
 import org.iottree.driver.zigbee.zstack.msg_af.DataConfirmAREQ_CB;
 import org.iottree.driver.zigbee.zstack.msg_af.DataRequestSREQ;
 import org.iottree.driver.zigbee.zstack.msg_af.DataRequestSRSP;
+import org.iottree.driver.zigbee.zstack.types.ZnpCmdStatus;
 import org.json.JSONObject;
 
 public class DataReqConfirm_CMD extends MsgReqRsp
@@ -44,7 +45,7 @@ public class DataReqConfirm_CMD extends MsgReqRsp
 	DataReqConfirm_CMD(DataRequestSREQ req)
 	{
 		super();
-		this.asReq(req, true, 5000) ;
+		this.asReq(req, true, 10000) ;
 	}
 	
 	/**
@@ -85,6 +86,17 @@ public class DataReqConfirm_CMD extends MsgReqRsp
 		int trans_id = zsm.get_next_trans_id() ;
 		DataRequestSREQ req =  DataRequestSREQ.createConfigAttrReportReq(dst_addr,endpoint,cluster_id, 
 				dir_s2c, trans_id,attr_reports) ;
+		DataReqConfirm_CMD ret = new DataReqConfirm_CMD(req) ;
+		return ret;
+	}
+	
+	public static DataReqConfirm_CMD create(ZStackManager zsm,int dst_addr,int dst_endpoint,
+			int src_endpoint,int cluster_id,int options,int radius,byte[] last_data)
+	{
+		int trans_id = zsm.get_next_trans_id() ;
+		DataRequestSREQ req = new DataRequestSREQ( dst_addr, dst_endpoint,
+				src_endpoint,cluster_id,trans_id,options,radius,last_data) ;
+		
 		DataReqConfirm_CMD ret = new DataReqConfirm_CMD(req) ;
 		return ret;
 	}
@@ -132,6 +144,13 @@ public class DataReqConfirm_CMD extends MsgReqRsp
 		if(this.flwCB==null)
 			return false;
 		return this.flwCB.getStatus() ;
+	}
+	
+	public ZnpCmdStatus getZnpCmdStatus()
+	{
+		if(this.flwCB==null)
+			return null;
+		return this.flwCB.getZnpCmdStatus() ;
 	}
 
 	@Override

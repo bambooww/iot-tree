@@ -11,9 +11,8 @@ import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.iottree.driver.zigbee.zspec.ZDOResp;
 import org.iottree.driver.zigbee.zspec.ZDOStatus;
 
-import kotlin.NotImplementedError;
 
-public class AddrRsp extends ZDOResp
+public class AddrResp extends ZDOResp
 {
 	ZDOClusterId clusterId ;
 	
@@ -27,7 +26,7 @@ public class AddrRsp extends ZDOResp
 	
 	List<Integer> assoc_dev_list ;
 	
-	public AddrRsp(ZDOClusterId cid)
+	public AddrResp(ZDOClusterId cid)
 	{
 		if(cid!=ZDOClusterId.NETWORK_ADDRESS_RESPONSE && cid!=ZDOClusterId.IEEE_ADDRESS_RESPONSE)
 			throw new IllegalArgumentException("not address response") ;
@@ -43,7 +42,7 @@ public class AddrRsp extends ZDOResp
 	@Override
 	public void packTo(ZDOBuffer buf)
 	{
-		throw new NotImplementedError() ;
+		throw new RuntimeException("no impl") ;
 	}
 
 	@Override

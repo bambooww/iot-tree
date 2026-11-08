@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Loader;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.jasper.servlet.JasperInitializer;
+import org.apache.tomcat.util.net.SSLHostConfig;
+import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.iottree.core.Config;
 import org.iottree.core.Config.Webapp;
 import org.iottree.core.UAServer;
@@ -125,6 +129,10 @@ public class ServerTomcat implements IServerBootComp
 		long st = System.currentTimeMillis() ;
 		tomcat.start();
 		
+		while (tomcat.getServer().getState() != LifecycleState.STARTED) {
+		    Thread.sleep(100); // 
+		}
+		
 		for(Map.Entry<String,Context> a2c:app2cxt.entrySet())
 		{
 			String appn = a2c.getKey() ;
@@ -180,28 +188,64 @@ public class ServerTomcat implements IServerBootComp
 		connector.setPort(port);
 		//connector.setSecure(true);
 		connector.setScheme("http");
-		connector.setAttribute("maxThreads", "200");
+		connector.setProperty("maxThreads", "200");
 		return connector;
 	}
-
+	
 	private static Connector getSslConnector(int port)
+	{
+	    // 1. 创建连接器并设置基本属性
+	    Connector connector = new Connector();
+	    connector.setPort(port);
+	    connector.setSecure(true);
+	    connector.setScheme("https");
+	    connector.setProperty("maxThreads", "200");
+
+	    // 2. 获取 NIO 协议处理器并开启 SSL
+	    Http11NioProtocol protocol = (Http11NioProtocol) connector.getProtocolHandler();
+	    protocol.setSSLEnabled(true);
+
+	    // 3. 构建 SSLHostConfig，承载 TLS 协议和客户端认证配置
+	    SSLHostConfig sslHostConfig = new SSLHostConfig();
+	    sslHostConfig.setSslProtocol("TLS");
+	    sslHostConfig.setCertificateVerification("none"); // 对应原 clientAuth="false"
+
+	    // 4. 构建证书配置，原来 keystore 相关属性都在这里
+	    SSLHostConfigCertificate certificate = new SSLHostConfigCertificate(
+	            sslHostConfig,
+	            SSLHostConfigCertificate.Type.UNDEFINED
+	    );
+	    certificate.setCertificateKeyAlias("tomcat");
+	    certificate.setCertificateKeystorePassword("123456");
+	    certificate.setCertificateKeystoreType("JKS");
+	    certificate.setCertificateKeystoreFile("../keystore.jks");
+
+	    // 5. 组装并应用
+	    sslHostConfig.addCertificate(certificate);
+	    protocol.addSslHostConfig(sslHostConfig);
+
+	    return connector;
+	}
+
+	private static Connector getSslConnector_old(int port)
 	{
 		Connector connector = new Connector();
 		connector.setPort(port);
 		connector.setSecure(true);
 		connector.setScheme("https");
 		//connector.setProperty(name, value)
-		connector.setAttribute("keyAlias", "tomcat");
 		//connector.set
-		connector.setAttribute("keystorePass", "123456");
-		connector.setAttribute("keystoreType", "JKS");
-		connector.setAttribute("keystoreFile", "../keystore.jks");
-		connector.setAttribute("clientAuth", "false");
-		connector.setAttribute("protocol", "HTTP/1.1");
-		connector.setAttribute("sslProtocol", "TLS");
-		connector.setAttribute("maxThreads", "200");
-		connector.setAttribute("protocol", "org.apache.coyote.http11.Http11AprProtocol");
-		connector.setAttribute("SSLEnabled", true);
+		connector.setProperty("keyAlias", "tomcat");
+		//connector.set
+		connector.setProperty("keystorePass", "123456");
+		connector.setProperty("keystoreType", "JKS");
+		connector.setProperty("keystoreFile", "../keystore.jks");
+		connector.setProperty("clientAuth", "false");
+		connector.setProperty("protocol", "HTTP/1.1");
+		connector.setProperty("sslProtocol", "TLS");
+		connector.setProperty("maxThreads", "200");
+		connector.setProperty("protocol", "org.apache.coyote.http11.Http11AprProtocol");
+		connector.setProperty("SSLEnabled", "true");
 		return connector;
 	}
 

@@ -10,7 +10,12 @@
 	<dd_node id="1" name="pg_prj" name_cn="项目" name_en="Project" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="pg_tag" name_cn="标签属性" name_en="Tag Properties" desc_cn="" desc_en=""/>
 	<dd_node id="1" name="pg_auth" name_cn="授权" name_en="Authorization" desc_cn="" desc_en=""/>
+	<dd_node id="1" name="pg_ai_asso" name_cn="AI关联" name_en="AI Association" desc_cn="设备能够自动接入AI推理的基本关联定义" desc_en="Basic association definition for devices to automatically integrate AI inference"/>
 
+	<dd_node id="1" name="pi_aia_name" name_cn="AI设备名称" name_en="AI Device Name" desc_cn="如果设备树中的设备名称不准确，应该在此进行设定（如二楼卧室温湿度计）" desc_en="If the device names in the device tree are not accurate, they should be set here (such as the second floor bedroom temperature and humidity meter)"/>
+	<dd_node id="1" name="pi_aia_tagsdef" name_cn="关联标签定义" name_en="Definition of associated tags" desc_cn="" desc_en=""/>
+	
+ 
     <dd_node id="1" name="pi_id" name_cn="ID" name_en="Id" desc_cn="对象唯一id" desc_en="Object's id"/>
     <dd_node id="1" name="pi_iid" name_cn="IID" name_en="IID" desc_cn="对象内部id" desc_en="Object's inner id"/>
     <dd_node id="1" name="pi_name" name_cn="名称" name_en="Name" desc_cn="对象名称" desc_en="Object's name"/>

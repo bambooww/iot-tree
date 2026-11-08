@@ -59,8 +59,11 @@ case "add":
 		String name=request.getParameter("name");
 		String title = request.getParameter("title");
 		String desc = request.getParameter("desc");
+		String hmi_tp = request.getParameter("hmi_tp") ;
+		if(hmi_tp==null)
+			hmi_tp ="" ;
+		hmi = nodecxt.addHmi(hmi_tp,name, title, desc,null) ;
 		
-		hmi = nodecxt.addHmi("",name, title, desc,null) ;
 		out.print("succ="+hmi.getId()) ;
 	}
 	catch(Exception e)

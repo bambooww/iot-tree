@@ -1,14 +1,14 @@
 package org.iottree.web.oper;
 
-import javax.servlet.http.HttpSession;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.EndpointConfig;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnError;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
+import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.server.PathParam;
+import jakarta.websocket.server.ServerEndpoint;
 
 import org.iottree.core.UAHmi;
 import org.iottree.core.UAManager;
@@ -21,9 +21,8 @@ import org.iottree.core.ws.WebSocketConfig;
 import org.json.JSONObject;
 
 @ServerEndpoint(value = "/_ws/hmi/{prjname}/{hmiid}", configurator = WebSocketConfig.class)
-public class WSHmiRT extends WSServer
+public class WSHmiRT extends WSServer<UAHmi.OperUser>
 {
-	
 	private static final String PAU = "_pau_" ;
 	static
 	{
@@ -89,7 +88,6 @@ public class WSHmiRT extends WSServer
 		startTimer();
 	}
 
-	//
 	@OnClose
 	public void onClose(Session session, @PathParam(value = "prjname") String prjname,
 			@PathParam(value = "hmiid") String hmiid)
@@ -108,8 +106,6 @@ public class WSHmiRT extends WSServer
 	@OnMessage
 	public void onMessageTxt(Session session, String msg) throws Exception
 	{// {tp:"event",repid:this.repId,hmiid:this.hmiId,diid:diid,name:eventn,val:eventv}
-		// ;
-		// System.out.println("ws recv:"+msg) ;
 		WSServer.SessionItem<UAHmi.OperUser> ws_si = getSessionItem(session) ; //session on open,it may be null
 		try
 		{

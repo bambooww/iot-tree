@@ -18,8 +18,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.graalvm.polyglot.Value;
+import org.iottree.core.UACh;
+import org.iottree.core.UADev;
 import org.iottree.core.UAPrj;
 import org.iottree.core.msgnet.IMNContainer;
+import org.iottree.core.msgnet.MNBase;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.plugin.PlugJsApi;
@@ -45,8 +48,13 @@ private transient ScriptEngine scriptEng = null;
 	IMNContainer container ;
 	
 	MNNet net ;
-
+	
 	public MNContext(MNNet net) throws ScriptException
+	{
+		this(net,null) ;
+	}
+
+	public MNContext(MNNet net,MNBase node) throws ScriptException
 	{
 		//this.prj = net.getPrj() ;
 		
@@ -56,15 +64,43 @@ private transient ScriptEngine scriptEng = null;
 
 		scriptEng = createJSEngine();
 
-		scriptEng.put("$_net_", net);
+		//scriptEng.put("$_net_", net);
+		asCxtNameOb("net",net) ; 
+		asCxtNameOb("node",node) ;
 		
 		if(this.container instanceof UAPrj)
 		{
 			UAPrj prj = (UAPrj)this.container ;
 		
-		scriptEng.put("$_prj_", prj);//prj.getJSOb());
-		
-		String init_eval = "const $prj=$_prj_;Object.freeze($prj);";
+			scriptEng.put("$_prj_", prj);//prj.getJSOb());
+			String init_eval = "const $prj=$_prj_;Object.freeze($prj);";
+			
+//			List<UACh> chs = prj.getChs() ;
+//			if(related_dev_id2tt!=null && related_dev_id2tt.size()>0 && chs!=null && chs.size()>0)
+//			{
+//				for(UACh ch:chs)
+//				{
+//					ArrayList<UADev> r_devs = new ArrayList<>() ;
+//					for(UADev dev:ch.getDevs())
+//					{
+//						String did = dev.getId() ;
+//						if(related_dev_id2tt.containsKey(did))
+//						{
+//							String t = related_dev_id2tt.get(did) ;
+//							dev.setUseTitle(t);
+//							r_devs.add(dev) ;
+//						}
+//					}
+//					
+//					if(r_devs.size()<=0)
+//						continue ;
+//					for(UADev rdev:r_devs)
+//					{
+//						String varn = ch.getName()+"$"+rdev.getName() ;
+//						asNameOb(varn,rdev) ;
+//					}
+//				}
+//			}
 		
 //		UACh ch = nodecxt.getBelongToCh() ;
 //		UADev dev = nodecxt.getBelongToDev() ;
@@ -100,6 +136,13 @@ private transient ScriptEngine scriptEng = null;
 	{
 		scriptEng.put("$_"+name+"_", obj);
 		scriptEng.eval("const $"+name+"=$_"+name+"_;Object.freeze($"+name+");") ;
+		return this ;
+	}
+	
+	public MNContext asNameOb(String name,Object obj) throws ScriptException
+	{
+		scriptEng.put("_"+name+"_", obj);
+		scriptEng.eval("const "+name+"=_"+name+"_;Object.freeze("+name+");") ;
 		return this ;
 	}
 

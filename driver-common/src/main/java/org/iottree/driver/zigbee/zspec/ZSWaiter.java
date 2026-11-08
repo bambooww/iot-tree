@@ -1,33 +1,33 @@
-package org.iottree.driver.zigbee.ember;
+package org.iottree.driver.zigbee.zspec;
 
 /**
  * 异步消息等待器
  * 
  * @author jason.zhu
  */
-public abstract class EZSPWaiter
+public abstract class ZSWaiter<M,R> //ASHFrmData fd,EZSPRsp rsp
 {
 	private long toMs;
 	
-	private EZSPRsp waitRsp = null ;
+	private R waitRsp = null ; //EZSPRsp waitRsp = null ;
 	
 	private long waitStartDT = System.currentTimeMillis() ;
 	private long waitCost = -1 ;
 	private long waitEndDT = -1 ;
 	
-	public EZSPWaiter(long to_ms)
+	public ZSWaiter(long to_ms)
 	{
 		if(to_ms<=0)
 			throw new IllegalArgumentException("time out msg must >0") ;
 		this.toMs = to_ms ;
 	}
 	
-	void startWait()
+	public final void startWait()
 	{
 		this.waitStartDT = System.currentTimeMillis() ;
 	}
 	
-	int RT_checkEnd()
+	public final int RT_checkEnd()
 	{
 		boolean bget_recv = (this.waitRsp!=null) ;
 		if(bget_recv)
@@ -40,13 +40,13 @@ public abstract class EZSPWaiter
 		return 0 ; // keep waiting
 	}
 	
-	boolean RT_onRspRecv(ASHFrmData fd,EZSPRsp m_recv)
+	public final boolean RT_onRspRecv(M m,R rsp)
 	{
-		if(!RT_chkRsp(fd,m_recv))
+		if(!RT_chkRsp(m,rsp))
 		{
 			return false;
 		}
-		waitRsp = m_recv ;
+		waitRsp = rsp ;
 		this.waitEndDT = System.currentTimeMillis() ;
 		waitCost = this.waitEndDT - this.waitStartDT ;
 		return true;
@@ -58,10 +58,10 @@ public abstract class EZSPWaiter
 		return this.waitCost ;
 	}
 	
-	public EZSPRsp getWaitRsp()
+	public R getWaitRsp()
 	{
 		return this.waitRsp ;
 	}
 	
-	public abstract boolean RT_chkRsp(ASHFrmData fd,EZSPRsp rsp) ;
+	public abstract boolean RT_chkRsp(M fd,R rsp) ;
 }

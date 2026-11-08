@@ -14,14 +14,22 @@
 <%
 //String prjid = 
 String classn = request.getParameter("cn") ;
-Class<?> cc = Class.forName(classn) ;
+Class<?> cc = null;
+try
+{
+	cc = Class.forName(classn) ;
+}
+catch(Exception ee)
+{
+	out.print(ee.getMessage()) ;
+	return ;
+}
 
 boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 %>
 <html>
 <head>
 <title>context script obj helper</title>
-
 <jsp:include page="../head.jsp">
 	<jsp:param value="true" name="simple"/>
 	<jsp:param value="true" name="tree"/>
@@ -48,7 +56,6 @@ boolean bdlg = "true".equalsIgnoreCase(request.getParameter("dlg"));
 <div class="tree_c">
 <div id="tree" class="tree" style="height:100%;width:100%;overflow: auto;"></div>
 </div>
-
 <div id='opc_info'>
 </div>
 </body>

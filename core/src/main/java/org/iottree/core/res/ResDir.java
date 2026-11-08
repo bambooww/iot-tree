@@ -3,9 +3,10 @@ package org.iottree.core.res;
 import java.io.*;
 
 import java.util.*;
+
+import org.apache.commons.fileupload2.core.FileItem;
 import org.iottree.core.util.Convert;
 
-import org.apache.commons.fileupload.*;
 
 /**
  * belong to rep channel dev or component
@@ -144,7 +145,7 @@ public class ResDir //Comparable<ResDir>
 		File tarf = new File(dirf,name+"."+extn) ;
 		if(!tarf.getParentFile().exists())
 			tarf.getParentFile().mkdirs() ;
-		f.write(tarf);
+		f.write(tarf.toPath());
 		if(oldri!=null)
 		{
 			oldri.updateResFile(tarf,true) ;

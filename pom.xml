@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.iottree</groupId>
     <artifactId>iottree-parent</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0-alpha</version>
     <packaging>pom</packaging>
     <name>IoT-Tree Project Parent POM</name>
     <description>This is the top level project that builds, packages sub-projects and integration libs.</description>
@@ -21,10 +21,14 @@
     <!-- Properties Management -->
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!--
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+		-->
+		 <maven.compiler.release>17</maven.compiler.release>
         <maven.assembly.version>3.1.0</maven.assembly.version>
 		
+		<tomcat.version>11.0.27</tomcat.version>
 		<guava.version>29.0-jre</guava.version>
 		<paho.version>1.2.4</paho.version>
 		<milo.version>1.0.5</milo.version> <!--0.6.3-->
@@ -182,7 +186,57 @@
     </dependencyManagement>
 
 <dependencies>
+
+<!--  -->
+    <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat.version}</version>
+    </dependency>
+    <!--  JSP -->
+    <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-jasper</artifactId>
+        <version>${tomcat.version}</version>
+    </dependency>
 	
+	<!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-websocket -->
+	<dependency>
+		<groupId>org.apache.tomcat.embed</groupId>
+		<artifactId>tomcat-embed-websocket</artifactId>
+		<version>${tomcat.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<!--
+		<dependency>
+	    <groupId>jakarta.servlet</groupId>
+	    <artifactId>jakarta.servlet-api</artifactId>
+	    <version>6.0.0</version>
+	    <scope>provided</scope>
+	</dependency>
+	
+	<dependency>
+	    <groupId>jakarta.servlet.jsp</groupId>
+	    <artifactId>jakarta.servlet.jsp-api</artifactId>
+	    <version>3.1.0</version>
+	    <scope>provided</scope>
+	</dependency>
+	
+	<dependency>
+	    <groupId>jakarta.websocket</groupId>
+	    <artifactId>jakarta.websocket-api</artifactId>
+	    <version>2.1.1</version>
+	    <scope>provided</scope>
+	</dependency>
+	<dependency>
+    <groupId>jakarta.websocket</groupId>
+    <artifactId>jakarta.websocket-client-api</artifactId>
+    <version>2.1.1</version>
+    <scope>provided</scope>
+	</dependency>
+	-->
+	
+
 </dependencies>
     <build>
 		<pluginManagement>
@@ -240,18 +294,18 @@
 					<version>3.0.0</version>
 				</plugin>
 				
-
 			</plugins>
 		</pluginManagement>
 
        <plugins>
+	      <!--
           <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>copy</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
@@ -263,13 +317,24 @@
                     </execution>
                 </executions>
             </plugin>
-			
+			-->
 			<plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>versions-maven-plugin</artifactId>
             <version>2.7</version>
         </plugin>
-		
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<version>3.11.0</version>
+			<configuration>
+				<release>17</release>
+				<compilerArgs>
+					<arg>--add-modules</arg>
+					<arg>java.xml</arg>
+				</compilerArgs>
+			</configuration>
+		</plugin>
        </plugins>
 
 		

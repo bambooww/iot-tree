@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.iottree.web</groupId>
     <artifactId>web-parent</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0-alpha</version>
   </parent>
   <artifactId>doc</artifactId>
   
@@ -26,30 +26,6 @@
 		    <artifactId>json</artifactId>
 		</dependency>
 		
-		<dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>servlet-api</artifactId>
-	    <scope>system</scope>
-	    <version>2.5</version>
-	     <systemPath>${basedir}/../../server/tomcat/lib/servlet-api.jar</systemPath>
-	</dependency>
-	
-	<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>system</scope>
-			<version>2.2</version>
-			<systemPath>${basedir}/../../server/tomcat/lib/jsp-api.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>websocket-api</artifactId>
-			<scope>system</scope>
-			<version>2.2</version>
-			<systemPath>${basedir}/../../server/tomcat/lib/websocket-api.jar</systemPath>
-		</dependency>
-		    
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>

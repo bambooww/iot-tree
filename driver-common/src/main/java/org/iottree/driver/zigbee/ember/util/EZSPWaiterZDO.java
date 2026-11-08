@@ -4,14 +4,14 @@ import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.driver.zigbee.ember.ASHFrmData;
 import org.iottree.driver.zigbee.ember.EZSPRsp;
-import org.iottree.driver.zigbee.ember.EZSPWaiter;
 import org.iottree.driver.zigbee.ember.ezsp.MsgIncomeHandlerCB;
 import org.iottree.driver.zigbee.ember.types.ApsFrame;
 import org.iottree.driver.zigbee.zspec.ZDOClusterId;
 import org.iottree.driver.zigbee.zspec.ZDOConsts;
 import org.iottree.driver.zigbee.zspec.ZDOResp;
+import org.iottree.driver.zigbee.zspec.ZSWaiter;
 
-public class EZSPWaiterZDO extends EZSPWaiter
+public class EZSPWaiterZDO extends ZSWaiter<ASHFrmData,EZSPRsp>
 {
 	static ILogger log = LoggerManager.getLogger(EZSPWaiterZDO.class) ;
 	

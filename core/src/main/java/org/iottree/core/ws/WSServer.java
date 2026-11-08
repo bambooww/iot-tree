@@ -13,10 +13,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.http.HttpSession;
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
-import javax.websocket.CloseReason.CloseCodes;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.CloseReason;
+import jakarta.websocket.Session;
+import jakarta.websocket.CloseReason.CloseCodes;
 
 import org.iottree.core.UAHmi;
 import org.iottree.core.UANodeOCTagsCxt;

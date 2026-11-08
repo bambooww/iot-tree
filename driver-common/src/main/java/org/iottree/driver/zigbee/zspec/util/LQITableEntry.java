@@ -1,6 +1,7 @@
 package org.iottree.driver.zigbee.zspec.util;
 
 import org.iottree.driver.zigbee.DataUtil;
+import org.iottree.driver.zigbee.zspec.ZDOBuffer;
 import org.json.JSONObject;
 
 /**
@@ -42,59 +43,59 @@ import org.json.JSONObject;
  */
 public class LQITableEntry
 {
-	private byte[] data = null ;
+	public String ext_pan_id ;
 	
-	public LQITableEntry(byte[] dd)
+	public String ieee_addr ;
+	
+	public int nwk_addr ;
+	
+	public int device_tp ;
+	
+	public int permit_join ;
+	
+	public int depth ;
+	
+	public int lqi ;
+	
+	public LQITableEntry()
+	{}
+	
+	public LQITableEntry(byte[] data)
 	{
-		if(dd==null || dd.length!=22)
+		if(data==null || data.length!=22)
 			throw new IllegalArgumentException("data len!=22") ;
-		this.data = dd ;
+		ext_pan_id = DataUtil.transPanId(data, 0) ; ;
+		ieee_addr = DataUtil.transIEEEAddr(data, 8) ; ;
+		nwk_addr = DataUtil.getUInt16(data, 16) ;  ;
+		device_tp = data[18] & 0xFF;
+		permit_join = data[19] & 0xFF  ;
+		depth = data[20] & 0xFF ;
+		lqi = data[21] & 0xFF ;
 	}
 	
-	public String getPanId()
-	{
-		return DataUtil.transPanId(data, 0) ;
-	}
-	
-	public String getIEEEAddr()
-	{
-		return DataUtil.transIEEEAddr(data, 8) ; //8-15
-	}
-	
-	public int getNwkArr() //node id ,short addr
-	{
-		return DataUtil.getUInt16(data, 16) ; //16-17
-	}
-	
-	public int getDeviceType()
-	{
-		return this.data[18] & 0xFF ;
-	}
-	
-	public int getPermitJoining()
-	{
-		return this.data[19] & 0xFF ;
-	}
-	
-	public int getDepth()
-	{
-		return this.data[20] & 0xFF ;
-	}
-	
-	public int getLQI()
-	{
-		return this.data[21] & 0xFF ;
-	}
 	
 	public JSONObject toJO()
 	{
-		return new JSONObject().put("pan_id", this.getPanId()).putOpt("ieee_addr", this.getIEEEAddr())
-				.put("nwk_addr", this.getNwkArr()).put("device_tp", this.getDeviceType()).put("permit_join", this.getPermitJoining())
-				.put("depth", this.getDepth()).put("lqi", this.getLQI()) ;
+		return new JSONObject().put("ext_pan_id", this.ext_pan_id).putOpt("ieee_addr", this.ieee_addr)
+				.put("nwk_addr", this.nwk_addr).put("device_tp", this.device_tp).put("permit_join", permit_join)
+				.put("depth", this.depth).put("lqi", this.lqi) ;
 	}
 	
 	public String toString()
 	{
-		return "PanId="+this.getPanId()+" IEEE="+this.getIEEEAddr()+" NwkAddr="+this.getNwkArr() ;
+		return "ExtPanId="+this.ext_pan_id+" IEEE="+this.ieee_addr+" NwkAddr="+this.nwk_addr ;
+	}
+	
+	public static LQITableEntry parseFrom(ZDOBuffer buf)
+	{
+		LQITableEntry r = new LQITableEntry() ;
+		r.ext_pan_id = buf.readExtendPanId() ;
+		r.ieee_addr = buf.readIEEEAddr();
+        r.nwk_addr = buf.readUInt16();
+        r.device_tp = buf.readUInt8();
+        r.permit_join = buf.readUInt8();
+        r.depth = buf.readUInt8();
+        r.lqi = buf.readUInt8();
+        return r ;
 	}
 }

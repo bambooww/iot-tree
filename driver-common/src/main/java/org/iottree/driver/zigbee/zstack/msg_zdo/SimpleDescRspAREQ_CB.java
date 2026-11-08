@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.iottree.core.util.Convert;
 import org.iottree.driver.zigbee.DataUtil;
+import org.iottree.driver.zigbee.zspec.ZDOStatus;
 import org.iottree.driver.zigbee.zspec.util.ShortAddr;
+import org.iottree.driver.zigbee.zspec.zdo.SimpleDescResp;
 import org.iottree.driver.zigbee.zstack.MsgRecv;
 import org.json.JSONObject;
 
@@ -62,6 +64,10 @@ public class SimpleDescRspAREQ_CB extends MsgRecv
 		return this.data[2] & 0xFF;
 	}
 	
+	public int getNwkAddrVal()
+	{
+		return DataUtil.getUInt16(this.data, 3) ;
+	}
 	/**
 	 * Specifies Device’s short address that this response describes.
 	 * @return
@@ -165,6 +171,24 @@ public class SimpleDescRspAREQ_CB extends MsgRecv
 				.put("profileid", this.getProfileId()).put("deviceid", this.getDeviceId()).put("dev_ver", this.getDeviceVer())
 				.put("in_cluster_n", this.getInClusterNum()).putOpt("in_clusters", this.getInClusterList())
 				.put("out_cluster_n", this.getOutClusterNum()).putOpt("out_clusters", this.getOutClusterList());
+	}
+	
+	public SimpleDescResp toZDOObj()
+	{
+		SimpleDescResp ret = new SimpleDescResp() ;
+		ret.status = ZDOStatus.valOfInt(this.getStatusVal()) ;
+		if(ret.status!=ZDOStatus.SUCCESS)
+			return ret ;
+		ret.nwk_addr = this.getNwkAddrVal() ;
+		ret.endpoint = this.getEndpoint() ;
+		ret.profile_id = this.getProfileId() ;
+		ret.device_id = this.getDeviceId() ;
+		ret.device_ver = this.getDeviceVer() ;
+		ret.in_cluster_c = this.getInClusterNum() ;
+		ret.in_cluster_list = this.getInClusterList() ;
+		ret.out_cluster_c = this.getOutClusterNum() ;
+		ret.out_cluster_list = this.getOutClusterList() ;
+		return ret ;
 	}
 
 //	@Override
