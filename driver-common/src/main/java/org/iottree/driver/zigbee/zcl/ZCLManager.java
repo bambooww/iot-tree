@@ -35,7 +35,7 @@ public class ZCLManager
 			return null ;
 		try
 		{
-			return f.getClass().getConstructor().newInstance() ;
+			return f.copyNewIns(); //.getClass().getConstructor().newInstance() ;
 		}
 		catch(Exception ee)
 		{

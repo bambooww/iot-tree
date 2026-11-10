@@ -21,6 +21,12 @@ public class ReadAttr extends ZCLFrame
 		asFrameCtrlGenCmd(false) ; //client -> server
 	}
 	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ReadAttr() ;
+	}
+	
 	public List<Integer> getAttrIds()
 	{
 		return this.attrIds ;

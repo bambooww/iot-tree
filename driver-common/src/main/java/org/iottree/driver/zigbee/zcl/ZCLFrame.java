@@ -1,9 +1,10 @@
 package org.iottree.driver.zigbee.zcl;
 
+import org.iottree.core.util.INewIns;
 import org.iottree.driver.zigbee.DataUtil;
 import org.json.JSONObject;
 
-public abstract class ZCLFrame
+public abstract class ZCLFrame implements INewIns<ZCLFrame>
 {
 	public static final int FRM_CTRL_GEN_CMD = 0 ;
 	public static final int FRM_CTRL_CLUSTER_CMD = 1 ;

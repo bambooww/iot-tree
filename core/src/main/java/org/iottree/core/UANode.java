@@ -77,7 +77,6 @@ public abstract class UANode extends PropNode implements IOCBox,DataTranserXml.I
 		id = CompressUUID.createNewId(); //UUID.randomUUID().toString();
 		setNameTitle(name,title,desc);
 	}
-	
 
 	public final String getId()
 	{

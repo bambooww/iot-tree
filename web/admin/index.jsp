@@ -16,6 +16,7 @@
 //String un = up.getUserInfo().getFullName();
 
 List<UAPrj> prjs = UAManager.getInstance().listPrjs();
+
 String using_lan = Lan.getUsingLang() ;
 String sname = "Server";
 
@@ -24,8 +25,8 @@ boolean m = "true".equals(request.getParameter("m")) ;
 LoginUtil.SessionItem si = LoginUtil.getUserLoginSession(request) ;
 String user_n = si.usern ;
 String user_disn = si.disn ;
-
-//UAContext.getOrLoadJsApi() ;%><!DOCTYPE html>
+int cc = 0 ;
+%><!DOCTYPE html>
 <html class="">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -182,6 +183,7 @@ if("cn".equals(using_lan))
 					<div class="iot-top-user"  style="right:150px;">
 					
 <%
+
 List<IPro> pros = ProManager.getInstance().listPros() ;
 if(pros.size()>0)
 {
@@ -189,6 +191,7 @@ if(pros.size()>0)
 <a class="login" href="javascript:pro_mgr()">Pro</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <%
 }
+
 %>
 <button class="layui-btn layui-btn-primary layui-btn-xs" class0="list" id="SysSetting" style="cursor:pointer;">
                           <%=user_disn %>&nbsp;<i class="fa-solid fa-angle-down"></i>
@@ -209,6 +212,8 @@ if(pros.size()>0)
 		<div class="row" style="height: auto !important;">
 			<div class="iot-content-wrap clearfix" style="height: auto !important;">
 				<div class="iot-main-content" style="height: auto !important; min-height: 0px !important;">
+				
+				
 					<div class="iot-mod iot-question-detail iot-item">
 						<div class="mod-head">
 							<h1><wbt:lang>local_prj</wbt:lang></h1>
@@ -252,10 +257,11 @@ if(pros.size()>0)
 						<div class="mod-body">
 							<div class="content markitup-box" style="height:200px:overflow:auto">
 <%
-	int cc = 0 ;
+	
 	for(UAPrj rep:prjs)
 {
 		cc ++ ;
+		String prj_tt = rep.getTitle();
 		String cssstr = "" ;
 		String tmpid = "" ;
 		if(cc>6)
@@ -270,7 +276,7 @@ if(pros.size()>0)
          <i class="fa fa-sitemap fa-1x"></i>
          <span class="d_btn" style="font-size:13px;top:0px;position:relative;margin-right:5px;"><i id="prj_run_<%=rep.getId() %>" class="fa-regular fa-life-ring" tt=""></i></span>
        </span>
-       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=rep.getTitle() %></a>
+       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=prj_tt%></a>
        <div class="inline-block pull-right text-left ">
           <span class="btn_sh">
           <span>
@@ -355,7 +361,11 @@ if(rep.isAutoStart())
            <span class="text-color-666" style="left:200px;position: absolute;">•<wbt:lang>modified_date</wbt:lang>:<%=Convert.toFullYMDHMS(new Date(rep.getSavedDT())) %>
            &nbsp;&nbsp;
 <%
+
+//long st1 =  System.currentTimeMillis() ;
 	PStation pstation = rep.getPrjPStationInsDef() ;
+	//long et1 =  System.currentTimeMillis() ;
+	//System.out.println(" pstat cost="+(et1-st1)) ;
 	if(pstation!=null)
 	{
 %><span style="color:blue;"> &lt;-&gt; <wbt:lang>remote_station</wbt:lang> [<%=pstation.getId() %>] </span><%
@@ -378,27 +388,10 @@ if(rep.isAutoStart())
 
 							</div>
 						</div>
-						<%--
-						<div class="mod-footer">
-							<div class="meta">
-																
-								
-								<div class="pull-right more-operate">
-									<a class="text-color-999 dropdown-toggle" data-toggle="dropdown">
-										<i class="icon icon-share"></i>bottom									</a>
-									<div aria-labelledby="dropdownMenu" role="menu" class="iot-dropdown shareout pull-right">
-										<ul class="iot-dropdown-list">
-											<li><a ><i class="icon icon-weibo"></i>act1</a></li>
-											<li><a ><i class="icon icon-qzone"></i> act2</a></li>
-											<li><a ><i class="icon icon-wechat"></i> act3</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						 --%>
+						
 					</div>
 <%
+
 if(m)
 {
 %>
@@ -439,7 +432,7 @@ if(m)
 							<div class="sub_cc">
 							<wbt:lang>dev,tree</wbt:lang>
 							<%
-	
+							
 	for(DTTree tree:DTTreeManager.getInstance().listTrees())
 {
 		cc ++ ;
@@ -479,6 +472,7 @@ if(m)
 			<div class="sub_cc">
 			<wbt:lang>devpart,lib</wbt:lang>
 <%
+
 	for(DTDevPartLib partlib:DTDevPartManager.getInstance().listLibs())
 {
 		cc ++ ;
@@ -520,6 +514,7 @@ if(m)
 			</div>
 <%
 }
+
 %>
 					<div class="iot-mod iot-question-detail iot-item">
 					    <div class="mod-head">
@@ -549,7 +544,7 @@ if(m)
 					   <div class="mod-body">
 							
 							<%
-	
+							
 	for(DevLib lib:DevManager.getInstance().getDevLibs())
 {
 		cc ++ ;
@@ -635,7 +630,8 @@ if(m)
 					        <iframe id="comp_lister" src="/admin/ua_hmi/hmi_left_comp.jsp" style="width:100%;height:500px;"></iframe>
 					        --%>
 					        <%
-	
+					        
+
 	for(CompLib lib:CompManager.getInstance().getCompLibs())
 {
 		cc ++ ;
@@ -749,6 +745,8 @@ if(m)
 							</span>
            </a>
 <%
+
+
 if(ins.isAutoStart())
 {
 %><a class=" " href="javascript:set_simins_auto_start('<%=ins.getId()%>',false)" title="unset auto start">

@@ -30,6 +30,12 @@ public class ReportAttr extends ZCLFrame
 		this.attr_vals = w_recs ;
 	}
 	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ReportAttr() ;
+	}
+	
 	public List<AttrVal> getAttrVals()
 	{
 		return this.attr_vals ;

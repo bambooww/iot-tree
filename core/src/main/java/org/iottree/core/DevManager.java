@@ -117,10 +117,15 @@ public class DevManager // implements IResCxt
 					continue ;
 				try
 				{
+					System.out.print("load device driver ["+ln+"]");
 					Class<?> c = Class.forName(ln);
 					DevDriver dd = (DevDriver)c.getConstructor().newInstance() ;
 					if(dd==null)
+					{
+						System.out.println(" failed ");
 						continue ;
+					}
+					System.out.println(" ok ");
 					List<DevDriver> multi_dds = dd.supportMultiDrivers() ;
 					if(multi_dds==null||multi_dds.size()<=0)
 					{

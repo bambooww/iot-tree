@@ -27,6 +27,12 @@ public class DefaultRsp extends ZCLFrame
 	{
 		return "default_rsp" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new DefaultRsp() ;
+	}
 
 	@Override
 	protected int getPayloadLen()

@@ -17,6 +17,8 @@
 		<module>ext-pro</module>
 		<module>web</module>
 		<module>server</module>
+		<module>server-api</module>
+		
   </modules>
     <!-- Properties Management -->
     <properties>
@@ -32,7 +34,7 @@
 		<guava.version>29.0-jre</guava.version>
 		<paho.version>1.2.4</paho.version>
 		<milo.version>1.0.5</milo.version> <!--0.6.3-->
-		<graalvm.version>20.3.0</graalvm.version>
+		<graalvm.version>23.0.13</graalvm.version>
 		<fastjson.version>1.2.74</fastjson.version>
 		
 		<spring.version>5.2.9.RELEASE</spring.version>
@@ -135,7 +137,7 @@
 			<artifactId>graal-sdk</artifactId>
 			<version>${graalvm.version}</version>
 		</dependency>
-        
+		
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
@@ -181,14 +183,26 @@
     <artifactId>json</artifactId>
     <version>20201115</version>
 </dependency>
-
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-core</artifactId>
+    <version>2.15.2</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.15.2</version>
+</dependency>
+		
         </dependencies>
     </dependencyManagement>
 
 <dependencies>
 
 <!--  -->
-    <dependency>
+
+		<dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat.version}</version>
@@ -205,34 +219,27 @@
 		<groupId>org.apache.tomcat.embed</groupId>
 		<artifactId>tomcat-embed-websocket</artifactId>
 		<version>${tomcat.version}</version>
-		<scope>compile</scope>
 	</dependency>
 	<!--
-		<dependency>
-	    <groupId>jakarta.servlet</groupId>
-	    <artifactId>jakarta.servlet-api</artifactId>
-	    <version>6.0.0</version>
-	    <scope>provided</scope>
-	</dependency>
-	
 	<dependency>
-	    <groupId>jakarta.servlet.jsp</groupId>
-	    <artifactId>jakarta.servlet.jsp-api</artifactId>
-	    <version>3.1.0</version>
-	    <scope>provided</scope>
-	</dependency>
-	
-	<dependency>
-	    <groupId>jakarta.websocket</groupId>
-	    <artifactId>jakarta.websocket-api</artifactId>
-	    <version>2.1.1</version>
-	    <scope>provided</scope>
-	</dependency>
-	<dependency>
-    <groupId>jakarta.websocket</groupId>
-    <artifactId>jakarta.websocket-client-api</artifactId>
-    <version>2.1.1</version>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <version>6.2.0-M2</version>
     <scope>provided</scope>
+	</dependency>
+		
+		<dependency>
+		<groupId>jakarta.servlet.jsp</groupId>
+		<artifactId>jakarta.servlet.jsp-api</artifactId>
+		<version>4.1.0-M2</version>
+		<scope>compile</scope>
+	</dependency>
+		
+	<dependency>
+		<groupId>jakarta.websocket</groupId>
+		<artifactId>jakarta.websocket-api</artifactId>
+		<version>2.3.0-M2</version>
+		<scope>provided</scope>
 	</dependency>
 	-->
 	
@@ -294,6 +301,17 @@
 					<version>3.0.0</version>
 				</plugin>
 				
+				<plugin>
+	            <groupId>io.quarkus</groupId>
+	            <artifactId>quarkus-maven-plugin</artifactId>
+	            <version>3.19.0</version>
+	            <executions>
+	                <execution>
+	                    
+	                </execution>
+	            </executions>
+	            
+	        </plugin>
 			</plugins>
 		</pluginManagement>
 

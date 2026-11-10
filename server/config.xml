@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<iottree debug="true" title="生产线监控系统" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" 
+<iottree debug="" title="生产线监控系统" copyright="" data_dir="../data/" data_dyn_dir="../data_dyn/" lib_dir="../_output/lib/" 
 	nav_bk_color="#ced9e1" nav_icon_color="rgb(73, 83, 89)" nav_txt_color="#333333" >
 
  	<webapps port="9090" ajp_port="" ssl_port="443" base_dir="../web" >
@@ -14,8 +14,11 @@
 		<webapp name="msg_net" path="../../msg_net" />
 		<webapp name="_sys" />
 		<webapp name="_templet" />
+		<!-- 
 		<webapp name="ent" main0="true"/>
 		<webapp name="pro" />
+		 -->
+		
 		
 		<!-- 
 		<webapp name="main"/>

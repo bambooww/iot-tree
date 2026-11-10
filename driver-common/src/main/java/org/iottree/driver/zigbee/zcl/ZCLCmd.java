@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IJoIn;
+import org.iottree.core.util.INewIns;
 import org.iottree.driver.zigbee.zcl.util.TagDef;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
  * 
  * @author jason.zhu
  */
-public class ZCLCmd implements IJoIn
+public class ZCLCmd implements IJoIn,INewIns<ZCLCmd>
 {
 	int id ;
 	
@@ -26,6 +27,12 @@ public class ZCLCmd implements IJoIn
 	boolean required = false;
 	
 	TagDef tagDef = null ;
+	
+	@Override
+	public ZCLCmd copyNewIns()
+	{
+		return new ZCLCmd();
+	}
 	
 	public int getID()
 	{
@@ -118,5 +125,7 @@ public class ZCLCmd implements IJoIn
 		
 		return true;
 	}
+
+	
 
 }

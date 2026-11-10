@@ -55,8 +55,8 @@ public interface IMNRunner
 		}
 		catch ( InterruptedException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//if()
+			//e.printStackTrace();
 		}
 	}
 }

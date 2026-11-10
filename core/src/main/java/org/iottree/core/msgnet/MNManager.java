@@ -31,6 +31,113 @@ import org.json.JSONObject;
 
 public class MNManager
 {
+
+	//for graalvm build kept
+	private static final Class<?>[] GRAALVM_CNS = new Class<?>[]{
+		org.iottree.core.msgnet.nodes.ManualTrigger.class
+		,org.iottree.core.msgnet.nodes.NS_TimerTrigger.class
+		,org.iottree.core.msgnet.nodes.NE_Debug.class
+		,org.iottree.core.msgnet.nodes.NM_MemQueue.class
+		,org.iottree.core.ai.NM_AIRole.class
+		,org.iottree.core.msgnet.nodes.NS_OuterTrigger.class
+		,org.iottree.core.msgnet.nodes.NS_OnFlowEvt.class
+		,org.iottree.core.msgnet.nodes.OutCallFunc.class
+		,org.iottree.core.msgnet.nodes.OutCallRet.class
+		,org.iottree.core.msgnet.nodes.NRES_Common.class
+			
+		,org.iottree.core.msgnet.modules.MemMultiQueue.class
+		,org.iottree.core.msgnet.modules.MemQueue_NM.class
+			
+		,org.iottree.core.msgnet.nodes.NM_JsFunc.class
+		,org.iottree.core.msgnet.nodes.NM_Template.class
+		,org.iottree.core.msgnet.nodes.NM_Change.class
+		,org.iottree.core.msgnet.nodes.NM_Switch.class
+		,org.iottree.core.msgnet.nodes.NM_OnOff.class
+		,org.iottree.core.msgnet.nodes.NM_Exec.class
+		,org.iottree.core.msgnet.nodes.NM_OuterApiCombinator.class
+			
+		,org.iottree.core.msgnet.modules.MsgMTO_M.class
+		,org.iottree.core.msgnet.modules.MsgMTO_IN.class
+		,org.iottree.core.msgnet.modules.MsgMTO_OUT.class
+			
+		,org.iottree.core.msgnet.modules.PID_M.class
+		,org.iottree.core.msgnet.modules.PID_PV.class
+		,org.iottree.core.msgnet.modules.PID_SP.class
+		,org.iottree.core.msgnet.modules.PID_AutoManual.class
+		,org.iottree.core.msgnet.modules.PID_ManualOutput.class
+		,org.iottree.core.msgnet.modules.PID_Output.class
+		,org.iottree.core.msgnet.modules.PID_Err.class
+			
+		,org.iottree.core.msgnet.modules.FSM_M.class
+		,org.iottree.core.msgnet.modules.FSM_State.class
+		,org.iottree.core.msgnet.modules.FSM_Input.class
+		,org.iottree.core.msgnet.modules.FSM_Transit.class
+		
+		,org.iottree.core.msgnet.nodes.NM_Csv.class
+		,org.iottree.core.msgnet.nodes.NM_TagReader.class
+		,org.iottree.core.msgnet.nodes.NM_TagWriter.class
+		,org.iottree.core.msgnet.nodes.NM_TagWriterMem.class
+		,org.iottree.core.msgnet.nodes.NM_TagFilter.class
+		,org.iottree.core.msgnet.nodes.NM_TagFilterW.class
+		,org.iottree.core.msgnet.nodes.NM_TagRT2RDB.class
+		,org.iottree.core.msgnet.nodes.NM_TagTSRec2RDB.class
+		,org.iottree.core.msgnet.nodes.NS_TagChgTrigger.class
+		,org.iottree.core.msgnet.nodes.NS_TagAlertTrigger.class
+		,org.iottree.core.msgnet.nodes.NM_TagEvtReader.class
+		,org.iottree.core.msgnet.nodes.NS_TagEvtTrigger.class
+		,org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB.class
+		,org.iottree.core.msgnet.nodes.NS_HmiEvtTrigger.class
+		,org.iottree.core.msgnet.modules.ConnInMsg_M.class
+		,org.iottree.core.msgnet.modules.ConnMsgIn_NS.class
+		,org.iottree.core.msgnet.modules.ConnMsgOut_NE.class
+		
+		,org.iottree.core.station.PlatRecvedDataGet_NM.class
+		,org.iottree.core.station.PlatRecvedDataFilterSave_NM.class
+		,org.iottree.core.station.StationMsgSend_NE.class
+		,org.iottree.core.station.PlatMsgRecv_NS.class
+		,org.iottree.core.msgnet.nodes.NM_HttpClient.class
+		,org.iottree.core.msgnet.nodes.NM_TcpClientRR.class
+		,org.iottree.core.msgnet.nodes.NM_RESTfulReadApi.class
+		,org.iottree.core.msgnet.nodes.NM_WebSocketApi.class
+		
+		,org.iottree.core.msgnet.modules.RESTful_M.class
+		,org.iottree.core.msgnet.modules.RESTful_Req.class
+		,org.iottree.core.msgnet.modules.RESTful_Resp.class
+		
+		
+		,org.iottree.core.msgnet.nodes.NM_FileReader.class
+		,org.iottree.core.msgnet.nodes.NM_FileWriter.class
+		,org.iottree.core.msgnet.nodes.NM_FileDirMon.class
+		,org.iottree.core.msgnet.modules.FileDir_M.class
+		,org.iottree.core.msgnet.modules.FileDir_Open.class
+		,org.iottree.core.msgnet.modules.FileDir_Write.class
+		,org.iottree.core.msgnet.modules.FileDir_Close.class
+			
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_M.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_Query.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_Writer.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_JO2Point.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_Tag2Point.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_ReadByTags.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_Measurement.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_TagStDur2RDB.class
+		,org.iottree.core.msgnet.store.influxdb.InfluxDB_TagAggr2RDB.class
+			
+			
+		,org.iottree.core.msgnet.modules.RelationalDB_M.class
+		,org.iottree.core.msgnet.modules.RelationalDB_Table.class
+		,org.iottree.core.msgnet.modules.RelationalDB_CRUD.class
+		,org.iottree.core.msgnet.modules.RelationalDB_SQL_UP.class
+		,org.iottree.core.msgnet.modules.RelationalDB_SQL_Query.class
+		,org.iottree.core.msgnet.modules.RelationalDB_JSON2TB.class
+		,org.iottree.core.msgnet.modules.RelationalDB_SQL2Api.class
+
+		,org.iottree.core.msgnet.nodes.NM_HeatingFurnace.class
+		
+		
+	};
+	
+		
 	private static ILogger log = LoggerManager.getLogger(MNManager.class) ;
 	
 	private static IMNContProvider contProvider = null ;
@@ -172,6 +279,8 @@ public class MNManager
 		{
 			if(classname.startsWith("#"))
 				return null ;
+			//if(log.isDebugEnabled())
+			//	log.debug("MsgNet registering "+classname);
 			Class<?> c = Class.forName(classname) ;
 			MNBase m = (MNBase)c.getConstructor().newInstance() ;
 			registerItem(m,cat);
@@ -179,9 +288,9 @@ public class MNManager
 		}
 		catch(Throwable ee)
 		{
-			if(log.isDebugEnabled())
-				log.error(ee.getMessage(), ee);
-			log.warn("registerItem "+classname+" "+ee.getMessage());
+			//if(log.isDebugEnabled())
+			//	log.error(ee.getMessage(), ee);
+			log.warn("registerItem "+classname+" failed="+ee.getClass().getName()+":"+ee.getMessage());
 			return null ;
 		}
 	}
@@ -209,55 +318,6 @@ public class MNManager
 			return null ;
 		}
 	}
-	
-//	private void loadNodesDefault()
-//	{
-//		MNCat cat = registerCat(new MNCat("_com")) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.ManualTrigger(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_TimerTrigger(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NE_Debug(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_MemQueue(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.modules.MemMultiQueue(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_OuterTrigger(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_OnFlowEvt(),cat) ;
-//		
-//		cat = registerCat(new MNCat("_func")) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_JsFunc(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_Template(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_Change(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_Switch(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_OnOff(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_PID(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_Exec(),cat) ;
-//		
-//		cat = registerCat(new MNCat("_dev")) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagReader(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagWriter(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagFilter(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_TagFilterW(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_TagValChgTrigger(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_TagEvtTrigger(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NS_ConnInMsgTrigger(),cat) ;
-//		//registerItem(new NS_TagAlertTrigger(),cat) ;
-//		
-//		
-//		cat = registerCat(new MNCat("_net")) ;
-//		registerItem("org.iottree.ext.msg_net.Kafka_M",cat) ;
-//		registerItem("org.iottree.ext.msg_net.Mqtt_M",cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_HttpClient(),cat) ;
-//		registerItem("org.iottree.ext.msg_net.BACnet_M",cat) ;
-//		
-//		
-//		cat = registerCat(new MNCat("_storage")) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_FileReader(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.nodes.NM_FileWriter(),cat) ;
-//		registerItem(new org.iottree.core.msgnet.modules.DBSql(),cat) ;
-//		registerItem("org.iottree.ext.msg_net.InfluxDB_M",cat) ;
-//		
-//		cat = registerCat(new MNCat("_sim")) ;
-//		registerItem("org.iottree.pro.modbuss.MSBus_M",cat) ;
-//
-//	}
 	
 	private static void loadNodesFile(File f) throws IOException
 	{
@@ -1242,7 +1302,5 @@ public class MNManager
 			}
 		}
 	}
-	
-	
 	
 }

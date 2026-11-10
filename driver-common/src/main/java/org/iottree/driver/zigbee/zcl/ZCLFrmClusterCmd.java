@@ -30,6 +30,12 @@ public class ZCLFrmClusterCmd extends ZCLFrame
 		//pm_pk_data = calParamBS(pm_name2val) ;
 	}
 	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ZCLFrmClusterCmd(this.cmdId,this.isDirServer2Client());
+	}
+	
 	public ZCLFrmClusterCmd asClusterID(int cluster_id)
 	{
 		this.clusterId = cluster_id ;
@@ -178,6 +184,8 @@ public class ZCLFrmClusterCmd extends ZCLFrame
 	{
 		return null;//new JSONObject().put("cluster_cmd_id",this.cmdId);
 	}
+
+	
 
 
 }

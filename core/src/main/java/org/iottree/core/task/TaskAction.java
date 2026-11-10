@@ -1,11 +1,10 @@
 package org.iottree.core.task;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.graalvm.polyglot.HostAccess;
 import org.iottree.core.UAPrj;
+import org.iottree.core.cxt.UAContext;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.xmldata.data_class;
@@ -191,8 +190,8 @@ public class TaskAction
 			return false;
 		
 		
-		ScriptEngine engine = this.task.getScriptEngine();
-		engine.put("$task_action", this);
+		UAContext engine = this.task.getContext() ;
+		engine.putMember("$task_action", this);
 		// reg function
 
 		try

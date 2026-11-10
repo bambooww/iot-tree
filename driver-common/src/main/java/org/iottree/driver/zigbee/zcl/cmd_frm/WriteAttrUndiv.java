@@ -23,6 +23,12 @@ public class WriteAttrUndiv extends ZCLFrame
 	{
 		return "write_attr_undiv" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new WriteAttrUndiv() ;
+	}
 
 	@Override
 	protected int getPayloadLen()

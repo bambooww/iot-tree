@@ -1,0 +1,269 @@
+[
+	{
+		"name": "org.apache.catalina.startup.ContextConfig",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true,
+		"allDeclaredFields": true
+	},
+	{
+		"name": "org.apache.juli.FileHandler",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.juli.AsyncFileHandler",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.web.FilterDef",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.catalina.authenticator.NonLoginAuthenticator",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.web.FilterMap",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.web.ServletDef",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.juli.OneLineFormatter",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.web.WebRuleSet",
+		"allDeclaredMethods": true,
+		"allDeclaredConstructors": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$Variable",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$TagAttribute",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$ScriptVariable",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$GenericBooleanRule",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TagXml",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true,
+		"mm": ",.setDynamicAttributes(boolean)"
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TaglibXml",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.web.WebXml",
+		"allDeclaredConstructors": true,
+		"methods": [
+			{
+				"name": "setPublicId",
+				"parameterTypes": [
+					"java.lang.String"
+				]
+			},
+			{
+				"name": "addFilter",
+				"parameterTypes": [
+					"org.apache.tomcat.util.descriptor.web.FilterDef"
+				]
+			},
+			{
+				"name": "addFilterMapping",
+				"parameterTypes": [
+					"org.apache.tomcat.util.descriptor.web.FilterMap"
+				]
+			},
+			{
+				"name": "addServlet",
+				"parameterTypes": [
+					"org.apache.tomcat.util.descriptor.web.ServletDef"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$Variable",
+		"allDeclaredConstructors": true,
+		"methods": [
+			{
+				"name": "setDeclare",
+				"parameterTypes": [
+					"boolean"
+				]
+			}
+		]
+	},
+	{
+		"name": "org.apache.tomcat.util.descriptor.tld.TldRuleSet$Attribute",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true,
+		"methods0": [
+			{
+				"name": "setRequired",
+				"parameterTypes": [
+					"boolean"
+				]
+			},
+			{
+				"name": "setRequestTime",
+				"parameterTypes": [
+					"boolean"
+				]
+			},
+			{
+				"name": "setFragment",
+				"parameterTypes": [
+					"boolean"
+				]
+			}
+		]
+	},
+	
+	
+	{
+		"name": "org.iottree.portal.PortalFilter",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	},
+	{
+		"name": "org.iottree.core.util.web.PrjFilter",
+		"allDeclaredConstructors": true,
+		"allDeclaredMethods": true
+	}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.apache.catalina.servlets.DefaultServlet"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.apache.jasper.servlet.JspServlet"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.util.web.AdminFilter"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ent.WebListener"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.ManualTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_TimerTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NE_Debug"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_MemQueue"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.ai.NM_AIRole"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_OuterTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_OnFlowEvt"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.OutCallFunc"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.OutCallRet"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NRES_Common"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.MemMultiQueue"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_JsFunc"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_Template"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_Change"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_Switch"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_OnOff"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_Exec"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_OuterApiCombinator"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.MsgMTO_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.PID_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.FSM_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_Csv"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagReader"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagWriter"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagWriterMem"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagFilter"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagFilterW"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagRT2RDB"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagTSRec2RDB"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_TagChgTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_TagAlertTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagEvtReader"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_TagEvtTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TagFilter2TSDB"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_HmiEvtTrigger"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.ConnInMsg_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.edge_c.EdgeC_iForest_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.edge_c.AnomalyDetect_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ui.UIChatAI_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.armlinux.GPIOOut_NE"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.station.PlatRecvedDataGet_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.station.PlatRecvedDataFilterSave_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.station.StationMsgSend_NE"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.station.PlatMsgRecv_NS"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_HttpClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_TcpClientRR"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_RESTfulReadApi"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_WebSocketApi"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.msg_net.MailSender_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.RESTful_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.msg_net.Kafka_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.msg_net.Mqtt_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.msg_net.BACnet_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.MicIn_NS"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.AudioStreamPlayer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.VoReco_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.WavPlayer_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.ObjReco_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.tts.VibeVoiceTTS"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.av.CameraCap_NM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_FileReader"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_FileWriter"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_FileDirMon"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.FileDir_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.store.influxdb.InfluxDB_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.modules.RelationalDB_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.edge.IOTTreeEdge_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.mn.LLMOllama_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.mn.VLLM_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.mn.LLMOnline_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.mn.LLMTooling_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.mcp.MCPServer_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.ai.dev.DevCtrl_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_HeatingFurnace"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.pro.modbuss.MSBus_M"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.caller.JsCaller"
+		,"ignore":"org.iottree.core.service.ServiceActiveMQ"
+	}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.opc.opcua.server.OpcUAService"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.bacnet.BACnetService"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.grpc.ServiceGRPC"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProTcpClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProTcpServer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProCOM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProOPCUA"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProOpcAgent"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProHTTP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProHTTPSer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProWSClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProMQTT"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProVirtual"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProMultiTcpMsg"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProUDP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProIOTTreeNode"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProLocPrjMap"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.conn.common.bacnet.ConnProBACnetClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.opcda.OpcDAConnPro"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.zcl.ZCLConsole"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.zstack.ZStackConsole"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.ember.EmberConsole"}
+]

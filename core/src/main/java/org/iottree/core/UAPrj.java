@@ -2,17 +2,13 @@ package org.iottree.core;
 
 import java.io.*;
 import java.util.*;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IdIId;
 import org.iottree.core.util.KeyValSaver;
 import org.iottree.core.util.KeyValSaverFile;
-import org.iottree.core.util.KeyValSaverSQLite;
 import org.iottree.core.util.Lan;
-import org.iottree.core.util.web.LoginUtil;
 import org.iottree.core.util.web.PrjNavTree;
 import org.iottree.core.util.web.PrjRestful;
 import org.iottree.core.util.xmldata.XmlData;
@@ -1383,8 +1379,8 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		{
 			try
 			{
-				tagStationUpDT = this.getOrAddTag("station_up_dt","pstation update dt from remote station (ms)","",ValTP.vt_int64, true) ;
-				tagStationUpGAP = this.getOrAddTag("station_up_gap", "The interval between the pstation update time and now (second)","",ValTP.vt_int64, true) ;
+				tagStationUpDT = this.getOrAddTag("station_up_dt","pstation update dt from remote station (ms)","",ValTP.vt_int64, false) ;
+				tagStationUpGAP = this.getOrAddTag("station_up_gap", "The interval between the pstation update time and now (second)","",ValTP.vt_int64, false) ;
 				//this.setSysTag("_station_up_dt", "pstation update dt from remote station (ms)","",ValTP.vt_int64) ;
 				//this.setSysTag("_station_up_gap", "The interval between the pstation update time and now (second)","",ValTP.vt_int64) ;
 			}
@@ -1561,6 +1557,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			boolean b_store = ic==null||ic.bEnable ;
 			
 			boolean b_station_ins = UAPrj.this.isPrjPStationIns() ;
+			
+			if(log.isInfoEnabled())
+				log.info("  ua prj starting :"+UAPrj.this.getName()+" "+getTitle());
+			
 			try
 			{
 				RT_init(true, true) ;
@@ -1677,6 +1677,9 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 					RecManager.getInstance(UAPrj.this).RT_stop() ;
 				
 				RouterManager.getInstance(UAPrj.this).RT_stop();
+				
+				if(log.isInfoEnabled())
+					log.info("  ua prj ended :"+UAPrj.this.getName()+" "+getTitle());
 			}
 		}
 	};
@@ -1796,18 +1799,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 //		return engine;
 //	}
 	
-	private ScriptEngine getJSEngine() throws ScriptException
+	private UAContext getJSContext() throws ScriptException
 	{
 		if(this.context!=null)
-			return this.context.getScriptEngine() ;
+			return this.context ; //.getScriptEngine() ;
 		
 		synchronized(this)
 		{
 			if(this.context!=null)
-				return this.context.getScriptEngine() ;
+				return this.context ;//.getScriptEngine() ;
 			
-			this.context = new UAContext(this) ;
-			return this.context.getScriptEngine() ;
+			return this.context = new UAContext(this) ;
+			//return this.context.getScriptEngine() ;
 		}
 	}
 
@@ -1835,10 +1838,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			return false;
 		}
 
-		ScriptEngine engine = getJSEngine();
+		UAContext engine = getJSContext() ;
 		try
 		{
-			engine.eval("function " + FN_PRJ_SCRIPT + "(){\r\n" + script + "\r\n}");
+			engine.scriptEval("function " + FN_PRJ_SCRIPT + "(){\r\n" + script + "\r\n}");
 			this.jsSetError = null;
 			// js set ok
 
@@ -1885,8 +1888,10 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 
 		try
 		{
-			Invocable jsInvoke = (Invocable) getJSEngine();
-			jsInvoke.invokeFunction(FN_PRJ_SCRIPT);
+			//Invocable jsInvoke = (Invocable) getJSEngine();
+			//jsInvoke.invokeFunction(FN_PRJ_SCRIPT);
+			UAContext cxt = this.getJSContext() ;
+			cxt.scriptInvoke(FN_PRJ_SCRIPT) ;
 		}
 		catch ( ScriptException se)
 		{

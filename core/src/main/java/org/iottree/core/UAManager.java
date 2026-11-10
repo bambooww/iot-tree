@@ -54,10 +54,23 @@ public class UAManager implements IMNContProvider
 		
 	}
 	
-	public ArrayList<UAPrj> listPrjs()
+	public synchronized ArrayList<UAPrj> listPrjs()
+	{
+		ArrayList<UAPrj> prjss =  listPrjsInner() ;
+		
+		ArrayList<UAPrj> rets =new ArrayList<>(prjss.size()) ;
+		rets.addAll(this.prjs) ;
+		return rets ;
+	}
+	
+	private ArrayList<UAPrj> listPrjsInner()
 	{
 		if(prjs!=null)
+		{
+			//ArrayList<UAPrj> rets =new ArrayList<>(this.prjs.size()) ;
+			//rets.addAll(this.prjs) ;
 			return prjs ;
+		}
 		
 		synchronized(this)
 		{
@@ -67,7 +80,7 @@ public class UAManager implements IMNContProvider
 			ArrayList<UAPrj> prjs00 = loadPrjs();
 			if(prjs00==null)
 				prjs00 = new ArrayList<>() ;
-			updatePrjList(prjs00);
+			sortPrjList(prjs00);
 			//constrcuctTree();
 			for(UAPrj r:prjs00)
 				r.constructNodeTree();
@@ -130,7 +143,7 @@ public class UAManager implements IMNContProvider
 		return reps;
 	}
 	
-	private static void updatePrjList(List<UAPrj> prjss)
+	private static void sortPrjList(List<UAPrj> prjss)
 	{
 		Collections.sort(prjss, new Comparator<UAPrj>() {
 		    @Override
@@ -145,9 +158,11 @@ public class UAManager implements IMNContProvider
 		});
 	}
 	
-	private void updatePrjList()
+	private synchronized void updatePrjList()
 	{
-		updatePrjList(this.listPrjs());
+		if(prjs==null)
+			return ;
+		sortPrjList(this.prjs);
 	}
 	
 	transient String defaultPrjId = null ;
@@ -224,7 +239,7 @@ public class UAManager implements IMNContProvider
 //			}
 //		}
 		
-		for(UAPrj r:listPrjs())
+		for(UAPrj r:listPrjsInner())
 		{
 			if(r.getId().contentEquals(id))
 				return r ;
@@ -234,7 +249,7 @@ public class UAManager implements IMNContProvider
 	
 	public UAPrj getPrjByName(String name)
 	{
-		for(UAPrj r:listPrjs())
+		for(UAPrj r:listPrjsInner())
 		{
 			if(name.contentEquals(r.getName()))
 				return r ;
@@ -288,16 +303,16 @@ public class UAManager implements IMNContProvider
 		return r ;
 	}
 	
-	void savePrj(UAPrj prj) throws Exception
+	synchronized void savePrj(UAPrj prj) throws Exception
 	{
 		XmlData xd = DataTranserXml.extractXmlDataFromObj(prj) ;
 		//XmlData xd = rep.toUAXmlData();
 		XmlData.writeToFile(xd, getPrjFile(prj.getId()));
 		
-		updatePrjList();
+		//updatePrjList();
 	}
 	
-	public void delPrj(String id)
+	public synchronized void delPrj(String id)
 	{
 		UAPrj prj = getPrjById(id);
 		if(prj==null)
@@ -314,11 +329,11 @@ public class UAManager implements IMNContProvider
 			Convert.deleteDir(df) ;
 		}
 		
-		this.listPrjs().remove(prj) ;
+		this.listPrjsInner().remove(prj) ;
 	}
 	
 	
-	public UAPrj addPrj(String name,String title,String desc) throws Exception
+	public synchronized UAPrj addPrj(String name,String title,String desc) throws Exception
 	{
 		StringBuilder sb = new StringBuilder() ;
 		if(!Convert.checkVarName(name,sb))
@@ -335,13 +350,13 @@ public class UAManager implements IMNContProvider
 		r = new UAPrj(name,title,desc) ;
 		savePrj(r);
 		r.RT_init(true, false);
-		listPrjs().add(r);
+		listPrjsInner().add(r);
 		
 		this.updatePrjList();
 		return r ;
 	}
 	
-	public UAPrj updatePrj(String id,String name,String title,String desc) throws Exception
+	public synchronized UAPrj updatePrj(String id,String name,String title,String desc) throws Exception
 	{
 		UAUtil.assertUAName(name);
 		
@@ -597,7 +612,7 @@ public class UAManager implements IMNContProvider
 		if(Convert.isNotNullEmpty(newid))
 		{
 			p.RT_init(true, true);
-			this.listPrjs().add(p) ;
+			this.listPrjsInner().add(p) ;
 		}
 		this.updatePrjList();	
 		p.constructNodeTree();
@@ -673,7 +688,7 @@ public class UAManager implements IMNContProvider
 		savePrj(p) ;
 		
 		p.RT_init(true, true);
-		this.listPrjs().add(p) ;
+		this.listPrjsInner().add(p) ;
 		
 		this.updatePrjList();	
 		p.constructNodeTree();
@@ -713,7 +728,7 @@ public class UAManager implements IMNContProvider
 				public void run()
 				{
 					ArrayList<UAPrj> ppps = new ArrayList<>() ;
-					ppps.addAll(UAManager.this.listPrjs()) ;
+					ppps.addAll(UAManager.this.listPrjsInner()) ;
 					
 					for(UAPrj prj:ppps)
 					{
@@ -756,7 +771,7 @@ public class UAManager implements IMNContProvider
 	
 	synchronized public void stop()
 	{
-		for(UAPrj prj:UAManager.this.listPrjs())
+		for(UAPrj prj:UAManager.this.listPrjsInner())
 		{
 			//if(prj.RT_isRunning())
 			prj.RT_stop();

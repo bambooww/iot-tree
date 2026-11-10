@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IJoIn;
+import org.iottree.core.util.INewIns;
 import org.iottree.driver.zigbee.zcl.util.DataType;
 import org.iottree.driver.zigbee.zcl.util.TagDef;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
  * ZCL Attribute 
  * @author jason.zhu
  */
-public class ZCLAttr implements IJoIn
+public class ZCLAttr implements IJoIn,INewIns<ZCLAttr>
 {
 	int id ;
 	
@@ -43,6 +44,12 @@ public class ZCLAttr implements IJoIn
 	
 	public ZCLAttr()
 	{}
+	
+	@Override
+	public ZCLAttr copyNewIns()
+	{
+		return new ZCLAttr();
+	}
 	
 	public int getID()
 	{
@@ -174,4 +181,6 @@ public class ZCLAttr implements IJoIn
 		this.tagDef = TagDef.fromObj(getDataType(),jo.opt("__tag")) ;
 		return true ;
 	}
+
+	
 }

@@ -87,7 +87,10 @@ public class UIItem
 
 	public String getUrl()
 	{
-		return getUITemp().calUrl(this.tagIds) ;
+		IUITemp uit = getUITemp() ;
+		if(uit==null)
+			return null ;
+		return uit.calUrl(this.tagIds) ;
 	}
 	
 	public int getWidth()

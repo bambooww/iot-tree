@@ -25,6 +25,12 @@ public class ReadAttrRsp extends ZCLFrame
 		return "read_attr_rsp" ;
 	}
 	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ReadAttrRsp() ;
+	}
+	
 	public ArrayList<AttrReadStatusVal> getReadStatusVals()
 	{
 		return this.rsVals ;

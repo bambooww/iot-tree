@@ -1,6 +1,7 @@
 package org.iottree.server;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +20,6 @@ import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.iottree.core.Config;
 import org.iottree.core.Config.Webapp;
 import org.iottree.core.UAServer;
-import org.iottree.core.plugin.PlugManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
 import org.iottree.core.util.web.AppWebConfig;
@@ -31,20 +31,7 @@ import org.iottree.core.util.web.AppWebConfig;
  */
 public class ServerTomcat implements IServerBootComp
 {
-	static
-	{
-		System.setProperty("java.util.logging.manager","org.apache.juli.ClassLoaderLogManager");
-		if(Config.isDebug())
-			System.setProperty("java.util.logging.config.file","./log/logging_debug.properties");
-		else
-			System.setProperty("java.util.logging.config.file","./log/logging.properties");
-		System.setProperty("java.endorsed.dirs","./tomcat/common/endorsed");
-		System.setProperty("catalina.base","./tomcat");
-		System.setProperty("catalina.home","./tomcat");
-		System.setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip","*");
-		System.setProperty("java.io.tmpdir","./tomcat/temp");
-		
-	}
+	
 	
 	Tomcat tomcat = null ;
 	
@@ -55,6 +42,31 @@ public class ServerTomcat implements IServerBootComp
 		if (w == null)
 		{
 			throw new RuntimeException("no Webapps found!") ;
+		}
+		
+//		try (InputStream is = ServerTomcat.class.getResourceAsStream("/logging.properties"))
+//		{
+//		    if (is != null)
+//		    {
+//		    	for(String logln:Convert.readStreamTxtLines(is, "UTF-8"))
+//		    	{
+//		    		System.out.println(" log line="+logln) ;
+//		    	}
+//		        
+//		    }
+//		} catch (Exception e) {
+//			System.out.println("load /logging.properties failed="+e.getMessage()) ;
+//		}
+		
+		try (InputStream is = ServerTomcat.class.getResourceAsStream("/logging.properties"))
+		{
+		    if (is != null)
+		    {
+		    	java.util.logging.LogManager.getLogManager().readConfiguration(is);
+		        System.out.println("load /logging.properties ok") ;
+		    }
+		} catch (Exception e) {
+			System.out.println("load /logging.properties failed="+e.getMessage()) ;
 		}
 		
 		// int tomcatp =
@@ -218,7 +230,7 @@ public class ServerTomcat implements IServerBootComp
 	    certificate.setCertificateKeyAlias("tomcat");
 	    certificate.setCertificateKeystorePassword("123456");
 	    certificate.setCertificateKeystoreType("JKS");
-	    certificate.setCertificateKeystoreFile("../keystore.jks");
+	    certificate.setCertificateKeystoreFile(Config.getConfigFileBase()+"/keystore.jks");//relative to tomcat
 
 	    // 5. 组装并应用
 	    sslHostConfig.addCertificate(certificate);

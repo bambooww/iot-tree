@@ -21,11 +21,16 @@ public class ConfigRepReadRsp extends ZCLFrame
 	{
 		return "config_report_read_rsp" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ConfigRepReadRsp() ;
+	}
 
 	@Override
 	protected int getPayloadLen()
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

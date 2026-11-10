@@ -6,4 +6,6 @@
 product.*
 config-*.xml
 app.xml
+*.exe
+*.dll
 plat_node.json

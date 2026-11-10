@@ -18,6 +18,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.xmldata.XmlHelper;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -722,6 +724,9 @@ public class Config
 				//System.out.println("Data File Base=" + dataFileBase);
 
 				bDebug = "true".equalsIgnoreCase(confRootEle.getAttribute("debug"));
+				if(bDebug)
+					LoggerManager.setDefaultLogLevel(ILogger.LOG_LEVEL_DEBUG) ;
+				
 				appTitle = confRootEle.getAttribute("title");
 				if (appTitle == null || appTitle.equals(""))
 					appTitle = "IOT-Tree Server";
@@ -1022,28 +1027,29 @@ public class Config
 		return p;
 	}
 
-	private static String version;
+	private static String version = "3.0.0";
 
 	public static String getVersion()
 	{
-		if (version != null)
-			return version;
-		try
-		{
-			String res = "META-INF/maven/org.iottree/iottree-core/pom.properties";
-			URL url = Thread.currentThread().getContextClassLoader().getResource(res);
-			try (InputStream inputs = url.openStream())
-			{
-				HashMap<String, String> props = Convert.readStringMapFromStream(inputs, "utf-8");
-				version = props.get("version");
-			}
-		}
-		catch ( Exception e)
-		{
-			e.printStackTrace();
-			version = "";
-		}
-		return version;
+		return version ;
+//		if (version != null)
+//			return version;
+//		try
+//		{
+//			String res = "META-INF/maven/org.iottree/iottree-core/pom.properties";
+//			URL url = Thread.currentThread().getContextClassLoader().getResource(res);
+//			try (InputStream inputs = url.openStream())
+//			{
+//				HashMap<String, String> props = Convert.readStringMapFromStream(inputs, "utf-8");
+//				version = props.get("version");
+//			}
+//		}
+//		catch ( Exception e)
+//		{
+//			e.printStackTrace();
+//			version = "";
+//		}
+//		return version;
 	}
 
 	public static class InnerComp

@@ -25,6 +25,13 @@ public class WriteAttrRsp extends ZCLFrame
 		return "write_attr_rsp" ;
 	}
 	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new WriteAttrRsp() ;
+	}
+
+	
 //	public int getAttrId()
 //	{
 //		return this.attrId ;

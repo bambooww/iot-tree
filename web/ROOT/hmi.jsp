@@ -614,7 +614,10 @@ if(b_his)
 			tip = tt ;
 			tt = tt.substring(10)+".." ;
 		}
-		String url = Convert.plainToHtml(uii.getUrl()) ;
+		String uiurl = uii.getUrl() ;
+		if(Convert.isNullOrEmpty(uiurl))
+			continue ;
+		String url = Convert.plainToHtml(uiurl) ;
 		int w = uii.getWidth() ;
 		int h = uii.getHeight() ;
 		

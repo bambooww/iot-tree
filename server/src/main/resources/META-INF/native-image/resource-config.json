@@ -1,0 +1,11 @@
+{
+  "resources": {
+    "includes": [
+		{"pattern": "org/iottree/.*\\.xml"},
+				{"pattern": "org/iottree/.*\\.json"},
+      {"pattern": "jakarta/servlet/resources/.*\\.xsd"},
+      {"pattern": ".*web-app.*\\.xsd"},
+	  {"pattern": "jakarta/servlet/resources/.*\\.dtd"}
+    ]
+  }
+}

@@ -71,15 +71,22 @@
 		    <artifactId>bacnet4j</artifactId>
 		    <version>6.0.1</version>
 		</dependency>
-		-->
-		
-		
 		<dependency>
 		    <groupId> iottree</groupId>
 		    <artifactId>bacnet4j</artifactId>
 		    <version>6.1.0</version>
 		</dependency>
+		-->
 		
+		
+		
+		<!-- Source: https://mvnrepository.com/artifact/com.serotonin/bacnet4j -->
+<dependency>
+    <groupId>com.infiniteautomation</groupId>
+    <artifactId>bacnet4j</artifactId>
+    <version>6.1.0</version>
+    <scope>compile</scope>
+</dependency>
 	
 <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql
 <dependency>
@@ -188,5 +195,10 @@
 	    </plugins>
 	    
 	</build>
-
+<repositories>
+    <repository>
+        <id>ias-releases</id>
+        <url>https://maven.mangoautomation.net/repository/ias-release/</url>
+    </repository>
+</repositories>
 </project>

@@ -27,6 +27,12 @@ public class ConfigReportRsp extends ZCLFrame
 	{
 		return "config_report_rsp" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ConfigReportRsp() ;
+	}
 
 	@Override
 	protected int getPayloadLen()

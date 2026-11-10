@@ -40,6 +40,13 @@ public class WriteAttr extends ZCLFrame
 	}
 	
 	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new WriteAttr() ;
+	}
+	
+	
+	@Override
 	public int getCmdIDResp()
 	{
 		return 0x04 ;

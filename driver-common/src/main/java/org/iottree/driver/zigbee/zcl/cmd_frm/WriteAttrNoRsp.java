@@ -24,6 +24,12 @@ public class WriteAttrNoRsp extends ZCLFrame
 	{
 		return "write_attr_norsp" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new WriteAttrNoRsp() ;
+	}
 
 	public ArrayList<AttrReadStatusVal> getReadStatusVals()
 	{

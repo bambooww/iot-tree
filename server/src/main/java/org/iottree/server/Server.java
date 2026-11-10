@@ -4,16 +4,44 @@ import java.io.*;
 import java.util.*;
 
 import org.iottree.core.Config;
-import org.iottree.core.UAManager;
 import org.iottree.core.UAServer;
-import org.iottree.core.sim.SimManager;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.IServerBootComp;
-import org.iottree.core.ws.WSHelper;
+import org.iottree.core.util.ServerCtrlHandler;
 import org.w3c.dom.Element;
 
 public class Server
 {
+	static
+	{
+		Locale.setDefault(Locale.US); 
+		
+		if (Config.isDebug())
+			System.out.println("user.dir=" + System.getProperties().getProperty("user.dir"));
+
+		// System.out.println("java.class.path=" +
+		// System.getProperties().getProperty("java.class.path"));
+
+		Config.loadConf();
+		
+		String data_dir = Config.getDataDirBase() ;
+
+		//System.setProperty("java.util.logging.manager","org.apache.juli.ClassLoaderLogManager");
+		//if(Config.isDebug())
+		//	System.setProperty("java.util.logging.config.file","./log/logging_debug.properties");
+		//else
+		System.setProperty("java.util.logging.config.file","./log/logging.properties");
+		System.setProperty("java.endorsed.dirs",data_dir+"/tomcat/common/endorsed");
+		System.setProperty("catalina.base",data_dir+"/tomcat");
+		System.setProperty("catalina.home",data_dir+"/tomcat");
+		System.setProperty("tomcat.util.scan.StandardJarScanFilter.jarsToSkip","*");
+		System.setProperty("java.io.tmpdir",data_dir+"/temp");
+		System.setProperty("user.language", "en");
+		System.setProperty("user.country", "US");
+		
+		System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+	}
+	
 	static ClassLoader dynCL = null;
 	
 	static ServerTomcat serverTomcat = null ; 
@@ -116,13 +144,7 @@ public class Server
 	{
 		printBanner();
 
-		if (Config.isDebug())
-			System.out.println("user.dir=" + System.getProperties().getProperty("user.dir"));
-
-		// System.out.println("java.class.path=" +
-		// System.getProperties().getProperty("java.class.path"));
-
-		Config.loadConf();
+		
 
 		// ClassLoader tbs_loader = null;
 		//

@@ -9,7 +9,9 @@
   <artifactId>ROOT</artifactId>
   
     <properties>
+    <!--
 	<output.directory>../../_output</output.directory>
+	-->
   </properties>
   
   <dependencies>

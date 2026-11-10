@@ -14,7 +14,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
-    <output.directory>../_output</output.directory>
   </properties>
 
   <dependencies>
@@ -69,23 +68,11 @@
 		
 	 -->
 	
-	<!-- 
-	<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>system</scope>
-			<systemPath>${basedir}/tomcat/lib/servlet-api.jar</systemPath>
-		</dependency>
-		
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>system</scope>
-			<systemPath>${basedir}/tomcat/lib/jsp-api.jar</systemPath>
-		</dependency>
- -->
   </dependencies>
 
+<profiles>
+    <profile>
+        <id>output</id> 
   <build>
   <finalName>iottree-server</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
@@ -157,7 +144,28 @@
 			    </configuration>
 			</plugin>
 			-->
-				<!-- config manifest add lib dependence -->
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-dependency-plugin</artifactId>
+			    <version>3.7.0</version>
+			    <executions>
+			        <execution>
+			            <id>copy-dependencies</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>copy-dependencies</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>../_output/lib</outputDirectory>
+			                <overWriteReleases>false</overWriteReleases>
+			                <overWriteSnapshots>false</overWriteSnapshots>
+			                <overWriteIfNewer>true</overWriteIfNewer>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -279,6 +287,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
+				 <version>3.1.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -286,7 +295,7 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
+							<target>
 								<copy file="./config-tar.xml" tofile="../_output/config.xml" />
 								<copy file="./iot-tree.bat.txt" tofile="../_output/iot-tree.bat" />
 								<copy file="./iot-tree-setup.bat.txt" tofile="../_output/iot-tree-setup.bat" />
@@ -308,10 +317,9 @@
 								<copy file="../ext-opcda/target/iottree-ext-opcda.jar"  tofile="../_output/lib/iottree-ext-opcda.jar" />
 								<copy file="../ext-pro/target/iottree-ext-pro.jar"  tofile="../_output/lib/iottree-ext-pro.jar" />
 								        
-								<delete file="../_output/lib/jsp-api-2.2.jar" />
-			                    <delete file="../_output/lib/websocket-api-2.2.jar" />
-			                    <delete file="../_output/lib/servlet-api-2.5.jar" />
-			                    <delete file="../_output/lib/javax.servlet-api-3.1.0.jar" />
+								<delete file="../_output/lib/jakarta.servlet.jsp-api-4.1.0-M2.jar" />
+			                    <delete file="../_output/lib/jakarta.websocket-api-2.3.0-M2.jar" />
+			                    <delete file="../_output/lib/jakarta.servlet-api-6.2.0-M2.jar" />
 			                    <delete file="../_output/lib/commons-io-2.2.jar" />
 			                    <delete file="../_output/lib/commons-io-2.4.jar" />
 			                    <delete file="../_output/lib/tomcat-catalina-2.2.jar" />
@@ -347,7 +355,7 @@
                 				</zip>
                 				-->
                 				<delete file="../_output/lib/iottree-ext-opcda.jar" />
-
+<!--
 			                    <zip destfile="../_output/iot-tree-${project.version}.zip" >
 					                  <fileset dir="../_output/">
 					                    <exclude name="jre_x86/"/>
@@ -366,8 +374,8 @@
 					                    <exclude name="iot-tree-${project.version}-winjre_x86.zip"/>
 					                  </fileset>
                 				</zip>
-			                    
-							</tasks>
+			                    -->
+							</target>
 						</configuration>
 					</execution>
 				</executions>
@@ -375,4 +383,6 @@
 			
 		</plugins>
   </build>
+    </profile>
+</profiles>
 </project>

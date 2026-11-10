@@ -19,7 +19,6 @@
 	  </properties>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -118,12 +117,19 @@
 			<version>2.2</version>
 			<scope>provided</scope>
 		</dependency>
-	-->
 		<dependency>
 			<groupId>gun.io</groupId>
 			<artifactId>RXTXcomm</artifactId>
 			<version>2.2</version>
 		</dependency>
+	-->
+		<!-- Source: https://mvnrepository.com/artifact/org.bidib.jbidib.org.qbang.rxtx/rxtxcomm -->
+<dependency>
+    <groupId>org.bidib.jbidib.org.qbang.rxtx</groupId>
+    <artifactId>rxtxcomm</artifactId>
+    <version>2.2</version>
+    <scope>compile</scope>
+</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
@@ -193,13 +199,11 @@
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-core</artifactId>
-    <version>2.15.1</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>2.15.1</version>
 </dependency>
 
 <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
@@ -310,12 +314,7 @@
 	        <version>4.7.6</version>
 	    </dependency>
 	    
-	    <dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-databind</artifactId>
-		    <version>2.15.2</version>
-		</dependency>
-
+	    
 	</dependencies>
 
 	<build>
@@ -324,7 +323,6 @@
 	        <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-compiler-plugin</artifactId>
-	            <version>3.8.1</version>
 	            <configuration>
 	                <annotationProcessorPaths>
 	                    <path>

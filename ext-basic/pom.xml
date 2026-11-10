@@ -67,11 +67,13 @@
 		</dependency>
 		
 		<!-- Source: https://mvnrepository.com/artifact/io.grpc/grpc-protobuf -->
+		<!--
 		<dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
             <version>${grpc.version}</version>
-        </dependency>
+        </dependency> // 1.85.1
+        -->
 		<dependency>
 		    <groupId>io.grpc</groupId>
 		    <artifactId>grpc-protobuf</artifactId>

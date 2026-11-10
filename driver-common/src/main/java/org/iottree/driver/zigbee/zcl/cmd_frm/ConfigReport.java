@@ -29,6 +29,13 @@ public class ConfigReport extends ZCLFrame
 	}
 	
 	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ConfigReport() ;
+	}
+
+	
+	@Override
 	public int getCmdIDResp()
 	{
 		return 0x07 ;
@@ -97,4 +104,5 @@ public class ConfigReport extends ZCLFrame
 		return true;
 	}
 
+	
 }

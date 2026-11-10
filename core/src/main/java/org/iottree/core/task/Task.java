@@ -256,7 +256,7 @@ public class Task
 
 	private volatile boolean rtRun = false;
 
-	private ScriptEngine scriptEng = null;
+	//private ScriptEngine scriptEng = null;
 
 	private UAContext cxt = null;
 
@@ -279,14 +279,14 @@ public class Task
 		return bret ;
 	}
 
-	public ScriptEngine getScriptEngine() throws ScriptException
-	{
-		if(scriptEng!=null)
-			return scriptEng;
-		
-		getContext();
-		return scriptEng;
-	}
+//	public ScriptEngine getScriptEngine() throws ScriptException
+//	{
+//		if(scriptEng!=null)
+//			return scriptEng;
+//		
+//		getContext();
+//		return scriptEng;
+//	}
 	
 	public UAContext getContext() throws ScriptException
 	{
@@ -300,7 +300,7 @@ public class Task
 			
 			cxt = new UAContext(this.getPrj());
 			cxt.asTask(this) ;
-			this.scriptEng = cxt.getScriptEngine() ;
+			//this.scriptEng = cxt.getScriptEngine() ;
 			return cxt ;
 		}
 	}

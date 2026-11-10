@@ -59,7 +59,10 @@ public class ServiceManager
 			}
 			catch(Throwable e)
 			{
-				e.printStackTrace();
+				
+				//e.printStackTrace();
+				if(log.isWarnEnabled())
+					log.warn("load service "+cn+" err:"+e.getMessage());
 			}
 		}
 	}

@@ -23,6 +23,12 @@ public class ConfigRepRead extends ZCLFrame
 	{
 		return "config_report_read" ;
 	}
+	
+	@Override
+	public ZCLFrame copyNewIns()
+	{
+		return new ConfigRepRead() ;
+	}
 
 	@Override
 	protected int getPayloadLen()

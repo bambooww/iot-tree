@@ -10,6 +10,7 @@ import javax.script.ScriptException;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
@@ -40,7 +41,8 @@ public class UACodeItem
 	 */
 	String codeTxt = null ;
 	
-	transient CompiledScript codeCS = null ;
+	//transient CompiledScript codeCS = null ;
+	transient Source codeCS = null ;
 	
 	//transient CompiledScript callFnCS = null ;
 	
@@ -193,7 +195,7 @@ public class UACodeItem
 			
 			synchronized(cxt)
 			{
-				return codeCS.eval() ;
+				return cxt.scriptEvalSrc(codeCS) ;//codeCS.eval() ;
 			}
 		}
 		finally

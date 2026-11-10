@@ -17,7 +17,9 @@
   <url></url>
 
   <properties>
+  <!--
 	<output.directory>../_output</output.directory>
+	-->
   </properties>
 
   <dependencies>
@@ -38,7 +40,7 @@
 		    <groupId>org.json</groupId>
 		    <artifactId>json</artifactId>
 		</dependency>
-		
+		<!--
 		<dependency>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
@@ -55,7 +57,7 @@
     <artifactId>jakarta.servlet.jsp.jstl</artifactId>
     <version>3.0.1</version>
 </dependency>
-		
+		-->
   </dependencies>
 
   <build>
@@ -108,5 +110,9 @@
   	<module>ROOT</module>
   	<module>doc</module>
   	<module>main</module>
+  	<!--
+  	<module>ent</module>
+  	-->
+  	<module>pro</module>
   </modules>
 </project>
