@@ -19,13 +19,14 @@ import org.iottree.core.msgnet.IMNContainer;
 import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IDirBase;
 import org.iottree.core.util.ZipUtil;
 import org.iottree.core.util.web.Mime;
 import org.iottree.core.util.xmldata.*;
 
 import com.google.common.eventbus.EventBus;
 
-public class UAManager implements IMNContProvider
+public class UAManager implements IMNContProvider,IDirBase
 {
 	private static UAManager instance = null ;
 	
@@ -100,6 +101,18 @@ public class UAManager implements IMNContProvider
 		return eventBus;
 	}
 	
+	@Override
+	public String getDirBaseId()
+	{
+		return "ua" ;
+	}
+	
+	@Override
+	public File getDirBaseFile()
+	{
+		return new File(Config.getDataDirBase()) ;
+	}
+	
 	private ArrayList<UAPrj> loadPrjs()
 	{
 		String dirf = Config.getDataDirBase() + "/prjs/";
@@ -166,6 +179,7 @@ public class UAManager implements IMNContProvider
 	}
 	
 	transient String defaultPrjId = null ;
+	
 	/**
 	 * get default project
 	 * @return
@@ -290,16 +304,35 @@ public class UAManager implements IMNContProvider
 		return new File(fp);
 	}
 	
-	UAPrj loadPrj(String id) throws Exception
+	private UAPrj loadPrj(String id) throws Exception
 	{
+		//System.out.print("load prj id="+id) ;
 		File tmpf = getPrjFile(id);
 		if(!tmpf.exists())
+		{
+			//System.out.println(" err file not exist") ;
 			return null ;
+		}
 		XmlData tmpxd = XmlData.readFromFile(tmpf);
+		if(tmpxd==null)
+		{
+			//System.out.println(" err xmldata null") ;
+			return null ;
+		}
+		String id_o = tmpxd.getParamValueStr("id") ;
+		if(Convert.isNullOrEmpty(id_o) || !id_o.equals(id))
+		{
+			//System.out.println(" err id is null or not match") ;
+			return null ;
+		}
 		UAPrj r = new UAPrj() ;
-		DataTranserXml.injectXmDataToObj(r, tmpxd);
-		//r.fromUAXmlData(tmpxd);
-		
+		boolean bres = DataTranserXml.injectXmDataToObj(r, tmpxd);
+		if(!bres)
+		{
+			//System.out.println(" err inject to obj failed") ;
+			return null ;
+		}
+		//System.out.println(" ok") ;
 		return r ;
 	}
 	

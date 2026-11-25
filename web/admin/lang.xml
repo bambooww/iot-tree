@@ -19,6 +19,9 @@
   <dd_node id="1001" name="icon" name_cn="图标" name_en="Icon" />
   <dd_node id="1001" name="nav" name_cn="导航" name_en="Navigator" />
   <dd_node id="1001" name="left_nav1_node" name_cn="左边一级导航节点" name_en="Left first level navigation" />
+  <dd_node id="1001" name="ecp" name_cn="设备设施工艺" name_en="Equipment Process" />
+  <dd_node id="1001" name="process" name_cn="工艺" name_en="Process" />
+  <dd_node id="1001" name="graph" name_cn="图" name_en="Graph" />
   
   <dd_node id="1" name="local_prj" name_cn="本地项目" name_en="Local Projects" />
   <dd_node id="1" name="prj" name_cn="项目" name_en="Project" />

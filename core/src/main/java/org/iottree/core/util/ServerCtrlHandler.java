@@ -8,6 +8,7 @@ import org.iottree.core.DevDriver;
 import org.iottree.core.DevManager;
 import org.iottree.core.UAManager;
 import org.iottree.core.UAPrj;
+import org.iottree.core.msgnet.MNNet;
 import org.iottree.core.util.logger.ILogger;
 import org.iottree.core.util.logger.LoggerManager;
 
@@ -199,9 +200,30 @@ class DefaultConsole implements IConsole
 		}
 		else if ("prjs".equals(cmds[0]))
 		{
-			for(UAPrj dd:UAManager.getInstance().listPrjs())
+			List<UAPrj> prjs = UAManager.getInstance().listPrjs() ;
+			for(UAPrj dd:prjs)
 			{
-				System.out.println("  "+dd.getName()+" "+dd.getTitle()) ;
+				boolean brun = dd.RT_isRunning() ;
+				System.out.println("  ["+dd.getName()+"] "+dd.getTitle()+" "+(brun?"*":"")) ;
+			}
+			System.out.println(" total prj number="+prjs.size()) ;
+		}
+		else if("prj".equals(cmds[0]))
+		{
+			if(cmds.length<2)
+			{
+				System.out.println("using: prj [prj_name]") ;
+				return 1; 
+			}
+			UAPrj prj = UAManager.getInstance().getPrjByName(cmds[1]) ;
+			if(prj==null)
+			{
+				System.out.println("prj with name "+cmds[1]+" is not found") ;
+				return 1; 
+			}
+			for(MNNet net:prj.listMNNetsAll())
+			{
+				System.out.println(" mnnet>>"+net.getName()+" has nodes "+net.getNodeMapAll().size()) ;
 			}
 		}
 //		else if("tomcat".equals(cmds[0]))

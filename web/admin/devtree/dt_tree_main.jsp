@@ -582,7 +582,7 @@ var menu2item = {
 }
 
 function on_dinode_menu(nd)
-{console.log("on_dinode_menu",nd);
+{//console.log("on_dinode_menu",nd);
 	if(!nd) return null ;
 	let baseitem = nd.baseItem ;
 	if(baseitem.has_part_ref)
@@ -789,17 +789,12 @@ function slide_toggle(obj,w)
 	}
 }
 
-
-
 ot.load_res("dt_tree_imgs_list.jsp",()=>{
 	init_iottpanel();
 	
 	dt_plugs = new DTPlugs(panel,treeid,ulang) ;
 	dt_plugs.init();
 }) ;
-
-
-
 
 function resize_zz()
 {

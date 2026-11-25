@@ -40,9 +40,10 @@ import com.google.common.primitives.UnsignedLong;
 
 
 /**
- * 
+ * PV  (Process Variable) - current value
+ * SV (Setting Variable/Setpoint)
+ *  
  * @author jason.zhu
- *
  */
 @data_class
 @JsDef(name="tag",title="Tag",desc="Tag Node",icon="icon_tag")

@@ -9,7 +9,7 @@
 	java.util.*, 
 	org.iottree.core.cxt.*,org.iottree.core.util.*,org.iottree.core.util.web.*,
 	org.iottree.core.ws.*,
-	org.iottree.core.sim.*,org.iottree.core.devtree.*,
+	org.iottree.core.sim.*,org.iottree.core.devtree.*,org.iottree.core.ecp.*,
 	org.iottree.pro.*,org.iottree.core.station.*,
 	org.iottree.core.util.xmldata.*
 "%><%@ taglib uri="wb_tag" prefix="wbt"%><%//UserProfile up = UserProfile.getUserProfile(request);
@@ -276,7 +276,7 @@ if(pros.size()>0)
          <i class="fa fa-sitemap fa-1x"></i>
          <span class="d_btn" style="font-size:13px;top:0px;position:relative;margin-right:5px;"><i id="prj_run_<%=rep.getId() %>" class="fa-regular fa-life-ring" tt=""></i></span>
        </span>
-       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=prj_tt%></a>
+       <a class="text title" href="javascript:open_rep('<%=rep.getId()%>')" data-id="8" title="<%=rep.getName() %>"><%=prj_tt%>&nbsp;&nbsp;</a>
        <div class="inline-block pull-right text-left ">
           <span class="btn_sh">
           <span>
@@ -390,8 +390,107 @@ if(rep.isAutoStart())
 						</div>
 						
 					</div>
+					
+					
+				<div class="iot-mod iot-question-detail iot-item">
+					    <div class="mod-head">
+					        <h1>&nbsp;<wbt:lang>ecp</wbt:lang> & <wbt:lang>model</wbt:lang></h1>
+					        
+					        <div style="float:left;top:5px;position: absolute;left:210px" >
+					        
+					        
+					        	<a  title="device library help" style="width:100px;height:40px;" href="/doc/en/quick/quick_know_devlib.md" target="_blank">
+							<span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-question fa-stack-1x fa-inverse"></i>
+							</span>
+							</a>
+							
+					        </div>
+					    </div>
+					   <div class="mod-body">
+							<div class="sub_cc" style="margin-bottom:1px;">
+							<wbt:lang>process,graph</wbt:lang>
+							<%
+							ECPManager ecpmgr = ECPManager.getInstanceUA() ;
+							String mgr_id = ecpmgr.getMgrId() ;
+	for(ECPNet net:ecpmgr.listNets())
+{
+		String netid = net.getId() ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		String net_uid = net.getUID() ;
+%>
+	<span class="lib_item btn_sh_c" >
+		<i class="fa-solid fa-network-wired"></i> &nbsp;<a class="text title" href="javascript:open_ecp('<%=net_uid%>')" data-id="8"><%=net.getTitle() %></a>
+		
+		<span class="btn_sh">
+           <a href="javascript:ecp_export('<%=ecpmgr.getMgrId() %>','<%=netid%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a class0="btn btn-success " style="color: #e33a3e" href="javascript:ecp_del('<%=ecpmgr.getMgrId() %>','<%=netid%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="ecp_add_or_edit('<%=mgr_id%>')"><i class="fa-solid fa-plus fa-lg"></i></span>
+				
+						</div>
+						<div style="width:100%;text-align: center"><i class="fa fa-arrow-down"></i></div>
+						<div class="sub_cc" style="margin-bottom:5px;">
+			<wbt:lang>comp,lib</wbt:lang>
 <%
 
+	for(ECPCompLib complib:ECPCompManager.getInstance().getLibMap().values())
+{
+		cc ++ ;
+		String cssstr = "" ;
+		String tmpid = "" ;
+		String plibid = complib.getLibId() ;
+%>
+	<span class="lib_item btn_sh_c" >
+		<i class="fa-solid fa-cubes"></i> &nbsp;<a class="text title" href="javascript:ecpcomplib_open('<%=plibid%>')" data-id="8"><%=complib.getLibTitle() %></a>
+		<span class="btn_sh">
+
+           <a href="javascript:ecpcomplib_add_or_edit('<%=plibid%>')" title="edit lib">
+              <span class="fa-stack fa-1x">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-pencil  fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a href="javascript:ecpcomplib_export('<%=plibid%>')" title="export">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa-arrow-up fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           <a style="color: #e33a3e" href="javascript:ecpcomplib_del('<%=plibid%>')" title="delete">
+              <span class="fa-stack">
+							  <i class="fa fa-square fa-stack-1x"></i>
+							  <i class="fa fa fa-times fa-stack-1x fa-inverse"></i>
+							</span>
+           </a>
+           </span>
+           
+	</span>
+<%
+}
+%>
+	<span class="lib_item" onclick="ecpcomplib_add_or_edit()"><i class="fa-solid fa-plus fa-lg"></i></span>
+				</div>
+				  <div style="height:10px;"></div>
+				</div>
+			</div>
+<%
 if(m)
 {
 %>
@@ -1310,6 +1409,150 @@ function tree_add_or_edit(treeid)
 			]);
 }
 
+
+
+function open_ecp(uid)
+{
+	window.open("./ecp/ecp_net_detail.jsp?net_uid="+uid) ;
+}
+
+function ecp_del(mgrid,netid)
+{
+	dlg.confirm('<wbt:lang>del,this,ecp</wbt:lang>?',{btn:['<wbt:lang>yes</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
+		    {
+					send_ajax("./ecp/ecp_ajax.jsp",{op:"del",mgr_id:mgrid,net_id:netid},function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
+			    			return ;
+			    		}
+			    		location.reload();
+			    	}) ;
+				});
+}
+
+function ecp_add_or_edit(mgrid,netid)
+{
+	var tt = "<wbt:lang>edit,ecp</wbt:lang>" ;
+	if(!netid)
+	{
+		netid ="" ;
+		tt = "<wbt:lang>add,ecp</wbt:lang>" ;
+	}
+		
+	dlg.open("./ecp/ecp_net_edit.jsp?mgr_id="+mgrid+"&net_id="+netid,
+			{title:tt},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 ret.op="add_edit_net" ;
+						 ret.mgr_id = mgrid ;
+						 send_ajax("./ecp/ecp_ajax.jsp",ret,(bsucc,rr)=>{
+							 if(!bsucc || rr.indexOf("succ")!=0)
+								{
+									dlg.msg(rr) ;
+									return ;
+								}
+								dlg.close();
+								location.reload();
+						 });
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function ecpcomplib_add_or_edit(libid)
+{
+	var tt = "<wbt:lang>edit,comp,lib</wbt:lang>" ;
+	if(!libid)
+	{
+		libid ="" ;
+		tt = "<wbt:lang>add,comp,lib</wbt:lang>" ;
+	}
+		
+	dlg.open("./ecp/ecp_complib_edit.jsp?libid="+libid,
+			{title:tt},
+			['<wbt:lang>ok</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlgw.do_submit((bsucc,ret)=>{
+						 if(!bsucc)
+						 {
+							 dlg.msg(ret) ;
+							 return;
+						 }
+						 
+						 ret.op="edit_complib" ;
+						 var pm = {
+									type : 'post',
+									url : "./ecp/ecp_comp_ajax.jsp",
+									data :ret
+								};
+							$.ajax(pm).done((ret)=>{
+								if(ret.indexOf("succ=")!=0)
+								{
+									dlg.msg(ret) ;
+									return ;
+								}
+								dlg.close();
+								location.reload();
+							}).fail(function(req, st, err) {
+								dlg.msg(err);
+							});
+				 	});
+				},
+				function(dlgw)
+				{
+					dlg.close();
+				}
+			]);
+}
+
+function ecpcomplib_open(libid)
+{
+	if(!libid)
+		libid = "" ;
+	dlg.open("./ecp/ecp_comp_mgr.jsp?dlg=true&edit=true&libid="+libid,
+			{title:"<wbt:lang>comp,lib</wbt:lang>",w:'500',h:'560'},
+			['<wbt:lang>close</wbt:lang>','<wbt:lang>help</wbt:lang>'],
+			[
+				function(dlgw)
+				{
+					dlg.close();
+				},
+				function(dlgw)
+				{
+					dlg.msg("help is under dev");
+				}
+			]);
+}
+
+function ecpcomplib_del(libid)
+{
+	dlg.confirm('<wbt:lang>del,this,comp,lib</wbt:lang>?',{btn:['<wbt:lang>yes</wbt:lang>','<wbt:lang>cancel</wbt:lang>'],title:"<wbt:lang>del,confirm</wbt:lang>"},function ()
+		    {
+					send_ajax("./ecp/ecp_comp_ajax.jsp","op=del_complib&libid="+libid,function(bsucc,ret){
+			    		if(!bsucc || ret!='succ')
+			    		{
+			    			dlg.msg("<wbt:lang>del,err</wbt:lang>:"+ret) ;
+			    			return ;
+			    		}
+			    		location.reload();
+			    	}) ;
+				});
+}
 
 function partlib_add_or_edit(libid)
 {

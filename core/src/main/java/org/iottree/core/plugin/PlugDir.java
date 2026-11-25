@@ -16,11 +16,15 @@ import java.util.Map;
 import org.iottree.core.Config;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.ZipUtil;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PlugDir
 {
+	private static ILogger log = LoggerManager.getLogger(PlugDir.class) ;
+	
 	private String name = null;
 
 	private String title = null;
@@ -313,9 +317,15 @@ public class PlugDir
 					
 					System.out.println(" plug ["+name+"] load js api object [$$"+nn+"]") ;
 				}
-				catch ( Exception e)
+				catch (Throwable e)
 				{
-					e.printStackTrace();
+					if(log.isDebugEnabled())
+					{
+						log.debug(e);
+					}
+					
+					if(log.isWarnEnabled())
+						log.warn(" plug ["+name+"] load js api object [$$"+nn+"] err:"+e.getMessage());
 				}
 			}
 		}

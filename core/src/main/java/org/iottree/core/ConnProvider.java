@@ -2,9 +2,12 @@ package org.iottree.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.iottree.core.msgnet.MNManager;
 import org.iottree.core.util.CompressUUID;
 import org.iottree.core.util.Convert;
 import org.iottree.core.util.logger.ILogger;
@@ -21,6 +24,7 @@ import org.json.JSONObject;
  */
 public abstract class ConnProvider implements IXmlDataValidator
 {
+	
 	protected static ILogger log = LoggerManager.getLogger(ConnProvider.class) ;
 	
 	private static HashMap<String,Class<?>> tp2class = new HashMap<>() ;
@@ -59,20 +63,37 @@ public abstract class ConnProvider implements IXmlDataValidator
 	
 	private static boolean loadFromConfig() throws IOException
 	{
-		File df = DevManager.getDevDrvBase() ;
-		File f = new File(df,"conn_providers.txt") ;
-		if(!f.exists())
-			return false;
-		String jstr = Convert.readFileTxt(f, "utf-8") ;
-		
-		JSONArray jos= new JSONArray(jstr) ;
-		int len = jos.length() ;
-		for(int i = 0 ; i < len ; i ++)
+		try(InputStream inps = MNManager.class.getResourceAsStream("/org/iottree/core/conn/conn_providers.json"))
 		{
-			JSONObject jo = jos.getJSONObject(i) ;
-			registerProvider(jo) ;
+			if(inps==null)
+				return false;
+			
+			byte[] buf = Convert.readStreamBuffer(inps) ;
+			String txt = new String(buf,"UTF-8") ;
+			JSONArray jos= new JSONArray(txt) ;
+			int len = jos.length() ;
+			for(int i = 0 ; i < len ; i ++)
+			{
+				JSONObject jo = jos.getJSONObject(i) ;
+				registerProvider(jo) ;
+			}
+			return true ;
 		}
-		return true;
+		
+//		File df = DevManager.getDevDrvBase() ;
+//		File f = new File(df,"conn_providers.txt") ;
+//		if(!f.exists())
+//			return false;
+//		String jstr = Convert.readFileTxt(f, "utf-8") ;
+//		
+//		JSONArray jos= new JSONArray(jstr) ;
+//		int len = jos.length() ;
+//		for(int i = 0 ; i < len ; i ++)
+//		{
+//			JSONObject jo = jos.getJSONObject(i) ;
+//			registerProvider(jo) ;
+//		}
+//		return true;
 	}
 	
 	static

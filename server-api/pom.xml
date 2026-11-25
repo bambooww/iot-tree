@@ -119,7 +119,9 @@
                     	<buildArg>--initialize-at-build-time=io.grpc.netty.shaded.io.netty.util.internal.logging.Slf4JLoggerFactory</buildArg>
 						<buildArg>--initialize-at-build-time=io.grpc.netty.shaded.io.netty.util.internal.logging.JdkLogger</buildArg>
 						<buildArg>--initialize-at-run-time=sun.security.util.Password$ConsoleHolder</buildArg>
+						<buildArg>--initialize-at-build-time=kotlin.annotation.AnnotationTarget,kotlin.annotation.AnnotationRetention</buildArg>
 						
+						<buildArg>--language:js</buildArg>
 						<!--
 						<buildArg>-H:IncludeResources=org/iottree/.*\.xml$</buildArg>
 						-->

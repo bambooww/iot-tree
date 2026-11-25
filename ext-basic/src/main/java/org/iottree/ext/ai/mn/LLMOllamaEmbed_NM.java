@@ -1,17 +1,11 @@
 package org.iottree.ext.ai.mn;
 
 import java.time.Duration;
-import java.util.List;
-
 import org.iottree.core.msgnet.MNConn;
 import org.iottree.core.msgnet.MNMsg;
 import org.iottree.core.msgnet.MNNodeMid;
 import org.iottree.core.msgnet.RTOut;
 import org.iottree.core.util.Convert;
-import org.iottree.ext.ai.LLMMsg;
-import org.iottree.ext.ai.LLMReq;
-import org.iottree.ext.ai.LLMRespOllama;
-import org.iottree.ext.ai.LLMMsg.Role;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -187,9 +181,18 @@ public class LLMOllamaEmbed_NM extends MNNodeMid
 			String responseBody = response.body().string();
 			JSONObject tmpjo = new JSONObject(responseBody) ;
 			JSONArray data_jarr = tmpjo.optJSONArray("data") ;
-			//System.out.println("resp ="+tmpjo.toString(2));
-//			LLMRespOllama resp = new LLMRespOllama();
-//			
+//			int n = data_jarr.length() ;
+//			if(n>0)
+//			{
+//				JSONObject emb_jo = data_jarr.getJSONObject(0) ;
+//				JSONArray jarr = emb_jo.optJSONArray("embedding") ;
+//				int len = jarr.length() ;
+//				float[] fs = new float[len] ;
+//				for(int i = 0 ; i < len ; i ++)
+//					fs[i] = jarr.getNumber(i).floatValue() ;
+//				//System.out.println("data len="+fs.length) ;
+//			}
+			
 			if(data_jarr!=null)
 			{
 				MNMsg m = new MNMsg().asPayloadJO(data_jarr) ;//resp.getMessage().getContent());

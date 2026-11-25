@@ -2610,6 +2610,11 @@ public class Convert
 	{
 		writeFileTxt(f,jo.toString()) ;
 	}
+	
+	public static void writeFileJArr(File f,JSONArray jarr) throws IOException
+	{
+		writeFileTxt(f,jarr.toString()) ;
+	}
 	/**
 	 * 读取文件到字符串
 	 * 
@@ -2639,6 +2644,14 @@ public class Convert
 		if(Convert.isNullOrEmpty(txt))
 			return null ;
 		return new JSONObject(txt) ;
+	}
+	
+	public static JSONArray readFileJArr(File f) throws IOException
+	{
+		String txt = readFileTxt(f) ;
+		if(Convert.isNullOrEmpty(txt))
+			return null ;
+		return new JSONArray(txt) ;
 	}
 
 	public static byte[] readFileBuf(File f) throws IOException

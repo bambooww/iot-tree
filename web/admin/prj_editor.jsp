@@ -236,6 +236,7 @@ if(hide_top)
     	<div class="layui-tab layui-tab-brief"  lay-filter="tab_left_btm_ext" style="width:100%;height:100%">
 			  <ul class="layui-tab-title">
 			    <li class="layui-this"><wbt:g>msg_net</wbt:g></li>
+			    <li  title="Equipment Composition and Process">ECP</li>
 <%
 //if(b_portal)
 {
@@ -249,6 +250,9 @@ if(hide_top)
 			  <div class="layui-tab-content" style="position:relative;bottom:0px;height:100%">
 			  	<div class="layui-tab-item layui-show left_btm_bd" style="position:relative;top:0px;bottom:0px;width:99%;height:210px">
 			      <iframe src="./mn/mn_mgr.jsp?container_id=<%=prjid %>" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>
+				</div>
+				<div class="layui-tab-item layui-show left_btm_bd" style="position:relative;top:0px;bottom:0px;width:99%;height:210px">
+			      <iframe src="./ecp/ecp_mgr.jsp?prj_id=<%=prjid %>" style="width:100%;height:100%;border:0px solid;overflow:hidden;"></iframe>
 				</div>
 <%
 //if(b_portal)

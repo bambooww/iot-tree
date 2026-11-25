@@ -21,6 +21,26 @@ import org.json.JSONObject;
  */
 public class ConnManager
 {
+	protected static Class<?>[] GRAALVM_CPS = new Class<?>[] {
+		org.iottree.core.conn.ConnProTcpClient.class
+		,org.iottree.core.conn.ConnProTcpServer.class
+		,org.iottree.core.conn.ext.ASHCommon.class
+		,org.iottree.core.conn.ext.ASHFixIP.class
+		,org.iottree.core.conn.ConnProCOM.class
+		,org.iottree.core.conn.ConnProOPCUA.class
+		,org.iottree.core.conn.ConnProOpcAgent.class
+		,org.iottree.core.conn.ConnProHTTP.class
+		,org.iottree.core.conn.ConnProHTTPSer.class
+		,org.iottree.core.conn.ConnProWSClient.class
+		,org.iottree.core.conn.ConnProMQTT.class
+		,org.iottree.core.conn.ConnProVirtual.class
+		,org.iottree.core.conn.ConnProMultiTcpMsg.class
+		,org.iottree.core.conn.ConnProUDP.class
+		,org.iottree.core.conn.ConnProIOTTreeNode.class
+		,org.iottree.core.conn.ConnProLocPrjMap.class
+		//,org.iottree.conn.common.bacnet.ConnProBACnetClient.class
+		//',org.iottree.ext.opcda.OpcDAConnPr.class
+	};
 	protected static ILogger log = LoggerManager.getLogger(ConnManager.class) ;
 	
 	private static ConnManager instance = null ;
@@ -181,7 +201,7 @@ public class ConnManager
 			ConnProvider cp = ConnProvider.parseFromXmlData(cpxd, failedr) ;
 			if(cp==null)
 			{
-				log.warn(" warning: load ConnProvider failedr") ;
+				log.warn(" warning: load ConnProvider failedr:"+failedr) ;
 				continue ;
 			}
 			cp.belongTo = rep ;

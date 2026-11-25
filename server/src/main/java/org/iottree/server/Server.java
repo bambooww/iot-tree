@@ -191,7 +191,7 @@ public class Server
 			
 			Thread.sleep(5000);
 		}
-		catch ( Exception ee)
+		catch ( Throwable ee)
 		{
 		}
 
@@ -267,9 +267,9 @@ public class Server
 	
 	static {
 	    System.setProperty("file.encoding", "UTF-8");
-	    try {
-	        System.setOut(new PrintStream(System.out, true, "UTF-8"));
-	    } catch (UnsupportedEncodingException ignored) {}
+//	    try {
+//	        System.setOut(new PrintStream(System.out, true, "UTF-8"));
+//	    } catch (UnsupportedEncodingException ignored) {}
 	}
 
 	public static void main(String[] args) throws Exception

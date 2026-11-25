@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dd_class id="1" name="ua_lang"  name_jp=""  >
+
+  <dd_node id="1" name="add_unit" name_cn="新增单元" name_en="Add Unit" />
+  <dd_node id="1" name="add_line" name_cn="新增关联" name_en="Add Line" />
+  <dd_node id="1" name="joint" name_cn="连接点" name_en="Joint" />
+  
+  <dd_node id="1" name="io_in" name_cn="IO仅输入" name_en="In Only" />
+  <dd_node id="1" name="io_out" name_cn=" IO仅输出" name_en="Out Only" />
+  <dd_node id="1" name="io_inout" name_cn="IO输入输出" name_en="In Out" />
+  <dd_node id="1" name="io_null" name_cn="无输入输出" name_en="No In Out" />
+  
+  
+  <dd_node id="1" name="plugin" name_cn="插件" name_en="Plugin" />
+  <dd_node id="1" name="add_inout_d" name_cn="新增输入输出端子" name_en="Add In Out Pins" />
+  <dd_node id="1" name="add_plugin_d" name_cn="新增插件" name_en="Add Plugin" />
+  
+  <dd_node id="1" name="node_to_comp" name_cn="节点到组件" name_en="Node to Component" />
+  <dd_node id="1" name="preview" name_cn="预览" name_en="Preview" />
+  <dd_node id="1" name="place" name_cn="放置" name_en="Place" />
+</dd_class>

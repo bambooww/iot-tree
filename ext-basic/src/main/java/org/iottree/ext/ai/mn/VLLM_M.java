@@ -9,7 +9,6 @@ import org.iottree.core.util.Convert;
 import org.iottree.core.util.UrlUtil;
 import org.iottree.ext.ai.LLMModel;
 import org.iottree.ext.ai.LLMModelVLLM;
-import org.iottree.ext.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

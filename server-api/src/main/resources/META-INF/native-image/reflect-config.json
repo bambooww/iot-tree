@@ -1,5 +1,78 @@
 [
-	{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.ManualTrigger"}
+	{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"name":"org.iottree.core.util.xmldata.data_va"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"name":"org.iottree.core.util.xmldata.data_obj"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"name":"org.iottree.core.util.xmldata.data_class"}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UANode"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UANodeOC"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UANodeOCTags"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UANodeOCTagsCxt"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UANodeOCTagsGCxt"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UAPrj"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UACh"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UAConn"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UAConnClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UAConnServer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UADev"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UAHmi"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UATag"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UATagG"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.UATagList"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.DevCat"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.DevDef"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.basic.ValEvent"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.basic.PropItem"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.basic.PropGroup"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.alert.AlertHandler"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.alert.AlertOut"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.alert.AlertOutJS"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.alert.AlertOutUI"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.Source"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.SourceInfluxDB"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.SourceJDBC"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.StoreHandler"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.StoreOut"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.store.StoreOutTb"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.task.Task"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.core.task.TaskAction"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.driver.common.modbus.sim.SlaveChannel"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.driver.common.modbus.sim.SlaveDev"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.driver.common.modbus.sim.SlaveDevSeg"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.driver.common.modbus.sim.SlaveTag"}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveBindTag"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveCP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveCPCom"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveCPTcpClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveCPTcpServer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveDev"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveDevSeg"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveNode"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"allDeclaredFields": true,"queryAllDeclaredFields": true,"queryAllDeclaredMethods": true,"name":"org.iottree.pro.modbuss.SlaveVar"}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.util.js.Debug"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.util.js.GSys"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.util.js.GUtil"}
+		
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.common.CmdLineDrv"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.common.JsonJSDrv"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.common.MsgJSDrv"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.drv.LocPrjMapDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.common.ModbusDrvRTU"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.common.ModbusDrvTCP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.s7.ppi.PPIDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.s7.eth.S7EthDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.pro.mitsubishi.mc_eth.MCEthTCPDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.mitsubishi.fx.FxDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.mitsubishi.fxnet.FxNetDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.pro.mitsubishi.f800.RespSnifferDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.pro.omron.fins.FinsDriverEthTCP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.zstack.ZStackDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.ember.EmberDriver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.gb.szy.SZY206_2016Driver"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.gb.szy.SZY206_2016DriverLisOnly"}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.ManualTrigger"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NS_TimerTrigger"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NE_Debug"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.msgnet.nodes.NM_MemQueue"}
@@ -167,6 +240,32 @@
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProUDP"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProIOTTreeNode"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnProLocPrjMap"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ext.ASHCommon"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ext.ASHFixIP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ext.ASHNull"}
+	
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtBinder"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtBytesPk"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtCOM"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtHTTP"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtHTTPSer"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtIOTTreeNode"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtLinkPair"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtLocPrjMap"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtMQTT"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtMsg"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtMSGMultiTcp"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtMSGNor"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtOpcAgent"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtOPCUA"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtStream"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtTcpAccepted"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtTcpClient"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtUDPBytesPk"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtUDPMsg"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtVirtual"}
+	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.core.conn.ConnPtWSClient"}
+	
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.conn.common.bacnet.ConnProBACnetClient"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.ext.opcda.OpcDAConnPro"}
 	,{"allDeclaredConstructors": true,"allDeclaredMethods": true,"name":"org.iottree.driver.zigbee.zcl.ZCLConsole"}

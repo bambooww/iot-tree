@@ -5,10 +5,13 @@ import java.util.*;
 import javax.script.ScriptException;
 
 import org.iottree.core.util.Convert;
+import org.iottree.core.util.IDirBase;
 import org.iottree.core.util.IdIId;
 import org.iottree.core.util.KeyValSaver;
 import org.iottree.core.util.KeyValSaverFile;
 import org.iottree.core.util.Lan;
+import org.iottree.core.util.logger.ILogger;
+import org.iottree.core.util.logger.LoggerManager;
 import org.iottree.core.util.web.PrjNavTree;
 import org.iottree.core.util.web.PrjRestful;
 import org.iottree.core.util.xmldata.XmlData;
@@ -30,6 +33,8 @@ import org.iottree.core.conn.ConnPtHTTPSer;
 import org.iottree.core.cxt.JsDef;
 import org.iottree.core.cxt.UAContext;
 import org.iottree.core.cxt.UARtSystem;
+import org.iottree.core.ecp.ECPManager;
+import org.iottree.core.ecp.ECPNet;
 import org.iottree.core.filter.UANodeFilter;
 import org.iottree.core.msgnet.IMNContTagListMapper;
 import org.iottree.core.msgnet.IMNContainer;
@@ -59,8 +64,10 @@ import org.json.JSONObject;
  */
 @data_class
 @JsDef(name="prj",title="Prj",desc="Project Node",icon="icon_prj")
-public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt ,IMNContainer,IMNContTagListMapper//IJSOb
+public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, ISaver, IResCxt ,IMNContainer,IMNContTagListMapper,IDirBase//IJSOb
 {
+	static ILogger log = LoggerManager.getLogger(UAPrj.class) ;
+	
 	public static final String NODE_TP = "prj" ;
 	
 	@data_obj(obj_c = UACh.class)
@@ -172,6 +179,18 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	// ch.constructTree();
 	// }
 	// }
+	
+	@Override
+	public String getDirBaseId()
+	{
+		return "prj_"+this.id ;
+	}
+	
+	@Override
+	public File getDirBaseFile()
+	{
+		return this.getPrjSubDir() ;
+	}
 
 	@Override
 	protected void copyTreeWithNewSelf(IRoot root,UANode new_self, String ownerid, 
@@ -853,6 +872,11 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 		return getPrjSubDir();
 	}
 	
+	public File getECPNetDir()
+	{
+		return getPrjSubDir();
+	}
+	
 	public final MNManager getMNManager()
 	{
 		return MNManager.getInstance(this) ;
@@ -861,6 +885,16 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 	public final List<MNNet> listMNNetsAll()
 	{
 		return getMNManager().listNets() ;
+	}
+	
+	public final ECPManager getECPManager()
+	{
+		return ECPManager.getInstanceByPrj(this) ;
+	}
+	
+	public final List<ECPNet> listECPNetsAll()
+	{
+		return getECPManager().listNets() ;
 	}
 
 	@Override
@@ -1559,7 +1593,7 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 			boolean b_station_ins = UAPrj.this.isPrjPStationIns() ;
 			
 			if(log.isInfoEnabled())
-				log.info("  ua prj starting :"+UAPrj.this.getName()+" "+getTitle());
+				log.info("  ua prj starting :["+UAPrj.this.getName()+"] "+getTitle());
 			
 			try
 			{
@@ -1573,15 +1607,33 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				
 				if(!b_station_ins)
 				{
-					if(b_rec)
-						RecManager.getInstance(UAPrj.this).RT_start() ;
+//					if(b_rec)
+//						RecManager.getInstance(UAPrj.this).RT_start() ;
 					
 					AlertManager.getInstancePrjN(UAPrj.this.getName()).RT_start();
 					
 					if(b_store)
-						StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+					{
+//						try
+//						{
+//							StoreManager.getInstance(UAPrj.this.getId()).RT_start();
+//						}
+//						catch(Throwable ee)
+//						{
+//							if(log.isWarnEnabled())
+//								log.warn("StoreManager RT_start error in prj:"+UAPrj.this.getName());
+//						}
+					}
 					
-					RouterManager.getInstance(UAPrj.this).RT_start();
+//					try
+//					{
+//						RouterManager.getInstance(UAPrj.this).RT_start();
+//					}
+//					catch(Throwable ee)
+//					{
+//						if(log.isWarnEnabled())
+//							log.warn("RouterManager RT_start error in prj:"+UAPrj.this.getName());
+//					}
 					// start channel drivers
 					startStopCh(true);
 					
@@ -1671,15 +1723,33 @@ public class UAPrj extends UANodeOCTagsCxt implements IRoot, IOCUnit, IOCDyn, IS
 				AlertManager.getInstancePrjN(UAPrj.this.getName()).RT_stop();
 				
 				if(b_store)
-					StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
+				{
+//					try
+//					{
+//						StoreManager.getInstance(UAPrj.this.getId()).RT_stop();
+//					}
+//					catch(Throwable ee)
+//					{
+//						if(log.isWarnEnabled())
+//							log.warn("StoreManager RT_stop error in prj:"+UAPrj.this.getName());
+//					}
+				}
 				
-				if(b_rec)
-					RecManager.getInstance(UAPrj.this).RT_stop() ;
+//				if(b_rec)
+//					RecManager.getInstance(UAPrj.this).RT_stop() ;
 				
-				RouterManager.getInstance(UAPrj.this).RT_stop();
+//				try
+//				{
+//					RouterManager.getInstance(UAPrj.this).RT_stop();
+//				}
+//				catch(Throwable ee)
+//				{
+//					if(log.isWarnEnabled())
+//						log.warn("RouterManager RT_stop error in prj:"+UAPrj.this.getName());
+//				}
 				
 				if(log.isInfoEnabled())
-					log.info("  ua prj ended :"+UAPrj.this.getName()+" "+getTitle());
+					log.info("  ua prj ended :["+UAPrj.this.getName()+"] "+getTitle());
 			}
 		}
 	};

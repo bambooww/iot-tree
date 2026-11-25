@@ -12,6 +12,7 @@
 		<webapp name="opencharts" path="../../opencharts" />
 		<webapp name="opentree" path="../../opentree" />
 		<webapp name="msg_net" path="../../msg_net" />
+		<webapp name="open_ecp" path="../../open_ecp" />
 		<webapp name="_sys" />
 		<webapp name="_templet" />
 		<!-- 

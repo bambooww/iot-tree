@@ -7,8 +7,6 @@ import java.util.List;
 import org.iottree.core.msgnet.MNModule;
 import org.iottree.ext.ai.LLMModel;
 import org.iottree.ext.ai.LLMModelOllama;
-import org.iottree.ext.ai.LLMModelVLLM;
-import org.iottree.ext.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

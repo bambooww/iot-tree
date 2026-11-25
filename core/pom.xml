@@ -314,6 +314,27 @@
 	        <version>4.7.6</version>
 	    </dependency>
 	    
+	    <!-- Source: https://mvnrepository.com/artifact/org.drools/drools-core -->
+		<dependency>
+		    <groupId>org.drools</groupId>
+		    <artifactId>drools-core</artifactId>
+		    <version>10.2.0</version>
+		    <scope>compile</scope>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.drools/drools-compiler -->
+		<dependency>
+		    <groupId>org.drools</groupId>
+		    <artifactId>drools-compiler</artifactId>
+		    <version>10.2.0</version>
+		    <scope>compile</scope>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.drools/drools-mvel -->
+		<dependency>
+		    <groupId>org.drools</groupId>
+		    <artifactId>drools-mvel</artifactId>
+		    <version>10.2.0</version>
+		    <scope>compile</scope>
+		</dependency>
 	    
 	</dependencies>
 

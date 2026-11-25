@@ -786,7 +786,7 @@ public class MNManager
 		MNNet ret = new MNNet(this) ;
 		if(!ret.fromJO(net_jo))
 		{
-			failedr.append("导入格式不对");
+			failedr.append("invalid net jo format");
 			return null ;
 		}
 		

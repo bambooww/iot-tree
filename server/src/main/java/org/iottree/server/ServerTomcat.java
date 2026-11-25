@@ -32,7 +32,9 @@ import org.iottree.core.util.web.AppWebConfig;
 public class ServerTomcat implements IServerBootComp
 {
 	
-	
+	private transient boolean bRunning = false;
+
+
 	Tomcat tomcat = null ;
 	
 	public List<UAServer.WebItem> startTomcat(ClassLoader cl) throws Exception
@@ -188,7 +190,7 @@ public class ServerTomcat implements IServerBootComp
 		}
 		
 		//AppWebConfig.fireAllWebAppLoaded();
-		
+		bRunning = true;
 		return wis ;
 	}
 	
@@ -270,14 +272,12 @@ public class ServerTomcat implements IServerBootComp
 	}
 
 	
-	private transient boolean bRunning = false;
-
-
+	
 	@Override
 	public void startComp() throws Exception
 	{
 		startTomcat(Thread.currentThread().getContextClassLoader());
-		bRunning = true;
+		
 	}
 
 

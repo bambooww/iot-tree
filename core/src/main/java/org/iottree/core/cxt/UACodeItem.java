@@ -2,16 +2,9 @@ package org.iottree.core.cxt;
 
 import java.util.UUID;
 
-import javax.script.Compilable;
-import javax.script.CompiledScript;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
 import org.iottree.core.UAVal;
 import org.iottree.core.util.Convert;
 
@@ -48,7 +41,7 @@ public class UACodeItem
 	
 	transient String blockFn = null;
 	
-	transient UAContext cxt = null;
+	transient JSContext cxt = null;
 	
 	transient boolean bValid = false;
 	
@@ -68,7 +61,7 @@ public class UACodeItem
 		initItem(cxt) ;
 	}
 	
-	public boolean initItem(UAContext cxt,String... param_names) //throws ScriptException
+	public boolean initItem(JSContext cxt,String... param_names) //throws ScriptException
 	{
 		if(Convert.isNullOrEmpty(this.codeTxt))
 			return false;

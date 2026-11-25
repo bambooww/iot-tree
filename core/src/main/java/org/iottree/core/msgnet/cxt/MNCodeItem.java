@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.script.CompiledScript;
 import javax.script.ScriptException;
 
+import org.graalvm.polyglot.Source;
 import org.iottree.core.util.Convert;
 
 public class MNCodeItem
@@ -27,7 +28,7 @@ static ThreadLocal<Boolean> thInJS = new ThreadLocal<>() ;
 	 */
 	String codeTxt = null ;
 	
-	transient CompiledScript codeCS = null ;
+	transient Source codeCS = null ;
 	
 	//transient CompiledScript callFnCS = null ;
 	
@@ -180,7 +181,7 @@ static ThreadLocal<Boolean> thInJS = new ThreadLocal<>() ;
 			
 			synchronized(cxt)
 			{
-				return codeCS.eval() ;
+				return cxt.scriptEvalSrc(codeCS) ;//codeCS.eval() ;
 			}
 		}
 		finally

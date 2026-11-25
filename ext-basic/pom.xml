@@ -101,6 +101,14 @@
     <version>2.0.0-M3</version>
     <scope>compile</scope>
 </dependency>
+
+<!-- Source: https://mvnrepository.com/artifact/org.zvec/zvec-java -->
+<dependency>
+    <groupId>org.zvec</groupId>
+    <artifactId>zvec-java</artifactId>
+    <version>0.8.0</version>
+    <scope>compile</scope>
+</dependency>
 <!-- Source: https://mvnrepository.com/artifact/com.openai/openai-java
 <dependency>
     <groupId>com.openai</groupId>

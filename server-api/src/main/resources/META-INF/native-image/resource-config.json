@@ -3,6 +3,10 @@
     "includes": [
 		{"pattern": ".*org/iottree/.*\\.xml"},
 		{"pattern": ".*org/iottree/.*\\.json"}
-    ]
+    ],
+	"excludes":[
+		{"pattern": ".*org/apache/catalina/.*"}
+		,{"pattern": ".*org/apache/tomcat/.*"}
+	]
   }
 }

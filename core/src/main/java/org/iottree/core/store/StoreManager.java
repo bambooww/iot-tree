@@ -329,7 +329,8 @@ public class StoreManager
 		catch (Exception e)
 		{
 			//e.printStackTrace();
-			log.error("loadHandlers err",e);
+			if(log.isWarnEnabled())
+				log.warn("loadHandlers err:",e);
 			return null ;
 		}
 	}
